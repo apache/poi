@@ -18,20 +18,22 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.xslf.XSLFTestDataSamples;
+
 /**
+ * test common properties for sheets (slides, masters, layouts, etc.)
+ *
  * @author Yegor Kozlov
  */
-public class TestXSLFTextBox extends TestCase {
-
-    public void testPlaceholder() {
+public class TestXSLFTheme extends TestCase {
+    public void testRead(){
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
-
-        XSLFTextBox shape = slide.createTextBox();
-        assertNull(shape.getTextType());
-        shape.setPlaceholder(Placeholder.TITLE);
-        assertEquals(Placeholder.TITLE, shape.getTextType());
-        shape.setPlaceholder(null);
-        assertNull(shape.getTextType());
+        XSLFTheme theme = slide.getSlideLayout().getSlideMaster().getTheme();
+        assertNotNull(theme);
+        
+        assertEquals("Office Theme", theme.getName());
+        XSLFColor accent1 = theme.getColor("accent1");
+        assertNotNull(accent1);
     }
 }

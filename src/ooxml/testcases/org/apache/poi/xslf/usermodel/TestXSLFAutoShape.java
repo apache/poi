@@ -33,11 +33,11 @@ public class TestXSLFAutoShape extends TestCase {
         XSLFAutoShape shape = slide.createAutoShape();
         shape.addNewTextParagraph().addNewTextRun().setText("POI");
 
-        // margins
-        assertEquals(-1., shape.getMarginBottom());
-        assertEquals(-1., shape.getMarginTop());
-        assertEquals(-1., shape.getMarginLeft());
-        assertEquals(-1., shape.getMarginRight());
+        // default margins from slide master
+        assertEquals(3.6, shape.getMarginBottom());
+        assertEquals(3.6, shape.getMarginTop());
+        assertEquals(7.2, shape.getMarginLeft());
+        assertEquals(7.2, shape.getMarginRight());
 
         shape.setMarginBottom(1.0);
         assertEquals(1.0, shape.getMarginBottom());
@@ -57,21 +57,22 @@ public class TestXSLFAutoShape extends TestCase {
         shape.setMarginRight(0.0);
         assertEquals(0.0, shape.getMarginRight());
 
+        // unset to defauls
         shape.setMarginBottom(-1);
-        assertEquals(-1., shape.getMarginBottom());
+        assertEquals(3.6, shape.getMarginBottom());
         shape.setMarginTop(-1);
-        assertEquals(-1.0, shape.getMarginTop());
+        assertEquals(3.6, shape.getMarginTop());
         shape.setMarginLeft(-1);
-        assertEquals(-1.0, shape.getMarginLeft());
+        assertEquals(7.2, shape.getMarginLeft());
         shape.setMarginRight(-1);
-        assertEquals(-1.0, shape.getMarginRight());
+        assertEquals(7.2, shape.getMarginRight());
 
         // shape
-        assertFalse(shape.getWordWrap());
-        shape.setWordWrap(true);
         assertTrue(shape.getWordWrap());
         shape.setWordWrap(false);
         assertFalse(shape.getWordWrap());
+        shape.setWordWrap(true);
+        assertTrue(shape.getWordWrap());
 
         // shape
         assertEquals(TextAutofit.NORMAL, shape.getTextAutofit());
@@ -209,7 +210,7 @@ public class TestXSLFAutoShape extends TestCase {
         assertEquals(1, p.getTextRuns().size());
         assertSame(r, p.getTextRuns().get(0));
 
-        assertEquals(-1.0, r.getFontSize());
+        assertEquals(18.0, r.getFontSize()); // default font size for text boxes
         assertFalse(r.getXmlObject().getRPr().isSetSz());
         r.setFontSize(10.0);
         assertTrue(r.getXmlObject().isSetRPr());
@@ -220,9 +221,9 @@ public class TestXSLFAutoShape extends TestCase {
         assertFalse(r.getXmlObject().getRPr().isSetSz());
 
         assertFalse(r.getXmlObject().getRPr().isSetLatin());
-        assertNull(r.getFontFamily());
+        assertEquals("Calibri", r.getFontFamily()); // comes from the slide master
         r.setFontFamily(null);
-        assertNull(r.getFontFamily());
+        assertEquals("Calibri", r.getFontFamily()); // comes from the slide master
         r.setFontFamily("Arial");
         assertEquals("Arial", r.getFontFamily());
         assertEquals("Arial", r.getXmlObject().getRPr().getLatin().getTypeface());
@@ -230,7 +231,7 @@ public class TestXSLFAutoShape extends TestCase {
         assertEquals("Symbol", r.getFontFamily());
         assertEquals("Symbol", r.getXmlObject().getRPr().getLatin().getTypeface());
         r.setFontFamily(null);
-        assertNull(r.getFontFamily());
+        assertEquals("Calibri", r.getFontFamily()); // comes from the slide master
         assertFalse(r.getXmlObject().getRPr().isSetLatin());
 
         assertFalse(r.isStrikethrough());

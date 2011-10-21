@@ -126,32 +126,4 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         gr.setUri(TABLE_URI);
         return frame;
     }
-
-    public Rectangle2D getAnchor(){
-        CTTransform2D xfrm = getXmlObject().getXfrm();
-        CTPoint2D off = xfrm.getOff();
-        long x = off.getX();
-        long y = off.getY();
-        CTPositiveSize2D ext = xfrm.getExt();
-        long cx = ext.getCx();
-        long cy = ext.getCy();
-        return new Rectangle2D.Double(
-                Units.toPoints(x), Units.toPoints(y),
-                Units.toPoints(cx), Units.toPoints(cy));
-    }
-
-    public void setAnchor(Rectangle2D anchor){
-        CTTransform2D xfrm = getXmlObject().getXfrm();
-        CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
-        long x = Units.toEMU(anchor.getX());
-        long y = Units.toEMU(anchor.getY());
-        off.setX(x);
-        off.setY(y);
-        CTPositiveSize2D ext = xfrm.isSetExt() ? xfrm.getExt() : xfrm.addNewExt();
-        long cx = Units.toEMU(anchor.getWidth());
-        long cy = Units.toEMU(anchor.getHeight());
-        ext.setCx(cx);
-        ext.setCy(cy);
-    }
-    
 }

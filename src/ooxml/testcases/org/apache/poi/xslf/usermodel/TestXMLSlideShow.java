@@ -41,7 +41,6 @@ public class TestXMLSlideShow extends TestCase {
          if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
             found = true;
          }
-         //System.out.println(part);
       }
       assertTrue(found);
    }

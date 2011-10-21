@@ -21,6 +21,8 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuideList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
@@ -39,8 +41,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Represents a preset geometric shape. 
@@ -49,6 +55,7 @@ import java.util.List;
  */
 @Beta
 public class XSLFAutoShape extends XSLFTextShape {
+    private static final Pattern adjPtrn = Pattern.compile("val\\s+(\\d+)");
 
     /*package*/ XSLFAutoShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
@@ -83,44 +90,6 @@ public class XSLFAutoShape extends XSLFTextShape {
         return ct;
     }
 
-    /**
-     * Specifies a solid color fill. The shape is filled entirely with the specified color.
-     *
-     * @param color the solid color fill.
-     * The value of <code>null</code> unsets the solidFIll attribute from the underlying xml
-     */
-    public void setFillColor(Color color) {
-        CTShapeProperties spPr = getSpPr();
-        if (color == null) {
-            if(spPr.isSetSolidFill()) spPr.unsetSolidFill();
-        }
-        else {
-            CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr.getSolidFill() : spPr.addNewSolidFill();
-
-            CTSRgbColor rgb = CTSRgbColor.Factory.newInstance();
-            rgb.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
-
-            fill.setSrgbClr(rgb);
-        }
-    }
-
-    /**
-     *
-     * @return solid fill color of null if not set
-     */
-    public Color getFillColor(){
-        CTShapeProperties spPr = getSpPr();
-        if(!spPr.isSetSolidFill() ) return null;
-
-        CTSolidColorFillProperties fill = spPr.getSolidFill();
-        if(!fill.isSetSrgbClr()) {
-            // TODO for now return null for all colors except explicit RGB
-            return null;
-        }
-        byte[] val = fill.getSrgbClr().getVal();
-        return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
-    }
-
     protected CTTextBody getTextBody(boolean create){
         CTShape shape = (CTShape) getXmlObject();
         CTTextBody txBody = shape.getTxBody();
@@ -130,6 +99,40 @@ public class XSLFAutoShape extends XSLFTextShape {
             txBody.addNewLstStyle();
         }
         return txBody;
+    }
+
+    int getAdjustValue(String name, int defaultValue){
+        /*
+        CTShape shape = (CTShape) getXmlObject();
+        CTGeomGuideList av = shape.getSpPr().getPrstGeom().getAvLst();
+        if(av != null){
+            for(CTGeomGuide gd : av.getGdList()){
+                if(gd.getName().equals(name)) {
+                    String fmla = gd.getFmla();
+                    Matcher m = adjPtrn.matcher(fmla);
+                    if(m.matches()){
+                        int val = Integer.parseInt(m.group(1));
+                        return 21600*val/100000;
+                    }
+                }
+            }
+        }
+        */
+        return defaultValue;
+    }
+
+    @Override
+    protected java.awt.Shape getOutline(){
+        java.awt.Shape outline = XSLFPresetGeometry.getOutline(this);
+        Rectangle2D anchor = getAnchor();
+
+        AffineTransform at = new AffineTransform();
+        at.translate(anchor.getX(), anchor.getY());
+        at.scale(
+                1.0f/21600*anchor.getWidth(),
+                1.0f/21600*anchor.getHeight()
+        );
+        return outline == null ? anchor : at.createTransformedShape(outline);
     }
 
 }

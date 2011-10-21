@@ -21,6 +21,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
@@ -30,9 +31,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 
 import javax.xml.namespace.QName;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -47,6 +52,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
     private CTGroupShape _spTree;
+    private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
+    private Map<Integer, XSLFSimpleShape> _placeholderByTypeMap;
 
     public XSLFSheet() {
         super();
@@ -187,6 +194,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         return getShapeList().remove(xShape);
     }
 
+    public XSLFBackground getBackground(){
+        return null;
+    }
+
     protected abstract String getRootElementName();
 
     protected CTGroupShape getSpTree(){
@@ -232,4 +243,112 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         getXmlObject().set(src.getXmlObject());
     }
 
+    public XSLFTheme getTheme(){
+    	return null;
+    }
+
+    public XSLFSlideMaster getSlideMaster(){
+    	return null;
+    }
+
+    public XSLFSlideLayout getSlideLayout(){
+    	return null;
+    }
+
+    protected CTTextListStyle getTextProperties(Placeholder textType) {
+        return null;
+    }
+    
+    protected XSLFTextShape getTextShapeByType(Placeholder type){
+        for(XSLFShape shape : this.getShapes()){
+            if(shape instanceof XSLFTextShape) {
+               XSLFTextShape txt = (XSLFTextShape)shape;
+                if(txt.getTextType() == type) {
+                    return txt;
+                }
+            }
+        }
+        return null;
+    }
+
+    XSLFSimpleShape getPlaceholder(CTPlaceholder ph) {
+        XSLFSimpleShape shape = null;
+        if(ph.isSetIdx()) shape = getPlaceholderById((int)ph.getIdx());
+
+        if (shape == null && ph.isSetType()) {
+            shape = getPlaceholderByType(ph.getType().intValue());
+        }
+        return shape;
+    }
+
+    XSLFSimpleShape getPlaceholderById(int id) {
+        if(_placeholderByIdMap == null) {
+            _placeholderByIdMap = new HashMap<Integer, XSLFSimpleShape>();
+            for(XSLFShape sh : getShapes()){
+                if(sh instanceof XSLFSimpleShape){
+                    XSLFSimpleShape sShape = (XSLFSimpleShape)sh;
+                    CTPlaceholder ph = sShape.getCTPlaceholder();
+                    if(ph != null && ph.isSetIdx()){
+                        int idx = (int)ph.getIdx();
+                        _placeholderByIdMap.put(idx, sShape);
+                    }
+                }
+            }
+        }
+        return _placeholderByIdMap.get(id);
+    }
+
+    XSLFSimpleShape getPlaceholderByType(int ordinal) {
+        if(_placeholderByTypeMap == null) {
+            _placeholderByTypeMap = new HashMap<Integer, XSLFSimpleShape>();
+            for(XSLFShape sh : getShapes()){
+                if(sh instanceof XSLFSimpleShape){
+                    XSLFSimpleShape sShape = (XSLFSimpleShape)sh;
+                    CTPlaceholder ph = sShape.getCTPlaceholder();
+                    if(ph != null && ph.isSetType()){
+                        _placeholderByTypeMap.put(ph.getType().intValue(), sShape);
+                    }
+                }
+            }
+        }
+        return _placeholderByTypeMap.get(ordinal);
+    }
+
+    /**
+     * Checks if this <code>sheet</code> displays the specified shape.
+     *
+     * Subclasses can override it and skip certain shapes from drawings.
+     */
+    protected boolean canDraw(XSLFShape shape){
+        return true;
+    }
+
+    /**
+     * Render this sheet into the supplied graphics object
+     *
+     * @param graphics
+     */
+    public void draw(Graphics2D graphics){
+        XSLFBackground bg = getBackground();
+        if(bg != null) bg.draw(graphics);
+
+        for(XSLFShape shape : getShapeList()) {
+            if(!canDraw(shape)) continue;
+
+        	// remember the initial transform and restore it after we are done with drawing
+        	AffineTransform at0 = graphics.getTransform();
+
+            graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
+
+            // apply rotation and flipping
+            shape.applyTransform(graphics);
+
+            shape.draw(graphics);
+
+            // restore the coordinate system
+            graphics.setTransform(at0);
+            graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
+
+        }
+    }
 }

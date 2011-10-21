@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">support for converting pptx files into images with a PPTX2PNG tool</action>
            <action dev="poi-developers" type="add">52050 - Support for the Excel RATE function</action>
            <action dev="poi-developers" type="fix">51566 - HSLF fix for finishing parsing the picture stream on the first non-valid type</action>
            <action dev="poi-developers" type="fix">51974 - Avoid HWPF issue when identifying the picture type</action>

@@ -32,6 +32,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnectorNonVisual;
 
+import java.awt.*;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
+
 /**
  *
  * Specifies a connection shape. 
@@ -190,6 +194,38 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
 
         STLineEndLength.Enum len = ln.getTailEnd().getLen();
         return len == null ? null : LineEndLength.values()[len.intValue() - 1];
+    }
+
+    @Override
+    public void draw(Graphics2D graphics){
+        java.awt.Shape outline = getOutline();
+
+        // shadow
+        XSLFShadow shadow = getShadow();
+        if(shadow != null) shadow.draw(graphics);
+
+        //border
+        Color lineColor = getLineColor();
+        if (lineColor != null){
+            graphics.setColor(lineColor);
+            applyStroke(graphics);
+            graphics.draw(outline);
+        }
+    }
+
+    @Override
+    protected java.awt.Shape getOutline(){
+        Rectangle2D anchor = getAnchor();
+        double  x1 = anchor.getX(),
+                y1 = anchor.getY(),
+                x2 = anchor.getX() + anchor.getWidth(),
+                y2 = anchor.getY() + anchor.getHeight();
+
+        GeneralPath line = new GeneralPath();
+        line.moveTo((float)x1, (float)y1);
+        line.lineTo((float)x2, (float)y2);
+
+        return line;
     }
 
 }

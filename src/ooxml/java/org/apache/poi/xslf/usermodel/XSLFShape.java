@@ -19,10 +19,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -41,4 +42,76 @@ public abstract class XSLFShape {
     public abstract String getShapeName();
 
     public abstract int getShapeId();
+
+    /**
+     * Rotate this shape.
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @param theta the rotation angle in degrees.
+     */
+    public abstract void setRotation(double theta);
+   
+    /**
+     * Rotation angle in degrees
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @return rotation angle in degrees
+     */
+    public abstract double getRotation();
+
+    public abstract void setFlipHorizontal(boolean flip);
+
+    public abstract void setFlipVertical(boolean flip);
+    
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+    public abstract boolean getFlipHorizontal();
+
+    public abstract boolean getFlipVertical();
+
+    public abstract void draw(Graphics2D graphics);
+
+    protected java.awt.Shape getOutline(){
+        return getAnchor();
+    }
+    
+    protected void applyTransform(Graphics2D graphics){
+        Rectangle2D anchor = getAnchor();
+
+        // rotation
+        double rotation = getRotation();
+        if(rotation != 0.) {
+        	// PowerPoint rotates shapes relative to the geometric center
+            double centerX = anchor.getX() + anchor.getWidth()/2;
+            double centerY = anchor.getY() + anchor.getHeight()/2;
+
+            graphics.translate(centerX, centerY);
+            graphics.rotate(Math.toRadians(rotation));
+            graphics.translate(-centerX, -centerY);
+        }
+
+        //flip horizontal
+        if(getFlipHorizontal()){
+            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
+            graphics.scale(-1, 1);
+            graphics.translate(-anchor.getX() , -anchor.getY());
+        }
+
+        //flip vertical
+        if(getFlipVertical()){
+            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
+            graphics.scale(1, -1);
+            graphics.translate(-anchor.getX(), -anchor.getY());
+        }
+    }
+    
 }

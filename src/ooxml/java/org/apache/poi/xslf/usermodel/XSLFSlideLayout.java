@@ -22,11 +22,18 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 @Beta
 public class XSLFSlideLayout extends XSLFSheet {
@@ -84,6 +91,7 @@ public class XSLFSlideLayout extends XSLFSheet {
      * @return slide master. Never null.
      * @throws IllegalStateException if slide master was not found
      */
+    @Override
     public XSLFSlideMaster getSlideMaster(){
         if(_master == null){
             for (POIXMLDocumentPart p : getRelations()) {
@@ -100,5 +108,41 @@ public class XSLFSlideLayout extends XSLFSheet {
 
     public XMLSlideShow getSlideShow() {
         return (XMLSlideShow)getParent().getParent();
+    }
+    
+    public XSLFTheme getTheme(){
+    	return getSlideMaster().getTheme();
+    }    
+
+
+    @Override
+    protected CTTextListStyle getTextProperties(Placeholder textType) {
+        XSLFTextShape lp = getTextShapeByType(textType);
+        CTTextListStyle props = lp.getTextBody(false).getLstStyle();
+        return props;
+    }
+
+    /**
+     * Render this sheet into the supplied graphics object
+     *
+     */
+    @Override
+    protected boolean canDraw(XSLFShape shape){
+        if(shape instanceof XSLFSimpleShape){
+            XSLFSimpleShape txt = (XSLFSimpleShape)shape;
+            CTPlaceholder ph = txt.getCTPlaceholder();
+            if(ph != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public XSLFBackground getBackground(){
+        if(_layout.getCSld().isSetBg()) {
+            return new XSLFBackground(_layout.getCSld().getBg(), this);
+        }
+        return null;
     }
 }

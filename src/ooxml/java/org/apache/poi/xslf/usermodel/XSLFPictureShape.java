@@ -22,16 +22,24 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
 import javax.imageio.ImageIO;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -104,4 +112,43 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         }
         return _data;
     }
+
+    @Override
+    public void draw(Graphics2D graphics){
+        java.awt.Shape outline = getOutline();
+
+        //fill
+        Color fillColor = getFillColor();
+        if (fillColor != null) {
+            graphics.setColor(fillColor);
+            applyFill(graphics);
+            graphics.fill(outline);
+        }
+        
+        // text
+    	
+    	XSLFPictureData data = getPictureData();
+    	if(data == null) return;
+    	
+        BufferedImage img;
+        try {
+               img = ImageIO.read(new ByteArrayInputStream(data.getData()));
+        }
+        catch (Exception e){
+            return;
+        }
+        Rectangle2D anchor = getAnchor();
+        graphics.drawImage(img, (int)anchor.getX(), (int)anchor.getY(), 
+        		(int)anchor.getWidth(), (int)anchor.getHeight(), null);
+
+
+        //border overlays the image
+        Color lineColor = getLineColor();
+        if (lineColor != null){
+            graphics.setColor(lineColor);
+            applyStroke(graphics);
+            graphics.draw(outline);
+        }
+    }
+
 }
