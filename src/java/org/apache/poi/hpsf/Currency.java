@@ -1,0 +1,18 @@
+package org.apache.poi.hpsf;
+
+import org.apache.poi.util.LittleEndian;
+
+import org.apache.poi.util.Internal;
+
+@Internal
+class Currency
+{
+    static final int SIZE = 8;
+
+    private byte[] _value;
+
+    Currency( byte[] data, int offset )
+    {
+        _value = LittleEndian.getByteArray( data, offset, SIZE );
+    }
+}
