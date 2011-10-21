@@ -20,6 +20,7 @@ package org.apache.poi.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 /**
  * a utility class for handling little-endian numbers, which the 80x86 world is
@@ -39,6 +40,12 @@ public class LittleEndian implements LittleEndianConsts
      */
     public static final class BufferUnderrunException extends IOException
     {
+        /**
+         * Serial version UID
+         * 
+         * @see Serializable
+         */
+        private static final long serialVersionUID = 8736973884877006145L;
 
         BufferUnderrunException()
         {
@@ -81,6 +88,22 @@ public class LittleEndian implements LittleEndianConsts
     public static double getDouble( byte[] data, int offset )
     {
         return Double.longBitsToDouble( getLong( data, offset ) );
+    }
+
+    /**
+     * get a float value from a byte array, reads it in little endian format
+     * then converts the resulting revolting IEEE 754 (curse them) floating
+     * point number to a happy java float
+     * 
+     * @param data
+     *            the byte array
+     * @param offset
+     *            a starting offset into the byte array
+     * @return the double (64-bit) value
+     */
+    public static float getFloat( byte[] data, int offset )
+    {
+        return Float.intBitsToFloat( getInt( data, offset ) );
     }
 
     /**
@@ -300,6 +323,53 @@ public class LittleEndian implements LittleEndianConsts
     }
 
     /**
+     * put a double value into a byte array
+     * 
+     * @param value
+     *            the double (64-bit) value
+     * @param outputStream
+     *            output stream
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void putDouble( double value, OutputStream outputStream )
+            throws IOException
+    {
+        putLong( Double.doubleToLongBits( value ), outputStream );
+    }
+
+    /**
+     * put a float value into a byte array
+     * 
+     * @param data
+     *            the byte array
+     * @param offset
+     *            a starting offset into the byte array
+     * @param value
+     *            the float (32-bit) value
+     */
+    public static void putFloat( byte[] data, int offset, float value )
+    {
+        putInt( data, offset, Float.floatToIntBits( value ) );
+    }
+
+    /**
+     * put a float value into a byte array
+     * 
+     * @param value
+     *            the float (32-bit) value
+     * @param outputStream
+     *            output stream
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void putFloat( float value, OutputStream outputStream )
+            throws IOException
+    {
+        putInt( Float.floatToIntBits( value ), outputStream );
+    }
+
+    /**
      * put an int value into beginning of a byte array
      * 
      * @param data
@@ -362,14 +432,37 @@ public class LittleEndian implements LittleEndianConsts
      */
     public static void putLong( byte[] data, int offset, long value )
     {
-        int limit = LONG_SIZE + offset;
-        long v = value;
+        data[offset + 0] = (byte) ( ( value >>> 0 ) & 0xFF );
+        data[offset + 1] = (byte) ( ( value >>> 8 ) & 0xFF );
+        data[offset + 2] = (byte) ( ( value >>> 16 ) & 0xFF );
+        data[offset + 3] = (byte) ( ( value >>> 24 ) & 0xFF );
+        data[offset + 4] = (byte) ( ( value >>> 32 ) & 0xFF );
+        data[offset + 5] = (byte) ( ( value >>> 40 ) & 0xFF );
+        data[offset + 6] = (byte) ( ( value >>> 48 ) & 0xFF );
+        data[offset + 7] = (byte) ( ( value >>> 56 ) & 0xFF );
+    }
 
-        for ( int j = offset; j < limit; j++ )
-        {
-            data[j] = (byte) ( v & 0xFF );
-            v >>= 8;
-        }
+    /**
+     * Put long into output stream
+     * 
+     * @param value
+     *            the long (64-bit) value
+     * @param outputStream
+     *            output stream
+     * @throws IOException
+     *             if an I/O error occurs
+     */
+    public static void putLong( long value, OutputStream outputStream )
+            throws IOException
+    {
+        outputStream.write( (byte) ( ( value >>> 0 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 8 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 16 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 24 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 32 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 40 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 48 ) & 0xFF ) );
+        outputStream.write( (byte) ( ( value >>> 56 ) & 0xFF ) );
     }
 
     /**
@@ -429,8 +522,9 @@ public class LittleEndian implements LittleEndianConsts
      * @param value
      *            the short (16-bit) values
      */
-    public static void putShortArray( byte[] data, int offset, short[] value )
+    public static void putShortArray( byte[] data, int startOffset, short[] value )
     {
+        int offset = startOffset;
         for ( short s : value )
         {
             putShort( data, offset, s );
