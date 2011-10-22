@@ -158,11 +158,15 @@ public class VariantSupport extends Variant
         TypedPropertyValue typedPropertyValue = new TypedPropertyValue(
                 (int) type, null );
         int unpadded;
-        try {
+        try
+        {
             unpadded = typedPropertyValue.readValue( src, offset );
-        } catch (UnsupportedOperationException exc) {
-            final byte[] v = new byte[length];
-            System.arraycopy( src, offset, v, 0, length );
+        }
+        catch ( UnsupportedOperationException exc )
+        {
+            int propLength = Math.min( length, src.length - offset );
+            final byte[] v = new byte[propLength];
+            System.arraycopy( src, offset, v, 0, propLength );
             throw new ReadingNotSupportedException( type, v );
         }
 
