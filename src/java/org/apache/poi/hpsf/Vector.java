@@ -54,7 +54,8 @@ class Vector
             for ( int i = 0; i < length; i++ )
             {
                 TypedPropertyValue value = new TypedPropertyValue( _type, null );
-                offset += value.readValuePadded( data, offset );
+                // be aware: not padded here
+                offset += value.readValue( data, offset );
                 _values[i] = value;
             }
         }
