@@ -1,8 +1,7 @@
 package org.apache.poi.hpsf;
 
-import org.apache.poi.util.LittleEndian;
-
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 
 @Internal
 class Blob
@@ -19,7 +18,7 @@ class Blob
             return;
         }
 
-        _value = LittleEndian.getByteArray( _value, offset
+        _value = LittleEndian.getByteArray( data, offset
                 + LittleEndian.INT_SIZE, size );
     }
 
