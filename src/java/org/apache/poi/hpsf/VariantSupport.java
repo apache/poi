@@ -150,39 +150,21 @@ public class VariantSupport extends Variant
      * @exception UnsupportedEncodingException if the specified codepage is not
      *            supported.
      * @see Variant
-     * @deprecated Use {@link #read(byte[],int,long,int)} instead
      */
-    @Deprecated
     public static Object read( final byte[] src, final int offset,
             final int length, final long type, final int codepage )
             throws ReadingNotSupportedException, UnsupportedEncodingException
     {
-        return read( src, offset, type, codepage );
-    }
-
-    /**
-     * <p>Reads a variant type from a byte array.</p>
-     *
-     * @param src The byte array
-     * @param offset The offset in the byte array where the variant starts
-     * @param type The variant type to read
-     * @param codepage The codepage to use for non-wide strings
-     * @return A Java object that corresponds best to the variant field. For
-     *         example, a VT_I4 is returned as a {@link Long}, a VT_LPSTR as a
-     *         {@link String}.
-     * @exception ReadingNotSupportedException if a property is to be written
-     *            who's variant type HPSF does not yet support
-     * @exception UnsupportedEncodingException if the specified codepage is not
-     *            supported.
-     * @see Variant
-     */
-    public static Object read(final byte[] src, final int offset,
-                              final long type, final int codepage)
-    throws ReadingNotSupportedException, UnsupportedEncodingException
-    {
         TypedPropertyValue typedPropertyValue = new TypedPropertyValue(
                 (int) type, null );
-        int unpadded = typedPropertyValue.readValue( src, offset );
+        int unpadded;
+        try {
+            unpadded = typedPropertyValue.readValue( src, offset );
+        } catch (UnsupportedOperationException exc) {
+            final byte[] v = new byte[length];
+            System.arraycopy( src, offset, v, 0, length );
+            throw new ReadingNotSupportedException( type, v );
+        }
 
         switch ( (int) type )
         {
