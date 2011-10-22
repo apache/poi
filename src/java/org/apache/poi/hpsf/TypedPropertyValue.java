@@ -1,12 +1,16 @@
 package org.apache.poi.hpsf;
 
-import org.apache.poi.util.LittleEndian;
-
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 @Internal
 class TypedPropertyValue
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( TypedPropertyValue.class );
+
     private int _type;
 
     private Object _value;
@@ -26,6 +30,11 @@ class TypedPropertyValue
         _value = value;
     }
 
+    Object getValue()
+    {
+        return _value;
+    }
+
     int read( byte[] data, int startOffset )
     {
         int offset = startOffset;
@@ -34,11 +43,13 @@ class TypedPropertyValue
         offset += LittleEndian.SHORT_SIZE;
 
         short padding = LittleEndian.getShort( data, offset );
-        if ( padding != 0 )
-            throw new IllegalPropertySetDataException(
-                    "Property padding at offset " + offset
-                            + " MUST be 0, but it's value is " + padding );
         offset += LittleEndian.SHORT_SIZE;
+        if ( padding != 0 )
+        {
+            logger.log( POILogger.WARN, "TypedPropertyValue padding at offset "
+                    + offset + " MUST be 0, but it's value is " + padding );
+        }
+
         offset += readValuePadded( data, offset );
 
         return offset - startOffset;
