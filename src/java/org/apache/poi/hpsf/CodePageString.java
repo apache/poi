@@ -22,10 +22,15 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 @Internal
 class CodePageString
 {
+
+    private final static POILogger logger = POILogFactory
+            .getLogger( CodePageString.class );
 
     private static String codepageToEncoding( final int codepage )
             throws UnsupportedEncodingException
@@ -172,7 +177,23 @@ class CodePageString
             result = new String( _value );
         else
             result = new String( _value, codepageToEncoding( codepage ) );
-        return result.substring( 0, result.length() - 1 );
+        final int terminator = result.indexOf( '\0' );
+        if ( terminator == -1 )
+        {
+            logger.log(
+                    POILogger.WARN,
+                    "String terminator (\\0) for CodePageString property value not found."
+                            + "Continue without trimming and hope for the best." );
+            return result;
+        }
+        if ( terminator != result.length() - 1 )
+        {
+            logger.log(
+                    POILogger.WARN,
+                    "String terminator (\\0) for CodePageString property value occured before the end of string. "
+                            + "Trimming and hope for the best." );
+        }
+        return result.substring( 0, terminator );
     }
 
     int getSize()

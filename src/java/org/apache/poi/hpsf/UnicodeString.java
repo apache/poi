@@ -18,11 +18,17 @@ package org.apache.poi.hpsf;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 @Internal
 class UnicodeString
 {
+
+    private final static POILogger logger = POILogFactory
+            .getLogger( UnicodeString.class );
+
     private byte[] _value;
 
     UnicodeString( byte[] data, int offset )
@@ -59,7 +65,25 @@ class UnicodeString
         if ( _value.length == 0 )
             return null;
 
-        return StringUtil.getFromUnicodeLE( _value, 0,
-                ( _value.length - 2 ) >> 1 );
+        String result = StringUtil.getFromUnicodeLE( _value, 0,
+                _value.length >> 1 );
+
+        final int terminator = result.indexOf( '\0' );
+        if ( terminator == -1 )
+        {
+            logger.log(
+                    POILogger.WARN,
+                    "String terminator (\\0) for UnicodeString property value not found."
+                            + "Continue without trimming and hope for the best." );
+            return result;
+        }
+        if ( terminator != result.length() - 1 )
+        {
+            logger.log(
+                    POILogger.WARN,
+                    "String terminator (\\0) for UnicodeString property value occured before the end of string. "
+                            + "Trimming and hope for the best." );
+        }
+        return result.substring( 0, terminator );
     }
 }
