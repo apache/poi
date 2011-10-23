@@ -19,7 +19,6 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
@@ -132,8 +131,9 @@ public class XSLFFreeformShape extends XSLFAutoShape {
             for(XmlObject ch : spPath.selectPath("*")){
                 if(ch instanceof CTPath2DMoveTo){
                     CTAdjPoint2D pt = ((CTPath2DMoveTo)ch).getPt();
-                    path.moveTo((float)Units.toPoints((Long)pt.getX())*scaleW,
-                                (float)Units.toPoints((Long)pt.getY())*scaleH);
+                    path.moveTo(
+                            (float) (Units.toPoints((Long) pt.getX()) * scaleW),
+                            (float) (Units.toPoints((Long) pt.getY()) * scaleH));
                 } else if (ch instanceof CTPath2DLineTo){
                     CTAdjPoint2D pt = ((CTPath2DLineTo)ch).getPt();
                     path.lineTo((float)Units.toPoints((Long)pt.getX()),
@@ -144,13 +144,12 @@ public class XSLFFreeformShape extends XSLFAutoShape {
                     CTAdjPoint2D pt2 = bez.getPtArray(1);
                     CTAdjPoint2D pt3 = bez.getPtArray(2);
                     path.curveTo(
-                            (float)Units.toPoints((Long) pt1.getX())*scaleW,
-                            (float)Units.toPoints((Long) pt1.getY())*scaleH,
-                            (float)Units.toPoints((Long) pt2.getX())*scaleW,
-                            (float)Units.toPoints((Long) pt2.getY())*scaleH,
-                            (float)Units.toPoints((Long) pt3.getX())*scaleW,
-                            (float)Units.toPoints((Long) pt3.getY())*scaleH
-                    );
+                            (float) (Units.toPoints((Long) pt1.getX()) * scaleW),
+                            (float) (Units.toPoints((Long) pt1.getY()) * scaleH),
+                            (float) (Units.toPoints((Long) pt2.getX()) * scaleW),
+                            (float) (Units.toPoints((Long) pt2.getY()) * scaleH),
+                            (float) (Units.toPoints((Long) pt3.getX()) * scaleW),
+                            (float) (Units.toPoints((Long) pt3.getY()) * scaleH)                    );
 
                 } else if (ch instanceof CTPath2DClose){
                     path.closePath();
