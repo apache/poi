@@ -81,6 +81,20 @@ public class LittleEndian implements LittleEndianConsts
      * 
      * @param data
      *            the byte array
+     * @return the double (64-bit) value
+     */
+    public static double getDouble( byte[] data )
+    {
+        return Double.longBitsToDouble( getLong( data, 0 ) );
+    }
+
+    /**
+     * get a double value from a byte array, reads it in little endian format
+     * then converts the resulting revolting IEEE 754 (curse them) floating
+     * point number to a happy java double
+     * 
+     * @param data
+     *            the byte array
      * @param offset
      *            a starting offset into the byte array
      * @return the double (64-bit) value
@@ -88,6 +102,20 @@ public class LittleEndian implements LittleEndianConsts
     public static double getDouble( byte[] data, int offset )
     {
         return Double.longBitsToDouble( getLong( data, offset ) );
+    }
+
+    /**
+     * get a float value from a byte array, reads it in little endian format
+     * then converts the resulting revolting IEEE 754 (curse them) floating
+     * point number to a happy java float
+     * 
+     * @param data
+     *            the byte array
+     * @return the double (64-bit) value
+     */
+    public static float getFloat( byte[] data )
+    {
+        return getFloat( data, 0 );
     }
 
     /**
@@ -112,9 +140,7 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the int (32-bit) value
-     * @deprecated Use {@link #getInt(byte[], int)}
      */
-    @Deprecated
     public static int getInt( byte[] data )
     {
         return getInt( data, 0 );
@@ -144,13 +170,25 @@ public class LittleEndian implements LittleEndianConsts
      * 
      * @param data
      *            the byte array
+     * @return the long (64-bit) value
+     */
+    public static long getLong( byte[] data )
+    {
+        return getLong( data, 0 );
+    }
+
+    /**
+     * get a long value from a byte array
+     * 
+     * @param data
+     *            the byte array
      * @param offset
      *            a starting offset into the byte array
      * @return the long (64-bit) value
      */
     public static long getLong( byte[] data, int offset )
     {
-        long result = 0;
+        long result = 0xff & data[offset + 7];
 
         for ( int j = offset + LONG_SIZE - 1; j >= offset; j-- )
         {
@@ -166,9 +204,7 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the short (16-bit) value
-     * @deprecated Use {@link #getShort(byte[], int)} instead
      */
-    @Deprecated
     public static short getShort( byte[] data )
     {
         return getShort( data, 0 );
@@ -217,6 +253,18 @@ public class LittleEndian implements LittleEndianConsts
      * 
      * @param data
      *            the byte array.
+     * @return the unsigned value of the byte as a 16 bit short
+     */
+    public static short getUByte( byte[] data )
+    {
+        return (short) ( data[0] & 0xFF );
+    }
+
+    /**
+     * get the unsigned value of a byte.
+     * 
+     * @param data
+     *            the byte array.
      * @param offset
      *            a starting offset into the byte array.
      * @return the unsigned value of the byte as a 16 bit short
@@ -232,9 +280,7 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the unsigned int (32-bit) value in a long
-     * @deprecated Use {@link #getUInt(byte[], int)}
      */
-    @Deprecated
     public static long getUInt( byte[] data )
     {
         return getUInt( data, 0 );
@@ -277,9 +323,7 @@ public class LittleEndian implements LittleEndianConsts
      * @param data
      *            the byte array
      * @return the unsigned short (16-bit) value in an int
-     * @deprecated Use {@link #getUShort(byte[], int)}
      */
-    @Deprecated
     public static int getUShort( byte[] data )
     {
         return getUShort( data, 0 );
