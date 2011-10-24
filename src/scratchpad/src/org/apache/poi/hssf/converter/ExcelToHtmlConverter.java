@@ -622,7 +622,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         final List<Element> emptyRowElements = new ArrayList<Element>(
                 physicalNumberOfRows );
         int maxSheetColumns = 1;
-        for ( int r = 0; r < physicalNumberOfRows; r++ )
+        for ( int r = sheet.getFirstRowNum(); r <= sheet.getLastRowNum(); r++ )
         {
             HSSFRow row = sheet.getRow( r );
 
