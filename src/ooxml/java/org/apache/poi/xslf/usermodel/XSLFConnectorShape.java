@@ -260,9 +260,9 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 break;
             case ARROW:
                 GeneralPath arrow = new GeneralPath();
-                arrow.moveTo(-lineWidth * 3, -lineWidth * 2);
+                arrow.moveTo((float) (-lineWidth * 3), (float) (-lineWidth * 2));
                 arrow.lineTo(0, 0);
-                arrow.lineTo(-lineWidth * 3, lineWidth * 2);
+                arrow.lineTo((float) (-lineWidth * 3), (float) (lineWidth * 2));
                 shape = arrow;
                 at.translate(x2, y2);
                 at.rotate(alpha);
@@ -271,9 +271,9 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 scaleY = tailWidth.ordinal() + 1;
                 scaleX = tailLength.ordinal() + 1;
                 GeneralPath triangle = new GeneralPath();
-                triangle.moveTo(-lineWidth * scaleX, -lineWidth * scaleY/2);
+                triangle.moveTo((float) (-lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
                 triangle.lineTo(0, 0);
-                triangle.lineTo(-lineWidth * scaleX, lineWidth * scaleY/2);
+                triangle.lineTo((float) (-lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
                 triangle.closePath();
                 shape = triangle;
                 at.translate(x2, y2);
@@ -314,9 +314,9 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
             case STEALTH:
             case ARROW:
                 GeneralPath arrow = new GeneralPath();
-                arrow.moveTo(lineWidth * 3 * scaleX, -lineWidth * scaleY * 2);
+                arrow.moveTo((float) (lineWidth * 3 * scaleX), (float) (-lineWidth * scaleY * 2));
                 arrow.lineTo(0, 0);
-                arrow.lineTo(lineWidth * 3 * scaleX, lineWidth * scaleY * 2);
+                arrow.lineTo((float) (lineWidth * 3 * scaleX), (float) (lineWidth * scaleY * 2));
                 shape = arrow;
                 at.translate(x1, y1);
                 at.rotate(alpha);
@@ -325,9 +325,9 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 scaleY = headWidth.ordinal() + 1;
                 scaleX = headLength.ordinal() + 1;
                 GeneralPath triangle = new GeneralPath();
-                triangle.moveTo(lineWidth * scaleX, -lineWidth * scaleY/2);
+                triangle.moveTo((float) (lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
                 triangle.lineTo(0, 0);
-                triangle.lineTo(lineWidth * scaleX, lineWidth * scaleY/2);
+                triangle.lineTo((float) (lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
                 triangle.closePath();
                 shape = triangle;
                 at.translate(x1, y1);
