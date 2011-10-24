@@ -279,14 +279,14 @@ public abstract class XSLFSimpleShape extends XSLFShape {
 
     public Color getLineColor() {
         final XSLFTheme theme = _sheet.getTheme();
-
+        final Color noline = new Color(0,0,0,0);
         PropertyFetcher<Color> fetcher = new PropertyFetcher<Color>(){
             public boolean fetch(XSLFSimpleShape shape){
                 CTShapeProperties spPr = shape.getSpPr();
                 CTLineProperties ln = spPr.getLn();
                 if (ln != null) {
                     if (ln.isSetNoFill()) {
-                        setValue(null);
+                        setValue(noline);
                         return true;
                     }
                     CTSolidColorFillProperties solidLine = ln.getSolidFill();
@@ -311,7 +311,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                 }
             }
         }
-        return color;
+        return color == noline ? null : color;
     }
 
     public void setLineWidth(double width) {
@@ -480,12 +480,12 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      */
     public Color getFillColor() {
         final XSLFTheme theme = _sheet.getTheme();
-
+        final Color nofill = new Color(0,0,0,0);
         PropertyFetcher<Color> fetcher = new PropertyFetcher<Color>(){
             public boolean fetch(XSLFSimpleShape shape){
                 CTShapeProperties spPr = shape.getSpPr();
                 if (spPr.isSetNoFill()) {
-                    setValue(null);
+                    setValue(nofill); // use it as 'nofill' value
                     return true;
                 }
                 if (spPr.isSetSolidFill()) {
@@ -508,7 +508,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                 }
             }
         }
-        return color;
+        return color == nofill ? null : color;
     }
 
     public XSLFShadow getShadow(){
@@ -608,7 +608,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
 
         int meter = BasicStroke.JOIN_ROUND;
 
-        Stroke stroke = new BasicStroke(lineWidth, cap, meter, 0.0f, dash,
+        Stroke stroke = new BasicStroke(lineWidth, cap, meter, Math.max(1, lineWidth), dash,
                 dash_phase);
         graphics.setStroke(stroke);
     }

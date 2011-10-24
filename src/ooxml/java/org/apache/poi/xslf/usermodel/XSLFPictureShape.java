@@ -117,30 +117,26 @@ public class XSLFPictureShape extends XSLFSimpleShape {
     public void draw(Graphics2D graphics){
         java.awt.Shape outline = getOutline();
 
+        // shadow
+        XSLFShadow shadow = getShadow();
+
         //fill
         Color fillColor = getFillColor();
         if (fillColor != null) {
-            graphics.setColor(fillColor);
+            if(shadow != null) shadow.draw(graphics);
+
+        	graphics.setColor(fillColor);
             applyFill(graphics);
             graphics.fill(outline);
         }
-        
-        // text
-    	
-    	XSLFPictureData data = getPictureData();
+         
+        XSLFPictureData data = getPictureData();
     	if(data == null) return;
     	
-        BufferedImage img;
-        try {
-               img = ImageIO.read(new ByteArrayInputStream(data.getData()));
-        }
-        catch (Exception e){
-            return;
-        }
-        Rectangle2D anchor = getAnchor();
-        graphics.drawImage(img, (int)anchor.getX(), (int)anchor.getY(), 
-        		(int)anchor.getWidth(), (int)anchor.getHeight(), null);
-
+        XSLFImageRendener renderer = (XSLFImageRendener)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
+        if(renderer == null) renderer = new XSLFImageRendener();
+ 
+        renderer.drawImage(graphics, data, getAnchor());
 
         //border overlays the image
         Color lineColor = getLineColor();

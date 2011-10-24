@@ -387,18 +387,19 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
 
         // shadow
         XSLFShadow shadow = getShadow();
-        if(shadow != null) shadow.draw(graphics);
 
-        //fill
         Color fillColor = getFillColor();
+        Color lineColor = getLineColor();
+        if(shadow != null) {
+        	shadow.draw(graphics);
+        }
+
         if (fillColor != null) {
-            graphics.setColor(fillColor);
+        	graphics.setColor(fillColor);
             applyFill(graphics);
             graphics.fill(outline);
         }
  
-        //border
-        Color lineColor = getLineColor();
         if (lineColor != null){
             graphics.setColor(lineColor);
             applyStroke(graphics);
