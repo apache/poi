@@ -45,8 +45,12 @@ public class XSLFShadow extends XSLFSimpleShape {
         _parent = parentShape;
     }
 
+     @Override
     public void draw(Graphics2D graphics) {
         Shape outline = _parent.getOutline();
+
+        Color parentFillColor = _parent.getFillColor();
+        Color parentLineColor = _parent.getLineColor();
 
         double angle = getAngle();
         double dist = getDistance();
@@ -55,12 +59,18 @@ public class XSLFShadow extends XSLFSimpleShape {
 
         graphics.translate(dx, dy);
 
-        //fill
         Color fillColor = getFillColor();
         if (fillColor != null) {
             graphics.setColor(fillColor);
-            graphics.fill(outline);
         }
+
+        if(parentFillColor != null) {
+            graphics.fill(outline);
+     	}
+    	if(parentLineColor != null) {
+            _parent.applyStroke(graphics);
+             graphics.draw(outline);
+     	}
 
         graphics.translate(-dx, -dy);
     }
@@ -75,21 +85,37 @@ public class XSLFShadow extends XSLFSimpleShape {
         throw new IllegalStateException("You can't set anchor of a shadow");
     }
 
+    /**
+     * @return the offset of this shadow in points
+     */
     public double getDistance(){
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
         return ct.isSetDist() ? Units.toPoints(ct.getDist()) : 0;        
     }
 
+    /**
+     * 
+     * @return the direction to offset the shadow in angles
+     */
     public double getAngle(){
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
         return ct.isSetDir() ? (double)ct.getDir() / 60000 : 0;
     }
 
+    /**
+     * 
+     * @return the blur radius of the shadow
+     * TODO: figure out how to make sense of this property when rendering shadows 
+     */
     public double getBlur(){
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
         return ct.isSetBlurRad() ? Units.toPoints(ct.getBlurRad()) : 0;
     }
 
+    /**
+     * @return the color of this shadow. 
+     * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
+     */
     @Override
     public Color getFillColor() {
         XSLFTheme theme = getSheet().getTheme();
@@ -100,7 +126,10 @@ public class XSLFShadow extends XSLFSimpleShape {
         else if (ct.isSetPrstClr()) {
             return theme.getPresetColor(ct.getPrstClr());
         }
+        else if (ct.isSetSrgbClr()) {
+            return theme.getSrgbColor(ct.getSrgbClr());
+        }
 
-        return Color.black;
+        return null;
     }
 }

@@ -38,5 +38,5 @@ public class XSLFRenderingHint extends RenderingHints.Key {
 
     public static final XSLFRenderingHint GSAVE = new XSLFRenderingHint(1);
     public static final XSLFRenderingHint GRESTORE = new XSLFRenderingHint(2);
-    public static final XSLFRenderingHint SKIP_PLACEHOLDERS = new XSLFRenderingHint(3);
+    public static final XSLFRenderingHint IMAGE_RENDERER = new XSLFRenderingHint(3);
 }
