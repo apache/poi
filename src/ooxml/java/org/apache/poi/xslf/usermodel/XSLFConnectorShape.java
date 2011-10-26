@@ -223,18 +223,6 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         }
     }
 
-    @Override
-    protected java.awt.Shape getOutline() {
-        Rectangle2D anchor = getAnchor();
-        double x1 = anchor.getX(),
-                y1 = anchor.getY(),
-                x2 = anchor.getX() + anchor.getWidth(),
-                y2 = anchor.getY() + anchor.getHeight();
-
-
-        return new Line2D.Double(x1, y1, x2, y2);
-    }
-
     Shape getTailDecoration() {
         LineEndLength tailLength = getLineTailLength();
         LineEndWidth tailWidth = getLineTailWidth();
@@ -307,9 +295,10 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         double scaleX = 1;
         switch (getLineHeadDecoration()) {
             case OVAL:
-                scaleY = Math.pow(2, headWidth.ordinal());
-                scaleX = Math.pow(2, headLength.ordinal());
                 shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
+                bounds = shape.getBounds2D();
+                at.translate(x1 - bounds.getWidth() / 2, y1 - bounds.getHeight() / 2);
+                at.rotate(alpha, bounds.getX() + bounds.getWidth() / 2, bounds.getY() + bounds.getHeight() / 2);
                 break;
             case STEALTH:
             case ARROW:
