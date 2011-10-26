@@ -58,6 +58,21 @@ import org.w3c.dom.Element;
 @Beta
 public abstract class AbstractWordConverter
 {
+    private static class DeadFieldBoundaries
+    {
+        final int beginMark;
+        final int endMark;
+        final int separatorMark;
+
+        public DeadFieldBoundaries( int beginMark, int separatorMark,
+                int endMark )
+        {
+            this.beginMark = beginMark;
+            this.separatorMark = separatorMark;
+            this.endMark = endMark;
+        }
+    }
+
     private static final class Structure implements Comparable<Structure>
     {
         final int end;
@@ -71,18 +86,18 @@ public abstract class AbstractWordConverter
             this.structure = bookmark;
         }
 
+        Structure( DeadFieldBoundaries deadFieldBoundaries, int start, int end )
+        {
+            this.start = start;
+            this.end = end;
+            this.structure = deadFieldBoundaries;
+        }
+
         Structure( Field field )
         {
             this.start = field.getFieldStartOffset();
             this.end = field.getFieldEndOffset();
             this.structure = field;
-        }
-
-        Structure( int start, int end )
-        {
-            this.start = start;
-            this.end = end;
-            this.structure = null;
         }
 
         public int compareTo( Structure o )
@@ -334,9 +349,11 @@ public abstract class AbstractWordConverter
                             wordDocument, range, c );
                     if ( separatorEnd != null )
                     {
-                        addToStructures( structures, new Structure(
-                                characterRun.getStartOffset(),
-                                separatorEnd[1] + 1 ) );
+                        addToStructures( structures,
+                                new Structure( new DeadFieldBoundaries( c,
+                                        separatorEnd[0], separatorEnd[1] ),
+                                        characterRun.getStartOffset(),
+                                        separatorEnd[1] + 1 ) );
                         c = separatorEnd[1];
                     }
                 }
@@ -406,6 +423,13 @@ public abstract class AbstractWordConverter
                 Field field = (Field) structure.structure;
                 processField( (HWPFDocument) wordDocument, range,
                         currentTableLevel, field, block );
+            }
+            else if ( structure.structure instanceof DeadFieldBoundaries )
+            {
+                DeadFieldBoundaries boundaries = (DeadFieldBoundaries) structure.structure;
+                processDeadField( wordDocument, block, range,
+                        currentTableLevel, boundaries.beginMark,
+                        boundaries.separatorMark, boundaries.endMark );
             }
             else
             {
@@ -658,25 +682,6 @@ public abstract class AbstractWordConverter
                     deadFieldValueSubrage, currentBlock );
 
         return;
-    }
-
-    protected Field processDeadField( HWPFDocumentCore wordDocument,
-            Range charactersRange, int currentTableLevel, int startOffset,
-            Element currentBlock )
-    {
-        if ( !( wordDocument instanceof HWPFDocument ) )
-            return null;
-
-        HWPFDocument hwpfDocument = (HWPFDocument) wordDocument;
-        Field field = hwpfDocument.getFields().getFieldByStartOffset(
-                FieldsDocumentPart.MAIN, startOffset );
-        if ( field == null )
-            return null;
-
-        processField( hwpfDocument, charactersRange, currentTableLevel, field,
-                currentBlock );
-
-        return field;
     }
 
     public void processDocument( HWPFDocumentCore wordDocument )
