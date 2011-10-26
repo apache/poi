@@ -21,6 +21,10 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.model.geom.Context;
+import org.apache.poi.xslf.model.geom.CustomGeometry;
+import org.apache.poi.xslf.model.geom.Path;
+import org.apache.poi.xslf.model.geom.PresetGeometries;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuideList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
@@ -42,6 +46,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,39 +105,4 @@ public class XSLFAutoShape extends XSLFTextShape {
         }
         return txBody;
     }
-
-    int getAdjustValue(String name, int defaultValue){
-        /*
-        CTShape shape = (CTShape) getXmlObject();
-        CTGeomGuideList av = shape.getSpPr().getPrstGeom().getAvLst();
-        if(av != null){
-            for(CTGeomGuide gd : av.getGdList()){
-                if(gd.getName().equals(name)) {
-                    String fmla = gd.getFmla();
-                    Matcher m = adjPtrn.matcher(fmla);
-                    if(m.matches()){
-                        int val = Integer.parseInt(m.group(1));
-                        return 21600*val/100000;
-                    }
-                }
-            }
-        }
-        */
-        return defaultValue;
-    }
-
-    @Override
-    protected java.awt.Shape getOutline(){
-        java.awt.Shape outline = XSLFPresetGeometry.getOutline(this);
-        Rectangle2D anchor = getAnchor();
-
-        AffineTransform at = new AffineTransform();
-        at.translate(anchor.getX(), anchor.getY());
-        at.scale(
-                1.0f/21600*anchor.getWidth(),
-                1.0f/21600*anchor.getHeight()
-        );
-        return outline == null ? anchor : at.createTransformedShape(outline);
-    }
-
 }

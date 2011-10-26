@@ -10875,7 +10875,7 @@
       <gd name="dx2" fmla="*/ ss a2 100000" />
       <gd name="x2" fmla="+- l dx2 0" />
       <gd name="dy1" fmla="*/ h a1 200000" />
-      <gd name="y1" fmla="+- vc 0 dy" />
+      <gd name="y1" fmla="+- vc 0 dy1" />
       <gd name="y2" fmla="+- vc dy1 0" />
       <gd name="dx1" fmla="*/ y1 dx2 hd2" />
       <gd name="x1" fmla="+- x2  0 dx1" />

@@ -19,35 +19,22 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.xslf.model.geom.*;
 import org.apache.poi.xslf.usermodel.LineCap;
 import org.apache.poi.xslf.usermodel.LineDash;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * @author Yegor Kozlov
@@ -673,5 +660,56 @@ public abstract class XSLFSimpleShape extends XSLFShape {
 
         return ok;
     }
+
+
+    @Override
+    protected java.awt.Shape getOutline(){
+        PresetGeometries dict = PresetGeometries.getInstance();
+        String name = getSpPr().getPrstGeom().getPrst().toString();
+        CustomGeometry geom = dict.get(name);
+        Rectangle2D anchor = getAnchor();
+        if(geom != null) {
+            // the guides in the shape definitions are all defined relative to each other,
+            // so we build the path starting from (0,0).
+            final Rectangle2D anchorEmu = new Rectangle2D.Double(
+                    0,
+                    0,
+                    Units.toEMU(anchor.getWidth()),
+                    Units.toEMU(anchor.getHeight())
+            );
+
+            GeneralPath path = new GeneralPath();
+            Context ctx = new Context(geom, new IAdjustableShape() {
+                public Rectangle2D getAnchor() {
+                    return anchorEmu;
+                }
+
+                public Guide getAdjustValue(String name) {
+                    CTPresetGeometry2D prst = getSpPr().getPrstGeom();
+                    if(prst.isSetAvLst()) {
+                        for(CTGeomGuide g : prst.getAvLst().getGdList()){
+                            if(g.getName().equals(name)) {
+                                return new Guide(g);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            });
+
+            for(Path p : geom){
+                path.append( p.getPath(ctx) , false);
+            }
+
+            // translate the result to the canvas coordinates in points
+            AffineTransform at = new AffineTransform();
+            at.scale(
+                    1.0/Units.EMU_PER_POINT, 1.0/Units.EMU_PER_POINT);
+            at.translate(Units.toEMU(anchor.getX()), Units.toEMU(anchor.getY()));
+            return at.createTransformedShape(path);
+        } else {
+            return anchor;
+        }
+     }
 
 }
