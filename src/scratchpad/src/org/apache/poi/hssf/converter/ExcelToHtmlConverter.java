@@ -125,6 +125,14 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
 
     private String cssClassContainerDiv = null;
 
+    private String cssClassPrefixCell = "c";
+
+    private String cssClassPrefixDiv = "d";
+
+    private String cssClassPrefixRow = "r";
+
+    private String cssClassPrefixTable = "t";
+
     private final String cssClassTable;
 
     private Map<Short, String> excelStyleToClass = new LinkedHashMap<Short, String>();
@@ -136,7 +144,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     public ExcelToHtmlConverter( Document doc )
     {
         htmlDocumentFacade = new HtmlDocumentFacade( doc );
-        cssClassTable = htmlDocumentFacade.getOrCreateCssClass( "t", "border-collapse:collapse;border-spacing:0;" );
+        cssClassTable = htmlDocumentFacade.getOrCreateCssClass(
+                cssClassPrefixTable,
+                "border-collapse:collapse;border-spacing:0;" );
     }
 
     protected String buildStyle( HSSFWorkbook workbook, HSSFCellStyle cellStyle )
@@ -233,6 +243,26 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         }
     }
 
+    public String getCssClassPrefixCell()
+    {
+        return cssClassPrefixCell;
+    }
+
+    public String getCssClassPrefixDiv()
+    {
+        return cssClassPrefixDiv;
+    }
+
+    public String getCssClassPrefixRow()
+    {
+        return cssClassPrefixRow;
+    }
+
+    public String getCssClassPrefixTable()
+    {
+        return cssClassPrefixTable;
+    }
+
     public Document getDocument()
     {
         return htmlDocumentFacade.getDocument();
@@ -248,7 +278,8 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             return knownClass;
 
         String cssStyle = buildStyle( workbook, cellStyle );
-        String cssClass = htmlDocumentFacade.getOrCreateCssClass( "c", cssStyle );
+        String cssClass = htmlDocumentFacade.getOrCreateCssClass(
+                cssClassPrefixCell, cssStyle );
         excelStyleToClass.put( cellStyleKey, cssClass );
         return cssClass;
     }
@@ -399,7 +430,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             innerDivStyle.append( "pt;white-space:nowrap;" );
             ExcelToHtmlUtils.appendAlign( innerDivStyle,
                     cellStyle.getAlignment() );
-            htmlDocumentFacade.addStyleClass( outerDiv, "d",
+            htmlDocumentFacade.addStyleClass( outerDiv, cssClassPrefixDiv,
                     innerDivStyle.toString() );
 
             innerDiv.appendChild( text );
@@ -633,8 +664,9 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
                 continue;
 
             Element tableRowElement = htmlDocumentFacade.createTableRow();
-            htmlDocumentFacade.addStyleClass( tableRowElement, "r", "height:"
-                    + ( row.getHeight() / 20f ) + "pt;" );
+            htmlDocumentFacade.addStyleClass( tableRowElement,
+                    cssClassPrefixRow, "height:" + ( row.getHeight() / 20f )
+                            + "pt;" );
 
             int maxRowColumnNumber = processRow( mergedRanges, row,
                     tableRowElement );
@@ -691,9 +723,10 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         {
             // prepare CSS classes for later usage
             this.cssClassContainerCell = htmlDocumentFacade
-                    .getOrCreateCssClass( "c", "padding:0;margin:0;align:left;vertical-align:top;" );
+                    .getOrCreateCssClass( cssClassPrefixCell,
+                            "padding:0;margin:0;align:left;vertical-align:top;" );
             this.cssClassContainerDiv = htmlDocumentFacade.getOrCreateCssClass(
-                    "d", "position:relative;" );
+                    cssClassPrefixDiv, "position:relative;" );
         }
 
         for ( int s = 0; s < workbook.getNumberOfSheets(); s++ )
@@ -703,6 +736,26 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         }
 
         htmlDocumentFacade.updateStylesheet();
+    }
+
+    public void setCssClassPrefixCell( String cssClassPrefixCell )
+    {
+        this.cssClassPrefixCell = cssClassPrefixCell;
+    }
+
+    public void setCssClassPrefixDiv( String cssClassPrefixDiv )
+    {
+        this.cssClassPrefixDiv = cssClassPrefixDiv;
+    }
+
+    public void setCssClassPrefixRow( String cssClassPrefixRow )
+    {
+        this.cssClassPrefixRow = cssClassPrefixRow;
+    }
+
+    public void setCssClassPrefixTable( String cssClassPrefixTable )
+    {
+        this.cssClassPrefixTable = cssClassPrefixTable;
     }
 
     /**
