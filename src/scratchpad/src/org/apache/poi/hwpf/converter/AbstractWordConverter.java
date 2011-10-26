@@ -341,7 +341,6 @@ public abstract class AbstractWordConverter
                 if ( aliveField != null )
                 {
                     addToStructures( structures, new Structure( aliveField ) );
-                    skipUntil = aliveField.getFieldEndOffset() + 1;
                 }
                 else
                 {
@@ -349,11 +348,14 @@ public abstract class AbstractWordConverter
                             wordDocument, range, c );
                     if ( separatorEnd != null )
                     {
-                        addToStructures( structures,
+                        addToStructures(
+                                structures,
                                 new Structure( new DeadFieldBoundaries( c,
                                         separatorEnd[0], separatorEnd[1] ),
-                                        characterRun.getStartOffset(),
-                                        separatorEnd[1] + 1 ) );
+                                        characterRun.getStartOffset(), range
+                                                .getCharacterRun(
+                                                        separatorEnd[1] )
+                                                .getEndOffset() ) );
                         c = separatorEnd[1];
                     }
                 }
