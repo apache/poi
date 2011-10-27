@@ -153,7 +153,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     {
         StringBuilder style = new StringBuilder();
 
-        style.append( "white-space: pre-wrap; " );
+        style.append( "white-space:pre-wrap;" );
         ExcelToHtmlUtils.appendAlign( style, cellStyle.getAlignment() );
 
         if ( cellStyle.getFillPattern() == 0 )
@@ -165,16 +165,16 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             final HSSFColor foregroundColor = cellStyle
                     .getFillForegroundColorColor();
             if ( foregroundColor != null )
-                style.append( "background-color: "
-                        + ExcelToHtmlUtils.getColor( foregroundColor ) + "; " );
+                style.append( "background-color:"
+                        + ExcelToHtmlUtils.getColor( foregroundColor ) + ";" );
         }
         else
         {
             final HSSFColor backgroundColor = cellStyle
                     .getFillBackgroundColorColor();
             if ( backgroundColor != null )
-                style.append( "background-color: "
-                        + ExcelToHtmlUtils.getColor( backgroundColor ) + "; " );
+                style.append( "background-color:"
+                        + ExcelToHtmlUtils.getColor( backgroundColor ) + ";" );
         }
 
         buildStyle_border( workbook, style, "top", cellStyle.getBorderTop(),
@@ -211,7 +211,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             borderStyle.append( ExcelToHtmlUtils.getColor( color ) );
         }
 
-        style.append( "border-" + type + ": " + borderStyle + "; " );
+        style.append( "border-" + type + ":" + borderStyle + ";" );
     }
 
     void buildStyle_font( HSSFWorkbook workbook, StringBuilder style,
@@ -220,7 +220,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
         switch ( font.getBoldweight() )
         {
         case HSSFFont.BOLDWEIGHT_BOLD:
-            style.append( "font-weight: bold; " );
+            style.append( "font-weight:bold;" );
             break;
         case HSSFFont.BOLDWEIGHT_NORMAL:
             // by default, not not increase HTML size
@@ -235,11 +235,11 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
                     + "; " );
 
         if ( font.getFontHeightInPoints() != 0 )
-            style.append( "font-size: " + font.getFontHeightInPoints() + "pt; " );
+            style.append( "font-size:" + font.getFontHeightInPoints() + "pt;" );
 
         if ( font.getItalic() )
         {
-            style.append( "font-style: italic; " );
+            style.append( "font-style:italic;" );
         }
     }
 
