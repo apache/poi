@@ -138,6 +138,11 @@ public class WordToFoConverter extends AbstractWordConverter
         this.foDocumentFacade = new FoDocumentFacade( document );
     }
 
+    public WordToFoConverter( FoDocumentFacade foDocumentFacade )
+    {
+        this.foDocumentFacade = foDocumentFacade;
+    }
+
     protected Element createNoteInline( String noteIndexText )
     {
         Element inline = foDocumentFacade.createInline();

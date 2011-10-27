@@ -170,6 +170,11 @@ public class WordToTextConverter extends AbstractWordConverter
         this.textDocumentFacade = new TextDocumentFacade( document );
     }
 
+    public WordToTextConverter( TextDocumentFacade textDocumentFacade )
+    {
+        this.textDocumentFacade = textDocumentFacade;
+    }
+
     @Override
     protected void afterProcess()
     {

@@ -133,8 +133,6 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
 
     private String cssClassPrefixTable = "t";
 
-    private final String cssClassTable;
-
     private Map<Short, String> excelStyleToClass = new LinkedHashMap<Short, String>();
 
     private final HtmlDocumentFacade htmlDocumentFacade;
@@ -144,9 +142,11 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     public ExcelToHtmlConverter( Document doc )
     {
         htmlDocumentFacade = new HtmlDocumentFacade( doc );
-        cssClassTable = htmlDocumentFacade.getOrCreateCssClass(
-                cssClassPrefixTable,
-                "border-collapse:collapse;border-spacing:0;" );
+    }
+
+    public ExcelToHtmlConverter( HtmlDocumentFacade htmlDocumentFacade )
+    {
+        this.htmlDocumentFacade = htmlDocumentFacade;
     }
 
     protected String buildStyle( HSSFWorkbook workbook, HSSFCellStyle cellStyle )
@@ -643,7 +643,8 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
             return;
 
         Element table = htmlDocumentFacade.createTable();
-        table.setAttribute( "class", cssClassTable );
+        htmlDocumentFacade.addStyleClass( table, cssClassPrefixTable,
+                "border-collapse:collapse;border-spacing:0;" );
 
         Element tableBody = htmlDocumentFacade.createTableBody();
 
