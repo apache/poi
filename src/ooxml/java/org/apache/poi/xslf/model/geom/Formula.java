@@ -39,7 +39,7 @@ public abstract class Formula {
 
     static Map<String, Formula> builtInFormulas = new HashMap<String, Formula>();
     static {
-        // 3 x 360¡ / 4 = 270¡
+        // 3 x 360 / 4 = 270
         builtInFormulas.put("3cd4",  new Formula(){
             @Override
             double evaluate(Context ctx){
@@ -48,7 +48,7 @@ public abstract class Formula {
 
          });
 
-        // 3 x 360¡ / 8 = 135¡
+        // 3 x 360 / 8 = 135
         builtInFormulas.put("3cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
@@ -57,7 +57,7 @@ public abstract class Formula {
 
          });
 
-        // 5 x 360¡ / 8 = 225¡
+        // 5 x 360 / 8 = 225
         builtInFormulas.put("5cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
@@ -66,7 +66,7 @@ public abstract class Formula {
 
          });
 
-        // 7 x 360¡ / 8 = 315¡
+        // 7 x 360 / 8 = 315
         builtInFormulas.put("7cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){
@@ -85,7 +85,7 @@ public abstract class Formula {
 
          });
 
-        // 360¡ / 2 = 180¡
+        // 360 / 2 = 180
         builtInFormulas.put("cd2",  new Formula(){
             @Override
             double evaluate(Context ctx){
@@ -94,7 +94,7 @@ public abstract class Formula {
 
          });
 
-        // 360¡ / 4 = 90¡
+        // 360 / 4 = 90
         builtInFormulas.put("cd4",  new Formula(){
             @Override
             double evaluate(Context ctx){
@@ -103,7 +103,7 @@ public abstract class Formula {
 
          });
 
-        // 360¡ / 8 = 45¡
+        // 360 / 8 = 45
         builtInFormulas.put("cd8",  new Formula(){
             @Override
             double evaluate(Context ctx){

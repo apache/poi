@@ -47,6 +47,6 @@ public class CurveToCommand implements PathCommand {
         double y2 = ctx.getValue(arg4);
         double x3 = ctx.getValue(arg5);
         double y3 = ctx.getValue(arg6);
-        path.curveTo(x1, y1, x2, y2, x3, y3);
+        path.curveTo((float)x1, (float)y1, (float)x2, (float)y2, (float)x3, (float)y3);
     }
 }
