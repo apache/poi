@@ -180,6 +180,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
         this.htmlDocumentFacade = new HtmlDocumentFacade( document );
     }
 
+    public WordToHtmlConverter( HtmlDocumentFacade htmlDocumentFacade )
+    {
+        this.htmlDocumentFacade = htmlDocumentFacade;
+    }
+
     @Override
     protected void afterProcess()
     {
@@ -313,16 +318,6 @@ public class WordToHtmlConverter extends AbstractWordConverter
                     basicLink );
     }
 
-    @Override
-    protected void processImageWithoutPicturesManager( Element currentBlock,
-            boolean inlined, Picture picture )
-    {
-        // no default implementation -- skip
-        currentBlock.appendChild( htmlDocumentFacade.document
-                .createComment( "Image link to '"
-                        + picture.suggestFullFileName() + "' can be here" ) );
-    }
-
     protected void processImage( Element currentBlock, boolean inlined,
             Picture picture, String imageSourcePath )
     {
@@ -408,6 +403,16 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
 
         currentBlock.appendChild( root );
+    }
+
+    @Override
+    protected void processImageWithoutPicturesManager( Element currentBlock,
+            boolean inlined, Picture picture )
+    {
+        // no default implementation -- skip
+        currentBlock.appendChild( htmlDocumentFacade.document
+                .createComment( "Image link to '"
+                        + picture.suggestFullFileName() + "' can be here" ) );
     }
 
     @Override

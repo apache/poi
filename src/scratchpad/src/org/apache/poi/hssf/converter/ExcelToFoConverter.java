@@ -137,6 +137,11 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         this.foDocumentFacade = new FoDocumentFacade( document );
     }
 
+    public ExcelToFoConverter( FoDocumentFacade foDocumentFacade )
+    {
+        this.foDocumentFacade = foDocumentFacade;
+    }
+
     protected String createPageMaster( float tableWidthIn, String pageMasterName )
     {
         final float paperHeightIn;
