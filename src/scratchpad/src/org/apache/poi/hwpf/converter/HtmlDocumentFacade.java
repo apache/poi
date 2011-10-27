@@ -93,6 +93,28 @@ public class HtmlDocumentFacade
         element.setAttribute( "class", newClassValue );
     }
 
+    protected String buildStylesheet(
+            final Map<String, Map<String, String>> prefixToMapOfStyles )
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        for ( Map<String, String> byPrefix : prefixToMapOfStyles.values() )
+        {
+            for ( Map.Entry<String, String> byStyle : byPrefix.entrySet() )
+            {
+                String style = byStyle.getKey();
+                String className = byStyle.getValue();
+
+                stringBuilder.append( "." );
+                stringBuilder.append( className );
+                stringBuilder.append( "{" );
+                stringBuilder.append( style );
+                stringBuilder.append( "}\n" );
+            }
+        }
+        final String stylesheetText = stringBuilder.toString();
+        return stylesheetText;
+    }
+
     public Element createBlock()
     {
         return document.createElement( "div" );
@@ -255,17 +277,6 @@ public class HtmlDocumentFacade
 
     public void updateStylesheet()
     {
-        StringBuilder stringBuilder = new StringBuilder();
-        for ( Map<String, String> byPrefix : stylesheet.values() )
-        {
-            for ( Map.Entry<String, String> byStyle : byPrefix.entrySet() )
-            {
-                String style = byStyle.getKey();
-                String className = byStyle.getValue();
-
-                stringBuilder.append( "." + className + "{" + style + "}\n" );
-            }
-        }
-        stylesheetElement.setTextContent( stringBuilder.toString() );
+        stylesheetElement.setTextContent( buildStylesheet( stylesheet ) );
     }
 }
