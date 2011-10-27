@@ -43,6 +43,6 @@ public class QuadToCommand implements PathCommand {
         double y1 = ctx.getValue(arg2);
         double x2 = ctx.getValue(arg3);
         double y2 = ctx.getValue(arg4);
-        path.quadTo(x1, y1, x2, y2);
+        path.quadTo((float)x1, (float)y1, (float)x2, (float)y2);
     }
 }

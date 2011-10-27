@@ -39,6 +39,6 @@ public class MoveToCommand implements PathCommand {
     public void execute(GeneralPath path, Context ctx){
         double x = ctx.getValue(arg1);
         double y = ctx.getValue(arg2);
-        path.moveTo(x, y);
+        path.moveTo((float)x, (float)y);
     }
 }

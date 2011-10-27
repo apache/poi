@@ -39,6 +39,6 @@ public class LineToCommand implements PathCommand {
     public void execute(GeneralPath path, Context ctx){
         double x = ctx.getValue(arg1);
         double y = ctx.getValue(arg2);
-        path.lineTo(x, y);
+        path.lineTo((float)x, (float)y);
     }
 }
