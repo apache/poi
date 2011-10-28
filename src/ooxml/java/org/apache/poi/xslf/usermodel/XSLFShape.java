@@ -21,9 +21,8 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 /**

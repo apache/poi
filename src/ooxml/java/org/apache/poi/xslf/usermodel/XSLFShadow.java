@@ -17,19 +17,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetColor;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 /**
  * Represents a shadow of a shape. For now supports only outer shadows.
@@ -49,8 +41,8 @@ public class XSLFShadow extends XSLFSimpleShape {
     public void draw(Graphics2D graphics) {
         Shape outline = _parent.getOutline();
 
-        Color parentFillColor = _parent.getFillColor();
-        Color parentLineColor = _parent.getLineColor();
+        Paint parentFillColor = _parent.getFill(graphics);
+        Paint parentLineColor = _parent.getLinePaint(graphics);
 
         double angle = getAngle();
         double dist = getDistance();
@@ -120,16 +112,6 @@ public class XSLFShadow extends XSLFSimpleShape {
     public Color getFillColor() {
         XSLFTheme theme = getSheet().getTheme();
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
-        if(ct.isSetSchemeClr()) {
-            return theme.getSchemeColor(ct.getSchemeClr());
-        }
-        else if (ct.isSetPrstClr()) {
-            return theme.getPresetColor(ct.getPrstClr());
-        }
-        else if (ct.isSetSrgbClr()) {
-            return theme.getSrgbColor(ct.getSrgbClr());
-        }
-
-        return null;
+        return ct == null ? null : new XSLFColor(ct, theme).getColor();
     }
 }

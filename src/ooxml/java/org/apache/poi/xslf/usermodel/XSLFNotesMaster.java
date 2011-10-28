@@ -16,19 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**

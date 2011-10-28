@@ -26,9 +26,9 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Collections;
 
 @Beta
 public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLFTableStyle>{

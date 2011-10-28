@@ -16,27 +16,35 @@
  *    limitations under the License.
  * ====================================================================
  */
+
 package org.apache.poi.xslf.usermodel;
 
+import junit.framework.TestCase;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 /**
+ * Date: 10/26/11
+ *
  * @author Yegor Kozlov
  */
-public enum Placeholder {
-    TITLE,
-    BODY,
-    CENTERED_TITLE,
-    SUBTITLE,
-    DATETIME,
-    SLIDE_NUMBER,
-    FOOTER,
-    HEADER,
-    OBJECT,
-    CHART,
-    TABLE,
-    CLIP_ART,
-    DGM,
-    MEDIA,
-    SLIDE_IMAGE,
-    PICTURE
+public class TestPPTX2PNG extends TestCase {
+    public void testRender(){
+        String[] testFiles = {"layouts.pptx", "sample.pptx", "shapes.pptx",
+                "45541_Header.pptx", "backgrounds.pptx"};
+        for(String sampleFile : testFiles){
+            XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument(sampleFile);
+            Dimension pg = pptx.getPageSize();
+            for(XSLFSlide slide : pptx.getSlides()){
+                BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_RGB);
+                Graphics2D graphics = img.createGraphics();
 
+                slide.draw(graphics);
+
+            }
+        }
+    }
 }

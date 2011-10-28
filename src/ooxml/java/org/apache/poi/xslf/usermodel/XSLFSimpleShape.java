@@ -19,22 +19,39 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.xslf.model.geom.*;
-import org.apache.poi.xslf.usermodel.LineCap;
-import org.apache.poi.xslf.usermodel.LineDash;
-import org.apache.poi.xslf.model.PropertyFetcher;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.poi.xslf.model.PropertyFetcher;
+import org.apache.poi.xslf.model.geom.Context;
+import org.apache.poi.xslf.model.geom.CustomGeometry;
+import org.apache.poi.xslf.model.geom.Guide;
+import org.apache.poi.xslf.model.geom.IAdjustableShape;
+import org.apache.poi.xslf.model.geom.Path;
+import org.apache.poi.xslf.model.geom.PresetGeometries;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.awt.Paint;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.TexturePaint;
+import java.awt.AlphaComposite;
+import java.awt.GradientPaint;
+import java.awt.BasicStroke;
+import java.awt.Stroke;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Constructor;
 
 /**
  * @author Yegor Kozlov
@@ -265,40 +282,45 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     }
 
     public Color getLineColor() {
+        Paint paint = getLinePaint(null);
+        if(paint instanceof Color){
+            return (Color)paint;
+        }
+        return null;
+    }
+
+    public Paint getLinePaint(final Graphics2D graphics) {
         final XSLFTheme theme = _sheet.getTheme();
-        final Color noline = new Color(0,0,0,0);
-        PropertyFetcher<Color> fetcher = new PropertyFetcher<Color>(){
+        final Color nofill = new Color(0,0,0,0);
+        PropertyFetcher<Paint> fetcher = new PropertyFetcher<Paint>(){
             public boolean fetch(XSLFSimpleShape shape){
-                CTShapeProperties spPr = shape.getSpPr();
-                CTLineProperties ln = spPr.getLn();
-                if (ln != null) {
-                    if (ln.isSetNoFill()) {
-                        setValue(noline);
+                CTLineProperties spPr = shape.getSpPr().getLn();
+                if (spPr != null) {
+                    if (spPr.isSetNoFill()) {
+                        setValue(nofill); // use it as 'nofill' value
                         return true;
                     }
-                    CTSolidColorFillProperties solidLine = ln.getSolidFill();
-                    if (solidLine != null) {
-                        setValue( theme.getSolidFillColor(ln.getSolidFill()) );
+                    Paint paint = getPaint(graphics, spPr);
+                    if (paint != null) {
+                        setValue( paint );
                         return true;
                     }
                 }
                 return false;
+
             }
         };
         fetchShapeProperty(fetcher);
 
-        Color color = fetcher.getValue();
+        Paint color = fetcher.getValue();
         if(color == null){
             // line color was not found, check if it is defined in the theme
             CTShapeStyle style = getSpStyle();
             if (style != null) {
-                CTSchemeColor schemeColor = style.getLnRef().getSchemeClr();
-                if (schemeColor != null) {
-                    color = theme.getSchemeColor(schemeColor);
-                }
+                color = new XSLFColor(style.getLnRef(), theme).getColor();
             }
         }
-        return color == noline ? null : color;
+        return color == nofill ? null : color;
     }
 
     public void setLineWidth(double width) {
@@ -466,17 +488,31 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      * @return solid fill color of null if not set
      */
     public Color getFillColor() {
+        Paint paint = getFill(null);
+        if(paint instanceof Color){
+            return (Color)paint;
+        }
+        return null;
+    }
+
+    /**
+     * fetch shape fill as a java.awt.Paint
+     *
+     * @return either Color or GradientPaint or TexturePaint or null
+     */
+    Paint getFill(final Graphics2D graphics) {
         final XSLFTheme theme = _sheet.getTheme();
-        final Color nofill = new Color(0,0,0,0);
-        PropertyFetcher<Color> fetcher = new PropertyFetcher<Color>(){
+        final Color nofill = new Color(0xFF,0xFF,0xFF, 0);
+        PropertyFetcher<Paint> fetcher = new PropertyFetcher<Paint>(){
             public boolean fetch(XSLFSimpleShape shape){
                 CTShapeProperties spPr = shape.getSpPr();
                 if (spPr.isSetNoFill()) {
                     setValue(nofill); // use it as 'nofill' value
                     return true;
                 }
-                if (spPr.isSetSolidFill()) {
-                    setValue( theme.getSolidFillColor(spPr.getSolidFill()) );
+                Paint paint = getPaint(graphics, spPr);
+                if (paint != null) {
+                    setValue( paint );
                     return true;
                 }
                 return false;
@@ -484,18 +520,15 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         };
         fetchShapeProperty(fetcher);
 
-        Color color = fetcher.getValue();
-        if(color == null){
+        Paint paint = fetcher.getValue();
+        if(paint == null){
             // fill color was not found, check if it is defined in the theme
             CTShapeStyle style = getSpStyle();
             if (style != null) {
-                CTSchemeColor schemeColor = style.getFillRef().getSchemeClr();
-                if (schemeColor != null) {
-                    color = theme.getSchemeColor(schemeColor);
-                }
+                paint = new XSLFColor(style.getFillRef(), theme).getColor();
             }
         }
-        return color == nofill ? null : color;
+        return paint == nofill ? null : paint;
     }
 
     public XSLFShadow getShadow(){
@@ -532,8 +565,130 @@ public abstract class XSLFSimpleShape extends XSLFShape {
 
     }
 
-    protected void applyFill(Graphics2D graphics) {
+    @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated
+    protected Paint getPaint(Graphics2D graphics, XmlObject spPr) {
+        XSLFTheme theme = getSheet().getTheme();
+        Rectangle2D anchor = getAnchor();
 
+        Paint paint = null;
+        for(XmlObject obj : spPr.selectPath("*")){
+            if(obj instanceof CTNoFillProperties){
+                paint = null;
+                break;
+            }
+            if(obj instanceof CTSolidColorFillProperties){
+                CTSolidColorFillProperties solidFill = (CTSolidColorFillProperties)obj;
+                XSLFColor c = new XSLFColor(solidFill, theme);
+                paint = c.getColor();
+            }
+            if(obj instanceof CTBlipFillProperties){
+                CTBlipFillProperties blipFill = (CTBlipFillProperties)obj;
+                CTBlip blip = blipFill.getBlip();
+                String blipId = blip.getEmbed();
+                PackagePart p = getSheet().getPackagePart();
+                PackageRelationship rel = p.getRelationship(blipId);
+                if (rel != null) {
+                    XSLFImageRendener renderer = null;
+                    if(graphics != null) renderer = (XSLFImageRendener)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
+                    if(renderer == null) renderer = new XSLFImageRendener();
+
+                    try {
+                        BufferedImage img = renderer.readImage(p.getRelatedPart(rel).getInputStream());
+                        if(blip.sizeOfAlphaModFixArray() > 0){
+                            float alpha = blip.getAlphaModFixArray(0).getAmt()/100000.f;
+                            AlphaComposite ac = AlphaComposite.getInstance(
+                                                   AlphaComposite.SRC_OVER, alpha);
+                            if(graphics != null) graphics.setComposite(ac);
+                        }
+
+                        paint = new TexturePaint(
+                                img, new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
+                    }
+                    catch (Exception e) {
+                        return null;
+                    }
+                }
+            }
+            if(obj instanceof CTGradientFillProperties){
+                CTGradientFillProperties gradFill = (CTGradientFillProperties)obj;
+                double angle;
+                if(gradFill.isSetLin()) {
+                    angle = gradFill.getLin().getAng() / 60000;
+                } else {
+                    // XSLF only supports linear gradient fills. Other types are filled as liner with angle=90 degrees
+                    angle = 90;
+                }
+                CTGradientStop[] gs =  gradFill.getGsLst().getGsArray();
+
+                Arrays.sort(gs, new Comparator<CTGradientStop>(){
+                    public int compare(CTGradientStop o1, CTGradientStop o2){
+                        Integer pos1 = o1.getPos();
+                        Integer pos2 = o2.getPos();
+                        return pos1.compareTo(pos2);
+                    }
+                });
+
+                Color[] colors = new Color[gs.length];
+                float[] fractions = new float[gs.length];
+
+                AffineTransform at = AffineTransform.getRotateInstance(
+                        Math.toRadians(angle),
+                        anchor.getX() + anchor.getWidth()/2,
+                        anchor.getY() + anchor.getHeight()/2);
+
+                double diagonal = Math.sqrt(anchor.getHeight()*anchor.getHeight() + anchor.getWidth()*anchor.getWidth());
+                Point2D p1 = new Point2D.Double(anchor.getX() + anchor.getWidth()/2 - diagonal/2,
+                        anchor.getY() + anchor.getHeight()/2);
+                p1 = at.transform(p1, null);
+
+                Point2D p2 = new Point2D.Double(anchor.getX() + anchor.getWidth(), anchor.getY() + anchor.getHeight()/2);
+                p2 = at.transform(p2, null);
+
+                norm(p1, anchor);
+                norm(p2, anchor);
+
+                for(int i = 0; i < gs.length; i++){
+                    CTGradientStop stop = gs[i];
+                    colors[i] = new XSLFColor(stop, theme).getColor();
+                    fractions[i] = stop.getPos() / 100000.f;
+                }
+
+                paint = createGradientPaint(p1, p2, fractions, colors);
+            }
+        }
+        return paint;
+    }
+
+    /**
+     * Trick to return GradientPaint on JDK 1.5 and LinearGradientPaint on JDK 1.6+
+     */
+    private Paint createGradientPaint(Point2D p1, Point2D p2, float[] fractions, Color[] colors){
+        Paint paint;
+        try {
+            Class clz = Class.forName("java.awt.LinearGradientPaint");
+            Constructor c =
+                    clz.getConstructor(Point2D.class, Point2D.class, float[].class, Color[].class);
+            paint = (Paint)c.newInstance(p1, p2, fractions, colors);
+        } catch (ClassNotFoundException e){
+            paint = new GradientPaint(p1, colors[0], p2, colors[colors.length - 1]);
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        return paint;
+    }
+
+    void norm(Point2D p, Rectangle2D anchor){
+        if(p.getX() < anchor.getX()){
+            p.setLocation(anchor.getX(), p.getY());
+        } else if(p.getX() > (anchor.getX() + anchor.getWidth())){
+            p.setLocation(anchor.getX() + anchor.getWidth(), p.getY());
+        }
+
+        if(p.getY() < anchor.getY()){
+            p.setLocation(p.getX(), anchor.getY());
+        } else if (p.getY() > (anchor.getY() + anchor.getHeight())){
+            p.setLocation(p.getX(), anchor.getY() + anchor.getHeight());
+        }
     }
 
     protected float[] getDashPattern(LineDash lineDash, float lineWidth) {
@@ -665,7 +820,13 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     @Override
     protected java.awt.Shape getOutline(){
         PresetGeometries dict = PresetGeometries.getInstance();
-        String name = getSpPr().getPrstGeom().getPrst().toString();
+        CTShapeProperties spPr = getSpPr();
+        String name;
+        if(spPr.isSetPrstGeom()) {
+            name = spPr.getPrstGeom().getPrst().toString();
+        } else {
+            name = "rect";
+        }
         CustomGeometry geom = dict.get(name);
         Rectangle2D anchor = getAnchor();
         if(geom != null) {

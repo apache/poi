@@ -19,24 +19,21 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
+import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 
 import java.awt.*;
 

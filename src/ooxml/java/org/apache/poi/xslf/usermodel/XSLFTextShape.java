@@ -23,9 +23,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.model.TextBodyPropertyFetcher;
-import org.apache.poi.xslf.model.geom.Context;
-import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Path;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
@@ -36,9 +33,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 import java.awt.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -392,19 +388,19 @@ public abstract class XSLFTextShape extends XSLFSimpleShape {
         // shadow
         XSLFShadow shadow = getShadow();
 
-        Color fillColor = getFillColor();
-        Color lineColor = getLineColor();
+        Paint fill = getFill(graphics);
+        Paint line = getLinePaint(graphics);
         if(shadow != null) {
-        	//shadow.draw(graphics);
+        	shadow.draw(graphics);
         }
-        if (fillColor != null) {
-        	graphics.setColor(fillColor);
-            applyFill(graphics);
+
+        if(fill != null) {
+            graphics.setPaint(fill);
             graphics.fill(outline);
         }
 
-        if (lineColor != null){
-            graphics.setColor(lineColor);
+        if (line != null){
+            graphics.setPaint(line);
             applyStroke(graphics);
             graphics.draw(outline);
         }
