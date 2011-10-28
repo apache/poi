@@ -21,22 +21,20 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 import javax.xml.namespace.QName;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -64,7 +62,14 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
     }
 
     public XMLSlideShow getSlideShow() {
-       return (XMLSlideShow)getParent();
+        POIXMLDocumentPart p = getParent();
+        while(p != null) {
+            if(p instanceof XMLSlideShow){
+                return (XMLSlideShow)p;
+            }
+            p = p.getParent();
+        }
+        return null;
     }
 
     protected List<XSLFShape> buildShapes(CTGroupShape spTree){

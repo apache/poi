@@ -19,28 +19,27 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
+import java.awt.*;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.font.TextLayout;
-import java.awt.font.TextAttribute;
-import java.awt.font.LineBreakMeasurer;
-import java.text.AttributedString;
-import java.text.AttributedCharacterIterator;
 
 /**
  * Represents a paragraph of text within the containing text body.
@@ -187,7 +186,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuClr()){
-                    setValue(theme.getColor(props.getBuClr()));
+                    XSLFColor c = new XSLFColor(props.getBuClr(), theme);
+                    setValue(c.getColor());
                     return true;
                 }
                 return false;
@@ -580,7 +580,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
             string.addAttribute(TextAttribute.FOREGROUND, run.getFontColor(), startIndex, endIndex);
             string.addAttribute(TextAttribute.FAMILY, run.getFontFamily(), startIndex, endIndex);
-            string.addAttribute(TextAttribute.SIZE, run.getFontSize(), startIndex, endIndex);
+            string.addAttribute(TextAttribute.SIZE, (float)run.getFontSize(), startIndex, endIndex);
             if(run.isBold()) {
                 string.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIndex, endIndex);
             }
@@ -589,9 +589,16 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             }
             if(run.isUnderline()) {
                 string.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, startIndex, endIndex);
+                string.addAttribute(TextAttribute.INPUT_METHOD_UNDERLINE, TextAttribute.UNDERLINE_LOW_TWO_PIXEL, startIndex, endIndex);
             }
             if(run.isStrikethrough()) {
                 string.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, startIndex, endIndex);
+            }
+            if(run.isSubscript()) {
+                string.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, startIndex, endIndex);
+            }
+            if(run.isSuperscript()) {
+                string.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER, startIndex, endIndex);
             }
 
             startIndex = endIndex;
@@ -646,8 +653,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                         bit.getAttribute(TextAttribute.FOREGROUND) : buColor);
                 str.addAttribute(TextAttribute.FAMILY, buFont);
 
-                double fontSize = (Double)bit.getAttribute(TextAttribute.SIZE);
-                double buSz = getBulletFontSize();
+                float fontSize = (Float)bit.getAttribute(TextAttribute.SIZE);
+                float buSz = (float)getBulletFontSize();
                 if(buSz > 0) fontSize *= buSz* 0.01;
                 else fontSize = -buSz;
 

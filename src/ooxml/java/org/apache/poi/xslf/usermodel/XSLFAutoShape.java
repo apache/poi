@@ -20,38 +20,15 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Units;
-import org.apache.poi.xslf.model.geom.Context;
-import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Path;
-import org.apache.poi.xslf.model.geom.PresetGeometries;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuideList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 /**
  * Represents a preset geometric shape. 

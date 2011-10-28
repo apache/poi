@@ -18,17 +18,14 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
-import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 import java.awt.*;
 
@@ -78,7 +75,8 @@ public class XSLFTextRun {
             public boolean fetch(CTTextCharacterProperties props){
                 CTSolidColorFillProperties solidFill = props.getSolidFill();
                 if(solidFill != null){
-                    setValue(theme.getSolidFillColor(solidFill));
+                    Color c = new XSLFColor(solidFill, theme).getColor();
+                    setValue(c);
                     return true;
                 }
                 return false;
@@ -193,6 +191,40 @@ public class XSLFTextRun {
             public boolean fetch(CTTextCharacterProperties props){
                 if(props.isSetStrike()){
                     setValue(props.getStrike() != STTextStrikeType.NO_STRIKE);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
+    }
+
+    /**
+     * @return whether a run of text will be formatted as a superscript text. Default is false.
+     */
+    public boolean isSuperscript() {
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetBaseline()){
+                    setValue(props.getBaseline() > 0);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
+    }
+
+    /**
+     * @return whether a run of text will be formatted as a superscript text. Default is false.
+     */
+    public boolean isSubscript() {
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetBaseline()){
+                    setValue(props.getBaseline() < 0);
                     return true;
                 }
                 return false;

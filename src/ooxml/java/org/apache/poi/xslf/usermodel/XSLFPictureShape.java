@@ -19,27 +19,21 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.POILogger;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
 import javax.imageio.ImageIO;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -104,9 +98,15 @@ public class XSLFPictureShape extends XSLFSimpleShape {
             CTPicture ct = (CTPicture)getXmlObject();
             String blipId = ct.getBlipFill().getBlip().getEmbed();
 
-            for (POIXMLDocumentPart part : getSheet().getRelations()) {
-                if(part.getPackageRelationship().getId().equals(blipId)){
-                    _data = (XSLFPictureData)part;
+            PackagePart p = getSheet().getPackagePart();
+            PackageRelationship rel = p.getRelationship(blipId);
+            if (rel != null) {
+                try {
+                    PackagePart imgPart = p.getRelatedPart(rel);
+                    _data = new XSLFPictureData(imgPart, rel);
+                }
+                catch (Exception e) {
+                    throw new POIXMLException(e);
                 }
             }
         }
@@ -120,28 +120,28 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         // shadow
         XSLFShadow shadow = getShadow();
 
-        //fill
-        Color fillColor = getFillColor();
-        if (fillColor != null) {
-            if(shadow != null) shadow.draw(graphics);
+        Paint fill = getFill(graphics);
+        Paint line = getLinePaint(graphics);
+        if(shadow != null) {
+        	shadow.draw(graphics);
+        }
 
-        	graphics.setColor(fillColor);
-            applyFill(graphics);
+        if(fill != null) {
+            graphics.setPaint(fill);
             graphics.fill(outline);
         }
-         
+
+
         XSLFPictureData data = getPictureData();
     	if(data == null) return;
     	
         XSLFImageRendener renderer = (XSLFImageRendener)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
         if(renderer == null) renderer = new XSLFImageRendener();
- 
+
         renderer.drawImage(graphics, data, getAnchor());
 
-        //border overlays the image
-        Color lineColor = getLineColor();
-        if (lineColor != null){
-            graphics.setColor(lineColor);
+        if (line != null){
+            graphics.setPaint(line);
             applyStroke(graphics);
             graphics.draw(outline);
         }

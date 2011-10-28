@@ -22,10 +22,12 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.util.Beta;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO
@@ -74,14 +76,25 @@ public class XSLFImageRendener {
 	public boolean drawImage(Graphics2D graphics, XSLFPictureData data,
 			Rectangle2D anchor) {
 		try {
-			BufferedImage img = ImageIO.read(new ByteArrayInputStream(data
-					.getData()));
-			graphics.drawImage(img, (int) anchor.getX(), (int) anchor.getY(),
-					(int) anchor.getWidth(), (int) anchor.getHeight(), null);
+			BufferedImage img = readImage(new ByteArrayInputStream(data.getData()));
+			if (img != null){
+                graphics.drawImage(img, (int) anchor.getX(), (int) anchor.getY(),
+                        (int) anchor.getWidth(), (int) anchor.getHeight(), null);
+            }
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 
 	}
+
+    /**
+     * create a buffered image from input stream
+     *
+     * @return a <code>BufferedImage</code> containing the decoded
+     * contents of the input, or <code>null</code>.
+     */
+    public BufferedImage readImage(InputStream is) throws IOException {
+        return ImageIO.read(is);
+    }
 }

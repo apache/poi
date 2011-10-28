@@ -19,20 +19,14 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.sl.usermodel.Shape;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.ShapeGroup;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 /**

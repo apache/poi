@@ -17,10 +17,10 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.util.List;
-
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+
+import java.util.List;
 
 public class DrawingTextBody {
     private final CTTextBody textBody;

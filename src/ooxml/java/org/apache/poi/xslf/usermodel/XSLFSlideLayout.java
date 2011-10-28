@@ -22,18 +22,12 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
 
 @Beta
 public class XSLFSlideLayout extends XSLFSheet {
@@ -106,9 +100,6 @@ public class XSLFSlideLayout extends XSLFSheet {
         return _master;
     }
 
-    public XMLSlideShow getSlideShow() {
-        return (XMLSlideShow)getParent().getParent();
-    }
     
     public XSLFTheme getTheme(){
     	return getSlideMaster().getTheme();
@@ -143,6 +134,6 @@ public class XSLFSlideLayout extends XSLFSheet {
         if(_layout.getCSld().isSetBg()) {
             return new XSLFBackground(_layout.getCSld().getBg(), this);
         }
-        return null;
+        return getSlideMaster().getBackground();
     }
 }

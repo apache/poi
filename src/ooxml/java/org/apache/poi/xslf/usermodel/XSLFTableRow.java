@@ -20,16 +20,13 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Units;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents a table in a .pptx presentation

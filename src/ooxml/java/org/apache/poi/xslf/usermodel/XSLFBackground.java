@@ -17,14 +17,17 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBackgroundFillStyleList;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlCursor;
 
-import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Background shape
@@ -37,34 +40,40 @@ public class XSLFBackground extends XSLFSimpleShape {
         super(shape, sheet);
     }
 
-    public void draw(Graphics2D graphics) {
+    @Override
+    public Rectangle2D getAnchor(){
         Dimension pg = getSheet().getSlideShow().getPageSize();
-        Rectangle anchor = new Rectangle(0, 0, pg.width, pg.height);
-        CTBackgroundProperties pr = ((CTBackground) getXmlObject()).getBgPr();
-        if (pr == null) return;
+        return new Rectangle2D.Double(0, 0, pg.getWidth(), pg.getHeight());
+    }
 
-        XSLFTheme theme = getSheet().getTheme();
-        if (pr.isSetSolidFill()) {
-            Color color = theme.getSolidFillColor(pr.getSolidFill());
-            graphics.setPaint(color);
-            graphics.fill(anchor);
+    public void draw(Graphics2D graphics) {
+        Rectangle2D anchor = getAnchor();
+
+        XmlObject spPr = null;
+        CTBackground bg = (CTBackground)getXmlObject();
+        if(bg.isSetBgPr()){
+            spPr = bg.getBgPr();
+        } else if (bg.isSetBgRef()){
+            CTStyleMatrixReference bgRef= bg.getBgRef();
+            int idx = (int)bgRef.getIdx() - 1000;
+            XSLFTheme theme = getSheet().getTheme();
+            CTBackgroundFillStyleList bgStyles =
+                    theme.getXmlObject().getThemeElements().getFmtScheme().getBgFillStyleLst();
+
+            // TODO pass this to getPaint
+            XmlObject bgStyle = bgStyles.selectPath("*")[idx];
         }
-        if (pr.isSetBlipFill()) {
 
-            String blipId = pr.getBlipFill().getBlip().getEmbed();
-            PackagePart p = getSheet().getPackagePart();
-            PackageRelationship rel = p.getRelationship(blipId);
-            if (rel != null) {
-                try {
-                    BufferedImage img = ImageIO.read(p.getRelatedPart(rel).getInputStream());
-                    graphics.drawImage(img, (int) anchor.getX(), (int) anchor.getY(),
-                            (int) anchor.getWidth(), (int) anchor.getHeight(), null);
-                }
-                catch (Exception e) {
-                    return;
-                }
-            }
+        if(spPr == null){
+            return;
+        }
+
+        Paint fill = getPaint(graphics, spPr);
+        if(fill != null) {
+            graphics.setPaint(fill);
+            graphics.fill(anchor);
         }
     }
 
+    
 }
