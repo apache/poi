@@ -33,19 +33,7 @@
         <field type="byte" size="1" name="clfolvl"
             description="Count of levels whose format is overridden (see LFOLVL)"/>
         <field type="byte" size="1" name="ibstFltAutoNum" description="Used for AUTONUM field emulation"/>
-        <field type="byte" size="1" name="grfhic" description="HTML compatibility flags">
-            <bit number="0" mask="0x01" name="fHtmlChecked" description="Checked"/>
-            <bit number="1" mask="0x02" name="fHtmlUnsupported"
-                description="The numbering sequence or format is unsupported (includes tab &amp; size)"/>
-            <bit number="2" mask="0x04" name="fHtmlListTextNotSharpDot" description="The list text is not &quot;#.&quot;"/>
-            <bit number="3" mask="0x08" name="fHtmlNotPeriod" description="Something other than a period is used"/>
-            <bit number="4" mask="0x10" name="fHtmlFirstLineMismatch" description="First line indent mismatch"/>
-            <bit number="5" mask="0x20" name="fHtmlTabLeftIndentMismatch"
-                description="The list tab and the dxaLeft don't match (need table?)"/>
-            <bit number="6" mask="0x40" name="fHtmlHangingIndentBeneathNumber"
-                description="The hanging indent falls beneath the number (need plain text)"/>
-            <bit number="7" mask="0x80" name="fHtmlBuiltInBullet" description="A built-in HTML bullet"/>
-        </field>
+        <field type="Grfhic" size="1" name="grfhic" description="HTML compatibility flags" />
         <field type="byte" size="1" name="reserved3" description="Reserved"/>
     </fields>
 </record>

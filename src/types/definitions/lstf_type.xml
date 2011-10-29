@@ -45,7 +45,7 @@
             <bit mask="0xE0" name="reserved1" deprecated="true"
                 description="This MUST be zero, and MUST be ignored."/>
         </field>
-        <field type="byte" size="1" name="grfhic"
+        <field type="Grfhic" size="1" name="grfhic"
             description="A grfhic that specifies the HTML incompatibilities of the list."/>
     </fields>
 </record>

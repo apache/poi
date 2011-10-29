@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model.types;
 
-import org.apache.poi.util.BitField;
+import org.apache.poi.hwpf.model.Grfhic;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -44,19 +44,12 @@ public abstract class LFOAbstractType
     protected int field_3_reserved2;
     protected byte field_4_clfolvl;
     protected byte field_5_ibstFltAutoNum;
-    protected byte field_6_grfhic;
-    /**/private static final BitField fHtmlChecked = new BitField(0x01);
-    /**/private static final BitField fHtmlUnsupported = new BitField(0x02);
-    /**/private static final BitField fHtmlListTextNotSharpDot = new BitField(0x04);
-    /**/private static final BitField fHtmlNotPeriod = new BitField(0x08);
-    /**/private static final BitField fHtmlFirstLineMismatch = new BitField(0x10);
-    /**/private static final BitField fHtmlTabLeftIndentMismatch = new BitField(0x20);
-    /**/private static final BitField fHtmlHangingIndentBeneathNumber = new BitField(0x40);
-    /**/private static final BitField fHtmlBuiltInBullet = new BitField(0x80);
+    protected Grfhic field_6_grfhic;
     protected byte field_7_reserved3;
 
     protected LFOAbstractType()
     {
+        this.field_6_grfhic = new Grfhic();
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -66,7 +59,7 @@ public abstract class LFOAbstractType
         field_3_reserved2              = LittleEndian.getInt( data, 0x8 + offset );
         field_4_clfolvl                = data[ 0xc + offset ];
         field_5_ibstFltAutoNum         = data[ 0xd + offset ];
-        field_6_grfhic                 = data[ 0xe + offset ];
+        field_6_grfhic                 = new Grfhic( data, 0xe + offset );
         field_7_reserved3              = data[ 0xf + offset ];
     }
 
@@ -77,7 +70,7 @@ public abstract class LFOAbstractType
         LittleEndian.putInt( data, 0x8 + offset, field_3_reserved2 );
         data[ 0xc + offset ] = field_4_clfolvl;
         data[ 0xd + offset ] = field_5_ibstFltAutoNum;
-        data[ 0xe + offset ] = field_6_grfhic;
+        field_6_grfhic.serialize( data, 0xe + offset );
         data[ 0xf + offset ] = field_7_reserved3;
     }
 
@@ -96,6 +89,53 @@ public abstract class LFOAbstractType
         return 0 + 4 + 4 + 4 + 1 + 1 + 1 + 1;
     }
 
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        LFOAbstractType other = (LFOAbstractType) obj;
+        if ( field_1_lsid != other.field_1_lsid )
+            return false;
+        if ( field_2_reserved1 != other.field_2_reserved1 )
+            return false;
+        if ( field_3_reserved2 != other.field_3_reserved2 )
+            return false;
+        if ( field_4_clfolvl != other.field_4_clfolvl )
+            return false;
+        if ( field_5_ibstFltAutoNum != other.field_5_ibstFltAutoNum )
+            return false;
+        if ( field_6_grfhic == null )
+        {
+            if ( other.field_6_grfhic != null )
+                return false;
+        }
+        else if ( !field_6_grfhic.equals( other.field_6_grfhic ) )
+            return false;
+        if ( field_7_reserved3 != other.field_7_reserved3 )
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + field_1_lsid;
+        result = prime * result + field_2_reserved1;
+        result = prime * result + field_3_reserved2;
+        result = prime * result + field_4_clfolvl;
+        result = prime * result + field_5_ibstFltAutoNum;
+        result = prime * result + field_6_grfhic.hashCode();
+        result = prime * result + field_7_reserved3;
+        return result;
+    }
+
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
@@ -112,14 +152,6 @@ public abstract class LFOAbstractType
         builder.append(" (").append(getIbstFltAutoNum()).append(" )\n");
         builder.append("    .grfhic               = ");
         builder.append(" (").append(getGrfhic()).append(" )\n");
-        builder.append("         .fHtmlChecked             = ").append(isFHtmlChecked()).append('\n');
-        builder.append("         .fHtmlUnsupported         = ").append(isFHtmlUnsupported()).append('\n');
-        builder.append("         .fHtmlListTextNotSharpDot     = ").append(isFHtmlListTextNotSharpDot()).append('\n');
-        builder.append("         .fHtmlNotPeriod           = ").append(isFHtmlNotPeriod()).append('\n');
-        builder.append("         .fHtmlFirstLineMismatch     = ").append(isFHtmlFirstLineMismatch()).append('\n');
-        builder.append("         .fHtmlTabLeftIndentMismatch     = ").append(isFHtmlTabLeftIndentMismatch()).append('\n');
-        builder.append("         .fHtmlHangingIndentBeneathNumber     = ").append(isFHtmlHangingIndentBeneathNumber()).append('\n');
-        builder.append("         .fHtmlBuiltInBullet       = ").append(isFHtmlBuiltInBullet()).append('\n');
         builder.append("    .reserved3            = ");
         builder.append(" (").append(getReserved3()).append(" )\n");
 
@@ -221,7 +253,7 @@ public abstract class LFOAbstractType
      * HTML compatibility flags.
      */
     @Internal
-    public byte getGrfhic()
+    public Grfhic getGrfhic()
     {
         return field_6_grfhic;
     }
@@ -230,7 +262,7 @@ public abstract class LFOAbstractType
      * HTML compatibility flags.
      */
     @Internal
-    public void setGrfhic( byte field_6_grfhic )
+    public void setGrfhic( Grfhic field_6_grfhic )
     {
         this.field_6_grfhic = field_6_grfhic;
     }
@@ -251,166 +283,6 @@ public abstract class LFOAbstractType
     public void setReserved3( byte field_7_reserved3 )
     {
         this.field_7_reserved3 = field_7_reserved3;
-    }
-
-    /**
-     * Sets the fHtmlChecked field value.
-     * Checked
-     */
-    @Internal
-    public void setFHtmlChecked( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlChecked.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * Checked
-     * @return  the fHtmlChecked field value.
-     */
-    @Internal
-    public boolean isFHtmlChecked()
-    {
-        return fHtmlChecked.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlUnsupported field value.
-     * The numbering sequence or format is unsupported (includes tab & size)
-     */
-    @Internal
-    public void setFHtmlUnsupported( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlUnsupported.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * The numbering sequence or format is unsupported (includes tab & size)
-     * @return  the fHtmlUnsupported field value.
-     */
-    @Internal
-    public boolean isFHtmlUnsupported()
-    {
-        return fHtmlUnsupported.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlListTextNotSharpDot field value.
-     * The list text is not "#."
-     */
-    @Internal
-    public void setFHtmlListTextNotSharpDot( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlListTextNotSharpDot.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * The list text is not "#."
-     * @return  the fHtmlListTextNotSharpDot field value.
-     */
-    @Internal
-    public boolean isFHtmlListTextNotSharpDot()
-    {
-        return fHtmlListTextNotSharpDot.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlNotPeriod field value.
-     * Something other than a period is used
-     */
-    @Internal
-    public void setFHtmlNotPeriod( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlNotPeriod.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * Something other than a period is used
-     * @return  the fHtmlNotPeriod field value.
-     */
-    @Internal
-    public boolean isFHtmlNotPeriod()
-    {
-        return fHtmlNotPeriod.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlFirstLineMismatch field value.
-     * First line indent mismatch
-     */
-    @Internal
-    public void setFHtmlFirstLineMismatch( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlFirstLineMismatch.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * First line indent mismatch
-     * @return  the fHtmlFirstLineMismatch field value.
-     */
-    @Internal
-    public boolean isFHtmlFirstLineMismatch()
-    {
-        return fHtmlFirstLineMismatch.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlTabLeftIndentMismatch field value.
-     * The list tab and the dxaLeft don't match (need table?)
-     */
-    @Internal
-    public void setFHtmlTabLeftIndentMismatch( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlTabLeftIndentMismatch.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * The list tab and the dxaLeft don't match (need table?)
-     * @return  the fHtmlTabLeftIndentMismatch field value.
-     */
-    @Internal
-    public boolean isFHtmlTabLeftIndentMismatch()
-    {
-        return fHtmlTabLeftIndentMismatch.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlHangingIndentBeneathNumber field value.
-     * The hanging indent falls beneath the number (need plain text)
-     */
-    @Internal
-    public void setFHtmlHangingIndentBeneathNumber( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlHangingIndentBeneathNumber.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * The hanging indent falls beneath the number (need plain text)
-     * @return  the fHtmlHangingIndentBeneathNumber field value.
-     */
-    @Internal
-    public boolean isFHtmlHangingIndentBeneathNumber()
-    {
-        return fHtmlHangingIndentBeneathNumber.isSet(field_6_grfhic);
-    }
-
-    /**
-     * Sets the fHtmlBuiltInBullet field value.
-     * A built-in HTML bullet
-     */
-    @Internal
-    public void setFHtmlBuiltInBullet( boolean value )
-    {
-        field_6_grfhic = (byte)fHtmlBuiltInBullet.setBoolean(field_6_grfhic, value);
-    }
-
-    /**
-     * A built-in HTML bullet
-     * @return  the fHtmlBuiltInBullet field value.
-     */
-    @Internal
-    public boolean isFHtmlBuiltInBullet()
-    {
-        return fHtmlBuiltInBullet.isSet(field_6_grfhic);
     }
 
 }  // END OF CLASS
