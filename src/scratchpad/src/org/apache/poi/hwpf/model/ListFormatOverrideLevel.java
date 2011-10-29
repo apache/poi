@@ -34,6 +34,7 @@ public final class ListFormatOverrideLevel
     public ListFormatOverrideLevel( byte[] buf, int offset )
     {
         _base = new LFOLVLBase( buf, offset );
+        offset += LFOLVLBase.getSize();
 
         if ( _base.isFFormatting() )
         {
