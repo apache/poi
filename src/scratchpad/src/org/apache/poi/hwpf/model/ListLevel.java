@@ -38,71 +38,23 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class ListLevel
 {
-    private static final POILogger logger = POILogFactory.getLogger( ListLevel.class );
-    
+    private static final POILogger logger = POILogFactory
+            .getLogger( ListLevel.class );
+
     private byte[] _grpprlChpx;
     private byte[] _grpprlPapx;
     private LVLF _lvlf;
     private char[] _xst = {};
 
+    ListLevel()
+    {
+
+    }
+
+    @Deprecated
     public ListLevel( final byte[] buf, final int startOffset )
     {
-        int offset = startOffset;
-
-        _lvlf = new LVLF( buf, offset );
-        offset += LVLF.getSize();
-
-        _grpprlPapx = new byte[_lvlf.getCbGrpprlPapx()];
-        System.arraycopy( buf, offset, _grpprlPapx, 0, _lvlf.getCbGrpprlPapx() );
-        offset += _lvlf.getCbGrpprlPapx();
-
-        _grpprlChpx = new byte[_lvlf.getCbGrpprlChpx()];
-        System.arraycopy( buf, offset, _grpprlChpx, 0, _lvlf.getCbGrpprlChpx() );
-        offset += _lvlf.getCbGrpprlChpx();
-
-        /*
-         * "If this level uses bullets (see lvlf.nfc), the cch field of this Xst
-         * MUST be equal to 0x0001, and this MUST NOT contain any placeholders."
-         * -- page 389 of 621 -- [MS-DOC] -- v20110315 Word (.doc) Binary File
-         * Format
-         */
-        if ( _lvlf.getNfc() == 0x17 )
-        {
-            int numberTextLength = LittleEndian.getShort( buf, offset );
-            offset += LittleEndian.SHORT_SIZE;
-
-            if ( numberTextLength != 1 )
-            {
-                logger.log( POILogger.WARN, "LVL at offset ",
-                        Integer.valueOf( startOffset ),
-                        " has nfc == 0x17 (bullets), but cch != 1 (",
-                        Integer.valueOf( numberTextLength ), ")" );
-            }
-
-            _xst = new char[] { (char) LittleEndian.getShort( buf, offset ) };
-            offset += LittleEndian.SHORT_SIZE;
-        }
-        else
-        {
-            int numberTextLength = LittleEndian.getShort( buf, offset );
-            offset += LittleEndian.SHORT_SIZE;
-
-            if ( numberTextLength > 0 )
-            {
-                _xst = new char[numberTextLength];
-                for ( int x = 0; x < numberTextLength; x++ )
-                {
-                    _xst[x] = (char) LittleEndian.getShort( buf, offset );
-                    offset += LittleEndian.SHORT_SIZE;
-                }
-            }
-            else
-            {
-                /* sometimes numberTextLength<0 */
-                /* by derjohng */
-                _xst = new char[] {};
-            }
-        }
+        read( buf, startOffset );
     }
 
     public ListLevel( int level, boolean numbered )
@@ -206,6 +158,74 @@ public final class ListLevel
         return _lvlf.getIxchFollow();
     }
 
+    int read( final byte[] data, final int startOffset )
+    {
+        int offset = startOffset;
+
+        _lvlf = new LVLF( data, offset );
+        offset += LVLF.getSize();
+
+        _grpprlPapx = new byte[_lvlf.getCbGrpprlPapx()];
+        System.arraycopy( data, offset, _grpprlPapx, 0, _lvlf.getCbGrpprlPapx() );
+        offset += _lvlf.getCbGrpprlPapx();
+
+        _grpprlChpx = new byte[_lvlf.getCbGrpprlChpx()];
+        System.arraycopy( data, offset, _grpprlChpx, 0, _lvlf.getCbGrpprlChpx() );
+        offset += _lvlf.getCbGrpprlChpx();
+
+        /*
+         * "If this level uses bullets (see lvlf.nfc), the cch field of this Xst
+         * MUST be equal to 0x0001, and this MUST NOT contain any placeholders."
+         * -- page 389 of 621 -- [MS-DOC] -- v20110315 Word (.doc) Binary File
+         * Format
+         */
+        if ( _lvlf.getNfc() == 0x17 )
+        {
+            int cch = LittleEndian.getUShort( data, offset );
+            offset += LittleEndian.SHORT_SIZE;
+
+            if ( cch != 1 )
+            {
+                logger.log( POILogger.WARN, "LVL at offset ",
+                        Integer.valueOf( startOffset ),
+                        " has nfc == 0x17 (bullets), but cch != 1 (",
+                        Integer.valueOf( cch ), ")" );
+            }
+
+            _xst = new char[cch];
+            for ( int x = 0; x < cch; x++ )
+            {
+                _xst[x] = (char) LittleEndian.getShort( data, offset );
+                offset += LittleEndian.SHORT_SIZE;
+            }
+        }
+        else
+        {
+            int cch = LittleEndian.getUShort( data, offset );
+            offset += LittleEndian.SHORT_SIZE;
+
+            if ( cch > 0 )
+            {
+                _xst = new char[cch];
+                for ( int x = 0; x < cch; x++ )
+                {
+                    _xst[x] = (char) LittleEndian.getShort( data, offset );
+                    offset += LittleEndian.SHORT_SIZE;
+                }
+            }
+            else
+            {
+                logger.log( POILogger.WARN, "LVL.xst.cch <= 0: ",
+                        Integer.valueOf( cch ) );
+                /* sometimes numberTextLength<0 */
+                /* by derjohng */
+                _xst = new char[] {};
+            }
+        }
+
+        return offset - startOffset;
+    }
+
     public void setAlignment( int alignment )
     {
         _lvlf.setJc( (byte) alignment );
@@ -276,9 +296,10 @@ public final class ListLevel
     @Override
     public String toString()
     {
-        return "ListLevel: " + ( "\n" + _lvlf ).replaceAll( "\n", "\n    " )
+        return "LVL: " + ( "\n" + _lvlf ).replaceAll( "\n", "\n    " )
                 + "\n"
                 + ( "PAPX's grpprl: " + Arrays.toString( _grpprlPapx ) + "\n" )
-                + ( "CHPX's grpprl: " + Arrays.toString( _grpprlChpx ) + "\n" );
+                + ( "CHPX's grpprl: " + Arrays.toString( _grpprlChpx ) + "\n" )
+                + ( "xst: " + Arrays.toString( _xst ) + "\n" );
     }
 }

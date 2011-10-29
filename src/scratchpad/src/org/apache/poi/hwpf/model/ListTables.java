@@ -41,7 +41,6 @@ import org.apache.poi.util.POILogger;
 @Internal
 public final class ListTables
 {
-  private static final int LIST_DATA_SIZE = 28;
   private static POILogger log = POILogFactory.getLogger(ListTables.class);
 
   ListMap _listMap = new ListMap();
@@ -65,7 +64,7 @@ public final class ListTables
 
             int cLst = LittleEndian.getShort( tableStream, offset );
             offset += LittleEndian.SHORT_SIZE;
-            int levelOffset = offset + ( cLst * LIST_DATA_SIZE );
+            int levelOffset = offset + ( cLst * LSTF.getSize() );
 
             for ( int x = 0; x < cLst; x++ )
             {
@@ -76,9 +75,9 @@ public final class ListTables
                 int num = lst.numLevels();
                 for ( int y = 0; y < num; y++ )
                 {
-                    ListLevel lvl = new ListLevel( tableStream, levelOffset );
+                    ListLevel lvl = new ListLevel();
+                    levelOffset += lvl.read( tableStream, levelOffset );
                     lst.setLevel( y, lvl );
-                    levelOffset += lvl.getSizeInBytes();
                 }
             }
         }
