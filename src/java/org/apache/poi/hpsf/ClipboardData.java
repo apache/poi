@@ -21,10 +21,15 @@ import java.io.OutputStream;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 @Internal
 class ClipboardData
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( ClipboardData.class );
+
     private int _format;
     private byte[] _value;
 
@@ -33,9 +38,16 @@ class ClipboardData
         int size = LittleEndian.getInt( data, offset );
 
         if ( size < 4 )
-            throw new IllegalPropertySetDataException(
-                    "ClipboardData size less than 4 bytes "
-                            + "(doesn't even have format field!)" );
+        {
+            logger.log( POILogger.WARN, "ClipboardData at offset ",
+                    Integer.valueOf( offset ), " size less than 4 bytes "
+                            + "(doesn't even have format field!). "
+                            + "Setting to format == 0 and hope for the best" );
+            _format = 0;
+            _value = new byte[0];
+            return;
+        }
+
         _format = LittleEndian.getInt( data, offset + LittleEndian.INT_SIZE );
         _value = LittleEndian.getByteArray( data, offset
                 + LittleEndian.INT_SIZE * 2, size - LittleEndian.INT_SIZE );
@@ -57,7 +69,6 @@ class ClipboardData
         LittleEndian.putInt( result, 0 * LittleEndian.INT_SIZE,
                 LittleEndian.INT_SIZE + _value.length );
         LittleEndian.putInt( result, 1 * LittleEndian.INT_SIZE, _format );
-        LittleEndian.putInt( result, 2 * LittleEndian.INT_SIZE, _value.length );
         System.arraycopy( _value, 0, result, LittleEndian.INT_SIZE
                 + LittleEndian.INT_SIZE, _value.length );
         return result;

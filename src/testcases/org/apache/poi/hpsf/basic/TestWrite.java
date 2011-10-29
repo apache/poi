@@ -36,7 +36,7 @@ import java.util.Map;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.Constants;
 import org.apache.poi.hpsf.HPSFRuntimeException;
@@ -63,7 +63,6 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
-import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Tests HPSF's writing functionality.</p>
@@ -377,14 +376,8 @@ public class TestWrite extends TestCase
             check(Variant.VT_EMPTY, null, codepage);
             check(Variant.VT_BOOL, Boolean.TRUE, codepage);
             check(Variant.VT_BOOL, Boolean.FALSE, codepage);
-            check(Variant.VT_CF, new byte[]{0}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6}, codepage);
-            check(Variant.VT_CF, new byte[]{0, 1, 2, 3, 4, 5, 6, 7}, codepage);
+            check( Variant.VT_CF, new byte[] { 8, 0, 0, 0, 1, 0, 0, 0, 1, 2, 3,
+                    4 }, codepage );
             check(Variant.VT_I4, Integer.valueOf(27), codepage);
             check(Variant.VT_I8, Long.valueOf(28), codepage);
             check(Variant.VT_R8, new Double(29.0), codepage);
