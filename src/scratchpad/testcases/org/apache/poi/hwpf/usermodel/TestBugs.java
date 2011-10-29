@@ -719,15 +719,31 @@ public class TestBugs extends TestCase
         HWPFTestDataSamples.writeOutAndReadBack( HWPFTestDataSamples
                 .openSampleFile( "Bug51834.doc" ) );
     }
-    
+
     /**
      * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
      * with no stack trace (broken after revision 1178063)
      */
-    public void testBug52032() throws Exception
+    public void testBug52032_1() throws Exception
     {
-        HWPFTestDataSamples.openSampleFile( "Bug52032.doc" );
-        HWPFTestDataSamples.writeOutAndReadBack( HWPFTestDataSamples
-                .openSampleFile( "Bug52032.doc" ) );
+        HWPFTestDataSamples.openSampleFile( "Bug52032_1.doc" );
+    }
+
+    /**
+     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
+     * with no stack trace (broken after revision 1178063)
+     */
+    public void testBug52032_2() throws Exception
+    {
+        HWPFTestDataSamples.openSampleFile( "Bug52032_2.doc" );
+    }
+
+    /**
+     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
+     * with no stack trace (broken after revision 1178063)
+     */
+    public void testBug52032_3() throws Exception
+    {
+        HWPFTestDataSamples.openSampleFile( "Bug52032_3.doc" );
     }
 }

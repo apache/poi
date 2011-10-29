@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.model.types;
 
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.model.Grfhic;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -52,11 +53,12 @@ public abstract class LSTFAbstractType
     /**/private static final BitField unused2 = new BitField(0x08);
     /**/private static final BitField fHybrid = new BitField(0x10);
     /**/private static final BitField reserved1 = new BitField(0xE0);
-    protected byte field_5_grfhic;
+    protected Grfhic field_5_grfhic;
 
     protected LSTFAbstractType()
     {
         this.field_3_rgistdPara = new short[0];
+        this.field_5_grfhic = new Grfhic();
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -65,7 +67,7 @@ public abstract class LSTFAbstractType
         field_2_tplc                   = LittleEndian.getInt( data, 0x4 + offset );
         field_3_rgistdPara             = LittleEndian.getShortArray( data, 0x8 + offset, 18 );
         field_4_flags                  = data[ 0x1a + offset ];
-        field_5_grfhic                 = data[ 0x1b + offset ];
+        field_5_grfhic                 = new Grfhic( data, 0x1b + offset );
     }
 
     public void serialize( byte[] data, int offset )
@@ -74,7 +76,7 @@ public abstract class LSTFAbstractType
         LittleEndian.putInt( data, 0x4 + offset, field_2_tplc );
         LittleEndian.putShortArray( data, 0x8 + offset, field_3_rgistdPara );
         data[ 0x1a + offset ] = field_4_flags;
-        data[ 0x1b + offset ] = field_5_grfhic;
+        field_5_grfhic.serialize( data, 0x1b + offset );
     }
 
     public byte[] serialize()
@@ -110,7 +112,12 @@ public abstract class LSTFAbstractType
             return false;
         if ( field_4_flags != other.field_4_flags )
             return false;
-        if ( field_5_grfhic != other.field_5_grfhic )
+        if ( field_5_grfhic == null )
+        {
+            if ( other.field_5_grfhic != null )
+                return false;
+        }
+        else if ( !field_5_grfhic.equals( other.field_5_grfhic ) )
             return false;
         return true;
     }
@@ -124,7 +131,7 @@ public abstract class LSTFAbstractType
         result = prime * result + field_2_tplc;
         result = prime * result + Arrays.hashCode( field_3_rgistdPara );
         result = prime * result + field_4_flags;
-        result = prime * result + field_5_grfhic;
+        result = prime * result + field_5_grfhic.hashCode();
         return result;
     }
 
@@ -229,7 +236,7 @@ public abstract class LSTFAbstractType
      * A grfhic that specifies the HTML incompatibilities of the list..
      */
     @Internal
-    public byte getGrfhic()
+    public Grfhic getGrfhic()
     {
         return field_5_grfhic;
     }
@@ -238,7 +245,7 @@ public abstract class LSTFAbstractType
      * A grfhic that specifies the HTML incompatibilities of the list..
      */
     @Internal
-    public void setGrfhic( byte field_5_grfhic )
+    public void setGrfhic( Grfhic field_5_grfhic )
     {
         this.field_5_grfhic = field_5_grfhic;
     }

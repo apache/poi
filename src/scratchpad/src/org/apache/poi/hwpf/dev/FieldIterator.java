@@ -70,7 +70,7 @@ public class FieldIterator
         String result = "";
 
         if ( type.equals( "short[]" ) )
-            result = "LittleEndian.getSimpleShortArray( data, 0x"
+            result = "LittleEndian.getShortArray( data, 0x"
                     + Integer.toHexString( offset ) + " + offset, " + size
                     + " )";
         else if ( type.equals( "byte[]" ) )
@@ -85,6 +85,9 @@ public class FieldIterator
                     + " + offset )";
         else if ( type.equals( "DateAndTime" ) )
             result = "new DateAndTime( data, 0x" + Integer.toHexString( offset )
+                    + " + offset )";
+        else if ( type.equals( "Grfhic" ) )
+            result = "new Grfhic( data, 0x" + Integer.toHexString( offset )
                     + " + offset )";
         else if ( size.equals( "2" ) )
             result = "LittleEndian.getShort( data, 0x"
@@ -154,6 +157,9 @@ public class FieldIterator
             result = javaFieldName + ".serialize( data, 0x"
                     + Integer.toHexString( offset ) + " + offset );";
         else if ( type.equals( "DateAndTime" ) )
+            result = javaFieldName + ".serialize( data, 0x"
+                    + Integer.toHexString( offset ) + " + offset );";
+        else if ( type.equals( "Grfhic" ) )
             result = javaFieldName + ".serialize( data, 0x"
                     + Integer.toHexString( offset ) + " + offset );";
         else if ( size.equals( "2" ) )

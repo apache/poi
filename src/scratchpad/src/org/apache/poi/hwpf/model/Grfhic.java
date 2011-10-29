@@ -16,27 +16,42 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.hwpf.model.types.GrfhicAbstractType;
 import org.apache.poi.util.Internal;
 
-import org.apache.poi.hwpf.model.types.LFOAbstractType;
-
 /**
- * "The LFO structure specifies the LSTF element that corresponds to a list that
- * contains a paragraph. An LFO can also specify formatting information that
- * overrides the LSTF element to which it corresponds." -- [MS-DOC] -- v20110315
- * Word (.doc) Binary File Format
+ * The grfhic structure is a set of HTML incompatibility flags that specify the
+ * HTML incompatibilities of a list structure. The values specify possible
+ * incompatibilities between an LVL or LVLF and HTML lists. The values do not
+ * define list properties.
+ * <p>
+ * Class and fields descriptions are quoted from [MS-DOC] -- v20110315 Word
+ * (.doc) Binary File Format specification
+ * <p>
+ * This class is internal. It content or properties may change without notice
+ * due to changes in our knowledge of internal Microsoft Word binary structures.
  * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
+ * @author Sergey Vladimirov; according to [MS-DOC] -- v20110315 Word (.doc)
+ *         Binary File Format specification
  */
 @Internal
-class LFO extends LFOAbstractType
+public class Grfhic extends GrfhicAbstractType
 {
-    public LFO()
+
+    public Grfhic()
     {
     }
 
-    public LFO( byte[] std, int offset )
+    public Grfhic( byte[] bytes, int offset )
     {
-        fillFields( std, offset );
+        fillFields( bytes, offset );
     }
+
+    public byte[] toByteArray()
+    {
+        byte[] buf = new byte[getSize()];
+        serialize( buf, 0 );
+        return buf;
+    }
+
 }

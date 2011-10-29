@@ -59,7 +59,7 @@
             description="An unsigned integer that specifies the size, in bytes, of the grpprlPapx in the LVL that contains this LVLF"/>
         <field type="short" size="1" name="ilvlRestartLim"
             description="An unsigned integer that specifies the first (most-significant) zero-based level after which the number sequence of this level does not restart. The number sequence of this level does restart after any level that is more significant than the specified level. This MUST be less than or equal to the zero-based level of the list to which this LVLF corresponds. If fNoRestart is zero, this MUST be ignored. If this level does not have a number sequence (see nfc), this MUST be ignored"/>
-        <field type="short" size="1" name="grfhic"
+        <field type="Grfhic" size="1" name="grfhic"
             description="A grfhic that specifies the HTML incompatibilities of the level."/>
     </fields>
 </record>

@@ -45,9 +45,9 @@ public final class ListLevel
     private LVLF _lvlf;
     private char[] _xst = {};
 
-    public ListLevel( final byte[] buf, final int originalOffset )
+    public ListLevel( final byte[] buf, final int startOffset )
     {
-        int offset = originalOffset;
+        int offset = startOffset;
 
         _lvlf = new LVLF( buf, offset );
         offset += LVLF.getSize();
@@ -74,7 +74,7 @@ public final class ListLevel
             if ( numberTextLength != 1 )
             {
                 logger.log( POILogger.WARN, "LVL at offset ",
-                        Integer.valueOf( originalOffset ),
+                        Integer.valueOf( startOffset ),
                         " has nfc == 0x17 (bullets), but cch != 1 (",
                         Integer.valueOf( numberTextLength ), ")" );
             }

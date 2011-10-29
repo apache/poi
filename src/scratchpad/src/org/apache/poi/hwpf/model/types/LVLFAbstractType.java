@@ -16,8 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model.types;
 
+
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.model.Grfhic;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -59,11 +61,12 @@ public abstract class LVLFAbstractType
     protected short field_8_cbGrpprlChpx;
     protected short field_9_cbGrpprlPapx;
     protected short field_10_ilvlRestartLim;
-    protected short field_11_grfhic;
+    protected Grfhic field_11_grfhic;
 
     protected LVLFAbstractType()
     {
         this.field_4_rgbxchNums = new byte[9];
+        this.field_11_grfhic = new Grfhic();
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -78,7 +81,7 @@ public abstract class LVLFAbstractType
         field_8_cbGrpprlChpx           = LittleEndian.getUByte( data, 0x18 + offset );
         field_9_cbGrpprlPapx           = LittleEndian.getUByte( data, 0x19 + offset );
         field_10_ilvlRestartLim        = LittleEndian.getUByte( data, 0x1a + offset );
-        field_11_grfhic                = LittleEndian.getUByte( data, 0x1b + offset );
+        field_11_grfhic                = new Grfhic( data, 0x1b + offset );
     }
 
     public void serialize( byte[] data, int offset )
@@ -93,7 +96,7 @@ public abstract class LVLFAbstractType
         LittleEndian.putUByte( data, 0x18 + offset, field_8_cbGrpprlChpx );
         LittleEndian.putUByte( data, 0x19 + offset, field_9_cbGrpprlPapx );
         LittleEndian.putUByte( data, 0x1a + offset, field_10_ilvlRestartLim );
-        LittleEndian.putUByte( data, 0x1b + offset, field_11_grfhic );
+        field_11_grfhic.serialize( data, 0x1b + offset );
     }
 
     public byte[] serialize()
@@ -141,7 +144,12 @@ public abstract class LVLFAbstractType
             return false;
         if ( field_10_ilvlRestartLim != other.field_10_ilvlRestartLim )
             return false;
-        if ( field_11_grfhic != other.field_11_grfhic )
+        if ( field_11_grfhic == null )
+        {
+            if ( other.field_11_grfhic != null )
+                return false;
+        }
+        else if ( !field_11_grfhic.equals( other.field_11_grfhic ) )
             return false;
         return true;
     }
@@ -161,7 +169,7 @@ public abstract class LVLFAbstractType
         result = prime * result + field_8_cbGrpprlChpx;
         result = prime * result + field_9_cbGrpprlPapx;
         result = prime * result + field_10_ilvlRestartLim;
-        result = prime * result + field_11_grfhic;
+        result = prime * result + field_11_grfhic.hashCode();
         return result;
     }
 
@@ -387,7 +395,7 @@ public abstract class LVLFAbstractType
      * A grfhic that specifies the HTML incompatibilities of the level..
      */
     @Internal
-    public short getGrfhic()
+    public Grfhic getGrfhic()
     {
         return field_11_grfhic;
     }
@@ -396,7 +404,7 @@ public abstract class LVLFAbstractType
      * A grfhic that specifies the HTML incompatibilities of the level..
      */
     @Internal
-    public void setGrfhic( short field_11_grfhic )
+    public void setGrfhic( Grfhic field_11_grfhic )
     {
         this.field_11_grfhic = field_11_grfhic;
     }
