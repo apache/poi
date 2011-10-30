@@ -80,7 +80,7 @@ import org.apache.poi.util.Internal;
  */
 public final class HWPFDocument extends HWPFDocumentCore
 {
-    private static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
+    static final String PROPERTY_PRESERVE_BIN_TABLES = "org.apache.poi.hwpf.preserveBinTables";
     private static final String PROPERTY_PRESERVE_TEXT_TABLE = "org.apache.poi.hwpf.preserveTextTable";
 
     private static final String STREAM_DATA = "Data";

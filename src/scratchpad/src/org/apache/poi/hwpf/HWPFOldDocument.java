@@ -66,9 +66,10 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         
         // We need to get hold of the text that makes up the
         //  document, which might be regular or fast-saved
+        ComplexFileTable cft = null;
         StringBuffer text = new StringBuffer();
         if(_fib.getFibBase().isFComplex()) {
-            ComplexFileTable cft = new ComplexFileTable(
+            cft = new ComplexFileTable(
                     _mainStream, _mainStream,
                     complexTableOffset, _fib.getFibBase().getFcMin()
             );
@@ -113,6 +114,27 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 _mainStream, sedTableOffset, sedTableSize,
                 _fib.getFibBase().getFcMin(), tpt
         );
+
+        /*
+         * in this mode we preserving PAPX/CHPX structure from file, so text may
+         * miss from output, and text order may be corrupted
+         */
+        boolean preserveBinTables = false;
+        try
+        {
+            preserveBinTables = Boolean.parseBoolean( System
+                    .getProperty( HWPFDocument.PROPERTY_PRESERVE_BIN_TABLES ) );
+        }
+        catch ( Exception exc )
+        {
+            // ignore;
+        }
+
+        if ( !preserveBinTables )
+        {
+            _cbt.rebuild( cft );
+            _pbt.rebuild( _text, cft );
+        }
     }
 
     public Range getOverallRange()

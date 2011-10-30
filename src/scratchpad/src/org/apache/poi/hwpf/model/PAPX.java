@@ -112,11 +112,17 @@ public final class PAPX extends BytePropertyNode<PAPX> {
 
   public byte[] getGrpprl()
   {
+      if (_buf == null)
+          return new byte[0];
+
     return ((SprmBuffer)_buf).toByteArray();
   }
 
-  public short getIstd()
-  {
+    public short getIstd()
+    {
+        if ( _buf == null )
+            return 0;
+
     byte[] buf = getGrpprl();
     if (buf.length == 0)
     {
