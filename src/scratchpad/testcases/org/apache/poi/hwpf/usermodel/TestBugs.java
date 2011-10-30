@@ -463,23 +463,12 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * [FAILING] Bug 47958 - Exception during Escher walk of pictures
+     * Bug 47958 - Exception during Escher walk of pictures
      */
     public void test47958()
     {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug47958.doc" );
-        try
-        {
-            for ( Picture pic : doc.getPicturesTable().getAllPictures() )
-            {
-                System.out.println( pic.suggestFullFileName() );
-            }
-            fixed( "47958" );
-        }
-        catch ( Exception e )
-        {
-            // expected exception
-        }
+        doc.getPicturesTable().getAllPictures();
     }
 
     /**
@@ -513,11 +502,33 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 50936 - HWPF fails to read a file
+     * Bug 50936 - Exception parsing MS Word 8.0 file
      */
-    public void test50936()
+    public void test50936_1()
     {
-        HWPFTestDataSamples.openSampleFile( "Bug50936.doc" );
+        HWPFDocument hwpfDocument = HWPFTestDataSamples
+                .openSampleFile( "Bug50936_1.doc" );
+        hwpfDocument.getPicturesTable().getAllPictures();
+    }
+
+    /**
+     * Bug 50936 - Exception parsing MS Word 8.0 file
+     */
+    public void test50936_2()
+    {
+        HWPFDocument hwpfDocument = HWPFTestDataSamples
+                .openSampleFile( "Bug50936_2.doc" );
+        hwpfDocument.getPicturesTable().getAllPictures();
+    }
+
+    /**
+     * Bug 50936 - Exception parsing MS Word 8.0 file
+     */
+    public void test50936_3()
+    {
+        HWPFDocument hwpfDocument = HWPFTestDataSamples
+                .openSampleFile( "Bug50936_3.doc" );
+        hwpfDocument.getPicturesTable().getAllPictures();
     }
 
     /**
