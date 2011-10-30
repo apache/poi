@@ -114,6 +114,12 @@ public class PAPBinTable
     public void rebuild( final StringBuilder docText,
             ComplexFileTable complexFileTable )
     {
+        rebuild( docText, complexFileTable, _paragraphs );
+    }
+
+    static void rebuild( final StringBuilder docText,
+            ComplexFileTable complexFileTable, List<PAPX> paragraphs )
+    {
         long start = System.currentTimeMillis();
 
         if ( complexFileTable != null )
@@ -156,19 +162,19 @@ public class PAPBinTable
 
                     PAPX papx = new PAPX( textPiece.getStart(),
                             textPiece.getEnd(), newSprmBuffer );
-                    _paragraphs.add( papx );
+                    paragraphs.add( papx );
                 }
             }
 
             logger.log( POILogger.DEBUG,
                     "Merged (?) with PAPX from complex file table in ",
                     Long.valueOf( System.currentTimeMillis() - start ),
-                    " ms (", Integer.valueOf( _paragraphs.size() ),
+                    " ms (", Integer.valueOf( paragraphs.size() ),
                     " elements in total)" );
             start = System.currentTimeMillis();
         }
 
-        List<PAPX> oldPapxSortedByEndPos = new ArrayList<PAPX>( _paragraphs );
+        List<PAPX> oldPapxSortedByEndPos = new ArrayList<PAPX>( paragraphs );
         Collections.sort( oldPapxSortedByEndPos,
                 PropertyNode.EndComparator.instance );
 
@@ -179,7 +185,7 @@ public class PAPBinTable
         final Map<PAPX, Integer> papxToFileOrder = new IdentityHashMap<PAPX, Integer>();
         {
             int counter = 0;
-            for ( PAPX papx : _paragraphs )
+            for ( PAPX papx : paragraphs )
             {
                 papxToFileOrder.put( papx, Integer.valueOf( counter++ ) );
             }
@@ -270,6 +276,9 @@ public class PAPBinTable
             SprmBuffer sprmBuffer = null;
             for ( PAPX papx : papxs )
             {
+                if ( papx.getGrpprl() == null || papx.getGrpprl().length == 0 )
+                    continue;
+
                 if ( sprmBuffer == null )
                     try
                     {
@@ -281,7 +290,9 @@ public class PAPBinTable
                         throw new Error( e );
                     }
                 else
+                {
                     sprmBuffer.append( papx.getGrpprl(), 2 );
+                }
             }
             PAPX newPapx = new PAPX( startInclusive, endExclusive, sprmBuffer );
             newPapxs.add( newPapx );
@@ -289,11 +300,12 @@ public class PAPBinTable
             lastParStart = endExclusive;
             continue;
         }
-        this._paragraphs = new ArrayList<PAPX>( newPapxs );
+        paragraphs.clear();
+        paragraphs.addAll( newPapxs );
 
         logger.log( POILogger.DEBUG, "PAPX rebuilded from document text in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms (",
-                Integer.valueOf( _paragraphs.size() ), " elements)" );
+                Integer.valueOf( paragraphs.size() ), " elements)" );
         start = System.currentTimeMillis();
     }
 

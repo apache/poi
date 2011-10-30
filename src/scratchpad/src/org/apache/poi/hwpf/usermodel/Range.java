@@ -1101,7 +1101,7 @@ public class Range { // TODO -instantiable superclass
         int endIndex = binarySearchEnd( rpl, startIndex, end );
         while ( endIndex < rpl.size() - 1
                 && rpl.get( endIndex + 1 ).getEnd() <= end )
-            endIndex--;
+            endIndex++;
 
         if ( startIndex < 0 || startIndex >= rpl.size()
                 || startIndex > endIndex || endIndex < 0

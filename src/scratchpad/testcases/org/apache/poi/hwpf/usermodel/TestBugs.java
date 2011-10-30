@@ -28,6 +28,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hwpf.converter.WordToTextConverter;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -736,7 +738,8 @@ public class TestBugs extends TestCase
      */
     public void testBug51944() throws Exception
     {
-        HWPFTestDataSamples.openOldSampleFile( "Bug51944.doc" );
+        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile( "Bug51944.doc" );
+        WordToTextConverter.getText( doc );
     }
 
     /**
