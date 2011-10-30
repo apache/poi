@@ -721,6 +721,14 @@ public class TestBugs extends TestCase
     }
 
     /**
+     * Bug 51944 - PAPFormattedDiskPage.getPAPX - IndexOutOfBounds
+     */
+    public void testBug51944() throws Exception
+    {
+        HWPFTestDataSamples.openOldSampleFile( "Bug51944.doc" );
+    }
+
+    /**
      * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
      * with no stack trace (broken after revision 1178063)
      */

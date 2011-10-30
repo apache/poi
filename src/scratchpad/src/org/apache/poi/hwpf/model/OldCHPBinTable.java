@@ -59,14 +59,11 @@ public final class OldCHPBinTable extends CHPBinTable
       CHPFormattedDiskPage cfkp = new CHPFormattedDiskPage(documentStream,
         pageOffset, tpt);
 
-      int fkpSize = cfkp.size();
-
-      for (int y = 0; y < fkpSize; y++)
-      {
-        CHPX chpx = cfkp.getCHPX(y);
-        if (chpx != null)
-            _textRuns.add(chpx);
-      }
+            for ( CHPX chpx : cfkp.getCHPXs() )
+            {
+                if ( chpx != null )
+                    _textRuns.add( chpx );
+            }
     }
     Collections.sort( _textRuns, PropertyNode.StartComparator.instance );
   }
