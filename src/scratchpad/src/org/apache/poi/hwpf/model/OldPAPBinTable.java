@@ -51,15 +51,11 @@ public final class OldPAPBinTable extends PAPBinTable
       PAPFormattedDiskPage pfkp = new PAPFormattedDiskPage(documentStream,
         documentStream, pageOffset, tpt);
 
-      int fkpSize = pfkp.size();
-
-      for (int y = 0; y < fkpSize; y++)
-      {
-    	PAPX papx = pfkp.getPAPX(y);
-        if (papx != null) {
-            _paragraphs.add(papx);
-        }
-      }
+            for ( PAPX papx : pfkp.getPAPXs() )
+            {
+                if ( papx != null )
+                    _paragraphs.add( papx );
+            }
     }
     Collections.sort( _paragraphs, PropertyNode.StartComparator.instance );
   }
