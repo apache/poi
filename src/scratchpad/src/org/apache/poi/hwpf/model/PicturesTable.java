@@ -20,6 +20,10 @@ package org.apache.poi.hwpf.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.util.POILogFactory;
+
+import org.apache.poi.util.POILogger;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -52,6 +56,9 @@ import org.apache.poi.util.LittleEndian;
 @Internal
 public final class PicturesTable
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( PicturesTable.class );
+    
   static final int TYPE_IMAGE = 0x08;
   static final int TYPE_IMAGE_WORD2000 = 0x00;
   static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD = 0xA;
@@ -175,18 +182,32 @@ public final class PicturesTable
               {
                   pictures.add(new Picture(blip.getPicturedata()));
               }
-              else if (bse.getOffset() > 0)
-              {
-                  // Blip stored in delay stream, which in a word doc, is the main stream
-                  EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
-                  EscherRecord record = recordFactory.createRecord(_mainStream, bse.getOffset());
+                else if ( bse.getOffset() > 0 )
+                {
+                    try
+                    {
+                        // Blip stored in delay stream, which in a word doc, is
+                        // the main stream
+                        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
+                        EscherRecord record = recordFactory.createRecord(
+                                _mainStream, bse.getOffset() );
 
-                  if (record instanceof EscherBlipRecord) {
-                      record.fillFields(_mainStream, bse.getOffset(), recordFactory);
-                      blip = (EscherBlipRecord) record;
-                      pictures.add(new Picture(blip.getPicturedata()));
-                  }
-              }
+                        if ( record instanceof EscherBlipRecord )
+                        {
+                            record.fillFields( _mainStream, bse.getOffset(),
+                                    recordFactory );
+                            blip = (EscherBlipRecord) record;
+                            pictures.add( new Picture( blip.getPicturedata() ) );
+                        }
+                    }
+                    catch ( Exception exc )
+                    {
+                        logger.log(
+                                POILogger.WARN,
+                                "Unable to load picture from BLIB record at offset #",
+                                Integer.valueOf( bse.getOffset() ), exc );
+                    }
+                }
           }
 
           // Recursive call.

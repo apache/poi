@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">50936 - Exception parsing MS Word 8.0 file (as duplicate of 47958)</action>
+           <action dev="poi-developers" type="fix">47958 - ArrayIndexOutOfBoundsException from PicturesTable.getAllPictures() during Escher tree walk</action>
            <action dev="poi-developers" type="fix">51944 - PAPFormattedDiskPage.getPAPX - IndexOutOfBounds</action>
            <action dev="poi-developers" type="fix">52032 - HWPF - ArrayIndexOutofBoundsException with no stack trace (broken after revision 1178063)</action>
            <action dev="poi-developers" type="add">support for converting pptx files into images with a PPTX2PNG tool</action>
