@@ -25,7 +25,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
 
 
 /**

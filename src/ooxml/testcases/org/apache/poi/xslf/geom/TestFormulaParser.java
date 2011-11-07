@@ -24,7 +24,7 @@ public class TestFormulaParser extends TestCase {
         };
 
         CustomGeometry geom = new CustomGeometry(CTCustomGeometry2D.Factory.newInstance());
-        Context ctx = new Context(geom, null);
+        Context ctx = new Context(geom, null, null);
         for(Formula fmla : ops) {
             ctx.evaluate(fmla);
         }

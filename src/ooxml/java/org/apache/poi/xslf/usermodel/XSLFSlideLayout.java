@@ -22,7 +22,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
@@ -42,13 +41,13 @@ public class XSLFSlideLayout extends XSLFSheet {
     public XSLFSlideLayout(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         SldLayoutDocument doc =
-            SldLayoutDocument.Factory.parse(getPackagePart().getInputStream());
+                SldLayoutDocument.Factory.parse(getPackagePart().getInputStream());
         _layout = doc.getSldLayout();
         setCommonSlideData(_layout.getCSld());
     }
 
 
-    public String getName(){
+    public String getName() {
         return _layout.getCSld().getName();
     }
 
@@ -61,79 +60,92 @@ public class XSLFSlideLayout extends XSLFSheet {
     }
 
     @Override
-    protected String getRootElementName(){
+    protected String getRootElementName() {
         return "sldLayout";
     }
 
     /**
      * Slide master object associated with this layout.
-     * <p>
-     *  Within a slide master slide are contained all elements
-     * that describe the objects and their corresponding formatting
-     * for within a presentation slide.
-     * </p>
-     * <p>
-     * Within a slide master slide are two main elements.
-     * The cSld element specifies the common slide elements such as shapes and
-     * their attached text bodies. Then the txStyles element specifies the
-     * formatting for the text within each of these shapes. The other properties
-     * within a slide master slide specify other properties for within a presentation slide
-     * such as color information, headers and footers, as well as timing and
-     * transition information for all corresponding presentation slides.
-     * </p>
      *
      * @return slide master. Never null.
      * @throws IllegalStateException if slide master was not found
      */
-    @Override
-    public XSLFSlideMaster getSlideMaster(){
-        if(_master == null){
+    public XSLFSlideMaster getSlideMaster() {
+        if (_master == null) {
             for (POIXMLDocumentPart p : getRelations()) {
-               if (p instanceof XSLFSlideMaster){
-                  _master = (XSLFSlideMaster)p;
-               }
-           }
+                if (p instanceof XSLFSlideMaster) {
+                    _master = (XSLFSlideMaster) p;
+                }
+            }
         }
-        if(_master == null) {
+        if (_master == null) {
             throw new IllegalStateException("SlideMaster was not found for " + this.toString());
         }
         return _master;
     }
 
-    
-    public XSLFTheme getTheme(){
-    	return getSlideMaster().getTheme();
-    }    
+    @Override
+    public XSLFSlideMaster getMasterSheet() {
+        return getSlideMaster();
+    }
+
+    @Override
+    public XSLFTheme getTheme() {
+        return getSlideMaster().getTheme();
+    }
 
 
     @Override
-    protected CTTextListStyle getTextProperties(Placeholder textType) {
-        XSLFTextShape lp = getTextShapeByType(textType);
-        CTTextListStyle props = lp.getTextBody(false).getLstStyle();
-        return props;
+    public boolean getFollowMasterGraphics() {
+        return !_layout.isSetShowMasterSp() || _layout.getShowMasterSp();
     }
 
     /**
      * Render this sheet into the supplied graphics object
-     *
      */
     @Override
-    protected boolean canDraw(XSLFShape shape){
-        if(shape instanceof XSLFSimpleShape){
-            XSLFSimpleShape txt = (XSLFSimpleShape)shape;
+    protected boolean canDraw(XSLFShape shape) {
+        if (shape instanceof XSLFSimpleShape) {
+            XSLFSimpleShape txt = (XSLFSimpleShape) shape;
             CTPlaceholder ph = txt.getCTPlaceholder();
-            if(ph != null) {
+            if (ph != null) {
                 return false;
             }
         }
         return true;
     }
 
-    @Override
-    public XSLFBackground getBackground(){
-        if(_layout.getCSld().isSetBg()) {
-            return new XSLFBackground(_layout.getCSld().getBg(), this);
+    /**
+     * Copy placeholders from this layout to the destination slide
+     *
+     * @param slide destination slide
+     */
+    public void copyLayout(XSLFSlide slide) {
+        for (XSLFShape sh : getShapes()) {
+            if (sh instanceof XSLFTextShape) {
+                XSLFTextShape tsh = (XSLFTextShape) sh;
+                Placeholder ph = tsh.getTextType();
+                if (ph == null) continue;
+
+                switch (ph) {
+                    // these are special and not copied by default
+                    case DATETIME:
+                    case SLIDE_NUMBER:
+                    case FOOTER:
+                        break;
+                    default:
+                        slide.getSpTree().addNewSp().set(tsh.getXmlObject().copy());
+                }
+            }
         }
-        return getSlideMaster().getBackground();
+    }
+
+    /**
+     *
+     * @return type of this layout
+     */
+    public SlideLayout getType(){
+        int ordinal = _layout.getType().intValue() - 1;
+        return SlideLayout.values()[ordinal];
     }
 }

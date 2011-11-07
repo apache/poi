@@ -24,6 +24,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Definition of a custom geometric shape
@@ -34,8 +35,9 @@ public class CustomGeometry implements Iterable<Path>{
     List<Guide> adjusts = new ArrayList<Guide>();
     List<Guide> guides = new ArrayList<Guide>();
     List<Path> paths = new ArrayList<Path>();
+    Path textBounds;
 
-    public CustomGeometry(CTCustomGeometry2D geom){
+    public CustomGeometry(CTCustomGeometry2D geom) {
         CTGeomGuideList avLst = geom.getAvLst();
         if(avLst != null) for(CTGeomGuide gd : avLst.getGdList()){
             adjusts.add(new AdjustValue(gd));
@@ -50,6 +52,21 @@ public class CustomGeometry implements Iterable<Path>{
         if(pathLst != null) for(CTPath2D spPath : pathLst.getPathList()){
             paths.add(new Path(spPath));
         }
+
+        if(geom.isSetRect()) {
+            CTGeomRect rect = geom.getRect();
+            textBounds = new Path();
+            textBounds.addCommand(
+                    new MoveToCommand(rect.getL().toString(), rect.getT().toString()));
+            textBounds.addCommand(
+                    new LineToCommand(rect.getR().toString(), rect.getT().toString()));
+            textBounds.addCommand(
+                    new LineToCommand(rect.getR().toString(), rect.getB().toString()));
+            textBounds.addCommand(
+                    new LineToCommand(rect.getL().toString(), rect.getB().toString()));
+            textBounds.addCommand(
+                    new ClosePathCommand());
+        }
     }
 
 
@@ -58,4 +75,7 @@ public class CustomGeometry implements Iterable<Path>{
         return paths.iterator();
     }
 
+    public Path getTextBounds(){
+        return textBounds;        
+    }
 }

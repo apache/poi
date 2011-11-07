@@ -38,7 +38,7 @@ public class TestXSLFSlideShow extends TestCase {
 
         List<POIXMLDocumentPart> rels =  slide1.getRelations();
         assertEquals(1, rels.size());
-        assertEquals(slide1.getMasterSheet().getLayout("blank"), rels.get(0));
+        assertEquals(slide1.getSlideMaster().getLayout(SlideLayout.BLANK), rels.get(0));
 
         XSLFSlide slide2 = ppt.createSlide();
         assertEquals(2, ppt.getSlides().length);
@@ -91,7 +91,7 @@ public class TestXSLFSlideShow extends TestCase {
         assertEquals(1, masters.length);
 
         XSLFSlide slide = ppt.createSlide();
-        assertSame(masters[0], slide.getMasterSheet());
+        assertSame(masters[0], slide.getSlideMaster());
     }
 
     public void testSlideLayout(){

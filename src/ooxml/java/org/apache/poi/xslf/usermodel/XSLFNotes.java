@@ -75,4 +75,9 @@ public final class XSLFNotes extends XSLFSheet {
     protected String getRootElementName(){
         return "notes";        
     }
+
+    @Override
+    public XSLFSheet getMasterSheet() {
+        return null;
+    }
 }

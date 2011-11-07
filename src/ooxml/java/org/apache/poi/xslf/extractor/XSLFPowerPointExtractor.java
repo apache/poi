@@ -128,7 +128,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
             XSLFNotes notes = slide.getNotes();
             XSLFComments comments = slide.getComments();
             XSLFSlideLayout layout = slide.getSlideLayout();
-            XSLFSlideMaster master = slide.getMasterSheet();
+            XSLFSlideMaster master = layout.getSlideMaster();
 
             // TODO Do the slide's name
             // (Stored in docProps/app.xml)

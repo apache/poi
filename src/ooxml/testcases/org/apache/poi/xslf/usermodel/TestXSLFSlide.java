@@ -19,9 +19,6 @@ package org.apache.poi.xslf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-
-import java.util.List;
 
 /**
  * @author Yegor Kozlov
@@ -99,11 +96,11 @@ public class TestXSLFSlide extends TestCase {
         assertEquals(0, ppt.getSlides().length);
 
         XSLFSlide slide = ppt.createSlide();
-        assertTrue(slide.getFollowMasterBackground());
-        slide.setFollowMasterBackground(false);
-        assertFalse(slide.getFollowMasterBackground());
-        slide.setFollowMasterBackground(true);
-        assertTrue(slide.getFollowMasterBackground());
+        assertTrue(slide.getFollowMasterGraphics());
+        slide.setFollowMasterGraphics(false);
+        assertFalse(slide.getFollowMasterGraphics());
+        slide.setFollowMasterGraphics(true);
+        assertTrue(slide.getFollowMasterGraphics());
     }
 
 }

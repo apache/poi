@@ -20,6 +20,8 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.xslf.model.geom.Outline;
+import org.apache.poi.xslf.model.geom.Path;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
@@ -32,11 +34,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnectorNonVisual;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Specifies a connection shape.
@@ -197,36 +202,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         return len == null ? LineEndLength.MEDIUM : LineEndLength.values()[len.intValue() - 1];
     }
 
-    @Override
-    public void draw(Graphics2D graphics) {
-        java.awt.Shape outline = getOutline();
-
-        // shadow
-        XSLFShadow shadow = getShadow();
-
-        //border
-        Paint line = getLinePaint(graphics);
-        if (line != null) {
-            if (shadow != null) shadow.draw(graphics);
-
-            graphics.setPaint(line);
-            applyStroke(graphics);
-            graphics.draw(outline);
-
-            Shape tailDecoration = getTailDecoration();
-            if (tailDecoration != null) {
-                graphics.draw(tailDecoration);
-            }
-
-            Shape headDecoration = getHeadDecoration();
-            if (headDecoration != null) {
-                graphics.draw(headDecoration);
-
-            }
-        }
-    }
-
-    Shape getTailDecoration() {
+    Outline getTailDecoration() {
         LineEndLength tailLength = getLineTailLength();
         LineEndWidth tailWidth = getLineTailWidth();
 
@@ -239,17 +215,20 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
 
         AffineTransform at = new AffineTransform();
         Shape shape = null;
+        Path p = null;
         Rectangle2D bounds;
         double scaleY = Math.pow(2, tailWidth.ordinal());
         double scaleX = Math.pow(2, tailLength.ordinal());
-        switch (getLineHeadDecoration()) {
+        switch (getLineTailDecoration()) {
             case OVAL:
+                p = new Path();
                 shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
                 bounds = shape.getBounds2D();
                 at.translate(x2 - bounds.getWidth() / 2, y2 - bounds.getHeight() / 2);
                 at.rotate(alpha, bounds.getX() + bounds.getWidth() / 2, bounds.getY() + bounds.getHeight() / 2);
                 break;
             case ARROW:
+                p = new Path();
                 GeneralPath arrow = new GeneralPath();
                 arrow.moveTo((float) (-lineWidth * 3), (float) (-lineWidth * 2));
                 arrow.lineTo(0, 0);
@@ -259,6 +238,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 at.rotate(alpha);
                 break;
             case TRIANGLE:
+                p = new Path();
                 scaleY = tailWidth.ordinal() + 1;
                 scaleX = tailLength.ordinal() + 1;
                 GeneralPath triangle = new GeneralPath();
@@ -277,10 +257,10 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         if (shape != null) {
             shape = at.createTransformedShape(shape);
         }
-        return shape;
+        return shape == null ? null : new Outline(shape, p);
     }
 
-    Shape getHeadDecoration() {
+    Outline getHeadDecoration() {
         LineEndLength headLength = getLineHeadLength();
         LineEndWidth headWidth = getLineHeadWidth();
 
@@ -293,11 +273,13 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
 
         AffineTransform at = new AffineTransform();
         Shape shape = null;
+        Path p = null;
         Rectangle2D bounds;
         double scaleY = 1;
         double scaleX = 1;
         switch (getLineHeadDecoration()) {
             case OVAL:
+                p = new Path();
                 shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
                 bounds = shape.getBounds2D();
                 at.translate(x1 - bounds.getWidth() / 2, y1 - bounds.getHeight() / 2);
@@ -305,6 +287,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 break;
             case STEALTH:
             case ARROW:
+                p = new Path();
                 GeneralPath arrow = new GeneralPath();
                 arrow.moveTo((float) (lineWidth * 3 * scaleX), (float) (-lineWidth * scaleY * 2));
                 arrow.lineTo(0, 0);
@@ -314,6 +297,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 at.rotate(alpha);
                 break;
             case TRIANGLE:
+                p = new Path();
                 scaleY = headWidth.ordinal() + 1;
                 scaleX = headLength.ordinal() + 1;
                 GeneralPath triangle = new GeneralPath();
@@ -332,7 +316,19 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         if (shape != null) {
             shape = at.createTransformedShape(shape);
         }
-        return shape;
+        return shape == null ? null : new Outline(shape, p);
+    }
+
+    @Override
+    List<Outline> getCustomOutlines(){
+        List<Outline> lst = new ArrayList<Outline>();
+
+        Outline head = getHeadDecoration();
+        if(head != null) lst.add(head);
+
+        Outline tail = getTailDecoration();
+        if(tail != null) lst.add(tail);
+        return lst;
     }
 
 }

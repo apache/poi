@@ -188,10 +188,4 @@ public class XSLFFreeformShape extends XSLFAutoShape {
         geom.addNewPathLst();
         return ct;
     }
-
-    @Override
-    protected java.awt.Shape getOutline(){
-        return getPath();
-    }
-
 }

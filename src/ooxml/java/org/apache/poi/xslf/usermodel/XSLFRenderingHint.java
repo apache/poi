@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.*;
+import java.awt.RenderingHints;
 
 /**
  *
@@ -38,5 +38,37 @@ public class XSLFRenderingHint extends RenderingHints.Key {
 
     public static final XSLFRenderingHint GSAVE = new XSLFRenderingHint(1);
     public static final XSLFRenderingHint GRESTORE = new XSLFRenderingHint(2);
+
+    /**
+     * Use a custom image rendener
+     *
+     * @see XSLFImageRendener
+     */
     public static final XSLFRenderingHint IMAGE_RENDERER = new XSLFRenderingHint(3);
+
+    /**
+     *  how to render text:
+     *
+     *  {@link #TEXT_MODE_CHARACTERS} (default) means to draw via
+     *   {@link java.awt.Graphics2D#drawString(java.text.AttributedCharacterIterator, float, float)}.
+     *   This mode draws text as characters. Use it if the target graphics writes the actual
+     *   character codes instead of glyph outlines (PDFGraphics2D, SVGGraphics2D, etc.)
+     *
+     *   {@link #TEXT_MODE_GLYPHS} means to render via
+     *   {@link java.awt.font.TextLayout#draw(java.awt.Graphics2D, float, float)}.
+     *   This mode draws glyphs as shapes and provides some advanced capabilities such as
+     *   justification and font substitution. Use it if the target graphics is an image.
+     *
+     */
+    public static final XSLFRenderingHint TEXT_RENDERING_MODE = new XSLFRenderingHint(4);
+
+    /**
+     * draw text via {@link java.awt.Graphics2D#drawString(java.text.AttributedCharacterIterator, float, float)}
+     */
+    public static final int TEXT_MODE_CHARACTERS = 1;
+
+    /**
+     * draw text via {@link java.awt.font.TextLayout#draw(java.awt.Graphics2D, float, float)}
+     */
+    public static final int TEXT_MODE_GLYPHS = 2;
 }

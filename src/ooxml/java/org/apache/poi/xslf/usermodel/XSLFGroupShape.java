@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -62,10 +62,12 @@ public class XSLFGroupShape extends XSLFShape {
         _spPr = shape.getGrpSpPr();
     }
 
+    @Override
     public CTGroupShape getXmlObject(){
         return _shape;
     }
 
+    @Override
     public Rectangle2D getAnchor(){
         CTGroupTransform2D xfrm = _spPr.getXfrm();
         CTPoint2D off = xfrm.getOff();
@@ -79,6 +81,7 @@ public class XSLFGroupShape extends XSLFShape {
                 Units.toPoints(cx), Units.toPoints(cy));
     }
 
+    @Override
     public void setAnchor(Rectangle2D anchor){
         CTGroupTransform2D xfrm = _spPr.isSetXfrm() ? _spPr.getXfrm() : _spPr.addNewXfrm();
         CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
@@ -93,6 +96,12 @@ public class XSLFGroupShape extends XSLFShape {
         ext.setCy(cy);
     }
 
+    /**
+     *
+     * @return the coordinates of the child extents rectangle
+     * used for calculations of grouping, scaling, and rotation
+     * behavior of shapes placed within a group.
+     */
     public Rectangle2D getInteriorAnchor(){
         CTGroupTransform2D xfrm = _spPr.getXfrm();
         CTPoint2D off = xfrm.getChOff();
@@ -106,6 +115,12 @@ public class XSLFGroupShape extends XSLFShape {
                 Units.toPoints(cx), Units.toPoints(cy));
     }
 
+    /**
+     *
+     * @param anchor the coordinates of the child extents rectangle
+     * used for calculations of grouping, scaling, and rotation
+     * behavior of shapes placed within a group.
+     */
     public void setInteriorAnchor(Rectangle2D anchor){
         CTGroupTransform2D xfrm = _spPr.isSetXfrm() ? _spPr.getXfrm() : _spPr.addNewXfrm();
         CTPoint2D off = xfrm.isSetChOff() ? xfrm.getChOff() : xfrm.addNewChOff();
@@ -120,10 +135,17 @@ public class XSLFGroupShape extends XSLFShape {
         ext.setCy(cy);
     }
 
+    /**
+     *
+     * @return child shapes contained witin this group
+     */
     public XSLFShape[] getShapes(){
         return _shapes.toArray(new XSLFShape[_shapes.size()]);
     }
 
+    /**
+     * Remove the specified shape from this group
+     */
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         if(obj instanceof CTShape){
@@ -138,10 +160,12 @@ public class XSLFGroupShape extends XSLFShape {
         return _shapes.remove(xShape);
     }
 
+    @Override
     public String getShapeName(){
         return _shape.getNvGrpSpPr().getCNvPr().getName();
     }
 
+    @Override
     public int getShapeId(){
         return (int)_shape.getNvGrpSpPr().getCNvPr().getId();
     }
@@ -216,53 +240,37 @@ public class XSLFGroupShape extends XSLFShape {
         return sh;
     }
 
-
+    @Override
     public void setFlipHorizontal(boolean flip){
         _spPr.getXfrm().setFlipH(flip);
     }
 
+    @Override
     public void setFlipVertical(boolean flip){
         _spPr.getXfrm().setFlipV(flip);
     }
-    /**
-     * Whether the shape is horizontally flipped
-     *
-     * @return whether the shape is horizontally flipped
-     */
+
+    @Override
     public boolean getFlipHorizontal(){
          return _spPr.getXfrm().getFlipH();
     }
 
+    @Override
     public boolean getFlipVertical(){
          return _spPr.getXfrm().getFlipV();
     }
 
-    /**
-     * Rotate this shape.
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @param theta the rotation angle in degrees.
-     */
+    @Override
     public void setRotation(double theta){
         _spPr.getXfrm().setRot((int)(theta*60000));
     }
 
-    /**
-     * Rotation angle in degrees
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @return rotation angle in degrees
-     */
+    @Override
     public double getRotation(){
         return (double)_spPr.getXfrm().getRot()/60000;
     }
 
+    @Override
     public void draw(Graphics2D graphics){
 
     	// the coordinate system of this group of shape
@@ -278,16 +286,14 @@ public class XSLFGroupShape extends XSLFShape {
 
         for (XSLFShape shape : getShapes()) {
         	// remember the initial transform and restore it after we are done with the drawing
-        	AffineTransform at0 = graphics.getTransform();
+        	AffineTransform at = graphics.getTransform();
             graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
 
-            // apply rotation and flipping
-        	shape.applyTransform(graphics);
-
+            shape.applyTransform(graphics);
         	shape.draw(graphics);
 
             // restore the coordinate system
-            graphics.setTransform(at0);
+            graphics.setTransform(at);
             graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
         }
     }

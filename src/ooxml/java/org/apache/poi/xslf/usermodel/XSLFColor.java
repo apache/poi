@@ -30,7 +30,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
 import org.w3c.dom.Node;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,12 +40,15 @@ import java.util.Map;
  * @author Yegor Kozlov
  */
 @Beta
+@Internal
 public class XSLFColor {
     private XmlObject _xmlObject;
     private Color _color;
+    private CTSchemeColor _phClr;
 
-    XSLFColor(XmlObject obj, XSLFTheme theme) {
+    public XSLFColor(XmlObject obj, XSLFTheme theme, CTSchemeColor phClr) {
         _xmlObject = obj;
+        _phClr = phClr;
         _color = toColor(obj, theme);
     }
 
@@ -94,7 +97,7 @@ public class XSLFColor {
         return result;
     }
 
-    static Color toColor(XmlObject obj, XSLFTheme theme) {
+    Color toColor(XmlObject obj, XSLFTheme theme) {
         Color color = null;
         for (XmlObject ch : obj.selectPath("*")) {
             if (ch instanceof CTHslColor) {
@@ -102,7 +105,8 @@ public class XSLFColor {
                 int h = hsl.getHue2();
                 int s = hsl.getSat2();
                 int l = hsl.getLum2();
-                // is it correct ? 
+                // This conversion is not correct and differs from PowerPoint.
+                // TODO: Revisit and improve.
                 color = Color.getHSBColor(h / 60000f, s / 100000f, l / 100000f);
             } else if (ch instanceof CTPresetColor) {
                 CTPresetColor prst = (CTPresetColor)ch;
@@ -111,12 +115,13 @@ public class XSLFColor {
             } else if (ch instanceof CTSchemeColor) {
                 CTSchemeColor schemeColor = (CTSchemeColor)ch;
                 String colorRef = schemeColor.getVal().toString();
+                if(_phClr != null) {
+                    // context color overrides the theme
+                    colorRef = _phClr.getVal().toString();
+                }
                 // find referenced CTColor in the theme and convert it to java.awt.Color via a recursive call
                 CTColor ctColor = theme.getCTColor(colorRef);
                 if(ctColor != null) color = toColor(ctColor, null);
-                else {
-                    color = Color.black;
-                }
             } else if (ch instanceof CTScRgbColor) {
                 // same as CTSRgbColor but with values expressed in percents
                 CTScRgbColor scrgb = (CTScRgbColor)ch;
@@ -145,21 +150,59 @@ public class XSLFColor {
         return color;
     }
 
+    /**
+     * Read a perecentage value from the supplied xml bean.
+     * Example:
+     *   <a:tint val="45000"/>
+     *
+     * the returned value is 45
+     *
+     * @return  the percentage value in the range [0 .. 100]
+     */
     private int getPercentageValue(String elem){
-        XmlObject[] obj = _xmlObject.selectPath(
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem);
+        String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
+
+        XmlObject[] obj;
+
+        // first ask the context color and if not found, ask the actual color bean
+        if(_phClr != null){
+            obj = _phClr.selectPath(query);
+            if(obj.length == 1){
+                Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
+                if(attr != null) {
+                    return Integer.parseInt(attr.getNodeValue()) / 1000;
+                }
+            }
+        }
+
+        obj = _xmlObject.selectPath(query);
         if(obj.length == 1){
             Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
             if(attr != null) {
                 return Integer.parseInt(attr.getNodeValue()) / 1000;
             }
         }
+
+
         return -1;
     }
 
     private int getAngleValue(String elem){
-        XmlObject[] obj = _xmlObject.selectPath(
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem);
+        String color = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
+        XmlObject[] obj;
+
+        // first ask the context color and if not found, ask the actual color bean
+        if(_phClr != null){
+            obj = _xmlObject.selectPath( color );
+            if(obj.length == 1){
+                Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
+                if(attr != null) {
+                    return Integer.parseInt(attr.getNodeValue()) / 60000;
+                }
+            }
+        }
+
+        obj = _xmlObject.selectPath( color );
         if(obj.length == 1){
             Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
             if(attr != null) {
@@ -341,7 +384,7 @@ public class XSLFColor {
      * A 10% shade is 10% of the input color combined with 90% black.
      * 
      * @return the value of the shade specified as a
-     * percentage with 0% indicating minimal blue and 100% indicating maximum
+     * percentage with 0% indicating minimal shade and 100% indicating maximum
      * or -1 if the value is not set
      */
     int getShade(){
@@ -353,7 +396,7 @@ public class XSLFColor {
      * A 10% tint is 10% of the input color combined with 90% white.
      *
      * @return the value of the tint specified as a
-     * percentage with 0% indicating minimal blue and 100% indicating maximum
+     * percentage with 0% indicating minimal tint and 100% indicating maximum
      * or -1 if the value is not set
      */
     int getTint(){
@@ -389,6 +432,10 @@ public class XSLFColor {
         return color;
     }
 
+    /**
+     * This algorithm returns result different from PowerPoint.
+     * TODO: revisit and improve
+     */
     private static Color shade(Color c, int shade) {
         return new Color(
                 (int)(c.getRed() * shade * 0.01),
@@ -397,6 +444,10 @@ public class XSLFColor {
                 c.getAlpha());
     }
 
+    /**
+     * This algorithm returns result different from PowerPoint.
+     * TODO: revisit and improve
+     */
     private static Color tint(Color c, int tint) {
         int r = c.getRed();
         int g = c.getGreen();
@@ -414,7 +465,7 @@ public class XSLFColor {
     /**
      * Preset colors defined in DrawingML
      */
-    static Map<String, Color> presetColors;
+    static final Map<String, Color> presetColors;
 
     static {
         presetColors = new HashMap<String, Color>();    

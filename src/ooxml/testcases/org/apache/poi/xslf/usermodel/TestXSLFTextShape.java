@@ -65,10 +65,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape1.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape1.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape1.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape1.getRightInset()); // 0.1"
+        assertEquals(3.6, shape1.getTopInset());  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -95,10 +95,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape2.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape2.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape2.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape2.getRightInset()); // 0.1"
+        assertEquals(3.6, shape2.getTopInset());  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         assertEquals("subtitle", shape2.getText());
@@ -134,10 +134,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape1.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape1.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape1.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape1.getRightInset()); // 0.1"
+        assertEquals(3.6, shape1.getTopInset());  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -169,10 +169,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape2.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape2.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape2.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape2.getRightInset()); // 0.1"
+        assertEquals(3.6, shape2.getTopInset());  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
@@ -244,10 +244,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape1.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape1.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape1.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape1.getRightInset()); // 0.1"
+        assertEquals(3.6, shape1.getTopInset());  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -278,10 +278,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape2.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape2.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape2.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape2.getRightInset()); // 0.1"
+        assertEquals(3.6, shape2.getTopInset());  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.BOTTOM, shape2.getVerticalAlignment());
 
         assertEquals("Section Header", shape2.getText());
@@ -318,10 +318,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape1.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape1.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape1.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape1.getRightInset()); // 0.1"
+        assertEquals(3.6, shape1.getTopInset());  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -351,10 +351,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape2.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape2.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape2.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape2.getRightInset()); // 0.1"
+        assertEquals(3.6, shape2.getTopInset());  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
@@ -425,10 +425,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape1.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape1.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape1.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape1.getRightInset()); // 0.1"
+        assertEquals(3.6, shape1.getTopInset());  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -449,10 +449,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape2.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape2.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape2.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape2.getRightInset()); // 0.1"
+        assertEquals(3.6, shape2.getTopInset());  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
@@ -498,10 +498,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape1.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape1.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape1.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape1.getRightInset()); // 0.1"
+        assertEquals(3.6, shape1.getTopInset());  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.BOTTOM, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -532,10 +532,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getMarginLeft());  // 0.1"
-        assertEquals(7.2, shape2.getMarginRight()); // 0.1"
-        assertEquals(3.6, shape2.getMarginTop());  // 0.05"
-        assertEquals(3.6, shape2.getMarginBottom()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
+        assertEquals(7.2, shape2.getRightInset()); // 0.1"
+        assertEquals(3.6, shape2.getTopInset());  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);

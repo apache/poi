@@ -34,38 +34,38 @@ public class TestXSLFAutoShape extends TestCase {
         shape.addNewTextParagraph().addNewTextRun().setText("POI");
 
         // default margins from slide master
-        assertEquals(3.6, shape.getMarginBottom());
-        assertEquals(3.6, shape.getMarginTop());
-        assertEquals(7.2, shape.getMarginLeft());
-        assertEquals(7.2, shape.getMarginRight());
+        assertEquals(3.6, shape.getBottomInset());
+        assertEquals(3.6, shape.getTopInset());
+        assertEquals(7.2, shape.getLeftInset());
+        assertEquals(7.2, shape.getRightInset());
 
-        shape.setMarginBottom(1.0);
-        assertEquals(1.0, shape.getMarginBottom());
-        shape.setMarginTop(2.0);
-        assertEquals(2.0, shape.getMarginTop());
-        shape.setMarginLeft(3.0);
-        assertEquals(3.0, shape.getMarginLeft());
-        shape.setMarginRight(4.0);
-        assertEquals(4.0, shape.getMarginRight());
+        shape.setBottomInset(1.0);
+        assertEquals(1.0, shape.getBottomInset());
+        shape.setTopInset(2.0);
+        assertEquals(2.0, shape.getTopInset());
+        shape.setLeftInset(3.0);
+        assertEquals(3.0, shape.getLeftInset());
+        shape.setRightInset(4.0);
+        assertEquals(4.0, shape.getRightInset());
 
-        shape.setMarginBottom(0.0);
-        assertEquals(0.0, shape.getMarginBottom());
-        shape.setMarginTop(0.0);
-        assertEquals(0.0, shape.getMarginTop());
-        shape.setMarginLeft(0.0);
-        assertEquals(0.0, shape.getMarginLeft());
-        shape.setMarginRight(0.0);
-        assertEquals(0.0, shape.getMarginRight());
+        shape.setBottomInset(0.0);
+        assertEquals(0.0, shape.getBottomInset());
+        shape.setTopInset(0.0);
+        assertEquals(0.0, shape.getTopInset());
+        shape.setLeftInset(0.0);
+        assertEquals(0.0, shape.getLeftInset());
+        shape.setRightInset(0.0);
+        assertEquals(0.0, shape.getRightInset());
 
         // unset to defauls
-        shape.setMarginBottom(-1);
-        assertEquals(3.6, shape.getMarginBottom());
-        shape.setMarginTop(-1);
-        assertEquals(3.6, shape.getMarginTop());
-        shape.setMarginLeft(-1);
-        assertEquals(7.2, shape.getMarginLeft());
-        shape.setMarginRight(-1);
-        assertEquals(7.2, shape.getMarginRight());
+        shape.setBottomInset(-1);
+        assertEquals(3.6, shape.getBottomInset());
+        shape.setTopInset(-1);
+        assertEquals(3.6, shape.getTopInset());
+        shape.setLeftInset(-1);
+        assertEquals(7.2, shape.getLeftInset());
+        shape.setRightInset(-1);
+        assertEquals(7.2, shape.getRightInset());
 
         // shape
         assertTrue(shape.getWordWrap());

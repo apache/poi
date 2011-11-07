@@ -36,6 +36,11 @@ public class LineToCommand implements PathCommand {
         arg2 = pt.getY().toString();
     }
 
+    LineToCommand(String s1, String s2){
+        arg1 = s1;
+        arg2 = s2;
+    }
+
     public void execute(GeneralPath path, Context ctx){
         double x = ctx.getValue(arg1);
         double y = ctx.getValue(arg2);

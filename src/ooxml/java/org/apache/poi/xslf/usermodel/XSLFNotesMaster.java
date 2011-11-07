@@ -24,7 +24,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
 * Notes master object associated with this layout.
@@ -45,8 +44,6 @@ import java.util.Map;
 @Beta
  public class XSLFNotesMaster extends XSLFSheet {
 	 private CTNotesMaster _slide;
-    private Map<String, XSLFSlideLayout> _layouts;
-    private XSLFTheme _theme;
 
     XSLFNotesMaster() {
         super();
@@ -70,4 +67,10 @@ import java.util.Map;
     protected String getRootElementName(){
         return "notesMaster";
     }
+
+    @Override
+    public XSLFSheet getMasterSheet() {
+        return null;
+    }
+
 }

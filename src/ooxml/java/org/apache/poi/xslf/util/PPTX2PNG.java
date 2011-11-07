@@ -28,21 +28,26 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileOutputStream;
 
 /**
- * Date: 10/11/11
+ * An utulity to convert slides of a .pptx slide show to a PNG image
  *
  * @author Yegor Kozlov
  */
 public class PPTX2PNG {
+
+    static void usage(){
+        System.out.println("Usage: PPTX2PNG [options] <pptx file>");
+        System.out.println("Options:");
+        System.out.println("    -scale <float>   scale factor");
+        System.out.println("    -slide <integer> 1-based index of a slide to render");
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
-            System.out.println("Usage: PPTX2PNG [options] <pptx file>");
+            usage();
             return;
         }
 
@@ -62,6 +67,11 @@ public class PPTX2PNG {
             }
         }
 
+        if(file == null){
+            usage();
+            return;
+        }
+
         System.out.println("Processing " + file);
         XMLSlideShow ppt = new XMLSlideShow(OPCPackage.open(file));
 
@@ -79,19 +89,23 @@ public class PPTX2PNG {
             BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
 
+            // default rendering options
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-            graphics.setPaint(Color.white);
-            graphics.fill(new Rectangle2D.Float(0, 0, width, height));
+            graphics.setColor(Color.white);
+            graphics.clearRect(0, 0, width, height);
 
-            graphics.scale((double) width / pgsize.width, (double) height / pgsize.height);
+            graphics.scale(scale, scale);
 
+            // draw stuff
             slide[i].draw(graphics);
 
-            String fname = file.replaceAll("\\.pptx", "-" + (i + 1) + ".png");
+            // save the result
+            int sep = file.lastIndexOf(".");
+            String fname = file.substring(0, sep == -1 ? file.length() : sep) + "-" + (i + 1) +".png";
             FileOutputStream out = new FileOutputStream(fname);
             ImageIO.write(img, "png", out);
             out.close();

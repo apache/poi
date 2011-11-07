@@ -21,9 +21,9 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
@@ -34,22 +34,25 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 import javax.xml.namespace.QName;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<XSLFShape> {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
     private CTGroupShape _spTree;
+
+    private List<XSLFTextShape>_placeholders;
     private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
     private Map<Integer, XSLFSimpleShape> _placeholderByTypeMap;
 
@@ -61,6 +64,10 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         super(part, rel);
     }
 
+    /**
+     *
+     * @return the XMLSlideShow this sheet belongs to
+     */
     public XMLSlideShow getSlideShow() {
         POIXMLDocumentPart p = getParent();
         while(p != null) {
@@ -69,7 +76,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
             }
             p = p.getParent();
         }
-        return null;
+        throw new IllegalStateException("SlideShow was not found");
     }
 
     protected List<XSLFShape> buildShapes(CTGroupShape spTree){
@@ -92,11 +99,16 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         return shapes;
     }
 
+    /**
+     * @return top-level Xml bean representing this sheet
+     */
     public abstract XmlObject getXmlObject();
 
+    @Internal
     public XSLFCommonSlideData getCommonSlideData() {
        return _commonSlideData;
     }
+
     protected void setCommonSlideData(CTCommonSlideData data) {
        if(data == null) {
           _commonSlideData = null;
@@ -180,10 +192,34 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         return sh;
     }
 
+    /**
+     * Returns an array containing all of the shapes in this sheet
+     *
+     * @return an array of all shapes in this sheet
+     */
     public XSLFShape[] getShapes(){
         return getShapeList().toArray(new XSLFShape[_shapes.size()]);
     }
 
+    /**
+     * Returns an iterator over the shapes in this sheet
+     *
+     * @return an iterator over the shapes in this sheet
+     */
+    public Iterator<XSLFShape> iterator(){
+        return getShapeList().iterator();
+    }
+
+    /**
+     * Removes the specified shape from this sheet, if it is present
+     * (optional operation).  If this sheet does not contain the element,
+     * it is unchanged.
+     *
+     * @param xShape shape to be removed from this sheet, if present
+     * @return <tt>true</tt> if this sheet contained the specified element
+     * @throws IllegalArgumentException if the type of the specified shape
+     *         is incompatible with this sheet (optional)
+     */
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         CTGroupShape spTree = getSpTree();
@@ -197,10 +233,6 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
         return getShapeList().remove(xShape);
-    }
-
-    public XSLFBackground getBackground(){
-        return null;
     }
 
     protected abstract String getRootElementName();
@@ -248,22 +280,22 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         getXmlObject().set(src.getXmlObject());
     }
 
-    public XSLFTheme getTheme(){
+    /**
+     * @return theme (shared styles) associated with this theme.
+     *  By default returns <code>null</code> which means that this sheet is theme-less.
+     *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
+     *  method and return the corresposnding package part.
+     */
+    XSLFTheme getTheme(){
     	return null;
     }
 
-    public XSLFSlideMaster getSlideMaster(){
-    	return null;
-    }
+    /**
+     *
+     * @return master of this sheet.
+     */
+    public abstract XSLFSheet getMasterSheet();
 
-    public XSLFSlideLayout getSlideLayout(){
-    	return null;
-    }
-
-    protected CTTextListStyle getTextProperties(Placeholder textType) {
-        return null;
-    }
-    
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
             if(shape instanceof XSLFTextShape) {
@@ -286,46 +318,78 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
         return shape;
     }
 
-    XSLFSimpleShape getPlaceholderById(int id) {
-        if(_placeholderByIdMap == null) {
+    void initPlaceholders() {
+        if(_placeholders == null) {
+            _placeholders = new ArrayList<XSLFTextShape>();
             _placeholderByIdMap = new HashMap<Integer, XSLFSimpleShape>();
+            _placeholderByTypeMap = new HashMap<Integer, XSLFSimpleShape>();
+
             for(XSLFShape sh : getShapes()){
-                if(sh instanceof XSLFSimpleShape){
-                    XSLFSimpleShape sShape = (XSLFSimpleShape)sh;
+                if(sh instanceof XSLFTextShape){
+                    XSLFTextShape sShape = (XSLFTextShape)sh;
                     CTPlaceholder ph = sShape.getCTPlaceholder();
-                    if(ph != null && ph.isSetIdx()){
-                        int idx = (int)ph.getIdx();
-                        _placeholderByIdMap.put(idx, sShape);
+                    if(ph != null) {
+                        _placeholders.add(sShape);
+                        if(ph.isSetIdx()) {
+                            int idx = (int)ph.getIdx();
+                            _placeholderByIdMap.put(idx, sShape);
+                        }
+                        if(ph.isSetType()){
+                            _placeholderByTypeMap.put(ph.getType().intValue(), sShape);
+                        }
                     }
                 }
             }
         }
+    }
+
+    XSLFSimpleShape getPlaceholderById(int id) {
+        initPlaceholders();
         return _placeholderByIdMap.get(id);
     }
 
     XSLFSimpleShape getPlaceholderByType(int ordinal) {
-        if(_placeholderByTypeMap == null) {
-            _placeholderByTypeMap = new HashMap<Integer, XSLFSimpleShape>();
-            for(XSLFShape sh : getShapes()){
-                if(sh instanceof XSLFSimpleShape){
-                    XSLFSimpleShape sShape = (XSLFSimpleShape)sh;
-                    CTPlaceholder ph = sShape.getCTPlaceholder();
-                    if(ph != null && ph.isSetType()){
-                        _placeholderByTypeMap.put(ph.getType().intValue(), sShape);
-                    }
-                }
-            }
-        }
+        initPlaceholders();
         return _placeholderByTypeMap.get(ordinal);
+    }
+
+    /**
+     *
+     * @param idx 0-based index of a placeholder in the sheet
+     * @return placeholder
+     */
+    public XSLFTextShape getPlaceholder(int idx) {
+        initPlaceholders();
+        return _placeholders.get(idx);
+    }
+
+    /**
+     *
+     * @return all placeholder shapes in this sheet
+     */
+    public XSLFTextShape[] getPlaceholders() {
+        initPlaceholders();
+        return _placeholders.toArray(new XSLFTextShape[_placeholders.size()]);
     }
 
     /**
      * Checks if this <code>sheet</code> displays the specified shape.
      *
-     * Subclasses can override it and skip certain shapes from drawings.
+     * Subclasses can override it and skip certain shapes from drawings,
+     * for instance, slide masters and layouts don't display placeholders
      */
     protected boolean canDraw(XSLFShape shape){
         return true;
+    }
+
+    /**
+     *
+     * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.
+     * Sheets that support the notion of master (slide, slideLayout) should override it and
+     * check this setting in the sheet XML
+     */
+    public boolean getFollowMasterGraphics(){
+        return false;
     }
 
     /**
@@ -334,24 +398,27 @@ public abstract class XSLFSheet extends POIXMLDocumentPart {
      * @param graphics
      */
     public void draw(Graphics2D graphics){
-        XSLFBackground bg = getBackground();
-        if(bg != null) bg.draw(graphics);
+        XSLFSheet master = getMasterSheet();
+        if(getFollowMasterGraphics() && master != null) master.draw(graphics);
 
         for(XSLFShape shape : getShapeList()) {
             if(!canDraw(shape)) continue;
 
         	// remember the initial transform and restore it after we are done with drawing
-        	AffineTransform at0 = graphics.getTransform();
+        	AffineTransform at = graphics.getTransform();
 
+            // concrete implementations can make sense of this hint,
+            // for example PSGraphics2D or PDFGraphics2D would call gsave() / grestore
             graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
 
             // apply rotation and flipping
             shape.applyTransform(graphics);
-
+            // draw stuff
             shape.draw(graphics);
 
             // restore the coordinate system
-            graphics.setTransform(at0);
+            graphics.setTransform(at);
+
             graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
 
         }

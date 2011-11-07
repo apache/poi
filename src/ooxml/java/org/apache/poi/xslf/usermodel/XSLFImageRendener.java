@@ -19,10 +19,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -76,11 +77,10 @@ public class XSLFImageRendener {
 	public boolean drawImage(Graphics2D graphics, XSLFPictureData data,
 			Rectangle2D anchor) {
 		try {
-			BufferedImage img = readImage(new ByteArrayInputStream(data.getData()));
-			if (img != null){
-                graphics.drawImage(img, (int) anchor.getX(), (int) anchor.getY(),
-                        (int) anchor.getWidth(), (int) anchor.getHeight(), null);
-            }
+			BufferedImage img = ImageIO.read(data.getPackagePart().getInputStream());
+            graphics.drawImage(img,
+                    (int) anchor.getX(), (int) anchor.getY(),
+                    (int) anchor.getWidth(), (int) anchor.getHeight(), null);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -89,12 +89,13 @@ public class XSLFImageRendener {
 	}
 
     /**
-     * create a buffered image from input stream
+     * Create a buffered image from the supplied package part.
+     * This method is called to create texture paints.
      *
      * @return a <code>BufferedImage</code> containing the decoded
      * contents of the input, or <code>null</code>.
      */
-    public BufferedImage readImage(InputStream is) throws IOException {
-        return ImageIO.read(is);
+    public BufferedImage readImage(PackagePart packagePart) throws IOException {
+        return ImageIO.read(packagePart.getInputStream());
     }
 }

@@ -29,17 +29,19 @@ import java.util.Map;
  * @author Yegor Kozlov
  */
 public class Context {
-    Map<String, Double> _ctx = new HashMap<String, Double>();
-    IAdjustableShape _props;
-
-   public Context(CustomGeometry geom, IAdjustableShape props){
+    final Map<String, Double> _ctx = new HashMap<String, Double>();
+    final IAdjustableShape _props;
+    final Rectangle2D _anchor;
+    
+    public Context(CustomGeometry geom, Rectangle2D anchor, IAdjustableShape props){
         _props = props;
+        _anchor = anchor;
         for(Guide gd : geom.adjusts) evaluate(gd);
         for(Guide gd : geom.guides) evaluate(gd);
     }
 
     public Rectangle2D getShapeAnchor(){
-        return _props.getAnchor();
+        return _anchor;
     }
 
     public Guide getAdjustValue(String name){

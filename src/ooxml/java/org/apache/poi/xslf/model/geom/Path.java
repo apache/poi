@@ -39,11 +39,26 @@ import java.util.List;
 public class Path {
     private final List<PathCommand> commands;
     boolean _fill, _stroke;
+    long _w, _h;
+
+    public Path(){
+        this(true, true);
+    }
+
+    public Path(boolean fill, boolean stroke){
+        commands = new ArrayList<PathCommand>();
+        _w = -1;
+        _h = -1;
+        _fill = fill;
+        _stroke = stroke;
+    }
 
     public Path(CTPath2D spPath){
         _fill = spPath.getFill() != STPathFillMode.NONE;
         _stroke = spPath.getStroke();
-
+        _w = spPath.isSetW() ? spPath.getW() : -1;	
+        _h = spPath.isSetH() ? spPath.getH() : -1;	
+        
         commands = new ArrayList<PathCommand>();
         for(XmlObject ch : spPath.selectPath("*")){
             if(ch instanceof CTPath2DMoveTo){
@@ -74,6 +89,13 @@ public class Path {
         }
     }
 
+    public void addCommand(PathCommand cmd){
+        commands.add(cmd);
+    }
+
+    /**
+     * Convert the internal represenation to java.awt.GeneralPath
+     */
     public GeneralPath getPath(Context ctx) {
         GeneralPath path = new GeneralPath();
         for(PathCommand cmd : commands)
@@ -87,5 +109,13 @@ public class Path {
 
     public boolean isFilled(){
         return _fill;
+    }
+    
+    public long getW(){
+    	return _w;
+    }
+
+    public long getH(){
+    	return _h;
     }
 }

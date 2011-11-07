@@ -16,26 +16,18 @@
  *    limitations under the License.
  * ====================================================================
  */
+
 package org.apache.poi.xslf.usermodel;
 
 /**
- * @author Yegor Kozlov
+ * Created by IntelliJ IDEA.
+ * User: yegor
+ * Date: 11/3/11
+ * Time: 5:07 PM
+ * To change this template use File | Settings | File Templates.
  */
-public enum Placeholder {
-    TITLE,
-    BODY,
-    CENTERED_TITLE,
-    SUBTITLE,
-    DATETIME,
-    SLIDE_NUMBER,
-    FOOTER,
-    HEADER,
-    CONTENT,
-    CHART,
-    TABLE,
-    CLIP_ART,
-    DGM,
-    MEDIA,
-    SLIDE_IMAGE,
-    PICTURE
+public enum TextCap {
+    NONE,
+    SMALL,
+    ALL
 }

@@ -30,7 +30,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
@@ -80,6 +81,23 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return out.toString();
     }
 
+    private String getVisibleText(){
+        StringBuilder out = new StringBuilder();
+        for (XSLFTextRun r : _runs) {
+            String txt = r.getText();
+            switch (r.getTextCap()){
+                case ALL:
+                    txt = txt.toUpperCase();
+                    break;
+                case SMALL:
+                    txt = txt.toLowerCase();
+                    break;
+            }
+            out.append(txt);
+        }
+        return out.toString();
+    }
+
     @Internal
     public CTTextParagraph getXmlObject(){
         return _p;
@@ -89,6 +107,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return _shape;
 
     }
+
     public List<XSLFTextRun> getTextRuns(){
         return _runs;
     }
@@ -186,7 +205,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuClr()){
-                    XSLFColor c = new XSLFColor(props.getBuClr(), theme);
+                    XSLFColor c = new XSLFColor(props.getBuClr(), theme, null);
                     setValue(c.getColor());
                     return true;
                 }
@@ -496,17 +515,18 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return "[" + getClass() + "]" + getText();
     }
 
-    public List<TextFragment> getTextLines(){
+    List<TextFragment> getTextLines(){
         return _lines;
     }
 
     public double draw(Graphics2D graphics, double x, double y){
-        double marginLeft = _shape.getMarginLeft();
-        double marginRight = _shape.getMarginRight();
+        double marginLeft = _shape.getLeftInset();
+        double marginRight = _shape.getRightInset();
         Rectangle2D anchor = _shape.getAnchor();
         double penY = y;
 
         double textOffset = getLeftMargin();
+        boolean firstLine = true;
         for(TextFragment line : _lines){
             double penX = x;
             switch (getTextAlign()) {
@@ -521,7 +541,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                     break;
             }
 
-            if(_bullet != null){
+            if(_bullet != null && firstLine){
                 _bullet.draw(graphics, penX  + getIndent(),  penY);
             }
             line.draw(graphics, penX,  penY);
@@ -535,6 +555,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                 // positive value means absolute spacing in points
                 penY += -spacing;
             }
+
+            firstLine = false;
         }
         return penY - y;
     }
@@ -551,8 +573,12 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         void draw(Graphics2D graphics, double x, double y){
             double yBaseline = y + _layout.getAscent();
 
-            graphics.drawString(_str.getIterator(), (float)x, (float)yBaseline );
-
+            Integer textMode = (Integer)graphics.getRenderingHint(XSLFRenderingHint.TEXT_RENDERING_MODE);
+            if(textMode != null && textMode == XSLFRenderingHint.TEXT_MODE_GLYPHS){
+                _layout.draw(graphics, (float)x, (float)yBaseline);
+            } else {
+                graphics.drawString(_str.getIterator(), (float)x, (float)yBaseline );
+            }
         }
         
         public float getHeight(){
@@ -564,8 +590,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
     }
 
-    public AttributedString getAttributedString(){
-        String text = getText();
+    AttributedString getAttributedString(Graphics2D graphics){
+        String text = getVisibleText();
 
         AttributedString string = new AttributedString(text);
 
@@ -579,7 +605,10 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             int endIndex = startIndex + length;
 
             string.addAttribute(TextAttribute.FOREGROUND, run.getFontColor(), startIndex, endIndex);
+
+            // user can pass an object to convert fonts via a rendering hint
             string.addAttribute(TextAttribute.FAMILY, run.getFontFamily(), startIndex, endIndex);
+
             string.addAttribute(TextAttribute.SIZE, (float)run.getFontSize(), startIndex, endIndex);
             if(run.isBold()) {
                 string.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIndex, endIndex);
@@ -601,6 +630,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                 string.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER, startIndex, endIndex);
             }
 
+
             startIndex = endIndex;
         }
 
@@ -610,7 +640,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     void breakText(Graphics2D graphics){
         _lines = new ArrayList<TextFragment>();
 
-        AttributedString at = getAttributedString();
+        AttributedString at = getAttributedString(graphics);
         AttributedCharacterIterator it = at.getIterator();
         if(it.getBeginIndex() == it.getEndIndex()) {
             return;
@@ -628,7 +658,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
             int endIndex = measurer.getPosition();
 
-            if(getTextAlign() == TextAlign.JUSTIFY) {
+            TextAlign hAlign = getTextAlign();
+            if(hAlign == TextAlign.JUSTIFY || hAlign == TextAlign.JUSTIFY_LOW) {
                 layout = layout.getJustifiedLayout((float)wrappingWidth);
             }
             
@@ -673,7 +704,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             width = _shape.getSheet().getSlideShow().getPageSize().getWidth();
         } else {
             width = _shape.getAnchor().getWidth() -
-                    _shape.getMarginLeft() - _shape.getMarginRight() - getLeftMargin();
+                    _shape.getLeftInset() - _shape.getRightInset() - getLeftMargin();
         }
         return width;
     }
@@ -700,7 +731,13 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         }
 
         int level = getLevel();
-        XmlObject[] o = _shape.getSheet().getSlideMaster().getXmlObject().selectPath(
+
+        XSLFSheet masterSheet = _shape.getSheet();
+        while (masterSheet.getMasterSheet() != null){
+            masterSheet = masterSheet.getMasterSheet();
+        }
+
+        XmlObject[] o = masterSheet.getXmlObject().selectPath(
                 "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
                 "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
                 ".//p:txStyles/p:" + defaultStyleSelector +"/a:lvl" +(level+1)+ "pPr");

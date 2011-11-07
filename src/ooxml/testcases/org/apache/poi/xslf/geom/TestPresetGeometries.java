@@ -21,11 +21,7 @@ public class TestPresetGeometries extends TestCase {
 
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
-            Context ctx = new Context(geom, new IAdjustableShape() {
-                public Rectangle2D getAnchor() {
-                    return new Rectangle2D.Double(0, 0, 100, 100);
-                }
-
+            Context ctx = new Context(geom, new Rectangle2D.Double(0, 0, 100, 100), new IAdjustableShape() {
                 public Guide getAdjustValue(String name) {
                     return null;
                 }
