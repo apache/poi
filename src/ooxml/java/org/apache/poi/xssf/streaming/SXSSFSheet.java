@@ -1284,7 +1284,7 @@ public class SXSSFSheet implements Sheet, Cloneable
 
         public SheetDataWriter() throws IOException 
         {
-            _fd = File.createTempFile("poi-sxxsf-sheet", ".xml");
+            _fd = File.createTempFile("poi-sxssf-sheet", ".xml");
             _fd.deleteOnExit();
             _out = new BufferedWriter(new FileWriter(_fd));
         }
