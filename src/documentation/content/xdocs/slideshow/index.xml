@@ -63,8 +63,7 @@
             Please note that XSLF is still in early development and is a subject to incompatible changes in future. 
             </p>
             <p>
-              A quick guide is available in 
-                <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/xslf/usermodel/">XSLF Examples</link> 
+              A quick guide is available in the <link href="./xslf-cookbook.html">XSLF Cookbook</link> 
             </p>
         </section>
     </body>
