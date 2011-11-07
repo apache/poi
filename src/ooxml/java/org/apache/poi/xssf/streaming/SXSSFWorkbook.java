@@ -186,30 +186,48 @@ public class SXSSFWorkbook implements Workbook
     private void injectData(File zipfile, OutputStream out) throws IOException 
     {
         ZipFile zip = new ZipFile(zipfile);
-
-        ZipOutputStream zos = new ZipOutputStream(out);
-
-        @SuppressWarnings("unchecked")
-        Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zip.entries();
-        while (en.hasMoreElements()) 
+        try
         {
-            ZipEntry ze = en.nextElement();
-            zos.putNextEntry(new ZipEntry(ze.getName()));
-            InputStream is = zip.getInputStream(ze);
-            XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
-            if(xSheet!=null)
+            ZipOutputStream zos = new ZipOutputStream(out);
+            try
             {
-                SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
-                copyStreamAndInjectWorksheet(is,zos,sxSheet.getWorksheetXMLInputStream());
+                @SuppressWarnings("unchecked")
+                Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zip.entries();
+                while (en.hasMoreElements()) 
+                {
+                    ZipEntry ze = en.nextElement();
+                    zos.putNextEntry(new ZipEntry(ze.getName()));
+                    InputStream is = zip.getInputStream(ze);
+                    XSSFSheet xSheet=getSheetFromZipEntryName(ze.getName());
+                    if(xSheet!=null)
+                    {
+                        SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
+                        InputStream xis = sxSheet.getWorksheetXMLInputStream();
+                        try
+                        {
+                            copyStreamAndInjectWorksheet(is,zos,xis);
+                        }
+                        finally
+                        {
+                            xis.close();
+                        }
+                    }
+                    else
+                    {
+                        copyStream(is, zos);
+                    }
+                    is.close();
+                }
             }
-            else
+            finally
             {
-                copyStream(is, zos);
+                zos.close();
             }
-            is.close();
         }
-
-        zos.close();
+        finally
+        {
+            zip.close();
+        }
     }
     private static void copyStream(InputStream in, OutputStream out) throws IOException {
         byte[] chunk = new byte[1024];
@@ -649,7 +667,7 @@ public class SXSSFWorkbook implements Workbook
     	}
     	
         //Save the template
-        File tmplFile = File.createTempFile("poi-sxxsf-template", ".xlsx");
+        File tmplFile = File.createTempFile("poi-sxssf-template", ".xlsx");
         tmplFile.deleteOnExit();
         FileOutputStream os = new FileOutputStream(tmplFile);
         _wb.write(os);
