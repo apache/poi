@@ -40,7 +40,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -190,7 +190,13 @@ public class XMLSlideShow  extends POIXMLDocument {
         return Collections.unmodifiableList(_pictures);
     }
 
-    public XSLFSlide createSlide() {
+    /**
+     * Create a slide and initialize it from the specified layout.
+     *
+     * @param layout
+     * @return created slide
+     */
+    public XSLFSlide createSlide(XSLFSlideLayout layout) {
         int slideNumber = 256, cnt = 1;
         CTSlideIdList slideList;
         if (!_presentation.isSetSldIdLst()) slideList = _presentation.addNewSldIdLst();
@@ -209,12 +215,7 @@ public class XMLSlideShow  extends POIXMLDocument {
         slideId.setId(slideNumber);
         slideId.setId2(slide.getPackageRelationship().getId());
 
-        String masterId = _presentation.getSldMasterIdLst().getSldMasterIdArray(0).getId2();
-        XSLFSlideMaster master = _masters.get(masterId);
-
-        XSLFSlideLayout layout = master.getLayout("blank");
-        if(layout == null) throw new IllegalArgumentException("Blank layout was not found");
-
+        layout.copyLayout(slide);
         slide.addRelation(layout.getPackageRelationship().getId(), layout);
 
         PackagePartName ppName = layout.getPackagePart().getPartName();
@@ -224,7 +225,20 @@ public class XMLSlideShow  extends POIXMLDocument {
         _slides.add(slide);
         return slide;
     }
-    
+
+    /**
+     * Create a blank slide.
+     */
+    public XSLFSlide createSlide() {
+        String masterId = _presentation.getSldMasterIdLst().getSldMasterIdArray(0).getId2();
+        XSLFSlideMaster master = _masters.get(masterId);
+
+        XSLFSlideLayout layout = master.getLayout(SlideLayout.BLANK);
+        if(layout == null) throw new IllegalArgumentException("Blank layout was not found");
+
+        return createSlide(layout);
+    }
+
     /**
      * Return the Notes Master, if there is one.
      * (May not be present if no notes exist)  

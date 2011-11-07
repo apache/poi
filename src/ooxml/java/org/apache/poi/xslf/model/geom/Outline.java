@@ -19,19 +19,27 @@
 
 package org.apache.poi.xslf.model.geom;
 
+import java.awt.Shape;
 
 /**
- * A bridge to the consumer application.
- *
- * To get a shape geometry one needs to pass shape bounds and adjust values.
- *
- * @author Yegor Kozlov
- */
-public interface IAdjustableShape {
-    /**
-     *
-     * @param  name name of a adjust value, e.g. adj1
-     * @return adjust guide defined in the shape or null
-     */
-    Guide getAdjustValue(String name);
+* Date: 11/6/11
+*
+* @author Yegor Kozlov
+*/
+public class Outline {
+    private Shape shape;
+    private Path path;
+
+    public Outline(Shape shape, Path path){
+        this.shape = shape;
+        this.path = path;
+    }
+
+    public Path getPath(){
+        return path;
+    }
+
+    public Shape getOutline(){
+        return shape;
+    }
 }

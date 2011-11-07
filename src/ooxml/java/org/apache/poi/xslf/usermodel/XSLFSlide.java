@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisua
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.io.IOException;
 
 @Beta
@@ -109,11 +109,11 @@ public final class XSLFSlide extends XSLFSheet {
         return "sld";        
     }
 
-    public XSLFSlideMaster getMasterSheet(){
-        return getSlideLayout().getSlideMaster();
+    @Override
+    public XSLFSlideLayout getMasterSheet(){
+        return getSlideLayout();
     }
 
-    @Override
     public XSLFSlideLayout getSlideLayout(){
         if(_layout == null){
              for (POIXMLDocumentPart p : getRelations()) {
@@ -128,7 +128,6 @@ public final class XSLFSlide extends XSLFSheet {
         return _layout;
     }
 
-    @Override
     public XSLFSlideMaster getSlideMaster(){
         return getSlideLayout().getSlideMaster();
     }
@@ -159,18 +158,10 @@ public final class XSLFSlide extends XSLFSheet {
        }
        if(_notes == null) {
           // This slide lacks notes
-          // Not al have them, sorry...
+          // Not all have them, sorry...
           return null;
        }
        return _notes;
-    }
-
-    public void setFollowMasterBackground(boolean value){
-        _slide.setShowMasterSp(value);    
-    }
-
-    public boolean getFollowMasterBackground(){
-        return !_slide.isSetShowMasterSp() || _slide.getShowMasterSp();    
     }
 
     /**
@@ -182,27 +173,59 @@ public final class XSLFSlide extends XSLFSheet {
         return txt == null ? "" : txt.getText();
     }
     
+    @Override
     public XSLFTheme getTheme(){
     	return getSlideLayout().getSlideMaster().getTheme();
     }
 
+    /**
+     *
+     * @return the information about background appearance of this slide
+     */
+    public XSLFBackground getBackground() {
+
+
+        if(_slide.getCSld().isSetBg()) {
+            return new XSLFBackground(_slide.getCSld().getBg(), this);
+        }
+
+        XSLFSlideLayout layout = getMasterSheet();
+        if(layout.getXmlObject().getCSld().isSetBg()) {
+            return new XSLFBackground(layout.getXmlObject().getCSld().getBg(), this);
+        }
+
+        XSLFSlideMaster master = layout.getMasterSheet();
+        if(master.getXmlObject().getCSld().isSetBg()) {
+            return new XSLFBackground(master.getXmlObject().getCSld().getBg(), this);
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @return whether shapes on the master slide should be shown  or not.
+     */
+    public boolean getFollowMasterGraphics(){
+        return !_slide.isSetShowMasterSp() || _slide.getShowMasterSp();
+    }
+
+    /**
+     *
+     * @param value whether shapes on the master slide should be shown or not.
+     */
+    public void setFollowMasterGraphics(boolean value){
+        _slide.setShowMasterSp(value);
+    }
+
+
     @Override
     public void draw(Graphics2D graphics){
 
-        if (getFollowMasterBackground()){
-            XSLFSlideLayout layout = getSlideLayout();
-            layout.draw(graphics);
-        }
+        XSLFBackground bg = getBackground();
+        if(bg != null) bg.draw(graphics);
 
         super.draw(graphics);
     }
 
-    @Override
-    public XSLFBackground getBackground(){
-        if(_slide.getCSld().isSetBg()) {
-            return new XSLFBackground(_slide.getCSld().getBg(), this);
-        }
-        return null;
-    }
 
 }

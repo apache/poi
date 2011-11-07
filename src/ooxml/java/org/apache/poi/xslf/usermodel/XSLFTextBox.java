@@ -63,23 +63,4 @@ public class XSLFTextBox extends XSLFAutoShape {
 
         return ct;
     }
-
-    /**
-     * Specifies that the corresponding shape should be represented by the generating application
-     * as a placeholder. When a shape is considered a placeholder by the generating application
-     * it can have special properties to alert the user that they may enter content into the shape.
-     * Different types of placeholders are allowed and can be specified by using the placeholder
-     * type attribute for this element
-     *
-     * @param placeholder
-     */
-    public void setPlaceholder(Placeholder placeholder){
-        CTShape sh =  (CTShape)getXmlObject();
-        CTApplicationNonVisualDrawingProps nv = sh.getNvSpPr().getNvPr();
-        if(placeholder == null) {
-            if(nv.isSetPh()) nv.unsetPh();
-        } else {
-            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
-        }
-    }
 }

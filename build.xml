@@ -108,6 +108,7 @@ under the License.
 
     <!-- OOXML support: -->
     <property name="ooxml.src" location="src/ooxml/java"/>
+    <property name="ooxml.resource1.dir" value="src/resources/ooxml"/>
     <property name="ooxml.src.test" location="src/ooxml/testcases"/>
     <property name="ooxml.reports.test" location="build/ooxml-test-results"/>
     <property name="ooxml.output.dir" location="build/ooxml-classes"/>
@@ -553,6 +554,9 @@ under the License.
                 <pathelement path="${main.output.test.dir}"/>
             </classpath>
         </javac>
+        <copy todir="${ooxml.output.dir}">
+            <fileset dir="${ooxml.resource1.dir}"/>
+        </copy>
     </target>
 
     <target name="compile-excelant" depends="compile-main,compile-ooxml">

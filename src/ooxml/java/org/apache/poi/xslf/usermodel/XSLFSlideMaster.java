@@ -21,7 +21,9 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterTextStyles;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
@@ -78,7 +80,12 @@ import java.util.Map;
         return "sldMaster";
     }
 
-    public XSLFSlideLayout getLayout(String name){
+    @Override
+    public XSLFSheet getMasterSheet() {
+        return null;
+    }
+
+    private Map<String, XSLFSlideLayout> getLayouts(){
         if(_layouts == null){
             _layouts = new HashMap<String, XSLFSlideLayout>();
             for (POIXMLDocumentPart p : getRelations()) {
@@ -88,14 +95,36 @@ import java.util.Map;
                 }
             }
         }
-        return _layouts.get(name);
+        return _layouts;
     }
 
+    /**
+     *
+     * @return all slide layouts referencing this master
+     */
+    public XSLFSlideLayout[] getSlideLayouts() {
+        return getLayouts().values().toArray(new XSLFSlideLayout[_layouts.size()]);
+    }
+
+    public XSLFSlideLayout getLayout(SlideLayout type){
+        for(XSLFSlideLayout layout : getLayouts().values()){
+            if(layout.getType() == type) {
+                return layout;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public XSLFTheme getTheme(){
         if(_theme == null){
             for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFTheme){
                     _theme = (XSLFTheme)p;
+                    CTColorMapping cmap = _slide.getClrMap();
+                    if(cmap != null){
+                        _theme.initColorMap(cmap);
+                    }
                     break;
                 }
             }
@@ -122,11 +151,20 @@ import java.util.Map;
         return props;
     }
 
+    /**
+     * Render this sheet into the supplied graphics object
+     *
+     */
     @Override
-    public XSLFBackground getBackground(){
-        if(_slide.getCSld().isSetBg()) {
-            return new XSLFBackground(_slide.getCSld().getBg(), this);
+    protected boolean canDraw(XSLFShape shape){
+        if(shape instanceof XSLFSimpleShape){
+            XSLFSimpleShape txt = (XSLFSimpleShape)shape;
+            CTPlaceholder ph = txt.getCTPlaceholder();
+            if(ph != null) {
+                return false;
+            }
         }
-        return null;
+        return true;
     }
+
 }

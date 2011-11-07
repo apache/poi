@@ -19,8 +19,11 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -37,35 +40,43 @@ public class XSLFShadow extends XSLFSimpleShape {
         _parent = parentShape;
     }
 
-     @Override
-    public void draw(Graphics2D graphics) {
-        Shape outline = _parent.getOutline();
 
-        Paint parentFillColor = _parent.getFill(graphics);
-        Paint parentLineColor = _parent.getLinePaint(graphics);
+    public void fill(Graphics2D graphics, Shape outline) {
 
         double angle = getAngle();
         double dist = getDistance();
-        double dx = dist * Math.cos( Math.toRadians(angle));
-        double dy = dist * Math.sin( Math.toRadians(angle));
+        double dx = dist * Math.cos(Math.toRadians(angle));
+        double dy = dist * Math.sin(Math.toRadians(angle));
 
         graphics.translate(dx, dy);
 
         Color fillColor = getFillColor();
         if (fillColor != null) {
             graphics.setColor(fillColor);
-        }
-
-        if(parentFillColor != null) {
             graphics.fill(outline);
-     	}
-    	if(parentLineColor != null) {
-            _parent.applyStroke(graphics);
-             graphics.draw(outline);
-     	}
+        }
 
         graphics.translate(-dx, -dy);
     }
+
+    public void draw(Graphics2D graphics, Shape outline) {
+
+        double angle = getAngle();
+        double dist = getDistance();
+        double dx = dist * Math.cos(Math.toRadians(angle));
+        double dy = dist * Math.sin(Math.toRadians(angle));
+
+        graphics.translate(dx, dy);
+
+        Color fillColor = getFillColor();
+        if (fillColor != null) {
+            graphics.setColor(fillColor);
+            graphics.draw(outline);
+        }
+
+        graphics.translate(-dx, -dy);
+    }
+
 
     @Override
     public Rectangle2D getAnchor(){
@@ -112,6 +123,11 @@ public class XSLFShadow extends XSLFSimpleShape {
     public Color getFillColor() {
         XSLFTheme theme = getSheet().getTheme();
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
-        return ct == null ? null : new XSLFColor(ct, theme).getColor();
+        if(ct == null) {
+            return null;
+        } else {
+            CTSchemeColor phClr = ct.getSchemeClr();
+            return new XSLFColor(ct, theme, phClr).getColor();
+        }
     }
 }

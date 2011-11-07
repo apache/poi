@@ -33,12 +33,14 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 
 /**
+ * Represents a picture shape
+ *
  * @author Yegor Kozlov
  */
 @Beta
@@ -114,37 +116,14 @@ public class XSLFPictureShape extends XSLFSimpleShape {
     }
 
     @Override
-    public void draw(Graphics2D graphics){
-        java.awt.Shape outline = getOutline();
-
-        // shadow
-        XSLFShadow shadow = getShadow();
-
-        Paint fill = getFill(graphics);
-        Paint line = getLinePaint(graphics);
-        if(shadow != null) {
-        	shadow.draw(graphics);
-        }
-
-        if(fill != null) {
-            graphics.setPaint(fill);
-            graphics.fill(outline);
-        }
-
+    public void drawContent(Graphics2D graphics) {
 
         XSLFPictureData data = getPictureData();
     	if(data == null) return;
-    	
+
         XSLFImageRendener renderer = (XSLFImageRendener)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
         if(renderer == null) renderer = new XSLFImageRendener();
 
         renderer.drawImage(graphics, data, getAnchor());
-
-        if (line != null){
-            graphics.setPaint(line);
-            applyStroke(graphics);
-            graphics.draw(outline);
-        }
     }
-
 }

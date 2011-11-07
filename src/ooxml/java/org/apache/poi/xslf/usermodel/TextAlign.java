@@ -43,5 +43,8 @@ public enum TextAlign {
      * is smart in the sense that it will not justify sentences
      * which are short
      */
-    JUSTIFY
+    JUSTIFY,
+    JUSTIFY_LOW,
+    DIST,
+    THAI_DIST
 }

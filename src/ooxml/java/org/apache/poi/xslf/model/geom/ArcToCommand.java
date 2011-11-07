@@ -57,15 +57,11 @@ public class ArcToCommand implements PathCommand {
         double x0 = pt.getX() - rx - rx * Math.cos(Math.toRadians(start));
         double y0 = pt.getY() - ry - ry * Math.sin(Math.toRadians(start));
 
-        if(start == 180 && extent == 180) {
-            x0 -= rx*2;   //YK: TODO revisit the code and get rid of this hack
-        }
-
         Arc2D arc = new Arc2D.Double(
                          x0,
                          y0,
                          2 * rx, 2 * ry,
-                         -start, -extent, // negate angles because DrawingML rotates counter-clockwise
+                         -start, -extent, 
                          Arc2D.OPEN);
 		path.append(arc, true);
     }

@@ -17,16 +17,16 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBackgroundFillStyleList;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBackgroundFillStyleList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 
-import javax.xml.namespace.QName;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -49,31 +49,46 @@ public class XSLFBackground extends XSLFSimpleShape {
     public void draw(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
 
-        XmlObject spPr = null;
-        CTBackground bg = (CTBackground)getXmlObject();
-        if(bg.isSetBgPr()){
-            spPr = bg.getBgPr();
-        } else if (bg.isSetBgRef()){
-            CTStyleMatrixReference bgRef= bg.getBgRef();
-            int idx = (int)bgRef.getIdx() - 1000;
-            XSLFTheme theme = getSheet().getTheme();
-            CTBackgroundFillStyleList bgStyles =
-                    theme.getXmlObject().getThemeElements().getFmtScheme().getBgFillStyleLst();
-
-            // TODO pass this to getPaint
-            XmlObject bgStyle = bgStyles.selectPath("*")[idx];
-        }
-
-        if(spPr == null){
-            return;
-        }
-
-        Paint fill = getPaint(graphics, spPr);
+        Paint fill = getPaint(graphics);
         if(fill != null) {
             graphics.setPaint(fill);
             graphics.fill(anchor);
         }
     }
 
-    
+    /**
+     * @return the Paint object to fill
+     */
+    Paint getPaint(Graphics2D graphics){
+        RenderableShape rShape = new RenderableShape(this);
+
+        Paint fill = null;
+        CTBackground bg = (CTBackground)getXmlObject();
+        if(bg.isSetBgPr()){
+            XmlObject spPr = bg.getBgPr();
+            fill = rShape.getPaint(graphics, spPr, null);
+        } else if (bg.isSetBgRef()){
+            CTStyleMatrixReference bgRef= bg.getBgRef();
+            CTSchemeColor phClr = bgRef.getSchemeClr();
+
+            int idx = (int)bgRef.getIdx() - 1001;
+            XSLFTheme theme = getSheet().getTheme();
+            CTBackgroundFillStyleList bgStyles =
+                    theme.getXmlObject().getThemeElements().getFmtScheme().getBgFillStyleLst();
+
+            XmlObject bgStyle = bgStyles.selectPath("*")[idx];
+            fill = rShape.selectPaint(graphics, bgStyle, phClr, theme.getPackagePart());
+        }
+
+        return fill;
+    }
+
+    @Override
+    public Color getFillColor(){
+        Paint p = getPaint(null);
+        if(p instanceof Color){
+            return (Color)p;
+        }
+        return null;
+    }
 }

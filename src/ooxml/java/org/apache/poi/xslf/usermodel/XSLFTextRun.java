@@ -20,14 +20,17 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -70,12 +73,14 @@ public class XSLFTextRun {
 
     public Color getFontColor(){
         final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+        CTShapeStyle style = _p.getParentShape().getSpStyle();
+        final CTSchemeColor shapeStyle = style == null ? null : style.getFontRef().getSchemeClr();
 
         CharacterPropertyFetcher<Color> fetcher = new CharacterPropertyFetcher<Color>(_p.getLevel()){
             public boolean fetch(CTTextCharacterProperties props){
                 CTSolidColorFillProperties solidFill = props.getSolidFill();
-                if(solidFill != null){
-                    Color c = new XSLFColor(solidFill, theme).getColor();
+                if(solidFill != null) {
+                    Color c = new XSLFColor(solidFill, theme, shapeStyle).getColor();
                     setValue(c);
                     return true;
                 }
@@ -104,6 +109,10 @@ public class XSLFTextRun {
      * @return font size in points or -1 if font size is not set.
      */
     public double getFontSize(){
+        double scale = 1;
+        CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTextBodyPr().getNormAutofit();
+        if(afit != null) scale = (double)afit.getFontScale() / 100000;
+
         CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getLevel()){
             public boolean fetch(CTTextCharacterProperties props){
                 if(props.isSetSz()){
@@ -114,7 +123,27 @@ public class XSLFTextRun {
             }
         };
         fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? -1 : fetcher.getValue();
+        return fetcher.getValue() == null ? -1 : fetcher.getValue()*scale;
+    }
+
+    /**
+     *
+     * @return the spacing between characters within a text run,
+     * If this attribute is omitted than a value of 0 or no adjustment is assumed.
+     */
+    public double getCharacterSpacing(){
+
+        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetSpc()){
+                    setValue(props.getSpc()*0.01);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
 
     /**
@@ -232,6 +261,24 @@ public class XSLFTextRun {
         };
         fetchCharacterProperty(fetcher);
         return fetcher.getValue() == null ? false : fetcher.getValue();
+    }
+
+    /**
+     * @return whether a run of text will be formatted as a superscript text. Default is false.
+     */
+    public TextCap getTextCap() {
+        CharacterPropertyFetcher<TextCap> fetcher = new CharacterPropertyFetcher<TextCap>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                if(props.isSetCap()){
+                    int idx = props.getCap().intValue() - 1;
+                    setValue(TextCap.values()[idx]);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(fetcher);
+        return fetcher.getValue() == null ? TextCap.NONE : fetcher.getValue();
     }
 
     /**

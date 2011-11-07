@@ -22,24 +22,54 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlObject;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
 /**
+ * Base super-class class for all shapes in PresentationML
+ *
  * @author Yegor Kozlov
  */
 @Beta
 public abstract class XSLFShape {
 
-
+    /**
+     *
+     * @return the position of this shape within the drawing canvas.
+     * The coordinates are expressed in points
+     */
     public abstract Rectangle2D getAnchor();
 
+    /**
+     *
+     * @param anchor the position of this shape within the drawing canvas.
+     * The coordinates are expressed in points
+     */
     public abstract void setAnchor(Rectangle2D anchor);
 
+    /**
+     *
+     * @return the xml bean holding this shape's data
+     */
     public abstract XmlObject getXmlObject();
 
+    /**
+     *
+     * @return human-readable name of this shape, e.g. "Rectange 3"
+     */
     public abstract String getShapeName();
 
+    /**
+     * Returns a unique identifier for this shape within the current document.
+     * This ID may be used to assist in uniquely identifying this object so that it can
+     * be referred to by other parts of the document.
+     * <p>
+     *     If multiple objects within the same document share the same id attribute value,
+     *     then the document shall be considered non-conformant.
+     * </p>
+     *
+     * @return unique id of this shape
+     */
     public abstract int getShapeId();
 
     /**
@@ -64,8 +94,16 @@ public abstract class XSLFShape {
      */
     public abstract double getRotation();
 
+    /**
+     * @param flip whether the shape is horizontally flipped
+     */
     public abstract void setFlipHorizontal(boolean flip);
 
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @param flip whether the shape is vertically flipped
+     */
     public abstract void setFlipVertical(boolean flip);
     
     /**
@@ -75,14 +113,25 @@ public abstract class XSLFShape {
      */
     public abstract boolean getFlipHorizontal();
 
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @return whether the shape is vertically flipped
+     */
     public abstract boolean getFlipVertical();
 
+    /**
+     * Draw this shape into the supplied canvas
+     *
+     * @param graphics the graphics to draw into
+     */
     public abstract void draw(Graphics2D graphics);
 
-    protected java.awt.Shape getOutline(){
-        return getAnchor();
-    }
-    
+    /**
+     * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
+     *
+     * @param graphics the graphics whos transform matrix will be modified
+     */
     protected void applyTransform(Graphics2D graphics){
         Rectangle2D anchor = getAnchor();
 
@@ -112,5 +161,5 @@ public abstract class XSLFShape {
             graphics.translate(-anchor.getX(), -anchor.getY());
         }
     }
-    
+
 }

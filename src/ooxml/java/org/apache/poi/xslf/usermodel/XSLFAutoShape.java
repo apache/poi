@@ -28,16 +28,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 
-import java.util.regex.Pattern;
 
 /**
- * Represents a preset geometric shape. 
+ * Represents a shape with a preset geometry.
  *
  * @author Yegor Kozlov
  */
 @Beta
 public class XSLFAutoShape extends XSLFTextShape {
-    private static final Pattern adjPtrn = Pattern.compile("val\\s+(\\d+)");
 
     /*package*/ XSLFAutoShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);

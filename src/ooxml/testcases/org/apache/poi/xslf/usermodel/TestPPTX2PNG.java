@@ -34,7 +34,7 @@ import java.awt.image.BufferedImage;
 public class TestPPTX2PNG extends TestCase {
     public void testRender(){
         String[] testFiles = {"layouts.pptx", "sample.pptx", "shapes.pptx",
-                "45541_Header.pptx", "backgrounds.pptx"};
+                "themes.pptx", "backgrounds.pptx"};
         for(String sampleFile : testFiles){
             XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument(sampleFile);
             Dimension pg = pptx.getPageSize();
