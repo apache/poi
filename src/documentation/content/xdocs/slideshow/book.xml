@@ -30,7 +30,8 @@
     <menu label="HSLF">
         <menu-item label="Overview" href="index.html"/>
         <menu-item label="Quick Guide" href="quick-guide.html"/>
-        <menu-item label="Shapes HowTo" href="how-to-shapes.html"/>
+        <menu-item label="HSLF Cookbok" href="how-to-shapes.html"/>
+        <menu-item label="XSLF Cookbok" href="xslf-cookbook.html"/>
         <menu-item label="PPT File Format" href="ppt-file-format.html"/>
 	</menu>
 	

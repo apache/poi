@@ -510,6 +510,22 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
 
+    /**
+     *
+     * @param isBullet whether text in this paragraph has bullets
+     */
+    public void setBullet(boolean flag) {
+        if(isBullet() == flag) return;
+
+        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
+        if(!flag) {
+            pr.addNewBuNone();
+        } else {
+            pr.addNewBuFont().setTypeface("Arial");
+            pr.addNewBuChar().setChar("\u2022");
+        }
+    }
+
     @Override
     public String toString(){
         return "[" + getClass() + "]" + getText();
