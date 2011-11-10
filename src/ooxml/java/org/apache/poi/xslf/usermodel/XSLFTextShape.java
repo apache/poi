@@ -202,7 +202,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
             }
         };
         fetchShapeProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        // If this attribute is omitted, then a value of 0.05 inches is implied
+        return fetcher.getValue() == null ? 3.6 : fetcher.getValue();
     }
 
     /**
@@ -224,7 +225,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
             }
         };
         fetchShapeProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        // If this attribute is omitted, then a value of 0.1 inches is implied
+        return fetcher.getValue() == null ? 7.2 : fetcher.getValue();
     }
 
     /**
@@ -246,7 +248,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
             }
         };
         fetchShapeProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        // If this attribute is omitted, then a value of 0.1 inches is implied
+        return fetcher.getValue() == null ? 7.2 : fetcher.getValue();
     }
 
     /**
@@ -267,7 +270,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
             }
         };
         fetchShapeProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        // If this attribute is omitted, then a value of 0.05 inches is implied
+        return fetcher.getValue() == null ? 3.6 : fetcher.getValue();
     }
 
     /**
@@ -521,4 +525,46 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         return y - y0;
     }
 
+    @Override
+    void copy(XSLFShape sh){
+        super.copy(sh);
+
+        XSLFTextShape tsh = (XSLFTextShape)sh;
+
+        boolean srcWordWrap = tsh.getWordWrap();
+        if(srcWordWrap != getWordWrap()){
+            setWordWrap(srcWordWrap);
+        }
+
+        double leftInset = tsh.getLeftInset();
+        if(leftInset != getLeftInset()) {
+            setLeftInset(leftInset);
+        }
+        double rightInset = tsh.getRightInset();
+        if(rightInset != getRightInset()) {
+            setRightInset(rightInset);
+        }
+        double topInset = tsh.getTopInset();
+        if(topInset != getTopInset()) {
+            setTopInset(topInset);
+        }
+        double bottomInset = tsh.getBottomInset();
+        if(bottomInset != getBottomInset()) {
+            setBottomInset(bottomInset);
+        }
+
+        VerticalAlignment vAlign = tsh.getVerticalAlignment();
+        if(vAlign != getVerticalAlignment()) {
+            setVerticalAlignment(vAlign);
+        }
+
+        List<XSLFTextParagraph> srcP = tsh.getTextParagraphs();
+        List<XSLFTextParagraph> tgtP = getTextParagraphs();
+        for(int i = 0; i < srcP.size(); i++){
+            XSLFTextParagraph p1 = srcP.get(i);
+            XSLFTextParagraph p2 = tgtP.get(i);
+            p2.copy(p1);
+        }
+
+    }
 }

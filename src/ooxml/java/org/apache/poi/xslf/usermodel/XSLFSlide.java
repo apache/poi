@@ -26,11 +26,13 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -227,5 +229,22 @@ public final class XSLFSlide extends XSLFSheet {
         super.draw(graphics);
     }
 
+
+    @Override
+    public XSLFSlide importContent(XSLFSheet src){
+        super.importContent(src);
+
+        CTBackground bg = ((CTSlide)src.getXmlObject()).getCSld().getBg();
+        if(bg != null) {
+            if(bg.isSetBgPr() && bg.getBgPr().isSetBlipFill()){
+                CTBlip blip = bg.getBgPr().getBlipFill().getBlip();
+                String blipId = blip.getEmbed();
+
+                String relId = importBlip(blipId, src.getPackagePart());
+                blip.setEmbed(relId);
+            }
+        }
+        return this;
+    }
 
 }

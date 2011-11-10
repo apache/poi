@@ -19,6 +19,12 @@ package org.apache.poi.xslf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.openxml4j.opc.PackagePart;
+
+import java.awt.Color;
+import java.util.List;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * @author Yegor Kozlov
@@ -103,4 +109,58 @@ public class TestXSLFSlide extends TestCase {
         assertTrue(slide.getFollowMasterGraphics());
     }
 
+    public void testImportContent(){
+        XMLSlideShow ppt = new XMLSlideShow();
+
+        XMLSlideShow  src = XSLFTestDataSamples.openSampleDocument("themes.pptx");
+
+        // create a blank slide and import content from the 4th slide of themes.pptx
+        XSLFSlide slide1 = ppt.createSlide().importContent(src.getSlides()[3]);
+        XSLFShape[] shapes1 = slide1.getShapes();
+        assertEquals(2, shapes1.length);
+
+        XSLFTextShape sh1 = (XSLFTextShape)shapes1[0];
+        assertEquals("Austin Theme", sh1.getText());
+        XSLFTextRun r1 = sh1.getTextParagraphs().get(0).getTextRuns().get(0);
+        assertEquals("Century Gothic", r1.getFontFamily());
+        assertEquals(40.0, r1.getFontSize());
+        assertTrue(r1.isBold());
+        assertTrue(r1.isItalic());
+        assertEquals(new Color(148, 198, 0), r1.getFontColor());
+        assertNull(sh1.getFillColor());
+        assertNull(sh1.getLineColor());
+
+        XSLFTextShape sh2 = (XSLFTextShape)shapes1[1];
+        assertEquals(
+                "Text in a autoshape is white\n" +
+                "Fill: RGB(148, 198,0)", sh2.getText());
+        XSLFTextRun r2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
+        assertEquals("Century Gothic", r2.getFontFamily());
+        assertEquals(18.0, r2.getFontSize());
+        assertFalse(r2.isBold());
+        assertFalse(r2.isItalic());
+        assertEquals(Color.white, r2.getFontColor());
+        assertEquals(new Color(148, 198, 0), sh2.getFillColor());
+        assertEquals(new Color(74, 99, 0), sh2.getLineColor()); // slightly different from PowerPoint!
+
+        // the 5th slide has a picture and a texture fill
+        XSLFSlide slide2 = ppt.createSlide().importContent(src.getSlides()[4]);
+        XSLFShape[] shapes2 = slide2.getShapes();
+        assertEquals(2, shapes2.length);
+
+        XSLFTextShape sh3 = (XSLFTextShape)shapes2[0];
+        assertEquals("This slide overrides master background with a texture fill", sh3.getText());
+        XSLFTextRun r3 = sh3.getTextParagraphs().get(0).getTextRuns().get(0);
+        assertEquals("Century Gothic", r3.getFontFamily());
+        //assertEquals(32.4.0, r3.getFontSize());
+        assertTrue(r3.isBold());
+        assertTrue(r3.isItalic());
+        assertEquals(new Color(148, 198, 0), r3.getFontColor());
+        assertNull(sh3.getFillColor());
+        assertNull(sh3.getLineColor());
+
+        XSLFPictureShape sh4 = (XSLFPictureShape)shapes2[1];
+        XSLFPictureShape srcPic = (XSLFPictureShape)src.getSlides()[4].getShapes()[1];
+        assertTrue(Arrays.equals(sh4.getPictureData().getData(), srcPic.getPictureData().getData()));
+    }
 }

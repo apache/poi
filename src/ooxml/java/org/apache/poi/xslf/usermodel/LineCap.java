@@ -17,11 +17,13 @@
 package org.apache.poi.xslf.usermodel;
 
 /**
+ * 
+ *
  * @author Yegor Kozlov
  */
 public enum LineCap {
     /**
-     *  Rounded ends - the default
+     *  Rounded ends
      */
     ROUND,
     /**

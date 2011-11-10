@@ -29,6 +29,11 @@ import org.apache.poi.xslf.model.geom.IAdjustableShape;
 import org.apache.poi.xslf.model.geom.Outline;
 import org.apache.poi.xslf.model.geom.Path;
 import org.apache.poi.xslf.model.geom.PresetGeometries;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
@@ -48,8 +53,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -69,6 +76,7 @@ import java.util.List;
  */
 @Beta
 public abstract class XSLFSimpleShape extends XSLFShape {
+    private static CTOuterShadowEffect NO_SHADOW = CTOuterShadowEffect.Factory.newInstance();
 
     private final XmlObject _shape;
     private final XSLFSheet _sheet;
@@ -285,6 +293,11 @@ public abstract class XSLFSimpleShape extends XSLFShape {
             CTSolidColorFillProperties fill = ln.isSetSolidFill() ? ln
                     .getSolidFill() : ln.addNewSolidFill();
             fill.setSrgbClr(rgb);
+            if(fill.isSetHslClr()) fill.unsetHslClr();
+            if(fill.isSetPrstClr()) fill.unsetPrstClr();
+            if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
+            if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
+            if(fill.isSetSysClr()) fill.unsetSysClr();
         }
     }
 
@@ -483,6 +496,11 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                     (byte) color.getGreen(), (byte) color.getBlue()});
 
             fill.setSrgbClr(rgb);
+            if(fill.isSetHslClr()) fill.unsetHslClr();
+            if(fill.isSetPrstClr()) fill.unsetPrstClr();
+            if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
+            if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
+            if(fill.isSetSysClr()) fill.unsetSysClr();
         }
     }
 
@@ -508,7 +526,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                 CTShapeProperties spPr = shape.getSpPr();
                 if (spPr.isSetEffectLst()) {
                     CTOuterShadowEffect obj = spPr.getEffectLst().getOuterShdw();
-                    setValue(obj);
+                    setValue(obj == null ? NO_SHADOW : obj);
                     return true;
                 }
                 return false;
@@ -530,7 +548,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                 }
             }
         }
-        return obj == null ? null : new XSLFShadow(obj, this);
+        return (obj == null || obj == NO_SHADOW) ? null : new XSLFShadow(obj, this);
     }
 
     @Override
@@ -638,6 +656,52 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      * @param graphics the graphics to draw into
      */
     public void drawContent(Graphics2D graphics){
+
+    }
+
+    @Override
+    void copy(XSLFShape sh){
+        super.copy(sh);
+
+        XSLFSimpleShape s = (XSLFSimpleShape)sh;
+
+        Color srsSolidFill = s.getFillColor();
+        Color tgtSoliFill = getFillColor();
+        if(srsSolidFill != null && !srsSolidFill.equals(tgtSoliFill)){
+            setFillColor(srsSolidFill);
+        }
+
+        if(getSpPr().isSetBlipFill()){
+            CTBlip blip = getSpPr().getBlipFill().getBlip();
+            String blipId = blip.getEmbed();
+
+            String relId = getSheet().importBlip(blipId, s.getSheet().getPackagePart());
+            blip.setEmbed(relId);
+        }
+        
+        Color srcLineColor = s.getLineColor();
+        Color tgtLineColor = getLineColor();
+        if(srcLineColor != null && !srcLineColor.equals(tgtLineColor)) {
+            setLineColor(srcLineColor);
+        }
+
+        double srcLineWidth = s.getLineWidth();
+        double tgtLineWidth = getLineWidth();
+        if(srcLineWidth != tgtLineWidth) {
+            setLineWidth(srcLineWidth);
+        }
+
+        LineDash srcLineDash = s.getLineDash();
+        LineDash tgtLineDash = getLineDash();
+        if(srcLineDash != null && srcLineDash != tgtLineDash) {
+            setLineDash(srcLineDash);
+        }
+
+        LineCap srcLineCap = s.getLineCap();
+        LineCap tgtLineCap = getLineCap();
+        if(srcLineCap != null && srcLineCap != tgtLineCap) {
+            setLineCap(srcLineCap);
+        }
 
     }
 }

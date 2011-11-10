@@ -17,9 +17,11 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
@@ -270,14 +272,29 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<X
 
     /**
      * Set the contents of this sheet to be a copy of the source sheet.
+     * This method erases any existing shapes and replaces them with
+     * object from the source sheet.
      *
      * @param src the source sheet to copy data from
+     * @return modified 'this'
      */
-    public void copy(XSLFSheet src){
+    public XSLFSheet importContent(XSLFSheet src){
         _shapes = null;
         _spTree = null;
         _drawing = null;
+        // first copy the source xml
         getXmlObject().set(src.getXmlObject());
+
+        // recursively update each shape 
+        List<XSLFShape> tgtShapes = getShapeList();
+        List<XSLFShape> srcShapes = src.getShapeList();
+        for(int i = 0; i < tgtShapes.size(); i++){
+            XSLFShape s1 = srcShapes.get(i);
+            XSLFShape s2 = tgtShapes.get(i);
+
+            s2.copy(s1);
+        }
+        return this;
     }
 
     /**
@@ -422,5 +439,33 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<X
             graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
 
         }
+    }
+
+    /**
+     * Import a picture data from another document.
+     *
+     * @param blipId        ID of the package relationship to retrieve.
+     * @param packagePart   package part containing the data to import
+     * @return ID of the created relationship
+     */
+    String importBlip(String blipId, PackagePart packagePart) {
+        PackageRelationship blipRel = packagePart.getRelationship(blipId);
+        PackagePart blipPart;
+        try {
+            blipPart = packagePart.getRelatedPart(blipRel);
+        } catch (InvalidFormatException e){
+            throw new POIXMLException(e);
+        }
+        XSLFPictureData data = new XSLFPictureData(blipPart, null);
+
+        XMLSlideShow ppt = getSlideShow();
+        int pictureIdx = ppt.addPicture(data.getData(), data.getPictureType());
+        PackagePart pic = ppt.getAllPictures().get(pictureIdx).getPackagePart();
+
+        PackageRelationship rel = getPackagePart().addRelationship(
+                pic.getPartName(), TargetMode.INTERNAL, blipRel.getRelationshipType());
+        addRelation(rel.getId(), new XSLFPictureData(pic, rel));
+
+        return rel.getId();
     }
 }
