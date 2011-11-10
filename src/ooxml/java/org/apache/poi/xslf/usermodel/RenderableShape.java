@@ -469,10 +469,19 @@ class RenderableShape {
 
         // first fill
         Paint fill = getFillPaint(graphics);
+        Paint line = getLinePaint(graphics);
+        applyStroke(graphics); // the stroke applies both to the shadow and the shape
+
+        // first paint the shadow
+        if(shadow != null) for(Outline o : elems){
+            if(o.getPath().isFilled()){
+                if(fill != null) shadow.fill(graphics, o.getOutline());
+                if(line != null) shadow.draw(graphics, o.getOutline());
+            }
+        }
+        // then fill the shape interior
         if(fill != null) for(Outline o : elems){
             if(o.getPath().isFilled()){
-                if(shadow != null) shadow.fill(graphics, o.getOutline());
-
                 graphics.setPaint(fill);
                 graphics.fill(o.getOutline());
             }
@@ -482,13 +491,8 @@ class RenderableShape {
         _shape.drawContent(graphics);
 
         // then stroke the shape outline
-        Paint line = getLinePaint(graphics);
         if(line != null) for(Outline o : elems){
             if(o.getPath().isStroked()){
-                applyStroke(graphics); // the stroke applies both to the shadow and the shape
-
-                if(shadow != null) shadow.draw(graphics, o.getOutline());
-
                 graphics.setPaint(line);
                 graphics.draw(o.getOutline());
             }

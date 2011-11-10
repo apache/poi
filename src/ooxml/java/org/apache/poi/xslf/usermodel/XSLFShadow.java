@@ -32,6 +32,7 @@ import java.awt.geom.Rectangle2D;
  * @author Yegor Kozlov
  */
 public class XSLFShadow extends XSLFSimpleShape {
+
     private XSLFSimpleShape _parent;
 
     /* package */XSLFShadow(CTOuterShadowEffect shape, XSLFSimpleShape parentShape) {

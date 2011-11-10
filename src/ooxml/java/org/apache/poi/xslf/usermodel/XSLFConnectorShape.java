@@ -331,4 +331,12 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         return lst;
     }
 
+    /**
+     * YK: dashing of lines is suppressed for now.
+     * @return
+     */
+    @Override
+    public XSLFShadow getShadow() {
+        return null;
+    }
 }

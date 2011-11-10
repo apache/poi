@@ -22,6 +22,7 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -97,8 +98,7 @@ public class XSLFPictureShape extends XSLFSimpleShape {
 
     public XSLFPictureData getPictureData() {
         if(_data == null){
-            CTPicture ct = (CTPicture)getXmlObject();
-            String blipId = ct.getBlipFill().getBlip().getEmbed();
+            String blipId = getBlipId();
 
             PackagePart p = getSheet().getPackagePart();
             PackageRelationship rel = p.getRelationship(blipId);
@@ -115,6 +115,11 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         return _data;
     }
 
+    private String getBlipId(){
+        CTPicture ct = (CTPicture)getXmlObject();
+        return ct.getBlipFill().getBlip().getEmbed();
+    }
+
     @Override
     public void drawContent(Graphics2D graphics) {
 
@@ -125,5 +130,20 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         if(renderer == null) renderer = new XSLFImageRendener();
 
         renderer.drawImage(graphics, data, getAnchor());
+    }
+
+
+    @Override
+    void copy(XSLFShape sh){
+        super.copy(sh);
+
+        XSLFPictureShape p = (XSLFPictureShape)sh;
+        String blipId = p.getBlipId();
+        String relId = getSheet().importBlip(blipId, p.getSheet().getPackagePart());
+
+        CTPicture ct = (CTPicture)getXmlObject();
+        CTBlip blip = ct.getBlipFill().getBlip();
+        blip.setEmbed(relId);
+
     }
 }

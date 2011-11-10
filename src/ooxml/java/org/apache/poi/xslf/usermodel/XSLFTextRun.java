@@ -56,6 +56,23 @@ public class XSLFTextRun {
         return _r.getT();
     }
 
+    String getRenderableText(){
+        String txt = _r.getT();
+        switch (getTextCap()){
+            case ALL:
+                txt = txt.toUpperCase();
+                break;
+            case SMALL:
+                txt = txt.toLowerCase();
+                break;
+        }
+        // TODO-1 is is the place to convert wingdings to unicode
+        
+        // TODO-2 this is a temporary hack. Rendering text with tabs is not yet supported.
+        // for now tabs are replaced with some number of spaces.
+        return txt.replace("\t", " ");
+    }
+
     public void setText(String text){
         _r.setT(text);
     }
@@ -69,6 +86,13 @@ public class XSLFTextRun {
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
         CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
         clr.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
+
+        if(fill.isSetHslClr()) fill.unsetHslClr();
+        if(fill.isSetPrstClr()) fill.unsetPrstClr();
+        if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
+        if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
+        if(fill.isSetSysClr()) fill.unsetSysClr();
+
     }
 
     public Color getFontColor(){
@@ -393,4 +417,32 @@ public class XSLFTextRun {
         return ok;
     }
 
+    void copy(XSLFTextRun r){
+        String srcFontFamily = r.getFontFamily();
+        if(srcFontFamily != null && !srcFontFamily.equals(getFontFamily())){
+            setFontFamily(srcFontFamily);
+        }
+
+        Color srcFontColor = r.getFontColor();
+        if(srcFontColor != null && !srcFontColor.equals(getFontColor())){
+            setFontColor(srcFontColor);
+        }
+
+        double srcFontSize = r.getFontSize();
+        if(srcFontSize  != getFontSize()){
+            setFontSize(srcFontSize);
+        }
+
+        boolean bold = r.isBold();
+        if(bold != isBold()) setBold(bold);
+
+        boolean italic = r.isItalic();
+        if(italic != isItalic()) setItalic(italic);
+
+        boolean underline = r.isUnderline();
+        if(underline != isUnderline()) setUnderline(underline);
+
+        boolean strike = r.isStrikethrough();
+        if(strike != isStrikethrough()) setStrikethrough(strike);
+    }
 }
