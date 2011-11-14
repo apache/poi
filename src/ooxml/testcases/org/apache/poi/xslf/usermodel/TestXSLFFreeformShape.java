@@ -18,7 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 

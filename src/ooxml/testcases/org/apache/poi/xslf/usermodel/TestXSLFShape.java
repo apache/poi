@@ -17,7 +17,6 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 

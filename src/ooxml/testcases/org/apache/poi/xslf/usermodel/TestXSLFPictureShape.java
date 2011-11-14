@@ -17,14 +17,10 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.util.*;
-import java.util.List;
-
 import org.apache.poi.xslf.XSLFTestDataSamples;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Yegor Kozlov

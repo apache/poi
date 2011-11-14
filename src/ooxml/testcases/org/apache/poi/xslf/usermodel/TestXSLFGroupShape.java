@@ -18,7 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
 /**

@@ -2,13 +2,9 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
-import java.awt.Rectangle;
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.io.FileOutputStream;
-
-import org.apache.poi.xssf.dev.XSSFDump;
-import org.apache.poi.xslf.util.PPTX2PNG;
 
 /**
  * Created by IntelliJ IDEA.

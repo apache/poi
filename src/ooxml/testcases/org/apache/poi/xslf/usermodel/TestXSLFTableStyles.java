@@ -18,15 +18,6 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.util.*;
-import java.util.List;
-
-import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
-
 /**
  * @author Yegor Kozlov
  */

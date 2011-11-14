@@ -17,15 +17,13 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetColorVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * @author Yegor Kozlov

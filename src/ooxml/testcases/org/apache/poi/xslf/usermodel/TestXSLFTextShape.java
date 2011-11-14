@@ -18,11 +18,11 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * @author Yegor Kozlov
