@@ -17,16 +17,13 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.util.Units;
-import org.apache.poi.xslf.usermodel.LineCap;
-import org.apache.poi.xslf.usermodel.LineDash;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * @author Yegor Kozlov

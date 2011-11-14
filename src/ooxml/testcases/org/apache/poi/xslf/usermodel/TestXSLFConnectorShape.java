@@ -17,17 +17,9 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
-import org.apache.poi.util.Units;
-import org.apache.poi.xslf.usermodel.LineCap;
-import org.apache.poi.xslf.usermodel.LineDash;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
-
-import java.awt.*;
 
 /**
  * @author Yegor Kozlov

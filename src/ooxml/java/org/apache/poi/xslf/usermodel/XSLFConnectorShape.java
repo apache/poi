@@ -35,12 +35,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnectorNonVisual;
 
 import java.awt.Shape;
+import java.awt.Graphics2D;
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -206,7 +207,8 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         LineEndLength tailLength = getLineTailLength();
         LineEndWidth tailWidth = getLineTailWidth();
 
-        double lineWidth = getLineWidth();
+        double lineWidth = Math.max(2.5, getLineWidth());
+
         Rectangle2D anchor = getAnchor();
         double x2 = anchor.getX() + anchor.getWidth(),
                 y2 = anchor.getY() + anchor.getHeight();
@@ -264,7 +266,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         LineEndLength headLength = getLineHeadLength();
         LineEndWidth headWidth = getLineHeadWidth();
 
-        double lineWidth = getLineWidth();
+        double lineWidth = Math.max(2.5, getLineWidth());
         Rectangle2D anchor = getAnchor();
         double x1 = anchor.getX(),
                 y1 = anchor.getY();
@@ -287,7 +289,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
                 break;
             case STEALTH:
             case ARROW:
-                p = new Path();
+                p = new Path(false, true);
                 GeneralPath arrow = new GeneralPath();
                 arrow.moveTo((float) (lineWidth * 3 * scaleX), (float) (-lineWidth * scaleY * 2));
                 arrow.lineTo(0, 0);
@@ -319,8 +321,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
         return shape == null ? null : new Outline(shape, p);
     }
 
-    @Override
-    List<Outline> getCustomOutlines(){
+    private List<Outline> getDecorationOutlines(){
         List<Outline> lst = new ArrayList<Outline>();
 
         Outline head = getHeadDecoration();
@@ -338,5 +339,24 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
     @Override
     public XSLFShadow getShadow() {
         return null;
+    }
+
+    @Override
+    public void draw(Graphics2D graphics){
+        super.draw(graphics);
+
+        // draw line decorations
+        Color lineColor = getLineColor();
+        if(lineColor != null) {
+            graphics.setPaint(lineColor);
+            for(Outline o : getDecorationOutlines()){
+                if(o.getPath().isFilled()){
+                    graphics.fill(o.getOutline());
+                }            
+                if(o.getPath().isStroked()){
+                    graphics.draw(o.getOutline());
+                }
+            }
+        }
     }
 }

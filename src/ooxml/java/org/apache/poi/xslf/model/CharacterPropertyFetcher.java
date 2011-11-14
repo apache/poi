@@ -27,6 +27,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties
  * @author Yegor Kozlov
  */
 public abstract class CharacterPropertyFetcher<T> extends ParagraphPropertyFetcher<T> {
+    public boolean isFetchingFromMaster = false;
 
     public CharacterPropertyFetcher(int level) {
         super(level);

@@ -17,14 +17,10 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.apache.poi.openxml4j.opc.PackagePart;
 
 import java.awt.Color;
-import java.util.List;
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 /**
  * @author Yegor Kozlov

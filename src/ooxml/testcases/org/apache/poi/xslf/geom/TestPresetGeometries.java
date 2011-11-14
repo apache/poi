@@ -19,7 +19,12 @@
 package org.apache.poi.xslf.geom;
 
 import junit.framework.TestCase;
-import org.apache.poi.xslf.model.geom.*;
+import org.apache.poi.xslf.model.geom.Context;
+import org.apache.poi.xslf.model.geom.CustomGeometry;
+import org.apache.poi.xslf.model.geom.Guide;
+import org.apache.poi.xslf.model.geom.IAdjustableShape;
+import org.apache.poi.xslf.model.geom.Path;
+import org.apache.poi.xslf.model.geom.PresetGeometries;
 
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;

@@ -430,6 +430,8 @@ class RenderableShape {
     public Stroke applyStroke(Graphics2D graphics) {
 
         float lineWidth = (float) _shape.getLineWidth();
+        if(lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
+
         LineDash lineDash = _shape.getLineDash();
         float[] dash = null;
         float dash_phase = 0;
@@ -559,8 +561,6 @@ class RenderableShape {
             lst.add(new Outline(canvasShape, p));
         }
 
-        // add any shape-specific stuff here (line decorations, etc.)
-        lst.addAll(_shape.getCustomOutlines());
         return lst;
     }
 

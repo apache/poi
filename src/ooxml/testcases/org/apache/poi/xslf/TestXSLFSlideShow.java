@@ -17,7 +17,6 @@
 package org.apache.poi.xslf;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;

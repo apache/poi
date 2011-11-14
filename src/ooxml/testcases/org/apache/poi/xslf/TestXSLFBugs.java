@@ -16,17 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import java.net.URI;
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
+
+import java.net.URI;
+import java.util.List;
 
 public class TestXSLFBugs extends TestCase {
 

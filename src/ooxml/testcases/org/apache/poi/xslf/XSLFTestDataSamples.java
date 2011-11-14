@@ -16,13 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 /**
  * @author Yegor Kozlov

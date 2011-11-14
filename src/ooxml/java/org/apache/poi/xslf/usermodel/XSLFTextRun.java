@@ -29,8 +29,13 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 
 import java.awt.Color;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -58,21 +63,54 @@ public class XSLFTextRun {
 
     String getRenderableText(){
         String txt = _r.getT();
-        switch (getTextCap()){
-            case ALL:
-                txt = txt.toUpperCase();
-                break;
-            case SMALL:
-                txt = txt.toLowerCase();
-                break;
+
+        StringBuffer buf = new StringBuffer();
+        for(int i = 0; i < txt.length(); i++) {
+            char c = txt.charAt(i);
+            if(c == '\t') {
+                // replace tab with the effective number of white spaces
+                buf.append("  ");
+            } else {
+                switch (getTextCap()){
+                    case ALL:
+                        buf.append(Character.toUpperCase(c));
+                        break;
+                    case SMALL:
+                        buf.append(Character.toLowerCase(c));
+                        break;
+                    default:
+                        buf.append(c);
+                }
+            }
         }
-        // TODO-1 is is the place to convert wingdings to unicode
-        
-        // TODO-2 this is a temporary hack. Rendering text with tabs is not yet supported.
-        // for now tabs are replaced with some number of spaces.
-        return txt.replace("\t", " ");
+
+        return buf.toString();
     }
 
+    /**
+     * Replace a tab with the effective number of white spaces.
+     *
+     * @return
+     */
+    private String tab2space(){
+        AttributedString string = new AttributedString(" ");
+        // user can pass an object to convert fonts via a rendering hint
+        string.addAttribute(TextAttribute.FAMILY, getFontFamily());
+
+        string.addAttribute(TextAttribute.SIZE, (float)getFontSize());
+        TextLayout l = new TextLayout(string.getIterator(), new FontRenderContext(null, true, true));
+        double wspace = l.getAdvance();
+
+        double tabSz = _p.getDefaultTabSize();
+
+        int numSpaces = (int)Math.ceil(tabSz / wspace);
+        StringBuffer buf = new StringBuffer();
+        for(int i = 0; i < numSpaces; i++) {
+            buf.append(' ');
+        }
+        return buf.toString();
+    }
+    
     public void setText(String text){
         _r.setT(text);
     }
@@ -98,13 +136,16 @@ public class XSLFTextRun {
     public Color getFontColor(){
         final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
         CTShapeStyle style = _p.getParentShape().getSpStyle();
-        final CTSchemeColor shapeStyle = style == null ? null : style.getFontRef().getSchemeClr();
+        final CTSchemeColor phClr = style == null ? null : style.getFontRef().getSchemeClr();
 
         CharacterPropertyFetcher<Color> fetcher = new CharacterPropertyFetcher<Color>(_p.getLevel()){
             public boolean fetch(CTTextCharacterProperties props){
                 CTSolidColorFillProperties solidFill = props.getSolidFill();
                 if(solidFill != null) {
-                    Color c = new XSLFColor(solidFill, theme, shapeStyle).getColor();
+                    boolean useCtxColor =
+                            (solidFill.isSetSchemeClr() && solidFill.getSchemeClr().getVal() == STSchemeColorVal.PH_CLR)
+                            || isFetchingFromMaster;
+                    Color c = new XSLFColor(solidFill, theme, useCtxColor ? phClr : null).getColor();
                     setValue(c);
                     return true;
                 }
@@ -410,7 +451,10 @@ public class XSLFTextRun {
             ok = shape.fetchShapeProperty(fetcher);
             if(!ok) {
                 CTTextParagraphProperties defaultProps = _p.getDefaultStyle();
-                if(defaultProps != null) ok = fetcher.fetch(defaultProps);
+                if(defaultProps != null) {
+                    fetcher.isFetchingFromMaster = true;
+                    ok = fetcher.fetch(defaultProps);
+                }
             }
         }
 

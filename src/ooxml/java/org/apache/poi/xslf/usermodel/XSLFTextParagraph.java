@@ -26,6 +26,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStop;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStopList;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharBullet;
@@ -33,6 +35,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePoint;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
@@ -242,7 +246,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTColor c = pr.isSetBuClr() ? pr.getBuClr() : pr.addNewBuClr();
         CTSRgbColor clr = c.isSetSrgbClr() ? c.getSrgbClr() : c.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
+        clr.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
     }
 
     public double getBulletFontSize(){
@@ -333,7 +337,45 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         };
         fetchParagraphProperty(fetcher);
         // if the marL attribute is omitted, then a value of 347663 is implied
-        return fetcher.getValue() == null ? Units.toPoints(347663) : fetcher.getValue();
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+    }
+
+    /**
+     *
+     * @return the default size for a tab character within this paragraph
+     */
+    public double getDefaultTabSize(){
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetDefTabSz()){
+                    double val = Units.toPoints(props.getDefTabSz());
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+    }
+
+    public double getTabStop(final int idx){
+        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetTabLst()){
+                    CTTextTabStopList tabStops = props.getTabLst();
+                    if(idx < tabStops.sizeOfTabArray() ) {
+                        CTTextTabStop ts = tabStops.getTabArray(idx);
+                        double val = Units.toPoints(ts.getPos());
+                        setValue(val);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? getDefaultTabSize() : fetcher.getValue();
     }
 
     /**
@@ -389,7 +431,18 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? 100 : fetcher.getValue();
+
+        double lnSpc = fetcher.getValue() == null ? 100 : fetcher.getValue();
+        if(lnSpc > 0) {
+            // check if the percentage value is scaled
+            CTTextNormalAutofit normAutofit = getParentShape().getTextBodyPr().getNormAutofit();
+            if(normAutofit != null) {
+                double scale = 1 - (double)normAutofit.getLnSpcReduction() / 100000;
+                lnSpc *= scale;
+            }
+        }
+        
+        return lnSpc;
     }
 
     /**
@@ -443,7 +496,9 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+
+        double spcBef = fetcher.getValue() == null ? 0 : fetcher.getValue();
+        return spcBef;
     }
 
     /**
@@ -535,7 +590,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                     setValue(false);
                     return true;
                 }
-                if(props.isSetBuFont()){
+                if(props.isSetBuFont() || props.isSetBuChar()){
                     setValue(true);
                     return true;
                 }
@@ -596,7 +651,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             width = anchor.getWidth() -  leftInset - rightInset - leftMargin;
             if(firstLine) {
                 if(isBullet()){
-                    width -= Math.abs(indent);
+                    if(indent > 0) width -= indent;
                 } else {
                     if(indent > 0) width -= indent; // first line indentation
                     else if (indent < 0) { // hanging indentation: the first line start at the left margin
@@ -618,28 +673,25 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         double leftMargin = getLeftMargin();
         boolean firstLine = true;
         double indent = getIndent();
+
+        //The vertical line spacing
+        double spacing = getLineSpacing();
         for(TextFragment line : _lines){
-            double penX = x;
+            double penX = x + leftMargin;
 
             if(firstLine) {
-
                 if(_bullet != null){
                     if(indent < 0) {
                         // a negative value means "Hanging" indentation and
                         // indicates the position of the actual bullet character.
                         // (the bullet is shifted to right relative to the text)
-                        _bullet.draw(graphics, penX,  penY);
-                        penX -= indent;
+                        _bullet.draw(graphics, penX + indent,  penY);
                     } else if(indent > 0){
-                        penX += leftMargin;
                         // a positive value means the "First Line" indentation:
                         // the first line is indented and other lines start at the bullet ofset
                         _bullet.draw(graphics, penX,  penY);
                         penX += indent;
                     } else {
-                        // no special indent. The first line behaves like all others
-                        penX += leftMargin;
-
                         // a zero indent means that the bullet and text have the same offset
                         _bullet.draw(graphics, penX,  penY);
 
@@ -647,19 +699,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                         penX += _bullet._layout.getAdvance() + 1;
                     }
                 } else {
-                    if(indent < 0) {
-                        // if bullet=false and indentation=hanging then the first line
-                        // starts at the left offset (penX is not incremented)
-                    } else if(indent > 0) {
-                        // first line indent shifts penX
-                        penX += indent + leftMargin;
-                    }  else {
-                        // no special indent. The first line behaves like all others
-                        penX += leftMargin;
-                    }
+                    penX += indent;
                 }
-            } else {
-                penX += leftMargin;
             }
 
 
@@ -671,14 +712,11 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                     penX += (anchor.getWidth() - line.getWidth() - leftInset - rightInset);
                     break;
                 default:
-                    //penX += leftInset;
                     break;
             }
 
             line.draw(graphics, penX,  penY);
 
-            //The vertical line spacing
-            double spacing = getLineSpacing();
             if(spacing > 0) {
                 // If linespacing >= 0, then linespacing is a percentage of normal line height.
                 penY += spacing*0.01* _maxLineHeight;
@@ -689,6 +727,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
             firstLine = false;
         }
+        
         return penY - y;
     }
 
@@ -722,6 +761,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     }
 
     AttributedString getAttributedString(Graphics2D graphics){
+
         String text = getRenderableText();
 
         AttributedString string = new AttributedString(text);
@@ -740,7 +780,11 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             // user can pass an object to convert fonts via a rendering hint
             string.addAttribute(TextAttribute.FAMILY, run.getFontFamily(), startIndex, endIndex);
 
-            string.addAttribute(TextAttribute.SIZE, (float)run.getFontSize(), startIndex, endIndex);
+            float fontSz = (float)run.getFontSize();
+            Number fontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.FONT_SCALE);
+            if(fontScale != null) fontSz *= fontScale.floatValue();
+
+            string.addAttribute(TextAttribute.SIZE, fontSz , startIndex, endIndex);
             if(run.isBold()) {
                 string.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIndex, endIndex);
             }
@@ -768,30 +812,48 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return string;
     }
 
+    /**
+     *  ensure that the paragraph contains at least one character
+     */
+    private void ensureNotEmpty(){
+        XSLFTextRun r = addNewTextRun();
+        r.setText(" ");
+        CTTextCharacterProperties endPr = _p.getEndParaRPr();
+        if(endPr != null) {
+            if(endPr.isSetSz()) r.setFontSize(endPr.getSz() / 100);
+        }
+    }
+
     void breakText(Graphics2D graphics){
         _lines = new ArrayList<TextFragment>();
 
+        // does this paragraph contain text?
+        boolean emptyParagraph = _runs.size() == 0;
+
+        // ensure that the paragraph contains at least one character
+        if(_runs.size() == 0) ensureNotEmpty();
+
         String text = getRenderableText();
+        if(text.length() == 0) return;
+
         AttributedString at = getAttributedString(graphics);
         AttributedCharacterIterator it = at.getIterator();
-        if(it.getBeginIndex() == it.getEndIndex()) {
-            return;
-        }
         LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
         for (;;) {
             int startIndex = measurer.getPosition();
             double wrappingWidth = getWrappingWidth(_lines.size() == 0) + 1; // add a pixel to compensate rounding errors
-
+            // shape width can be smaller that the sum of insets (proved by a test file)
+            if(wrappingWidth < 0) wrappingWidth = 1;
 
             int nextBreak = text.indexOf('\n', startIndex + 1);
             if(nextBreak == -1) nextBreak = it.getEndIndex();
 
             TextLayout layout = measurer.nextLayout((float)wrappingWidth, nextBreak, true);
-             if (layout == null) {
+            if (layout == null) {
                  // layout can be null if the entire word at the current position
                  // does not fit within the wrapping width. Try with requireNextWord=false.
                  layout = measurer.nextLayout((float)wrappingWidth, nextBreak, false);
-             }
+            }
 
             int endIndex = measurer.getPosition();
 
@@ -809,9 +871,10 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             if(endIndex == it.getEndIndex()) break;
         }
 
-        if(isBullet()) {
+        if(isBullet() && !emptyParagraph) {
             String buCharacter = getBulletCharacter();
             String buFont = getBulletFont();
+            if(buFont == null) buFont = getTextRuns().get(0).getFontFamily();
             if(buCharacter != null && buFont != null && _lines.size() > 0) {
                 AttributedString str = new AttributedString(buCharacter);
 
@@ -954,4 +1017,5 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             r2.copy(r1);
         }
     }
+
 }

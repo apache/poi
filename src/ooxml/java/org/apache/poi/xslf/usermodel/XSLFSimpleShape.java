@@ -643,14 +643,6 @@ public abstract class XSLFSimpleShape extends XSLFShape {
 
 
     /**
-     * @return any shape-specific geometry that is not included in presetShapeDefinitions.xml
-     * (line decorations, etc)
-     */
-    List<Outline>  getCustomOutlines(){
-        return Collections.emptyList();
-    }
-
-    /**
      * draw any content within this shape (image, text, etc.).
      *
      * @param graphics the graphics to draw into

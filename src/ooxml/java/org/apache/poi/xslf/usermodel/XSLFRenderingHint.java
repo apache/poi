@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.util.Internal;
+
 import java.awt.RenderingHints;
 
 /**
@@ -71,4 +73,7 @@ public class XSLFRenderingHint extends RenderingHints.Key {
      * draw text via {@link java.awt.font.TextLayout#draw(java.awt.Graphics2D, float, float)}
      */
     public static final int TEXT_MODE_GLYPHS = 2;
+
+    @Internal
+    public static final XSLFRenderingHint FONT_SCALE = new XSLFRenderingHint(5);
 }

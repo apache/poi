@@ -17,18 +17,11 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-
-import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.util.*;
-import java.util.List;
-import java.net.URI;
-
-import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+
+import java.net.URI;
 
 /**
  * @author Yegor Kozlov

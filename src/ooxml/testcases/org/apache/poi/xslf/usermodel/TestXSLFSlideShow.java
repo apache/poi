@@ -17,12 +17,11 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.xslf.XSLFTestDataSamples;
 
 import java.awt.Dimension;
 import java.util.List;
-
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.xslf.XSLFTestDataSamples;
 
 /**
  * @author Yegor Kozlov

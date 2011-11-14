@@ -19,7 +19,10 @@
 package org.apache.poi.xslf.geom;
 
 import junit.framework.TestCase;
-import org.apache.poi.xslf.model.geom.*;
+import org.apache.poi.xslf.model.geom.Context;
+import org.apache.poi.xslf.model.geom.CustomGeometry;
+import org.apache.poi.xslf.model.geom.Formula;
+import org.apache.poi.xslf.model.geom.Guide;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
 
 /**

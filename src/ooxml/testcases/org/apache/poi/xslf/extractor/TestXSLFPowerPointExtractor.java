@@ -16,11 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xslf.extractor;
 
+import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for HXFPowerPointExtractor
