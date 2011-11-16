@@ -461,7 +461,7 @@ public class XWPFRun {
      * @param fontFamily
      */
     public void setFontFamily(String fontFamily) {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTFonts fonts = pr.isSetRFonts() ? pr.getRFonts() : pr.addNewRFonts();
         fonts.setAscii(fontFamily);
     }
