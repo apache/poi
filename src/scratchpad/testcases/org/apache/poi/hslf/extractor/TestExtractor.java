@@ -292,13 +292,15 @@ public final class TestExtractor extends TestCase {
        
        // Initially not there
        String text = ppe.getText();
-       assertFalse(text.contains("Master Header Text"));
+       assertFalse(text.contains("Text that I added to the master slide"));
        
        // Enable, shows up
        ppe.setMasterByDefault(true);
        text = ppe.getText();
-       assertTrue(text.contains("Master Header Text"));
-       
+       assertTrue(text.contains("Text that I added to the master slide"));
+
+       // Make sure placeholder text does not come out
+       assertFalse(text.contains("Click to edit Master"));
        
        // Now with another file only containing master text
        // Will always show up

@@ -24,7 +24,6 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.awt.*;
 
 /**
@@ -122,7 +121,7 @@ public abstract class Sheet {
      * For a given PPDrawing, grab all the TextRuns
      */
     public static TextRun[] findTextRuns(PPDrawing ppdrawing) {
-        Vector runsV = new Vector();
+        final List<TextRun> runsV = new ArrayList<TextRun>();
         EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
         for (int i = 0; i < wrappers.length; i++) {
             int s1 = runsV.size();
@@ -132,15 +131,11 @@ public abstract class Sheet {
             findTextRuns(wrappers[i].getChildRecords(), runsV);
             int s2 = runsV.size();
             if (s2 != s1){
-                TextRun t = (TextRun) runsV.get(runsV.size()-1);
+                TextRun t = runsV.get(runsV.size()-1);
                 t.setShapeId(wrappers[i].getShapeId());
             }
         }
-        TextRun[] runs = new TextRun[runsV.size()];
-        for (int i = 0; i < runs.length; i++) {
-            runs[i] = (TextRun) runsV.get(i);
-        }
-        return runs;
+        return runsV.toArray(new TextRun[runsV.size()]);
     }
 
     /**
@@ -151,7 +146,7 @@ public abstract class Sheet {
      * @param records the records to build from
      * @param found   vector to add any found to
      */
-    protected static void findTextRuns(Record[] records, Vector found) {
+    protected static void findTextRuns(Record[] records, List<TextRun> found) {
         // Look for a TextHeaderAtom
         for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
             if (records[i] instanceof TextHeaderAtom) {

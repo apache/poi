@@ -221,7 +221,22 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		if (getSlideText) {
             if (getMasterText) {
                 for (SlideMaster master : _show.getSlidesMasters()) {
-                    textRunsToText(ret, master.getTextRuns());
+                    for(Shape sh : master.getShapes()){
+                        if(sh instanceof TextShape){
+                            if(MasterSheet.isPlaceholder(sh)) {
+                                // don't bother about boiler
+                                // plate text on master
+                                // sheets
+                                continue;
+                            }
+                            TextShape tsh = (TextShape)sh;
+                            String text = tsh.getText();
+                            ret.append(text);
+                            if (!text.endsWith("\n")) {
+                                ret.append("\n");
+                            }
+                        }
+                    }
                 }
             }
 
