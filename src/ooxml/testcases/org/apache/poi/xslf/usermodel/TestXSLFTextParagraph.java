@@ -2,9 +2,10 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -98,4 +99,74 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals(244.0, expectedWidth); // 300 - 10 - 10 - 36 
         assertEquals(expectedWidth, p.getWrappingWidth(false));
      }
+
+    public void testBreakLines(){
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFTextShape sh = slide.createAutoShape();
+
+        XSLFTextParagraph p = sh.addNewTextParagraph();
+        XSLFTextRun r = p.addNewTextRun();
+        r.setFontFamily("serif"); // this should always be available
+        r.setFontSize(12);
+        r.setText(
+                "Paragraph formatting allows for more granular control " +
+                "of text within a shape. Properties here apply to all text " +
+                "residing within the corresponding paragraph.");
+
+        sh.setAnchor(new Rectangle(50, 50, 300, 200));
+
+        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = img.createGraphics();
+
+        List<TextFragment> lines;
+        lines = p.breakText(graphics);
+        assertEquals(3, lines.size());
+
+        // descrease the shape width from 300 pt to 100 pt
+        sh.setAnchor(new Rectangle(50, 50, 100, 200));
+        lines = p.breakText(graphics);
+        assertEquals(10, lines.size());
+
+        // descrease the shape width from 300 pt to 100 pt
+        sh.setAnchor(new Rectangle(50, 50, 600, 200));
+        lines = p.breakText(graphics);
+        assertEquals(2, lines.size());
+
+        // set left and right margins to 200pt. This leaves 200pt for wrapping text
+        sh.setLeftInset(200);
+        sh.setRightInset(200);
+        lines = p.breakText(graphics);
+        assertEquals(4, lines.size());
+
+        r.setText("Apache POI");
+        lines = p.breakText(graphics);
+        assertEquals(1, lines.size());
+        assertEquals("Apache POI", lines.get(0).getString());
+
+        r.setText("Apache\nPOI");
+        lines = p.breakText(graphics);
+        assertEquals(2, lines.size());
+        assertEquals("Apache", lines.get(0).getString());
+        assertEquals("POI", lines.get(1).getString());
+
+        XSLFAutoShape sh2 = slide.createAutoShape();
+        sh2.setAnchor(new Rectangle(50, 50, 300, 200));
+        XSLFTextParagraph p2 = sh2.addNewTextParagraph();
+        XSLFTextRun r2 = p2.addNewTextRun();
+        r2.setFontFamily("serif"); // this should always be available
+        r2.setFontSize(30);
+        r2.setText("Apache\n");
+        XSLFTextRun r3 = p2.addNewTextRun();
+        r3.setFontFamily("serif"); // this should always be available
+        r3.setFontSize(10);
+        r3.setText("POI");
+        lines = p2.breakText(graphics);
+        assertEquals(2, lines.size());
+        assertEquals("Apache", lines.get(0).getString());
+        assertEquals("POI", lines.get(1).getString());
+        // the first line is at least two times higher than the second
+        assertTrue(lines.get(0).getHeight() > lines.get(1).getHeight()*2);
+
+    }
 }

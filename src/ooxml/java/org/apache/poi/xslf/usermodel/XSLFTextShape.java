@@ -493,7 +493,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         double y0 = y;
         for(int i = 0; i < _paragraphs.size(); i++){
             XSLFTextParagraph p = _paragraphs.get(i);
-            List<XSLFTextParagraph.TextFragment> lines = p.getTextLines();
+            List<TextFragment> lines = p.getTextLines();
 
             if(i > 0 && lines.size() > 0) {
                 // the amount of vertical white space before the paragraph

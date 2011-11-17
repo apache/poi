@@ -283,8 +283,8 @@ public class XSLFGroupShape extends XSLFShape {
         double scaleY = exterior.getHeight() / interior.getHeight();
 
         // group transform scales shapes but not fonts
-        Number prevFontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.FONT_SCALE);
-        graphics.setRenderingHint(XSLFRenderingHint.FONT_SCALE, Math.abs(1/scaleY));
+        Number prevFontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
+        graphics.setRenderingHint(XSLFRenderingHint.GROUP_SCALE, Math.abs(1/scaleY));
 
         graphics.scale(scaleX, scaleY);
         graphics.translate(-interior.getX(), -interior.getY());
@@ -302,7 +302,7 @@ public class XSLFGroupShape extends XSLFShape {
             graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
         }
 
-        graphics.setRenderingHint(XSLFRenderingHint.FONT_SCALE, prevFontScale);
+        graphics.setRenderingHint(XSLFRenderingHint.GROUP_SCALE, prevFontScale);
         
     }
 
