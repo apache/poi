@@ -719,7 +719,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
             if(spacing > 0) {
                 // If linespacing >= 0, then linespacing is a percentage of normal line height.
-                penY += spacing*0.01* _maxLineHeight;
+                penY += spacing*0.01* line.getHeight();
             } else {
                 // positive value means absolute spacing in points
                 penY += -spacing;
@@ -731,40 +731,13 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return penY - y;
     }
 
-    static class TextFragment {
-        private TextLayout _layout;
-        private AttributedString _str;
-
-        TextFragment(TextLayout layout, AttributedString str){
-            _layout = layout;
-            _str = str;
-        }
-
-        void draw(Graphics2D graphics, double x, double y){
-            double yBaseline = y + _layout.getAscent();
-
-            Integer textMode = (Integer)graphics.getRenderingHint(XSLFRenderingHint.TEXT_RENDERING_MODE);
-            if(textMode != null && textMode == XSLFRenderingHint.TEXT_MODE_GLYPHS){
-                _layout.draw(graphics, (float)x, (float)yBaseline);
-            } else {
-                graphics.drawString(_str.getIterator(), (float)x, (float)yBaseline );
-            }
-        }
-        
-        public float getHeight(){
-            return _layout.getAscent() + _layout.getDescent() + _layout.getLeading();
-        }
-        public float getWidth(){
-            return _layout.getAdvance();
-        }
-
-    }
-
     AttributedString getAttributedString(Graphics2D graphics){
 
         String text = getRenderableText();
 
         AttributedString string = new AttributedString(text);
+
+        XSLFFontManager fontHandler = (XSLFFontManager)graphics.getRenderingHint(XSLFRenderingHint.FONT_HANDLER);
 
         int startIndex = 0;
         for (XSLFTextRun run : _runs){
@@ -777,11 +750,15 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
             string.addAttribute(TextAttribute.FOREGROUND, run.getFontColor(), startIndex, endIndex);
 
-            // user can pass an object to convert fonts via a rendering hint
-            string.addAttribute(TextAttribute.FAMILY, run.getFontFamily(), startIndex, endIndex);
+            // user can pass an custom object to convert fonts
+            String fontFamily = run.getFontFamily();
+            if(fontHandler != null) {
+                fontFamily = fontHandler.getRendererableFont(fontFamily, run.getPitchAndFamily());
+            }
+            string.addAttribute(TextAttribute.FAMILY, fontFamily, startIndex, endIndex);
 
             float fontSz = (float)run.getFontSize();
-            Number fontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.FONT_SCALE);
+            Number fontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
             if(fontScale != null) fontSz *= fontScale.floatValue();
 
             string.addAttribute(TextAttribute.SIZE, fontSz , startIndex, endIndex);
@@ -813,7 +790,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     }
 
     /**
-     *  ensure that the paragraph contains at least one character
+     *  ensure that the paragraph contains at least one character.
+     *  We need this trick to correctly measure text
      */
     private void ensureNotEmpty(){
         XSLFTextRun r = addNewTextRun();
@@ -824,7 +802,14 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         }
     }
 
-    void breakText(Graphics2D graphics){
+    /**
+     * break text into lines
+     *
+     * @param graphics
+     * @return array of text fragments,
+     * each representing a line of text that fits in the wrapping width
+     */
+    List<TextFragment> breakText(Graphics2D graphics){
         _lines = new ArrayList<TextFragment>();
 
         // does this paragraph contain text?
@@ -834,15 +819,16 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         if(_runs.size() == 0) ensureNotEmpty();
 
         String text = getRenderableText();
-        if(text.length() == 0) return;
+        if(text.length() == 0) return _lines;
 
         AttributedString at = getAttributedString(graphics);
         AttributedCharacterIterator it = at.getIterator();
         LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
         for (;;) {
             int startIndex = measurer.getPosition();
+
             double wrappingWidth = getWrappingWidth(_lines.size() == 0) + 1; // add a pixel to compensate rounding errors
-            // shape width can be smaller that the sum of insets (proved by a test file)
+            // shape width can be smaller that the sum of insets (this was proved by a test file)
             if(wrappingWidth < 0) wrappingWidth = 1;
 
             int nextBreak = text.indexOf('\n', startIndex + 1);
@@ -861,14 +847,22 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             if(hAlign == TextAlign.JUSTIFY || hAlign == TextAlign.JUSTIFY_LOW) {
                 layout = layout.getJustifiedLayout((float)wrappingWidth);
             }
-            
+
+            // skip over new line breaks (we paint 'clear' text runs not starting or ending with \n)
+            if(endIndex < it.getEndIndex() && text.charAt(endIndex) == '\n'){
+                measurer.setPosition(endIndex + 1);
+            }
+
             AttributedString str = new AttributedString(it, startIndex, endIndex);
-            TextFragment line = new TextFragment(layout, str);
+            TextFragment line = new TextFragment(
+                    layout, // we will not paint empty paragraphs
+                    emptyParagraph ? null : str);
             _lines.add(line);
 
             _maxLineHeight = Math.max(_maxLineHeight, line.getHeight());
 
             if(endIndex == it.getEndIndex()) break;
+
         }
 
         if(isBullet() && !emptyParagraph) {
@@ -897,7 +891,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                 _bullet = new TextFragment(layout, str);
             }
         }
-
+        return _lines;
     }
 
     CTTextParagraphProperties getDefaultStyle(){

@@ -431,6 +431,8 @@ class RenderableShape {
 
         float lineWidth = (float) _shape.getLineWidth();
         if(lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
+        Number fontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
+        if(fontScale != null) lineWidth *= fontScale.floatValue();
 
         LineDash lineDash = _shape.getLineDash();
         float[] dash = null;

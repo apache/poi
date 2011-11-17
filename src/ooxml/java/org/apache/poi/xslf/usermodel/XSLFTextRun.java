@@ -63,15 +63,15 @@ public class XSLFTextRun {
 
     String getRenderableText(){
         String txt = _r.getT();
-
+        TextCap cap = getTextCap();
         StringBuffer buf = new StringBuffer();
         for(int i = 0; i < txt.length(); i++) {
             char c = txt.charAt(i);
             if(c == '\t') {
-                // replace tab with the effective number of white spaces
+                // TODO: finish support for tabs
                 buf.append("  ");
             } else {
-                switch (getTextCap()){
+                switch (cap){
                     case ALL:
                         buf.append(Character.toUpperCase(c));
                         break;
@@ -266,6 +266,24 @@ public class XSLFTextRun {
         fetchCharacterProperty(visitor);
 
         return  visitor.getValue();
+    }
+
+    public byte getPitchAndFamily(){
+        final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
+
+        CharacterPropertyFetcher<Byte> visitor = new CharacterPropertyFetcher<Byte>(_p.getLevel()){
+            public boolean fetch(CTTextCharacterProperties props){
+                CTTextFont font = props.getLatin();
+                if(font != null){
+                    setValue(font.getPitchFamily());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchCharacterProperty(visitor);
+
+        return  visitor.getValue() == null ? 0 : visitor.getValue();
     }
 
     /**

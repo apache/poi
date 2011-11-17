@@ -51,12 +51,12 @@ public class XSLFRenderingHint extends RenderingHints.Key {
     /**
      *  how to render text:
      *
-     *  {@link #TEXT_MODE_CHARACTERS} (default) means to draw via
+     *  {@link #TEXT_AS_CHARACTERS} (default) means to draw via
      *   {@link java.awt.Graphics2D#drawString(java.text.AttributedCharacterIterator, float, float)}.
      *   This mode draws text as characters. Use it if the target graphics writes the actual
      *   character codes instead of glyph outlines (PDFGraphics2D, SVGGraphics2D, etc.)
      *
-     *   {@link #TEXT_MODE_GLYPHS} means to render via
+     *   {@link #TEXT_AS_SHAPES} means to render via
      *   {@link java.awt.font.TextLayout#draw(java.awt.Graphics2D, float, float)}.
      *   This mode draws glyphs as shapes and provides some advanced capabilities such as
      *   justification and font substitution. Use it if the target graphics is an image.
@@ -67,13 +67,19 @@ public class XSLFRenderingHint extends RenderingHints.Key {
     /**
      * draw text via {@link java.awt.Graphics2D#drawString(java.text.AttributedCharacterIterator, float, float)}
      */
-    public static final int TEXT_MODE_CHARACTERS = 1;
+    public static final int TEXT_AS_CHARACTERS = 1;
 
     /**
      * draw text via {@link java.awt.font.TextLayout#draw(java.awt.Graphics2D, float, float)}
      */
-    public static final int TEXT_MODE_GLYPHS = 2;
+    public static final int TEXT_AS_SHAPES = 2;
 
     @Internal
-    public static final XSLFRenderingHint FONT_SCALE = new XSLFRenderingHint(5);
+    static final XSLFRenderingHint GROUP_SCALE = new XSLFRenderingHint(5);
+
+    /**
+     * Use this object to resolve unknown / missing fonts when rendering slides
+     */
+    public static final XSLFRenderingHint FONT_HANDLER = new XSLFRenderingHint(6);
+
 }
