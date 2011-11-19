@@ -227,9 +227,13 @@ public class XSLFGroupShape extends XSLFShape {
     public XSLFPictureShape createPicture(int pictureIndex){
 
         List<PackagePart>  pics = _sheet.getPackagePart().getPackage()
-                .getPartsByName(Pattern.compile("/ppt/media/.*?"));
+                .getPartsByName(Pattern.compile("/ppt/media/image" + (pictureIndex + 1) + ".*?"));
 
-        PackagePart pic = pics.get(pictureIndex);
+        if(pics.size() == 0) {
+            throw new IllegalArgumentException("Picture with index=" + pictureIndex + " was not found");
+        }
+
+        PackagePart pic = pics.get(0);
 
         PackageRelationship rel = _sheet.getPackagePart().addRelationship(
                 pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
