@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">52209 - fixed inserting multiple pictures in XSLF </action>
            <action dev="poi-developers" type="fix">51803 - fixed HSLF TextExtractor to extract content from master slide </action>
            <action dev="poi-developers" type="fix">52190 - null check on XWPF setFontFamily</action>
            <action dev="poi-developers" type="fix">52062 - ensure that temporary files in SXSSF are deleted</action>

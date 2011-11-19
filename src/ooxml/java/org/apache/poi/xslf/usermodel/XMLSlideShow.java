@@ -338,7 +338,7 @@ public class XMLSlideShow  extends POIXMLDocument {
     public int addPicture(byte[] pictureData, int format) {
         getAllPictures();
         
-        int imageNumber = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?")).size() + 1;
+        int imageNumber = _pictures.size() + 1;
         XSLFPictureData img = (XSLFPictureData) createRelationship(
                 XSLFPictureData.RELATIONS[format], XSLFFactory.getInstance(), imageNumber, true);
         _pictures.add(img);

@@ -841,16 +841,20 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                  layout = measurer.nextLayout((float)wrappingWidth, nextBreak, false);
             }
 
+            if(layout == null) {
+                // exit if can't break any more
+                break;
+            }
+
             int endIndex = measurer.getPosition();
+            // skip over new line breaks (we paint 'clear' text runs not starting or ending with \n)
+            if(endIndex < it.getEndIndex() && text.charAt(endIndex) == '\n'){
+                measurer.setPosition(endIndex + 1);
+            }
 
             TextAlign hAlign = getTextAlign();
             if(hAlign == TextAlign.JUSTIFY || hAlign == TextAlign.JUSTIFY_LOW) {
                 layout = layout.getJustifiedLayout((float)wrappingWidth);
-            }
-
-            // skip over new line breaks (we paint 'clear' text runs not starting or ending with \n)
-            if(endIndex < it.getEndIndex() && text.charAt(endIndex) == '\n'){
-                measurer.setPosition(endIndex + 1);
             }
 
             AttributedString str = new AttributedString(it, startIndex, endIndex);
