@@ -19,8 +19,11 @@ package org.apache.poi.xslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yegor Kozlov
@@ -49,13 +52,65 @@ public class TestXSLFPictureShape extends TestCase {
         assertTrue(Arrays.equals(data2, shape2.getPictureData().getData()));
 
         ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        List<XSLFPictureData> pics =  ppt.getAllPictures();
+        List<XSLFPictureData> pics = ppt.getAllPictures();
         assertEquals(2, pics.size());
         assertTrue(Arrays.equals(data1, pics.get(0).getData()));
         assertTrue(Arrays.equals(data2, pics.get(1).getData()));
 
         XSLFShape[] shapes = ppt.getSlides()[0].getShapes();
-        assertTrue(Arrays.equals(data1, ((XSLFPictureShape)shapes[0]).getPictureData().getData()));
-        assertTrue(Arrays.equals(data2, ((XSLFPictureShape)shapes[1]).getPictureData().getData()));
+        assertTrue(Arrays.equals(data1, ((XSLFPictureShape) shapes[0]).getPictureData().getData()));
+        assertTrue(Arrays.equals(data2, ((XSLFPictureShape) shapes[1]).getPictureData().getData()));
+    }
+
+    public void testCreateMultiplePictures() {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide1 = ppt.createSlide();
+        XSLFGroupShape group1 = slide1.createGroup();
+
+
+        int pictureIndex = 0;
+        // first add 20 images to the slide
+        for (int i = 0; i < 20; i++, pictureIndex++) {
+            byte[] data = new byte[]{(byte)pictureIndex};
+            int elementIndex = ppt.addPicture(data,
+                    XSLFPictureData.PICTURE_TYPE_PNG);
+            assertEquals(pictureIndex, elementIndex);   // added images have indexes 0,1,2....19
+            XSLFPictureShape picture = slide1.createPicture(elementIndex);
+            // POI saves images as image1.png, image2.png, etc.
+            String fileName = "image" + (elementIndex + 1) + ".png";
+            assertEquals(fileName, picture.getPictureData().getFileName());
+            assertTrue(Arrays.equals(data, picture.getPictureData().getData()));
+        }
+
+        // and then add next 20 images to a group
+        for (int i = 0; i < 20; i++, pictureIndex++) {
+            byte[] data = new byte[]{(byte)pictureIndex};
+            int elementIndex = ppt.addPicture(data,
+                    XSLFPictureData.PICTURE_TYPE_PNG);
+            XSLFPictureShape picture = group1.createPicture(elementIndex);
+            // POI saves images as image1.png, image2.png, etc.
+            assertEquals(pictureIndex, elementIndex);   // added images have indexes 0,1,2....19
+            String fileName = "image" + (pictureIndex + 1) + ".png";
+            assertEquals(fileName, picture.getPictureData().getFileName());
+            assertTrue(Arrays.equals(data, picture.getPictureData().getData()));
+        }
+
+        // serialize, read back and check that all images are there
+
+        ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        // pictures keyed by file name
+        Map<String, XSLFPictureData> pics = new HashMap<String, XSLFPictureData>();
+        for(XSLFPictureData p : ppt.getAllPictures()){
+            pics.put(p.getFileName(), p);
+        }
+        assertEquals(40, pics.size());
+        for (int i = 0; i < 40; i++) {
+            byte[] data1 = new byte[]{(byte)i};
+            String fileName = "image" + (i + 1) + ".png";
+            XSLFPictureData data = pics.get(fileName);
+            assertNotNull(data);
+            assertEquals(fileName, data.getFileName());
+            assertTrue(Arrays.equals(data1, data.getData()));
+        }
     }
 }
