@@ -150,6 +150,13 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals("Apache", lines.get(0).getString());
         assertEquals("POI", lines.get(1).getString());
 
+        // trailing newlines are ignored
+        r.setText("Apache\nPOI\n");
+        lines = p.breakText(graphics);
+        assertEquals(2, lines.size());
+        assertEquals("Apache", lines.get(0).getString());
+        assertEquals("POI", lines.get(1).getString());
+
         XSLFAutoShape sh2 = slide.createAutoShape();
         sh2.setAnchor(new Rectangle(50, 50, 300, 200));
         XSLFTextParagraph p2 = sh2.addNewTextParagraph();
