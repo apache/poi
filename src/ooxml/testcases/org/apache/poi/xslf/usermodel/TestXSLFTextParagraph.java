@@ -1,6 +1,8 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -15,6 +17,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class TestXSLFTextParagraph extends TestCase {
+    private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);
 
     public void testWrappingWidth() throws Exception {
         XMLSlideShow ppt = new XMLSlideShow();
@@ -100,14 +103,33 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals(expectedWidth, p.getWrappingWidth(false));
      }
 
+    /**
+     * test breaking test into lines.
+     * This test is platform-dependent and will run only if the test fonr (Arial)
+     * is present in local graphics environment
+     */
     public void testBreakLines(){
+        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        String testFont = "Arial";
+        boolean testFontAvailable = false;
+        for(String family : env.getAvailableFontFamilyNames()) {
+            if(family.equals(testFont)) {
+                testFontAvailable = true;
+                break;
+            }
+        }
+
+        if(!testFontAvailable) {
+            _logger.log(POILogger.WARN, "the Arial font family is not available in local graphics environment");
+        }
+
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
 
         XSLFTextParagraph p = sh.addNewTextParagraph();
         XSLFTextRun r = p.addNewTextRun();
-        r.setFontFamily("serif"); // this should always be available
+        r.setFontFamily("Arial"); // this should always be available
         r.setFontSize(12);
         r.setText(
                 "Paragraph formatting allows for more granular control " +
@@ -121,12 +143,12 @@ public class TestXSLFTextParagraph extends TestCase {
 
         List<TextFragment> lines;
         lines = p.breakText(graphics);
-        assertEquals(3, lines.size());
+        assertEquals(4, lines.size());
 
         // descrease the shape width from 300 pt to 100 pt
         sh.setAnchor(new Rectangle(50, 50, 100, 200));
         lines = p.breakText(graphics);
-        assertEquals(10, lines.size());
+        assertEquals(12, lines.size());
 
         // descrease the shape width from 300 pt to 100 pt
         sh.setAnchor(new Rectangle(50, 50, 600, 200));
@@ -137,7 +159,7 @@ public class TestXSLFTextParagraph extends TestCase {
         sh.setLeftInset(200);
         sh.setRightInset(200);
         lines = p.breakText(graphics);
-        assertEquals(4, lines.size());
+        assertEquals(5, lines.size());
 
         r.setText("Apache POI");
         lines = p.breakText(graphics);
