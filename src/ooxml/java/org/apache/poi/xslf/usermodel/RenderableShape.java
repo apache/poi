@@ -120,7 +120,7 @@ class RenderableShape {
         else if (obj instanceof CTGradientFillProperties) {
             CTGradientFillProperties gradFill = (CTGradientFillProperties) obj;
             if (gradFill.isSetLin()) {
-                 paint = createLinearGradientPaint(gradFill, anchor, theme, phClr);
+                 paint = createLinearGradientPaint(graphics, gradFill, anchor, theme, phClr);
             } else if (gradFill.isSetPath()){
                 CTPathShadeProperties ps = gradFill.getPath();
                 if(ps.getPath() ==  STPathShadeType.CIRCLE){
@@ -166,6 +166,7 @@ class RenderableShape {
     }
 
     private static Paint createLinearGradientPaint(
+            Graphics2D graphics,
             CTGradientFillProperties gradFill, Rectangle2D anchor,
             XSLFTheme theme, CTSchemeColor phClr) {
         double angle = gradFill.getLin().getAng() / 60000;
@@ -204,13 +205,30 @@ class RenderableShape {
             fractions[i] = stop.getPos() / 100000.f;
         }
 
+        AffineTransform grAt;
+        if(gradFill.getRotWithShape()) grAt = new AffineTransform();
+        else {
+            // gradient fill is not rotated with the shape
+            try {
+                grAt = graphics.getTransform().createInverse();
+            } catch (Exception e){
+                // should not happen.
+                grAt = new AffineTransform();
+            }
+        }
+
         // Trick to return GradientPaint on JDK 1.5 and LinearGradientPaint on JDK 1.6+
         Paint paint;
         try {
             Class clz = Class.forName("java.awt.LinearGradientPaint");
+            Class clzCycleMethod = Class.forName("java.awt.MultipleGradientPaint$CycleMethod");
+            Class clzColorSpaceType = Class.forName("java.awt.MultipleGradientPaint$ColorSpaceType");
             Constructor c =
-                    clz.getConstructor(Point2D.class, Point2D.class, float[].class, Color[].class);
-            paint = (Paint) c.newInstance(p1, p2, fractions, colors);
+                    clz.getConstructor(Point2D.class, Point2D.class, float[].class, Color[].class,
+                            clzCycleMethod, clzColorSpaceType, AffineTransform.class);
+            paint = (Paint) c.newInstance(p1, p2, fractions, colors,
+                    Enum.valueOf(clzCycleMethod, "NO_CYCLE"),
+                    Enum.valueOf(clzColorSpaceType, "SRGB"), grAt);
         } catch (ClassNotFoundException e) {
             paint = new GradientPaint(p1, colors[0], p2, colors[colors.length - 1]);
         } catch (Exception e) {
@@ -504,9 +522,12 @@ class RenderableShape {
     }
 
     private Collection<Outline> computeOutlines() {
-        CustomGeometry geom = _shape.getGeometry();
 
         Collection<Outline> lst = new ArrayList<Outline>();
+        CustomGeometry geom = _shape.getGeometry();
+        if(geom == null) {
+            return lst;
+        }
 
         Rectangle2D anchor = _shape.getAnchor();
         for (Path p : geom) {
