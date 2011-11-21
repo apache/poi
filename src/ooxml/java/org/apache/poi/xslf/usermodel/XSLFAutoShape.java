@@ -80,4 +80,9 @@ public class XSLFAutoShape extends XSLFTextShape {
         }
         return txBody;
     }
+
+    @Override
+    public String toString(){
+        return "[" + getClass().getSimpleName() + "] " + getShapeName();
+    }
 }

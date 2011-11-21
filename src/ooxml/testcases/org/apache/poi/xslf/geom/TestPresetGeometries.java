@@ -39,7 +39,7 @@ public class TestPresetGeometries extends TestCase {
     public void testRead(){
 
         Map<String, CustomGeometry> shapes = PresetGeometries.getInstance();
-        assertEquals(186, shapes.size());
+        assertEquals(187, shapes.size());
 
 
         for(String name : shapes.keySet()) {

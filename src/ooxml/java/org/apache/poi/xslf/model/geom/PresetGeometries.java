@@ -51,6 +51,9 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             String name = def.getDomNode().getLocalName();
             CTCustomGeometry2D geom = CTCustomGeometry2D.Factory.parse(def.toString());
 
+            if(containsKey(name)) {
+                System.out.println("Duplicate definoition of " + name) ;
+            }
             put(name, new CustomGeometry(geom));
         }
     }
