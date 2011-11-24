@@ -22,6 +22,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
@@ -113,6 +114,17 @@ public class XSLFSlideLayout extends XSLFSheet {
             }
         }
         return true;
+    }
+
+
+    @Override
+    public XSLFBackground getBackground() {
+        CTBackground bg = _layout.getCSld().getBg();
+        if(bg != null) {
+            return new XSLFBackground(bg, this);
+        } else {
+            return getMasterSheet().getBackground();
+        }
     }
 
     /**

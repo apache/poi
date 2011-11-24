@@ -23,6 +23,7 @@ import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterTextStyles;
@@ -165,6 +166,16 @@ import java.util.Map;
             }
         }
         return true;
+    }
+
+    @Override
+    public XSLFBackground getBackground() {
+        CTBackground bg = _slide.getCSld().getBg();
+        if(bg != null) {
+            return new XSLFBackground(bg, this);
+        } else {
+            return null;
+        }
     }
 
 }

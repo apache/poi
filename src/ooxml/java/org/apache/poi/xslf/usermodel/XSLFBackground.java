@@ -20,7 +20,9 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBackgroundFillStyleList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 
 import java.awt.Color;
@@ -90,5 +92,16 @@ public class XSLFBackground extends XSLFSimpleShape {
             return (Color)p;
         }
         return null;
+    }
+
+    /**
+     * background does not have a associated transform.
+     * we return a dummy transform object to prevent exceptions in inherited methods.
+     *
+     * @return  dummy  CTTransform2D bean
+     */
+    @Override
+    CTTransform2D getXfrm() {
+        return CTTransform2D.Factory.newInstance();
     }
 }

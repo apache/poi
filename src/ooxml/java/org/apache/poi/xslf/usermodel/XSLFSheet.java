@@ -414,6 +414,14 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<X
     }
 
     /**
+     *
+     * @return  background for this sheet
+     */
+    public XSLFBackground getBackground() {
+        return null;
+    }
+
+    /**
      * Render this sheet into the supplied graphics object
      *
      * @param graphics

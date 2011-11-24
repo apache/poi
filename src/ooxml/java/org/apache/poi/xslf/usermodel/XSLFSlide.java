@@ -184,23 +184,14 @@ public final class XSLFSlide extends XSLFSheet {
      *
      * @return the information about background appearance of this slide
      */
+    @Override
     public XSLFBackground getBackground() {
-
-
-        if(_slide.getCSld().isSetBg()) {
-            return new XSLFBackground(_slide.getCSld().getBg(), this);
+        CTBackground bg = _slide.getCSld().getBg();
+        if(bg != null) {
+            return new XSLFBackground(bg, this);
+        } else {
+            return getMasterSheet().getBackground();
         }
-
-        XSLFSlideLayout layout = getMasterSheet();
-        if(layout.getXmlObject().getCSld().isSetBg()) {
-            return new XSLFBackground(layout.getXmlObject().getCSld().getBg(), this);
-        }
-
-        XSLFSlideMaster master = layout.getMasterSheet();
-        if(master.getXmlObject().getCSld().isSetBg()) {
-            return new XSLFBackground(master.getXmlObject().getCSld().getBg(), this);
-        }
-        return null;
     }
 
     /**

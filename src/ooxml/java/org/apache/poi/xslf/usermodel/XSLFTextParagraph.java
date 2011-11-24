@@ -570,7 +570,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
     /**
      *
-     * @return the text level of this paragraph. Default is 0.
+     * @return the text level of this paragraph (0-based). Default is 0.
      */
     public int getLevel(){
         CTTextParagraphProperties pr = _p.getPPr();
@@ -823,7 +823,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
         AttributedString at = getAttributedString(graphics);
         AttributedCharacterIterator it = at.getIterator();
-        LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
+        LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext())  ;
         for (;;) {
             int startIndex = measurer.getPosition();
 
@@ -898,29 +898,27 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return _lines;
     }
 
-    CTTextParagraphProperties getDefaultStyle(){
+    CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getCTPlaceholder();
         String defaultStyleSelector;
-        if(ph == null) defaultStyleSelector = "otherStyle";
-        else {
-            switch(ph.getType().intValue()){
-                case STPlaceholderType.INT_TITLE:
-                case STPlaceholderType.INT_CTR_TITLE:
-                    defaultStyleSelector = "titleStyle";
-                    break;
-                case STPlaceholderType.INT_FTR:
-                case STPlaceholderType.INT_SLD_NUM:
-                case STPlaceholderType.INT_DT:
-                    defaultStyleSelector = "otherStyle";
-                    break;
-                default:
-                    defaultStyleSelector = "bodyStyle";
-                    break;
-            }
+        switch(ph.getType().intValue()){
+            case STPlaceholderType.INT_TITLE:
+            case STPlaceholderType.INT_CTR_TITLE:
+                defaultStyleSelector = "titleStyle";
+                break;
+            case STPlaceholderType.INT_FTR:
+            case STPlaceholderType.INT_SLD_NUM:
+            case STPlaceholderType.INT_DT:
+                defaultStyleSelector = "otherStyle";
+                break;
+            default:
+                defaultStyleSelector = "bodyStyle";
+                break;
         }
 
         int level = getLevel();
 
+        // wind up and find the root master sheet which must be slide master
         XSLFSheet masterSheet = _shape.getSheet();
         while (masterSheet.getMasterSheet() != null){
             masterSheet = masterSheet.getMasterSheet();
@@ -946,9 +944,18 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         if(!ok) {
             XSLFTextShape shape = getParentShape();
             ok = shape.fetchShapeProperty(visitor);
-            if(!ok) {
-                CTTextParagraphProperties defaultProps = getDefaultStyle();
-                if(defaultProps != null) ok = visitor.fetch(defaultProps);
+            if(!ok){
+                CTPlaceholder ph = shape.getCTPlaceholder();
+                if(ph == null){
+                    // if it is a plain text box then take defaults from presentation.xml
+                    XMLSlideShow ppt = getParentShape().getSheet().getSlideShow();
+                    CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getLevel());
+                    if(themeProps != null) ok = visitor.fetch(themeProps);
+                } else {
+                    // defaults for placeholders are defined in the slide master
+                    CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
+                    if(defaultProps != null) ok = visitor.fetch(defaultProps);
+                }
             }
         }
 

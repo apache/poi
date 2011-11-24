@@ -3,6 +3,7 @@ package org.apache.poi.xslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xslf.XSLFTestDataSamples;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -105,22 +106,13 @@ public class TestXSLFTextParagraph extends TestCase {
 
     /**
      * test breaking test into lines.
-     * This test is platform-dependent and will run only if the test fonr (Arial)
-     * is present in local graphics environment
+     * This test requires that the Arial font is available and will run only on windows
      */
     public void testBreakLines(){
-        GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        String testFont = "Arial";
-        boolean testFontAvailable = false;
-        for(String family : env.getAvailableFontFamilyNames()) {
-            if(family.equals(testFont)) {
-                testFontAvailable = true;
-                break;
-            }
-        }
-
-        if(!testFontAvailable) {
-            _logger.log(POILogger.WARN, "the Arial font family is not available in local graphics environment");
+        String os = System.getProperty("os.name");
+        if(os == null || !os.contains("Windows")) {
+            _logger.log(POILogger.WARN, "Skipping testBreakLines(), it is executed only on Windows machines");
+            return;
         }
 
         XMLSlideShow ppt = new XMLSlideShow();
@@ -196,6 +188,22 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals("POI", lines.get(1).getString());
         // the first line is at least two times higher than the second
         assertTrue(lines.get(0).getHeight() > lines.get(1).getHeight()*2);
+
+    }
+
+    public void testThemeInheritance(){
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("prProps.pptx");
+        XSLFShape[] shapes = ppt.getSlides()[0].getShapes();
+        XSLFTextShape sh1 = (XSLFTextShape)shapes[0];
+        assertEquals("Apache", sh1.getText());
+        assertEquals(TextAlign.CENTER, sh1.getTextParagraphs().get(0).getTextAlign());
+        XSLFTextShape sh2 = (XSLFTextShape)shapes[1];
+        assertEquals("Software", sh2.getText());
+        assertEquals(TextAlign.CENTER, sh2.getTextParagraphs().get(0).getTextAlign());
+        XSLFTextShape sh3 = (XSLFTextShape)shapes[2];
+        assertEquals("Foundation", sh3.getText());
+        assertEquals(TextAlign.CENTER, sh3.getTextParagraphs().get(0).getTextAlign());
+
 
     }
 }
