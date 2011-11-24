@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Encapsulates logic to translate DrawingML objects to Java2D
@@ -125,6 +126,8 @@ class RenderableShape {
                 CTPathShadeProperties ps = gradFill.getPath();
                 if(ps.getPath() ==  STPathShadeType.CIRCLE){
                     paint = createRadialGradientPaint(gradFill, anchor, theme, phClr);
+                } else if (ps.getPath() ==  STPathShadeType.SHAPE){
+                    paint = toRadialGradientPaint(gradFill, anchor, theme, phClr);
                 }
             }
         }
@@ -165,7 +168,7 @@ class RenderableShape {
         return paint;
     }
 
-    private static Paint createLinearGradientPaint(
+    private Paint createLinearGradientPaint(
             Graphics2D graphics,
             CTGradientFillProperties gradFill, Rectangle2D anchor,
             XSLFTheme theme, CTSchemeColor phClr) {
@@ -205,15 +208,16 @@ class RenderableShape {
             fractions[i] = stop.getPos() / 100000.f;
         }
 
-        AffineTransform grAt;
-        if(gradFill.getRotWithShape()) grAt = new AffineTransform();
-        else {
-            // gradient fill is not rotated with the shape
-            try {
-                grAt = graphics.getTransform().createInverse();
-            } catch (Exception e){
-                // should not happen.
-                grAt = new AffineTransform();
+        AffineTransform grAt  = new AffineTransform();
+        if(gradFill.isSetRotWithShape() || !gradFill.getRotWithShape()) {
+            double rotation = _shape.getRotation();
+            if (rotation != 0.) {
+                double centerX = anchor.getX() + anchor.getWidth() / 2;
+                double centerY = anchor.getY() + anchor.getHeight() / 2;
+
+                grAt.translate(centerX, centerY);
+                grAt.rotate(Math.toRadians(-rotation));
+                grAt.translate(-centerX, -centerY);
             }
         }
 
@@ -235,6 +239,30 @@ class RenderableShape {
             throw new RuntimeException(e);
         }
         return paint;
+    }
+
+    /**
+     * gradients with type=shape are enot supported by Java graphics.
+     * We approximate it with a radial gradient.
+     */
+    private static Paint toRadialGradientPaint(
+            CTGradientFillProperties gradFill, Rectangle2D anchor,
+            XSLFTheme theme, CTSchemeColor phClr) {
+
+        CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
+        Arrays.sort(gs, new Comparator<CTGradientStop>() {
+            public int compare(CTGradientStop o1, CTGradientStop o2) {
+                Integer pos1 = o1.getPos();
+                Integer pos2 = o2.getPos();
+                return pos1.compareTo(pos2);
+            }
+        });
+        gs[1].setPos(50000);
+
+        CTGradientFillProperties g = CTGradientFillProperties.Factory.newInstance();
+        g.set(gradFill);
+        g.getGsLst().setGsArray(new CTGradientStop[]{gs[0], gs[1]});
+        return createRadialGradientPaint(g, anchor, theme, phClr);
     }
 
     private static Paint createRadialGradientPaint(
@@ -498,7 +526,7 @@ class RenderableShape {
         if(shadow != null) for(Outline o : elems){
             if(o.getPath().isFilled()){
                 if(fill != null) shadow.fill(graphics, o.getOutline());
-                if(line != null) shadow.draw(graphics, o.getOutline());
+                else if(line != null) shadow.draw(graphics, o.getOutline());
             }
         }
         // then fill the shape interior

@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 
 /**
  * @author Yegor Kozlov
@@ -33,5 +34,33 @@ public class TestXSLFTextBox extends TestCase {
         assertEquals(Placeholder.TITLE, shape.getTextType());
         shape.setPlaceholder(null);
         assertNull(shape.getTextType());
+        shape.setText("Apache POI");
+    }
+
+    /**
+     * text box inherits default text proeprties from presentation.xml
+     */
+    public void testDefaultTextStyle() {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+
+        // default character properties for paragraphs with level=1
+        CTTextCharacterProperties pPr = ppt.getCTPresentation().getDefaultTextStyle().getLvl1PPr().getDefRPr();
+
+        XSLFTextBox shape = slide.createTextBox();
+        shape.setText("Apache POI");
+        assertEquals(1, shape.getTextParagraphs().size());
+        assertEquals(1, shape.getTextParagraphs().get(0).getTextRuns().size());
+
+        XSLFTextRun r = shape.getTextParagraphs().get(0).getTextRuns().get(0);
+
+        assertEquals(1800, pPr.getSz());
+        assertEquals(18.0, r.getFontSize());
+        assertEquals("Calibri", r.getFontFamily());
+
+        pPr.setSz(900);
+        pPr.getLatin().setTypeface("Arial");
+        assertEquals(9.0, r.getFontSize());
+        assertEquals("Arial", r.getFontFamily());
     }
 }

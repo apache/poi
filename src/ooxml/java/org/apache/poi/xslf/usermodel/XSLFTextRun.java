@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 import java.awt.Color;
 import java.awt.font.FontRenderContext;
@@ -467,11 +468,23 @@ public class XSLFTextRun {
         if(!ok) {
             XSLFTextShape shape = _p.getParentShape();
             ok = shape.fetchShapeProperty(fetcher);
-            if(!ok) {
-                CTTextParagraphProperties defaultProps = _p.getDefaultStyle();
-                if(defaultProps != null) {
-                    fetcher.isFetchingFromMaster = true;
-                    ok = fetcher.fetch(defaultProps);
+            if(!ok){
+                CTPlaceholder ph = shape.getCTPlaceholder();
+                if(ph == null){
+                    // if it is a plain text box then take defaults from presentation.xml
+                    XMLSlideShow ppt = shape.getSheet().getSlideShow();
+                    CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(_p.getLevel());
+                    if(themeProps != null) {
+                        fetcher.isFetchingFromMaster = true;
+                        ok = fetcher.fetch(themeProps);
+                    }
+                } else {
+                    // defaults for placeholders are defined in the slide master
+                    CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
+                    if(defaultProps != null) {
+                        fetcher.isFetchingFromMaster = true;
+                        ok = fetcher.fetch(defaultProps);
+                    }
                 }
             }
         }

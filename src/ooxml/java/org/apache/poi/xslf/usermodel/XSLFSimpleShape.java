@@ -154,7 +154,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         return _ph;
     }
 
-    private CTTransform2D getXfrm() {
+    CTTransform2D getXfrm() {
         PropertyFetcher<CTTransform2D> fetcher = new PropertyFetcher<CTTransform2D>() {
             public boolean fetch(XSLFSimpleShape shape) {
                 CTShapeProperties pr = shape.getSpPr();
@@ -561,7 +561,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      *
      * The following order of inheritance is assumed:
      * <p>
-     * slide <-- slideLayout <-- slideMaster <-- default styles in the slideMaster
+     * slide <-- slideLayout <-- slideMaster
      * </p>
      *
      * @param visitor the object that collects the desired property
@@ -571,24 +571,21 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         boolean ok = visitor.fetch(this);
 
         XSLFSimpleShape masterShape;
-        XSLFSheet layout = getSheet().getMasterSheet();
-        if (layout != null) {
+        XSLFSheet masterSheet = getSheet().getMasterSheet();
+        CTPlaceholder ph = getCTPlaceholder();
+
+        if (masterSheet != null && ph != null) {
             if (!ok) {
-                // first try to fetch from the slide layout
-                CTPlaceholder ph = getCTPlaceholder();
-                if (ph != null) {
-                    masterShape = layout.getPlaceholder(ph);
-                    if (masterShape != null) {
-                        ok = visitor.fetch(masterShape);
-                    }
+                masterShape = masterSheet.getPlaceholder(ph);
+                if (masterShape != null) {
+                    ok = visitor.fetch(masterShape);
                 }
             }
 
             // try slide master
-            if (!ok) {
+            if (!ok ) {
                 int textType;
-                CTPlaceholder ph = getCTPlaceholder();
-                if (ph == null || !ph.isSetType()) textType = STPlaceholderType.INT_BODY;
+                if ( !ph.isSetType()) textType = STPlaceholderType.INT_BODY;
                 else {
                     switch (ph.getType().intValue()) {
                         case STPlaceholderType.INT_TITLE:
@@ -605,7 +602,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                             break;
                     }
                 }
-                XSLFSheet master = layout.getMasterSheet();
+                XSLFSheet master = masterSheet.getMasterSheet();
                 if (master != null) {
                     masterShape = master.getPlaceholderByType(textType);
                     if (masterShape != null) {

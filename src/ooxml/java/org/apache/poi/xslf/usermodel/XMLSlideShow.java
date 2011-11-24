@@ -32,7 +32,9 @@ import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
@@ -353,6 +355,17 @@ public class XMLSlideShow  extends POIXMLDocument {
     }
     public XSLFTableStyles getTableStyles(){
         return _tableStyles;
+    }
+
+    CTTextParagraphProperties getDefaultParagraphStyle(int level) {
+        XmlObject[] o = _presentation.selectPath(
+                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
+                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
+                ".//p:defaultTextStyle/a:lvl" +(level+1)+ "pPr");
+        if(o.length == 1){
+            return (CTTextParagraphProperties)o[0];
+        }
+        return null;
     }
 
 }

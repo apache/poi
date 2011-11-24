@@ -29,6 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 
 import javax.xml.namespace.QName;
@@ -150,4 +151,17 @@ public class XSLFTheme extends POIXMLDocumentPart {
     public String getMinorFont(){
         return _theme.getThemeElements().getFontScheme().getMinorFont().getLatin().getTypeface();
     }
+
+
+    CTTextParagraphProperties getDefaultParagraphStyle(){
+        XmlObject[] o = _theme.selectPath(
+                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
+                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
+                ".//a:objectDefaults/a:spDef/a:lstStyle/a:defPPr");
+        if(o.length == 1){
+            return (CTTextParagraphProperties)o[0];
+        }
+        return null;
+    }
+
 }

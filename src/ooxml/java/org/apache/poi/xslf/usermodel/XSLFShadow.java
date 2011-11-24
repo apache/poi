@@ -44,7 +44,11 @@ public class XSLFShadow extends XSLFSimpleShape {
 
     public void fill(Graphics2D graphics, Shape outline) {
 
-        double angle = getAngle();
+        double shapeRotation = _parent.getRotation();
+        if(_parent.getFlipVertical()){
+            shapeRotation += 180;
+        }
+        double angle = getAngle() - shapeRotation;
         double dist = getDistance();
         double dx = dist * Math.cos(Math.toRadians(angle));
         double dy = dist * Math.sin(Math.toRadians(angle));

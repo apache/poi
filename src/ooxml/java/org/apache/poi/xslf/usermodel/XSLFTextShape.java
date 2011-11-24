@@ -51,6 +51,11 @@ import java.util.List;
 public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<XSLFTextParagraph>{
     private final List<XSLFTextParagraph> _paragraphs;
 
+    /**
+     * whether the text was broken into lines.
+     */
+    private boolean _isTextBroken;
+
     /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
         super(shape, sheet);
 
@@ -441,17 +446,23 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
     /**
      * Compute the cumulative height occupied by the text
      */
-    private double getTextHeight(){
+    public double getTextHeight(){
         // dry-run in a 1x1 image and return the vertical advance
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        return drawParagraphs(img.createGraphics(), 0, 0);
+        Graphics2D graphics = img.createGraphics();
+        breakText(graphics);
+        return drawParagraphs(graphics, 0, 0);
     }
 
     /**
      * break the contained text into lines
     */
     private void breakText(Graphics2D graphics){
-        for(XSLFTextParagraph p : _paragraphs) p.breakText(graphics);
+        if(!_isTextBroken) {
+            for(XSLFTextParagraph p : _paragraphs) p.breakText(graphics);
+
+            _isTextBroken = true;
+        }
     }
 
     @Override
