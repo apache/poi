@@ -16,9 +16,12 @@
 ==================================================================== */
 package org.apache.poi.poifs.filesystem;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.util.Internal;
 
@@ -95,5 +98,119 @@ public class EntryUtils
     {
         // System.err.println("CopyNodes called");
         copyNodes( source.getRoot(), target.getRoot(), excepts );
+    }
+    
+    /**
+     * Checks to see if the two Directories hold the same contents.
+     * For this to be true, they must have entries with the same names,
+     *  no entries in one but not the other, and the size+contents
+     *  of each entry must match.
+     * TODO Some sort of excepts support
+     */
+    public static boolean areDirectoriesIdentical(DirectoryNode dirA, DirectoryNode dirB) {
+       // First up, check they have the same number of children
+       if (dirA.getEntryCount() != dirB.getEntryCount()) {
+          return false;
+       }
+       
+       // Next, check entries and their types/sizes
+       Map<String,Integer> aSizes = new HashMap<String, Integer>();
+       final int isDirectory = -12345; 
+       for (Entry a : dirA) {
+          String aName = a.getName();
+          if (a.isDirectoryEntry()) {
+             aSizes.put(aName, isDirectory);
+          } else {
+             aSizes.put(aName, ((DocumentNode)a).getSize());
+          }
+       }
+       for (Entry b : dirB) {
+          String bName = b.getName();
+          if (! aSizes.containsKey(bName)) {
+             // In B but not A
+             return false;
+          }
+          
+          int size;
+          if (b.isDirectoryEntry()) {
+             size = isDirectory;
+          } else {
+             size = ((DocumentNode)b).getSize();
+          }
+          if (size != aSizes.get(bName)) {
+             // Either the wrong type, or they're different sizes
+             return false;
+          }
+          
+          // Track it as checked
+          aSizes.remove(bName);
+       }
+       if (!aSizes.isEmpty()) {
+          // Nodes were in A but not B
+          return false;
+       }
+       
+       // If that passed, check entry contents
+       for (Entry a : dirA) {
+          try {
+             Entry b = dirB.getEntry(a.getName());
+             boolean match;
+             if (a.isDirectoryEntry()) {
+                match = areDirectoriesIdentical(
+                      (DirectoryNode)a, (DirectoryNode)b);
+             } else {
+                match = areDocumentsIdentical(
+                      (DocumentNode)a, (DocumentNode)b);
+             }
+             if (!match) return false;
+          } catch(FileNotFoundException e) {
+             // Shouldn't really happen...
+             return false;
+          } catch(IOException e) {
+             // Something's messed up with one document, not a match
+             return false;
+          }
+       }
+       
+       // If we get here, they match!
+       return true;
+    }
+    
+    /**
+     * Checks to see if two Documents have the same name
+     *  and the same contents. (Their parent directories are
+     *  not checked)
+     */
+    public static boolean areDocumentsIdentical(DocumentNode docA, DocumentNode docB) throws IOException {
+       if (! docA.getName().equals(docB.getName())) {
+          // Names don't match, not the same
+          return false;
+       }
+       if (docA.getSize() != docB.getSize()) {
+          // Wrong sizes, can't have the same contents
+          return false;
+       }
+
+       boolean matches = true;
+       DocumentInputStream inpA = null, inpB = null;
+       try {
+          inpA = new DocumentInputStream(docA);
+          inpB = new DocumentInputStream(docB);
+          
+          int readA, readB;
+          do {
+             readA = inpA.read();
+             readB = inpB.read();
+             if (readA != readB) {
+                matches = false;
+                break;
+             }
+          } while(readA != -1 && readB != -1);
+       } finally {
+          if (inpA != null) inpA.close();
+          if (inpB != null) inpB.close();
+       }
+       
+       return matches;
     }
 }
