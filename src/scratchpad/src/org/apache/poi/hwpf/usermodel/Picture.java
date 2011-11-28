@@ -21,15 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.InflaterInputStream;
-
-import org.apache.poi.ddf.EscherSimpleProperty;
-
-import org.apache.poi.ddf.EscherProperty;
-
-import org.apache.poi.ddf.EscherOptRecord;
-
-import org.apache.poi.ddf.EscherContainerRecord;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
@@ -41,8 +35,6 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Represents embedded picture extracted from Word Document
- * 
- * @author Dmitry Romanov
  */
 public final class Picture
 {
@@ -109,6 +101,7 @@ public final class Picture
 
     private PICF _picf;
     private PICFAndOfficeArtData _picfAndOfficeArtData;
+    private List<? extends EscherRecord> _blipRecords;
 
     private byte[] content;
     private int dataBlockStartOfsset;
@@ -116,18 +109,20 @@ public final class Picture
     private int height = -1;
     private int width = -1;
 
-    public Picture( byte[] _dataStream )
+    /**
+     * Builds a Picture object for a Picture stored as
+     *  Escher.
+     * TODO We need to pass in the PICF data too somehow!
+     */
+    public Picture( EscherBlipRecord blipRecord )
     {
-        super();
-
-        // XXX: implement
-        // this._dataStream = _dataStream;
-        // this.dataBlockStartOfsset = 0;
-        // this.dataBlockSize = _dataStream.length;
-        // this.pictureBytesStartOffset = 0;
-        // this.size = _dataStream.length;
+       this._blipRecords = Arrays.asList(new EscherBlipRecord[] {blipRecord});
     }
 
+    /**
+     * Builds a Picture object for a Picture stored in the
+     *  DataStream
+     */
     public Picture( int dataBlockStartOfsset, byte[] _dataStream,
             boolean fillBytes )
     {
@@ -137,8 +132,13 @@ public final class Picture
 
         this.dataBlockStartOfsset = dataBlockStartOfsset;
 
-        if ( fillBytes )
+        if ( _picfAndOfficeArtData != null && _picfAndOfficeArtData.getBlipRecords() != null) {
+           _blipRecords = _picfAndOfficeArtData.getBlipRecords();
+        }
+        
+        if ( fillBytes ) {
             fillImageContent();
+        }
     }
 
     private void fillImageContent()
@@ -432,13 +432,11 @@ public final class Picture
      */
     public byte[] getRawContent()
     {
-        if ( _picfAndOfficeArtData == null ||
-           	 _picfAndOfficeArtData.getBlipRecords()== null || 
-           	 _picfAndOfficeArtData.getBlipRecords().size() != 1 )
-            return new byte[0];
+        if (_blipRecords == null || _blipRecords.size() != 1) {
+           return new byte[0];
+        }
 
-        EscherRecord escherRecord = _picfAndOfficeArtData.getBlipRecords().get(
-                0 );
+        EscherRecord escherRecord = _blipRecords.get( 0 );
         if ( escherRecord instanceof EscherBlipRecord )
         {
             return ( (EscherBlipRecord) escherRecord ).getPicturedata();
@@ -518,13 +516,11 @@ public final class Picture
 
     public PictureType suggestPictureType()
     {
-        if ( _picfAndOfficeArtData == null ||
-        	 _picfAndOfficeArtData.getBlipRecords()== null || 
-        	 _picfAndOfficeArtData.getBlipRecords().size() != 1 )
+        if (_blipRecords == null || _blipRecords.size() != 1 ) {
             return PictureType.UNKNOWN;
+        }
 
-        EscherRecord escherRecord = _picfAndOfficeArtData.getBlipRecords().get(
-                0 );
+        EscherRecord escherRecord = _blipRecords.get( 0 );
         switch ( escherRecord.getRecordId() )
         {
         case (short) 0xF007:

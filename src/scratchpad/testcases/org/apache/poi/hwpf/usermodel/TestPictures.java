@@ -324,4 +324,14 @@ public final class TestPictures extends TestCase {
         assertEquals(0, pic2.getDyaCropBottom());
     }
 
+    public void testPictureDetectionWithPNG() throws Exception {
+        HWPFDocument document = HWPFTestDataSamples.openSampleFile("PngPicture.doc");
+        PicturesTable pictureTable = document.getPicturesTable();
+        
+        assertEquals(1, pictureTable.getAllPictures().size());
+        
+        Picture p = pictureTable.getAllPictures().get(0);
+        assertEquals(PictureType.PNG, p.suggestPictureType());
+        assertEquals("png", p.suggestFileExtension());
+    }
 }
