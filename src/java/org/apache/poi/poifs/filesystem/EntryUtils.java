@@ -104,11 +104,16 @@ public class EntryUtils
      * Checks to see if the two Directories hold the same contents.
      * For this to be true, they must have entries with the same names,
      *  no entries in one but not the other, and the size+contents
-     *  of each entry must match.
+     *  of each entry must match, and they must share names
      * TODO Some sort of excepts support
      */
-    public static boolean areDirectoriesIdentical(DirectoryNode dirA, DirectoryNode dirB) {
-       // First up, check they have the same number of children
+    public static boolean areDirectoriesIdentical(DirectoryEntry dirA, DirectoryEntry dirB) {
+       // First, check names
+       if (! dirA.getName().equals(dirB.getName())) {
+          return false;
+       }
+       
+       // Next up, check they have the same number of children
        if (dirA.getEntryCount() != dirB.getEntryCount()) {
           return false;
        }
@@ -181,7 +186,7 @@ public class EntryUtils
      *  and the same contents. (Their parent directories are
      *  not checked)
      */
-    public static boolean areDocumentsIdentical(DocumentNode docA, DocumentNode docB) throws IOException {
+    public static boolean areDocumentsIdentical(DocumentEntry docA, DocumentEntry docB) throws IOException {
        if (! docA.getName().equals(docB.getName())) {
           // Names don't match, not the same
           return false;
