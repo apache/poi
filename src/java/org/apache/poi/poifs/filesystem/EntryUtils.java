@@ -104,8 +104,9 @@ public class EntryUtils
      * Checks to see if the two Directories hold the same contents.
      * For this to be true, they must have entries with the same names,
      *  no entries in one but not the other, and the size+contents
-     *  of each entry must match, and they must share names
-     * TODO Some sort of excepts support
+     *  of each entry must match, and they must share names.
+     * To exclude certain parts of the Directory from being checked,
+     *  use a {@link FilteringDirectoryNode}
      */
     public static boolean areDirectoriesIdentical(DirectoryEntry dirA, DirectoryEntry dirB) {
        // First, check names
@@ -162,10 +163,10 @@ public class EntryUtils
              boolean match;
              if (a.isDirectoryEntry()) {
                 match = areDirectoriesIdentical(
-                      (DirectoryNode)a, (DirectoryNode)b);
+                      (DirectoryEntry)a, (DirectoryEntry)b);
              } else {
                 match = areDocumentsIdentical(
-                      (DocumentNode)a, (DocumentNode)b);
+                      (DocumentEntry)a, (DocumentEntry)b);
              }
              if (!match) return false;
           } catch(FileNotFoundException e) {
