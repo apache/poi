@@ -18,11 +18,8 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import org.apache.poi.util.POILogFactory;
-
-import org.apache.poi.util.POILogger;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -35,6 +32,8 @@ import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
@@ -180,7 +179,7 @@ public final class PicturesTable
               EscherBlipRecord blip = bse.getBlipRecord();
               if (blip != null)
               {
-                  pictures.add(new Picture(blip.getPicturedata()));
+                  pictures.add(new Picture(blip));
               }
                 else if ( bse.getOffset() > 0 )
                 {
@@ -197,7 +196,7 @@ public final class PicturesTable
                             record.fillFields( _mainStream, bse.getOffset(),
                                     recordFactory );
                             blip = (EscherBlipRecord) record;
-                            pictures.add( new Picture( blip.getPicturedata() ) );
+                            pictures.add( new Picture( blip ) );
                         }
                     }
                     catch ( Exception exc )
