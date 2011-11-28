@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">POIFS Helper FilteringDirectoryNode, which wraps a DirectoryEntry and allows certain parts to be ignored</action>
            <action dev="poi-developers" type="fix">52209 - fixed inserting multiple pictures in XSLF </action>
            <action dev="poi-developers" type="fix">51803 - fixed HSLF TextExtractor to extract content from master slide </action>
            <action dev="poi-developers" type="fix">52190 - null check on XWPF setFontFamily</action>
