@@ -20,13 +20,12 @@ package org.apache.poi.poifs.filesystem;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.POIDataSamples;
-
 public class TestEntryUtils extends TestCase {
-    private static final POIDataSamples dataSamples = POIDataSamples.getPOIFSInstance();
     private byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
     private byte[] dataSmallB = new byte[] { 11, 73, 21, -92, -103 };
 
@@ -160,6 +159,33 @@ public class TestEntryUtils extends TestCase {
        assertEquals(true, EntryUtils.areDirectoriesIdentical(dirA1, dirB1));
        
        
-       // TODO Excludes support
+       // Excludes support
+       List<String> excl = Arrays.asList(new String[] {"Ignore1", "IgnDir/Ign2"});
+       FilteringDirectoryNode fdA = new FilteringDirectoryNode(dirA1, excl);
+       FilteringDirectoryNode fdB = new FilteringDirectoryNode(dirB1, excl);
+       
+       assertEquals(true, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       // Add an ignored doc, no notice is taken
+       fdA.createDocument("Ignore1", new ByteArrayInputStream(dataSmallA));
+       assertEquals(true, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       // Add a directory with filtered contents, not the same
+       DirectoryEntry dirAI = dirA1.createDirectory("IgnDir");
+       assertEquals(false, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       DirectoryEntry dirBI = dirB1.createDirectory("IgnDir");
+       assertEquals(true, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       // Add something to the filtered subdir that gets ignored
+       dirAI.createDocument("Ign2", new ByteArrayInputStream(dataSmallA));
+       assertEquals(true, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       // And something that doesn't
+       dirAI.createDocument("IgnZZ", new ByteArrayInputStream(dataSmallA));
+       assertEquals(false, EntryUtils.areDirectoriesIdentical(fdA, fdB));
+       
+       dirBI.createDocument("IgnZZ", new ByteArrayInputStream(dataSmallA));
+       assertEquals(true, EntryUtils.areDirectoriesIdentical(fdA, fdB));
     }
 }
