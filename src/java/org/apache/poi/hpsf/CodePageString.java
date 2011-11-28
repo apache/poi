@@ -158,10 +158,16 @@ class CodePageString
         offset += LittleEndian.INT_SIZE;
 
         _value = LittleEndian.getByteArray( data, offset, size );
-        if ( _value[size - 1] != 0 )
-            throw new IllegalPropertySetDataException(
-                    "CodePageString started at offset #" + offset
-                            + " is not NULL-terminated" );
+        if ( _value[size - 1] != 0 ) {
+            // TODO Some files, such as TestVisioWithCodepage.vsd, are currently
+            //  triggering this for values that don't look like codepages
+            // See Bug #52258 for details
+            logger.log(POILogger.WARN, "CodePageString started at offset #" + offset
+                        + " is not NULL-terminated" );
+//            throw new IllegalPropertySetDataException(
+//                    "CodePageString started at offset #" + offset
+//                            + " is not NULL-terminated" );
+        }
     }
 
     CodePageString( String string, int codepage )
