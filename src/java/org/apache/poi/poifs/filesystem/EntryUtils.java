@@ -59,14 +59,47 @@ public class EntryUtils
     }
 
     /**
-     * Copies nodes from one POIFS to the other minus the excepts
+     * Copies all the nodes from one POIFS Directory to another
      * 
      * @param source
-     *            is the source POIFS to copy from
+     *            is the source Directory to copy from
      * @param target
-     *            is the target POIFS to copy to
+     *            is the target Directory to copy to
      * @param excepts
      *            is a list of Strings specifying what nodes NOT to copy
+     */
+    public static void copyNodes(DirectoryEntry sourceRoot,
+            DirectoryEntry targetRoot) throws IOException
+    {
+        for (Entry entry : sourceRoot) {
+            copyNodeRecursively( entry, targetRoot );
+        }
+    }
+
+    /**
+     * Copies nodes from one Directory to the other minus the excepts
+     * 
+     * @param source The filtering source Directory to copy from
+     * @param target The filtering target Directory to copy to
+     */
+    public static void copyNodes( FilteringDirectoryNode filteredSource,
+            FilteringDirectoryNode filteredTarget ) throws IOException
+    {
+        // Nothing special here, just overloaded types to make the
+        //  recommended new way to handle this clearer
+        copyNodes( (DirectoryEntry)filteredSource, (DirectoryEntry)filteredTarget );
+    }
+
+    /**
+     * Copies nodes from one Directory to the other minus the excepts
+     * 
+     * @param source
+     *            is the source Directory to copy from
+     * @param target
+     *            is the target Directory to copy to
+     * @param excepts
+     *            is a list of Strings specifying what nodes NOT to copy
+     * @deprecated use {@link FilteringDirectoryNode} instead
      */
     public static void copyNodes( DirectoryEntry sourceRoot,
             DirectoryEntry targetRoot, List<String> excepts )
@@ -84,20 +117,36 @@ public class EntryUtils
     }
 
     /**
-     * Copies nodes from one POIFS to the other minus the excepts
+     * Copies all nodes from one POIFS to the other
      * 
      * @param source
      *            is the source POIFS to copy from
      * @param target
      *            is the target POIFS to copy to
-     * @param excepts
-     *            is a list of Strings specifying what nodes NOT to copy
+     */
+    public static void copyNodes( POIFSFileSystem source,
+            POIFSFileSystem target ) throws IOException
+    {
+        copyNodes( source.getRoot(), target.getRoot() );
+    }
+    
+    /**
+     * Copies nodes from one POIFS to the other, minus the excepts.
+     * This delegates the filtering work to {@link FilteringDirectoryNode},
+     *  so excepts can be of the form "NodeToExclude" or
+     *  "FilteringDirectory/ExcludedChildNode"
+     * 
+     * @param source is the source POIFS to copy from
+     * @param target is the target POIFS to copy to
+     * @param excepts is a list of Entry Names to be excluded from the copy
      */
     public static void copyNodes( POIFSFileSystem source,
             POIFSFileSystem target, List<String> excepts ) throws IOException
     {
-        // System.err.println("CopyNodes called");
-        copyNodes( source.getRoot(), target.getRoot(), excepts );
+        copyNodes(
+              new FilteringDirectoryNode(source.getRoot(), excepts),
+              new FilteringDirectoryNode(target.getRoot(), excepts)
+        );
     }
     
     /**
