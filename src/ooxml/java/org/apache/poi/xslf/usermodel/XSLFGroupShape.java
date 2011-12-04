@@ -282,16 +282,15 @@ public class XSLFGroupShape extends XSLFShape {
         // anchor of this group relative to the parent shape
         Rectangle2D exterior = getAnchor();
 
-        graphics.translate(exterior.getX(), exterior.getY());
-        double scaleX = exterior.getWidth() / interior.getWidth();
-        double scaleY = exterior.getHeight() / interior.getHeight();
+        AffineTransform tx = (AffineTransform)graphics.getRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM);
+        AffineTransform tx0 = new AffineTransform(tx);
 
-        // group transform scales shapes but not fonts
-        Number prevFontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
-        graphics.setRenderingHint(XSLFRenderingHint.GROUP_SCALE, Math.abs(1/scaleY));
+        double scaleX = interior.getWidth() == 0. ? 1.0 : exterior.getWidth() / interior.getWidth();
+        double scaleY = interior.getHeight() == 0. ? 1.0 : exterior.getHeight() / interior.getHeight();
 
-        graphics.scale(scaleX, scaleY);
-        graphics.translate(-interior.getX(), -interior.getY());
+        tx.translate(exterior.getX(), exterior.getY());
+        tx.scale(scaleX, scaleY);
+        tx.translate(-interior.getX(), -interior.getY());
 
         for (XSLFShape shape : getShapes()) {
         	// remember the initial transform and restore it after we are done with the drawing
@@ -306,7 +305,7 @@ public class XSLFGroupShape extends XSLFShape {
             graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
         }
 
-        graphics.setRenderingHint(XSLFRenderingHint.GROUP_SCALE, prevFontScale);
+        graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, tx0);
         
     }
 

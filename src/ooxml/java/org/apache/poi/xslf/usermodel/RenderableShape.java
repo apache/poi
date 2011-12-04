@@ -102,7 +102,6 @@ class RenderableShape {
      */
     public Paint selectPaint(Graphics2D graphics, XmlObject obj, CTSchemeColor phClr, PackagePart parentPart) {
         XSLFTheme theme = _shape.getSheet().getTheme();
-        Rectangle2D anchor = _shape.getAnchor();
 
         Paint paint = null;
         if (obj instanceof CTNoFillProperties) {
@@ -119,6 +118,7 @@ class RenderableShape {
             paint = createTexturePaint(blipFill, graphics, parentPart);
         }
         else if (obj instanceof CTGradientFillProperties) {
+            Rectangle2D anchor = getAnchor(graphics);
             CTGradientFillProperties gradFill = (CTGradientFillProperties) obj;
             if (gradFill.isSetLin()) {
                  paint = createLinearGradientPaint(graphics, gradFill, anchor, theme, phClr);
@@ -477,8 +477,6 @@ class RenderableShape {
 
         float lineWidth = (float) _shape.getLineWidth();
         if(lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
-        Number fontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
-        if(fontScale != null) lineWidth *= fontScale.floatValue();
 
         LineDash lineDash = _shape.getLineDash();
         float[] dash = null;
@@ -512,7 +510,7 @@ class RenderableShape {
     }
 
     public void render(Graphics2D graphics){
-        Collection<Outline> elems = computeOutlines();
+        Collection<Outline> elems = computeOutlines(graphics);
 
         // shadow
         XSLFShadow shadow = _shape.getShadow();
@@ -549,7 +547,7 @@ class RenderableShape {
         }
     }
 
-    private Collection<Outline> computeOutlines() {
+    private Collection<Outline> computeOutlines(Graphics2D graphics) {
 
         Collection<Outline> lst = new ArrayList<Outline>();
         CustomGeometry geom = _shape.getGeometry();
@@ -557,7 +555,7 @@ class RenderableShape {
             return lst;
         }
 
-        Rectangle2D anchor = _shape.getAnchor();
+        Rectangle2D anchor = getAnchor(graphics);
         for (Path p : geom) {
 
             double w = p.getW() == -1 ? anchor.getWidth() * Units.EMU_PER_POINT : p.getW();
@@ -615,4 +613,16 @@ class RenderableShape {
         return lst;
     }
 
+    public Rectangle2D getAnchor(Graphics2D graphics) {
+        Rectangle2D anchor = _shape.getAnchor();
+        if(graphics == null)  {
+            return anchor;
+        }
+
+        AffineTransform tx = (AffineTransform)graphics.getRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM);
+        if(tx != null) {
+            anchor = tx.createTransformedShape(anchor).getBounds2D();
+        }
+        return anchor;
+    }    
 }

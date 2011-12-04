@@ -469,7 +469,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
     public void drawContent(Graphics2D graphics) {
         breakText(graphics);
 
-        Rectangle2D anchor = getAnchor();
+        RenderableShape rShape = new RenderableShape(this);
+        Rectangle2D anchor = rShape.getAnchor(graphics);
         double x = anchor.getX() + getLeftInset();
         double y = anchor.getY();
 

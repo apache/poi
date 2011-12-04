@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
@@ -77,7 +78,12 @@ public final class XSLFNotes extends XSLFSheet {
     }
 
     @Override
-    public XSLFSheet getMasterSheet() {
+    public XSLFNotesMaster getMasterSheet() {
+        for (POIXMLDocumentPart p : getRelations()) {
+           if (p instanceof XSLFNotesMaster){
+              return (XSLFNotesMaster)p;
+           }
+        }
         return null;
     }
 }

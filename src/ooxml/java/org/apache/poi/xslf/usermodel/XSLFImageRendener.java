@@ -80,19 +80,14 @@ public class XSLFImageRendener {
 			Rectangle2D anchor) {
 		try {
 			BufferedImage img = ImageIO.read(data.getPackagePart().getInputStream());
-            Number groupScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
-            if(groupScale != null) {
-                double sx = anchor.getWidth()/img.getWidth();
-                double sy = anchor.getHeight()/img.getHeight();
-                double tx = anchor.getX();
-                double ty = anchor.getY();
-                AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
-                graphics.drawRenderedImage(img, at);
-            } else {
-                graphics.drawImage(img,
-                        (int) anchor.getX(), (int) anchor.getY(),
-                        (int) anchor.getWidth(), (int) anchor.getHeight(), null);
-            }
+            double sx = anchor.getWidth()/img.getWidth();
+            double sy = anchor.getHeight()/img.getHeight();
+            double tx = anchor.getX();
+            double ty = anchor.getY();
+            AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
+
+            graphics.drawRenderedImage(img, at);
+
 			return true;
 		} catch (Exception e) {
 			return false;

@@ -544,7 +544,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         Color lineColor = getLineColor();
         if(lineColor != null) {
             graphics.setPaint(lineColor);
-            for(Outline o : getDecorationOutlines()){
+            for(Outline o : getDecorationOutlines(graphics)){
                 if(o.getPath().isFilled()){
                     graphics.fill(o.getOutline());
                 }
@@ -820,13 +820,13 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         return len == null ? LineEndLength.MEDIUM : LineEndLength.values()[len.intValue() - 1];
     }
 
-    Outline getTailDecoration() {
+    Outline getTailDecoration(Graphics2D graphics) {
         LineEndLength tailLength = getLineTailLength();
         LineEndWidth tailWidth = getLineTailWidth();
 
         double lineWidth = Math.max(2.5, getLineWidth());
 
-        Rectangle2D anchor = getAnchor();
+        Rectangle2D anchor = new RenderableShape(this).getAnchor(graphics);
         double x2 = anchor.getX() + anchor.getWidth(),
                 y2 = anchor.getY() + anchor.getHeight();
 
@@ -879,12 +879,13 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         return shape == null ? null : new Outline(shape, p);
     }
 
-    Outline getHeadDecoration() {
+    Outline getHeadDecoration(Graphics2D graphics) {
         LineEndLength headLength = getLineHeadLength();
         LineEndWidth headWidth = getLineHeadWidth();
 
         double lineWidth = Math.max(2.5, getLineWidth());
-        Rectangle2D anchor = getAnchor();
+
+        Rectangle2D anchor = new RenderableShape(this).getAnchor(graphics);
         double x1 = anchor.getX(),
                 y1 = anchor.getY();
 
@@ -938,13 +939,13 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         return shape == null ? null : new Outline(shape, p);
     }
 
-    private List<Outline> getDecorationOutlines(){
+    private List<Outline> getDecorationOutlines(Graphics2D graphics){
         List<Outline> lst = new ArrayList<Outline>();
 
-        Outline head = getHeadDecoration();
+        Outline head = getHeadDecoration(graphics);
         if(head != null) lst.add(head);
 
-        Outline tail = getTailDecoration();
+        Outline tail = getTailDecoration(graphics);
         if(tail != null) lst.add(tail);
         return lst;
     }

@@ -24,6 +24,7 @@ import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -131,6 +132,10 @@ public abstract class XSLFShape {
      */
     protected void applyTransform(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
+        AffineTransform tx = (AffineTransform)graphics.getRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM);
+        if(tx != null) {
+            anchor = tx.createTransformedShape(anchor).getBounds2D();
+        }
 
         // rotation
         double rotation = getRotation();

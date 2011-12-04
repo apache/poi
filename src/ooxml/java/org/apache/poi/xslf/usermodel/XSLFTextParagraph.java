@@ -633,12 +633,13 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      *
      * @return  wrapping width in points
      */
-    double getWrappingWidth(boolean firstLine){
+    double getWrappingWidth(boolean firstLine, Graphics2D graphics){
         // internal margins for the text box
         double leftInset = _shape.getLeftInset();
         double rightInset = _shape.getRightInset();
 
-        Rectangle2D anchor = _shape.getAnchor();
+        RenderableShape rShape = new RenderableShape(_shape);
+        Rectangle2D anchor = rShape.getAnchor(graphics);
 
         double leftMargin = getLeftMargin();
         double indent = getIndent();
@@ -667,7 +668,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     public double draw(Graphics2D graphics, double x, double y){
         double leftInset = _shape.getLeftInset();
         double rightInset = _shape.getRightInset();
-        Rectangle2D anchor = _shape.getAnchor();
+        RenderableShape rShape = new RenderableShape(_shape);
+        Rectangle2D anchor = rShape.getAnchor(graphics);
         double penY = y;
 
         double leftMargin = getLeftMargin();
@@ -758,10 +760,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             string.addAttribute(TextAttribute.FAMILY, fontFamily, startIndex, endIndex);
 
             float fontSz = (float)run.getFontSize();
-            Number fontScale = (Number)graphics.getRenderingHint(XSLFRenderingHint.GROUP_SCALE);
-            if(fontScale != null) fontSz *= fontScale.floatValue();
-
             string.addAttribute(TextAttribute.SIZE, fontSz , startIndex, endIndex);
+
             if(run.isBold()) {
                 string.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, startIndex, endIndex);
             }
@@ -827,7 +827,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         for (;;) {
             int startIndex = measurer.getPosition();
 
-            double wrappingWidth = getWrappingWidth(_lines.size() == 0) + 1; // add a pixel to compensate rounding errors
+            double wrappingWidth = getWrappingWidth(_lines.size() == 0, graphics) + 1; // add a pixel to compensate rounding errors
             // shape width can be smaller that the sum of insets (this was proved by a test file)
             if(wrappingWidth < 0) wrappingWidth = 1;
 
@@ -901,21 +901,23 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
     CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getCTPlaceholder();
         String defaultStyleSelector;
-        switch(ph.getType().intValue()){
-            case STPlaceholderType.INT_TITLE:
-            case STPlaceholderType.INT_CTR_TITLE:
-                defaultStyleSelector = "titleStyle";
-                break;
-            case STPlaceholderType.INT_FTR:
-            case STPlaceholderType.INT_SLD_NUM:
-            case STPlaceholderType.INT_DT:
-                defaultStyleSelector = "otherStyle";
-                break;
-            default:
-                defaultStyleSelector = "bodyStyle";
-                break;
+        if(ph == null) defaultStyleSelector = "otherStyle";   // no placeholder means plain text box
+        else {
+            switch(ph.getType().intValue()){
+                case STPlaceholderType.INT_TITLE:
+                case STPlaceholderType.INT_CTR_TITLE:
+                    defaultStyleSelector = "titleStyle";
+                    break;
+                case STPlaceholderType.INT_FTR:
+                case STPlaceholderType.INT_SLD_NUM:
+                case STPlaceholderType.INT_DT:
+                    defaultStyleSelector = "otherStyle";
+                    break;
+                default:
+                    defaultStyleSelector = "bodyStyle";
+                    break;
+            }
         }
-
         int level = getLevel();
 
         // wind up and find the root master sheet which must be slide master
@@ -951,7 +953,9 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                     XMLSlideShow ppt = getParentShape().getSheet().getSlideShow();
                     CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getLevel());
                     if(themeProps != null) ok = visitor.fetch(themeProps);
-                } else {
+                }
+
+                if(!ok){
                     // defaults for placeholders are defined in the slide master
                     CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
                     if(defaultProps != null) ok = visitor.fetch(defaultProps);
