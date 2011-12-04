@@ -75,7 +75,7 @@ public class XSLFRenderingHint extends RenderingHints.Key {
     public static final int TEXT_AS_SHAPES = 2;
 
     @Internal
-    static final XSLFRenderingHint GROUP_SCALE = new XSLFRenderingHint(5);
+    static final XSLFRenderingHint GROUP_TRANSFORM = new XSLFRenderingHint(5);
 
     /**
      * Use this object to resolve unknown / missing fonts when rendering slides

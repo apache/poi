@@ -430,6 +430,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<X
         XSLFSheet master = getMasterSheet();
         if(getFollowMasterGraphics() && master != null) master.draw(graphics);
 
+        graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, new AffineTransform());
         for(XSLFShape shape : getShapeList()) {
             if(!canDraw(shape)) continue;
 

@@ -19,10 +19,14 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
@@ -50,13 +54,23 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /*package*/ XSLFTable(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape, sheet);
 
-        for(XmlObject obj : shape.getGraphic().getGraphicData().selectPath("*")){
-            if(obj instanceof CTTable){
-                _table = (CTTable)obj;
+        XmlObject[] rs = shape.getGraphic().getGraphicData()
+                .selectPath("declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' ./a:tbl");
+        if (rs.length == 0) {
+            throw new IllegalStateException("a:tbl element was not found in\n " + shape.getGraphic().getGraphicData());
+        }
+
+        // Pesky XmlBeans bug - see Bugzilla #49934
+        // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
+        if(rs[0] instanceof XmlAnyTypeImpl){
+            try {
+                rs[0] = CTTable.Factory.parse(rs[0].toString());
+            }catch (XmlException e){
+                throw new POIXMLException(e);
             }
         }
-        if(_table == null) throw new IllegalStateException("CTTable element was not found");
 
+        _table = (CTTable) rs[0];
         _rows = new ArrayList<XSLFTableRow>(_table.sizeOfTrArray());
         for(CTTableRow row : _table.getTrList()) _rows.add(new XSLFTableRow(row, this));
     }

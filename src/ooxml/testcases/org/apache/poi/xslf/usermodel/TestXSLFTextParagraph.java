@@ -51,16 +51,16 @@ public class TestXSLFTextParagraph extends TestCase {
         // Case 1: bullet=false, leftMargin=0, indent=0.
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
         assertEquals(285.6, expectedWidth); // 300 - 7.2 - 7.2 - 0
-        assertEquals(expectedWidth, p.getWrappingWidth(true));
-        assertEquals(expectedWidth, p.getWrappingWidth(false));
+        assertEquals(expectedWidth, p.getWrappingWidth(true, null));
+        assertEquals(expectedWidth, p.getWrappingWidth(false, null));
 
         p.setLeftMargin(36); // 0.5"
         leftMargin = p.getLeftMargin();
         assertEquals(36.0, leftMargin);
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
         assertEquals(249.6, expectedWidth, 1E-5); // 300 - 7.2 - 7.2 - 36
-        assertEquals(expectedWidth, p.getWrappingWidth(true));
-        assertEquals(expectedWidth, p.getWrappingWidth(false));
+        assertEquals(expectedWidth, p.getWrappingWidth(true, null));
+        assertEquals(expectedWidth, p.getWrappingWidth(false, null));
 
         // increase insets, the wrapping width should get smaller
         sh.setLeftInset(10);
@@ -71,8 +71,8 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals(10.0, rightInset);
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
         assertEquals(244.0, expectedWidth); // 300 - 10 - 10 - 36
-        assertEquals(expectedWidth, p.getWrappingWidth(true));
-        assertEquals(expectedWidth, p.getWrappingWidth(false));
+        assertEquals(expectedWidth, p.getWrappingWidth(true, null));
+        assertEquals(expectedWidth, p.getWrappingWidth(false, null));
 
         // set a positive indent of a 0.5 inch. This means "First Line" indentation:
         // |<---  indent -->|Here goes first line of the text
@@ -83,11 +83,11 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals(36.0, indent);
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin - indent;
         assertEquals(208.0, expectedWidth); // 300 - 10 - 10 - 36 - 6.4
-        assertEquals(expectedWidth, p.getWrappingWidth(true)); // first line is indented
+        assertEquals(expectedWidth, p.getWrappingWidth(true, null)); // first line is indented
         // other lines are not indented
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
         assertEquals(244.0, expectedWidth); // 300 - 10 - 10 - 36
-        assertEquals(expectedWidth, p.getWrappingWidth(false));
+        assertEquals(expectedWidth, p.getWrappingWidth(false, null));
 
         // set a negative indent of a 1 inch. This means "Hanging" indentation:
         // Here goes first line of the text
@@ -97,11 +97,11 @@ public class TestXSLFTextParagraph extends TestCase {
         assertEquals(-72.0, indent);
         expectedWidth = anchor.getWidth() - leftInset - rightInset;
         assertEquals(280.0, expectedWidth); // 300 - 10 - 10 
-        assertEquals(expectedWidth, p.getWrappingWidth(true)); // first line is NOT indented
+        assertEquals(expectedWidth, p.getWrappingWidth(true, null)); // first line is NOT indented
         // other lines are indented by leftMargin (the value of indent is not used)
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
         assertEquals(244.0, expectedWidth); // 300 - 10 - 10 - 36 
-        assertEquals(expectedWidth, p.getWrappingWidth(false));
+        assertEquals(expectedWidth, p.getWrappingWidth(false, null));
      }
 
     /**

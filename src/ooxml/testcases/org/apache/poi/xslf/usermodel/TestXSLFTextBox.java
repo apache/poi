@@ -62,5 +62,18 @@ public class TestXSLFTextBox extends TestCase {
         pPr.getLatin().setTypeface("Arial");
         assertEquals(9.0, r.getFontSize());
         assertEquals("Arial", r.getFontFamily());
+
+        // unset font size in presentation.xml. The value should be taken from master slide
+        // from /p:sldMaster/p:txStyles/p:otherStyle/a:lvl1pPr/a:defRPr
+        ppt.getCTPresentation().getDefaultTextStyle().getLvl1PPr().getDefRPr().unsetSz();
+        pPr = slide.getSlideMaster().getXmlObject().getTxStyles().getOtherStyle().getLvl1PPr().getDefRPr();
+        assertEquals(1800, pPr.getSz());
+        assertEquals(18.0, r.getFontSize());
+        pPr.setSz(2000);
+        assertEquals(20.0, r.getFontSize());
+
+        pPr.unsetSz();  // Should never be
+        assertEquals(-1.0, r.getFontSize());
+
     }
 }

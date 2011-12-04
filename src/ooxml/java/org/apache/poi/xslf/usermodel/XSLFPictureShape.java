@@ -129,7 +129,10 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         XSLFImageRendener renderer = (XSLFImageRendener)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
         if(renderer == null) renderer = new XSLFImageRendener();
 
-        renderer.drawImage(graphics, data, getAnchor());
+        RenderableShape rShape = new RenderableShape(this);
+        Rectangle2D anchor = rShape.getAnchor(graphics);
+
+        renderer.drawImage(graphics, data, anchor);
     }
 
 

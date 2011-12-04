@@ -478,8 +478,8 @@ public class XSLFTextRun {
                         fetcher.isFetchingFromMaster = true;
                         ok = fetcher.fetch(themeProps);
                     }
-                } else {
-                    // defaults for placeholders are defined in the slide master
+                }
+                if (!ok) {
                     CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
                     if(defaultProps != null) {
                         fetcher.isFetchingFromMaster = true;
