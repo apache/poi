@@ -332,5 +332,21 @@ public final class TestPOIFSChunkParser extends TestCase {
       } catch(ChunkNotFoundException e) {
          fail();
       }
-	}
+   }
+	
+   /**
+    * Bugzilla #51873 - Outlook 2002 files created with dragging and
+    *  dropping files to the disk include a non-standard named streams
+    *  such as "Olk10SideProps_0001"
+    */
+   public void testOlk10SideProps() throws Exception {
+      POIFSFileSystem poifs = new POIFSFileSystem(
+          new FileInputStream(samples.getFile("51873.msg"))
+      );
+      MAPIMessage msg = new MAPIMessage(poifs);
+
+      // Check core details came through
+      assertEquals("bubba@bubbasmith.com", msg.getDisplayTo());
+      assertEquals("Test with Olk10SideProps_ Chunk", msg.getSubject());
+   }
 }
