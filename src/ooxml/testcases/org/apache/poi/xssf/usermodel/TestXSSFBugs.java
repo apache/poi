@@ -623,7 +623,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * Newlines are valid characters in a formula
      */
-    public void test50440() throws Exception {
+    public void test50440And51875() throws Exception {
        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("NewlineInFormulas.xlsx");
        Sheet s = wb.getSheetAt(0);
        Cell c = s.getRow(0).getCell(0);
@@ -636,6 +636,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        
        assertEquals("SUM(\n1,2\n)", c.getCellFormula());
        assertEquals(3.0, c.getNumericCellValue());
+
+       // For 51875
+       Cell b3 = s.getRow(2).getCell(1);
+       formulaEvaluator.evaluateFormulaCell(b3);
+       assertEquals("B1+B2", b3.getCellFormula()); // The newline is lost for shared formulas
+       assertEquals(3.0, b3.getNumericCellValue());
     }
     
     /**
