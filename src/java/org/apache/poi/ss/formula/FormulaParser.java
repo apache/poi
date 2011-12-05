@@ -121,7 +121,9 @@ public final class FormulaParser {
 
 	private ParseNode _rootNode;
 
-	private static char TAB = '\t';
+	private final static char TAB = '\t'; // HSSF + XSSF
+	private final static char CR = '\r';  // Normally just XSSF
+	private final static char LF = '\n';  // Normally just XSSF
 
 	/**
 	 * Lookahead Character.
@@ -229,7 +231,7 @@ public final class FormulaParser {
 
 	/** Recognize White Space */
 	private static boolean IsWhite( char c) {
-		return  c ==' ' || c== TAB;
+		return  c ==' ' || c== TAB || c == CR || c == LF;
 	}
 
 	/** Skip Over Leading White Space */
