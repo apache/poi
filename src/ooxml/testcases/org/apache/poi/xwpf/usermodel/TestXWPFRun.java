@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -368,5 +369,25 @@ public class TestXWPFRun extends TestCase {
        
        assertEquals(1, doc.getAllPictures().size());
        assertEquals(1, r.getEmbeddedPictures().size());
+    }
+    
+    /**
+     * Bugzilla #52288 - setting the font family on the
+     *  run mustn't NPE
+     */
+    public void testSetFontFamily_52288() throws Exception {
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52288.docx");
+       final Iterator<XWPFParagraph> paragraphs = doc.getParagraphsIterator();
+       while (paragraphs.hasNext()) {
+          final XWPFParagraph paragraph = paragraphs.next();
+          for (final XWPFRun run : paragraph.getRuns()) {
+             if (run != null) {
+                final String text = run.getText(0);
+                if (text != null) {
+                   run.setFontFamily("Times New Roman");
+                }
+             }
+          }
+       }
     }
 }
