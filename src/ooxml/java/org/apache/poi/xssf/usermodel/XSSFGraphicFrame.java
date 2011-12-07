@@ -25,14 +25,9 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTGraphicalObjectFrameNonVisual;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 
 /**
@@ -40,7 +35,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
  *
  * @author Roman Kashitsyn
  */
-public final class XSSFGraphicFrame {
+public final class XSSFGraphicFrame extends XSSFShape {
 
 	private static CTGraphicalObjectFrame prototype = null;
 
@@ -186,4 +181,8 @@ public final class XSSFGraphicFrame {
 		data.setUri(c_namespaceUri);
 	}
 
+    @Override
+    protected CTShapeProperties getShapeProperties(){
+        return null;
+    }
 }

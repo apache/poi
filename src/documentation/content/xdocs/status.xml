@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="add">52268 - support cloning sheets with drawings in XSSF </action>
            <action dev="poi-developers" type="add">52285 - Support XWPF smart tags text in Paragraphs</action>
            <action dev="poi-developers" type="fix">51875 - More XSSF new-line in formula support</action>
            <action dev="poi-developers" type="add">POIFS EntryUtils.copyNodes(POFS,POIFS) now uses FilteringDirectoryNode, so can exclude from copying nodes not just directly under the root</action>
