@@ -375,25 +375,56 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             throw new POIXMLException("Failed to clone sheet", e);
         }
         CTWorksheet ct = clonedSheet.getCTWorksheet();
-        if(ct.isSetDrawing()) {
-            logger.log(POILogger.WARN, "Cloning sheets with drawings is not yet supported.");
-            ct.unsetDrawing();
-        }
         if(ct.isSetLegacyDrawing()) {
             logger.log(POILogger.WARN, "Cloning sheets with comments is not yet supported.");
             ct.unsetLegacyDrawing();
+        }
+        if (ct.isSetPageSetup()) {
+            logger.log(POILogger.WARN, "Cloning sheets with page setup is not yet supported.");
+            ct.unsetPageSetup();
         }
 
         clonedSheet.setSelected(false);
 
         // copy sheet's relations
         List<POIXMLDocumentPart> rels = srcSheet.getRelations();
+        // if the sheet being cloned has a drawing then rememebr it and re-create tpoo
+        XSSFDrawing dg = null;
         for(POIXMLDocumentPart r : rels) {
+            // do not copy the drawing relationship, it will be re-created
+            if(r instanceof XSSFDrawing) {
+                dg = (XSSFDrawing)r;
+                continue;
+            }
+
             PackageRelationship rel = r.getPackageRelationship();
-            clonedSheet.getPackagePart().addRelationship(rel.getTargetURI(), rel.getTargetMode(),rel.getRelationshipType());
+            clonedSheet.getPackagePart().addRelationship(
+                    rel.getTargetURI(), rel.getTargetMode(),rel.getRelationshipType());
             clonedSheet.addRelation(rel.getId(), r);
         }
 
+        // clone the sheet drawing alongs with its relationships
+        if (dg != null) {
+            if(ct.isSetDrawing()) {
+                // unset the existing reference to the drawing,
+                // so that subsequent call of clonedSheet.createDrawingPatriarch() will create a new one
+                ct.unsetDrawing();
+            }
+            XSSFDrawing clonedDg = clonedSheet.createDrawingPatriarch();
+            // copy drawing contents
+            clonedDg.getCTDrawing().set(dg.getCTDrawing());
+
+            // Clone drawing relations
+            List<POIXMLDocumentPart> srcRels = srcSheet.createDrawingPatriarch().getRelations();
+            for (POIXMLDocumentPart rel : srcRels) {
+                PackageRelationship relation = rel.getPackageRelationship();
+                clonedSheet
+                        .createDrawingPatriarch()
+                        .getPackagePart()
+                        .addRelationship(relation.getTargetURI(), relation.getTargetMode(),
+                                relation.getRelationshipType(), relation.getId());
+            }
+        }
         return clonedSheet;
     }
 

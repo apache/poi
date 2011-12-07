@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.dev.XSSFDump;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
 /**
@@ -45,9 +46,20 @@ public class TestXSSFDrawing extends TestCase {
         //there should be a relation to this drawing in the worksheet
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
         assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
+
+        List<XSSFShape> shapes = drawing.getShapes();
+        assertEquals(6, shapes.size());
+
+        assertTrue(shapes.get(0) instanceof XSSFPicture);
+        assertTrue(shapes.get(1) instanceof XSSFPicture);
+        assertTrue(shapes.get(2) instanceof XSSFPicture);
+        assertTrue(shapes.get(3) instanceof XSSFPicture);
+        assertTrue(shapes.get(4) instanceof XSSFSimpleShape);
+        assertTrue(shapes.get(5) instanceof XSSFPicture);
+
     }
 
-    public void testNew(){
+    public void testNew() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         //multiple calls of createDrawingPatriarch should return the same instance of XSSFDrawing
@@ -66,31 +78,36 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(sheet.getCTWorksheet().isSetDrawing());
         assertEquals(drawingId, sheet.getCTWorksheet().getDrawing().getId());
 
-        XSSFClientAnchor anchor = new XSSFClientAnchor();
-
-        XSSFConnector c1= drawing.createConnector(anchor);
+        XSSFConnector c1= drawing.createConnector(new XSSFClientAnchor(0,0,0,0,0,0,2,2));
         c1.setLineWidth(2.5);
         c1.setLineStyle(1);
 
-        XSSFShapeGroup c2 = drawing.createGroup(anchor);
+        XSSFShapeGroup c2 = drawing.createGroup(new XSSFClientAnchor(0,0,0,0,0,0,5,5));
 
-        XSSFSimpleShape c3 = drawing.createSimpleShape(anchor);
+        XSSFSimpleShape c3 = drawing.createSimpleShape(new XSSFClientAnchor(0,0,0,0,2,2,3,4));
         c3.setText(new XSSFRichTextString("Test String"));
         c3.setFillColor(128, 128, 128);
 
-        XSSFTextBox c4 = drawing.createTextbox(anchor);
+        XSSFTextBox c4 = drawing.createTextbox(new XSSFClientAnchor(0,0,0,0,4,4,5,6));
         XSSFRichTextString rt = new XSSFRichTextString("Test String");
         rt.applyFont(0, 5, wb.createFont());
         rt.applyFont(5, 6, wb.createFont());
         c4.setText(rt);
 
         c4.setNoFill(true);
-        
-        
+        assertEquals(4, drawing.getCTDrawing().sizeOfTwoCellAnchorArray());
+
+        List<XSSFShape> shapes = drawing.getShapes();
+        assertEquals(4, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFConnector);
+        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
+        assertTrue(shapes.get(2) instanceof XSSFSimpleShape);
+        assertTrue(shapes.get(3) instanceof XSSFSimpleShape); //
+
         // Save and re-load it
         wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
-        
+
         // Check
         dr1 = sheet.createDrawingPatriarch();
         CTDrawing ctDrawing = dr1.getCTDrawing();
@@ -98,12 +115,19 @@ public class TestXSSFDrawing extends TestCase {
         // Connector, shapes and text boxes are all two cell anchors
         assertEquals(0, ctDrawing.sizeOfAbsoluteAnchorArray());
         assertEquals(0, ctDrawing.sizeOfOneCellAnchorArray());
-        // TODO Fix this!
-//        assertEquals(4, ctDrawing.sizeOfTwoCellAnchorArray());
-        
+        assertEquals(4, ctDrawing.sizeOfTwoCellAnchorArray());
+
+        shapes = dr1.getShapes();
+        assertEquals(4, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFConnector);
+        assertTrue(shapes.get(1) instanceof XSSFShapeGroup);
+        assertTrue(shapes.get(2) instanceof XSSFSimpleShape);
+        assertTrue(shapes.get(3) instanceof XSSFSimpleShape); //
+
         // Ensure it got the right namespaces
         String xml = ctDrawing.toString();
-        assertEquals("<xdr:wsDr", xml.substring(0, 9));
+        assertTrue(xml.contains("xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\""));
+        assertTrue(xml.contains("xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""));
     }
     
     public void testMultipleDrawings(){
@@ -114,5 +138,37 @@ public class TestXSSFDrawing extends TestCase {
         }
         OPCPackage pkg = wb.getPackage();
         assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
+    }
+
+    public void testClone() throws Exception{
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
+        XSSFSheet sheet1 = wb.getSheetAt(0);
+
+        XSSFSheet sheet2 = wb.cloneSheet(0);
+        
+        //the source sheet has one relationship and it is XSSFDrawing
+        List<POIXMLDocumentPart> rels1 = sheet1.getRelations();
+        assertEquals(1, rels1.size());
+        assertTrue(rels1.get(0) instanceof XSSFDrawing);
+
+        List<POIXMLDocumentPart> rels2 = sheet2.getRelations();
+        assertEquals(1, rels2.size());
+        assertTrue(rels2.get(0) instanceof XSSFDrawing);
+
+        XSSFDrawing drawing1 = (XSSFDrawing)rels1.get(0);
+        XSSFDrawing drawing2 = (XSSFDrawing)rels2.get(0);
+        assertNotSame(drawing1, drawing2);  // drawing2 is a clone of drawing1
+
+        List<XSSFShape> shapes1 = drawing1.getShapes();
+        List<XSSFShape> shapes2 = drawing2.getShapes();
+        assertEquals(shapes1.size(), shapes2.size());
+
+        for(int i = 0; i < shapes1.size(); i++){
+            XSSFShape sh1 = (XSSFShape)shapes1.get(i);
+            XSSFShape sh2 = (XSSFShape)shapes2.get(i);
+
+            assertTrue(sh1.getClass() == sh2.getClass());
+            assertEquals(sh1.getShapeProperties().toString(), sh2.getShapeProperties().toString());
+        }
     }
 }
