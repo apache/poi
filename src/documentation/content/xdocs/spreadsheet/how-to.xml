@@ -739,6 +739,16 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 
 ]]></source>
+<p>SXSSF flushes sheet data in temporary files (a temp file per sheet) and the size of these temporary files 
+can grow to a very large value. For example, for a 20 MB csv data the size of the temp xml becomes more than a gigabyte.
+If the size of the temp files is an issue, you can tell SXSSF to use gzip compression:
+</p>
+<source><![CDATA[
+  SXSSFWorkbook wb = new SXSSFWorkbook(); 
+  wb.setCompressTempFiles(true); // temp files will be gzipped
+
+]]></source>
+
      </section>
 
      <anchor id="low_level_api" />

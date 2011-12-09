@@ -17,15 +17,14 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.usermodel.streaming;
+package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
 
 public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
@@ -137,4 +136,65 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	assertNotNull(cell3_1_1);
     	assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
     }
+
+    public void testSheetdataWriter(){
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+        SXSSFSheet sh = (SXSSFSheet)wb.createSheet();
+        SheetDataWriter wr = sh.getSheetDataWriter();
+        assertTrue(wr.getClass() == SheetDataWriter.class);
+        File tmp = wr.getTempFile();
+        assertTrue(tmp.getName().startsWith("poi-sxssf-sheet"));
+        assertTrue(tmp.getName().endsWith(".xml"));
+
+        wb = new SXSSFWorkbook();
+        wb.setCompressTempFiles(true);
+        sh = (SXSSFSheet)wb.createSheet();
+        wr = sh.getSheetDataWriter();
+        assertTrue(wr.getClass() == GZIPSheetDataWriter.class);
+        tmp = wr.getTempFile();
+        assertTrue(tmp.getName().startsWith("poi-sxssf-sheet-xml"));
+        assertTrue(tmp.getName().endsWith(".gz"));
+    }
+    
+    public void testGZipSheetdataWriter(){
+        Workbook wb = new SXSSFWorkbook();
+        ((SXSSFWorkbook)wb).setCompressTempFiles(true);
+        int rowNum = 10000;
+        int sheetNum = 5;
+        for(int i = 0; i < sheetNum; i++){
+            Sheet sh = wb.createSheet("sheet" + i);
+            for(int j = 0; j < rowNum; j++){
+                Row row = sh.createRow(j);
+                Cell cell1 = row.createCell(0);
+                cell1.setCellValue(new CellReference(cell1).formatAsString());
+                
+                Cell cell2 = row.createCell(1);
+                cell2.setCellValue(i);
+
+                Cell cell3 = row.createCell(2);
+                cell3.setCellValue(j);
+            }
+        }
+
+        wb = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        for(int i = 0; i < sheetNum; i++){
+            Sheet sh = wb.getSheetAt(i);
+            assertEquals("sheet" + i, sh.getSheetName());
+            for(int j = 0; j < rowNum; j++){
+                Row row = sh.getRow(j);
+                assertNotNull("row[" + j + "]", row);
+                Cell cell1 = row.getCell(0);
+                assertEquals(new CellReference(cell1).formatAsString(), cell1.getStringCellValue());
+
+                Cell cell2 = row.getCell(1);
+                assertEquals(i, (int)cell2.getNumericCellValue());
+
+                Cell cell3 = row.getCell(2);
+                assertEquals(j, (int)cell3.getNumericCellValue());
+            }
+        }
+
+        
+    }
+
 }
