@@ -59,7 +59,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
      * read from a Word file).
      * 
      * @deprecated Use
-     *             {@link #CHPFormattedDiskPage(byte[],int,TextPieceTable)}
+     *             {@link #CHPFormattedDiskPage(byte[], int, CharIndexTranslator)}
      *             instead
      */
     @SuppressWarnings( "unused" )

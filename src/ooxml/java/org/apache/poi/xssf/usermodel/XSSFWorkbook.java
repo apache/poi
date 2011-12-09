@@ -558,12 +558,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * The string MUST NOT begin or end with the single quote (') character.
      * </p>
      *
+     * <p>
+     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
+     * </p>
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
-     *      for a safe way to create valid names
+     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     public XSSFSheet createSheet(String sheetname) {
         if (sheetname == null) {
@@ -1190,9 +1193,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetname  the new sheet name
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see {@link #createSheet(String)}
-     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
-     *      for a safe way to create valid names
+     * @see #createSheet(String)
+     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     public void setSheetName(int sheetIndex, String sheetname) {
         validateSheetIndex(sheetIndex);

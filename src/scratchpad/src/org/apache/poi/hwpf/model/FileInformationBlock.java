@@ -38,9 +38,9 @@ import org.apache.poi.util.POILogger;
  * The {@link FibBase} class, holds the
  *  first 32 bytes.
  * The next part, the fibRgW / FibRgW97, is handled
- *  by {@link FIBShortHandler}.
+ *  by {@link FibRgW97}.
  * The next part, the fibRgLw / The FibRgLw97, is
- *  handled by the {@link FIBLongHandler}.
+ *  handled by the {@link FibRgLw}.
  * Finally, the rest of the fields are handled by
  *  the {@link FIBFieldHandler}.
  *

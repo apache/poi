@@ -65,7 +65,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * Encapsulates logic to translate DrawingML objects to Java2D
@@ -142,10 +141,10 @@ class RenderableShape {
         String blipId = blip.getEmbed();
         PackageRelationship rel = parentPart.getRelationship(blipId);
         if (rel != null) {
-            XSLFImageRendener renderer = null;
+            XSLFImageRenderer renderer = null;
             if (graphics != null)
-                renderer = (XSLFImageRendener) graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
-            if (renderer == null) renderer = new XSLFImageRendener();
+                renderer = (XSLFImageRenderer) graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
+            if (renderer == null) renderer = new XSLFImageRenderer();
 
             try {
                 BufferedImage img = renderer.readImage(parentPart.getRelatedPart(rel));

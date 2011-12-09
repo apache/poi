@@ -69,7 +69,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
      * Creates a PAPFormattedDiskPage from a 512 byte array
      * 
      * @deprecated Use
-     *             {@link #PAPFormattedDiskPage(byte[],byte[],int,int,TextPieceTable,boolean)}
+     *             {@link #PAPFormattedDiskPage(byte[], byte[], int, CharIndexTranslator)}
      *             instead
      */
     public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,

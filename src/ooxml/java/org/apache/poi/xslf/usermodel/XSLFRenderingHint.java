@@ -44,7 +44,7 @@ public class XSLFRenderingHint extends RenderingHints.Key {
     /**
      * Use a custom image rendener
      *
-     * @see XSLFImageRendener
+     * @see XSLFImageRenderer
      */
     public static final XSLFRenderingHint IMAGE_RENDERER = new XSLFRenderingHint(3);
 

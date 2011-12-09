@@ -77,8 +77,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape {
 
 
     /**
-     * YK: dashing of lines is suppressed for now.
-     * @return
+     * YK: shadows of lines are suppressed for now.
      */
     @Override
     public XSLFShadow getShadow() {

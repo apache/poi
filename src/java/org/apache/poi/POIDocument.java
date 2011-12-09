@@ -245,8 +245,8 @@ public abstract class POIDocument {
 
    /**
     * Copies nodes from one POIFS to the other minus the excepts
-    * @param source is the source POIFS to copy from
-    * @param target is the target POIFS to copy to
+    * @param sourceRoot is the source POIFS to copy from
+    * @param targetRoot is the target POIFS to copy to
     * @param excepts is a list of Strings specifying what nodes NOT to copy
     */
     @Deprecated

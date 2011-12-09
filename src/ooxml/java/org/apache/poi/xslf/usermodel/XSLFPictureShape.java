@@ -22,7 +22,6 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -126,8 +125,8 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         XSLFPictureData data = getPictureData();
     	if(data == null) return;
 
-        XSLFImageRendener renderer = (XSLFImageRendener)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
-        if(renderer == null) renderer = new XSLFImageRendener();
+        XSLFImageRenderer renderer = (XSLFImageRenderer)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
+        if(renderer == null) renderer = new XSLFImageRenderer();
 
         RenderableShape rShape = new RenderableShape(this);
         Rectangle2D anchor = rShape.getAnchor(graphics);

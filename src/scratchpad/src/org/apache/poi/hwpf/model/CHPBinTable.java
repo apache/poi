@@ -64,7 +64,7 @@ public class CHPBinTable
      * Constructor used to read a binTable in from a Word document.
      * 
      * @deprecated Use
-     *             {@link #CHPBinTable(byte[],byte[],int,int,TextPieceTable)}
+     *             {@link #CHPBinTable(byte[], byte[], int, int, CharIndexTranslator)}
      *             instead
      */
     public CHPBinTable( byte[] documentStream, byte[] tableStream, int offset,

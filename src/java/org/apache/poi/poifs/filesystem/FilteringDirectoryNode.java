@@ -57,7 +57,7 @@ public class FilteringDirectoryNode implements DirectoryEntry
     *  will exclude entries such as "MyNode" and "MyDir/IgnoreNode".
     * The excludes can stretch into children, if they contain a /.
     *  
-    * @param entry The Directory to filter
+    * @param directory The Directory to filter
     * @param excludes The Entries to exclude
     */
    public FilteringDirectoryNode(DirectoryEntry directory, Collection<String> excludes) {

@@ -132,7 +132,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
 
 	/**
 	 * add a footnote to the document
-	 * @param footnote
+	 * @param note
 	 * @throws IOException		 
 	 */
 	public XWPFFootnote addFootnote(CTFtnEdn note){
