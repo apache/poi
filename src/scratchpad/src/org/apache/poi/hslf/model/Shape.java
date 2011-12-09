@@ -342,7 +342,9 @@ public abstract class Shape {
      * @param sh - owning shape
      */
     protected void afterInsert(Sheet sh){
-
+        if(_fill != null) {
+            _fill.afterInsert(sh);
+        }
     }
 
     /**
