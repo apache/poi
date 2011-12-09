@@ -159,7 +159,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     public void testGZipSheetdataWriter(){
         Workbook wb = new SXSSFWorkbook();
         ((SXSSFWorkbook)wb).setCompressTempFiles(true);
-        int rowNum = 10000;
+        int rowNum = 1000;
         int sheetNum = 5;
         for(int i = 0; i < sheetNum; i++){
             Sheet sh = wb.createSheet("sheet" + i);
