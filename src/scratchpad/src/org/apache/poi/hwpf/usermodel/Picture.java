@@ -298,7 +298,7 @@ public final class Picture
     }
 
     /**
-     * @retrn the vertical aspect ratio for picture provided by user
+     * @return the vertical aspect ratio for picture provided by user
      * @deprecated use more precise {@link #getVerticalScalingFactor()}
      */
     @Deprecated

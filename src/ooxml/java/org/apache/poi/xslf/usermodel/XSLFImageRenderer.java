@@ -39,7 +39,6 @@ import java.io.InputStream;
  * 
  * <pre>
  * <code>
- * @Override
  * public class MyImageRendener extends XSLFImageRendener{
  * public boolean drawImage(Graphics2D graphics, XSLFPictureData data, Rectangle2D anchor){
  * 	boolean ok = super.drawImage(graphics, data, anchor);
@@ -69,12 +68,12 @@ import java.io.InputStream;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFImageRendener {
+public class XSLFImageRenderer {
 
 	/**
 	 * Render picture data into the supplied graphics
 	 * 
-	 * @return true if the picture data was succesfully renderered
+	 * @return true if the picture data was successfully rendered
 	 */
 	public boolean drawImage(Graphics2D graphics, XSLFPictureData data,
 			Rectangle2D anchor) {

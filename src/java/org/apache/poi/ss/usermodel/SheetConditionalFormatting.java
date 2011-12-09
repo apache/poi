@@ -46,7 +46,7 @@ public interface SheetConditionalFormatting {
      *
      * @param regions - list of rectangular regions to apply conditional formatting rules
      * @param rule1 -  the first rule
-     * @param rule1 -  the second rule
+     * @param rule2 -  the second rule
      *
      * @return index of the newly created Conditional Formatting object
      */

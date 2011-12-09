@@ -61,12 +61,10 @@ public class EntryUtils
     /**
      * Copies all the nodes from one POIFS Directory to another
      * 
-     * @param source
+     * @param sourceRoot
      *            is the source Directory to copy from
-     * @param target
+     * @param targetRoot
      *            is the target Directory to copy to
-     * @param excepts
-     *            is a list of Strings specifying what nodes NOT to copy
      */
     public static void copyNodes(DirectoryEntry sourceRoot,
             DirectoryEntry targetRoot) throws IOException
@@ -79,8 +77,8 @@ public class EntryUtils
     /**
      * Copies nodes from one Directory to the other minus the excepts
      * 
-     * @param source The filtering source Directory to copy from
-     * @param target The filtering target Directory to copy to
+     * @param filteredSource The filtering source Directory to copy from
+     * @param filteredTarget The filtering target Directory to copy to
      */
     public static void copyNodes( FilteringDirectoryNode filteredSource,
             FilteringDirectoryNode filteredTarget ) throws IOException
@@ -93,9 +91,9 @@ public class EntryUtils
     /**
      * Copies nodes from one Directory to the other minus the excepts
      * 
-     * @param source
+     * @param sourceRoot
      *            is the source Directory to copy from
-     * @param target
+     * @param targetRoot
      *            is the target Directory to copy to
      * @param excepts
      *            is a list of Strings specifying what nodes NOT to copy

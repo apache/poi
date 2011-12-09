@@ -165,7 +165,7 @@ public class AbstractExcelUtils
     /**
      * @param mergedRanges
      *            map of sheet merged ranges built with
-     *            {@link #buildMergedRangesMap(HSSFSheet)}
+     *            {@link ExcelToHtmlUtils#buildMergedRangesMap(HSSFSheet)}
      * @return {@link CellRangeAddress} from map if cell with specified row and
      *         column numbers contained in found range, <tt>null</tt> otherwise
      */

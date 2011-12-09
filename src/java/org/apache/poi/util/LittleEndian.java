@@ -573,7 +573,7 @@ public class LittleEndian implements LittleEndianConsts
      * 
      * @param data
      *            the byte array
-     * @param offset
+     * @param startOffset
      *            a starting offset into the byte array
      * @param value
      *            the short (16-bit) values

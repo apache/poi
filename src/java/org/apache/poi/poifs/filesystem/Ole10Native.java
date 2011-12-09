@@ -66,7 +66,7 @@ public class Ole10Native {
    * to include a stream &quot;{01}Ole10Native&quot; which contains the actual
    * data relevant for this class.
    *
-   * @param poifs POI Filesystem object
+   * @param directory POI Filesystem object
    * @return Returns an instance of this class
    * @throws IOException on IO error
    * @throws Ole10NativeException on invalid or unexcepted data format

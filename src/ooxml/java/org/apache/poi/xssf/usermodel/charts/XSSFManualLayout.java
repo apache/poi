@@ -49,7 +49,7 @@ public final class XSSFManualLayout implements ManualLayout {
 
 	/**
 	 * Create a new SpreadsheetML manual layout.
-	 * @param layout a Spreadsheet ML layout that should be used as base.
+	 * @param ctLayout a Spreadsheet ML layout that should be used as base.
 	 */
 	public XSSFManualLayout(CTLayout ctLayout) {
 		initLayout(ctLayout);

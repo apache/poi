@@ -129,13 +129,15 @@ public interface Workbook {
 
     /**
      * Set the sheet name.
-     *
+     * <p>
+     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
+     * </p>
      * @param sheet number (0 based)
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see {@link #createSheet(String)}
-     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
-     *      for a safe way to create valid names
+     * @see #createSheet(String)
+     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     void setSheetName(int sheet, String name);
 
@@ -208,12 +210,15 @@ public interface Workbook {
      * The string MUST NOT begin or end with the single quote (') character.
      * </p>
      *
+     * <p>
+     * See {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
+     *      for a safe way to create valid names
+     * </p>
      * @param sheetname  sheetname to set for the sheet.
      * @return Sheet representing the new sheet.
      * @throws IllegalArgumentException if the name is null or invalid
      *  or workbook already contains a sheet with this name
-     * @see {@link org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)}
-     *      for a safe way to create valid names
+     * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
     Sheet createSheet(String sheetname);
 

@@ -81,7 +81,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     }
 
     /**
-     * @param position in table array
+     * @param pos in table array
      * @return The table at position pos
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */

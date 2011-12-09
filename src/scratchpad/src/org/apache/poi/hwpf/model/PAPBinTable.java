@@ -59,7 +59,7 @@ public class PAPBinTable
 
     /**
      * @deprecated Use
-     *             {@link #PAPBinTable(byte[],byte[],byte[],int,int,int,TextPieceTable,boolean)}
+     *             {@link #PAPBinTable(byte[], byte[], byte[], int, int, CharIndexTranslator)}
      *             instead
      */
     @SuppressWarnings( "unused" )

@@ -29,7 +29,7 @@ public interface XSLFFontManager {
     /**
      * select a font to be used to paint text
      *
-     * @param family the font family as defined in the .pptx file.
+     * @param typeface the font family as defined in the .pptx file.
      * This can be unknown or missing in the graphic environment.
      *
      * @return the font to be used to paint text
