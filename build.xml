@@ -1164,6 +1164,7 @@ under the License.
               <exclude name="scratchpad/testcases/dummy.txt" />
               <exclude name="contrib/testcases/dummy.txt" />
               <exclude name="examples/lib/dummy.txt" />
+              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/presetShapeDefinitions.xml" />
            </fileset>
        </rat:report>
     </target>
