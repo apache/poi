@@ -23,6 +23,7 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import java.util.List;
 
 import java.awt.*;
 
@@ -114,6 +115,36 @@ public final class Fill {
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
         EscherSimpleProperty prop = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
+    }
+
+    /**
+     */
+    protected void afterInsert(Sheet sh){
+        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        if(p != null) {
+            int idx = p.getPropertyValue();
+            EscherBSERecord bse = getEscherBSERecord(idx);
+            bse.setRef(bse.getRef() + 1);
+        }
+    }
+
+    protected EscherBSERecord getEscherBSERecord(int idx){
+        Sheet sheet = shape.getSheet();
+        if(sheet == null) {
+            logger.log(POILogger.DEBUG, "Fill has not yet been assigned to a sheet");
+            return null;
+        }
+        SlideShow ppt = sheet.getSlideShow();
+        Document doc = ppt.getDocumentRecord();
+        EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
+        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        if(bstore == null) {
+            logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
+            return null;
+        }
+        List lst = bstore.getChildRecords();
+        return (EscherBSERecord)lst.get(idx-1);
     }
 
     /**
@@ -233,6 +264,12 @@ public final class Fill {
     public void setPictureData(int idx){
         EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
         Shape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), idx);
+        if( idx != 0 ) {
+            if( shape.getSheet() != null ) {
+                EscherBSERecord bse = getEscherBSERecord(idx);
+                bse.setRef(bse.getRef() + 1);
+            }
+        }
     }
 
 }

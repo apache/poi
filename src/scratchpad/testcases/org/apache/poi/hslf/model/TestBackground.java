@@ -21,10 +21,14 @@ import junit.framework.TestCase;
 
 import java.io.*;
 import java.awt.*;
+import java.util.List;
 
+import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
+
 
 /**
  * Test <code>Fill</code> object.
@@ -163,6 +167,7 @@ public final class TestBackground extends TestCase {
 
         fill = slides[0].getBackground().getFill();
         assertEquals(Fill.FILL_PICTURE, fill.getFillType());
+        assertEquals(3, getFillPictureRefCount(slides[0].getBackground(), fill));
         shape = slides[0].getShapes()[0];
         assertEquals(Fill.FILL_SOLID, shape.getFill().getFillType());
 
@@ -173,14 +178,33 @@ public final class TestBackground extends TestCase {
 
         fill = slides[2].getBackground().getFill();
         assertEquals(Fill.FILL_TEXTURE, fill.getFillType());
+        assertEquals(3, getFillPictureRefCount(slides[2].getBackground(), fill));
         shape = slides[2].getShapes()[0];
         assertEquals(Fill.FILL_PICTURE, shape.getFill().getFillType());
+        assertEquals(1, getFillPictureRefCount(shape, fill));
 
         fill = slides[3].getBackground().getFill();
         assertEquals(Fill.FILL_SHADE_CENTER, fill.getFillType());
         shape = slides[3].getShapes()[0];
         assertEquals(Fill.FILL_SHADE, shape.getFill().getFillType());
 
+    }
+
+    private int getFillPictureRefCount(Shape shape, Fill fill) {
+        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        if(p != null) {
+            int idx = p.getPropertyValue();
+
+            Sheet sheet = shape.getSheet();
+            SlideShow ppt = sheet.getSlideShow();
+            Document doc = ppt.getDocumentRecord();
+            EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
+            EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+            List lst = bstore.getChildRecords();
+            return ((EscherBSERecord)lst.get(idx-1)).getRef();
+        }
+        return 0;
     }
 
 }

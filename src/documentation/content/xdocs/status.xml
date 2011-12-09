@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta5" date="2011-??-??">
+           <action dev="poi-developers" type="fix">46288 - fixed refcount of Fill pictures in HSLF </action>
            <action dev="poi-developers" type="add">51961 - support compression of temp files in SXSSF </action>
            <action dev="poi-developers" type="add">52268 - support cloning sheets with drawings in XSSF </action>
            <action dev="poi-developers" type="add">52285 - Support XWPF smart tags text in Paragraphs</action>
