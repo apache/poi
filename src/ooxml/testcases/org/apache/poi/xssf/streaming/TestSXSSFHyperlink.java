@@ -17,9 +17,8 @@
  * ====================================================================
  */
 
-package org.apache.poi.xssf.usermodel.streaming;
+package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 

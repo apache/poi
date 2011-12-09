@@ -67,6 +67,11 @@ public class SXSSFWorkbook implements Workbook
     private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
     /**
+     * whetehr temp files should be compressed.
+     */
+    private boolean _compressTmpFiles = false;
+
+    /**
      * Construct a new workbook
      */
     public SXSSFWorkbook(){
@@ -149,6 +154,31 @@ public class SXSSFWorkbook implements Workbook
             throw new IllegalArgumentException("rowAccessWindowSize must be greater than 0 or -1");
         }
         _randomAccessWindowSize = rowAccessWindowSize;
+    }
+
+    /**
+     * Set whether temp files should be compressed.
+     * <p>
+     *   SXSSF writes sheet data in temporary files (a temp file per-sheet)
+     *   and the size of these temp files can grow to to a very large size,
+     *   e.g. for a 20 MB csv data the size of the temp xml file become few GB large.
+     *   If the "compress" flag is set to <code>true</code> then the temporary XML is gzipped.
+     * </p>
+     * <p>
+     *     Please note the the "compress" option may cause performance penalty.
+     * </p>
+     * @param compress whether to compress temp files
+     */
+    public void setCompressTempFiles(boolean compress){
+        _compressTmpFiles = compress;
+    }
+
+    SheetDataWriter createSheetDataWriter() throws IOException {
+        if(_compressTmpFiles) {
+            return new GZIPSheetDataWriter();
+        } else {
+            return new SheetDataWriter();
+        }
     }
 
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
