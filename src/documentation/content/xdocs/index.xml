@@ -32,18 +32,18 @@
   </header>
 
   <body>
-    <section><title>28 August 2011 -  The Apache POI project is celebrating its 10th anniversary</title>
-      <p>
-        The Apache POI project is celebrating its 10th anniversary. On the 28th of August 2001, the first 0.1 alpha version of POI was released. 
-        <link href="https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces14">Read more...</link></p>
-    </section>
-    <section><title>26 August 2011 - POI 3.8 beta 4 available</title>
-      <p>The Apache POI team is pleased to announce the release of 3.8 beta 4. 
+    <section><title>17 December 2011 - POI 3.8 beta 5 available</title>
+      <p>The Apache POI team is pleased to announce the release of 3.8 beta 5. 
          This includes a large number of bug fixes and enhancements. 
       </p>
       <p>A full list of changes is available in the <link href="changes.html">change log</link>.
         People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
       <p>See the <link href="download.html">downloads</link> page for more details.</p>
+    </section>
+    <section><title>28 August 2011 -  The Apache POI project is celebrating its 10th anniversary</title>
+      <p>
+        The Apache POI project is celebrating its 10th anniversary. On the 28th of August 2001, the first 0.1 alpha version of POI was released. 
+        <link href="https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces14">Read more...</link></p>
     </section>
     <section><title>29 October 2010 - POI 3.7 available</title>
      <p>The Apache POI team is pleased to announce the release of 3.7. This includes a large number of bug fixes, and some
