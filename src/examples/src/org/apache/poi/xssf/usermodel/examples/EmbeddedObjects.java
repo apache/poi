@@ -32,7 +32,8 @@ import java.io.InputStream;
  */
 public class EmbeddedObjects {
     public static void main(String[] args) throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(args[0]);
+        OPCPackage pkg = OPCPackage.open(args[0]);
+        XSSFWorkbook workbook = new XSSFWorkbook(pkg);
         for (PackagePart pPart : workbook.getAllEmbedds()) {
             String contentType = pPart.getContentType();
             // Excel Workbook - either binary or OpenXML
@@ -66,5 +67,6 @@ public class EmbeddedObjects {
                 InputStream inputStream = pPart.getInputStream();
             }
         }
+        pkg.close();
     }
 }

@@ -23,13 +23,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.io.FileInputStream;
+
 /**
  *  Iterate over rows and cells
  */
 public class IterateCells {
 
     public static void main(String[] args) throws Exception {
-        Workbook wb = new XSSFWorkbook(args[0]);
+        Workbook wb = new XSSFWorkbook(new FileInputStream(args[0]));
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             Sheet sheet = wb.getSheetAt(i);
             System.out.println(wb.getSheetName(i));
