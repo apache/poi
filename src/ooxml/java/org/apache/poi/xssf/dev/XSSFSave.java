@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.dev;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -30,13 +31,16 @@ import java.io.FileOutputStream;
 public final class XSSFSave {
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {
-            XSSFWorkbook wb = new XSSFWorkbook(args[i]);
+            OPCPackage pkg = OPCPackage.open(args[i]);
+            XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
             int sep = args[i].lastIndexOf('.');
             String outfile = args[i].substring(0, sep) + "-save.xls" + (wb.isMacroEnabled() ? "m" : "x");
             FileOutputStream out = new FileOutputStream(outfile);
             wb.write(out);
             out.close();
+
+            pkg.close();
         }
     }
 
