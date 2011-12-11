@@ -43,6 +43,12 @@ public class WorkbookFactory {
 		return new HSSFWorkbook(fs);
 	}
 	/**
+	 * Creates an HSSFWorkbook from the given NPOIFSFileSystem
+	 */
+	public static Workbook create(NPOIFSFileSystem fs) throws IOException {
+		return new HSSFWorkbook(fs.getRoot(), true);
+	}
+	/**
 	 * Creates an XSSFWorkbook from the given OOXML Package
 	 */
 	public static Workbook create(OPCPackage pkg) throws IOException {
