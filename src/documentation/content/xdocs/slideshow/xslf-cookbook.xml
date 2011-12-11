@@ -23,11 +23,16 @@
     <header>
         <title>XSLF Cookbook</title>
         <authors>
-            <person email="yegor@dinom.ru" name="Yegor Kozlov" id="CO"/>
+            <person email="yegor@apache.org" name="Yegor Kozlov" id="YK"/>
         </authors>
     </header>
     <body>
         <section><title>XSLF Cookbook</title>
+            <p>
+              This page offers a short introduction into the XSLF API. More examples can be found in the
+                <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/xslf/usermodel/"> XSLF Examples</link>
+               in the POI SVN repository. 
+            </p>
             <note>
             Please note that XSLF is still in early development and is a subject to incompatible changes in a future release. 
             </note>
