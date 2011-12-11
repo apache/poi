@@ -19,6 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
@@ -454,6 +455,24 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
         return drawParagraphs(graphics, 0, 0);
     }
 
+    /**
+     * Adjust the size of the shape so it encompasses the text inside it.
+     *
+     * @return a <code>Rectangle2D</code> that is the bounds of this <code>TextShape</code>.
+     */
+    public Rectangle2D resizeToFitText(){
+        Rectangle2D anchor = getAnchor();
+        if(anchor.getWidth() == 0.)  throw new POIXMLException(
+                "Anchor of the shape was not set.");
+        double height = getTextHeight(); 
+        height += 1; // add a pixel to compensate rounding errors
+        
+        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height);
+        setAnchor(anchor);
+        
+        return anchor;
+    }   
+    
     /**
      * break the contained text into lines
     */
