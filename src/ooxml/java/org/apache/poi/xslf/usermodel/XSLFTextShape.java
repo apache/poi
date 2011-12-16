@@ -458,7 +458,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
     /**
      * Adjust the size of the shape so it encompasses the text inside it.
      *
-     * @return a <code>Rectangle2D</code> that is the bounds of this <code>TextShape</code>.
+     * @return a <code>Rectangle2D</code> that is the bounds of this shape.
      */
     public Rectangle2D resizeToFitText(){
         Rectangle2D anchor = getAnchor();
