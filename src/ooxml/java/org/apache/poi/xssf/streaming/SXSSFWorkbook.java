@@ -104,7 +104,33 @@ public class SXSSFWorkbook implements Workbook
      * @param rowAccessWindowSize
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize){
+    	this(workbook,rowAccessWindowSize, false);
+    }
+
+    /**
+     * Constructs an workbook from an existing workbook.
+     * <p>
+     * When a new node is created via createRow() and the total number
+     * of unflushed records would exceed the specified value, then the
+     * row with the lowest index value is flushed and cannot be accessed
+     * via getRow() anymore.
+     * </p>
+     * <p>
+     * A value of -1 indicates unlimited access. In this case all
+     * records that have not been flushed by a call to flush() are available
+     * for random access.
+     * <p>
+     * <p></p>
+     * A value of 0 is not allowed because it would flush any newly created row
+     * without having a chance to specify any cells.
+     * </p>
+     *
+     * @param rowAccessWindowSize
+     * @param compressTmpFiles whether to use gzip compression for temporary files
+     */
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles){
     	setRandomAccessWindowSize(rowAccessWindowSize);
+    	setCompressTempFiles(compressTmpFiles);
     	if (workbook == null)
     	{
     		_wb=new XSSFWorkbook();
@@ -119,7 +145,6 @@ public class SXSSFWorkbook implements Workbook
             }
     	}
     }
-
     /**
      * Construct an empty workbook and specify the window for row access.
      * <p>
