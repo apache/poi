@@ -21,22 +21,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStop;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStopList;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharBullet;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePoint;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
@@ -615,6 +600,21 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             pr.addNewBuFont().setTypeface("Arial");
             pr.addNewBuChar().setChar("\u2022");
         }
+    }
+
+    /**
+     * Specifies that automatic numbered bullet points should be applied to this paragraph
+     *
+     * @param scheme type of auto-numbering
+     * @param startAt the number that will start number for a given sequence of automatically
+    numbered bullets (1-based).
+     */
+    public void setBulletAutoNumber(ListAutoNumber scheme, int startAt) {
+        if(startAt < 1) throw new IllegalArgumentException("Start Number must be greater or equal that 1") ;
+        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
+        CTTextAutonumberBullet lst = pr.isSetBuAutoNum() ? pr.getBuAutoNum() : pr.addNewBuAutoNum();
+        lst.setType(STTextAutonumberScheme.Enum.forInt(scheme.ordinal() + 1));
+        lst.setStartAt(startAt);
     }
 
     @Override
