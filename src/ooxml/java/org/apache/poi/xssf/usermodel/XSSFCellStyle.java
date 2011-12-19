@@ -68,15 +68,15 @@ public class XSSFCellStyle implements CellStyle {
 
     /**
      * Creates a Cell Style from the supplied parts
-     * @param cellXfId The main XF for the cell
-     * @param cellStyleXfId Optional, style xf
+     * @param cellXfId The main XF for the cell. Must be a valid 0-based index into the XF table
+     * @param cellStyleXfId Optional, style xf. A value of <code>-1</code> means no xf.
      * @param stylesSource Styles Source to work off
      */
     public XSSFCellStyle(int cellXfId, int cellStyleXfId, StylesTable stylesSource, ThemesTable theme) {
         _cellXfId = cellXfId;
         _stylesSource = stylesSource;
         _cellXf = stylesSource.getCellXfAt(this._cellXfId);
-        _cellStyleXf = stylesSource.getCellStyleXfAt(cellStyleXfId);
+        _cellStyleXf = cellStyleXfId == -1 ? null : stylesSource.getCellStyleXfAt(cellStyleXfId);
         _theme = theme;
     }
 
