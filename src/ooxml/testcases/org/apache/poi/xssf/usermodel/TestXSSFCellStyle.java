@@ -691,4 +691,19 @@ public class TestXSSFCellStyle extends TestCase {
        assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
        assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
    }
+
+    /**
+     * Avoid ArrayIndexOutOfBoundsException  when creating cell style
+     * in a workbook that has an empty xf table.
+     */
+    public void testBug52348() {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("52348.xlsx");
+        StylesTable st = workbook.getStylesSource();
+        assertEquals(0, st._getStyleXfsSize());
+        
+        
+        XSSFCellStyle style = workbook.createCellStyle(); // no exception at this point
+        assertNull(style.getStyleXf());
+    }
+
 }
