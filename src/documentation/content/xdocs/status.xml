@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">52219 - fixed XSSFSimpleShape to set rich text attributes from XSSFRichtextString</action>
            <action dev="poi-developers" type="fix">52314 - enhanced SheetUtil.getColumnWidth</action>
         </release>
         <release version="3.8-beta5" date="2011-12-17">

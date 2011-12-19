@@ -17,32 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.STFontCollectionIndex;
-import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.apache.poi.util.Internal;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 
 /**
  * Represents a shape with a predefined geometry in a SpreadsheetML drawing.
@@ -190,15 +173,43 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
 
     /**
      *
-     * CTRPrElt --> CTFont adapter
+     * org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt to
+     * org.openxmlformats.schemas.drawingml.x2006.main.CTFont adapter
      */
     private static void applyAttributes(CTRPrElt pr, CTTextCharacterProperties rPr){
 
         if(pr.sizeOfBArray() > 0) rPr.setB(pr.getBArray(0).getVal());
-        //if(pr.sizeOfUArray() > 0) rPr.setU(pr.getUArray(0).getVal());
+        if(pr.sizeOfUArray() > 0) {
+            STUnderlineValues.Enum u1 = pr.getUArray(0).getVal();
+            if(u1 == STUnderlineValues.SINGLE) rPr.setU(STTextUnderlineType.SNG);
+            else if(u1 == STUnderlineValues.DOUBLE) rPr.setU(STTextUnderlineType.DBL);
+            else if(u1 == STUnderlineValues.NONE) rPr.setU(STTextUnderlineType.NONE);
+        }
         if(pr.sizeOfIArray() > 0) rPr.setI(pr.getIArray(0).getVal());
 
-        CTTextFont rFont = rPr.addNewLatin();
-        rFont.setTypeface(pr.sizeOfRFontArray() > 0 ? pr.getRFontArray(0).getVal() : "Arial");
+        if(pr.sizeOfFamilyArray() > 0) {
+            CTTextFont rFont = rPr.addNewLatin();
+            rFont.setTypeface(pr.getRFontArray(0).getVal());
+        }
+        
+        if(pr.sizeOfColorArray() > 0) {
+            CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
+            org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor xlsColor = pr.getColorArray(0);
+            if(xlsColor.isSetRgb()) {
+                CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
+                clr.setVal(xlsColor.getRgb());
+            }
+            else if(xlsColor.isSetIndexed()) {
+                HSSFColor indexed = HSSFColor.getIndexHash().get((int) xlsColor.getIndexed());
+                if (indexed != null) {
+                    byte[] rgb = new byte[3];
+                    rgb[0] = (byte) indexed.getTriplet()[0];
+                    rgb[1] = (byte) indexed.getTriplet()[1];
+                    rgb[2] = (byte) indexed.getTriplet()[2];
+                    CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
+                    clr.setVal(rgb);
+                }
+            }
+        }
     }
 }
