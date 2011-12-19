@@ -16,15 +16,24 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.FontUnderline;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.dev.XSSFDump;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 
 /**
  * @author Yegor Kozlov
@@ -170,5 +179,41 @@ public class TestXSSFDrawing extends TestCase {
             assertTrue(sh1.getClass() == sh2.getClass());
             assertEquals(sh1.getShapeProperties().toString(), sh2.getShapeProperties().toString());
         }
+    }
+
+    /**
+     * ensure that rich text attributes defined in a XSSFRichTextString
+     * are passed to XSSFSimpleShape.
+     *
+     * See Bugzilla 52219.
+     */
+    public void testRichText(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+        XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
+        XSSFRichTextString rt = new XSSFRichTextString("Test String");
+
+        XSSFFont font = wb.createFont();
+        font.setColor(new XSSFColor(new Color(0, 128, 128)));
+        font.setItalic(true);
+        font.setBold(true);
+        font.setUnderline(FontUnderline.SINGLE);
+        rt.applyFont(font);
+
+        shape.setText(rt);
+
+        CTTextParagraph pr = shape.getCTShape().getTxBody().getPArray(0);
+        assertEquals(1, pr.sizeOfRArray());
+
+        CTTextCharacterProperties rPr = pr.getRArray(0).getRPr();
+        assertEquals(true, rPr.getB());
+        assertEquals(true, rPr.getI());
+        assertEquals(STTextUnderlineType.SNG, rPr.getU());
+        assertTrue(Arrays.equals(
+                new byte[]{0, (byte)128, (byte)128} ,
+                rPr.getSolidFill().getSrgbClr().getVal()));
+
     }
 }
