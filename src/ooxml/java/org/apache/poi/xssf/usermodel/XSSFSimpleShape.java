@@ -191,6 +191,11 @@ public class XSSFSimpleShape extends XSSFShape { // TODO - instantiable supercla
             CTTextFont rFont = rPr.addNewLatin();
             rFont.setTypeface(pr.getRFontArray(0).getVal());
         }
+
+        if(pr.sizeOfSzArray() > 0) {
+            int sz = (int)(pr.getSzArray(0).getVal()*100);
+            rPr.setSz(sz);
+        }
         
         if(pr.sizeOfColorArray() > 0) {
             CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
