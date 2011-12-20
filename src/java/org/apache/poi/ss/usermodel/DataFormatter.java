@@ -16,13 +16,28 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.RoundingMode;
-import java.text.*;
+import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * DataFormatter contains methods for formatting the value stored in an
@@ -257,7 +272,7 @@ public class DataFormatter {
        if (emulateCsv && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
            formatStr = formatStr.replaceAll("#", "");
        }
-
+       
         // See if we already have it cached
         Format format = formats.get(formatStr);
         if (format != null) {
@@ -332,6 +347,13 @@ public class DataFormatter {
                 DateUtil.isValidExcelDate(cellValue)) {
             return createDateFormat(formatStr, cellValue);
         }
+        
+        // Excel supports fractions in format strings, which Java doesn't
+        if (formatStr.indexOf("/") == formatStr.lastIndexOf("/") && 
+              formatStr.indexOf("/") >= 0 && !formatStr.contains("-")) {
+            return new FractionFormat(formatStr);
+        }
+        
         if (numPattern.matcher(formatStr).find()) {
             return createNumberFormat(formatStr, cellValue);
         }
@@ -945,6 +967,67 @@ public class DataFormatter {
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
         }
+    }
+    
+    /**
+     * Format class that handles Excel style fractions, such as "# #/#" and "#/###"
+     */
+    @SuppressWarnings("serial")
+    private static final class FractionFormat extends Format {
+       private final String str;
+       public FractionFormat(String s) {
+          str = s;
+       }
+       
+       public String format(Number num) {
+          double wholePart = Math.floor(num.doubleValue());
+          double decPart = num.doubleValue() - wholePart;
+          if (wholePart * decPart == 0) {
+             return "0";
+          }
+          String[] parts = str.split(" ");
+          String[] fractParts;
+          if (parts.length == 2) {
+             fractParts = parts[1].split("/");
+          } else {
+             fractParts = str.split("/");
+          }
+
+          if (fractParts.length == 2) {
+             double minVal = 1.0;
+             double currDenom = Math.pow(10 ,  fractParts[1].length()) - 1d;
+             double currNeum = 0;
+             for (int i = (int)(Math.pow(10,  fractParts[1].length())- 1d); i > 0; i--) {
+                for(int i2 = (int)(Math.pow(10,  fractParts[1].length())- 1d); i2 > 0; i2--){
+                   if (minVal >=  Math.abs((double)i2/(double)i - decPart)) {
+                      currDenom = i;
+                      currNeum = i2;
+                      minVal = Math.abs((double)i2/(double)i  - decPart);
+                   }
+                }
+             }
+             NumberFormat neumFormatter = new DecimalFormat(fractParts[0]);
+             NumberFormat denomFormatter = new DecimalFormat(fractParts[1]);
+             if (parts.length == 2) {
+                NumberFormat wholeFormatter = new DecimalFormat(parts[0]);
+                String result = wholeFormatter.format(wholePart) + " " + neumFormatter.format(currNeum) + "/" + denomFormatter.format(currDenom);
+                return result;
+             } else {
+                String result = neumFormatter.format(currNeum + (currDenom * wholePart)) + "/" + denomFormatter.format(currDenom);
+                return result;
+             }
+          } else {
+             throw new IllegalArgumentException("Fraction must have 2 parts, found " + fractParts.length + " for fraction format " + str);
+          }
+       }
+
+       public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+          return toAppendTo.append(format((Number)obj));
+       }
+
+       public Object parseObject(String source, ParsePosition pos) {
+          throw new NotImplementedException("Reverse parsing not supported");
+       }
     }
 
     /**

@@ -17,12 +17,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -279,17 +273,13 @@ public abstract class TextFunction implements Function {
 
 	/**
 	 * An implementation of the TEXT function<br/>
-	 * TEXT returns a number value formatted with the given
-	 * number formatting string. This function is not a complete implementation of
-	 * the Excel function.  This function implements decimal formatting
-	 * with the Java class DecimalFormat.  For date formatting, this function uses
-	 * {@link DataFormatter}, which attempts to replicate the Excel date 
-	 * format string.
-	 * 
-	 * TODO Merge much of this logic with {@link DataFormatter}
+	 * TEXT returns a number value formatted with the given number formatting string. 
+	 * This function is not a complete implementation of the Excel function, but
+	 *  handles most of the common cases. All work is passed down to 
+	 *  {@link DataFormatter} to be done, as this works much the same as the
+	 *  display focused work that that does. 
 	 *
 	 * <b>Syntax<b>:<br/> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br/>
-	 *
 	 */
 	public static final Function TEXT = new Fixed2ArgFunction() {
 
@@ -302,57 +292,13 @@ public abstract class TextFunction implements Function {
 			} catch (EvaluationException e) {
 				return e.getErrorEval();
 			}
-			if (s1.matches("[\\d,\\#,\\.,\\$,\\,]+")) {
-			NumberFormat formatter = new DecimalFormat(s1);
-			return new StringEval(formatter.format(s0));
-			} else if (s1.indexOf("/") == s1.lastIndexOf("/") && s1.indexOf("/") >=0 && !s1.contains("-")) {
-				double wholePart = Math.floor(s0);
-				double decPart = s0 - wholePart;
-				if (wholePart * decPart == 0) {
-					return new StringEval("0");
-				}
-				String[] parts = s1.split(" ");
-				String[] fractParts;
-				if (parts.length == 2) {
-					fractParts = parts[1].split("/");
-				} else {
-					fractParts = s1.split("/");
-				}
-
-				if (fractParts.length == 2) {
-					double minVal = 1.0;
-					double currDenom = Math.pow(10 ,  fractParts[1].length()) - 1d;
-					double currNeum = 0;
-					for (int i = (int)(Math.pow(10,  fractParts[1].length())- 1d); i > 0; i--) {
-						for(int i2 = (int)(Math.pow(10,  fractParts[1].length())- 1d); i2 > 0; i2--){
-							if (minVal >=  Math.abs((double)i2/(double)i - decPart)) {
-								currDenom = i;
-								currNeum = i2;
-								minVal = Math.abs((double)i2/(double)i  - decPart);
-							}
-						}
-					}
-					NumberFormat neumFormatter = new DecimalFormat(fractParts[0]);
-					NumberFormat denomFormatter = new DecimalFormat(fractParts[1]);
-					if (parts.length == 2) {
-						NumberFormat wholeFormatter = new DecimalFormat(parts[0]);
-						String result = wholeFormatter.format(wholePart) + " " + neumFormatter.format(currNeum) + "/" + denomFormatter.format(currDenom);
-						return new StringEval(result);
-					} else {
-						String result = neumFormatter.format(currNeum + (currDenom * wholePart)) + "/" + denomFormatter.format(currDenom);
-						return new StringEval(result);
-					}
-				} else {
-					return ErrorEval.VALUE_INVALID;
-				}
-			} else {
-				try {
-	            // Ask DataFormatter to handle the Date string for us
-				   String formattedDate = formatter.formatRawCellContents(s0, -1, s1);
-					return new StringEval(formattedDate);
-				} catch (Exception e) {
-					return ErrorEval.VALUE_INVALID;
-				}
+			
+			try {
+            // Ask DataFormatter to handle the String for us
+			   String formattedStr = formatter.formatRawCellContents(s0, -1, s1);
+				return new StringEval(formattedStr);
+			} catch (Exception e) {
+				return ErrorEval.VALUE_INVALID;
 			}
 		}
 	};

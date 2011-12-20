@@ -162,6 +162,18 @@ public class TestDataFormatter extends TestCase {
     }
     
     /**
+     * Test that we correctly handle fractions in the
+     *  format string, eg # #/#
+     */
+    public void testFractions() {
+       DataFormatter dfUS = new DataFormatter(Locale.US);
+       
+       assertEquals("321 1/3", dfUS.formatRawCellContents(321.321, -1, "# #/#"));
+       assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# #/##"));
+       assertEquals("26027/81", dfUS.formatRawCellContents(321.321, -1, "#/##"));
+    }
+    
+    /**
      * Test that _x (blank with the space taken by "x")
      *  and *x (fill to the column width with "x"s) are
      *  correctly ignored by us.
