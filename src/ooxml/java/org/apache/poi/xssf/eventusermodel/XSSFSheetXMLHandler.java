@@ -254,7 +254,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                             thisStr = fv;
                          }
                       } else {
-                         // No formatter supplied, just do raw value in all cases
+                         // No formating applied, just do raw value in all cases
                          thisStr = fv;
                       }
                    }
