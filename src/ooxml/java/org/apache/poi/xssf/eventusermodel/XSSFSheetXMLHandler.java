@@ -242,7 +242,21 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    if(formulasNotResults) {
                       thisStr = formula.toString();
                    } else {
-                      thisStr = value.toString();
+                      String fv = value.toString();
+                      
+                      if (this.formatString != null) {
+                         try {
+                            // Try to use the value as a formattable number
+                            double d = Double.parseDouble(fv);
+                            thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
+                         } catch(NumberFormatException e) {
+                            // Formula is a String result not a Numeric one
+                            thisStr = fv;
+                         }
+                      } else {
+                         // No formatter supplied, just do raw value in all cases
+                         thisStr = fv;
+                      }
                    }
                    break;
 
