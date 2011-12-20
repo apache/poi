@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -37,8 +38,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * @author Stephen Wolke (smwolke at geistig.com)
  */
 public abstract class TextFunction implements Function {
-
-	protected static final String EMPTY_STRING = "";
+	protected static final DataFormatter formatter = new DataFormatter();
+   protected static final String EMPTY_STRING = "";
 
 	protected static final String evaluateStringArg(ValueEval eval, int srcRow, int srcCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(eval, srcRow, srcCol);
@@ -281,8 +282,11 @@ public abstract class TextFunction implements Function {
 	 * TEXT returns a number value formatted with the given
 	 * number formatting string. This function is not a complete implementation of
 	 * the Excel function.  This function implements decimal formatting
-	 * with the Java class DecimalFormat.  For date formatting this function uses
-	 * the SimpleDateFormat class.<p/>
+	 * with the Java class DecimalFormat.  For date formatting, this function uses
+	 * {@link DataFormatter}, which attempts to replicate the Excel date 
+	 * format string.
+	 * 
+	 * TODO Merge much of this logic with {@link DataFormatter}
 	 *
 	 * <b>Syntax<b>:<br/> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br/>
 	 *
@@ -343,12 +347,9 @@ public abstract class TextFunction implements Function {
 				}
 			} else {
 				try {
-					DateFormat dateFormatter = new SimpleDateFormat(s1);
-					Calendar cal = new GregorianCalendar(1899, 11, 30, 0, 0, 0);
-					cal.add(Calendar.DATE, (int)Math.floor(s0));
-					double dayFraction = s0 - Math.floor(s0);
-					cal.add(Calendar.MILLISECOND, (int) Math.round(dayFraction * 24 * 60 * 60 * 1000));
-					return new StringEval(dateFormatter.format(cal.getTime()));
+	            // Ask DataFormatter to handle the Date string for us
+				   String formattedDate = formatter.formatRawCellContents(s0, -1, s1);
+					return new StringEval(formattedDate);
 				} catch (Exception e) {
 					return ErrorEval.VALUE_INVALID;
 				}
