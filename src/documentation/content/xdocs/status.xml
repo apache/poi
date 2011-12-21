@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">52378 - Support for WORKDAY and NETWORKDAYS functions</action>
            <action dev="poi-developers" type="add">52349 - Merge the logic between the TEXT function and DataFormatter</action>
            <action dev="poi-developers" type="fix">52349 - Correctly support excel style date format strings in the TEXT function</action>
            <action dev="poi-developers" type="fix">52369 - XSSFExcelExtractor should format numeric cells based on the format strings applied to them</action>

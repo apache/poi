@@ -21,11 +21,6 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.NumericFunction;
-import org.apache.poi.ss.usermodel.DateUtil;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.regex.Pattern;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function MROUND()<br/>

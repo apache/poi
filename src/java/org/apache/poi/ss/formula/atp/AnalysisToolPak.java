@@ -1,19 +1,12 @@
-/* ====================================================================
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-==================================================================== */
+/*
+ * ==================================================================== Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or
+ * agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ * ====================================================================
+ */
 
 package org.apache.poi.ss.formula.atp;
 
@@ -50,13 +43,12 @@ public final class AnalysisToolPak implements UDFFinder {
 
     private final Map<String, FreeRefFunction> _functionsByName = createFunctionsMap();
 
-
     private AnalysisToolPak() {
         // enforce singleton
     }
 
     public FreeRefFunction findFunction(String name) {
-        return _functionsByName.get(name);
+        return _functionsByName.get(name.toUpperCase());
     }
 
     private Map<String, FreeRefFunction> createFunctionsMap() {
@@ -140,7 +132,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "MDURATION", null);
         r(m, "MROUND", MRound.instance);
         r(m, "MULTINOMIAL", null);
-        r(m, "NETWORKDAYS", null);
+        r(m, "NETWORKDAYS", NetworkdaysFunction.instance);
         r(m, "NOMINAL", null);
         r(m, "OCT2BIN", null);
         r(m, "OCT2DEC", null);
@@ -163,7 +155,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
         r(m, "WEEKNUM", null);
-        r(m, "WORKDAY", null);
+        r(m, "WORKDAY", WorkdayFunction.instance);
         r(m, "XIRR", null);
         r(m, "XNPV", null);
         r(m, "YEARFRAC", YearFrac.instance);
