@@ -225,8 +225,9 @@ public final class XSLFSlide extends XSLFSheet {
     public XSLFSlide importContent(XSLFSheet src){
         super.importContent(src);
 
-        CTBackground bg = ((CTSlide)src.getXmlObject()).getCSld().getBg();
-        if(bg != null) {
+        XSLFBackground bgShape = getBackground();
+        if(bgShape != null) {
+            CTBackground bg = (CTBackground)bgShape.getXmlObject();
             if(bg.isSetBgPr() && bg.getBgPr().isSetBlipFill()){
                 CTBlip blip = bg.getBgPr().getBlipFill().getBlip();
                 String blipId = blip.getEmbed();

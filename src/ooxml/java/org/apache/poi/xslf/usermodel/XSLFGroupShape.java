@@ -25,6 +25,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
@@ -33,6 +34,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 import java.awt.Graphics2D;
@@ -307,6 +309,20 @@ public class XSLFGroupShape extends XSLFShape {
 
         graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, tx0);
         
+    }
+
+    @Override
+    void copy(XSLFShape src){
+        XSLFGroupShape gr = (XSLFGroupShape)src;
+        // recursively update each shape
+        XSLFShape[] tgtShapes = getShapes();
+        XSLFShape[] srcShapes = gr.getShapes();
+        for(int i = 0; i < tgtShapes.length; i++){
+            XSLFShape s1 = srcShapes[i];
+            XSLFShape s2 = tgtShapes[i];
+
+            s2.copy(s1);
+        }
     }
 
 }
