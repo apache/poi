@@ -415,4 +415,21 @@ public class TestDataFormatter extends TestCase {
         assertEquals(" -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals(" $-   ", dfUS.formatRawCellContents(0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
+
+    /**
+     * TODO Fix these so that they work
+     */
+    public void DISABLEDtestCustomFormats() {
+       DataFormatter dfUS = new DataFormatter(Locale.US, true);
+       String fmt;
+       
+       fmt = "\"At\" H:MM AM/PM \"on\" DDDD MMMM D\",\" YYYY";
+       assertEquals(
+             "At 4:20 AM on Thursday May 17, 2007",
+             dfUS.formatRawCellContents(39219.1805636921, -1, fmt)
+       );
+       
+       fmt = "0 \"dollars and\" .00 \"cents\"";
+       assertEquals("19 dollars and .99 cents", dfUS.formatRawCellContents(19.99, -1, fmt));
+    }
 }
