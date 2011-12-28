@@ -246,6 +246,22 @@ public class TestDataFormatter extends TestCase {
     }
     
     /**
+     * Tests that we do AM/PM handling properly
+     */
+    public void testAMPM() {
+       DataFormatter dfUS = new DataFormatter(Locale.US);
+       
+       assertEquals("06:00", dfUS.formatRawCellContents(0.25, -1, "hh:mm"));
+       assertEquals("18:00", dfUS.formatRawCellContents(0.75, -1, "hh:mm"));
+       
+       assertEquals("06:00 AM", dfUS.formatRawCellContents(0.25, -1, "hh:mm AM/PM"));
+       assertEquals("06:00 PM", dfUS.formatRawCellContents(0.75, -1, "hh:mm AM/PM"));
+       
+       assertEquals("1904-01-01 06:00:00 AM", dfUS.formatRawCellContents(0.25, -1, "yyyy-mm-dd hh:mm:ss AM/PM", true));
+       assertEquals("1904-01-01 06:00:00 PM", dfUS.formatRawCellContents(0.75, -1, "yyyy-mm-dd hh:mm:ss AM/PM", true));
+    }
+    
+    /**
      * Test that we can handle elapsed time,
      *  eg formatting 1 day 4 hours as 28 hours
      */
