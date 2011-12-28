@@ -168,9 +168,15 @@ public class TestDataFormatter extends TestCase {
     public void testFractions() {
        DataFormatter dfUS = new DataFormatter(Locale.US);
        
-       assertEquals("321 1/3", dfUS.formatRawCellContents(321.321, -1, "# #/#"));
+       // Excel often prefers "# #/#"
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# #/#"));
        assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# #/##"));
-       assertEquals("26027/81", dfUS.formatRawCellContents(321.321, -1, "#/##"));
+       assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "#/##"));
+
+       // OOo seems to like the "# ?/?" form
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/?"));
+       assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# ?/??"));
+       assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "?/??"));
     }
     
     /**
