@@ -90,7 +90,11 @@ public class CellDateFormatter extends CellFormatter {
             case 'M':
                 mStart = pos;
                 mLen = part.length();
-                return part.toUpperCase();
+                // For 'm' after 'h', output minutes ('m') not month ('M')
+                if (hStart >= 0)
+                    return part.toLowerCase();
+                else
+                    return part.toUpperCase();
 
             case 'y':
             case 'Y':
