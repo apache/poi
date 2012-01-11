@@ -17,12 +17,12 @@
 
 package org.apache.poi;
 
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 /**
  * A {@link POITextExtractor} for returning the textual
@@ -122,58 +122,111 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 
 		return text.toString();
 	}
-	/**
-	 * Returns the custom document properties, if
-	 *  there are any
-	 */
-	public String getCustomPropertiesText() {
-		StringBuffer text = new StringBuffer();
-		org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
-			props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
+   /**
+    * Returns the custom document properties, if
+    *  there are any
+    */
+   public String getCustomPropertiesText() {
+      StringBuffer text = new StringBuffer();
+      org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
+      props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
 
-		List<CTProperty> properties = props.getPropertyList();
-		for(CTProperty property : properties) {
-			String val = "(not implemented!)";
-			
-			if (property.isSetLpwstr()) {
-			   val = property.getLpwstr(); 
-			}
-			else if (property.isSetFiletime()) {
-			   val = property.getFiletime().toString(); 
-			}
-			else if (property.isSetDate()) {
-			   val = property.getDate().toString(); 
-			}
-			else if (property.isSetDecimal()) {
-			   BigDecimal d = property.getDecimal();
-			   if (d == null) {
-			      val = null;
-			   } else {
-			      val = d.toPlainString();
-			   }
-			}
-			else if (property.isSetBool()) {
-			   val = Boolean.toString( property.getBool() );
-			}
-			else if (property.isSetInt()) {
-			   val = Integer.toString( property.getInt() ); 
-			}
-			else if (property.isSetLpstr()) {
-			   val = property.getLpstr(); 
-			}
-			else if (property.isSetI4()) {
-			   /* Number in Excel for example.... Why i4 ? Ask microsoft. */ 
-			   val = Integer.toString(property.getI4()); 
-			}
-			
-			text.append(
-					property.getName() +
-					" = " + val + "\n"
-			);
-		}
+      List<CTProperty> properties = props.getPropertyList();
+      for(CTProperty property : properties) {
+         String val = "(not implemented!)";
 
-		return text.toString();
-	}
+         if (property.isSetLpwstr()) {
+            val = property.getLpwstr(); 
+         }
+         else if (property.isSetLpstr()) {
+            val = property.getLpstr(); 
+         }
+         else if (property.isSetDate()) {
+            val = property.getDate().toString(); 
+         }
+         else if (property.isSetFiletime()) {
+            val = property.getFiletime().toString(); 
+         }
+         else if (property.isSetBool()) {
+            val = Boolean.toString( property.getBool() );
+         }
+
+         // Integers
+         else if (property.isSetI1()) {
+            val = Integer.toString(property.getI1()); 
+         }
+         else if (property.isSetI2()) {
+            val = Integer.toString(property.getI2()); 
+         }
+         else if (property.isSetI4()) {
+            val = Integer.toString(property.getI4()); 
+         }
+         else if (property.isSetI8()) {
+            val = Long.toString(property.getI8()); 
+         }
+         else if (property.isSetInt()) {
+            val = Integer.toString( property.getInt() ); 
+         }
+
+         // Unsigned Integers
+         else if (property.isSetUi1()) {
+            val = Integer.toString(property.getUi1()); 
+         }
+         else if (property.isSetUi2()) {
+            val = Integer.toString(property.getUi2()); 
+         }
+         else if (property.isSetUi4()) {
+            val = Long.toString(property.getUi4()); 
+         }
+         else if (property.isSetUi8()) {
+            val = property.getUi8().toString(); 
+         }
+         else if (property.isSetUint()) {
+            val = Long.toString(property.getUint()); 
+         }
+
+         // Reals
+         else if (property.isSetR4()) {
+            val = Float.toString( property.getR4() ); 
+         }
+         else if (property.isSetR8()) {
+            val = Double.toString( property.getR8() ); 
+         }
+         else if (property.isSetDecimal()) {
+            BigDecimal d = property.getDecimal();
+            if (d == null) {
+               val = null;
+            } else {
+               val = d.toPlainString();
+            }
+         }
+
+         else if (property.isSetArray()) {
+            // TODO Fetch the array values and output 
+         }
+         else if (property.isSetVector()) {
+            // TODO Fetch the vector values and output
+         }
+
+         else if (property.isSetBlob() || property.isSetOblob()) {
+            // TODO Decode, if possible
+         }
+         else if (property.isSetStream() || property.isSetOstream() ||
+                  property.isSetVstream()) {
+            // TODO Decode, if possible
+         }
+         else if (property.isSetStorage() || property.isSetOstorage()) {
+            // TODO Decode, if possible
+         }
+
+         text.append(
+               property.getName() +
+               " = " + val + "\n"
+         );
+      }
+
+      return text.toString();
+   }
 
 	public String getText() {
 		try {
