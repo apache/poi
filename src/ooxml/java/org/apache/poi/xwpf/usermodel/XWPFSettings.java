@@ -149,6 +149,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
     @Override
     protected void commit() throws IOException {
+        if (ctSettings == null) {
+           throw new IllegalStateException("Unable to write out settings that were never read in!");
+        }
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTSettings.type.getName().getNamespaceURI(), "settings"));

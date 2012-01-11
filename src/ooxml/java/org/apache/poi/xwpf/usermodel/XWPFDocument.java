@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -188,6 +189,20 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     picData.onDocumentRead();
                     registerPackagePictureData(picData);
                     pictures.add(picData);
+                } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
+                    // We don't currently process the glossary itself
+                    // Until we do, we do need to load the glossary child parts of it
+                    for (POIXMLDocumentPart gp : p.getRelations()) {
+                       // Trigger the onDocumentRead for all the child parts
+                       // Otherwise we'll hit issues on Styles, Settings etc on save
+                       try {
+                          Method onDocumentRead = gp.getClass().getDeclaredMethod("onDocumentRead");
+                          onDocumentRead.setAccessible(true);
+                          onDocumentRead.invoke(gp);
+                       } catch(Exception e) {
+                          throw new POIXMLException(e);
+                       }
+                    }
                 }
             }
             initHyperlinks();

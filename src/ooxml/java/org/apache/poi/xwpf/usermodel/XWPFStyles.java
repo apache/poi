@@ -70,41 +70,44 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	public XWPFStyles() {
 	}
 
-	/**
-	 * Read document
-	 */
-	 @Override
-	protected void onDocumentRead ()throws IOException{
-		StylesDocument stylesDoc;
-		try {
-			InputStream is = getPackagePart().getInputStream();
-			stylesDoc = StylesDocument.Factory.parse(is);
-	        ctStyles = stylesDoc.getStyles();
-	        latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
-	        
-		} catch (XmlException e) {
-			throw new POIXMLException();
-		}
-        //get any Style
-        for(CTStyle style : ctStyles.getStyleList()) {
-            listStyle.add(new XWPFStyle(style, this));
-        }
-	}
+   /**
+    * Read document
+    */
+   @Override
+   protected void onDocumentRead() throws IOException{
+      StylesDocument stylesDoc;
+      try {
+         InputStream is = getPackagePart().getInputStream();
+         stylesDoc = StylesDocument.Factory.parse(is);
+         ctStyles = stylesDoc.getStyles();
+         latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
+      } catch (XmlException e) {
+         throw new POIXMLException("Unable to read styles", e);
+      }
+      
+      // Build up all the style objects
+      for(CTStyle style : ctStyles.getStyleList()) {
+         listStyle.add(new XWPFStyle(style, this));
+      }
+   }
 	
-	 @Override
-	    protected void commit() throws IOException {
-	        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-	        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
-	        Map<String,String> map = new HashMap<String,String>();
-	        map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
-	        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
-	        xmlOptions.setSaveSuggestedPrefixes(map);
-	        PackagePart part = getPackagePart();
-	        OutputStream out = part.getOutputStream();
-	        ctStyles.save(out, xmlOptions);
-	        out.close();
-	    }
-
+   @Override
+   protected void commit() throws IOException {
+      if (ctStyles == null) {
+         throw new IllegalStateException("Unable to write out styles that were never read in!");
+      }
+      
+      XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+      xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
+      Map<String,String> map = new HashMap<String,String>();
+      map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
+      map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
+      xmlOptions.setSaveSuggestedPrefixes(map);
+      PackagePart part = getPackagePart();
+      OutputStream out = part.getOutputStream();
+      ctStyles.save(out, xmlOptions);
+      out.close();
+   }
 	
     /**
      * Sets the ctStyles
