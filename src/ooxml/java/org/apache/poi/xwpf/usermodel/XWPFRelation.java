@@ -58,6 +58,12 @@ public final class XWPFRelation extends POIXMLRelation {
             "/word/document.xml",
             null
     );
+    public static final XWPFRelation GLOSSARY_DOCUMENT = new XWPFRelation(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document.glossary+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/glossaryDocument",
+            "/word/glossary/document.xml",
+            null
+    );
         
     public static final XWPFRelation NUMBERING = new XWPFRelation(
     		"application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml",

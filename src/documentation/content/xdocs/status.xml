@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">52449 - Support writing XWPF documents with glossaries (Glossaries are not yet supported, but can now be written out again without changes)</action>
            <action dev="poi-developers" type="fix">52446 - Handle files which have been truncated by a few bytes in NPropertyTable</action>
            <action dev="poi-developers" type="fix">52438 - Update CellDateFormatter to handle times without seconds</action>
            <action dev="poi-developers" type="add">52389 - Support ?/? as well as #/# fractions, and tighten DataFormatter rules for fraction matching</action>
