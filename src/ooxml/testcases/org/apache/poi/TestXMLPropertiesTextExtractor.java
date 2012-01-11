@@ -84,8 +84,21 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 		assertTrue(eText.contains("Company = Mera"));
 	}
 
-	public void testCustom() {
-		// TODO!
+	public void testCustom() throws Exception {
+      OPCPackage pkg = OPCPackage.open(
+                _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
+      );
+      XSSFWorkbook wb = new XSSFWorkbook(pkg);
+
+      POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
+      ext.getText();
+
+      // Now check
+      String text = ext.getText();
+      String cText = ext.getCustomPropertiesText();
+      
+      assertTrue(text.contains("description = another value"));
+      assertTrue(cText.contains("description = another value"));
 	}
 	
 	/**

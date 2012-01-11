@@ -20,6 +20,7 @@ package org.apache.poi;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -131,12 +132,42 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
 			props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
 
 		List<CTProperty> properties = props.getPropertyList();
-		for(int i = 0; i<properties.size(); i++) {
-			// TODO - finish off
+		for(CTProperty property : properties) {
 			String val = "(not implemented!)";
-
+			
+			if (property.isSetLpwstr()) {
+			   val = property.getLpwstr(); 
+			}
+			else if (property.isSetFiletime()) {
+			   val = property.getFiletime().toString(); 
+			}
+			else if (property.isSetDate()) {
+			   val = property.getDate().toString(); 
+			}
+			else if (property.isSetDecimal()) {
+			   BigDecimal d = property.getDecimal();
+			   if (d == null) {
+			      val = null;
+			   } else {
+			      val = d.toPlainString();
+			   }
+			}
+			else if (property.isSetBool()) {
+			   val = Boolean.toString( property.getBool() );
+			}
+			else if (property.isSetInt()) {
+			   val = Integer.toString( property.getInt() ); 
+			}
+			else if (property.isSetLpstr()) {
+			   val = property.getLpstr(); 
+			}
+			else if (property.isSetI4()) {
+			   /* Number in Excel for example.... Why i4 ? Ask microsoft. */ 
+			   val = Integer.toString(property.getI4()); 
+			}
+			
 			text.append(
-					properties.get(i).getName() +
+					property.getName() +
 					" = " + val + "\n"
 			);
 		}
