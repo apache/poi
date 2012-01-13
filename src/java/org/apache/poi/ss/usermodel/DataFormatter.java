@@ -983,7 +983,7 @@ public class DataFormatter {
        public String format(Number num) {
           double wholePart = Math.floor(num.doubleValue());
           double decPart = num.doubleValue() - wholePart;
-          if (wholePart * decPart == 0) {
+          if (wholePart + decPart == 0) {
              return "0";
           }
           
