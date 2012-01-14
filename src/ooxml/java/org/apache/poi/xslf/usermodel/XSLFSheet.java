@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<XSLFShape> {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -239,6 +239,16 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements Iterable<X
             throw new IllegalArgumentException("Unsupported shape: " + xShape);
         }
         return getShapeList().remove(xShape);
+    }
+
+    /**
+     * Removes all of the elements from this container (optional operation).
+     * The container will be empty after this call returns.
+     */
+    public void clear() {
+        for(XSLFShape shape : getShapes()){
+            removeShape(shape);
+        }
     }
 
     protected abstract String getRootElementName();
