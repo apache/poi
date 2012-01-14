@@ -25,7 +25,6 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
@@ -34,12 +33,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -49,7 +48,7 @@ import java.util.regex.Pattern;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFGroupShape extends XSLFShape {
+public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
     private final CTGroupShape _shape;
     private final XSLFSheet _sheet;
     private final List<XSLFShape> _shapes;
@@ -143,6 +142,15 @@ public class XSLFGroupShape extends XSLFShape {
      */
     public XSLFShape[] getShapes(){
         return _shapes.toArray(new XSLFShape[_shapes.size()]);
+    }
+
+    /**
+     * Returns an iterator over the shapes in this sheet
+     *
+     * @return an iterator over the shapes in this sheet
+     */
+    public Iterator<XSLFShape> iterator(){
+        return _shapes.iterator();
     }
 
     /**
@@ -322,6 +330,16 @@ public class XSLFGroupShape extends XSLFShape {
             XSLFShape s2 = tgtShapes[i];
 
             s2.copy(s1);
+        }
+    }
+
+    /**
+     * Removes all of the elements from this container (optional operation).
+     * The container will be empty after this call returns.
+     */
+    public void clear() {
+        for(XSLFShape shape : getShapes()){
+            removeShape(shape);
         }
     }
 
