@@ -50,6 +50,7 @@
                     <li><link href="#Text">Format text</link></li>
                     <li><link href="#Hyperlinks">Hyperlinks</link></li>
                     <li><link href="#PPTX2PNG">Convert .pptx slides into images</link></li>
+                    <li><link href="#Merge">Merge multiple presentations together</link></li>
                 </ul>
             </section>
             <section><title>Cookbok</title>
@@ -276,7 +277,28 @@ Options:
                 example demonstrates how to use Apache Batik to convert .pptx slides into SVG format. 
                 </p>
                 </section>
-                  
+                <anchor id="Merge"/>
+                <section>
+                    <title>Merge multiple presentations together</title>
+                    <source>
+    XMLSlideShow ppt = new XMLSlideShow();
+    String[] inputs = {"presentations1.pptx", "presentation2.pptx"};
+    for(String arg : inputs){
+        FileInputStream is = new FileInputStream(arg);
+        XMLSlideShow src = new XMLSlideShow(is);
+        is.close();
+
+        for(XSLFSlide srcSlide : src.getSlides()){
+            ppt.createSlide().importContent(srcSlide);
+        }
+    }
+
+    FileOutputStream out = new FileOutputStream("merged.pptx");
+    ppt.write(out);
+    out.close();
+                    </source>
+                </section>
+
             </section>
         </section>
     </body>
