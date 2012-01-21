@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.Sumifs;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -48,6 +49,10 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     public FreeRefFunction findFunction(String name) {
+        // functions that are available in Excel 2007+ have a prefix _xlfn.
+        // if you save such a .xlsx workbook as .xls
+        if(name.startsWith("_xlfn.")) name = name.substring(6);
+
         return _functionsByName.get(name.toUpperCase());
     }
 
@@ -150,7 +155,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "RTD", null);
         r(m, "SERIESSUM", null);
         r(m, "SQRTPI", null);
-        r(m, "SUMIFS", null);
+        r(m, "SUMIFS", Sumifs.instance);
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
