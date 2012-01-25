@@ -27,11 +27,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
- * Created by IntelliJ IDEA.
- * User: yegor
- * Date: Nov 10, 2011
- * Time: 1:43:25 PM
- * To change this template use File | Settings | File Templates.
+ * @author Yegor Kozlov
  */
 public class TestXSLFTextParagraph extends TestCase {
     private static POILogger _logger = POILogFactory.getLogger(XSLFTextParagraph.class);

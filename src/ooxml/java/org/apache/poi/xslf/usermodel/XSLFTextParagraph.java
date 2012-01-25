@@ -117,7 +117,8 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
     public XSLFTextRun addNewTextRun(){
         CTRegularTextRun r = _p.addNewR();
-        r.addNewRPr();
+        CTTextCharacterProperties rPr = r.addNewRPr();
+        rPr.setLang("en-US");
         XSLFTextRun run = new XSLFTextRun(r, this);
         _runs.add(run);
         return run;

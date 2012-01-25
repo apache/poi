@@ -167,6 +167,10 @@ public class XSLFTextRun {
         if(fontSize == -1.0) {
             if(rPr.isSetSz()) rPr.unsetSz();
         } else {
+            if(fontSize < 1.0) {
+                throw new IllegalArgumentException("Minimum font size is 1pt but was " + fontSize);
+            }
+
             rPr.setSz((int)(100*fontSize));
         }
     }
@@ -210,6 +214,24 @@ public class XSLFTextRun {
         };
         fetchCharacterProperty(fetcher);
         return fetcher.getValue() == null ? 0 : fetcher.getValue();
+    }
+
+    /**
+     * Set the spacing between characters within a text run.
+     * <p>
+     * The spacing is specified in points. Positive values will cause the text to expand,
+     * negative values to condense.
+     * </p>
+     *
+     * @param spc  character spacing in points.
+     */
+    public void setCharacterSpacing(double spc){
+        CTTextCharacterProperties rPr = getRpR();
+        if(spc == 0.0) {
+            if(rPr.isSetSpc()) rPr.unsetSpc();
+        } else {
+            rPr.setSpc((int)(100*spc));
+        }
     }
 
     /**
