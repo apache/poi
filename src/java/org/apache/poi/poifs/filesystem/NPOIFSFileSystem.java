@@ -369,7 +369,7 @@ public class NPOIFSFileSystem extends BlockStore
           
           for(int j=0; j<bigBlockSize.getXBATEntriesPerBlock(); j++) {
              int fatAt = xfat.getValueAt(j);
-             if(fatAt == POIFSConstants.UNUSED_BLOCK) break;
+             if(fatAt == POIFSConstants.UNUSED_BLOCK || fatAt == POIFSConstants.END_OF_CHAIN) break;
              readBAT(fatAt, loopDetector);
           }
        }
