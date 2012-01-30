@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -33,7 +34,6 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -42,6 +42,7 @@ import org.apache.poi.POIDataSamples;
  * at most one core properties relationship for a package. A format consumer
  * shall consider more than one core properties relationship for a package to be
  * an error. If present, the relationship shall target the Core Properties part.
+ * (POI relaxes this on reading, as Office sometimes breaks this)
  * 
  * M4.2: The format designer shall not specify and the format producer shall not
  * create Core Properties that use the Markup Compatibility namespace as defined
@@ -82,28 +83,43 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 	}
 
 	private static String extractInvalidFormatMessage(String sampleNameSuffix) {
-
 		InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix);
 		OPCPackage pkg;
 		try {
 			pkg = OPCPackage.open(is);
 		} catch (InvalidFormatException e) {
-			// expected during successful test
+			// no longer required for successful test
 			return e.getMessage();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		pkg.revert();
-		// Normally must thrown an InvalidFormatException exception.
 		throw new AssertionFailedError("expected OPC compliance exception was not thrown");
 	}
 	
 	/**
 	 * Test M4.1 rule.
 	 */
-	public void testOnlyOneCorePropertiesPart() {
-		String msg = extractInvalidFormatMessage("OnlyOneCorePropertiesPartFAIL.docx");
-		assertEquals("OPC Compliance error [M4.1]: there is more than one core properties relationship in the package !", msg);
+	public void testOnlyOneCorePropertiesPart() throws Exception {
+	   // We have relaxed this check, so we can read the file anyway
+	   try {
+	      extractInvalidFormatMessage("OnlyOneCorePropertiesPartFAIL.docx");
+	      fail("M4.1 should be being relaxed");
+	   } catch (AssertionFailedError e) {}
+	   
+	   // We will use the first core properties, and ignore the others
+      InputStream is = OpenXML4JTestDataSamples.openSampleStream("MultipleCoreProperties.docx");
+      OPCPackage pkg = OPCPackage.open(is);
+      
+      // We can see 2 by type
+      assertEquals(2, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+      // But only the first one by relationship
+      assertEquals(1, pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size());
+      // It should be core.xml not the older core1.xml
+      assertEquals(
+            "/docProps/core.xml",
+            pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).get(0).getPartName().toString()
+      );
 	}
 	
 	private static URI createURI(String text) {
@@ -131,7 +147,8 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 		try {
 			pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL,
 					PackageRelationshipTypes.CORE_PROPERTIES);
-			fail("expected OPC compliance exception was not thrown");
+			// no longer fail on compliance error
+			//fail("expected OPC compliance exception was not thrown");
 		} catch (InvalidFormatException e) {
 			throw new RuntimeException(e);
 		} catch (InvalidOperationException e) {
@@ -157,7 +174,8 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
 		try {
 			pkg.createPart(PackagingURIHelper.createPartName(partUri),
 					ContentTypes.CORE_PROPERTIES_PART);
-			fail("expected OPC compliance exception was not thrown");
+			// no longer fail on compliance error
+			//fail("expected OPC compliance exception was not thrown");
 		} catch (InvalidFormatException e) {
 			throw new RuntimeException(e);
 		} catch (InvalidOperationException e) {
