@@ -597,8 +597,13 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	}
 
 	/**
-	 * Load the parts of the archive if it has not been done yet The
-	 * relationships of each part are not loaded
+	 * Load the parts of the archive if it has not been done yet. The
+	 * relationships of each part are not loaded.
+	 * 
+	 * Note - Rule M4.1 states that there may only ever be one Core
+	 *  Properties Part, but Office produced files will sometimes
+	 *  have multiple! As Office ignores all but the first, we relax
+	 *  Compliance with Rule M4.1, and ignore all others silently too. 
 	 *
 	 * @return All this package's parts.
 	 */
@@ -609,31 +614,36 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (partList == null) {
 			/* Variables use to validate OPC Compliance */
 
-			// Ensure rule M4.1 -> A format consumer shall consider more than
+			// Check rule M4.1 -> A format consumer shall consider more than
 			// one core properties relationship for a package to be an error
+		   // (We just log it and move on, as real files break this!)
 			boolean hasCorePropertiesPart = false;
+			boolean needCorePropertiesPart = true;
 
 			PackagePart[] parts = this.getPartsImpl();
 			this.partList = new PackagePartCollection();
 			for (PackagePart part : parts) {
 				if (partList.containsKey(part._partName))
 					throw new InvalidFormatException(
-							"A part with the name '"
-									+ part._partName
-									+ "' already exist : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
+							"A part with the name '" +
+							part._partName +
+						        "' already exist : Packages shall not contain equivalent " +
+						        "part names and package implementers shall neither create " +
+					        	"nor recognize packages with equivalent part names. [M1.12]");
 
 				// Check OPC compliance rule M4.1
 				if (part.getContentType().equals(
 						ContentTypes.CORE_PROPERTIES_PART)) {
-					if (!hasCorePropertiesPart)
+					if (!hasCorePropertiesPart) {
 						hasCorePropertiesPart = true;
-					else
-						throw new InvalidFormatException(
-								"OPC Compliance error [M4.1]: there is more than one core properties relationship in the package !");
+					} else {
+					   logger.log(POILogger.WARN, "OPC Compliance error [M4.1]: " +
+					   		"there is more than one core properties relationship in the package! " +
+					   		"POI will use only the first, but other software may reject this file.");
+					}
 				}
 
-				PartUnmarshaller partUnmarshaller = partUnmarshallers
-						.get(part._contentType);
+				PartUnmarshaller partUnmarshaller = partUnmarshallers.get(part._contentType);
 
 				if (partUnmarshaller != null) {
 					UnmarshallContext context = new UnmarshallContext(this,
@@ -643,9 +653,14 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 								.unmarshall(context, part.getInputStream());
 						partList.put(unmarshallPart._partName, unmarshallPart);
 
-						// Core properties case
-						if (unmarshallPart instanceof PackagePropertiesPart)
+						// Core properties case-- use first CoreProperties part we come across
+						// and ignore any subsequent ones
+						if (unmarshallPart instanceof PackagePropertiesPart &&
+								hasCorePropertiesPart &&
+								needCorePropertiesPart) {
 							this.packageProperties = (PackagePropertiesPart) unmarshallPart;
+							needCorePropertiesPart = false;
+						}
 					} catch (IOException ioe) {
 						logger.log(POILogger.WARN, "Unmarshall operation : IOException for "
 								+ part._partName);
@@ -718,19 +733,20 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (partList.containsKey(partName)
 				&& !partList.get(partName).isDeleted()) {
 			throw new PartAlreadyExistsException(
-					"A part with the name '"
-							+ partName.getName()
-							+ "' already exists : Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
+					"A part with the name '" + partName.getName() + "'" +
+					" already exists : Packages shall not contain equivalent part names and package" +
+					" implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
 		}
 
 		/* Check OPC compliance */
 
-		// Rule [M4.1]: The format designer shall specify and the format
-		// producer
+		// Rule [M4.1]: The format designer shall specify and the format producer
 		// shall create at most one core properties relationship for a package.
 		// A format consumer shall consider more than one core properties
 		// relationship for a package to be an error. If present, the
 		// relationship shall target the Core Properties part.
+		// Note - POI will read files with more than one Core Properties, which
+		//  Office sometimes produces, but is strict on generation
 		if (contentType.equals(ContentTypes.CORE_PROPERTIES_PART)) {
 			if (this.packageProperties != null)
 				throw new InvalidOperationException(
