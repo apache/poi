@@ -42,7 +42,7 @@
    <p>
      The POI project is <link href="http://www.opensource.org">OpenSource</link>
      and developed/distributed under the <link 
-     href="http://www.apache.org/foundation/licence-FAQ.html">
+     href="http://www.apache.org/foundation/license-faq.html">
      Apache Software License</link>.  Unlike other licenses this license allows
      free open source development; however, it does not require you to release
      your source or use any particular license for your source.  If you wish
@@ -58,7 +58,7 @@
    released under the <link href="http://www.microsoft.com/interop/osp">Open
    Specification Promise</link>, which does allow us to use them for
    building open source software under the <link 
-     href="http://www.apache.org/foundation/licence-FAQ.html">
+     href="http://www.apache.org/foundation/license-FAQ.html">
    Apache Software License</link>.
   </p>
   <p>
@@ -220,7 +220,7 @@
       <ul>
         <li>added code complies with <link href="http://poi.apache.org/resolutions/res001.html">coding standards</link></li>
         <li>added code compiles and runs on java 1.5</li>
-        <li>new java files begin with the <link href="http://www.apache.org/foundation/licence-faq.html">
+        <li>new java files begin with the <link href="http://www.apache.org/foundation/license-faq.html">
              apache software license</link> statement.</li> 
         <li>the code does not depend on gpl or lgpl code.</li> 
         <li>the code includes the @author tag on any files you've altered or created.</li>
