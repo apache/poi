@@ -50,8 +50,9 @@
                 </p>
                 <ol>
                         <li>
-                        All classes and interfaces MUST have, right at the beginning, the POI
-                        License (see poi/doc/LICENSE).
+                        All classes and interfaces MUST have, right at the 
+                        beginning of the file, the Apache Software License
+                        2.0 License Header. (see /legal/LICENSE).
                         </li>
                         <li>
                         All classes and interfaces MUST include class javadoc. Conventionally,
@@ -75,11 +76,12 @@
         <section><title>Amendments (informal by extension and not by vote)</title>
             <section><title>License</title>
                 <p>
-                        As opposed to the formerly used POI License which was
-                        based on the Apache Public License, now that POI is part of
-                        Jakarta, use the APL 1.1 for the header.  Currently, the
-                        Apache Software Foundation requires us to use the full
-                        long version.
+                        As opposed to the formerly used POI License (which was
+                        based on the Apache Public License), now that POI is 
+                        part of Apache, use the standard Apache Software
+                        License 2.0 header.  As per standard Apache Software 
+                        Foundation policy, the full (long) version of the
+                        header should be used.
                 </p>
             </section>
             <section><title>2 cents</title>
