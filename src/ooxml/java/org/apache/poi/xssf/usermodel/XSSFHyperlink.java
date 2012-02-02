@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -181,15 +182,34 @@ public class XSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
      *
      * @param address - the address of this hyperlink
      */
     public void setAddress(String address) {
-        _location = address;
+        validate(address);
+
+       _location = address;
         //we must set location for internal hyperlinks
         if (_type == Hyperlink.LINK_DOCUMENT) {
             setLocation(address);
+        }
+    }
+
+    private void validate(String address) {
+        switch (_type){
+            // email, path to file and url must be valid URIs
+            case Hyperlink.LINK_EMAIL:
+            case Hyperlink.LINK_FILE:
+            case Hyperlink.LINK_URL:
+                try {
+                    new URI(address);
+                } catch (URISyntaxException x) {
+                    IllegalArgumentException y = new IllegalArgumentException("Address of hyperlink must be a valid URI");
+                    y.initCause(x);
+                    throw y;
+                }
+                break;
         }
     }
 

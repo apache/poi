@@ -50,6 +50,35 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 		doTestHyperlinkContents(sheet);
 	}
 
+    public void testCreate() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFCreationHelper createHelper = workbook.getCreationHelper();
+        
+        String[] validURLs = {
+                "http://apache.org",
+                "www.apache.org",
+                "/temp",
+                "c:/temp",
+                "http://apache.org/default.php?s=isTramsformed&submit=Search&la=*&li=*"};
+        for(String s : validURLs){
+            createHelper.createHyperlink(Hyperlink.LINK_URL).setAddress(s);
+        }
+
+        String[] invalidURLs = {
+                "http:\\apache.org",
+                "www.apache .org",
+                "c:\\temp",
+                "\\poi"};
+        for(String s : invalidURLs){
+            try {
+                createHelper.createHyperlink(Hyperlink.LINK_URL).setAddress(s);
+                fail("expected IllegalArgumentException: " + s);
+            } catch (IllegalArgumentException e){
+                
+            }
+        }
+    }
+
 	public void testLoadSave() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		CreationHelper createHelper = workbook.getCreationHelper();
