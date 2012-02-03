@@ -19,14 +19,8 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.xslf.XSLFTestDataSamples;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.util.List;
 
 /**
  * @author Yegor Kozlov
@@ -39,7 +33,7 @@ public class TestXSLFTextRun extends TestCase {
         XSLFTextShape sh = slide.createAutoShape();
 
         XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
-        assertEquals("en-US", r.getRpR().getLang());
+        assertEquals("en-US", r.getRPr().getLang());
 
         assertEquals(0., r.getCharacterSpacing());
         r.setCharacterSpacing(3);
@@ -48,7 +42,7 @@ public class TestXSLFTextRun extends TestCase {
         assertEquals(-3., r.getCharacterSpacing());
         r.setCharacterSpacing(0);
         assertEquals(0., r.getCharacterSpacing());
-        assertFalse(r.getRpR().isSetSpc());
+        assertFalse(r.getRPr().isSetSpc());
 
         assertEquals(Color.black, r.getFontColor());
         r.setFontColor(Color.red);

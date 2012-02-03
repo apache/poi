@@ -55,7 +55,8 @@ class TextFragment {
      * @return full height of this text run which is sum of ascent, descent and leading
      */
     public float getHeight(){
-        return _layout.getAscent() + _layout.getDescent() + _layout.getLeading();
+        double h = Math.ceil(_layout.getAscent()) + Math.ceil(_layout.getDescent()) + _layout.getLeading();
+        return (float)h;
     }
 
     /**

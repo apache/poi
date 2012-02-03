@@ -115,6 +115,11 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return _runs.iterator();
     }
 
+    /**
+     * Add a new run of text
+     *
+     * @return a new run of text
+     */
     public XSLFTextRun addNewTextRun(){
         CTRegularTextRun r = _p.addNewR();
         CTTextCharacterProperties rPr = r.addNewRPr();
@@ -124,8 +129,25 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         return run;
     }
 
-    public void addLineBreak(){
-        _p.addNewBr();
+    /**
+     * Insert a line break
+     *
+     * @return text run representing this line break ('\n')
+     */
+    public XSLFTextRun addLineBreak(){
+        CTTextLineBreak br = _p.addNewBr();
+        CTTextCharacterProperties brProps = br.addNewRPr();
+        if(_runs.size() > 0){
+            // by default line break has the font size of the last text run
+            CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr();
+            brProps.set(prevRun);
+        }
+        CTRegularTextRun r = CTRegularTextRun.Factory.newInstance();
+        r.setRPr(brProps);
+        r.setT("\n");
+        XSLFTextRun run = new XSLFLineBreak(r, this, brProps);
+        _runs.add(run);
+        return run;
     }
 
     /**
