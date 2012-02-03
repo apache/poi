@@ -189,7 +189,7 @@ public class TestXSLFPowerPointExtractor extends TestCase {
          "Theme Master first level\n" +
          "And the 2nd level\n" +
          "Our 3rd level goes here\n" +
-         "And onto the 4th, such fun….\n" +
+         "And onto the 4th, such fun....\n" +
          "Finally is the Fifth level\n";
       
       // Check the whole text

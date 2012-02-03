@@ -290,4 +290,32 @@ public class TestXSLFTextParagraph extends TestCase {
         p.setBullet(false);
         assertFalse(p.isBullet());
     }
+
+    public void testLineBreak(){
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFTextShape sh = slide.createAutoShape();
+
+        XSLFTextParagraph p = sh.addNewTextParagraph();
+        XSLFTextRun r1 = p.addNewTextRun();
+        r1.setText("Hello,");
+        XSLFTextRun r2 = p.addLineBreak();
+        assertEquals("\n", r2.getText());
+        r2.setFontSize(10.0);
+        assertEquals(10.0, r2.getFontSize());
+        XSLFTextRun r3 = p.addNewTextRun();
+        r3.setText("World!");
+        r3.setFontSize(20.0);
+        XSLFTextRun r4 = p.addLineBreak();
+        assertEquals(20.0, r4.getFontSize());
+
+        assertEquals("Hello,\nWorld!\n",sh.getText());
+
+        try {
+            r2.setText("aaa");
+            fail("Expected IllegalStateException");
+        } catch (IllegalStateException e){
+            assertEquals("You cannot change text of a line break, it is always '\\n'", e.getMessage());
+        }
+    }
 }
