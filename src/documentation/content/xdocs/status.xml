@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">52575 - added an option to ignore missing workbook references in formula evaluator</action>
            <action dev="poi-developers" type="add">Validate address of hyperlinks in XSSF</action>
            <action dev="poi-developers" type="fix">52540 - Relax the M4.1 constraint on reading OOXML files, as some Office produced ones do have 2 Core Properties, despite the specification explicitly forbidding this</action>
            <action dev="poi-developers" type="add">52462 - Added implementation for SUMIFS()</action>

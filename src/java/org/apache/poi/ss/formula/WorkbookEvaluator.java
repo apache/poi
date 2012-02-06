@@ -67,6 +67,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Evaluates formula cells.<p/>
@@ -80,8 +82,16 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Josh Micich
  */
 public final class WorkbookEvaluator {
+	
+	private static final POILogger LOG = POILogFactory.getLogger(WorkbookEvaluator.class);
 
-	private final EvaluationWorkbook _workbook;
+    /**
+     * Whether to use cached formula results if external workbook references in a formula is not available.
+     * See Bugzilla 52575 for details.
+     */
+    private static final String IGNORE_MISSING_WORKBOOKS = WorkbookEvaluator.class.getName() + ".IGNORE_MISSING_WORKBOOKS";
+
+    private final EvaluationWorkbook _workbook;
 	private EvaluationCache _cache;
 	/** part of cache entry key (useful when evaluating multiple workbooks) */
 	private int _workbookIx;
@@ -144,11 +154,19 @@ public final class WorkbookEvaluator {
 	}
 
 	private static boolean isDebugLogEnabled() {
-		return false;
+		return LOG.check(POILogger.DEBUG);
+	}
+	private static boolean isInfoLogEnabled() {
+		return LOG.check(POILogger.INFO);
 	}
 	private static void logDebug(String s) {
 		if (isDebugLogEnabled()) {
-			System.out.println(s);
+			LOG.log(POILogger.DEBUG, s);
+		}
+	}
+	private static void logInfo(String s) {
+		if (isInfoLogEnabled()) {
+			LOG.log(POILogger.INFO, s);
 		}
 	}
 	/* package */ void attachToEnvironment(CollaboratingWorkbooksEnvironment collaboratingWorkbooksEnvironment, EvaluationCache cache, int workbookIx) {
@@ -288,9 +306,38 @@ public final class WorkbookEvaluator {
 				}
 
 				tracker.updateCacheResult(result);
-			} catch (NotImplementedException e) {
+			}
+			 catch (NotImplementedException e) {
 				throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
-			} finally {
+			 } catch (RuntimeException re) {
+				 if (re.getCause() instanceof WorkbookNotFoundException 
+						 //To be replaced by configuration infrastructure
+						 && Boolean.valueOf(System.getProperty(IGNORE_MISSING_WORKBOOKS))) {
+ 					logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
+ 					switch(srcCell.getCachedFormulaResultType()) {
+	 					case Cell.CELL_TYPE_NUMERIC:
+	 						result = new NumberEval(srcCell.getNumericCellValue());
+	 						break;
+	 					case Cell.CELL_TYPE_STRING:
+	 						result =  new StringEval(srcCell.getStringCellValue());
+	 						break;
+	 					case Cell.CELL_TYPE_BLANK:
+	 						result = BlankEval.instance;
+	 						break;
+	 					case Cell.CELL_TYPE_BOOLEAN:
+	 						result =  BoolEval.valueOf(srcCell.getBooleanCellValue());
+	 						break;
+	 					case Cell.CELL_TYPE_ERROR:
+							result =  ErrorEval.valueOf(srcCell.getErrorCellValue());
+							break;
+	 					case Cell.CELL_TYPE_FORMULA:
+						default:
+							throw new RuntimeException("Unexpected cell type '" + srcCell.getCellType()+"' found!");
+ 					}
+				 } else {
+					 throw re;
+				 }
+			 } finally {
 				tracker.endEvaluate(cce);
 			}
 		} else {

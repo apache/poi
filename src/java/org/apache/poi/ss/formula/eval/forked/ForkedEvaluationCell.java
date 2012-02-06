@@ -128,4 +128,8 @@ final class ForkedEvaluationCell implements EvaluationCell {
 	public int getColumnIndex() {
 		return _masterCell.getColumnIndex();
 	}
+    public int getCachedFormulaResultType() {
+        return _masterCell.getCachedFormulaResultType();
+    }
+
 }
