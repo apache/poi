@@ -86,7 +86,7 @@ public final class OperationEvaluationContext {
 			try {
 				targetEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
 			} catch (WorkbookNotFoundException e) {
-				throw new RuntimeException(e.getMessage());
+				throw new RuntimeException(e.getMessage(), e);
 			}
 			otherSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
 			if (otherSheetIndex < 0) {

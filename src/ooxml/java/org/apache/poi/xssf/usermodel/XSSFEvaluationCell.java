@@ -72,4 +72,7 @@ final class XSSFEvaluationCell implements EvaluationCell {
 	public String getStringCellValue() {
 		return _cell.getRichStringCellValue().getString();
 	}
+	public int getCachedFormulaResultType() {
+		return _cell.getCachedFormulaResultType();
+	}
 }

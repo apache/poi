@@ -41,4 +41,6 @@ public interface EvaluationCell {
 	String getStringCellValue();
 	boolean getBooleanCellValue();
 	int getErrorCellValue();
+
+	int getCachedFormulaResultType();
 }
