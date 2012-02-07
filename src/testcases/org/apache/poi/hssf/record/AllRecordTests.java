@@ -96,6 +96,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestUnicodeNameRecord.class);
 		result.addTestSuite(TestUnicodeString.class);
 		result.addTestSuite(TestWriteAccessRecord.class);
+                result.addTestSuite(TestDConRefRecord.class);
 		return result;
 	}
 }
