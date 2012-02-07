@@ -22,12 +22,19 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 
 /**
  * Tests for XWPF Run
@@ -132,11 +139,95 @@ public class TestXWPFTable extends TestCase {
         assertEquals(20, row.getHeight());
     }
 
+    public void testSetGetMargins() {
+    	// instantiate the following class so it'll get picked up by
+    	// the XmlBean process and added to the jar file. it's required
+    	// for the following XWPFTable methods.
+    	CTTblCellMar ctm = CTTblCellMar.Factory.newInstance();
+    	assertNotNull(ctm);
+    	// create a table
+        XWPFDocument doc = new XWPFDocument();
+    	CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // set margins
+        table.setCellMargins(50, 50, 250, 450);
+        // get margin components
+        int t = table.getCellMarginTop();
+        assertEquals(50, t);
+        int l = table.getCellMarginLeft();
+        assertEquals(50, l);
+        int b = table.getCellMarginBottom();
+        assertEquals(250, b);
+        int r = table.getCellMarginRight();
+        assertEquals(450, r);
+    }
+
+    public void testSetGetHBorders() {
+    	// instantiate the following classes so they'll get picked up by
+    	// the XmlBean process and added to the jar file. they are required
+    	// for the following XWPFTable methods.
+    	CTTblBorders cttb = CTTblBorders.Factory.newInstance();
+    	assertNotNull(cttb);
+    	STBorder stb = STBorder.Factory.newInstance();
+    	assertNotNull(stb);
+    	// create a table
+        XWPFDocument doc = new XWPFDocument();
+    	CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // set inside horizontal border
+        table.setInsideHBorder(XWPFBorderType.SINGLE, 4, 0, "FF0000");
+        // get inside horizontal border components
+        int s = table.getInsideHBorderSize();
+        assertEquals(4, s);
+        int sp = table.getInsideHBorderSpace();
+        assertEquals(0, sp);
+        String clr = table.getInsideHBorderColor();
+        assertEquals("FF0000", clr);
+        XWPFBorderType bt = table.getInsideHBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+    }
+
+    public void testSetGetVBorders() {
+    	// create a table
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // set inside vertical border
+        table.setInsideVBorder(XWPFBorderType.DOUBLE, 4, 0, "00FF00");
+        // get inside vertical border components
+        XWPFBorderType bt = table.getInsideVBorderType();
+        assertEquals(XWPFBorderType.DOUBLE, bt);
+        int sz = table.getInsideVBorderSize();
+        assertEquals(4, sz);
+        int sp = table.getInsideVBorderSpace();
+        assertEquals(0, sp);
+        String clr =  table.getInsideVBorderColor();
+        assertEquals("00FF00", clr);
+    }
+
+    public void testSetGetRowBandSize() {
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        table.setRowBandSize(12);
+        int sz = table.getRowBandSize();
+        assertEquals(12, sz);
+    }
+
+    public void testSetGetColBandSize() {
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        table.setColBandSize(16);
+        int sz = table.getColBandSize();
+        assertEquals(16, sz);
+    }
+
     public void testCreateTable() throws Exception {
        // open an empty document
        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
 
-       // create a table with 5 rows and 7 coloumns
+       // create a table with 5 rows and 7 columns
        int noRows = 5; 
        int noCols = 7;
        XWPFTable table = doc.createTable(noRows,noCols);
