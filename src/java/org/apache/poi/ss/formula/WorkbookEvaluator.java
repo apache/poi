@@ -85,12 +85,6 @@ public final class WorkbookEvaluator {
 	
 	private static final POILogger LOG = POILogFactory.getLogger(WorkbookEvaluator.class);
 
-    /**
-     * Whether to use cached formula results if external workbook references in a formula is not available.
-     * See Bugzilla 52575 for details.
-     */
-    private static final String IGNORE_MISSING_WORKBOOKS = WorkbookEvaluator.class.getName() + ".IGNORE_MISSING_WORKBOOKS";
-
     private final EvaluationWorkbook _workbook;
 	private EvaluationCache _cache;
 	/** part of cache entry key (useful when evaluating multiple workbooks) */
@@ -102,6 +96,8 @@ public final class WorkbookEvaluator {
 	private CollaboratingWorkbooksEnvironment _collaboratingWorkbookEnvironment;
 	private final IStabilityClassifier _stabilityClassifier;
 	private final AggregatingUDFFinder _udfFinder;
+
+    private boolean _ignoreMissingWorkbooks = false;
 
 	/**
 	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
@@ -310,9 +306,7 @@ public final class WorkbookEvaluator {
 			 catch (NotImplementedException e) {
 				throw addExceptionInfo(e, sheetIndex, rowIndex, columnIndex);
 			 } catch (RuntimeException re) {
-				 if (re.getCause() instanceof WorkbookNotFoundException 
-						 //To be replaced by configuration infrastructure
-						 && Boolean.valueOf(System.getProperty(IGNORE_MISSING_WORKBOOKS))) {
+				 if (re.getCause() instanceof WorkbookNotFoundException && _ignoreMissingWorkbooks) {
  					logInfo(re.getCause().getMessage() + " - Continuing with cached value!");
  					switch(srcCell.getCachedFormulaResultType()) {
 	 					case Cell.CELL_TYPE_NUMERIC:
@@ -671,4 +665,24 @@ public final class WorkbookEvaluator {
 	public FreeRefFunction findUserDefinedFunction(String functionName) {
 		return _udfFinder.findFunction(functionName);
 	}
+
+    /**
+     * Whether to ignore missing references to external workbooks and
+     * use cached formula results in the main workbook instead.
+     * <p>
+     * In some cases exetrnal workbooks referenced by formulas in the main workbook are not avaiable.
+     * With this method you can control how POI handles such missing references:
+     * <ul>
+     *     <li>by default ignoreMissingWorkbooks=false and POI throws {@link WorkbookNotFoundException}
+     *     if an external reference cannot be resolved</li>
+     *     <li>if ignoreMissingWorkbooks=true then POI uses cached formula result
+     *     that already exists in the main workbook</li>
+     * </ul>
+     *
+     * @param ignore whether to ignore missing references to external workbooks
+     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52575">Bug 52575</a> for details
+     */
+    public void setIgnoreMissingWorkbooks(boolean ignore){
+        _ignoreMissingWorkbooks = ignore;
+    }
 }
