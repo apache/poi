@@ -161,6 +161,13 @@ public class TestXWPFRun extends TestCase {
         assertEquals(2400, rpr.getPosition().getVal().longValue());
     }
 
+    public void testSetGetColor() {
+        XWPFRun run = new XWPFRun(ctRun, p);
+        run.setColor("0F0F0F");
+        String clr = run.getColor();
+        assertEquals("0F0F0F", clr);
+    }
+
     public void testAddCarriageReturn() {
 	
 	ctRun.addNewT().setStringValue("TEST STRING");
