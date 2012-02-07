@@ -22,13 +22,16 @@ import java.util.List;
 
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 
 
 /**
  * @author gisellabronzetti
+ * @author gregg morris - added removeCell(), setCantSplitRow(), setRepeatHeader()
  */
 public class XWPFTableRow {
 
@@ -64,6 +67,11 @@ public class XWPFTableRow {
         return null;
     }
     
+    public void removeCell(int pos) {
+        if (pos >= 0 && pos < ctRow.sizeOfTcArray()) {
+        	tableCells.remove(pos);
+        }    	
+    }
     /**
      * adds a new TableCell at the end of this tableRow
      */
@@ -105,7 +113,6 @@ public class XWPFTableRow {
         return properties.sizeOfTrHeightArray() == 0 ? 0 : properties.getTrHeightArray(0).getVal().intValue();
     }
 
-
     private CTTrPr getTrPr() {
         return (ctRow.isSetTrPr()) ? ctRow.getTrPr() : ctRow.addNewTrPr();
     }
@@ -136,9 +143,67 @@ public class XWPFTableRow {
 	 */
 	public XWPFTableCell getTableCell(CTTc cell) {
 		for(int i=0; i<tableCells.size(); i++){
-			if(tableCells.get(i).getCTTc() == cell) return tableCells.get(i); 
+			if (tableCells.get(i).getCTTc() == cell)
+				return tableCells.get(i); 
 		}
 		return null;
+	}
+
+	/**
+	 * This attribute controls whether to allow table rows to split across pages.
+	 * The logic for this attribute is a little unusual: a true value means
+	 * DON'T allow rows to split, false means allow rows to split.
+	 * @param split - if true, don't allow rows to be split. If false, allow
+	 *        rows to be split.
+	 */
+	public void setCantSplitRow(boolean split) {
+		CTTrPr trpr = getTrPr();
+		CTOnOff onoff = trpr.addNewCantSplit();
+		onoff.setVal(split ? STOnOff.ON : STOnOff.OFF);
+	}
+
+	/**
+	 * Return true if the "can't split row" value is true. The logic for this
+	 * attribute is a little unusual: a TRUE value means DON'T allow rows to
+	 * split, FALSE means allow rows to split.
+	 * @return true if rows can't be split, false otherwise.
+	 */
+	public boolean isCantSplitRow() {
+		boolean isCant = false;
+		CTTrPr trpr = getTrPr();
+		if (trpr.sizeOfCantSplitArray() > 0) {
+			CTOnOff onoff = trpr.getCantSplitList().get(0);
+			isCant = onoff.getVal().equals(STOnOff.ON);
+		}
+		return isCant;
+	}
+
+	/**
+	 * This attribute controls whether to repeat a table's header row at the top
+	 * of a table split across pages.
+	 * @param repeat - if TRUE, repeat header row at the top of each page of table;
+	 *                 if FALSE, don't repeat header row.
+	 */
+	public void setRepeatHeader(boolean repeat) {
+		CTTrPr trpr = getTrPr();
+		CTOnOff onoff = trpr.addNewTblHeader();
+		onoff.setVal(repeat ? STOnOff.ON : STOnOff.OFF);
+	}
+
+	/**
+	 * Return true if a table's header row should be repeated at the top of a
+	 * table split across pages.
+	 * @return true if table's header row should be repeated at the top of each
+	 *         page of table, false otherwise.
+	 */
+	public boolean isRepeatHeader() {
+		boolean repeat = false;
+		CTTrPr trpr = getTrPr();
+		if (trpr.sizeOfTblHeaderArray() > 0) {
+			CTOnOff rpt = trpr.getTblHeaderList().get(0);
+			repeat = rpt.getVal().equals(STOnOff.ON);
+		}
+		return repeat;
 	}
 
 }// end class
