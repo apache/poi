@@ -18,14 +18,20 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
@@ -39,6 +45,15 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
  * of paragraphs (and other block-level content) arranged in rows and columns.
  *
  * @author Yury Batrakov (batrakov at gmail.com)
+ * @author Gregg Morris (gregg dot morris at gmail dot com) - added 
+ *         setStyleID()
+ *         getRowBandSize(), setRowBandSize()
+ *         getColBandSize(), setColBandSize()
+ *         getInsideHBorderType(), getInsideHBorderSize(), getInsideHBorderSpace(), getInsideHBorderColor()
+ *         getInsideVBorderType(), getInsideVBorderSize(), getInsideVBorderSpace(), getInsideVBorderColor()
+ *         setInsideHBorder(), setInsideVBorder()
+ *         getCellMarginTop(), getCellMarginLeft(), getCellMarginBottom(), getCellMarginRight()
+ *         setCellMargins()
  */
 public class XWPFTable implements IBodyElement{
 
@@ -46,15 +61,47 @@ public class XWPFTable implements IBodyElement{
     private CTTbl ctTbl;
     protected List<XWPFTableRow> tableRows;
     protected List<String> styleIDs;
+
+    // Create a map from this XWPF-level enum to the STBorder.Enum values
+    public static enum XWPFBorderType { NIL, NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED, DOT_DASH };
+    private static EnumMap<XWPFBorderType, STBorder.Enum> xwpfBorderTypeMap;
+    // Create a map from the STBorder.Enum values to the XWPF-level enums
+    private static HashMap<Integer, XWPFBorderType> stBorderTypeMap;
+
     protected IBody part;
 
+    static {
+        // populate enum maps
+        xwpfBorderTypeMap = new EnumMap<XWPFBorderType, STBorder.Enum>(XWPFBorderType.class);
+        xwpfBorderTypeMap.put(XWPFBorderType.NIL, STBorder.Enum.forInt(STBorder.INT_NIL));
+        xwpfBorderTypeMap.put(XWPFBorderType.NONE, STBorder.Enum.forInt(STBorder.INT_NONE));
+        xwpfBorderTypeMap.put(XWPFBorderType.SINGLE, STBorder.Enum.forInt(STBorder.INT_SINGLE));
+        xwpfBorderTypeMap.put(XWPFBorderType.THICK, STBorder.Enum.forInt(STBorder.INT_THICK));
+        xwpfBorderTypeMap.put(XWPFBorderType.DOUBLE, STBorder.Enum.forInt(STBorder.INT_DOUBLE));
+        xwpfBorderTypeMap.put(XWPFBorderType.DOTTED, STBorder.Enum.forInt(STBorder.INT_DOTTED));
+        xwpfBorderTypeMap.put(XWPFBorderType.DASHED, STBorder.Enum.forInt(STBorder.INT_DASHED));
+        xwpfBorderTypeMap.put(XWPFBorderType.DOT_DASH, STBorder.Enum.forInt(STBorder.INT_DOT_DASH));
+
+        stBorderTypeMap = new HashMap<Integer, XWPFBorderType>();
+        stBorderTypeMap.put(STBorder.INT_NIL, XWPFBorderType.NIL);
+        stBorderTypeMap.put(STBorder.INT_NONE, XWPFBorderType.NONE);
+        stBorderTypeMap.put(STBorder.INT_SINGLE, XWPFBorderType.SINGLE);
+        stBorderTypeMap.put(STBorder.INT_THICK, XWPFBorderType.THICK);
+        stBorderTypeMap.put(STBorder.INT_DOUBLE, XWPFBorderType.DOUBLE);
+        stBorderTypeMap.put(STBorder.INT_DOTTED, XWPFBorderType.DOTTED);
+        stBorderTypeMap.put(STBorder.INT_DASHED, XWPFBorderType.DASHED);
+        stBorderTypeMap.put(STBorder.INT_DOT_DASH, XWPFBorderType.DOT_DASH);    	
+    }
+    
     public XWPFTable(CTTbl table, IBody part, int row, int col) {
         this(table, part);
+
         for (int i = 0; i < row; i++) {
             XWPFTableRow tabRow = (getRow(i) == null) ? createRow() : getRow(i);
             for (int k = 0; k < col; k++) {
-                XWPFTableCell tabCell = (tabRow.getCell(k) == null) ? tabRow
-                        .createCell() : null;
+                if (tabRow.getCell(k) == null) {
+                    tabRow.createCell();
+                }
             }
         }
     }
@@ -218,7 +265,266 @@ public class XWPFTable implements IBodyElement{
      * @return	style-ID of the table
      */
     public String getStyleID(){
-    	return ctTbl.getTblPr().getTblStyle().getVal();
+        String styleId = null;
+        CTTblPr tblPr = ctTbl.getTblPr();
+        if (tblPr != null) {
+            CTString styleStr = tblPr.getTblStyle();
+            if (styleStr != null) {
+                styleId = styleStr.getVal();
+            }
+        }
+        return styleId;
+    }
+
+    /**
+     * Set the table style. If the style is not defined in the document, MS Word
+     * will set the table style to "Normal".
+     * @param styleName - the style name to apply to this table
+     */
+    public void setStyleID(String styleName) {
+        CTTblPr tblPr = getTrPr();
+        CTString styleStr = tblPr.getTblStyle();
+        if (styleStr == null) {
+            styleStr = tblPr.addNewTblStyle();
+        }
+        styleStr.setVal(styleName);
+    }
+
+    public XWPFBorderType getInsideHBorderType() {
+    	XWPFBorderType bt = null;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideH()) {
+    			CTBorder border = ctb.getInsideH();
+    			bt = stBorderTypeMap.get(border.getVal().intValue());
+    		}
+    	}
+    	return bt;
+    }
+
+    public int getInsideHBorderSize() {
+    	int size = -1;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideH()) {
+    			CTBorder border = ctb.getInsideH();
+    			size = border.getSz().intValue();
+    		}
+    	}
+    	return size;
+    }
+
+    public int getInsideHBorderSpace() {
+    	int space = -1;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideH()) {
+    			CTBorder border = ctb.getInsideH();
+    			space = border.getSpace().intValue();
+    		}
+    	}
+    	return space;
+    }
+
+    public String getInsideHBorderColor() {
+    	String color = null;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideH()) {
+    			CTBorder border = ctb.getInsideH();
+        		color = border.xgetColor().getStringValue();
+    		}
+    	}
+    	return color;
+    }
+
+    public XWPFBorderType getInsideVBorderType() {
+    	XWPFBorderType bt = null;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideV()) {
+    			CTBorder border = ctb.getInsideV();
+    			bt = stBorderTypeMap.get(border.getVal().intValue());
+    		}
+    	}
+    	return bt;
+    }
+
+    public int getInsideVBorderSize() {
+    	int size = -1;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideV()) {
+    			CTBorder border = ctb.getInsideV();
+    			size = border.getSz().intValue();
+    		}
+    	}
+    	return size;
+    }
+
+    public int getInsideVBorderSpace() {
+    	int space = -1;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideV()) {
+    			CTBorder border = ctb.getInsideV();
+    			space = border.getSpace().intValue();
+    		}
+    	}
+    	return space;
+    }
+
+    public String getInsideVBorderColor() {
+    	String color = null;
+
+    	CTTblPr tblPr = getTrPr();
+    	if (tblPr.isSetTblBorders()) {
+    		CTTblBorders ctb = tblPr.getTblBorders();
+    		if (ctb.isSetInsideV()) {
+    			CTBorder border = ctb.getInsideV();
+        		color = border.xgetColor().getStringValue();
+    		}
+    	}
+    	return color;
+    }
+
+    public int getRowBandSize() {
+        int size = 0;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblStyleRowBandSize()) {
+        	CTDecimalNumber rowSize = tblPr.getTblStyleRowBandSize();
+        	size = rowSize.getVal().intValue();
+        }
+        return size;
+    }
+
+    public void setRowBandSize(int size) {
+        CTTblPr tblPr = getTrPr();
+        CTDecimalNumber rowSize = tblPr.isSetTblStyleRowBandSize() ? tblPr.getTblStyleRowBandSize() : tblPr.addNewTblStyleRowBandSize();
+        rowSize.setVal(BigInteger.valueOf(size));
+    }
+
+    public int getColBandSize() {
+        int size = 0;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblStyleColBandSize()) {
+        	CTDecimalNumber colSize = tblPr.getTblStyleColBandSize();
+        	size = colSize.getVal().intValue();
+        }
+        return size;
+    }
+
+    public void setColBandSize(int size) {
+        CTTblPr tblPr = getTrPr();
+        CTDecimalNumber colSize = tblPr.isSetTblStyleColBandSize() ? tblPr.getTblStyleColBandSize() : tblPr.addNewTblStyleColBandSize();
+        colSize.setVal(BigInteger.valueOf(size));
+    }
+
+    public void setInsideHBorder(XWPFBorderType type, int size, int space, String rgbColor) {
+        CTTblPr tblPr = getTrPr();
+        CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
+        CTBorder b = ctb.isSetInsideH() ? ctb.getInsideH() : ctb.addNewInsideH();
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
+    }
+
+    public void setInsideVBorder(XWPFBorderType type, int size, int space, String rgbColor) {
+        CTTblPr tblPr = getTrPr();
+        CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
+        CTBorder b = ctb.isSetInsideV() ? ctb.getInsideV() : ctb.addNewInsideV();
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
+    }
+
+    public int getCellMarginTop() {
+        int margin = 0;
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.getTblCellMar();
+        if (tcm != null) {
+        	CTTblWidth tw = tcm.getTop();
+        	if (tw != null) {
+        		margin = tw.getW().intValue();
+        	}
+        }
+        return margin;
+    }
+
+    public int getCellMarginLeft() {
+        int margin = 0;
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.getTblCellMar();
+        if (tcm != null) {
+        	CTTblWidth tw = tcm.getLeft();
+        	if (tw != null) {
+        		margin = tw.getW().intValue();
+        	}
+        }
+        return margin;
+    }
+
+    public int getCellMarginBottom() {
+        int margin = 0;
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.getTblCellMar();
+        if (tcm != null) {
+        	CTTblWidth tw = tcm.getBottom();
+        	if (tw != null) {
+        		margin = tw.getW().intValue();
+        	}
+        }
+        return margin;
+    }
+
+    public int getCellMarginRight() {
+        int margin = 0;
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.getTblCellMar();
+        if (tcm != null) {
+        	CTTblWidth tw = tcm.getRight();
+        	if (tw != null) {
+        		margin = tw.getW().intValue();
+        	}
+        }
+        return margin;
+    }
+
+    public void setCellMargins(int top, int left, int bottom, int right) {
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.isSetTblCellMar() ? tblPr.getTblCellMar() : tblPr.addNewTblCellMar();
+
+        CTTblWidth tw = tcm.isSetLeft() ? tcm.getLeft() : tcm.addNewLeft();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(left));
+
+        tw = tcm.isSetTop() ? tcm.getTop() : tcm.addNewTop();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(top));
+
+        tw = tcm.isSetBottom() ? tcm.getBottom() : tcm.addNewBottom();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(bottom));
+
+        tw = tcm.isSetRight() ? tcm.getRight() : tcm.addNewRight();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(right));
     }
     
     /**
@@ -269,7 +575,9 @@ public class XWPFTable implements IBodyElement{
      */
     public boolean removeRow(int pos) throws IndexOutOfBoundsException {
         if (pos >= 0 && pos < tableRows.size()) {
+            if (ctTbl.sizeOfTrArray() > 0) {
             ctTbl.removeTr(pos);
+            }
             tableRows.remove(pos);
             return true;
         }
