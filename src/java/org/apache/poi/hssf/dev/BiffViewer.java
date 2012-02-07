@@ -148,6 +148,7 @@ public final class BiffViewer {
 			case DatRecord.sid:            return new DatRecord(in);
 			case DataFormatRecord.sid:     return new DataFormatRecord(in);
 			case DateWindow1904Record.sid: return new DateWindow1904Record(in);
+		case DConRefRecord.sid: return new DConRefRecord(in);
 			case DefaultColWidthRecord.sid:return new DefaultColWidthRecord(in);
 			case DefaultDataLabelTextPropertiesRecord.sid: return new DefaultDataLabelTextPropertiesRecord(in);
 			case DefaultRowHeightRecord.sid: return new DefaultRowHeightRecord(in);

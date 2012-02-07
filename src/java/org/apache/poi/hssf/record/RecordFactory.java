@@ -129,6 +129,7 @@ public final class RecordFactory {
 		CRNRecord.class,
 		DateWindow1904Record.class,
 		DBCellRecord.class,
+                DConRefRecord.class,
 		DefaultColWidthRecord.class,
 		DefaultRowHeightRecord.class,
 		DeltaRecord.class,
