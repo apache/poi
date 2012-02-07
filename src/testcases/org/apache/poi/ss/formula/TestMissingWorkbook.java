@@ -72,9 +72,9 @@ public class TestMissingWorkbook extends TestCase {
 		assertEquals(Cell.CELL_TYPE_FORMULA, lB1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lC1Cell.getCellType());
 		
-		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
-		
-		System.setProperty(propertyKey, Boolean.toString(true));
+		HSSFFormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
+        evaluator.setIgnoreMissingWorkbooks(true);
+
 		assertEquals(Cell.CELL_TYPE_NUMERIC, evaluator.evaluateFormulaCell(lA1Cell));
 		assertEquals(Cell.CELL_TYPE_STRING, evaluator.evaluateFormulaCell(lB1Cell));
 		assertEquals(Cell.CELL_TYPE_BOOLEAN, evaluator.evaluateFormulaCell(lC1Cell));
