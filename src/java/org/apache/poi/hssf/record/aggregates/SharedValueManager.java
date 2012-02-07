@@ -158,6 +158,9 @@ public final class SharedValueManager {
 	 */
 	public SharedFormulaRecord linkSharedFormulaRecord(CellReference firstCell, FormulaRecordAggregate agg) {
 		SharedFormulaGroup result = findFormulaGroupForCell(firstCell);
+        if(null == result) {
+            throw new RuntimeException("Failed to find a matching shared formula record");
+        }
 		result.add(agg);
 		return result.getSFR();
 	}
@@ -170,10 +173,6 @@ public final class SharedValueManager {
             }
         }
         SharedFormulaGroup sfg = _groupsCache.get(getKeyForCache(cellRef));
-        if(null == sfg) {
-            // TODO - fix file "15228.xls" so it opens in Excel after rewriting with POI
-            throw new RuntimeException("Failed to find a matching shared formula record");
-        }
         return sfg;
     }
 

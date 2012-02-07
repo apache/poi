@@ -192,4 +192,24 @@ public final class TestSharedValueManager extends TestCase {
 			throw new RuntimeException(e);
 		}
 	}
+
+    public void testBug52527() {
+        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("52527.xls");
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+
+        assertEquals("IF(H3,LINEST(N9:N14,K9:M14,FALSE),LINEST(N8:N14,K8:M14,FALSE))",
+                wb1.getSheetAt(0).getRow(4).getCell(11).getCellFormula());
+        assertEquals("IF(H3,LINEST(N9:N14,K9:M14,FALSE),LINEST(N8:N14,K8:M14,FALSE))",
+                wb2.getSheetAt(0).getRow(4).getCell(11).getCellFormula());
+
+        assertEquals("1/SQRT(J9)",
+                wb1.getSheetAt(0).getRow(8).getCell(10).getCellFormula());
+        assertEquals("1/SQRT(J9)",
+                wb2.getSheetAt(0).getRow(8).getCell(10).getCellFormula());
+
+        assertEquals("1/SQRT(J26)",
+                wb1.getSheetAt(0).getRow(25).getCell(10).getCellFormula());
+        assertEquals("1/SQRT(J26)",
+                wb2.getSheetAt(0).getRow(25).getCell(10).getCellFormula());
+    }
 }
