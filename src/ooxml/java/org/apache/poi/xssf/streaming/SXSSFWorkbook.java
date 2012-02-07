@@ -77,7 +77,42 @@ public class SXSSFWorkbook implements Workbook
     public SXSSFWorkbook(){
     	this(null /*workbook*/);
     }
-    
+
+    /**
+     * Construct a workbook from a template.
+     * <p>
+     * There are three use-cases to use SXSSFWorkbook(XSSFWorkbook) :
+     * <ol>
+     *   <li>
+     *       Append new sheets to existing workbooks. You can open existing
+     *       workbook from a file or create on the fly with XSSF.
+     *   </li>
+     *   <li>
+     *       Append rows to existing sheets. The row number MUST be greater
+     *       than max(rownum) in the template sheet.
+     *   </li>
+     *   <li>
+     *       Use existing workbook as a template and re-use global objects such
+     *       as cell styles, formats, images, etc.
+     *   </li>
+     * </ol>
+     * All three use cases can work in a combination.
+     * </p>
+     * What is not supported:
+     * <ul>
+     *   <li>
+     *   Access initial cells and rows in the template. After constructing
+     *   SXSSFWorkbook(XSSFWorkbook) all internal windows are empty and
+     *   SXSSFSheet@getRow and SXSSFRow#getCell return null.
+     *   </li>
+     *   <li>
+     *    Override existing cells and rows. The API silently allows that but
+     *    the output file is invalid and Excel cannot read it.
+     *   </li>
+     * </ul>
+     *
+     * @param workbook  the template workbook
+     */
     public SXSSFWorkbook(XSSFWorkbook workbook){
     	this(workbook, DEFAULT_WINDOW_SIZE);
     }
