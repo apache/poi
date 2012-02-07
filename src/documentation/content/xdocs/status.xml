@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">52566 - Added methods to set/get vertical alignment and color in XWPFTableCell</action>
            <action dev="poi-developers" type="add">52562 - Added methods to get/set a table row's Can't Split and Repeat Header attributes  in XWPF</action>
            <action dev="poi-developers" type="add">52561 - Added methods to set table inside borders and cell margins in XWPF</action>
            <action dev="poi-developers" type="add">52569 - Support DConRefRecord in HSSF</action>
