@@ -302,6 +302,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     	return Collections.unmodifiableList(bodyElements);
     }
     
+    public Iterator<IBodyElement> getBodyElementsIterator() {
+    	return bodyElements.iterator();
+    }
+
     /**
 	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphs()
      */
@@ -492,7 +496,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
     
     /**
-     * Look up the paragraph at the specified position in the body elemnts list
+     * Look up the paragraph at the specified position in the body elements list
      * and return this paragraphs position in the paragraphs list
      * 
      * @param pos
@@ -604,7 +608,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             cursor.toParent();
             CTTbl t = (CTTbl) cursor.getObject();
             XWPFTable newT = new XWPFTable(t, this);
-            cursor.removeXmlContents();
             XmlObject o = null;
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
                 o = cursor.getObject();
@@ -616,16 +619,22 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 tables.add(pos, newT);
             }
             int i = 0;
-            cursor = t.newCursor();
+            XmlCursor tableCursor = t.newCursor();
+            try {
+                cursor.toCursor(tableCursor);
             while (cursor.toPrevSibling()) {
                 o = cursor.getObject();
                 if (o instanceof CTP || o instanceof CTTbl)
                     i++;
             }
             bodyElements.add(i, newT);
-            cursor = t.newCursor();
+            	cursor.toCursor(tableCursor);
             cursor.toEndToken();
             return newT;
+        }
+            finally {
+            	tableCursor.dispose();
+            }
         }
         return null;
     }
@@ -1317,7 +1326,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 			return null;
 		}
 		XWPFTableRow tableRow = table.getRow(row);
-		if(row == null){
+		if (tableRow == null) {
 			return null;
 		}
 		return tableRow.getTableCell(cell);
