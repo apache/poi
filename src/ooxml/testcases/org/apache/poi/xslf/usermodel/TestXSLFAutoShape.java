@@ -264,4 +264,20 @@ public class TestXSLFAutoShape extends TestCase {
         r.setText(null);
         assertNull(r.getText());
     }
+
+    public void testShapeType() {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+
+        XSLFAutoShape shape = slide.createAutoShape();
+        assertEquals(XSLFShapeType.RECT, shape.getShapeType());
+
+        shape.setShapeType(XSLFShapeType.TRIANGLE);
+        assertEquals(XSLFShapeType.TRIANGLE, shape.getShapeType());
+
+        for(XSLFShapeType tp : XSLFShapeType.values()) {
+            shape.setShapeType(tp);
+            assertEquals(tp, shape.getShapeType());
+        }
+    }
 }
