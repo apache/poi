@@ -168,4 +168,11 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
         return 0;
     }
 
+    long getChecksum(){
+        if(checksum == null){
+            byte[] pictureData = getData();
+            checksum = IOUtils.calculateChecksum(pictureData);
+        }
+        return checksum;
+    }
 }
