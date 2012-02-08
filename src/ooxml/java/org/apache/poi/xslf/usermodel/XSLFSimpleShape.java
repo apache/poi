@@ -22,35 +22,22 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
-import org.apache.poi.xslf.model.geom.Context;
 import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Guide;
-import org.apache.poi.xslf.model.geom.IAdjustableShape;
 import org.apache.poi.xslf.model.geom.Outline;
 import org.apache.poi.xslf.model.geom.Path;
 import org.apache.poi.xslf.model.geom.PresetGeometries;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.POIXMLException;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,13 +75,19 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     }
 
     /**
-     * TODO match STShapeType with
-     * {@link org.apache.poi.sl.usermodel.ShapeTypes}
+     *
+     * @param type
      */
-    public int getShapeType() {
-        CTPresetGeometry2D prst = getSpPr().getPrstGeom();
-        STShapeType.Enum stEnum = prst == null ? null : prst.getPrst();
-        return stEnum == null ? 0 : stEnum.intValue();
+    public void setShapeType(XSLFShapeType type){
+        CTShape shape = (CTShape) getXmlObject();
+        STShapeType.Enum geom = STShapeType.Enum.forInt(type.getIndex());
+        shape.getSpPr().getPrstGeom().setPrst(geom);
+    }
+
+    public XSLFShapeType getShapeType(){
+        CTShape shape = (CTShape) getXmlObject();
+        STShapeType.Enum geom = shape.getSpPr().getPrstGeom().getPrst();
+        return XSLFShapeType.forInt(geom.intValue());
     }
 
     @Override
