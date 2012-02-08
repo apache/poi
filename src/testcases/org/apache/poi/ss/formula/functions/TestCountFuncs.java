@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -36,6 +39,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
 /**
  * Test cases for COUNT(), COUNTA() COUNTIF(), COUNTBLANK()
@@ -355,6 +359,33 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(true, mp, "#REF!");
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
 		confirmPredicate(false, mp, ErrorEval.REF_INVALID);
+	}
+
+   /**
+    * Bug #51498 - Check that CountIf behaves correctly for GTE, LTE
+    *  and NEQ cases
+    */
+	public void testCountifLTEGTE() throws Exception {
+		final int REF_COL = 4;
+		final int EVAL_COL = 3;
+		
+		// Note - POI currently agrees with OpenOffice on certain blank cell cases,
+		//  while Excel can differ. This is the list of checks to skip
+		List<Integer> skipRowsPendingExcelVsOpenOffice = Arrays.asList(
+		      new Integer[] {3});
+
+      HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("51498.xls");
+		FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+		HSSFSheet sheet = workbook.getSheetAt(0);
+		for (int i = 0; i < 8; i++) {
+		   if (skipRowsPendingExcelVsOpenOffice.contains(i)) {
+		      // Skip the check for now
+		      continue;
+		   }
+			CellValue expected = evaluator.evaluate(sheet.getRow(i).getCell(REF_COL));
+			CellValue actual = evaluator.evaluate(sheet.getRow(i).getCell(EVAL_COL));
+			assertEquals(expected.formatAsString(), actual.formatAsString());
+		}
 	}
 
 	public void testWildCards() {
