@@ -113,4 +113,21 @@ public class TestXSLFPictureShape extends TestCase {
             assertTrue(Arrays.equals(data1, data.getData()));
         }
     }
+
+    public void testImageCaching() {
+        XMLSlideShow ppt = new XMLSlideShow();
+        byte[] img1 = new byte[]{1,2,3};
+        byte[] img2 = new byte[]{3,4,5};
+        int idx1 = ppt.addPicture(img1, XSLFPictureData.PICTURE_TYPE_PNG);
+        assertEquals(0, idx1);
+        assertEquals(0, ppt.addPicture(img1, XSLFPictureData.PICTURE_TYPE_PNG));
+
+        int idx2 = ppt.addPicture(img2, XSLFPictureData.PICTURE_TYPE_PNG);
+        assertEquals(1, idx2);
+        assertEquals(1, ppt.addPicture(img2, XSLFPictureData.PICTURE_TYPE_PNG));
+
+        XSLFSlide slide1 = ppt.createSlide();
+        XSLFSlide slide2 = ppt.createSlide();
+
+    }
 }
