@@ -2180,6 +2180,29 @@ if(1==2) {
         HSSFWorkbook wb = openSample("51670.xls");
         writeOutAndReadBack(wb);
     }
+    
+    /**
+     * Sum across multiple workbooks
+     *  eg =SUM($Sheet2.A1:$Sheet3.A1)
+     * DISABLED - We currently get the formula wrong, and mis-evaluate
+     */
+    public void DISABLEDtest48703() {
+        HSSFWorkbook wb = openSample("48703.xls");
+        assertEquals(3, wb.getNumberOfSheets());
+        
+        // Check reading the formula
+        Sheet sheet = wb.getSheetAt(0);
+        Row r = sheet.getRow(0);
+        Cell c = r.getCell(0);
+        
+        assertEquals("SUM(Sheet2!A1:Sheet3!A1)", c.getCellFormula());
+        assertEquals(4.0, c.getNumericCellValue());
+        
+        // Check the evaluated result
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+        eval.evaluateFormulaCell(c);
+        assertEquals(4.0, c.getNumericCellValue());
+    }
 
     /**
      * Normally encrypted files have BOF then FILEPASS, but
