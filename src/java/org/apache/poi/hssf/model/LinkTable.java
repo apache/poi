@@ -552,4 +552,27 @@ final class LinkTable {
     private int findRefIndexFromExtBookIndex(int extBookIndex) {
 		return _externSheetRecord.findRefIndexFromExtBookIndex(extBookIndex);
 	}
+   
+	/**
+	 * Changes an external referenced file to another file.
+	 * A formular in Excel which refers a cell in another file is saved in two parts: 
+	 * The referenced file is stored in an reference table. the row/cell information is saved separate.
+	 * This method invokation will only change the reference in the lookup-table itself.
+	 * @param oldUrl The old URL to search for and which is to be replaced
+	 * @param newUrl The URL replacement
+	 * @return true if the oldUrl was found and replaced with newUrl. Otherwise false
+	 */
+	public boolean changeExternalReference(String oldUrl, String newUrl) {
+		for(ExternalBookBlock ex : _externalBookBlocks) {
+			SupBookRecord externalRecord = ex.getExternalBookRecord();
+			if (externalRecord.isExternalReferences() 
+				&& externalRecord.getURL().equals(oldUrl)) {
+				
+				externalRecord.setURL(newUrl);
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
