@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -31,6 +33,8 @@ import org.apache.poi.util.StringUtil;
  */
 public final class SupBookRecord extends StandardRecord {
 
+    private final static POILogger logger = POILogFactory.getLogger(SupBookRecord.class);
+	
     public final static short sid = 0x01AE;
 
     private static final short SMALL_RECORD_SIZE = 4;
@@ -42,6 +46,15 @@ public final class SupBookRecord extends StandardRecord {
     private String[] field_3_sheet_names;
     private boolean _isAddInFunctions;
 
+    protected static final char CH_VOLUME = 1;
+    protected static final char CH_SAME_VOLUME = 2;
+    protected static final char CH_DOWN_DIR = 3;
+    protected static final char CH_UP_DIR = 4;
+    protected static final char CH_LONG_VOLUME = 5;
+    protected static final char CH_STARTUP_DIR = 6;
+    protected static final char CH_ALT_STARTUP_DIR = 7;
+    protected static final char CH_LIB_DIR = 8;
+    protected static final String PATH_SEPERATOR = System.getProperty("file.separator");
 
     public static SupBookRecord createInternalReferences(short numberOfSheets) {
         return new SupBookRecord(false, numberOfSheets);
@@ -192,21 +205,51 @@ public final class SupBookRecord extends StandardRecord {
         return encodedUrl;
     }
     private static String decodeFileName(String encodedUrl) {
-        return encodedUrl.substring(1);
-        // TODO the following special characters may appear in the rest of the string, and need to get interpreted
-        /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION"
-        chVolume  1
-        chSameVolume  2
-        chDownDir  3
-        chUpDir  4
-        chLongVolume  5
-        chStartupDir  6
-        chAltStartupDir 7
-        chLibDir  8
-
-        */
+        /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION" */
+    	StringBuilder sb = new StringBuilder();
+        for(int i=1; i<encodedUrl.length(); i++) {
+        	char c = encodedUrl.charAt(i);
+        	switch (c) {
+        	case CH_VOLUME:
+        		char driveLetter = encodedUrl.charAt(++i);
+        		if (driveLetter == '@') {
+        			sb.append("\\\\");
+        		} else {
+        			//Windows notation for drive letters
+        			sb.append(driveLetter).append(":");
+        		}
+        		break;
+        	case CH_SAME_VOLUME:
+        		sb.append(PATH_SEPERATOR);
+        		break;
+        	case CH_DOWN_DIR:
+        		sb.append(PATH_SEPERATOR);
+        		break;
+        	case CH_UP_DIR:
+        		sb.append("..").append(PATH_SEPERATOR);
+        		break;
+        	case CH_LONG_VOLUME:
+        		//Don't known to handle...
+        		logger.log(POILogger.WARN, "Found unexpected key: ChLongVolume - IGNORING");
+        		break;
+        	case CH_STARTUP_DIR:
+        	case CH_ALT_STARTUP_DIR:
+        	case CH_LIB_DIR:
+        		logger.log(POILogger.WARN, "EXCEL.EXE path unkown - using this directoy instead: .");
+        		sb.append(".").append(PATH_SEPERATOR);
+        		break;
+        	default:
+        		sb.append(c);
+        	}
+        }
+        return sb.toString();
     }
     public String[] getSheetNames() {
         return field_3_sheet_names.clone();
+    }
+    
+    public void setURL(String pUrl) {
+    	//Keep the first marker character!
+    	field_2_encoded_url = field_2_encoded_url.substring(0, 1) + pUrl; 
     }
 }

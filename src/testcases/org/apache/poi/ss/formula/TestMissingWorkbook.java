@@ -32,8 +32,6 @@ public class TestMissingWorkbook extends TestCase {
 	private static final String SOURCE_DUMMY_WORKBOOK_FILENAME = "source_dummy.xls";
 	private static final String SOURCE_WORKBOOK_FILENAME = "52575_source.xls";
 	
-	private static final String propertyKey = WorkbookEvaluator.class.getName() + ".IGNORE_MISSING_WORKBOOKS";
-	
 	private HSSFWorkbook mainWorkbook;
 	private HSSFWorkbook sourceWorkbook;
 	

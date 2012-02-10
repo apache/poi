@@ -1678,17 +1678,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        
        row = s.getRow(4);
        assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
-       assertEquals("'[\u0005$http://gagravarr.org/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
+       assertEquals("'[$http://gagravarr.org/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
        assertEquals(112.0, row.getCell(1).getNumericCellValue());
        
        // Change 4
-       row.getCell(1).setCellFormula("'[\u0005$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2");
+       row.getCell(1).setCellFormula("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2");
        row.getCell(1).setCellValue(123.0);
        
        // Add 5
        row = s.createRow(5);
        row.createCell(1, Cell.CELL_TYPE_FORMULA);
-       row.getCell(1).setCellFormula("'[\u0005$http://example.com/FormulaRefs.xls]Sheet1'!B1");
+       row.getCell(1).setCellFormula("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1");
        row.getCell(1).setCellValue(234.0);
        
        
@@ -1719,12 +1719,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 if(1==2) {
        row = s.getRow(4);
        assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
-       assertEquals("'[\u0005$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2", row.getCell(1).getCellFormula());
+       assertEquals("'[$http://gagravarr.org/FormulaRefs2.xls]Sheet1'!B2", row.getCell(1).getCellFormula());
        assertEquals(123.0, row.getCell(1).getNumericCellValue());
        
        row = s.getRow(5);
        assertEquals(Cell.CELL_TYPE_FORMULA, row.getCell(1).getCellType());
-       assertEquals("'[\u0005$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
+       assertEquals("'[$http://example.com/FormulaRefs.xls]Sheet1'!B1", row.getCell(1).getCellFormula());
        assertEquals(234.0, row.getCell(1).getNumericCellValue());
 }
     }
@@ -2193,4 +2193,12 @@ if(1==2) {
           // Good
        }
     }
+
+    public void test49896() {
+        HSSFWorkbook wb = openSample("49896.xls");
+        HSSFCell  cell = wb.getSheetAt(0).getRow(1).getCell(1);
+        assertEquals("VLOOKUP(A2,'[C:Documents and Settings/Yegor/My Documents/csco.xls]Sheet1'!$A$2:$B$3,2,FALSE)",
+                cell.getCellFormula());
+     }
+
 }

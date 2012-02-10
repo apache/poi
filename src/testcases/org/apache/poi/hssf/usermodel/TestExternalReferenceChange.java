@@ -1,0 +1,52 @@
+package org.apache.poi.hssf.usermodel;
+
+import java.io.IOException;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.Cell;
+
+import junit.framework.TestCase;
+
+public class TestExternalReferenceChange extends TestCase {
+
+	private static final String MAIN_WORKBOOK_FILENAME = "52575_main.xls";
+	private static final String SOURCE_DUMMY_WORKBOOK_FILENAME = "source_dummy.xls";
+	private static final String SOURCE_WORKBOOK_FILENAME = "52575_source.xls";
+	
+	private HSSFWorkbook mainWorkbook;
+	private HSSFWorkbook sourceWorkbook;
+	
+	@Override
+	protected void setUp() throws Exception {
+		mainWorkbook = HSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
+		sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);
+		
+		assertNotNull(mainWorkbook);
+		assertNotNull(sourceWorkbook);
+	}
+	
+	public void testDummyToSource() throws IOException {
+		boolean changed = mainWorkbook.changeExternalReference("DOESNOTEXIST", SOURCE_WORKBOOK_FILENAME);
+		assertFalse(changed);
+		
+		changed = mainWorkbook.changeExternalReference(SOURCE_DUMMY_WORKBOOK_FILENAME, SOURCE_WORKBOOK_FILENAME);
+		assertTrue(changed);
+
+		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
+		HSSFCell lA1Cell = lSheet.getRow(0).getCell(0);
+		
+		assertEquals(Cell.CELL_TYPE_FORMULA, lA1Cell.getCellType());
+		
+		HSSFFormulaEvaluator lMainWorkbookEvaluator = new HSSFFormulaEvaluator(mainWorkbook);
+		HSSFFormulaEvaluator lSourceEvaluator = new HSSFFormulaEvaluator(sourceWorkbook);
+		HSSFFormulaEvaluator.setupEnvironment(
+				new String[]{MAIN_WORKBOOK_FILENAME, SOURCE_WORKBOOK_FILENAME}, 
+				new HSSFFormulaEvaluator[] {lMainWorkbookEvaluator, lSourceEvaluator});
+		
+		assertEquals(Cell.CELL_TYPE_NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCell(lA1Cell));
+
+		assertEquals(20.0d, lA1Cell.getNumericCellValue(), 0.00001d);
+
+	}
+	
+}
