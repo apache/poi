@@ -2220,7 +2220,9 @@ if(1==2) {
     public void test49896() {
         HSSFWorkbook wb = openSample("49896.xls");
         HSSFCell  cell = wb.getSheetAt(0).getRow(1).getCell(1);
-        assertEquals("VLOOKUP(A2,'[C:Documents and Settings/Yegor/My Documents/csco.xls]Sheet1'!$A$2:$B$3,2,FALSE)",
+        String PATH_SEPARATOR = System.getProperty("file.separator");
+        assertEquals("VLOOKUP(A2,'[C:Documents and Settings" + PATH_SEPARATOR+"Yegor"+PATH_SEPARATOR
+                +"My Documents"+PATH_SEPARATOR+"csco.xls]Sheet1'!$A$2:$B$3,2,FALSE)",
                 cell.getCellFormula());
      }
 
