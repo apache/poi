@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">51498 - fixed evaluation of blank cells in COUNTIF</action>
            <action dev="poi-developers" type="add">52576 - support changing external file references in HSSFWorkbook</action>
            <action dev="poi-developers" type="add">49896 - support external references in FormulaRenderer</action>
            <action dev="poi-developers" type="fix">52527 - avoid exception when matching shared formula records in HSSF</action>
