@@ -20,6 +20,7 @@ package org.apache.poi.xssf.streaming;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -88,6 +89,8 @@ public class SXSSFRow implements Row
      */
     public Cell createCell(int column, int type)
     {
+        checkBounds(column);
+
         if(column>=_cells.length)
         {
             SXSSFCell[] newCells=new SXSSFCell[Math.max(column+1,_cells.length*2)];
@@ -97,6 +100,19 @@ public class SXSSFRow implements Row
         _cells[column]=new SXSSFCell(this,type);
         if(column>_maxColumn) _maxColumn=column;
         return _cells[column];
+    }
+
+    /**
+     * @throws RuntimeException if the bounds are exceeded.
+     */
+    private static void checkBounds(int cellIndex) {
+        SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
+        int maxcol = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+        if (cellIndex < 0 || cellIndex > maxcol) {
+            throw new IllegalArgumentException("Invalid column index (" + cellIndex
+                    + ").  Allowable column range for " + v.name() + " is (0.."
+                    + maxcol + ") or ('A'..'" + v.getLastColumnName() + "')");
+        }
     }
 
     /**
