@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Map;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 
 import org.apache.poi.ss.util.SheetUtil;
@@ -84,6 +85,12 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public Row createRow(int rownum)
     {
+        int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        if (rownum < 0 || rownum > maxrow) {
+            throw new IllegalArgumentException("Invalid row number (" + rownum
+                    + ") outside allowable range (0.." + maxrow + ")");
+        }
+
 //Make the initial allocation as big as the row above.
         Row previousRow=rownum>0?getRow(rownum-1):null;
         int initialAllocationSize=0;
