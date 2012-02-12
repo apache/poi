@@ -401,6 +401,10 @@ public abstract class BaseTestSheet extends TestCase {
         assertEquals((short) 300, sheet.getDefaultRowHeight());
         assertEquals(15.0F, sheet.getDefaultRowHeightInPoints(), 0F);
 
+        Row row = sheet.createRow(1);
+        // new row inherits  default height from the sheet
+        assertEquals(sheet.getDefaultRowHeight(), row.getHeight());
+
         // Set a new default row height in twips and test getting the value in points
         sheet.setDefaultRowHeight((short) 360);
         assertEquals(18.0f, sheet.getDefaultRowHeightInPoints(), 0F);

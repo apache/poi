@@ -2060,8 +2060,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param  height default row height in  twips (1/20 of  a point)
      */
     public void setDefaultRowHeight(short height) {
-        getSheetTypeSheetFormatPr().setDefaultRowHeight((double)height / 20);
-
+        setDefaultRowHeightInPoints((float)height / 20);
     }
 
     /**
@@ -2070,8 +2069,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param height default row height measured in point size.
      */
     public void setDefaultRowHeightInPoints(float height) {
-        getSheetTypeSheetFormatPr().setDefaultRowHeight(height);
-
+        CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
+        pr.setDefaultRowHeight(height);
+        pr.setCustomHeight(true);
     }
 
     /**

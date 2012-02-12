@@ -197,6 +197,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     public HSSFRow createRow(int rownum)
     {
         HSSFRow row = new HSSFRow(_workbook, this, rownum);
+        // new rows inherit default height from the sheet
+        row.setHeight(getDefaultRowHeight());
 
         addRow(row, true);
         return row;

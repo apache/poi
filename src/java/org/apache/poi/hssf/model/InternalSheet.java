@@ -1002,6 +1002,8 @@ public final class InternalSheet {
      */
     public void setDefaultRowHeight(short dch) {
         defaultrowheight.setRowHeight(dch);
+        // set the bit that specifies that the default settings for the row height have been changed.
+        defaultrowheight.setOptionFlags((short)1);
     }
 
     /**
