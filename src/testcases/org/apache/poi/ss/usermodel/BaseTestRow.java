@@ -292,6 +292,7 @@ public abstract class BaseTestRow extends TestCase {
         assertEquals(20*20, row1.getHeight());
 
         Row row2 = sheet.createRow(1);
+        assertEquals(sheet.getDefaultRowHeight(), row2.getHeight());
         row2.setHeight((short)310);
         assertEquals(310, row2.getHeight());
         assertEquals(310F/20, row2.getHeightInPoints(), 0F);
