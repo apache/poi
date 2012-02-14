@@ -19,6 +19,13 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -26,19 +33,12 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTDTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrameNonVisual;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Represents a table in a .pptx presentation
@@ -122,7 +122,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         cnv.setId(shapeId + 1);
         nvGr.addNewCNvGraphicFramePr().addNewGraphicFrameLocks().setNoGrp(true);
         nvGr.addNewNvPr();
-        
+
         frame.addNewXfrm();
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
         XmlCursor cursor = gr.newCursor();
@@ -134,5 +134,56 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         cursor.dispose();
         gr.setUri(TABLE_URI);
         return frame;
+    }
+
+    /**
+     * Merge cells of a table
+     */
+    public void mergeCells(int firstRow, int lastRow, int firstCol, int lastCol) {
+
+    	if(firstRow > lastRow) {
+    		throw new IllegalArgumentException(
+    			"Cannot merge, first row > last row : "
+    			+ firstRow + " > " + lastRow
+    		);
+    	}
+
+    	if(firstCol > lastCol) {
+    		throw new IllegalArgumentException(
+    			"Cannot merge, first column > last column : "
+    			+ firstCol + " > " + lastCol
+    		);
+    	}
+
+    	int rowSpan = (lastRow - firstRow) + 1;
+    	boolean mergeRowRequired = rowSpan > 1;
+
+    	int colSpan = (lastCol - firstCol) + 1;
+    	boolean mergeColumnRequired = colSpan > 1;
+
+    	for(int i = firstRow; i <= lastRow; i++) {
+
+    		XSLFTableRow row = _rows.get(i);
+
+    		for(int colPos = firstCol; colPos <= lastCol; colPos++) {
+
+    			XSLFTableCell cell = row.getCells().get(colPos);
+
+    			if(mergeRowRequired) {
+	    			if(i == firstRow) {
+	    				cell.setRowSpan(rowSpan);
+	    			} else {
+	    				cell.setVMerge(true);
+	    			}
+    			}
+    			if(mergeColumnRequired) {
+    				if(colPos == firstCol) {
+    					cell.setGridSpan(colSpan);
+    				} else {
+    					cell.setHMerge(true);
+    				}
+    			}
+    		}
+    	}
     }
 }

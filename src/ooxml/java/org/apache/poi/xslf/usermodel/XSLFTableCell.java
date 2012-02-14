@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Color;
+
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
@@ -34,8 +36,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-
-import java.awt.Color;
 
 /**
  * Represents a cell of a table in a .pptx presentation
@@ -83,7 +83,7 @@ public class XSLFTableCell extends XSLFTextShape {
 
         pr.setMarL(Units.toEMU(margin));
     }
-    
+
     @Override
     public void setRightInset(double margin){
         CTTableCellProperties pr = getXmlObject().getTcPr();
@@ -284,4 +284,19 @@ public class XSLFTableCell extends XSLFTextShape {
         return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
     }
 
+    void setGridSpan(int gridSpan_) {
+    	getXmlObject().setGridSpan(gridSpan_);
+    }
+
+    void setRowSpan(int rowSpan_) {
+    	getXmlObject().setRowSpan(rowSpan_);
+    }
+
+    void setHMerge(boolean merge_) {
+    	getXmlObject().setHMerge(merge_);
+    }
+
+    void setVMerge(boolean merge_) {
+    	getXmlObject().setVMerge(merge_);
+    }
 }
