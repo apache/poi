@@ -606,8 +606,13 @@ public final class CharacterRun
   public Ffn getSymbolFont()
   {
     if (isSymbol()) {
+      if (_doc.getFontTable() == null)
+        return null;
+      
+      // Fetch all font names
       Ffn[] fontNames = _doc.getFontTable().getFontNames();
 
+      // Try to find the name of the font for our symbol
       if (fontNames.length <= _props.getFtcSym())
         return null;
 
