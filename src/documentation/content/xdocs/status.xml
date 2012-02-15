@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">52649 - fixed namespace issue in WordToFoConverter</action>
            <action dev="poi-developers" type="fix">52385 - avoid trancated array and vector data when reading OLE properties</action>
            <action dev="poi-developers" type="fix">52662 - CharacterRun NPE fix when fetching symbol fonts, where no fonts are defined</action>
            <action dev="poi-developers" type="add">52658 - support mergin table cells in XSLF</action>

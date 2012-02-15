@@ -242,7 +242,7 @@ public class FoDocumentFacade
 
         // See http://xmlgraphics.apache.org/fop/0.95/metadata.html
 
-        Element xmpmeta = document.createElementNS( "adobe:ns:meta",
+        Element xmpmeta = document.createElementNS( "adobe:ns:meta/",
                 "x:xmpmeta" );
         declarations.appendChild( xmpmeta );
 
