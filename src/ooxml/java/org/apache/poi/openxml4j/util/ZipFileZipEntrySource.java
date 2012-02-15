@@ -41,10 +41,16 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
    }
 
    public Enumeration<? extends ZipEntry> getEntries() {
+      if (zipArchive == null)
+         throw new IllegalStateException("Zip File is closed");
+      
       return zipArchive.entries();
    }
 
    public InputStream getInputStream(ZipEntry entry) throws IOException {
+      if (zipArchive == null)
+         throw new IllegalStateException("Zip File is closed");
+      
       return zipArchive.getInputStream(entry);
    }
 }
