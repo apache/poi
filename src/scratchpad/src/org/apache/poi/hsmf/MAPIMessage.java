@@ -451,13 +451,17 @@ public class MAPIMessage extends POIDocument {
             }
          }
       }
-      for(Chunk c : nameIdChunks.getAll()) {
-         if(c instanceof StringChunk) {
-            if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
-               return true;
+      
+      if (nameIdChunks!=null) {
+         for(Chunk c : nameIdChunks.getAll()) {
+            if(c instanceof StringChunk) {
+               if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
+                  return true;
+               }
             }
          }
       }
+      
       for(RecipientChunks rc : recipientChunks) {
          for(Chunk c : rc.getAll()) {
             if(c instanceof StringChunk) {
