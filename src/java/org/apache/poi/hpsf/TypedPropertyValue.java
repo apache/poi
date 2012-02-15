@@ -68,7 +68,7 @@ class TypedPropertyValue
                     + offset + " MUST be 0, but it's value is " + padding );
         }
 
-        offset += readValuePadded( data, offset );
+        offset += readValue( data, offset );
 
         return offset - startOffset;
     }
