@@ -414,9 +414,9 @@ public class Property
         b.append(getType());
         final Object value = getValue();
         b.append(", value: ");
-        b.append(value.toString());
         if (value instanceof String)
         {
+            b.append(value.toString());
             final String s = (String) value;
             final int l = s.length();
             final byte[] bytes = new byte[l * 2];
@@ -428,10 +428,24 @@ public class Property
                 bytes[i * 2]     = high;
                 bytes[i * 2 + 1] = low;
             }
-            final String hex = HexDump.dump(bytes, 0L, 0);
             b.append(" [");
-            b.append(hex);
+            if(bytes.length > 0) {
+                final String hex = HexDump.dump(bytes, 0L, 0);
+                b.append(hex);
+            }
             b.append("]");
+        }
+        else if (value instanceof byte[])
+        {
+            byte[] bytes = (byte[])value;
+            if(bytes.length > 0) {
+                String hex = HexDump.dump(bytes, 0L, 0);
+                b.append(hex);
+            }
+        }
+        else
+        {
+            b.append(value.toString());
         }
         b.append(']');
         return b.toString();

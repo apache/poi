@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -78,4 +79,7 @@ class Vector
         return offset - startOffset;
     }
 
+    TypedPropertyValue[] getValues(){
+        return _values;
+    }
 }
