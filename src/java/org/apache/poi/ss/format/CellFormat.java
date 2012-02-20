@@ -18,6 +18,7 @@
 package org.apache.poi.ss.format;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -61,6 +62,9 @@ import java.util.regex.Pattern;
  * In addition to these, there is a general format that is used when no format
  * is specified.  This formatting is presented by the {@link #GENERAL_FORMAT}
  * object.
+ * 
+ * TODO Merge this with {@link DataFormatter} so we only have one set of
+ * code for formatting numbers.
  *
  * @author Ken Arnold, Industrious Media LLC
  */
