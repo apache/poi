@@ -10,11 +10,16 @@
 
 package org.apache.poi.ss.formula.atp;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.function.FunctionMetadata;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.Function;
+import org.apache.poi.ss.formula.functions.NotImplementedFunction;
 import org.apache.poi.ss.formula.functions.Sumifs;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
@@ -174,5 +179,56 @@ public final class AnalysisToolPak implements UDFFinder {
     private static void r(Map<String, FreeRefFunction> m, String functionName, FreeRefFunction pFunc) {
         FreeRefFunction func = pFunc == null ? new NotImplemented(functionName) : pFunc;
         m.put(functionName, func);
+    }
+
+    public static boolean isATPFunction(String name){
+        AnalysisToolPak inst = (AnalysisToolPak)instance;
+        return inst._functionsByName.containsKey(name);
+    }
+
+    /**
+     * Returns an array of function names implemented by POI.
+     *
+     * @return an array of supported functions
+     * @since 3.8 beta6
+     */
+    public static String[] getSupportedFunctionNames(){
+        AnalysisToolPak inst = (AnalysisToolPak)instance;
+        ArrayList<String> lst = new ArrayList<String>();
+        for(String name : inst._functionsByName.keySet()){
+            FreeRefFunction func = inst._functionsByName.get(name);
+            if(func != null && !(func instanceof NotImplemented)){
+                lst.add(name);
+            }
+        }
+        return lst.toArray(new String[lst.size()]);
+    }
+
+    /**
+     * Register a ATP function in runtime.
+     *
+     * @param name  the function name
+     * @param func  the functoin to register
+     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @since 3.8 beta6
+     */
+   public static void registerFunction(String name, FreeRefFunction func){
+        AnalysisToolPak inst = (AnalysisToolPak)instance;
+        if(!isATPFunction(name)) {
+            FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);
+            if(metaData != null) {
+                throw new IllegalArgumentException(name + " is a built-in Excel function. " +
+                        "Use FunctoinEval.registerFunction(String name, Function func) instead.");
+            } else {
+                throw new IllegalArgumentException(name + " is not a function from the Excel Analysis Toolpack.");
+            }
+        }
+        FreeRefFunction f = inst.findFunction(name);
+        if(f != null && !(f instanceof NotImplemented)) {
+            throw new IllegalArgumentException("POI already implememts " + name +
+                    ". You cannot override POI's implementations of Excel functions");
+        }
+
+        inst._functionsByName.put(name, func);
     }
 }
