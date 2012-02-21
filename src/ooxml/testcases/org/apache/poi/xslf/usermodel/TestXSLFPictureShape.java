@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -128,6 +129,28 @@ public class TestXSLFPictureShape extends TestCase {
 
         XSLFSlide slide1 = ppt.createSlide();
         XSLFSlide slide2 = ppt.createSlide();
+
+    }
+
+    public void testMerge() {
+        XMLSlideShow ppt1 = new XMLSlideShow();
+        byte[] data1 = new byte[100];
+        int idx1 = ppt1.addPicture(data1, XSLFPictureData.PICTURE_TYPE_JPEG);
+
+        XSLFSlide slide1 = ppt1.createSlide();
+        XSLFPictureShape shape1 = slide1.createPicture(idx1);
+        CTPicture ctPic1 = (CTPicture)shape1.getXmlObject();
+        ctPic1.getNvPicPr().getNvPr().addNewCustDataLst().addNewTags().setId("rId99");
+
+        XMLSlideShow ppt2 = new XMLSlideShow();
+
+        XSLFSlide slide2 = ppt2.createSlide().importContent(slide1);
+        XSLFPictureShape shape2 = (XSLFPictureShape)slide2.getShapes()[0];
+
+        assertTrue(Arrays.equals(data1, shape2.getPictureData().getData()));
+
+        CTPicture ctPic2 = (CTPicture)shape2.getXmlObject();
+        assertFalse(ctPic2.getNvPicPr().getNvPr().isSetCustDataLst());
 
     }
 }

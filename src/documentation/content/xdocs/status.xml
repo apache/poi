@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">52687 - fixed merging slides with pictures with associated custom tags</action>
            <action dev="poi-developers" type="add"> allow runtime registration of functions in FormulaEvaluator</action>
            <action dev="poi-developers" type="fix">52665 - When reading from a ZipFileZipEntrySource that has already been closed, give IllegalArgumentException rather than NPE</action>
            <action dev="poi-developers" type="fix">52664 - MAPIMessage may not always have name chunks when checking for 7 bit encodings</action>
