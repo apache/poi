@@ -142,5 +142,11 @@ public class TestXSLFTable extends TestCase {
         assertNull(cell1.getBorderRightColor());
         cell1.setBorderRightColor(Color.yellow);
         assertEquals(Color.yellow, cell1.getBorderRightColor());
+
+        assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
+        cell1.setVerticalAlignment(VerticalAlignment.MIDDLE);
+        assertEquals(VerticalAlignment.MIDDLE, cell1.getVerticalAlignment());
+        cell1.setVerticalAlignment(null);
+        assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
     }
 }
