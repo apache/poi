@@ -29,6 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
@@ -146,6 +147,12 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         CTPicture ct = (CTPicture)getXmlObject();
         CTBlip blip = ct.getBlipFill().getBlip();
         blip.setEmbed(relId);
+
+        CTApplicationNonVisualDrawingProps nvPr = ct.getNvPicPr().getNvPr();
+        if(nvPr.isSetCustDataLst()) {
+            // discard any custom tags associated with the picture being copied
+            nvPr.unsetCustDataLst();
+        }
 
     }
 }
