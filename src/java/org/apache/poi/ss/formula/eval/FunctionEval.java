@@ -17,9 +17,12 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.*;
+
+import java.util.ArrayList;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -255,4 +258,50 @@ public final class FunctionEval {
 		}
 		return result;
 	}
+
+    /**
+     * Register a new function in runtime.
+     *
+     * @param name  the function name
+     * @param func  the functoin to register
+     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @since 3.8 beta6
+     */
+    public static void registerFunction(String name, Function func){
+        FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);
+        if(metaData == null) {
+            if(AnalysisToolPak.isATPFunction(name)) {
+                throw new IllegalArgumentException(name + " is a function from the Excel Analysis Toolpack. " +
+                        "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.");
+            } else {
+                throw new IllegalArgumentException("Unknown function: " + name);
+            }
+        }
+
+        int idx = metaData.getIndex();
+        if(functions[idx] instanceof NotImplementedFunction) {
+            functions[idx] = func;
+        } else {
+            throw new IllegalArgumentException("POI already implememts " + name +
+                    ". You cannot override POI's implementations of Excel functions");
+        }
+    }
+
+    /**
+     * Returns an array of function names implemented by POI.
+     *
+     * @return an array of supported functions
+     * @since 3.8 beta6
+     */
+    public static String[] getSupportedFunctionNames(){
+        ArrayList<String>  lst = new ArrayList<String>();
+        for(int i = 0; i < functions.length; i++){
+            Function func = functions[i];
+            if(func != null && !(func instanceof NotImplementedFunction)){
+                FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByIndex(i);
+                lst.add(metaData.getName());
+            }
+        }
+        return lst.toArray(new String[lst.size()]);
+    }
 }
