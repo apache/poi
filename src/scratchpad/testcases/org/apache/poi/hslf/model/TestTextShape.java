@@ -47,7 +47,7 @@ public final class TestTextShape extends TestCase {
         assertNotNull(shape.getEscherTextboxWrapper());
         assertEquals("", shape.getText());
         assertSame(run, shape.createTextRun());
-
+        assertEquals(-1, run.getIndex());
     }
 
     public void testCreateTextBox(){
@@ -194,5 +194,25 @@ public final class TestTextShape extends TestCase {
         assertEquals(0.39, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+    }
+
+    public void test52599() throws IOException {
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("52599.ppt"));
+
+        Slide slide = ppt.getSlides()[0];
+        Shape[] sh = slide.getShapes();
+        assertEquals(3, sh.length);
+
+        TextShape sh0 = (TextShape)sh[0];
+        assertEquals(null, sh0.getText());
+        assertEquals(null, sh0.getTextRun());
+
+        TextShape sh1 = (TextShape)sh[1];
+        assertEquals(null, sh1.getText());
+        assertEquals(null, sh1.getTextRun());
+
+        TextShape sh2 = (TextShape)sh[2];
+        assertEquals("this box should be shown just once", sh2.getText());
+        assertEquals(-1, sh2.getTextRun().getIndex());
     }
 }
