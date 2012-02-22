@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">51731 - fixed painting shape outlines in HSLF</action>
            <action dev="poi-developers" type="fix">52701 - fixed seting vertical alignment for XSLFTableCell</action>
            <action dev="poi-developers" type="fix">52687 - fixed merging slides with pictures with associated custom tags</action>
            <action dev="poi-developers" type="add"> allow runtime registration of functions in FormulaEvaluator</action>

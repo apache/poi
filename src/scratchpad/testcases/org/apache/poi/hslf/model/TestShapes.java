@@ -366,4 +366,29 @@ public final class TestShapes extends TestCase {
         }
         assertEquals(numClusters + 1, dgg.getNumIdClusters());
     }
+
+    public void testLineColor() throws IOException {
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("51731.ppt"));
+        Shape[] shape = ppt.getSlides()[0].getShapes();
+
+        assertEquals(4, shape.length);
+
+        TextShape sh1 = (TextShape)shape[0];
+        assertEquals("Hello Apache POI", sh1.getText());
+        assertNull(sh1.getLineColor());
+
+        TextShape sh2 = (TextShape)shape[1];
+        assertEquals("Why are you showing this border?", sh2.getText());
+        assertNull(sh2.getLineColor());
+
+        TextShape sh3 = (TextShape)shape[2];
+        assertEquals("Text in a black border", sh3.getText());
+        assertEquals(Color.black, sh3.getLineColor());
+        assertEquals(0.75, sh3.getLineWidth());
+
+        TextShape sh4 = (TextShape)shape[3];
+        assertEquals("Border width is 5 pt", sh4.getText());
+        assertEquals(Color.black, sh4.getLineColor());
+        assertEquals(5.0, sh4.getLineWidth());
+    }
 }
