@@ -138,23 +138,11 @@ public abstract class SimpleShape extends Shape {
     public Color getLineColor(){
         EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
 
-        EscherSimpleProperty p1 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__COLOR);
-        EscherSimpleProperty p2 = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
-        int p2val = p2 == null ? 0 : p2.getPropertyValue();
-        Color clr = null;
-        if ((p2val  & 0x8) != 0 || (p2val  & 0x10) != 0){
-            int rgb = p1 == null ? 0 : p1.getPropertyValue();
-            if (rgb >= 0x8000000) {
-                int idx = rgb % 0x8000000;
-                if(getSheet() != null) {
-                    ColorSchemeAtom ca = getSheet().getColorScheme();
-                    if(idx >= 0 && idx <= 7) rgb = ca.getColor(idx);
-                }
-            }
-            Color tmp = new Color(rgb, true);
-            clr = new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
-        }
-        return clr;
+        EscherSimpleProperty p = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
+
+        Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY, -1);
+        return clr == null ? Color.black : clr;
     }
 
     /**
