@@ -91,6 +91,7 @@ public final class Slide extends Sheet
 		for(int k=0; k<_otherRuns.length; i++, k++) {
 			_runs[i] = _otherRuns[k];
             _runs[i].setSheet(this);
+            _runs[i].setIndex(-1); // runs found in PPDrawing are not linked with SlideListWithTexts
 		}
 	}
 
