@@ -419,7 +419,9 @@ public final class Slide extends Sheet
 
     public void draw(Graphics2D graphics){
         MasterSheet master = getMasterSheet();
-        if(getFollowMasterBackground()) master.getBackground().draw(graphics);
+        Background bg = getBackground();
+        if(bg != null)bg.draw(graphics);
+
         if(getFollowMasterObjects()){
             Shape[] sh = master.getShapes();
             for (int i = 0; i < sh.length; i++) {
@@ -428,6 +430,7 @@ public final class Slide extends Sheet
                 sh[i].draw(graphics);
             }
         }
+
         Shape[] sh = getShapes();
         for (int i = 0; i < sh.length; i++) {
             sh[i].draw(graphics);
