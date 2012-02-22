@@ -68,23 +68,27 @@ public class XSSFHyperlink implements Hyperlink {
             //  the relation to see how
             if (_externalRel == null) {
                 if (ctHyperlink.getId() != null) {
-                    throw new IllegalStateException("The hyperlink for cell " + ctHyperlink.getRef() + " references relation " + ctHyperlink.getId() + ", but that didn't exist!");
+                    throw new IllegalStateException("The hyperlink for cell " + ctHyperlink.getRef() +
+                            " references relation " + ctHyperlink.getId() + ", but that didn't exist!");
                 }
-                throw new IllegalStateException("A sheet hyperlink must either have a location, or a relationship. Found:\n" + ctHyperlink);
-            }
-
-            URI target = _externalRel.getTargetURI();
-            _location = target.toString();
-
-            // Try to figure out the type
-            if (_location.startsWith("http://") || _location.startsWith("https://")
-                    || _location.startsWith("ftp://")) {
-                _type = Hyperlink.LINK_URL;
-            } else if (_location.startsWith("mailto:")) {
-                _type = Hyperlink.LINK_EMAIL;
+                // hyperlink is internal and is not related to other parts
+                _type = Hyperlink.LINK_DOCUMENT;
             } else {
-                _type = Hyperlink.LINK_FILE;
+                URI target = _externalRel.getTargetURI();
+                _location = target.toString();
+
+                // Try to figure out the type
+                if (_location.startsWith("http://") || _location.startsWith("https://")
+                        || _location.startsWith("ftp://")) {
+                    _type = Hyperlink.LINK_URL;
+                } else if (_location.startsWith("mailto:")) {
+                    _type = Hyperlink.LINK_EMAIL;
+                } else {
+                    _type = Hyperlink.LINK_FILE;
+                }
             }
+
+
         }
     }
 
@@ -306,4 +310,18 @@ public class XSSFHyperlink implements Hyperlink {
     public void setLastRow(int row) {
         setFirstRow(row);
 	}
+
+    /**
+     * @return additional text to help the user understand more about the hyperlink
+     */
+    public String getTooltip() {
+        return _ctHyperlink.getTooltip();
+    }
+
+    /**
+     * @param text  additional text to help the user understand more about the hyperlink
+     */
+    public void setTooltip(String text) {
+        _ctHyperlink.setTooltip(text);
+    }
 }
