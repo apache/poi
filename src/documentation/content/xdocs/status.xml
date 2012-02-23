@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="fix">52745 - fixed XSSFRichtextString.append to preserve leading / trailing spaces </action>
            <action dev="poi-developers" type="fix">52716 - tolerate hyperlinks that have neither location nor relation </action>
            <action dev="poi-developers" type="fix">52599 - avoid duplicate text when rendering slides in HSLF</action>
            <action dev="poi-developers" type="fix">52598 - respect slide background when rendering slides in HSLF</action>

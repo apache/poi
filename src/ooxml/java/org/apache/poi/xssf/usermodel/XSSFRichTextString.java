@@ -194,11 +194,14 @@ public class XSSFRichTextString implements RichTextString {
     public void append(String text, XSSFFont font){
         if(st.sizeOfRArray() == 0 && st.isSetT()) {
             //convert <t>string</t> into a text run: <r><t>string</t></r>
-            st.addNewR().setT(st.getT());
+            CTRElt lt = st.addNewR();
+            lt.setT(st.getT());
+            preserveSpaces(lt.xgetT());
             st.unsetT();
         }
         CTRElt lt = st.addNewR();
         lt.setT(text);
+        preserveSpaces(lt.xgetT());
         CTRPrElt pr = lt.addNewRPr();
         if(font != null) setRunAttributes(font.getCTFont(), pr);
     }
@@ -392,7 +395,7 @@ public class XSSFRichTextString implements RichTextString {
         if(st.sizeOfRArray() > 0) {
             for (CTRElt r : st.getRArray()) {
                 CTRPrElt pr = r.getRPr();
-                if(pr != null){
+                if(pr != null && pr.sizeOfRFontArray() > 0){
                     String fontName = pr.getRFontArray(0).getVal();
                     if(fontName.startsWith("#")){
                         int idx = Integer.parseInt(fontName.substring(1));
