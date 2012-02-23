@@ -140,6 +140,12 @@ public final class TestXSSFRichTextString extends TestCase {
         rt.setString("  Apache");
         assertEquals("<xml-fragment xml:space=\"preserve\">  Apache</xml-fragment>", xs.xmlText());
 
+        rt.append(" POI");
+        rt.append(" ");
+        assertEquals("  Apache POI ", rt.getString());
+        assertEquals("<xml-fragment xml:space=\"preserve\">  Apache</xml-fragment>", rt.getCTRst().getRArray(0).xgetT().xmlText());
+        assertEquals("<xml-fragment xml:space=\"preserve\"> POI</xml-fragment>", rt.getCTRst().getRArray(1).xgetT().xmlText());
+        assertEquals("<xml-fragment xml:space=\"preserve\"> </xml-fragment>", rt.getCTRst().getRArray(2).xgetT().xmlText());
     }
 
     /**
