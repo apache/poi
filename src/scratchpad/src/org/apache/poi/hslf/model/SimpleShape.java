@@ -22,6 +22,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -246,27 +248,37 @@ public abstract class SimpleShape extends Shape {
         setEscherProperty(EscherProperties.TRANSFORM__ROTATION, (theta << 16));
     }
 
+    /**
+     *
+     * @return 'absolute' anchor of this shape relative to the parent sheet
+     */
     public Rectangle2D getLogicalAnchor2D(){
         Rectangle2D anchor = getAnchor2D();
 
         //if it is a groupped shape see if we need to transform the coordinates
         if (_parent != null){
+            List<Shape> lst = new ArrayList<Shape>();
+            lst.add(_parent);
             Shape top = _parent;
-            while(top.getParent() != null) top = top.getParent();
+            while(top.getParent() != null) {
+                top = top.getParent();
+                lst.add(top);
+            }
 
-            Rectangle2D clientAnchor = top.getAnchor2D();
-            Rectangle2D spgrAnchor = ((ShapeGroup)top).getCoordinates();
+            AffineTransform tx = new AffineTransform();
+            for(int i = lst.size() - 1; i >= 0; i--) {
+                ShapeGroup prnt = (ShapeGroup)lst.get(i);
+                Rectangle2D exterior = prnt.getAnchor2D();
+                Rectangle2D interior = prnt.getCoordinates();
 
-            double scalex = spgrAnchor.getWidth()/clientAnchor.getWidth();
-            double scaley = spgrAnchor.getHeight()/clientAnchor.getHeight();
+                double scaleX =  exterior.getWidth() / interior.getWidth();
+                double scaleY = exterior.getHeight() / interior.getHeight();
 
-            double x = clientAnchor.getX() + (anchor.getX() - spgrAnchor.getX())/scalex;
-            double y = clientAnchor.getY() + (anchor.getY() - spgrAnchor.getY())/scaley;
-            double width = anchor.getWidth()/scalex;
-            double height = anchor.getHeight()/scaley;
-
-            anchor = new Rectangle2D.Double(x, y, width, height);
-
+                tx.translate(exterior.getX(), exterior.getY());
+                tx.scale(scaleX, scaleY);
+                tx.translate(-interior.getX(), -interior.getY());
+            }
+            anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
 
         int angle = getRotation();
