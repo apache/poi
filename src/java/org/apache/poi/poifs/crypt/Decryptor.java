@@ -31,11 +31,39 @@ import org.apache.poi.util.LittleEndian;
 public abstract class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
 
+    /**
+     * Return a stream with decrypted data.
+     * <p>
+     * Use {@link #getLength()} to get the size of that data that can be safely read from the stream.
+     * Just reading to the end of the input stream is not sufficient because there are
+     * normally padding bytes that must be discarded
+     * </p>
+     *
+     * @param dir the node to read from
+     * @return decrypted stream
+     */
     public abstract InputStream getDataStream(DirectoryNode dir)
         throws IOException, GeneralSecurityException;
 
     public abstract boolean verifyPassword(String password)
         throws GeneralSecurityException;
+
+    /**
+     * Returns the length of the encytpted data that can be safely read with
+     * {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}.
+     * Just reading to the end of the input stream is not sufficient because there are
+     * normally padding bytes that must be discarded
+     *
+     * <p>
+     *    The length variable is initialized in {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)},
+     *    an attempt to call getLength() prior to getDataStream() will result in IllegalStateException.
+     * </p>
+     *
+     * @return length of the encrypted data
+     * @throws IllegalStateException if {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}
+     * was not called
+     */
+    public abstract long getLength();
 
     public static Decryptor getInstance(EncryptionInfo info) {
         int major = info.getVersionMajor();
@@ -82,7 +110,7 @@ public abstract class Decryptor {
 
         for (int i = 0; i < info.getVerifier().getSpinCount(); i++) {
             sha1.reset();
-            LittleEndian.putInt(iterator, i);
+            LittleEndian.putInt(iterator, 0, i);
             sha1.update(iterator);
             hash = sha1.digest(hash);
         }

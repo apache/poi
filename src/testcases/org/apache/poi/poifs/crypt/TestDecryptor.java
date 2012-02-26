@@ -20,7 +20,9 @@ import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -80,4 +82,36 @@ public class TestDecryptor extends TestCase {
             }
         }
     }
+    public void testDataLength() throws Exception {
+        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx"));
+
+        EncryptionInfo info = new EncryptionInfo(fs);
+
+        Decryptor d = Decryptor.getInstance(info);
+
+        d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
+
+        InputStream is = d.getDataStream(fs);
+
+        long len = d.getLength();
+        assertEquals(12810, len);
+
+        byte[] buf = new byte[(int)len];
+
+        is.read(buf);
+
+        ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(buf));
+
+        while (true) {
+            ZipEntry entry = zin.getNextEntry();
+            if (entry==null) {
+                break;
+            }
+
+            while (zin.available()>0) {
+                zin.skip(zin.available());
+            }
+        }
+    }
+
 }
