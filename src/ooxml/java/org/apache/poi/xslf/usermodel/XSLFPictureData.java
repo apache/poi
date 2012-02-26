@@ -72,12 +72,33 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
     public static final int PICTURE_TYPE_GIF = 8;
 
     /**
+     * Tag Image File (.tiff)
+     */
+    public static final int PICTURE_TYPE_TIFF = 9;
+
+    /**
+     * Encapsulated Postscript (.eps)
+     */
+    public static final int PICTURE_TYPE_EPS = 10;
+
+
+    /**
+     * Windows Bitmap (.bmp)
+     */
+    public static final int PICTURE_TYPE_BMP = 11;
+
+    /**
+     * WordPerfect graphics (.wpg)
+     */
+    public static final int PICTURE_TYPE_WPG = 12;
+
+    /**
      * Relationships for each known picture type
      */
     protected static final POIXMLRelation[] RELATIONS;
 
     static {
-        RELATIONS = new POIXMLRelation[9];
+        RELATIONS = new POIXMLRelation[13];
         RELATIONS[PICTURE_TYPE_EMF] = XSLFRelation.IMAGE_EMF;
         RELATIONS[PICTURE_TYPE_WMF] = XSLFRelation.IMAGE_WMF;
         RELATIONS[PICTURE_TYPE_PICT] = XSLFRelation.IMAGE_PICT;
@@ -85,6 +106,10 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
         RELATIONS[PICTURE_TYPE_PNG] = XSLFRelation.IMAGE_PNG;
         RELATIONS[PICTURE_TYPE_DIB] = XSLFRelation.IMAGE_DIB;
         RELATIONS[PICTURE_TYPE_GIF] = XSLFRelation.IMAGE_GIF;
+        RELATIONS[PICTURE_TYPE_TIFF] = XSLFRelation.IMAGE_TIFF;
+        RELATIONS[PICTURE_TYPE_EPS] = XSLFRelation.IMAGE_EPS;
+        RELATIONS[PICTURE_TYPE_BMP] = XSLFRelation.IMAGE_BMP;
+        RELATIONS[PICTURE_TYPE_WPG] = XSLFRelation.IMAGE_WPG;
     }
 
     private Long checksum = null;

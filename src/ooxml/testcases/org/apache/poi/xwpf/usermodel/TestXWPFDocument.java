@@ -139,6 +139,27 @@ public final class TestXWPFDocument extends TestCase {
             assertEquals(newJpeg[i],jpeg[i]);
         }
     }
+    public void testAllPictureFormats() throws IOException, InvalidFormatException {
+        XWPFDocument doc = new XWPFDocument();
+
+        doc.addPictureData(new byte[10], XWPFDocument.PICTURE_TYPE_EMF);
+        doc.addPictureData(new byte[11], XWPFDocument.PICTURE_TYPE_WMF);
+        doc.addPictureData(new byte[12], XWPFDocument.PICTURE_TYPE_PICT);
+        doc.addPictureData(new byte[13], XWPFDocument.PICTURE_TYPE_JPEG);
+        doc.addPictureData(new byte[14], XWPFDocument.PICTURE_TYPE_PNG);
+        doc.addPictureData(new byte[15], XWPFDocument.PICTURE_TYPE_DIB);
+        doc.addPictureData(new byte[16], XWPFDocument.PICTURE_TYPE_GIF);
+        doc.addPictureData(new byte[17], XWPFDocument.PICTURE_TYPE_TIFF);
+        doc.addPictureData(new byte[18], XWPFDocument.PICTURE_TYPE_EPS);
+        doc.addPictureData(new byte[19], XWPFDocument.PICTURE_TYPE_BMP);
+        doc.addPictureData(new byte[20], XWPFDocument.PICTURE_TYPE_WPG);
+
+        assertEquals(11, doc.getAllPictures().size());
+
+        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        assertEquals(11, doc.getAllPictures().size());
+
+    }
 
 	public void testRemoveBodyElement() throws IOException {
 	   XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");

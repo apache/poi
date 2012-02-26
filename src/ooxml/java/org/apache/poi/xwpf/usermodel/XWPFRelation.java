@@ -131,7 +131,10 @@ public final class XWPFRelation extends POIXMLRelation {
             null,
             null
     );
-    
+
+    /**
+     * Supported image formats
+     */
     public static final XWPFRelation IMAGE_EMF = new XWPFRelation(
           "image/x-emf",
           "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
@@ -174,6 +177,31 @@ public final class XWPFRelation extends POIXMLRelation {
 	      "/word/media/image#.gif",
 	      XWPFPictureData.class
 	);
+    public static final XWPFRelation IMAGE_TIFF = new XWPFRelation(
+            "image/tiff",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/word/media/image#.tiff",
+            XWPFPictureData.class
+    );
+    public static final XWPFRelation IMAGE_EPS = new XWPFRelation(
+            "image/x-eps",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/word/media/image#.eps",
+            XWPFPictureData.class
+    );
+    public static final XWPFRelation IMAGE_BMP = new XWPFRelation(
+            "image/x-ms-bmp",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/word/media/image#.bmp",
+            XWPFPictureData.class
+    );
+    public static final XWPFRelation IMAGE_WPG = new XWPFRelation(
+            "image/x-wpg",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/word/media/image#.wpg",
+            XWPFPictureData.class
+    );
+
 	public static final XWPFRelation IMAGES = new XWPFRelation(
 	      null,
 	      "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",

@@ -182,6 +182,30 @@ public class XSLFRelation extends POIXMLRelation {
 	      "/ppt/media/image#.gif",
 	      XSLFPictureData.class
 	);
+    public static final XSLFRelation IMAGE_TIFF = new XSLFRelation(
+            "image/tiff",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/ppt/media/image#.tiff",
+            XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_EPS = new XSLFRelation(
+            "image/x-eps",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/ppt/media/image#.eps",
+            XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_BMP = new XSLFRelation(
+            "image/x-ms-bmp",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/ppt/media/image#.bmp",
+            XSLFPictureData.class
+    );
+    public static final XSLFRelation IMAGE_WPG = new XSLFRelation(
+            "image/x-wpg",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/ppt/media/image#.wpg",
+            XSLFPictureData.class
+    );
 
     public static final XSLFRelation IMAGES = new XSLFRelation(
             null,

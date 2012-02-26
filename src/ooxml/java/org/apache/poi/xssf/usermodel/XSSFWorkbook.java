@@ -82,6 +82,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private static final int MAX_SENSITIVE_SHEET_NAME_LEN = 31;
 
     /**
+     * Images formats supported by XSSF but not by HSSF
+     */
+    public static final int PICTURE_TYPE_GIF = 8;
+    public static final int PICTURE_TYPE_TIFF = 9;
+    public static final int PICTURE_TYPE_EPS = 10;
+    public static final int PICTURE_TYPE_BMP = 11;
+    public static final int PICTURE_TYPE_WPG = 12;
+
+    /**
      * The underlying XML bean
      */
     private CTWorkbook workbook;
