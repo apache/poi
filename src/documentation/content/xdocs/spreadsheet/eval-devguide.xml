@@ -24,21 +24,29 @@
         <title>Developing Formula Evaluation</title>
         <authors>
 			<person email="amoweb@yahoo.com" name="Amol Deshmukh" id="AD"/>
+            <person email="yegor@apache.org" name="Yegor Kozlov" id="YK"/>
         </authors>
     </header>
     <body>
 	<section><title>Introduction</title>
 		<p>This document is for developers wishing to contribute to the 
 			FormulaEvaluator API functionality.</p>
-		<p>Currently, contribution is desired for implementing the standard MS 
+        <p>When evaluating workbooks you may encounter a org.apache.poi.ss.formula.eval.NotImplementedException
+            which indicates that a function is not (yet) supported by POI. Is there a workaround?
+            Yes, the POI framework  makes it easy to add implementation of new functions. Prior to POI-3.8
+            you had to checkout the source code from svn and make a custom build with your function implementation.
+            Since POI-3.8 you can register new functions in run-time.
+        </p>
+		<p>Currently, contribution is desired for implementing the standard MS
 			excel functions. Place holder classes for these have been created, 
 			contributors only need to insert implementation for the 
 			individual "evaluate()" methods that do the actual evaluation.</p>
 	</section>
+
 	<section><title>Overview of FormulaEvaluator </title>
 		<p>Briefly, a formula string (along with the sheet and workbook that 
 			form the context in which the formula is evaluated) is first parsed 
-			into RPN tokens using the FormulaParser class in POI-HSSF main. 
+			into RPN tokens using the FormulaParser class .
 			(If you dont know what RPN tokens are, now is a good time to 
 			read <link href="http://www-stone.ch.cam.ac.uk/documentation/rrf/rpn.html">
 			this</link>.)
@@ -65,7 +73,7 @@
 				eventually there are no more RPN tokens at which point, if the formula 
 				string was correctly parsed, there should be just one Eval on the 
 				stack - which contains the result of evaluating the formula.</p>
-			<p>Ofcourse I glossed over the details of how AreaPtg and ReferencePtg 
+			<p>Of course I glossed over the details of how AreaPtg and ReferencePtg
 				are handled a little differently, but the code should be self 
 				explanatory for that. Very briefly, the cells included in AreaPtg and 
 				RefPtg are examined and their values are populated in individual 
@@ -74,131 +82,276 @@
 				AreaEval and RefEval - but you'll figure all that out from the code)</p>
 			<p>OperationEvals for the standard operators have been implemented and tested.</p>
 		</section>
-		<section><title> FunctionEval and FuncVarEval</title>
-			<p>FunctionEval is an abstract super class of FuncVarEval. The reason for this is that in the FormulaParser Ptg classes, there are two Ptgs, FuncPtg and FuncVarPtg. In my tests, I did not see FuncPtg being used so there is no corresponding FuncEval right now. But in case the need arises for a FuncVal class, FuncEval and FuncVarEval need to be isolated with a common interface/abstract class, hence FunctionEval.</p>
-			<p>FunctionEval also contains the mapping of which function class maps to which function index. This mapping has been done for all the functions, so all you really have to do is implement the evaluate method in the function class that has not already been implemented. The Function indexes are defined in AbstractFunctionPtg class in POI main.</p>
-		</section>
 	</section>
-	<section><title>Walkthrough of an "evaluate()" implementation.</title>
-		<p>So here is the fun part - lets walk through the implementation of the excel 
-			function... <strong>SQRT()</strong> </p>
-		<section><title>The Code</title>
-		<source>
-public class Sqrt extends NumericFunction {
-    
-    private static final ValueEvalToNumericXlator NUM_XLATOR = 
-        new ValueEvalToNumericXlator((short)
-                ( ValueEvalToNumericXlator.BOOL_IS_PARSED 
-                | ValueEvalToNumericXlator.EVALUATED_REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.EVALUATED_REF_STRING_IS_PARSED
-                | ValueEvalToNumericXlator.REF_BOOL_IS_PARSED
-                | ValueEvalToNumericXlator.STRING_IS_PARSED
-                ));
 
-    protected ValueEvalToNumericXlator getXlator() {
-        return NUM_XLATOR;
+        <section><title>What functions are supported?</title>
+            <p>
+                As of Feb 2012, POI supports about 140 built-in functions,
+                see <link href="#appendixA">Appendix A</link> for the full list.
+                You can programmatically list supported / unsuported functions using trhe following helper methods:
+            </p>
+            <source>
+    // list of functions that POI can evaluate
+    Collection&lt;String&gt; suportedFuncs = WorkbookEvaluator.getSupportedFunctionNames();
+
+    // list of functions that are not supported by POI
+    Collection&lt;String&gt; unsupportedFuncs = WorkbookEvaluator.getNotSupportedFunctionNames();
+
+            </source>
+        </section>
+
+        <section><title>Two base interfaces to start your implementation</title>
+            <p>
+                All Excel formula function classes implement either
+                org.apache.poi.hssf.record.formula.functions.Function or
+                org.apache.poi.hssf.record.formula.functions.FreeRefFunction interface.
+
+                Function is a commonn interface for the functions defined in the binary Excel format (BIFF8): these are "classic" Excel functions like SUM, COUNT, LOOKUP, etc.
+                FreeRefFunction is a common interface for the functions from the Excel Analysis Toolpack and for User-Defined Functions.
+                In the future these two interfaces are expected be unified into one, but for now you have to start your implementation from two slightly different roots.
+
+            </p>
+        </section>
+
+        <section><title>Which interface to start from?</title>
+            <p>
+                You are about to implement a function XXX and don't know which interface to start from: Function or FreeRefFunction.
+                Use the following code to check whether your function is from the excel Analysis Toolpack:
+            </p>
+            <source>
+    if(AnalysisToolPack.isATPFunction(functionName)){
+        // the function implements org.apache.poi.hssf.record.formula.functions.Function
+    } else {
+        // the function implements org.apache.poi.hssf.record.formula.functions.FreeRefFunction
     }
+            </source>
+        </section>
 
-    public Eval evaluate(Eval[] operands, int srcRow, short srcCol) {
-        double d = 0;
-        ValueEval retval = null;
-        
-        switch (operands.length) {
-        default:
-            retval = ErrorEval.VALUE_INVALID;
-            break;
-        case 1:
-            ValueEval ve = singleOperandEvaluate(operands[0], srcRow, srcCol);
-            if (ve instanceof NumericValueEval) {
-                NumericValueEval ne = (NumericValueEval) ve;
-                d = ne.getNumberValue();
-            }
-            else if (ve instanceof BlankEval) {
-                // do nothing
-            }
-            else {
-                retval = ErrorEval.NUM_ERROR;
+
+        <section><title>Walkthrough of an "evaluate()" implementation.</title>
+            <p>Here is the fun part: lets walk through the implementation of the excel function  <strong>SQRT()</strong>
+            </p>
+            <p>
+                AnalysisToolPack.isATPFunction("SQRTPI") returns false so the base interface is Function.
+
+                There are sub-interfaces that make life easier when implementing numeric functions or functions
+                with fixed number of arguments, 1-arg, 2-arg and 3-arg function:
+            </p>
+            <ul>
+                <li>org.apache.poi.hssf.record.formula.functions.NumericFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed3ArgFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed4ArgFunction</li>
+            </ul>
+            <p>
+                Since SQRTPI takes exactly one argument we start our implementation from org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction:
+            </p>
+
+            <source>
+    Function SQRTPI = new Fixed1ArgFunction() {
+        public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+            try {
+                // Retrieves a single value from a variety of different argument types according to standard
+                // Excel rules.  Does not perform any type conversion.
+                ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+
+                // Applies some conversion rules if the supplied value is not already a number.
+                // Throws EvaluationException(#VALUE!) if the supplied parameter is not a number
+                double arg = OperandResolver.coerceValueToDouble(ve);
+
+                // this where all the heavy-lifting happens
+                double result = Math.sqrt(arg*Math.PI);
+
+                // Excel uses the error code #NUM! instead of IEEE <em>NaN</em> and <em>Infinity</em>,
+                // so when a numeric function evaluates to Double.NaN or Double.Infinity,
+                // be sure to translate the result to the appropriate error code
+                if (Double.isNaN(result) || Double.isInfinite(result)) {
+                    throw new EvaluationException(ErrorEval.NUM_ERROR);
+                }
+
+                return new NumberEval(result);
+            } catch (EvaluationException e){
+                return e.getErrorEval();
             }
         }
-        
-        if (retval == null) {
-            d = Math.sqrt(d);
-            retval = (Double.isNaN(d)) ? (ValueEval) ErrorEval.VALUE_INVALID : new NumberEval(d);
-        }
-        return retval;
     }
+            </source>
 
-}
-	</source>
-		</section>
-		<section><title>Implementation Details</title>
-		<ul>
-			<li>The first thing to realise is that classes already exist, even for functions that are not yet implemented.
-			Just that they extend from DefaultFunctionImpl whose behaviour is to return an ErrorEval.FUNCTION_NOT_IMPLEMENTED value.</li>
-			<li>In order to implement SQRT(..), we need to: a. Extend from the correct Abstract super class; b. implement the evaluate(..) method</li>
-			<li>Hence we extend SQRT(..) from the predefined class NumericFunction</li>
-			<li>Since SQRT(..) takes a single argument, we verify the length of the operands array else set the return value to ErrorEval.VALUE_INVALID</li>
-			<li>Next we normalize each operand to a limited set of ValueEval subtypes, specifically, we call the function 
-			<code>singleOperandEvaluate(..)</code> to do conversions of different value eval types to one of: NumericValueEval,
-			BlankEval and ErrorEval. The conversion logic is configured by a ValueEvalToNumericXlator instance which
-			is returned by the Factory method: <code>getXlator(..)</code> The flags used to create the ValueEvalToNumericXlator
-			instance are briefly explained as follows:
-			BOOL_IS_PARSED means whether this function treats Boolean values as 1, 
-			REF_BOOL_IS_PARSED means whether Boolean values in cell references are parsed or not.
-			So also, EVALUATED_REF_BOOL_IS_PARSED means if the operand was a RefEval that was assigned a
-			Boolean value as a result of evaluation of the formula that it contained.
-			eg. SQRT(TRUE) returns 1: This means BOOL_IS_PARSED should be set.
-			SQRT(A1) returns 1 when A1 has TRUE: This means REF_BOOL_IS_PARSED should be set.
-			SQRT(A1) returns 1 when A1 has a formula that evaluates to TRUE: This means EVALUATED_REF_BOOL_IS_PARSED should be set.
-			If the flag is not set for a particular case, that case is ignored (treated as if the cell is blank) _unless_
-			there is a flag like: STRING_IS_INVALID_VALUE (which means that Strings should be treated as resulting in VALUE_INVALID ErrorEval)
-			</li>
-			<li>Next perform the appropriate Math function on the double value (if an error didnt occur already).</li>
-			<li>Finally before returning the NumberEval wrapping the double value that 
-				you computed, do one final check to see if the double is a NaN, (or if it is "Infinite")
-				If it is return the appropriate ErrorEval instance. Note: The OpenOffice.org error codes
-				should NOT be preferred. Instead use the excel specific error codes like VALUE_INVALID, NUM_ERROR, DIV_ZERO etc. 
-				(Thanks to Avik for bringing this issue up early!) The Oo.o ErrorCodes will be removed (if they havent already been :)</li>
-		</ul>
-		</section>
-		<section><title>Modelling Excel Semantics</title>
-			<p>Strings are ignored. Booleans are ignored!!!. Actually here's the info on Bools: 
-				if you have formula: "=TRUE+1", it evaluates to 2. 
-				So also, when you use TRUE like this: "=SUM(1,TRUE)", you see the result is: 2. 
-				So TRUE means 1 when doing numeric calculations, right? 
-				Wrong!
-				Because when you use TRUE in referenced cells with arithmetic functions, it evaluates to blank - meaning it is not evaluated - as if it was string or a blank cell. 
-				eg. "=SUM(1,A1)" when A1 is TRUE evaluates to 1.
-				This behaviour changes depending on which function you are using. eg. SQRT(..) that was 
-				described earlier treats a TRUE as 1 in all cases. This is why the configurable ValueEvalToNumericXlator
-				class had to be written.
-				</p>
-			<p>Note that when you are extending from an abstract function class like
-			NumericFunction (rather than implementing the interface o.a.p.hssf.record.formula.eval.Function directly)
-			you can use the utility methods in the super class - singleOperandEvaluate(..) - to quickly
-			reduce the different ValueEval subtypes to a small set of possible types. However when
-			implemenitng the Function interface directly, you will have to handle the possiblity
-			of all different ValueEval subtypes being sent in as 'operands'. (Hard to put this in
-			word, please have a look at the code for NumericFunction for an example of
-			how/why different ValueEvals need to be handled)
-			</p>
-		</section>
-	</section>
-	<section><title>Testing Framework</title>
-	<p>Automated testing of the implemented Function is easy.
-	The source code for this is in the file: o.a.p.h.record.formula.GenericFormulaTestCase.java
-	This class has a reference to the test xls file (not /a/ test xls, /the/ test xls :)
-	which may need to be changed for your environment. Once you do that, in the test xls,
-	locate the entry for the function that you have implemented and enter different tests 
-	in a cell in the FORMULA row. Then copy the "value of" the formula that you entered in the
-	cell just below it (this is easily done in excel as: 
-	[copy the formula cell] > [go to cell below] > Edit > Paste Special > Values > "ok").
-	You can enter multiple such formulas and paste their values in the cell below and the
-	test framework will automatically test if the formula evaluation matches the expected
-	value (Again, hard to put in words, so if you will, please take time to quickly look
-	at the code and the currently entered tests in the patch attachment "FormulaEvalTestData.xls" 
-	file).
-	</p>	
-	</section>
+            <p>Now when the implementation is ready we need to register it in the formula evaluator:</p>
+            <source>
+    WorkbookEvaluator.registerFunction("SQRTPI", SQRTPI);
+            </source>
+
+            <p>Voila! The formula evaluator now recognizes SQRTPI! </p>
+
+        </section>
+
+        <section><title>Floating-point Arithmetic in Excel</title>
+            <p>Excel uses the IEEE Standard for Double Precision Floating Point numbers
+                except two cases where it does not adhere to IEEE 754:
+            </p>
+            <ol>
+                <li>Positive/Negative Infinities: Infinities occur when you divide by 0.
+                    Excel does not support infinities, rather, it gives a #DIV/0! error in these cases.
+                </li>
+                <li>Not-a-Number (NaN): NaN is used to represent invalid operations
+                    (such as infinity/infinity, infinity-infinity, or the square root of -1).
+                    NaNs allow a program to continue past an invalid operation.
+                    Excel instead immediately generates an error such as #NUM! or #DIV/0!.
+                </li>
+            </ol>
+            <p>Be aware of these two cases when saving results of your scientific calculations in Excel:
+                “where are my Infinities and NaNs? They are gone!”
+            </p>
+        </section>
+
+        <anchor id="appendixA"/>
+        <section>
+           <title>Appendix A</title>
+            <p>Functions supported by POI ( as of Feb 2012)</p>
+            <source>
+    ABS
+    ACOS
+    ACOSH
+    ADDRESS
+    AND
+    ASIN
+    ASINH
+    ATAN
+    ATAN2
+    ATANH
+    AVEDEV
+    AVERAGE
+    CEILING
+    CHAR
+    CHOOSE
+    CLEAN
+    COLUMN
+    COLUMNS
+    COMBIN
+    CONCATENATE
+    COS
+    COSH
+    COUNT
+    COUNTA
+    COUNTBLANK
+    COUNTIF
+    DATE
+    DAY
+    DAYS360
+    DEGREES
+    DEVSQ
+    DOLLAR
+    ERROR.TYPE
+    EVEN
+    EXACT
+    EXP
+    FACT
+    FALSE
+    FIND
+    FLOOR
+    FV
+    HLOOKUP
+    HOUR
+    HYPERLINK
+    IF
+    INDEX
+    INDIRECT
+    INT
+    IRR
+    ISBLANK
+    ISERROR
+    ISEVEN
+    ISLOGICAL
+    ISNA
+    ISNONTEXT
+    ISNUMBER
+    ISODD
+    ISREF
+    ISTEXT
+    LARGE
+    LEFT
+    LEN
+    LN
+    LOG
+    LOG10
+    LOOKUP
+    LOWER
+    MATCH
+    MAX
+    MAXA
+    MEDIAN
+    MID
+    MIN
+    MINA
+    MINUTE
+    MOD
+    MODE
+    MONTH
+    MROUND
+    NA
+    NETWORKDAYS
+    NOT
+    NOW
+    NPER
+    NPV
+    ODD
+    OFFSET
+    OR
+    PI
+    PMT
+    POISSON
+    POWER
+    PRODUCT
+    PV
+    RADIANS
+    RAND
+    RANDBETWEEN
+    RATE
+    REPLACE
+    RIGHT
+    ROUND
+    ROUNDDOWN
+    ROUNDUP
+    ROW
+    ROWS
+    SEARCH
+    SECOND
+    SIGN
+    SIN
+    SINH
+    SMALL
+    SQRT
+    STDEV
+    SUBSTITUTE
+    SUBTOTAL
+    SUM
+    SUMIF
+    SUMIFS
+    SUMPRODUCT
+    SUMSQ
+    SUMX2MY2
+    SUMX2PY2
+    SUMXMY2
+    T
+    TAN
+    TANH
+    TEXT
+    TIME
+    TODAY
+    TRIM
+    TRUE
+    TRUNC
+    UPPER
+    VALUE
+    VAR
+    VARP
+    VLOOKUP
+    WORKDAY
+    YEAR
+    YEARFRAC
+            </source>
+        </section>
 	</body>
 </document>

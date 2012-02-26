@@ -17,10 +17,11 @@
 
 package org.apache.poi.ss.formula;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
+import org.apache.poi.ss.formula.atp.AnalysisToolPak;
+import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -48,16 +49,6 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.UnknownPtg;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.NameEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Choose;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.IfFunc;
@@ -65,7 +56,6 @@ import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -684,5 +674,53 @@ public final class WorkbookEvaluator {
      */
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _ignoreMissingWorkbooks = ignore;
+    }
+
+    /**
+     * Return a collection of functions that POI can evaluate
+     *
+     * @return names of functions supported by POI
+     */
+    public static Collection<String> getSupportedFunctionNames(){
+        Collection<String> lst = new TreeSet<String>();
+        lst.addAll(FunctionEval.getSupportedFunctionNames());
+        lst.addAll(AnalysisToolPak.getSupportedFunctionNames());
+        return lst;
+    }
+
+    /**
+     * Return a collection of functions that POI does not support
+     *
+     * @return names of functions NOT supported by POI
+     */
+    public static Collection<String> getNotSupportedFunctionNames(){
+        Collection<String> lst = new TreeSet<String>();
+        lst.addAll(FunctionEval.getNotSupportedFunctionNames());
+        lst.addAll(AnalysisToolPak.getNotSupportedFunctionNames());
+        return lst;
+    }
+
+    /**
+     * Register a ATP function in runtime.
+     *
+     * @param name  the function name
+     * @param func  the functoin to register
+     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @since 3.8 beta6
+     */
+    public static void registerFunction(String name, FreeRefFunction func){
+        AnalysisToolPak.registerFunction(name, func);
+    }
+
+    /**
+     * Register a function in runtime.
+     *
+     * @param name  the function name
+     * @param func  the functoin to register
+     * @throws IllegalArgumentException if the function is unknown or already  registered.
+     * @since 3.8 beta6
+     */
+    public static void registerFunction(String name, Function func){
+        FunctionEval.registerFunction(name, func);
     }
 }

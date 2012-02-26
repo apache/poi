@@ -22,7 +22,9 @@ import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.*;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -288,20 +290,40 @@ public final class FunctionEval {
     }
 
     /**
-     * Returns an array of function names implemented by POI.
+     * Returns a collection of function names implemented by POI.
      *
      * @return an array of supported functions
      * @since 3.8 beta6
      */
-    public static String[] getSupportedFunctionNames(){
-        ArrayList<String>  lst = new ArrayList<String>();
+    public static Collection<String> getSupportedFunctionNames(){
+        Collection<String> lst = new TreeSet<String>();
         for(int i = 0; i < functions.length; i++){
             Function func = functions[i];
+            FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByIndex(i);
             if(func != null && !(func instanceof NotImplementedFunction)){
+                lst.add(metaData.getName());
+            }
+        }
+        lst.add("INDIRECT"); // INDIRECT is a special case
+        return Collections.unmodifiableCollection(lst);
+    }
+
+    /**
+     * Returns an array of function names NOT implemented by POI.
+     *
+     * @return an array of not supported functions
+     * @since 3.8 beta6
+     */
+    public static Collection<String> getNotSupportedFunctionNames(){
+        Collection<String> lst = new TreeSet<String>();
+        for(int i = 0; i < functions.length; i++){
+            Function func = functions[i];
+            if(func != null && (func instanceof NotImplementedFunction)){
                 FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByIndex(i);
                 lst.add(metaData.getName());
             }
         }
-        return lst.toArray(new String[lst.size()]);
+        lst.remove("INDIRECT"); // INDIRECT is a special case
+        return Collections.unmodifiableCollection(lst);
     }
 }

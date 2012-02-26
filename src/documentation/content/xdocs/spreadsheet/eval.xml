@@ -41,7 +41,7 @@
 		<anchor id="Status"/>
 		<section><title>Status</title>
 			<p>	The code currently provides implementations for all the arithmatic operators.
-				It also provides implementations for approx. 100 built in 
+				It also provides implementations for approx. 140 built in
 				functions in Excel. The framework however makes is easy to add 
 			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
         evaluation development guide</link>  and <link href="../apidocs/org/apache/poi/hssf/record/formula/functions/package-summary.html">javadocs</link> 
