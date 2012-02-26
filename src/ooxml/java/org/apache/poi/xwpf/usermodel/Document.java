@@ -37,5 +37,25 @@ public interface Document {
 
     /** GIF image format */
     public static final int PICTURE_TYPE_GIF = 8;
-	
+
+    /**
+     * Tag Image File (.tiff)
+     */
+    public static final int PICTURE_TYPE_TIFF = 9;
+
+    /**
+     * Encapsulated Postscript (.eps)
+     */
+    public static final int PICTURE_TYPE_EPS = 10;
+
+
+    /**
+     * Windows Bitmap (.bmp)
+     */
+    public static final int PICTURE_TYPE_BMP = 11;
+
+    /**
+     * WordPerfect graphics (.wpg)
+     */
+    public static final int PICTURE_TYPE_WPG = 12;
 }

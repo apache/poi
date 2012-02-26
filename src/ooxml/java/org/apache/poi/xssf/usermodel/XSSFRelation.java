@@ -191,6 +191,38 @@ public final class XSSFRelation extends POIXMLRelation {
     		XSSFPictureData.class
     );
 
+    public static final XSSFRelation IMAGE_GIF = new XSSFRelation(
+            "image/gif",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/xl/media/image#.gif",
+            XSSFPictureData.class
+    );
+
+    public static final XSSFRelation IMAGE_TIFF = new XSSFRelation(
+            "image/tiff",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/xl/media/image#.tiff",
+            XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_EPS = new XSSFRelation(
+            "image/x-eps",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/xl/media/image#.eps",
+            XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_BMP = new XSSFRelation(
+            "image/x-ms-bmp",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/xl/media/image#.bmp",
+            XSSFPictureData.class
+    );
+    public static final XSSFRelation IMAGE_WPG = new XSSFRelation(
+            "image/x-wpg",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/xl/media/image#.wpg",
+            XSSFPictureData.class
+    );
+
   public static final XSSFRelation SHEET_COMMENTS = new XSSFRelation(
 		    "application/vnd.openxmlformats-officedocument.spreadsheetml.comments+xml",
 		    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/comments",

@@ -44,7 +44,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      */
     protected static final POIXMLRelation[] RELATIONS;
     static {
-        RELATIONS = new POIXMLRelation[9];
+        RELATIONS = new POIXMLRelation[13];
         RELATIONS[Document.PICTURE_TYPE_EMF] = XWPFRelation.IMAGE_EMF;
         RELATIONS[Document.PICTURE_TYPE_WMF] = XWPFRelation.IMAGE_WMF;
         RELATIONS[Document.PICTURE_TYPE_PICT] = XWPFRelation.IMAGE_PICT;
@@ -52,6 +52,10 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         RELATIONS[Document.PICTURE_TYPE_PNG] = XWPFRelation.IMAGE_PNG;
         RELATIONS[Document.PICTURE_TYPE_DIB] = XWPFRelation.IMAGE_DIB;
         RELATIONS[Document.PICTURE_TYPE_GIF] = XWPFRelation.IMAGE_GIF;
+        RELATIONS[Document.PICTURE_TYPE_TIFF] = XWPFRelation.IMAGE_TIFF;
+        RELATIONS[Document.PICTURE_TYPE_EPS] = XWPFRelation.IMAGE_EPS;
+        RELATIONS[Document.PICTURE_TYPE_BMP] = XWPFRelation.IMAGE_BMP;
+        RELATIONS[Document.PICTURE_TYPE_WPG] = XWPFRelation.IMAGE_WPG;
     }
 
     private Long checksum = null;
