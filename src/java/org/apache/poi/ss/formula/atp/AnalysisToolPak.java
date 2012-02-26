@@ -10,10 +10,8 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
@@ -22,8 +20,8 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.NotImplementedFunction;
 import org.apache.poi.ss.formula.functions.Sumifs;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
+
+import java.util.*;
 
 /**
  * @author Josh Micich
@@ -187,21 +185,39 @@ public final class AnalysisToolPak implements UDFFinder {
     }
 
     /**
-     * Returns an array of function names implemented by POI.
+     * Returns a collection of ATP function names implemented by POI.
      *
      * @return an array of supported functions
      * @since 3.8 beta6
      */
-    public static String[] getSupportedFunctionNames(){
+    public static Collection<String> getSupportedFunctionNames(){
         AnalysisToolPak inst = (AnalysisToolPak)instance;
-        ArrayList<String> lst = new ArrayList<String>();
+        Collection<String> lst = new TreeSet<String>();
         for(String name : inst._functionsByName.keySet()){
             FreeRefFunction func = inst._functionsByName.get(name);
             if(func != null && !(func instanceof NotImplemented)){
                 lst.add(name);
             }
         }
-        return lst.toArray(new String[lst.size()]);
+        return Collections.unmodifiableCollection(lst);
+    }
+
+    /**
+     * Returns a collection of ATP function names NOT implemented by POI.
+     *
+     * @return an array of not supported functions
+     * @since 3.8 beta6
+     */
+    public static Collection<String> getNotSupportedFunctionNames(){
+        AnalysisToolPak inst = (AnalysisToolPak)instance;
+        Collection<String> lst = new TreeSet<String>();
+        for(String name : inst._functionsByName.keySet()){
+            FreeRefFunction func = inst._functionsByName.get(name);
+            if(func != null && (func instanceof NotImplemented)){
+                lst.add(name);
+            }
+        }
+        return Collections.unmodifiableCollection(lst);
     }
 
     /**
