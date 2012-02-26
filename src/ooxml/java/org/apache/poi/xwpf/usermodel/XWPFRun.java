@@ -655,9 +655,10 @@ public class XWPFRun {
      *  
      * @param pictureData The raw picture data
      * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
-     * @throws IOException 
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException 
-     * @throws IOException 
+     * @param image width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param image height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
+     * @throws IOException
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
     throws InvalidFormatException, IOException {
@@ -676,7 +677,7 @@ public class XWPFRun {
             // (We need full control of what goes where and as what)
             String xml = 
                 "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
-                "<a:graphicData uri=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+                "<a:graphicData uri=\"" + CTPicture.type.getName().getNamespaceURI() + "\">" +
                 "<pic:pic xmlns:pic=\"" + CTPicture.type.getName().getNamespaceURI() + "\" />" +
                 "</a:graphicData>" +
                 "</a:graphic>";
