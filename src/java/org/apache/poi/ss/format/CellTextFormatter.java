@@ -61,6 +61,9 @@ public class CellTextFormatter extends CellFormatter {
     public void formatValue(StringBuffer toAppendTo, Object obj) {
         int start = toAppendTo.length();
         String text = obj.toString();
+        if (obj instanceof Boolean) {
+            text = text.toUpperCase();
+        }
         toAppendTo.append(desc);
         for (int i = 0; i < textPos.length; i++) {
             int pos = start + textPos[i];

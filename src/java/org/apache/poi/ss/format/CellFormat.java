@@ -18,10 +18,12 @@
 package org.apache.poi.ss.format;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.DataFormatter;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -75,6 +77,7 @@ public class CellFormat {
     private final CellFormatPart zeroNumFmt;
     private final CellFormatPart negNumFmt;
     private final CellFormatPart textFmt;
+    private final int formatPartCount;
 
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",
@@ -83,6 +86,20 @@ public class CellFormat {
     private static final CellFormatPart DEFAULT_TEXT_FORMAT =
             new CellFormatPart("@");
 
+    /*
+     * Cells that cannot be formatted, e.g. cells that have a date or time
+     * format and have an invalid date or time value, are displayed as 255
+     * pound signs ("#").
+     */
+    private static final String INVALID_VALUE_FOR_FORMAT =
+            "###################################################" +
+            "###################################################" +
+            "###################################################" +
+            "###################################################" +
+            "###################################################";
+
+    private static String QUOTE = "\"";
+
     /**
      * Format a value as it would be were no format specified.  This is also
      * used when the format specified is <tt>General</tt>.
@@ -90,14 +107,7 @@ public class CellFormat {
     public static final CellFormat GENERAL_FORMAT = new CellFormat("General") {
         @Override
         public CellFormatResult apply(Object value) {
-            String text;
-            if (value == null) {
-                text = "";
-            } else if (value instanceof Number) {
-                text = CellNumberFormatter.SIMPLE_NUMBER.format(value);
-            } else {
-                text = value.toString();
-            }
+            String text = (new CellGeneralFormatter()).format(value);
             return new CellFormatResult(true, text, null);
         }
     };
@@ -117,7 +127,7 @@ public class CellFormat {
     public static CellFormat getInstance(String format) {
         CellFormat fmt = formatCache.get(format);
         if (fmt == null) {
-            if (format.equals("General"))
+            if (format.equals("General") || format.equals("@"))
                 fmt = GENERAL_FORMAT;
             else
                 fmt = new CellFormat(format);
@@ -151,28 +161,33 @@ public class CellFormat {
                 parts.add(null);
             }
         }
-
-        switch (parts.size()) {
+        
+        formatPartCount = parts.size();
+        
+        switch (formatPartCount) {
         case 1:
-            posNumFmt = zeroNumFmt = negNumFmt = parts.get(0);
+            posNumFmt = parts.get(0);
+            negNumFmt = null;
+            zeroNumFmt = null;
             textFmt = DEFAULT_TEXT_FORMAT;
             break;
         case 2:
-            posNumFmt = zeroNumFmt = parts.get(0);
+            posNumFmt = parts.get(0);
             negNumFmt = parts.get(1);
+            zeroNumFmt = null;
             textFmt = DEFAULT_TEXT_FORMAT;
             break;
         case 3:
             posNumFmt = parts.get(0);
-            zeroNumFmt = parts.get(1);
-            negNumFmt = parts.get(2);
+            negNumFmt = parts.get(1);
+            zeroNumFmt = parts.get(2);
             textFmt = DEFAULT_TEXT_FORMAT;
             break;
         case 4:
         default:
             posNumFmt = parts.get(0);
-            zeroNumFmt = parts.get(1);
-            negNumFmt = parts.get(2);
+            negNumFmt = parts.get(1);
+            zeroNumFmt = parts.get(2);
             textFmt = parts.get(3);
             break;
         }
@@ -191,15 +206,42 @@ public class CellFormat {
         if (value instanceof Number) {
             Number num = (Number) value;
             double val = num.doubleValue();
-            if (val > 0)
-                return posNumFmt.apply(value);
-            else if (val < 0)
+            if (val < 0 &&
+                    ((formatPartCount == 2
+                            && !posNumFmt.hasCondition() && !negNumFmt.hasCondition())
+                    || (formatPartCount == 3 && !negNumFmt.hasCondition())
+                    || (formatPartCount == 4 && !negNumFmt.hasCondition()))) {
+                // The negative number format has the negative formatting required,
+                // e.g. minus sign or brackets, so pass a positive value so that
+                // the default leading minus sign is not also output
                 return negNumFmt.apply(-val);
-            else
-                return zeroNumFmt.apply(value);
+            } else {
+                return getApplicableFormatPart(val).apply(val);
+            }
+        } else if (value instanceof java.util.Date) {
+            // Don't know (and can't get) the workbook date windowing (1900 or 1904)
+            // so assume 1900 date windowing
+            Double numericValue = DateUtil.getExcelDate((Date) value);
+            if (DateUtil.isValidExcelDate(numericValue)) {
+                return getApplicableFormatPart(numericValue).apply(value);
+            } else {
+                throw new IllegalArgumentException("value not a valid Excel date");
+            }
         } else {
             return textFmt.apply(value);
         }
+    }
+
+    /**
+     * Returns the result of applying the format to the given date.
+     *
+     * @param date         The date.
+     * @param numericValue The numeric value for the date.
+     *
+     * @return The result, in a {@link CellFormatResult}.
+     */
+    private CellFormatResult apply(Date date, double numericValue) {
+        return getApplicableFormatPart(numericValue).apply(date);
     }
 
     /**
@@ -216,9 +258,18 @@ public class CellFormat {
         case Cell.CELL_TYPE_BLANK:
             return apply("");
         case Cell.CELL_TYPE_BOOLEAN:
-            return apply(Boolean.toString(c.getBooleanCellValue()));
+            return apply(c.getBooleanCellValue());
         case Cell.CELL_TYPE_NUMERIC:
-            return apply(c.getNumericCellValue());
+            Double value = c.getNumericCellValue();
+            if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
+                if (DateUtil.isValidExcelDate(value)) {
+                    return apply(c.getDateCellValue(), value);
+                } else {
+                    return apply(INVALID_VALUE_FOR_FORMAT);
+                }
+            } else {
+                return apply(value);
+            }
         case Cell.CELL_TYPE_STRING:
             return apply(c.getStringCellValue());
         default:
@@ -245,6 +296,25 @@ public class CellFormat {
     }
 
     /**
+     * Uses the result of applying this format to the given date, setting the text
+     * and color of a label before returning the result.
+     *
+     * @param label        The label to apply to.
+     * @param date         The date.
+     * @param numericValue The numeric value for the date.
+     *
+     * @return The result, in a {@link CellFormatResult}.
+     */
+    private CellFormatResult apply(JLabel label, Date date, double numericValue) {
+        CellFormatResult result = apply(date, numericValue);
+        label.setText(result.text);
+        if (result.textColor != null) {
+            label.setForeground(result.textColor);
+        }
+        return result;
+    }
+
+    /**
      * Fetches the appropriate value from the cell, and uses the result, setting
      * the text and color of a label before returning the result.
      *
@@ -258,14 +328,73 @@ public class CellFormat {
         case Cell.CELL_TYPE_BLANK:
             return apply(label, "");
         case Cell.CELL_TYPE_BOOLEAN:
-            return apply(Boolean.toString(c.getBooleanCellValue()));
+            return apply(label, c.getBooleanCellValue());
         case Cell.CELL_TYPE_NUMERIC:
-            return apply(label, c.getNumericCellValue());
+            Double value = c.getNumericCellValue();
+            if (getApplicableFormatPart(value).getCellFormatType() == CellFormatType.DATE) {
+                if (DateUtil.isValidExcelDate(value)) {
+                    return apply(label, c.getDateCellValue(), value);
+                } else {
+                    return apply(label, INVALID_VALUE_FOR_FORMAT);
+                }
+            } else {
+                return apply(label, value);
+            }
         case Cell.CELL_TYPE_STRING:
             return apply(label, c.getStringCellValue());
         default:
             return apply(label, "?");
         }
+    }
+
+    /**
+     * Returns the {@link CellFormatPart} that applies to the value.  Result
+     * depends on how many parts the cell format has, the cell value and any
+     * conditions.  The value must be a {@link Number}.
+     * 
+     * @param value The value.
+     * @return The {@link CellFormatPart} that applies to the value.
+     */
+    private CellFormatPart getApplicableFormatPart(Object value) {
+        
+        if (value instanceof Number) {
+            
+            double val = ((Number) value).doubleValue();
+            
+            if (formatPartCount == 1) {
+                if (!posNumFmt.hasCondition()
+                        || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
+                    return posNumFmt;
+                } else {
+                    return new CellFormatPart("General");
+                }
+            } else if (formatPartCount == 2) {
+                if ((!posNumFmt.hasCondition() && val >= 0)
+                        || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
+                    return posNumFmt;
+                } else if (!negNumFmt.hasCondition()
+                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                    return negNumFmt;
+                } else {
+                    // Return ###...### (255 #s) to match Excel 2007 behaviour
+                    return new CellFormatPart(QUOTE + INVALID_VALUE_FOR_FORMAT + QUOTE);
+                }
+            } else {
+                if ((!posNumFmt.hasCondition() && val > 0)
+                        || (posNumFmt.hasCondition() && posNumFmt.applies(val))) {
+                    return posNumFmt;
+                } else if ((!negNumFmt.hasCondition() && val < 0)
+                        || (negNumFmt.hasCondition() && negNumFmt.applies(val))) {
+                    return negNumFmt;
+                // Only the first two format parts can have conditions
+                } else {
+                    return zeroNumFmt;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("value must be a Number");
+        }
+        
     }
 
     /**

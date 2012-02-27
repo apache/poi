@@ -34,7 +34,8 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
-           <action dev="poi-developers" type="fix">52690 - added a getter for length of encrypted data in Ecma and Agile decryptors</action>
+           <action dev="poi-developers" type="add">52708 - misc improvements in CellFormat </action>
+           <action dev="poi-developers" type="add">52690 - added a getter for length of encrypted data in Ecma and Agile decryptors</action>
            <action dev="poi-developers" type="fix">52255 - support adding TIFF,EPS and WPG pictures in OOXML documents </action>
            <action dev="poi-developers" type="fix">52078 - avoid OutOfMemoryError when rendering groupped pictures in HSLF </action>
            <action dev="poi-developers" type="fix">52745 - fixed XSSFRichtextString.append to preserve leading / trailing spaces </action>

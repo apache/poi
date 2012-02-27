@@ -60,6 +60,13 @@ public class CellNumberFormatter extends CellFormatter {
     private boolean improperFraction;
     private DecimalFormat decimalFmt;
 
+    // The CellNumberFormatter.simpleValue() method uses the SIMPLE_NUMBER
+    // CellFormatter defined here. The CellFormat.GENERAL_FORMAT CellFormat
+    // no longer uses the SIMPLE_NUMBER CellFormatter.
+    // Note that the simpleValue()/SIMPLE_NUMBER CellFormatter format
+    // ("#" for integer values, and "#.#" for floating-point values) is
+    // different from the 'General' format for numbers ("#" for integer
+    // values and "#.#########" for floating-point values).
     static final CellFormatter SIMPLE_NUMBER = new CellFormatter("General") {
         public void formatValue(StringBuffer toAppendTo, Object value) {
             if (value == null)
@@ -554,7 +561,13 @@ public class CellNumberFormatter extends CellFormatter {
         double value = ((Number) valueObject).doubleValue();
         value *= scale;
 
-        // the '-' sign goes at the front, always, so we pick it out
+        // For negative numbers:
+        // - If the cell format has a negative number format, this method
+        // is called with a positive value and the number format has
+        // the negative formatting required, e.g. minus sign or brackets.
+        // - If the cell format does not have a negative number format,
+        // this method is called with a negative value and the number is
+        // formatted with a minus sign at the start.
         boolean negative = value < 0;
         if (negative)
             value = -value;

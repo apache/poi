@@ -72,6 +72,8 @@ public class CellGeneralFormatter extends CellFormatter {
                     toAppendTo.deleteCharAt(removeFrom--);
                 }
             }
+        } else if (value instanceof Boolean) {
+            toAppendTo.append(value.toString().toUpperCase());
         } else {
             toAppendTo.append(value.toString());
         }
