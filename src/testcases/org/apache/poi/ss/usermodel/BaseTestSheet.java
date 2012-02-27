@@ -557,6 +557,11 @@ public abstract class BaseTestSheet extends TestCase {
         sheet.setMargin(Sheet.BottomMargin, 13.0);
         assertEquals(13.0, sheet.getMargin(Sheet.BottomMargin), 0.0);
 
+        sheet.setMargin(Sheet.FooterMargin, 5.6);
+        assertEquals(5.6, sheet.getMargin(Sheet.FooterMargin), 0.0);
+        sheet.setMargin(Sheet.HeaderMargin, 11.5);
+        assertEquals(11.5, sheet.getMargin(Sheet.HeaderMargin), 0.0);
+
         // incorrect margin constant
         try {
             sheet.setMargin((short) 65, 15);
