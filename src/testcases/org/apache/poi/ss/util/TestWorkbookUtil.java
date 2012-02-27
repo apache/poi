@@ -80,5 +80,8 @@ public final class TestWorkbookUtil extends TestCase {
 		
 		actual = WorkbookUtil.createSafeSheetName("1234567890123456789012345678901TOOLONG");
 		assertEquals("1234567890123456789012345678901", actual);
+
+        actual = WorkbookUtil.createSafeSheetName("sheet:a4");
+        assertEquals("sheet a4", actual);
 	}
 }
