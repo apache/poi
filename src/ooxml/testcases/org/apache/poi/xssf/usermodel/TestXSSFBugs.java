@@ -44,6 +44,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1285,4 +1286,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(20.0, c1.getNumericCellValue());
        assertEquals(20.0, c2.getNumericCellValue());
     }
+
+    /**
+     * Bugzilla 51710: problems reading shared formuals from .xlsx
+     */
+    public void test51710() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51790.xlsx");
+
+        final String[] columns = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N"};
+        final int rowMax = 500; // bug triggers on row index 59
+
+        Sheet sheet = wb.getSheetAt(0);
+
+
+        // go through all formula cells
+        for (int rInd = 2; rInd <= rowMax; rInd++) {
+            Row row = sheet.getRow(rInd);
+
+            for (int cInd = 1; cInd <= 12; cInd++) {
+                Cell cell = row.getCell(cInd);
+                String formula = cell.getCellFormula();
+                CellReference ref = new CellReference(cell);
+
+                //simulate correct answer
+                String correct = "$A" + (rInd + 1) + "*" + columns[cInd] + "$2";
+
+                assertEquals("Incorrect formula in " + ref.formatAsString(), correct, formula);
+            }
+
+        }
+    }
+
 }

@@ -2670,7 +2670,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
             // save a detached  copy to avoid XmlValueDisconnectedException,
             // this may happen when the master cell of a shared formula is changed
-            sharedFormulas.put((int)f.getSi(), (CTCellFormula)f.copy());
+            CTCellFormula sf = (CTCellFormula)f.copy();
+            CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
+            CellReference cellRef = new CellReference(cell);
+            // If the shared formula range preceeds the master cell then the preseeing part is discarded, e.g.
+            // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
+            // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
+            if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
+                String effectiveRef = new CellRangeAddress(
+                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), sfRef.getLastRow(),
+                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), sfRef.getLastColumn()).formatAsString();
+                sf.setRef(effectiveRef);
+            }
+
+            sharedFormulas.put((int)f.getSi(), sf);
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));

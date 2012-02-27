@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">51710 - fixed reading shared formulas in XSSF </action>
            <action dev="poi-developers" type="add">52708 - misc improvements in CellFormat </action>
            <action dev="poi-developers" type="add">52690 - added a getter for length of encrypted data in Ecma and Agile decryptors</action>
            <action dev="poi-developers" type="fix">52255 - support adding TIFF,EPS and WPG pictures in OOXML documents </action>
