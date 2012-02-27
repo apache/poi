@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">52574 - support setting header / footer page margins in HSSF </action>
+           <action dev="poi-developers" type="add">52583 - fixed WorkbookUtil#createSafeSheetName to escape colon </action>
            <action dev="poi-developers" type="add">51710 - fixed reading shared formulas in XSSF </action>
            <action dev="poi-developers" type="add">52708 - misc improvements in CellFormat </action>
            <action dev="poi-developers" type="add">52690 - added a getter for length of encrypted data in Ecma and Agile decryptors</action>

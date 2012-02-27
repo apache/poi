@@ -2673,7 +2673,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             CTCellFormula sf = (CTCellFormula)f.copy();
             CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
             CellReference cellRef = new CellReference(cell);
-            // If the shared formula range preceeds the master cell then the preseeing part is discarded, e.g.
+            // If the shared formula range preceeds the master cell then the preceding  part is discarded, e.g.
             // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
             // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
             if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){

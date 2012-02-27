@@ -1062,7 +1062,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return the size of the margin
      */
     public double getMargin(short margin) {
-        return _sheet.getPageSettings().getMargin(margin);
+        switch (margin){
+            case FooterMargin:
+                return _sheet.getPageSettings().getPrintSetup().getFooterMargin();
+            case HeaderMargin:
+                return _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
+            default:
+                return _sheet.getPageSettings().getMargin(margin);
+        }
     }
 
     /**
@@ -1071,7 +1078,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param size the size of the margin
      */
     public void setMargin(short margin, double size) {
-        _sheet.getPageSettings().setMargin(margin, size);
+        switch (margin){
+            case FooterMargin:
+                _sheet.getPageSettings().getPrintSetup().setFooterMargin(size);
+                break;
+            case HeaderMargin:
+                _sheet.getPageSettings().getPrintSetup().setHeaderMargin(size);
+                break;
+            default:
+                _sheet.getPageSettings().setMargin(margin, size);
+        }
     }
 
     private WorksheetProtectionBlock getProtectionBlock() {
