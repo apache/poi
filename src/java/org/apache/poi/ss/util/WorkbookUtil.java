@@ -35,7 +35,7 @@ public class WorkbookUtil {
 	 * <li>never null</li>
 	 * <li>minimum length is 1</li>
 	 * <li>maximum length is 31</li>
-	 * <li>doesn't contain special chars: / \ ? * ] [ </li>
+	 * <li>doesn't contain special chars: : 0x0000, 0x0003, / \ ? * ] [ </li>
 	 * <li>Sheet names must not begin or end with ' (apostrophe)</li>
 	 * </ul>
 	 * Invalid characters are replaced by one space character ' '.
@@ -57,6 +57,9 @@ public class WorkbookUtil {
 		for (int i=0; i<length; i++) {
 			char ch = result.charAt(i);
 			switch (ch) {
+                case '\u0000':
+                case '\u0003':
+                case ':':
 				case '/':
 				case '\\':
 				case '?':
