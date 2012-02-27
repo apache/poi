@@ -37,7 +37,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
             public Object getValue(Cell cell) {
                 int type = CellFormat.ultimateType(cell);
                 if (type == Cell.CELL_TYPE_BOOLEAN)
-                    return cell.getBooleanCellValue() ? "TRUE" : "FALSE";
+                    return cell.getBooleanCellValue();
                 else if (type == Cell.CELL_TYPE_NUMERIC)
                     return cell.getNumericCellValue();
                 else
@@ -93,7 +93,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             public Object getValue(Cell cell) {
                 if (CellFormat.ultimateType(cell) == Cell.CELL_TYPE_BOOLEAN)
-                    return cell.getBooleanCellValue() ? "TRUE" : "FALSE";
+                    return cell.getBooleanCellValue();
                 else
                     return cell.getStringCellValue();
             }
