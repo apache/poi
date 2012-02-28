@@ -56,4 +56,11 @@ public final class TestTrunc extends AbstractNumericTestCase {
 		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
 		assertEquals("TRUNC", (new NumberEval(2d)).getNumberValue(), ((NumberEval)result).getNumberValue());
 	}
+
+    public void testNegative() {
+        ValueEval[] args = { new NumberEval(-8.9), new NumberEval(0) };
+        @SuppressWarnings("static-access")
+        ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
+        assertEquals("TRUNC", (new NumberEval(-8)).getNumberValue(), ((NumberEval)result).getNumberValue());
+    }
 }
