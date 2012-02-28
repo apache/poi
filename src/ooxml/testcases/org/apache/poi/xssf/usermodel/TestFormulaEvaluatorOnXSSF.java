@@ -61,33 +61,33 @@ public final class TestFormulaEvaluatorOnXSSF extends TestCase {
 		 * Name of the test spreadsheet (found in the standard test data folder)
 		 */
 		public final static String FILENAME = "FormulaEvalTestData_Copy.xlsx";
-		/**
-		 * Row (zero-based) in the test spreadsheet where the operator examples start.
-		 */
-		public static final int START_OPERATORS_ROW_INDEX = 22; // Row '23'
-		/**
-		 * Row (zero-based) in the test spreadsheet where the function examples start.
-		 */
-		public static final int START_FUNCTIONS_ROW_INDEX = 87; // Row '88' 
-		/** 
-		 * Index of the column that contains the function names
-		 */
-		public static final short COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
-	
-		/**
-		 * Used to indicate when there are no more functions left
-		 */
-		public static final String FUNCTION_NAMES_END_SENTINEL = "<END-OF-FUNCTIONS>";
-	
-		/**
-		 * Index of the column where the test values start (for each function)
-		 */
-		public static final short COLUMN_INDEX_FIRST_TEST_VALUE = 3; // Column 'D'
-		
-		/**
-		 * Each function takes 4 rows in the test spreadsheet 
-		 */
-		public static final int NUMBER_OF_ROWS_PER_FUNCTION = 4;
+        /**
+         * Row (zero-based) in the test spreadsheet where the operator examples start.
+         */
+        public static final int START_OPERATORS_ROW_INDEX = 22; // Row '23'
+        /**
+         * Row (zero-based) in the test spreadsheet where the function examples start.
+         */
+        public static final int START_FUNCTIONS_ROW_INDEX = 95; // Row '96'
+        /**
+         * Index of the column that contains the function names
+         */
+        public static final int COLUMN_INDEX_FUNCTION_NAME = 1; // Column 'B'
+
+        /**
+         * Used to indicate when there are no more functions left
+         */
+        public static final String FUNCTION_NAMES_END_SENTINEL = "<END-OF-FUNCTIONS>";
+
+        /**
+         * Index of the column where the test values start (for each function)
+         */
+        public static final short COLUMN_INDEX_FIRST_TEST_VALUE = 3; // Column 'D'
+
+        /**
+         * Each function takes 4 rows in the test spreadsheet
+         */
+        public static final int NUMBER_OF_ROWS_PER_FUNCTION = 4;
 	}
 
 	private XSSFWorkbook workbook;
