@@ -137,6 +137,9 @@ public class SheetDataWriter {
             _out.write(" s=\"" + row._style + "\"");
             _out.write(" customFormat=\"1\"");
         }
+        if (row.getOutlineLevel() != 0) {
+            _out.write(" outlineLevel=\"" + row.getOutlineLevel() + "\"");
+        }
         _out.write(">\n");
         this._rownum = rownum;
         _rowContainedNullCells = false;
