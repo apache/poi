@@ -974,6 +974,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return settings.isEnforcedWith(STDocProtect.TRACKED_CHANGES);
     }
 
+    public boolean isEnforcedUpdateFields() {
+        return settings.isUpdateFields();
+    }
+
     /**
      * Enforces the readOnly protection.<br/>
      * In the documentProtection tag inside settings.xml file, <br/>
@@ -1047,6 +1051,22 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         settings.removeEnforcement();
     }
 
+    /**
+     * Enforces fields update on document open (in Word).
+     * In the settings.xml file <br/>
+     * sets the updateSettings value to true (w:updateSettings w:val="true")
+     * 
+     *  NOTICES:
+     *  <ul>
+     *  	<li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"
+     *           (if "Update automatic links at open" is enabled)</li>
+     *  	<li>Flag is removed after saving with changes in Word </li>
+     *  </ul> 
+     */
+    public void enforceUpdateFields() {
+    	settings.setUpdateFields();
+    }
+    
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      * @param pos
