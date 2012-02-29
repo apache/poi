@@ -17,12 +17,7 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.*;
@@ -527,5 +522,24 @@ public final class TestPackage extends TestCase {
         assertTrue(selected.containsKey("/word/styles.xml"));
         assertTrue(selected.containsKey("/word/theme/theme1.xml"));
         assertTrue(selected.containsKey("/word/webSettings.xml"));
+    }
+
+    public void testReplaceContentType() throws Exception {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
+        OPCPackage p = OPCPackage.open(is);
+
+        ContentTypeManager mgr = getContentTypeManager(p);
+
+        assertTrue(mgr.isContentTypeRegister("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
+        assertFalse(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
+
+        assertTrue(
+                p.replaceContentType(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
+                "application/vnd.ms-excel.sheet.macroEnabled.main+xml")
+        );
+
+        assertFalse(mgr.isContentTypeRegister("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
+        assertTrue(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
     }
 }
