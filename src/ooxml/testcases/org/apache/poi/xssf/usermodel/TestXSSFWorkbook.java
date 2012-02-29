@@ -432,4 +432,13 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         changeSheetNameWithSharedFormulas("shared_formulas.xlsx");
     }
 
+    public void testSetTabColor() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sh = wb.createSheet();
+        assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
+        sh.setTabColor(IndexedColors.RED.index);
+        assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
+        assertEquals(IndexedColors.RED.index,
+                sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
+    }
 }
