@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">51673 - support grouping rows in SXSSF</action>
            <action dev="poi-developers" type="add">51780 - support replacement of content types in OPC packages </action>
            <action dev="poi-developers" type="fix">52784 - replace ISO control characters with question marks in SXSSF to be consistent with XSSF </action>
            <action dev="poi-developers" type="add">52057 - updated formula test framework to be aware of recently added Functions </action>

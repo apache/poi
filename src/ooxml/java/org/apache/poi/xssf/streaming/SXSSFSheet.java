@@ -26,11 +26,12 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 
 import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
  * Streaming version of XSSFSheet implementing the "BigGridDemo" strategy.
@@ -44,6 +45,7 @@ public class SXSSFSheet implements Sheet, Cloneable
     TreeMap<Integer,SXSSFRow> _rows=new TreeMap<Integer,SXSSFRow>();
     SheetDataWriter _writer;
     int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
+    int outlineLevelRow = 0;
 
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException
     {
@@ -1036,7 +1038,18 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void groupRow(int fromRow, int toRow)
     {
-        _sh.groupRow(fromRow, toRow);
+        for(SXSSFRow row : _rows.subMap(fromRow, toRow + 1).values()){
+            int level = row.getOutlineLevel() + 1;
+            row.setOutlineLevel(level);
+
+            if(level > outlineLevelRow) outlineLevelRow = level;
+        }
+
+        CTWorksheet ct = _sh.getCTWorksheet();
+        CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
+                ct.getSheetFormatPr() :
+                ct.addNewSheetFormatPr();
+        pr.setOutlineLevelRow((short)outlineLevelRow);
     }
 
     /**
@@ -1058,7 +1071,8 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void setRowGroupCollapsed(int row, boolean collapse)
     {
-        _sh.setRowGroupCollapsed(row, collapse);
+        //_sh.setRowGroupCollapsed(row, collapse);
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
