@@ -1033,6 +1033,37 @@ public class SXSSFSheet implements Sheet, Cloneable
     /**
      * Tie a range of rows together so that they can be collapsed or expanded
      *
+     * <p>
+     *     Please note the rows being grouped <em>must</em> be in the current window,
+     *     if the rows are already flushed then groupRow has no effect.
+     * </p>
+     * <p>
+     *      Correct code:
+     *      <pre><code>
+     *       Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
+     *       Sheet sh = wb.createSheet();
+     *       for (int rownum = 0; rownum &lt; 1000; rownum++) {
+     *           Row row = sh.createRow(rownum);
+     *           if(rownum == 200)  {
+     *               sh.groupRow(100, 200);
+     *           }
+     *       }
+     *
+     *      </code></pre>
+     * </p>
+     * <p>
+     *      Incorrect code:
+     *      <pre><code>
+     *       Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
+     *       Sheet sh = wb.createSheet();
+     *       for (int rownum = 0; rownum &lt; 1000; rownum++) {
+     *           Row row = sh.createRow(rownum);
+     *       }
+     *       sh.groupRow(100, 200); // the rows in the range [100, 200] are already flushed and groupRows has no effect
+     *
+     *      </code></pre>
+     * </p>
+     *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
      */
@@ -1049,7 +1080,7 @@ public class SXSSFSheet implements Sheet, Cloneable
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
                 ct.getSheetFormatPr() :
                 ct.addNewSheetFormatPr();
-        pr.setOutlineLevelRow((short)outlineLevelRow);
+        if(outlineLevelRow > 0) pr.setOutlineLevelRow((short)outlineLevelRow);
     }
 
     /**
