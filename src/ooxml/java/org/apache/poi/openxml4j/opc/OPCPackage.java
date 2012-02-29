@@ -1439,4 +1439,50 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	protected abstract PackagePart[] getPartsImpl()
 			throws InvalidFormatException;
+
+    /**
+     * Replace a content type in this package.
+     *
+     * <p>
+     *     A typical scneario to call this method is to rename a template file to the main format, e.g.
+     *     ".dotx" to ".docx"
+     *     ".dotm" to ".docm"
+     *     ".xltx" to ".xlsx"
+     *     ".xltm" to ".xlsm"
+     *     ".potx" to ".pptx"
+     *     ".potm" to ".pptm"
+     * </p>
+     * For example, a code converting  a .xlsm macro workbook to .xlsx would look as follows:
+     * <p>
+     *    <pre><code>
+     *
+     *     OPCPackage pkg = OPCPackage.open(new FileInputStream("macro-workbook.xlsm"));
+     *     pkg.replaceContentType(
+     *         "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
+     *         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+     *
+     *     FileOutputStream out = new FileOutputStream("workbook.xlsx");
+     *     pkg.save(out);
+     *     out.close();
+     *
+     *    </code></pre>
+     * </p>
+     *
+     * @param oldContentType  the content type to be replaced
+     * @param newContentType  the replacement
+     * @return whether replacement was succesfull
+     * @since POI-3.8
+     */
+    public boolean replaceContentType(String oldContentType, String newContentType){
+        boolean success = false;
+        ArrayList<PackagePart> list = getPartsByContentType(oldContentType);
+        for (PackagePart packagePart : list) {
+            if (packagePart.getContentType().equals(oldContentType)) {
+                PackagePartName partName = packagePart.getPartName();
+                contentTypeManager.addContentType(partName, newContentType);
+                success = true;
+            }
+        }
+        return success;
+    }
 }
