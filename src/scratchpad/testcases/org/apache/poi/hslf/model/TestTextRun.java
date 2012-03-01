@@ -531,4 +531,21 @@ public final class TestTextRun extends TestCase {
         }
 
     }
+
+    public void test52244() throws IOException {
+        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("52244.ppt"));
+        Slide slide = ppt.getSlides()[0];
+        TextRun[] runs = slide.getTextRuns();
+
+        assertEquals("Arial", runs[0].getRichTextRuns()[0].getFontName());
+        assertEquals(36, runs[0].getRichTextRuns()[0].getFontSize());
+
+        assertEquals("Arial", runs[1].getRichTextRuns()[0].getFontName());
+        assertEquals(24, runs[1].getRichTextRuns()[0].getFontSize());
+
+        assertEquals("Arial", runs[2].getRichTextRuns()[0].getFontName());
+        assertEquals(32, runs[2].getRichTextRuns()[0].getFontSize());
+
+    }
+
 }
