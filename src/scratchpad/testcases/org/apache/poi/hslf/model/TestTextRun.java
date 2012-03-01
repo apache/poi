@@ -100,9 +100,9 @@ public final class TestTextRun extends TestCase {
 		run.setText(changeTo);
 		assertEquals(changeTo, run.getText());
 
-		// Ensure trailing \n's get stripped
+		// Ensure trailing \n's are NOT stripped, it is legal to set a text with a trailing '\r'
 		run.setText(changeTo + "\n");
-		assertEquals(changeTo, run.getText());
+		assertEquals(changeTo + "\n", run.getText());
 	}
 
 	/**

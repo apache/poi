@@ -320,12 +320,6 @@ public final class TextRun
 	 *  touch the stylings.
 	 */
 	private void storeText(String s) {
-		// Remove a single trailing \r, as there is an implicit one at the
-		//  end of every record
-		if(s.endsWith("\r")) {
-			s = s.substring(0, s.length()-1);
-		}
-
 		// Store in the appropriate record
 		if(_isUnicode) {
 			// The atom can safely convert to unicode
