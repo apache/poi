@@ -124,7 +124,8 @@ public final class SlideMaster extends MasterSheet {
 
             TxMasterStyleAtom[] txrec = ((MainMaster)getSheetContainer()).getTxMasterStyleAtoms();
             for (int i = 0; i < txrec.length; i++) {
-                _txmaster[txrec[i].getTextType()] = txrec[i];
+                int txType = txrec[i].getTextType();
+                if(_txmaster[txType] == null) _txmaster[txType] = txrec[i];
             }
         }
     }
