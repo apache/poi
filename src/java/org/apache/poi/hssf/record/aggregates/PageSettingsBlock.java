@@ -19,13 +19,17 @@ package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.util.HexDump;
 
 /**
  * Groups the page settings records for a worksheet.<p/>
@@ -653,26 +657,31 @@ public final class PageSettingsBlock extends RecordAggregate {
         // Take a copy to loop over, so we can update the real one
         //  without concurrency issues
         List<HeaderFooterRecord> hfRecordsToIterate = new ArrayList<HeaderFooterRecord>(_sviewHeaderFooters);
-       
+
+        final Map<String, HeaderFooterRecord> hfGuidMap = new HashMap<String, HeaderFooterRecord>();
+
+        for(final HeaderFooterRecord hf : hfRecordsToIterate) {
+            hfGuidMap.put(HexDump.toHex(hf.getGuid()), hf);
+        }
+
         // loop through HeaderFooterRecord records having not-empty GUID and match them with
         // CustomViewSettingsRecordAggregate blocks having UserSViewBegin with the same GUID
-        for(final HeaderFooterRecord hf : hfRecordsToIterate) {
-            for (RecordBase rb : sheetRecords) {
-                if (rb instanceof CustomViewSettingsRecordAggregate) {
-                    final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
-                    cv.visitContainedRecords(new RecordVisitor() {
-                        public void visitRecord(Record r) {
-                            if (r.getSid() == UserSViewBegin.sid) {
-                                byte[] guid1 = ((UserSViewBegin) r).getGuid();
-                                byte[] guid2 = hf.getGuid();
-                                if (Arrays.equals(guid1, guid2)) {
-                                    cv.append(hf);
-                                    _sviewHeaderFooters.remove(hf);
-                                }
+        for (RecordBase rb : sheetRecords) {
+            if (rb instanceof CustomViewSettingsRecordAggregate) {
+                final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
+                cv.visitContainedRecords(new RecordVisitor() {
+                    public void visitRecord(Record r) {
+                        if (r.getSid() == UserSViewBegin.sid) {
+                            String guid = HexDump.toHex(((UserSViewBegin) r).getGuid());
+                            HeaderFooterRecord hf = hfGuidMap.get(guid);
+
+                            if (hf != null) {
+                                cv.append(hf);
+                                _sviewHeaderFooters.remove(hf);
                             }
                         }
-                    });
-                }
+                    }
+                });
             }
         }
     }
