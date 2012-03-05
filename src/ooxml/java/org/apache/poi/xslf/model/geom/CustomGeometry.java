@@ -24,7 +24,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Definition of a custom geometric shape

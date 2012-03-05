@@ -496,7 +496,6 @@ public class XSSFRichTextString implements RichTextString {
         return buf.toString();
     }
 
-    @SuppressWarnings("deprecation")
     void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {
             // delete format runs that fit between startIndex and endIndex
             // runs intersecting startIndex and endIndex remain
@@ -527,18 +526,19 @@ public class XSSFRichTextString implements RichTextString {
             while(sub.size() > 1) sub.remove(sub.lastKey());
         }
 
-        TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
-            int length = 0;
-            TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
-            for (CTRElt r : entry.getRArray()) {
-                String txt = r.getT();
-                CTRPrElt fmt = r.getRPr();
+    @SuppressWarnings("deprecation")
+    TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
+        int length = 0;
+        TreeMap<Integer, CTRPrElt> formats = new TreeMap<Integer, CTRPrElt>();
+        for (CTRElt r : entry.getRArray()) {
+            String txt = r.getT();
+            CTRPrElt fmt = r.getRPr();
 
-                length += txt.length();
-                formats.put(length, fmt);
-            }
-            return formats;
+            length += txt.length();
+            formats.put(length, fmt);
         }
+        return formats;
+    }
 
     CTRst buildCTRst(String text, TreeMap<Integer, CTRPrElt> formats){
         if(text.length() != formats.lastKey()) {

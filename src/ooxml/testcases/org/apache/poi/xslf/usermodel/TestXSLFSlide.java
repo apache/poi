@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 
 import java.awt.Color;
-import java.io.FileInputStream;
 import java.util.Arrays;
 
 /**

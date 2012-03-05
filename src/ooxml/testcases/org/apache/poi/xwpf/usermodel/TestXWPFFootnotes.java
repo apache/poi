@@ -18,17 +18,12 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.lang.String;
 import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 

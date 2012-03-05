@@ -20,29 +20,13 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.xslf.model.geom.Outline;
-import org.apache.poi.xslf.model.geom.Path;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnectorNonVisual;
-
-import java.awt.Shape;
-import java.awt.Graphics2D;
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Specifies a connection shape.

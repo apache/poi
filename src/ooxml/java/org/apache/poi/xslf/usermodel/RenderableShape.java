@@ -172,6 +172,7 @@ class RenderableShape {
             CTGradientFillProperties gradFill, Rectangle2D anchor,
             XSLFTheme theme, CTSchemeColor phClr) {
         double angle = gradFill.getLin().getAng() / 60000;
+        @SuppressWarnings("deprecation")
         CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
 
         Arrays.sort(gs, new Comparator<CTGradientStop>() {
@@ -248,6 +249,7 @@ class RenderableShape {
             CTGradientFillProperties gradFill, Rectangle2D anchor,
             XSLFTheme theme, CTSchemeColor phClr) {
 
+        @SuppressWarnings("deprecation")
         CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
         Arrays.sort(gs, new Comparator<CTGradientStop>() {
             public int compare(CTGradientStop o1, CTGradientStop o2) {
@@ -267,6 +269,7 @@ class RenderableShape {
     private static Paint createRadialGradientPaint(
             CTGradientFillProperties gradFill, Rectangle2D anchor,
             XSLFTheme theme, CTSchemeColor phClr) {
+        @SuppressWarnings("deprecation")
         CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
 
         Point2D pCenter = new Point2D.Double(anchor.getX() + anchor.getWidth()/2,
@@ -326,7 +329,6 @@ class RenderableShape {
     }
 
 
-    @SuppressWarnings("deprecation") //  getXYZArray() array accessors are deprecated
     Paint getPaint(Graphics2D graphics, XmlObject spPr, CTSchemeColor phClr) {
 
         Paint paint = null;

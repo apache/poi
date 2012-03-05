@@ -21,8 +21,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.TempFile;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 /**

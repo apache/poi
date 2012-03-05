@@ -53,6 +53,9 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
 	private boolean includeCellComments = false;
 	private boolean includeHeadersFooters = true;
 
+    /**
+     * @deprecated  Use {@link #XSSFExcelExtractor(org.apache.poi.openxml4j.opc.OPCPackage)} instead.
+     */
 	public XSSFExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(new XSSFWorkbook(path));
 	}

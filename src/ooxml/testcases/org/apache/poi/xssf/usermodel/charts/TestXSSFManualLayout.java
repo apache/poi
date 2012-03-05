@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.LegendPosition;
 import org.apache.poi.ss.usermodel.charts.ManualLayout;
 import org.apache.poi.ss.usermodel.charts.LayoutMode;
 import org.apache.poi.ss.usermodel.charts.LayoutTarget;
