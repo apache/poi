@@ -17,9 +17,6 @@
 
 package org.apache.poi.hpbf.model;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.POIDataSamples;
 

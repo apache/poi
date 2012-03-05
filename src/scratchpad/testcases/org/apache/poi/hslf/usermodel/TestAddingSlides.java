@@ -20,8 +20,6 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.File;
 
 import junit.framework.TestCase;
 import org.apache.poi.hslf.*;

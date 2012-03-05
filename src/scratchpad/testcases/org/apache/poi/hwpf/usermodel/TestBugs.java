@@ -17,9 +17,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -43,7 +41,6 @@ import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;

@@ -23,8 +23,6 @@ import java.util.NoSuchElementException;
 
 import org.apache.poi.util.Internal;
 
-import org.apache.poi.hwpf.model.BytePropertyNode;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.CHPX;

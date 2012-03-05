@@ -19,7 +19,6 @@
 package org.apache.poi.hwpf.model.types;
 
 
-import org.apache.poi.hwpf.usermodel.*;
 import org.apache.poi.util.*;
 
 /**
