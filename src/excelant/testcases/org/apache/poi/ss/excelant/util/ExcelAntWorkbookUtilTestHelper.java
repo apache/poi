@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant.util;
 
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
