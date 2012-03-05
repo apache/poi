@@ -1291,7 +1291,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Bugzilla 51710: problems reading shared formuals from .xlsx
      */
     public void test51710() {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51790.xlsx");
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51710.xlsx");
 
         final String[] columns = {"A","B","C","D","E","F","G","H","I","J","K","L","M","N"};
         final int rowMax = 500; // bug triggers on row index 59
