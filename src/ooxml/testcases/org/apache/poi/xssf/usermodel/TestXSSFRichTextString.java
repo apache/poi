@@ -18,13 +18,10 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;

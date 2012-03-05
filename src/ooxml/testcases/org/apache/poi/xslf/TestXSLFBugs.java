@@ -29,6 +29,7 @@ import java.util.List;
 
 public class TestXSLFBugs extends TestCase {
 
+    @SuppressWarnings("deprecation")
     public void test51187() throws Exception {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("51187.pptx");
        

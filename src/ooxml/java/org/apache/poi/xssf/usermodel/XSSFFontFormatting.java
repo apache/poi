@@ -19,8 +19,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
@@ -29,10 +27,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
-import java.util.Map;
-import java.util.Iterator;
-import java.awt.*;
-import java.awt.Font;
 
 /**
  * @author Yegor Kozlov

@@ -47,14 +47,10 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayout;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTManualLayout;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -295,7 +291,7 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	}
 
 	private void parseValueAxis() {
-		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
+		for (CTValAx valAx : chart.getPlotArea().getValAxList()) {
 			axis.add(new XSSFValueAxis(this, valAx));
 		}
 	}

@@ -30,7 +30,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutMode;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutTarget;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
 
 /**
  * Represents a SpreadsheetML manual layout.

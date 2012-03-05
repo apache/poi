@@ -23,7 +23,6 @@ import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 /**
