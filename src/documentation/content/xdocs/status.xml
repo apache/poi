@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.8-beta6" date="2012-??-??">
+           <action dev="poi-developers" type="add">52818 - Added implementation for RANK()</action>
            <action dev="poi-developers" type="fix">52682 - allow setting text with trailing carriage return in HSLF</action>
            <action dev="poi-developers" type="fix">52244 - use correct text attributes when presentation has multiple TxMasterStyleAtoms of the same type</action>
            <action dev="poi-developers" type="add">support setting background color of sheet tab in XSSF</action>
