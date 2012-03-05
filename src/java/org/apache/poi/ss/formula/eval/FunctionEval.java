@@ -171,6 +171,7 @@ public final class FunctionEval {
 
 		retval[212] = NumericFunction.ROUNDUP;
 		retval[213] = NumericFunction.ROUNDDOWN;
+        retval[216] = new Rank();
         retval[219] = new Address();  //Aniket Banerjee
         retval[220] = new Days360();
 		retval[221] = new Today();
