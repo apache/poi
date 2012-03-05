@@ -43,11 +43,11 @@ public class EmeddedObjects {
                 //System.out.println(entry.getName() + ": " + embeddedWorkbook.getNumberOfSheets());
             } else if (oleName.equals("Document")) {
                 DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                HWPFDocument embeddedWordDocument = new HWPFDocument(dn, fs);
+                HWPFDocument embeddedWordDocument = new HWPFDocument(dn);
                 //System.out.println(entry.getName() + ": " + embeddedWordDocument.getRange().text());
             }  else if (oleName.equals("Presentation")) {
                 DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                SlideShow embeddedPowerPointDocument = new SlideShow(new HSLFSlideShow(dn, fs));
+                SlideShow embeddedPowerPointDocument = new SlideShow(new HSLFSlideShow(dn));
                 //System.out.println(entry.getName() + ": " + embeddedPowerPointDocument.getSlides().length);
             } else {
                 if(obj.hasDirectoryEntry()){

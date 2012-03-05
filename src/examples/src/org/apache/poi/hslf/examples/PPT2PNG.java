@@ -19,16 +19,12 @@ package org.apache.poi.hslf.examples;
 
 import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.TextHeaderAtom;
 
 import javax.imageio.ImageIO;
-import java.io.IOException;
 import java.io.FileOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 /**

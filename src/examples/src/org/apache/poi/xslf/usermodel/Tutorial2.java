@@ -20,7 +20,6 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.io.FileOutputStream;
 import java.io.IOException;
 

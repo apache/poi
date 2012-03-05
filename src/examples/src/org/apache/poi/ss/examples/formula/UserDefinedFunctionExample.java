@@ -23,7 +23,6 @@ import java.io.IOException ;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException ;
 import org.apache.poi.ss.formula.functions.FreeRefFunction ;
-import org.apache.poi.ss.formula.udf.AggregatingUDFFinder ;
 import org.apache.poi.ss.formula.udf.DefaultUDFFinder ;
 import org.apache.poi.ss.formula.udf.UDFFinder ;
 import org.apache.poi.ss.usermodel.*;

@@ -19,12 +19,9 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.math.BigInteger;
-import java.util.List;
 
 /**
  * Demonstrates how to add pictures in a .docx document
