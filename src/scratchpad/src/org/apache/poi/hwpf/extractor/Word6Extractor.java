@@ -19,10 +19,8 @@ package org.apache.poi.hwpf.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 
 import org.apache.poi.hwpf.converter.WordToTextConverter;
-import org.apache.poi.hwpf.usermodel.HeaderStories;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFOldDocument;

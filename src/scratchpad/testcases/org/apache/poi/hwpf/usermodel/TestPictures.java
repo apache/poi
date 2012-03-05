@@ -25,7 +25,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Test the picture handling

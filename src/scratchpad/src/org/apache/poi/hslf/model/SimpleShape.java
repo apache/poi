@@ -28,7 +28,6 @@ import java.util.List;
 import org.apache.poi.ddf.*;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.Record;

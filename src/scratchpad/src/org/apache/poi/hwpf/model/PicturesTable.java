@@ -18,7 +18,6 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
