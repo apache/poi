@@ -21,7 +21,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
 
 /**
  * Various utility functions that make working with a region of cells easier.
@@ -34,8 +33,11 @@ public final class HSSFRegionUtil {
 		// no instances of this class
 	}
 
-	private static CellRangeAddress toCRA(Region region) {
-		return Region.convertToCellRangeAddress(region);
+    /**
+     * @deprecated (Aug 2008) use {@link CellRangeAddress} instead of {@link Region}
+     */
+	private static CellRangeAddress toCRA(org.apache.poi.ss.util.Region region) {
+		return org.apache.poi.ss.util.Region.convertToCellRangeAddress(region);
 	}
 
 	/**

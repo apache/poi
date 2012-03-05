@@ -17,7 +17,6 @@
 package org.apache.poi.ss.formula.atp;
 
 import junit.framework.TestCase;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.*;

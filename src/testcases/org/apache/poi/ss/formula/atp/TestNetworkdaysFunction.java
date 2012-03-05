@@ -43,6 +43,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 /**
  * @author jfaenomoto@gmail.com
  */
+@SuppressWarnings("deprecation") // YK: uses deprecated {@link java.util.Date(int year, int month, int date)}
 public class TestNetworkdaysFunction extends TestCase {
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");

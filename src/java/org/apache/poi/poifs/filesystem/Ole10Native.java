@@ -138,7 +138,7 @@ public class Ole10Native {
       ofs += len;
       flags2 = LittleEndian.getShort(data, ofs);
       ofs += LittleEndianConsts.SHORT_SIZE;
-      len = LittleEndian.getUnsignedByte(data, ofs);
+      len = LittleEndian.getUByte(data, ofs);
       unknown1 = new byte[len];
       ofs += len;
       len = 3;

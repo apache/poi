@@ -369,13 +369,13 @@ public class PropertySet
         final int byteOrder = LittleEndian.getUShort(src, o);
         o += LittleEndian.SHORT_SIZE;
         byte[] temp = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putShort(temp, (short) byteOrder);
+        LittleEndian.putShort(temp, 0, (short) byteOrder);
         if (!Util.equal(temp, BYTE_ORDER_ASSERTION))
             return false;
         final int format = LittleEndian.getUShort(src, o);
         o += LittleEndian.SHORT_SIZE;
         temp = new byte[LittleEndian.SHORT_SIZE];
-        LittleEndian.putShort(temp, (short) format);
+        LittleEndian.putShort(temp, 0, (short) format);
         if (!Util.equal(temp, FORMAT_ASSERTION))
             return false;
         // final long osVersion = LittleEndian.getUInt(src, offset);

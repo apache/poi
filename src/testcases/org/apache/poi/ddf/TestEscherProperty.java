@@ -19,11 +19,6 @@ package org.apache.poi.ddf;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-import java.lang.reflect.Field;
-
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
 
 /**
  * @author Yegor Kozlov

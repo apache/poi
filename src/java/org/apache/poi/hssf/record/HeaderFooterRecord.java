@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 

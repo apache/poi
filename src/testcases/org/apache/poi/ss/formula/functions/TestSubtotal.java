@@ -18,20 +18,14 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.SheetBuilder;
-
-import java.util.Date;
 
 /**
  * Tests for {@link Subtotal}

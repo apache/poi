@@ -22,7 +22,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
 
 import junit.framework.TestCase;
-import org.apache.poi.ss.util.CellReference;
 
 public final class TestAddress extends TestCase {
 

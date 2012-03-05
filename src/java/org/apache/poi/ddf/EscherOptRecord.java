@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ddf;
 
+import org.apache.poi.util.Internal;
+
 /**
  * The opt record is used to store property values for a shape. It is the key to
  * determining the attributes of a shape. Properties can be of two types: simple
@@ -39,7 +41,7 @@ public class EscherOptRecord extends AbstractEscherOptRecord
     /**
      * Automatically recalculate the correct option
      */
-    @Deprecated
+    @Internal
     public short getOptions()
     {
         // update values

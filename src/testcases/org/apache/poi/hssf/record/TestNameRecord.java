@@ -21,7 +21,6 @@ import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.ArrayPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
 import junit.framework.AssertionFailedError;
