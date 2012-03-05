@@ -21,7 +21,6 @@ import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
 
 /**
  * HSSFConditionalFormatting class encapsulates all settings of Conditional Formatting. 
@@ -99,10 +98,10 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 	/**
 	 * @deprecated (Aug-2008) use {@link HSSFConditionalFormatting#getFormattingRanges()}
 	 */
-	public Region[] getFormattingRegions()
+	public org.apache.poi.ss.util.Region[] getFormattingRegions()
 	{
 		CellRangeAddress[] cellRanges = getFormattingRanges();
-		return Region.convertCellRangesToRegions(cellRanges);
+		return org.apache.poi.ss.util.Region.convertCellRangesToRegions(cellRanges);
 	}
 	/**
 	 * @return array of <tt>CellRangeAddress</tt>s. never <code>null</code> 

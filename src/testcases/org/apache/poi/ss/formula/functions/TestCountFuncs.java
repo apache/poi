@@ -17,9 +17,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 

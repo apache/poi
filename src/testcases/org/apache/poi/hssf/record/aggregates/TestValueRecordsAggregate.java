@@ -54,6 +54,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 	 * Make sure the shared formula DOESNT makes it to the FormulaRecordAggregate when being parsed
 	 * as part of the value records
 	 */
+    @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
 	public void testSharedFormula() {
 		List<Record> records = new ArrayList<Record>();
 		records.add(new FormulaRecord());
@@ -94,6 +95,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		return records;
 	}
 
+    @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
 	public void testInsertCell() {
 		CellValueRecordInterface[] cvrs = valueRecord.getValueRecords();
 		assertEquals(0, cvrs.length);
@@ -104,6 +106,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		assertEquals(1, cvrs.length);
 	}
 
+    @SuppressWarnings("deprecation") // uses deprecated {@link ValueRecordsAggregate#getValueRecords()}
 	public void testRemoveCell() {
 		BlankRecord blankRecord1 = newBlankRecord();
 		valueRecord.insertCell( blankRecord1 );

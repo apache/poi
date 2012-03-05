@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Storage for documents that are too small to use regular

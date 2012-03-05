@@ -18,8 +18,6 @@
 package org.apache.poi.ss.formula.atp;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;

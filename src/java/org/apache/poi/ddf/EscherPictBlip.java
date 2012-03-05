@@ -95,7 +95,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
         int pos = offset;
         LittleEndian.putShort( data, pos, getOptions() ); pos += 2;
         LittleEndian.putShort( data, pos, getRecordId() ); pos += 2;
-        LittleEndian.putInt( data, getRecordSize() - HEADER_SIZE ); pos += 4;
+        LittleEndian.putInt( data, 0, getRecordSize() - HEADER_SIZE ); pos += 4;
 
         System.arraycopy( field_1_UID, 0, data, pos, 16 ); pos += 16;
         LittleEndian.putInt( data, pos, field_2_cb ); pos += 4;

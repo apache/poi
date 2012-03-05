@@ -35,7 +35,6 @@ import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.hssf.util.PaneInformation;
-import org.apache.poi.hssf.util.Region;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.Cell;
@@ -765,10 +764,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * @deprecated (Aug-2008) use {@link HSSFSheet#getMergedRegion(int)}
      */
-    public Region getMergedRegionAt(int index) {
+    public org.apache.poi.hssf.util.Region getMergedRegionAt(int index) {
         CellRangeAddress cra = getMergedRegion(index);
 
-        return new Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
+        return new org.apache.poi.hssf.util.Region(cra.getFirstRow(), (short)cra.getFirstColumn(),
                 cra.getLastRow(), (short)cra.getLastColumn());
     }
     /**

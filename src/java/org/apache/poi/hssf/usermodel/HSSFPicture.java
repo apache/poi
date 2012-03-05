@@ -24,8 +24,6 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**

@@ -160,7 +160,7 @@ public final class TestLittleEndian extends TestCase {
 
         testdata[0] = ( short ) 0xFF01;
         testdata[1] = 0x02FF;
-        LittleEndian.putShort(received, testdata[0]);
+        LittleEndian.putShort(received, 0, testdata[0]);
         assertTrue(compareByteArrays(received, expected, 0, LittleEndian.SHORT_SIZE));
         LittleEndian.putShort(received, 1, testdata[1]);
         assertTrue(compareByteArrays(received, expected, 1, LittleEndian.SHORT_SIZE));
@@ -180,7 +180,7 @@ public final class TestLittleEndian extends TestCase {
         };
         byte[] received = new byte[ LittleEndian.INT_SIZE + 1 ];
 
-        LittleEndian.putInt(received, 0xFFFFFF01);
+        LittleEndian.putInt(received, 0, 0xFFFFFF01);
         assertTrue(compareByteArrays(received, expected, 0, LittleEndian.INT_SIZE));
         LittleEndian.putInt(received, 1, 0x02FFFFFF);
         assertTrue(compareByteArrays(received, expected, 1, LittleEndian.INT_SIZE));

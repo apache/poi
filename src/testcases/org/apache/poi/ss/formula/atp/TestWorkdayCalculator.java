@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 /**
  * @author jfaenomoto@gmail.com
  */
+@SuppressWarnings("deprecation") // YK: heavily uses deprecated {@link java.util.Date(int year, int month, int date)}
 public class TestWorkdayCalculator extends TestCase {
 
     public void testCalculateWorkdaysShouldReturnJustWeekdaysWhenNoWeekend() {

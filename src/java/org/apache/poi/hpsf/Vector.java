@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
