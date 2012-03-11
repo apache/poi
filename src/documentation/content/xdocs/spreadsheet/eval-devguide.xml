@@ -325,6 +325,7 @@
     RADIANS
     RAND
     RANDBETWEEN
+    RANK
     RATE
     REPLACE
     RIGHT
