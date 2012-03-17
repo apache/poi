@@ -33,7 +33,7 @@
     </developers>
 
     <changes>
-        <release version="3.8-beta6" date="2012-??-??">
+        <release version="3.8-FINAL" date="2012-03-26">
            <action dev="poi-developers" type="add">52928 - DateFormatConverter: an utility to convert instances of java.text.DateFormat to Excel format patterns</action>
            <action dev="poi-developers" type="fix">52895 - show SSTIndex instead of XFIndex in LabelSSTRecord.toString()</action>
            <action dev="poi-developers" type="fix">52835 - Tolerate missing Count and UniqueCount attributes when parsing shared strings table in XSSF eventusermodel</action>
