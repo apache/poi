@@ -98,10 +98,15 @@ public final class ZipPackage extends Package {
 	ZipPackage(String path, PackageAccess access) {
 		super(access);
 
-		ZipFile zipFile = ZipHelper.openZipFile(path);
-		if (zipFile == null)
-			throw new InvalidOperationException(
-					"Can't open the specified file: '" + path + "'");
+        ZipFile zipFile = null;
+
+        try {
+            zipFile = ZipHelper.openZipFile(path);
+        } catch (IOException e) {
+            throw new InvalidOperationException(
+         					"Can't open the specified file: '" + path + "'", e);
+        }
+
 		this.zipArchive = new ZipFileZipEntrySource(zipFile);
 	}
 
