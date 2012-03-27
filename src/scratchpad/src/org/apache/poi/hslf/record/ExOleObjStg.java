@@ -22,6 +22,7 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.Hashtable;
 
+import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -97,8 +98,10 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
      */
     public InputStream getData() {
         if (isCompressed()) {
+            int size = LittleEndian.getInt(_data);
+
             InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
-            return new InflaterInputStream(compressedStream);
+            return new BoundedInputStream(new InflaterInputStream(compressedStream), size);
         } else {
             return new ByteArrayInputStream(_data, 0, _data.length);
         }
