@@ -110,7 +110,7 @@ public class Paragraph extends Range implements Cloneable {
             final ListLevel listLevel = listTables.getLevel(
                     listFormatOverride.getLsid(), properties.getIlvl() );
 
-            if ( listLevel.getGrpprlPapx() != null )
+            if ( listLevel!=null && listLevel.getGrpprlPapx() != null )
             {
                 properties = ParagraphSprmUncompressor.uncompressPAP(
                         properties, listLevel.getGrpprlPapx(), 0 );

@@ -232,7 +232,7 @@ public class AbstractWordUtils
         final ListLevel listLevel = listTables.getLevel( listId,
                 paragraph.getIlvl() );
 
-        if ( listLevel.getNumberText() == null )
+        if ( listLevel==null || listLevel.getNumberText() == null )
             return EMPTY;
 
         StringBuffer bulletBuffer = new StringBuffer();
