@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">53101 - fixed evaluation of SUM over cell range &gt; 255</action>
           <action dev="poi-developers" type="fix">49529 - avoid exception when cloning sheets with no drawing records and initialized drawing patriarch</action>
         </release>
         <release version="3.8-FINAL" date="2012-03-26">
