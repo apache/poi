@@ -1317,4 +1317,26 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    /**
+     * Bug 53101:
+     */
+    public void test5301(){
+        Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("53101.xlsx");
+        FormulaEvaluator evaluator =
+                workbook.getCreationHelper().createFormulaEvaluator();
+        // A1: SUM(B1: IZ1)
+        double a1Value =
+                evaluator.evaluate(workbook.getSheetAt(0).getRow(0).getCell(0)).getNumberValue();
+
+        // Assert
+        assertEquals(259.0, a1Value, 0.0);
+
+        // KY: SUM(B1: IZ1)
+        double ky1Value =
+                evaluator.evaluate(workbook.getSheetAt(0).getRow(0).getCell(310)).getNumberValue();
+
+        // Assert
+        assertEquals(259.0, a1Value, 0.0);
+    }
+
 }

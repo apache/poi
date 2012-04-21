@@ -45,8 +45,8 @@ final class LazyAreaEval extends AreaEvalBase {
 
 	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 
-		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
+		int rowIx = (relativeRowIndex + getFirstRow() ) ;
+		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
 		return _evaluator.getEvalForCell(rowIx, colIx);
 	}
