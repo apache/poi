@@ -1047,6 +1047,7 @@ under the License.
         <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
             <zipfileset dir="legal/" prefix="${zipdir}"/>
             <zipfileset dir="${main.lib}" prefix="${zipdir}/lib">
+              <include name="commons-codec-*.jar"/>
               <include name="commons-logging-*.jar"/>
               <include name="junit-*.jar"/>
               <include name="log4j-*.jar"/>
@@ -1075,6 +1076,7 @@ under the License.
                compression="gzip">
             <tarfileset dir="legal/" prefix="${zipdir}"/>
             <zipfileset dir="${main.lib}" prefix="${zipdir}/lib">
+              <include name="commons-codec-*.jar"/>
               <include name="commons-logging-*.jar"/>
               <include name="junit-*.jar"/>
               <include name="log4j-*.jar"/>
@@ -1115,6 +1117,7 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
+    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
