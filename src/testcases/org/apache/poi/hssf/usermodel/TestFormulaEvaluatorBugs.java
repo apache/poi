@@ -292,6 +292,48 @@ public final class TestFormulaEvaluatorBugs extends TestCase {
 			throw e;
 		}
 	}
+	
+	public void testDateWithNegativeParts_bug48528() {
+      HSSFWorkbook wb = new HSSFWorkbook();
+      HSSFSheet sheet = wb.createSheet("Sheet1");
+      HSSFRow row = sheet.createRow(1);
+      HSSFCell cell = row.createCell(0);
+      HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+      
+      // 5th Feb 2012 = 40944
+      // 1st Feb 2012 = 40940
+      // 5th Jan 2012 = 40913
+      // 5th Dec 2011 = 40882
+      // 5th Feb 2011 = 40579
+      
+      cell.setCellFormula("DATE(2012,2,1)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40940.0, fe.evaluate(cell).getNumberValue());
+      
+      cell.setCellFormula("DATE(2012,2,1+4)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40944.0, fe.evaluate(cell).getNumberValue());
+      
+      cell.setCellFormula("DATE(2012,2-1,1+4)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40913.0, fe.evaluate(cell).getNumberValue());
+      
+      cell.setCellFormula("DATE(2012,2,1-27)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40913.0, fe.evaluate(cell).getNumberValue());
+      
+      cell.setCellFormula("DATE(2012,2-2,1+4)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40882.0, fe.evaluate(cell).getNumberValue());
+      
+      cell.setCellFormula("DATE(2012,2,1-58)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40882.0, fe.evaluate(cell).getNumberValue());
+      
+      cell.setCellFormula("DATE(2012,2-12,1+4)");
+      fe.notifyUpdateCell(cell);
+      assertEquals(40579.0, fe.evaluate(cell).getNumberValue());
+	}
 
 	private static final class EvalListener extends EvaluationListener {
 		private int _countCacheHits;
