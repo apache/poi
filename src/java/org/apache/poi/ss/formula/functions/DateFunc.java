@@ -54,16 +54,29 @@ public final class DateFunc extends Fixed3ArgFunction {
 		return new NumberEval(result);
 	}
 
+	/**
+	 * Note - works with Java Calendar months, not Excel months
+	 */
 	private static double evaluate(int year, int month, int pDay) throws EvaluationException {
-
-		if (year < 0 || month < 0 || pDay < 0) {
+	   // We don't support negative years yet
+		if (year < 0) {
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
-
+		// Negative months are fairly easy
+		while (month < 0) {
+		   year--;
+		   month += 12;
+		}
+		// Negative days are handled by the Java Calendar
+		
+		// Excel has bugs around leap years in 1900, handle them
+		// Special case for the non-existant 1900 leap year
 		if (year == 1900 && month == Calendar.FEBRUARY && pDay == 29) {
 			return 60.0;
 		}
 
+		// If they give a date in 1900 in Jan/Feb, with the days
+		//  putting it past the leap year, adjust
 		int day = pDay;
 		if (year == 1900) {
 			if ((month == Calendar.JANUARY && day >= 60) ||
@@ -72,12 +85,24 @@ public final class DateFunc extends Fixed3ArgFunction {
 			}
 		}
 
+		// Turn this into a Java date
 		Calendar c = new GregorianCalendar();
-
 		c.set(year, month, day, 0, 0, 0);
 		c.set(Calendar.MILLISECOND, 0);
+		
+		// Handle negative days of the week, that pull us across
+		//  the 29th of Feb 1900
+		if (pDay < 0 && c.get(Calendar.YEAR) == 1900 &&
+		      month > Calendar.FEBRUARY && 
+		      c.get(Calendar.MONTH) < Calendar.MARCH) {
+		   c.add(Calendar.DATE, 1);
+		}
 
-		return DateUtil.getExcelDate(c.getTime(), false); // TODO - fix 1900/1904 problem
+		// TODO Identify if we're doing 1900 or 1904 date windowing
+		boolean use1904windowing = false;
+		
+		// Have this Java date turned back into an Excel one
+		return DateUtil.getExcelDate(c.getTime(), use1904windowing);
 	}
 
 	private static int getYear(double d) {
