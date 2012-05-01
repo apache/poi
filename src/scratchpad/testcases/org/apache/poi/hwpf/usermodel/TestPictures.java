@@ -333,4 +333,12 @@ public final class TestPictures extends TestCase {
         assertEquals(PictureType.PNG, p.suggestPictureType());
         assertEquals("png", p.suggestFileExtension());
     }
+    
+    public void testPictureWithAlternativeText() throws Exception {
+        HWPFDocument document = HWPFTestDataSamples.openSampleFile("Picture_Alternative_Text.doc");
+        PicturesTable pictureTable = document.getPicturesTable();
+        Picture picture = pictureTable.getAllPictures().get(0);
+
+        assertEquals("This is the alternative text for the picture.", picture.getDescription());
+    }
 }
