@@ -27,11 +27,16 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents embedded picture extracted from Word Document
@@ -487,6 +492,28 @@ public final class Picture
             fillWidthHeight();
         }
         return width;
+    }
+    
+    /**
+     * returns the description stored in the alternative text
+     * 
+     * @return pictue description
+     */
+    public String getDescription()
+    {
+       for(EscherRecord escherRecord : _picfAndOfficeArtData.getShape().getChildRecords()){
+          if(escherRecord instanceof EscherOptRecord){
+             EscherOptRecord escherOptRecord = (EscherOptRecord) escherRecord;
+             for(EscherProperty property : escherOptRecord.getEscherProperties()){
+                if(EscherProperties.GROUPSHAPE__DESCRIPTION == property.getPropertyNumber()){
+                   byte[] complexData = ((EscherComplexProperty)property).getComplexData();
+                   return StringUtil.getFromUnicodeLE(complexData,0,complexData.length/2-1);
+                }
+             }
+          }
+       }
+
+       return null;
     }
 
     /**

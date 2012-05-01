@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">53165 - HWPF support for fetching the description (alt text) of a picture</action>
           <action dev="poi-developers" type="fix">48528 - support negative arguments to the DATE() function</action>
           <action dev="poi-developers" type="fix">53092 - allow specifying of a TimeZone to DateUtil.getJavaDate(), for when it is known that a file comes from a different (known) timezone to the current machine</action>
           <action dev="poi-developers" type="fix">53043 - don't duplicate hyperlink relationships when saving XSSF file</action>
