@@ -18,6 +18,7 @@
 package org.apache.poi.ddf;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.util.HexDump;
@@ -141,6 +142,24 @@ public final class UnknownEscherRecord extends EscherRecord {
                 "  numchildren: " + getChildRecords().size() + '\n' +
                 theDumpHex +
                 children.toString();
+    }
+
+    @Override
+    public String toXml(String tab) {
+        String theDumpHex = HexDump.toHex(thedata, 32);
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<IsContainer>").append(isContainerRecord()).append("</IsContainer>\n")
+                .append(tab).append("\t").append("<Numchildren>").append(HexDump.toHex(_childRecords.size())).append("</Numchildren>\n");
+        for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator
+                .hasNext(); )
+        {
+            EscherRecord record = iterator.next();
+            builder.append(record.toXml(tab+"\t"));
+        }
+        builder.append(theDumpHex).append("\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
     }
 
     public void addChildRecord(EscherRecord childRecord) {

@@ -329,6 +329,18 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
 		return result.toString();
 	}
+    
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getRecordName()).append(">\n");
+        for ( Iterator iterator = getEscherRecords().iterator(); iterator.hasNext(); )
+        {
+            EscherRecord escherRecord = (EscherRecord) iterator.next();
+            builder.append( escherRecord.toXml(tab+"\t") );
+        }
+        builder.append(tab).append("</").append(getRecordName()).append(">\n");
+        return builder.toString();
+    }
 
 	/**
 	 * Collapses the drawing records into an aggregate.

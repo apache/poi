@@ -213,4 +213,21 @@ public final class EscherPictBlip extends EscherBlipRecord {
                 "  Filter: " + HexDump.toHex( field_7_fFilter ) + '\n' +
                 "  Extra Data:" + '\n' + extraData;
     }
+
+    @Override
+    public String toXml(String tab) {
+        String extraData = "";
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<UID>0x").append(HexDump.toHex( field_1_UID )).append("</UID>\n")
+                .append(tab).append("\t").append("<UncompressedSize>0x").append(HexDump.toHex( field_2_cb )).append("</UncompressedSize>\n")
+                .append(tab).append("\t").append("<Bounds>").append(getBounds()).append("</Bounds>\n")
+                .append(tab).append("\t").append("<SizeInEMU>").append(getSizeEMU()).append("</SizeInEMU>\n")
+                .append(tab).append("\t").append("<CompressedSize>0x").append(HexDump.toHex( field_5_cbSave )).append("</CompressedSize>\n")
+                .append(tab).append("\t").append("<Compression>0x").append(HexDump.toHex( field_6_fCompression )).append("</Compression>\n")
+                .append(tab).append("\t").append("<Filter>0x").append(HexDump.toHex( field_7_fFilter )).append("</Filter>\n")
+                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
 }

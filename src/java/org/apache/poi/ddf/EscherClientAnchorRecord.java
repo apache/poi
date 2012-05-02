@@ -160,6 +160,38 @@ public class EscherClientAnchorRecord
 
     }
 
+    @Override
+    public String toXml(String tab) {
+        String extraData;
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        try
+        {
+            HexDump.dump(this.remainingData, 0, b, 0);
+            extraData = b.toString();
+        }
+        catch ( Exception e )
+        {
+            extraData = "error\n";
+        }
+        if (extraData.contains("No Data")){
+            extraData = "No Data";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<Flag>").append(field_1_flag).append("</Flag>\n")
+                .append(tab).append("\t").append("<Col1>").append(field_2_col1).append("</Col1>\n")
+                .append(tab).append("\t").append("<DX1>").append(field_3_dx1).append("</DX1>\n")
+                .append(tab).append("\t").append("<Row1>").append(field_4_row1).append("</Row1>\n")
+                .append(tab).append("\t").append("<DY1>").append(field_5_dy1).append("</DY1>\n")
+                .append(tab).append("\t").append("<Col2>").append(field_6_col2).append("</Col2>\n")
+                .append(tab).append("\t").append("<DX2>").append(field_7_dx2).append("</DX2>\n")
+                .append(tab).append("\t").append("<Row2>").append(field_8_row2).append("</Row2>\n")
+                .append(tab).append("\t").append("<DY2>").append(field_9_dy2).append("</DY2>\n")
+                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     /**
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
      */
