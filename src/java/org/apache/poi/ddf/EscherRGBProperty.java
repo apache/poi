@@ -17,6 +17,8 @@
 
 package org.apache.poi.ddf;
 
+import org.apache.poi.util.HexDump;
+
 /**
  * A color property.
  *
@@ -51,4 +53,11 @@ public class EscherRGBProperty
         return (byte) ( (propertyValue >> 16) & 0xFF );
     }
 
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
+                .append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append(isBlipId()).append("\" value=\"0x").append(HexDump.toHex(propertyValue)).append("\"/>\n");
+        return builder.toString();
+    }
 }

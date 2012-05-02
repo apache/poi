@@ -97,6 +97,18 @@ public class EscherChildAnchorRecord
 
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<X1>").append(field_1_dx1).append("</X1>\n")
+                .append(tab).append("\t").append("<Y1>").append(field_2_dy1).append("</Y1>\n")
+                .append(tab).append("\t").append("<X2>").append(field_3_dx2).append("</X2>\n")
+                .append(tab).append("\t").append("<Y2>").append(field_4_dy2).append("</Y2>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     /**
      * Retrieves offset within the parent coordinate space for the top left point.
      */

@@ -118,4 +118,12 @@ public class EscherSimpleProperty extends EscherProperty
                 + ", value: " + propertyValue + " (0x" + HexDump.toHex(propertyValue) + ")";
     }
 
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
+                .append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append(isBlipId()).append("\" complex=\"").append(isComplex()).append("\" value=\"").append("0x")
+                .append(HexDump.toHex(propertyValue)).append("\"/>\n");
+        return builder.toString();
+    }
 }

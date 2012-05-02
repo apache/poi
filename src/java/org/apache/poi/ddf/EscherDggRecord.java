@@ -142,6 +142,18 @@ public final class EscherDggRecord extends EscherRecord {
 
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<ShapeIdMax>").append(field_1_shapeIdMax).append("</ShapeIdMax>\n")
+                .append(tab).append("\t").append("<NumIdClusters>").append(getNumIdClusters()).append("</NumIdClusters>\n")
+                .append(tab).append("\t").append("<NumShapesSaved>").append(field_3_numShapesSaved).append("</NumShapesSaved>\n")
+                .append(tab).append("\t").append("<DrawingsSaved>").append(field_4_drawingsSaved).append("</DrawingsSaved>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     public int getShapeIdMax() {
         return field_1_shapeIdMax;
     }

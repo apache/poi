@@ -72,6 +72,13 @@ public abstract class EscherProperty {
     public int getPropertySize() {
         return 6;
     }
+    
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"").append(getId()).append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append(isBlipId()).append("\"/>\n");
+        return builder.toString();
+    }
 
     /**
      * Escher properties consist of a simple fixed length part and a complex variable length part.

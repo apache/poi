@@ -114,4 +114,26 @@ public class EscherBitmapBlip extends EscherBlipRecord {
                 "  Marker: 0x" + HexDump.toHex( field_2_marker ) + nl +
                 "  Extra Data:" + nl + extraData;
     }
+
+    @Override
+    public String toXml(String tab) {
+        String extraData;
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        try
+        {
+            HexDump.dump( this.field_pictureData, 0, b, 0 );
+            extraData = b.toString();
+        }
+        catch ( Exception e )
+        {
+            extraData = e.toString();
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<UID>0x").append(HexDump.toHex(field_1_UID)).append("</UID>\n")
+                .append(tab).append("\t").append("<Marker>0x").append(HexDump.toHex(field_2_marker)).append("</Marker>\n")
+                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
 }
