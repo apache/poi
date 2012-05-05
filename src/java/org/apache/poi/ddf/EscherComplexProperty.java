@@ -140,7 +140,7 @@ public class EscherComplexProperty extends EscherProperty {
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
                 .append("\" name=\"").append(getName()).append("\" blipId=\"")
                 .append(isBlipId()).append("\">\n");
-        builder.append("\t").append(tab).append(dataStr);
+        //builder.append("\t").append(tab).append(dataStr);
         builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
         return builder.toString();
     }

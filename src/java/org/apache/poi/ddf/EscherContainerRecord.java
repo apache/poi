@@ -258,17 +258,14 @@ public final class EscherContainerRecord extends EscherRecord {
     @Override
     public String toXml(String tab) {
         StringBuilder builder = new StringBuilder();
-        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
-                .append(tab).append("\t").append("<RecordName>").append(getRecordName()).append("</RecordName>\n")
-                .append(tab).append("\t").append("<IsContainer>").append(isContainerRecord()).append("</IsContainer>\n")
-                .append(tab).append("\t").append("<Numchildren>").append(HexDump.toHex(_childRecords.size())).append("</Numchildren>\n");
+        builder.append(tab).append(formatXmlRecordHeader(getRecordName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
         for ( Iterator<EscherRecord> iterator = _childRecords.iterator(); iterator
                 .hasNext(); )
         {
             EscherRecord record = iterator.next();
             builder.append(record.toXml(tab+"\t"));
         }
-        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        builder.append(tab).append("</").append(getRecordName()).append(">\n");
         return builder.toString();
     }
 
