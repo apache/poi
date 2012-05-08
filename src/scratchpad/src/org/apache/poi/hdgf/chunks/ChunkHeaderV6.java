@@ -17,6 +17,8 @@
 
 package org.apache.poi.hdgf.chunks;
 
+import java.nio.charset.Charset;
+
 /**
  * A chunk header from v6
  */
@@ -58,5 +60,10 @@ public class ChunkHeaderV6 extends ChunkHeader {
 	public boolean hasSeparator() {
 		// V6 never has separators
 		return false;
+	}
+
+	@Override
+	public Charset getChunkCharset() {
+		return Charset.forName("ASCII");
 	}
 }
