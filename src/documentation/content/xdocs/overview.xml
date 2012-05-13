@@ -234,7 +234,7 @@
         </tr>
         <tr>
           <td>poi</td>
-	  <td>commons-logging, log4j</td>
+	  <td>commons-logging, commons-codec, log4j</td>
           <td>poi-version-yyyymmdd.jar</td>
         </tr>
         <tr>
