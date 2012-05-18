@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,12 +36,12 @@ import org.apache.poi.util.IOUtils;
 
 
 /**
- * Demonstrates how to add an image to a worksheet and set that image's size
- * to a specific number of milimetres irrespective of the width of the columns
+ * Demonstrates how to add an image to a worksheet and set that images size
+ * to a specific number of millimetres irrespective of the width of the columns
  * or height of the rows. Overridden methods are provided so that the location
- * of the image - the cells row and column co-ordinates that define the top
+ * of the image - the cells row and column coordinates that define the top
  * left hand corners of the image - can be identified either in the familiar
- * Excel manner - A1 for instance - or using POI's methodolody of a column and
+ * Excel manner - A1 for instance - or using POI's methodology of a column and
  * row index where 0, 0 would indicate cell A1.
  *
  * The best way to make use of these techniques is to delay adding the image to
@@ -53,22 +54,22 @@ import org.apache.poi.util.IOUtils;
  * The key to the process is the ClientAnchor class. It defines methods that allow
  * us to define the location of an image by specifying the following;
  *
- *      * How far - in terms of co-ordinate positions - the image should be inset
+ *      * How far - in terms of coordinate positions - the image should be inset
  *      from the left hand border of a cell.
- *      * How far - in terms of co-ordinate positions - the image should be inset
+ *      * How far - in terms of coordinate positions - the image should be inset
  *      from the from the top of the cell.
- *      * How far - in terms of co-ordinate positions - the right hand edge of
- *      the image should protrude into a cell (measured from the cell's left hand
- *      edge to the image's right hand edge).
- *      * How far - in terms of co-ordinate positions - the bottm edge of the
- *      image should protrude into a row (measured from the cell's top edge to
- *      the image's bottom edge).
+ *      * How far - in terms of coordinate positions - the right hand edge of
+ *      the image should protrude into a cell (measured from the cells left hand
+ *      edge to the images right hand edge).
+ *      * How far - in terms of coordinate positions - the bottom edge of the
+ *      image should protrude into a row (measured from the cells top edge to
+ *      the images bottom edge).
  *      * The index of the column that contains the cell whose top left hand
  *      corner should be aligned with the top left hand corner of the image.
  *      * The index of the row that contains the cell whose top left hand corner
- *      should be aligned with the image's top left hand corner.
+ *      should be aligned with the images top left hand corner.
  *      * The index of the column that contains the cell whose top left hand
- *      corner should be aligned with the image's bottom right hand corner
+ *      corner should be aligned with the images bottom right hand corner
  *      * The index number of the row that contains the cell whose top left
  *      hand corner should be aligned with the images bottom right hand corner.
  *
@@ -106,7 +107,7 @@ import org.apache.poi.util.IOUtils;
  * the bottom right hand corner of the image will be located in cell B2 (1, 1) and
  * it will again be aligned with the top left hand corner of the cell. This has the
  * effect of making the image seem to occupy the whole of cell A1. Interestingly, it
- * also has an effect on the image's resizing behaviour because testing has 
+ * also has an effect on the images resizing behaviour because testing has 
  * demonstrated that if the image is wholly contained within one cell and is not
  * 'attached' for want of a better word, to a neighbouring cell, then that image
  * will not increase in size in response to the user dragging the column wider
@@ -114,10 +115,10 @@ import org.apache.poi.util.IOUtils;
  *
  * The following example demonstrates a slightly different way to insert an
  * image into cell A1 and to ensure that it occupies the whole of the cell. This
- * is accomplised by specifying the the images bottom right hand corner should be
+ * is accomplished by specifying the the images bottom right hand corner should be
  * aligned with the bottom right hand corner of the cell. It is also a case
  * where the image will not increase in size if the user increases the size of
- * the enclosing cell - irrespective of the anchor's type - but it will reduce in
+ * the enclosing cell - irrespective of the anchors type - but it will reduce in
  * size if the cell is made smaller.
  *
  *      ClientAnchor anchor = sheet.getWorkbook().getCreationHelper().createClientAnchor();
@@ -131,13 +132,13 @@ import org.apache.poi.util.IOUtils;
  *      anchor.setCol2(0);
  *      anchor.setRow2(0);
  *
- * Note that the final four method calls all pas the same value and seem to
+ * Note that the final four method calls all pass the same value and seem to
  * indicate that the images top left hand corner is aligned with the top left
  * hand corner of cell A1 and that it's bottom right hand corner is also
  * aligned with the top left hand corner of cell A1. Yet, running this code
  * would see the image fully occupying cell A1. That is the result of the
  * values passed to parameters three and four; these I have referred to as
- * determing the images co-ordinates within the cell. They indicate that the
+ * determining the images coordinates within the cell. They indicate that the
  * image should occupy - in order - the full width of the column and the full
  * height of the row.
  *
@@ -147,9 +148,9 @@ import org.apache.poi.util.IOUtils;
  * always result in the image occupying the full width of the column. They help
  * in situations where an image is larger than a column/row and must overlap
  * into the next column/row. Using them does mean, however, that it is often
- * necessary to perform conversions between Excel's characters units, points,
+ * necessary to perform conversions between Excels characters units, points,
  * pixels and millimetres in order to establish how many rows/columns an image
- * should occupy and just what the varous insets ought to be.
+ * should occupy and just what the various insets ought to be.
  *
  * Note that the setDx1(int) and setDy1(int) methods of the ClientAchor class
  * are not made use of in the code that follows. It would be fairly trivial
@@ -165,9 +166,9 @@ import org.apache.poi.util.IOUtils;
  * rounding the values at the correct point - it is likely that these errors
  * could be reduced or removed.
  *
- * A note concerning Excels' image resizing behaviour. The ClientAnchor
+ * A note concerning Excels image resizing behaviour. The ClientAnchor
  * class contains a method called setAnchorType(int) which can be used to
- * determine how Excel will resize an image in reponse to the user increasing
+ * determine how Excel will resize an image in response to the user increasing
  * or decreasing the dimensions of the cell containing the image. There are 
  * three values that can be passed to this method; 0 = To move and size the 
  * image with the cell, 2 = To move but don't size the image with the cell,
@@ -181,12 +182,21 @@ import org.apache.poi.util.IOUtils;
  * @author Mark Beardsley [msb at apache.org] and Mark Southern [southern at scripps.edu]
  * @version 1.00 5th August 2009.
  *          2.00 26th February 2010.
- *               Ported to make use of the the SS Usermodel classes.
+ *               Ported to make use of the the SS usermodel classes.
  *               Ability to reuse the Drawing Patriarch so that multiple images
  *               can be inserted without unintentionally erasing earlier images.
  *               Check on image type added; i.e. jpg, jpeg or png.
  *               The String used to contain the files name is now converted
  *               into a URL.
+ *          2.10 17th May 2012
+ *               Corrected gross error that occurred when using the code with
+ *               XSSF or SXSSF workbooks. In short, the code did not correctly
+ *               calculate the size of the image(s) owing to the use of EMUs
+ *               within the OOXML file format. That problem has largely been
+ *               corrected although it should be mentioned that images are not
+ *               sized with the same level of accuracy. Discrepancies of up to
+ *               2mm have been noted in testing. Further investigation will
+ *               continue to rectify this issue.
  */
 public class AddDimensionedImage {
 
@@ -210,7 +220,12 @@ public class AddDimensionedImage {
     public static final int EXPAND_COLUMN = 2;
     public static final int EXPAND_ROW_AND_COLUMN = 3;
     public static final int OVERLAY_ROW_AND_COLUMN = 7;
-
+    
+    // Modified to support EMU - English Metric Units - used within the OOXML
+    // workbooks, this multoplier is used to convert between measurements in
+    // millimetres and in EMUs
+    private static final int EMU_PER_MM = 36000;
+    
     /**
      * Add an image to a worksheet.
      *
@@ -223,6 +238,12 @@ public class AddDimensionedImage {
      *                   the image should be positioned on the sheet.
      * @param sheet A reference to the sheet that contains the cell referenced
      *              above.
+     * @param drawing An instance of the DrawingPatriarch class. This is now
+     *                passed into the method where it was, previously, recovered
+     *                from the sheet in order to allow multiple pictures be
+     *                inserted. If the patriarch was not 'cached in this manner
+     *                each time it was created any previously positioned images
+     *                would be simply over-written.
      * @param imageFile An instance of the URL class that encapsulates the name
      *                  of and path to the image that is to be 'inserted into'
      *                  the sheet.
@@ -264,16 +285,22 @@ public class AddDimensionedImage {
      *                  column on the worksheet; POI column indices are zero
      *                  based. Together with the rowNumber parameter's value,
      *                  this parameter identifies a cell on the worksheet. The
-     *                  image's top left hand corner will be aligned with the
+     *                  images top left hand corner will be aligned with the
      *                  top left hand corner of this cell.
-     * @param rowNumber A primtive int that contains the index number of a row
+     * @param rowNumber A primitive int that contains the index number of a row
      *                  on the worksheet; POI row indices are zero based.
      *                  Together with the rowNumber parameter's value, this
      *                  parameter identifies a cell on the worksheet. The
-     *                  image's top left hand corner will be aligned with the
+     *                  images top left hand corner will be aligned with the
      *                  top left hand corner of this cell.
      * @param sheet A reference to the sheet that contains the cell identified
      *              by the two parameters above.
+     * @param drawing An instance of the DrawingPatriarch class. This is now
+     *                passed into the method where it was, previously, recovered
+     *                from the sheet in order to allow multiple pictures be
+     *                inserted. If the patriarch was not 'cached in this manner
+     *                each time it was created any previously positioned images
+     *                would be simply over-written.
      * @param imageFile An instance of the URL class that encapsulates the name
      *                  of and path to the image that is to be 'inserted into'
      *                  the sheet.
@@ -356,18 +383,18 @@ public class AddDimensionedImage {
         // to the method, the images type is identified before it is added to the
         // sheet.
         String sURL = imageFile.toString().toLowerCase();
-		if( sURL.endsWith(".png") ) {
-			imageType = Workbook.PICTURE_TYPE_PNG;
-		}
-		else if( sURL.endsWith("jpg") || sURL.endsWith(".jpeg") ) {
-			imageType = Workbook.PICTURE_TYPE_JPEG;
-		}
-		else  {
-			throw new IllegalArgumentException("Invalid Image file : " +
-				sURL);
-		}
+	if( sURL.endsWith(".png") ) {
+            imageType = Workbook.PICTURE_TYPE_PNG;
+	}
+	else if( sURL.endsWith("jpg") || sURL.endsWith(".jpeg") ) {
+            imageType = Workbook.PICTURE_TYPE_JPEG;
+	}
+	else  {
+            throw new IllegalArgumentException("Invalid Image file : " +
+                sURL);
+	}
         int index = sheet.getWorkbook().addPicture(
-        	IOUtils.toByteArray(imageFile.openStream()), imageType);
+            IOUtils.toByteArray(imageFile.openStream()), imageType);
         drawing.createPicture(anchor, index);
     }
 
@@ -381,9 +408,9 @@ public class AddDimensionedImage {
      * @param sheet A reference to the sheet that will 'contain' the image.
      * @param colNumber A primtive int that contains the index number of a
      *                  column on the sheet.
-     * @param reqImageWidthMM A primtive double that contains the required
+     * @param reqImageWidthMM A primitive double that contains the required
      *                        width of the image in millimetres
-     * @param resizeBehaviour A primitve int whose value will indicate how the
+     * @param resizeBehaviour A primitive int whose value will indicate how the
      *                        width of the column should be adjusted if the
      *                        required width of the image is greater than the
      *                        width of the column.
@@ -394,7 +421,7 @@ public class AddDimensionedImage {
      *         left hand corner also defines the bottom right hand corner of
      *         the image and an inset that determines how far the right hand
      *         edge of the image can protrude into the next column - expressed
-     *         as a specific number of co-ordinate positions.
+     *         as a specific number of coordinate positions.
      */
     private ClientAnchorDetail fitImageToColumns(Sheet sheet, int colNumber,
             double reqImageWidthMM, int resizeBehaviour) {
@@ -426,10 +453,16 @@ public class AddDimensionedImage {
                 // the required width of the image into co-ordinates. This value
                 // will become the inset for the ClientAnchorDetail class that
                 // is then instantiated.
-                colWidthMM = reqImageWidthMM;
-                colCoordinatesPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
-                    colWidthMM;
-                pictureWidthCoordinates = (int)(reqImageWidthMM * colCoordinatesPerMM);
+                if(sheet instanceof HSSFSheet) {
+                    colWidthMM = reqImageWidthMM;
+                    colCoordinatesPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
+                        colWidthMM;
+                    pictureWidthCoordinates = (int)(reqImageWidthMM * colCoordinatesPerMM);
+
+                }
+                else {
+                    pictureWidthCoordinates = (int)reqImageWidthMM * AddDimensionedImage.EMU_PER_MM;
+                }
                 colClientAnchorDetail = new ClientAnchorDetail(colNumber,
                         colNumber, pictureWidthCoordinates);
             }
@@ -444,11 +477,17 @@ public class AddDimensionedImage {
         }
         // If the column is wider than the image.
         else {
-            // Mow many co-ordinate positions are there per millimetre?
-            colCoordinatesPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
+            if(sheet instanceof HSSFSheet) {
+                // Mow many co-ordinate positions are there per millimetre?
+                colCoordinatesPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
                     colWidthMM;
-            // Given the width of the image, what should be it's co-ordinate?
-            pictureWidthCoordinates = (int)(reqImageWidthMM * colCoordinatesPerMM);
+                // Given the width of the image, what should be it's co-ordinate?
+                pictureWidthCoordinates = (int)(reqImageWidthMM * colCoordinatesPerMM);
+            }
+            else {
+                pictureWidthCoordinates = (int)reqImageWidthMM *
+                        AddDimensionedImage.EMU_PER_MM;
+            }
             colClientAnchorDetail = new ClientAnchorDetail(colNumber,
                     colNumber, pictureWidthCoordinates);
         }
@@ -456,18 +495,18 @@ public class AddDimensionedImage {
     }
 
     /**
-     * Determines whether the sheet's row should be re-sized to accomodate
+     * Determines whether the sheets row should be re-sized to accomodate
      * the image, adjusts the rows height if necessary and creates then
      * returns a ClientAnchorDetail object that facilitates construction of
      * a ClientAnchor that will fix the image on the sheet and establish
      * it's size.
      *
      * @param sheet A reference to the sheet that will 'contain' the image.
-     * @param rowNumber A primtive int that contains the index number of a
+     * @param rowNumber A primitive int that contains the index number of a
      *                  row on the sheet.
-     * @param reqImageHeightMM A primtive double that contains the required
+     * @param reqImageHeightMM A primitive double that contains the required
      *                         height of the image in millimetres
-     * @param resizeBehaviour A primitve int whose value will indicate how the
+     * @param resizeBehaviour A primitive int whose value will indicate how the
      *                        height of the row should be adjusted if the
      *                        required height of the image is greater than the
      *                        height of the row.
@@ -478,7 +517,7 @@ public class AddDimensionedImage {
      *         top left hand corner also defines the bottom right hand
      *         corner of the image and an inset that determines how far the
      *         bottom edge of the image can protrude into the next (lower)
-     *         row - expressed as a specific number of co-ordinate positions.
+     *         row - expressed as a specific number of coordinate positions.
      */
     private ClientAnchorDetail fitImageToRows(Sheet sheet, int rowNumber,
             double reqImageHeightMM, int resizeBehaviour) {
@@ -507,10 +546,17 @@ public class AddDimensionedImage {
                (resizeBehaviour == AddDimensionedImage.EXPAND_ROW_AND_COLUMN)) {
                 row.setHeightInPoints((float)(reqImageHeightMM *
                         ConvertImageUnits.POINTS_PER_MILLIMETRE));
-                rowHeightMM = reqImageHeightMM;
-                rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
-                    rowHeightMM;
-                pictureHeightCoordinates = (int)(reqImageHeightMM * rowCoordinatesPerMM);
+                if(sheet instanceof HSSFSheet) {                    
+                    rowHeightMM = reqImageHeightMM;
+                    rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
+                        rowHeightMM;
+                    pictureHeightCoordinates = (int)(reqImageHeightMM *
+                            rowCoordinatesPerMM);
+                }
+                else {
+                    pictureHeightCoordinates = (int)(reqImageHeightMM *
+                            AddDimensionedImage.EMU_PER_MM);
+                }
                 rowClientAnchorDetail = new ClientAnchorDetail(rowNumber,
                         rowNumber, pictureHeightCoordinates);
             }
@@ -525,9 +571,15 @@ public class AddDimensionedImage {
         }
         // Else, if the image is smaller than the space available
         else {
-            rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
+            if(sheet instanceof HSSFSheet) {
+                rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
                     rowHeightMM;
-            pictureHeightCoordinates = (int)(reqImageHeightMM * rowCoordinatesPerMM);
+                pictureHeightCoordinates = (int)(reqImageHeightMM * rowCoordinatesPerMM);
+            }
+            else {
+                pictureHeightCoordinates = (int)(reqImageHeightMM *
+                        AddDimensionedImage.EMU_PER_MM);
+            }
             rowClientAnchorDetail = new ClientAnchorDetail(rowNumber,
                         rowNumber, pictureHeightCoordinates);
         }
@@ -554,7 +606,7 @@ public class AddDimensionedImage {
      *         left hand corner also defines the bottom right hand corner of
      *         the image and an inset that determines how far the right hand
      *         edge of the image can protrude into the next column - expressed
-     *         as a specific number of co-ordinate positions.
+     *         as a specific number of coordinate positions.
      */
     private ClientAnchorDetail calculateColumnLocation(Sheet sheet,
                                                        int startingColumn,
@@ -600,8 +652,14 @@ public class AddDimensionedImage {
             // total number of co-ordinate positions to the third paramater
             // of the ClientAnchorDetail constructor. For no sepcific reason,
             // the latter option is used below.
-            anchorDetail = new ClientAnchorDetail(startingColumn,
+            if(sheet instanceof HSSFSheet) {
+                anchorDetail = new ClientAnchorDetail(startingColumn,
                     toColumn, ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS);
+            }
+            else {
+                anchorDetail = new ClientAnchorDetail(startingColumn,
+                    toColumn, (int)reqImageWidthMM * AddDimensionedImage.EMU_PER_MM);
+            }
         }
         // In this case, the image will overlap part of another column and it is
         // necessary to calculate just how much - this will become the inset
@@ -619,13 +677,18 @@ public class AddDimensionedImage {
                 overlapMM = 0.0D;
             }
 
-            // Next, from the columns width, calculate how many co-ordinate
-            // positons there are per millimetre
-            coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
+            if(sheet instanceof HSSFSheet) {
+                // Next, from the columns width, calculate how many co-ordinate
+                // positons there are per millimetre
+                coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
                     colWidthMM;
-            // From this figure, determine how many co-ordinat positions to
-            // inset the left hand or bottom edge of the image.
-            inset = (int)(coordinatePositionsPerMM * overlapMM);
+                // From this figure, determine how many co-ordinat positions to
+                // inset the left hand or bottom edge of the image.
+                inset = (int)(coordinatePositionsPerMM * overlapMM);
+            }
+            else {
+                inset = (int)overlapMM * AddDimensionedImage.EMU_PER_MM;
+            }
 
             // Now create the ClientAnchorDetail object, setting the from and to
             // columns and the inset.
@@ -694,8 +757,14 @@ public class AddDimensionedImage {
         // equality, cast both to int(s) to truncate the value; VERY crude and
         // I do not really like it!!
         if((int)totalRowHeightMM == (int)reqImageHeightMM) {
-            clientAnchorDetail = new ClientAnchorDetail(startingRow, toRow,
+            if(sheet instanceof HSSFSheet) {
+                clientAnchorDetail = new ClientAnchorDetail(startingRow, toRow,
                     ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS);
+            }
+            else {
+                clientAnchorDetail = new ClientAnchorDetail(startingRow, toRow,
+                    (int)reqImageHeightMM * AddDimensionedImage.EMU_PER_MM);
+            }
         }
         else {
             // Calculate how far the image will project into the next row. Note
@@ -709,9 +778,14 @@ public class AddDimensionedImage {
                 overlapMM = 0.0D;
             }
 
-            rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
+            if(sheet instanceof HSSFSheet) {
+                rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
                     rowHeightMM;
-            inset = (int)(overlapMM * rowCoordinatesPerMM);
+                inset = (int)(overlapMM * rowCoordinatesPerMM);
+            }
+            else {
+                inset = (int)overlapMM * AddDimensionedImage.EMU_PER_MM;
+            }
             clientAnchorDetail = new ClientAnchorDetail(startingRow,
                         toRow, inset);
         }
@@ -748,11 +822,9 @@ public class AddDimensionedImage {
         		System.err.println("Usage: AddDimensionedImage imageFile outputFile");
         		return;
         	}
-        	workbook = new HSSFWorkbook();
+        	workbook = new HSSFWorkbook();   // OR XSSFWorkbook
         	sheet = workbook.createSheet("Picture Test");
-            // Note that as the code has been ported to the SS model, the following
-            // would be equally as valid - workbook = new XSSFWorkbook();
-        	imageFile = args[0];
+               	imageFile = args[0];
         	outputFile = args[1];
         	new AddDimensionedImage().addImageToSheet("B5", sheet, sheet.createDrawingPatriarch(),
         		new File(imageFile).toURI().toURL(), 100, 40,
@@ -786,7 +858,7 @@ public class AddDimensionedImage {
     }
 
     /**
-     * The HSSFClientAnchor class accepts eight parameters. In order, these are;
+     * The HSSFClientAnchor class accepts eight arguments. In order, these are;
      *
      *      * How far the left hand edge of the image is inset from the left hand
      *      edge of the cell
@@ -795,16 +867,16 @@ public class AddDimensionedImage {
      *      hand edge of the cell
      *      * How far the bottom edge of the image is inset from the top of the
      *      cell.
-     *      * Together, parameters five and six determine the column and row
-     *      co-ordinates of the cell whose top left hand corner will be aligned
-     *      with the image's top left hand corner.
-     *      * Together, parameter seven and eight determine the column and row
-     *      co-ordinates of the cell whose top left hand corner will be aligned
+     *      * Together, arguments five and six determine the column and row
+     *      coordinates of the cell whose top left hand corner will be aligned
+     *      with the images top left hand corner.
+     *      * Together, arguments seven and eight determine the column and row
+     *      coordinates of the cell whose top left hand corner will be aligned
      *      with the images bottom right hand corner.
      *
      * An instance of the ClientAnchorDetail class provides three of the eight
-     * parameters, one of the co-ordinates for the images top left hand corner,
-     * one of the co-ordinates for the images bottom right hand corner and
+     * parameters, one of the coordinates for the images top left hand corner,
+     * one of the coordinates for the images bottom right hand corner and
      * either how far the image should be inset from the top or the left hand
      * edge of the cell.
      *
@@ -822,10 +894,10 @@ public class AddDimensionedImage {
          * following parameters.
          *
          * @param fromIndex A primitive int that contains one of the
-         *                  co-ordinates (row or column index) for the top left
+         *                  coordinates (row or column index) for the top left
          *                  hand corner of the image.
          * @param toIndex A primitive int that contains one of the
-         *                co-ordinates (row or column index) for the bottom
+         *                coordinates (row or column index) for the bottom
          *                right hand corner of the image.
          * @param inset A primitive int that contains a value which indicates
          *              how far the image should be inset from the top or the
@@ -842,7 +914,7 @@ public class AddDimensionedImage {
          * whose top left hand corner will be aligned with the top left hand
          * corner of the image.
          *
-         * @return The value - row or column index - for one of the co-ordinates
+         * @return The value - row or column index - for one of the coordinates
          *         of the top left hand corner of the image.
          */
         public int getFromIndex() {
@@ -851,10 +923,10 @@ public class AddDimensionedImage {
 
         /**
          * Get one of the number of the column or row that contains the cell
-         * whose top left hand corner will be aligned with the bottom righ hand
+         * whose top left hand corner will be aligned with the bottom right hand
          * corner of the image.
          *
-         * @return The value - row or column index - for one of the co-ordinates
+         * @return The value - row or column index - for one of the coordinates
          *         of the bottom right hand corner of the image.
          */
         public int getToIndex() {
@@ -862,7 +934,7 @@ public class AddDimensionedImage {
         }
 
         /**
-         * Get the image's offset from the edge of a cell.
+         * Get the images offset from the edge of a cell.
          *
          * @return How far either the right hand or bottom edge of the image is
          *         inset from the left hand or top edge of a cell.
@@ -873,7 +945,7 @@ public class AddDimensionedImage {
     }
 
     /**
-     * Utility methods used to convert Excel's character based column and row
+     * Utility methods used to convert Excels character based column and row
      * size measurements into pixels and/or millimetres. The class also contains
      * various constants that are required in other calculations.
      *
@@ -938,10 +1010,10 @@ public class AddDimensionedImage {
         }
 
         /**
-         * Convert Excel's width units into millimetres.
+         * Convert Excels width units into millimetres.
          *
          * @param widthUnits The width of the column or the height of the
-         *                   row in Excel's units.
+         *                   row in Excels units.
          * @return A primitive double that contains the columns width or rows
          *         height in millimetres.
          */
@@ -951,12 +1023,12 @@ public class AddDimensionedImage {
         }
 
         /**
-         * Convert into millimetres Excel's width units..
+         * Convert into millimetres Excels width units..
          *
          * @param millimetres A primitive double that contains the columns
          *                    width or rows height in millimetres.
          * @return A primitive int that contains the columns width or rows
-         *         height in Excel's units.
+         *         height in Excels units.
          */
         public static int millimetres2WidthUnits(double millimetres) {
             return(ConvertImageUnits.pixel2WidthUnits((int)(millimetres *
