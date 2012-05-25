@@ -204,7 +204,6 @@ public class SheetDataWriter {
                 break;
             }
             default: {
-                assert false;
                 throw new RuntimeException("Huh?");
             }
         }

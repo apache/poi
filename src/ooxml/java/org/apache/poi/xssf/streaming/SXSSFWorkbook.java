@@ -244,7 +244,6 @@ public class SXSSFWorkbook implements Workbook
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
     {
         XSSFSheet result=_sxFromXHash.get(sheet);
-        assert result!=null;
         return result;
     }
 
@@ -543,7 +542,6 @@ public class SXSSFWorkbook implements Workbook
      */
     public int getSheetIndex(Sheet sheet)
     {
-        assert sheet instanceof SXSSFSheet;
         return _wb.getSheetIndex(getXSSFSheet((SXSSFSheet)sheet));
     }
 
