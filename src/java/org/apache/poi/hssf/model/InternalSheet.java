@@ -21,43 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.CFHeaderRecord;
-import org.apache.poi.hssf.record.CalcCountRecord;
-import org.apache.poi.hssf.record.CalcModeRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.DVALRecord;
-import org.apache.poi.hssf.record.DefaultColWidthRecord;
-import org.apache.poi.hssf.record.DefaultRowHeightRecord;
-import org.apache.poi.hssf.record.DeltaRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.DrawingRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.FeatHdrRecord;
-import org.apache.poi.hssf.record.FeatRecord;
-import org.apache.poi.hssf.record.GridsetRecord;
-import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.IterationRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.PaneRecord;
-import org.apache.poi.hssf.record.PrintGridlinesRecord;
-import org.apache.poi.hssf.record.PrintHeadersRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RefModeRecord;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.SaveRecalcRecord;
-import org.apache.poi.hssf.record.SelectionRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.WSBoolRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
@@ -1553,6 +1517,14 @@ public final class InternalSheet {
         {
             loc += 2;
             if (records.get( loc ) instanceof NoteRecord) loc ++;
+            while ( loc + 1 < records.size()
+                    && records.get( loc ) instanceof ContinueRecord
+                    && (records.get( loc + 1 ) instanceof ObjRecord ||
+                    records.get( loc + 1 ) instanceof TextObjectRecord) )
+            {
+                loc += 2;
+                if (records.get( loc ) instanceof NoteRecord) loc ++;
+            }
         }
 
         int endloc = loc-1;

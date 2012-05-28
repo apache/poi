@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">53302 - Fixed EscherAggregate to correctly handle Continue records in drawing blocks  </action>
           <action dev="poi-developers" type="add">53025 - Updatad documentation and example on using Data Validations  </action>
           <action dev="poi-developers" type="add">53227 - Corrected AddDimensionedImage.java to support XSSF/SXSSF  </action>
           <action dev="poi-developers" type="add">53058 - Utility for representing drawings contained in a binary Excel file as a XML tree</action>
