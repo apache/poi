@@ -373,6 +373,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 		{
 			dataSize += ( (DrawingRecord) records.get( loc ) ).getData().length;
 			loc += 2;
+            while ( loc + 1 < records.size()
+                    && sid( records, loc ) == ContinueRecord.sid
+                    && isObjectRecord( records, loc + 1 ) )
+            {
+                dataSize += ( (ContinueRecord) records.get( loc ) ).getData().length;
+                loc += 2;
+            }
 		}
 
 		// Create one big buffer
@@ -387,6 +394,15 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			System.arraycopy( drawingRecord.getData(), 0, buffer, offset, drawingRecord.getData().length );
 			offset += drawingRecord.getData().length;
 			loc += 2;
+            while ( loc + 1 < records.size()
+                    && sid( records, loc ) == ContinueRecord.sid
+                    && isObjectRecord( records, loc + 1 ) )
+            {
+                ContinueRecord continueRecord = (ContinueRecord) records.get( loc );
+                System.arraycopy( continueRecord.getData(), 0, buffer, offset, continueRecord.getData().length );
+                offset += continueRecord.getData().length;
+                loc += 2;
+            }
 		}
 
 		// Decode the shapes
@@ -411,6 +427,14 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 			Record objRecord = (Record) records.get( loc + 1 );
 			agg.shapeToObj.put( shapeRecords.get( shapeIndex++ ), objRecord );
 			loc += 2;
+            while ( loc + 1 < records.size()
+                    && sid( records, loc ) == ContinueRecord.sid
+                    && isObjectRecord( records, loc + 1 ) )
+            {
+                objRecord = (Record) records.get( loc + 1 );
+                agg.shapeToObj.put( shapeRecords.get( shapeIndex++ ), objRecord );
+                loc += 2;
+            }
 		}
 
 		return agg;
