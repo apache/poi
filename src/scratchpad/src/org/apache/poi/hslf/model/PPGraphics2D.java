@@ -218,6 +218,9 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         p.setPath(path);
         p.getFill().setForegroundColor(null);
         applyStroke(p);
+        if (_paint instanceof Color) {
+            p.setLineColor((Color)_paint);
+        }
         _group.addShape(p);
     }
 
