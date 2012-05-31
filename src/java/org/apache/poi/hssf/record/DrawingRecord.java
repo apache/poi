@@ -64,6 +64,10 @@ public final class DrawingRecord extends StandardRecord {
         return recordData;
     }
 
+    public byte[] getRecordData(){
+        return recordData;
+    }
+
     public void setData(byte[] thedata) {
     	if (thedata == null) {
     		throw new IllegalArgumentException("data must not be null");
