@@ -288,7 +288,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 	protected HSSFPatriarch patriarch;
 
 	/** Maps shape container objects to their {@link TextObjectRecord} or {@link ObjRecord} */
-	private Map<EscherRecord, Record> shapeToObj = new HashMap<EscherRecord, Record>();
+	Map<EscherRecord, Record> shapeToObj = new HashMap<EscherRecord, Record>();
 	private DrawingManager2 drawingManager;
 	private short drawingGroupId;
 
@@ -371,7 +371,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				&& sid( records, loc ) == DrawingRecord.sid
 				&& isObjectRecord( records, loc + 1 ) )
 		{
-			dataSize += ( (DrawingRecord) records.get( loc ) ).getData().length;
+			dataSize += ( (DrawingRecord) records.get( loc ) ).getRecordData().length;
 			loc += 2;
             while ( loc + 1 < records.size()
                     && sid( records, loc ) == ContinueRecord.sid
@@ -391,8 +391,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 				&& isObjectRecord( records, loc + 1 ) )
 		{
 			DrawingRecord drawingRecord = (DrawingRecord) records.get( loc );
-			System.arraycopy( drawingRecord.getData(), 0, buffer, offset, drawingRecord.getData().length );
-			offset += drawingRecord.getData().length;
+			System.arraycopy( drawingRecord.getRecordData(), 0, buffer, offset, drawingRecord.getRecordData().length );
+			offset += drawingRecord.getRecordData().length;
 			loc += 2;
             while ( loc + 1 < records.size()
                     && sid( records, loc ) == ContinueRecord.sid
