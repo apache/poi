@@ -17,11 +17,7 @@
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
-import org.apache.poi.ddf.EscherClientDataRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
@@ -30,125 +26,27 @@ import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Yegor Kozlov
  * @author Evgeniy Berlog
  */
 public class TestDrawingAggregate extends TestCase {
-    /**
-     * Serialize escher aggregate, read back and assert that the drawing data is preserved.
-     *
-     * @param agg the aggregate to test
-     * @return verified aggregate (serialized and read back)
-     */
-    public static EscherAggregate assertWriteAndReadBack(EscherAggregate agg) {
-        byte[] dgBytes = agg.serialize();
-
-
-        List<Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
-
-        DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord());
-
-        // create a dummy sheet consisting of our test data
-        InternalSheet sheet = InternalSheet.createSheet();
-        List<RecordBase> records = sheet.getRecords();
-        records.clear();
-        records.addAll(dgRecords);
-        records.add(EOFRecord.instance);
-
-
-        sheet.aggregateDrawingRecords(drawingManager, false);
-        assertEquals("drawing was not fully aggregated", 2, records.size());
-        assertTrue("expected EscherAggregate", records.get(0) instanceof EscherAggregate);
-        assertTrue("expected EOFRecord", records.get(1) instanceof EOFRecord);
-        EscherAggregate agg2 = (EscherAggregate) records.get(0);
-
-        assertEquals(agg.getEscherRecords().size(), agg2.getEscherRecords().size());
-
-        // assert that both pre- and after- serialize aggregates have the same xml representation
-        for (int i = 0; i < agg.getEscherRecords().size(); i++) {
-            EscherRecord r1 = agg.getEscherRecords().get(i);
-            EscherRecord r2 = agg2.getEscherRecords().get(i);
-
-            assertEquals(r1.toXml(), r2.toXml());
-        }
-
-        return agg2;
-    }
-
-    /**
-     * assert that mapping of Obj records to escher shape containers is the same in both aggregates
-     */
-    public static void assertObjectMappingSame(EscherAggregate agg1, EscherAggregate agg2) {
-
-        // map EscherClientDataRecord and EscherTextboxRecord to their parents
-        Map<EscherRecord, EscherContainerRecord> map1 = new LinkedHashMap<EscherRecord, EscherContainerRecord>();
-        for (EscherRecord r : agg1.getEscherRecords()) mapShapeContainers(r, map1);
-
-        Map<EscherRecord, EscherContainerRecord> map2 = new LinkedHashMap<EscherRecord, EscherContainerRecord>();
-        for (EscherRecord r : agg2.getEscherRecords()) mapShapeContainers(r, map2);
-
-        assertEquals("aggregates have different number of shapes", map1.size(), map2.size());
-
-        // for each EscherClientDataRecord get parent SP_CONTAINER and corresponding ObjRecord
-        // verify that ObjRecord to
-        List<EscherRecord> l1 = new ArrayList<EscherRecord>(map1.keySet());
-        List<EscherRecord> l2 = new ArrayList<EscherRecord>(map2.keySet());
-        for (int i = 0; i < l1.size(); i++) {
-            EscherRecord e1 = l1.get(i);
-            EscherRecord e2 = l2.get(i);
-            ObjRecord obj1 = (ObjRecord) HSSFRecordTestHelper.getShapeToObjForTest(agg1).get(e1);
-            ObjRecord obj2 = (ObjRecord) HSSFRecordTestHelper.getShapeToObjForTest(agg2).get(e2);
-
-            CommonObjectDataSubRecord cmo1 = (CommonObjectDataSubRecord) obj1.getSubRecords().get(0);
-            CommonObjectDataSubRecord cmo2 = (CommonObjectDataSubRecord) obj2.getSubRecords().get(0);
-
-            assertEquals(cmo1.getObjectId(), cmo2.getObjectId());
-            assertEquals(obj1.toString(), obj2.toString());
-
-            // test that obj parents have the same shapeId, that is, that shape is the same
-            EscherContainerRecord p1 = map1.get(e1);
-            EscherContainerRecord p2 = map2.get(e2);
-            EscherSpRecord sp1 = (EscherSpRecord) p1.getChildById(EscherSpRecord.RECORD_ID);
-            EscherSpRecord sp2 = (EscherSpRecord) p2.getChildById(EscherSpRecord.RECORD_ID);
-            assertEquals(sp1.getShapeId(), sp2.getShapeId());
-
-            assertEquals("wrong shape2obj mapping", sp1.getShapeId() % 1024, cmo1.getObjectId());
-            assertEquals(p1.toXml(), p2.toXml());
-        }
-    }
-
-    /**
-     * recursively map EscherClientDataRecords  to their parent shape containers:
-     * <p/>
-     * EscherClientDataRecord1 --> EscherContainerRecord1
-     * EscherClientDataRecord2 --> EscherContainerRecord2
-     * ...
-     * <p/>
-     * TODO: YK: this method can be avoided if we have EscherRecord.getParent()
-     */
-    private static void mapShapeContainers(EscherRecord parent, Map<EscherRecord, EscherContainerRecord> map) {
-        if (parent.isContainerRecord()) {
-            if (parent.getRecordId() == EscherContainerRecord.SP_CONTAINER) {
-                // iterate over shape's children and search for EscherClientDataRecord
-                for (EscherRecord r : parent.getChildRecords()) {
-                    if (r.getRecordId() == EscherClientDataRecord.RECORD_ID) {
-                        map.put(r, (EscherContainerRecord) parent);
-                    }
+    private static byte[] toByteArray(List<RecordBase> records){
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            for(RecordBase rb : records) {
+                    Record r = (Record)rb;
+                    try {
+                            out.write(r.serialize());
+                        } catch (IOException e){
+                            throw new RuntimeException(e);
+                        }
                 }
-            } else {
-                for (EscherRecord ch : parent.getChildRecords()) {
-                    mapShapeContainers(ch, map);
-                }
-            }
+            return out.toByteArray();
         }
-    }
 
     /**
      * test reading drawing aggregate from a test file from Bugzilla 45129
@@ -170,7 +68,10 @@ public class TestDrawingAggregate extends TestCase {
                 records.get(18) instanceof RowRecordsAggregate);
 
         // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 388);
+        List<RecordBase> dgRecords = records.subList(19, 389);
+        // collect drawing records into a byte buffer.
+        byte[] dgBytes = toByteArray(dgRecords);
+
         for (RecordBase rb : dgRecords) {
             Record r = (Record) rb;
             short sid = r.getSid();
@@ -203,10 +104,161 @@ public class TestDrawingAggregate extends TestCase {
         assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
                 records.get(20) instanceof WindowTwoRecord);
 
-        EscherAggregate agg2 = assertWriteAndReadBack(agg);
-
-        assertObjectMappingSame(agg, agg2);
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
     }
+
+    /**
+     * Try to check file with such record sequence
+     * ...
+     * DrawingRecord
+     * ContinueRecord
+     * ObjRecord | TextObjRecord
+     * ...
+     */
+    public void testSerializeDrawingBigger8k() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls");
+        InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
+        HSSFSheet sh = wb.getSheetAt(0);
+        InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
+
+
+        List<RecordBase> records = isheet.getRecords();
+
+        // the sheet's drawing is not aggregated
+        assertEquals("wrong size of sheet records stream", 32, records.size());
+        // the last record before the drawing block
+        assertTrue(
+                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                records.get(18) instanceof RowRecordsAggregate);
+
+        // records to be aggregated
+        List<RecordBase> dgRecords = records.subList(19, 26);
+        for (RecordBase rb : dgRecords) {
+            Record r = (Record) rb;
+            short sid = r.getSid();
+            // we expect that drawing block consists of either
+            // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+            assertTrue(
+                    sid == DrawingRecord.sid ||
+                            sid == ContinueRecord.sid ||
+                            sid == ObjRecord.sid ||
+                            sid == NoteRecord.sid ||
+                            sid == TextObjectRecord.sid);
+        }
+        // collect drawing records into a byte buffer.
+        byte[] dgBytes = toByteArray(dgRecords);
+
+        // the first record after the drawing block
+        assertTrue(
+                "records.get(26) is expected to be Window2",
+                records.get(26) instanceof WindowTwoRecord);
+
+        // aggregate drawing records.
+        // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
+        DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
+        int loc = isheet.aggregateDrawingRecords(drawingManager, false);
+        EscherAggregate agg = (EscherAggregate) records.get(loc);
+
+        assertEquals("wrong size of the aggregated sheet records stream", 26, records.size());
+        assertTrue(
+                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                records.get(18) instanceof RowRecordsAggregate);
+        assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
+                records.get(19) instanceof EscherAggregate);
+        assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
+                records.get(20) instanceof WindowTwoRecord);
+
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+
+
+    }
+
+
+    public void testSerializeDrawingBigger8k_noAggregation() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls");
+
+        InternalSheet isheet = HSSFTestHelper.getSheetForTest(wb.getSheetAt(0));
+        List<RecordBase> records = isheet.getRecords();
+
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        InternalSheet isheet2 = HSSFTestHelper.getSheetForTest( wb2.getSheetAt(0));
+        List<RecordBase> records2 = isheet2.getRecords();
+
+        assertEquals(records.size(), records2.size());
+        for(int i = 0; i < records.size(); i++) {
+            RecordBase r1 = records.get(i);
+            RecordBase r2 = records2.get(i);
+            assertTrue(r1.getClass() == r2.getClass());
+            assertEquals(r1.getRecordSize(), r2.getRecordSize());
+            if(r1 instanceof Record ){
+                assertEquals(((Record)r1).getSid(), ((Record)r2).getSid());
+                assertTrue(Arrays.equals(((Record) r1).serialize(), ((Record) r2).serialize()));
+            }
+        }
+
+    }
+
+    public void testSerializeDrawingWithComments() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingAndComments.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
+        InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
+        InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
+
+        List<RecordBase> records = isheet.getRecords();
+
+        // the sheet's drawing is not aggregated
+        assertEquals("wrong size of sheet records stream", 46, records.size());
+        // the last record before the drawing block
+        assertTrue(
+                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                records.get(18) instanceof RowRecordsAggregate);
+
+        // records to be aggregated
+        List<RecordBase> dgRecords = records.subList(19, 39);
+        for (RecordBase rb : dgRecords) {
+            Record r = (Record) rb;
+            short sid = r.getSid();
+            // we expect that drawing block consists of either
+            // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+            assertTrue(
+                    sid == DrawingRecord.sid ||
+                            sid == ContinueRecord.sid ||
+                            sid == ObjRecord.sid ||
+                            sid == NoteRecord.sid ||
+                            sid == TextObjectRecord.sid);
+        }
+        // collect drawing records into a byte buffer.
+        byte[] dgBytes = toByteArray(dgRecords);
+
+        // the first record after the drawing block
+        assertTrue(
+                "records.get(39) is expected to be Window2",
+                records.get(39) instanceof WindowTwoRecord);
+
+        // aggregate drawing records.
+        // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
+        DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
+        int loc = isheet.aggregateDrawingRecords(drawingManager, false);
+        EscherAggregate agg = (EscherAggregate) records.get(loc);
+
+        assertEquals("wrong size of the aggregated sheet records stream", 27, records.size());
+        assertTrue(
+                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                records.get(18) instanceof RowRecordsAggregate);
+        assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
+                records.get(19) instanceof EscherAggregate);
+        assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
+                records.get(20) instanceof WindowTwoRecord);
+
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+    }
+
 
     public void testFileWithPictures() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ContinueRecordProblem.xls");
@@ -225,7 +277,7 @@ public class TestDrawingAggregate extends TestCase {
                 records.get(21) instanceof RowRecordsAggregate);
 
         // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(22, 299);
+        List<RecordBase> dgRecords = records.subList(22, 300);
         for (RecordBase rb : dgRecords) {
             Record r = (Record) rb;
             short sid = r.getSid();
@@ -237,6 +289,8 @@ public class TestDrawingAggregate extends TestCase {
                             sid == ObjRecord.sid ||
                             sid == TextObjectRecord.sid);
         }
+        // collect drawing records into a byte buffer.
+        byte[] dgBytes = toByteArray(dgRecords);
 
         // the first record after the drawing block
         assertTrue(
@@ -244,7 +298,7 @@ public class TestDrawingAggregate extends TestCase {
                 records.get(300) instanceof WindowTwoRecord);
 
         // aggregate drawing records.
-        // The subrange [19, 388] is expected to be replaced with a EscherAggregate object
+        // The subrange [19, 299] is expected to be replaced with a EscherAggregate object
         DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
         int loc = isheet.aggregateDrawingRecords(drawingManager, false);
         EscherAggregate agg = (EscherAggregate) records.get(loc);
@@ -258,9 +312,9 @@ public class TestDrawingAggregate extends TestCase {
         assertTrue("records.get(23) is expected to be Window2 but was " + records.get(23).getClass().getSimpleName(),
                 records.get(23) instanceof WindowTwoRecord);
 
-        EscherAggregate agg2 = assertWriteAndReadBack(agg);
-
-        assertObjectMappingSame(agg, agg2);
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
     }
 
     public void testUnhandledContinue() {
@@ -972,10 +1026,9 @@ public class TestDrawingAggregate extends TestCase {
         assertTrue("expected EOFRecord", records.get(1) instanceof EOFRecord);
         EscherAggregate agg = (EscherAggregate) records.get(0);
 
-        // serialize, read back and assert that the drawing data is preserved
-        EscherAggregate agg2 = assertWriteAndReadBack(agg);
-
-        assertObjectMappingSame(agg, agg2);
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
     }
 
     public void testUnhandledContinue2() {
@@ -1926,8 +1979,8 @@ public class TestDrawingAggregate extends TestCase {
 
         EscherAggregate agg = (EscherAggregate) records.get(0);
 
-        EscherAggregate agg2 = assertWriteAndReadBack(agg);
-
-        assertObjectMappingSame(agg, agg2);
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
     }
 }
