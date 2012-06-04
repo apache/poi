@@ -49,17 +49,12 @@ public final class TestDrawingRecord extends TestCase {
         out.write(cn.serialize());
 
         List<Record> rec = RecordFactory.createRecords(new ByteArrayInputStream(out.toByteArray()));
-        assertEquals(1, rec.size());
+        assertEquals(2, rec.size());
         assertTrue(rec.get(0) instanceof DrawingRecord);
+        assertTrue(rec.get(1) instanceof ContinueRecord);
 
-        //DrawingRecord.getData() should return concatenated data1 and data2
-        byte[] tmp = new byte[data1.length + data2.length];
-        System.arraycopy(data1, 0, tmp, 0, data1.length);
-        System.arraycopy(data2, 0, tmp, data1.length, data2.length);
-
-        DrawingRecord dg2 = (DrawingRecord)rec.get(0);
-        assertEquals(data1.length + data2.length, dg2.getData().length);
-        assertTrue(Arrays.equals(tmp, dg2.getData()));
+        assertTrue(Arrays.equals(data1, ((DrawingRecord)rec.get(0)).getData()));
+        assertTrue(Arrays.equals(data2, ((ContinueRecord)rec.get(1)).getData()));
 
     }
 

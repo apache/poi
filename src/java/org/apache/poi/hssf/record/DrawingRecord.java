@@ -20,22 +20,21 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 /**
  * DrawingRecord (0x00EC)<p/>
- *
  */
 public final class DrawingRecord extends StandardRecord {
     public static final short sid = 0x00EC;
 
-	private static final byte[] EMPTY_BYTE_ARRAY = { };
+    private static final byte[] EMPTY_BYTE_ARRAY = {};
 
     private byte[] recordData;
     private byte[] contd;
 
     public DrawingRecord() {
-    	recordData = EMPTY_BYTE_ARRAY;
+        recordData = EMPTY_BYTE_ARRAY;
     }
 
     public DrawingRecord(RecordInputStream in) {
-      recordData = in.readRemainder();
+        recordData = in.readRemainder();
     }
 
     public void processContinueRecord(byte[] record) {
@@ -46,6 +45,7 @@ public final class DrawingRecord extends StandardRecord {
     public void serialize(LittleEndianOutput out) {
         out.write(recordData);
     }
+
     protected int getDataSize() {
         return recordData.length;
     }
@@ -55,12 +55,12 @@ public final class DrawingRecord extends StandardRecord {
     }
 
     public byte[] getData() {
-        if(contd != null) {
-            byte[] newBuffer = new byte[ recordData.length + contd.length ];
-            System.arraycopy( recordData, 0, newBuffer, 0, recordData.length );
-            System.arraycopy( contd, 0, newBuffer, recordData.length, contd.length);
-            return newBuffer;
-        }
+//        if (continueData.size() != 0) {
+//            byte[] newBuffer = new byte[recordData.length + continueData.size()];
+//            System.arraycopy(recordData, 0, newBuffer, 0, recordData.length);
+//            System.arraycopy(continueData.toByteArray(), 0, newBuffer, recordData.length, continueData.size());
+//            return newBuffer;
+//        }
         return recordData;
     }
 
@@ -69,21 +69,20 @@ public final class DrawingRecord extends StandardRecord {
     }
 
     public void setData(byte[] thedata) {
-    	if (thedata == null) {
-    		throw new IllegalArgumentException("data must not be null");
-    	}
+        if (thedata == null) {
+            throw new IllegalArgumentException("data must not be null");
+        }
         recordData = thedata;
     }
 
     public Object clone() {
-    	DrawingRecord rec = new DrawingRecord();
-    	
-    	rec.recordData = recordData.clone();
-    	if (contd != null) {
-	    	// TODO - this code probably never executes
-	    	rec.contd = contd.clone();
-    	}
-    	
-    	return rec;
+        DrawingRecord rec = new DrawingRecord();
+        rec.recordData = recordData.clone();
+        if (contd != null) {
+            // TODO - this code probably never executes
+            rec.contd = contd.clone();
+        }
+
+        return rec;
     }
 }

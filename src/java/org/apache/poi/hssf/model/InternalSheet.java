@@ -1508,31 +1508,10 @@ public final class InternalSheet {
             return loc;
         }
         List<RecordBase> records = getRecords();
-        EscherAggregate r = EscherAggregate.createAggregate( records, loc, drawingManager );
-        int startloc = loc;
-        while ( loc + 1 < records.size()
-                && records.get( loc ) instanceof DrawingRecord
-                && (records.get( loc + 1 ) instanceof ObjRecord ||
-                    records.get( loc + 1 ) instanceof TextObjectRecord) )
-        {
-            loc += 2;
-            if (records.get( loc ) instanceof NoteRecord) loc ++;
-            while ( loc + 1 < records.size()
-                    && records.get( loc ) instanceof ContinueRecord
-                    && (records.get( loc + 1 ) instanceof ObjRecord ||
-                    records.get( loc + 1 ) instanceof TextObjectRecord) )
-            {
-                loc += 2;
-                if (records.get( loc ) instanceof NoteRecord) loc ++;
-            }
-        }
 
-        int endloc = loc-1;
-        for(int i = 0; i < (endloc - startloc + 1); i++)
-            records.remove(startloc);
-        records.add(startloc, r);
+        EscherAggregate.createAggregate( records, loc, drawingManager );
 
-        return startloc;
+        return loc;
     }
 
     /**
