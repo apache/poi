@@ -77,6 +77,9 @@ public abstract class Stream {
 		if(pointer.getType() == 20) {
 			return new TrailerStream(pointer, store, chunkFactory, pointerFactory);
 		}
+		else if(pointer.getType() == 22) {
+			// Fall through to unknown stream
+		}
 		else if(pointer.destinationHasPointers()) {
 			return new PointerContainingStream(pointer, store, chunkFactory, pointerFactory);
 		}
