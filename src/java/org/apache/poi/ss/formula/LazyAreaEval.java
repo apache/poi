@@ -22,9 +22,6 @@ import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellReference;
 
 /**
@@ -48,8 +45,8 @@ final class LazyAreaEval extends AreaEvalBase {
 
 	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 
-		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
+		int rowIx = (relativeRowIndex + getFirstRow() ) ;
+		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
 		return _evaluator.getEvalForCell(rowIx, colIx);
 	}

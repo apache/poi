@@ -176,4 +176,15 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         return stringBuilder.toString();
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(),
+                HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())));
+        for (EscherProperty property: getEscherProperties()){
+            builder.append(property.toXml(tab+"\t"));
+        }
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
 }

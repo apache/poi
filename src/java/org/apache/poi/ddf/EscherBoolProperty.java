@@ -18,6 +18,8 @@
 
 package org.apache.poi.ddf;
 
+import org.apache.poi.util.HexDump;
+
 /**
  * Represents a boolean property.  The actual utility of this property is in doubt because many
  * of the properties marked as boolean seem to actually contain special values.  In other words
@@ -65,4 +67,11 @@ public class EscherBoolProperty
 //                + ", value: " + (getValue() != 0);
 //    }
 
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
+                .append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append(isBlipId()).append("\" value=\"").append(isTrue()).append("\"").append("/>\n");
+        return builder.toString();
+    }
 }

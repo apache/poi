@@ -23,7 +23,6 @@ import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.util.Region;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.SpreadsheetVersion;
 
@@ -122,8 +121,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 	/**
 	 * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
 	 */
-	public int addConditionalFormatting(Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
-		return addConditionalFormatting(Region.convertRegionsToCellRanges(regions), cfRules);
+	public int addConditionalFormatting(org.apache.poi.ss.util.Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
+		return addConditionalFormatting(org.apache.poi.ss.util.Region.convertRegionsToCellRanges(regions), cfRules);
 	}
 	/**
 	 * Allows to add a new Conditional Formatting set to the sheet.

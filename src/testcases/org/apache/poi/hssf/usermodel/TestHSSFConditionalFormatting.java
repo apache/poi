@@ -17,14 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  *

@@ -115,6 +115,17 @@ public class EscherSpRecord
 
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<ShapeType>").append(HexDump.toHex(getShapeType())).append("</ShapeType>\n")
+                .append(tab).append("\t").append("<ShapeId>").append(field_1_shapeId).append("</ShapeId>\n")
+                .append(tab).append("\t").append("<Flags>").append(decodeFlags(field_2_flags) + " (0x" + HexDump.toHex(field_2_flags) + ")").append("</Flags>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     /**
      * Converts the shape flags into a more descriptive name.
      */

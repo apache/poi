@@ -24,8 +24,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
 
 import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.File;
 
 /**
  * @author aviks

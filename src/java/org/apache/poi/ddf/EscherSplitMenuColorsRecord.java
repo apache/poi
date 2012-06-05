@@ -99,6 +99,18 @@ public class EscherSplitMenuColorsRecord
                 "";
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<Color1>0x").append(HexDump.toHex(field_1_color1)).append("</Color1>\n")
+                .append(tab).append("\t").append("<Color2>0x").append(HexDump.toHex(field_2_color2)).append("</Color2>\n")
+                .append(tab).append("\t").append("<Color3>0x").append(HexDump.toHex(field_3_color3)).append("</Color3>\n")
+                .append(tab).append("\t").append("<Color4>0x").append(HexDump.toHex(field_4_color4)).append("</Color4>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     public int getColor1()
     {
         return field_1_color1;

@@ -330,6 +330,25 @@ public final class EscherBSERecord extends EscherRecord {
                 "  Extra Data:" + '\n' + extraData;
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<BlipTypeWin32>").append(field_1_blipTypeWin32).append("</BlipTypeWin32>\n")
+                .append(tab).append("\t").append("<BlipTypeMacOS>").append(field_2_blipTypeMacOS).append("</BlipTypeMacOS>\n")
+                .append(tab).append("\t").append("<SUID>").append(field_3_uid == null ? "" : HexDump.toHex(field_3_uid)).append("</SUID>\n")
+                .append(tab).append("\t").append("<Tag>").append(field_4_tag).append("</Tag>\n")
+                .append(tab).append("\t").append("<Size>").append(field_5_size).append("</Size>\n")
+                .append(tab).append("\t").append("<Ref>").append(field_6_ref).append("</Ref>\n")
+                .append(tab).append("\t").append("<Offset>").append(field_7_offset).append("</Offset>\n")
+                .append(tab).append("\t").append("<Usage>").append(field_8_usage).append("</Usage>\n")
+                .append(tab).append("\t").append("<Name>").append(field_9_name).append("</Name>\n")
+                .append(tab).append("\t").append("<Unused2>").append(field_10_unused2).append("</Unused2>\n")
+                .append(tab).append("\t").append("<Unused3>").append(field_11_unused3).append("</Unused3>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     /**
      * Retrieve the string representation given a blip id.
      */

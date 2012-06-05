@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;

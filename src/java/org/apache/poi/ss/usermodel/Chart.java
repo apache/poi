@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.charts.ChartData;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartLegend;
-import org.apache.poi.ss.usermodel.charts.ManualLayout;
 import org.apache.poi.ss.usermodel.charts.ManuallyPositionable;
 import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;

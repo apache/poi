@@ -1330,7 +1330,6 @@ public class SXSSFSheet implements Sheet, Cloneable
             if(entry.getValue()==row)
                 return entry.getKey().intValue();
         }
-        assert false;
         return -1;
     }
 }

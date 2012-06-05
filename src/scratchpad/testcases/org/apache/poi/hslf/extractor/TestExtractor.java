@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.extractor;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Tests that the extractor correctly gets the text out of our sample file
@@ -203,7 +205,20 @@ public final class TestExtractor extends TestCase {
          assertEquals("Expected 2 embedded Excel Spreadsheets", 2, num_xls);
          assertEquals("Expected 2 embedded PowerPoint Presentations", 2, num_ppt);
      }
-    
+
+    /**
+     * A powerpoint file with embeded powerpoint files
+     */
+    public void test52991() throws Exception {
+        String path = "badzip.ppt";
+        ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
+        List<OLEShape> shapes = ppe.getOLEShapes();
+        
+        for (OLEShape shape : shapes) {
+            IOUtils.copy(shape.getObjectData().getData(), new ByteArrayOutputStream());
+        }
+    }
+
     /**
      * From bug #45543
      */

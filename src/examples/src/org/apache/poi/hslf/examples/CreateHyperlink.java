@@ -18,10 +18,8 @@
 package org.apache.poi.hslf.examples;
 
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.model.*;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.awt.*;
 

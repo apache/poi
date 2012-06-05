@@ -17,14 +17,8 @@
 
 package org.apache.poi.xssf.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.*;
@@ -32,7 +26,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 
 
 public class TestCommentsTable extends TestCase {

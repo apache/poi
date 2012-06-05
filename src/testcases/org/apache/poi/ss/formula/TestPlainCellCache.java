@@ -19,19 +19,9 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
 import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.CellValue;
-
-import java.io.PrintStream;
-import java.util.*;
 
 /**
  * @author Yegor Kozlov

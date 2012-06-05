@@ -16,8 +16,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.formula.functions.NotImplementedFunction;
 import org.apache.poi.ss.formula.functions.Sumifs;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 

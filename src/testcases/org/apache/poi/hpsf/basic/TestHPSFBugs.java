@@ -19,28 +19,11 @@ package org.apache.poi.hpsf.basic;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
-import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.HPSFException;
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.Section;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Tests various bugs have been fixed

@@ -59,12 +59,14 @@ public class TestDateParser extends TestCase {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void testShouldParseValidDate() throws EvaluationException {
         Calendar aDate = Calendar.getInstance();
         aDate.setTime(new Date(84, OCTOBER, 20));
         assertEquals(aDate, DateParser.parseDate("1984/10/20"));
     }
 
+    @SuppressWarnings("deprecation")
     public void testShouldIgnoreTimestamp() throws EvaluationException {
         Calendar aDate = Calendar.getInstance();
         aDate.setTime(new Date(84, OCTOBER, 20));

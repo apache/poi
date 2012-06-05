@@ -97,6 +97,18 @@ public class EscherSpgrRecord
                 "  RectHeight: " + field_4_rectY2 + '\n';
     }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<RectX>").append(field_1_rectX1).append("</RectX>\n")
+                .append(tab).append("\t").append("<RectY>").append(field_2_rectY1).append("</RectY>\n")
+                .append(tab).append("\t").append("<RectWidth>").append(field_3_rectX2).append("</RectWidth>\n")
+                .append(tab).append("\t").append("<RectHeight>").append(field_4_rectY2).append("</RectHeight>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
+
     /**
      * The starting top-left coordinate of child records.
      */

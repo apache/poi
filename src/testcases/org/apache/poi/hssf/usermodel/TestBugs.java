@@ -1037,6 +1037,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         confirmCachedValue("70164", nc2);
         confirmCachedValue("90210", nc3);
 
+        @SuppressWarnings("deprecation")
         CellValueRecordInterface[] cvrs = ns.getSheet().getValueRecords();
         for (int i = 0; i < cvrs.length; i++) {
             CellValueRecordInterface cvr = cvrs[i];
@@ -2226,4 +2227,15 @@ if(1==2) {
                 cell.getCellFormula());
      }
 
+    public void test49529() throws Exception {
+        // user code reported in Bugzilla #49529
+        HSSFWorkbook workbook = openSample("49529.xls");
+        workbook.getSheetAt(0).createDrawingPatriarch();
+        // prior to the fix the line below failed with
+        // java.lang.IllegalStateException: EOF - next record not available
+        workbook.cloneSheet(0);
+
+        // make sure we are still readable
+        writeOutAndReadBack(workbook);
+    }
 }

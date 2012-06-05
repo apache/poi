@@ -25,7 +25,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Test the picture handling
@@ -333,5 +332,13 @@ public final class TestPictures extends TestCase {
         Picture p = pictureTable.getAllPictures().get(0);
         assertEquals(PictureType.PNG, p.suggestPictureType());
         assertEquals("png", p.suggestFileExtension());
+    }
+    
+    public void testPictureWithAlternativeText() throws Exception {
+        HWPFDocument document = HWPFTestDataSamples.openSampleFile("Picture_Alternative_Text.doc");
+        PicturesTable pictureTable = document.getPicturesTable();
+        Picture picture = pictureTable.getAllPictures().get(0);
+
+        assertEquals("This is the alternative text for the picture.", picture.getDescription());
     }
 }

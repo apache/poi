@@ -381,10 +381,11 @@ public abstract class Shape {
         boolean fSchemeIndex = (a & (1 << 3)) != 0;
         boolean fSysIndex = (a & (1 << 4)) != 0;
 
-        if (fSchemeIndex)
+        Sheet sheet = getSheet();
+        if (fSchemeIndex && sheet != null)
         {
             //red is the index to the color scheme
-            ColorSchemeAtom ca = getSheet().getColorScheme();
+            ColorSchemeAtom ca = sheet.getColorScheme();
             int schemeColor = ca.getColor(r);
 
             r = (schemeColor >> 0) & 0xFF;

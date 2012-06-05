@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.util.Beta;
 
 /**

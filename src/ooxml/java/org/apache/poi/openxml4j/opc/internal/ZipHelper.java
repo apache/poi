@@ -148,15 +148,13 @@ public final class ZipHelper {
 	 *            The file path.
 	 * @return The zip archive freshly open.
 	 */
-	public static ZipFile openZipFile(String path) {
+	public static ZipFile openZipFile(String path) throws IOException {
 		File f = new File(path);
-		try {
-			if (!f.exists()) {
-				return null;
-			}
-			return new ZipFile(f);
-		} catch (IOException ioe) {
+
+		if (!f.exists()) {
 			return null;
 		}
+
+		return new ZipFile(f);
 	}
 }

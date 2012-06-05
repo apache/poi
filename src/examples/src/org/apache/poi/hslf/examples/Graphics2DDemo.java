@@ -22,7 +22,6 @@ import org.apache.poi.hslf.model.*;
 
 import java.awt.*;
 import java.io.FileOutputStream;
-import java.io.FileInputStream;
 
 /**
  * Demonstrates how to draw into a slide using the HSLF Graphics2D driver.

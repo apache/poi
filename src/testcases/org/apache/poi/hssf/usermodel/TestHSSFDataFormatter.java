@@ -17,14 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.Locale;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;

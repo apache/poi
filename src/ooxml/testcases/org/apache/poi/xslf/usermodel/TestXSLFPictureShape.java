@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

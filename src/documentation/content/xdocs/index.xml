@@ -32,27 +32,31 @@
   </header>
 
   <body>
-    <section><title>17 December 2011 - POI 3.8 beta 5 available</title>
-      <p>The Apache POI team is pleased to announce the release of 3.8 beta 5. 
-         This includes a large number of bug fixes and enhancements. 
+    <section><title>26 March 2012 - POI 3.8 available</title>
+     <p>The Apache POI team is pleased to announce the release of 3.8. This includes a large number of bug fixes, and some
+        enhancements (especially text extraction). See the
+        <link href="http://www.apache.org/dist/poi/release/RELEASE-NOTES.txt">release notes</link> for more details.
       </p>
-      <p>A full list of changes is available in the <link href="changes.html">change log</link>.
-        People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
+      <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+      People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
       <p>See the <link href="download.html">downloads</link> page for more details.</p>
+    </section>
+    <section><title>Nightly Builds</title>
+     <p>The POI nightly builds are run on <link href="https://builds.apache.org/job/POI/">Jenkins</link>  continuous integration server.
+     Note that these are no official builds and they are not endorsed or even supported by the POI team.
+     <br/>
+     <strong>These builds should not be used in production</strong>: they are only intended for use by developers 
+     to help with resolving bugs and evaluating new features.
+     </p>
+     <ul>
+      <li><link href="https://builds.apache.org/job/POI/lastSuccessfulBuild/artifact/build/dist/">
+        Last Successful Jenkins build for POI-trunk</link></li> 
+     </ul>
     </section>
     <section><title>28 August 2011 -  The Apache POI project is celebrating its 10th anniversary</title>
       <p>
         The Apache POI project is celebrating its 10th anniversary. On the 28th of August 2001, the first 0.1 alpha version of POI was released. 
         <link href="https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces14">Read more...</link></p>
-    </section>
-    <section><title>29 October 2010 - POI 3.7 available</title>
-     <p>The Apache POI team is pleased to announce the release of 3.7. This includes a large number of bug fixes, and some
-        enhancements (especially text extraction). See the
-        <link href="http://www.apache.org/dist/poi/release/bin/RELEASE_NOTES.txt">full release notes</link> for more details.
-      </p>
-      <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
-      People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
-      <p>See the <link href="download.html">downloads</link> page for more details.</p>
     </section>
     <section><title>Mission Statement</title>
       <p>

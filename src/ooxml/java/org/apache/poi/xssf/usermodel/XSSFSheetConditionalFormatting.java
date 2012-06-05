@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.hssf.record.cf.CellRangeUtil;
-import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
@@ -34,7 +33,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormatti
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
 
 /**

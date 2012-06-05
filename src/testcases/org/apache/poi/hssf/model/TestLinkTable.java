@@ -30,7 +30,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 
 /**

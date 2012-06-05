@@ -33,7 +33,23 @@
     </developers>
 
     <changes>
-        <release version="3.8-beta6" date="2012-??-??">
+        <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">53271 - Removed unconditional asserts in SXSSF</action>
+          <action dev="poi-developers" type="add">53025 - Updatad documentation and example on using Data Validations  </action>
+          <action dev="poi-developers" type="add">53227 - Corrected AddDimensionedImage.java to support XSSF/SXSSF  </action>
+          <action dev="poi-developers" type="add">53058 - Utility for representing drawings contained in a binary Excel file as a XML tree</action>
+          <action dev="poi-developers" type="add">53165 - HWPF support for fetching the description (alt text) of a picture</action>
+          <action dev="poi-developers" type="fix">48528 - support negative arguments to the DATE() function</action>
+          <action dev="poi-developers" type="fix">53092 - allow specifying of a TimeZone to DateUtil.getJavaDate(), for when it is known that a file comes from a different (known) timezone to the current machine</action>
+          <action dev="poi-developers" type="fix">53043 - don't duplicate hyperlink relationships when saving XSSF file</action>
+          <action dev="poi-developers" type="fix">53101 - fixed evaluation of SUM over cell range &gt; 255</action>
+          <action dev="poi-developers" type="fix">49529 - avoid exception when cloning sheets with no drawing records and initialized drawing patriarch</action>
+        </release>
+        <release version="3.8-FINAL" date="2012-03-26">
+           <action dev="poi-developers" type="add">52928 - DateFormatConverter: an utility to convert instances of java.text.DateFormat to Excel format patterns</action>
+           <action dev="poi-developers" type="fix">52895 - show SSTIndex instead of XFIndex in LabelSSTRecord.toString()</action>
+           <action dev="poi-developers" type="fix">52835 - Tolerate missing Count and UniqueCount attributes when parsing shared strings table in XSSF eventusermodel</action>
+           <action dev="poi-developers" type="add">52818 - Added implementation for RANK()</action>
            <action dev="poi-developers" type="fix">52682 - allow setting text with trailing carriage return in HSLF</action>
            <action dev="poi-developers" type="fix">52244 - use correct text attributes when presentation has multiple TxMasterStyleAtoms of the same type</action>
            <action dev="poi-developers" type="add">support setting background color of sheet tab in XSSF</action>

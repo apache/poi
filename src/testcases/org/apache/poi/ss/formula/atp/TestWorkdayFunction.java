@@ -25,12 +25,10 @@ import static java.util.Calendar.MAY;
 import static java.util.Calendar.NOVEMBER;
 import static java.util.Calendar.OCTOBER;
 import static java.util.Calendar.SEPTEMBER;
-import static org.apache.poi.ss.formula.eval.ErrorEval.NUM_ERROR;
 import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +46,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 /**
  * @author jfaenomoto@gmail.com
  */
+@SuppressWarnings("deprecation") // YK: heavily uses deprecated {@link java.util.Date(int year, int month, int date)}
 public class TestWorkdayFunction extends TestCase {
 
     private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");

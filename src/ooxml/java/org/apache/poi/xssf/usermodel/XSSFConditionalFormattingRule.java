@@ -25,10 +25,8 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 

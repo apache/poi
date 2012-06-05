@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -50,19 +52,51 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 		doTestHyperlinkContents(sheet);
 	}
 
-    public void testCreate() {
+    public void testCreate() throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        XSSFRow row = sheet.createRow(0);
         XSSFCreationHelper createHelper = workbook.getCreationHelper();
         
-        String[] validURLs = {
+        String[] urls = {
                 "http://apache.org",
                 "www.apache.org",
                 "/temp",
                 "c:/temp",
                 "http://apache.org/default.php?s=isTramsformed&submit=Search&la=*&li=*"};
-        for(String s : validURLs){
-            createHelper.createHyperlink(Hyperlink.LINK_URL).setAddress(s);
+        for(int i = 0; i < urls.length; i++){
+            String s = urls[i];
+            XSSFHyperlink link = createHelper.createHyperlink(Hyperlink.LINK_URL);
+            link.setAddress(s);
+
+            XSSFCell cell = row.createCell(i);
+            cell.setHyperlink(link);
         }
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+        PackageRelationshipCollection rels = sheet.getPackagePart().getRelationships();
+        assertEquals(urls.length, rels.size());
+        for(int i = 0; i < rels.size(); i++){
+            PackageRelationship rel = rels.getRelationship(i);
+            // there should be a relationship for each URL
+            assertEquals(urls[i], rel.getTargetURI().toString());
+        }
+
+        // Bugzilla 53041: Hyperlink relations are duplicated when saving XSSF file
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheetAt(0);
+        rels = sheet.getPackagePart().getRelationships();
+        assertEquals(urls.length, rels.size());
+        for(int i = 0; i < rels.size(); i++){
+            PackageRelationship rel = rels.getRelationship(i);
+            // there should be a relationship for each URL
+            assertEquals(urls[i], rel.getTargetURI().toString());
+        }
+    }
+
+    public void testInvalidURLs() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFCreationHelper createHelper = workbook.getCreationHelper();
 
         String[] invalidURLs = {
                 "http:\\apache.org",
@@ -74,12 +108,12 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
                 createHelper.createHyperlink(Hyperlink.LINK_URL).setAddress(s);
                 fail("expected IllegalArgumentException: " + s);
             } catch (IllegalArgumentException e){
-                
+
             }
         }
     }
 
-	public void testLoadSave() {
+    public void testLoadSave() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		CreationHelper createHelper = workbook.getCreationHelper();
 		assertEquals(3, workbook.getNumberOfSheets());

@@ -19,13 +19,9 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-import org.apache.poi.xslf.XSLFTestDataSamples;
-
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 /**
- * test common operatrions on containers of shapes (sheets and groups of shapes)
+ * test common operations on containers of shapes (sheets and groups of shapes)
  *
  * @author Yegor Kozlov
  */

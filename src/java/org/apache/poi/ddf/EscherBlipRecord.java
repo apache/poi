@@ -81,4 +81,14 @@ public class EscherBlipRecord extends EscherRecord { // TODO - instantiable supe
                 "  Instance: 0x" + HexDump.toHex( getInstance() ) + '\n' +
                 "  Extra Data:" + '\n' + extraData;
     }
+
+    @Override
+    public String toXml(String tab) {
+        String extraData = HexDump.toHex(field_pictureData, 32);
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<ExtraData>").append(extraData).append("</ExtraData>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
+    }
 }

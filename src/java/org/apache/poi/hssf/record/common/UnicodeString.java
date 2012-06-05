@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
-import org.apache.poi.poifs.dev.POIFSLister;
 import org.apache.poi.util.*;
 
 /**

@@ -21,8 +21,6 @@ import junit.framework.TestCase;
 import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**

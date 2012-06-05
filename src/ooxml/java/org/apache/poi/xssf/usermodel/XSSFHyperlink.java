@@ -111,7 +111,7 @@ public class XSSFHyperlink implements Hyperlink {
      * Generates the relation if required
      */
     protected void generateRelationIfNeeded(PackagePart sheetPart) {
-        if (needsRelationToo()) {
+        if (_externalRel == null && needsRelationToo()) {
             // Generate the relation
             PackageRelationship rel =
                     sheetPart.addExternalRelationship(_location, XSSFRelation.SHEET_HYPERLINKS.getRelation());

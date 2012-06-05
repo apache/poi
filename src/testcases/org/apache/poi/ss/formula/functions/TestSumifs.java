@@ -25,7 +25,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Test cases for SUMIFS()

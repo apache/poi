@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.xssf.usermodel.charts.*;
 
 public final class TestXSSFValueAxis extends TestCase {
  

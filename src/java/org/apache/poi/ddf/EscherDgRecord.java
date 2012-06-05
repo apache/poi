@@ -92,7 +92,16 @@ public class EscherDgRecord
                 "  Instance: 0x" + HexDump.toHex(getInstance()) + '\n' +
                 "  NumShapes: " + field_1_numShapes + '\n' +
                 "  LastMSOSPID: " + field_2_lastMSOSPID + '\n';
+    }
 
+    @Override
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append(formatXmlRecordHeader(getClass().getSimpleName(), HexDump.toHex(getRecordId()), HexDump.toHex(getVersion()), HexDump.toHex(getInstance())))
+                .append(tab).append("\t").append("<NumShapes>").append(field_1_numShapes).append("</NumShapes>\n")
+                .append(tab).append("\t").append("<LastMSOSPID>").append(field_2_lastMSOSPID).append("</LastMSOSPID>\n");
+        builder.append(tab).append("</").append(getClass().getSimpleName()).append(">\n");
+        return builder.toString();
     }
 
     /**
