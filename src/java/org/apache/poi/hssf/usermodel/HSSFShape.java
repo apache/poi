@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+
 /**
  * An abstract shape.
  *
@@ -40,7 +43,7 @@ public abstract class HSSFShape {
     public static final int LINESTYLE_NONE = -1;
 
     // TODO - make all these fields private
-    final HSSFShape parent;  
+    HSSFShape parent;
     HSSFAnchor anchor;
     HSSFPatriarch _patriarch;  
     private int _lineStyleColor = 0x08000040;
@@ -49,13 +52,28 @@ public abstract class HSSFShape {
     private int _lineStyle = LINESTYLE_SOLID;
     private boolean _noFill = false;
 
+    private EscherContainerRecord spContainer;
+    private ObjRecord objRecord;
+
+    public HSSFShape(EscherContainerRecord spContainer, ObjRecord objRecord){
+        this.spContainer = spContainer;
+        this.objRecord = objRecord;
+    }
     /**
      * Create a new shape with the specified parent and anchor.
      */
-    HSSFShape( HSSFShape parent, HSSFAnchor anchor )
+    public HSSFShape( HSSFShape parent, HSSFAnchor anchor )
     {
         this.parent = parent;
         this.anchor = anchor;
+    }
+
+    public EscherContainerRecord getSpContainer() {
+        return spContainer;
+    }
+
+    public ObjRecord getObjRecord() {
+        return objRecord;
     }
 
     /**

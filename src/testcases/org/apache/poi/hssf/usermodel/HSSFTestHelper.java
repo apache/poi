@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.EscherAggregate;
 
 /**
  * Helper class for HSSF tests that aren't within the
@@ -34,4 +35,8 @@ public class HSSFTestHelper {
 	public static InternalSheet getSheetForTest(HSSFSheet sheet) {
 		return sheet.getSheet();
 	}
+
+    public static HSSFPatriarch createTestPatriarch(HSSFSheet sheet, EscherAggregate agg){
+        return new HSSFPatriarch(sheet, agg);
+    }
 }

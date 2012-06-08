@@ -43,16 +43,7 @@ import org.apache.poi.hssf.model.CommentShape;
 import org.apache.poi.hssf.model.ConvertAnchor;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.TextboxShape;
-import org.apache.poi.hssf.usermodel.HSSFAnchor;
-import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFPicture;
-import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.hssf.usermodel.HSSFShapeContainer;
-import org.apache.poi.hssf.usermodel.HSSFShapeGroup;
-import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
-import org.apache.poi.hssf.usermodel.HSSFTextbox;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -322,7 +313,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * list of "tail" records that need to be serialized after all drawing group records
      */
-    private List tailRec = new ArrayList();
+    private List<Record> tailRec = new ArrayList<Record>();
 
     public EscherAggregate(DrawingManager2 drawingManager) {
         this.drawingManager = drawingManager;
@@ -413,7 +404,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         // Decode the shapes
-        //		agg.escherRecords = new ArrayList();
+        // agg.escherRecords = new ArrayList();
         int pos = 0;
         while (pos < buffer.size()) {
             EscherRecord r = recordFactory.createRecord(buffer.toByteArray(), pos);
@@ -486,7 +477,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
                 public void afterRecordSerialize(int offset, short recordId, int size, EscherRecord record) {
                     if (recordId == EscherClientDataRecord.RECORD_ID || recordId == EscherTextboxRecord.RECORD_ID) {
-                        spEndingOffsets.add(Integer.valueOf(offset));
+                        spEndingOffsets.add(offset);
                         shapes.add(record);
                     }
                 }
@@ -501,12 +492,17 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         pos = offset;
         int writtenEscherBytes = 0;
         for (int i = 1; i < shapes.size(); i++) {
-            int endOffset = ((Integer) spEndingOffsets.get(i)).intValue() - 1;
+            int endOffset;
+            if (i == shapes.size()-1){
+                endOffset = buffer.length - 1;
+            } else {
+                endOffset = (Integer) spEndingOffsets.get(i) - 1;
+            }
             int startOffset;
             if (i == 1)
                 startOffset = 0;
             else
-                startOffset = ((Integer) spEndingOffsets.get(i - 1)).intValue();
+                startOffset = (Integer) spEndingOffsets.get(i - 1);
 
 
             byte[] drawingData = new byte[endOffset - startOffset + 1];
@@ -790,7 +786,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             container.getChildren().add(shape);
     }
 
-    private static HSSFClientAnchor toClientAnchor(EscherClientAnchorRecord anchorRecord) {
+    public static HSSFClientAnchor toClientAnchor(EscherClientAnchorRecord anchorRecord) {
         HSSFClientAnchor anchor = new HSSFClientAnchor();
         anchor.setAnchorType(anchorRecord.getFlag());
         anchor.setCol1(anchorRecord.getCol1());
@@ -804,7 +800,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return anchor;
     }
 
-    private static HSSFChildAnchor toChildAnchor(EscherChildAnchorRecord anchorRecord) {
+    public static HSSFChildAnchor toChildAnchor(EscherChildAnchorRecord anchorRecord) {
         HSSFChildAnchor anchor = new HSSFChildAnchor();
 //        anchor.setAnchorType(anchorRecord.getFlag());
 //        anchor.setCol1( anchorRecord.getCol1() );
@@ -1081,4 +1077,24 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return null;
     }
 
+    /**
+     * Returns the mapping  of {@link EscherClientDataRecord} and {@link EscherTextboxRecord}
+     * to their {@link TextObjectRecord} or {@link ObjRecord} .
+     *
+     * We need to access it outside of EscherAggregate when building shapes
+     *
+     * @return
+     */
+    public Map<EscherRecord, Record> getShapeToObjMapping(){
+        return Collections.unmodifiableMap(shapeToObj);
+    }
+
+    /**
+     *
+     * @return tails records. We need to access them when building shapes.
+     * Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
+     */
+    public List<Record> getTailRecords(){
+        return Collections.unmodifiableList(tailRec);
+    }
 }

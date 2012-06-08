@@ -17,13 +17,13 @@
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFTestHelper;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.util.HexRead;
 
 import java.io.*;
@@ -35,18 +35,84 @@ import java.util.List;
  * @author Evgeniy Berlog
  */
 public class TestDrawingAggregate extends TestCase {
-    private static byte[] toByteArray(List<RecordBase> records){
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            for(RecordBase rb : records) {
-                    Record r = (Record)rb;
-                    try {
-                            out.write(r.serialize());
-                        } catch (IOException e){
-                            throw new RuntimeException(e);
-                        }
-                }
-            return out.toByteArray();
+
+    private int spgrCount = 0;
+    private int spCount = 0;
+    private int shapeCount = 0;
+    private int shGroupCount = 0;
+
+    /*
+     * EscherAggregate must have for each SpgrContainer HSSFShapeGroup and for each SpContainer HSSFShape
+     */
+    private void checkEscherAndShapesCount(EscherAggregate agg, HSSFSheet sheet) {
+        /*
+        HSSFPatriarch patriarch = HSSFTestHelper.createTestPatriarch(sheet, agg);
+        agg.setPatriarch(patriarch);
+        EscherAggregate.createShapeTree(EscherAggregate.getMainSpgrContainer(agg), agg.getPatriarch(), agg);
+        EscherContainerRecord mainContainer = EscherAggregate.getMainSpgrContainer(agg);
+        calculateShapesCount(agg.getPatriarch());
+        calculateEscherContainersCount(mainContainer);
+
+        assertEquals(spgrCount, shGroupCount);
+        assertEquals(spCount - spgrCount - 1, shapeCount);
+        */
+    }
+
+    private void calculateEscherContainersCount(EscherContainerRecord spgr) {
+        for (EscherRecord record : spgr.getChildRecords()) {
+            if (EscherContainerRecord.SP_CONTAINER == record.getRecordId()) {
+                spCount++;
+                continue;
+            }
+            if (EscherContainerRecord.SPGR_CONTAINER == record.getRecordId()) {
+                spgrCount++;
+                calculateEscherContainersCount((EscherContainerRecord) record);
+            }
         }
+    }
+
+    private void calculateShapesCount(HSSFShapeContainer group) {
+        for (HSSFShape shape : (List<HSSFShape>) group.getChildren()) {
+            if (shape instanceof HSSFShapeGroup) {
+                shGroupCount++;
+                calculateShapesCount((HSSFShapeGroup) shape);
+            } else {
+                shapeCount++;
+            }
+        }
+    }
+
+
+    private static byte[] toByteArray(List<RecordBase> records) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        for (RecordBase rb : records) {
+            Record r = (Record) rb;
+            try {
+                out.write(r.serialize());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return out.toByteArray();
+    }
+
+    public void testSolverContainerMustBeSavedDuringSerialization(){
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SolverContainerAfterSPGR.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
+        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+        sh.getDrawingPatriarch();
+        EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+        assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
+        assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sh = wb.getSheetAt(0);
+        sh.getDrawingPatriarch();
+        ish = HSSFTestHelper.getSheetForTest(sh);
+        agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+        assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
+        assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
+
+    }
 
     /**
      * test reading drawing aggregate from a test file from Bugzilla 45129
@@ -107,6 +173,7 @@ public class TestDrawingAggregate extends TestCase {
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
         assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        checkEscherAndShapesCount(agg, sh);
     }
 
     /**
@@ -174,7 +241,7 @@ public class TestDrawingAggregate extends TestCase {
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
         assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
 
-
+        checkEscherAndShapesCount(agg, sh);
     }
 
 
@@ -185,21 +252,20 @@ public class TestDrawingAggregate extends TestCase {
         List<RecordBase> records = isheet.getRecords();
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        InternalSheet isheet2 = HSSFTestHelper.getSheetForTest( wb2.getSheetAt(0));
+        InternalSheet isheet2 = HSSFTestHelper.getSheetForTest(wb2.getSheetAt(0));
         List<RecordBase> records2 = isheet2.getRecords();
 
         assertEquals(records.size(), records2.size());
-        for(int i = 0; i < records.size(); i++) {
+        for (int i = 0; i < records.size(); i++) {
             RecordBase r1 = records.get(i);
             RecordBase r2 = records2.get(i);
             assertTrue(r1.getClass() == r2.getClass());
             assertEquals(r1.getRecordSize(), r2.getRecordSize());
-            if(r1 instanceof Record ){
-                assertEquals(((Record)r1).getSid(), ((Record)r2).getSid());
+            if (r1 instanceof Record) {
+                assertEquals(((Record) r1).getSid(), ((Record) r2).getSid());
                 assertTrue(Arrays.equals(((Record) r1).serialize(), ((Record) r2).serialize()));
             }
         }
-
     }
 
     public void testSerializeDrawingWithComments() throws IOException {
@@ -257,6 +323,7 @@ public class TestDrawingAggregate extends TestCase {
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
         assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        checkEscherAndShapesCount(agg, sh);
     }
 
 
@@ -314,7 +381,8 @@ public class TestDrawingAggregate extends TestCase {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        checkEscherAndShapesCount(agg, sh);
     }
 
     public void testUnhandledContinue() {

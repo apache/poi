@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 
 
@@ -32,6 +33,13 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     short col2;
     int row2;
     int anchorType;
+
+    private EscherClientAnchorRecord escherClientAnchorRecord;
+
+    public HSSFClientAnchor(EscherClientAnchorRecord escherClientAnchorRecord) {
+        this.escherClientAnchorRecord = escherClientAnchorRecord;
+        //TODO set properties or read properties from EscherRecord ?
+    }
 
     /**
      * Creates a new client anchor and defaults all the anchor positions to 0.

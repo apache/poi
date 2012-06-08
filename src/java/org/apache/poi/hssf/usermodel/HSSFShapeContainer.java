@@ -31,4 +31,15 @@ public interface HSSFShapeContainer
      */
     List getChildren();
 
+    /**
+     * add shape to the list of child records
+     * @param shape
+     */
+    public void addShape(HSSFShape shape);
+
+    /**
+     * set coordinates of this group relative to the parent
+     */
+    void setCoordinates( int x1, int y1, int x2, int y2 );
+
 }
