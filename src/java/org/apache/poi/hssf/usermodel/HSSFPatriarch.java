@@ -22,9 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.util.StringUtil;
@@ -314,4 +316,23 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 		throw new RuntimeException("NotImplemented");
 	}
 
+
+    void buildShapeTree(){
+        EscherContainerRecord dgContainer = _boundAggregate.getEscherContainer();
+        EscherContainerRecord spgrConrainer = dgContainer.getChildContainers().get(0);
+        List<EscherContainerRecord> spgrChildren = spgrConrainer.getChildContainers();
+
+        for(int i = 0; i < spgrChildren.size(); i++){
+            EscherContainerRecord spContainer = spgrChildren.get(i);
+            if (i == 0){
+                EscherSpgrRecord spgr = (EscherSpgrRecord)spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
+                setCoordinates(
+                        spgr.getRectX1(), spgr.getRectY1(),
+                        spgr.getRectX2(), spgr.getRectY2()
+                );
+            } else {
+                HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this);
+            }
+        }
+    }
 }

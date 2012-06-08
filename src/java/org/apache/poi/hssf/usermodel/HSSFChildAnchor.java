@@ -18,7 +18,16 @@
 package org.apache.poi.hssf.usermodel;
 
 
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+
 public final class HSSFChildAnchor extends HSSFAnchor {
+
+    private EscherChildAnchorRecord escherChildAnchorRecord;
+
+    public HSSFChildAnchor(EscherChildAnchorRecord escherChildAnchorRecord) {
+        this.escherChildAnchorRecord = escherChildAnchorRecord;
+    }
+
     public HSSFChildAnchor()
     {
     }

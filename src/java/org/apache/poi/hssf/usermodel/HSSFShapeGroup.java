@@ -17,6 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.hssf.model.TextboxShape;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
@@ -37,6 +46,32 @@ public class HSSFShapeGroup
     int x2 = 1023;
     int y2 = 255;
 
+    public HSSFShapeGroup(EscherContainerRecord spgrContainer, ObjRecord objRecord) {
+        super(spgrContainer, objRecord);
+
+        // read internal and external coordinates from spgrContainer
+        EscherContainerRecord spContainer = spgrContainer.getChildContainers().get(0);
+        for(EscherRecord ch : spContainer.getChildRecords()){
+            switch(ch.getRecordId()) {
+                case EscherSpgrRecord.RECORD_ID:
+                    EscherSpgrRecord spgr = (EscherSpgrRecord)ch;
+                    setCoordinates(
+                            spgr.getRectX1(), spgr.getRectY1(),
+                            spgr.getRectX2(), spgr.getRectY2()
+                    );
+                    break;
+                case EscherClientAnchorRecord.RECORD_ID:
+                    this.anchor = EscherAggregate.toClientAnchor((EscherClientAnchorRecord)ch);
+                    // TODO anchor = new HSSFClientAnchor((EscherChildAnchorRecord)ch);
+                    break;
+                case EscherChildAnchorRecord.RECORD_ID:
+                    this.anchor = EscherAggregate.toChildAnchor((EscherChildAnchorRecord)ch);
+                    // TODO anchor = new HSSFChildAnchor((EscherClientAnchorRecord)ch);
+                    break;
+            }
+        }
+
+    }
 
     public HSSFShapeGroup( HSSFShape parent, HSSFAnchor anchor )
     {
@@ -59,6 +94,11 @@ public class HSSFShapeGroup
     public void addShape(HSSFShape shape){
         shape._patriarch = this._patriarch;
         shapes.add(shape);
+    }
+
+    public void addTextBox(TextboxShape textboxShape){
+//        HSSFTextbox shape = new HSSFTextbox(this, textboxShape.geanchor);
+//        shapes.add(textboxShape);
     }
 
     /**

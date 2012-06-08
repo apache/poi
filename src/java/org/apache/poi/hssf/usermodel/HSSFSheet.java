@@ -1738,12 +1738,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         if(agg == null) return null;
 
         _patriarch = new HSSFPatriarch(this, agg);
-        agg.setPatriarch(_patriarch);
+        _patriarch.buildShapeTree();
+
+        //HSSFShapeFactory.createShapeTree();
+        //agg.setPatriarch(_patriarch);
+        //EscherAggregate.createShapeTree(EscherAggregate.getMainSpgrContainer(agg), agg.getPatriarch(), agg);
 
         // Have it process the records into high level objects
         //  as best it can do (this step may eat anything
         //  that isn't supported, you were warned...)
-        agg.convertRecordsToUserModel();
+//        agg.convertRecordsToUserModel();
 
         // Return what we could cope with
         return _patriarch;
