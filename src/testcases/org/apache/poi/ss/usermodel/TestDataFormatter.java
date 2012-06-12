@@ -47,6 +47,24 @@ public class TestDataFormatter extends TestCase {
     }
     
     /**
+     * At the moment, we don't decode the locale strings into
+     *  a specific locale, but we should format things as if
+     *  the locale (eg '[$-1010409]') isn't there
+     */
+    public void testLocaleBasedFormats() {
+       DataFormatter dfUS = new DataFormatter(Locale.US);
+
+       // Standard formats
+       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]General"));
+       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]@"));
+
+       // Regular numeric style formats
+       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]##"));
+       assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));        
+
+    }
+    
+    /**
      * Ensure that colours get correctly
      *  zapped from within the format strings
      */
