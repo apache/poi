@@ -82,9 +82,9 @@ import org.apache.poi.util.POILogger;
  * build escher(office art) records tree from this array.
  * Each shape in drawing layer matches corresponding ObjRecord
  * Each textbox matches corresponding TextObjectRecord
- *
+ * <p/>
  * ObjRecord contains information about shape. Thus each ObjRecord corresponds EscherContainerRecord(SPGR)
- *
+ * <p/>
  * EscherAggrefate contains also NoteRecords
  * NoteRecords must be serial
  *
@@ -492,51 +492,28 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         pos = offset;
         int writtenEscherBytes = 0;
         for (int i = 1; i < shapes.size(); i++) {
-            int endOffset;
-            if (i == shapes.size()-1){
-                endOffset = buffer.length - 1;
-            } else {
-                endOffset = (Integer) spEndingOffsets.get(i) - 1;
-            }
+            int endOffset = (Integer) spEndingOffsets.get(i) - 1;
             int startOffset;
             if (i == 1)
                 startOffset = 0;
             else
                 startOffset = (Integer) spEndingOffsets.get(i - 1);
 
-
             byte[] drawingData = new byte[endOffset - startOffset + 1];
             System.arraycopy(buffer, startOffset, drawingData, 0, drawingData.length);
-            int temp = 0;
+            pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
 
-            //First record in drawing layer MUST be DrawingRecord
-            if (writtenEscherBytes + drawingData.length > RecordInputStream.MAX_RECORD_DATA_SIZE && i != 1) {
-                for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
-                    ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
-                    temp += drawing.serialize(pos + temp, data);
-                }
-            } else {
-                for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
-                    if (j == 0) {
-                        DrawingRecord drawing = new DrawingRecord();
-                        drawing.setData(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
-                        temp += drawing.serialize(pos + temp, data);
-                    } else {
-                        ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
-                        temp += drawing.serialize(pos + temp, data);
-                    }
-                }
-
-            }
-
-            pos += temp;
             writtenEscherBytes += drawingData.length;
 
             // Write the matching OBJ record
             Record obj = shapeToObj.get(shapes.get(i));
-            temp = obj.serialize(pos, data);
-            pos += temp;
+            pos += obj.serialize(pos, data);
 
+            if (i == shapes.size() - 1 && endOffset < buffer.length - 1) {
+                drawingData = new byte[buffer.length - endOffset - 1];
+                System.arraycopy(buffer, endOffset + 1, drawingData, 0, drawingData.length);
+                pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
+            }
         }
 
         // write records that need to be serialized after all drawing group records
@@ -544,11 +521,32 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             Record rec = (Record) tailRec.get(i);
             pos += rec.serialize(pos, data);
         }
-
         int bytesWritten = pos - offset;
         if (bytesWritten != getRecordSize())
             throw new RecordFormatException(bytesWritten + " bytes written but getRecordSize() reports " + getRecordSize());
         return bytesWritten;
+    }
+
+    private int writeDataIntoDrawingRecord(int temp, byte[] drawingData, int writtenEscherBytes, int pos, byte[] data, int i) {
+        //First record in drawing layer MUST be DrawingRecord
+        if (writtenEscherBytes + drawingData.length > RecordInputStream.MAX_RECORD_DATA_SIZE && i != 1) {
+            for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
+                ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
+                temp += drawing.serialize(pos + temp, data);
+            }
+        } else {
+            for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
+                if (j == 0) {
+                    DrawingRecord drawing = new DrawingRecord();
+                    drawing.setData(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
+                    temp += drawing.serialize(pos + temp, data);
+                } else {
+                    ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
+                    temp += drawing.serialize(pos + temp, data);
+                }
+            }
+        }
+        return temp;
     }
 
     /**
@@ -591,10 +589,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         spEndingOffsets.add(0, 0);
 
         for (int i = 1; i < spEndingOffsets.size(); i++) {
-            if (spEndingOffsets.get(i) - spEndingOffsets.get(i - 1) <= RecordInputStream.MAX_RECORD_DATA_SIZE){
+            if (i == spEndingOffsets.size() - 1 && spEndingOffsets.get(i) < pos) {
+                continueRecordsHeadersSize += 4;
+            }
+            if (spEndingOffsets.get(i) - spEndingOffsets.get(i - 1) <= RecordInputStream.MAX_RECORD_DATA_SIZE) {
                 continue;
             }
-            continueRecordsHeadersSize += ((spEndingOffsets.get(i) - spEndingOffsets.get(i - 1)) / RecordInputStream.MAX_RECORD_DATA_SIZE)*4;
+            continueRecordsHeadersSize += ((spEndingOffsets.get(i) - spEndingOffsets.get(i - 1)) / RecordInputStream.MAX_RECORD_DATA_SIZE) * 4;
         }
 
         int drawingRecordSize = rawEscherSize + (shapeToObj.size()) * 4;
@@ -608,13 +609,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             Record r = (Record) iterator.next();
             tailRecordSize += r.getRecordSize();
         }
-        return drawingRecordSize + objRecordSize + tailRecordSize +continueRecordsHeadersSize;
+        return drawingRecordSize + objRecordSize + tailRecordSize + continueRecordsHeadersSize;
     }
 
     /**
      * Associates an escher record to an OBJ record or a TXO record.
      */
-    Object associateShapeToObjRecord(EscherRecord r, ObjRecord objRecord) {
+    public Object associateShapeToObjRecord(EscherRecord r, ObjRecord objRecord) {
         return shapeToObj.put(r, objRecord);
     }
 
@@ -624,6 +625,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     public void setPatriarch(HSSFPatriarch patriarch) {
         this.patriarch = patriarch;
+        convertPatriarch(patriarch);
     }
 
     /**
@@ -1080,12 +1082,12 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * Returns the mapping  of {@link EscherClientDataRecord} and {@link EscherTextboxRecord}
      * to their {@link TextObjectRecord} or {@link ObjRecord} .
-     *
+     * <p/>
      * We need to access it outside of EscherAggregate when building shapes
      *
      * @return
      */
-    public Map<EscherRecord, Record> getShapeToObjMapping(){
+    public Map<EscherRecord, Record> getShapeToObjMapping() {
         return Collections.unmodifiableMap(shapeToObj);
     }
 

@@ -85,4 +85,9 @@ public final class DrawingRecord extends StandardRecord {
 
         return rec;
     }
+
+    @Override
+    public String toString() {
+        return "DrawingRecord["+recordData.length+"]";
+    }
 }

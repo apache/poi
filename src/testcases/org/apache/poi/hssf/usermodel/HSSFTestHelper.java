@@ -39,4 +39,8 @@ public class HSSFTestHelper {
     public static HSSFPatriarch createTestPatriarch(HSSFSheet sheet, EscherAggregate agg){
         return new HSSFPatriarch(sheet, agg);
     }
+
+    public static EscherAggregate getEscherAggregate(HSSFPatriarch patriarch){
+        return patriarch._getBoundAggregate();
+    }
 }

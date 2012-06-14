@@ -67,7 +67,7 @@ public class HSSFShapeFactory {
             }
             Class clazz = shapeTypeToClass.get(type);
             if (null == clazz){
-                System.out.println("No class attached to shape type: "+type);
+                //System.out.println("No class attached to shape type: "+type);
                 return new HSSFUnknownShape(spContainer, objRecord);
             }
             try{
