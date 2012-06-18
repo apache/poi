@@ -39,25 +39,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author evgeniy
+ * @author Evgeniy Berlog
  * date: 05.06.12
  */
 public class HSSFShapeFactory {
 
-    private static final Map<Short, Class> shapeTypeToClass = new HashMap<Short, Class>(HSSFShapeType.values().length);
+    private static final Map<Short, HSSFShapeType> shapeTypeToClass = new HashMap<Short, HSSFShapeType>(HSSFShapeType.values().length);
     private static final ReflectionConstructorShapeCreator shapeCreator = new ReflectionConstructorShapeCreator(shapeTypeToClass);
 
     static {
         for (HSSFShapeType type: HSSFShapeType.values()){
-            shapeTypeToClass.put(type.getType(), type.getShape());
+            shapeTypeToClass.put(type.getType(), type);
         }
     }
 
     private static class ReflectionConstructorShapeCreator {
 
-        private final Map<Short, Class> shapeTypeToClass;
+        private final Map<Short, HSSFShapeType> shapeTypeToClass;
 
-        private ReflectionConstructorShapeCreator(Map<Short, Class> shapeTypeToClass) {
+        private ReflectionConstructorShapeCreator(Map<Short, HSSFShapeType> shapeTypeToClass) {
             this.shapeTypeToClass = shapeTypeToClass;
         }
 
@@ -65,7 +65,7 @@ public class HSSFShapeFactory {
             if (!shapeTypeToClass.containsKey(type)){
                 return new HSSFUnknownShape(spContainer, objRecord);
             }
-            Class clazz = shapeTypeToClass.get(type);
+            Class clazz = shapeTypeToClass.get(type).getShape();
             if (null == clazz){
                 //System.out.println("No class attached to shape type: "+type);
                 return new HSSFUnknownShape(spContainer, objRecord);
@@ -81,26 +81,6 @@ public class HSSFShapeFactory {
         }
     }
 
-    public static HSSFShape createShape(EscherRecord container, ObjRecord objRecord){
-        if (0 == container.getChildRecords().size()){
-            throw new IllegalArgumentException("Couldn't create shape from empty escher container");
-        }
-        if (container.getChild(0) instanceof EscherSpgrRecord){
-            return new HSSFShapeGroup((EscherContainerRecord) container, objRecord);
-        }
-
-        //TODO implement cases for all shapes
-        return new HSSFUnknownShape(container, objRecord);
-    }
-
-    public static HSSFShapeGroup createShapeGroup(){
-        return null;
-    }
-
-    public static HSSFShapeGroup createSimpleShape(EscherRecord container, ObjRecord objRecord){
-        return null;
-    }
-
     public static void createShapeTree(EscherContainerRecord container, EscherAggregate agg, HSSFShapeContainer out){
         if(container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
             HSSFShapeGroup group = new HSSFShapeGroup(container,
@@ -111,10 +91,6 @@ public class HSSFShapeFactory {
                 EscherContainerRecord spContainer = children.get(i);
                 if(i == 0){
                     EscherSpgrRecord spgr = (EscherSpgrRecord)spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
-                    group.setCoordinates(
-                            spgr.getRectX1(), spgr.getRectY1(),
-                            spgr.getRectX2(), spgr.getRectY2()
-                    );
                 } else {
                     createShapeTree(spContainer, agg, group);
                 }

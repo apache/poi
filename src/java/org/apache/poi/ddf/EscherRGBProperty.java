@@ -38,6 +38,10 @@ public class EscherRGBProperty
         return propertyValue;
     }
 
+    public void setRgbColor(int color){
+        this.propertyValue = color;
+    }
+
     public byte getRed()
     {
         return (byte) ( propertyValue & 0xFF );

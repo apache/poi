@@ -41,32 +41,23 @@ public class HSSFShapeGroup
         implements HSSFShapeContainer
 {
     List<HSSFShape> shapes = new ArrayList<HSSFShape>();
-    int x1 = 0;
-    int y1  = 0 ;
-    int x2 = 1023;
-    int y2 = 255;
+    private EscherSpgrRecord _spgrRecord;
 
     public HSSFShapeGroup(EscherContainerRecord spgrContainer, ObjRecord objRecord) {
         super(spgrContainer, objRecord);
 
         // read internal and external coordinates from spgrContainer
         EscherContainerRecord spContainer = spgrContainer.getChildContainers().get(0);
+        _spgrRecord = (EscherSpgrRecord) spContainer.getChild(0);
         for(EscherRecord ch : spContainer.getChildRecords()){
             switch(ch.getRecordId()) {
                 case EscherSpgrRecord.RECORD_ID:
-                    EscherSpgrRecord spgr = (EscherSpgrRecord)ch;
-                    setCoordinates(
-                            spgr.getRectX1(), spgr.getRectY1(),
-                            spgr.getRectX2(), spgr.getRectY2()
-                    );
                     break;
                 case EscherClientAnchorRecord.RECORD_ID:
-                    this.anchor = EscherAggregate.toClientAnchor((EscherClientAnchorRecord)ch);
-                    // TODO anchor = new HSSFClientAnchor((EscherChildAnchorRecord)ch);
+                    anchor = new HSSFClientAnchor((EscherClientAnchorRecord)ch);
                     break;
                 case EscherChildAnchorRecord.RECORD_ID:
-                    this.anchor = EscherAggregate.toChildAnchor((EscherChildAnchorRecord)ch);
-                    // TODO anchor = new HSSFChildAnchor((EscherClientAnchorRecord)ch);
+                    anchor = new HSSFChildAnchor((EscherChildAnchorRecord)ch);
                     break;
             }
         }
@@ -76,6 +67,11 @@ public class HSSFShapeGroup
     public HSSFShapeGroup( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
+        _spgrRecord = new EscherSpgrRecord();
+        _spgrRecord.setRectX1(0);
+        _spgrRecord.setRectX2(1023);
+        _spgrRecord.setRectY1(0);
+        _spgrRecord.setRectY2(255);
     }
 
     /**
@@ -171,10 +167,10 @@ public class HSSFShapeGroup
      */
     public void setCoordinates( int x1, int y1, int x2, int y2 )
     {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+        _spgrRecord.setRectX1(x1);
+        _spgrRecord.setRectX2(x2);
+        _spgrRecord.setRectY1(y1);
+        _spgrRecord.setRectY2(y2);
     }
 
     /**
@@ -182,7 +178,7 @@ public class HSSFShapeGroup
      */
     public int getX1()
     {
-        return x1;
+        return _spgrRecord.getRectX1();
     }
 
     /**
@@ -190,7 +186,7 @@ public class HSSFShapeGroup
      */
     public int getY1()
     {
-        return y1;
+        return _spgrRecord.getRectY1();
     }
 
     /**
@@ -198,7 +194,7 @@ public class HSSFShapeGroup
      */
     public int getX2()
     {
-        return x2;
+        return _spgrRecord.getRectX2();
     }
 
     /**
@@ -206,7 +202,7 @@ public class HSSFShapeGroup
      */
     public int getY2()
     {
-        return y2;
+        return _spgrRecord.getRectY2();
     }
 
     /**
