@@ -145,8 +145,8 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         float w = 0;
 
         //space in the leftmost cell
-        w += getColumnWidthInPixels(anchor.col1)*(1 - (float)anchor.dx1/1024);
-        short col2 = (short)(anchor.col1 + 1);
+        w += getColumnWidthInPixels(anchor.getCol1())*(1 - (float)anchor.getDx1()/1024);
+        short col2 = (short)(anchor.getCol1() + 1);
         int dx2 = 0;
 
         while(w < scaledWidth){
@@ -160,12 +160,12 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
             double delta = w - scaledWidth;
             dx2 = (int)((cw-delta)/cw*1024);
         }
-        anchor.col2 = col2;
-        anchor.dx2 = dx2;
+        anchor.setCol2(col2);
+        anchor.setDx2(dx2);
 
         float h = 0;
-        h += (1 - (float)anchor.dy1/256)* getRowHeightInPixels(anchor.row1);
-        int row2 = anchor.row1 + 1;
+        h += (1 - (float)anchor.getDy1()/256)* getRowHeightInPixels(anchor.getRow1());
+        int row2 = anchor.getRow1() + 1;
         int dy2 = 0;
 
         while(h < scaledHeight){
@@ -177,8 +177,8 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
             double delta = h - scaledHeight;
             dy2 = (int)((ch-delta)/ch*256);
         }
-        anchor.row2 = row2;
-        anchor.dy2 = dy2;
+        anchor.setRow2(row2);
+        anchor.setDy2(dy2);
 
         return anchor;
     }

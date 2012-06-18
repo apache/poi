@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -38,6 +37,14 @@ public class EscherClientAnchorRecord
     public static final short RECORD_ID = (short) 0xF010;
     public static final String RECORD_DESCRIPTION = "MsofbtClientAnchor";
 
+    /**
+     * bit[0] -  fMove (1 bit): A bit that specifies whether the shape will be kept intact when the cells are moved.
+     * bit[1] - fSize (1 bit): A bit that specifies whether the shape will be kept intact when the cells are resized. If fMove is 1, the value MUST be 1.
+     * bit[2-4] - reserved, MUST be 0 and MUST be ignored
+     * bit[5-15]- Undefined and MUST be ignored.
+     *
+     * it can take values: 0, 2, 3
+     */
     private short field_1_flag;
     private short field_2_col1;
     private short field_3_dx1;

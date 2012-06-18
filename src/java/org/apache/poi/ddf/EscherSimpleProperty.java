@@ -80,6 +80,10 @@ public class EscherSimpleProperty extends EscherProperty
         return propertyValue;
     }
 
+    public void setPropertyValue(int propertyValue) {
+        this.propertyValue = propertyValue;
+    }
+
     /**
      * Returns true if one escher property is equal to another.
      */

@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+
 /**
  * Represents a simple shape such as a line, rectangle or oval.
  *
@@ -52,7 +56,13 @@ public class HSSFSimpleShape
 
     int shapeType = OBJECT_TYPE_LINE;
 
-    public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor )
+    public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
+        super(spContainer, objRecord);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
+        setShapeType(cod.getObjectType());
+    }
+
+    public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor)
     {
         super( parent, anchor );
     }
