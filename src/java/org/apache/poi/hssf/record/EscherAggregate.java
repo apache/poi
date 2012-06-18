@@ -491,7 +491,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         // the first one because it's the patriach).
         pos = offset;
         int writtenEscherBytes = 0;
-        for (int i = 1; i < shapes.size(); i++) {
+        int i;
+        for (i = 1; i < shapes.size(); i++) {
             int endOffset = (Integer) spEndingOffsets.get(i) - 1;
             int startOffset;
             if (i == 1)
@@ -515,10 +516,15 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
                 pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
             }
         }
+        if ((pos - offset) < buffer.length-1){
+            byte[] drawingData = new byte[buffer.length - (pos - offset)];
+            System.arraycopy(buffer, (pos - offset), drawingData, 0, drawingData.length);
+            pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
+        }
 
         // write records that need to be serialized after all drawing group records
-        for (int i = 0; i < tailRec.size(); i++) {
-            Record rec = (Record) tailRec.get(i);
+        for (i = 0; i < tailRec.size(); i++) {
+            Record rec = tailRec.get(i);
             pos += rec.serialize(pos, data);
         }
         int bytesWritten = pos - offset;
@@ -599,6 +605,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         int drawingRecordSize = rawEscherSize + (shapeToObj.size()) * 4;
+        if (rawEscherSize != 0 && spEndingOffsets.size()==1/**EMPTY**/){
+            continueRecordsHeadersSize +=4;
+        }
         int objRecordSize = 0;
         for (Iterator iterator = shapeToObj.values().iterator(); iterator.hasNext(); ) {
             Record r = (Record) iterator.next();
