@@ -72,11 +72,12 @@ public final class ZipHelper {
 	 * Retrieve the Zip entry of the content types part.
 	 */
 	public static ZipEntry getContentTypeZipEntry(ZipPackage pkg) {
-		Enumeration entries = pkg.getZipArchive().getEntries();
+		Enumeration<? extends ZipEntry> entries = pkg.getZipArchive().getEntries();
+		
 		// Enumerate through the Zip entries until we find the one named
 		// '[Content_Types].xml'.
 		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();
+			ZipEntry entry = entries.nextElement();
 			if (entry.getName().equals(
 					ContentTypeManager.CONTENT_TYPES_PART_NAME))
 				return entry;
@@ -140,6 +141,21 @@ public final class ZipHelper {
 			return null;
 		}
 	}
+
+   /**
+    * Opens the specified file as a zip, or returns null if no such file exists
+    *
+    * @param file
+    *            The file to open.
+    * @return The zip archive freshly open.
+    */
+   public static ZipFile openZipFile(File file) throws IOException {
+      if (!file.exists()) {
+         return null;
+      }
+
+      return new ZipFile(file);
+   }
 
 	/**
 	 * Retrieve and open a zip file with the specified path.

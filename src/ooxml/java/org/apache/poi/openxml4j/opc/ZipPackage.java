@@ -85,30 +85,55 @@ public final class ZipPackage extends Package {
 		);
 	}
 
-	/**
-	 * Constructor. Opens a Zip based Open XML document.
-	 *
-	 * @param path
-	 *            The path of the file to open or create.
-	 * @param access
-	 *            The package access mode.
-	 * @throws InvalidFormatException
-	 *             If the content type part parsing encounters an error.
-	 */
-	ZipPackage(String path, PackageAccess access) {
-		super(access);
+   /**
+    * Constructor. Opens a Zip based Open XML document.
+    *
+    * @param path
+    *            The path of the file to open or create.
+    * @param access
+    *            The package access mode.
+    * @throws InvalidFormatException
+    *             If the content type part parsing encounters an error.
+    */
+   ZipPackage(String path, PackageAccess access) {
+      super(access);
 
-        ZipFile zipFile = null;
+      ZipFile zipFile = null;
 
-        try {
-            zipFile = ZipHelper.openZipFile(path);
-        } catch (IOException e) {
-            throw new InvalidOperationException(
-         					"Can't open the specified file: '" + path + "'", e);
-        }
+      try {
+         zipFile = ZipHelper.openZipFile(path);
+      } catch (IOException e) {
+         throw new InvalidOperationException(
+               "Can't open the specified file: '" + path + "'", e);
+      }
 
-		this.zipArchive = new ZipFileZipEntrySource(zipFile);
-	}
+      this.zipArchive = new ZipFileZipEntrySource(zipFile);
+   }
+
+   /**
+    * Constructor. Opens a Zip based Open XML document.
+    *
+    * @param file
+    *            The file to open or create.
+    * @param access
+    *            The package access mode.
+    * @throws InvalidFormatException
+    *             If the content type part parsing encounters an error.
+    */
+   ZipPackage(File file, PackageAccess access) {
+      super(access);
+
+      ZipFile zipFile = null;
+
+      try {
+         zipFile = ZipHelper.openZipFile(file);
+      } catch (IOException e) {
+         throw new InvalidOperationException(
+               "Can't open the specified file: '" + file + "'", e);
+      }
+
+      this.zipArchive = new ZipFileZipEntrySource(zipFile);
+   }
 
 	/**
 	 * Retrieves the parts from this package. We assume that the package has not
