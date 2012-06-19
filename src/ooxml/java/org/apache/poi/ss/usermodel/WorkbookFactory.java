@@ -87,7 +87,7 @@ public class WorkbookFactory {
 	      NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
 	      return new HSSFWorkbook(fs.getRoot(), true);
 	   } catch(OfficeXmlFileException e) {
-	      OPCPackage pkg = OPCPackage.openOrCreate(file);
+	      OPCPackage pkg = OPCPackage.open(file);
 	      return new XSSFWorkbook(pkg);
 	   }
 	}
