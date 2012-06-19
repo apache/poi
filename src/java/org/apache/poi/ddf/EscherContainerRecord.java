@@ -25,6 +25,8 @@ import java.util.NoSuchElementException;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Escher container records store other escher records as children.
@@ -42,6 +44,32 @@ public final class EscherContainerRecord extends EscherRecord {
     public static final short SP_CONTAINER     = (short)0xF004;
     public static final short SOLVER_CONTAINER = (short)0xF005;
 
+    private static POILogger log = POILogFactory.getLogger(EscherContainerRecord.class);
+
+    /**
+     * in case if document contains any charts we have such document structure:
+     * BOF
+     * ...
+     * DrawingRecord
+     * ...
+     * ObjRecord|TxtObjRecord
+     * ...
+     * EOF
+     * ...
+     * BOF(Chart begin)
+     * ...
+     * DrawingRecord
+     * ...
+     * ObjRecord|TxtObjRecord
+     * ...
+     * EOF
+     * So, when we call EscherAggregate.createAggregate() we have not all needed data.
+     * When we got warning "WARNING: " + bytesRemaining + " bytes remaining but no space left"
+     * we should save value of bytesRemaining
+     * and add it to container size when we serialize it
+     */
+    private int _remainingLength;
+
     private final List<EscherRecord> _childRecords = new ArrayList<EscherRecord>();
 
     public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
@@ -56,7 +84,8 @@ public final class EscherContainerRecord extends EscherRecord {
             bytesRemaining -= childBytesWritten;
             addChildRecord(child);
             if (offset >= data.length && bytesRemaining > 0) {
-                System.out.println("WARNING: " + bytesRemaining + " bytes remaining but no space left");
+                _remainingLength = bytesRemaining;
+                log.log(POILogger.WARN, "Not enough Escher data: " + bytesRemaining + " bytes remaining but no space left");
             }
         }
         return bytesWritten;
@@ -74,6 +103,7 @@ public final class EscherContainerRecord extends EscherRecord {
             EscherRecord r = iterator.next();
             remainingBytes += r.getRecordSize();
         }
+        remainingBytes += _remainingLength;
         LittleEndian.putInt(data, offset+4, remainingBytes);
         int pos = offset+8;
         iterator = _childRecords.iterator();

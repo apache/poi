@@ -17,8 +17,7 @@
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.DrawingRecord;
@@ -36,6 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
 import java.io.ByteArrayInputStream;
@@ -188,13 +188,51 @@ public class TestDrawingAggregate extends TestCase {
                 // System.out.println("[WARN]  Cannot read " + file.getName());
                 continue;
             }
-            try {
-                assertWriteAndReadBack(wb);
-            } catch (Throwable e){
-                //e.printStackTrace();
-                System.err.println("[ERROR] assertion failed for " + file.getName() + ": " + e.getMessage());
-            }
+            assertWriteAndReadBack(wb);
         }
+    }
+
+    /**
+     * when reading incomplete data ensure that the serialized bytes
+     match the source
+     */
+    public void testIncompleteData(){
+        //EscherDgContainer and EscherSpgrContainer length exceeds the actual length of the data
+        String hex =
+                " 0F 00 02 F0 30 03 00 00 10 00 08 F0 08 00 00 " +
+                " 00 07 00 00 00 B2 04 00 00 0F 00 03 F0 18 03 00 " +
+                " 00 0F 00 04 F0 28 00 00 00 01 00 09 F0 10 00 00 " +
+                " 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 " +
+                " 00 02 00 0A F0 08 00 00 00 00 04 00 00 05 00 00 " +
+                " 00 0F 00 04 F0 74 00 00 00 92 0C 0A F0 08 00 00 " +
+                " 00 AD 04 00 00 00 0A 00 00 63 00 0B F0 3A 00 00 " +
+                " 00 7F 00 04 01 E5 01 BF 00 08 00 08 00 81 01 4E " +
+                " 00 00 08 BF 01 10 00 10 00 80 C3 16 00 00 00 BF " +
+                " 03 00 00 02 00 44 00 69 00 61 00 67 00 72 00 61 " +
+                " 00 6D 00 6D 00 20 00 32 00 00 00 00 00 10 F0 12 " +
+                " 00 00 00 00 00 05 00 00 00 01 00 00 00 0B 00 00 " +
+                " 00 0F 00 66 00 00 00 11 F0 00 00 00 00 ";
+        byte[] buffer = HexRead.readFromString(hex);
+
+        List<EscherRecord> records = new ArrayList<EscherRecord>();
+        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
+        int pos = 0;
+        while (pos < buffer.length) {
+            EscherRecord r = recordFactory.createRecord(buffer, pos);
+            int bytesRead = r.fillFields(buffer, pos, recordFactory);
+            records.add(r);
+            pos += bytesRead;
+        }
+        assertEquals("data was not fully read", buffer.length, pos);
+
+        // serialize to byte array
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            for(EscherRecord r : records) out.write(r.serialize());
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        assertEquals(HexDump.toHex(buffer, 10), HexDump.toHex(out.toByteArray(), 10));
     }
 
     /**
@@ -263,6 +301,28 @@ public class TestDrawingAggregate extends TestCase {
         EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+    }
+
+    public void testFileWithCharts(){
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
+        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+        List<RecordBase> records = ish.getRecords();
+        // records to be aggregated
+        List<RecordBase> dgRecords = records.subList(19, 21);
+        byte[] dgBytes = toByteArray(dgRecords);
+        sh.getDrawingPatriarch();
+
+        // collect drawing records into a byte buffer.
+        EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+        byte[] dgBytesAfterSave = agg.serialize();
+        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+        for (int i=0; i< dgBytes.length; i++){
+            if (dgBytes[i] != dgBytesAfterSave[i]){
+                System.out.println("pos = " + i);
+            }
+        }
         assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
     }
 
