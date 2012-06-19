@@ -65,8 +65,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
         // However, EscherTextboxRecord are containers of records for the
         //  host application, not of other Escher records, so treat them
         //  differently
-        if ( ( options & (short) 0x000F ) == (short) 0x000F
-             && recordId != EscherTextboxRecord.RECORD_ID ) {
+        if (isContainer(options, recordId)) {
             EscherContainerRecord r = new EscherContainerRecord();
             r.setRecordId( recordId );
             r.setOptions( options );
@@ -144,5 +143,18 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
             result.put(Short.valueOf(sid), constructor);
         }
         return result;
+    }
+
+    public static boolean isContainer(short options, short recordId){
+        if(recordId >= EscherContainerRecord.DGG_CONTAINER &&  recordId
+                <= EscherContainerRecord.SOLVER_CONTAINER){
+            return true;
+        } else {
+            if (recordId == EscherTextboxRecord.RECORD_ID) {
+                return false;
+            } else {
+                return ( options & (short) 0x000F ) == (short) 0x000F;
+            }
+        }
     }
 }
