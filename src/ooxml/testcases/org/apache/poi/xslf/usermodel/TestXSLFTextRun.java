@@ -56,5 +56,16 @@ public class TestXSLFTextRun extends TestCase {
         r.setFontSize(13.0);
         assertEquals(13.0, r.getFontSize());
 
+        assertEquals(false, r.isSuperscript());
+        r.setSuperscript(true);
+        assertEquals(true, r.isSuperscript());
+        r.setSuperscript(false);
+        assertEquals(false, r.isSuperscript());
+
+        assertEquals(false, r.isSubscript());
+        r.setSubscript(true);
+        assertEquals(true, r.isSubscript());
+        r.setSubscript(false);
+        assertEquals(false, r.isSubscript());
     }
 }

@@ -19,9 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 import java.awt.Color;
 
@@ -231,4 +229,14 @@ public class TestXSLFSimpleShape extends TestCase {
 
     }
 
+    public void testShadowEffects(){
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        CTStyleMatrix styleMatrix = slide.getTheme().getXmlObject().getThemeElements().getFmtScheme();
+        CTEffectStyleList lst = styleMatrix.getEffectStyleLst();
+        assertNotNull(lst);
+        for(CTEffectStyleItem ef : lst.getEffectStyleList()){
+            CTOuterShadowEffect obj = ef.getEffectLst().getOuterShdw();
+        }
+    }
 }

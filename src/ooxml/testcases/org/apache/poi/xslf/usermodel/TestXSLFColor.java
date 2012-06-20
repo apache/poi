@@ -17,11 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetColorVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 import java.awt.Color;
 
@@ -149,4 +145,19 @@ public class TestXSLFColor extends TestCase {
             assertEquals(XSLFColor.presetColors.get(colorName), color.getColor());
         }
     }
+
+    public void testSys() {
+        CTColor xml = CTColor.Factory.newInstance();
+        CTSystemColor sys = xml.addNewSysClr();
+        sys.setVal(STSystemColorVal.GRAY_TEXT);
+        XSLFColor color = new XSLFColor(xml, null, null);
+        assertEquals(Color.black, color.getColor());
+
+        xml = CTColor.Factory.newInstance();
+        sys = xml.addNewSysClr();
+        sys.setLastClr(new byte[]{(byte)0xFF, 0, 0});
+        color = new XSLFColor(xml, null, null);
+        assertEquals(Color.red, color.getColor());
+    }
+
 }
