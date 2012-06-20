@@ -425,7 +425,13 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? getDefaultTabSize() : fetcher.getValue();
+        return fetcher.getValue() == null ? 0. : fetcher.getValue();
+    }
+
+    public void addTabStop(double value){
+        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
+        CTTextTabStopList tabStops = pr.isSetTabLst() ? pr.getTabLst() : pr.addNewTabLst();
+        tabStops.addNewTab().setPos(Units.toEMU(value));
     }
 
     /**

@@ -289,6 +289,17 @@ public class TestXSLFTextParagraph extends TestCase {
 
         p.setBullet(false);
         assertFalse(p.isBullet());
+
+        p.setBulletAutoNumber(ListAutoNumber.ALPHA_LC_PARENT_BOTH, 1);
+
+        double tabStop = p.getTabStop(0);
+        assertEquals(0.0, tabStop);
+
+        p.addTabStop(100.);
+        assertEquals(100., p.getTabStop(0));
+
+        assertEquals(72.0, p.getDefaultTabSize());
+
     }
 
     public void testLineBreak(){
