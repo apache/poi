@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -172,9 +173,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     /**
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
-     * see <a href="http://openxml4j.org/">www.openxml4j.org</a>.
+     *  see <a href="http://poi.apache.org/oxml4j/">http://poi.apache.org/oxml4j/</a>.
+     * 
+     * Once you have finished working with the Workbook, you should close the package
+     * by calling pkg.close, to avoid leaving file handles open.
+     * 
+     * Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
+     *  footprint than an InputStream backed one.
      *
-     * @param pkg the OpenXML4J <code>Package</code> object.
+     * @param pkg the OpenXML4J <code>OPC Package</code> object.
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(pkg);
@@ -183,6 +190,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         load(XSSFFactory.getInstance());
     }
 
+    /**
+     * Constructs a XSSFWorkbook object, by buffering the whole stream into memory
+     *  and then opening an {@link OPCPackage} object for it.
+     * 
+     * Using an {@link InputStream} requires more memory than using a File, so
+     *  if a {@link File} is available then you should instead do something like
+     *   <pre><code>
+     *       OPCPackage pkg = OPCPackage.open(path);
+     *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
+     *       // work with the wb object
+     *       ......
+     *       pkg.close(); // gracefully closes the underlying zip file
+     *   </code></pre>     
+     */
     public XSSFWorkbook(InputStream is) throws IOException {
         super(PackageHelper.open(is));
         
