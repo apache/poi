@@ -20,8 +20,8 @@ package org.apache.poi.hssf.usermodel;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -54,7 +54,9 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      */
     private static final int PX_ROW = 15;
 
-    private int _pictureIndex;
+    public HSSFPicture(EscherContainerRecord spContainer, ObjRecord objRecord) {
+        super(spContainer, objRecord);
+    }
 
     /**
      * Constructs a picture object.
@@ -67,12 +69,16 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     public int getPictureIndex()
     {
-        return _pictureIndex;
+        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.BLIP__BLIPTODISPLAY);
+        if (null == property){
+            return -1;
+        }
+        return property.getPropertyValue();
     }
 
     public void setPictureIndex( int pictureIndex )
     {
-        this._pictureIndex = pictureIndex;
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
     }
 
     /**
@@ -215,7 +221,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return image dimension
      */
     public Dimension getImageDimension(){
-        EscherBSERecord bse = _patriarch._sheet._book.getBSERecord(_pictureIndex);
+        EscherBSERecord bse = _patriarch._sheet._book.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
@@ -228,7 +234,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      */
     public HSSFPictureData getPictureData(){
         InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
-    	EscherBlipRecord blipRecord = iwb.getBSERecord(_pictureIndex).getBlipRecord();
+    	EscherBlipRecord blipRecord = iwb.getBSERecord(getPictureIndex()).getBlipRecord();
     	return new HSSFPictureData(blipRecord);
     }
 }

@@ -30,6 +30,7 @@ public abstract class HSSFShape {
     public static final int LINEWIDTH_DEFAULT = 9525;
     public static final int LINESTYLE__COLOR_DEFAULT = 0x08000040;
     public static final int FILL__FILLCOLOR_DEFAULT = 0x08000009;
+    public static final boolean NO_FILL_DEFAULT = true;
 
     public static final int LINESTYLE_SOLID = 0;              // Solid (continuous) pen
     public static final int LINESTYLE_DASHSYS = 1;            // PS_DASH system   dash style
@@ -43,6 +44,8 @@ public abstract class HSSFShape {
     public static final int LINESTYLE_LONGDASHDOTGEL = 9;     // long dash short dash
     public static final int LINESTYLE_LONGDASHDOTDOTGEL = 10; // long dash short dash short dash
     public static final int LINESTYLE_NONE = -1;
+
+    public static final int LINESTYLE_DEFAULT = LINESTYLE_NONE;
 
     // TODO - make all these fields private
     HSSFShape parent;
@@ -108,11 +111,20 @@ public abstract class HSSFShape {
      * @see HSSFClientAnchor
      */
     public void setAnchor(HSSFAnchor anchor) {
+        int i = 0;
+        int recordId = -1;
         if (parent == null) {
             if (anchor instanceof HSSFChildAnchor)
                 throw new IllegalArgumentException("Must use client anchors for shapes directly attached to sheet.");
             EscherClientAnchorRecord anch = _escherContainer.getChildById(EscherClientAnchorRecord.RECORD_ID);
             if (null != anch) {
+                for (i=0; i< _escherContainer.getChildRecords().size(); i++){
+                    if (_escherContainer.getChild(i).getRecordId() == EscherClientAnchorRecord.RECORD_ID){
+                        if (i != _escherContainer.getChildRecords().size() -1){
+                            recordId = _escherContainer.getChild(i+1).getRecordId();
+                        }
+                    }
+                }
                 _escherContainer.removeChildRecord(anch);
             }
         } else {
@@ -120,10 +132,21 @@ public abstract class HSSFShape {
                 throw new IllegalArgumentException("Must use child anchors for shapes attached to groups.");
             EscherChildAnchorRecord anch = _escherContainer.getChildById(EscherChildAnchorRecord.RECORD_ID);
             if (null != anch) {
+                for (i=0; i< _escherContainer.getChildRecords().size(); i++){
+                    if (_escherContainer.getChild(i).getRecordId() == EscherChildAnchorRecord.RECORD_ID){
+                        if (i != _escherContainer.getChildRecords().size() -1){
+                            recordId = _escherContainer.getChild(i+1).getRecordId();
+                        }
+                    }
+                }
                 _escherContainer.removeChildRecord(anch);
             }
         }
-        _escherContainer.addChildRecord(anchor.getEscherAnchor());
+        if (-1 == recordId){
+            _escherContainer.addChildRecord(anchor.getEscherAnchor());
+        } else {
+            _escherContainer.addChildBefore(anchor.getEscherAnchor(), recordId);
+        }
         this.anchor = anchor;
     }
 
@@ -139,13 +162,7 @@ public abstract class HSSFShape {
      * The color applied to the lines of this shape.
      */
     public void setLineStyleColor(int lineStyleColor) {
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.LINESTYLE__COLOR);
-        if (null == rgbProperty) {
-            rgbProperty = new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor);
-            _optRecord.addEscherProperty(rgbProperty);
-        } else {
-            rgbProperty.setRgbColor(lineStyleColor);
-        }
+        setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
     }
 
     /**
@@ -153,13 +170,7 @@ public abstract class HSSFShape {
      */
     public void setLineStyleColor(int red, int green, int blue) {
         int lineStyleColor = ((blue) << 16) | ((green) << 8) | red;
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.LINESTYLE__COLOR);
-        if (null == rgbProperty) {
-            rgbProperty = new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor);
-            _optRecord.addEscherProperty(rgbProperty);
-        } else {
-            rgbProperty.setRgbColor(lineStyleColor);
-        }
+        setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
     }
 
     /**
@@ -174,13 +185,7 @@ public abstract class HSSFShape {
      * The color used to fill this shape.
      */
     public void setFillColor(int fillColor) {
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.FILL__FILLCOLOR);
-        if (null == rgbProperty) {
-            rgbProperty = new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor);
-            _optRecord.addEscherProperty(rgbProperty);
-        } else {
-            rgbProperty.setRgbColor(fillColor);
-        }
+        setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
     }
 
     /**
@@ -188,13 +193,7 @@ public abstract class HSSFShape {
      */
     public void setFillColor(int red, int green, int blue) {
         int fillColor = ((blue) << 16) | ((green) << 8) | red;
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.FILL__FILLCOLOR);
-        if (null == rgbProperty) {
-            rgbProperty = new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor);
-            _optRecord.addEscherProperty(rgbProperty);
-        } else {
-            rgbProperty.setRgbColor(fillColor);
-        }
+        setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
     }
 
     /**
@@ -202,7 +201,7 @@ public abstract class HSSFShape {
      */
     public int getLineWidth() {
         EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEWIDTH);
-        return property.getPropertyValue();
+        return property == null ? LINEWIDTH_DEFAULT: property.getPropertyValue();
     }
 
     /**
@@ -212,13 +211,7 @@ public abstract class HSSFShape {
      * @see HSSFShape#LINEWIDTH_ONE_PT
      */
     public void setLineWidth(int lineWidth) {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEWIDTH);
-        if (null == property) {
-            property = new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, lineWidth);
-            _optRecord.addEscherProperty(property);
-        } else {
-            property.setPropertyValue(lineWidth);
-        }
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, lineWidth));
     }
 
     /**
@@ -227,7 +220,7 @@ public abstract class HSSFShape {
     public int getLineStyle() {
         EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEDASHING);
         if (null == property){
-            return -1;
+            return LINESTYLE_DEFAULT;
         }
         return property.getPropertyValue();
     }
@@ -238,13 +231,7 @@ public abstract class HSSFShape {
      * @param lineStyle One of the constants in LINESTYLE_*
      */
     public void setLineStyle(int lineStyle) {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEDASHING);
-        if (null == property) {
-            property = new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, lineStyle);
-            _optRecord.addEscherProperty(property);
-        } else {
-            property.setPropertyValue(lineStyle);
-        }
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, lineStyle));
     }
 
     /**
@@ -252,19 +239,29 @@ public abstract class HSSFShape {
      */
     public boolean isNoFill() {
         EscherBoolProperty property = _optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
-        return property.isTrue();
+        return property == null ? NO_FILL_DEFAULT : property.isTrue();
     }
 
     /**
      * Sets whether this shape is filled or transparent.
      */
     public void setNoFill(boolean noFill) {
-        EscherBoolProperty property = _optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
-        if (null == property) {
-            property = new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? 1 : 0);
+        setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? 1 : 0));
+    }
+
+    protected void setPropertyValue(EscherProperty property){
+        if (null == _optRecord.lookup(property.getId())){
             _optRecord.addEscherProperty(property);
         } else {
-            property.setPropertyValue(noFill ? 1 : 0);
+            int i=0;
+            for (EscherProperty prop: _optRecord.getEscherProperties()){
+                if (prop.getId() == property.getId()){
+                    _optRecord.getEscherProperties().remove(i);
+                    break;
+                }
+                i++;
+            }
+            _optRecord.addEscherProperty(property);
         }
     }
 
