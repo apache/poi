@@ -43,6 +43,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -189,6 +191,40 @@ public class TestDrawingAggregate extends TestCase {
                 continue;
             }
             assertWriteAndReadBack(wb);
+        }
+    }
+
+    public void testBuildBaseTree(){
+        EscherAggregate agg = new EscherAggregate();
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+
+        HSSFPatriarch drawing = sheet.createDrawingPatriarch();
+        EscherAggregate agg1 = HSSFTestHelper.getEscherAggregate(drawing);
+        callConvertPatriarch(agg1);
+        agg1.setPatriarch(null);
+        
+        agg.setPatriarch(null);
+
+        byte[] aggS = agg.serialize();
+        byte []agg1S = agg1.serialize();
+
+        assertEquals(aggS.length, agg1S.length);
+        assertTrue(Arrays.equals(aggS, agg1S));
+    }
+
+    private static void callConvertPatriarch(EscherAggregate agg) {
+        Method method = null;
+        try {
+            method = agg.getClass().getDeclaredMethod("convertPatriarch", HSSFPatriarch.class);
+            method.setAccessible(true);
+            method.invoke(agg, agg.getPatriarch());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 

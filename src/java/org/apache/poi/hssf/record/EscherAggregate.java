@@ -315,6 +315,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      */
     private List<Record> tailRec = new ArrayList<Record>();
 
+    public EscherAggregate() {
+        buildBaseTree();
+    }
+
     public EscherAggregate(DrawingManager2 drawingManager) {
         this.drawingManager = drawingManager;
     }
@@ -634,7 +638,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     public void setPatriarch(HSSFPatriarch patriarch) {
         this.patriarch = patriarch;
-        convertPatriarch(patriarch);
     }
 
     /**
@@ -1023,6 +1026,43 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             }
         }
         throw new IllegalArgumentException("Can not find client data record");
+    }
+
+    private void buildBaseTree(){
+        EscherContainerRecord dgContainer = new EscherContainerRecord();
+        EscherContainerRecord spgrContainer = new EscherContainerRecord();
+        EscherContainerRecord spContainer1 = new EscherContainerRecord();
+        EscherSpgrRecord spgr = new EscherSpgrRecord();
+        EscherSpRecord sp1 = new EscherSpRecord();
+        dgContainer.setRecordId(EscherContainerRecord.DG_CONTAINER);
+        dgContainer.setOptions((short) 0x000F);
+        EscherDgRecord dg = new EscherDgRecord();
+        dg.setRecordId( EscherDgRecord.RECORD_ID );
+        short dgId = 1;
+        dg.setOptions( (short) ( dgId << 4 ) );
+        dg.setNumShapes( 1 );
+        dg.setLastMSOSPID( 1024 );
+        drawingGroupId = dg.getDrawingGroupId();
+        spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
+        spgrContainer.setOptions((short) 0x000F);
+        spContainer1.setRecordId(EscherContainerRecord.SP_CONTAINER);
+        spContainer1.setOptions((short) 0x000F);
+        spgr.setRecordId(EscherSpgrRecord.RECORD_ID);
+        spgr.setOptions((short) 0x0001);    // version
+        spgr.setRectX1(0);
+        spgr.setRectY1(0);
+        spgr.setRectX2(1023);
+        spgr.setRectY2(255);
+        sp1.setRecordId(EscherSpRecord.RECORD_ID);
+        sp1.setOptions((short) 0x0002);
+        sp1.setShapeId(1024);
+        sp1.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_PATRIARCH);
+        dgContainer.addChildRecord(dg);
+        dgContainer.addChildRecord(spgrContainer);
+        spgrContainer.addChildRecord(spContainer1);
+        spContainer1.addChildRecord(spgr);
+        spContainer1.addChildRecord(sp1);
+        addEscherRecord(dgContainer);
     }
 
     private void convertPatriarch(HSSFPatriarch patriarch) {
