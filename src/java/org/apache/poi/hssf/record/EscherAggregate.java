@@ -323,6 +323,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         this.drawingManager = drawingManager;
     }
 
+    public DrawingManager2 getDrawingManager() {
+        return drawingManager;
+    }
+
     /**
      * @return Returns the current sid.
      */
@@ -628,7 +632,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * Associates an escher record to an OBJ record or a TXO record.
      */
-    public Object associateShapeToObjRecord(EscherRecord r, ObjRecord objRecord) {
+    public Object associateShapeToObjRecord(EscherRecord r, Record objRecord) {
         return shapeToObj.put(r, objRecord);
     }
 
@@ -1039,9 +1043,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         EscherDgRecord dg = new EscherDgRecord();
         dg.setRecordId( EscherDgRecord.RECORD_ID );
         short dgId = 1;
-        dg.setOptions( (short) ( dgId << 4 ) );
-        dg.setNumShapes( 1 );
-        dg.setLastMSOSPID( 1024 );
+        dg.setOptions((short) (dgId << 4));
+        dg.setNumShapes(1);
+        dg.setLastMSOSPID(1024);
         drawingGroupId = dg.getDrawingGroupId();
         spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
         spgrContainer.setOptions((short) 0x000F);

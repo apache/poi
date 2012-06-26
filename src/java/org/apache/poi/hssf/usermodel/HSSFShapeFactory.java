@@ -115,19 +115,37 @@ public class HSSFShapeFactory {
                         break;
                 }
             }
-            if (null != objRecord){
-                HSSFShape shape = shapeCreator.createNewShape(spRecord.getShapeType(), container, objRecord);
+            CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
+            HSSFShape shape = null;
+            switch (cmo.getObjectType()) {
+                case CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE:
+                    shape = new HSSFPicture(container, objRecord);
+                    break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_RECTANGLE:
+                    shape = new HSSFSimpleShape(container, objRecord);
+                    break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_TEXT:
+                    shape = new HSSFTextbox(container, objRecord, txtRecord);
+                    break;
+                default:
+                    shape = new HSSFSimpleShape(container, objRecord);
+            }
+            if (null != shape){
                 out.addShape(shape);
             }
-            if (null != txtRecord){
-                //TODO resolve textbox
-//                TextboxShape shape = new TextboxShape(container, txtRecord);
-//                out.a
-            }
-//
-//            //TODO decide what shape to create based on ObjRecord / EscherSpRecord
-//            HSSFShape shape = new HSSFUnknownShape(container, objRecord);
-//            out.addShape(shape);
+//            if (null != objRecord){
+//                HSSFShape shape = shapeCreator.createNewShape(spRecord.getShapeType(), container, objRecord);
+//                out.addShape(shape);
+//            }
+//            if (null != txtRecord){
+//                //TODO resolve textbox
+////                TextboxShape shape = new TextboxShape(container, txtRecord);
+////                out.a
+//            }
+////
+////            //TODO decide what shape to create based on ObjRecord / EscherSpRecord
+////            HSSFShape shape = new HSSFUnknownShape(container, objRecord);
+////            out.addShape(shape);
         }
     }
 }

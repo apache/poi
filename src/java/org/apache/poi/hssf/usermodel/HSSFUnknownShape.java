@@ -30,4 +30,14 @@ public class HSSFUnknownShape extends HSSFShape {
     public HSSFUnknownShape(EscherRecord spContainer, ObjRecord objRecord) {
         super((EscherContainerRecord) spContainer, objRecord);
     }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

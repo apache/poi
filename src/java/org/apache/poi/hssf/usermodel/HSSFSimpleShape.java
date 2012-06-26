@@ -19,7 +19,13 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.usermodel.drawing.HSSFShapeType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a simple shape such as a line, rectangle or oval.
@@ -56,16 +62,68 @@ public class HSSFSimpleShape
 
     int shapeType = OBJECT_TYPE_LINE;
 
+    private static final Map <Short, Short> objTypeToShapeType = new HashMap<Short, Short>();
+
+    static {
+        objTypeToShapeType.put(OBJECT_TYPE_RECTANGLE, HSSFShapeType.RECTANGLE.getType());
+        objTypeToShapeType.put(OBJECT_TYPE_PICTURE, HSSFShapeType.PICTURE.getType());
+        objTypeToShapeType.put(OBJECT_TYPE_LINE, HSSFShapeType.LINE.getType());
+    }
+
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
         super(spContainer, objRecord);
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
-        setShapeType(cod.getObjectType());
     }
 
     public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor)
     {
         super( parent, anchor );
+        _escherContainer = createSpContainer();
+        _objRecord = createObjRecord();
+        setShapeType(OBJECT_TYPE_LINE);
     }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
+        spContainer.setOptions( (short) 0x000F );
+
+        EscherSpRecord sp = new EscherSpRecord();
+        sp.setRecordId( EscherSpRecord.RECORD_ID );
+        sp.setFlags( EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE );
+
+        EscherClientDataRecord clientData = new EscherClientDataRecord();
+        clientData.setRecordId( EscherClientDataRecord.RECORD_ID );
+        clientData.setOptions( (short) 0x0000 );
+
+        spContainer.addChildRecord(sp);
+        spContainer.addChildRecord(_optRecord);
+        spContainer.addChildRecord(anchor.getEscherAnchor());
+        spContainer.addChildRecord(clientData);
+        return spContainer;
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        ObjRecord obj = new ObjRecord();
+        CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
+        c.setLocked(true);
+        c.setPrintable(true);
+        c.setAutofill(true);
+        c.setAutoline(true);
+        EndSubRecord e = new EndSubRecord();
+
+        obj.addSubRecord(c);
+        obj.addSubRecord(e);
+        return obj;
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch){
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(_escherContainer.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+    }
+
 
     /**
      * Gets the shape type.
@@ -77,7 +135,10 @@ public class HSSFSimpleShape
      * @see #OBJECT_TYPE_PICTURE
      * @see #OBJECT_TYPE_COMMENT
      */
-    public int getShapeType() { return shapeType; }
+    public int getShapeType() {
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        return cod.getObjectType();
+    }
 
     /**
      * Sets the shape types.
@@ -90,6 +151,14 @@ public class HSSFSimpleShape
      * @see #OBJECT_TYPE_PICTURE
      * @see #OBJECT_TYPE_COMMENT
      */
-    public void setShapeType( int shapeType ){ this.shapeType = shapeType; }
-
+    public void setShapeType( int shapeType ){
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        cod.setObjectType((short) shapeType);
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        if (null == objTypeToShapeType.get((short)shapeType)){
+            System.out.println("Unknown shape type: "+shapeType);
+            return;
+        }
+        spRecord.setShapeType(objTypeToShapeType.get((short)shapeType));
+    }
 }

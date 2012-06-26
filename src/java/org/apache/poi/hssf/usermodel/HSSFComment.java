@@ -66,7 +66,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     protected HSSFComment(NoteRecord note, TextObjectRecord txo) {
-        this((HSSFShape) null, (HSSFAnchor) null);
+        this(null, new HSSFClientAnchor());
         _txo = txo;
         _note = note;
     }
@@ -185,7 +185,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     /**
      * Returns the underlying Text record
      */
-    protected TextObjectRecord getTextObjectRecord() {
+    public TextObjectRecord getTextObjectRecord() {
 	    return _txo;
 	}
 }

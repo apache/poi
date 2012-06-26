@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+
 /**
  * @author Glen Stampoultzis  (glens at superlinksoftware.com)
  */
@@ -31,6 +34,16 @@ public class HSSFPolygon
     HSSFPolygon( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public int[] getXPoints()
