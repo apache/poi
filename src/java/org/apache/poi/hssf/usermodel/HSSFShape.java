@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 
 /**
@@ -71,11 +72,30 @@ public abstract class HSSFShape {
         this.anchor = anchor;
         this._escherContainer = new EscherContainerRecord();
         _optRecord = new EscherOptRecord();
+        _optRecord.setRecordId( EscherOptRecord.RECORD_ID );
         _optRecord.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
         _optRecord.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
         _optRecord.addEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
         _optRecord.addEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
         _optRecord.addEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
+    }
+
+    protected abstract EscherContainerRecord createSpContainer();
+
+    protected abstract ObjRecord createObjRecord();
+
+    void setShapeId(int shapeId){
+        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        spRecord.setShapeId(shapeId);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        cod.setObjectId((short) (shapeId-1024));
+    }
+    
+    int getShapeId(){
+        return ((EscherSpRecord)_escherContainer.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
+    }
+
+    void afterInsert(HSSFPatriarch patriarch){
     }
 
     public EscherContainerRecord getEscherContainer() {

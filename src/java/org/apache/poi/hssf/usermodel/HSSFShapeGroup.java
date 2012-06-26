@@ -74,6 +74,16 @@ public class HSSFShapeGroup
         _spgrRecord.setRectY2(255);
     }
 
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     /**
      * Create another group under this group.
      * @param anchor    the position of the new group.

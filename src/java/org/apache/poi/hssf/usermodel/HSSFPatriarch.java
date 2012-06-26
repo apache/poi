@@ -21,12 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherComplexProperty;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperty;
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.util.StringUtil;
@@ -93,6 +89,8 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         HSSFSimpleShape shape = new HSSFSimpleShape(null, anchor);
         shape.anchor = anchor;
         addShape(shape);
+        //open existing file
+        onCreate(shape);
         return shape;
     }
 
@@ -109,6 +107,8 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         shape.setPictureIndex( pictureIndex );
         shape.anchor = anchor;
         addShape(shape);
+        //open existing file
+        onCreate(shape);
 
         EscherBSERecord bse = _sheet.getWorkbook().getWorkbook().getBSERecord(pictureIndex);
         bse.setRef(bse.getRef() + 1);
@@ -147,6 +147,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         HSSFTextbox shape = new HSSFTextbox(null, anchor);
         shape.anchor = anchor;
         addShape(shape);
+        onCreate(shape);
         return shape;
     }
 
@@ -200,6 +201,20 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         _shapes.add(shape);
     }
 
+    private void onCreate(HSSFShape shape){
+        if(_boundAggregate.getPatriarch() == null){
+            EscherContainerRecord spgrContainer =
+                    _boundAggregate.getEscherContainer().getChildContainers().get(0);
+
+            EscherContainerRecord spContainer = shape.getEscherContainer();
+            int shapeId = newShapeId();
+            shape.setShapeId(shapeId);
+
+            spgrContainer.addChildRecord(spContainer);
+            shape.afterInsert(this);
+        }
+    }
+
     /**
      * Total count of all children and their children's children.
      */
@@ -220,6 +235,17 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         _y1 = y1;
         _x2 = x2;
         _y2 = y2;
+    }
+
+    int newShapeId() {
+        if (_boundAggregate.getEscherContainer() == null){
+            throw new IllegalStateException("We can use this method for only existing files");
+        }
+        DrawingManager2 dm = _boundAggregate.getDrawingManager();
+        EscherDgRecord dg =
+                _boundAggregate.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
+        short drawingGroupId = dg.getDrawingGroupId();
+        return dm.allocateShapeId(drawingGroupId, dg);
     }
 
     /**

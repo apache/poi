@@ -251,4 +251,41 @@ public class TestDrawingShapes extends TestCase{
                 ((EscherContainerRecord)spgrContainer.getChild(2)).getChildById(EscherSpRecord.RECORD_ID);
         assertEquals(1026, sp2.getShapeId());
     }
+
+    /**
+     * Test get new id for shapes from existing file
+     * File already have for 1 shape on each sheet, because document must contain EscherDgRecord for each sheet
+     */
+    public void testAllocateNewIds(){
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("empty.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
+
+        /**
+         * 2048 - main SpContainer id
+         * 2049 - existing shape id
+         */
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2050);
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2051);
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2052);
+
+        sheet = wb.getSheetAt(1);
+        patriarch = sheet.getDrawingPatriarch();
+
+        /**
+         * 3072 - main SpContainer id
+         * 3073 - existing shape id
+         */
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3074);
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3075);
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3076);
+
+
+        sheet = wb.getSheetAt(2);
+        patriarch = sheet.getDrawingPatriarch();
+
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1026);
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1027);
+        assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1028);
+    }
 }
