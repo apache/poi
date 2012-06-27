@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">53476 - Support Complex Name in formulas </action>
           <action dev="poi-developers" type="fix">53414 - properly update sheet dimensions when adding column </action>
           <action dev="poi-developers" type="add">Add File based constructor to OPCPackage, alongside existing String one (which constructed a File from the string internally)</action>
           <action dev="poi-developers" type="fix">53389 - Handle formatting General and @ formats even if a locale is prefixed to them</action>
