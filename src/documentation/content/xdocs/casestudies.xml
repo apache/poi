@@ -217,8 +217,13 @@ format,
 	    <section>
 	        <title>iDATA Development Ltd (IDD)</title>
 		  <p>
-        <link href="http://www.iexlsoftware.com/">IDD</link> have developed the iEXL product to generate Excel spreadsheets 
-        directly on the Iseries/AS400 IBM platform.  Using RPG, SQL, QUERY, JAVA, COBOL etc. In other words your existing staffs knowledge.
+        <link href="http://www.iexlsoftware.com/">IDD</link> have developed the iEXL product to 
+        generate Excel spreadsheets directly on the Iseries/AS400 IBM I on Power platform. 
+      </p>
+      <p>
+      Professional spreadsheets created via a menu system. Some basic programming is required for more complex options.
+      When programming is required it can be carried out using RPG, SQL, QUERY, JAVA, COBOL etc. 
+      In other words your existing staffs knowledge
       </p>
       <p>
       Design spreadsheets with: 
@@ -236,26 +241,34 @@ format,
         <li>Page breaks</li> 
         <li>Sheet breaks</li> 
         <li>Text insertion and much more</li>  
+        <li>Functions/Formula</li>
+        <li>Merge cells</li>
+        <li>Row Height</li>
+        <li>Cell text alignment</li>
+        <li>Text Rotation </li>
+        <li>50 Database files per workbook.</li>
         <li>E-mail the spreadsheet</li> 
       </ul>
       <p>
-        The product name is ‘iEXL’ and has been live on both European and North American systems for over three years. 
-        It is being used in preference to more established commercial products which my clients have already purchased. 
+        The product name is 'iEXL' and has been live on both European and North American systems for over four years. 
+        It is being used in preference to more established commercial products which our clients have already purchased. 
         This is due to cost and ease of use. 
       </p>  
       <p>
-        All spreadsheets can be archived if required so that historical spreadsheets can be retrieved and in the case 
-        of one client a full external company audit can be approved. The system has benefits for all departments within an organisation. 
-        Examples of this are accounts department for things such as aged trial balance, distribution department for ASN’s, 
-        warehousing for stock figures, IS for security reporting etc. 
+        All spreadsheets can be archived if required so that historical spreadsheets can be retrieved. 
       </p>
       <p>
-        Clients have at this point (Nov 2010) created over 200 spreadsheets 
-        which in turn have generated over 120,000  E-mails. iEXL has a menu driven email system.   
+        The system has benefits for all departments within an organisation. 
+        Examples of this are accounts department for things such as aged trial balance, 
+        distribution department for ASN’s, warehousing for stock figures, IS for security reporting etc.   
+      </p>
+      <p>
+        Clients have at this point (June 2012) created over 300 spreadsheets which in turn have generated over 
+        500,000  E-mails. iEXL has a menu driven email system.  
       </p>
       <p>
         Due to the Apache-POI project IDD have been able to create the IEXL product. 
-        This is a well priced product which allows companies of all sizes access to a product that opens up their reporting capabilities.  
+        This is a well priced product which allows companies of all sizes access to a product that opens up their reporting capabilities
       </p>
       <p>
         Within the <link href="http://www.iexlsoftware.com/">iEXLSOFTWARE.COM</link> website you will find a full user manual, 
