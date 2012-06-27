@@ -42,6 +42,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -235,4 +238,47 @@ public class TestWorkbookEvaluator extends TestCase {
 		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
 		assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
 	}
+	
+
+  /**
+   * formulas with defined names.
+   */
+  public void testNamesInFormulas() {
+    Workbook wb = new HSSFWorkbook();
+    Sheet sheet = wb.createSheet("Sheet1");
+    
+    Name name1 = wb.createName();
+    name1.setNameName("aConstant");
+    name1.setRefersToFormula("3.14");
+
+    Name name2 = wb.createName();
+    name2.setNameName("aFormula");
+    name2.setRefersToFormula("SUM(Sheet1!$A$1:$A$3)");
+
+    Name name3 = wb.createName();
+    name3.setNameName("aSet");
+    name3.setRefersToFormula("Sheet1!$A$2:$A$4");
+
+    
+    Row row0 = sheet.createRow(0);
+    Row row1 = sheet.createRow(1);
+    Row row2 = sheet.createRow(2);
+    Row row3 = sheet.createRow(3);
+    row0.createCell(0).setCellValue(2);
+    row1.createCell(0).setCellValue(5);
+    row2.createCell(0).setCellValue(3);
+    row3.createCell(0).setCellValue(7);
+    
+    row0.createCell(2).setCellFormula("aConstant");
+    row1.createCell(2).setCellFormula("aFormula");
+    row2.createCell(2).setCellFormula("SUM(aSet)");
+    row3.createCell(2).setCellFormula("aConstant+aFormula+SUM(aSet)");
+
+    FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+    assertEquals(3.14, fe.evaluate(row0.getCell(2)).getNumberValue());
+    assertEquals(10.0, fe.evaluate(row1.getCell(2)).getNumberValue());
+    assertEquals(15.0, fe.evaluate(row2.getCell(2)).getNumberValue());
+    assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue());
+  }
+	
 }
