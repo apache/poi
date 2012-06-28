@@ -127,6 +127,9 @@ public class HSSFShapeFactory {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_TEXT:
                     shape = new HSSFTextbox(container, objRecord, txtRecord);
                     break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT:
+                    shape = new HSSFComment(container, objRecord, txtRecord, agg.getNoteRecordByObj(objRecord));
+                    break;
                 default:
                     shape = new HSSFSimpleShape(container, objRecord);
             }
