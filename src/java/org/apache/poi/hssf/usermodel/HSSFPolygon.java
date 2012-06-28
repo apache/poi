@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 
 /**
@@ -38,12 +39,18 @@ public class HSSFPolygon
 
     @Override
     protected EscherContainerRecord createSpContainer() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
+        spContainer.setOptions( (short) 0x000F );
+        EscherOptRecord optRecord = new EscherOptRecord();
+        optRecord.setRecordId(EscherOptRecord.RECORD_ID);
+        spContainer.addChildRecord(optRecord);
+        return spContainer;
     }
 
     @Override
     protected ObjRecord createObjRecord() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public int[] getXPoints()

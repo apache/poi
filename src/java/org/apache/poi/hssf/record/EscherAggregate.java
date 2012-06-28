@@ -1152,4 +1152,15 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     public List<Record> getTailRecords(){
         return Collections.unmodifiableList(tailRec);
     }
+
+    public NoteRecord getNoteRecordByObj(ObjRecord obj){
+        for (Record rec: tailRec){
+            NoteRecord note = (NoteRecord) rec;
+            CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) obj.getSubRecords().get(0);
+            if (note.getShapeId()  == cod.getObjectId()){
+                return note;
+            }
+        }
+        return null;
+    }
 }

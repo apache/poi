@@ -17,7 +17,7 @@ import static junit.framework.Assert.assertEquals;
  * @author Evgeniy Berlog
  * date: 12.06.12
  */
-public class TestDrawingShapes extends TestCase{
+public class TestDrawingShapes extends TestCase {
 
     /**
      * HSSFShape tree bust be built correctly
@@ -33,7 +33,7 @@ public class TestDrawingShapes extends TestCase{
      * ----shape
      * ----shape
      */
-    public void testDrawingGroups(){
+    public void testDrawingGroups() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("groups");
         HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
@@ -47,7 +47,7 @@ public class TestDrawingShapes extends TestCase{
     }
 
     public void testHSSFShapeCompatibility() {
-        HSSFShape shape = new HSSFSimpleShape(null, new  HSSFClientAnchor());
+        HSSFShape shape = new HSSFSimpleShape(null, new HSSFClientAnchor());
         assertEquals(0x08000040, shape.getLineStyleColor());
         assertEquals(0x08000009, shape.getFillColor());
         assertEquals(HSSFShape.LINEWIDTH_DEFAULT, shape.getLineWidth());
@@ -61,22 +61,22 @@ public class TestDrawingShapes extends TestCase{
 
         assertEquals(7, opt.getEscherProperties().size());
         assertEquals(true,
-                ((EscherBoolProperty)opt.lookup(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE)).isTrue());
+                ((EscherBoolProperty) opt.lookup(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE)).isTrue());
         assertEquals(0x00000004,
-                ((EscherSimpleProperty)opt.lookup(EscherProperties.GEOMETRY__SHAPEPATH)).getPropertyValue());
+                ((EscherSimpleProperty) opt.lookup(EscherProperties.GEOMETRY__SHAPEPATH)).getPropertyValue());
         assertEquals(0x08000009,
-                ((EscherSimpleProperty)opt.lookup(EscherProperties.FILL__FILLCOLOR)).getPropertyValue());
+                ((EscherSimpleProperty) opt.lookup(EscherProperties.FILL__FILLCOLOR)).getPropertyValue());
         assertEquals(true,
-                ((EscherBoolProperty)opt.lookup(EscherProperties.FILL__NOFILLHITTEST)).isTrue());
+                ((EscherBoolProperty) opt.lookup(EscherProperties.FILL__NOFILLHITTEST)).isTrue());
         assertEquals(0x08000040,
-                ((EscherSimpleProperty)opt.lookup(EscherProperties.LINESTYLE__COLOR)).getPropertyValue());
+                ((EscherSimpleProperty) opt.lookup(EscherProperties.LINESTYLE__COLOR)).getPropertyValue());
         assertEquals(true,
-                ((EscherBoolProperty)opt.lookup(EscherProperties.LINESTYLE__NOLINEDRAWDASH)).isTrue());
+                ((EscherBoolProperty) opt.lookup(EscherProperties.LINESTYLE__NOLINEDRAWDASH)).isTrue());
         assertEquals(true,
-                ((EscherBoolProperty)opt.lookup(EscherProperties.GROUPSHAPE__PRINT)).isTrue());
+                ((EscherBoolProperty) opt.lookup(EscherProperties.GROUPSHAPE__PRINT)).isTrue());
     }
 
-    public void testDefaultPictureSettings(){
+    public void testDefaultPictureSettings() {
         HSSFPicture picture = new HSSFPicture(null, new HSSFClientAnchor());
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
         assertEquals(picture.getFillColor(), HSSFShape.FILL__FILLCOLOR_DEFAULT);
@@ -89,7 +89,7 @@ public class TestDrawingShapes extends TestCase{
     /**
      * No NullPointerException should appear
      */
-    public void testDefaultSettingsWithEmptyContainer(){
+    public void testDefaultSettingsWithEmptyContainer() {
         EscherContainerRecord container = new EscherContainerRecord();
         EscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId(EscherOptRecord.RECORD_ID);
@@ -107,6 +107,7 @@ public class TestDrawingShapes extends TestCase{
         assertEquals(picture.isNoFill(), HSSFShape.NO_FILL_DEFAULT);
         assertEquals(picture.getPictureIndex(), -1);//not set yet
     }
+
     /**
      * create a rectangle, save the workbook, read back and verify that all shape properties are there
      */
@@ -116,7 +117,7 @@ public class TestDrawingShapes extends TestCase{
         HSSFSheet sheet = wb.createSheet();
 
         HSSFPatriarch drawing = sheet.createDrawingPatriarch();
-        HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 200, 200, (short)2, 2, (short)15, 15);
+        HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 200, 200, (short) 2, 2, (short) 15, 15);
         anchor.setAnchorType(2);
         assertEquals(anchor.getAnchorType(), 2);
 
@@ -139,7 +140,7 @@ public class TestDrawingShapes extends TestCase{
         assertEquals(1, drawing.getChildren().size());
 
         HSSFSimpleShape rectangle2 =
-                (HSSFSimpleShape)drawing.getChildren().get(0);
+                (HSSFSimpleShape) drawing.getChildren().get(0);
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE,
                 rectangle2.getShapeType());
         assertEquals(10000, rectangle2.getLineWidth());
@@ -163,7 +164,7 @@ public class TestDrawingShapes extends TestCase{
         sheet = wb.getSheetAt(0);
         drawing = sheet.getDrawingPatriarch();
         assertEquals(1, drawing.getChildren().size());
-        rectangle2 = (HSSFSimpleShape)drawing.getChildren().get(0);
+        rectangle2 = (HSSFSimpleShape) drawing.getChildren().get(0);
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, rectangle2.getShapeType());
         assertEquals(77, rectangle2.getLineWidth());
         assertEquals(9, rectangle2.getLineStyle());
@@ -183,7 +184,7 @@ public class TestDrawingShapes extends TestCase{
         assertEquals(drawing.getChildren().size(), 2);
     }
 
-    public void testReadExistingImage(){
+    public void testReadExistingImage() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("pictures");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -196,6 +197,9 @@ public class TestDrawingShapes extends TestCase{
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
         assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_DEFAULT);
         assertEquals(picture.isNoFill(), true);
+
+        picture.setPictureIndex(2);
+        assertEquals(picture.getPictureIndex(), 2);
     }
 
 
@@ -206,20 +210,19 @@ public class TestDrawingShapes extends TestCase{
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
         assertEquals(1, drawing.getChildren().size());
 
-        for(HSSFShape shape : drawing.getChildren()){
-            assertEquals(shape.isNoFill(), true);
-            assertEquals(shape.getLineStyle(), HSSFShape.LINESTYLE_DASHDOTGEL);
-            assertEquals(shape.getLineStyleColor(), 0x616161);
-            assertEquals(HexDump.toHex(shape.getFillColor()), shape.getFillColor(), 0x2CE03D);
-            assertEquals(shape.getLineWidth(), HSSFShape.LINEWIDTH_ONE_PT*2);
-        }
+        HSSFSimpleShape shape = (HSSFSimpleShape) drawing.getChildren().get(0);
+        assertEquals(shape.isNoFill(), true);
+        assertEquals(shape.getLineStyle(), HSSFShape.LINESTYLE_DASHDOTGEL);
+        assertEquals(shape.getLineStyleColor(), 0x616161);
+        assertEquals(HexDump.toHex(shape.getFillColor()), shape.getFillColor(), 0x2CE03D);
+        assertEquals(shape.getLineWidth(), HSSFShape.LINEWIDTH_ONE_PT * 2);
     }
 
     public void testShapeIds() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet();
         HSSFPatriarch patriarch1 = sheet1.createDrawingPatriarch();
-        for(int i = 0; i < 2; i++) {
+        for (int i = 0; i < 2; i++) {
             patriarch1.createSimpleShape(new HSSFClientAnchor());
         }
 
@@ -240,15 +243,15 @@ public class TestDrawingShapes extends TestCase{
         assertEquals(3, spgrContainer.getChildRecords().size());
 
         EscherSpRecord sp0 =
-                ((EscherContainerRecord)spgrContainer.getChild(0)).getChildById(EscherSpRecord.RECORD_ID);
+                ((EscherContainerRecord) spgrContainer.getChild(0)).getChildById(EscherSpRecord.RECORD_ID);
         assertEquals(1024, sp0.getShapeId());
 
         EscherSpRecord sp1 =
-                ((EscherContainerRecord)spgrContainer.getChild(1)).getChildById(EscherSpRecord.RECORD_ID);
+                ((EscherContainerRecord) spgrContainer.getChild(1)).getChildById(EscherSpRecord.RECORD_ID);
         assertEquals(1025, sp1.getShapeId());
 
         EscherSpRecord sp2 =
-                ((EscherContainerRecord)spgrContainer.getChild(2)).getChildById(EscherSpRecord.RECORD_ID);
+                ((EscherContainerRecord) spgrContainer.getChild(2)).getChildById(EscherSpRecord.RECORD_ID);
         assertEquals(1026, sp2.getShapeId());
     }
 
@@ -256,7 +259,7 @@ public class TestDrawingShapes extends TestCase{
      * Test get new id for shapes from existing file
      * File already have for 1 shape on each sheet, because document must contain EscherDgRecord for each sheet
      */
-    public void testAllocateNewIds(){
+    public void testAllocateNewIds() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("empty.xls");
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
@@ -287,5 +290,38 @@ public class TestDrawingShapes extends TestCase{
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1026);
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1027);
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 1028);
+    }
+
+    public void testOpt() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        // create a sheet with a text box
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
+        EscherOptRecord opt1 = HSSFTestHelper.getOptRecord(textbox);
+        EscherOptRecord opt2 = textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID);
+        assertSame(opt1, opt2);
+    }
+    
+    public void testCorrectOrderInOptRecord(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
+        EscherOptRecord opt = HSSFTestHelper.getOptRecord(textbox);    
+        
+        String opt1Str = opt.toXml();
+
+        textbox.setFillColor(textbox.getFillColor());
+        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        textbox.setLineStyle(textbox.getLineStyle());
+        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        textbox.setLineWidth(textbox.getLineWidth());
+        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        textbox.setLineStyleColor(textbox.getLineStyleColor());
+        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
     }
 }

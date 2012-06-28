@@ -47,11 +47,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
     public final static short VERTICAL_ALIGNMENT_JUSTIFY = 4;
     public final static short VERTICAL_ALIGNMENT_DISTRIBUTED = 7;
 
-
-    int marginLeft, marginRight, marginTop, marginBottom;
-    short halign, valign;
-
-    private TextObjectRecord _textObjectRecord;
+    protected TextObjectRecord _textObjectRecord;
 
     public HSSFTextbox(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord) {
         super(spContainer, objRecord);
@@ -113,14 +109,15 @@ public class HSSFTextbox extends HSSFSimpleShape {
         sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         opt.setRecordId(EscherOptRecord.RECORD_ID);
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTID, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTLEFT, getMarginLeft()));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTRIGHT, getMarginRight()));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTBOTTOM, getMarginBottom()));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTTOP, getMarginTop()));
-
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__WRAPTEXT, 0));
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__ANCHORTEXT, 0));
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00080000));
+
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTLEFT, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTRIGHT, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTTOP, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTBOTTOM, 0));
+
 
         EscherRecord anchor = getAnchor().getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);

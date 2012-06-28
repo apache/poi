@@ -17,11 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherChildAnchorRecord;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
@@ -76,7 +72,13 @@ public class HSSFShapeGroup
 
     @Override
     protected EscherContainerRecord createSpContainer() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
+        spContainer.setOptions( (short) 0x000F );
+        EscherOptRecord optRecord = new EscherOptRecord();
+        optRecord.setRecordId(EscherOptRecord.RECORD_ID);
+        spContainer.addChildRecord(optRecord);
+        return spContainer;
     }
 
     @Override

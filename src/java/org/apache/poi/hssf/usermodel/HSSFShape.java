@@ -53,8 +53,8 @@ public abstract class HSSFShape {
     HSSFAnchor anchor;
     HSSFPatriarch _patriarch;
 
-    protected EscherContainerRecord _escherContainer;
-    protected ObjRecord _objRecord;
+    protected final EscherContainerRecord _escherContainer;
+    protected final ObjRecord _objRecord;
     protected final EscherOptRecord _optRecord;
 
     public HSSFShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
@@ -70,14 +70,11 @@ public abstract class HSSFShape {
     public HSSFShape(HSSFShape parent, HSSFAnchor anchor) {
         this.parent = parent;
         this.anchor = anchor;
-        this._escherContainer = new EscherContainerRecord();
-        _optRecord = new EscherOptRecord();
-        _optRecord.setRecordId( EscherOptRecord.RECORD_ID );
-        _optRecord.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        _optRecord.addEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
-        _optRecord.addEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
-        _optRecord.addEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        _optRecord.addEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
+        this._escherContainer = createSpContainer();
+        _optRecord = _escherContainer.getChildById(EscherOptRecord.RECORD_ID);
+        addStandardOptions(_optRecord);
+        _objRecord = createObjRecord();
+
     }
 
     protected abstract EscherContainerRecord createSpContainer();
@@ -89,6 +86,14 @@ public abstract class HSSFShape {
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
         cod.setObjectId((short) (shapeId-1024));
+    }
+
+    private void addStandardOptions(EscherOptRecord optRecord){
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
     }
     
     int getShapeId(){
@@ -270,19 +275,7 @@ public abstract class HSSFShape {
     }
 
     protected void setPropertyValue(EscherProperty property){
-        if (null == _optRecord.lookup(property.getId())){
-            _optRecord.addEscherProperty(property);
-        } else {
-            int i=0;
-            for (EscherProperty prop: _optRecord.getEscherProperties()){
-                if (prop.getId() == property.getId()){
-                    _optRecord.getEscherProperties().remove(i);
-                    break;
-                }
-                i++;
-            }
-            _optRecord.addEscherProperty(property);
-        }
+        _optRecord.setEscherProperty(property);
     }
 
     /**

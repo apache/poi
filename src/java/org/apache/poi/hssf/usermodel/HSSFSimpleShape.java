@@ -60,8 +60,6 @@ public class HSSFSimpleShape
     public final static short       OBJECT_TYPE_COMMENT            = 25;
 //    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 
-    int shapeType = OBJECT_TYPE_LINE;
-
     private static final Map <Short, Short> objTypeToShapeType = new HashMap<Short, Short>();
 
     static {
@@ -77,8 +75,6 @@ public class HSSFSimpleShape
     public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor)
     {
         super( parent, anchor );
-        _escherContainer = createSpContainer();
-        _objRecord = createObjRecord();
         setShapeType(OBJECT_TYPE_LINE);
     }
 
@@ -96,8 +92,11 @@ public class HSSFSimpleShape
         clientData.setRecordId( EscherClientDataRecord.RECORD_ID );
         clientData.setOptions( (short) 0x0000 );
 
+        EscherOptRecord optRecord = new EscherOptRecord();
+        optRecord.setRecordId( EscherOptRecord.RECORD_ID );
+
         spContainer.addChildRecord(sp);
-        spContainer.addChildRecord(_optRecord);
+        spContainer.addChildRecord(optRecord);
         spContainer.addChildRecord(anchor.getEscherAnchor());
         spContainer.addChildRecord(clientData);
         return spContainer;
@@ -159,6 +158,6 @@ public class HSSFSimpleShape
             System.out.println("Unknown shape type: "+shapeType);
             return;
         }
-        spRecord.setShapeType(objTypeToShapeType.get((short)shapeType));
+        spRecord.setShapeType(objTypeToShapeType.get((short) shapeType));
     }
 }

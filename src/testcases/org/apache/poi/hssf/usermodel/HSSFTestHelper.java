@@ -16,6 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
+import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.EscherAggregate;
@@ -46,5 +47,9 @@ public class HSSFTestHelper {
 
     public static int allocateNewShapeId(HSSFPatriarch patriarch){
         return patriarch.newShapeId();
+    }
+
+    public static EscherOptRecord getOptRecord(HSSFShape shape){
+        return shape._optRecord;
     }
 }

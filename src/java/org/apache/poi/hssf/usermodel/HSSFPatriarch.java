@@ -163,6 +163,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         HSSFComment shape = new HSSFComment(null, anchor);
         shape.anchor = anchor;
         addShape(shape);
+        onCreate(shape);
         return shape;
     }
 

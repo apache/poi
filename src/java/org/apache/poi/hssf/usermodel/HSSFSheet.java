@@ -2007,4 +2007,27 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return new HSSFAutoFilter(this);
     }
 
+    protected HSSFComment findCellComment(int row, int column) {
+        return lookForComment(getDrawingPatriarch(), row, column);
+    }
+
+    private HSSFComment lookForComment(HSSFShapeContainer container, int row, int column){
+        for (Object object: container.getChildren()){
+            HSSFShape shape = (HSSFShape) object;
+            if (shape instanceof HSSFShapeGroup){
+                HSSFShape res =  lookForComment((HSSFShapeContainer) shape, row, column);
+                if (null != res){
+                    return (HSSFComment) res;
+                }
+                continue;
+            }
+            if (shape instanceof HSSFComment){
+                HSSFComment comment = (HSSFComment) shape;
+                if (comment.getColumn() == column && comment.getRow() == row){
+                    return comment;
+                }
+            }
+        }
+        return null;
+    }
 }
