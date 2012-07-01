@@ -118,6 +118,12 @@ public class HSSFTextbox extends HSSFSimpleShape {
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTTOP, 0));
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTBOTTOM, 0));
 
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
+
 
         EscherRecord anchor = getAnchor().getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);

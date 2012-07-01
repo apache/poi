@@ -17,12 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherClientDataRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherSpgrRecord;
-import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
@@ -123,6 +118,15 @@ public class HSSFShapeFactory {
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_RECTANGLE:
                     shape = new HSSFSimpleShape(container, objRecord);
+                    break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING:
+                    EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
+                    EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+                    if (null != property){
+                        shape = new HSSFPolygon(container, objRecord);    
+                    } else {
+                        shape = new HSSFSimpleShape(container, objRecord);
+                    }
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_TEXT:
                     shape = new HSSFTextbox(container, objRecord, txtRecord);
