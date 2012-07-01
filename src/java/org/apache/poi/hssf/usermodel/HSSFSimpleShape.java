@@ -32,8 +32,7 @@ import java.util.Map;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class HSSFSimpleShape
-    extends HSSFShape
+public class HSSFSimpleShape extends HSSFShape
 {
     // The commented out ones haven't been tested yet or aren't supported
     // by HSSFSimpleShape.
@@ -93,6 +92,11 @@ public class HSSFSimpleShape
         clientData.setOptions( (short) 0x0000 );
 
         EscherOptRecord optRecord = new EscherOptRecord();
+        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        optRecord.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
         optRecord.setRecordId( EscherOptRecord.RECORD_ID );
 
         spContainer.addChildRecord(sp);

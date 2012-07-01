@@ -72,7 +72,6 @@ public abstract class HSSFShape {
         this.anchor = anchor;
         this._escherContainer = createSpContainer();
         _optRecord = _escherContainer.getChildById(EscherOptRecord.RECORD_ID);
-        addStandardOptions(_optRecord);
         _objRecord = createObjRecord();
 
     }
@@ -86,14 +85,6 @@ public abstract class HSSFShape {
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
         cod.setObjectId((short) (shapeId-1024));
-    }
-
-    private void addStandardOptions(EscherOptRecord optRecord){
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
-        setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
-        setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
     }
     
     int getShapeId(){

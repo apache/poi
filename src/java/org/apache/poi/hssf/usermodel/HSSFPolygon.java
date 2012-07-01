@@ -17,87 +17,186 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * @author Glen Stampoultzis  (glens at superlinksoftware.com)
  */
-public class HSSFPolygon
-        extends HSSFShape
-{
-    int[] xPoints;
-    int[] yPoints;
-    int drawAreaWidth = 100;
-    int drawAreaHeight = 100;
+public class HSSFPolygon  extends HSSFShape {
 
-    HSSFPolygon( HSSFShape parent, HSSFAnchor anchor )
-    {
-        super( parent, anchor );
+    public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
+
+    public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord) {
+        super(spContainer, objRecord);
     }
 
-    @Override
+    HSSFPolygon(HSSFShape parent, HSSFAnchor anchor) {
+        super(parent, anchor);
+    }
+
+    /**
+     * Generates the shape records for this shape.
+     */
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = new EscherContainerRecord();
-        spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
-        spContainer.setOptions( (short) 0x000F );
-        EscherOptRecord optRecord = new EscherOptRecord();
-        optRecord.setRecordId(EscherOptRecord.RECORD_ID);
-        spContainer.addChildRecord(optRecord);
+        EscherSpRecord sp = new EscherSpRecord();
+        EscherOptRecord opt = new EscherOptRecord();
+        EscherClientDataRecord clientData = new EscherClientDataRecord();
+
+        spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
+        spContainer.setOptions((short) 0x000F);
+        sp.setRecordId(EscherSpRecord.RECORD_ID);
+        sp.setOptions((short) ((EscherAggregate.ST_NOT_PRIMATIVE << 4) | 0x2));
+        if (getParent() == null) {
+            sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
+        } else {
+            sp.setFlags(EscherSpRecord.FLAG_CHILD | EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
+        }
+        opt.setRecordId(EscherOptRecord.RECORD_ID);
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION, false, false, 0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, false, false, 100));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, false, false, 100));
+        opt.setEscherProperty(new EscherShapePathProperty(EscherProperties.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX));
+
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__FILLOK, false, false, 0x00010001));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINESTARTARROWHEAD, false, false, 0x0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDARROWHEAD, false, false, 0x0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDCAPSTYLE, false, false, 0x0));
+
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
+
+        EscherRecord anchor = getAnchor().getEscherAnchor();
+        clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
+        clientData.setOptions((short) 0x0000);
+
+        spContainer.addChildRecord(sp);
+        spContainer.addChildRecord(opt);
+        spContainer.addChildRecord(anchor);
+        spContainer.addChildRecord(clientData);
+
         return spContainer;
     }
 
-    @Override
+    /**
+     * Creates the low level OBJ record for this shape.
+     */
     protected ObjRecord createObjRecord() {
-        return null;
+        ObjRecord obj = new ObjRecord();
+        CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
+        c.setObjectType(OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING);
+        c.setLocked(true);
+        c.setPrintable(true);
+        c.setAutofill(true);
+        c.setAutoline(true);
+        EndSubRecord e = new EndSubRecord();
+        obj.addSubRecord(c);
+        obj.addSubRecord(e);
+        return obj;
     }
 
-    public int[] getXPoints()
-    {
-        return xPoints;
+    public int[] getXPoints() {
+        EscherArrayProperty verticesProp = _optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+        if (null == verticesProp){
+            return new int[]{};
+        }
+        int []array = new int[verticesProp.getNumberOfElementsInArray()-1];
+        for (int i=0; i< verticesProp.getNumberOfElementsInArray()-1; i++){
+            byte[] property = verticesProp.getElement(i);
+            short x = LittleEndian.getShort(property, 0);
+            array[i] = x;
+        }
+        return array;
     }
 
-    public int[] getYPoints()
-    {
-        return yPoints;
+    public int[] getYPoints() {
+        EscherArrayProperty verticesProp = _optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+        if (null == verticesProp){
+            return new int[]{};
+        }
+        int []array = new int[verticesProp.getNumberOfElementsInArray()-1];
+        for (int i=0; i< verticesProp.getNumberOfElementsInArray()-1; i++){
+            byte[] property = verticesProp.getElement(i);
+            short x = LittleEndian.getShort(property, 2);
+            array[i] = x;
+        }
+        return array;
     }
 
-    public void setPoints(int[] xPoints, int[] yPoints)
-    {
-        this.xPoints = cloneArray(xPoints);
-        this.yPoints = cloneArray(yPoints);
-    }
+    public void setPoints(int[] xPoints, int[] yPoints) {
+        if (xPoints.length != yPoints.length){
+            System.out.println("xPoint.length must be equal to yPoints.length");
+            return;
+        }
+        if (xPoints.length == 0){
+            System.out.println("HSSFPolygon must have at least one point");
+        }
+        EscherArrayProperty verticesProp = new EscherArrayProperty(EscherProperties.GEOMETRY__VERTICES, false, new byte[0] );
+        verticesProp.setNumberOfElementsInArray(xPoints.length+1);
+        verticesProp.setNumberOfElementsInMemory(xPoints.length+1);
+        verticesProp.setSizeOfElements(0xFFF0);
+        for (int i = 0; i < xPoints.length; i++)
+        {
+            byte[] data = new byte[4];
+            LittleEndian.putShort(data, 0, (short)xPoints[i]);
+            LittleEndian.putShort(data, 2, (short)yPoints[i]);
+            verticesProp.setElement(i, data);
+        }
+        int point = xPoints.length;
+        byte[] data = new byte[4];
+        LittleEndian.putShort(data, 0, (short)xPoints[0]);
+        LittleEndian.putShort(data, 2, (short)yPoints[0]);
+        verticesProp.setElement(point, data);
+        setPropertyValue(verticesProp);
 
-    private int[] cloneArray( int[] a )
-    {
-        int[] result = new int[a.length];
-        for ( int i = 0; i < a.length; i++ )
-            result[i] = a[i];
-
-        return result;
+        EscherArrayProperty segmentsProp = new EscherArrayProperty(EscherProperties.GEOMETRY__SEGMENTINFO, false, null );
+        segmentsProp.setSizeOfElements(0x0002);
+        segmentsProp.setNumberOfElementsInArray(xPoints.length * 2 + 4);
+        segmentsProp.setNumberOfElementsInMemory(xPoints.length * 2 + 4);
+        segmentsProp.setElement(0, new byte[] { (byte)0x00, (byte)0x40 } );
+        segmentsProp.setElement(1, new byte[] { (byte)0x00, (byte)0xAC } );
+        for (int i = 0; i < xPoints.length; i++)
+        {
+            segmentsProp.setElement(2 + i * 2, new byte[] { (byte)0x01, (byte)0x00 } );
+            segmentsProp.setElement(3 + i * 2, new byte[] { (byte)0x00, (byte)0xAC } );
+        }
+        segmentsProp.setElement(segmentsProp.getNumberOfElementsInArray() - 2, new byte[] { (byte)0x01, (byte)0x60 } );
+        segmentsProp.setElement(segmentsProp.getNumberOfElementsInArray() - 1, new byte[] { (byte)0x00, (byte)0x80 } );
+        setPropertyValue(segmentsProp);
     }
 
     /**
      * Defines the width and height of the points in the polygon
+     *
      * @param width
      * @param height
      */
-    public void setPolygonDrawArea( int width, int height )
-    {
-        this.drawAreaWidth = width;
-        this.drawAreaHeight = height;
+    public void setPolygonDrawArea(int width, int height) {
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, width));
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, height));
     }
 
-    public int getDrawAreaWidth()
-    {
-        return drawAreaWidth;
+    public int getDrawAreaWidth() {
+        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.GEOMETRY__RIGHT);
+        return property == null ? 100: property.getPropertyValue();
     }
 
-    public int getDrawAreaHeight()
-    {
-        return drawAreaHeight;
+    public int getDrawAreaHeight() {
+        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.GEOMETRY__BOTTOM);
+        return property == null ? 100: property.getPropertyValue();
     }
 
-
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(_escherContainer.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+    }
 }

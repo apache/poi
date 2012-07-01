@@ -73,6 +73,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         HSSFShapeGroup group = new HSSFShapeGroup(null, anchor);
         group.anchor = anchor;
         addShape(group);
+        onCreate(group);
         return group;
     }
 
@@ -132,6 +133,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         HSSFPolygon shape = new HSSFPolygon(null, anchor);
         shape.anchor = anchor;
         addShape(shape);
+        onCreate(shape);
         return shape;
     }
 

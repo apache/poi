@@ -1,6 +1,7 @@
 package org.apache.poi.hssf.model;
 
 import org.apache.poi.hssf.usermodel.HSSFComment;
+import org.apache.poi.hssf.usermodel.HSSFPolygon;
 import org.apache.poi.hssf.usermodel.HSSFTextbox;
 
 /**
@@ -14,5 +15,9 @@ public class HSSFTestModelHelper {
 
     public static CommentShape createCommentShape(int shapeId, HSSFComment comment){
         return new CommentShape(comment, shapeId);
+    }
+
+    public static PolygonShape createPolygonShape(int shapeId, HSSFPolygon polygon){
+        return new PolygonShape(polygon, shapeId);
     }
 }

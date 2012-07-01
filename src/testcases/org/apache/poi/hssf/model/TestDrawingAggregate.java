@@ -201,7 +201,7 @@ public class TestDrawingAggregate extends TestCase {
 
         HSSFPatriarch drawing = sheet.createDrawingPatriarch();
         EscherAggregate agg1 = HSSFTestHelper.getEscherAggregate(drawing);
-        callConvertPatriarch(agg1);
+        HSSFTestHelper.callConvertPatriarch(agg1);
         agg1.setPatriarch(null);
         
         agg.setPatriarch(null);
@@ -213,20 +213,7 @@ public class TestDrawingAggregate extends TestCase {
         assertTrue(Arrays.equals(aggS, agg1S));
     }
 
-    private static void callConvertPatriarch(EscherAggregate agg) {
-        Method method = null;
-        try {
-            method = agg.getClass().getDeclaredMethod("convertPatriarch", HSSFPatriarch.class);
-            method.setAccessible(true);
-            method.invoke(agg, agg.getPatriarch());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
+
 
     /**
      * when reading incomplete data ensure that the serialized bytes

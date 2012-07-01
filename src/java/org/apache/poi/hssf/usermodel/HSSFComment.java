@@ -38,11 +38,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
       * It seems like HSSFRow should manage a collection of local HSSFComments
       */
 
-    private boolean _visible;
-    private int _row;
-    private int _col;
-    private String _author;
-
     private NoteRecord _note;
 
     public HSSFComment(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord, NoteRecord _note) {
