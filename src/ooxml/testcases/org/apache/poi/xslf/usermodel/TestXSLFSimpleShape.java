@@ -100,6 +100,20 @@ public class TestXSLFSimpleShape extends TestCase {
         assertEquals(null, shape.getLineColor());
         // setting dash width to null unsets the SolidFill element
         assertFalse(shape.getSpPr().getLn().isSetSolidFill());
+
+        XSLFSimpleShape ln2 = slide.createAutoShape();
+        ln2.setLineDash(LineDash.DOT);
+        assertEquals(LineDash.DOT, ln2.getLineDash());
+        ln2.setLineWidth(0.);
+        assertEquals(0., ln2.getLineWidth());
+
+        XSLFSimpleShape ln3 = slide.createAutoShape();
+        ln3.setLineWidth(1.);
+        assertEquals(1., ln3.getLineWidth());
+        ln3.setLineDash(null);
+        assertEquals(null, ln3.getLineDash());
+        ln3.setLineCap(null);
+        assertEquals(null, ln3.getLineDash());
     }
 
     public void testFill() {
