@@ -57,11 +57,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
     public HSSFShapeGroup(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
-        _spgrRecord = new EscherSpgrRecord();
-        _spgrRecord.setRectX1(0);
-        _spgrRecord.setRectX2(1023);
-        _spgrRecord.setRectY1(0);
-        _spgrRecord.setRectY2(255);
+        _spgrRecord = ((EscherContainerRecord)_escherContainer.getChild(0)).getChildById(EscherSpgrRecord.RECORD_ID);
     }
 
     @Override
@@ -133,6 +129,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
             shape.setShapeId(shapeId);
             _escherContainer.addChildRecord(spContainer);
             shape.afterInsert(_patriarch);
+            EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_CHILD);
         }
     }
 
@@ -296,7 +294,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         EscherSpRecord spRecord = containerRecord.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId-1024));
+        cod.setObjectId((short) (shapeId));
     }
 
     @Override

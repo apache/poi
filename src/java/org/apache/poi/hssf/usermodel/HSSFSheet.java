@@ -1683,7 +1683,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 _sheet.aggregateDrawingRecords(_book.getDrawingManager(), true);
                 EscherAggregate agg = (EscherAggregate) _sheet.findFirstRecordBySid(EscherAggregate.sid);
                 _patriarch = new HSSFPatriarch(this, agg);
-                agg.setPatriarch(_patriarch);
+                _patriarch.afterCreate();
+//                agg.setPatriarch(_patriarch);
             }
         }
         return _patriarch;
@@ -1738,7 +1739,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         if(agg == null) return null;
 
         _patriarch = new HSSFPatriarch(this, agg);
-        _patriarch.buildShapeTree();
+//        _patriarch.buildShapeTree();
 
         //HSSFShapeFactory.createShapeTree();
         //agg.setPatriarch(_patriarch);

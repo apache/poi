@@ -324,4 +324,14 @@ public class TestDrawingShapes extends TestCase {
         textbox.setLineStyleColor(textbox.getLineStyleColor());
         assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
     }
+
+    public void testDgRecordNumShapes(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        EscherAggregate aggregate = HSSFTestHelper.getEscherAggregate(patriarch);
+        EscherDgRecord dgRecord = (EscherDgRecord) aggregate.getEscherRecord(0).getChild(0);
+        assertEquals(dgRecord.getNumShapes(), 1);
+    }
 }

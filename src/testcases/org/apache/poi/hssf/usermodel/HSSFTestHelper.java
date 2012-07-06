@@ -16,9 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -26,6 +24,7 @@ import org.apache.poi.hssf.record.EscherAggregate;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -35,11 +34,7 @@ import java.util.Map;
  */
 public class HSSFTestHelper {
 
-    private static class MockDrawingManager extends DrawingManager2 {
-//
-//        public MockDrawingManager(EscherDggRecord dgg) {
-//            super(dgg);
-//        }
+    public static class MockDrawingManager extends DrawingManager2 {
 
         public MockDrawingManager (){
             super(null);
@@ -47,7 +42,22 @@ public class HSSFTestHelper {
 
         @Override
         public int allocateShapeId(short drawingGroupId) {
-            return 0; //Mock value
+            return 1025; //Mock value
+        }
+
+        @Override
+        public int allocateShapeId(short drawingGroupId, EscherDgRecord dg) {
+            return 1025;
+        }
+
+        public EscherDgRecord createDgRecord()
+        {
+            EscherDgRecord dg = new EscherDgRecord();
+            dg.setRecordId( EscherDgRecord.RECORD_ID );
+            dg.setOptions( (short) (16) );
+            dg.setNumShapes( 1 );
+            dg.setLastMSOSPID( 1024 );
+            return dg;
         }
     }
 	/**

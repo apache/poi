@@ -195,16 +195,35 @@ public class TestDrawingAggregate extends TestCase {
     }
 
     public void testBuildBaseTree(){
-        EscherAggregate agg = new EscherAggregate();
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
-
-        HSSFPatriarch drawing = sheet.createDrawingPatriarch();
-        EscherAggregate agg1 = HSSFTestHelper.getEscherAggregate(drawing);
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+        EscherAggregate agg1 = new EscherAggregate(new HSSFTestHelper.MockDrawingManager());
+        EscherSpgrRecord spgr = new EscherSpgrRecord();
+        spgr.setRectY1(0);
+        spgr.setRectY2(255);
+        spgr.setRectX1(0);
+        spgr.setRectX2(1023);
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        spContainer.addChildRecord(spgr);
+        EscherContainerRecord spgrContainer = new EscherContainerRecord();
+        spgrContainer.addChildRecord(spContainer);
+        EscherContainerRecord dgContainer = new EscherContainerRecord();
+        dgContainer.addChildRecord(spgrContainer);
+        agg1.addEscherRecord(dgContainer);
+        agg1.setPatriarch(HSSFTestHelper.createTestPatriarch(sheet, agg1));
+        agg1.clear();
         HSSFTestHelper.callConvertPatriarch(agg1);
         agg1.setPatriarch(null);
-        
+
         agg.setPatriarch(null);
+//
+        EscherSpRecord sp = (EscherSpRecord) agg.getEscherContainer().getChildContainers().get(0).getChild(0).getChild(1);
+        sp.setShapeId(1025);
+        EscherDgRecord dg = (EscherDgRecord) agg.getEscherContainer().getChild(0);
+        dg.setNumShapes(1);
+        dg.setOptions((short) (1 << 4));
 
         byte[] aggS = agg.serialize();
         byte []agg1S = agg1.serialize();

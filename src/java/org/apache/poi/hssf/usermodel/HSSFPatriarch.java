@@ -38,10 +38,12 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  */
 public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     private final List<HSSFShape> _shapes = new ArrayList<HSSFShape>();
-    private int _x1 = 0;
-    private int _y1  = 0 ;
-    private int _x2 = 1023;
-    private int _y2 = 255;
+//    private int _x1 = 0;
+//    private int _y1  = 0 ;
+//    private int _x2 = 1023;
+//    private int _y2 = 255;
+
+    private final EscherSpgrRecord _spgrRecord;
 
     /**
      * The EscherAggregate we have been bound to.
@@ -59,6 +61,18 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate){
         _sheet = sheet;
 		_boundAggregate = boundAggregate;
+        EscherContainerRecord spContainer = (EscherContainerRecord) _boundAggregate.getEscherContainer()
+                .getChildContainers().get(0).getChild(0);
+        _spgrRecord = spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
+        buildShapeTree();
+    }
+
+    public void afterCreate(){
+        DrawingManager2 drawingManager = _sheet.getWorkbook().getWorkbook().getDrawingManager();
+        short dgId = drawingManager.findNewDrawingGroupId();
+        _boundAggregate.setDgId(dgId);
+        _boundAggregate.setMainSpRecordId(newShapeId());
+        drawingManager.incrementDrawingsSaved();
     }
 
     /**
@@ -234,17 +248,14 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * to these coordinates.
      */
     public void setCoordinates(int x1, int y1, int x2, int y2){
-        _x1 = x1;
-        _y1 = y1;
-        _x2 = x2;
-        _y2 = y2;
+        _spgrRecord.setRectY1(y1);
+        _spgrRecord.setRectY2(y2);
+        _spgrRecord.setRectX1(x1);
+        _spgrRecord.setRectX2(x2);
     }
 
     int newShapeId() {
-        if (_boundAggregate.getEscherContainer() == null){
-            throw new IllegalStateException("We can use this method for only existing files");
-        }
-        DrawingManager2 dm = _boundAggregate.getDrawingManager();
+        DrawingManager2 dm = _sheet.getWorkbook().getWorkbook().getDrawingManager();
         EscherDgRecord dg =
                 _boundAggregate.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
         short drawingGroupId = dg.getDrawingGroupId();
@@ -289,7 +300,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
     public int getX1()
     {
-        return _x1;
+        return _spgrRecord.getRectX1();
     }
 
     /**
@@ -297,7 +308,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
     public int getY1()
     {
-        return _y1;
+        return _spgrRecord.getRectY1();
     }
 
     /**
@@ -305,7 +316,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
     public int getX2()
     {
-        return _x2;
+        return _spgrRecord.getRectX2();
     }
 
     /**
@@ -313,7 +324,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
     public int getY2()
     {
-        return _y2;
+        return _spgrRecord.getRectY2();
     }
 
     /**
@@ -348,6 +359,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 
     void buildShapeTree(){
         EscherContainerRecord dgContainer = _boundAggregate.getEscherContainer();
+        if (dgContainer == null){
+            return;
+        }
         EscherContainerRecord spgrConrainer = dgContainer.getChildContainers().get(0);
         List<EscherContainerRecord> spgrChildren = spgrConrainer.getChildContainers();
 

@@ -21,7 +21,7 @@ public class TestText extends TestCase {
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
-        TextboxShape textboxShape = HSSFTestModelHelper.createTextboxShape(0, textbox);
+        TextboxShape textboxShape = HSSFTestModelHelper.createTextboxShape(1025, textbox);
 
         assertEquals(textbox.getEscherContainer().getChildRecords().size(), 5);
         assertEquals(textboxShape.getSpContainer().getChildRecords().size(), 5);
@@ -52,7 +52,6 @@ public class TestText extends TestCase {
         assertTrue(Arrays.equals(expected, actual));
 
         ObjRecord obj = textbox.getObjRecord();
-        ((CommonObjectDataSubRecord) obj.getSubRecords().get(0)).setObjectId(-1024);
         ObjRecord objShape = textboxShape.getObjRecord();
 
         expected = obj.serialize();

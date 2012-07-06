@@ -119,6 +119,9 @@ public class HSSFShapeFactory {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_RECTANGLE:
                     shape = new HSSFSimpleShape(container, objRecord);
                     break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_LINE:
+                    shape = new HSSFSimpleShape(container, objRecord);
+                    break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING:
                     EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
                     EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);

@@ -1497,7 +1497,7 @@ public final class InternalSheet {
                 return -1;
             }
 
-            EscherAggregate aggregate = new EscherAggregate( drawingManager );
+            EscherAggregate aggregate = new EscherAggregate();
             loc = findFirstRecordLocBySid(EscherAggregate.sid);
             if (loc == -1) {
                 loc = findFirstRecordLocBySid( WindowTwoRecord.sid );

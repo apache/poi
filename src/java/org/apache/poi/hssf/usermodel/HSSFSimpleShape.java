@@ -65,6 +65,7 @@ public class HSSFSimpleShape extends HSSFShape
         objTypeToShapeType.put(OBJECT_TYPE_RECTANGLE, HSSFShapeType.RECTANGLE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_PICTURE, HSSFShapeType.PICTURE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_LINE, HSSFShapeType.LINE.getType());
+        objTypeToShapeType.put(OBJECT_TYPE_OVAL, HSSFShapeType.OVAL.getType());
     }
 
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
@@ -93,10 +94,15 @@ public class HSSFSimpleShape extends HSSFShape
 
         EscherOptRecord optRecord = new EscherOptRecord();
         optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        optRecord.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+//        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
         optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
         optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        optRecord.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0x0));
+        optRecord.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0));
+        optRecord.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+
+        optRecord.setEscherProperty( new EscherShapePathProperty( EscherProperties.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX ) );
+        optRecord.setEscherProperty(new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x080000));
         optRecord.setRecordId( EscherOptRecord.RECORD_ID );
 
         spContainer.addChildRecord(sp);
