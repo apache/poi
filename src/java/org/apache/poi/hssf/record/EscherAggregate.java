@@ -524,7 +524,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
                 pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
             }
         }
-        if ((pos - offset) < buffer.length-1){
+        if ((pos - offset) < buffer.length - 1) {
             byte[] drawingData = new byte[buffer.length - (pos - offset)];
             System.arraycopy(buffer, (pos - offset), drawingData, 0, drawingData.length);
             pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
@@ -613,8 +613,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         int drawingRecordSize = rawEscherSize + (shapeToObj.size()) * 4;
-        if (rawEscherSize != 0 && spEndingOffsets.size()==1/**EMPTY**/){
-            continueRecordsHeadersSize +=4;
+        if (rawEscherSize != 0 && spEndingOffsets.size() == 1/**EMPTY**/) {
+            continueRecordsHeadersSize += 4;
         }
         int objRecordSize = 0;
         for (Iterator iterator = shapeToObj.values().iterator(); iterator.hasNext(); ) {
@@ -1032,7 +1032,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         throw new IllegalArgumentException("Can not find client data record");
     }
 
-    private void buildBaseTree(){
+    private void buildBaseTree() {
         EscherContainerRecord dgContainer = new EscherContainerRecord();
         EscherContainerRecord spgrContainer = new EscherContainerRecord();
         EscherContainerRecord spContainer1 = new EscherContainerRecord();
@@ -1044,7 +1044,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         dg.setRecordId( EscherDgRecord.RECORD_ID );
         short dgId = 1;
         dg.setOptions((short) (dgId << 4));
-        dg.setNumShapes(1);
+        dg.setNumShapes(0);
         dg.setLastMSOSPID(1024);
         drawingGroupId = dg.getDrawingGroupId();
         spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
@@ -1059,7 +1059,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         spgr.setRectY2(255);
         sp1.setRecordId(EscherSpRecord.RECORD_ID);
         sp1.setOptions((short) 0x0002);
-        sp1.setShapeId(1024);
+        sp1.setShapeId(-1);
         sp1.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_PATRIARCH);
         dgContainer.addChildRecord(dg);
         dgContainer.addChildRecord(spgrContainer);
@@ -1067,6 +1067,19 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         spContainer1.addChildRecord(spgr);
         spContainer1.addChildRecord(sp1);
         addEscherRecord(dgContainer);
+    }
+
+    public void setDgId(short dgId) {
+        EscherContainerRecord dgContainer = getEscherContainer();
+        EscherDgRecord dg = dgContainer.getChildById(EscherDgRecord.RECORD_ID);
+        dg.setOptions((short) (dgId << 4));
+    }
+
+    public void setMainSpRecordId(int shapeId){
+        EscherContainerRecord dgContainer = getEscherContainer();
+        EscherContainerRecord spContainer = (EscherContainerRecord) dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER).getChild(0);
+        EscherSpRecord sp = (EscherSpRecord) spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        sp.setShapeId(shapeId);
     }
 
     private void convertPatriarch(HSSFPatriarch patriarch) {
@@ -1145,22 +1158,25 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     /**
-     *
      * @return tails records. We need to access them when building shapes.
-     * Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
+     *         Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
      */
-    public List<Record> getTailRecords(){
+    public List<Record> getTailRecords() {
         return Collections.unmodifiableList(tailRec);
     }
 
-    public NoteRecord getNoteRecordByObj(ObjRecord obj){
-        for (Record rec: tailRec){
+    public NoteRecord getNoteRecordByObj(ObjRecord obj) {
+        for (Record rec : tailRec) {
             NoteRecord note = (NoteRecord) rec;
             CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) obj.getSubRecords().get(0);
-            if (note.getShapeId()  == cod.getObjectId()){
+            if (note.getShapeId() == cod.getObjectId()) {
                 return note;
             }
         }
         return null;
+    }
+
+    public void addTailRecord(NoteRecord note){
+        tailRec.add(note);
     }
 }

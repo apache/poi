@@ -5,10 +5,7 @@ import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.CommentShape;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,7 +26,7 @@ public class TestComment extends TestCase {
         HSSFCell cell = row.createCell(0);
         cell.setCellComment(comment);
 
-        CommentShape commentShape = HSSFTestModelHelper.createCommentShape(0, comment);
+        CommentShape commentShape = HSSFTestModelHelper.createCommentShape(1025, comment);
 
         assertEquals(comment.getEscherContainer().getChildRecords().size(), 5);
         assertEquals(commentShape.getSpContainer().getChildRecords().size(), 5);
@@ -207,12 +204,16 @@ public class TestComment extends TestCase {
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
 
+        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+        assertEquals(agg.getTailRecords().size(), 0);
+
         HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+        assertEquals(agg.getTailRecords().size(), 1);
 
         HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
 
-        //5 properties of HSSFShape + 8 of HSSFTextbox
-        assertEquals(comment._optRecord.getEscherProperties().size(), 13);
+        //6 properties of HSSFShape + 8 of HSSFTextbox
+        assertEquals(comment._optRecord.getEscherProperties().size(), 14);
     }
 
     public void testShapeId(){
@@ -232,10 +233,10 @@ public class TestComment extends TestCase {
         assertEquals(comment.getShapeId(), 2024);
 
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
-        assertEquals(cod.getObjectId(), 1000);
+        assertEquals(cod.getObjectId(), 2024);
         EscherSpRecord spRecord = (EscherSpRecord) comment.getEscherContainer().getChild(0);
         assertEquals(spRecord.getShapeId(), 2024);
         assertEquals(comment.getShapeId(), 2024);
-        assertEquals(comment.getNoteRecord().getShapeId(), 1000);
+        assertEquals(comment.getNoteRecord().getShapeId(), 2024);
     }
 }

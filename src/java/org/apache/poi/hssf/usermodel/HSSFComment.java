@@ -69,6 +69,12 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        super.afterInsert(patriarch);
+        _patriarch._getBoundAggregate().addTailRecord(getNoteRecord());
+    }
+
+    @Override
     protected ObjRecord createObjRecord() {
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
@@ -96,7 +102,9 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     @Override
     void setShapeId(int shapeId) {
         super.setShapeId(shapeId);
-        _note.setShapeId(shapeId-1024);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        cod.setObjectId((short) (shapeId));
+        _note.setShapeId(shapeId);
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.apache.poi.hssf.usermodel.drawing;
 
+import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.usermodel.HSSFPicture;
 import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
 import org.apache.poi.hssf.usermodel.HSSFTextbox;
@@ -13,6 +14,7 @@ public enum HSSFShapeType {
     RECTANGLE((short)0x1, HSSFSimpleShape.class, HSSFSimpleShape.OBJECT_TYPE_RECTANGLE),
     PICTURE((short)0x004B, HSSFPicture.class, HSSFSimpleShape.OBJECT_TYPE_PICTURE),
     LINE((short)0x14, HSSFSimpleShape.class, HSSFSimpleShape.OBJECT_TYPE_LINE),
+    OVAL(EscherAggregate.ST_ELLIPSE, HSSFSimpleShape.class, HSSFSimpleShape.OBJECT_TYPE_OVAL),
     TEXT((short)202, HSSFTextbox.class, HSSFTextbox.OBJECT_TYPE_TEXT),
     ROUND_RECTANGLE((short)0x2, null, null);
 

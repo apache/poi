@@ -248,6 +248,11 @@ public abstract class HSSFShape {
      */
     public void setLineStyle(int lineStyle) {
         setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, lineStyle));
+        if (getLineStyle() == HSSFShape.LINESTYLE_NONE){
+            setPropertyValue(new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
+        } else {
+            setPropertyValue( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        }
     }
 
     /**
