@@ -37,16 +37,16 @@ public final class TestMAPIProperty extends TestCase {
       assertEquals(true, all.contains(MAPIProperty.DISPLAY_CC));
       
       // Won't contain custom
-      assertEquals(false, all.contains(MAPIProperty.createCustom(1, 1, "")));
+      assertEquals(false, all.contains(MAPIProperty.createCustom(1, Types.UNSPECIFIED, "")));
       
       // Won't contain unknown
       assertEquals(false, all.contains(MAPIProperty.UNKNOWN));
    }
    
    public void testCustom() throws Exception {
-      MAPIProperty c1 = MAPIProperty.createCustom(1, 1, "");
-      MAPIProperty c2a = MAPIProperty.createCustom(2, 1, "2");
-      MAPIProperty c2b = MAPIProperty.createCustom(2, 1, "2");
+      MAPIProperty c1 = MAPIProperty.createCustom(1, Types.UNSPECIFIED, "");
+      MAPIProperty c2a = MAPIProperty.createCustom(2, Types.UNSPECIFIED, "2");
+      MAPIProperty c2b = MAPIProperty.createCustom(2, Types.UNSPECIFIED, "2");
       
       // New object each time
       assertNotSame(c1, c2a);

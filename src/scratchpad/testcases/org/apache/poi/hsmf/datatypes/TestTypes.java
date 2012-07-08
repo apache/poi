@@ -28,13 +28,21 @@ import junit.framework.TestCase;
  */
 public final class TestTypes extends TestCase {
    public void testTypeIds() {
-      assertEquals(0x1e, Types.ASCII_STRING);
-      assertEquals(0x1f, Types.UNICODE_STRING);
+      assertEquals(0x1e, Types.ASCII_STRING.getId());
+      assertEquals(0x1f, Types.UNICODE_STRING.getId());
       
-      assertEquals(0x0102, Types.BINARY);
-      assertEquals(0x000B, Types.BOOLEAN);
-      assertEquals(0x0003, Types.LONG);
-      assertEquals(0x0040, Types.TIME);
+      assertEquals(0x0102, Types.BINARY.getId());
+      assertEquals(0x000B, Types.BOOLEAN.getId());
+      assertEquals(0x0003, Types.LONG.getId());
+      assertEquals(0x0040, Types.TIME.getId());
+      
+      assertEquals(Types.ASCII_STRING, Types.getById(0x1e));
+      assertEquals(Types.UNICODE_STRING, Types.getById(0x1f));
+      
+      assertEquals(Types.BINARY, Types.getById(0x0102));
+      assertEquals(Types.BOOLEAN, Types.getById(0x000B));
+      assertEquals(Types.LONG, Types.getById(0x0003));
+      assertEquals(Types.TIME, Types.getById(0x0040));
    }
    
    public void testTypeFormatting() {
@@ -45,7 +53,7 @@ public final class TestTypes extends TestCase {
    }
    
    public void testName() {
-      assertEquals("ASCII String", Types.asName(Types.ASCII_STRING));
-      assertEquals("Boolean", Types.asName(Types.BOOLEAN));
+      assertEquals("ASCII String", Types.ASCII_STRING.getName());
+      assertEquals("Boolean", Types.BOOLEAN.getName());
    }
 }
