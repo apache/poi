@@ -32,6 +32,7 @@ import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
@@ -97,7 +98,7 @@ public final class POIFSChunkParser {
          if(entry instanceof DocumentNode) {
             process(entry, grouping);
          } else if(entry instanceof DirectoryNode) {
-             if(entry.getName().endsWith(Types.asFileEnding(Types.DIRECTORY))) {
+             if(entry.getName().endsWith(Types.DIRECTORY.asFileEnding())) {
                  process(entry, grouping);
              }
          }
@@ -141,7 +142,12 @@ public final class POIFSChunkParser {
       // Now try to turn it into id + type
       try {
          int chunkId = Integer.parseInt(ids.substring(0, 4), 16);
-         int type    = Integer.parseInt(ids.substring(4, 8), 16);
+         int typeId  = Integer.parseInt(ids.substring(4, 8), 16);
+         
+         MAPIType type = Types.getById(typeId);
+         if (type == null) {
+            type = Types.createCustom(typeId);
+         }
          
          Chunk chunk = null;
          
@@ -152,19 +158,20 @@ public final class POIFSChunkParser {
          else {
             // Nothing special about this ID
             // So, do the usual thing which is by type
-            switch(type) {
-            case Types.BINARY:
+            if (type == Types.BINARY) {
                chunk = new ByteChunk(namePrefix, chunkId, type);
-               break;
-            case Types.DIRECTORY:
+            }
+            else if (type == Types.DIRECTORY) {
                if(entry instanceof DirectoryNode) {
                    chunk = new DirectoryChunk((DirectoryNode)entry, namePrefix, chunkId, type);
                }
-               break;
-            case Types.ASCII_STRING:
-            case Types.UNICODE_STRING:
+            }
+            else if (type == Types.ASCII_STRING ||
+                     type == Types.UNICODE_STRING) {
                chunk = new StringChunk(namePrefix, chunkId, type);
-               break;
+            } 
+            else {
+               // Type of an unsupported type! Skipping... 
             }
          }
          

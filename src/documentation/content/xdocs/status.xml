@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">Change HSMF Types to have full data on ID, Name and Length, rather than just being a simple ID</action>
           <action dev="poi-developers" type="add">48469 - Updated case study</action>
           <action dev="poi-developers" type="add">53476 - Support Complex Name in formulas </action>
           <action dev="poi-developers" type="fix">53414 - properly update sheet dimensions when adding column </action>

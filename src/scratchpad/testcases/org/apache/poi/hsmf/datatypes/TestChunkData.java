@@ -30,24 +30,29 @@ public final class TestChunkData extends TestCase {
 	public void testChunkCreate() {
 	   Chunk chunk;
 	   
-		chunk = new StringChunk(0x0200, 0x001E);
+		chunk = new StringChunk(0x0200, Types.createCustom(0x001E));
 		assertEquals("__substg1.0_0200001E", chunk.getEntryName());
 		assertEquals(0x0200, chunk.getChunkId());
-		assertEquals(0x001E, chunk.getType());
+		assertEquals(0x001E, chunk.getType().getId());
 
-      chunk = new StringChunk("__substg1.0_", 0x0200, 0x001E);
+      chunk = new StringChunk("__substg1.0_", 0x0200, Types.createCustom(0x001E));
       assertEquals("__substg1.0_0200001E", chunk.getEntryName());
       assertEquals(0x0200, chunk.getChunkId());
-      assertEquals(0x001E, chunk.getType());
+      assertEquals(0x001E, chunk.getType().getId());
+      
+      chunk = new StringChunk("__substg1.0_", 0x0200, Types.getById(0x001E));
+      assertEquals("__substg1.0_0200001E", chunk.getEntryName());
+      assertEquals(0x0200, chunk.getChunkId());
+      assertEquals(0x001E, chunk.getType().getId());
       
 		/* test the lower and upper limits of the chunk ids */
-		chunk = new StringChunk(0x0000, 0x001E);
+		chunk = new StringChunk(0x0000, Types.createCustom(0x001E));
 		assertEquals("__substg1.0_0000001E", chunk.getEntryName());
 
-		chunk = new StringChunk(0xFFFF, 0x001E);
+		chunk = new StringChunk(0xFFFF, Types.createCustom(0x001E));
 		assertEquals("__substg1.0_FFFF001E", chunk.getEntryName());
 
-		chunk = new StringChunk(0xFFFF, 0x001F);
+		chunk = new StringChunk(0xFFFF, Types.createCustom(0x001F));
 		assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
 	}
 
