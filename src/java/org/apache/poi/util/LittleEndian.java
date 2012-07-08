@@ -724,6 +724,24 @@ public class LittleEndian implements LittleEndianConsts
         }
         return ( ch4 << 24 ) + ( ch3 << 16 ) + ( ch2 << 8 ) + ( ch1 << 0 );
     }
+    
+    /**
+     * get an unsigned int value from an InputStream
+     * 
+     * @param stream
+     *            the InputStream from which the int is to be read
+     * @return the unsigned int (32-bit) value
+     * @exception IOException
+     *                will be propagated back to the caller
+     * @exception BufferUnderrunException
+     *                if the stream cannot provide enough bytes
+     */
+    public static long readUInt( InputStream stream ) throws IOException,
+            BufferUnderrunException
+    {
+       long retNum = readInt(stream);
+       return retNum & 0x00FFFFFFFFl;
+    }
 
     /**
      * get a long value from an InputStream

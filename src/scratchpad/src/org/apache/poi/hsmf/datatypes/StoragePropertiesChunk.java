@@ -17,31 +17,37 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import org.apache.poi.util.LittleEndian;
 
 /**
- * Collection of convenience chunks for the
- *  NameID part of an outlook file
+ * A {@link PropertiesChunk} for a Storage Properties, such as
+ *  Attachments and Recipients.
+ * This only has a 8 byte header
  */
-public final class NameIdChunks implements ChunkGroup {
-   public static final String NAME = "__nameid_version1.0";
-   
-   /** Holds all the chunks that were found. */
-   private List<Chunk> allChunks = new ArrayList<Chunk>();
-   
-   public Chunk[] getAll() {
-      return allChunks.toArray(new Chunk[allChunks.size()]);
+public class StoragePropertiesChunk extends PropertiesChunk {
+   public StoragePropertiesChunk() {
+      super();
    }
-   public Chunk[] getChunks() {
-      return getAll();
+   
+   @Override
+   public void readValue(InputStream stream) throws IOException {
+      // 8 bytes of reserved zeros
+      LittleEndian.readLong(stream);
+      
+      // Now properties
+      readProperties(stream);
    }
-	
-   /**
-    * Called by the parser whenever a chunk is found.
-    */
-   public void record(Chunk chunk) {
-      allChunks.add(chunk);
+
+   @Override
+   public void writeValue(OutputStream out) throws IOException {
+      // 8 bytes of reserved zeros
+      out.write(new byte[8]);
+      
+      // Now properties
+      writeProperties(out);
    }
 }
