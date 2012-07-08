@@ -20,31 +20,68 @@ package org.apache.poi.hsmf.datatypes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Chunk which holds fixed-length properties, and pointer
- *  to the variable length ones (which get their own chunk)
+ *  to the variable length ones (which get their own chunk).
+ * There are two kinds of PropertiesChunks, which differ only in 
+ *  their headers.
  */
-public class PropertiesChunk extends Chunk {
-   public static final String PREFIX = "__properties_version1.0";
+public abstract class PropertiesChunk extends Chunk {
+   public static final String NAME = "__properties_version1.0";
+   
+   /**
+    * Holds properties, indexed by type. Properties can be multi-valued
+    */
+   private Map<MAPIProperty, List<PropertyValue>> properties = 
+         new HashMap<MAPIProperty, List<PropertyValue>>();
 
 	/**
 	 * Creates a Properties Chunk.
 	 */
-	public PropertiesChunk() {
-		super(PREFIX, -1, Types.UNKNOWN);
+	protected PropertiesChunk() {
+		super(NAME, -1, Types.UNKNOWN);
 	}
 
 	@Override
    public String getEntryName() {
-	   return PREFIX;
+	   return NAME;
    }
+	
+	/**
+	 * Returns all the properties in the chunk
+	 */
+	public Map<MAPIProperty, List<PropertyValue>> getProperties() {
+	   return properties;
+	}
+	
+	/**
+	 * Returns all values for the given property, of null if none exist
+	 */
+	public List<PropertyValue> getValues(MAPIProperty property) {
+	   return properties.get(property);
+	}
+	
+	/**
+	 * Returns the (first/only) value for the given property, or
+	 *  null if none exist
+	 */
+	public PropertyValue getValue(MAPIProperty property) {
+	   List<PropertyValue> values = properties.get(property);
+	   if (values != null && values.size() > 0) {
+	      return values.get(0);
+	   }
+	   return null;
+	}
 
-   public void readValue(InputStream value) throws IOException {
+   protected void readProperties(InputStream value) throws IOException {
       // TODO
 	}
 	
-	public void writeValue(OutputStream out) throws IOException {
+	protected void writeProperties(OutputStream out) throws IOException {
 	   // TODO
 	}
 }

@@ -1026,6 +1026,8 @@ public class MAPIProperty {
       new MAPIProperty(-1, Types.UNKNOWN, "Unknown", null);
    
    // 0x8??? ones are outlook specific, and not standard MAPI
+   // TODO See http://msdn.microsoft.com/en-us/library/ee157150%28v=exchg.80%29 for some
+   //  info on how we might decode them properly in the future
    private static final int ID_FIRST_CUSTOM = 0x8000;
    private static final int ID_LAST_CUSTOM = 0xFFFE;
    

@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public final class Types {
    private static Map<Integer, MAPIType> builtInTypes = new HashMap<Integer, MAPIType>();
+   private static Map<Integer, MAPIType> customTypes = new HashMap<Integer, Types.MAPIType>();
 
    /** Unspecified */
    public static final MAPIType UNSPECIFIED = new MAPIType(0x0000, "Unspecified", -1);
@@ -95,6 +96,7 @@ public final class Types {
          this.id = id;
          this.name = asCustomName(id);
          this.length = length;
+         customTypes.put(id, this);
       }
       
       /**
@@ -150,6 +152,24 @@ public final class Types {
    }
    
    public static MAPIType createCustom(int typeId) {
-      return new MAPIType(typeId, -1);
+      // Check they're not being silly, and asking for a built-in one...
+      if (getById(typeId) != null) {
+         return getById(typeId);
+      }
+      
+      // Try to get an existing definition of this
+      MAPIType type = customTypes.get(typeId);
+      
+      // If none, do a thread-safe creation
+      if (type == null) {
+         synchronized (customTypes) {
+            type = customTypes.get(typeId);
+            if (type == null) {
+               type = new MAPIType(typeId, -1);
+            }
+         }
+      }
+      
+      return type;
    }
 }
