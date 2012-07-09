@@ -17,6 +17,8 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import org.apache.poi.util.LittleEndian;
+
 /**
  * An instance of a {@link MAPIProperty} inside a {@link PropertiesChunk}.
  * Where the {@link Types} type is a fixed length one, this will contain the
@@ -27,5 +29,47 @@ package org.apache.poi.hsmf.datatypes;
 public class PropertyValue {
    private MAPIProperty property;
    private long flags;
-   private byte[] data;
+   protected byte[] data;
+   
+   public PropertyValue(MAPIProperty property, long flags, byte[] data) {
+      this.property = property;
+      this.flags = flags;
+      this.data = data;
+   }
+   
+   public MAPIProperty getProperty() {
+      return property;
+   }
+
+   /**
+    * Get the raw value flags.
+    * TODO Also provide getters for the flag meanings
+    */
+   public long getFlags() {
+      return flags;
+   }
+
+   public Object getValue() {
+      return data;
+   }
+   public void setRawValue(byte[] value) {
+      this.data = value;
+   }
+   
+   // TODO classes for the other important value types
+   public static class LongLongPropertyValue extends PropertyValue {
+      public LongLongPropertyValue(MAPIProperty property, long flags, byte[] data) {
+         super(property, flags, data);
+      }
+      
+      public Long getValue() {
+         return LittleEndian.getLong(data);
+      }
+      public void setValue(long value) {
+         if (data.length != 8) {
+            data = new byte[8];
+         }
+         LittleEndian.putLong(data, 0, value);
+      }
+   }
 }
