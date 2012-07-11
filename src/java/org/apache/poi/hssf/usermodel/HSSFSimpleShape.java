@@ -70,11 +70,12 @@ public class HSSFSimpleShape extends HSSFShape
 
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
         super(spContainer, objRecord);
-        this._textObjectRecord = _textObjectRecord;
+        this._textObjectRecord = _textObjectRecord == null ? createTextObjRecord() : _textObjectRecord;
     }
 
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
         super(spContainer, objRecord);
+        this._textObjectRecord = createTextObjRecord();
     }
 
     public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor)
@@ -159,6 +160,10 @@ public class HSSFSimpleShape extends HSSFShape
      * @param string Sets the rich text string used by this object.
      */
     public void setString(RichTextString string) {
+        //TODO add other shape types which can not contain text
+        if (getShapeType() == 0 || getShapeType() == OBJECT_TYPE_LINE){
+            throw new IllegalStateException("Cannot set text for shape type: "+getShapeType());
+        }
         HSSFRichTextString rtr = (HSSFRichTextString) string;
         // If font is not set we must set the default one
         if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);

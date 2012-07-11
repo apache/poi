@@ -10,6 +10,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.util.HexDump;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -340,5 +341,60 @@ public class TestDrawingShapes extends TestCase {
         EscherAggregate aggregate = HSSFTestHelper.getEscherAggregate(patriarch);
         EscherDgRecord dgRecord = (EscherDgRecord) aggregate.getEscherRecord(0).getChild(0);
         assertEquals(dgRecord.getNumShapes(), 1);
+    }
+
+    public void testTextForSimpleShape(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
+        shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+
+        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+        assertNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        assertEquals(agg.getShapeToObjMapping().size(), 1);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+
+        shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
+
+        agg = HSSFTestHelper.getEscherAggregate(patriarch);
+        assertNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        assertEquals(agg.getShapeToObjMapping().size(), 1);
+
+        shape.setString(new HSSFRichTextString("string1"));
+        assertEquals(shape.getString().getString(), "string1");
+
+        assertNotNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        assertEquals(agg.getShapeToObjMapping().size(), 2);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+
+        shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
+
+        assertNotNull(shape.getTextObjectRecord());
+        assertEquals(shape.getString().getString(), "string1");
+        assertNotNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        assertEquals(agg.getShapeToObjMapping().size(), 2);
+    }
+
+    public void testComboboxRecords(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFCombobox combobox = new HSSFCombobox(null, new HSSFClientAnchor());
+        HSSFTestHelper.setShapeId(combobox, 1024);
+        ComboboxShape comboboxShape = new ComboboxShape(combobox, 1024);
+
+        assertTrue(Arrays.equals(comboboxShape.getSpContainer().serialize(), combobox.getEscherContainer().serialize()));
+        assertTrue(Arrays.equals(comboboxShape.getObjRecord().serialize(), combobox.getObjRecord().serialize()));
     }
 }

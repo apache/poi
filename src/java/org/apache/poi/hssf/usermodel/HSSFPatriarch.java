@@ -97,7 +97,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     public HSSFShapeGroup createGroup(HSSFClientAnchor anchor)
     {
         HSSFShapeGroup group = new HSSFShapeGroup(null, anchor);
-        group.anchor = anchor;
         addShape(group);
         onCreate(group);
         return group;
@@ -114,7 +113,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     public HSSFSimpleShape createSimpleShape(HSSFClientAnchor anchor)
     {
         HSSFSimpleShape shape = new HSSFSimpleShape(null, anchor);
-        shape.anchor = anchor;
         addShape(shape);
         //open existing file
         onCreate(shape);
@@ -139,7 +137,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     {
         HSSFPicture shape = new HSSFPicture(null, anchor);
         shape.setPictureIndex( pictureIndex );
-        shape.anchor = anchor;
         addShape(shape);
         //open existing file
         onCreate(shape);
@@ -169,7 +166,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     public HSSFPolygon createPolygon(HSSFClientAnchor anchor)
     {
         HSSFPolygon shape = new HSSFPolygon(null, anchor);
-        shape.anchor = anchor;
         addShape(shape);
         onCreate(shape);
         return shape;
@@ -185,7 +181,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     public HSSFTextbox createTextbox(HSSFClientAnchor anchor)
     {
         HSSFTextbox shape = new HSSFTextbox(null, anchor);
-        shape.anchor = anchor;
         addShape(shape);
         onCreate(shape);
         return shape;
@@ -201,7 +196,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
    public HSSFComment createComment(HSSFAnchor anchor)
     {
         HSSFComment shape = new HSSFComment(null, anchor);
-        shape.anchor = anchor;
         addShape(shape);
         onCreate(shape);
         return shape;
@@ -214,10 +208,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
      HSSFSimpleShape createComboBox(HSSFAnchor anchor)
      {
-         HSSFSimpleShape shape = new HSSFSimpleShape(null, anchor);
-         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX);
-         shape.anchor = anchor;
+         HSSFCombobox shape = new HSSFCombobox(null, anchor);
          addShape(shape);
+         onCreate(shape);
          return shape;
      }
 
