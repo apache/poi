@@ -33,11 +33,19 @@ public class HSSFUnknownShape extends HSSFShape {
 
     @Override
     protected EscherContainerRecord createSpContainer() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     protected ObjRecord createObjRecord() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
+    }
+
+    @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
     }
 }

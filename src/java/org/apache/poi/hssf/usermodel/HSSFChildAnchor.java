@@ -34,7 +34,13 @@ public final class HSSFChildAnchor extends HSSFAnchor {
     }
 
     public HSSFChildAnchor(int dx1, int dy1, int dx2, int dy2) {
-        super(dx1, dy1, dx2, dy2);
+        super(Math.min(dx1, dx2), Math.min(dy1, dy2), Math.max(dx1, dx2), Math.max(dy1, dy2));
+        if (dx1 > dx2){
+            _isHorizontallyFlipped = true;
+        }
+        if (dy1 > dy2){
+            _isVerticallyFlipped = true;
+        }
     }
 
     @Override
@@ -78,18 +84,18 @@ public final class HSSFChildAnchor extends HSSFAnchor {
     }
 
     public void setAnchor(int dx1, int dy1, int dx2, int dy2) {
-        setDx1(dx1);
-        setDy1(dy1);
-        setDx2(dx2);
-        setDy2(dy2);
+        setDx1(Math.min(dx1, dx2));
+        setDy1(Math.min(dy1, dy2));
+        setDx2(Math.max(dx1, dx2));
+        setDy2(Math.max(dy1, dy2));
     }
 
     public boolean isHorizontallyFlipped() {
-        return getDx1() > getDx2();
+        return _isHorizontallyFlipped;
     }
 
     public boolean isVerticallyFlipped() {
-        return getDy1() > getDy2();
+        return _isVerticallyFlipped;
     }
 
     @Override

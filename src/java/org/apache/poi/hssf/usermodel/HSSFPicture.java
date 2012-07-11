@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.ObjRecord;
@@ -69,7 +70,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     public int getPictureIndex()
     {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.BLIP__BLIPTODISPLAY);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
         if (null == property){
             return -1;
         }
@@ -79,6 +80,15 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     public void setPictureIndex( int pictureIndex )
     {
         setPropertyValue(new EscherSimpleProperty( EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        EscherContainerRecord spContainer = super.createSpContainer();
+        EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        removeEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
+        removeEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        return spContainer;
     }
 
     /**
@@ -236,5 +246,38 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
     	EscherBlipRecord blipRecord = iwb.getBSERecord(getPictureIndex()).getBlipRecord();
     	return new HSSFPictureData(blipRecord);
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        super.afterInsert(patriarch);
+        EscherBSERecord bse =
+                patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+        bse.setRef(bse.getRef() + 1);
+    }
+
+    /**
+     * The color applied to the lines of this shape.
+     */
+    public String getAdditionalData() {
+        EscherComplexProperty propFile = (EscherComplexProperty) getOptRecord().lookup(
+                      EscherProperties.BLIP__BLIPFILENAME);
+        try {
+            if (null == propFile){
+                return "";
+            }
+            return new String(propFile.getComplexData(), "UTF-16LE").trim();
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+    
+    public void setAdditionalData(String data){
+        try {
+            EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, data.getBytes("UTF-16LE"));
+            setPropertyValue(prop);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Unsupported encoding: UTF-16LE");
+        }
     }
 }

@@ -57,7 +57,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
     public HSSFShapeGroup(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
-        _spgrRecord = ((EscherContainerRecord)_escherContainer.getChild(0)).getChildById(EscherSpgrRecord.RECORD_ID);
+        _spgrRecord = ((EscherContainerRecord)getEscherContainer().getChild(0)).getChildById(EscherSpgrRecord.RECORD_ID);
     }
 
     @Override
@@ -122,12 +122,16 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         return obj;
     }
 
+    @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+    }
+
     private void onCreate(HSSFShape shape){
         if(_patriarch != null && _patriarch._getBoundAggregate().getPatriarch() == null){
             EscherContainerRecord spContainer = shape.getEscherContainer();
             int shapeId = _patriarch.newShapeId();
             shape.setShapeId(shapeId);
-            _escherContainer.addChildRecord(spContainer);
+            getEscherContainer().addChildRecord(spContainer);
             shape.afterInsert(_patriarch);
             EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_CHILD);
@@ -172,6 +176,13 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         shape.anchor = anchor;
         shapes.add(shape);
         onCreate(shape);
+        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (shape.anchor.isHorizontallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
+        }
+        if (shape.anchor.isVerticallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
+        }
         return shape;
     }
 
@@ -220,6 +231,13 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         shape.setPictureIndex(pictureIndex);
         shapes.add(shape);
         onCreate(shape);
+        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (shape.anchor.isHorizontallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
+        }
+        if (shape.anchor.isVerticallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
+        }
         return shape;
     }
 
@@ -284,22 +302,22 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     @Override
     void afterInsert(HSSFPatriarch patriarch){
         EscherAggregate agg = patriarch._getBoundAggregate();
-        EscherContainerRecord containerRecord = _escherContainer.getChildById(EscherContainerRecord.SP_CONTAINER);
+        EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         agg.associateShapeToObjRecord(containerRecord.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
     }
 
     @Override
     void setShapeId(int shapeId){
-        EscherContainerRecord containerRecord = _escherContainer.getChildById(EscherContainerRecord.SP_CONTAINER);
+        EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         EscherSpRecord spRecord = containerRecord.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectId((short) (shapeId));
     }
 
     @Override
     int getShapeId(){
-        EscherContainerRecord containerRecord = _escherContainer.getChildById(EscherContainerRecord.SP_CONTAINER);
+        EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         return ((EscherSpRecord)containerRecord.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
     }
 }

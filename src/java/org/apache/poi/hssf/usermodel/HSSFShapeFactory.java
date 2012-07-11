@@ -117,7 +117,7 @@ public class HSSFShapeFactory {
                     shape = new HSSFPicture(container, objRecord);
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_RECTANGLE:
-                    shape = new HSSFSimpleShape(container, objRecord);
+                    shape = new HSSFSimpleShape(container, objRecord, txtRecord);
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_LINE:
                     shape = new HSSFSimpleShape(container, objRecord);

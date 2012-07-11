@@ -31,6 +31,9 @@ import org.apache.poi.ddf.EscherRecord;
  */
 public abstract class HSSFAnchor {
 
+    protected boolean _isHorizontallyFlipped = false;
+    protected boolean _isVerticallyFlipped = false;
+
     public HSSFAnchor() {
         createEscherAnchor();
     }
@@ -51,7 +54,6 @@ public abstract class HSSFAnchor {
                 return new HSSFClientAnchor((EscherClientAnchorRecord) container.getChildById(EscherClientAnchorRecord.RECORD_ID));
             }
             return null;
-//            throw new IllegalArgumentException("continer must have anchor record");
         }
     }
 

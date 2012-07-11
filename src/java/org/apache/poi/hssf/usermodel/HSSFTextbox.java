@@ -47,11 +47,8 @@ public class HSSFTextbox extends HSSFSimpleShape {
     public final static short VERTICAL_ALIGNMENT_JUSTIFY = 4;
     public final static short VERTICAL_ALIGNMENT_DISTRIBUTED = 7;
 
-    protected TextObjectRecord _textObjectRecord;
-
     public HSSFTextbox(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord) {
-        super(spContainer, objRecord);
-        this._textObjectRecord = textObjectRecord;
+        super(spContainer, objRecord, textObjectRecord);
     }
 
     HSSFRichTextString string = new HSSFRichTextString("");
@@ -64,25 +61,16 @@ public class HSSFTextbox extends HSSFSimpleShape {
      */
     public HSSFTextbox(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
-        _textObjectRecord = createTextObjRecord();
         setHorizontalAlignment(HORIZONTAL_ALIGNMENT_LEFT);
         setVerticalAlignment(VERTICAL_ALIGNMENT_TOP);
         setString(new HSSFRichTextString(""));
-
-    }
-
-    protected TextObjectRecord createTextObjRecord(){
-        TextObjectRecord obj = new TextObjectRecord();
-        obj.setTextLocked(true);
-        obj.setTextOrientation(TextObjectRecord.TEXT_ORIENTATION_NONE);
-        return obj;
     }
 
     @Override
     protected ObjRecord createObjRecord() {
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
-        c.setObjectType(OBJECT_TYPE_TEXT);
+        c.setObjectType(HSSFTextbox.OBJECT_TYPE_TEXT);
         c.setLocked( true );
         c.setPrintable( true );
         c.setAutofill( true );
@@ -90,8 +78,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
         EndSubRecord e = new EndSubRecord();
         obj.addSubRecord( c );
         obj.addSubRecord( e );
-        return obj;
-    }
+        return obj;    }
 
     @Override
     protected EscherContainerRecord createSpContainer() {
@@ -123,7 +110,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
         opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
         opt.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
         opt.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 1));
+        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
         opt.setEscherProperty(new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x080000));
 
         EscherRecord anchor = getAnchor().getEscherAnchor();
@@ -142,34 +129,25 @@ public class HSSFTextbox extends HSSFSimpleShape {
     }
 
     @Override
-    void afterInsert(HSSFPatriarch patriarch){
-        EscherAggregate agg = patriarch._getBoundAggregate();
-        agg.associateShapeToObjRecord(_escherContainer.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
-        agg.associateShapeToObjRecord(_escherContainer.getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
-    }
-
-    /**
-     * @return the rich text string for this textbox.
-     */
-    public HSSFRichTextString getString() {
-        return _textObjectRecord.getStr();
-    }
-
-    /**
-     * @param string Sets the rich text string used by this object.
-     */
     public void setString(RichTextString string) {
         HSSFRichTextString rtr = (HSSFRichTextString) string;
         // If font is not set we must set the default one
         if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);
-        _textObjectRecord.setStr(rtr);
+        getTextObjectRecord().setStr(rtr);
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch){
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
     }
 
     /**
      * @return Returns the left margin within the textbox.
      */
     public int getMarginLeft() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.TEXT__TEXTLEFT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTLEFT);
         return property == null ? 0: property.getPropertyValue();
     }
 
@@ -184,7 +162,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * @return returns the right margin within the textbox.
      */
     public int getMarginRight() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.TEXT__TEXTRIGHT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTRIGHT);
         return property == null ? 0: property.getPropertyValue();
     }
 
@@ -199,7 +177,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * @return returns the top margin within the textbox.
      */
     public int getMarginTop() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.TEXT__TEXTTOP);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTTOP);
         return property == null ? 0: property.getPropertyValue();
     }
 
@@ -214,7 +192,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * Gets the bottom margin within the textbox.
      */
     public int getMarginBottom() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.TEXT__TEXTBOTTOM);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTBOTTOM);
         return property == null ? 0: property.getPropertyValue();
     }
 
@@ -229,34 +207,32 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * Gets the horizontal alignment.
      */
     public short getHorizontalAlignment() {
-        return (short) _textObjectRecord.getHorizontalTextAlignment();
+        return (short) getTextObjectRecord().getHorizontalTextAlignment();
     }
 
     /**
      * Sets the horizontal alignment.
      */
     public void setHorizontalAlignment(short align) {
-        _textObjectRecord.setHorizontalTextAlignment(align);
+        getTextObjectRecord().setHorizontalTextAlignment(align);
     }
 
     /**
      * Gets the vertical alignment.
      */
     public short getVerticalAlignment() {
-        return (short) _textObjectRecord.getVerticalTextAlignment();
+        return (short) getTextObjectRecord().getVerticalTextAlignment();
     }
 
     /**
      * Sets the vertical alignment.
      */
     public void setVerticalAlignment(short align) {
-        _textObjectRecord.setVerticalTextAlignment(align);
-    }
-
-    public TextObjectRecord getTextObjectRecord() {
-        return _textObjectRecord;
+        getTextObjectRecord().setVerticalTextAlignment(align);
     }
 
     @Override
-    public void setShapeType(int shapeType) {/**DO NOTHING**/}
+    public void setShapeType(int shapeType) {
+        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+    }
 }

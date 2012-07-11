@@ -212,8 +212,7 @@ public class TestComment extends TestCase {
 
         HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
 
-        //6 properties of HSSFShape + 8 of HSSFTextbox
-        assertEquals(comment._optRecord.getEscherProperties().size(), 14);
+        assertEquals(comment.getOptRecord().getEscherProperties().size(), 10);
     }
 
     public void testShapeId(){

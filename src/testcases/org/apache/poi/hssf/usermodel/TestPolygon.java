@@ -73,7 +73,7 @@ public class TestPolygon extends TestCase{
 
         PolygonShape polygonShape = HSSFTestModelHelper.createPolygonShape(0, polygon);
 
-        EscherArrayProperty verticesProp1 = polygon._optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
         EscherArrayProperty verticesProp2 = ((EscherOptRecord)polygonShape.getSpContainer().getChildById(EscherOptRecord.RECORD_ID))
                 .lookup(EscherProperties.GEOMETRY__VERTICES);
 
@@ -85,7 +85,7 @@ public class TestPolygon extends TestCase{
         assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{4, 5, 6}));
 
         polygonShape = HSSFTestModelHelper.createPolygonShape(0, polygon);
-        verticesProp1 = polygon._optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+        verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
         verticesProp2 = ((EscherOptRecord)polygonShape.getSpContainer().getChildById(EscherOptRecord.RECORD_ID))
                 .lookup(EscherProperties.GEOMETRY__VERTICES);
 

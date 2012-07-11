@@ -1614,7 +1614,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         r.setUid( uid );
         r.setTag( (short) 0xFF );
         r.setSize( pictureData.length + 25 );
-        r.setRef( 1 );
+        r.setRef( 0 );
         r.setOffset( 0 );
         r.setBlipRecord( blipRecord );
 

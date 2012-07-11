@@ -21,6 +21,8 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 
+import java.util.Iterator;
+
 /**
  * An abstract shape.
  *
@@ -53,9 +55,12 @@ public abstract class HSSFShape {
     HSSFAnchor anchor;
     HSSFPatriarch _patriarch;
 
-    protected final EscherContainerRecord _escherContainer;
-    protected final ObjRecord _objRecord;
-    protected final EscherOptRecord _optRecord;
+    private final EscherContainerRecord _escherContainer;
+    private final ObjRecord _objRecord;
+    private final EscherOptRecord _optRecord;
+    
+    public final static int NO_FILLHITTEST_TRUE = 0x00110000;
+    public final static int NO_FILLHITTEST_FALSE = 0x00010000;
 
     public HSSFShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
         this._escherContainer = spContainer;
@@ -80,6 +85,17 @@ public abstract class HSSFShape {
 
     protected abstract ObjRecord createObjRecord();
 
+    protected abstract void afterRemove(HSSFPatriarch patriarch);
+
+    protected void removeEscherProperty(EscherOptRecord opt, int num){
+        for ( Iterator<EscherProperty> iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
+            if (prop.getPropertyNumber() == num){
+                iterator.remove();
+            }
+        }
+    }
+
     void setShapeId(int shapeId){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
@@ -91,8 +107,7 @@ public abstract class HSSFShape {
         return ((EscherSpRecord)_escherContainer.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
     }
 
-    void afterInsert(HSSFPatriarch patriarch){
-    }
+    abstract void afterInsert(HSSFPatriarch patriarch);
 
     public EscherContainerRecord getEscherContainer() {
         return _escherContainer;
@@ -100,6 +115,10 @@ public abstract class HSSFShape {
 
     public ObjRecord getObjRecord() {
         return _objRecord;
+    }
+
+    public EscherOptRecord getOptRecord() {
+        return _optRecord;
     }
 
     /**
@@ -248,10 +267,13 @@ public abstract class HSSFShape {
      */
     public void setLineStyle(int lineStyle) {
         setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, lineStyle));
-        if (getLineStyle() == HSSFShape.LINESTYLE_NONE){
-            setPropertyValue(new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
-        } else {
-            setPropertyValue( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        if (getLineStyle() != HSSFShape.LINESTYLE_SOLID) {
+            setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDCAPSTYLE, 0));
+            if (getLineStyle() == HSSFShape.LINESTYLE_NONE){
+                setPropertyValue(new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
+            } else {
+                setPropertyValue( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+            }
         }
     }
 
@@ -260,14 +282,14 @@ public abstract class HSSFShape {
      */
     public boolean isNoFill() {
         EscherBoolProperty property = _optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
-        return property == null ? NO_FILL_DEFAULT : property.isTrue();
+        return property == null ? NO_FILL_DEFAULT : property.getPropertyValue() == NO_FILLHITTEST_TRUE;
     }
 
     /**
      * Sets whether this shape is filled or transparent.
      */
     public void setNoFill(boolean noFill) {
-        setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? 1 : 0));
+        setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? NO_FILLHITTEST_TRUE : NO_FILLHITTEST_FALSE));
     }
 
     protected void setPropertyValue(EscherProperty property){
