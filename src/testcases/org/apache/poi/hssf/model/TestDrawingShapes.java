@@ -47,7 +47,8 @@ public class TestDrawingShapes extends TestCase {
     }
 
     public void testHSSFShapeCompatibility() {
-        HSSFShape shape = new HSSFSimpleShape(null, new HSSFClientAnchor());
+        HSSFSimpleShape shape = new HSSFSimpleShape(null, new HSSFClientAnchor());
+        shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
         assertEquals(0x08000040, shape.getLineStyleColor());
         assertEquals(0x08000009, shape.getFillColor());
         assertEquals(HSSFShape.LINEWIDTH_DEFAULT, shape.getLineWidth());
@@ -80,7 +81,7 @@ public class TestDrawingShapes extends TestCase {
         HSSFPicture picture = new HSSFPicture(null, new HSSFClientAnchor());
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
         assertEquals(picture.getFillColor(), HSSFShape.FILL__FILLCOLOR_DEFAULT);
-        assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_SOLID);
+        assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_NONE);
         assertEquals(picture.getLineStyleColor(), HSSFShape.LINESTYLE__COLOR_DEFAULT);
         assertEquals(picture.isNoFill(), false);
         assertEquals(picture.getPictureIndex(), -1);//not set yet
@@ -131,8 +132,10 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(10, rectangle.getLineStyle());
         rectangle.setLineStyleColor(1111);
         rectangle.setNoFill(true);
+        rectangle.setString(new HSSFRichTextString("teeeest"));
         assertEquals(rectangle.getLineStyleColor(), 1111);
         assertEquals(rectangle.isNoFill(), true);
+        assertEquals(rectangle.getString().getString(), "teeeest");
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
@@ -149,6 +152,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(rectangle2.getLineStyleColor(), 1111);
         assertEquals(rectangle2.getFillColor(), 777);
         assertEquals(rectangle2.isNoFill(), true);
+        assertEquals(rectangle2.getString().getString(), "teeeest");
 
         rectangle2.setFillColor(3333);
         rectangle2.setLineStyle(9);
@@ -159,6 +163,7 @@ public class TestDrawingShapes extends TestCase {
         rectangle2.getAnchor().setDx2(3);
         rectangle2.getAnchor().setDy1(4);
         rectangle2.getAnchor().setDy2(5);
+        rectangle2.setString(new HSSFRichTextString("test22"));
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
@@ -175,6 +180,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(rectangle2.getAnchor().getDy1(), 4);
         assertEquals(rectangle2.getAnchor().getDy2(), 5);
         assertEquals(rectangle2.isNoFill(), false);
+        assertEquals(rectangle2.getString().getString(), "test22");
 
         HSSFSimpleShape rect3 = drawing.createSimpleShape(new HSSFClientAnchor());
         rect3.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
@@ -196,7 +202,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(picture.getFillColor(), 0x5DC943);
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
         assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_DEFAULT);
-        assertEquals(picture.isNoFill(), true);
+        assertEquals(picture.isNoFill(), false);
 
         picture.setPictureIndex(2);
         assertEquals(picture.getPictureIndex(), 2);
@@ -211,11 +217,12 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(1, drawing.getChildren().size());
 
         HSSFSimpleShape shape = (HSSFSimpleShape) drawing.getChildren().get(0);
-        assertEquals(shape.isNoFill(), true);
+        assertEquals(shape.isNoFill(), false);
         assertEquals(shape.getLineStyle(), HSSFShape.LINESTYLE_DASHDOTGEL);
         assertEquals(shape.getLineStyleColor(), 0x616161);
         assertEquals(HexDump.toHex(shape.getFillColor()), shape.getFillColor(), 0x2CE03D);
         assertEquals(shape.getLineWidth(), HSSFShape.LINEWIDTH_ONE_PT * 2);
+        assertEquals(shape.getString().getString(), "POItest");
     }
 
     public void testShapeIds() {

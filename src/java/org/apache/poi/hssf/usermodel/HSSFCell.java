@@ -1021,7 +1021,7 @@ public class HSSFCell implements Cell {
      */
      public HSSFComment getCellComment(){
         if (_comment == null) {
-            _comment = findCellComment(_sheet.getSheet(), _record.getRow(), _record.getColumn());
+            _comment = _sheet.findCellComment(_record.getRow(), _record.getColumn());
         }
         return _comment;
     }
@@ -1033,41 +1033,12 @@ public class HSSFCell implements Cell {
      *  all comments after performing this action!
      */
     public void removeCellComment() {
-        HSSFComment comment = findCellComment(_sheet.getSheet(), _record.getRow(), _record.getColumn());
+        HSSFComment comment = _sheet.findCellComment(_record.getRow(), _record.getColumn());
         _comment = null;
-
-        if(comment == null) {
-            // Nothing to do
+        if (null == comment){
             return;
         }
-
-        // Zap the underlying NoteRecord
-        List<RecordBase> sheetRecords = _sheet.getSheet().getRecords();
-        sheetRecords.remove(comment.getNoteRecord());
-
-        // If we have a TextObjectRecord, is should
-        //  be proceeed by:
-        // MSODRAWING with container
-        // OBJ
-        // MSODRAWING with EscherTextboxRecord
-        if(comment.getTextObjectRecord() != null) {
-            TextObjectRecord txo = comment.getTextObjectRecord();
-            int txoAt = sheetRecords.indexOf(txo);
-
-            if(sheetRecords.get(txoAt-3) instanceof DrawingRecord &&
-                sheetRecords.get(txoAt-2) instanceof ObjRecord &&
-                sheetRecords.get(txoAt-1) instanceof DrawingRecord) {
-                // Zap these, in reverse order
-                sheetRecords.remove(txoAt-1);
-                sheetRecords.remove(txoAt-2);
-                sheetRecords.remove(txoAt-3);
-            } else {
-                throw new IllegalStateException("Found the wrong records before the TextObjectRecord, can't remove comment");
-            }
-
-            // Now remove the text record
-            sheetRecords.remove(txo);
-        }
+        _sheet.getDrawingPatriarch().removeShape(comment);
     }
 
     /**

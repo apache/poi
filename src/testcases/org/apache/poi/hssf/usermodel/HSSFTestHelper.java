@@ -83,7 +83,7 @@ public class HSSFTestHelper {
     }
 
     public static EscherOptRecord getOptRecord(HSSFShape shape){
-        return shape._optRecord;
+        return shape.getOptRecord();
     }
 
     public static void convertHSSFGroup(HSSFShapeGroup shape, EscherContainerRecord escherParent, Map shapeToObj){

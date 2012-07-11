@@ -304,6 +304,12 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     protected HSSFPatriarch patriarch;
 
     /**
+     * if we want to get the same byte array if we open existing file and serialize it we should save 
+     * note records in right order. This list contains ids of NoteRecords in such order as we read from existing file
+     */
+    private List<Integer> _tailIds = new ArrayList<Integer>();
+
+    /**
      * Maps shape container objects to their {@link TextObjectRecord} or {@link ObjRecord}
      */
     private final Map<EscherRecord, Record> shapeToObj = new HashMap<EscherRecord, Record>();
@@ -313,7 +319,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * list of "tail" records that need to be serialized after all drawing group records
      */
-    private List<Record> tailRec = new ArrayList<Record>();
+     private Map<Integer, NoteRecord> tailRec = new HashMap<Integer, NoteRecord>();
 
     public EscherAggregate() {
         buildBaseTree();
@@ -440,7 +446,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         while (loc < records.size()) {
             if (sid(records, loc) == NoteRecord.sid) {
                 NoteRecord r = (NoteRecord) records.get(loc);
-                agg.tailRec.add(r);
+                agg.tailRec.put(r.getShapeId(), r);
+                agg._tailIds.add(agg._tailIds.size(), r.getShapeId());
             } else {
                 break;
             }
@@ -531,8 +538,18 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         }
 
         // write records that need to be serialized after all drawing group records
-        for (i = 0; i < tailRec.size(); i++) {
-            Record rec = tailRec.get(i);
+        Map<Integer, NoteRecord> tailCopy = new HashMap<Integer, NoteRecord>(tailRec);
+        // at first we should save records in correct order which were already in the file during EscherAggregate.createAggregate()
+        for (Integer id : _tailIds){
+            NoteRecord note = tailCopy.get(id);
+            if (null != note){
+                pos += note.serialize(pos, data);
+                tailCopy.remove(id);
+            }
+        }
+        // Add all other notes which were created after createAggregate()
+        for (i = 0; i < tailCopy.size(); i++) {
+            Record rec = (Record) tailCopy.values().toArray()[i];
             pos += rec.serialize(pos, data);
         }
         int bytesWritten = pos - offset;
@@ -622,7 +639,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             objRecordSize += r.getRecordSize();
         }
         int tailRecordSize = 0;
-        for (Iterator iterator = tailRec.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = tailRec.values().iterator(); iterator.hasNext(); ) {
             Record r = (Record) iterator.next();
             tailRecordSize += r.getRecordSize();
         }
@@ -634,6 +651,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      */
     public Object associateShapeToObjRecord(EscherRecord r, Record objRecord) {
         return shapeToObj.put(r, objRecord);
+    }
+
+    public void removeShapeToObjRecord(EscherRecord rec){
+        shapeToObj.remove(rec);
     }
 
     public HSSFPatriarch getPatriarch() {
@@ -938,7 +959,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
                     if (shapeModel instanceof CommentShape) {
                         CommentShape comment = (CommentShape) shapeModel;
-                        tailRec.add(comment.getNoteRecord());
+                        tailRec.put(comment.getNoteRecord().getShapeId(), comment.getNoteRecord());
                     }
 
                 }
@@ -1058,7 +1079,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         spgr.setRectX2(1023);
         spgr.setRectY2(255);
         sp1.setRecordId(EscherSpRecord.RECORD_ID);
+
         sp1.setOptions((short) 0x0002);
+        sp1.setVersion((short) 0x2);
         sp1.setShapeId(-1);
         sp1.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_PATRIARCH);
         dgContainer.addChildRecord(dg);
@@ -1161,22 +1184,20 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      * @return tails records. We need to access them when building shapes.
      *         Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
      */
-    public List<Record> getTailRecords() {
-        return Collections.unmodifiableList(tailRec);
+    public Map<Integer, NoteRecord> getTailRecords() {
+        return tailRec;
     }
 
     public NoteRecord getNoteRecordByObj(ObjRecord obj) {
-        for (Record rec : tailRec) {
-            NoteRecord note = (NoteRecord) rec;
-            CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) obj.getSubRecords().get(0);
-            if (note.getShapeId() == cod.getObjectId()) {
-                return note;
-            }
-        }
-        return null;
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) obj.getSubRecords().get(0);
+        return tailRec.get(cod.getObjectId());
     }
 
     public void addTailRecord(NoteRecord note){
-        tailRec.add(note);
+        tailRec.put(note.getShapeId(), note);
+    }
+
+    public void removeTailRecord(NoteRecord note){
+        tailRec.remove(note.getShapeId());
     }
 }

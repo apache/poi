@@ -18,11 +18,9 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.EndSubRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.drawing.HSSFShapeType;
+import org.apache.poi.ss.usermodel.RichTextString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,11 +59,18 @@ public class HSSFSimpleShape extends HSSFShape
 
     private static final Map <Short, Short> objTypeToShapeType = new HashMap<Short, Short>();
 
+    private TextObjectRecord _textObjectRecord;
+
     static {
         objTypeToShapeType.put(OBJECT_TYPE_RECTANGLE, HSSFShapeType.RECTANGLE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_PICTURE, HSSFShapeType.PICTURE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_LINE, HSSFShapeType.LINE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_OVAL, HSSFShapeType.OVAL.getType());
+    }
+
+    public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
+        super(spContainer, objRecord);
+        this._textObjectRecord = _textObjectRecord;
     }
 
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
@@ -75,7 +80,18 @@ public class HSSFSimpleShape extends HSSFShape
     public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor)
     {
         super( parent, anchor );
-        setShapeType(OBJECT_TYPE_LINE);
+        _textObjectRecord = createTextObjRecord();
+    }
+
+    public TextObjectRecord getTextObjectRecord() {
+        return _textObjectRecord;
+    }
+
+    protected TextObjectRecord createTextObjRecord(){
+        TextObjectRecord obj = new TextObjectRecord();
+        obj.setTextLocked(true);
+        obj.setTextOrientation(TextObjectRecord.TEXT_ORIENTATION_NONE);
+        return obj;
     }
 
     @Override
@@ -87,10 +103,11 @@ public class HSSFSimpleShape extends HSSFShape
         EscherSpRecord sp = new EscherSpRecord();
         sp.setRecordId( EscherSpRecord.RECORD_ID );
         sp.setFlags( EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE );
+        sp.setVersion((short) 0x2);
 
         EscherClientDataRecord clientData = new EscherClientDataRecord();
         clientData.setRecordId( EscherClientDataRecord.RECORD_ID );
-        clientData.setOptions( (short) 0x0000 );
+        clientData.setOptions( (short) (0x0000) );
 
         EscherOptRecord optRecord = new EscherOptRecord();
         optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
@@ -98,7 +115,7 @@ public class HSSFSimpleShape extends HSSFShape
 //        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
         optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
         optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        optRecord.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 0));
+        optRecord.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
         optRecord.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
 
         optRecord.setEscherProperty( new EscherShapePathProperty( EscherProperties.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX ) );
@@ -128,9 +145,45 @@ public class HSSFSimpleShape extends HSSFShape
     }
 
     @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+    }
+
+    /**
+     * @return the rich text string for this textbox.
+     */
+    public HSSFRichTextString getString() {
+        return _textObjectRecord.getStr();
+    }
+
+    /**
+     * @param string Sets the rich text string used by this object.
+     */
+    public void setString(RichTextString string) {
+        HSSFRichTextString rtr = (HSSFRichTextString) string;
+        // If font is not set we must set the default one
+        if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);
+        EscherTextboxRecord textbox = getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID);
+        if (string.getString()!= null && !string.getString().equals("")){
+            if (null == textbox){
+                EscherTextboxRecord escherTextbox = new EscherTextboxRecord();
+                escherTextbox.setRecordId(EscherTextboxRecord.RECORD_ID);
+                escherTextbox.setOptions((short) 0x0000);
+                getEscherContainer().addChildRecord(escherTextbox);
+                _patriarch._getBoundAggregate().associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
+            }
+        } else {
+            if (null != textbox){
+                getEscherContainer().removeChildRecord(textbox);
+                _patriarch._getBoundAggregate().removeShapeToObjRecord(textbox);
+            }
+        }
+        _textObjectRecord.setStr(rtr);
+    }
+
+    @Override
     void afterInsert(HSSFPatriarch patriarch){
         EscherAggregate agg = patriarch._getBoundAggregate();
-        agg.associateShapeToObjRecord(_escherContainer.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
     }
 
 
@@ -145,7 +198,7 @@ public class HSSFSimpleShape extends HSSFShape
      * @see #OBJECT_TYPE_COMMENT
      */
     public int getShapeType() {
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         return cod.getObjectType();
     }
 
@@ -161,9 +214,9 @@ public class HSSFSimpleShape extends HSSFShape
      * @see #OBJECT_TYPE_COMMENT
      */
     public void setShapeType( int shapeType ){
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectType((short) shapeType);
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         if (null == objTypeToShapeType.get((short)shapeType)){
             System.out.println("Unknown shape type: "+shapeType);
             return;

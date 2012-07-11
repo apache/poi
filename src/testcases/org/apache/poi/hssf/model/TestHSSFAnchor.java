@@ -375,4 +375,38 @@ public class TestHSSFAnchor extends TestCase {
         childAnchor2.setDy2(3);
         assertEquals(childAnchor1, childAnchor2);
     }
+
+    public void testFlipped(){
+        HSSFChildAnchor child = new HSSFChildAnchor(2,2,1,1);
+        assertEquals(child.isHorizontallyFlipped(), true);
+        assertEquals(child.isVerticallyFlipped(), true);
+        assertEquals(child.getDx1(), 1);
+        assertEquals(child.getDx2(), 2);
+        assertEquals(child.getDy1(), 1);
+        assertEquals(child.getDy2(), 2);
+
+        child = new HSSFChildAnchor(3,3,4,4);
+        assertEquals(child.isHorizontallyFlipped(), false);
+        assertEquals(child.isVerticallyFlipped(), false);
+        assertEquals(child.getDx1(), 3);
+        assertEquals(child.getDx2(), 4);
+        assertEquals(child.getDy1(), 3);
+        assertEquals(child.getDy2(), 4);
+
+        HSSFClientAnchor client = new HSSFClientAnchor(1,1,1,1, (short)4,4,(short)3,3);
+        assertEquals(client.isVerticallyFlipped(), true);
+        assertEquals(client.isHorizontallyFlipped(), true);
+        assertEquals(client.getCol1(), 3);
+        assertEquals(client.getCol2(), 4);
+        assertEquals(client.getRow1(), 3);
+        assertEquals(client.getRow2(), 4);
+
+        client = new HSSFClientAnchor(1,1,1,1, (short)5,5,(short)6,6);
+        assertEquals(client.isVerticallyFlipped(), false);
+        assertEquals(client.isHorizontallyFlipped(), false);
+        assertEquals(client.getCol1(), 5);
+        assertEquals(client.getCol2(), 6);
+        assertEquals(client.getRow1(), 5);
+        assertEquals(client.getRow2(), 6);
+    }
 }

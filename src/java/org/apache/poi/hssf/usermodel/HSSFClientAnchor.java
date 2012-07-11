@@ -66,10 +66,17 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         checkRange(row1, 0, 255 * 256, "row1");
         checkRange(row2, 0, 255 * 256, "row2");
 
-        setCol1(col1);
-        setCol2(col2);
-        setRow1(row1);
-        setRow2(row2);
+        setCol1((short) Math.min(col1, col2));
+        setCol2((short) Math.max(col1, col2));
+        setRow1((short) Math.min(row1, row2));
+        setRow2((short) Math.max(row1, row2));
+
+        if (col1 > col2){
+            _isHorizontallyFlipped = true;
+        }
+        if (row1 > row2){
+            _isVerticallyFlipped = true;
+        }
     }
 
     /**
@@ -187,20 +194,14 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * @return true if the anchor goes from right to left.
      */
     public boolean isHorizontallyFlipped() {
-        if (getCol1() == getCol2()) {
-            return getDx1() > getDx2();
-        }
-        return getCol1() > getCol2();
+        return _isHorizontallyFlipped;
     }
 
     /**
      * @return true if the anchor goes from bottom to top.
      */
     public boolean isVerticallyFlipped() {
-        if (getRow1() == getRow2()) {
-            return getDy1() > getDy2();
-        }
-        return getRow1() > getRow2();
+        return _isVerticallyFlipped;
     }
 
     @Override

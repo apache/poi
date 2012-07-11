@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -64,7 +64,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     protected HSSFComment(NoteRecord note, TextObjectRecord txo) {
         this(null, new HSSFClientAnchor());
-        _textObjectRecord = txo;
         _note = note;
     }
 
@@ -72,6 +71,17 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     void afterInsert(HSSFPatriarch patriarch) {
         super.afterInsert(patriarch);
         _patriarch._getBoundAggregate().addTailRecord(getNoteRecord());
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        EscherContainerRecord spContainer = super.createSpContainer();
+        EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        removeEscherProperty(opt, EscherProperties.TEXT__TEXTLEFT);
+        removeEscherProperty(opt, EscherProperties.TEXT__TEXTRIGHT);
+        removeEscherProperty(opt, EscherProperties.TEXT__TEXTTOP);
+        removeEscherProperty(opt, EscherProperties.TEXT__TEXTBOTTOM);
+        return spContainer;
     }
 
     @Override
@@ -94,7 +104,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     private NoteRecord createNoteRecord(){
         NoteRecord note = new NoteRecord();
-        note.setFlags(NoteRecord.NOTE_VISIBLE);
+        note.setFlags(NoteRecord.NOTE_HIDDEN);
         note.setAuthor("");
         return note;
     }
@@ -102,7 +112,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     @Override
     void setShapeId(int shapeId) {
         super.setShapeId(shapeId);
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectId((short) (shapeId));
         _note.setShapeId(shapeId);
     }
@@ -188,30 +198,20 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     /**
-     * Sets the rich text string used by this comment.
-     *
-     * @param string Sets the rich text string used by this object.
-     */
-    public void setString(RichTextString string) {
-        HSSFRichTextString hstring = (HSSFRichTextString) string;
-        //if font is not set we must set the default one
-        if (hstring.numFormattingRuns() == 0) hstring.applyFont((short) 0);
-
-        _textObjectRecord.setStr(hstring);
-        super.setString(string);
-    }
-
-    /**
      * Returns the underlying Note record
      */
     protected NoteRecord getNoteRecord() {
         return _note;
     }
 
-    /**
-     * Returns the underlying Text record
-     */
-    public TextObjectRecord getTextObjectRecord() {
-        return _textObjectRecord;
+    @Override
+    public void setShapeType(int shapeType) {
+        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+    }
+
+    public void afterRemove(HSSFPatriarch patriarch){
+        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
+        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        patriarch._getBoundAggregate().removeTailRecord(getNoteRecord());
     }
 }

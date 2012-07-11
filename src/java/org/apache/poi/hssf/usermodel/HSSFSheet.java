@@ -1358,15 +1358,17 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             //  exist for cells which are null
             if(moveComments) {
                 // This code would get simpler if NoteRecords could be organised by HSSFRow.
-                for(int i=noteRecs.length-1; i>=0; i--) {
-                    NoteRecord nr = noteRecs[i];
-                    if (nr.getRow() != rowNum) {
+                HSSFPatriarch patriarch = createDrawingPatriarch();
+                for(int i=patriarch.getChildren().size()-1; i>=0; i--){
+                    HSSFShape shape = patriarch.getChildren().get(i);
+                    if (!(shape instanceof HSSFComment)){
                         continue;
                     }
-                    HSSFComment comment = getCellComment(rowNum, nr.getColumn());
-                    if (comment != null) {
-                       comment.setRow(rowNum + n);
+                    HSSFComment comment = (HSSFComment) shape;
+                    if (comment.getRow() != rowNum){
+                        continue;
                     }
+                    comment.setRow(rowNum + n);
                 }
             }
         }
@@ -1875,20 +1877,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @return cell comment or <code>null</code> if not found
      */
      public HSSFComment getCellComment(int row, int column) {
-        // Don't call findCellComment directly, otherwise
-        //  two calls to this method will result in two
-        //  new HSSFComment instances, which is bad
-        HSSFRow r = getRow(row);
-        if(r != null) {
-            HSSFCell c = r.getCell(column);
-            if(c != null) {
-                return c.getCellComment();
-            }
-            // No cell, so you will get new
-            //  objects every time, sorry...
-            return HSSFCell.findCellComment(_sheet, row, column);
-        }
-        return null;
+        return findCellComment(row, column);
     }
 
     public HSSFSheetConditionalFormatting getSheetConditionalFormatting() {
@@ -2009,7 +1998,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     protected HSSFComment findCellComment(int row, int column) {
-        return lookForComment(getDrawingPatriarch(), row, column);
+        HSSFPatriarch patriarch = getDrawingPatriarch();
+        if (null == patriarch){
+            patriarch = createDrawingPatriarch();
+        }
+        return lookForComment(patriarch, row, column);
     }
 
     private HSSFComment lookForComment(HSSFShapeContainer container, int row, int column){

@@ -44,6 +44,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 //    private int _y2 = 255;
 
     private final EscherSpgrRecord _spgrRecord;
+    private final EscherContainerRecord _mainSpgrContainer;
 
     /**
      * The EscherAggregate we have been bound to.
@@ -61,10 +62,21 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate){
         _sheet = sheet;
 		_boundAggregate = boundAggregate;
+        _mainSpgrContainer = _boundAggregate.getEscherContainer().getChildContainers().get(0);
         EscherContainerRecord spContainer = (EscherContainerRecord) _boundAggregate.getEscherContainer()
                 .getChildContainers().get(0).getChild(0);
         _spgrRecord = spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
         buildShapeTree();
+    }
+
+    /**
+     * remove first level shapes
+     * @param shape to be removed
+     */
+    public void removeShape(HSSFShape shape){
+        _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
+        shape.afterRemove(this);
+        _shapes.remove(shape);
     }
 
     public void afterCreate(){
@@ -106,6 +118,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         addShape(shape);
         //open existing file
         onCreate(shape);
+        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (shape.anchor.isHorizontallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
+        }
+        if (shape.anchor.isVerticallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
+        }
         return shape;
     }
 
@@ -125,8 +144,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         //open existing file
         onCreate(shape);
 
-        EscherBSERecord bse = _sheet.getWorkbook().getWorkbook().getBSERecord(pictureIndex);
-        bse.setRef(bse.getRef() + 1);
+        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (shape.anchor.isHorizontallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
+        }
+        if (shape.anchor.isVerticallyFlipped()){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
+        }
         return shape;
     }
 
@@ -368,11 +392,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         for(int i = 0; i < spgrChildren.size(); i++){
             EscherContainerRecord spContainer = spgrChildren.get(i);
             if (i == 0){
-                EscherSpgrRecord spgr = (EscherSpgrRecord)spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
-                setCoordinates(
-                        spgr.getRectX1(), spgr.getRectY1(),
-                        spgr.getRectX2(), spgr.getRectY2()
-                );
+                continue;
             } else {
                 HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this);
             }

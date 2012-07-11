@@ -106,8 +106,12 @@ public class HSSFPolygon  extends HSSFShape {
         return obj;
     }
 
+    @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+    }
+
     public int[] getXPoints() {
-        EscherArrayProperty verticesProp = _optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp = getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
         if (null == verticesProp){
             return new int[]{};
         }
@@ -121,7 +125,7 @@ public class HSSFPolygon  extends HSSFShape {
     }
 
     public int[] getYPoints() {
-        EscherArrayProperty verticesProp = _optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp = getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
         if (null == verticesProp){
             return new int[]{};
         }
@@ -188,18 +192,18 @@ public class HSSFPolygon  extends HSSFShape {
     }
 
     public int getDrawAreaWidth() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.GEOMETRY__RIGHT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__RIGHT);
         return property == null ? 100: property.getPropertyValue();
     }
 
     public int getDrawAreaHeight() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.GEOMETRY__BOTTOM);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__BOTTOM);
         return property == null ? 100: property.getPropertyValue();
     }
 
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch._getBoundAggregate();
-        agg.associateShapeToObjRecord(_escherContainer.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
     }
 }
