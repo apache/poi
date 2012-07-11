@@ -93,11 +93,11 @@ public class HSSFTestHelper {
             method.setAccessible(true);
             method.invoke(new EscherAggregate(new MockDrawingManager()), shape, escherParent, shapeToObj);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (InvocationTargetException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 
@@ -110,9 +110,13 @@ public class HSSFTestHelper {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (InvocationTargetException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
+    }
+
+    public static void setShapeId(HSSFShape shape, int id){
+        shape.setShapeId(id);
     }
 }

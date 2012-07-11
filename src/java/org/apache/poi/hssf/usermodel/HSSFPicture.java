@@ -65,7 +65,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     public HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
-        setShapeType(OBJECT_TYPE_PICTURE);
+        super.setShapeType(OBJECT_TYPE_PICTURE);
     }
 
     public int getPictureIndex()
@@ -279,5 +279,10 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         } catch (UnsupportedEncodingException e) {
             System.out.println("Unsupported encoding: UTF-16LE");
         }
+    }
+
+    @Override
+    public void setShapeType(int shapeType) {
+        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
     }
 }

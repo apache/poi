@@ -122,6 +122,9 @@ public class HSSFShapeFactory {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_LINE:
                     shape = new HSSFSimpleShape(container, objRecord);
                     break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_COMBO_BOX:
+                    shape = new HSSFCombobox(container, objRecord);
+                    break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING:
                     EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
                     EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
@@ -143,19 +146,6 @@ public class HSSFShapeFactory {
             if (null != shape){
                 out.addShape(shape);
             }
-//            if (null != objRecord){
-//                HSSFShape shape = shapeCreator.createNewShape(spRecord.getShapeType(), container, objRecord);
-//                out.addShape(shape);
-//            }
-//            if (null != txtRecord){
-//                //TODO resolve textbox
-////                TextboxShape shape = new TextboxShape(container, txtRecord);
-////                out.a
-//            }
-////
-////            //TODO decide what shape to create based on ObjRecord / EscherSpRecord
-////            HSSFShape shape = new HSSFUnknownShape(container, objRecord);
-////            out.addShape(shape);
         }
     }
 }

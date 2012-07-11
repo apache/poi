@@ -54,11 +54,10 @@ public class TestHSSFAnchor extends TestCase {
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
 
         HSSFSimpleShape rectangle = (HSSFSimpleShape) drawing.getChildren().get(0);
-        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
         assertEquals(rectangle.getEscherContainer().getChild(0).getRecordId(), EscherSpRecord.RECORD_ID);
         assertEquals(rectangle.getEscherContainer().getChild(1).getRecordId(), EscherOptRecord.RECORD_ID);
-        assertEquals("  " + HexDump.toHex(rectangle.getEscherContainer().getChild(2).getRecordId()) + "    ", rectangle.getEscherContainer().getChild(2).getRecordId(), EscherClientAnchorRecord.RECORD_ID);
+        assertEquals(rectangle.getEscherContainer().getChild(2).getRecordId(), EscherClientAnchorRecord.RECORD_ID);
         assertEquals(rectangle.getEscherContainer().getChild(3).getRecordId(), EscherClientDataRecord.RECORD_ID);
 
         rectangle.setAnchor(new HSSFClientAnchor());
