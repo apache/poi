@@ -198,7 +198,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(1, drawing.getChildren().size());
         HSSFPicture picture = (HSSFPicture) drawing.getChildren().get(0);
 
-        assertEquals(picture.getPictureIndex(), 1);
+        assertEquals(picture.getPictureIndex(), 2);
         assertEquals(picture.getLineStyleColor(), HSSFShape.LINESTYLE__COLOR_DEFAULT);
         assertEquals(picture.getFillColor(), 0x5DC943);
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
