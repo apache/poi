@@ -21,6 +21,7 @@ package org.apache.poi.hssf.usermodel;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.SubRecord;
@@ -31,29 +32,19 @@ import org.apache.poi.util.HexDump;
 /**
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
  *
+ * Right now, 13, july, 2012 can not be created from scratch
+ *
  * @author Daniel Noll
  */
-public final class HSSFObjectData {
-    /**
-     * Underlying object record ultimately containing a reference to the object.
-     */
-    private final ObjRecord _record;
-
+public final class HSSFObjectData extends HSSFShape{
     /**
      * Reference to the filesystem root, required for retrieving the object data.
      */
     private final DirectoryEntry _root;
 
-    /**
-     * Constructs object data by wrapping a lower level object record.
-     *
-     * @param record the low-level object record.
-     * @param root the root of the filesystem, required for retrieving the object data.
-     */
-    public HSSFObjectData(ObjRecord record, DirectoryEntry root)
-    {
-        _record = record;
-        _root = root;
+    public HSSFObjectData(EscherContainerRecord spContainer, ObjRecord objRecord, DirectoryEntry _root) {
+        super(spContainer, objRecord);
+        this._root = _root;
     }
 
     /**
@@ -110,7 +101,7 @@ public final class HSSFObjectData {
      *  Exception if there wasn't one
      */
     protected EmbeddedObjectRefSubRecord findObjectRecord() {
-        Iterator<SubRecord> subRecordIter = _record.getSubRecords().iterator();
+        Iterator<SubRecord> subRecordIter = getObjRecord().getSubRecords().iterator();
 
         while (subRecordIter.hasNext()) {
             Object subRecord = subRecordIter.next();
@@ -120,5 +111,25 @@ public final class HSSFObjectData {
         }
 
         throw new IllegalStateException("Object data does not contain a reference to an embedded object OLE2 directory");
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+    }
+
+    @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
     }
 }

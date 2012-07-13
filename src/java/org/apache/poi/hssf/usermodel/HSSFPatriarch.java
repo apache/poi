@@ -387,7 +387,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
             if (i == 0){
                 continue;
             } else {
-                HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this);
+                HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this, _sheet.getWorkbook().getRootDirectory());
             }
         }
     }
