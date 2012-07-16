@@ -278,6 +278,9 @@ public class SheetDataWriter {
                     // the same rule applies to unicode surrogates and "not a character" symbols.
                     if( c < ' ' || Character.isLowSurrogate(c) || Character.isHighSurrogate(c) ||
                             ('\uFFFE' <= c && c <= '\uFFFF')) {
+                        if (counter > last) {
+                            _out.write(chars, last, counter - last);
+                        }
                         _out.write('?');
                         last = counter + 1;
                     }
