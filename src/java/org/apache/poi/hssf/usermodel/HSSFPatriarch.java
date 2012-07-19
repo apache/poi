@@ -88,10 +88,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      *
      * @param shape to be removed
      */
-    public void removeShape(HSSFShape shape) {
-        _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
-        shape.afterRemove(this);
-        _shapes.remove(shape);
+    public boolean removeShape(HSSFShape shape) {
+        boolean  isRemoved = _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
+        if (isRemoved){
+            shape.afterRemove(this);
+            _shapes.remove(shape);
+        }
+        return isRemoved;
     }
 
     void afterCreate() {
