@@ -114,6 +114,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
 
     @Override
     protected void afterRemove(HSSFPatriarch patriarch) {
+        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
     }
 
     public int[] getXPoints() {

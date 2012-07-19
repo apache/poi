@@ -71,14 +71,15 @@ public class HSSFTextbox extends HSSFSimpleShape {
         ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType(HSSFTextbox.OBJECT_TYPE_TEXT);
-        c.setLocked( true );
-        c.setPrintable( true );
-        c.setAutofill( true );
-        c.setAutoline( true );
+        c.setLocked(true);
+        c.setPrintable(true);
+        c.setAutofill(true);
+        c.setAutoline(true);
         EndSubRecord e = new EndSubRecord();
-        obj.addSubRecord( c );
-        obj.addSubRecord( e );
-        return obj;    }
+        obj.addSubRecord(c);
+        obj.addSubRecord(e);
+        return obj;
+    }
 
     @Override
     protected EscherContainerRecord createSpContainer() {
@@ -106,12 +107,12 @@ public class HSSFTextbox extends HSSFSimpleShape {
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTBOTTOM, 0));
 
         opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        opt.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
         opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
         opt.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
         opt.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
         opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
-        opt.setEscherProperty(new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x080000));
+        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.GROUPSHAPE__PRINT, 0x080000));
 
         EscherRecord anchor = getAnchor().getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
@@ -137,7 +138,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
     }
 
     @Override
-    void afterInsert(HSSFPatriarch patriarch){
+    void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
@@ -148,7 +149,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      */
     public int getMarginLeft() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTLEFT);
-        return property == null ? 0: property.getPropertyValue();
+        return property == null ? 0 : property.getPropertyValue();
     }
 
     /**
@@ -163,7 +164,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      */
     public int getMarginRight() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTRIGHT);
-        return property == null ? 0: property.getPropertyValue();
+        return property == null ? 0 : property.getPropertyValue();
     }
 
     /**
@@ -178,7 +179,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      */
     public int getMarginTop() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTTOP);
-        return property == null ? 0: property.getPropertyValue();
+        return property == null ? 0 : property.getPropertyValue();
     }
 
     /**
@@ -193,7 +194,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      */
     public int getMarginBottom() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTBOTTOM);
-        return property == null ? 0: property.getPropertyValue();
+        return property == null ? 0 : property.getPropertyValue();
     }
 
     /**
@@ -233,16 +234,22 @@ public class HSSFTextbox extends HSSFSimpleShape {
 
     @Override
     public void setShapeType(int shapeType) {
-        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+        throw new IllegalStateException("Shape type can not be changed in " + this.getClass().getSimpleName());
     }
 
     @Override
     public HSSFShape cloneShape() {
         TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
         EscherContainerRecord spContainer = new EscherContainerRecord();
-        byte [] inSp = getEscherContainer().serialize();
+        byte[] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         return new HSSFTextbox(spContainer, obj, txo);
+    }
+
+    @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
+        patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
     }
 }
