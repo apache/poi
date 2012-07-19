@@ -302,4 +302,6 @@ public abstract class HSSFShape {
     public int countOfAllChildren() {
         return 1;
     }
+
+    public abstract HSSFShape cloneShape();
 }

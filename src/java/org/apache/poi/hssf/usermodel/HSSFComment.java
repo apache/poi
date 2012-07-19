@@ -70,7 +70,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
         super.afterInsert(patriarch);
-        _patriarch._getBoundAggregate().addTailRecord(getNoteRecord());
+        patriarch._getBoundAggregate().addTailRecord(getNoteRecord());
     }
 
     @Override
@@ -113,8 +113,8 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     void setShapeId(int shapeId) {
         super.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId));
-        _note.setShapeId(shapeId);
+        cod.setObjectId((short) (shapeId % 1024));
+        _note.setShapeId(shapeId % 1024);
     }
 
     /**
@@ -213,5 +213,16 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
         patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
         patriarch._getBoundAggregate().removeTailRecord(getNoteRecord());
+    }
+
+    @Override
+    public HSSFShape cloneShape() {
+        TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        NoteRecord note = (NoteRecord) getNoteRecord().cloneViaReserialise();
+        return new HSSFComment(spContainer, obj, txo, note);
     }
 }

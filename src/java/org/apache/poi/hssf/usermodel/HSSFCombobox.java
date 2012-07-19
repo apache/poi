@@ -19,6 +19,11 @@ public class HSSFCombobox extends HSSFSimpleShape {
     }
 
     @Override
+    protected TextObjectRecord createTextObjRecord() {
+        return null;
+    }
+
+    @Override
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = new EscherContainerRecord();
         EscherSpRecord sp = new EscherSpRecord();

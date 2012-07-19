@@ -38,10 +38,6 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  */
 public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     private final List<HSSFShape> _shapes = new ArrayList<HSSFShape>();
-//    private int _x1 = 0;
-//    private int _y1  = 0 ;
-//    private int _x2 = 1023;
-//    private int _y2 = 255;
 
     private final EscherSpgrRecord _spgrRecord;
     private final EscherContainerRecord _mainSpgrContainer;
@@ -49,19 +45,19 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * The EscherAggregate we have been bound to.
      * (This will handle writing us out into records,
-     *  and building up our shapes from the records)
+     * and building up our shapes from the records)
      */
     private EscherAggregate _boundAggregate;
-	final HSSFSheet _sheet; // TODO make private
+    final HSSFSheet _sheet; // TODO make private
 
     /**
      * Creates the patriarch.
      *
      * @param sheet the sheet this patriarch is stored in.
      */
-    HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate){
+    HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate) {
         _sheet = sheet;
-		_boundAggregate = boundAggregate;
+        _boundAggregate = boundAggregate;
         _mainSpgrContainer = _boundAggregate.getEscherContainer().getChildContainers().get(0);
         EscherContainerRecord spContainer = (EscherContainerRecord) _boundAggregate.getEscherContainer()
                 .getChildContainers().get(0).getChild(0);
@@ -69,17 +65,36 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         buildShapeTree();
     }
 
+    static HSSFPatriarch createPatriarch(HSSFPatriarch patriarch, HSSFSheet sheet){
+        HSSFPatriarch newPatriarch = new HSSFPatriarch(sheet, new EscherAggregate());
+        newPatriarch.afterCreate();
+
+        for (HSSFShape shape: patriarch.getChildren()){
+            HSSFShape newShape;
+            if (shape instanceof HSSFShapeGroup){
+                newShape = ((HSSFShapeGroup)shape).cloneShape(newPatriarch);
+            } else {
+                newShape = shape.cloneShape();
+            }
+            newPatriarch.onCreate(newShape);
+            newPatriarch.addShape(newShape);
+        }
+
+        return newPatriarch;
+    }
+
     /**
      * remove first level shapes
+     *
      * @param shape to be removed
      */
-    public void removeShape(HSSFShape shape){
+    public void removeShape(HSSFShape shape) {
         _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
         shape.afterRemove(this);
         _shapes.remove(shape);
     }
 
-    public void afterCreate(){
+    void afterCreate() {
         DrawingManager2 drawingManager = _sheet.getWorkbook().getWorkbook().getDrawingManager();
         short dgId = drawingManager.findNewDrawingGroupId();
         _boundAggregate.setDgId(dgId);
@@ -90,12 +105,11 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * Creates a new group record stored under this patriarch.
      *
-     * @param anchor    the client anchor describes how this group is attached
-     *                  to the sheet.
-     * @return  the newly created group.
+     * @param anchor the client anchor describes how this group is attached
+     *               to the sheet.
+     * @return the newly created group.
      */
-    public HSSFShapeGroup createGroup(HSSFClientAnchor anchor)
-    {
+    public HSSFShapeGroup createGroup(HSSFClientAnchor anchor) {
         HSSFShapeGroup group = new HSSFShapeGroup(null, anchor);
         addShape(group);
         onCreate(group);
@@ -106,21 +120,20 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * Creates a simple shape.  This includes such shapes as lines, rectangles,
      * and ovals.
      *
-     * @param anchor    the client anchor describes how this group is attached
-     *                  to the sheet.
-     * @return  the newly created shape.
+     * @param anchor the client anchor describes how this group is attached
+     *               to the sheet.
+     * @return the newly created shape.
      */
-    public HSSFSimpleShape createSimpleShape(HSSFClientAnchor anchor)
-    {
+    public HSSFSimpleShape createSimpleShape(HSSFClientAnchor anchor) {
         HSSFSimpleShape shape = new HSSFSimpleShape(null, anchor);
         addShape(shape);
         //open existing file
         onCreate(shape);
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()){
+        if (shape.anchor.isHorizontallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.anchor.isVerticallyFlipped()){
+        if (shape.anchor.isVerticallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
         return shape;
@@ -129,42 +142,39 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * Creates a picture.
      *
-     * @param anchor    the client anchor describes how this group is attached
-     *                  to the sheet.
-     * @return  the newly created shape.
+     * @param anchor the client anchor describes how this group is attached
+     *               to the sheet.
+     * @return the newly created shape.
      */
-    public HSSFPicture createPicture(HSSFClientAnchor anchor, int pictureIndex)
-    {
+    public HSSFPicture createPicture(HSSFClientAnchor anchor, int pictureIndex) {
         HSSFPicture shape = new HSSFPicture(null, anchor);
-        shape.setPictureIndex( pictureIndex );
+        shape.setPictureIndex(pictureIndex);
         addShape(shape);
         //open existing file
         onCreate(shape);
 
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()){
+        if (shape.anchor.isHorizontallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.anchor.isVerticallyFlipped()){
+        if (shape.anchor.isVerticallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
         return shape;
     }
 
-    public HSSFPicture createPicture(ClientAnchor anchor, int pictureIndex)
-    {
-        return createPicture((HSSFClientAnchor)anchor, pictureIndex);
+    public HSSFPicture createPicture(ClientAnchor anchor, int pictureIndex) {
+        return createPicture((HSSFClientAnchor) anchor, pictureIndex);
     }
 
     /**
      * Creates a polygon
      *
-     * @param anchor    the client anchor describes how this group is attached
-     *                  to the sheet.
-     * @return  the newly created shape.
+     * @param anchor the client anchor describes how this group is attached
+     *               to the sheet.
+     * @return the newly created shape.
      */
-    public HSSFPolygon createPolygon(HSSFClientAnchor anchor)
-    {
+    public HSSFPolygon createPolygon(HSSFClientAnchor anchor) {
         HSSFPolygon shape = new HSSFPolygon(null, anchor);
         addShape(shape);
         onCreate(shape);
@@ -174,12 +184,11 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * Constructs a textbox under the patriarch.
      *
-     * @param anchor    the client anchor describes how this group is attached
-     *                  to the sheet.
-     * @return      the newly created textbox.
+     * @param anchor the client anchor describes how this group is attached
+     *               to the sheet.
+     * @return the newly created textbox.
      */
-    public HSSFTextbox createTextbox(HSSFClientAnchor anchor)
-    {
+    public HSSFTextbox createTextbox(HSSFClientAnchor anchor) {
         HSSFTextbox shape = new HSSFTextbox(null, anchor);
         addShape(shape);
         onCreate(shape);
@@ -189,12 +198,11 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * Constructs a cell comment.
      *
-     * @param anchor    the client anchor describes how this comment is attached
-     *                  to the sheet.
-     * @return      the newly created comment.
+     * @param anchor the client anchor describes how this comment is attached
+     *               to the sheet.
+     * @return the newly created comment.
      */
-   public HSSFComment createComment(HSSFAnchor anchor)
-    {
+    public HSSFComment createComment(HSSFAnchor anchor) {
         HSSFComment shape = new HSSFComment(null, anchor);
         addShape(shape);
         onCreate(shape);
@@ -206,23 +214,21 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      *
      * @see org.apache.poi.hssf.usermodel.HSSFSheet#setAutoFilter(org.apache.poi.ss.util.CellRangeAddress)
      */
-     HSSFSimpleShape createComboBox(HSSFAnchor anchor)
-     {
-         HSSFCombobox shape = new HSSFCombobox(null, anchor);
-         addShape(shape);
-         onCreate(shape);
-         return shape;
-     }
+    HSSFSimpleShape createComboBox(HSSFAnchor anchor) {
+        HSSFCombobox shape = new HSSFCombobox(null, anchor);
+        addShape(shape);
+        onCreate(shape);
+        return shape;
+    }
 
     public HSSFComment createCellComment(ClientAnchor anchor) {
-        return createComment((HSSFAnchor)anchor);
+        return createComment((HSSFAnchor) anchor);
     }
 
     /**
      * Returns a list of all shapes contained by the patriarch.
      */
-    public List<HSSFShape> getChildren()
-    {
+    public List<HSSFShape> getChildren() {
         return _shapes;
     }
 
@@ -230,23 +236,21 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * add a shape to this drawing
      */
     @Internal
-    public void addShape(HSSFShape shape){
+    public void addShape(HSSFShape shape) {
         shape._patriarch = this;
         _shapes.add(shape);
     }
 
-    private void onCreate(HSSFShape shape){
-        if(_boundAggregate.getPatriarch() == null){
-            EscherContainerRecord spgrContainer =
-                    _boundAggregate.getEscherContainer().getChildContainers().get(0);
+    private void onCreate(HSSFShape shape) {
+        EscherContainerRecord spgrContainer =
+                _boundAggregate.getEscherContainer().getChildContainers().get(0);
 
-            EscherContainerRecord spContainer = shape.getEscherContainer();
-            int shapeId = newShapeId();
-            shape.setShapeId(shapeId);
+        EscherContainerRecord spContainer = shape.getEscherContainer();
+        int shapeId = newShapeId();
+        shape.setShapeId(shapeId);
 
-            spgrContainer.addChildRecord(spContainer);
-            shape.afterInsert(this);
-        }
+        spgrContainer.addChildRecord(spContainer);
+        shape.afterInsert(this);
     }
 
     /**
@@ -254,17 +258,18 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
     public int countOfAllChildren() {
         int count = _shapes.size();
-        for (Iterator<HSSFShape> iterator = _shapes.iterator(); iterator.hasNext();) {
+        for (Iterator<HSSFShape> iterator = _shapes.iterator(); iterator.hasNext(); ) {
             HSSFShape shape = iterator.next();
             count += shape.countOfAllChildren();
         }
         return count;
     }
+
     /**
      * Sets the coordinate space of this group.  All children are constrained
      * to these coordinates.
      */
-    public void setCoordinates(int x1, int y1, int x2, int y2){
+    public void setCoordinates(int x1, int y1, int x2, int y2) {
         _spgrRecord.setRectY1(y1);
         _spgrRecord.setRectY2(y2);
         _spgrRecord.setRectX1(x1);
@@ -282,28 +287,28 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * Does this HSSFPatriarch contain a chart?
      * (Technically a reference to a chart, since they
-     *  get stored in a different block of records)
+     * get stored in a different block of records)
      * FIXME - detect chart in all cases (only seems
-     *  to work on some charts so far)
+     * to work on some charts so far)
      */
     public boolean containsChart() {
         // TODO - support charts properly in usermodel
 
         // We're looking for a EscherOptRecord
         EscherOptRecord optRecord = (EscherOptRecord)
-            _boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
-        if(optRecord == null) {
+                _boundAggregate.findFirstWithId(EscherOptRecord.RECORD_ID);
+        if (optRecord == null) {
             // No opt record, can't have chart
             return false;
         }
 
-        for(Iterator<EscherProperty> it = optRecord.getEscherProperties().iterator(); it.hasNext();) {
+        for (Iterator<EscherProperty> it = optRecord.getEscherProperties().iterator(); it.hasNext(); ) {
             EscherProperty prop = it.next();
-            if(prop.getPropertyNumber() == 896 && prop.isComplex()) {
-                EscherComplexProperty cp = (EscherComplexProperty)prop;
+            if (prop.getPropertyNumber() == 896 && prop.isComplex()) {
+                EscherComplexProperty cp = (EscherComplexProperty) prop;
                 String str = StringUtil.getFromUnicodeLE(cp.getComplexData());
 
-                if(str.equals("Chart 1\0")) {
+                if (str.equals("Chart 1\0")) {
                     return true;
                 }
             }
@@ -315,32 +320,28 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * The top left x coordinate of this group.
      */
-    public int getX1()
-    {
+    public int getX1() {
         return _spgrRecord.getRectX1();
     }
 
     /**
      * The top left y coordinate of this group.
      */
-    public int getY1()
-    {
+    public int getY1() {
         return _spgrRecord.getRectY1();
     }
 
     /**
      * The bottom right x coordinate of this group.
      */
-    public int getX2()
-    {
+    public int getX2() {
         return _spgrRecord.getRectX2();
     }
 
     /**
      * The bottom right y coordinate of this group.
      */
-    public int getY2()
-    {
+    public int getY2() {
         return _spgrRecord.getRectY2();
     }
 
@@ -365,26 +366,26 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * @param row2 the row (0 based) of the second cell.
      * @return the newly created client anchor
      */
-    public HSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2, int col1, int row1, int col2, int row2){
-        return new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short)col1, row1, (short)col2, row2);
+    public HSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2, int col1, int row1, int col2, int row2) {
+        return new HSSFClientAnchor(dx1, dy1, dx2, dy2, (short) col1, row1, (short) col2, row2);
     }
 
-	public Chart createChart(ClientAnchor anchor) {
-		throw new RuntimeException("NotImplemented");
-	}
+    public Chart createChart(ClientAnchor anchor) {
+        throw new RuntimeException("NotImplemented");
+    }
 
 
-    void buildShapeTree(){
+    void buildShapeTree() {
         EscherContainerRecord dgContainer = _boundAggregate.getEscherContainer();
-        if (dgContainer == null){
+        if (dgContainer == null) {
             return;
         }
         EscherContainerRecord spgrConrainer = dgContainer.getChildContainers().get(0);
         List<EscherContainerRecord> spgrChildren = spgrConrainer.getChildContainers();
 
-        for(int i = 0; i < spgrChildren.size(); i++){
+        for (int i = 0; i < spgrChildren.size(); i++) {
             EscherContainerRecord spContainer = spgrChildren.get(i);
-            if (i == 0){
+            if (i == 0) {
                 continue;
             } else {
                 HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this, _sheet.getWorkbook().getRootDirectory());

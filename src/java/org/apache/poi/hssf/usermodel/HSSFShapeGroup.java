@@ -127,13 +127,18 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     private void onCreate(HSSFShape shape){
-        if(_patriarch != null && _patriarch._getBoundAggregate().getPatriarch() == null){
+        if(_patriarch != null){
             EscherContainerRecord spContainer = shape.getEscherContainer();
             int shapeId = _patriarch.newShapeId();
             shape.setShapeId(shapeId);
             getEscherContainer().addChildRecord(spContainer);
             shape.afterInsert(_patriarch);
-            EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+            EscherSpRecord sp;
+            if (shape instanceof HSSFShapeGroup){
+                sp = shape.getEscherContainer().getChildContainers().get(0).getChildById(EscherSpRecord.RECORD_ID);
+            } else {
+                sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+            }
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_CHILD);
         }
     }
@@ -312,12 +317,47 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         EscherSpRecord spRecord = containerRecord.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId));
+        cod.setObjectId((short) (shapeId % 1024));
     }
 
     @Override
     int getShapeId(){
         EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         return ((EscherSpRecord)containerRecord.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
+    }
+
+    @Override
+    public HSSFShape cloneShape() {
+        throw new IllegalStateException("Use method cloneShape(HSSFPatriarch patriarch)");
+    }
+
+    public HSSFShape cloneShape(HSSFPatriarch patriarch) {
+        EscherContainerRecord spgrContainer = new EscherContainerRecord();
+        spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
+        spgrContainer.setOptions((short) 0x000F);
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER).serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+
+        spgrContainer.addChildRecord(spContainer);
+        ObjRecord obj = null;
+        if (null != getObjRecord()){
+            obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        }
+
+        HSSFShapeGroup group = new HSSFShapeGroup(spgrContainer, obj);
+        group._patriarch = patriarch;
+
+        for (HSSFShape shape: getChildren()){
+            HSSFShape newShape;
+            if (shape instanceof HSSFShapeGroup){
+                newShape = ((HSSFShapeGroup)shape).cloneShape(patriarch);
+            } else {
+                newShape = shape.cloneShape();
+            }
+            group.addShape(newShape);
+            group.onCreate(newShape);
+        }
+        return group;
     }
 }

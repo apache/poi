@@ -18,18 +18,19 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.EndSubRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * @author Glen Stampoultzis  (glens at superlinksoftware.com)
  */
-public class HSSFPolygon  extends HSSFShape {
+public class HSSFPolygon  extends HSSFSimpleShape {
 
     public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
+
+    public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
+        super(spContainer, objRecord, _textObjectRecord);
+    }
 
     public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord) {
         super(spContainer, objRecord);
@@ -37,6 +38,11 @@ public class HSSFPolygon  extends HSSFShape {
 
     HSSFPolygon(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
+    }
+
+    @Override
+    protected TextObjectRecord createTextObjRecord() {
+        return null;
     }
 
     /**
@@ -199,11 +205,5 @@ public class HSSFPolygon  extends HSSFShape {
     public int getDrawAreaHeight() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__BOTTOM);
         return property == null ? 100: property.getPropertyValue();
-    }
-
-    @Override
-    void afterInsert(HSSFPatriarch patriarch) {
-        EscherAggregate agg = patriarch._getBoundAggregate();
-        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
     }
 }

@@ -48,4 +48,9 @@ public class HSSFUnknownShape extends HSSFShape {
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
     }
+
+    @Override
+    public HSSFShape cloneShape() {
+        return null;
+    }
 }
