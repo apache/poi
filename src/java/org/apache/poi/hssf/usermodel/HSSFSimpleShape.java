@@ -68,14 +68,13 @@ public class HSSFSimpleShape extends HSSFShape
         objTypeToShapeType.put(OBJECT_TYPE_OVAL, HSSFShapeType.OVAL.getType());
     }
 
-    public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
+    public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord) {
         super(spContainer, objRecord);
-        this._textObjectRecord = _textObjectRecord == null ? createTextObjRecord() : _textObjectRecord;
+        this._textObjectRecord = textObjectRecord;
     }
 
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
         super(spContainer, objRecord);
-        this._textObjectRecord = createTextObjRecord();
     }
 
     public HSSFSimpleShape( HSSFShape parent, HSSFAnchor anchor)
@@ -92,6 +91,7 @@ public class HSSFSimpleShape extends HSSFShape
         TextObjectRecord obj = new TextObjectRecord();
         obj.setTextLocked(true);
         obj.setTextOrientation(TextObjectRecord.TEXT_ORIENTATION_NONE);
+        obj.setStr(new HSSFRichTextString(""));
         return obj;
     }
 
@@ -123,10 +123,15 @@ public class HSSFSimpleShape extends HSSFShape
         optRecord.setEscherProperty(new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x080000));
         optRecord.setRecordId( EscherOptRecord.RECORD_ID );
 
+        EscherTextboxRecord escherTextbox = new EscherTextboxRecord();
+        escherTextbox.setRecordId(EscherTextboxRecord.RECORD_ID);
+        escherTextbox.setOptions((short) 0x0000);
+
         spContainer.addChildRecord(sp);
         spContainer.addChildRecord(optRecord);
         spContainer.addChildRecord(anchor.getEscherAnchor());
         spContainer.addChildRecord(clientData);
+        spContainer.addChildRecord(escherTextbox);
         return spContainer;
     }
 
@@ -167,21 +172,6 @@ public class HSSFSimpleShape extends HSSFShape
         HSSFRichTextString rtr = (HSSFRichTextString) string;
         // If font is not set we must set the default one
         if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);
-        EscherTextboxRecord textbox = getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID);
-        if (string.getString()!= null && !string.getString().equals("")){
-            if (null == textbox){
-                EscherTextboxRecord escherTextbox = new EscherTextboxRecord();
-                escherTextbox.setRecordId(EscherTextboxRecord.RECORD_ID);
-                escherTextbox.setOptions((short) 0x0000);
-                getEscherContainer().addChildRecord(escherTextbox);
-                _patriarch._getBoundAggregate().associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
-            }
-        } else {
-            if (null != textbox){
-                getEscherContainer().removeChildRecord(textbox);
-                _patriarch._getBoundAggregate().removeShapeToObjRecord(textbox);
-            }
-        }
         _textObjectRecord.setStr(rtr);
     }
 
@@ -189,6 +179,24 @@ public class HSSFSimpleShape extends HSSFShape
     void afterInsert(HSSFPatriarch patriarch){
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+
+        //used only when clone shapes
+        if (null != getTextObjectRecord()){
+            agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
+        }
+    }
+
+    @Override
+    public HSSFShape cloneShape() {
+        TextObjectRecord txo = null;
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        if (getTextObjectRecord() != null && getString() != null && !"".equals(getString().getString())){
+            txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
+        }
+        return new HSSFSimpleShape(spContainer, obj, txo);
     }
 
 

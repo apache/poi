@@ -235,4 +235,14 @@ public class HSSFTextbox extends HSSFSimpleShape {
     public void setShapeType(int shapeType) {
         throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
     }
+
+    @Override
+    public HSSFShape cloneShape() {
+        TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        return new HSSFTextbox(spContainer, obj, txo);
+    }
 }

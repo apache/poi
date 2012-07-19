@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
@@ -88,6 +89,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
         removeEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
         removeEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        spContainer.removeChildRecord(spContainer.getChildById(EscherTextboxRecord.RECORD_ID));
         return spContainer;
     }
 
@@ -250,7 +252,8 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
-        super.afterInsert(patriarch);
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
         EscherBSERecord bse =
                 patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
         bse.setRef(bse.getRef() + 1);
@@ -284,5 +287,14 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     @Override
     public void setShapeType(int shapeType) {
         throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+    }
+
+    @Override
+    public HSSFShape cloneShape() {
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        return new HSSFPicture(spContainer, obj);
     }
 }

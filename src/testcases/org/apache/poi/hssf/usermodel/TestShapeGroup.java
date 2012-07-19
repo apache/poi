@@ -17,29 +17,6 @@ import java.util.Map;
  */
 public class TestShapeGroup extends TestCase{
 
-    public void testResultEqualsToAbstractShape() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-        HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
-
-        EscherContainerRecord container = new EscherContainerRecord();
-        Map shapeToObj = new HashMap();
-        HSSFTestHelper.convertHSSFGroup(group, container, shapeToObj);
-
-        byte [] actual = group.getEscherContainer().serialize();
-        byte [] expected = container.getChild(0).serialize();
-
-        assertEquals(actual.length, expected.length);
-        assertTrue(Arrays.equals(actual, expected));
-
-        actual = group.getObjRecord().serialize();
-        expected = ((ObjRecord)shapeToObj.values().toArray()[0]).serialize();
-
-        assertEquals(actual.length, expected.length);
-        assertTrue(Arrays.equals(actual, expected));
-    }
-
     public void testSetGetCoordinates(){
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();

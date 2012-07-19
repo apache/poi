@@ -58,6 +58,8 @@ public class TestComment extends TestCase {
 
         ObjRecord obj = comment.getObjRecord();
         ObjRecord objShape = commentShape.getObjRecord();
+        /**shapeId = 1025 % 1024**/
+        ((CommonObjectDataSubRecord)objShape.getSubRecords().get(0)).setObjectId(1);
 
         expected = obj.serialize();
         actual = objShape.serialize();
@@ -76,6 +78,7 @@ public class TestComment extends TestCase {
 
         NoteRecord note = comment.getNoteRecord();
         NoteRecord noteShape = commentShape.getNoteRecord();
+        noteShape.setShapeId(1);
 
         expected = note.serialize();
         actual = noteShape.serialize();
@@ -225,17 +228,17 @@ public class TestComment extends TestCase {
         comment.setShapeId(2024);
         /**
          * SpRecord.id == shapeId
-         * ObjRecord.id == shapeId - 1024
-         * NoteRecord.id == ObjectRecord.id == shapeId - 1024
+         * ObjRecord.id == shapeId % 1024
+         * NoteRecord.id == ObjectRecord.id == shapeId % 1024
          */
 
         assertEquals(comment.getShapeId(), 2024);
 
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
-        assertEquals(cod.getObjectId(), 2024);
+        assertEquals(cod.getObjectId(), 1000);
         EscherSpRecord spRecord = (EscherSpRecord) comment.getEscherContainer().getChild(0);
         assertEquals(spRecord.getShapeId(), 2024);
         assertEquals(comment.getShapeId(), 2024);
-        assertEquals(comment.getNoteRecord().getShapeId(), 2024);
+        assertEquals(comment.getNoteRecord().getShapeId(), 1000);
     }
 }

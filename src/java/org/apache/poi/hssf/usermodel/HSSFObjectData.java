@@ -21,22 +21,20 @@ package org.apache.poi.hssf.usermodel;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.SubRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.HexDump;
 
 /**
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
- *
+ * <p/>
  * Right now, 13, july, 2012 can not be created from scratch
  *
  * @author Daniel Noll
  */
-public final class HSSFObjectData extends HSSFShape{
+public final class HSSFObjectData extends HSSFShape {
     /**
      * Reference to the filesystem root, required for retrieving the object data.
      */
@@ -56,7 +54,7 @@ public final class HSSFObjectData extends HSSFShape{
 
     /**
      * Gets the object data. Only call for ones that have
-     *  data though. See {@link #hasDirectoryEntry()}
+     * data though. See {@link #hasDirectoryEntry()}
      *
      * @return the object data as an OLE2 directory.
      * @throws IOException if there was an error reading the data.
@@ -76,8 +74,8 @@ public final class HSSFObjectData extends HSSFShape{
 
     /**
      * Returns the data portion, for an ObjectData
-     *  that doesn't have an associated POIFS Directory
-     *  Entry
+     * that doesn't have an associated POIFS Directory
+     * Entry
      */
     public byte[] getObjectData() {
         return findObjectRecord().getObjectData();
@@ -85,7 +83,7 @@ public final class HSSFObjectData extends HSSFShape{
 
     /**
      * Does this ObjectData have an associated POIFS
-     *  Directory Entry?
+     * Directory Entry?
      * (Not all do, those that don't have a data portion)
      */
     public boolean hasDirectoryEntry() {
@@ -98,7 +96,7 @@ public final class HSSFObjectData extends HSSFShape{
 
     /**
      * Finds the EmbeddedObjectRefSubRecord, or throws an
-     *  Exception if there wasn't one
+     * Exception if there wasn't one
      */
     protected EmbeddedObjectRefSubRecord findObjectRecord() {
         Iterator<SubRecord> subRecordIter = getObjRecord().getSubRecords().iterator();
@@ -106,7 +104,7 @@ public final class HSSFObjectData extends HSSFShape{
         while (subRecordIter.hasNext()) {
             Object subRecord = subRecordIter.next();
             if (subRecord instanceof EmbeddedObjectRefSubRecord) {
-                return (EmbeddedObjectRefSubRecord)subRecord;
+                return (EmbeddedObjectRefSubRecord) subRecord;
             }
         }
 
@@ -130,6 +128,39 @@ public final class HSSFObjectData extends HSSFShape{
 
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
-        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        EscherBSERecord bse =
+                patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+        bse.setRef(bse.getRef() + 1);
+    }
+
+    @Override
+    public HSSFShape cloneShape() {
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte[] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        return new HSSFObjectData(spContainer, obj, _root);
+    }
+
+    public int getPictureIndex() {
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
+        if (null == property) {
+            return -1;
+        }
+        return property.getPropertyValue();
+    }
+
+    public void setPictureIndex(int pictureIndex) {
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
+    }
+
+    @Override
+    void setShapeId(int shapeId) {
+        EscherSpRecord spRecord = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        spRecord.setShapeId(shapeId);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectId((short) (shapeId % 1024));
     }
 }

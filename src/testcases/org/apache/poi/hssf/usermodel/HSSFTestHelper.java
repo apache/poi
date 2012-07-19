@@ -101,21 +101,6 @@ public class HSSFTestHelper {
         }
     }
 
-    public static void callConvertPatriarch(EscherAggregate agg) {
-        Method method = null;
-        try {
-            method = agg.getClass().getDeclaredMethod("convertPatriarch", HSSFPatriarch.class);
-            method.setAccessible(true);
-            method.invoke(agg, agg.getPatriarch());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setShapeId(HSSFShape shape, int id){
         shape.setShapeId(id);
     }

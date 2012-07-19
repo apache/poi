@@ -352,8 +352,7 @@ public class TestDrawingShapes extends TestCase {
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
         EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
-        assertNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
-        assertEquals(agg.getShapeToObjMapping().size(), 1);
+        assertEquals(agg.getShapeToObjMapping().size(), 2);
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
@@ -362,8 +361,7 @@ public class TestDrawingShapes extends TestCase {
         shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
         agg = HSSFTestHelper.getEscherAggregate(patriarch);
-        assertNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
-        assertEquals(agg.getShapeToObjMapping().size(), 1);
+        assertEquals(agg.getShapeToObjMapping().size(), 2);
 
         shape.setString(new HSSFRichTextString("string1"));
         assertEquals(shape.getString().getString(), "string1");

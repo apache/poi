@@ -22,27 +22,16 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherChildAnchorRecord;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSerializationListener;
-import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hssf.model.AbstractShape;
-import org.apache.poi.hssf.model.CommentShape;
-import org.apache.poi.hssf.model.ConvertAnchor;
 import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -313,8 +302,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      * Maps shape container objects to their {@link TextObjectRecord} or {@link ObjRecord}
      */
     private final Map<EscherRecord, Record> shapeToObj = new HashMap<EscherRecord, Record>();
-    private DrawingManager2 drawingManager;
-    private short drawingGroupId;
 
     /**
      * list of "tail" records that need to be serialized after all drawing group records
@@ -326,11 +313,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     public EscherAggregate(DrawingManager2 drawingManager) {
-        this.drawingManager = drawingManager;
-    }
-
-    public DrawingManager2 getDrawingManager() {
-        return drawingManager;
     }
 
     /**
@@ -458,8 +440,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         // replace drawing block with the created EscherAggregate
         records.subList(locFirstDrawingRecord, locLastDrawingRecord).clear();
         records.add(locFirstDrawingRecord, agg);
-
-
         return agg;
     }
 
@@ -472,13 +452,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      * @return The number of bytes serialized.
      */
     public int serialize(int offset, byte[] data) {
-        convertUserModelToRecords();
-
         // Determine buffer size
         List records = getEscherRecords();
         int size = getEscherRecordSize(records);
         byte[] buffer = new byte[size];
-
 
         // Serialize escher records into one big data structure and keep note of ending offsets.
         final List spEndingOffsets = new ArrayList();
@@ -594,8 +571,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     public int getRecordSize() {
-        // TODO - convert this to RecordAggregate
-        convertUserModelToRecords();
         // To determine size of aggregate record we have to know size of each DrawingRecord because if DrawingRecord
         // is split into several continue records we have to add header size to total EscherAggregate size
         int continueRecordsHeadersSize = 0;
@@ -657,249 +632,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         shapeToObj.remove(rec);
     }
 
-    public HSSFPatriarch getPatriarch() {
-        return patriarch;
-    }
-
-    public void setPatriarch(HSSFPatriarch patriarch) {
-        this.patriarch = patriarch;
-    }
-
-    /**
-     * Converts the Records into UserModel
-     * objects on the bound HSSFPatriarch
-     */
-    public void convertRecordsToUserModel() {
-        if (patriarch == null) {
-            throw new IllegalStateException("Must call setPatriarch() first");
-        }
-
-        // The top level container ought to have
-        //  the DgRecord and the container of one container
-        //  per shape group (patriach overall first)
-        EscherContainerRecord topContainer = getEscherContainer();
-        if (topContainer == null) {
-            return;
-        }
-        topContainer = topContainer.getChildContainers().get(0);
-
-        List tcc = topContainer.getChildContainers();
-        if (tcc.size() == 0) {
-            throw new IllegalStateException("No child escher containers at the point that should hold the patriach data, and one container per top level shape!");
-        }
-
-        // First up, get the patriach position
-        // This is in the first EscherSpgrRecord, in
-        //  the first container, with a EscherSRecord too
-        EscherContainerRecord patriachContainer =
-                (EscherContainerRecord) tcc.get(0);
-        EscherSpgrRecord spgr = null;
-        for (Iterator<EscherRecord> it = patriachContainer.getChildIterator(); it.hasNext(); ) {
-            EscherRecord r = it.next();
-            if (r instanceof EscherSpgrRecord) {
-                spgr = (EscherSpgrRecord) r;
-                break;
-            }
-        }
-        if (spgr != null) {
-            patriarch.setCoordinates(
-                    spgr.getRectX1(), spgr.getRectY1(),
-                    spgr.getRectX2(), spgr.getRectY2()
-            );
-        }
-
-        convertRecordsToUserModelRecursive(tcc, patriarch, null);
-
-        // Now, clear any trace of what records make up
-        //  the patriarch
-        // Otherwise, everything will go horribly wrong
-        //  when we try to write out again....
-//		clearEscherRecords();
-        drawingManager.getDgg().setFileIdClusters(new EscherDggRecord.FileIdCluster[0]);
-
-        // TODO: Support converting our records
-        // back into shapes
-        // log.log(POILogger.WARN, "Not processing objects into Patriarch!");
-    }
-
-    private static void convertRecordsToUserModelRecursive(List tcc, HSSFShapeContainer container, HSSFShape parent) {
-        // Now process the containers for each group
-        //  and objects
-        for (int i = 1; i < tcc.size(); i++) {
-            EscherContainerRecord shapeContainer = (EscherContainerRecord) tcc.get(i);
-
-            // Could be a group, or a base object
-            if (shapeContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
-                // Group
-                final int shapeChildren = shapeContainer.getChildRecords().size();
-                if (shapeChildren > 0) {
-                    HSSFShapeGroup group = new HSSFShapeGroup(parent, new HSSFClientAnchor());
-                    addToParentOrContainer(group, container, parent);
-
-                    EscherContainerRecord groupContainer = (EscherContainerRecord) shapeContainer.getChild(0);
-                    convertRecordsToUserModel(groupContainer, group);
-
-                    if (shapeChildren > 1) {
-                        convertRecordsToUserModelRecursive(shapeContainer.getChildRecords(), container, group);
-                    }
-                } else {
-                    log.log(POILogger.WARN,
-                            "Found drawing group without children.");
-                }
-
-            } else if (shapeContainer.getRecordId() == EscherContainerRecord.SP_CONTAINER) {
-                EscherSpRecord spRecord = shapeContainer
-                        .getChildById(EscherSpRecord.RECORD_ID);
-                int type = spRecord.getShapeType();
-
-                switch (type) {
-                    case ST_TEXTBOX:
-                        HSSFTextbox box = new HSSFTextbox(parent,
-                                new HSSFClientAnchor());
-                        addToParentOrContainer(box, container, parent);
-
-                        convertRecordsToUserModel(shapeContainer, box);
-                        break;
-                    case ST_PICTUREFRAME:
-                        // Duplicated from
-                        // org.apache.poi.hslf.model.Picture.getPictureIndex()
-                        EscherOptRecord opt = (EscherOptRecord) getEscherChild(
-                                shapeContainer, EscherOptRecord.RECORD_ID);
-                        EscherSimpleProperty prop = (EscherSimpleProperty) opt.lookup(
-                                EscherProperties.BLIP__BLIPTODISPLAY);
-                        if (prop == null) {
-                            log.log(POILogger.WARN,
-                                    "Picture index for picture shape not found.");
-                        } else {
-                            int pictureIndex = prop.getPropertyValue();
-
-                            EscherClientAnchorRecord anchorRecord = (EscherClientAnchorRecord) getEscherChild(
-                                    shapeContainer,
-                                    EscherClientAnchorRecord.RECORD_ID);
-
-                            EscherChildAnchorRecord childRecord = (EscherChildAnchorRecord) getEscherChild(
-                                    shapeContainer,
-                                    EscherChildAnchorRecord.RECORD_ID);
-
-                            if (anchorRecord != null && childRecord != null) {
-                                log.log(POILogger.WARN, "Picture with both CLIENT and CHILD anchor: " + type);
-                            }
-
-                            HSSFAnchor anchor;
-                            if (anchorRecord != null) {
-                                anchor = toClientAnchor(anchorRecord);
-                            } else {
-                                anchor = toChildAnchor(childRecord);
-                            }
-
-                            HSSFPicture picture = new HSSFPicture(parent, anchor);
-                            picture.setPictureIndex(pictureIndex);
-
-                            addToParentOrContainer(picture, container, parent);
-                        }
-                        break;
-                    default:
-                        final HSSFSimpleShape shape = new HSSFSimpleShape(parent,
-                                new HSSFClientAnchor());
-                        addToParentOrContainer(shape, container, parent);
-                        convertRecordsToUserModel(shapeContainer, shape);
-
-                        log.log(POILogger.WARN, "Unhandled shape type: "
-                                + type);
-                        break;
-                }
-            } else {
-                log.log(POILogger.WARN, "Unexpected record id of shape group.");
-            }
-
-        }
-    }
-
-    private static void addToParentOrContainer(HSSFShape shape, HSSFShapeContainer container, HSSFShape parent) {
-
-        if (parent instanceof HSSFShapeGroup)
-            ((HSSFShapeGroup) parent).addShape(shape);
-        else if (container instanceof HSSFPatriarch)
-            ((HSSFPatriarch) container).addShape(shape);
-        else
-            container.getChildren().add(shape);
-    }
-
-    public static HSSFClientAnchor toClientAnchor(EscherClientAnchorRecord anchorRecord) {
-        HSSFClientAnchor anchor = new HSSFClientAnchor();
-        anchor.setAnchorType(anchorRecord.getFlag());
-        anchor.setCol1(anchorRecord.getCol1());
-        anchor.setCol2(anchorRecord.getCol2());
-        anchor.setDx1(anchorRecord.getDx1());
-        anchor.setDx2(anchorRecord.getDx2());
-        anchor.setDy1(anchorRecord.getDy1());
-        anchor.setDy2(anchorRecord.getDy2());
-        anchor.setRow1(anchorRecord.getRow1());
-        anchor.setRow2(anchorRecord.getRow2());
-        return anchor;
-    }
-
-    public static HSSFChildAnchor toChildAnchor(EscherChildAnchorRecord anchorRecord) {
-        HSSFChildAnchor anchor = new HSSFChildAnchor();
-//        anchor.setAnchorType(anchorRecord.getFlag());
-//        anchor.setCol1( anchorRecord.getCol1() );
-//        anchor.setCol2( anchorRecord.getCol2() );
-        anchor.setDx1(anchorRecord.getDx1());
-        anchor.setDx2(anchorRecord.getDx2());
-        anchor.setDy1(anchorRecord.getDy1());
-        anchor.setDy2(anchorRecord.getDy2());
-//        anchor.setRow1( anchorRecord.getRow1() );
-//        anchor.setRow2( anchorRecord.getRow2() );
-        return anchor;
-    }
-
-    private static void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
-        for (Iterator<EscherRecord> it = shapeContainer.getChildIterator(); it.hasNext(); ) {
-            EscherRecord r = it.next();
-            if (r instanceof EscherSpgrRecord) {
-                // This may be overriden by a later EscherClientAnchorRecord
-                EscherSpgrRecord spgr = (EscherSpgrRecord) r;
-
-                if (model instanceof HSSFShapeGroup) {
-                    HSSFShapeGroup g = (HSSFShapeGroup) model;
-                    g.setCoordinates(
-                            spgr.getRectX1(), spgr.getRectY1(),
-                            spgr.getRectX2(), spgr.getRectY2()
-                    );
-                } else {
-                    throw new IllegalStateException("Got top level anchor but not processing a group");
-                }
-            } else if (r instanceof EscherClientAnchorRecord) {
-                EscherClientAnchorRecord car = (EscherClientAnchorRecord) r;
-
-                if (model instanceof HSSFShape) {
-                    HSSFShape g = (HSSFShape) model;
-                    g.getAnchor().setDx1(car.getDx1());
-                    g.getAnchor().setDx2(car.getDx2());
-                    g.getAnchor().setDy1(car.getDy1());
-                    g.getAnchor().setDy2(car.getDy2());
-                } else {
-                    throw new IllegalStateException("Got top level anchor but not processing a group or shape");
-                }
-            } else if (r instanceof EscherTextboxRecord) {
-                EscherTextboxRecord tbr = (EscherTextboxRecord) r;
-
-                // Also need to find the TextObjectRecord too
-                // TODO
-            } else if (r instanceof EscherSpRecord) {
-                // Use flags if needed
-                final EscherSpRecord spr = (EscherSpRecord) r;
-                if (model instanceof HSSFShape) {
-                    final HSSFShape s = (HSSFShape) model;
-                }
-            } else if (r instanceof EscherOptRecord) {
-                // Use properties if needed
-            } else {
-                //System.err.println(r);
-            }
-        }
-    }
-
     public void clear() {
         clearEscherRecords();
         shapeToObj.clear();
@@ -914,133 +646,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     private static boolean isObjectRecord(List records, int loc) {
         return sid(records, loc) == ObjRecord.sid || sid(records, loc) == TextObjectRecord.sid;
-    }
-
-    private void convertUserModelToRecords() {
-        if (patriarch != null) {
-            shapeToObj.clear();
-            tailRec.clear();
-            clearEscherRecords();
-            if (patriarch.getChildren().size() != 0) {
-                convertPatriarch(patriarch);
-                EscherContainerRecord dgContainer = (EscherContainerRecord) getEscherRecord(0);
-                EscherContainerRecord spgrContainer = null;
-                Iterator<EscherRecord> iter = dgContainer.getChildIterator();
-                while (iter.hasNext()) {
-                    EscherRecord child = iter.next();
-                    if (child.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
-                        spgrContainer = (EscherContainerRecord) child;
-                    }
-                }
-                convertShapes(patriarch, spgrContainer, shapeToObj);
-
-                patriarch = null;
-            }
-        }
-    }
-
-    private void convertShapes(HSSFShapeContainer parent, EscherContainerRecord escherParent, Map shapeToObj) {
-        if (escherParent == null) throw new IllegalArgumentException("Parent record required");
-
-        List shapes = parent.getChildren();
-        for (Iterator iterator = shapes.iterator(); iterator.hasNext(); ) {
-            HSSFShape shape = (HSSFShape) iterator.next();
-            if (shape instanceof HSSFShapeGroup) {
-                convertGroup((HSSFShapeGroup) shape, escherParent, shapeToObj);
-            } else {
-                AbstractShape shapeModel = AbstractShape.createShape(
-                        shape,
-                        drawingManager.allocateShapeId(drawingGroupId));
-                shapeToObj.put(findClientData(shapeModel.getSpContainer()), shapeModel.getObjRecord());
-                if (shapeModel instanceof TextboxShape) {
-                    EscherRecord escherTextbox = ((TextboxShape) shapeModel).getEscherTextbox();
-                    shapeToObj.put(escherTextbox, ((TextboxShape) shapeModel).getTextObjectRecord());
-                    //					escherParent.addChildRecord(escherTextbox);
-
-                    if (shapeModel instanceof CommentShape) {
-                        CommentShape comment = (CommentShape) shapeModel;
-                        tailRec.put(comment.getNoteRecord().getShapeId(), comment.getNoteRecord());
-                    }
-
-                }
-                escherParent.addChildRecord(shapeModel.getSpContainer());
-            }
-        }
-//		drawingManager.newCluster( (short)1 );
-//		drawingManager.newCluster( (short)2 );
-
-    }
-
-    private void convertGroup(HSSFShapeGroup shape, EscherContainerRecord escherParent, Map shapeToObj) {
-        EscherContainerRecord spgrContainer = new EscherContainerRecord();
-        EscherContainerRecord spContainer = new EscherContainerRecord();
-        EscherSpgrRecord spgr = new EscherSpgrRecord();
-        EscherSpRecord sp = new EscherSpRecord();
-        EscherOptRecord opt = new EscherOptRecord();
-        EscherRecord anchor;
-        EscherClientDataRecord clientData = new EscherClientDataRecord();
-
-        spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
-        spgrContainer.setOptions((short) 0x000F);
-        spContainer.setRecordId(EscherContainerRecord.SP_CONTAINER);
-        spContainer.setOptions((short) 0x000F);
-        spgr.setRecordId(EscherSpgrRecord.RECORD_ID);
-        spgr.setOptions((short) 0x0001);
-        spgr.setRectX1(shape.getX1());
-        spgr.setRectY1(shape.getY1());
-        spgr.setRectX2(shape.getX2());
-        spgr.setRectY2(shape.getY2());
-        sp.setRecordId(EscherSpRecord.RECORD_ID);
-        sp.setOptions((short) 0x0002);
-        int shapeId = drawingManager.allocateShapeId(drawingGroupId);
-        sp.setShapeId(shapeId);
-        if (shape.getAnchor() instanceof HSSFClientAnchor)
-            sp.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_HAVEANCHOR);
-        else
-            sp.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_CHILD);
-        opt.setRecordId(EscherOptRecord.RECORD_ID);
-        opt.setOptions((short) 0x0023);
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x00040004));
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00080000));
-
-        anchor = ConvertAnchor.createAnchor(shape.getAnchor());
-//		clientAnchor.setCol1( ( (HSSFClientAnchor) shape.getAnchor() ).getCol1() );
-//		clientAnchor.setRow1( (short) ( (HSSFClientAnchor) shape.getAnchor() ).getRow1() );
-//		clientAnchor.setDx1( (short) shape.getAnchor().getDx1() );
-//		clientAnchor.setDy1( (short) shape.getAnchor().getDy1() );
-//		clientAnchor.setCol2( ( (HSSFClientAnchor) shape.getAnchor() ).getCol2() );
-//		clientAnchor.setRow2( (short) ( (HSSFClientAnchor) shape.getAnchor() ).getRow2() );
-//		clientAnchor.setDx2( (short) shape.getAnchor().getDx2() );
-//		clientAnchor.setDy2( (short) shape.getAnchor().getDy2() );
-        clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
-        clientData.setOptions((short) 0x0000);
-
-        spgrContainer.addChildRecord(spContainer);
-        spContainer.addChildRecord(spgr);
-        spContainer.addChildRecord(sp);
-        spContainer.addChildRecord(opt);
-        spContainer.addChildRecord(anchor);
-        spContainer.addChildRecord(clientData);
-
-        ObjRecord obj = new ObjRecord();
-        CommonObjectDataSubRecord cmo = new CommonObjectDataSubRecord();
-        cmo.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_GROUP);
-        cmo.setObjectId(shapeId);
-        cmo.setLocked(true);
-        cmo.setPrintable(true);
-        cmo.setAutofill(true);
-        cmo.setAutoline(true);
-        GroupMarkerSubRecord gmo = new GroupMarkerSubRecord();
-        EndSubRecord end = new EndSubRecord();
-        obj.addSubRecord(cmo);
-        obj.addSubRecord(gmo);
-        obj.addSubRecord(end);
-        shapeToObj.put(clientData, obj);
-
-        escherParent.addChildRecord(spgrContainer);
-
-        convertShapes(shape, spgrContainer, shapeToObj);
-
     }
 
     private EscherRecord findClientData(EscherContainerRecord spContainer) {
@@ -1067,7 +672,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         dg.setOptions((short) (dgId << 4));
         dg.setNumShapes(0);
         dg.setLastMSOSPID(1024);
-        drawingGroupId = dg.getDrawingGroupId();
         spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
         spgrContainer.setOptions((short) 0x000F);
         spContainer1.setRecordId(EscherContainerRecord.SP_CONTAINER);
@@ -1104,46 +708,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         EscherSpRecord sp = (EscherSpRecord) spContainer.getChildById(EscherSpRecord.RECORD_ID);
         sp.setShapeId(shapeId);
     }
-
-    private void convertPatriarch(HSSFPatriarch patriarch) {
-        EscherContainerRecord dgContainer = new EscherContainerRecord();
-        EscherDgRecord dg;
-        EscherContainerRecord spgrContainer = new EscherContainerRecord();
-        EscherContainerRecord spContainer1 = new EscherContainerRecord();
-        EscherSpgrRecord spgr = new EscherSpgrRecord();
-        EscherSpRecord sp1 = new EscherSpRecord();
-
-        dgContainer.setRecordId(EscherContainerRecord.DG_CONTAINER);
-        dgContainer.setOptions((short) 0x000F);
-        dg = drawingManager.createDgRecord();
-        drawingGroupId = dg.getDrawingGroupId();
-//		dg.setOptions( (short) ( drawingId << 4 ) );
-//		dg.setNumShapes( getNumberOfShapes( patriarch ) );
-//		dg.setLastMSOSPID( 0 );  // populated after all shape id's are assigned.
-        spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
-        spgrContainer.setOptions((short) 0x000F);
-        spContainer1.setRecordId(EscherContainerRecord.SP_CONTAINER);
-        spContainer1.setOptions((short) 0x000F);
-        spgr.setRecordId(EscherSpgrRecord.RECORD_ID);
-        spgr.setOptions((short) 0x0001);    // version
-        spgr.setRectX1(patriarch.getX1());
-        spgr.setRectY1(patriarch.getY1());
-        spgr.setRectX2(patriarch.getX2());
-        spgr.setRectY2(patriarch.getY2());
-        sp1.setRecordId(EscherSpRecord.RECORD_ID);
-        sp1.setOptions((short) 0x0002);
-        sp1.setShapeId(drawingManager.allocateShapeId(dg.getDrawingGroupId()));
-        sp1.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_PATRIARCH);
-
-        dgContainer.addChildRecord(dg);
-        dgContainer.addChildRecord(spgrContainer);
-        spgrContainer.addChildRecord(spContainer1);
-        spContainer1.addChildRecord(spgr);
-        spContainer1.addChildRecord(sp1);
-
-        addEscherRecord(dgContainer);
-    }
-
 
     private static short sid(List records, int loc) {
         return ((Record) records.get(loc)).getSid();

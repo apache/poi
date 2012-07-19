@@ -74,8 +74,12 @@ public class HSSFShapeFactory {
 
     public static void createShapeTree(EscherContainerRecord container, EscherAggregate agg, HSSFShapeContainer out, DirectoryNode root) {
         if (container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
-            HSSFShapeGroup group = new HSSFShapeGroup(container,
-                    null /* shape containers don't have a associated Obj record*/);
+            ObjRecord obj = null;
+            EscherClientDataRecord clientData = ((EscherContainerRecord)container.getChild(0)).getChildById(EscherClientDataRecord.RECORD_ID);
+            if (null != clientData){
+                obj = (ObjRecord) agg.getShapeToObjMapping().get(clientData);
+            }
+            HSSFShapeGroup group = new HSSFShapeGroup(container, obj);
             List<EscherContainerRecord> children = container.getChildContainers();
             // skip the first child record, it is group descriptor
             for (int i = 0; i < children.size(); i++) {
@@ -130,7 +134,7 @@ public class HSSFShapeFactory {
                     EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
                     EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
                     if (null != property) {
-                        shape = new HSSFPolygon(container, objRecord);
+                        shape = new HSSFPolygon(container, objRecord, txtRecord);
                     } else {
                         shape = new HSSFSimpleShape(container, objRecord);
                     }

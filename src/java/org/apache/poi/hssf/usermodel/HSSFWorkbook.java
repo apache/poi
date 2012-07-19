@@ -701,7 +701,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             names.add(newName);
         }
         // TODO - maybe same logic required for other/all built-in name records
-        workbook.cloneDrawings(clonedSheet.getSheet());
+//        workbook.cloneDrawings(clonedSheet.getSheet());
 
         return clonedSheet;
     }
