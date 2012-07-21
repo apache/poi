@@ -76,7 +76,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
     private static final int MAX_ROW = 0xFFFF;
-    private static final short MAX_COLUMN = (short)0x00FF;
+    private static final int MAX_COLUMN = (short)0x00FF;
 
     /**
      * The maximum number of cell styles in a .xls workbook.
@@ -1034,7 +1034,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
 
-    private int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
+    int findExistingBuiltinNameRecordIdx(int sheetIndex, byte builtinCode) {
         for(int defNameIndex =0; defNameIndex<names.size(); defNameIndex++) {
             NameRecord r = workbook.getNameRecord(defNameIndex);
             if (r == null) {

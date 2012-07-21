@@ -2003,4 +2003,71 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return new HSSFAutoFilter(this);
     }
 
+
+  @Override
+  public CellRangeAddress getRepeatingRows() {
+    return getRepeatingRowsOrColums(true);
+  }
+
+
+  @Override
+  public CellRangeAddress getRepeatingColumns() {
+    return getRepeatingRowsOrColums(false);
+  }
+
+  
+  private CellRangeAddress getRepeatingRowsOrColums(boolean rows) {
+    NameRecord rec = getBuiltinNameRecord(NameRecord.BUILTIN_PRINT_TITLE);
+    if (rec == null) {
+      return null;
+    }
+    
+    Ptg[] nameDefinition = rec.getNameDefinition();
+    if (rec.getNameDefinition() == null) {
+      return null;
+    }
+    
+    int maxRowIndex = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+    int maxColIndex = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+    
+    for (Ptg ptg :nameDefinition) {
+      
+      if (ptg instanceof Area3DPtg) {
+        Area3DPtg areaPtg = (Area3DPtg) ptg;
+        
+        if (areaPtg.getFirstColumn() == 0 
+            && areaPtg.getLastColumn() == maxColIndex) {
+          if (rows) {
+            CellRangeAddress rowRange = new CellRangeAddress(
+                areaPtg.getFirstRow(), areaPtg.getLastRow(), -1, -1);
+            return rowRange;
+          }
+        } else if (areaPtg.getFirstRow() == 0 
+            && areaPtg.getLastRow() == maxRowIndex) {
+          if (!rows) {
+            CellRangeAddress columnRange = new CellRangeAddress(-1, -1, 
+                areaPtg.getFirstColumn(), areaPtg.getLastColumn());
+            return columnRange;
+          }
+        }
+        
+      }
+      
+    }
+    
+    return null;
+  }
+
+
+  private NameRecord getBuiltinNameRecord(byte builtinCode) {
+    int sheetIndex = _workbook.getSheetIndex(this);
+    int recIndex = 
+      _workbook.findExistingBuiltinNameRecordIdx(sheetIndex, builtinCode);
+    if (recIndex == -1) {
+      return null;
+    }
+    return _workbook.getNameRecord(recIndex);
+  }
+
+  
 }

@@ -3185,4 +3185,54 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         color.setIndexed(colorIndex);
         pr.setTabColor(color);
     }
+    
+    
+    @Override
+    public CellRangeAddress getRepeatingRows() {
+      return getRepeatingRowsOrColums(true);
+    }
+
+
+    @Override
+    public CellRangeAddress getRepeatingColumns() {
+      return getRepeatingRowsOrColums(false);
+    }
+
+
+    private CellRangeAddress getRepeatingRowsOrColums(boolean rows) {
+      int sheetIndex = getWorkbook().getSheetIndex(this);
+      XSSFName name = getWorkbook().getBuiltInName(
+          XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
+      if (name == null ) {
+        return null;
+      }
+      String refStr = name.getRefersToFormula();
+      if (refStr == null) {
+        return null;
+      }
+      String[] parts = refStr.split(",");
+      int maxRowIndex = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+      int maxColIndex = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+      for (String part : parts) {
+        CellRangeAddress range = CellRangeAddress.valueOf(part);
+        if ((range.getFirstColumn() == 0 
+            && range.getLastColumn() == maxColIndex)
+            || (range.getFirstColumn() == -1 
+                && range.getLastColumn() == -1)) {
+          if (rows) {
+            return range;
+          }
+        } else if (range.getFirstRow() == 0 
+            && range.getLastRow() == maxRowIndex
+            || (range.getFirstRow() == -1 
+                && range.getLastRow() == -1)) {
+          if (!rows) {
+            return range;
+          }
+        }
+      }
+      return null;
+    }
+
+
 }
