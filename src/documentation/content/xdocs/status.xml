@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">53369 - Fixed tests failing on JDK 1.7</action>
           <action dev="poi-developers" type="fix">53360 - Fixed SXSSF to correctly write text before escaped Unicode control character</action>
           <action dev="poi-developers" type="add">Change HSMF Types to have full data on ID, Name and Length, rather than just being a simple ID</action>
           <action dev="poi-developers" type="add">48469 - Updated case study</action>
