@@ -359,14 +359,40 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(row, cell.getRow());
     }
 
+
+    public void testGetRepeatingRowsAnsColumns(){
+        Workbook wb = _testDataProvider.openSampleWorkbook(
+            "RepeatingRowsCols." 
+            + _testDataProvider.getStandardFileNameExtension());
+        
+        Sheet sheet0 = wb.getSheetAt(0);
+        assertNull(sheet0.getRepeatingRows());
+        assertNull(sheet0.getRepeatingColumns());
+
+        Sheet sheet1 = wb.getSheetAt(1);
+        assertEquals("1:1", sheet1.getRepeatingRows().formatAsString());
+        assertNull(sheet1.getRepeatingColumns());
+        
+        Sheet sheet2 = wb.getSheetAt(2);
+        assertNull(sheet2.getRepeatingRows());
+        assertEquals("A:A", sheet2.getRepeatingColumns().formatAsString());
+        
+        Sheet sheet3 = wb.getSheetAt(3);
+        assertEquals("2:3", sheet3.getRepeatingRows().formatAsString());
+        assertEquals("A:B", sheet3.getRepeatingColumns().formatAsString());
+    }
+
+
     public void testSetRepeatingRowsAnsColumns(){
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
+        assertEquals("1:4", sheet1.getRepeatingRows().formatAsString());
 
         //must handle sheets with quotas, see Bugzilla #47294
         Sheet sheet2 = wb.createSheet("My' Sheet");
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet2), 0, 0, 0, 3);
+        assertEquals("1:4", sheet2.getRepeatingRows().formatAsString());
     }
 
     /**

@@ -100,7 +100,10 @@ public class CellRangeAddress extends CellRangeAddressBase {
         sb.append(cellRefFrom.formatAsString());
 
         //for a single-cell reference return A1 instead of A1:A1
-        if(!cellRefFrom.equals(cellRefTo)){
+        //for full-column ranges or full-row ranges return A:A instead of A,
+        //and 1:1 instead of 1         
+        if(!cellRefFrom.equals(cellRefTo)
+            || isFullColumnRange() || isFullRowRange()){
             sb.append(':');
             sb.append(cellRefTo.formatAsString());
         }

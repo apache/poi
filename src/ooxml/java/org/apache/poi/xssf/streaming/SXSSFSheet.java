@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
@@ -1263,7 +1264,20 @@ public class SXSSFSheet implements Sheet, Cloneable
     public SheetConditionalFormatting getSheetConditionalFormatting(){
         return _sh.getSheetConditionalFormatting();
     }
-
+    
+    
+    @Override
+    public CellRangeAddress getRepeatingRows() {
+      return _sh.getRepeatingRows();
+    }
+    
+    
+    @Override
+    public CellRangeAddress getRepeatingColumns() {
+      return _sh.getRepeatingColumns();
+    }
+    
+    
 //end of interface implementation
     /**
      * Specifies how many rows can be accessed at most via getRow().
