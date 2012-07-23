@@ -2004,13 +2004,11 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
 
-  @Override
   public CellRangeAddress getRepeatingRows() {
     return getRepeatingRowsOrColums(true);
   }
 
 
-  @Override
   public CellRangeAddress getRepeatingColumns() {
     return getRepeatingRowsOrColums(false);
   }
