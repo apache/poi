@@ -20,7 +20,10 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.util.LittleEndian;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
 /**
@@ -100,7 +103,7 @@ public abstract class HSSFShape {
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId-1024));
+        cod.setObjectId((short) (shapeId%1024));
     }
     
     int getShapeId(){
@@ -294,6 +297,53 @@ public abstract class HSSFShape {
 
     protected void setPropertyValue(EscherProperty property){
         _optRecord.setEscherProperty(property);
+    }
+    
+    public void setFlipVertical(boolean value){
+        EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (value){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
+        } else {
+            sp.setFlags(sp.getFlags() & (Integer.MAX_VALUE - EscherSpRecord.FLAG_FLIPVERT));
+        }
+    }
+
+    public void setFlipHorizontal(boolean value){
+        EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (value){
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
+        } else {
+            sp.setFlags(sp.getFlags() & (Integer.MAX_VALUE - EscherSpRecord.FLAG_FLIPHORIZ));
+        }
+    }
+    
+    public boolean isFlipVertical(){
+        EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        return (sp.getFlags() & EscherSpRecord.FLAG_FLIPVERT) != 0;
+    }
+
+    public boolean isFlipHorizontal(){
+        EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        return (sp.getFlags() & EscherSpRecord.FLAG_FLIPHORIZ) != 0;
+    }
+    
+    public int getRotationDegree(){
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TRANSFORM__ROTATION);
+        if (null == property){
+            return 0;
+        }
+        try {
+            LittleEndian.putInt(property.getPropertyValue(), bos);
+            return LittleEndian.getShort(bos.toByteArray(), 2);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public void setRotationDegree(short value){
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION , (value << 16)));
     }
 
     /**

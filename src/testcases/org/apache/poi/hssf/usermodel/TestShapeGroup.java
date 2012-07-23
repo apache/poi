@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 
 import java.lang.reflect.Field;
@@ -225,5 +226,37 @@ public class TestShapeGroup extends TestCase{
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void testClearShapes(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        HSSFShapeGroup group = patriarch.createGroup(new HSSFClientAnchor());
+
+        group.createShape(new HSSFChildAnchor());
+        group.createShape(new HSSFChildAnchor());
+
+        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+
+        assertEquals(agg.getShapeToObjMapping().size(), 5);
+        assertEquals(agg.getTailRecords().size(), 0);
+        assertEquals(group.getChildren().size(), 2);
+
+        group.clear();
+
+        assertEquals(agg.getShapeToObjMapping().size(), 1);
+        assertEquals(agg.getTailRecords().size(), 0);
+        assertEquals(group.getChildren().size(), 0);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+
+        group = (HSSFShapeGroup) patriarch.getChildren().get(0);
+
+        assertEquals(agg.getShapeToObjMapping().size(), 1);
+        assertEquals(agg.getTailRecords().size(), 0);
+        assertEquals(group.getChildren().size(), 0);
     }
 }

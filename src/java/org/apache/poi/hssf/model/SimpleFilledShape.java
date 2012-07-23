@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.EndSubRecord;
 import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
 import org.apache.poi.hssf.usermodel.HSSFShape;
 
+@Deprecated
 public class SimpleFilledShape
         extends AbstractShape
 {

@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFPolygon;
 import org.apache.poi.util.LittleEndian;
 
+@Deprecated
 public class PolygonShape
         extends AbstractShape
 {

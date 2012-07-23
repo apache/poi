@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.*;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
+@Deprecated
 public class TextboxShape
         extends AbstractShape
 {

@@ -24,12 +24,12 @@ import java.util.List;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public interface HSSFShapeContainer
+public interface HSSFShapeContainer extends Iterable<HSSFShape>
 {
     /**
      * @return  Any children contained by this shape.
      */
-    List getChildren();
+    List<HSSFShape> getChildren();
 
     /**
      * add shape to the list of child records
@@ -42,4 +42,13 @@ public interface HSSFShapeContainer
      */
     void setCoordinates( int x1, int y1, int x2, int y2 );
 
+    void clear();
+    
+    public int getX1();
+
+    public int getY1();
+
+    public int getX2();
+
+    public int getY2();
 }
