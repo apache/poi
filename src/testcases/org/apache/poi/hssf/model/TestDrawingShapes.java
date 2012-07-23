@@ -136,6 +136,8 @@ public class TestDrawingShapes extends TestCase {
         rectangle.setNoFill(true);
         rectangle.setString(new HSSFRichTextString("teeeest"));
         assertEquals(rectangle.getLineStyleColor(), 1111);
+        assertEquals(((EscherSimpleProperty)((EscherOptRecord)rectangle.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID))
+                .lookup(EscherProperties.TEXT__TEXTID)).getPropertyValue(), "teeeest".hashCode());
         assertEquals(rectangle.isNoFill(), true);
         assertEquals(rectangle.getString().getString(), "teeeest");
 
@@ -225,6 +227,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(HexDump.toHex(shape.getFillColor()), shape.getFillColor(), 0x2CE03D);
         assertEquals(shape.getLineWidth(), HSSFShape.LINEWIDTH_ONE_PT * 2);
         assertEquals(shape.getString().getString(), "POItest");
+        assertEquals(shape.getRotationDegree(), 27);
     }
 
     public void testShapeIds() {
@@ -534,6 +537,117 @@ public class TestDrawingShapes extends TestCase {
 
         assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getShapeToObjMapping().size(), 0);
         assertEquals(HSSFTestHelper.getEscherAggregate(patriarch).getTailRecords().size(), 0);
+        assertEquals(patriarch.getChildren().size(), 0);
+    }
+
+    public void testShapeFlip(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor());
+        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+
+        assertEquals(rectangle.isFlipVertical(), false);
+        assertEquals(rectangle.isFlipHorizontal(), false);
+
+        rectangle.setFlipVertical(true);
+        assertEquals(rectangle.isFlipVertical(), true);
+        rectangle.setFlipHorizontal(true);
+        assertEquals(rectangle.isFlipHorizontal(), true);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+
+        rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
+
+        assertEquals(rectangle.isFlipHorizontal(), true);
+        rectangle.setFlipHorizontal(false);
+        assertEquals(rectangle.isFlipHorizontal(), false);
+
+        assertEquals(rectangle.isFlipVertical(), true);
+        rectangle.setFlipVertical(false);
+        assertEquals(rectangle.isFlipVertical(), false);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+
+        rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
+
+        assertEquals(rectangle.isFlipVertical(), false);
+        assertEquals(rectangle.isFlipHorizontal(), false);
+    }
+
+    public void testRotation() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor(0,0,100,100, (short) 0,0,(short)5,5));
+        rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
+
+        assertEquals(rectangle.getRotationDegree(), 0);
+        rectangle.setRotationDegree((short) 45);
+        assertEquals(rectangle.getRotationDegree(), 45);
+        rectangle.setFlipHorizontal(true);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+        rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
+        assertEquals(rectangle.getRotationDegree(), 45);
+        rectangle.setRotationDegree((short) 30);
+        assertEquals(rectangle.getRotationDegree(), 30);
+
+        patriarch.setCoordinates(0, 0, 10, 10);
+        rectangle.setString(new HSSFRichTextString("1234"));
+    }
+
+    public void testShapeContainerImplementsIterable(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        patriarch.createSimpleShape(new HSSFClientAnchor());
+        patriarch.createSimpleShape(new HSSFClientAnchor());
+
+        int i=2;
+
+        for (HSSFShape shape: patriarch){
+            i--;
+        }
+        assertEquals(i, 0);
+    }
+
+    public void testClearShapesForPatriarch(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+
+        patriarch.createSimpleShape(new HSSFClientAnchor());
+        patriarch.createSimpleShape(new HSSFClientAnchor());
+        patriarch.createCellComment(new HSSFClientAnchor());
+
+        EscherAggregate agg = HSSFTestHelper.getEscherAggregate(patriarch);
+
+        assertEquals(agg.getShapeToObjMapping().size(), 6);
+        assertEquals(agg.getTailRecords().size(), 1);
+        assertEquals(patriarch.getChildren().size(), 3);
+
+        patriarch.clear();
+
+        assertEquals(agg.getShapeToObjMapping().size(), 0);
+        assertEquals(agg.getTailRecords().size(), 0);
+        assertEquals(patriarch.getChildren().size(), 0);
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        patriarch = sheet.getDrawingPatriarch();
+
+        assertEquals(agg.getShapeToObjMapping().size(), 0);
+        assertEquals(agg.getTailRecords().size(), 0);
         assertEquals(patriarch.getChildren().size(), 0);
     }
 }

@@ -130,14 +130,6 @@ public class HSSFTextbox extends HSSFSimpleShape {
     }
 
     @Override
-    public void setString(RichTextString string) {
-        HSSFRichTextString rtr = (HSSFRichTextString) string;
-        // If font is not set we must set the default one
-        if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);
-        getTextObjectRecord().setStr(rtr);
-    }
-
-    @Override
     void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());

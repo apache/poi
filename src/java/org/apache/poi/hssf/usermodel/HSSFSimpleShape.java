@@ -177,6 +177,9 @@ public class HSSFSimpleShape extends HSSFShape
         // If font is not set we must set the default one
         if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);
         _textObjectRecord.setStr(rtr);
+        if (string.getString() != null){
+            setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTID, string.getString().hashCode()));
+        }
     }
 
     @Override

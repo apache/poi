@@ -18,10 +18,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.record.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Iterator;
 
@@ -32,7 +32,7 @@ import java.util.Iterator;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
-    List<HSSFShape> shapes = new ArrayList<HSSFShape>();
+    private final List<HSSFShape> shapes = new ArrayList<HSSFShape>();
     private EscherSpgrRecord _spgrRecord;
 
     public HSSFShapeGroup(EscherContainerRecord spgrContainer, ObjRecord objRecord) {
@@ -172,11 +172,6 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         shapes.add(shape);
     }
 
-    public void addTextBox(TextboxShape textboxShape) {
-//        HSSFTextbox shape = new HSSFTextbox(this, textboxShape.geanchor);
-//        shapes.add(textboxShape);
-    }
-
     /**
      * Create a new simple shape under this group.
      *
@@ -258,7 +253,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      * Return all children contained by this shape.
      */
     public List<HSSFShape> getChildren() {
-        return shapes;
+        return Collections.unmodifiableList(shapes);
     }
 
     /**
@@ -270,6 +265,13 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         _spgrRecord.setRectX2(x2);
         _spgrRecord.setRectY1(y1);
         _spgrRecord.setRectY2(y2);
+    }
+
+    public void clear() {
+        ArrayList <HSSFShape> copy = new ArrayList<HSSFShape>(shapes);
+        for (HSSFShape shape: copy){
+            removeShape(shape);
+        }
     }
 
     /**
@@ -376,5 +378,9 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
             shapes.remove(shape);
         }
         return isRemoved;
+    }
+
+    public Iterator<HSSFShape> iterator() {
+        return shapes.iterator();
     }
 }

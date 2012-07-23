@@ -34,7 +34,7 @@ import org.apache.poi.hssf.model.InternalWorkbook;
  * @author Glen Stampoultzis
  * @author Yegor Kozlov (yegor at apache.org)
  */
-public final class HSSFPicture extends HSSFSimpleShape implements Picture {
+public class HSSFPicture extends HSSFSimpleShape implements Picture {
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
     public static final int PICTURE_TYPE_PICT = HSSFWorkbook.PICTURE_TYPE_PICT;              // Macintosh PICT
@@ -203,7 +203,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     private float getColumnWidthInPixels(int column){
 
-        int cw = _patriarch._sheet.getColumnWidth(column);
+        int cw = _patriarch.getSheet().getColumnWidth(column);
         float px = getPixelWidth(column);
 
         return cw/px;
@@ -211,18 +211,18 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     private float getRowHeightInPixels(int i){
 
-        HSSFRow row = _patriarch._sheet.getRow(i);
+        HSSFRow row = _patriarch.getSheet().getRow(i);
         float height;
         if(row != null) height = row.getHeight();
-        else height = _patriarch._sheet.getDefaultRowHeight();
+        else height = _patriarch.getSheet().getDefaultRowHeight();
 
         return height/PX_ROW;
     }
 
     private float getPixelWidth(int column){
 
-        int def = _patriarch._sheet.getDefaultColumnWidth()*256;
-        int cw = _patriarch._sheet.getColumnWidth(column);
+        int def = _patriarch.getSheet().getDefaultColumnWidth()*256;
+        int cw = _patriarch.getSheet().getColumnWidth(column);
 
         return cw == def ? PX_DEFAULT : PX_MODIFIED;
     }
@@ -233,7 +233,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return image dimension
      */
     public Dimension getImageDimension(){
-        EscherBSERecord bse = _patriarch._sheet._book.getBSERecord(getPictureIndex());
+        EscherBSERecord bse = _patriarch.getSheet()._book.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
@@ -245,7 +245,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return picture data for this shape
      */
     public HSSFPictureData getPictureData(){
-        InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
+        InternalWorkbook iwb = _patriarch.getSheet().getWorkbook().getWorkbook();
     	EscherBlipRecord blipRecord = iwb.getBSERecord(getPictureIndex()).getBlipRecord();
     	return new HSSFPictureData(blipRecord);
     }
@@ -255,14 +255,14 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
         EscherBSERecord bse =
-                patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+                patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
         bse.setRef(bse.getRef() + 1);
     }
 
     /**
      * The color applied to the lines of this shape.
      */
-    public String getAdditionalData() {
+    public String getFileName() {
         EscherComplexProperty propFile = (EscherComplexProperty) getOptRecord().lookup(
                       EscherProperties.BLIP__BLIPFILENAME);
         try {
@@ -275,7 +275,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         }
     }
     
-    public void setAdditionalData(String data){
+    public void setFileName(String data){
         try {
             EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, data.getBytes("UTF-16LE"));
             setPropertyValue(prop);

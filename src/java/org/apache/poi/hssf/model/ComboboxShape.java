@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.*;
  * 
  * @author Yegor Kozlov
  */
+@Deprecated
 public class ComboboxShape
         extends AbstractShape {
     private EscherContainerRecord spContainer;

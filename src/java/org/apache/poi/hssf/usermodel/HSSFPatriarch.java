@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * and building up our shapes from the records)
      */
     private EscherAggregate _boundAggregate;
-    final HSSFSheet _sheet; // TODO make private
+    private final HSSFSheet _sheet;
 
     /**
      * Creates the patriarch.
@@ -132,13 +133,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         addShape(shape);
         //open existing file
         onCreate(shape);
-        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()) {
-            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
-        }
-        if (shape.anchor.isVerticallyFlipped()) {
-            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
-        }
         return shape;
     }
 
@@ -155,14 +149,6 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         addShape(shape);
         //open existing file
         onCreate(shape);
-
-        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()) {
-            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
-        }
-        if (shape.anchor.isVerticallyFlipped()) {
-            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
-        }
         return shape;
     }
 
@@ -232,7 +218,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * Returns a list of all shapes contained by the patriarch.
      */
     public List<HSSFShape> getChildren() {
-        return _shapes;
+        return Collections.unmodifiableList(_shapes);
     }
 
     /**
@@ -254,6 +240,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 
         spgrContainer.addChildRecord(spContainer);
         shape.afterInsert(this);
+        setFlipFlags(shape);
     }
 
     /**
@@ -277,6 +264,13 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         _spgrRecord.setRectY2(y2);
         _spgrRecord.setRectX1(x1);
         _spgrRecord.setRectX2(x2);
+    }
+
+    public void clear() {
+        ArrayList <HSSFShape> copy = new ArrayList<HSSFShape>(_shapes);
+        for (HSSFShape shape: copy){
+            removeShape(shape);
+        }
     }
 
     int newShapeId() {
@@ -394,5 +388,23 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
                 HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this, _sheet.getWorkbook().getRootDirectory());
             }
         }
+    }
+
+    private void setFlipFlags(HSSFShape shape){
+        EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        if (shape.anchor.isHorizontallyFlipped()) {
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
+        }
+        if (shape.anchor.isVerticallyFlipped()) {
+            sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
+        }
+    }
+
+    public Iterator<HSSFShape> iterator() {
+        return _shapes.iterator();
+    }
+
+    protected HSSFSheet getSheet() {
+        return _sheet;
     }
 }

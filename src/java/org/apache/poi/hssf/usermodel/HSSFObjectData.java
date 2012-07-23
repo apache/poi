@@ -34,7 +34,7 @@ import org.apache.poi.util.HexDump;
  *
  * @author Daniel Noll
  */
-public final class HSSFObjectData extends HSSFShape {
+public final class HSSFObjectData extends HSSFPicture {
     /**
      * Reference to the filesystem root, required for retrieving the object data.
      */
@@ -131,7 +131,7 @@ public final class HSSFObjectData extends HSSFShape {
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
         EscherBSERecord bse =
-                patriarch._sheet.getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+                patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
         bse.setRef(bse.getRef() + 1);
     }
 
@@ -142,25 +142,5 @@ public final class HSSFObjectData extends HSSFShape {
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         return new HSSFObjectData(spContainer, obj, _root);
-    }
-
-    public int getPictureIndex() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
-        if (null == property) {
-            return -1;
-        }
-        return property.getPropertyValue();
-    }
-
-    public void setPictureIndex(int pictureIndex) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
-    }
-
-    @Override
-    void setShapeId(int shapeId) {
-        EscherSpRecord spRecord = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        spRecord.setShapeId(shapeId);
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId % 1024));
     }
 }

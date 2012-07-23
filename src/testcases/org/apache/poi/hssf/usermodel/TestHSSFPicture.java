@@ -184,7 +184,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
         assertEquals(1, drawing.getChildren().size());
 
         HSSFPicture picture = (HSSFPicture) drawing.getChildren().get(0);
-        assertEquals(picture.getAdditionalData(), "test");
+        assertEquals(picture.getFileName(), "test");
     }
 
     public void testSetGetProperties(){
@@ -199,15 +199,15 @@ public final class TestHSSFPicture extends BaseTestPicture {
         int idx1 = wb.addPicture(data1, Workbook.PICTURE_TYPE_JPEG);
         HSSFPicture p1 = dr.createPicture(anchor, idx1);
 
-        assertEquals(p1.getAdditionalData(), "");
-        p1.setAdditionalData("aaa");
-        assertEquals(p1.getAdditionalData(), "aaa");
+        assertEquals(p1.getFileName(), "");
+        p1.setFileName("aaa");
+        assertEquals(p1.getFileName(), "aaa");
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sh = wb.getSheet("Pictures");
         dr = sh.getDrawingPatriarch();
 
         p1 = (HSSFPicture) dr.getChildren().get(0);
-        assertEquals(p1.getAdditionalData(), "aaa");
+        assertEquals(p1.getFileName(), "aaa");
     }
 }
