@@ -1266,13 +1266,11 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
     
     
-    @Override
     public CellRangeAddress getRepeatingRows() {
       return _sh.getRepeatingRows();
     }
     
     
-    @Override
     public CellRangeAddress getRepeatingColumns() {
       return _sh.getRepeatingColumns();
     }
