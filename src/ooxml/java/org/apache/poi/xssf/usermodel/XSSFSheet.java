@@ -3187,13 +3187,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
     
     
-    @Override
     public CellRangeAddress getRepeatingRows() {
       return getRepeatingRowsOrColums(true);
     }
 
 
-    @Override
     public CellRangeAddress getRepeatingColumns() {
       return getRepeatingRowsOrColums(false);
     }
