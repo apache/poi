@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">53205 - Fix some parsing errors and encoding issues in HDGF </action>
           <action dev="poi-developers" type="add">53204 - Improved performanceof PageSettingsBlock in HSSF </action>
           <action dev="poi-developers" type="add">53500 - Getter for repeating rows and columns</action>
           <action dev="poi-developers" type="fix">53369 - Fixed tests failing on JDK 1.7</action>

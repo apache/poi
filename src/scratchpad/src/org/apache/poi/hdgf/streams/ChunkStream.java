@@ -52,18 +52,24 @@ public final class ChunkStream extends Stream {
 
 		int pos = 0;
 		byte[] contents = getStore().getContents();
-		while(pos < contents.length) {
-			// Ensure we have enough data to create a chunk from
-			int headerSize = ChunkHeader.getHeaderSize(chunkFactory.getVersion());
-			if(pos+headerSize <= contents.length) {
-				Chunk chunk = chunkFactory.createChunk(contents, pos);
-				chunksA.add(chunk);
+		try {
+			while(pos < contents.length) {
+				// Ensure we have enough data to create a chunk from
+				int headerSize = ChunkHeader.getHeaderSize(chunkFactory.getVersion());
+				if(pos+headerSize <= contents.length) {
+					Chunk chunk = chunkFactory.createChunk(contents, pos);
+					chunksA.add(chunk);
 
-				pos += chunk.getOnDiskSize();
-			} else {
-				System.err.println("Needed " + headerSize + " bytes to create the next chunk header, but only found " + (contents.length-pos) + " bytes, ignoring rest of data");
-				pos = contents.length;
+					pos += chunk.getOnDiskSize();
+				} else {
+					System.err.println("Needed " + headerSize + " bytes to create the next chunk header, but only found " + (contents.length-pos) + " bytes, ignoring rest of data");
+					pos = contents.length;
+				}
 			}
+		}
+		catch (Exception e)
+		{
+			System.err.println("Failed to create chunk at " + pos + ", ignoring rest of data." + e);
 		}
 
 		chunks = chunksA.toArray(new Chunk[chunksA.size()]);
