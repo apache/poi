@@ -24,9 +24,12 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -2237,5 +2240,32 @@ if(1==2) {
 
         // make sure we are still readable
         writeOutAndReadBack(workbook);
+    }
+    
+    public void test51675(){
+        final List<Short> list = new ArrayList<Short>();
+        HSSFWorkbook workbook = openSample("51675.xls");
+        HSSFSheet sh = workbook.getSheetAt(0);
+        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+        PageSettingsBlock psb = (PageSettingsBlock) ish.getRecords().get(13);
+        psb.visitContainedRecords(new RecordAggregate.RecordVisitor() {
+            public void visitRecord(Record r) {
+                list.add(r.getSid());
+            }
+        });
+        assertTrue(list.get(list.size()-1).intValue() == UnknownRecord.BITMAP_00E9);
+        assertTrue(list.get(list.size()-2).intValue() == UnknownRecord.HEADER_FOOTER_089C);
+    }
+    
+    public void test52272(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh = wb.createSheet();
+        HSSFPatriarch p = sh.createDrawingPatriarch();
+        
+        HSSFSimpleShape s = p.createSimpleShape(new HSSFClientAnchor());
+        s.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
+
+        HSSFSheet sh2 = wb.cloneSheet(0);
+        assertNotNull(sh2.getDrawingPatriarch());
     }
 }
