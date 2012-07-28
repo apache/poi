@@ -337,7 +337,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         throw new IllegalStateException("Use method cloneShape(HSSFPatriarch patriarch)");
     }
 

@@ -230,7 +230,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
         EscherContainerRecord spContainer = new EscherContainerRecord();
         byte[] inSp = getEscherContainer().serialize();

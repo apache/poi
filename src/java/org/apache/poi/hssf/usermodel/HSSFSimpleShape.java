@@ -57,6 +57,10 @@ public class HSSFSimpleShape extends HSSFShape
     public final static short       OBJECT_TYPE_COMMENT            = 25;
 //    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 
+    public final static int WRAP_SQUARE = 0;
+    public final static int WRAP_BY_POINTS = 1;
+    public final static int WRAP_NONE = 2;
+
     private static final Map <Short, Short> objTypeToShapeType = new HashMap<Short, Short>();
 
     private TextObjectRecord _textObjectRecord;
@@ -83,12 +87,14 @@ public class HSSFSimpleShape extends HSSFShape
         _textObjectRecord = createTextObjRecord();
     }
 
-    public TextObjectRecord getTextObjectRecord() {
+    protected TextObjectRecord getTextObjectRecord() {
         return _textObjectRecord;
     }
 
     protected TextObjectRecord createTextObjRecord(){
         TextObjectRecord obj = new TextObjectRecord();
+        obj.setHorizontalTextAlignment(2);
+        obj.setVerticalTextAlignment(2);
         obj.setTextLocked(true);
         obj.setTextOrientation(TextObjectRecord.TEXT_ORIENTATION_NONE);
         obj.setStr(new HSSFRichTextString(""));
@@ -194,7 +200,7 @@ public class HSSFSimpleShape extends HSSFShape
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         TextObjectRecord txo = null;
         EscherContainerRecord spContainer = new EscherContainerRecord();
         byte [] inSp = getEscherContainer().serialize();
@@ -242,5 +248,14 @@ public class HSSFSimpleShape extends HSSFShape
             return;
         }
         spRecord.setShapeType(objTypeToShapeType.get((short) shapeType));
+    }
+
+    public int getWrapText(){
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__WRAPTEXT);
+        return null == property ? WRAP_SQUARE : property.getPropertyValue();
+    }
+
+    public void setWrapText(int value){
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__WRAPTEXT, false, false, value));
     }
 }

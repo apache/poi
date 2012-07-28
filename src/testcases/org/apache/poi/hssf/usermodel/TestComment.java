@@ -7,7 +7,7 @@ import org.apache.poi.hssf.model.CommentShape;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
 import org.apache.poi.hssf.record.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 
 /**
@@ -91,17 +91,25 @@ public class TestComment extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+        int idx = wb.addPicture(new byte[]{1,2,3}, HSSFWorkbook.PICTURE_TYPE_PNG);
 
         HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
         comment.setString(new HSSFRichTextString("comment1"));
-        comment = patriarch.createCellComment(new HSSFClientAnchor());
+        comment = patriarch.createCellComment(new HSSFClientAnchor(0,0,100,100,(short)0,0,(short)10,10));
         comment.setString(new HSSFRichTextString("comment2"));
+        comment.setBackgroundImage(idx);
+        assertEquals(comment.getBackgroundImageId(), idx);
 
         assertEquals(patriarch.getChildren().size(), 2);
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sh = wb.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
+
+        comment = (HSSFComment) patriarch.getChildren().get(1);
+        assertEquals(comment.getBackgroundImageId(), idx);
+        comment.resetBackgroundImage();
+        assertEquals(comment.getBackgroundImageId(), 0);
 
         assertEquals(patriarch.getChildren().size(), 2);
         comment = patriarch.createCellComment(new HSSFClientAnchor());
@@ -111,6 +119,8 @@ public class TestComment extends TestCase {
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sh = wb.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
+        comment = (HSSFComment) patriarch.getChildren().get(1);
+        assertEquals(comment.getBackgroundImageId(), 0);
         assertEquals(patriarch.getChildren().size(), 3);
         assertEquals(((HSSFComment) patriarch.getChildren().get(0)).getString().getString(), "comment1");
         assertEquals(((HSSFComment) patriarch.getChildren().get(1)).getString().getString(), "comment2");

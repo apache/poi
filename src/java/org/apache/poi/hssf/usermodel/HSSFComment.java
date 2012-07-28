@@ -19,7 +19,6 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * Represents a cell comment - a sticky note associated with a cell.
@@ -27,6 +26,9 @@ import org.apache.poi.ss.usermodel.RichTextString;
  * @author Yegor Kozlov
  */
 public class HSSFComment extends HSSFTextbox implements Comment {
+
+    private final static int FILL_TYPE_SOLID = 0;
+    private final static int FILL_TYPE_PICTURE = 3;
 
     /*
       * TODO - make HSSFComment more consistent when created vs read from file.
@@ -77,10 +79,11 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = super.createSpContainer();
         EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
-        removeEscherProperty(opt, EscherProperties.TEXT__TEXTLEFT);
-        removeEscherProperty(opt, EscherProperties.TEXT__TEXTRIGHT);
-        removeEscherProperty(opt, EscherProperties.TEXT__TEXTTOP);
-        removeEscherProperty(opt, EscherProperties.TEXT__TEXTBOTTOM);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTLEFT);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTRIGHT);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTTOP);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTBOTTOM);
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, 655362));
         return spContainer;
     }
 
@@ -215,7 +218,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
         EscherContainerRecord spContainer = new EscherContainerRecord();
         byte [] inSp = getEscherContainer().serialize();
@@ -223,5 +226,27 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         NoteRecord note = (NoteRecord) getNoteRecord().cloneViaReserialise();
         return new HSSFComment(spContainer, obj, txo, note);
+    }
+    
+    public void setBackgroundImage(int pictureIndex){
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__PATTERNTEXTURE, false, true, pictureIndex));
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
+        EscherBSERecord bse = _patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
+        bse.setRef(bse.getRef() + 1);
+    }
+    
+    public void resetBackgroundImage(){
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
+        if (null != property){
+            EscherBSERecord bse = _patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(property.getPropertyValue());
+            bse.setRef(bse.getRef() - 1);
+            getOptRecord().removeEscherProperty(EscherProperties.FILL__PATTERNTEXTURE);
+        }
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
+    }
+    
+    public int getBackgroundImageId(){
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
+        return property == null ? 0 : property.getPropertyValue();
     }
 }

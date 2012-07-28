@@ -90,15 +90,6 @@ public abstract class HSSFShape {
 
     protected abstract void afterRemove(HSSFPatriarch patriarch);
 
-    protected void removeEscherProperty(EscherOptRecord opt, int num){
-        for ( Iterator<EscherProperty> iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); ) {
-            EscherProperty prop = iterator.next();
-            if (prop.getPropertyNumber() == num){
-                iterator.remove();
-            }
-        }
-    }
-
     void setShapeId(int shapeId){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
@@ -112,15 +103,15 @@ public abstract class HSSFShape {
 
     abstract void afterInsert(HSSFPatriarch patriarch);
 
-    public EscherContainerRecord getEscherContainer() {
+    protected EscherContainerRecord getEscherContainer() {
         return _escherContainer;
     }
 
-    public ObjRecord getObjRecord() {
+    protected ObjRecord getObjRecord() {
         return _objRecord;
     }
 
-    public EscherOptRecord getOptRecord() {
+    protected EscherOptRecord getOptRecord() {
         return _optRecord;
     }
 
@@ -353,5 +344,5 @@ public abstract class HSSFShape {
         return 1;
     }
 
-    public abstract HSSFShape cloneShape();
+    protected abstract HSSFShape cloneShape();
 }

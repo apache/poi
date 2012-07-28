@@ -120,7 +120,7 @@ public class TestDrawingShapes extends TestCase {
         HSSFSheet sheet = wb.createSheet();
 
         HSSFPatriarch drawing = sheet.createDrawingPatriarch();
-        HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 200, 200, (short) 2, 2, (short) 15, 15);
+        HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 50, 50, (short) 2, 2, (short) 4, 4);
         anchor.setAnchorType(2);
         assertEquals(anchor.getAnchorType(), 2);
 
@@ -132,13 +132,16 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(10000, rectangle.getLineWidth());
         rectangle.setLineStyle(10);
         assertEquals(10, rectangle.getLineStyle());
+        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_SQUARE);
         rectangle.setLineStyleColor(1111);
         rectangle.setNoFill(true);
+        rectangle.setWrapText(HSSFSimpleShape.WRAP_NONE);
         rectangle.setString(new HSSFRichTextString("teeeest"));
         assertEquals(rectangle.getLineStyleColor(), 1111);
-        assertEquals(((EscherSimpleProperty)((EscherOptRecord)rectangle.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID))
+        assertEquals(((EscherSimpleProperty)((EscherOptRecord)HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherOptRecord.RECORD_ID))
                 .lookup(EscherProperties.TEXT__TEXTID)).getPropertyValue(), "teeeest".hashCode());
         assertEquals(rectangle.isNoFill(), true);
+        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
         assertEquals(rectangle.getString().getString(), "teeeest");
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -157,6 +160,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(rectangle2.getFillColor(), 777);
         assertEquals(rectangle2.isNoFill(), true);
         assertEquals(rectangle2.getString().getString(), "teeeest");
+        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
 
         rectangle2.setFillColor(3333);
         rectangle2.setLineStyle(9);
@@ -167,6 +171,7 @@ public class TestDrawingShapes extends TestCase {
         rectangle2.getAnchor().setDx2(3);
         rectangle2.getAnchor().setDy1(4);
         rectangle2.getAnchor().setDy2(5);
+        rectangle.setWrapText(HSSFSimpleShape.WRAP_BY_POINTS);
         rectangle2.setString(new HSSFRichTextString("test22"));
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -175,6 +180,7 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(1, drawing.getChildren().size());
         rectangle2 = (HSSFSimpleShape) drawing.getChildren().get(0);
         assertEquals(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE, rectangle2.getShapeType());
+        assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_BY_POINTS);
         assertEquals(77, rectangle2.getLineWidth());
         assertEquals(9, rectangle2.getLineStyle());
         assertEquals(rectangle2.getLineStyleColor(), 4444);
@@ -313,7 +319,7 @@ public class TestDrawingShapes extends TestCase {
 
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
         EscherOptRecord opt1 = HSSFTestHelper.getOptRecord(textbox);
-        EscherOptRecord opt2 = textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt2 = HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID);
         assertSame(opt1, opt2);
     }
     
@@ -328,13 +334,13 @@ public class TestDrawingShapes extends TestCase {
         String opt1Str = opt.toXml();
 
         textbox.setFillColor(textbox.getFillColor());
-        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
         textbox.setLineStyle(textbox.getLineStyle());
-        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
         textbox.setLineWidth(textbox.getLineWidth());
-        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
         textbox.setLineStyleColor(textbox.getLineStyleColor());
-        assertEquals(opt1Str, textbox.getEscherContainer().getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
     }
 
     public void testDgRecordNumShapes(){
@@ -370,7 +376,7 @@ public class TestDrawingShapes extends TestCase {
         shape.setString(new HSSFRichTextString("string1"));
         assertEquals(shape.getString().getString(), "string1");
 
-        assertNotNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        assertNotNull(HSSFTestHelper.getEscherContainer(shape).getChildById(EscherTextboxRecord.RECORD_ID));
         assertEquals(agg.getShapeToObjMapping().size(), 2);
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -381,9 +387,9 @@ public class TestDrawingShapes extends TestCase {
 
         shape = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
-        assertNotNull(shape.getTextObjectRecord());
+        assertNotNull(HSSFTestHelper.getTextObjRecord(shape));
         assertEquals(shape.getString().getString(), "string1");
-        assertNotNull(shape.getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID));
+        assertNotNull(HSSFTestHelper.getEscherContainer(shape).getChildById(EscherTextboxRecord.RECORD_ID));
         assertEquals(agg.getShapeToObjMapping().size(), 2);
     }
 
@@ -396,8 +402,8 @@ public class TestDrawingShapes extends TestCase {
         HSSFTestHelper.setShapeId(combobox, 1024);
         ComboboxShape comboboxShape = new ComboboxShape(combobox, 1024);
 
-        assertTrue(Arrays.equals(comboboxShape.getSpContainer().serialize(), combobox.getEscherContainer().serialize()));
-        assertTrue(Arrays.equals(comboboxShape.getObjRecord().serialize(), combobox.getObjRecord().serialize()));
+        assertTrue(Arrays.equals(comboboxShape.getSpContainer().serialize(), HSSFTestHelper.getEscherContainer(combobox).serialize()));
+        assertTrue(Arrays.equals(comboboxShape.getObjRecord().serialize(), HSSFTestHelper.getObjRecord(combobox).serialize()));
     }
 
     public void testRemoveShapes(){
