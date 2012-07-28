@@ -154,6 +154,15 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         sortProperties();
     }
 
+    public void removeEscherProperty(int num){
+        for ( Iterator<EscherProperty> iterator = getEscherProperties().iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
+            if (prop.getPropertyNumber() == num){
+                iterator.remove();
+            }
+        }
+    }
+
     /**
      * Retrieve the string representation of this record.
      */

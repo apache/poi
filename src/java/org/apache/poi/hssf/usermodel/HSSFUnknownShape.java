@@ -50,7 +50,7 @@ public class HSSFUnknownShape extends HSSFShape {
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         return null;
     }
 }

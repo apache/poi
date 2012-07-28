@@ -87,8 +87,8 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = super.createSpContainer();
         EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
-        removeEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
-        removeEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        opt.removeEscherProperty(EscherProperties.LINESTYLE__LINEDASHING);
+        opt.removeEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH);
         spContainer.removeChildRecord(spContainer.getChildById(EscherTextboxRecord.RECORD_ID));
         return spContainer;
     }
@@ -290,7 +290,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         EscherContainerRecord spContainer = new EscherContainerRecord();
         byte [] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());

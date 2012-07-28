@@ -136,7 +136,7 @@ public final class HSSFObjectData extends HSSFPicture {
     }
 
     @Override
-    public HSSFShape cloneShape() {
+    protected HSSFShape cloneShape() {
         EscherContainerRecord spContainer = new EscherContainerRecord();
         byte[] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());

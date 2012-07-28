@@ -21,6 +21,8 @@ import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -103,5 +105,17 @@ public class HSSFTestHelper {
 
     public static void setShapeId(HSSFShape shape, int id){
         shape.setShapeId(id);
+    }
+
+    public static EscherContainerRecord getEscherContainer(HSSFShape shape){
+        return shape.getEscherContainer();
+    }
+
+    public static TextObjectRecord getTextObjRecord(HSSFSimpleShape shape){
+        return shape.getTextObjectRecord();
+    }
+
+    public static ObjRecord getObjRecord(HSSFShape shape){
+        return shape.getObjRecord();
     }
 }
