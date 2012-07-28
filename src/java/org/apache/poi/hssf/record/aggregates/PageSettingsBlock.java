@@ -284,9 +284,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 			pls.visitContainedRecords(rv);
 		}
 		visitIfPresent(_printSetup, rv);
-		visitIfPresent(_bitmap, rv);
 		visitIfPresent(_printSize, rv);
 		visitIfPresent(_headerFooter, rv);
+        visitIfPresent(_bitmap, rv);
 	}
 	private static void visitIfPresent(Record r, RecordVisitor rv) {
 		if (r != null) {
