@@ -38,7 +38,7 @@ public class HSSFSimpleShape extends HSSFShape
     public final static short       OBJECT_TYPE_LINE               = 1;
     public final static short       OBJECT_TYPE_RECTANGLE          = 2;
     public final static short       OBJECT_TYPE_OVAL               = 3;
-//    public final static short       OBJECT_TYPE_ARC                = 4;
+    public final static short       OBJECT_TYPE_ARC                = 4;
 //    public final static short       OBJECT_TYPE_CHART              = 5;
 //    public final static short       OBJECT_TYPE_TEXT               = 6;
 //    public final static short       OBJECT_TYPE_BUTTON             = 7;
@@ -55,7 +55,7 @@ public class HSSFSimpleShape extends HSSFShape
 //    public final static short       OBJECT_TYPE_GROUP_BOX          = 19;
     public final static short       OBJECT_TYPE_COMBO_BOX          = 20;
     public final static short       OBJECT_TYPE_COMMENT            = 25;
-//    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
+    public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 
     public final static int WRAP_SQUARE = 0;
     public final static int WRAP_BY_POINTS = 1;
@@ -70,6 +70,7 @@ public class HSSFSimpleShape extends HSSFShape
         objTypeToShapeType.put(OBJECT_TYPE_PICTURE, HSSFShapeType.PICTURE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_LINE, HSSFShapeType.LINE.getType());
         objTypeToShapeType.put(OBJECT_TYPE_OVAL, HSSFShapeType.OVAL.getType());
+        objTypeToShapeType.put(OBJECT_TYPE_ARC, HSSFShapeType.ARC.getType());
     }
 
     public HSSFSimpleShape(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord) {
@@ -193,7 +194,6 @@ public class HSSFSimpleShape extends HSSFShape
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
 
-        //used only when clone shapes
         if (null != getTextObjectRecord()){
             agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
         }
@@ -206,7 +206,7 @@ public class HSSFSimpleShape extends HSSFShape
         byte [] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
-        if (getTextObjectRecord() != null && getString() != null && !"".equals(getString().getString())){
+        if (getTextObjectRecord() != null && getString() != null && null != getString().getString()){
             txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
         }
         return new HSSFSimpleShape(spContainer, obj, txo);
@@ -236,8 +236,6 @@ public class HSSFSimpleShape extends HSSFShape
      * @see #OBJECT_TYPE_LINE
      * @see #OBJECT_TYPE_OVAL
      * @see #OBJECT_TYPE_RECTANGLE
-     * @see #OBJECT_TYPE_PICTURE
-     * @see #OBJECT_TYPE_COMMENT
      */
     public void setShapeType( int shapeType ){
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
@@ -257,5 +255,16 @@ public class HSSFSimpleShape extends HSSFShape
 
     public void setWrapText(int value){
         setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__WRAPTEXT, false, false, value));
+    }
+
+    /**
+     * @see org.apache.poi.hssf.usermodel.drawing.ShapeTypes
+     * @param value
+     */
+    public void setAdditionalShapeType(short value){
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING);
+        EscherSpRecord spRecord = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
+        spRecord.setShapeType(value);
     }
 }
