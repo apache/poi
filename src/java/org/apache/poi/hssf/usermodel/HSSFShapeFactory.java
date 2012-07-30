@@ -23,7 +23,6 @@ import org.apache.poi.hssf.usermodel.drawing.HSSFShapeType;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -75,8 +74,8 @@ public class HSSFShapeFactory {
     public static void createShapeTree(EscherContainerRecord container, EscherAggregate agg, HSSFShapeContainer out, DirectoryNode root) {
         if (container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
             ObjRecord obj = null;
-            EscherClientDataRecord clientData = ((EscherContainerRecord)container.getChild(0)).getChildById(EscherClientDataRecord.RECORD_ID);
-            if (null != clientData){
+            EscherClientDataRecord clientData = ((EscherContainerRecord) container.getChild(0)).getChildById(EscherClientDataRecord.RECORD_ID);
+            if (null != clientData) {
                 obj = (ObjRecord) agg.getShapeToObjMapping().get(clientData);
             }
             HSSFShapeGroup group = new HSSFShapeGroup(container, obj);
@@ -110,7 +109,7 @@ public class HSSFShapeFactory {
                         break;
                 }
             }
-            if (isEmbeddedObject(objRecord)){
+            if (isEmbeddedObject(objRecord)) {
                 HSSFObjectData objectData = new HSSFObjectData(container, objRecord, root);
                 out.addShape(objectData);
                 return;
@@ -136,7 +135,7 @@ public class HSSFShapeFactory {
                     if (null != property) {
                         shape = new HSSFPolygon(container, objRecord, txtRecord);
                     } else {
-                        shape = new HSSFSimpleShape(container, objRecord);
+                        shape = new HSSFSimpleShape(container, objRecord, txtRecord);
                     }
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_TEXT:
@@ -146,11 +145,9 @@ public class HSSFShapeFactory {
                     shape = new HSSFComment(container, objRecord, txtRecord, agg.getNoteRecordByObj(objRecord));
                     break;
                 default:
-                    shape = new HSSFSimpleShape(container, objRecord);
+                    shape = new HSSFSimpleShape(container, objRecord, txtRecord);
             }
-            if (null != shape) {
-                out.addShape(shape);
-            }
+            out.addShape(shape);
         }
     }
 

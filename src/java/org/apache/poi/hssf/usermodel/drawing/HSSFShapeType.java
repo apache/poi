@@ -15,6 +15,7 @@ public enum HSSFShapeType {
     PICTURE((short)0x004B, HSSFPicture.class, HSSFSimpleShape.OBJECT_TYPE_PICTURE),
     LINE((short)0x14, HSSFSimpleShape.class, HSSFSimpleShape.OBJECT_TYPE_LINE),
     OVAL(EscherAggregate.ST_ELLIPSE, HSSFSimpleShape.class, HSSFSimpleShape.OBJECT_TYPE_OVAL),
+    ARC(EscherAggregate.ST_ARC, HSSFSimpleShape.class, HSSFSimpleShape.OBJECT_TYPE_ARC),
     TEXT((short)202, HSSFTextbox.class, HSSFTextbox.OBJECT_TYPE_TEXT),
     ROUND_RECTANGLE((short)0x2, null, null);
 
