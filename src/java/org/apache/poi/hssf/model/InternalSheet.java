@@ -1482,6 +1482,7 @@ public final class InternalSheet {
      *  if none currently exist
      * @param drawingManager The DrawingManager2 for our workbook
      * @param createIfMissing Should one be created if missing?
+     * @return location of EscherAggregate record. if no EscherAggregate record is found return -1
      */
     public int aggregateDrawingRecords(DrawingManager2 drawingManager, boolean createIfMissing) {
         int loc = findFirstRecordLocBySid(DrawingRecord.sid);

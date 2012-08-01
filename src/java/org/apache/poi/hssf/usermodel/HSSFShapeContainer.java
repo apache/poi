@@ -51,4 +51,6 @@ public interface HSSFShapeContainer extends Iterable<HSSFShape>
     public int getX2();
 
     public int getY2();
+
+    public boolean removeShape(HSSFShape shape);
 }

@@ -293,7 +293,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     protected HSSFPatriarch patriarch;
 
     /**
-     * if we want to get the same byte array if we open existing file and serialize it we should save 
+     * if we want to get the same byte array if we open existing file and serialize it we should save
      * note records in right order. This list contains ids of NoteRecords in such order as we read from existing file
      */
     private List<Integer> _tailIds = new ArrayList<Integer>();
@@ -306,7 +306,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /**
      * list of "tail" records that need to be serialized after all drawing group records
      */
-     private Map<Integer, NoteRecord> tailRec = new HashMap<Integer, NoteRecord>();
+    private Map<Integer, NoteRecord> tailRec = new HashMap<Integer, NoteRecord>();
 
     public EscherAggregate() {
         buildBaseTree();
@@ -517,9 +517,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         // write records that need to be serialized after all drawing group records
         Map<Integer, NoteRecord> tailCopy = new HashMap<Integer, NoteRecord>(tailRec);
         // at first we should save records in correct order which were already in the file during EscherAggregate.createAggregate()
-        for (Integer id : _tailIds){
+        for (Integer id : _tailIds) {
             NoteRecord note = tailCopy.get(id);
-            if (null != note){
+            if (null != note) {
                 pos += note.serialize(pos, data);
                 tailCopy.remove(id);
             }
@@ -539,14 +539,18 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         //First record in drawing layer MUST be DrawingRecord
         if (writtenEscherBytes + drawingData.length > RecordInputStream.MAX_RECORD_DATA_SIZE && i != 1) {
             for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
-                ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
+                byte[] buf = new byte[Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j)];
+                System.arraycopy(drawingData, j, buf, 0, Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j));
+                ContinueRecord drawing = new ContinueRecord(buf);
                 temp += drawing.serialize(pos + temp, data);
             }
         } else {
             for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
                 if (j == 0) {
                     DrawingRecord drawing = new DrawingRecord();
-                    drawing.setData(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
+                    byte[] buf = new byte[Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j)];
+                    System.arraycopy(drawingData, j, buf, 0, Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j));
+                    drawing.setData(buf);
                     temp += drawing.serialize(pos + temp, data);
                 } else {
                     ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
@@ -628,7 +632,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return shapeToObj.put(r, objRecord);
     }
 
-    public void removeShapeToObjRecord(EscherRecord rec){
+    public void removeShapeToObjRecord(EscherRecord rec) {
         shapeToObj.remove(rec);
     }
 
@@ -667,7 +671,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         dgContainer.setRecordId(EscherContainerRecord.DG_CONTAINER);
         dgContainer.setOptions((short) 0x000F);
         EscherDgRecord dg = new EscherDgRecord();
-        dg.setRecordId( EscherDgRecord.RECORD_ID );
+        dg.setRecordId(EscherDgRecord.RECORD_ID);
         short dgId = 1;
         dg.setOptions((short) (dgId << 4));
         dg.setNumShapes(0);
@@ -702,7 +706,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         dg.setOptions((short) (dgId << 4));
     }
 
-    public void setMainSpRecordId(int shapeId){
+    public void setMainSpRecordId(int shapeId) {
         EscherContainerRecord dgContainer = getEscherContainer();
         EscherContainerRecord spContainer = (EscherContainerRecord) dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER).getChild(0);
         EscherSpRecord sp = (EscherSpRecord) spContainer.getChildById(EscherSpRecord.RECORD_ID);
@@ -757,11 +761,11 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return tailRec.get(cod.getObjectId());
     }
 
-    public void addTailRecord(NoteRecord note){
+    public void addTailRecord(NoteRecord note) {
         tailRec.put(note.getShapeId(), note);
     }
 
-    public void removeTailRecord(NoteRecord note){
+    public void removeTailRecord(NoteRecord note) {
         tailRec.remove(note.getShapeId());
     }
 }
