@@ -346,7 +346,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
         spgrContainer.setOptions((short) 0x000F);
         EscherContainerRecord spContainer = new EscherContainerRecord();
-        byte [] inSp = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER).serialize();
+        EscherContainerRecord cont = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
+        byte [] inSp = cont.serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
 
         spgrContainer.addChildRecord(spContainer);

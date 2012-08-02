@@ -553,7 +553,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
                     drawing.setData(buf);
                     temp += drawing.serialize(pos + temp, data);
                 } else {
-                    ContinueRecord drawing = new ContinueRecord(Arrays.copyOfRange(drawingData, j, Math.min(j + RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length)));
+                    byte[] buf = new byte[Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j)];
+                    System.arraycopy(drawingData, j, buf, 0, Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j));
+                    ContinueRecord drawing = new ContinueRecord(buf);
                     temp += drawing.serialize(pos + temp, data);
                 }
             }
@@ -708,7 +710,8 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     public void setMainSpRecordId(int shapeId) {
         EscherContainerRecord dgContainer = getEscherContainer();
-        EscherContainerRecord spContainer = (EscherContainerRecord) dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER).getChild(0);
+        EscherContainerRecord spgrConatiner = (EscherContainerRecord) dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER);
+        EscherContainerRecord spContainer = (EscherContainerRecord) spgrConatiner.getChild(0);
         EscherSpRecord sp = (EscherSpRecord) spContainer.getChildById(EscherSpRecord.RECORD_ID);
         sp.setShapeId(shapeId);
     }

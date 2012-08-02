@@ -351,13 +351,15 @@ public class TestDrawingShapes extends TestCase {
         String opt1Str = opt.toXml();
 
         textbox.setFillColor(textbox.getFillColor());
-        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
+        EscherContainerRecord container = HSSFTestHelper.getEscherContainer(textbox);
+        EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
+        assertEquals(opt1Str, optRecord.toXml());
         textbox.setLineStyle(textbox.getLineStyle());
-        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, optRecord.toXml());
         textbox.setLineWidth(textbox.getLineWidth());
-        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, optRecord.toXml());
         textbox.setLineStyleColor(textbox.getLineStyleColor());
-        assertEquals(opt1Str, HSSFTestHelper.getEscherContainer(textbox).getChildById(EscherOptRecord.RECORD_ID).toXml());
+        assertEquals(opt1Str, optRecord.toXml());
     }
 
     public void testDgRecordNumShapes(){
