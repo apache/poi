@@ -32,8 +32,10 @@ import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
@@ -2004,13 +2006,107 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
 
+  @Override
   public CellRangeAddress getRepeatingRows() {
     return getRepeatingRowsOrColums(true);
   }
 
 
+  @Override
   public CellRangeAddress getRepeatingColumns() {
     return getRepeatingRowsOrColums(false);
+  }
+
+  
+  @Override
+  public void setRepeatingRows(CellRangeAddress rowRangeRef) {
+    CellRangeAddress columnRangeRef = getRepeatingColumns();
+    setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
+  }
+
+  
+  @Override
+  public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
+    CellRangeAddress rowRangeRef = getRepeatingRows();
+    setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
+  }
+
+  
+  private void setRepeatingRowsAndColumns(
+      CellRangeAddress rowDef, CellRangeAddress colDef) {
+    int sheetIndex = _workbook.getSheetIndex(this);
+    int maxRowIndex = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+    int maxColIndex = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+
+    int col1 = -1; 
+    int col2 =  -1;
+    int row1 = -1; 
+    int row2 =  -1;
+    
+    if (rowDef != null) {
+      row1 = rowDef.getFirstRow();
+      row2 = rowDef.getLastRow();
+      if ((row1 == -1 && row2 != -1) || (row1 > row2)
+           || (row1 < 0 || row1 > maxRowIndex) 
+           || (row2 < 0 || row2 > maxRowIndex)) {
+        throw new IllegalArgumentException("Invalid row range specification");
+      }
+    }
+    if (colDef != null) {
+      col1 = colDef.getFirstColumn();
+      col2 = colDef.getLastColumn();
+      if ((col1 == -1 && col2 != -1) || (col1 > col2)
+          || (col1 < 0 || col1 > maxColIndex) 
+          || (col2 < 0 || col2 > maxColIndex)) {
+       throw new IllegalArgumentException("Invalid column range specification");
+     }
+    }
+
+    short externSheetIndex = 
+      _workbook.getWorkbook().checkExternSheet(sheetIndex);
+
+    boolean setBoth = rowDef != null && colDef != null;
+    boolean removeAll = rowDef == null && colDef == null;
+
+    HSSFName name = _workbook.getBuiltInName(
+        NameRecord.BUILTIN_PRINT_TITLE, sheetIndex);
+    if (removeAll) {
+        if (name != null) {
+          _workbook.removeName(name);
+        }
+        return;
+    }
+    if (name == null) {
+        name = _workbook.createBuiltInName(
+            NameRecord.BUILTIN_PRINT_TITLE, sheetIndex);
+    }
+    
+    List<Ptg> ptgList = new ArrayList<Ptg>();
+    if (setBoth) {
+      final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
+      ptgList.add(new MemFuncPtg(exprsSize));
+    }
+    if (colDef != null) {
+      Area3DPtg colArea = new Area3DPtg(0, maxRowIndex, col1, col2,
+              false, false, false, false, externSheetIndex);
+      ptgList.add(colArea);
+    }
+    if (rowDef != null) {
+      Area3DPtg rowArea = new Area3DPtg(row1, row2, 0, maxColIndex,
+              false, false, false, false, externSheetIndex);
+      ptgList.add(rowArea);
+    }
+    if (setBoth) {
+      ptgList.add(UnionPtg.instance);
+    }
+
+    Ptg[] ptgs = new Ptg[ptgList.size()];
+    ptgList.toArray(ptgs);
+    name.setNameDefinition(ptgs);
+
+    HSSFPrintSetup printSetup = getPrintSetup();
+    printSetup.setValidSettings(false);
+    setActive(true);
   }
 
   
@@ -2021,7 +2117,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
     
     Ptg[] nameDefinition = rec.getNameDefinition();
-    if (rec.getNameDefinition() == null) {
+    if (nameDefinition == null) {
       return null;
     }
     

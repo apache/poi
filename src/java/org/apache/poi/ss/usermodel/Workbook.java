@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * High level representation of a Excel workbook.  This is the first object most users
@@ -284,6 +285,9 @@ public interface Workbook {
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
+     * 
+     * @deprecated use {@link Sheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link Sheet#setRepeatingColumns(CellRangeAddress)}
      */
     void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow);
 

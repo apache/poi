@@ -49,13 +49,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -75,8 +72,6 @@ import org.apache.commons.codec.digest.DigestUtils;
  */
 public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
-    private static final int MAX_ROW = 0xFFFF;
-    private static final int MAX_COLUMN = (short)0x00FF;
 
     /**
      * The maximum number of cell styles in a .xls workbook.
@@ -957,80 +952,27 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
+     * 
+     * @deprecated use {@link HSSFSheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link HSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
     public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
-                                           int startRow, int endRow)
-    {
-        // Check arguments
-        if (startColumn == -1 && endColumn != -1) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow == -1 && endRow != -1) throw new IllegalArgumentException("Invalid row range specification");
-        if (startColumn < -1 || startColumn >= MAX_COLUMN) throw new IllegalArgumentException("Invalid column range specification");
-        if (endColumn < -1 || endColumn >= MAX_COLUMN) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow < -1 || startRow > MAX_ROW) throw new IllegalArgumentException("Invalid row range specification");
-        if (endRow < -1 || endRow > MAX_ROW) throw new IllegalArgumentException("Invalid row range specification");
-        if (startColumn > endColumn) throw new IllegalArgumentException("Invalid column range specification");
-        if (startRow > endRow) throw new IllegalArgumentException("Invalid row range specification");
+                                           int startRow, int endRow) {
+      HSSFSheet sheet = getSheetAt(sheetIndex);
 
-        HSSFSheet sheet = getSheetAt(sheetIndex);
-        short externSheetIndex = getWorkbook().checkExternSheet(sheetIndex);
+      CellRangeAddress rows = null;
+      CellRangeAddress cols = null;
 
-        boolean settingRowAndColumn =
-                startColumn != -1 && endColumn != -1 && startRow != -1 && endRow != -1;
-        boolean removingRange =
-                startColumn == -1 && endColumn == -1 && startRow == -1 && endRow == -1;
+      if (startRow != -1) {
+        rows = new CellRangeAddress(startRow, endRow, -1, -1);
+      }
+      if (startColumn != -1) {
+        cols = new CellRangeAddress(-1, -1, startColumn, endColumn);
+      }
 
-        int rowColHeaderNameIndex = findExistingBuiltinNameRecordIdx(sheetIndex, NameRecord.BUILTIN_PRINT_TITLE);
-        if (removingRange) {
-            if (rowColHeaderNameIndex >= 0) {
-                workbook.removeName(rowColHeaderNameIndex);
-            }
-            return;
-        }
-        boolean isNewRecord;
-        NameRecord nameRecord;
-        if (rowColHeaderNameIndex < 0) {
-            //does a lot of the house keeping for builtin records, like setting lengths to zero etc
-            nameRecord = workbook.createBuiltInName(NameRecord.BUILTIN_PRINT_TITLE, sheetIndex+1);
-            isNewRecord = true;
-        } else {
-            nameRecord = workbook.getNameRecord(rowColHeaderNameIndex);
-            isNewRecord = false;
-        }
-
-        List temp = new ArrayList();
-
-        if (settingRowAndColumn) {
-            final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
-            temp.add(new MemFuncPtg(exprsSize));
-        }
-        if (startColumn >= 0) {
-            Area3DPtg colArea = new Area3DPtg(0, MAX_ROW, startColumn, endColumn,
-                    false, false, false, false, externSheetIndex);
-            temp.add(colArea);
-        }
-        if (startRow >= 0) {
-            Area3DPtg rowArea = new Area3DPtg(startRow, endRow, 0, MAX_COLUMN,
-                    false, false, false, false, externSheetIndex);
-            temp.add(rowArea);
-        }
-        if (settingRowAndColumn) {
-            temp.add(UnionPtg.instance);
-        }
-        Ptg[] ptgs = new Ptg[temp.size()];
-        temp.toArray(ptgs);
-        nameRecord.setNameDefinition(ptgs);
-
-        if (isNewRecord)
-        {
-            HSSFName newName = new HSSFName(this, nameRecord, nameRecord.isBuiltInName() ? null : workbook.getNameCommentRecord(nameRecord));
-            names.add(newName);
-        }
-
-        HSSFPrintSetup printSetup = sheet.getPrintSetup();
-        printSetup.setValidSettings(false);
-
-        sheet.setActive(true);
+      sheet.setRepeatingRows(rows);
+      sheet.setRepeatingColumns(cols);
     }
 
 
@@ -1050,6 +992,26 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return -1;
     }
 
+    
+    HSSFName createBuiltInName(byte builtinCode, int sheetIndex) {
+      NameRecord nameRecord = 
+        workbook.createBuiltInName(builtinCode, sheetIndex + 1);
+      HSSFName newName = new HSSFName(this, nameRecord, null);
+      names.add(newName);
+      return newName;
+    }
+
+    
+    HSSFName getBuiltInName(byte builtinCode, int sheetIndex) {
+      int index = findExistingBuiltinNameRecordIdx(sheetIndex, builtinCode);
+      if (index < 0) {
+        return null;
+      } else {
+        return names.get(index);
+      }
+    }
+
+    
     /**
      * create a new Font and add it to the workbook's font table
      * @return new font object
@@ -1477,6 +1439,25 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
 
+    /**
+     * As {@link #getNameIndex(String)} is not necessarily unique 
+     * (name + sheet index is unique), this method is more accurate.
+     * 
+     * @param name the name whose index in the list of names of this workbook
+     *        should be looked up.
+     * @return an index value >= 0 if the name was found; -1, if the name was 
+     *         not found
+     */
+    int getNameIndex(HSSFName name) {
+      for (int k = 0; k < names.size(); k++) {
+        if (name == names.get(k)) {
+            return k;
+        }
+      }
+      return -1;
+    }
+
+
     public void removeName(int index){
         names.remove(index);
         workbook.removeName(index);
@@ -1497,8 +1478,19 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public void removeName(String name) {
         int index = getNameIndex(name);
-
         removeName(index);
+    }
+
+
+    /**
+     * As {@link #removeName(String)} is not necessarily unique 
+     * (name + sheet index is unique), this method is more accurate.
+     * 
+     * @param name the name to remove.
+     */
+    void removeName(HSSFName name) {
+      int index = getNameIndex(name);
+      removeName(index);
     }
 
     public HSSFPalette getCustomPalette()

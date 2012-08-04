@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * @author Yegor Kozlov
@@ -35,13 +36,15 @@ public final class TestXSSFName extends BaseTestNamedRange {
         // First test that setting RR&C for same sheet more than once only creates a
         // single  Print_Titles built-in record
         XSSFWorkbook wb = new XSSFWorkbook();
-        wb.createSheet("First Sheet");
+        XSSFSheet sheet1 = wb.createSheet("First Sheet");
 
-        wb.setRepeatingRowsAndColumns(0, -1, -1, -1, -1);
+        sheet1.setRepeatingRows(null);
+        sheet1.setRepeatingColumns(null);
 
         // set repeating rows and columns twice for the first sheet
         for (int i = 0; i < 2; i++) {
-            wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
+          sheet1.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
+          sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:A"));
             //sheet.createFreezePane(0, 3);
         }
         assertEquals(1, wb.getNumberOfNames());
@@ -51,18 +54,18 @@ public final class TestXSSFName extends BaseTestNamedRange {
         assertEquals("'First Sheet'!$A:$A,'First Sheet'!$1:$4", nr1.getRefersToFormula());
 
         //remove the columns part
-        wb.setRepeatingRowsAndColumns(0, -1, -1, 0, 3);
+        sheet1.setRepeatingColumns(null);
         assertEquals("'First Sheet'!$1:$4", nr1.getRefersToFormula());
 
         //revert
-        wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
+        sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:A"));
 
         //remove the rows part
-        wb.setRepeatingRowsAndColumns(0, 0, 0, -1, -1);
+        sheet1.setRepeatingRows(null);
         assertEquals("'First Sheet'!$A:$A", nr1.getRefersToFormula());
 
         //revert
-        wb.setRepeatingRowsAndColumns(0, 0, 0, 0, 3);
+        sheet1.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
 
         // Save and re-open
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -75,8 +78,9 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         // check that setting RR&C on a second sheet causes a new Print_Titles built-in
         // name to be created
-        nwb.createSheet("SecondSheet");
-        nwb.setRepeatingRowsAndColumns(1, 1, 2, 0, 0);
+        XSSFSheet sheet2 = nwb.createSheet("SecondSheet");
+        sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:1"));
+        sheet2.setRepeatingColumns(CellRangeAddress.valueOf("B:C"));
 
         assertEquals(2, nwb.getNumberOfNames());
         XSSFName nr2 = nwb.getNameAt(1);
@@ -84,6 +88,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
         assertEquals(XSSFName.BUILTIN_PRINT_TITLE, nr2.getNameName());
         assertEquals("SecondSheet!$B:$C,SecondSheet!$1:$1", nr2.getRefersToFormula());
 
-        nwb.setRepeatingRowsAndColumns(1, -1, -1, -1, -1);
+        sheet2.setRepeatingRows(null);
+        sheet2.setRepeatingColumns(null);
     }
 }
