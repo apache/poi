@@ -20,10 +20,13 @@ package org.apache.poi.hslf.model;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import javax.imageio.ImageIO;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.POIDataSamples;
@@ -87,5 +90,42 @@ public final class TestPicture extends TestCase {
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
         pict.draw(graphics);
+    }
+
+    public void testMacImages() throws Exception {
+        HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("53446.ppt"));
+
+        PictureData[] pictures = hss.getPictures();
+        assertEquals(15, pictures.length);
+
+        int[][] expectedSizes = {
+                null,           // WMF
+                { 427, 428 },   // PNG
+                { 371, 370 },   // PNG
+                { 288, 183 },   // PNG
+                { 285, 97 },    // PNG
+                { 288, 168 },   // PNG
+                null,           // WMF
+                null,           // WMF
+                { 199, 259 },   // PNG
+                { 432, 244 },   // PNG
+                { 261, 258 },   // PNG
+                null,           // WMF
+                null,           // WMF
+                null,           // WMF
+                null            // EMF
+        };
+
+        for (int i = 0; i < pictures.length; i++) {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(pictures[i].getData()));
+
+            if (pictures[i].getType() != Picture.WMF && pictures[i].getType() != Picture.EMF) {
+                assertNotNull(image);
+
+                int[] dimensions = expectedSizes[i];
+                assertEquals(dimensions[0], image.getWidth());
+                assertEquals(dimensions[1], image.getHeight());
+            }
+        }
     }
 }

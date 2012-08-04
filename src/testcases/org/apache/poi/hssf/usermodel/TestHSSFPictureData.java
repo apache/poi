@@ -71,6 +71,29 @@ public final class TestHSSFPictureData extends TestCase{
             }
         }
     }
+	
+	public void testMacPicture() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("53446.xls");
+
+        @SuppressWarnings("unchecked")
+        List<HSSFPictureData> lst = (List<HSSFPictureData>)(List<?>)wb.getAllPictures();
+        assertEquals(1, lst.size());
+
+        HSSFPictureData pict = lst.get(0);
+        String ext = pict.suggestFileExtension();
+        if (!ext.equals("png")) {
+            fail("Expected a PNG.");
+        }
+
+        //try to read image data using javax.imageio.* (JDK 1.4+)
+        byte[] data = pict.getData();
+        BufferedImage png = ImageIO.read(new ByteArrayInputStream(data));
+        assertNotNull(png);
+        assertEquals(78, png.getWidth());
+        assertEquals(76, png.getHeight());
+        assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
+        assertEquals("image/png", pict.getMimeType());
+    }
 
     public void testNotNullPictures() throws IOException {
 
