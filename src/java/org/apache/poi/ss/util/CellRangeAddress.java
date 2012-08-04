@@ -111,8 +111,12 @@ public class CellRangeAddress extends CellRangeAddressBase {
     }
 
     /**
-     * @param ref usually a standard area ref (e.g. "B1:D8").  May be a single cell
-     *            ref (e.g. "B5") in which case the result is a 1 x 1 cell range.
+     * Creates a CellRangeAddress from a cell range reference string.
+     *  
+     * @param ref usually a standard area ref (e.g. "B1:D8").  May be a single 
+     *            cell ref (e.g. "B5") in which case the result is a 1 x 1 cell 
+     *            range. May also be a whole row range (e.g. "3:5"), or a whole 
+     *            column range (e.g. "C:F")
      */
     public static CellRangeAddress valueOf(String ref) {
         int sep = ref.indexOf(":");

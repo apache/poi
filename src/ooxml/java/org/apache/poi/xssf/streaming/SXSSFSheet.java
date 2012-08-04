@@ -17,20 +17,32 @@
 
 package org.apache.poi.xssf.streaming;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
-import java.util.TreeMap;
 import java.util.Map;
-
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.*;
-
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.SheetUtil;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import java.util.TreeMap;
 
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.AutoFilter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
@@ -1266,14 +1278,27 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
     
     
+    @Override
     public CellRangeAddress getRepeatingRows() {
       return _sh.getRepeatingRows();
     }
     
     
+    @Override
     public CellRangeAddress getRepeatingColumns() {
       return _sh.getRepeatingColumns();
     }
+    
+    @Override
+    public void setRepeatingRows(CellRangeAddress rowRangeRef) {
+      _sh.setRepeatingRows(rowRangeRef);
+    }
+    
+    @Override
+    public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
+      _sh.setRepeatingColumns(columnRangeRef);
+    }
+    
     
     
 //end of interface implementation
