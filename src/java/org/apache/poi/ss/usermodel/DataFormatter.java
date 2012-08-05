@@ -111,8 +111,11 @@ public class DataFormatter {
     /** Pattern to find "AM/PM" marker */
     private static final Pattern amPmPattern = Pattern.compile("((A|P)[M/P]*)", Pattern.CASE_INSENSITIVE);
 
-    /** A regex to find patterns like [$$-1009] and [$?-452]. */
-    private static final Pattern specialPatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+\\])");
+    /** 
+     * A regex to find locale patterns like [$$-1009] and [$?-452].
+     * Note that we don't currently process these into locales 
+     */
+    private static final Pattern localePatternGroup = Pattern.compile("(\\[\\$[^-\\]]*-[0-9A-Z]+\\])");
 
     /**
      * A regex to match the colour formattings rules.
@@ -278,12 +281,16 @@ public class DataFormatter {
         if (format != null) {
             return format;
         }
+        
+        // Is it one of the special built in types, General or @?
         if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
             if (isWholeNumber(cellValue)) {
                 return generalWholeNumFormat;
             }
             return generalDecimalNumFormat;
         }
+        
+        // Build a formatter, and cache it
         format = createFormat(cellValue, formatIndex, formatStr);
         formats.put(formatStr, format);
         return format;
@@ -323,8 +330,8 @@ public class DataFormatter {
            colourM = colorPattern.matcher(formatStr);
         }
 
-        // try to extract special characters like currency
-        Matcher m = specialPatternGroup.matcher(formatStr);
+        // Strip off the locale information, we use an instance-wide locale for everything
+        Matcher m = localePatternGroup.matcher(formatStr);
         while(m.find()) {
             String match = m.group();
             String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
@@ -336,11 +343,19 @@ public class DataFormatter {
                 symbol = sb.toString();
             }
             formatStr = m.replaceAll(symbol);
-            m = specialPatternGroup.matcher(formatStr);
+            m = localePatternGroup.matcher(formatStr);
         }
 
+        // Check for special cases
         if(formatStr == null || formatStr.trim().length() == 0) {
             return getDefaultFormat(cellValue);
+        }
+        
+        if ("General".equalsIgnoreCase(formatStr) || "@".equals(formatStr)) {
+           if (isWholeNumber(cellValue)) {
+               return generalWholeNumFormat;
+           }
+           return generalDecimalNumFormat;
         }
 
         if(DateUtil.isADateFormat(formatIndex,formatStr) &&

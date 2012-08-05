@@ -154,6 +154,14 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         tmp = wr.getTempFile();
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet-xml"));
         assertTrue(tmp.getName().endsWith(".gz"));
+
+        //Test escaping of Unicode control characters
+        wb = new SXSSFWorkbook();
+        wb.createSheet("S1").createRow(0).createCell(0).setCellValue("value\u0019");
+        XSSFWorkbook xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        Cell cell = xssfWorkbook.getSheet("S1").getRow(0).getCell(0);
+        assertEquals("value?", cell.getStringCellValue());
+
     }
     
     public void testGZipSheetdataWriter(){

@@ -212,7 +212,6 @@ public class SXSSFRow implements Row
      */
     public Cell getCell(int cellnum, MissingCellPolicy policy)
     {
-        assert false;
         Cell cell = getCell(cellnum);
         if(policy == RETURN_NULL_AND_BLANK)
         {

@@ -637,10 +637,10 @@ public final class WorkbookEvaluator {
      * YK: Used by OperationEvaluationContext to resolve indirect names.
      */
 	/*package*/ ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
-		if (ptgs.length > 1) {
-			throw new RuntimeException("Complex name formulas not supported yet");
-		}
-		return getEvalForPtg(ptgs[0], ec);
+    if (ptgs.length == 1) {
+      return getEvalForPtg(ptgs[0], ec);
+    }
+	  return evaluateFormula(ec, ptgs);
 	}
 
 	/**

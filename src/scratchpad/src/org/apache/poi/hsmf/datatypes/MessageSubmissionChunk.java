@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
 
 /**
@@ -44,7 +45,7 @@ public class MessageSubmissionChunk extends Chunk {
 	/**
 	 * Creates a Byte Chunk.
 	 */
-	public MessageSubmissionChunk(String namePrefix, int chunkId, int type) {
+	public MessageSubmissionChunk(String namePrefix, int chunkId, MAPIType type) {
 		super(namePrefix, chunkId, type);
 	}
 	
@@ -52,7 +53,7 @@ public class MessageSubmissionChunk extends Chunk {
 	 * Create a Byte Chunk, with the specified
 	 *  type.
 	 */
-	public MessageSubmissionChunk(int chunkId, int type) {
+	public MessageSubmissionChunk(int chunkId, MAPIType type) {
 	   super(chunkId, type);
 	}
 

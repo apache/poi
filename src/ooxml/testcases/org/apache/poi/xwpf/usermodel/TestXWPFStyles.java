@@ -26,7 +26,11 @@ import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 
 public class TestXWPFStyles extends TestCase {
 
@@ -82,4 +86,36 @@ public class TestXWPFStyles extends TestCase {
       assertNotNull(styles);
 	}
 
+
+    /**
+     * YK: tests below don't make much sense,
+     * they exist only to copy xml beans to pi-ooxml-schemas.jar
+     */
+    public void testLanguages(){
+        XWPFDocument docOut = new XWPFDocument();
+        XWPFStyles styles = docOut.createStyles();
+        styles.setEastAsia("Chinese");
+
+        styles.setSpellingLanguage("English");
+
+        CTFonts def = CTFonts.Factory.newInstance();
+        styles.setDefaultFonts(def);
+    }
+
+    public void testType() {
+        CTStyle ctStyle = CTStyle.Factory.newInstance();
+        XWPFStyle style = new XWPFStyle(ctStyle);
+
+        style.setType(STStyleType.PARAGRAPH);
+        assertEquals(STStyleType.PARAGRAPH, style.getType());
+    }
+
+    public void testLatentStyles() {
+        CTLatentStyles latentStyles = CTLatentStyles.Factory.newInstance();
+        CTLsdException ex = latentStyles.addNewLsdException();
+        ex.setName("ex1");
+        XWPFLatentStyles ls = new XWPFLatentStyles(latentStyles);
+        assertEquals(true, ls.isLatentStyle("ex1"));
+
+    }
 }

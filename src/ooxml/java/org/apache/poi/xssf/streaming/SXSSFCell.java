@@ -728,10 +728,6 @@ public class SXSSFCell implements Cell
     }
     void ensureTypeOrFormulaType(int type)
     {
-        assert type==CELL_TYPE_NUMERIC||
-               type==CELL_TYPE_STRING||
-               type==CELL_TYPE_BOOLEAN||
-               type==CELL_TYPE_ERROR;
         if(_value.getType()==type)
         {
             if(type==CELL_TYPE_STRING&&((StringValue)_value).isRichText())

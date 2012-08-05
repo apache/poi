@@ -19,9 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import junit.framework.TestCase;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 import java.awt.Color;
 
@@ -102,6 +100,20 @@ public class TestXSLFSimpleShape extends TestCase {
         assertEquals(null, shape.getLineColor());
         // setting dash width to null unsets the SolidFill element
         assertFalse(shape.getSpPr().getLn().isSetSolidFill());
+
+        XSLFSimpleShape ln2 = slide.createAutoShape();
+        ln2.setLineDash(LineDash.DOT);
+        assertEquals(LineDash.DOT, ln2.getLineDash());
+        ln2.setLineWidth(0.);
+        assertEquals(0., ln2.getLineWidth());
+
+        XSLFSimpleShape ln3 = slide.createAutoShape();
+        ln3.setLineWidth(1.);
+        assertEquals(1., ln3.getLineWidth());
+        ln3.setLineDash(null);
+        assertEquals(null, ln3.getLineDash());
+        ln3.setLineCap(null);
+        assertEquals(null, ln3.getLineDash());
     }
 
     public void testFill() {
@@ -231,4 +243,14 @@ public class TestXSLFSimpleShape extends TestCase {
 
     }
 
+    public void testShadowEffects(){
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        CTStyleMatrix styleMatrix = slide.getTheme().getXmlObject().getThemeElements().getFmtScheme();
+        CTEffectStyleList lst = styleMatrix.getEffectStyleLst();
+        assertNotNull(lst);
+        for(CTEffectStyleItem ef : lst.getEffectStyleList()){
+            CTOuterShadowEffect obj = ef.getEffectLst().getOuterShdw();
+        }
+    }
 }

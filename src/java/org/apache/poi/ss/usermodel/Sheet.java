@@ -927,4 +927,95 @@ public interface Sheet extends Iterable<Row> {
      */
     SheetConditionalFormatting getSheetConditionalFormatting();
 
+
+    /**
+     * Gets the repeating rows used when printing the sheet, as found in 
+     * File->PageSetup->Sheet.
+     * <p/>
+     * Repeating rows cover a range of contiguous rows, e.g.:
+     * <pre>
+     * Sheet1!$1:$1
+     * Sheet2!$5:$8
+     * </pre>
+     * The {@link CellRangeAddress} returned contains a column part which spans 
+     * all columns, and a row part which specifies the contiguous range of 
+     * repeating rows.
+     * <p/>
+     * If the Sheet does not have any repeating rows defined, null is returned.
+     * 
+     * @return an {@link CellRangeAddress} containing the repeating rows for the 
+     *         Sheet, or null.
+     */
+    CellRangeAddress getRepeatingRows();
+
+
+    /**
+     * Gets the repeating columns used when printing the sheet, as found in 
+     * File->PageSetup->Sheet.
+     * <p/>
+     * Repeating columns cover a range of contiguous columns, e.g.:
+     * <pre>
+     * Sheet1!$A:$A
+     * Sheet2!$C:$F
+     * </pre>
+     * The {@link CellRangeAddress} returned contains a row part which spans all 
+     * rows, and a column part which specifies the contiguous range of 
+     * repeating columns.
+     * <p/>
+     * If the Sheet does not have any repeating columns defined, null is 
+     * returned.
+     * 
+     * @return an {@link CellRangeAddress} containing the repeating columns for 
+     *         the Sheet, or null.
+     */
+    CellRangeAddress getRepeatingColumns();
+
+
+    /**
+     * Sets the repeating rows used when printing the sheet, as found in 
+     * File->PageSetup->Sheet.
+     * <p/>
+     * Repeating rows cover a range of contiguous rows, e.g.:
+     * <pre>
+     * Sheet1!$1:$1
+     * Sheet2!$5:$8</pre>
+     * The parameter {@link CellRangeAddress} should specify a column part 
+     * which spans all columns, and a row part which specifies the contiguous 
+     * range of repeating rows, e.g.:
+     * <pre>
+     * sheet.setRepeatingRows(CellRangeAddress.valueOf("2:3"));</pre>
+     * A null parameter value indicates that repeating rows should be removed 
+     * from the Sheet:
+     * <pre>
+     * sheet.setRepeatingRows(null);</pre>
+     * 
+     * @param rowRangeRef a {@link CellRangeAddress} containing the repeating 
+     *        rows for the Sheet, or null.
+     */
+    void setRepeatingRows(CellRangeAddress rowRangeRef);
+
+
+    /**
+     * Sets the repeating columns used when printing the sheet, as found in 
+     * File->PageSetup->Sheet.
+     * <p/>
+     * Repeating columns cover a range of contiguous columns, e.g.:
+     * <pre>
+     * Sheet1!$A:$A
+     * Sheet2!$C:$F</pre>
+     * The parameter {@link CellRangeAddress} should specify a row part 
+     * which spans all rows, and a column part which specifies the contiguous 
+     * range of repeating columns, e.g.:
+     * <pre>
+     * sheet.setRepeatingColumns(CellRangeAddress.valueOf("B:C"));</pre>
+     * A null parameter value indicates that repeating columns should be removed 
+     * from the Sheet:
+     * <pre>
+     * sheet.setRepeatingColumns(null);</pre>
+     * 
+     * @param columnRangeRef a {@link CellRangeAddress} containing the repeating 
+     *        columns for the Sheet, or null.
+     */
+    void setRepeatingColumns(CellRangeAddress columnRangeRef);
+
 }

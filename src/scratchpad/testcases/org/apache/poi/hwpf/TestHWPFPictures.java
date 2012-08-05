@@ -17,10 +17,14 @@
 
 package org.apache.poi.hwpf;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.POIDataSamples;
@@ -127,6 +131,30 @@ public final class TestHWPFPictures extends TestCase {
 		assertEquals(picBytes.length, pic.getContent().length);
 		assertBytesSame(picBytes, pic.getContent());
 	}
+
+   	public void testMacImages() throws Exception {
+        HWPFDocument docC = HWPFTestDataSamples.openSampleFile("53446.doc");
+   		PicturesTable picturesTable = docC.getPicturesTable();
+   		List<Picture> pictures = picturesTable.getAllPictures();
+
+   		assertEquals(4, pictures.size());
+
+        int[][] expectedSizes = {
+            { 185, 42 },  // PNG
+            { 260, 114 }, // PNG
+            { 185, 42 },  // PNG
+            { 260, 114 }, // PNG
+       };
+
+       for (int i = 0; i < pictures.size(); i++) {
+           BufferedImage image = ImageIO.read(new ByteArrayInputStream(pictures.get(i).getContent()));
+           assertNotNull(image);
+
+           int[] dimensions = expectedSizes[i];
+           assertEquals(dimensions[0], image.getWidth());
+           assertEquals(dimensions[1], image.getHeight());
+       }
+   	}
 
 	/**
 	 * Pending the missing files being uploaded to

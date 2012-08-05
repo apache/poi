@@ -712,4 +712,78 @@ public abstract class BaseTestSheet extends TestCase {
         assertNull(sheet.getPaneInformation());
     }
 
+    
+    public void testGetRepeatingRowsAndColumns() {
+        Workbook wb = _testDataProvider.openSampleWorkbook(
+            "RepeatingRowsCols." 
+            + _testDataProvider.getStandardFileNameExtension());
+        
+        checkRepeatingRowsAndColumns(wb.getSheetAt(0), null, null);
+        checkRepeatingRowsAndColumns(wb.getSheetAt(1), "1:1", null);
+        checkRepeatingRowsAndColumns(wb.getSheetAt(2), null, "A:A");
+        checkRepeatingRowsAndColumns(wb.getSheetAt(3), "2:3", "A:B");
+    }
+
+
+    public void testSetRepeatingRowsAndColumnsBug47294(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet1 = wb.createSheet();
+        sheet1.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
+        assertEquals("1:4", sheet1.getRepeatingRows().formatAsString());
+
+        //must handle sheets with quotas, see Bugzilla #47294
+        Sheet sheet2 = wb.createSheet("My' Sheet");
+        sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
+        assertEquals("1:4", sheet2.getRepeatingRows().formatAsString());
+    }
+
+    public void testSetRepeatingRowsAndColumns() {
+      Workbook wb = _testDataProvider.createWorkbook();
+      Sheet sheet1 = wb.createSheet("Sheet1");
+      Sheet sheet2 = wb.createSheet("Sheet2");
+      Sheet sheet3 = wb.createSheet("Sheet3");
+
+      checkRepeatingRowsAndColumns(sheet1, null, null);
+      
+      sheet1.setRepeatingRows(CellRangeAddress.valueOf("4:5"));
+      sheet2.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
+      sheet3.setRepeatingRows(CellRangeAddress.valueOf("1:4"));
+      sheet3.setRepeatingColumns(CellRangeAddress.valueOf("A:A"));
+
+      checkRepeatingRowsAndColumns(sheet1, "4:5", null);
+      checkRepeatingRowsAndColumns(sheet2, null, "A:C");
+      checkRepeatingRowsAndColumns(sheet3, "1:4", "A:A");
+
+      // write out, read back, and test refrain...
+      wb = _testDataProvider.writeOutAndReadBack(wb);
+      sheet1 = wb.getSheetAt(0);
+      sheet2 = wb.getSheetAt(1);
+      sheet3 = wb.getSheetAt(2);
+      
+      checkRepeatingRowsAndColumns(sheet1, "4:5", null);
+      checkRepeatingRowsAndColumns(sheet2, null, "A:C");
+      checkRepeatingRowsAndColumns(sheet3, "1:4", "A:A");
+      
+      // check removing repeating rows and columns       
+      sheet3.setRepeatingRows(null);
+      checkRepeatingRowsAndColumns(sheet3, null, "A:A");
+      
+      sheet3.setRepeatingColumns(null);
+      checkRepeatingRowsAndColumns(sheet3, null, null);
+    }
+
+    private void checkRepeatingRowsAndColumns(
+        Sheet s, String expectedRows, String expectedCols) {
+      if (expectedRows == null) {
+        assertNull(s.getRepeatingRows());
+      } else {
+        assertEquals(expectedRows, s.getRepeatingRows().formatAsString());
+      }
+      if (expectedCols == null) {
+        assertNull(s.getRepeatingColumns());
+      } else {
+        assertEquals(expectedCols, s.getRepeatingColumns().formatAsString());
+      }
+    }
+
 }

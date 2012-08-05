@@ -20,14 +20,19 @@ package org.apache.poi.hsmf.datatypes;
 import static org.apache.poi.hsmf.datatypes.Types.ASCII_STRING;
 import static org.apache.poi.hsmf.datatypes.Types.BINARY;
 import static org.apache.poi.hsmf.datatypes.Types.BOOLEAN;
+import static org.apache.poi.hsmf.datatypes.Types.CLS_ID;
 import static org.apache.poi.hsmf.datatypes.Types.DIRECTORY;
 import static org.apache.poi.hsmf.datatypes.Types.LONG;
+import static org.apache.poi.hsmf.datatypes.Types.LONG_LONG;
+import static org.apache.poi.hsmf.datatypes.Types.SHORT;
 import static org.apache.poi.hsmf.datatypes.Types.TIME;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 
 /**
  * Holds the list of MAPI Attributes, and allows lookup
@@ -49,7 +54,7 @@ public class MAPIProperty {
    public static final MAPIProperty AB_PROVIDERS =
       new MAPIProperty(0x3d01, BINARY, "AbProviders", "PR_AB_PROVIDERS");
    public static final MAPIProperty AB_SEARCH_PATH =
-      new MAPIProperty(0x3d05, 4354, "AbSearchPath", "PR_AB_SEARCH_PATH");
+      new MAPIProperty(0x3d05, Types.createCustom(4354), "AbSearchPath", "PR_AB_SEARCH_PATH");
    public static final MAPIProperty AB_SEARCH_PATH_UPDATE =
       new MAPIProperty(0x3d11, BINARY, "AbSearchPathUpdate", "PR_AB_SEARCH_PATH_UPDATE");
    public static final MAPIProperty ACCESS =
@@ -75,15 +80,15 @@ public class MAPIProperty {
    public static final MAPIProperty ATTACH_ADDITIONAL_INFO =
       new MAPIProperty(0x370f, BINARY, "AttachAdditionalInfo", "PR_ATTACH_ADDITIONAL_INFO");
    public static final MAPIProperty ATTACH_CONTENT_BASE =
-      new MAPIProperty(0x3711, -1, "AttachContentBase", "PR_ATTACH_CONTENT_BASE");
+      new MAPIProperty(0x3711, Types.UNKNOWN,  "AttachContentBase", "PR_ATTACH_CONTENT_BASE");
    public static final MAPIProperty ATTACH_CONTENT_ID =
-      new MAPIProperty(0x3712, -1, "AttachContentId", "PR_ATTACH_CONTENT_ID");
+      new MAPIProperty(0x3712, Types.UNKNOWN,  "AttachContentId", "PR_ATTACH_CONTENT_ID");
    public static final MAPIProperty ATTACH_CONTENT_LOCATION =
-      new MAPIProperty(0x3713, -1, "AttachContentLocation", "PR_ATTACH_CONTENT_LOCATION");
+      new MAPIProperty(0x3713, Types.UNKNOWN,  "AttachContentLocation", "PR_ATTACH_CONTENT_LOCATION");
    public static final MAPIProperty ATTACH_DATA =
       new MAPIProperty(0x3701, BINARY, "AttachData", "PR_ATTACH_DATA_OBJ");
    public static final MAPIProperty ATTACH_DISPOSITION =
-      new MAPIProperty(0x3716, -1, "AttachDisposition", "PR_ATTACH_DISPOSITION");
+      new MAPIProperty(0x3716, Types.UNKNOWN,  "AttachDisposition", "PR_ATTACH_DISPOSITION");
    public static final MAPIProperty ATTACH_ENCODING =
       new MAPIProperty(0x3702, BINARY, "AttachEncoding", "PR_ATTACH_ENCODING");
    public static final MAPIProperty ATTACH_EXTENSION =
@@ -91,7 +96,7 @@ public class MAPIProperty {
    public static final MAPIProperty ATTACH_FILENAME =
       new MAPIProperty(0x3704, ASCII_STRING, "AttachFilename", "PR_ATTACH_FILENAME");
    public static final MAPIProperty ATTACH_FLAGS =
-      new MAPIProperty(0x3714, -1, "AttachFlags", "PR_ATTACH_FLAGS");
+      new MAPIProperty(0x3714, Types.UNKNOWN,  "AttachFlags", "PR_ATTACH_FLAGS");
    public static final MAPIProperty ATTACH_LONG_FILENAME =
       new MAPIProperty(0x3707, ASCII_STRING, "AttachLongFilename", "PR_ATTACH_LONG_FILENAME");
    public static final MAPIProperty ATTACH_LONG_PATHNAME =
@@ -99,11 +104,11 @@ public class MAPIProperty {
    public static final MAPIProperty ATTACH_METHOD =
       new MAPIProperty(0x3705, LONG, "AttachMethod", "PR_ATTACH_METHOD");
    public static final MAPIProperty ATTACH_MIME_SEQUENCE =
-      new MAPIProperty(0x3710, -1, "AttachMimeSequence", "PR_ATTACH_MIME_SEQUENCE");
+      new MAPIProperty(0x3710, Types.UNKNOWN,  "AttachMimeSequence", "PR_ATTACH_MIME_SEQUENCE");
    public static final MAPIProperty ATTACH_MIME_TAG =
       new MAPIProperty(0x370e, ASCII_STRING, "AttachMimeTag", "PR_ATTACH_MIME_TAG");
    public static final MAPIProperty ATTACH_NETSCAPE_MAC_INFO =
-      new MAPIProperty(0x3715, -1, "AttachNetscapeMacInfo", "PR_ATTACH_NETSCAPE_MAC_INFO");
+      new MAPIProperty(0x3715, Types.UNKNOWN,  "AttachNetscapeMacInfo", "PR_ATTACH_NETSCAPE_MAC_INFO");
    public static final MAPIProperty ATTACH_NUM =
       new MAPIProperty(0xe21, LONG, "AttachNum", "PR_ATTACH_NUM");
    public static final MAPIProperty ATTACH_PATHNAME =
@@ -125,19 +130,19 @@ public class MAPIProperty {
    public static final MAPIProperty AUTO_FORWARDED =
       new MAPIProperty(5, BOOLEAN, "AutoForwarded", "PR_AUTO_FORWARDED");
    public static final MAPIProperty AUTO_RESPONSE_SUPPRESS =
-      new MAPIProperty(0x3fdf, -1, "AutoResponseSuppress", "PR_AUTO_RESPONSE_SUPPRESS");
+      new MAPIProperty(0x3fdf, Types.UNKNOWN,  "AutoResponseSuppress", "PR_AUTO_RESPONSE_SUPPRESS");
    public static final MAPIProperty BIRTHDAY =
       new MAPIProperty(0x3a42, TIME, "Birthday", "PR_BIRTHDAY");
    public static final MAPIProperty BODY =
       new MAPIProperty(0x1000, ASCII_STRING, "Body", "PR_BODY");
    public static final MAPIProperty BODY_CONTENT_ID =
-      new MAPIProperty(0x1015, -1, "BodyContentId", "PR_BODY_CONTENT_ID");
+      new MAPIProperty(0x1015, Types.UNKNOWN,  "BodyContentId", "PR_BODY_CONTENT_ID");
    public static final MAPIProperty BODY_CONTENT_LOCATION =
-      new MAPIProperty(0x1014, -1, "BodyContentLocation", "PR_BODY_CONTENT_LOCATION");
+      new MAPIProperty(0x1014, Types.UNKNOWN,  "BodyContentLocation", "PR_BODY_CONTENT_LOCATION");
    public static final MAPIProperty BODY_CRC =
       new MAPIProperty(0xe1c, LONG, "BodyCrc", "PR_BODY_CRC");
    public static final MAPIProperty BODY_HTML =
-      new MAPIProperty(0x1013, -1, "BodyHtml", "data");
+      new MAPIProperty(0x1013, Types.UNKNOWN,  "BodyHtml", "data");
    public static final MAPIProperty BUSINESS_FAX_NUMBER =
       new MAPIProperty(0x3a24, ASCII_STRING, "BusinessFaxNumber", "PR_BUSINESS_FAX_NUMBER");
    public static final MAPIProperty BUSINESS_HOME_PAGE =
@@ -147,7 +152,7 @@ public class MAPIProperty {
    public static final MAPIProperty CAR_TELEPHONE_NUMBER =
       new MAPIProperty(0x3a1e, ASCII_STRING, "CarTelephoneNumber", "PR_CAR_TELEPHONE_NUMBER");
    public static final MAPIProperty CHILDRENS_NAMES =
-      new MAPIProperty(0x3a58, 4126, "ChildrensNames", "PR_CHILDRENS_NAMES");
+      new MAPIProperty(0x3a58, Types.createCustom(4126), "ChildrensNames", "PR_CHILDRENS_NAMES");
    public static final MAPIProperty CLIENT_SUBMIT_TIME =
       new MAPIProperty(0x39, TIME, "ClientSubmitTime", "PR_CLIENT_SUBMIT_TIME");
    public static final MAPIProperty COMMENT =
@@ -161,15 +166,15 @@ public class MAPIProperty {
    public static final MAPIProperty COMPUTER_NETWORK_NAME =
       new MAPIProperty(0x3a49, ASCII_STRING, "ComputerNetworkName", "PR_COMPUTER_NETWORK_NAME");
    public static final MAPIProperty CONTACT_ADDRTYPES =
-      new MAPIProperty(0x3a54, 4126, "ContactAddrtypes", "PR_CONTACT_ADDRTYPES");
+      new MAPIProperty(0x3a54, Types.createCustom(4126), "ContactAddrtypes", "PR_CONTACT_ADDRTYPES");
    public static final MAPIProperty CONTACT_DEFAULT_ADDRESS_INDEX =
       new MAPIProperty(0x3a55, LONG, "ContactDefaultAddressIndex", "PR_CONTACT_DEFAULT_ADDRESS_INDEX");
    public static final MAPIProperty CONTACT_EMAIL_ADDRESSES =
-      new MAPIProperty(0x3a56, 4126, "ContactEmailAddresses", "PR_CONTACT_EMAIL_ADDRESSES");
+      new MAPIProperty(0x3a56, Types.createCustom(4126), "ContactEmailAddresses", "PR_CONTACT_EMAIL_ADDRESSES");
    public static final MAPIProperty CONTACT_ENTRY_IDS =
-      new MAPIProperty(0x3a53, 4354, "ContactEntryIds", "PR_CONTACT_ENTRYIDS");
+      new MAPIProperty(0x3a53, Types.createCustom(4354), "ContactEntryIds", "PR_CONTACT_ENTRYIDS");
    public static final MAPIProperty CONTACT_VERSION =
-      new MAPIProperty(0x3a52, 72, "ContactVersion", "PR_CONTACT_VERSION");
+      new MAPIProperty(0x3a52, CLS_ID, "ContactVersion", "PR_CONTACT_VERSION");
    public static final MAPIProperty CONTAINER_CLASS =
       new MAPIProperty(0x3613, ASCII_STRING, "ContainerClass", "PR_CONTAINER_CLASS");
    public static final MAPIProperty CONTAINER_CONTENTS =
@@ -179,7 +184,7 @@ public class MAPIProperty {
    public static final MAPIProperty CONTAINER_HIERARCHY =
       new MAPIProperty(0x360e, DIRECTORY, "ContainerHierarchy", "PR_CONTAINER_HIERARCHY");
    public static final MAPIProperty CONTAINER_MODIFY_VERSION =
-      new MAPIProperty(0x3614, 20, "ContainerModifyVersion", "PR_CONTAINER_MODIFY_VERSION");
+      new MAPIProperty(0x3614, LONG_LONG, "ContainerModifyVersion", "PR_CONTAINER_MODIFY_VERSION");
    public static final MAPIProperty CONTENT_CONFIDENTIALITY_ALGORITHM_ID =
       new MAPIProperty(6, BINARY, "ContentConfidentialityAlgorithmId", "PR_CONTENT_CONFIDENTIALITY_ALGORITHM_ID");
    public static final MAPIProperty CONTENT_CORRELATOR =
@@ -197,7 +202,7 @@ public class MAPIProperty {
    public static final MAPIProperty CONTENT_UNREAD =
       new MAPIProperty(0x3603, LONG, "ContentUnread", "PR_CONTENT_UNREAD");
    public static final MAPIProperty CONTENTS_SORT_ORDER =
-      new MAPIProperty(0x360d, 4099, "ContentsSortOrder", "PR_CONTENTS_SORT_ORDER");
+      new MAPIProperty(0x360d, Types.createCustom(4099), "ContentsSortOrder", "PR_CONTENTS_SORT_ORDER");
    public static final MAPIProperty CONTROL_FLAGS =
       new MAPIProperty(0x3f00, LONG, "ControlFlags", "PR_CONTROL_FLAGS");
    public static final MAPIProperty CONTROL_ID =
@@ -231,9 +236,9 @@ public class MAPIProperty {
    public static final MAPIProperty CREATION_TIME =
       new MAPIProperty(0x3007, TIME, "CreationTime", "PR_CREATION_TIME");
    public static final MAPIProperty CREATION_VERSION =
-      new MAPIProperty(0xe19, 20, "CreationVersion", "PR_CREATION_VERSION");
+      new MAPIProperty(0xe19, LONG_LONG, "CreationVersion", "PR_CREATION_VERSION");
    public static final MAPIProperty CURRENT_VERSION =
-      new MAPIProperty(0xe00, 20, "CurrentVersion", "PR_CURRENT_VERSION");
+      new MAPIProperty(0xe00, LONG_LONG, "CurrentVersion", "PR_CURRENT_VERSION");
    public static final MAPIProperty CUSTOMER_ID =
       new MAPIProperty(0x3a4a, ASCII_STRING, "CustomerId", "PR_CUSTOMER_ID");
    public static final MAPIProperty DEF_CREATE_DL =
@@ -299,13 +304,13 @@ public class MAPIProperty {
    public static final MAPIProperty ENTRY_ID =
       new MAPIProperty(0xfff, BINARY, "EntryId", "PR_ENTRYID");
    public static final MAPIProperty EXPAND_BEGIN_TIME =
-      new MAPIProperty(0x3618, -1, "ExpandBeginTime", "PR_EXPAND_BEGIN_TIME");
+      new MAPIProperty(0x3618, Types.UNKNOWN,  "ExpandBeginTime", "PR_EXPAND_BEGIN_TIME");
    public static final MAPIProperty EXPAND_END_TIME =
-      new MAPIProperty(0x3619, -1, "ExpandEndTime", "PR_EXPAND_END_TIME");
+      new MAPIProperty(0x3619, Types.UNKNOWN,  "ExpandEndTime", "PR_EXPAND_END_TIME");
    public static final MAPIProperty EXPANDED_BEGIN_TIME =
-      new MAPIProperty(0x361a, -1, "ExpandedBeginTime", "PR_EXPANDED_BEGIN_TIME");
+      new MAPIProperty(0x361a, Types.UNKNOWN,  "ExpandedBeginTime", "PR_EXPANDED_BEGIN_TIME");
    public static final MAPIProperty EXPANDED_END_TIME =
-      new MAPIProperty(0x361b, -1, "ExpandedEndTime", "PR_EXPANDED_END_TIME");
+      new MAPIProperty(0x361b, Types.UNKNOWN,  "ExpandedEndTime", "PR_EXPANDED_END_TIME");
    public static final MAPIProperty EXPIRY_TIME =
       new MAPIProperty(0x15, TIME, "ExpiryTime", "PR_EXPIRY_TIME");
    public static final MAPIProperty EXPLICIT_CONVERSION =
@@ -323,17 +328,17 @@ public class MAPIProperty {
    public static final MAPIProperty FORM_CATEGORY_SUB =
       new MAPIProperty(0x3305, ASCII_STRING, "FormCategorySub", "PR_FORM_CATEGORY_SUB");
    public static final MAPIProperty FORM_CLSID =
-      new MAPIProperty(0x3302, 72, "FormClsid", "PR_FORM_ClsID");
+      new MAPIProperty(0x3302, CLS_ID, "FormClsid", "PR_FORM_ClsID");
    public static final MAPIProperty FORM_CONTACT_NAME =
       new MAPIProperty(0x3303, ASCII_STRING, "FormContactName", "PR_FORM_CONTACT_NAME");
    public static final MAPIProperty FORM_DESIGNER_GUID =
-      new MAPIProperty(0x3309, 72, "FormDesignerGuid", "PR_FORM_DESIGNER_GUID");
+      new MAPIProperty(0x3309, CLS_ID, "FormDesignerGuid", "PR_FORM_DESIGNER_GUID");
    public static final MAPIProperty FORM_DESIGNER_NAME =
       new MAPIProperty(0x3308, ASCII_STRING, "FormDesignerName", "PR_FORM_DESIGNER_NAME");
    public static final MAPIProperty FORM_HIDDEN =
       new MAPIProperty(0x3307, BOOLEAN, "FormHidden", "PR_FORM_HIDDEN");
    public static final MAPIProperty FORM_HOST_MAP =
-      new MAPIProperty(0x3306, 4099, "FormHostMap", "PR_FORM_HOST_MAP");
+      new MAPIProperty(0x3306, Types.createCustom(4099), "FormHostMap", "PR_FORM_HOST_MAP");
    public static final MAPIProperty FORM_MESSAGE_BEHAVIOR =
       new MAPIProperty(0x330a, LONG, "FormMessageBehavior", "PR_FORM_MESSAGE_BEHAVIOR");
    public static final MAPIProperty FORM_VERSION =
@@ -341,7 +346,7 @@ public class MAPIProperty {
    public static final MAPIProperty FTP_SITE =
       new MAPIProperty(0x3a4c, ASCII_STRING, "FtpSite", "PR_FTP_SITE");
    public static final MAPIProperty GENDER =
-      new MAPIProperty(0x3a4d, 2, "Gender", "PR_GENDER");
+      new MAPIProperty(0x3a4d, SHORT, "Gender", "PR_GENDER");
    public static final MAPIProperty GENERATION =
       new MAPIProperty(0x3a05, ASCII_STRING, "Generation", "PR_GENERATION");
    public static final MAPIProperty GIVEN_NAME =
@@ -373,9 +378,9 @@ public class MAPIProperty {
    public static final MAPIProperty HOME_TELEPHONE_NUMBER =
       new MAPIProperty(0x3a09, ASCII_STRING, "HomeTelephoneNumber", "PR_HOME_TELEPHONE_NUMBER");
    public static final MAPIProperty INET_MAIL_OVERRIDE_CHARSET =
-      new MAPIProperty(0x5903, -1, "INetMailOverrideCharset", "Charset");
+      new MAPIProperty(0x5903, Types.UNKNOWN,  "INetMailOverrideCharset", "Charset");
    public static final MAPIProperty INET_MAIL_OVERRIDE_FORMAT =
-      new MAPIProperty(0x5902, -1, "INetMailOverrideFormat", "Format");
+      new MAPIProperty(0x5902, Types.UNKNOWN,  "INetMailOverrideFormat", "Format");
    public static final MAPIProperty ICON =
       new MAPIProperty(0xffd, BINARY, "Icon", "PR_ICON");
    public static final MAPIProperty IDENTITY_DISPLAY =
@@ -389,7 +394,7 @@ public class MAPIProperty {
    public static final MAPIProperty IMPORTANCE =
       new MAPIProperty(0x17, LONG, "Importance", "PR_IMPORTANCE");
    public static final MAPIProperty IN_REPLY_TO_ID =
-      new MAPIProperty(0x1042, -1, "InReplyToId", "PR_IN_REPLY_TO_ID");
+      new MAPIProperty(0x1042, Types.UNKNOWN,  "InReplyToId", "PR_IN_REPLY_TO_ID");
    public static final MAPIProperty INCOMPLETE_COPY =
       new MAPIProperty(0x35, BOOLEAN, "IncompleteCopy", "PR_INCOMPLETE_COPY");
    public static final MAPIProperty INITIAL_DETAILS_PANE =
@@ -403,7 +408,7 @@ public class MAPIProperty {
    public static final MAPIProperty INTERNET_ARTICLE_NUMBER =
       new MAPIProperty(0xe23, LONG, "InternetArticleNumber", "PR_INTERNET_ARTICLE_NUMBER");
    public static final MAPIProperty INTERNET_CPID =
-      new MAPIProperty(0x3fde, -1, "InternetCPID", "PR_INTERNET_CPID");
+      new MAPIProperty(0x3fde, Types.UNKNOWN,  "InternetCPID", "PR_INTERNET_CPID");
    public static final MAPIProperty INTERNET_CONTROL =
       new MAPIProperty(0x1031, ASCII_STRING, "InternetControl", "PR_INTERNET_CONTROL");
    public static final MAPIProperty INTERNET_DISTRIBUTION =
@@ -457,39 +462,39 @@ public class MAPIProperty {
    public static final MAPIProperty LATEST_DELIVERY_TIME =
       new MAPIProperty(0x19, TIME, "LatestDeliveryTime", "PR_LATEST_DELIVERY_TIME");
    public static final MAPIProperty LIST_HELP =
-      new MAPIProperty(0x1043, -1, "ListHelp", "PR_LIST_HELP");
+      new MAPIProperty(0x1043, Types.UNKNOWN,  "ListHelp", "PR_LIST_HELP");
    public static final MAPIProperty LIST_SUBSCRIBE =
-      new MAPIProperty(0x1044, -1, "ListSubscribe", "PR_LIST_SUBSCRIBE");
+      new MAPIProperty(0x1044, Types.UNKNOWN,  "ListSubscribe", "PR_LIST_SUBSCRIBE");
    public static final MAPIProperty LIST_UNSUBSCRIBE =
-      new MAPIProperty(0x1045, -1, "ListUnsubscribe", "PR_LIST_UNSUBSCRIBE");
+      new MAPIProperty(0x1045, Types.UNKNOWN,  "ListUnsubscribe", "PR_LIST_UNSUBSCRIBE");
    public static final MAPIProperty LOCALITY =
       new MAPIProperty(0x3a27, ASCII_STRING, "Locality", "PR_LOCALITY");
    public static final MAPIProperty LOCALLY_DELIVERED =
-      new MAPIProperty(0x6745, -1, "LocallyDelivered", "ptagLocallyDelivered");
+      new MAPIProperty(0x6745, Types.UNKNOWN,  "LocallyDelivered", "ptagLocallyDelivered");
    public static final MAPIProperty LOCATION =
       new MAPIProperty(0x3a0d, ASCII_STRING, "Location", "PR_LOCATION");
    public static final MAPIProperty LOCK_BRANCH_ID =
-      new MAPIProperty(0x3800, -1, "LockBranchId", "PR_LOCK_BRANCH_ID");
+      new MAPIProperty(0x3800, Types.UNKNOWN,  "LockBranchId", "PR_LOCK_BRANCH_ID");
    public static final MAPIProperty LOCK_DEPTH =
-      new MAPIProperty(0x3808, -1, "LockDepth", "PR_LOCK_DEPTH");
+      new MAPIProperty(0x3808, Types.UNKNOWN,  "LockDepth", "PR_LOCK_DEPTH");
    public static final MAPIProperty LOCK_ENLISTMENT_CONTEXT =
-      new MAPIProperty(0x3804, -1, "LockEnlistmentContext", "PR_LOCK_ENLISTMENT_CONTEXT");
+      new MAPIProperty(0x3804, Types.UNKNOWN,  "LockEnlistmentContext", "PR_LOCK_ENLISTMENT_CONTEXT");
    public static final MAPIProperty LOCK_EXPIRY_TIME =
-      new MAPIProperty(0x380a, -1, "LockExpiryTime", "PR_LOCK_EXPIRY_TIME");
+      new MAPIProperty(0x380a, Types.UNKNOWN,  "LockExpiryTime", "PR_LOCK_EXPIRY_TIME");
    public static final MAPIProperty LOCK_PERSISTENT =
-      new MAPIProperty(0x3807, -1, "LockPersistent", "PR_LOCK_PERSISTENT");
+      new MAPIProperty(0x3807, Types.UNKNOWN,  "LockPersistent", "PR_LOCK_PERSISTENT");
    public static final MAPIProperty LOCK_RESOURCE_DID =
-      new MAPIProperty(0x3802, -1, "LockResourceDid", "PR_LOCK_RESOURCE_DID");
+      new MAPIProperty(0x3802, Types.UNKNOWN,  "LockResourceDid", "PR_LOCK_RESOURCE_DID");
    public static final MAPIProperty LOCK_RESOURCE_FID =
-      new MAPIProperty(0x3801, -1, "LockResourceFid", "PR_LOCK_RESOURCE_FID");
+      new MAPIProperty(0x3801, Types.UNKNOWN,  "LockResourceFid", "PR_LOCK_RESOURCE_FID");
    public static final MAPIProperty LOCK_RESOURCE_MID =
-      new MAPIProperty(0x3803, -1, "LockResourceMid", "PR_LOCK_RESOURCE_MID");
+      new MAPIProperty(0x3803, Types.UNKNOWN,  "LockResourceMid", "PR_LOCK_RESOURCE_MID");
    public static final MAPIProperty LOCK_SCOPE =
-      new MAPIProperty(0x3806, -1, "LockScope", "PR_LOCK_SCOPE");
+      new MAPIProperty(0x3806, Types.UNKNOWN,  "LockScope", "PR_LOCK_SCOPE");
    public static final MAPIProperty LOCK_TIMEOUT =
-      new MAPIProperty(0x3809, -1, "LockTimeout", "PR_LOCK_TIMEOUT");
+      new MAPIProperty(0x3809, Types.UNKNOWN,  "LockTimeout", "PR_LOCK_TIMEOUT");
    public static final MAPIProperty LOCK_TYPE =
-      new MAPIProperty(0x3805, -1, "LockType", "PR_LOCK_TYPE");
+      new MAPIProperty(0x3805, Types.UNKNOWN,  "LockType", "PR_LOCK_TYPE");
    public static final MAPIProperty MAIL_PERMISSION =
       new MAPIProperty(0x3a0e, BOOLEAN, "MailPermission", "PR_MAIL_PERMISSION");
    public static final MAPIProperty MANAGER_NAME =
@@ -505,7 +510,7 @@ public class MAPIProperty {
    public static final MAPIProperty MESSAGE_CLASS =
       new MAPIProperty(0x1a, ASCII_STRING, "MessageClass", "PR_MESSAGE_CLASS");
    public static final MAPIProperty MESSAGE_CODEPAGE =
-      new MAPIProperty(0x3ffd, -1, "MessageCodepage", "PR_MESSAGE_CODEPAGE");
+      new MAPIProperty(0x3ffd, Types.UNKNOWN,  "MessageCodepage", "PR_MESSAGE_CODEPAGE");
    public static final MAPIProperty MESSAGE_DELIVERY_ID =
       new MAPIProperty(0x1b, BINARY, "MessageDeliveryId", "PR_MESSAGE_DELIVERY_ID");
    public static final MAPIProperty MESSAGE_DELIVERY_TIME =
@@ -537,7 +542,7 @@ public class MAPIProperty {
    public static final MAPIProperty MOBILE_TELEPHONE_NUMBER =
       new MAPIProperty(0x3a1c, ASCII_STRING, "MobileTelephoneNumber", "PR_MOBILE_TELEPHONE_NUMBER");
    public static final MAPIProperty MODIFY_VERSION =
-      new MAPIProperty(0xe1a, 20, "ModifyVersion", "PR_MODIFY_VERSION");
+      new MAPIProperty(0xe1a, LONG_LONG, "ModifyVersion", "PR_MODIFY_VERSION");
    public static final MAPIProperty MSG_STATUS =
       new MAPIProperty(0xe17, LONG, "MsgStatus", "PR_MSG_STATUS");
    public static final MAPIProperty NDR_DIAG_CODE =
@@ -545,7 +550,7 @@ public class MAPIProperty {
    public static final MAPIProperty NDR_REASON_CODE =
       new MAPIProperty(0xc04, LONG, "NdrReasonCode", "PR_NDR_REASON_CODE");
    public static final MAPIProperty NDR_STATUS_CODE =
-      new MAPIProperty(0xc20, -1, "NdrStatusCode", "PR_NDR_STATUS_CODE");
+      new MAPIProperty(0xc20, Types.UNKNOWN,  "NdrStatusCode", "PR_NDR_STATUS_CODE");
    public static final MAPIProperty NEWSGROUP_NAME =
       new MAPIProperty(0xe24, ASCII_STRING, "NewsgroupName", "PR_NEWSGROUP_NAME");
    public static final MAPIProperty NICKNAME =
@@ -559,7 +564,7 @@ public class MAPIProperty {
    public static final MAPIProperty NORMALIZED_SUBJECT =
       new MAPIProperty(0xe1d, ASCII_STRING, "NormalizedSubject", "PR_NORMALIZED_SUBJECT");
    public static final MAPIProperty NT_SECURITY_DESCRIPTOR =
-      new MAPIProperty(0xe27, -1, "NtSecurityDescriptor", "PR_NT_SECURITY_DESCRIPTOR");
+      new MAPIProperty(0xe27, Types.UNKNOWN,  "NtSecurityDescriptor", "PR_NT_SECURITY_DESCRIPTOR");
    public static final MAPIProperty NULL =
       new MAPIProperty(1, LONG, "Null", "PR_NULL");
    public static final MAPIProperty OBJECT_TYPE =
@@ -573,11 +578,11 @@ public class MAPIProperty {
    public static final MAPIProperty OFFICE_TELEPHONE_NUMBER =
       new MAPIProperty(0x3a08, ASCII_STRING, "OfficeTelephoneNumber", "PR_OFFICE_TELEPHONE_NUMBER");
    public static final MAPIProperty OOF_REPLY_TYPE =
-      new MAPIProperty(0x4080, -1, "OofReplyType", "PR_OOF_REPLY_TYPE");
+      new MAPIProperty(0x4080, Types.UNKNOWN,  "OofReplyType", "PR_OOF_REPLY_TYPE");
    public static final MAPIProperty ORGANIZATIONAL_ID_NUMBER =
       new MAPIProperty(0x3a10, ASCII_STRING, "OrganizationalIdNumber", "PR_ORGANIZATIONAL_ID_NUMBER");
    public static final MAPIProperty ORIG_ENTRY_ID =
-      new MAPIProperty(0x300f, -1, "OrigEntryId", "PR_ORIG_ENTRYID");
+      new MAPIProperty(0x300f, Types.UNKNOWN,  "OrigEntryId", "PR_ORIG_ENTRYID");
    public static final MAPIProperty ORIG_MESSAGE_CLASS =
       new MAPIProperty(0x4b, ASCII_STRING, "OrigMessageClass", "PR_ORIG_MESSAGE_CLASS");
    public static final MAPIProperty ORIGIN_CHECK =
@@ -737,9 +742,9 @@ public class MAPIProperty {
    public static final MAPIProperty PROOF_OF_SUBMISSION_REQUESTED =
       new MAPIProperty(40, BOOLEAN, "ProofOfSubmissionRequested", "PR_PROOF_OF_SUBMISSION_REQUESTED");
    public static final MAPIProperty PROP_ID_SECURE_MAX =
-      new MAPIProperty(0x67ff, -1, "PropIdSecureMax", "PROP_ID_SECURE_MAX");
+      new MAPIProperty(0x67ff, Types.UNKNOWN,  "PropIdSecureMax", "PROP_ID_SECURE_MAX");
    public static final MAPIProperty PROP_ID_SECURE_MIN =
-      new MAPIProperty(0x67f0, -1, "PropIdSecureMin", "PROP_ID_SECURE_MIN");
+      new MAPIProperty(0x67f0, Types.UNKNOWN,  "PropIdSecureMin", "PROP_ID_SECURE_MIN");
    public static final MAPIProperty PROVIDER_DISPLAY =
       new MAPIProperty(0x3006, ASCII_STRING, "ProviderDisplay", "PR_PROVIDER_DISPLAY");
    public static final MAPIProperty PROVIDER_DLL_NAME =
@@ -751,7 +756,7 @@ public class MAPIProperty {
    public static final MAPIProperty PROVIDER_UID =
       new MAPIProperty(0x300c, BINARY, "ProviderUid", "PR_PROVIDER_UID");
    public static final MAPIProperty PUID =
-      new MAPIProperty(0x300e, -1, "Puid", "PR_PUID");
+      new MAPIProperty(0x300e, Types.UNKNOWN, "Puid", "PR_PUID");
    public static final MAPIProperty RADIO_TELEPHONE_NUMBER =
       new MAPIProperty(0x3a1d, ASCII_STRING, "RadioTelephoneNumber", "PR_RADIO_TELEPHONE_NUMBER");
    public static final MAPIProperty RCVD_REPRESENTING_ADDRTYPE =
@@ -783,11 +788,11 @@ public class MAPIProperty {
    public static final MAPIProperty RECEIVED_BY_NAME =
       new MAPIProperty(0x40, ASCII_STRING, "ReceivedByName", "PR_RECEIVED_BY_NAME");
    public static final MAPIProperty RECIPIENT_DISPLAY_NAME =
-      new MAPIProperty(0x5ff6, -1, "RecipientDisplayName", null);
+      new MAPIProperty(0x5ff6, Types.UNKNOWN, "RecipientDisplayName", null);
    public static final MAPIProperty RECIPIENT_ENTRY_ID =
-      new MAPIProperty(0x5ff7, -1, "RecipientEntryId", null);
+      new MAPIProperty(0x5ff7, Types.UNKNOWN, "RecipientEntryId", null);
    public static final MAPIProperty RECIPIENT_FLAGS =
-      new MAPIProperty(0x5ffd, -1, "RecipientFlags", null);
+      new MAPIProperty(0x5ffd, Types.UNKNOWN, "RecipientFlags", null);
    public static final MAPIProperty RECEIVED_BY_SEARCH_KEY =
       new MAPIProperty(0x51, BINARY, "ReceivedBySearchKey", "PR_RECEIVED_BY_SEARCH_KEY");
    public static final MAPIProperty RECIPIENT_CERTIFICATE =
@@ -887,7 +892,7 @@ public class MAPIProperty {
    public static final MAPIProperty SEND_INTERNET_ENCODING =
       new MAPIProperty(0x3a71, LONG, "SendInternetEncoding", "PR_SEND_INTERNET_ENCODING");
    public static final MAPIProperty SEND_RECALL_REPORT =
-      new MAPIProperty(0x6803, -1, "SendRecallReport", "messages");
+      new MAPIProperty(0x6803, Types.UNKNOWN, "SendRecallReport", "messages");
    public static final MAPIProperty SEND_RICH_INFO =
       new MAPIProperty(0x3a40, BOOLEAN, "SendRichInfo", "PR_SEND_RICH_INFO");
    public static final MAPIProperty SENDER_ADDRTYPE =
@@ -915,7 +920,7 @@ public class MAPIProperty {
    public static final MAPIProperty SENTMAIL_ENTRY_ID =
       new MAPIProperty(0xe0a, BINARY, "SentmailEntryId", "PR_SENTMAIL_ENTRYID");
    public static final MAPIProperty SERVICE_DELETE_FILES =
-      new MAPIProperty(0x3d10, 4126, "ServiceDeleteFiles", "PR_SERVICE_DELETE_FILES");
+      new MAPIProperty(0x3d10, Types.createCustom(4126), "ServiceDeleteFiles", "PR_SERVICE_DELETE_FILES");
    public static final MAPIProperty SERVICE_DLL_NAME =
       new MAPIProperty(0x3d0a, ASCII_STRING, "ServiceDllName", "PR_SERVICE_DLL_NAME");
    public static final MAPIProperty SERVICE_ENTRY_NAME =
@@ -925,7 +930,7 @@ public class MAPIProperty {
    public static final MAPIProperty SERVICE_NAME =
       new MAPIProperty(0x3d09, ASCII_STRING, "ServiceName", "PR_SERVICE_NAME");
    public static final MAPIProperty SERVICE_SUPPORT_FILES =
-      new MAPIProperty(0x3d0f, 4126, "ServiceSupportFiles", "PR_SERVICE_SUPPORT_FILES");
+      new MAPIProperty(0x3d0f, Types.createCustom(4126), "ServiceSupportFiles", "PR_SERVICE_SUPPORT_FILES");
    public static final MAPIProperty SERVICE_UID =
       new MAPIProperty(0x3d0c, BINARY, "ServiceUid", "PR_SERVICE_UID");
    public static final MAPIProperty SERVICES =
@@ -933,7 +938,7 @@ public class MAPIProperty {
    public static final MAPIProperty SEVEN_BIT_DISPLAY_NAME =
       new MAPIProperty(0x39ff, ASCII_STRING, "SevenBitDisplayName", "PR_SEVEN_BIT_DISPLAY_NAME");
    public static final MAPIProperty SMTP_ADDRESS =
-      new MAPIProperty(0x39fe, -1, "SmtpAddress", "PR_SMTP_ADDRESS");
+      new MAPIProperty(0x39fe, Types.UNKNOWN, "SmtpAddress", "PR_SMTP_ADDRESS");
    public static final MAPIProperty SPOOLER_STATUS =
       new MAPIProperty(0xe10, LONG, "SpoolerStatus", "PR_SPOOLER_STATUS");
    public static final MAPIProperty SPOUSE_NAME =
@@ -1001,7 +1006,7 @@ public class MAPIProperty {
    public static final MAPIProperty USER_CERTIFICATE =
       new MAPIProperty(0x3a22, BINARY, "UserCertificate", "PR_USER_CERTIFICATE");
    public static final MAPIProperty USER_X509_CERTIFICATE =
-      new MAPIProperty(0x3a70, 4354, "UserX509Certificate", "PR_USER_X509_CERTIFICATE");
+      new MAPIProperty(0x3a70, Types.createCustom(4354), "UserX509Certificate", "PR_USER_X509_CERTIFICATE");
    public static final MAPIProperty VALID_FOLDER_MASK =
       new MAPIProperty(0x35df, LONG, "ValidFolderMask", "PR_VALID_FOLDER_MASK");
    public static final MAPIProperty VIEWS_ENTRY_ID =
@@ -1018,20 +1023,22 @@ public class MAPIProperty {
       new MAPIProperty(0x3f06, LONG, "Ypos", "PR_YPOS");
    
    public static final MAPIProperty UNKNOWN =
-      new MAPIProperty(-1, -1, "Unknown", null);
+      new MAPIProperty(-1, Types.UNKNOWN, "Unknown", null);
    
    // 0x8??? ones are outlook specific, and not standard MAPI
+   // TODO See http://msdn.microsoft.com/en-us/library/ee157150%28v=exchg.80%29 for some
+   //  info on how we might decode them properly in the future
    private static final int ID_FIRST_CUSTOM = 0x8000;
    private static final int ID_LAST_CUSTOM = 0xFFFE;
    
    /* ---------------------------------------------------------------------  */
    
    public final int id;
-   public final int usualType;
+   public final MAPIType usualType;
    public final String name;
    public final String mapiProperty;
    
-   private MAPIProperty(int id, int usualType, String name, String mapiProperty) {
+   private MAPIProperty(int id, MAPIType usualType, String name, String mapiProperty) {
       this.id = id;
       this.usualType = usualType;
       this.name = name;
@@ -1077,12 +1084,12 @@ public class MAPIProperty {
       return Collections.unmodifiableCollection( attributes.values() );
    }
    
-   public static MAPIProperty createCustom(int id, int type, String name) {
+   public static MAPIProperty createCustom(int id, MAPIType type, String name) {
       return new CustomMAPIProperty(id, type, name, null);
    }
    
    private static class CustomMAPIProperty extends MAPIProperty {
-      private CustomMAPIProperty(int id, int usualType, String name, String mapiProperty) {
+      private CustomMAPIProperty(int id, MAPIType usualType, String name, String mapiProperty) {
          super(id, usualType, name, mapiProperty);
       }
    }

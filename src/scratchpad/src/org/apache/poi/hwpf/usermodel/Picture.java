@@ -34,6 +34,7 @@ import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
+import org.apache.poi.util.PngUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
@@ -191,6 +192,15 @@ public final class Picture
         {
             // Raw data is not compressed.
             content = rawContent;
+
+            //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
+            //Just cut it off!.
+            if (PngUtils.matchesPngHeader(content, 16))
+            {
+                byte[] png = new byte[content.length-16];
+                System.arraycopy(content, 16, png, 0, png.length);
+                content = png;
+            }
         }
     }
 

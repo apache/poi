@@ -35,6 +35,8 @@ import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -772,5 +774,44 @@ public final class TestSheet extends TestCase {
         assertEquals(EscherAggregate.sid, ((Record)sheetRecords.get(1)).getSid());
         assertEquals(WindowTwoRecord.sid, ((Record)sheetRecords.get(2)).getSid());
         assertEquals(EOFRecord.sid, ((Record)sheetRecords.get(3)).getSid());
+    }
+
+    public void testSheetDimensions() throws IOException{
+        InternalSheet sheet = InternalSheet.createSheet();
+        DimensionsRecord dimensions = (DimensionsRecord)sheet.findFirstRecordBySid(DimensionsRecord.sid);
+        assertEquals(0, dimensions.getFirstCol());
+        assertEquals(0, dimensions.getFirstRow());
+        assertEquals(1, dimensions.getLastCol());  // plus pne
+        assertEquals(1, dimensions.getLastRow());  // plus pne
+
+        RowRecord rr = new RowRecord(0);
+        sheet.addRow(rr);
+
+        assertEquals(0, dimensions.getFirstCol());
+        assertEquals(0, dimensions.getFirstRow());
+        assertEquals(1, dimensions.getLastCol());
+        assertEquals(1, dimensions.getLastRow());
+
+        CellValueRecordInterface cvr;
+
+        cvr = new BlankRecord();
+        cvr.setColumn((short)0);
+        cvr.setRow(0);
+        sheet.addValueRecord(0, cvr);
+
+        assertEquals(0, dimensions.getFirstCol());
+        assertEquals(0, dimensions.getFirstRow());
+        assertEquals(1, dimensions.getLastCol());
+        assertEquals(1, dimensions.getLastRow());
+
+        cvr = new BlankRecord();
+        cvr.setColumn((short)1);
+        cvr.setRow(0);
+        sheet.addValueRecord(0, cvr);
+
+        assertEquals(0, dimensions.getFirstCol());
+        assertEquals(0, dimensions.getFirstRow());
+        assertEquals(2, dimensions.getLastCol());   //YK:  failed until Bugzilla 53414 was fixed
+        assertEquals(1, dimensions.getLastRow());
     }
 }

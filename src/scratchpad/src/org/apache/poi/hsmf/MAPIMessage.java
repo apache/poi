@@ -39,9 +39,9 @@ import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
-import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
 import org.apache.poi.hsmf.datatypes.StringChunk;
+import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -214,7 +214,7 @@ public class MAPIMessage extends POIDocument {
       
       try {
          MAPIRtfAttribute rtf = new MAPIRtfAttribute(
-               MAPIProperty.RTF_COMPRESSED, Types.BINARY, chunk.getValue()
+               MAPIProperty.RTF_COMPRESSED, Types.BINARY.getId(), chunk.getValue()
          );
          return rtf.getDataString();
       } catch(IOException e) {

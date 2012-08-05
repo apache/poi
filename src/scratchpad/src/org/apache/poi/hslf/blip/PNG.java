@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
+import org.apache.poi.util.PngUtils;
 import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
@@ -35,22 +36,19 @@ public final class PNG extends Bitmap {
     /**
      * @return PNG data
      */
-    public byte[] getData(){
-         byte[] data = super.getData();
-          try {
-              //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
-              //Just cut it off!.
-              BufferedImage bi = ImageIO.read(new ByteArrayInputStream(data));
-              if (bi == null){
-                  byte[] png = new byte[data.length-16];
-                  System.arraycopy(data, 16, png, 0, png.length);
-                  data = png;
-              }
-          } catch (IOException e){
-              throw new HSLFException(e);
-          }
-         return data;
-     }
+    public byte[] getData() {
+        byte[] data = super.getData();
+
+        //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
+        //Just cut it off!.
+        if (PngUtils.matchesPngHeader(data, 16)) {
+            byte[] png = new byte[data.length-16];
+            System.arraycopy(data, 16, png, 0, png.length);
+            data = png;
+        }
+
+        return data;
+    }
 
     /**
      * @return type of  this picture
