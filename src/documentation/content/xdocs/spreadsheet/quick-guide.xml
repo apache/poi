@@ -865,26 +865,31 @@ Examples:
                 <section><title>Repeating rows and columns</title>
                     <p>
                         It's possible to set up repeating rows and columns in
-                        your printouts by using the setRepeatingRowsAndColumns()
-                        function in the HSSFWorkbook class.
+                        your printouts by using the setRepeatingRows() and 
+                        setRepeatingColumns() methods in the Sheet class.
                     </p>
                     <p>
-                        This function Contains 5 parameters.
-                        The first parameter is the index to the sheet (0 = first sheet).
-                        The second and third parameters specify the range for the columns to repreat.
-                        To stop the columns from repeating pass in -1 as the start and end column.
-                        The fourth and fifth parameters specify the range for the rows to repeat.
-                        To stop the columns from repeating pass in -1 as the start and end rows.
+                        These methods expect a CellRangeAddress parameter
+                        which specifies the range for the rows or columns to 
+                        repeat. 
+                        For setRepeatingRows(), it should specify a range of 
+                        rows to repeat, with the column part spanning all 
+                        columns. 
+                        For setRepeatingColums(), it should specify a range of 
+                        columns to repeat, with the row part spanning all 
+                        rows. 
+                        If the parameter is null, the repeating rows or columns 
+                        will be removed.
                     </p>
                     <source>
-    Workbook wb = new HSSFWorkbook();
-    Sheet sheet1 = wb.createSheet("new sheet");
-    Sheet sheet2 = wb.createSheet("second sheet");
+    Workbook wb = new HSSFWorkbook();           // or new XSSFWorkbook();
+    Sheet sheet1 = wb.createSheet("Sheet1");
+    Sheet sheet2 = wb.createSheet("Sheet2");
 
-    // Set the columns to repeat from column 0 to 2 on the first sheet
-    wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
-    // Set the the repeating rows and columns on the second sheet.
-    wb.setRepeatingRowsAndColumns(1,4,5,1,2);
+    // Set the rows to repeat from row 4 to 5 on the first sheet.
+    sheet1.setRepeatingRows(CellRangeAddress.valueOf("4:5"));
+    // Set the columns to repeat from column A to C on the second sheet
+    sheet2.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
 
     FileOutputStream fileOut = new FileOutputStream("workbook.xls");
     wb.write(fileOut);

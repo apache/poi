@@ -353,6 +353,39 @@ public class XSLFTextRun {
     }
 
     /**
+     *  Set the baseline for both the superscript and subscript fonts.
+     *  <p>
+     *     The size is specified using a percentage.
+     *     Positive values indicate superscript, negative values indicate subscript.
+     *  </p>
+     *
+     * @param baselineOffset
+     */
+    public void setBaselineOffset(double baselineOffset){
+       getRPr().setBaseline((int) baselineOffset * 1000);
+    }
+
+    /**
+     * Set whether the text in this run is formatted as superscript.
+     * Default base line offset is 30%
+     *
+     * @see #setBaselineOffset(double)
+     */
+    public void setSuperscript(boolean flag){
+        setBaselineOffset(flag ? 30. : 0.);
+    }
+
+    /**
+     * Set whether the text in this run is formatted as subscript.
+     * Default base line offset is -25%.
+     *
+     * @see #setBaselineOffset(double)
+     */
+    public void setSubscript(boolean flag){
+        setBaselineOffset(flag ? -25.0 : 0.);
+    }
+
+    /**
      * @return whether a run of text will be formatted as a superscript text. Default is false.
      */
     public boolean isSubscript() {

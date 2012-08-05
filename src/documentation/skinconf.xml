@@ -82,7 +82,7 @@ be used to configure the chosen Forrest skin.
   <!-- Do we want to disable the print link? If enabled, invalid HTML 4.0.1 -->
   <disable-print-link>false</disable-print-link>  
   <!-- Do we want to disable the PDF link? -->
-  <disable-pdf-link>false</disable-pdf-link>
+  <disable-pdf-link>true</disable-pdf-link>
   <!-- Do we want to disable the xml source link? yes, it avoids disclosing author emails -->
   <disable-xml-link>true</disable-xml-link>
   <!-- Do we want to disable w3c compliance links? -->
@@ -114,7 +114,7 @@ be used to configure the chosen Forrest skin.
   <host-logo></host-logo>
 
   <!-- The following are used to construct a copyright statement -->
-  <year>2002-2011</year>
+  <year>2002-2012</year>
   <vendor>The Apache Software Foundation</vendor>
 
   <!-- Some skins use this to form a 'breadcrumb trail' of links. If you don't

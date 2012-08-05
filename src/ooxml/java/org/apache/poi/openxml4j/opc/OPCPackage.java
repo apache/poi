@@ -186,6 +186,20 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		return open(path, defaultPackageAccess);
 	}
 
+   /**
+    * Open a package with read/write permission.
+    *
+    * @param file
+    *            The file to open.
+    * @return A Package object, else <b>null</b>.
+    * @throws InvalidFormatException
+    *             If the specified file doesn't exist, and a parsing error
+    *             occur.
+    */
+   public static OPCPackage open(File file) throws InvalidFormatException {
+      return open(file, defaultPackageAccess);
+   }
+
 	/**
 	 * Open a package.
 	 *
@@ -211,6 +225,31 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		pack.originalPackagePath = new File(path).getAbsolutePath();
 		return pack;
 	}
+
+   /**
+    * Open a package.
+    *
+    * @param file
+    *            The file to open.
+    * @param access
+    *            PackageBase access.
+    * @return A PackageBase object, else <b>null</b>.
+    * @throws InvalidFormatException
+    *             If the specified file doesn't exist, and a parsing error
+    *             occur.
+    */
+   public static OPCPackage open(File file, PackageAccess access)
+         throws InvalidFormatException {
+      if (file == null|| (file.exists() && file.isDirectory()))
+         throw new IllegalArgumentException("file");
+
+      OPCPackage pack = new ZipPackage(file, access);
+      if (pack.partList == null && access != PackageAccess.WRITE) {
+         pack.getParts();
+      }
+      pack.originalPackagePath = file.getAbsolutePath();
+      return pack;
+   }
 
 	/**
 	 * Open a package.

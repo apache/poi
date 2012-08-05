@@ -200,6 +200,18 @@ public final class HSSFName implements Name {
         return HSSFFormulaParser.toFormulaString(_book, ptgs);
     }
 
+
+    /**
+     * Sets the NameParsedFormula structure that specifies the formula for the 
+     * defined name.
+     * 
+     * @param ptgs the sequence of {@link Ptg}s for the formula.
+     */
+    void setNameDefinition(Ptg[] ptgs) {
+      _definedNameRec.setNameDefinition(ptgs);
+    }
+
+
     public boolean isDeleted(){
         Ptg[] ptgs = _definedNameRec.getNameDefinition();
         return Ptg.doesFormulaReferToDeletedCell(ptgs);

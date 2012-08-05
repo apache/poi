@@ -337,4 +337,10 @@ public final class TestXWPFDocument extends TestCase {
 	    
 	    doc.getPackage().revert();
 	}
+
+    public void testSettings(){
+        XWPFSettings settings = new XWPFSettings();
+        settings.setZoomPercent(50);
+        assertEquals(50, settings.getZoomPercent());
+    }
 }

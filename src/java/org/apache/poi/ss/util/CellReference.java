@@ -91,25 +91,28 @@ public class CellReference {
 
 		String[] parts = separateRefParts(cellRef);
 		_sheetName = parts[0];
+
 		String colRef = parts[1];
-		if (colRef.length() < 1) {
-			throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
-		}
-		_isColAbs = colRef.charAt(0) == '$';
+		_isColAbs = (colRef.length() > 0) && colRef.charAt(0) == '$';
 		if (_isColAbs) {
-			colRef=colRef.substring(1);
+		  colRef = colRef.substring(1);
 		}
-		_colIndex = convertColStringToIndex(colRef);
+		if (colRef.length() == 0) {
+		  _colIndex = -1;
+		} else {
+		  _colIndex = convertColStringToIndex(colRef);
+		}
 
 		String rowRef=parts[2];
-		if (rowRef.length() < 1) {
-			throw new IllegalArgumentException("Invalid Formula cell reference: '"+cellRef+"'");
-		}
-		_isRowAbs = rowRef.charAt(0) == '$';
+    _isRowAbs = (rowRef.length() > 0) && rowRef.charAt(0) == '$';
 		if (_isRowAbs) {
-			rowRef=rowRef.substring(1);
+		  rowRef = rowRef.substring(1);
 		}
-		_rowIndex = Integer.parseInt(rowRef)-1; // -1 to convert 1-based to zero-based
+		if (rowRef.length() == 0) {
+		  _rowIndex = -1;
+		} else {
+		  _rowIndex = Integer.parseInt(rowRef)-1; // -1 to convert 1-based to zero-based
+		}
 	}
 
 	public CellReference(int pRow, int pCol) {
@@ -482,14 +485,18 @@ public class CellReference {
 	 * Sheet name is not included.
 	 */
 	/* package */ void appendCellReference(StringBuffer sb) {
-		if(_isColAbs) {
-			sb.append(ABSOLUTE_REFERENCE_MARKER);
+    if (_colIndex != -1) {
+      if(_isColAbs) {
+        sb.append(ABSOLUTE_REFERENCE_MARKER);
+      }
+      sb.append( convertNumToColString(_colIndex));
+    }
+		if (_rowIndex != -1) {
+		  if(_isRowAbs) {
+		    sb.append(ABSOLUTE_REFERENCE_MARKER);
+		  }
+		  sb.append(_rowIndex+1);
 		}
-		sb.append( convertNumToColString(_colIndex));
-		if(_isRowAbs) {
-			sb.append(ABSOLUTE_REFERENCE_MARKER);
-		}
-		sb.append(_rowIndex+1);
 	}
 
 	/**

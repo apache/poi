@@ -56,17 +56,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         return wb.getWorkbook();
     }
 
-    public void testSetRepeatingRowsAndColumns() {
-        // Test bug 29747
-        HSSFWorkbook b = new HSSFWorkbook( );
-        b.createSheet();
-        b.createSheet();
-        b.createSheet();
-        b.setRepeatingRowsAndColumns( 2, 0,1,-1,-1 );
-        NameRecord nameRecord = b.getWorkbook().getNameRecord( 0 );
-        assertEquals(3, nameRecord.getSheetNumber());
-    }
-
     public void testWindowOneDefaults() {
         HSSFWorkbook b = new HSSFWorkbook( );
         try {
@@ -501,7 +490,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals("Sheet2!$A$1:$IV$1", HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition())); // 1:1
 
         try {
-            wb.setRepeatingRowsAndColumns(3, 4, 5, 8, 11);
+          wb.getSheetAt(3).setRepeatingRows(CellRangeAddress.valueOf("9:12"));
+          wb.getSheetAt(3).setRepeatingColumns(CellRangeAddress.valueOf("E:F"));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("Builtin (7) already exists for sheet (4)")) {
                 // there was a problem in the code which locates the existing print titles name record

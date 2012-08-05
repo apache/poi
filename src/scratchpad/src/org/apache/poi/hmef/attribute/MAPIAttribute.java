@@ -27,6 +27,7 @@ import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -109,14 +110,20 @@ public class MAPIAttribute {
          // Is it either Multi-Valued or Variable-Length?
          boolean isMV = false;
          boolean isVL = false;
-         int type = typeAndMV;
+         int typeId = typeAndMV;
          if( (typeAndMV & Types.MULTIVALUED_FLAG) > 0 ) {
             isMV = true;
-            type -= Types.MULTIVALUED_FLAG;
+            typeId -= Types.MULTIVALUED_FLAG;
          }
-         if(type == Types.ASCII_STRING || type == Types.UNICODE_STRING ||
-               type == Types.BINARY || type == Types.DIRECTORY) {
+         if(typeId == Types.ASCII_STRING.getId() || typeId == Types.UNICODE_STRING.getId() ||
+               typeId == Types.BINARY.getId() || typeId == Types.DIRECTORY.getId()) {
             isVL = true;
+         }
+         
+         // Turn the type ID into a strongly typed thing
+         MAPIType type = Types.getById(typeId);
+         if (type == null) {
+            type = Types.createCustom(typeId);
          }
          
          // If it's a named property, rather than a standard
@@ -164,13 +171,13 @@ public class MAPIAttribute {
             // Create
             MAPIAttribute attr;
             if(type == Types.UNICODE_STRING || type == Types.ASCII_STRING) {
-               attr = new MAPIStringAttribute(prop, type, data);
+               attr = new MAPIStringAttribute(prop, typeId, data);
             } else if(type == Types.APP_TIME || type == Types.TIME) {
-               attr = new MAPIDateAttribute(prop, type, data);
+               attr = new MAPIDateAttribute(prop, typeId, data);
             } else if(id == MAPIProperty.RTF_COMPRESSED.id) {
-               attr = new MAPIRtfAttribute(prop, type, data);
+               attr = new MAPIRtfAttribute(prop, typeId, data);
             } else {
-               attr = new MAPIAttribute(prop, type, data);
+               attr = new MAPIAttribute(prop, typeId, data);
             }
             attrs.add(attr);
          }
@@ -179,32 +186,17 @@ public class MAPIAttribute {
       // All done
       return attrs;
    }
-   private static int getLength(int type, InputStream inp) throws IOException {
-      switch(type) {
-         case Types.NULL:
-            return 0;
-         case Types.BOOLEAN:
-         case Types.SHORT:
-            return 2;
-         case Types.LONG:
-         case Types.FLOAT:
-         case Types.ERROR:
-            return 4;
-         case Types.LONG_LONG:
-         case Types.DOUBLE:
-         case Types.APP_TIME:
-         case Types.TIME:
-         case Types.CURRENCY:
-            return 8;
-         case Types.CLS_ID:
-            return 16;
-         case Types.ASCII_STRING:
-         case Types.UNICODE_STRING:
-         case Types.DIRECTORY:
-         case Types.BINARY:
+   private static int getLength(MAPIType type, InputStream inp) throws IOException {
+      if (type.isFixedLength()) {
+         return type.getLength();
+      }
+      if (type == Types.ASCII_STRING ||
+          type == Types.UNICODE_STRING ||
+          type == Types.DIRECTORY ||
+          type == Types.BINARY) {
             // Need to read the length, as it varies
             return LittleEndian.readInt(inp);
-         default:
+      } else {
             throw new IllegalArgumentException("Unknown type " + type);
       }
    }

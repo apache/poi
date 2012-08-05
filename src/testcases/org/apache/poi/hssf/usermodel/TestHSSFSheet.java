@@ -57,6 +57,22 @@ public final class TestHSSFSheet extends BaseTestSheet {
         super(HSSFITestDataProvider.instance);
     }
 
+
+    /**
+     * Test for Bugzilla #29747.
+     * Moved from TestHSSFWorkbook#testSetRepeatingRowsAndColumns().
+     */
+    public void testSetRepeatingRowsAndColumnsBug29747() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        wb.createSheet();
+        wb.createSheet();
+        HSSFSheet sheet2 = wb.createSheet();
+        sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:2"));
+        NameRecord nameRecord = wb.getWorkbook().getNameRecord(0);
+        assertEquals(3, nameRecord.getSheetNumber());
+    }
+
+
     public void testTestGetSetMargin() {
         baseTestGetSetMargin(new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3});
     }

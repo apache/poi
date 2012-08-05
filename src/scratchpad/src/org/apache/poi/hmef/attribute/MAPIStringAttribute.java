@@ -37,13 +37,13 @@ public final class MAPIStringAttribute extends MAPIAttribute {
       super(property, type, data);
       
       String tmpData = null;
-      if(type == Types.ASCII_STRING) {
+      if(type == Types.ASCII_STRING.getId()) {
          try {
             tmpData = new String(data, CODEPAGE);
          } catch(UnsupportedEncodingException e) {
             throw new RuntimeException("JVM Broken - core encoding " + CODEPAGE + " missing");
          }
-      } else if(type == Types.UNICODE_STRING) {
+      } else if(type == Types.UNICODE_STRING.getId()) {
          tmpData = StringUtil.getFromUnicodeLE(data);
       } else {
          throw new IllegalArgumentException("Not a string type " + type);

@@ -597,7 +597,7 @@ public final class InternalSheet {
         }
         DimensionsRecord d = _dimensions;
 
-        if (col.getColumn() > d.getLastCol()) {
+        if (col.getColumn() >= d.getLastCol()) {
             d.setLastCol(( short ) (col.getColumn() + 1));
         }
         if (col.getColumn() < d.getFirstCol()) {

@@ -33,8 +33,10 @@ import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
@@ -371,6 +373,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Creates a data validation object
+     *
      * @param dataValidation The Data validation object settings
      */
     public void addValidationData(DataValidation dataValidation) {
@@ -522,6 +525,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
      * twips (1/20 of  a point)
+     *
      * @return default row height
      */
     public short getDefaultRowHeight() {
@@ -531,6 +535,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * get the default row height for the sheet (if the rows do not define their own height) in
      * points.
+     *
      * @return default row height in points
      */
 
@@ -813,6 +818,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     /**
      * used internally in the API to get the low level Sheet record represented by this
      * Object.
+     *
      * @return Sheet - low level representation of this HSSFSheet.
      */
     InternalSheet getSheet() {
@@ -821,6 +827,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * whether alternate expression evaluation is on
+     *
      * @param b alternative expression evaluation or not
      */
     public void setAlternativeExpression(boolean b) {
@@ -832,6 +839,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * whether alternative formula entry is on
+     *
      * @param b alternative formulas or not
      */
     public void setAlternativeFormula(boolean b) {
@@ -843,6 +851,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * show automatic page breaks or not
+     *
      * @param b whether to show auto page breaks
      */
     public void setAutobreaks(boolean b) {
@@ -854,6 +863,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * set whether sheet is a dialog sheet or not
+     *
      * @param b isDialog or not
      */
     public void setDialog(boolean b) {
@@ -877,6 +887,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * fit to page option is on
+     *
      * @param b fit or not
      */
     public void setFitToPage(boolean b) {
@@ -888,6 +899,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * set if row summaries appear below detail in the outline
+     *
      * @param b below or not
      */
     public void setRowSumsBelow(boolean b) {
@@ -901,6 +913,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * set if col summaries appear right of the detail in the outline
+     *
      * @param b right or not
      */
     public void setRowSumsRight(boolean b) {
@@ -912,6 +925,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * whether alternate expression evaluation is on
+     *
      * @return alternative expression evaluation or not
      */
     public boolean getAlternateExpression() {
@@ -921,6 +935,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * whether alternative formula entry is on
+     *
      * @return alternative formulas or not
      */
     public boolean getAlternateFormula() {
@@ -930,6 +945,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * show automatic page breaks or not
+     *
      * @return whether to show auto page breaks
      */
     public boolean getAutobreaks() {
@@ -939,6 +955,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * get whether sheet is a dialog sheet or not
+     *
      * @return isDialog or not
      */
     public boolean getDialog() {
@@ -963,6 +980,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * <p>
      * In Excel 2003 this option can be changed in the Options dialog on the View tab.
      * </p>
+     *
      * @return whether all zero values on the worksheet are displayed
      */
     public boolean isDisplayZeros() {
@@ -975,6 +993,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * <p>
      * In Excel 2003 this option can be set in the Options dialog on the View tab.
      * </p>
+     *
      * @param value whether to display or hide all zero values on the worksheet
      */
     public void setDisplayZeros(boolean value) {
@@ -983,6 +1002,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * fit to page option is on
+     *
      * @return fit or not
      */
     public boolean getFitToPage() {
@@ -992,6 +1012,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * get if row summaries appear below detail in the outline
+     *
      * @return below or not
      */
     public boolean getRowSumsBelow() {
@@ -1001,6 +1022,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * get if col summaries appear right of the detail in the outline
+     *
      * @return right or not
      */
     public boolean getRowSumsRight() {
@@ -1010,6 +1032,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Returns whether gridlines are printed.
+     *
      * @return Gridlines are printed
      */
     public boolean isPrintGridlines() {
@@ -1018,8 +1041,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Turns on or off the printing of gridlines.
+     *
      * @param newPrintGridlines boolean to turn on or off the printing of
-     * gridlines
+     *                          gridlines
      */
     public void setPrintGridlines(boolean newPrintGridlines) {
         getSheet().getPrintGridlines().setPrintGridlines(newPrintGridlines);
@@ -1027,6 +1051,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
 
     /**
      * Gets the print setup object.
+     *
      * @return The user model for the print setup object.
      */
     public HSSFPrintSetup getPrintSetup() {
@@ -1799,10 +1824,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return new HSSFPatriarch(this, agg);
     }
 
-        /**
-         * @deprecated (Sep 2008) use {@link #setColumnGroupCollapsed(int, boolean)}
-         */
-
+    /**
+     * @deprecated (Sep 2008) use {@link #setColumnGroupCollapsed(int, boolean)}
+     */
     public void setColumnGroupCollapsed(short columnNumber, boolean collapsed) {
         setColumnGroupCollapsed(columnNumber & 0xFFFF, collapsed);
     }
@@ -2070,4 +2094,160 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
         return null;
     }
+
+
+    public CellRangeAddress getRepeatingRows() {
+        return getRepeatingRowsOrColums(true);
+    }
+
+
+    public CellRangeAddress getRepeatingColumns() {
+        return getRepeatingRowsOrColums(false);
+    }
+
+
+    public void setRepeatingRows(CellRangeAddress rowRangeRef) {
+        CellRangeAddress columnRangeRef = getRepeatingColumns();
+        setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
+    }
+
+
+    public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
+        CellRangeAddress rowRangeRef = getRepeatingRows();
+        setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
+    }
+
+
+    private void setRepeatingRowsAndColumns(
+            CellRangeAddress rowDef, CellRangeAddress colDef) {
+        int sheetIndex = _workbook.getSheetIndex(this);
+        int maxRowIndex = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        int maxColIndex = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+
+        int col1 = -1;
+        int col2 = -1;
+        int row1 = -1;
+        int row2 = -1;
+
+        if (rowDef != null) {
+            row1 = rowDef.getFirstRow();
+            row2 = rowDef.getLastRow();
+            if ((row1 == -1 && row2 != -1) || (row1 > row2)
+                    || (row1 < 0 || row1 > maxRowIndex)
+                    || (row2 < 0 || row2 > maxRowIndex)) {
+                throw new IllegalArgumentException("Invalid row range specification");
+            }
+        }
+        if (colDef != null) {
+            col1 = colDef.getFirstColumn();
+            col2 = colDef.getLastColumn();
+            if ((col1 == -1 && col2 != -1) || (col1 > col2)
+                    || (col1 < 0 || col1 > maxColIndex)
+                    || (col2 < 0 || col2 > maxColIndex)) {
+                throw new IllegalArgumentException("Invalid column range specification");
+            }
+        }
+
+        short externSheetIndex =
+                _workbook.getWorkbook().checkExternSheet(sheetIndex);
+
+        boolean setBoth = rowDef != null && colDef != null;
+        boolean removeAll = rowDef == null && colDef == null;
+
+        HSSFName name = _workbook.getBuiltInName(
+                NameRecord.BUILTIN_PRINT_TITLE, sheetIndex);
+        if (removeAll) {
+            if (name != null) {
+                _workbook.removeName(name);
+            }
+            return;
+        }
+        if (name == null) {
+            name = _workbook.createBuiltInName(
+                    NameRecord.BUILTIN_PRINT_TITLE, sheetIndex);
+        }
+
+        List<Ptg> ptgList = new ArrayList<Ptg>();
+        if (setBoth) {
+            final int exprsSize = 2 * 11 + 1; // 2 * Area3DPtg.SIZE + UnionPtg.SIZE
+            ptgList.add(new MemFuncPtg(exprsSize));
+        }
+        if (colDef != null) {
+            Area3DPtg colArea = new Area3DPtg(0, maxRowIndex, col1, col2,
+                    false, false, false, false, externSheetIndex);
+            ptgList.add(colArea);
+        }
+        if (rowDef != null) {
+            Area3DPtg rowArea = new Area3DPtg(row1, row2, 0, maxColIndex,
+                    false, false, false, false, externSheetIndex);
+            ptgList.add(rowArea);
+        }
+        if (setBoth) {
+            ptgList.add(UnionPtg.instance);
+        }
+
+        Ptg[] ptgs = new Ptg[ptgList.size()];
+        ptgList.toArray(ptgs);
+        name.setNameDefinition(ptgs);
+
+        HSSFPrintSetup printSetup = getPrintSetup();
+        printSetup.setValidSettings(false);
+        setActive(true);
+    }
+
+
+    private CellRangeAddress getRepeatingRowsOrColums(boolean rows) {
+        NameRecord rec = getBuiltinNameRecord(NameRecord.BUILTIN_PRINT_TITLE);
+        if (rec == null) {
+            return null;
+        }
+
+        Ptg[] nameDefinition = rec.getNameDefinition();
+        if (nameDefinition == null) {
+            return null;
+        }
+
+        int maxRowIndex = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        int maxColIndex = SpreadsheetVersion.EXCEL97.getLastColumnIndex();
+
+        for (Ptg ptg : nameDefinition) {
+
+            if (ptg instanceof Area3DPtg) {
+                Area3DPtg areaPtg = (Area3DPtg) ptg;
+
+                if (areaPtg.getFirstColumn() == 0
+                        && areaPtg.getLastColumn() == maxColIndex) {
+                    if (rows) {
+                        CellRangeAddress rowRange = new CellRangeAddress(
+                                areaPtg.getFirstRow(), areaPtg.getLastRow(), -1, -1);
+                        return rowRange;
+                    }
+                } else if (areaPtg.getFirstRow() == 0
+                        && areaPtg.getLastRow() == maxRowIndex) {
+                    if (!rows) {
+                        CellRangeAddress columnRange = new CellRangeAddress(-1, -1,
+                                areaPtg.getFirstColumn(), areaPtg.getLastColumn());
+                        return columnRange;
+                    }
+                }
+
+            }
+
+        }
+
+        return null;
+    }
+
+
+    private NameRecord getBuiltinNameRecord(byte builtinCode) {
+        int sheetIndex = _workbook.getSheetIndex(this);
+        int recIndex =
+                _workbook.findExistingBuiltinNameRecordIdx(sheetIndex, builtinCode);
+        if (recIndex == -1) {
+            return null;
+        }
+        return _workbook.getNameRecord(recIndex);
+    }
+
+
 }

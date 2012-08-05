@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyle;
 
 /**
  * @author Yegor Kozlov
@@ -29,5 +30,10 @@ public class TestXSLFTableStyles extends TestCase {
         assertNotNull(tblStyles);
 
         assertEquals(0, tblStyles.getStyles().size());
+    }
+
+    public void testStyle(){
+        CTTableStyle obj = CTTableStyle.Factory.newInstance();
+        XSLFTableStyle style = new XSLFTableStyle(obj);
     }
 }

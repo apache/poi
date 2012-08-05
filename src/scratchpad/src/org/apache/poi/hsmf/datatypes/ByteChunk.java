@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
 
 /**
@@ -36,14 +37,14 @@ public class ByteChunk extends Chunk {
 	/**
 	 * Creates a Byte Chunk.
 	 */
-   public ByteChunk(String namePrefix, int chunkId, int type) {
+   public ByteChunk(String namePrefix, int chunkId, MAPIType type) {
       super(namePrefix, chunkId, type);
    }
 	/**
 	 * Create a Byte Chunk, with the specified
 	 *  type.
 	 */
-	public ByteChunk(int chunkId, int type) {
+	public ByteChunk(int chunkId, MAPIType type) {
 	   super(chunkId, type);
 	}
 

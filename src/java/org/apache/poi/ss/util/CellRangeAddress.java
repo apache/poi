@@ -100,7 +100,10 @@ public class CellRangeAddress extends CellRangeAddressBase {
         sb.append(cellRefFrom.formatAsString());
 
         //for a single-cell reference return A1 instead of A1:A1
-        if(!cellRefFrom.equals(cellRefTo)){
+        //for full-column ranges or full-row ranges return A:A instead of A,
+        //and 1:1 instead of 1         
+        if(!cellRefFrom.equals(cellRefTo)
+            || isFullColumnRange() || isFullRowRange()){
             sb.append(':');
             sb.append(cellRefTo.formatAsString());
         }
@@ -108,8 +111,12 @@ public class CellRangeAddress extends CellRangeAddressBase {
     }
 
     /**
-     * @param ref usually a standard area ref (e.g. "B1:D8").  May be a single cell
-     *            ref (e.g. "B5") in which case the result is a 1 x 1 cell range.
+     * Creates a CellRangeAddress from a cell range reference string.
+     *  
+     * @param ref usually a standard area ref (e.g. "B1:D8").  May be a single 
+     *            cell ref (e.g. "B5") in which case the result is a 1 x 1 cell 
+     *            range. May also be a whole row range (e.g. "3:5"), or a whole 
+     *            column range (e.g. "C:F")
      */
     public static CellRangeAddress valueOf(String ref) {
         int sep = ref.indexOf(":");

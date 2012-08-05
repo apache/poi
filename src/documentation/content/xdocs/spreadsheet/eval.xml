@@ -272,28 +272,41 @@ for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
         </source>        
 		</section>
 
-		<anchor id="Performance"/>
-		<section><title>Performance Notes</title>
-			<ul>
-				<li>Generally you should have to create only one FormulaEvaluator 
-					instance per sheet, but there really is no overhead in creating 
-					multiple FormulaEvaluators per sheet other than that of the 
-					FormulaEvaluator object creation. 
-				</li>
-				<li>Also note that FormulaEvaluator maintains a reference to 
-					the sheet and workbook, so ensure that the evaluator instance 
-					is available for garbage collection when you are done with it 
-					(in other words don't maintain long lived reference to 
-					FormulaEvaluator if you don't really need to - unless 
-					all references to the sheet and workbook are removed, these 
-					don't get garbage collected and continue to occupy potentially 
-					large amounts of memory). 
-				</li>	
-				<li>CellValue instances however do not maintain reference to the 
-					Cell or the sheet or workbook, so these can be long-lived 
-					objects without any adverse effect on performance.
-				</li>
-			</ul>
-		</section>
-	</body>
+    <anchor id="Performance"/>
+    <section><title>Performance Notes</title>
+      <ul>
+        <li>Generally you should have to create only one FormulaEvaluator 
+          instance per Workbook. The FormulaEvaluator will cache 
+          evaluations of dependent cells, so if you have multiple
+          formulas all depending on a cell then subsequent evaluations
+          will be faster.
+        </li>
+        <li>You should normally perform all of your updates to cells,
+          before triggering the evaluation, rather than doing one
+          cell at a time. By waiting until all the updates/sets are
+          performed, you'll be able to take best advantage of the caching
+          for complex formulas.
+        </li>
+        <li>If you do end up making changes to cells part way through
+          evaluation, you should call <em>notifySetFormula</em> or
+          <em>notifyUpdateCell</em> to trigger suitable cache clearance.
+          Alternately, you could instantiate a new FormulaEvaluator,
+          which will start with empty caches.
+        </li>
+        <li>Also note that FormulaEvaluator maintains a reference to 
+          the sheet and workbook, so ensure that the evaluator instance 
+          is available for garbage collection when you are done with it 
+          (in other words don't maintain long lived reference to 
+          FormulaEvaluator if you don't really need to - unless 
+          all references to the sheet and workbook are removed, these 
+          don't get garbage collected and continue to occupy potentially 
+          large amounts of memory). 
+        </li>	
+        <li>CellValue instances however do not maintain reference to the 
+          Cell or the sheet or workbook, so these can be long-lived 
+          objects without any adverse effect on performance.
+        </li>
+      </ul>
+    </section>
+  </body>
 </document>

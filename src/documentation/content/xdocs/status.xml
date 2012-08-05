@@ -34,7 +34,19 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
-          <action dev="poi-developers" type="add">53302 - Fixed EscherAggregate to correctly handle Continue records in drawing blocks  </action>
+          <action dev="poi-developers" type="add">53446 - Fixed some problems extracting PNGs </action>
+          <action dev="poi-developers" type="fix">53205 - Fixed some parsing errors and encoding issues in HDGF </action>
+          <action dev="poi-developers" type="add">53204 - Improved performanceof PageSettingsBlock in HSSF </action>
+          <action dev="poi-developers" type="add">53500 - Getter for repeating rows and columns</action>
+          <action dev="poi-developers" type="fix">53369 - Fixed tests failing on JDK 1.7</action>
+          <action dev="poi-developers" type="fix">53360 - Fixed SXSSF to correctly write text before escaped Unicode control character</action>
+          <action dev="poi-developers" type="add">Change HSMF Types to have full data on ID, Name and Length, rather than just being a simple ID</action>
+          <action dev="poi-developers" type="add">48469 - Updated case study</action>
+          <action dev="poi-developers" type="add">53476 - Support Complex Name in formulas </action>
+          <action dev="poi-developers" type="fix">53414 - properly update sheet dimensions when adding column </action>
+          <action dev="poi-developers" type="add">Add File based constructor to OPCPackage, alongside existing String one (which constructed a File from the string internally)</action>
+          <action dev="poi-developers" type="fix">53389 - Handle formatting General and @ formats even if a locale is prefixed to them</action>
+          <action dev="poi-developers" type="fix">53271 - Removed unconditional asserts in SXSSF</action>
           <action dev="poi-developers" type="add">53025 - Updatad documentation and example on using Data Validations  </action>
           <action dev="poi-developers" type="add">53227 - Corrected AddDimensionedImage.java to support XSSF/SXSSF  </action>
           <action dev="poi-developers" type="add">53058 - Utility for representing drawings contained in a binary Excel file as a XML tree</action>

@@ -42,6 +42,7 @@ import java.util.zip.ZipEntry;
 
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Streaming version of XSSFWorkbook implementing the "BigGridDemo" strategy.
@@ -244,7 +245,6 @@ public class SXSSFWorkbook implements Workbook
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)
     {
         XSSFSheet result=_sxFromXHash.get(sheet);
-        assert result!=null;
         return result;
     }
 
@@ -543,7 +543,6 @@ public class SXSSFWorkbook implements Workbook
      */
     public int getSheetIndex(Sheet sheet)
     {
-        assert sheet instanceof SXSSFSheet;
         return _wb.getSheetIndex(getXSSFSheet((SXSSFSheet)sheet));
     }
 
@@ -664,6 +663,9 @@ public class SXSSFWorkbook implements Workbook
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
+     * 
+     * @deprecated use {@link SXSSFSheet#setRepeatingRows(CellRangeAddress)}
+     *        or {@link SXSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
     public void setRepeatingRowsAndColumns(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow)
     {

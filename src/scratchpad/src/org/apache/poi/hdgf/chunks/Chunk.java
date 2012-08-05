@@ -161,70 +161,76 @@ public final class Chunk {
 				continue;
 			}
 
-			// Process
-			switch(type) {
-			// Types 0->7 = a flat at bit 0->7
-			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-				int val = contents[offset] & (1<<type);
-				command.value = Boolean.valueOf(val > 0);
-				break;
-			case 8:
-				command.value = Byte.valueOf(contents[offset]);
-				break;
-			case 9:
-				command.value = new Double(
-						LittleEndian.getDouble(contents, offset)
-				);
-				break;
-			case 12:
-				// A Little Endian String
-				// Starts 8 bytes into the data segment
-				// Ends at end of data, or 00 00
-			   
-				// Ensure we have enough data
-				if(contents.length < 8) {
-					command.value = "";
+			try {
+				// Process
+				switch(type) {
+				// Types 0->7 = a flat at bit 0->7
+				case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+					int val = contents[offset] & (1<<type);
+					command.value = Boolean.valueOf(val > 0);
 					break;
-				}
-			   
-				// Find the end point
-				int startsAt = 8;
-				int endsAt = startsAt;
-				for(int j=startsAt; j<contents.length-1 && endsAt == startsAt; j++) {
-					if(contents[j] == 0 && contents[j+1] == 0) {
-						endsAt = j;
+				case 8:
+					command.value = Byte.valueOf(contents[offset]);
+					break;
+				case 9:
+					command.value = new Double(
+							LittleEndian.getDouble(contents, offset)
+					);
+					break;
+				case 12:
+					// A Little Endian String
+					// Starts 8 bytes into the data segment
+					// Ends at end of data, or 00 00
+
+					// Ensure we have enough data
+					if(contents.length < 8) {
+						command.value = "";
+						break;
 					}
-				}
-				if(endsAt == startsAt) {
-					endsAt = contents.length;
-				}
-				
-				int strLen = (endsAt-startsAt) / 2;
-				command.value = StringUtil.getFromUnicodeLE(contents, startsAt, strLen);
-				break;
-			case 25:
-				command.value = Short.valueOf(
-					LittleEndian.getShort(contents, offset)
-				);
-				break;
-			case 26:
-				command.value = Integer.valueOf(
-						LittleEndian.getInt(contents, offset)
-				);
-				break;
 
-			// Types 11 and 21 hold the offset to the blocks
-			case 11: case 21:
-				if(offset < contents.length - 3) {
-					int bOffset = (int)LittleEndian.getUInt(contents, offset);
-					BlockOffsetCommand bcmd = (BlockOffsetCommand)command;
-					bcmd.setOffset(bOffset);
-				}
-				break;
+					// Find the end point
+					int startsAt = 8;
+					int endsAt = startsAt;
+					for(int j=startsAt; j<contents.length-1 && endsAt == startsAt; j++) {
+						if(contents[j] == 0 && contents[j+1] == 0) {
+							endsAt = j;
+						}
+					}
+					if(endsAt == startsAt) {
+						endsAt = contents.length;
+					}
 
-			default:
-				logger.log(POILogger.INFO,
-						"Command of type " + type + " not processed!");
+					int strLen = endsAt - startsAt;
+					command.value = new String(contents, startsAt, strLen, header.getChunkCharset().name());
+					break;
+				case 25:
+					command.value = Short.valueOf(
+						LittleEndian.getShort(contents, offset)
+					);
+					break;
+				case 26:
+					command.value = Integer.valueOf(
+							LittleEndian.getInt(contents, offset)
+					);
+					break;
+
+				// Types 11 and 21 hold the offset to the blocks
+				case 11: case 21:
+					if(offset < contents.length - 3) {
+						int bOffset = (int)LittleEndian.getUInt(contents, offset);
+						BlockOffsetCommand bcmd = (BlockOffsetCommand)command;
+						bcmd.setOffset(bOffset);
+					}
+					break;
+
+				default:
+					logger.log(POILogger.INFO,
+							"Command of type " + type + " not processed!");
+				}
+			}
+			catch (Exception e) {
+				logger.log(POILogger.ERROR, "Unexpected error processing command, ignoring and continuing. Command: " +
+						command, e);
 			}
 
 			// Add to the array

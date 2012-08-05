@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.poi.hsmf.datatypes.Types;
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
@@ -38,7 +38,7 @@ public class StringChunk extends Chunk {
 	/**
 	 * Creates a String Chunk.
 	 */
-	public StringChunk(String namePrefix, int chunkId, int type) {
+	public StringChunk(String namePrefix, int chunkId, MAPIType type) {
 		super(namePrefix, chunkId, type);
 	}
 	
@@ -46,7 +46,7 @@ public class StringChunk extends Chunk {
 	 * Create a String Chunk, with the specified
 	 *  type.
 	 */
-	public StringChunk(int chunkId, int type) {
+	public StringChunk(int chunkId, MAPIType type) {
 	   super(chunkId, type);
 	}
 	
@@ -81,14 +81,11 @@ public class StringChunk extends Chunk {
 	}
 	private void parseString() {
 	   String tmpValue;
-	   switch(type) {
-	   case Types.ASCII_STRING:
+	   if (type == Types.ASCII_STRING) {
 	      tmpValue = parseAs7BitData(rawValue, encoding7Bit);
-	      break;
-	   case Types.UNICODE_STRING:
+	   } else if (type == Types.UNICODE_STRING) {
 	      tmpValue = StringUtil.getFromUnicodeLE(rawValue);
-	      break;
-	   default:
+	   } else {
 	      throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
 	   }
 
@@ -100,19 +97,16 @@ public class StringChunk extends Chunk {
 	   out.write(rawValue);
 	}
 	private void storeString() {
-      switch(type) {
-      case Types.ASCII_STRING:
+      if (type == Types.ASCII_STRING) {
          try {
             rawValue = value.getBytes(encoding7Bit);
          } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Encoding not found - " + encoding7Bit, e);
          }
-         break;
-      case Types.UNICODE_STRING:
+      } else if (type == Types.UNICODE_STRING) {
          rawValue = new byte[value.length()*2];
          StringUtil.putUnicodeLE(value, rawValue, 0);
-         break;
-      default:
+      } else {
          throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
       }
 	}

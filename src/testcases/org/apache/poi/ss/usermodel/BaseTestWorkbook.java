@@ -359,14 +359,27 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertSame(row, cell.getRow());
     }
 
+
+    /**
+     * Test is kept to ensure stub for deprecated business method passes test.
+     * 
+     * @Deprecated remove this test when 
+     * {@link Workbook#setRepeatingRowsAndColumns(int, int, int, int, int)} 
+     * is removed 
+     */
+    @Deprecated
     public void testSetRepeatingRowsAnsColumns(){
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
+        assertEquals("1:4", sheet1.getRepeatingRows().formatAsString());
+        assertEquals("A:A", sheet1.getRepeatingColumns().formatAsString());
 
         //must handle sheets with quotas, see Bugzilla #47294
         Sheet sheet2 = wb.createSheet("My' Sheet");
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet2), 0, 0, 0, 3);
+        assertEquals("1:4", sheet2.getRepeatingRows().formatAsString());
+        assertEquals("A:A", sheet1.getRepeatingColumns().formatAsString());
     }
 
     /**

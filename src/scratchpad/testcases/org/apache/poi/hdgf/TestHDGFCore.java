@@ -17,6 +17,7 @@
 
 package org.apache.poi.hdgf;
 
+import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -88,4 +89,28 @@ public final class TestHDGFCore extends TestCase {
       HDGFDiagram hdgf = new HDGFDiagram(fs);
       assertNotNull(hdgf);
 	}
+
+    public void testV6NonUtf16LE() throws Exception {
+   		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v6-non-utf16le.vsd"));
+
+   		HDGFDiagram hdgf = new HDGFDiagram(fs);
+   		assertNotNull(hdgf);
+
+        VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
+        String text = textExtractor.getText().replace("\u0000", "").trim();
+
+        assertEquals("Table\n\n\nPropertySheet\n\n\n\nPropertySheetField", text);
+   	}
+
+    public void testUtf16LE() throws Exception {
+   		fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
+
+   		HDGFDiagram hdgf = new HDGFDiagram(fs);
+   		assertNotNull(hdgf);
+
+        VisioTextExtractor textExtractor = new VisioTextExtractor(hdgf);
+        String text = textExtractor.getText().trim();
+
+        assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page", text);
+   	}
 }
