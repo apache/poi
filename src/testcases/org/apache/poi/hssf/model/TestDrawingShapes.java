@@ -412,19 +412,6 @@ public class TestDrawingShapes extends TestCase {
         assertEquals(agg.getShapeToObjMapping().size(), 2);
     }
 
-    public void testComboboxRecords(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-
-        HSSFCombobox combobox = new HSSFCombobox(null, new HSSFClientAnchor());
-        HSSFTestHelper.setShapeId(combobox, 1024);
-        ComboboxShape comboboxShape = new ComboboxShape(combobox, 1024);
-
-        assertTrue(Arrays.equals(comboboxShape.getSpContainer().serialize(), HSSFTestHelper.getEscherContainer(combobox).serialize()));
-        assertTrue(Arrays.equals(comboboxShape.getObjRecord().serialize(), HSSFTestHelper.getObjRecord(combobox).serialize()));
-    }
-
     public void testRemoveShapes(){
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();

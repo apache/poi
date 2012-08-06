@@ -341,7 +341,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         throw new IllegalStateException("Use method cloneShape(HSSFPatriarch patriarch)");
     }
 
-    public HSSFShape cloneShape(HSSFPatriarch patriarch) {
+    protected HSSFShape cloneShape(HSSFPatriarch patriarch) {
         EscherContainerRecord spgrContainer = new EscherContainerRecord();
         spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
         spgrContainer.setOptions((short) 0x000F);

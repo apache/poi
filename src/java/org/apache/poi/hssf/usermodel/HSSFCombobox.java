@@ -33,6 +33,8 @@ public class HSSFCombobox extends HSSFSimpleShape {
     public HSSFCombobox(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
         super.setShapeType(OBJECT_TYPE_COMBO_BOX);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_COMBO_BOX);
     }
 
     @Override

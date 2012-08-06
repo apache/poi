@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Picture;
@@ -67,6 +68,8 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     {
         super( parent, anchor );
         super.setShapeType(OBJECT_TYPE_PICTURE);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE);
     }
 
     public int getPictureIndex()

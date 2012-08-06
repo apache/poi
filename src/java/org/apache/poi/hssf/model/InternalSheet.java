@@ -351,6 +351,9 @@ public final class InternalSheet {
                 continue;
             }
             if (rb instanceof EscherAggregate){
+                /**
+                 * this record will be removed after reading actual data from EscherAggregate
+                 */
                 rb = new DrawingRecord();
             }
             Record rec = (Record) ((Record) rb).clone();

@@ -81,9 +81,6 @@ public class TestComment extends TestCase {
         expected = obj.serialize();
         actual = objShape.serialize();
 
-        assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
-
         TextObjectRecord tor = comment.getTextObjectRecord();
         TextObjectRecord torShape = commentShape.getTextObjectRecord();
 

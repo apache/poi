@@ -65,6 +65,11 @@ public abstract class HSSFShape {
     public final static int NO_FILLHITTEST_TRUE = 0x00110000;
     public final static int NO_FILLHITTEST_FALSE = 0x00010000;
 
+    /**
+     * creates shapes from existing file
+     * @param spContainer
+     * @param objRecord
+     */
     public HSSFShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
         this._escherContainer = spContainer;
         this._objRecord = objRecord;
@@ -90,13 +95,19 @@ public abstract class HSSFShape {
 
     protected abstract void afterRemove(HSSFPatriarch patriarch);
 
+    /**
+     * @param shapeId - global shapeId which must be set to EscherSpRecord
+     */
     void setShapeId(int shapeId){
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
         cod.setObjectId((short) (shapeId%1024));
     }
-    
+
+    /**
+     * @return global shapeId(from EscherSpRecord)
+     */
     int getShapeId(){
         return ((EscherSpRecord)_escherContainer.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
     }
@@ -280,7 +291,7 @@ public abstract class HSSFShape {
     }
 
     /**
-     * Sets whether this shape is filled or transparent.
+     * @param noFill sets whether this shape is filled or transparent.
      */
     public void setNoFill(boolean noFill) {
         setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? NO_FILLHITTEST_TRUE : NO_FILLHITTEST_FALSE));
@@ -289,7 +300,10 @@ public abstract class HSSFShape {
     protected void setPropertyValue(EscherProperty property){
         _optRecord.setEscherProperty(property);
     }
-    
+
+    /**
+     * @param value specifies whether this shape is vertically flipped.
+     */
     public void setFlipVertical(boolean value){
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         if (value){
@@ -299,6 +313,9 @@ public abstract class HSSFShape {
         }
     }
 
+    /**
+     * @param value specifies whether this shape is horizontally flipped.
+     */
     public void setFlipHorizontal(boolean value){
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         if (value){
@@ -307,17 +324,26 @@ public abstract class HSSFShape {
             sp.setFlags(sp.getFlags() & (Integer.MAX_VALUE - EscherSpRecord.FLAG_FLIPHORIZ));
         }
     }
-    
+
+    /**
+     * @return whether this shape is vertically flipped.
+     */
     public boolean isFlipVertical(){
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         return (sp.getFlags() & EscherSpRecord.FLAG_FLIPVERT) != 0;
     }
 
+    /**
+     * @return whether this shape is horizontally flipped.
+     */
     public boolean isFlipHorizontal(){
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         return (sp.getFlags() & EscherSpRecord.FLAG_FLIPHORIZ) != 0;
     }
-    
+
+    /**
+     * @return the rotation, in degrees, that is applied to a shape.
+     */
     public int getRotationDegree(){
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TRANSFORM__ROTATION);
@@ -333,6 +359,14 @@ public abstract class HSSFShape {
         }
     }
 
+    /**
+     * specifies the rotation, in degrees, that is applied to a shape.
+     * Positive values specify rotation in the clockwise direction.
+     * Negative values specify rotation in the counterclockwise direction.
+     * Rotation occurs around the center of the shape.
+     * The default value for this property is 0x00000000
+     * @param value
+     */
     public void setRotationDegree(short value){
         setPropertyValue(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION , (value << 16)));
     }

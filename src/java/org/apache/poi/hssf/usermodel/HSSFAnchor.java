@@ -57,27 +57,57 @@ public abstract class HSSFAnchor {
         }
     }
 
+    /**
+     * @return x coordinate of the left up corner
+     */
     public abstract int getDx1();
 
+    /**
+     * @param dx1 x coordinate of the left up corner
+     */
     public abstract void setDx1(int dx1);
 
+    /**
+     * @return y coordinate of the left up corner
+     */
     public abstract int getDy1();
 
+    /**
+     * @param dy1 y coordinate of the left up corner
+     */
     public abstract void setDy1(int dy1);
 
+    /**
+     * @return y coordinate of the right down corner
+     */
     public abstract int getDy2();
 
+    /**
+     * @param dy2 y coordinate of the right down corner
+     */
     public abstract void setDy2(int dy2);
 
+    /**
+     * @return x coordinate of the right down corner
+     */
     public abstract int getDx2();
 
+    /**
+     * @param dx2 x coordinate of the right down corner
+     */
     public abstract void setDx2(int dx2);
 
+    /**
+     * @return whether this shape is horizontally flipped
+     */
     public abstract boolean isHorizontallyFlipped();
 
+    /**
+     * @return  whether this shape is vertically flipped
+     */
     public abstract boolean isVerticallyFlipped();
 
-    public abstract EscherRecord getEscherAnchor();
+    protected abstract EscherRecord getEscherAnchor();
 
     protected abstract void createEscherAnchor();
 }
