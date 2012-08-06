@@ -1278,23 +1278,18 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
     
     
-    @Override
     public CellRangeAddress getRepeatingRows() {
       return _sh.getRepeatingRows();
     }
     
-    
-    @Override
     public CellRangeAddress getRepeatingColumns() {
       return _sh.getRepeatingColumns();
     }
     
-    @Override
     public void setRepeatingRows(CellRangeAddress rowRangeRef) {
       _sh.setRepeatingRows(rowRangeRef);
     }
     
-    @Override
     public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
       _sh.setRepeatingColumns(columnRangeRef);
     }
