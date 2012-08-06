@@ -117,6 +117,9 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID));
     }
 
+    /**
+     * @return array of x coordinates
+     */
     public int[] getXPoints() {
         EscherArrayProperty verticesProp = getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
         if (null == verticesProp){
@@ -131,6 +134,9 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         return array;
     }
 
+    /**
+     * @return array of y coordinates
+     */
     public int[] getYPoints() {
         EscherArrayProperty verticesProp = getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
         if (null == verticesProp){
@@ -145,6 +151,10 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         return array;
     }
 
+    /**
+     * @param xPoints - array of x coordinates
+     * @param yPoints - array of y coordinates
+     */
     public void setPoints(int[] xPoints, int[] yPoints) {
         if (xPoints.length != yPoints.length){
             System.out.println("xPoint.length must be equal to yPoints.length");
@@ -189,7 +199,6 @@ public class HSSFPolygon  extends HSSFSimpleShape {
 
     /**
      * Defines the width and height of the points in the polygon
-     *
      * @param width
      * @param height
      */
@@ -198,11 +207,17 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         setPropertyValue(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, height));
     }
 
+    /**
+     * @return shape width
+     */
     public int getDrawAreaWidth() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__RIGHT);
         return property == null ? 100: property.getPropertyValue();
     }
 
+    /**
+     * @return shape height
+     */
     public int getDrawAreaHeight() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__BOTTOM);
         return property == null ? 100: property.getPropertyValue();

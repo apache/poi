@@ -66,10 +66,17 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         buildShapeTree();
     }
 
+    /**
+     * used to clone patriarch
+     *
+     * create patriarch from existing one
+     * @param patriarch - copy all the shapes from this patriarch to new one
+     * @param sheet where must be located new patriarch
+     * @return new patriarch with copies of all shapes from the existing patriarch
+     */
     static HSSFPatriarch createPatriarch(HSSFPatriarch patriarch, HSSFSheet sheet){
         HSSFPatriarch newPatriarch = new HSSFPatriarch(sheet, new EscherAggregate());
         newPatriarch.afterCreate();
-
         for (HSSFShape shape: patriarch.getChildren()){
             HSSFShape newShape;
             if (shape instanceof HSSFShapeGroup){
@@ -80,15 +87,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
             newPatriarch.onCreate(newShape);
             newPatriarch.addShape(newShape);
         }
-
         return newPatriarch;
     }
 
-    /**
-     * remove first level shapes
-     *
-     * @param shape to be removed
-     */
     public boolean removeShape(HSSFShape shape) {
         boolean  isRemoved = _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
         if (isRemoved){
@@ -152,6 +153,15 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return shape;
     }
 
+    /**
+     *
+     * @param anchor       the client anchor describes how this picture is
+     *                     attached to the sheet.
+     * @param pictureIndex the index of the picture in the workbook collection
+     *                     of pictures.
+     *
+     * @return newly created shape
+     */
     public HSSFPicture createPicture(ClientAnchor anchor, int pictureIndex) {
         return createPicture((HSSFClientAnchor) anchor, pictureIndex);
     }
@@ -245,6 +255,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 
     /**
      * Total count of all children and their children's children.
+     * @return count of shapes including shapes inside shape groups
      */
     public int countOfAllChildren() {
         int count = _shapes.size();
@@ -266,6 +277,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         _spgrRecord.setRectX2(x2);
     }
 
+    /**
+     * remove all shapes inside patriarch
+     */
     public void clear() {
         ArrayList <HSSFShape> copy = new ArrayList<HSSFShape>(_shapes);
         for (HSSFShape shape: copy){
@@ -273,6 +287,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         }
     }
 
+    /**
+     * @return new unique shapeId
+     */
     int newShapeId() {
         DrawingManager2 dm = _sheet.getWorkbook().getWorkbook().getDrawingManager();
         EscherDgRecord dg =
@@ -314,30 +331,18 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return false;
     }
 
-    /**
-     * The top left x coordinate of this group.
-     */
     public int getX1() {
         return _spgrRecord.getRectX1();
     }
 
-    /**
-     * The top left y coordinate of this group.
-     */
     public int getY1() {
         return _spgrRecord.getRectY1();
     }
 
-    /**
-     * The bottom right x coordinate of this group.
-     */
     public int getX2() {
         return _spgrRecord.getRectX2();
     }
 
-    /**
-     * The bottom right y coordinate of this group.
-     */
     public int getY2() {
         return _spgrRecord.getRectY2();
     }

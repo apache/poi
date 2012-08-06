@@ -19,11 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.drawing.HSSFShapeType;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,43 +31,19 @@ import java.util.Map;
  */
 public class HSSFShapeFactory {
 
-    private static final Map<Short, HSSFShapeType> shapeTypeToClass = new HashMap<Short, HSSFShapeType>(HSSFShapeType.values().length);
-    private static final ReflectionConstructorShapeCreator shapeCreator = new ReflectionConstructorShapeCreator(shapeTypeToClass);
+    private final static short       OBJECT_TYPE_LINE               = 1;
+    private final static short       OBJECT_TYPE_RECTANGLE          = 2;
+    private final static short       OBJECT_TYPE_OVAL               = 3;
+    private final static short       OBJECT_TYPE_ARC                = 4;
+    private final static short       OBJECT_TYPE_PICTURE            = 8;
 
-    static {
-        for (HSSFShapeType type : HSSFShapeType.values()) {
-            shapeTypeToClass.put(type.getType(), type);
-        }
-    }
-
-    private static class ReflectionConstructorShapeCreator {
-
-        private final Map<Short, HSSFShapeType> shapeTypeToClass;
-
-        private ReflectionConstructorShapeCreator(Map<Short, HSSFShapeType> shapeTypeToClass) {
-            this.shapeTypeToClass = shapeTypeToClass;
-        }
-
-        public HSSFShape createNewShape(Short type, EscherContainerRecord spContainer, ObjRecord objRecord) {
-            if (!shapeTypeToClass.containsKey(type)) {
-                return new HSSFUnknownShape(spContainer, objRecord);
-            }
-            Class clazz = shapeTypeToClass.get(type).getShape();
-            if (null == clazz) {
-                //System.out.println("No class attached to shape type: "+type);
-                return new HSSFUnknownShape(spContainer, objRecord);
-            }
-            try {
-                Constructor constructor = clazz.getConstructor(new Class[]{EscherContainerRecord.class, ObjRecord.class});
-                return (HSSFShape) constructor.newInstance(spContainer, objRecord);
-            } catch (NoSuchMethodException e) {
-                throw new IllegalStateException(clazz.getName() + " doesn't have required for shapes constructor");
-            } catch (Exception e) {
-                throw new IllegalStateException("Couldn't create new instance of " + clazz.getName());
-            }
-        }
-    }
-
+    /**
+     * build shape tree from escher container
+     * @param container root escher container from which escher records must be taken
+     * @param agg - EscherAggregate
+     * @param out - shape container to which shapes must be added
+     * @param root - node to create HSSFObjectData shapes
+     */
     public static void createShapeTree(EscherContainerRecord container, EscherAggregate agg, HSSFShapeContainer out, DirectoryNode root) {
         if (container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
             ObjRecord obj = null;
@@ -83,24 +56,18 @@ public class HSSFShapeFactory {
             // skip the first child record, it is group descriptor
             for (int i = 0; i < children.size(); i++) {
                 EscherContainerRecord spContainer = children.get(i);
-                if (i == 0) {
-                    EscherSpgrRecord spgr = (EscherSpgrRecord) spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
-                } else {
+                if (i != 0) {
                     createShapeTree(spContainer, agg, group, root);
                 }
             }
             out.addShape(group);
         } else if (container.getRecordId() == EscherContainerRecord.SP_CONTAINER) {
             Map<EscherRecord, Record> shapeToObj = agg.getShapeToObjMapping();
-            EscherSpRecord spRecord = null;
             ObjRecord objRecord = null;
             TextObjectRecord txtRecord = null;
 
             for (EscherRecord record : container.getChildRecords()) {
                 switch (record.getRecordId()) {
-                    case EscherSpRecord.RECORD_ID:
-                        spRecord = (EscherSpRecord) record;
-                        break;
                     case EscherClientDataRecord.RECORD_ID:
                         objRecord = (ObjRecord) shapeToObj.get(record);
                         break;
@@ -115,7 +82,7 @@ public class HSSFShapeFactory {
                 return;
             }
             CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
-            HSSFShape shape = null;
+            HSSFShape shape;
             switch (cmo.getObjectType()) {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE:
                     shape = new HSSFPicture(container, objRecord);

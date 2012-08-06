@@ -113,45 +113,75 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         return row.getHeightInPoints();
     }
 
+    /**
+     * @return the column(0 based) of the first cell.
+     */
     public short getCol1() {
         return _escherClientAnchor.getCol1();
     }
 
+    /**
+     * @param col1 the column(0 based) of the first cell.
+     */
     public void setCol1(short col1) {
         checkRange(col1, 0, 255, "col1");
         _escherClientAnchor.setCol1(col1);
     }
 
+    /**
+     * @param col1 0-based column of the first cell.
+     */
     public void setCol1(int col1) {
         setCol1((short) col1);
     }
 
+    /**
+     * @return the column(0 based) of the first cell.
+     */
     public short getCol2() {
         return _escherClientAnchor.getCol2();
     }
 
+    /**
+     * @param col2 the column(0 based) of the second cell.
+     */
     public void setCol2(short col2) {
         checkRange(col2, 0, 255, "col2");
         _escherClientAnchor.setCol2(col2);
     }
 
+    /**
+     * @param col2 the column(0 based) of the second cell.
+     */
     public void setCol2(int col2) {
         setCol2((short) col2);
     }
 
+    /**
+     * @return the row(0 based) of the first cell.
+     */
     public int getRow1() {
         return _escherClientAnchor.getRow1();
     }
 
+    /**
+     * @param row1 0-based row of the first cell.
+     */
     public void setRow1(int row1) {
         checkRange(row1, 0, 256 * 256, "row1");
         _escherClientAnchor.setRow1(Integer.valueOf(row1).shortValue());
     }
 
+    /**
+     * @return the row(0 based) of the second cell.
+     */
     public int getRow2() {
         return _escherClientAnchor.getRow2();
     }
 
+    /**
+     * @return the row(0 based) of the second cell.
+     */
     public void setRow2(int row2) {
         checkRange(row2, 0, 256 * 256, "row2");
         _escherClientAnchor.setRow2(Integer.valueOf(row2).shortValue());
@@ -190,22 +220,16 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         setDy2(y2);
     }
 
-    /**
-     * @return true if the anchor goes from right to left.
-     */
     public boolean isHorizontallyFlipped() {
         return _isHorizontallyFlipped;
     }
 
-    /**
-     * @return true if the anchor goes from bottom to top.
-     */
     public boolean isVerticallyFlipped() {
         return _isVerticallyFlipped;
     }
 
     @Override
-    public EscherRecord getEscherAnchor() {
+    protected EscherRecord getEscherAnchor() {
         return _escherClientAnchor;
     }
 
@@ -229,9 +253,6 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
      */
     public void setAnchorType(int anchorType) {
-//        if (0 != anchorType && 2 != anchorType && 3 != anchorType){
-//            throw new IllegalArgumentException("Anchor type of shape can take only such values: 0, 2, 3");
-//        }
         _escherClientAnchor.setFlag(Integer.valueOf(anchorType).shortValue());
     }
 

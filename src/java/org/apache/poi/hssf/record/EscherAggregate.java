@@ -290,8 +290,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     public static final short ST_TEXTBOX = (short) 202;
     public static final short ST_NIL = (short) 0x0FFF;
 
-    protected HSSFPatriarch patriarch;
-
     /**
      * if we want to get the same byte array if we open existing file and serialize it we should save
      * note records in right order. This list contains ids of NoteRecords in such order as we read from existing file
@@ -340,6 +338,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return result.toString();
     }
 
+    /**
+     * Calculates the xml representation of this record.  This is
+     * simply a dump of all the records.
+     */
     public String toXml(String tab) {
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getRecordName()).append(">\n");
@@ -360,7 +362,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     /**
      * Collapses the drawing records into an aggregate.
-     * read Drawing and Continue records into single byte array, create Escher tree from byte array, create map <EscherRecord, Record>
+     * read Drawing, Obj, TxtObj, Note and Continue records into single byte array,
+     * create Escher tree from byte array, create map <EscherRecord, Record>
+     *
      */
     public static EscherAggregate createAggregate(List records, int locFirstDrawingRecord, DrawingManager2 drawingManager) {
         // Keep track of any shape records created so we can match them back to the object id's.
@@ -494,7 +498,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
             byte[] drawingData = new byte[endOffset - startOffset + 1];
             System.arraycopy(buffer, startOffset, drawingData, 0, drawingData.length);
-            pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
+            pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
 
             writtenEscherBytes += drawingData.length;
 
@@ -505,13 +509,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             if (i == shapes.size() - 1 && endOffset < buffer.length - 1) {
                 drawingData = new byte[buffer.length - endOffset - 1];
                 System.arraycopy(buffer, endOffset + 1, drawingData, 0, drawingData.length);
-                pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
+                pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
             }
         }
         if ((pos - offset) < buffer.length - 1) {
             byte[] drawingData = new byte[buffer.length - (pos - offset)];
             System.arraycopy(buffer, (pos - offset), drawingData, 0, drawingData.length);
-            pos += writeDataIntoDrawingRecord(0, drawingData, writtenEscherBytes, pos, data, i);
+            pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
         }
 
         // write records that need to be serialized after all drawing group records
@@ -535,7 +539,17 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return bytesWritten;
     }
 
-    private int writeDataIntoDrawingRecord(int temp, byte[] drawingData, int writtenEscherBytes, int pos, byte[] data, int i) {
+    /**
+     * @param drawingData - escher records saved into single byte array
+     * @param writtenEscherBytes - count of bytes already saved into drawing records (we should know it to decide create
+     *                           drawing or continue record)
+     * @param pos current position of data array
+     * @param data - array of bytes where drawing records must be serialized
+     * @param i - number of shape, saved into data array
+     * @return offset of data array after serialization
+     */
+    private int writeDataIntoDrawingRecord(byte[] drawingData, int writtenEscherBytes, int pos, byte[] data, int i) {
+        int temp = 0;
         //First record in drawing layer MUST be DrawingRecord
         if (writtenEscherBytes + drawingData.length > RecordInputStream.MAX_RECORD_DATA_SIZE && i != 1) {
             for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
@@ -576,6 +590,9 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         return size;
     }
 
+    /**
+     * @return record size, including header size of obj, text, note, drawing, continue records
+     */
     public int getRecordSize() {
         // To determine size of aggregate record we have to know size of each DrawingRecord because if DrawingRecord
         // is split into several continue records we have to add header size to total EscherAggregate size
@@ -636,12 +653,6 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     public void removeShapeToObjRecord(EscherRecord rec) {
         shapeToObj.remove(rec);
-    }
-
-    public void clear() {
-        clearEscherRecords();
-        shapeToObj.clear();
-//		lastShapeId = 1024;
     }
 
     protected String getRecordName() {
@@ -740,34 +751,44 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     /**
-     * Returns the mapping  of {@link EscherClientDataRecord} and {@link EscherTextboxRecord}
+     * @return unmodifiable copy of the mapping  of {@link EscherClientDataRecord} and {@link EscherTextboxRecord}
      * to their {@link TextObjectRecord} or {@link ObjRecord} .
      * <p/>
      * We need to access it outside of EscherAggregate when building shapes
-     *
-     * @return
      */
     public Map<EscherRecord, Record> getShapeToObjMapping() {
         return Collections.unmodifiableMap(shapeToObj);
     }
 
     /**
-     * @return tails records. We need to access them when building shapes.
+     * @return unmodifiable copy of tail records. We need to access them when building shapes.
      *         Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
      */
     public Map<Integer, NoteRecord> getTailRecords() {
         return tailRec;
     }
 
+    /**
+     * @param obj - ObjRecord with id == NoteRecord.id
+     * @return null if note record is not found else returns note record with id == obj.id
+     */
     public NoteRecord getNoteRecordByObj(ObjRecord obj) {
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) obj.getSubRecords().get(0);
         return tailRec.get(cod.getObjectId());
     }
 
+    /**
+     * Add tail record to existing map
+     * @param note to be added
+     */
     public void addTailRecord(NoteRecord note) {
         tailRec.put(note.getShapeId(), note);
     }
 
+    /**
+     * Remove tail record from the existing map
+     * @param note to be removed
+     */
     public void removeTailRecord(NoteRecord note) {
         tailRec.remove(note.getShapeId());
     }

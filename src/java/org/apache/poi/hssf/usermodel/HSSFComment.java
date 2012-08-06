@@ -62,6 +62,8 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         //by default comments are hidden
         setVisible(false);
         setAuthor("");
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT);
     }
 
     protected HSSFComment(NoteRecord note, TextObjectRecord txo) {

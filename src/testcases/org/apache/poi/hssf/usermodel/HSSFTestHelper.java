@@ -118,4 +118,8 @@ public class HSSFTestHelper {
     public static ObjRecord getObjRecord(HSSFShape shape){
         return shape.getObjRecord();
     }
+
+    public static EscherRecord getEscherAnchor(HSSFAnchor anchor){
+        return anchor.getEscherAnchor();
+    }
 }

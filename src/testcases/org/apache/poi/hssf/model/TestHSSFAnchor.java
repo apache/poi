@@ -151,9 +151,9 @@ public class TestHSSFAnchor extends TestCase {
 
         rectangle.setAnchor(anchor);
 
-        assertNotNull(anchor.getEscherAnchor());
+        assertNotNull(HSSFTestHelper.getEscherAnchor(anchor));
         assertNotNull(HSSFTestHelper.getEscherContainer(rectangle));
-        assertTrue(anchor.getEscherAnchor().equals(HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID)));
+        assertTrue(HSSFTestHelper.getEscherAnchor(anchor).equals(HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID)));
     }
 
     public void testClientAnchorFromEscher(){
@@ -188,7 +188,7 @@ public class TestHSSFAnchor extends TestCase {
 
     public void testClientAnchorFromScratch(){
         HSSFClientAnchor anchor = new HSSFClientAnchor();
-        EscherClientAnchorRecord escher = (EscherClientAnchorRecord) anchor.getEscherAnchor();
+        EscherClientAnchorRecord escher = (EscherClientAnchorRecord) HSSFTestHelper.getEscherAnchor(anchor);
         anchor.setAnchor((short)11, 12, 13, 14, (short)15, 16, 17, 18);
 
         assertEquals(anchor.getCol1(), 11);
@@ -254,7 +254,7 @@ public class TestHSSFAnchor extends TestCase {
 
     public void testChildAnchorFromScratch(){
         HSSFChildAnchor anchor = new HSSFChildAnchor();
-        EscherChildAnchorRecord escher = (EscherChildAnchorRecord) anchor.getEscherAnchor();
+        EscherChildAnchorRecord escher = (EscherChildAnchorRecord) HSSFTestHelper.getEscherAnchor(anchor);
         anchor.setAnchor(11, 12, 13, 14);
 
         assertEquals(anchor.getDx1(), 11);

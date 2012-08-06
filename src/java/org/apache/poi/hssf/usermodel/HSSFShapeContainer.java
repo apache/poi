@@ -43,14 +43,31 @@ public interface HSSFShapeContainer extends Iterable<HSSFShape>
     void setCoordinates( int x1, int y1, int x2, int y2 );
 
     void clear();
-    
+
+    /**
+     *@return The top left x coordinate of this group.
+     */
     public int getX1();
 
+    /**
+     *@return The top left y coordinate of this group.
+     */
     public int getY1();
 
+    /**
+     *@return The bottom right x coordinate of this group.
+     */
     public int getX2();
 
+    /**
+     * @return The bottom right y coordinate of this group.
+     */
     public int getY2();
 
+    /**
+     * remove first level shapes
+     * @param shape to be removed
+     * @return true if shape is removed else return false
+     */
     public boolean removeShape(HSSFShape shape);
 }

@@ -37,6 +37,7 @@ public final class DrawingRecord extends StandardRecord {
         recordData = in.readRemainder();
     }
 
+    @Deprecated
     public void processContinueRecord(byte[] record) {
         //don't merge continue record with the drawing record, it must be serialized separately
         contd = record;
@@ -54,13 +55,8 @@ public final class DrawingRecord extends StandardRecord {
         return sid;
     }
 
+    @Deprecated
     public byte[] getData() {
-//        if (continueData.size() != 0) {
-//            byte[] newBuffer = new byte[recordData.length + continueData.size()];
-//            System.arraycopy(recordData, 0, newBuffer, 0, recordData.length);
-//            System.arraycopy(continueData.toByteArray(), 0, newBuffer, recordData.length, continueData.size());
-//            return newBuffer;
-//        }
         return recordData;
     }
 
@@ -75,6 +71,10 @@ public final class DrawingRecord extends StandardRecord {
         recordData = thedata;
     }
 
+    /**
+     * Cloning of drawing records must be executed through HSSFPatriarch, because all id's must be changed
+     * @return cloned drawing records
+     */
     public Object clone() {
         DrawingRecord rec = new DrawingRecord();
         rec.recordData = recordData.clone();

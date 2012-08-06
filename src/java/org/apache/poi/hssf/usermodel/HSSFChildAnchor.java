@@ -25,6 +25,10 @@ public final class HSSFChildAnchor extends HSSFAnchor {
 
     private EscherChildAnchorRecord _escherChildAnchor;
 
+    /**
+     * create anchor from existing file
+     * @param escherChildAnchorRecord
+     */
     public HSSFChildAnchor(EscherChildAnchorRecord escherChildAnchorRecord) {
         this._escherChildAnchor = escherChildAnchorRecord;
     }
@@ -33,6 +37,13 @@ public final class HSSFChildAnchor extends HSSFAnchor {
         _escherChildAnchor = new EscherChildAnchorRecord();
     }
 
+    /**
+     * create anchor from scratch
+     * @param dx1 x coordinate of the left up corner
+     * @param dy1 y coordinate of the left up corner
+     * @param dx2 x coordinate of the right down corner
+     * @param dy2 y coordinate of the right down corner
+     */
     public HSSFChildAnchor(int dx1, int dy1, int dx2, int dy2) {
         super(Math.min(dx1, dx2), Math.min(dy1, dy2), Math.max(dx1, dx2), Math.max(dy1, dy2));
         if (dx1 > dx2){
@@ -83,6 +94,12 @@ public final class HSSFChildAnchor extends HSSFAnchor {
         _escherChildAnchor.setDx2(dx2);
     }
 
+    /**
+     * @param dx1 x coordinate of the left up corner
+     * @param dy1 y coordinate of the left up corner
+     * @param dx2 x coordinate of the right down corner
+     * @param dy2 y coordinate of the right down corner
+     */
     public void setAnchor(int dx1, int dy1, int dx2, int dy2) {
         setDx1(Math.min(dx1, dx2));
         setDy1(Math.min(dy1, dy2));
@@ -90,16 +107,18 @@ public final class HSSFChildAnchor extends HSSFAnchor {
         setDy2(Math.max(dy1, dy2));
     }
 
+
     public boolean isHorizontallyFlipped() {
         return _isHorizontallyFlipped;
     }
+
 
     public boolean isVerticallyFlipped() {
         return _isVerticallyFlipped;
     }
 
     @Override
-    public EscherRecord getEscherAnchor() {
+    protected EscherRecord getEscherAnchor() {
         return _escherChildAnchor;
     }
 
