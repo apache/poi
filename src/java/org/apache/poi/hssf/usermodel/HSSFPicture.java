@@ -206,7 +206,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     private float getColumnWidthInPixels(int column){
 
-        int cw = _patriarch.getSheet().getColumnWidth(column);
+        int cw = getPatriarch().getSheet().getColumnWidth(column);
         float px = getPixelWidth(column);
 
         return cw/px;
@@ -214,18 +214,18 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     private float getRowHeightInPixels(int i){
 
-        HSSFRow row = _patriarch.getSheet().getRow(i);
+        HSSFRow row = getPatriarch().getSheet().getRow(i);
         float height;
         if(row != null) height = row.getHeight();
-        else height = _patriarch.getSheet().getDefaultRowHeight();
+        else height = getPatriarch().getSheet().getDefaultRowHeight();
 
         return height/PX_ROW;
     }
 
     private float getPixelWidth(int column){
 
-        int def = _patriarch.getSheet().getDefaultColumnWidth()*256;
-        int cw = _patriarch.getSheet().getColumnWidth(column);
+        int def = getPatriarch().getSheet().getDefaultColumnWidth()*256;
+        int cw = getPatriarch().getSheet().getColumnWidth(column);
 
         return cw == def ? PX_DEFAULT : PX_MODIFIED;
     }
@@ -236,7 +236,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return image dimension
      */
     public Dimension getImageDimension(){
-        EscherBSERecord bse = _patriarch.getSheet()._book.getBSERecord(getPictureIndex());
+        EscherBSERecord bse = getPatriarch().getSheet()._book.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
@@ -248,7 +248,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return picture data for this shape
      */
     public HSSFPictureData getPictureData(){
-        InternalWorkbook iwb = _patriarch.getSheet().getWorkbook().getWorkbook();
+        InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
     	EscherBlipRecord blipRecord = iwb.getBSERecord(getPictureIndex()).getBlipRecord();
     	return new HSSFPictureData(blipRecord);
     }

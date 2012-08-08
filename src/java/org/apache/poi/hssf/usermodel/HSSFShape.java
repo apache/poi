@@ -54,9 +54,9 @@ public abstract class HSSFShape {
     public static final int LINESTYLE_DEFAULT = LINESTYLE_NONE;
 
     // TODO - make all these fields private
-    HSSFShape parent;
+    private HSSFShape parent;
     HSSFAnchor anchor;
-    HSSFPatriarch _patriarch;
+    private HSSFPatriarch _patriarch;
 
     private final EscherContainerRecord _escherContainer;
     private final ObjRecord _objRecord;
@@ -93,6 +93,12 @@ public abstract class HSSFShape {
 
     protected abstract ObjRecord createObjRecord();
 
+    /**
+     * remove escher container from the patriarch.escherAggregate
+     * remove obj, textObj and note records if it's necessary
+     * in case of ShapeGroup remove all contained shapes
+     * @param patriarch
+     */
     protected abstract void afterRemove(HSSFPatriarch patriarch);
 
     /**
@@ -379,4 +385,16 @@ public abstract class HSSFShape {
     }
 
     protected abstract HSSFShape cloneShape();
+
+    protected void setPatriarch(HSSFPatriarch _patriarch) {
+        this._patriarch = _patriarch;
+    }
+
+    public HSSFPatriarch getPatriarch() {
+        return _patriarch;
+    }
+
+    protected void setParent(HSSFShape parent) {
+        this.parent = parent;
+    }
 }

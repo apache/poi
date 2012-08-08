@@ -90,6 +90,10 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return newPatriarch;
     }
 
+    /**
+     * @param shape to be removed
+     * @return true of shape is removed
+     */
     public boolean removeShape(HSSFShape shape) {
         boolean  isRemoved = _mainSpgrContainer.removeChildRecord(shape.getEscherContainer());
         if (isRemoved){
@@ -225,7 +229,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     }
 
     /**
-     * Returns a list of all shapes contained by the patriarch.
+     * Returns a unmodifiable list of all shapes contained by the patriarch.
      */
     public List<HSSFShape> getChildren() {
         return Collections.unmodifiableList(_shapes);
@@ -236,7 +240,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      */
     @Internal
     public void addShape(HSSFShape shape) {
-        shape._patriarch = this;
+        shape.setPatriarch(this);
         _shapes.add(shape);
     }
 
@@ -331,18 +335,30 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return false;
     }
 
+    /**
+     * @return x coordinate of the left up corner
+     */
     public int getX1() {
         return _spgrRecord.getRectX1();
     }
 
+    /**
+     * @return y coordinate of the left up corner
+     */
     public int getY1() {
         return _spgrRecord.getRectY1();
     }
 
+    /**
+     * @return x coordinate of the right down corner
+     */
     public int getX2() {
         return _spgrRecord.getRectX2();
     }
 
+    /**
+     * @return y coordinate of the right down corner
+     */
     public int getY2() {
         return _spgrRecord.getRectY2();
     }
@@ -377,6 +393,9 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     }
 
 
+    /**
+     * create shape tree from existing escher records tree
+     */
     void buildShapeTree() {
         EscherContainerRecord dgContainer = _boundAggregate.getEscherContainer();
         if (dgContainer == null) {
@@ -397,10 +416,10 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 
     private void setFlipFlags(HSSFShape shape){
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()) {
+        if (shape.getAnchor().isHorizontallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.anchor.isVerticallyFlipped()) {
+        if (shape.getAnchor().isVerticallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
     }

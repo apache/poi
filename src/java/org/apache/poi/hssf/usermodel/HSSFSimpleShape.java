@@ -19,7 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.drawing.ShapeTypes;
 import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
@@ -32,14 +31,14 @@ public class HSSFSimpleShape extends HSSFShape
     // The commented out ones haven't been tested yet or aren't supported
     // by HSSFSimpleShape.
 
-    public final static short       OBJECT_TYPE_LINE               = ShapeTypes.Line;
-    public final static short       OBJECT_TYPE_RECTANGLE          = ShapeTypes.Rectangle;
-    public final static short       OBJECT_TYPE_OVAL               = ShapeTypes.Ellipse;
-    public final static short       OBJECT_TYPE_ARC                = ShapeTypes.Arc;
+    public final static short       OBJECT_TYPE_LINE               = HSSFShapeTypes.Line;
+    public final static short       OBJECT_TYPE_RECTANGLE          = HSSFShapeTypes.Rectangle;
+    public final static short       OBJECT_TYPE_OVAL               = HSSFShapeTypes.Ellipse;
+    public final static short       OBJECT_TYPE_ARC                = HSSFShapeTypes.Arc;
     //    public final static short       OBJECT_TYPE_CHART              = 5;
 //    public final static short       OBJECT_TYPE_TEXT               = 6;
 //    public final static short       OBJECT_TYPE_BUTTON             = 7;
-    public final static short       OBJECT_TYPE_PICTURE            = ShapeTypes.PictureFrame;
+    public final static short       OBJECT_TYPE_PICTURE            = HSSFShapeTypes.PictureFrame;
 
 //    public final static short       OBJECT_TYPE_POLYGON            = 9;
 //    public final static short       OBJECT_TYPE_CHECKBOX           = 11;
@@ -51,8 +50,8 @@ public class HSSFSimpleShape extends HSSFShape
 //    public final static short       OBJECT_TYPE_SCROLL_BAR         = 17;
 //    public final static short       OBJECT_TYPE_LIST_BOX           = 18;
 //    public final static short       OBJECT_TYPE_GROUP_BOX          = 19;
-    public final static short       OBJECT_TYPE_COMBO_BOX          = ShapeTypes.HostControl;
-    public final static short       OBJECT_TYPE_COMMENT            = ShapeTypes.TextBox;
+    public final static short       OBJECT_TYPE_COMBO_BOX          = HSSFShapeTypes.HostControl;
+    public final static short       OBJECT_TYPE_COMMENT            = HSSFShapeTypes.TextBox;
     public final static short       OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
 
     public final static int WRAP_SQUARE = 0;
@@ -124,7 +123,7 @@ public class HSSFSimpleShape extends HSSFShape
 
         spContainer.addChildRecord(sp);
         spContainer.addChildRecord(optRecord);
-        spContainer.addChildRecord(anchor.getEscherAnchor());
+        spContainer.addChildRecord(getAnchor().getEscherAnchor());
         spContainer.addChildRecord(clientData);
         spContainer.addChildRecord(escherTextbox);
         return spContainer;
@@ -226,7 +225,7 @@ public class HSSFSimpleShape extends HSSFShape
     }
 
     /**
-     * @see org.apache.poi.hssf.usermodel.drawing.ShapeTypes
+     * @see HSSFShapeTypes
      * @param value - shapeType
      */
     public void setShapeType(int value){
