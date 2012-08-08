@@ -129,18 +129,18 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         for ( int i=0; i<shapes.size(); i++ ) {
             HSSFShape shape = shapes.get(i);
             removeShape(shape);
-            shape.afterRemove(_patriarch);
+            shape.afterRemove(getPatriarch());
         }
         shapes.clear();
     }
 
     private void onCreate(HSSFShape shape){
-        if(_patriarch != null){
+        if(getPatriarch() != null){
             EscherContainerRecord spContainer = shape.getEscherContainer();
-            int shapeId = _patriarch.newShapeId();
+            int shapeId = getPatriarch().newShapeId();
             shape.setShapeId(shapeId);
             getEscherContainer().addChildRecord(spContainer);
-            shape.afterInsert(_patriarch);
+            shape.afterInsert(getPatriarch());
             EscherSpRecord sp;
             if (shape instanceof HSSFShapeGroup){
                 sp = shape.getEscherContainer().getChildContainers().get(0).getChildById(EscherSpRecord.RECORD_ID);
@@ -159,16 +159,16 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      */
     public HSSFShapeGroup createGroup(HSSFChildAnchor anchor) {
         HSSFShapeGroup group = new HSSFShapeGroup(this, anchor);
-        group.parent = this;
-        group.anchor = anchor;
+        group.setParent(this);
+        group.setAnchor(anchor);
         shapes.add(group);
         onCreate(group);
         return group;
     }
 
     public void addShape(HSSFShape shape) {
-        shape._patriarch = this._patriarch;
-        shape.parent = this;
+        shape.setPatriarch(this.getPatriarch());
+        shape.setParent(this);
         shapes.add(shape);
     }
 
@@ -180,15 +180,15 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      */
     public HSSFSimpleShape createShape(HSSFChildAnchor anchor) {
         HSSFSimpleShape shape = new HSSFSimpleShape(this, anchor);
-        shape.parent = this;
-        shape.anchor = anchor;
+        shape.setParent(this);
+        shape.setAnchor(anchor);
         shapes.add(shape);
         onCreate(shape);
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()){
+        if (shape.getAnchor().isHorizontallyFlipped()){
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.anchor.isVerticallyFlipped()){
+        if (shape.getAnchor().isVerticallyFlipped()){
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
         return shape;
@@ -202,8 +202,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      */
     public HSSFTextbox createTextbox(HSSFChildAnchor anchor) {
         HSSFTextbox shape = new HSSFTextbox(this, anchor);
-        shape.parent = this;
-        shape.anchor = anchor;
+        shape.setParent(this);
+        shape.setAnchor(anchor);
         shapes.add(shape);
         onCreate(shape);
         return shape;
@@ -218,8 +218,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      */
     public HSSFPolygon createPolygon(HSSFChildAnchor anchor) {
         HSSFPolygon shape = new HSSFPolygon(this, anchor);
-        shape.parent = this;
-        shape.anchor = anchor;
+        shape.setParent(this);
+        shape.setAnchor(anchor);
         shapes.add(shape);
         onCreate(shape);
         return shape;
@@ -234,16 +234,16 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      */
     public HSSFPicture createPicture(HSSFChildAnchor anchor, int pictureIndex) {
         HSSFPicture shape = new HSSFPicture(this, anchor);
-        shape.parent = this;
-        shape.anchor = anchor;
+        shape.setParent(this);
+        shape.setAnchor(anchor);
         shape.setPictureIndex(pictureIndex);
         shapes.add(shape);
         onCreate(shape);
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.anchor.isHorizontallyFlipped()){
+        if (shape.getAnchor().isHorizontallyFlipped()){
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.anchor.isVerticallyFlipped()){
+        if (shape.getAnchor().isVerticallyFlipped()){
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
         return shape;
@@ -357,7 +357,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         }
 
         HSSFShapeGroup group = new HSSFShapeGroup(spgrContainer, obj);
-        group._patriarch = patriarch;
+        group.setPatriarch(patriarch);
 
         for (HSSFShape shape: getChildren()){
             HSSFShape newShape;
@@ -375,7 +375,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     public boolean removeShape(HSSFShape shape) {
         boolean  isRemoved = getEscherContainer().removeChildRecord(shape.getEscherContainer());
         if (isRemoved){
-            shape.afterRemove(this._patriarch);
+            shape.afterRemove(this.getPatriarch());
             shapes.remove(shape);
         }
         return isRemoved;

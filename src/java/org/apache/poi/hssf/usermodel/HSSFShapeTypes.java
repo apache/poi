@@ -15,9 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hssf.usermodel.drawing;
+package org.apache.poi.hssf.usermodel;
 
-public interface ShapeTypes {
+public interface HSSFShapeTypes {
     public static final int NotPrimitive = 0;
     public static final int Rectangle = 1;
     public static final int RoundRectangle = 2;

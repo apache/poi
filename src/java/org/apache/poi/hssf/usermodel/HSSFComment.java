@@ -233,14 +233,14 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     public void setBackgroundImage(int pictureIndex){
         setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__PATTERNTEXTURE, false, true, pictureIndex));
         setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
-        EscherBSERecord bse = _patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
+        EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
         bse.setRef(bse.getRef() + 1);
     }
     
     public void resetBackgroundImage(){
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
         if (null != property){
-            EscherBSERecord bse = _patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(property.getPropertyValue());
+            EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(property.getPropertyValue());
             bse.setRef(bse.getRef() - 1);
             getOptRecord().removeEscherProperty(EscherProperties.FILL__PATTERNTEXTURE);
         }
