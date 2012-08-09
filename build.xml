@@ -632,6 +632,7 @@ under the License.
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
             <jvmarg value="-ea"/>
+            <jvmarg value="-Xmx256m"/>
             <formatter type="plain"/>
             <batchtest todir="${main.reports.test}">
                 <fileset dir="${main.src.test}">
