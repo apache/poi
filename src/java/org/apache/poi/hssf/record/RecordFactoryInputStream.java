@@ -341,8 +341,8 @@ public final class RecordFactoryInputStream {
 				return null;
 			}
 			if (_lastRecord instanceof DrawingRecord) {
-				((DrawingRecord) _lastRecord).processContinueRecord(contRec.getData());
-				return null;
+//				((DrawingRecord) _lastRecord).appendContinueRecord(contRec.getData());
+				return contRec;
 			}
 			if (_lastRecord instanceof UnknownRecord) {
 				//Gracefully handle records that we don't know about,

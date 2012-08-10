@@ -18,40 +18,96 @@
 package org.apache.poi.hssf.usermodel;
 
 
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+
 /**
  * An anchor is what specifics the position of a shape within a client object
  * or within another containing shape.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public abstract class HSSFAnchor
-{
-    int dx1;
-    int dy1;
-    int dx2;
-    int dy2;
+public abstract class HSSFAnchor {
 
-    public HSSFAnchor()
-    {
+    protected boolean _isHorizontallyFlipped = false;
+    protected boolean _isVerticallyFlipped = false;
+
+    public HSSFAnchor() {
+        createEscherAnchor();
     }
 
-    public HSSFAnchor( int dx1, int dy1, int dx2, int dy2 )
-    {
-        this.dx1 = dx1;
-        this.dy1 = dy1;
-        this.dx2 = dx2;
-        this.dy2 = dy2;
+    public HSSFAnchor(int dx1, int dy1, int dx2, int dy2) {
+        createEscherAnchor();
+        setDx1(dx1);
+        setDy1(dy1);
+        setDx2(dx2);
+        setDy2(dy2);
     }
 
-    public int getDx1(){ return dx1; }
-    public void setDx1( int dx1 ){ this.dx1 = dx1; }
-    public int getDy1(){ return dy1; }
-    public void setDy1( int dy1 ){ this.dy1 = dy1; }
-    public int getDy2(){ return dy2; }
-    public void setDy2( int dy2 ){ this.dy2 = dy2; }
-    public int getDx2(){ return dx2; }
-    public void setDx2( int dx2 ){ this.dx2 = dx2; }
+    public static HSSFAnchor createAnchorFromEscher(EscherContainerRecord container){
+        if (null != container.getChildById(EscherChildAnchorRecord.RECORD_ID)){
+            return new HSSFChildAnchor((EscherChildAnchorRecord) container.getChildById(EscherChildAnchorRecord.RECORD_ID));
+        } else {
+            if (null != container.getChildById(EscherClientAnchorRecord.RECORD_ID)){
+                return new HSSFClientAnchor((EscherClientAnchorRecord) container.getChildById(EscherClientAnchorRecord.RECORD_ID));
+            }
+            return null;
+        }
+    }
 
+    /**
+     * @return x coordinate of the left up corner
+     */
+    public abstract int getDx1();
+
+    /**
+     * @param dx1 x coordinate of the left up corner
+     */
+    public abstract void setDx1(int dx1);
+
+    /**
+     * @return y coordinate of the left up corner
+     */
+    public abstract int getDy1();
+
+    /**
+     * @param dy1 y coordinate of the left up corner
+     */
+    public abstract void setDy1(int dy1);
+
+    /**
+     * @return y coordinate of the right down corner
+     */
+    public abstract int getDy2();
+
+    /**
+     * @param dy2 y coordinate of the right down corner
+     */
+    public abstract void setDy2(int dy2);
+
+    /**
+     * @return x coordinate of the right down corner
+     */
+    public abstract int getDx2();
+
+    /**
+     * @param dx2 x coordinate of the right down corner
+     */
+    public abstract void setDx2(int dx2);
+
+    /**
+     * @return whether this shape is horizontally flipped
+     */
     public abstract boolean isHorizontallyFlipped();
+
+    /**
+     * @return  whether this shape is vertically flipped
+     */
     public abstract boolean isVerticallyFlipped();
+
+    protected abstract EscherRecord getEscherAnchor();
+
+    protected abstract void createEscherAnchor();
 }

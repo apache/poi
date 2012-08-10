@@ -62,6 +62,9 @@ public final class EscherArrayProperty extends EscherComplexProperty {
     }
 
     public int getNumberOfElementsInArray() {
+        if (emptyComplexPart){
+            return 0;
+        }
         return LittleEndian.getUShort(_complexData, 0);
     }
 

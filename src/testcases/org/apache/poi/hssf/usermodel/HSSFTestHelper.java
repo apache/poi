@@ -16,8 +16,18 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Helper class for HSSF tests that aren't within the
@@ -25,6 +35,33 @@ import org.apache.poi.hssf.model.InternalWorkbook;
  *  UserModel things.
  */
 public class HSSFTestHelper {
+
+    public static class MockDrawingManager extends DrawingManager2 {
+
+        public MockDrawingManager (){
+            super(null);
+        }
+
+        @Override
+        public int allocateShapeId(short drawingGroupId) {
+            return 1025; //Mock value
+        }
+
+        @Override
+        public int allocateShapeId(short drawingGroupId, EscherDgRecord dg) {
+            return 1025;
+        }
+
+        public EscherDgRecord createDgRecord()
+        {
+            EscherDgRecord dg = new EscherDgRecord();
+            dg.setRecordId( EscherDgRecord.RECORD_ID );
+            dg.setOptions( (short) (16) );
+            dg.setNumShapes( 1 );
+            dg.setLastMSOSPID( 1024 );
+            return dg;
+        }
+    }
 	/**
 	 * Lets non UserModel tests at the low level Workbook
 	 */
@@ -34,4 +71,55 @@ public class HSSFTestHelper {
 	public static InternalSheet getSheetForTest(HSSFSheet sheet) {
 		return sheet.getSheet();
 	}
+
+    public static HSSFPatriarch createTestPatriarch(HSSFSheet sheet, EscherAggregate agg){
+        return new HSSFPatriarch(sheet, agg);
+    }
+
+    public static EscherAggregate getEscherAggregate(HSSFPatriarch patriarch){
+        return patriarch._getBoundAggregate();
+    }
+
+    public static int allocateNewShapeId(HSSFPatriarch patriarch){
+        return patriarch.newShapeId();
+    }
+
+    public static EscherOptRecord getOptRecord(HSSFShape shape){
+        return shape.getOptRecord();
+    }
+
+    public static void convertHSSFGroup(HSSFShapeGroup shape, EscherContainerRecord escherParent, Map shapeToObj){
+        Class clazz = EscherAggregate.class;
+        try {
+            Method method = clazz.getDeclaredMethod("convertGroup", HSSFShapeGroup.class, EscherContainerRecord.class, Map.class);
+            method.setAccessible(true);
+            method.invoke(new EscherAggregate(new MockDrawingManager()), shape, escherParent, shapeToObj);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setShapeId(HSSFShape shape, int id){
+        shape.setShapeId(id);
+    }
+
+    public static EscherContainerRecord getEscherContainer(HSSFShape shape){
+        return shape.getEscherContainer();
+    }
+
+    public static TextObjectRecord getTextObjRecord(HSSFSimpleShape shape){
+        return shape.getTextObjectRecord();
+    }
+
+    public static ObjRecord getObjRecord(HSSFShape shape){
+        return shape.getObjRecord();
+    }
+
+    public static EscherRecord getEscherAnchor(HSSFAnchor anchor){
+        return anchor.getEscherAnchor();
+    }
 }

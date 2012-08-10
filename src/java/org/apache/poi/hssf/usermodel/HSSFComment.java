@@ -16,10 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * Represents a cell comment - a sticky note associated with a cell.
@@ -28,47 +27,99 @@ import org.apache.poi.ss.usermodel.RichTextString;
  */
 public class HSSFComment extends HSSFTextbox implements Comment {
 
-	/*
-	 * TODO - make HSSFComment more consistent when created vs read from file.
-	 * Currently HSSFComment has two main forms (corresponding to the two constructors).   There
-	 * are certain operations that only work on comment objects in one of the forms (e.g. deleting
-	 * comments).
-	 * POI is also deficient in its management of RowRecord fields firstCol and lastCol.  Those 
-	 * fields are supposed to take comments into account, but POI does not do this yet (feb 2009).
-	 * It seems like HSSFRow should manage a collection of local HSSFComments 
-	 */
-	
-    private boolean _visible;
-    private int _row;
-    private int _col;
-    private String _author;
+    private final static int FILL_TYPE_SOLID = 0;
+    private final static int FILL_TYPE_PICTURE = 3;
+
+    /*
+      * TODO - make HSSFComment more consistent when created vs read from file.
+      * Currently HSSFComment has two main forms (corresponding to the two constructors).   There
+      * are certain operations that only work on comment objects in one of the forms (e.g. deleting
+      * comments).
+      * POI is also deficient in its management of RowRecord fields firstCol and lastCol.  Those
+      * fields are supposed to take comments into account, but POI does not do this yet (feb 2009).
+      * It seems like HSSFRow should manage a collection of local HSSFComments
+      */
 
     private NoteRecord _note;
-    private TextObjectRecord _txo;
+
+    public HSSFComment(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord, NoteRecord _note) {
+        super(spContainer, objRecord, textObjectRecord);
+        this._note = _note;
+    }
 
     /**
      * Construct a new comment with the given parent and anchor.
      *
      * @param parent
-     * @param anchor  defines position of this anchor in the sheet
+     * @param anchor defines position of this anchor in the sheet
      */
     public HSSFComment(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
-        setShapeType(OBJECT_TYPE_COMMENT);
-
+        _note = createNoteRecord();
         //default color for comments
-        _fillColor = 0x08000050;
+        setFillColor(0x08000050);
 
         //by default comments are hidden
-        _visible = false;
-
-        _author = "";
+        setVisible(false);
+        setAuthor("");
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT);
     }
 
     protected HSSFComment(NoteRecord note, TextObjectRecord txo) {
-        this((HSSFShape) null, (HSSFAnchor) null);
-        _txo = txo;
+        this(null, new HSSFClientAnchor());
         _note = note;
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        super.afterInsert(patriarch);
+        patriarch._getBoundAggregate().addTailRecord(getNoteRecord());
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        EscherContainerRecord spContainer = super.createSpContainer();
+        EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTLEFT);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTRIGHT);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTTOP);
+        opt.removeEscherProperty(EscherProperties.TEXT__TEXTBOTTOM);
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, 655362));
+        return spContainer;
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        ObjRecord obj = new ObjRecord();
+        CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
+        c.setObjectType(OBJECT_TYPE_COMMENT);
+        c.setLocked(true);
+        c.setPrintable(true);
+        c.setAutofill(false);
+        c.setAutoline(true);
+
+        NoteStructureSubRecord u = new NoteStructureSubRecord();
+        EndSubRecord e = new EndSubRecord();
+        obj.addSubRecord(c);
+        obj.addSubRecord(u);
+        obj.addSubRecord(e);
+        return obj;
+    }
+
+    private NoteRecord createNoteRecord(){
+        NoteRecord note = new NoteRecord();
+        note.setFlags(NoteRecord.NOTE_HIDDEN);
+        note.setAuthor("");
+        return note;
+    }
+
+    @Override
+    void setShapeId(int shapeId) {
+        super.setShapeId(shapeId);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectId((short) (shapeId % 1024));
+        _note.setShapeId(shapeId % 1024);
     }
 
     /**
@@ -76,11 +127,8 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      *
      * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
-    public void setVisible(boolean visible){
-        if(_note != null) {
-			_note.setFlags(visible ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
-		}
-        _visible = visible;
+    public void setVisible(boolean visible) {
+        _note.setFlags(visible ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
     }
 
     /**
@@ -89,7 +137,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     public boolean isVisible() {
-        return _visible;
+        return _note.getFlags() == NoteRecord.NOTE_VISIBLE;
     }
 
     /**
@@ -98,7 +146,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @return the 0-based row of the cell that contains the comment
      */
     public int getRow() {
-        return _row;
+        return _note.getRow();
     }
 
     /**
@@ -107,10 +155,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @param row the 0-based row of the cell that contains the comment
      */
     public void setRow(int row) {
-        if(_note != null) {
-			_note.setRow(row);
-        }
-        _row = row;
+        _note.setRow(row);
     }
 
     /**
@@ -118,8 +163,8 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      *
      * @return the 0-based column of the cell that contains the comment
      */
-    public int getColumn(){
-        return _col;
+    public int getColumn() {
+        return _note.getColumn();
     }
 
     /**
@@ -128,17 +173,15 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @param col the 0-based column of the cell that contains the comment
      */
     public void setColumn(int col) {
-        if(_note != null) {
-		    _note.setColumn(col);
-        }
-        _col = col;
+        _note.setColumn(col);
     }
+
     /**
      * @deprecated (Nov 2009) use {@link HSSFComment#setColumn(int)} }
      */
     @Deprecated
     public void setColumn(short col) {
-        setColumn((int)col);
+        setColumn((int) col);
     }
 
     /**
@@ -147,7 +190,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @return the name of the original author of the comment
      */
     public String getAuthor() {
-        return _author;
+        return _note.getAuthor();
     }
 
     /**
@@ -155,37 +198,57 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      *
      * @param author the name of the original author of the comment
      */
-    public void setAuthor(String author){
-        if(_note != null) _note.setAuthor(author);
-        this._author = author;
+    public void setAuthor(String author) {
+        if (_note != null) _note.setAuthor(author);
     }
-    
-    /**
-     * Sets the rich text string used by this comment.
-     *
-     * @param string    Sets the rich text string used by this object.
-     */
-    public void setString(RichTextString string) {
-        HSSFRichTextString hstring = (HSSFRichTextString) string;
-        //if font is not set we must set the default one
-        if (hstring.numFormattingRuns() == 0) hstring.applyFont((short)0);
 
-        if (_txo != null) {
-            _txo.setStr(hstring);
-        }
-        super.setString(string);
-    }
-    
     /**
      * Returns the underlying Note record
      */
     protected NoteRecord getNoteRecord() {
-	    return _note;
-	}
-    /**
-     * Returns the underlying Text record
-     */
-    protected TextObjectRecord getTextObjectRecord() {
-	    return _txo;
-	}
+        return _note;
+    }
+
+    @Override
+    public void setShapeType(int shapeType) {
+        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+    }
+
+    public void afterRemove(HSSFPatriarch patriarch){
+        super.afterRemove(patriarch);
+        patriarch._getBoundAggregate().removeTailRecord(getNoteRecord());
+    }
+
+    @Override
+    protected HSSFShape cloneShape() {
+        TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        NoteRecord note = (NoteRecord) getNoteRecord().cloneViaReserialise();
+        return new HSSFComment(spContainer, obj, txo, note);
+    }
+    
+    public void setBackgroundImage(int pictureIndex){
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__PATTERNTEXTURE, false, true, pictureIndex));
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
+        EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
+        bse.setRef(bse.getRef() + 1);
+    }
+    
+    public void resetBackgroundImage(){
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
+        if (null != property){
+            EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(property.getPropertyValue());
+            bse.setRef(bse.getRef() - 1);
+            getOptRecord().removeEscherProperty(EscherProperties.FILL__PATTERNTEXTURE);
+        }
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
+    }
+    
+    public int getBackgroundImageId(){
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
+        return property == null ? 0 : property.getPropertyValue();
+    }
 }

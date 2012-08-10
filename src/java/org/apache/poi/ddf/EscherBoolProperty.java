@@ -70,7 +70,7 @@ public class EscherBoolProperty
     public String toXml(String tab){
         StringBuilder builder = new StringBuilder();
         builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
-                .append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append("\" name=\"").append(getName()).append("\" simpleValue=\"").append(getPropertyValue()).append("\" blipId=\"")
                 .append(isBlipId()).append("\" value=\"").append(isTrue()).append("\"").append("/>\n");
         return builder.toString();
     }

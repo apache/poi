@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -149,4 +151,63 @@ public final class TestHSSFPicture extends BaseTestPicture {
         assertTrue(Arrays.equals(data4, ((HSSFPicture)dr.getChildren().get(3)).getPictureData().getData()));
     }
 
+    public void testBSEPictureRef(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sh = wb.createSheet("Pictures");
+        HSSFPatriarch dr = sh.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor();
+
+        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+
+        //register a picture
+        byte[] data1 = new byte[]{1, 2, 3};
+        int idx1 = wb.addPicture(data1, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(1, idx1);
+        HSSFPicture p1 = dr.createPicture(anchor, idx1);
+
+        EscherBSERecord bse = wb.getWorkbook().getBSERecord(idx1);
+
+        assertEquals(bse.getRef(), 1);
+        dr.createPicture(new HSSFClientAnchor(), idx1);
+        assertEquals(bse.getRef(), 2);
+
+        HSSFShapeGroup gr = dr.createGroup(new HSSFClientAnchor());
+        gr.createPicture(new HSSFChildAnchor(), idx1);
+        assertEquals(bse.getRef(), 3);
+    }
+
+    public void testReadExistingImage(){
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
+        HSSFSheet sheet = wb.getSheet("picture");
+        HSSFPatriarch drawing = sheet.getDrawingPatriarch();
+        assertEquals(1, drawing.getChildren().size());
+
+        HSSFPicture picture = (HSSFPicture) drawing.getChildren().get(0);
+        assertEquals(picture.getFileName(), "test");
+    }
+
+    public void testSetGetProperties(){
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFSheet sh = wb.createSheet("Pictures");
+        HSSFPatriarch dr = sh.createDrawingPatriarch();
+        HSSFClientAnchor anchor = new HSSFClientAnchor();
+
+        //register a picture
+        byte[] data1 = new byte[]{1, 2, 3};
+        int idx1 = wb.addPicture(data1, Workbook.PICTURE_TYPE_JPEG);
+        HSSFPicture p1 = dr.createPicture(anchor, idx1);
+
+        assertEquals(p1.getFileName(), "");
+        p1.setFileName("aaa");
+        assertEquals(p1.getFileName(), "aaa");
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sh = wb.getSheet("Pictures");
+        dr = sh.getDrawingPatriarch();
+
+        p1 = (HSSFPicture) dr.getChildren().get(0);
+        assertEquals(p1.getFileName(), "aaa");
+    }
 }

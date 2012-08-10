@@ -349,6 +349,7 @@ public class EscherGraphics
         shape.setLineStyle(HSSFShape.LINESTYLE_NONE);
         shape.setFillColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
+        shape.setNoFill(false);
     }
 
     /**

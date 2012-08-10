@@ -696,7 +696,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             names.add(newName);
         }
         // TODO - maybe same logic required for other/all built-in name records
-        workbook.cloneDrawings(clonedSheet.getSheet());
+//        workbook.cloneDrawings(clonedSheet.getSheet());
 
         return clonedSheet;
     }
@@ -1606,7 +1606,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         r.setUid( uid );
         r.setTag( (short) 0xFF );
         r.setSize( pictureData.length + 25 );
-        r.setRef( 1 );
+        r.setRef( 0 );
         r.setOffset( 0 );
         r.setBlipRecord( blipRecord );
 
@@ -1698,7 +1698,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         List<HSSFObjectData> objects = new ArrayList<HSSFObjectData>();
         for (int i = 0; i < getNumberOfSheets(); i++)
         {
-            getAllEmbeddedObjects(getSheetAt(i).getSheet().getRecords(), objects);
+            getAllEmbeddedObjects(getSheetAt(i), objects);
         }
         return objects;
     }
@@ -1706,27 +1706,20 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Gets all embedded OLE2 objects from the Workbook.
      *
-     * @param records the list of records to search.
+     * @param sheet embedded object attached to
      * @param objects the list of embedded objects to populate.
      */
-    private void getAllEmbeddedObjects(List<RecordBase> records, List<HSSFObjectData> objects)
+    private void getAllEmbeddedObjects(HSSFSheet sheet, List<HSSFObjectData> objects)
     {
-       for (RecordBase obj : records) {
-          if (obj instanceof ObjRecord)
-          {
-             // TODO: More convenient way of determining if there is stored binary.
-             // TODO: Link to the data stored in the other stream.
-             Iterator<SubRecord> subRecordIter = ((ObjRecord) obj).getSubRecords().iterator();
-             while (subRecordIter.hasNext())
-             {
-                SubRecord sub = subRecordIter.next();
-                if (sub instanceof EmbeddedObjectRefSubRecord)
-                {
-                   objects.add(new HSSFObjectData((ObjRecord) obj, directory));
-                }
-             }
-          }
-       }
+        HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
+        if (null == patriarch){
+            return;
+        }
+        for (HSSFShape shape: patriarch.getChildren()){
+            if (shape instanceof HSSFObjectData){
+                objects.add((HSSFObjectData) shape);
+            }
+        }
     }
 
     public HSSFCreationHelper getCreationHelper() {
@@ -1799,5 +1792,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 	 */
     public boolean changeExternalReference(String oldUrl, String newUrl) {
     	return workbook.changeExternalReference(oldUrl, newUrl);
+    }
+
+    public DirectoryNode getRootDirectory(){
+        return directory;
     }
 }
