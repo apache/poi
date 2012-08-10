@@ -824,8 +824,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFSheet sheet2 = wb2.getSheetAt(1);
 
         //check that id of the drawing group was updated
-        EscherDgRecord dg1 = (EscherDgRecord)sheet1.getDrawingEscherAggregate().findFirstWithId(EscherDgRecord.RECORD_ID);
-        EscherDgRecord dg2 = (EscherDgRecord)sheet2.getDrawingEscherAggregate().findFirstWithId(EscherDgRecord.RECORD_ID);
+        EscherDgRecord dg1 = (EscherDgRecord)sheet1.getDrawingPatriarch()._getBoundAggregate().findFirstWithId(EscherDgRecord.RECORD_ID);
+        EscherDgRecord dg2 = (EscherDgRecord)sheet2.getDrawingPatriarch()._getBoundAggregate().findFirstWithId(EscherDgRecord.RECORD_ID);
         int dg_id_1 = dg1.getOptions() >> 4;
         int dg_id_2 = dg2.getOptions() >> 4;
         assertEquals(dg_id_1 + 1, dg_id_2);

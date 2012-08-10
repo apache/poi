@@ -27,6 +27,7 @@ import org.apache.poi.hssf.usermodel.*;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
+@Deprecated
 public class LineShape
         extends AbstractShape
 {

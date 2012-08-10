@@ -311,7 +311,7 @@ public abstract class EscherRecord {
     protected String formatXmlRecordHeader(String className, String recordId, String version, String instance){
         StringBuilder builder = new StringBuilder();
         builder.append("<").append(className).append(" recordId=\"0x").append(recordId).append("\" version=\"0x")
-                .append(version).append("\" instance=\"0x").append(instance).append("\">\n");
+                .append(version).append("\" instance=\"0x").append(instance).append("\" size=\"").append(getRecordSize()).append("\">\n");
         return builder.toString();
     }
     

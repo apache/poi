@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ddf;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -137,6 +134,33 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
                 return s1 < s2 ? -1 : s1 == s2 ? 0 : 1;
             }
         } );
+    }
+
+    /**
+     * Set an escher property. If a property with given propId already
+     exists it is replaced.
+     *
+     * @param value the property to set.
+     */
+    public void setEscherProperty(EscherProperty value){
+        for ( Iterator<EscherProperty> iterator =
+                      properties.iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
+            if (prop.getId() == value.getId()){
+                iterator.remove();
+            }
+        }
+        properties.add( value );
+        sortProperties();
+    }
+
+    public void removeEscherProperty(int num){
+        for ( Iterator<EscherProperty> iterator = getEscherProperties().iterator(); iterator.hasNext(); ) {
+            EscherProperty prop = iterator.next();
+            if (prop.getPropertyNumber() == num){
+                iterator.remove();
+            }
+        }
     }
 
     /**

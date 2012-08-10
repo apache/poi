@@ -21,39 +21,28 @@ package org.apache.poi.hssf.usermodel;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.SubRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.HexDump;
 
 /**
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
+ * <p/>
+ * Right now, 13, july, 2012 can not be created from scratch
  *
  * @author Daniel Noll
  */
-public final class HSSFObjectData {
-    /**
-     * Underlying object record ultimately containing a reference to the object.
-     */
-    private final ObjRecord _record;
-
+public final class HSSFObjectData extends HSSFPicture {
     /**
      * Reference to the filesystem root, required for retrieving the object data.
      */
     private final DirectoryEntry _root;
 
-    /**
-     * Constructs object data by wrapping a lower level object record.
-     *
-     * @param record the low-level object record.
-     * @param root the root of the filesystem, required for retrieving the object data.
-     */
-    public HSSFObjectData(ObjRecord record, DirectoryEntry root)
-    {
-        _record = record;
-        _root = root;
+    public HSSFObjectData(EscherContainerRecord spContainer, ObjRecord objRecord, DirectoryEntry _root) {
+        super(spContainer, objRecord);
+        this._root = _root;
     }
 
     /**
@@ -65,7 +54,7 @@ public final class HSSFObjectData {
 
     /**
      * Gets the object data. Only call for ones that have
-     *  data though. See {@link #hasDirectoryEntry()}
+     * data though. See {@link #hasDirectoryEntry()}
      *
      * @return the object data as an OLE2 directory.
      * @throws IOException if there was an error reading the data.
@@ -85,8 +74,8 @@ public final class HSSFObjectData {
 
     /**
      * Returns the data portion, for an ObjectData
-     *  that doesn't have an associated POIFS Directory
-     *  Entry
+     * that doesn't have an associated POIFS Directory
+     * Entry
      */
     public byte[] getObjectData() {
         return findObjectRecord().getObjectData();
@@ -94,7 +83,7 @@ public final class HSSFObjectData {
 
     /**
      * Does this ObjectData have an associated POIFS
-     *  Directory Entry?
+     * Directory Entry?
      * (Not all do, those that don't have a data portion)
      */
     public boolean hasDirectoryEntry() {
@@ -107,18 +96,51 @@ public final class HSSFObjectData {
 
     /**
      * Finds the EmbeddedObjectRefSubRecord, or throws an
-     *  Exception if there wasn't one
+     * Exception if there wasn't one
      */
     protected EmbeddedObjectRefSubRecord findObjectRecord() {
-        Iterator<SubRecord> subRecordIter = _record.getSubRecords().iterator();
+        Iterator<SubRecord> subRecordIter = getObjRecord().getSubRecords().iterator();
 
         while (subRecordIter.hasNext()) {
             Object subRecord = subRecordIter.next();
             if (subRecord instanceof EmbeddedObjectRefSubRecord) {
-                return (EmbeddedObjectRefSubRecord)subRecord;
+                return (EmbeddedObjectRefSubRecord) subRecord;
             }
         }
 
         throw new IllegalStateException("Object data does not contain a reference to an embedded object OLE2 directory");
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+    }
+
+    @Override
+    protected ObjRecord createObjRecord() {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+    }
+
+    @Override
+    protected void afterRemove(HSSFPatriarch patriarch) {
+        throw new IllegalStateException("HSSFObjectData cannot be created from scratch");
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        EscherBSERecord bse =
+                patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+        bse.setRef(bse.getRef() + 1);
+    }
+
+    @Override
+    protected HSSFShape cloneShape() {
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte[] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        return new HSSFObjectData(spContainer, obj, _root);
     }
 }

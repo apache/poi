@@ -19,9 +19,12 @@ package org.apache.poi.hssf.usermodel;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -32,7 +35,7 @@ import org.apache.poi.hssf.model.InternalWorkbook;
  * @author Glen Stampoultzis
  * @author Yegor Kozlov (yegor at apache.org)
  */
-public final class HSSFPicture extends HSSFSimpleShape implements Picture {
+public class HSSFPicture extends HSSFSimpleShape implements Picture {
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
     public static final int PICTURE_TYPE_PICT = HSSFWorkbook.PICTURE_TYPE_PICT;              // Macintosh PICT
@@ -54,7 +57,9 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      */
     private static final int PX_ROW = 15;
 
-    private int _pictureIndex;
+    public HSSFPicture(EscherContainerRecord spContainer, ObjRecord objRecord) {
+        super(spContainer, objRecord);
+    }
 
     /**
      * Constructs a picture object.
@@ -62,17 +67,33 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
     public HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
-        setShapeType(OBJECT_TYPE_PICTURE);
+        super.setShapeType(OBJECT_TYPE_PICTURE);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE);
     }
 
     public int getPictureIndex()
     {
-        return _pictureIndex;
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
+        if (null == property){
+            return -1;
+        }
+        return property.getPropertyValue();
     }
 
     public void setPictureIndex( int pictureIndex )
     {
-        this._pictureIndex = pictureIndex;
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        EscherContainerRecord spContainer = super.createSpContainer();
+        EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        opt.removeEscherProperty(EscherProperties.LINESTYLE__LINEDASHING);
+        opt.removeEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        spContainer.removeChildRecord(spContainer.getChildById(EscherTextboxRecord.RECORD_ID));
+        return spContainer;
     }
 
     /**
@@ -145,8 +166,8 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
         float w = 0;
 
         //space in the leftmost cell
-        w += getColumnWidthInPixels(anchor.col1)*(1 - (float)anchor.dx1/1024);
-        short col2 = (short)(anchor.col1 + 1);
+        w += getColumnWidthInPixels(anchor.getCol1())*(1 - (float)anchor.getDx1()/1024);
+        short col2 = (short)(anchor.getCol1() + 1);
         int dx2 = 0;
 
         while(w < scaledWidth){
@@ -160,12 +181,12 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
             double delta = w - scaledWidth;
             dx2 = (int)((cw-delta)/cw*1024);
         }
-        anchor.col2 = col2;
-        anchor.dx2 = dx2;
+        anchor.setCol2(col2);
+        anchor.setDx2(dx2);
 
         float h = 0;
-        h += (1 - (float)anchor.dy1/256)* getRowHeightInPixels(anchor.row1);
-        int row2 = anchor.row1 + 1;
+        h += (1 - (float)anchor.getDy1()/256)* getRowHeightInPixels(anchor.getRow1());
+        int row2 = anchor.getRow1() + 1;
         int dy2 = 0;
 
         while(h < scaledHeight){
@@ -177,15 +198,15 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
             double delta = h - scaledHeight;
             dy2 = (int)((ch-delta)/ch*256);
         }
-        anchor.row2 = row2;
-        anchor.dy2 = dy2;
+        anchor.setRow2(row2);
+        anchor.setDy2(dy2);
 
         return anchor;
     }
 
     private float getColumnWidthInPixels(int column){
 
-        int cw = _patriarch._sheet.getColumnWidth(column);
+        int cw = getPatriarch().getSheet().getColumnWidth(column);
         float px = getPixelWidth(column);
 
         return cw/px;
@@ -193,18 +214,18 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     private float getRowHeightInPixels(int i){
 
-        HSSFRow row = _patriarch._sheet.getRow(i);
+        HSSFRow row = getPatriarch().getSheet().getRow(i);
         float height;
         if(row != null) height = row.getHeight();
-        else height = _patriarch._sheet.getDefaultRowHeight();
+        else height = getPatriarch().getSheet().getDefaultRowHeight();
 
         return height/PX_ROW;
     }
 
     private float getPixelWidth(int column){
 
-        int def = _patriarch._sheet.getDefaultColumnWidth()*256;
-        int cw = _patriarch._sheet.getColumnWidth(column);
+        int def = getPatriarch().getSheet().getDefaultColumnWidth()*256;
+        int cw = getPatriarch().getSheet().getColumnWidth(column);
 
         return cw == def ? PX_DEFAULT : PX_MODIFIED;
     }
@@ -215,7 +236,7 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return image dimension
      */
     public Dimension getImageDimension(){
-        EscherBSERecord bse = _patriarch._sheet._book.getBSERecord(_pictureIndex);
+        EscherBSERecord bse = getPatriarch().getSheet()._book.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
@@ -227,8 +248,56 @@ public final class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @return picture data for this shape
      */
     public HSSFPictureData getPictureData(){
-        InternalWorkbook iwb = _patriarch._sheet.getWorkbook().getWorkbook();
-    	EscherBlipRecord blipRecord = iwb.getBSERecord(_pictureIndex).getBlipRecord();
+        InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
+    	EscherBlipRecord blipRecord = iwb.getBSERecord(getPictureIndex()).getBlipRecord();
     	return new HSSFPictureData(blipRecord);
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        EscherAggregate agg = patriarch._getBoundAggregate();
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        EscherBSERecord bse =
+                patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+        bse.setRef(bse.getRef() + 1);
+    }
+
+    /**
+     * The color applied to the lines of this shape.
+     */
+    public String getFileName() {
+        EscherComplexProperty propFile = (EscherComplexProperty) getOptRecord().lookup(
+                      EscherProperties.BLIP__BLIPFILENAME);
+        try {
+            if (null == propFile){
+                return "";
+            }
+            return new String(propFile.getComplexData(), "UTF-16LE").trim();
+        } catch (UnsupportedEncodingException e) {
+            return "";
+        }
+    }
+    
+    public void setFileName(String data){
+        try {
+            EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, data.getBytes("UTF-16LE"));
+            setPropertyValue(prop);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Unsupported encoding: UTF-16LE");
+        }
+    }
+
+    @Override
+    public void setShapeType(int shapeType) {
+        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+    }
+
+    @Override
+    protected HSSFShape cloneShape() {
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        return new HSSFPicture(spContainer, obj);
     }
 }
