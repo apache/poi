@@ -88,11 +88,11 @@
             <p>
                 As of Feb 2012, POI supports about 140 built-in functions,
                 see <link href="#appendixA">Appendix A</link> for the full list.
-                You can programmatically list supported / unsuported functions using trhe following helper methods:
+                You can programmatically list supported / unsuported functions using the following helper methods:
             </p>
             <source>
     // list of functions that POI can evaluate
-    Collection&lt;String&gt; suportedFuncs = WorkbookEvaluator.getSupportedFunctionNames();
+    Collection&lt;String&gt; supportedFuncs = WorkbookEvaluator.getSupportedFunctionNames();
 
     // list of functions that are not supported by POI
     Collection&lt;String&gt; unsupportedFuncs = WorkbookEvaluator.getNotSupportedFunctionNames();
@@ -366,6 +366,7 @@
     VAR
     VARP
     VLOOKUP
+    WEEKDAY
     WORKDAY
     YEAR
     YEARFRAC
