@@ -33,18 +33,20 @@ import java.util.regex.Pattern;
  * @author  Hack Kampbjorn (hak at 2mba.dk)
  * @author  Alex Jacoby (ajacoby at gmail.com)
  * @author  Pavel Krupets (pkrupets at palmtreebusiness dot com)
+ * @author  Thies Wellpott
  */
 public class DateUtil {
     protected DateUtil() {
         // no instances of this class
     }
-    private static final int SECONDS_PER_MINUTE = 60;
-    private static final int MINUTES_PER_HOUR = 60;
-    private static final int HOURS_PER_DAY = 24;
-    private static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
+
+    public static final int SECONDS_PER_MINUTE = 60;
+    public static final int MINUTES_PER_HOUR = 60;
+    public static final int HOURS_PER_DAY = 24;
+    public static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
 
     private static final int    BAD_DATE         = -1;   // used to specify that date is invalid
-    private static final long   DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
+    public static final long   DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
 
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
 
@@ -56,6 +58,10 @@ public class DateUtil {
     private static final Pattern date_ptrn3 = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
+
+    // only get this static info once (because operations are not really cheap)
+    private static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
+
 
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
@@ -178,19 +184,7 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz) {
-       if (!isValidExcelDate(date)) {
-          return null;
-       }
-       Calendar calendar;
-       if (tz != null)
-          calendar = new GregorianCalendar(tz);
-       else
-          calendar = new GregorianCalendar(); // using default time-zone
-       
-      int wholeDays = (int)Math.floor(date);
-      int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
-      setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing);
-      return calendar.getTime();
+        return getJavaCalendar(date, use1904windowing, tz).getTime();
     }
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
@@ -212,8 +206,10 @@ public class DateUtil {
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date, boolean use1904windowing) {
-       return getJavaDate(date, use1904windowing, (TimeZone)null);
+        return getJavaCalendar(date, use1904windowing).getTime();
     }
+
+
     public static void setCalendar(Calendar calendar, int wholeDays,
             int millisecondsInDay, boolean use1904windowing) {
         int startYear = 1900;
@@ -229,6 +225,54 @@ public class DateUtil {
         }
         calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
         calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
+    }
+
+
+    /**
+     * Get EXCEL date as Java Calendar (with default time zone).
+     * This is like {@link #getJavaDate(double, boolean)} but returns a Calendar object.
+     *  @param date  The Excel date.
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date, boolean use1904windowing) {
+    	return getJavaCalendar(date, use1904windowing, (TimeZone)null);
+    }
+
+    /**
+     * Get EXCEL date as Java Calendar with UTC time zone.
+     * This is similar to {@link #getJavaDate(double, boolean)} but returns a
+     * Calendar object that has UTC as time zone, so no daylight saving hassle.
+     *  @param date  The Excel date.
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @return Java representation of the date in UTC, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendarUTC(double date, boolean use1904windowing) {
+    	return getJavaCalendar(date, use1904windowing, TIMEZONE_UTC);
+    }
+
+
+    /**
+     * Get EXCEL date as Java Calendar with given time zone.
+     * @see getJavaDate(double, TimeZone)
+     * @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone) {
+        if (!isValidExcelDate(date)) {
+            return null;
+        }
+        int wholeDays = (int)Math.floor(date);
+        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+        Calendar calendar;
+        if (timeZone != null) {
+            calendar = new GregorianCalendar(timeZone);
+        } else {
+            calendar = new GregorianCalendar();     // using default time-zone
+        }
+        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing);
+        return calendar;
     }
 
 
@@ -257,7 +301,7 @@ public class DateUtil {
         }
 
         String fs = formatString;
-        if (false) {
+        /*if (false) {
             // Normalize the format string. The code below is equivalent
             // to the following consecutive regexp replacements:
 
@@ -276,7 +320,7 @@ public class DateUtil {
 
              // The code above was reworked as suggested in bug 48425:
              // simple loop is more efficient than consecutive regexp replacements.
-        }
+        }*/
         StringBuilder sb = new StringBuilder(fs.length());
         for (int i = 0; i < fs.length(); i++) {
             char c = fs.charAt(i);

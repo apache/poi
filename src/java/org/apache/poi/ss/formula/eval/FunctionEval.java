@@ -117,6 +117,7 @@ public final class FunctionEval {
 		retval[68] = CalendarFieldFunction.MONTH;
 		retval[69] = CalendarFieldFunction.YEAR;
 
+		retval[70] = WeekdayFunc.instance;
 		retval[71] = CalendarFieldFunction.HOUR;
 		retval[72] = CalendarFieldFunction.MINUTE;
 		retval[73] = CalendarFieldFunction.SECOND;

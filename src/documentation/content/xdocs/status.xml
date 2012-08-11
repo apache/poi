@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">53644 - XLS formula bugfix (CalFieldFunc) + WeekDay addon </action>
           <action dev="poi-developers" type="add">53446 - Fixed some problems extracting PNGs </action>
           <action dev="poi-developers" type="fix">53205 - Fixed some parsing errors and encoding issues in HDGF </action>
           <action dev="poi-developers" type="add">53204 - Improved performanceof PageSettingsBlock in HSSF </action>

@@ -59,6 +59,33 @@ public final class TestCalendarFieldFunction extends TestCase {
         confirm("SECOND(40627.4860417)", 54);
     }
 
+    public void testRounding() {
+		// 41484.999994200 = 23:59:59,499
+		// 41484.9999942129 = 23:59:59,500  (but sub-milliseconds are below 0.5 (0.49999453965575), XLS-second results in 59)
+		// 41484.9999942130 = 23:59:59,500  (sub-milliseconds are 0.50000334065408, XLS-second results in 00)
+
+        confirm("DAY(41484.999994200)", 29);
+        confirm("SECOND(41484.999994200)", 59);
+
+        confirm("DAY(41484.9999942129)", 29);
+        confirm("HOUR(41484.9999942129)", 23);
+        confirm("MINUTE(41484.9999942129)", 59);
+        confirm("SECOND(41484.9999942129)", 59);
+		
+        confirm("DAY(41484.9999942130)", 30);
+        confirm("HOUR(41484.9999942130)", 0);
+        confirm("MINUTE(41484.9999942130)", 0);
+        confirm("SECOND(41484.9999942130)", 0);
+	}
+
+    public void testDaylightSaving() {
+        confirm("HOUR(41364.08263888890000)", 1);		// 31.03.2013 01:59:00,000
+        confirm("HOUR(41364.08333333330000)", 2);		// 31.03.2013 02:00:00,000 (this time does not exist in TZ CET, but EXCEL does not care)
+        confirm("HOUR(41364.08402777780000)", 2);		// 31.03.2013 02:01:00,000
+        confirm("HOUR(41364.12430555560000)", 2);		// 31.03.2013 02:59:00,000
+        confirm("HOUR(41364.12500000000000)", 3);		// 31.03.2013 03:00:00,000
+	}
+
     public void testBugDate() {
         confirm("YEAR(0.0)", 1900);
         confirm("MONTH(0.0)", 1);

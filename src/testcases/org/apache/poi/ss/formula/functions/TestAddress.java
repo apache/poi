@@ -33,6 +33,9 @@ public final class TestAddress extends TestCase {
         String formulaText = "ADDRESS(1,2)";
         confirmResult(fe, cell, formulaText, "$B$1");
 
+        formulaText = "ADDRESS(1,2,)";					// with explicitly empty third parameter
+        confirmResult(fe, cell, formulaText, "$B$1");
+
         formulaText = "ADDRESS(22,44)";
         confirmResult(fe, cell, formulaText, "$AR$22");
 

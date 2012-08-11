@@ -50,11 +50,11 @@
          <filterchain>  
             <!-- capture any new files -->
             <linecontainsregexp>
-                <regexp pattern="(\?|A)......"/>
+                <regexp pattern="^(\?|A)......"/>
             </linecontainsregexp>
             <!-- filter out the first six characters -->
             <tokenfilter>
-              <replaceregex pattern="(.......)" replace=""/>
+              <replaceregex pattern="^(.......)" replace=""/>
             </tokenfilter>
             <!--remove line breaks -->
             <striplinebreaks/>

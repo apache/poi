@@ -18,8 +18,6 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -32,14 +30,17 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * Implementation of Excel functions Date parsing functions:
  *  Date - DAY, MONTH and YEAR
  *  Time - HOUR, MINUTE and SECOND
+ *
+ * @author Others (not mentioned in code)
+ * @author Thies Wellpott
  */
 public final class CalendarFieldFunction extends Fixed1ArgFunction {
 	public static final Function YEAR = new CalendarFieldFunction(Calendar.YEAR);
 	public static final Function MONTH = new CalendarFieldFunction(Calendar.MONTH);
 	public static final Function DAY = new CalendarFieldFunction(Calendar.DAY_OF_MONTH);
 	public static final Function HOUR = new CalendarFieldFunction(Calendar.HOUR_OF_DAY);
-   public static final Function MINUTE = new CalendarFieldFunction(Calendar.MINUTE);
-   public static final Function SECOND = new CalendarFieldFunction(Calendar.SECOND);
+    public static final Function MINUTE = new CalendarFieldFunction(Calendar.MINUTE);
+    public static final Function SECOND = new CalendarFieldFunction(Calendar.SECOND);
 
 	private final int _dateFieldId;
 
@@ -64,7 +65,7 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
 	private int getCalField(double serialDate) {
 	   // For some reason, a date of 0 in Excel gets shown
 	   //  as the non existant 1900-01-00
-		if(((int)serialDate) == 0) {
+		if (((int)serialDate) == 0) {
 			switch (_dateFieldId) {
 				case Calendar.YEAR: return 1900;
 				case Calendar.MONTH: return 1;
@@ -74,10 +75,9 @@ public final class CalendarFieldFunction extends Fixed1ArgFunction {
 		}
 
 		// TODO Figure out if we're in 1900 or 1904
-		Date d = DateUtil.getJavaDate(serialDate, false);
-
-		Calendar c = new GregorianCalendar();
-		c.setTime(d);
+		// EXCEL functions round up nearly a half second (probably to prevent floating point
+		// rounding issues); use UTC here to prevent daylight saving issues for HOUR
+		Calendar c = DateUtil.getJavaCalendarUTC(serialDate + 0.4995 / DateUtil.SECONDS_PER_DAY, false);
 		int result = c.get(_dateFieldId);
 		
 		// Month is a special case due to C semantics
