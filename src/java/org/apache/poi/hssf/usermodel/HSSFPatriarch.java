@@ -75,7 +75,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * @return new patriarch with copies of all shapes from the existing patriarch
      */
     static HSSFPatriarch createPatriarch(HSSFPatriarch patriarch, HSSFSheet sheet){
-        HSSFPatriarch newPatriarch = new HSSFPatriarch(sheet, new EscherAggregate());
+        HSSFPatriarch newPatriarch = new HSSFPatriarch(sheet, new EscherAggregate(true));
         newPatriarch.afterCreate();
         for (HSSFShape shape: patriarch.getChildren()){
             HSSFShape newShape;
