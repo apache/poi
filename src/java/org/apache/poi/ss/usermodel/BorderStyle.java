@@ -52,7 +52,7 @@ package org.apache.poi.ss.usermodel;
      * dot border
      */
 
-    HAIR,
+    DOTTED,
 
     /**
      * Thick border
@@ -70,7 +70,7 @@ package org.apache.poi.ss.usermodel;
      * hair-line border
      */
 
-    DOTTED,
+    HAIR,
 
     /**
      * Medium dashed border
