@@ -278,7 +278,26 @@ format,
           <em>Author: Mark.D.Golden</em>
       </p>
 	    </section>
-      
+      <section>
+          <title>Ugly Duckling</title>
+          <p>
+            <link href="http://uglyduckling.nl/">Ugly Duckling</link> focus on Software, Management and Finance. 
+            We have recently been using Apache POI to create tools for the mortgage group of 
+            <link href="https://www.abnamro.nl/en/personal/index.html">ABN AMRO</link> in the Netherlands. 
+            During this project we created a number of what we call 'Robots' using the HSSF API.
+          </p>
+          <p>
+            These <link href="http://uglyduckling.nl/work/robots/">robots</link> run as services on the network and 
+            help automate the processing of large amounts of data. Our Robots can be used to spot problems that 
+            a human might not, and also to automate repetitive tasks.
+          </p>
+          <p>
+            We found Apache POI to be extremely useful. We took the base API, wrapped it in a builder pattern and 
+            thus created a DSL with a fluid interface. Throughout the project we enjoyed very much working with 
+            Apache POI and found it to be very reliable.
+          </p>
+      </section>
+  
         </section>
     </body>
     <footer>
