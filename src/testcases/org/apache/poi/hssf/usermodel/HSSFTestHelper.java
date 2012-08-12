@@ -88,21 +88,6 @@ public class HSSFTestHelper {
         return shape.getOptRecord();
     }
 
-    public static void convertHSSFGroup(HSSFShapeGroup shape, EscherContainerRecord escherParent, Map shapeToObj){
-        Class clazz = EscherAggregate.class;
-        try {
-            Method method = clazz.getDeclaredMethod("convertGroup", HSSFShapeGroup.class, EscherContainerRecord.class, Map.class);
-            method.setAccessible(true);
-            method.invoke(new EscherAggregate(new MockDrawingManager()), shape, escherParent, shapeToObj);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void setShapeId(HSSFShape shape, int id){
         shape.setShapeId(id);
     }
