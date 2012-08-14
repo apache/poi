@@ -1245,6 +1245,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // serialization is about to occur.
         for (int i = 0; i < nSheets; i++) {
             sheets[i].getSheet().preSerialize();
+            sheets[i].preSerialize();
         }
 
         int totalsize = workbook.getSize();

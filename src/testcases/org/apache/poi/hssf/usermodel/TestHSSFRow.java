@@ -116,4 +116,21 @@ public final class TestHSSFRow extends BaseTestRow {
         assertEquals(2, row.getFirstCellNum());
         assertEquals(6, row.getLastCellNum());
     }
+
+    public void testRowHeight(){
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        HSSFRow row = sheet.createRow(0);
+
+        assertEquals(row.getHeight(), sheet.getDefaultRowHeight());
+        assertEquals(row.getRowRecord().getBadFontHeight(), false);
+
+        row.setHeight((short) 123);
+        assertEquals(row.getHeight(), 123);
+        assertEquals(row.getRowRecord().getBadFontHeight(), true);
+
+        row.setHeight((short) -1);
+        assertEquals(row.getHeight(), sheet.getDefaultRowHeight());
+        assertEquals(row.getRowRecord().getBadFontHeight(), false);
+    }
 }

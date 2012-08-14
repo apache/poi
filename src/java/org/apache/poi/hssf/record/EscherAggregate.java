@@ -773,7 +773,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      *         Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
      */
     public Map<Integer, NoteRecord> getTailRecords() {
-        return tailRec;
+        return Collections.unmodifiableMap(tailRec);
     }
 
     /**

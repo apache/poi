@@ -137,6 +137,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
+     * check whether the data of sheet can be serialized
+     */
+    protected void preSerialize(){
+        if (_patriarch != null){
+            _patriarch.preSerialize();
+        }
+    }
+
+    /**
      * Return the parent workbook
      *
      * @return the parent workbook
@@ -215,6 +224,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         HSSFRow row = new HSSFRow(_workbook, this, rownum);
         // new rows inherit default height from the sheet
         row.setHeight(getDefaultRowHeight());
+        row.getRowRecord().setBadFontHeight(false);
 
         addRow(row, true);
         return row;

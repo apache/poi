@@ -458,6 +458,7 @@ public final class HSSFRow implements Row {
     {
         if(height == -1){
             row.setHeight((short)(0xFF | 0x8000));
+            row.setBadFontHeight(false);
         } else {
             row.setBadFontHeight(true);
             row.setHeight(height);

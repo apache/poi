@@ -108,8 +108,10 @@ public class TestComment extends TestCase {
         int idx = wb.addPicture(new byte[]{1,2,3}, HSSFWorkbook.PICTURE_TYPE_PNG);
 
         HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
+        comment.setColumn(5);
         comment.setString(new HSSFRichTextString("comment1"));
         comment = patriarch.createCellComment(new HSSFClientAnchor(0,0,100,100,(short)0,0,(short)10,10));
+        comment.setRow(5);
         comment.setString(new HSSFRichTextString("comment2"));
         comment.setBackgroundImage(idx);
         assertEquals(comment.getBackgroundImageId(), idx);
@@ -264,5 +266,23 @@ public class TestComment extends TestCase {
         assertEquals(spRecord.getShapeId(), 2024);
         assertEquals(comment.getShapeId(), 2024);
         assertEquals(comment.getNoteRecord().getShapeId(), 1000);
+    }
+    
+    public void testAttemptToSave2CommentsWithSameCoordinates(){
+        Object err = null;
+        
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sh = wb.createSheet();
+        HSSFPatriarch patriarch = sh.createDrawingPatriarch();
+        patriarch.createCellComment(new HSSFClientAnchor());
+        patriarch.createCellComment(new HSSFClientAnchor());
+        
+        try{
+            HSSFTestDataSamples.writeOutAndReadBack(wb);
+        } catch (IllegalStateException e){
+            err = 1;
+            assertEquals(e.getMessage(), "found multiple cell comments for cell $A$1");
+        }
+        assertNotNull(err);
     }
 }
