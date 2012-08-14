@@ -17,15 +17,16 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -38,6 +39,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
+    private static POILogger log = POILogFactory.getLogger(HSSFPatriarch.class);
     private final List<HSSFShape> _shapes = new ArrayList<HSSFShape>();
 
     private final EscherSpgrRecord _spgrRecord;
@@ -55,6 +57,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * Creates the patriarch.
      *
      * @param sheet the sheet this patriarch is stored in.
+     * @param boundAggregate -low level representation of all binary data inside sheet
      */
     HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate) {
         _sheet = sheet;
@@ -88,6 +91,27 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
             newPatriarch.addShape(newShape);
         }
         return newPatriarch;
+    }
+
+    /**
+     * check if any shapes contain wrong data
+     * At now(13.08.2010) check if patriarch contains 2 or more comments with same coordinates
+     */
+    protected void preSerialize(){
+        Map<Integer, NoteRecord> tailRecords = _boundAggregate.getTailRecords();
+        /**
+         * contains coordinates of comments we iterate over
+         */
+        Set<String> coordinates = new HashSet<String>(tailRecords.size());
+        for(NoteRecord rec : tailRecords.values()){
+            String noteRef = new CellReference(rec.getRow(),
+                    rec.getColumn()).formatAsString(); // A1-style notation
+            if(coordinates.contains(noteRef )){
+                throw new IllegalStateException("found multiple cell comments for cell " + noteRef );
+            } else {
+                coordinates.add(noteRef);
+            }
+        }
     }
 
     /**
@@ -146,6 +170,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      *
      * @param anchor the client anchor describes how this group is attached
      *               to the sheet.
+     * @param pictureIndex - pointer to the byte array saved inside workbook in escher bse record
      * @return the newly created shape.
      */
     public HSSFPicture createPicture(HSSFClientAnchor anchor, int pictureIndex) {
@@ -365,6 +390,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 
     /**
      * Returns the aggregate escher record we're bound to
+     * @return - low level representation of sheet drawing data
      */
     protected EscherAggregate _getBoundAggregate() {
         return _boundAggregate;
@@ -406,9 +432,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
 
         for (int i = 0; i < spgrChildren.size(); i++) {
             EscherContainerRecord spContainer = spgrChildren.get(i);
-            if (i == 0) {
-                continue;
-            } else {
+            if (i != 0) {
                 HSSFShapeFactory.createShapeTree(spContainer, _boundAggregate, this, _sheet.getWorkbook().getRootDirectory());
             }
         }
