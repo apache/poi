@@ -257,7 +257,9 @@ public abstract class AbstractEscherHolderRecord extends Record {
      */
     public void decode()
     {
-        byte[] rawData = getRawData();
-        convertToEscherRecords(0, rawData.length, rawData );
+        if (null == escherRecords || 0 == escherRecords.size()){
+            byte[] rawData = getRawData();
+            convertToEscherRecords(0, rawData.length, rawData );
+        }
     }
 }

@@ -2268,4 +2268,19 @@ if(1==2) {
         HSSFSheet sh2 = wb.cloneSheet(0);
         assertNotNull(sh2.getDrawingPatriarch());
     }
+
+    public void test53432(){
+        Workbook wb = new HSSFWorkbook(); //or new HSSFWorkbook();
+        wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(wb.getAllPictures().size(), 1);
+
+        wb = new HSSFWorkbook();
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+        assertEquals(wb.getAllPictures().size(), 0);
+        wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
+        assertEquals(wb.getAllPictures().size(), 1);
+
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+        assertEquals(wb.getAllPictures().size(), 1);
+    }
 }
