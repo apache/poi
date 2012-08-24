@@ -34,6 +34,32 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">53561 - Unexpected adding of drawings into a workbook </action>
+          <action dev="poi-developers" type="fix">53413 - [GSoC] Improved work with shapes. HSSF </action>
+          <action dev="poi-developers" type="fix">53361 - feature: enhancements in EscherAggregate </action>
+          <action dev="poi-developers" type="fix">53302 - [Patch] EscherAggregate does not handle Continue records </action>
+          <action dev="poi-developers" type="fix">53144 - First comment not cloned after cloneSheet() </action>
+          <action dev="poi-developers" type="fix">53028 - Broken auto fit row height in the cells with word wrap </action>
+          <action dev="poi-developers" type="fix">53010 - [GSoC2012] Improve drawing support in HSSF </action>
+          <action dev="poi-developers" type="fix">52764 - Unmodified cell comments disappear after HSSFWorkbook.write </action>
+          <action dev="poi-developers" type="fix">52300 - Corrupted File after cloneSheet() </action>
+          <action dev="poi-developers" type="fix">52272 - [PATCH] Inserting images on cloned sheet with images. </action>
+          <action dev="poi-developers" type="fix">51796 - The [EscherClientAnchorRecord] for object (eg: TextBox,Shape) may get lost. </action>
+          <action dev="poi-developers" type="fix">51683 - [HSSF] Improve support for Shapes and Shape Groups </action>
+          <action dev="poi-developers" type="fix">51676 - Using drawingPatriarch.createCellComment(anchor) leads to File error: data may have been lost </action>
+          <action dev="poi-developers" type="fix">51675 - Background images cause problems in HSSF spreadsheet </action>
+          <action dev="poi-developers" type="fix">51455 - It would be really nice to be able to set the background picture of a comment </action>
+          <action dev="poi-developers" type="fix">51341 - Adding Image to Header in Excel Using HSSF </action>
+          <action dev="poi-developers" type="fix">51280 - when we insert a new image to the existing excel file that corrupts the previous images </action>
+          <action dev="poi-developers" type="fix">50696 - File Error: data may have been lost </action>
+          <action dev="poi-developers" type="fix">48989 - If we have a comment but the row is not created we will not be able to get it. </action>
+          <action dev="poi-developers" type="fix">48873 - Comments not saving in XLS files with collapsible columns </action>
+          <action dev="poi-developers" type="fix">48654 - Not able to read Excel (xls) file having drawing objects </action>
+          <action dev="poi-developers" type="fix">48590 - Excel chrashes after using removeCellComment methods </action>
+          <action dev="poi-developers" type="fix">46444 - cloning cloned sheet with autofilters corrupts the workbook </action>
+          <action dev="poi-developers" type="fix">45129 - Lost picture in file output after saving with POI </action>
+          <action dev="poi-developers" type="fix">47624 - File Error Data May Have been Lost error while opening commented workbook(excel file) </action>
+          <action dev="poi-developers" type="fix">46143 - setLineStyleColor for comments donot work </action>
           <action dev="poi-developers" type="fix">53699 - Patch to correct BorderStyle enum positions </action>
           <action dev="poi-developers" type="add">53064 - Ugly Duckling case study</action>
           <action dev="poi-developers" type="add">53644 - XLS formula bugfix (CalFieldFunc) + WeekDay addon </action>
