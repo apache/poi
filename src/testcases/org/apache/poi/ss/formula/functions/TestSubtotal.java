@@ -81,20 +81,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(1,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(1,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue(1);
-        Cell a5 = sh.createRow(4).createCell(0);
+        Cell a5 = sh.createRow(5).createCell(1);
         a5.setCellValue(7);
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(1,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(1,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(1,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(1,B2:B7)");
 
         fe.evaluateAll();
 
@@ -110,20 +110,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(9,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(9,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue(1);
-        Cell a5 = sh.createRow(4).createCell(0);
+        Cell a5 = sh.createRow(5).createCell(1);
         a5.setCellValue(7);
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(9,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(9,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(9,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(9,B2:B7)");
 
         fe.evaluateAll();
 
@@ -139,20 +139,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(2,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(2,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue("POI");                  // A4 is string and not counted
-        Cell a5 = sh.createRow(4).createCell(0); // A5 is blank and not counted
+        Cell a5 = sh.createRow(5).createCell(1); // A5 is blank and not counted
 
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(2,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(2,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(2,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(2,B2:B7)");
 
         fe.evaluateAll();
 
@@ -168,20 +168,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(3,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(3,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue("POI");                  // A4 is string and not counted
-        Cell a5 = sh.createRow(4).createCell(0); // A5 is blank and not counted
+        Cell a5 = sh.createRow(5).createCell(1); // A5 is blank and not counted
 
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(3,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(3,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(3,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(3,B2:B7)");
 
         fe.evaluateAll();
 
@@ -197,20 +197,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(4,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(4,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue(1);
-        Cell a5 = sh.createRow(4).createCell(0);
+        Cell a5 = sh.createRow(5).createCell(1);
         a5.setCellValue(7);
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(4,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(4,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(4,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(4,B2:B7)");
 
         fe.evaluateAll();
 
@@ -226,20 +226,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(5,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(5,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue(1);
-        Cell a5 = sh.createRow(4).createCell(0);
+        Cell a5 = sh.createRow(5).createCell(1);
         a5.setCellValue(7);
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(5,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(5,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(5,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(5,B2:B7)");
 
         fe.evaluateAll();
 
@@ -255,20 +255,20 @@ public final class TestSubtotal extends TestCase {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
+        Cell a2 = sh.createRow(2).createCell(1);
         a2.setCellValue(3);
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(7,A1:A2)");
-        Cell a4 = sh.createRow(3).createCell(0);
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(7,B2:B3)");
+        Cell a4 = sh.createRow(4).createCell(1);
         a4.setCellValue(1);
-        Cell a5 = sh.createRow(4).createCell(0);
+        Cell a5 = sh.createRow(5).createCell(1);
         a5.setCellValue(7);
-        Cell a6 = sh.createRow(5).createCell(0);
-        a6.setCellFormula("SUBTOTAL(7,A1:A5)*2 + 2");
-        Cell a7 = sh.createRow(6).createCell(0);
-        a7.setCellFormula("SUBTOTAL(7,A1:A6)");
+        Cell a6 = sh.createRow(6).createCell(1);
+        a6.setCellFormula("SUBTOTAL(7,B2:B6)*2 + 2");
+        Cell a7 = sh.createRow(7).createCell(1);
+        a7.setCellFormula("SUBTOTAL(7,B2:B7)");
 
         fe.evaluateAll();
 
@@ -280,12 +280,12 @@ public final class TestSubtotal extends TestCase {
     public void test50209(){
         Workbook wb = new HSSFWorkbook();
         Sheet sh = wb.createSheet();
-        Cell a1 = sh.createRow(0).createCell(0);
+        Cell a1 = sh.createRow(1).createCell(1);
         a1.setCellValue(1);
-        Cell a2 = sh.createRow(1).createCell(0);
-        a2.setCellFormula("SUBTOTAL(9,A1)");
-        Cell a3 = sh.createRow(2).createCell(0);
-        a3.setCellFormula("SUBTOTAL(9,A1:A2)");
+        Cell a2 = sh.createRow(2).createCell(1);
+        a2.setCellFormula("SUBTOTAL(9,B2)");
+        Cell a3 = sh.createRow(3).createCell(1);
+        a3.setCellFormula("SUBTOTAL(9,B2:B3)");
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         fe.evaluateAll();
@@ -306,26 +306,26 @@ public final class TestSubtotal extends TestCase {
         HSSFSheet sheet = workbook.getSheetAt(0);
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-        assertEquals("A1", 10.0, sheet.getRow(0).getCell(0).getNumericCellValue());
-        assertEquals("A2", 20.0, sheet.getRow(1).getCell(0).getNumericCellValue());
+        assertEquals("B2", 10.0, sheet.getRow(1).getCell(1).getNumericCellValue());
+        assertEquals("B3", 20.0, sheet.getRow(2).getCell(1).getNumericCellValue());
 
         //Test simple subtotal over one area
-        Cell cellA3 = sheet.getRow(2).getCell(0);
-        confirmExpectedResult(evaluator, "A3", cellA3, 30.0);
+        Cell cellA3 = sheet.getRow(3).getCell(1);
+        confirmExpectedResult(evaluator, "B4", cellA3, 30.0);
 
         //Test existence of the second area
-        assertNotNull("B1 must not be null", sheet.getRow(0).getCell(1));
-        assertEquals("B1", 7.0, sheet.getRow(0).getCell(1).getNumericCellValue());
+        assertNotNull("C2 must not be null", sheet.getRow(1).getCell(2));
+        assertEquals("C2", 7.0, sheet.getRow(1).getCell(2).getNumericCellValue());
 
-        Cell cellC1 = sheet.getRow(0).getCell(2);
-        Cell cellC2 = sheet.getRow(1).getCell(2);
-        Cell cellC3 = sheet.getRow(2).getCell(2);
+        Cell cellC1 = sheet.getRow(1).getCell(3);
+        Cell cellC2 = sheet.getRow(2).getCell(3);
+        Cell cellC3 = sheet.getRow(3).getCell(3);
 
         //Test Functions SUM, COUNT and COUNTA calculation of SUBTOTAL
         //a) areas A and B are used
         //b) first 2 subtotals don't consider the value of nested subtotal in A3
-        confirmExpectedResult(evaluator, "SUBTOTAL(SUM;A1:A7;B1:B7)", cellC1, 37.0);
-        confirmExpectedResult(evaluator, "SUBTOTAL(COUNT;A1:A7;B1:B7)", cellC2, 3.0);
-        confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA;A1:A7;B1:B7)", cellC3, 5.0);
+        confirmExpectedResult(evaluator, "SUBTOTAL(SUM;B2:B8;C2:C8)", cellC1, 37.0);
+        confirmExpectedResult(evaluator, "SUBTOTAL(COUNT;B2:B8,C2:C8)", cellC2, 3.0);
+        confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA;B2:B8,C2:C8)", cellC3, 5.0);
     }
 }
