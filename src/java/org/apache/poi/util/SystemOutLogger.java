@@ -60,8 +60,8 @@ public class SystemOutLogger extends POILogger
     public void log(final int level, final Object obj1,
                     final Throwable exception) {
         if (check(level)) {
-            System.out.println("["+_cat+"] "+obj1);
-            if(exception != null) {
+            System.out.println("[" + _cat + "]" + LEVEL_STRINGS_SHORT[Math.min(LEVEL_STRINGS_SHORT.length-1, level)] + " " + obj1);
+            if (exception != null) {
             	exception.printStackTrace(System.out);
             }
         }
