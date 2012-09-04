@@ -171,9 +171,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         Iterator<CellValueRecordInterface> iter = sheet.getCellValueIterator();
         long timestart = System.currentTimeMillis();
 
-        if (log.check(POILogger.DEBUG))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "Time at start of cell creating in HSSF sheet = ",
                     Long.valueOf(timestart));
+        }
         HSSFRow lastrow = null;
 
         // Add every cell to its row
@@ -199,17 +200,24 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                     hrow = createRowFromRecord(rowRec);
                 }
             }
-            if (log.check(POILogger.DEBUG))
-                log.log(DEBUG, "record id = " + Integer.toHexString(((Record) cval).getSid()));
-            hrow.createCellFromRecord(cval);
-            if (log.check(POILogger.DEBUG))
-                log.log(DEBUG, "record took ",
-                        Long.valueOf(System.currentTimeMillis() - cellstart));
+            if (log.check( POILogger.DEBUG )) {
+            	if (cval instanceof Record) {
+                log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
+				} else {
+					log.log( DEBUG, "record = " + cval );
+				}
+            }
+            hrow.createCellFromRecord( cval );
+            if (log.check( POILogger.DEBUG )) {
+                log.log( DEBUG, "record took ",
+                    Long.valueOf( System.currentTimeMillis() - cellstart ) );
+			}
 
         }
-        if (log.check(POILogger.DEBUG))
+        if (log.check( POILogger.DEBUG )) {
             log.log(DEBUG, "total sheet cell creation took ",
-                    Long.valueOf(System.currentTimeMillis() - timestart));
+                Long.valueOf(System.currentTimeMillis() - timestart));
+    }
     }
 
     /**

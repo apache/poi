@@ -17,7 +17,8 @@
 
 package org.apache.poi.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A logger interface that strives to make it as easy as possible for
@@ -31,11 +32,17 @@ import java.util.*;
  */
 public abstract class POILogger {
 
-    public static int DEBUG = 1;
-    public static int INFO  = 3;
-    public static int WARN  = 5;
-    public static int ERROR = 7;
-    public static int FATAL = 9;
+    public static final int DEBUG = 1;
+    public static final int INFO  = 3;
+    public static final int WARN  = 5;
+    public static final int ERROR = 7;
+    public static final int FATAL = 9;
+
+    /** Short strings for numeric log level. Use level as array index. */
+    protected static final String LEVEL_STRINGS_SHORT[] = {"?", "D", "?", "I", "?", "W", "?", "E", "?", "F", "?"};
+    /** Long strings for numeric log level. Use level as array index. */
+    protected static final String LEVEL_STRINGS[] = {"?0?", "DEBUG", "?2?", "INFO", "?4?", "WARN", "?6?", "ERROR", "?8?", "FATAL", "?10+?"};
+
 
     /**
      * package scope so it cannot be instantiated outside of the util
