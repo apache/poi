@@ -34,6 +34,8 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">53434 - Subtotal is not return correct value. </action>
+          <action dev="poi-developers" type="fix">53642 - [PATCH] XLS formula evaluation logging </action>
           <action dev="poi-developers" type="fix">53561 - Unexpected adding of drawings into a workbook </action>
           <action dev="poi-developers" type="fix">53413 - [GSoC] Improved work with shapes. HSSF </action>
           <action dev="poi-developers" type="fix">53361 - feature: enhancements in EscherAggregate </action>
