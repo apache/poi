@@ -389,14 +389,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
         _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
     }
 
-    /**
-     * @param value whether perform detailed output
-     *
-     * Perform detailed output of formula evaluation for next evaluation only?
-     * Is for developer use only (also developers using POI for their XLS files).
-     * Log-Level WARN is for basic info, INFO for detailed information. These quite
-     * high levels are used because you have to explicitly enable this specific logging.
-     */
+    /** {@inheritDoc} */
     public void setDebugEvaluationOutputForNextEval(boolean value){
         _bookEvaluator.setDebugEvaluationOutputForNextEval(value);
     }
