@@ -279,4 +279,10 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 		}
 		throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
 	}
+	
+    /** {@inheritDoc} */
+    public void setDebugEvaluationOutputForNextEval(boolean value){
+        _bookEvaluator.setDebugEvaluationOutputForNextEval(value);
+    }
+
 }

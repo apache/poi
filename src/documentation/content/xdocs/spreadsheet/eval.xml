@@ -319,16 +319,16 @@ for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
 	// activate logging to console
 	System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
 	System.setProperty("poi.log.level", POILogger.INFO + "");
-	
+
 	// open your file
 	Workbook wb = new HSSFWorkbook(new FileInputStream("foobar.xls"));
-    HSSFFormulaEvaluator fe = (HSSFFormulaEvaluator) wb.getCreationHelper().createFormulaEvaluator();
+    FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 	// get your cell
 	Cell cell = wb.getSheet(0).getRow(0).getCell(0);		// just a dummy example
 
 	// perform debug output for the next evaluate-call only
-    fe.setDebugEvaluationOutputForNextEval(true);
+    evaluator.setDebugEvaluationOutputForNextEval(true);
 	evaluator.evaluateFormulaCell(cell);
 	evaluator.evaluateFormulaCell(cell);		// no logging performed for this next evaluate-call
 		</source>
