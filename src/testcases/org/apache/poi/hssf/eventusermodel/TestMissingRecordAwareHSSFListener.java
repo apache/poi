@@ -461,4 +461,22 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		}
 		assertEquals(2, eorCount);
 	}
+
+    public void testStringRecordHandling(){
+        readRecords("53588.xls");
+        Record[] rr = r;
+        int missingCount=0;
+        int lastCount=0;
+        for (int i = 0; i < rr.length; i++) {
+            Record record = rr[i];
+            if (record instanceof MissingCellDummyRecord) {
+                missingCount++;
+            }
+            if (record instanceof LastCellOfRowDummyRecord) {
+                lastCount++;
+            }
+        }
+        assertEquals(1, missingCount);
+        assertEquals(1, lastCount);
+    }
 }
