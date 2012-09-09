@@ -170,7 +170,8 @@ public class HSSFSimpleShape extends HSSFShape
         HSSFRichTextString rtr = (HSSFRichTextString) string;
         // If font is not set we must set the default one
         if (rtr.numFormattingRuns() == 0) rtr.applyFont((short) 0);
-        _textObjectRecord.setStr(rtr);
+        TextObjectRecord txo = getOrCreateTextObjRecord();
+        txo.setStr(rtr);
         if (string.getString() != null){
             setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTID, string.getString().hashCode()));
         }
@@ -233,5 +234,20 @@ public class HSSFSimpleShape extends HSSFShape
         cod.setObjectType(OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING);
         EscherSpRecord spRecord = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeType((short) value);
+    }
+    
+    private TextObjectRecord getOrCreateTextObjRecord(){
+        if (getTextObjectRecord() == null){
+            _textObjectRecord = createTextObjRecord();
+        }
+        EscherTextboxRecord escherTextbox = getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID);
+        if (null == escherTextbox){
+            escherTextbox = new EscherTextboxRecord();
+            escherTextbox.setRecordId(EscherTextboxRecord.RECORD_ID);
+            escherTextbox.setOptions((short) 0x0000);
+            getEscherContainer().addChildRecord(escherTextbox);
+            getPatriarch()._getBoundAggregate().associateShapeToObjRecord(escherTextbox, _textObjectRecord);
+        }
+        return _textObjectRecord;
     }
 }
