@@ -2283,4 +2283,18 @@ if(1==2) {
         wb = writeOutAndReadBack((HSSFWorkbook) wb);
         assertEquals(wb.getAllPictures().size(), 1);
     }
+
+    public void test46250(){
+        Workbook wb = openSample("46250.xls");
+        Sheet sh = wb.getSheet("Template");
+        Sheet cSh = wb.cloneSheet(wb.getSheetIndex(sh));
+
+        HSSFPatriarch patriarch = (HSSFPatriarch) cSh.createDrawingPatriarch();
+        HSSFTextbox tb = (HSSFTextbox) patriarch.getChildren().get(2);
+
+        tb.setString(new HSSFRichTextString("POI test"));
+        tb.setAnchor(new HSSFClientAnchor(0,0,0,0,(short)0,0,(short)10,10));
+
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+    }
 }

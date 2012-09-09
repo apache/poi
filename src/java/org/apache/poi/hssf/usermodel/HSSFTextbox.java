@@ -133,7 +133,9 @@ public class HSSFTextbox extends HSSFSimpleShape {
     void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
-        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
+        if (getTextObjectRecord() != null){
+            agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherTextboxRecord.RECORD_ID), getTextObjectRecord());
+        }
     }
 
     /**
@@ -231,7 +233,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
 
     @Override
     protected HSSFShape cloneShape() {
-        TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
+        TextObjectRecord txo = getTextObjectRecord() == null ? null : (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
         EscherContainerRecord spContainer = new EscherContainerRecord();
         byte[] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
