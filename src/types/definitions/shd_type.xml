@@ -19,16 +19,15 @@
 -->
 <record fromfile="true" name="SHD" package="org.apache.poi.hwpf.model.types">
     <suffix>AbstractType</suffix>
-    <description>The SHD is a substructure of the CHP, PAP, and TC for Word 2000. &lt;p&gt;Class
+    <description>The Shd structure specifies the colors and pattern that are used for background shading. &lt;p&gt;Class
         and
-        fields descriptions are quoted from Microsoft Office Word 97-2007 Binary File Format
+        fields descriptions are quoted from Word (.doc) Binary File Format by Microsoft Corporation
     </description>
-    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
-        Specification [*.doc]
+    <author>Sergey Vladimirov; according to Word (.doc) Binary File Format by Microsoft Corporation.
     </author>
     <fields>
-        <field type="Colorref" size="4" name="cvFore" description="24-bit foreground color"/>
-        <field type="Colorref" size="4" name="cvBack" description="24-bit background color"/>
-        <field type="int" size="2" name="ipat" description="Shading pattern"/>
+        <field type="Colorref" size="4" name="cvFore" description="A COLORREF that specifies the foreground color of ipat"/>
+        <field type="Colorref" size="4" name="cvBack" description="A COLORREF that specifies the background color of ipat"/>
+        <field type="int" size="2" name="ipat" description="An Ipat that specifies the pattern used for shading"/>
     </fields>
 </record>

@@ -14,17 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hwpf.model.types;
 
+package org.apache.poi.hwpf.model.types;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The SHD80 is a substructure of the CHP and PAP, and TC for Word 97. <p>Class
-        and fields descriptions are quoted from
-        Microsoft Office Word 97-2007 Binary File Format
+ * The Shd80 structure specifies the colors and pattern that are used for background
+        shading. As an exception to the constraints that are specified by Ico and Ipat, a Shd80 can
+        be set to Shd80Nil and specifies that no shading is applied. <p>Class and fields
+        descriptions are quoted from Word (.doc) Binary File Format by Microsoft Corporation
     
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
@@ -33,8 +34,7 @@ import org.apache.poi.util.LittleEndian;
  * This class is internal. It content or properties may change without notice 
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
-        Specification [*.doc]
+ * @author Sergey Vladimirov; according to Word (.doc) Binary File Format by Microsoft Corporation.
     
  */
 @Internal
@@ -42,9 +42,9 @@ public abstract class SHD80AbstractType
 {
 
     protected short field_1_value;
-    /**/private static BitField icoFore = new BitField(0x001F);
-    /**/private static BitField icoBack = new BitField(0x03E0);
-    /**/private static BitField ipat = new BitField(0xFC00);
+    /**/private static final BitField icoFore = new BitField(0x001F);
+    /**/private static final BitField icoBack = new BitField(0x03E0);
+    /**/private static final BitField ipat = new BitField(0xFC00);
 
     protected SHD80AbstractType()
     {
@@ -52,12 +52,19 @@ public abstract class SHD80AbstractType
 
     protected void fillFields( byte[] data, int offset )
     {
-        field_1_value                  = LittleEndian.getShort(data, 0x0 + offset);
+        field_1_value                  = LittleEndian.getShort( data, 0x0 + offset );
     }
 
     public void serialize( byte[] data, int offset )
     {
-        LittleEndian.putShort(data, 0x0 + offset, (short)field_1_value);
+        LittleEndian.putShort( data, 0x0 + offset, field_1_value );
+    }
+
+    public byte[] serialize()
+    {
+        final byte[] result = new byte[ getSize() ];
+        serialize( result, 0 );
+        return result;
     }
 
     /**
@@ -66,6 +73,30 @@ public abstract class SHD80AbstractType
     public static int getSize()
     {
         return 0 + 2;
+    }
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        SHD80AbstractType other = (SHD80AbstractType) obj;
+        if ( field_1_value != other.field_1_value )
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + field_1_value;
+        return result;
     }
 
     public String toString()

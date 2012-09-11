@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
+
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.Hyphenation;
 import org.apache.poi.hwpf.usermodel.BorderCode;
@@ -578,9 +580,20 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0x65:
         newCHP.setBrc (new BorderCode(sprm.getGrpprl(), sprm.getGrpprlOffset()));
         break;
-      case 0x66:
-        newCHP.setShd (new ShadingDescriptor(sprm.getGrpprl(), sprm.getGrpprlOffset()));
-        break;
+        case 0x66:
+            // sprmCShd80
+            /*
+             * "A Shd80 structure that specifies the background shading for the text. By default, text is not shaded."
+             * 
+             * Word (.doc) Binary File Format. Copyright (c) 2011 Microsoft
+             * Corporation. Release: Tuesday, March 15, 2011
+             */
+            ShadingDescriptor80 oldDescriptor = new ShadingDescriptor80(
+                    sprm.getGrpprl(), sprm.getGrpprlOffset() );
+            ShadingDescriptor newDescriptor = oldDescriptor
+                    .toShadingDescriptor();
+            newCHP.setShd( newDescriptor );
+            break;
       case 0x67:
         // Obsolete
         break;
