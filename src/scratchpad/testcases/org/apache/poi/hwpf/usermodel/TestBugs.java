@@ -765,4 +765,20 @@ public class TestBugs extends TestCase
     {
         HWPFTestDataSamples.openSampleFile( "Bug52032_3.doc" );
     }
+
+    /**
+     * Bug 53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document
+     */
+    public void testBug53380_1() throws Exception
+    {
+        HWPFTestDataSamples.openSampleFile( "Bug53380_1.doc" );
+    }
+
+    /**
+     * Bug 53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document
+     */
+    public void testBug53380_2() throws Exception
+    {
+        HWPFTestDataSamples.openSampleFile( "Bug53380_2.doc" );
+    }
 }
