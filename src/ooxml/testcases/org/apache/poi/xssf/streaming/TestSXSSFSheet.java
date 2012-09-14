@@ -29,6 +29,13 @@ public class TestSXSSFSheet extends BaseTestSheet {
         super(SXSSFITestDataProvider.instance);
     }
 
+
+    @Override
+    public void tearDown(){
+        SXSSFITestDataProvider.instance.cleanup();
+    }
+
+
     /**
      * cloning of sheets is not supported in SXSSF
      */

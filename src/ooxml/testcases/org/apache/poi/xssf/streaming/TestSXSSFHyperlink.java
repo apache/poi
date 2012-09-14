@@ -33,4 +33,10 @@ public class TestSXSSFHyperlink extends BaseTestHyperlink {
         super(SXSSFITestDataProvider.instance);
     }
 
+
+    @Override
+    public void tearDown(){
+        SXSSFITestDataProvider.instance.cleanup();
+    }
+
 }

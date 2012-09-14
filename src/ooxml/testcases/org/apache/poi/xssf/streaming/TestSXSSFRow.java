@@ -32,6 +32,12 @@ public final class TestSXSSFRow extends BaseTestRow {
         super(SXSSFITestDataProvider.instance);
     }
 
+
+    @Override
+    public void tearDown(){
+        SXSSFITestDataProvider.instance.cleanup();
+    }
+
     public void testRowBounds() {
         baseTestRowBounds(SpreadsheetVersion.EXCEL2007.getLastRowIndex());
     }

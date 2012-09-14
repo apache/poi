@@ -57,7 +57,6 @@ public class SheetDataWriter {
      */
     public File createTempFile()throws IOException {
         File fd = File.createTempFile("poi-sxssf-sheet", ".xml");
-        fd.deleteOnExit();
         return fd;
     }
 
@@ -300,6 +299,19 @@ public class SheetDataWriter {
         }
         if (last < length) {
             _out.write(chars, last, length - last);
+        }
+    }
+
+    /**
+     * Deletes the temporary file that backed this sheet on disk.
+     * @return true if the file was deleted, false if it wasn't.
+     */
+    boolean dispose() {
+        try {
+            _out.close();
+            return _fd.delete();
+        } catch (IOException e){
+            return false;
         }
     }
 }

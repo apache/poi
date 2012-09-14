@@ -27,10 +27,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 
 public final class TestSXSSFWorkbook extends BaseTestWorkbook {
+    public static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
 
-	public TestSXSSFWorkbook() {
-		super(SXSSFITestDataProvider.instance);
+    public TestSXSSFWorkbook() {
+		super(_testDataProvider);
 	}
+
+    @Override
+    public void tearDown(){
+        _testDataProvider.cleanup();
+    }
 
     /**
      * cloning of sheets is not supported in SXSSF
@@ -59,19 +65,23 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
                     "Only XSSFCells can be evaluated.", e.getMessage());
         }
     }
-    
+
     public void testExistingWorkbook() {
     	XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
     	xssfWorkbook.createSheet("S1");
     	SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
     	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-    	wb = new SXSSFWorkbook(xssfWorkbook);
+    	wb.dispose();
+
+        wb = new SXSSFWorkbook(xssfWorkbook);
     	assertEquals(1, wb.getNumberOfSheets());
     	Sheet sheet  = wb.getSheetAt(0);
     	assertNotNull(sheet);
     	assertEquals("S1", sheet.getSheetName());
+        wb.dispose();
+
     }
-    
+
     public void testAddToExistingWorkbook() {
     	XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
     	xssfWorkbook.createSheet("S1");
@@ -81,26 +91,28 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	cell.setCellValue("value 2_1_1");
     	SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
     	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-    	wb = new SXSSFWorkbook(xssfWorkbook);
-    	
+        wb.dispose();
+
+        wb = new SXSSFWorkbook(xssfWorkbook);
+
     	// Add a row to the existing empty sheet
     	Sheet sheet1 = wb.getSheetAt(0);
     	Row row1_1 = sheet1.createRow(1);
     	Cell cell1_1_1 = row1_1.createCell(1);
     	cell1_1_1.setCellValue("value 1_1_1");
-    	
+
     	// Add a row to the existing non-empty sheet
     	Sheet sheet2 = wb.getSheetAt(1);
     	Row row2_2 = sheet2.createRow(2);
     	Cell cell2_2_1 = row2_2.createCell(1);
     	cell2_2_1.setCellValue("value 2_2_1");
-    	
+
     	// Add a sheet with one row
     	Sheet sheet3 = wb.createSheet("S3");
     	Row row3_1 = sheet3.createRow(1);
     	Cell cell3_1_1 = row3_1.createCell(1);
     	cell3_1_1.setCellValue("value 3_1_1");
-    	
+
     	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
     	assertEquals(3, xssfWorkbook.getNumberOfSheets());
     	// Verify sheet 1
@@ -145,6 +157,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         File tmp = wr.getTempFile();
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet"));
         assertTrue(tmp.getName().endsWith(".xml"));
+        wb.dispose();
 
         wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
@@ -154,6 +167,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         tmp = wr.getTempFile();
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet-xml"));
         assertTrue(tmp.getName().endsWith(".gz"));
+        wb.dispose();
 
         //Test escaping of Unicode control characters
         wb = new SXSSFWorkbook();
@@ -162,11 +176,13 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         Cell cell = xssfWorkbook.getSheet("S1").getRow(0).getCell(0);
         assertEquals("value?", cell.getStringCellValue());
 
+        wb.dispose();
+
     }
-    
+
     public void testGZipSheetdataWriter(){
-        Workbook wb = new SXSSFWorkbook();
-        ((SXSSFWorkbook)wb).setCompressTempFiles(true);
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+        wb.setCompressTempFiles(true);
         int rowNum = 1000;
         int sheetNum = 5;
         for(int i = 0; i < sheetNum; i++){
@@ -175,7 +191,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
                 Row row = sh.createRow(j);
                 Cell cell1 = row.createCell(0);
                 cell1.setCellValue(new CellReference(cell1).formatAsString());
-                
+
                 Cell cell2 = row.createCell(1);
                 cell2.setCellValue(i);
 
@@ -184,9 +200,9 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
             }
         }
 
-        wb = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        XSSFWorkbook xwb = (XSSFWorkbook)SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         for(int i = 0; i < sheetNum; i++){
-            Sheet sh = wb.getSheetAt(i);
+            Sheet sh = xwb.getSheetAt(i);
             assertEquals("sheet" + i, sh.getSheetName());
             for(int j = 0; j < rowNum; j++){
                 Row row = sh.getRow(j);
@@ -202,7 +218,50 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
             }
         }
 
-        
+        wb.dispose();
+
     }
 
+    static void assertWorkbookDispose(SXSSFWorkbook wb)
+    {
+        int rowNum = 1000;
+        int sheetNum = 5;
+        for(int i = 0; i < sheetNum; i++){
+            Sheet sh = wb.createSheet("sheet" + i);
+            for(int j = 0; j < rowNum; j++){
+                Row row = sh.createRow(j);
+                Cell cell1 = row.createCell(0);
+                cell1.setCellValue(new CellReference(cell1).formatAsString());
+
+                Cell cell2 = row.createCell(1);
+                cell2.setCellValue(i);
+
+                Cell cell3 = row.createCell(2);
+                cell3.setCellValue(j);
+            }
+        }
+
+        for (SXSSFSheet sheet : wb._sxFromXHash.keySet()) {
+            assertTrue(sheet.getSheetDataWriter().getTempFile().exists());
+        }
+
+        assertTrue(wb.dispose());
+
+        for (SXSSFSheet sheet : wb._sxFromXHash.keySet()) {
+            assertFalse(sheet.getSheetDataWriter().getTempFile().exists());
+        }
+    }
+
+    public void testWorkbookDispose()
+    {
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+        // the underlying writer is SheetDataWriter
+        assertWorkbookDispose(wb);
+
+        wb = new SXSSFWorkbook();
+        wb.setCompressTempFiles(true);
+        // the underlying writer is GZIPSheetDataWriter
+        assertWorkbookDispose(wb);
+
+    }
 }
