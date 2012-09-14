@@ -33,6 +33,12 @@ public class TestSXSSFCell extends BaseTestCell {
         super(SXSSFITestDataProvider.instance);
     }
 
+
+    @Override
+    public void tearDown(){
+        SXSSFITestDataProvider.instance.cleanup();
+    }
+
     /**
      * this test involves evaluation of formulas which isn't supported for SXSSF
      */
@@ -82,7 +88,7 @@ public class TestSXSSFCell extends BaseTestCell {
         Workbook xwb = new XSSFWorkbook();
         Cell xCell = xwb.createSheet().createRow(0).createCell(0);
 
-        Workbook swb = new SXSSFWorkbook();
+        Workbook swb = SXSSFITestDataProvider.instance.createWorkbook();
         Cell sCell = swb.createSheet().createRow(0).createCell(0);
 
         StringBuffer sb = new StringBuffer();

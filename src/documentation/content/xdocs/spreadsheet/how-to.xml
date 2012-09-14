@@ -626,10 +626,6 @@ public class ExampleEventUserModel {
      </section>
      <anchor id="sxssf"/>
      <section><title>SXSSF (Streaming Usermodel API)</title>
-    <note>
-      SXSSF is a brand new contribution and some features were added after it was first introduced in POI 3.8-beta3.
-      Users are advised to try the latest build from trunk. Instructions how to build are <link href="../howtobuild.html">here</link>.
-    </note>
     <p>
     SXSSF (package: org.apache.poi.xssf.streaming)  is an API-compatible streaming extension of XSSF to be used when
     very large spreadsheets have to be produced, and heap space is limited.
@@ -656,6 +652,9 @@ public class ExampleEventUserModel {
     records that have not been flushed by a call to flushRows() are available
     for random access. 
     </p>
+   <p> 
+   Note that SXSSF allocates temporary files that you <strong>must</strong> always clean up explicitly, by calling the dispose method.
+   </p> 
     <p> The example below writes a sheet with a window of 100 rows. When the row count reaches 101, 
         the row with rownum=0 is flushed to disk and removed from memory, when rownum reaches 102 then the row with rownum=1 is flushed, etc.
     </p> 
@@ -672,7 +671,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
     public static void main(String[] args) throws Throwable {
-        Workbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+        SXSSFWorkbook wb = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
         Sheet sh = wb.createSheet();
         for(int rownum = 0; rownum < 1000; rownum++){
             Row row = sh.createRow(rownum);
@@ -697,6 +696,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
         FileOutputStream out = new FileOutputStream("/temp/sxssf.xlsx");
         wb.write(out);
         out.close();
+
+        // dispose of temporary files backing this workbook on disk
+        wb.dispose();
     }
 
 
@@ -712,7 +714,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
     public static void main(String[] args) throws Throwable {
-        Workbook wb = new SXSSFWorkbook(-1); // turn off auto-flushing and accumulate all rows in memory
+        SXSSFWorkbook wb = new SXSSFWorkbook(-1); // turn off auto-flushing and accumulate all rows in memory
         Sheet sh = wb.createSheet();
         for(int rownum = 0; rownum < 1000; rownum++){
             Row row = sh.createRow(rownum);
@@ -735,7 +737,10 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
         FileOutputStream out = new FileOutputStream("/temp/sxssf.xlsx");
         wb.write(out);
         out.close();
-    }
+
+        // dispose of temporary files backing this workbook on disk
+        wb.dispose();
+   }
 
 
 ]]></source>
@@ -748,7 +753,6 @@ If the size of the temp files is an issue, you can tell SXSSF to use gzip compre
   wb.setCompressTempFiles(true); // temp files will be gzipped
 
 ]]></source>
-
      </section>
 
      <anchor id="low_level_api" />

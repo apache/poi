@@ -1364,4 +1364,12 @@ public class SXSSFSheet implements Sheet, Cloneable
         }
         return -1;
     }
+
+    /**
+     * Deletes the temporary file that backed this sheet on disk.
+     * @return true if the file was deleted, false if it wasn't.
+     */
+    boolean dispose() {
+        return _writer.dispose();
+    }
 }

@@ -760,14 +760,40 @@ public class SXSSFWorkbook implements Workbook
     	
         //Save the template
         File tmplFile = File.createTempFile("poi-sxssf-template", ".xlsx");
-        tmplFile.deleteOnExit();
-        FileOutputStream os = new FileOutputStream(tmplFile);
-        _wb.write(os);
-        os.close();
+        try
+        {
+            FileOutputStream os = new FileOutputStream(tmplFile);
+            try
+            {
+                _wb.write(os);
+            }
+            finally
+            {
+                os.close();
+            }
 
-        //Substitute the template entries with the generated sheet data files
-        injectData(tmplFile, stream);
-        tmplFile.delete();
+            //Substitute the template entries with the generated sheet data files
+            injectData(tmplFile, stream);
+        }
+        finally
+        {
+            tmplFile.delete();
+        }
+    }
+    
+    /**
+     * Dispose of temporary files backing this workbook on disk.
+     * Calling this method will render the workbook unusable.
+     * @return true if all temporary files were deleted successfully.
+     */
+    public boolean dispose()
+    {
+        boolean success = true;
+        for (SXSSFSheet sheet : _sxFromXHash.keySet())
+        {
+            success = sheet.dispose() && success;
+        }
+        return success;
     }
 
     /**

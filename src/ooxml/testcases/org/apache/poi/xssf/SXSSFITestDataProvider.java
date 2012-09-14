@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * @author Yegor Kozlov
@@ -37,12 +38,16 @@ import java.io.InputStream;
 public final class SXSSFITestDataProvider implements ITestDataProvider {
     public static final SXSSFITestDataProvider instance = new SXSSFITestDataProvider();
 
+    private ArrayList<SXSSFWorkbook> instances = new ArrayList<SXSSFWorkbook>();
+
     private SXSSFITestDataProvider() {
         // enforce singleton
     }
     public Workbook openSampleWorkbook(String sampleFileName) {
     	XSSFWorkbook xssfWorkbook = XSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
-    	return new SXSSFWorkbook(xssfWorkbook);
+        SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
+        instances.add(swb);
+    	return swb;
     }
 
     public Workbook writeOutAndReadBack(Workbook wb) {
@@ -62,7 +67,9 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         return result;
     }
     public SXSSFWorkbook createWorkbook(){
-        return new SXSSFWorkbook();
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+        instances.add(wb);
+        return wb;
     }
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
@@ -72,5 +79,15 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
     }
     public String getStandardFileNameExtension() {
         return "xlsx";
+    }
+
+    public synchronized boolean cleanup(){
+        boolean ok = true;
+        for(int i = 0; i < instances.size(); i++){
+            SXSSFWorkbook wb = instances.get(i);
+            ok = ok && wb.dispose();
+            instances.remove(i);
+        }
+        return ok;
     }
 }
