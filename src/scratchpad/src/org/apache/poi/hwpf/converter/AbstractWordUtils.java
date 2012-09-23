@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,10 +29,8 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.OldWordFileFormatException;
-import org.apache.poi.hwpf.model.ListLevel;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.BorderCode;
-import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.HWPFList;
 import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
@@ -226,32 +226,39 @@ public class AbstractWordUtils
         return stringBuilder.toString();
     }
 
-    public static String getBulletText( ListTables listTables,
-            Paragraph paragraph, int listId )
+    public static class NumberingState {
+        
+        private final Map<String, Integer> levels = new HashMap<String, Integer>();
+        
+    }
+    
+    public static String getBulletText(NumberingState numberingState, HWPFList list, char level )
     {
-        final ListLevel listLevel = listTables.getLevel( listId,
-                paragraph.getIlvl() );
-
-        if ( listLevel==null || listLevel.getNumberText() == null )
-            return EMPTY;
-
         StringBuffer bulletBuffer = new StringBuffer();
-        char[] xst = listLevel.getNumberText().toCharArray();
+        char[] xst = list.getNumberText( level ).toCharArray();
         for ( char element : xst )
         {
             if ( element < 9 )
             {
-                ListLevel numLevel = listTables.getLevel( listId, element );
-
-                int num = numLevel.getStartAt();
-                bulletBuffer.append( NumberFormatter.getNumber( num,
-                        listLevel.getNumberFormat() ) );
-
-                if ( numLevel == listLevel )
+                final String key = list.getLsid() + "#" + ( (int) element );
+                int num;
+                if ( numberingState.levels.containsKey( key ) )
                 {
-                    numLevel.setStartAt( numLevel.getStartAt() + 1 );
+                    num = numberingState.levels.get( key ).intValue();
+                }
+                else
+                {
+                    num = list.getStartAt( level );
+                    numberingState.levels.put( key, Integer.valueOf( num ) );
                 }
 
+                bulletBuffer.append( NumberFormatter.getNumber( num,
+                        list.getNumberFormat( level ) ) );
+
+                if ( level == element )
+                {
+                    numberingState.levels.put( key, Integer.valueOf( num + 1 ) );
+                }
             }
             else
             {
@@ -259,7 +266,7 @@ public class AbstractWordUtils
             }
         }
 
-        byte follow = listLevel.getTypeOfCharFollowingTheNumber();
+        byte follow = list.getTypeOfCharFollowingTheNumber(level);
         switch ( follow )
         {
         case 0:

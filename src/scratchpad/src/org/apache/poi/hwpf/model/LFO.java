@@ -29,7 +29,7 @@ import org.apache.poi.hwpf.model.types.LFOAbstractType;
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
-class LFO extends LFOAbstractType
+public class LFO extends LFOAbstractType
 {
     public LFO()
     {
