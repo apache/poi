@@ -134,6 +134,15 @@ public final class SprmOperation
         }
     }
 
+    public short getOperandShortSigned()
+    {
+        if ( getSizeCode() != 2 && getSizeCode() != 4 && getSizeCode() != 5 )
+            throw new UnsupportedOperationException(
+                    "Current SPRM doesn't have signed short operand: " + this );
+
+        return LittleEndian.getShort( _grpprl, _gOffset );
+    }
+
     public int getOperation()
     {
         return BITFIELD_OP.getValue( _value );

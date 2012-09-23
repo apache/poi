@@ -35,4 +35,11 @@ public class TestWordToTextConverter extends TestCase
         assertTrue( foundText
                 .contains( "Soak the rice in water for three to four hours" ) );
     }
+
+    public void testBug53380_3() throws Exception
+    {
+        HWPFDocument doc = HWPFTestDataSamples
+                .openSampleFile( "Bug53380_3.doc" );
+        WordToTextConverter.getText( doc );
+    }
 }
