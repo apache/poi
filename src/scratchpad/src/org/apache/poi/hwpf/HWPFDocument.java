@@ -346,12 +346,13 @@ public final class HWPFDocument extends HWPFDocumentCore
     _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
     _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
-    int listOffset = _fib.getFcPlcfLst();
-    int lfoOffset = _fib.getFcPlfLfo();
-    if (listOffset != 0 && _fib.getLcbPlcfLst() != 0)
-    {
-      _lt = new ListTables(_tableStream, _fib.getFcPlcfLst(), _fib.getFcPlfLfo());
-    }
+        int listOffset = _fib.getFcPlfLst();
+        int lfoOffset = _fib.getFcPlfLfo();
+        if ( listOffset != 0 && _fib.getLcbPlfLst() != 0 )
+        {
+            _lt = new ListTables( _tableStream, listOffset, _fib.getFcPlfLfo(),
+                    _fib.getLcbPlfLfo() );
+        }
 
     int sbtOffset = _fib.getFcSttbSavedBy();
     int sbtLength = _fib.getLcbSttbSavedBy();
@@ -830,9 +831,7 @@ public final class HWPFDocument extends HWPFDocumentCore
              * Microsoft Office Word 97-2007 Binary File Format (.doc)
              * Specification; Page 26 of 210
              */
-            _fib.setFcPlfLfo( tableStream.getOffset() );
-            _lt.writeListOverridesTo( tableStream );
-            _fib.setLcbPlfLfo( tableStream.getOffset() - tableOffset );
+            _lt.writeListOverridesTo( _fib, tableStream );
             tableOffset = tableStream.getOffset();
         }
 
@@ -1024,14 +1023,15 @@ public final class HWPFDocument extends HWPFDocumentCore
     return _tableStream;
   }
 
-  public int registerList(HWPFList list)
-  {
-    if (_lt == null)
+    public int registerList( HWPFList list )
     {
-      _lt = new ListTables();
+        if ( _lt == null )
+        {
+            _lt = new ListTables();
+        }
+        return _lt.addList( list.getListData(), list.getLFO(),
+                list.getLFOData() );
     }
-    return _lt.addList(list.getListData(), list.getOverride());
-  }
 
   public void delete(int start, int length)
   {

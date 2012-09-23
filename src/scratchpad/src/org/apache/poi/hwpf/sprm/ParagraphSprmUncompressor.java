@@ -159,9 +159,10 @@ public final class ParagraphSprmUncompressor
       case 0xa:
         newPAP.setIlvl ((byte) sprm.getOperand());
         break;
-      case 0xb:
-        newPAP.setIlfo (sprm.getOperand());
-        break;
+        case 0xb:
+            /* sprmPIlfo -- 0x460B */
+            newPAP.setIlfo( sprm.getOperandShortSigned() );
+            break;
       case 0xc:
         newPAP.setFNoLnn (sprm.getOperand() != 0);
         break;
