@@ -16,12 +16,12 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.hwpf.model.ListFormatOverride;
+import org.apache.poi.hwpf.model.LFO;
 import org.apache.poi.hwpf.model.ListLevel;
-
-import junit.framework.TestCase;
 
 public class TestBug50075 extends TestCase
 {
@@ -31,7 +31,7 @@ public class TestBug50075 extends TestCase
     Range range = doc.getRange();
     assertEquals(1, range.numParagraphs());
     ListEntry entry = (ListEntry) range.getParagraph(0);
-    ListFormatOverride override = doc.getListTables().getOverride(entry.getIlfo());
+    LFO override = doc.getListTables().getLfo( entry.getIlfo());
     ListLevel level = doc.getListTables().getLevel(override.getLsid(), entry.getIlvl());
     
     // the bug reproduces, if this call fails with NullPointerException

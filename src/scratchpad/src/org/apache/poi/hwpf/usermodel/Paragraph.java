@@ -17,9 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.HWPFDocumentCore;
+import java.util.NoSuchElementException;
 
-import org.apache.poi.hwpf.model.ListFormatOverride;
+import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.model.LFO;
 import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.model.PAPX;
@@ -28,8 +29,14 @@ import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
-public class Paragraph extends Range implements Cloneable {
+public class Paragraph extends Range implements Cloneable
+{
+
+    private static POILogger log = POILogFactory.getLogger( Paragraph.class );
+
   public final static short SPRM_JC = 0x2403;
   public final static short SPRM_FSIDEBYSIDE = 0x2404;
   public final static short SPRM_FKEEP = 0x2405;
@@ -105,20 +112,31 @@ public class Paragraph extends Range implements Cloneable {
 
         if ( properties.getIlfo() != 0 && listTables != null )
         {
-            final ListFormatOverride listFormatOverride = listTables
-                    .getOverride( properties.getIlfo() );
-            final ListLevel listLevel = listTables.getLevel(
-                    listFormatOverride.getLsid(), properties.getIlvl() );
-
-            if ( listLevel!=null && listLevel.getGrpprlPapx() != null )
+            LFO lfo = null;
+            try
             {
-                properties = ParagraphSprmUncompressor.uncompressPAP(
-                        properties, listLevel.getGrpprlPapx(), 0 );
-                // reapply style and local PAPX properties
-                properties = newParagraph_applyStyleProperties( styleSheet,
-                        papx, properties );
-                properties = ParagraphSprmUncompressor.uncompressPAP(
-                        properties, papx.getGrpprl(), 2 );
+                lfo = listTables.getLfo( properties.getIlfo() );
+            }
+            catch ( NoSuchElementException exc )
+            {
+                log.log( POILogger.WARN, "Paragraph refers to LFO #",
+                        properties.getIlfo(), " that does not exists" );
+            }
+            if ( lfo != null )
+            {
+                final ListLevel listLevel = listTables.getLevel( lfo.getLsid(),
+                        properties.getIlvl() );
+
+                if ( listLevel != null && listLevel.getGrpprlPapx() != null )
+                {
+                    properties = ParagraphSprmUncompressor.uncompressPAP(
+                            properties, listLevel.getGrpprlPapx(), 0 );
+                    // reapply style and local PAPX properties
+                    properties = newParagraph_applyStyleProperties( styleSheet,
+                            papx, properties );
+                    properties = ParagraphSprmUncompressor.uncompressPAP(
+                            properties, papx.getGrpprl(), 2 );
+                }
             }
         }
 
@@ -574,6 +592,22 @@ public short getStyleIndex()
     public int[] getTabStopsPositions()
     {
         return _props.getRgdxaTab();
+    }
+
+    public HWPFList getList()
+    {
+        if ( getIlfo() == 0x000 || getIlfo() == 0xF801 )
+        {
+            throw new IllegalStateException( "Paragraph not in list" );
+        }
+        HWPFList hwpfList = new HWPFList( getDocument().getStyleSheet(),
+                getDocument().getListTables(), getIlfo() );
+        return hwpfList;
+    }
+
+    public boolean isInList()
+    {
+        return getIlfo() != 0x000 && getIlfo() != 0xF801;
     }
 
   /**

@@ -17,6 +17,7 @@
 
 package org.apache.poi.util;
 
+
 /**
  * Utility classes for dealing with arrays.
  *
@@ -126,6 +127,28 @@ public class ArrayUtil
         byte[] result = new byte[newLength];
         System.arraycopy( source, 0, result, 0,
                 Math.min( source.length, newLength ) );
+        return result;
+    }
+
+    /**
+     * Copies the specified array into specified result array, truncating or
+     * padding with zeros (if necessary) so the copy has the specified length.
+     * This method is temporary replace for Arrays.copyOf() until we start to
+     * require JDK 1.6.
+     * 
+     * @param source
+     *            the array to be copied
+     * @param result
+     *            the array to be filled and returned
+     * @throws NegativeArraySizeException
+     *             if <tt>newLength</tt> is negative
+     * @throws NullPointerException
+     *             if <tt>original</tt> is null
+     */
+    public static <T> T[] copyOf( T[] source, T[] result )
+    {
+        System.arraycopy( source, 0, result, 0,
+                Math.min( source.length, result.length ) );
         return result;
     }
 
