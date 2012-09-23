@@ -21,19 +21,20 @@
     <suffix>AbstractType</suffix>
     <extends>HDFType</extends>
     <description>List Format Override (LFO). &lt;p&gt;Class and fields descriptions are quoted from
-        Microsoft Office Word 97-2007 Binary File Format
+        [MS-DOC] --v20110315; Word (.doc) Binary File Format
     </description>
-    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
-        Specification [*.doc]
+    <author>Sergey Vladimirov; according to [MS-DOC] --v20110315; Word (.doc) Binary File Format;
+        Copyright (c) Microsoft Corporation
     </author>
     <fields>
-        <field type="int" size="4" name="lsid" description="List ID of corresponding LSTF (see LSTF)"/>
-        <field type="int" size="4" name="reserved1" description="Reserved"/>
-        <field type="int" size="4" name="reserved2" description="Reserved"/>
+        <field type="int" size="4" name="lsid"
+            description="A signed integer that specifies the list identifier of an LSTF. This LFO corresponds to the LSTF in PlfLst.rgLstf that has an lsid whose value is equal to this value."/>
+        <field type="int" size="4" name="unused1" description="This field MUST be ignored"/>
+        <field type="int" size="4" name="unused2" description="This field MUST be ignored"/>
         <field type="byte" size="1" name="clfolvl"
-            description="Count of levels whose format is overridden (see LFOLVL)"/>
+            description="An unsigned integer that specifies the field that this LFO represents."/>
         <field type="byte" size="1" name="ibstFltAutoNum" description="Used for AUTONUM field emulation"/>
-        <field type="Grfhic" size="1" name="grfhic" description="HTML compatibility flags" />
-        <field type="byte" size="1" name="reserved3" description="Reserved"/>
+        <field type="Grfhic" size="1" name="grfhic" description="HTML compatibility flags"/>
+        <field type="byte" size="1" name="unused3" description="This field MUST be ignored"/>
     </fields>
 </record>

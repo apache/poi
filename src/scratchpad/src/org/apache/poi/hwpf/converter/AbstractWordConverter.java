@@ -30,13 +30,13 @@ import java.util.regex.Pattern;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.hwpf.converter.AbstractWordUtils.NumberingState;
 import org.apache.poi.hwpf.converter.FontReplacer.Triplet;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
-import org.apache.poi.hwpf.model.ListFormatOverride;
-import org.apache.poi.hwpf.model.ListTables;
 import org.apache.poi.hwpf.usermodel.Bookmark;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Field;
+import org.apache.poi.hwpf.usermodel.HWPFList;
 import org.apache.poi.hwpf.usermodel.Notes;
 import org.apache.poi.hwpf.usermodel.OfficeDrawing;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -171,6 +171,8 @@ public abstract class AbstractWordConverter
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
     private FontReplacer fontReplacer = new DefaultFontReplacer();
+
+    private NumberingState numberingState = new NumberingState();
 
     private PicturesManager picturesManager;
 
@@ -1022,9 +1024,6 @@ public abstract class AbstractWordConverter
     protected void processParagraphes( HWPFDocumentCore wordDocument,
             Element flow, Range range, int currentTableLevel )
     {
-        final ListTables listTables = wordDocument.getListTables();
-        int currentListInfo = 0;
-
         final int paragraphs = range.numParagraphs();
         for ( int p = 0; p < paragraphs; p++ )
         {
@@ -1054,36 +1053,15 @@ public abstract class AbstractWordConverter
                 processPageBreak( wordDocument, flow );
             }
 
-            if ( paragraph.getIlfo() != currentListInfo )
+            if ( paragraph.isInList() )
             {
-                currentListInfo = paragraph.getIlfo();
-            }
+                HWPFList hwpfList = paragraph.getList();
 
-            if ( currentListInfo != 0 )
-            {
-                if ( listTables != null )
-                {
-                    final ListFormatOverride listFormatOverride = listTables
-                            .getOverride( paragraph.getIlfo() );
+                String label = AbstractWordUtils.getBulletText( numberingState,
+                        hwpfList, (char) paragraph.getIlvl() );
 
-                    String label = AbstractWordUtils.getBulletText( listTables,
-                            paragraph, listFormatOverride.getLsid() );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, label );
-                }
-                else
-                {
-                    logger.log( POILogger.WARN,
-                            "Paragraph #" + paragraph.getStartOffset() + "-"
-                                    + paragraph.getEndOffset()
-                                    + " has reference to list structure #"
-                                    + currentListInfo
-                                    + ", but listTables not defined in file" );
-
-                    processParagraph( wordDocument, flow, currentTableLevel,
-                            paragraph, AbstractWordUtils.EMPTY );
-                }
+                processParagraph( wordDocument, flow, currentTableLevel,
+                        paragraph, label );
             }
             else
             {

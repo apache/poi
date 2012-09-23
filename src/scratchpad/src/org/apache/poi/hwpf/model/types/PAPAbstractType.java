@@ -508,7 +508,26 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * 1-based index into the pllfo (lists structure), if non-zero.
+     * "A 16-bit signed integer value that is used to determine which list
+     * contains the paragraph. This value MUST be one of the following:
+     * 
+     * 0x0000 -- This paragraph is not in a list, and any list formatting on the
+     * paragraph is removed.
+     * 
+     * 0x0001 - 0x07FE -- The value is a 1-based index into PlfLfo.rgLfo. The
+     * LFO at this index defines the list that this paragraph is in.
+     * 
+     * 0xF801 -- This paragraph is not in a list.
+     * 
+     * 0xF802 - 0xFFFF -- The value is the negation of a 1-based index into
+     * PlfLfo.rgLfo. The LFO at this index defines the list that this paragraph
+     * is in. The logical left indentation (see sprmPDxaLeft) and the logical
+     * left first line indentation (see sprmPDxaLeft1) of the paragraph MUST be
+     * preserved despite any list formatting.
+     * 
+     * By default, a paragraph is not in a list."
+     * 
+     * Quote from [MS-DOC] -- v20110315, page 125
      */
     @Internal
     public int getIlfo()
@@ -517,7 +536,25 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * 1-based index into the pllfo (lists structure), if non-zero.
+     * "A 16-bit signed integer value that is used to determine which list
+     * contains the paragraph. This value MUST be one of the following:
+     * 
+     * 0x0000 -- This paragraph is not in a list, and any list formatting on the
+     * paragraph is removed.
+     * 
+     * 0x0001 - 0x07FE -- The value is a 1-based index into PlfLfo.rgLfo. The
+     * LFO at this index defines the list that this paragraph is in.
+     * 
+     * 0xF801 -- This paragraph is not in a list.
+     * 
+     * 0xF802 - 0xFFFF -- The value is the negation of a 1-based index into
+     * PlfLfo.rgLfo. The LFO at this index defines the list that this paragraph
+     * is in. The logical left indentation (see sprmPDxaLeft) and the logical
+     * left first line indentation (see sprmPDxaLeft1) of the paragraph MUST be
+     * preserved despite any list formatting. By default, a paragraph is not in
+     * a list."
+     * 
+     * Quote from [MS-DOC] -- v20110315, page 125
      */
     @Internal
     public void setIlfo( int field_9_ilfo )

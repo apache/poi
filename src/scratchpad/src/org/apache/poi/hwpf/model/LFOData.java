@@ -31,11 +31,17 @@ import org.apache.poi.util.LittleEndian;
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
-class LFOData
+public class LFOData
 {
     private int _cp;
 
     private ListFormatOverrideLevel[] _rgLfoLvl;
+
+    public LFOData()
+    {
+        _cp = 0;
+        _rgLfoLvl = new ListFormatOverrideLevel[0];
+    }
 
     LFOData( byte[] buf, int startOffset, int cLfolvl )
     {
@@ -52,17 +58,17 @@ class LFOData
         }
     }
 
-    int getCp()
+    public int getCp()
     {
         return _cp;
     }
 
-    ListFormatOverrideLevel[] getRgLfoLvl()
+    public ListFormatOverrideLevel[] getRgLfoLvl()
     {
         return _rgLfoLvl;
     }
 
-    int getSizeInBytes()
+    public int getSizeInBytes()
     {
         int result = 0;
         result += LittleEndian.INT_SIZE;
