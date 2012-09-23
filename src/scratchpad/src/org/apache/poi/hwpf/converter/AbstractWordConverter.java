@@ -167,10 +167,11 @@ public abstract class AbstractWordConverter
         }
         structures.add( structure );
     }
-
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
     private FontReplacer fontReplacer = new DefaultFontReplacer();
+
+    private POILogger log = POILogFactory.getLogger( getClass() );
 
     private NumberingState numberingState = new NumberingState();
 
@@ -1053,17 +1054,31 @@ public abstract class AbstractWordConverter
                 processPageBreak( wordDocument, flow );
             }
 
+            boolean processed = false;
             if ( paragraph.isInList() )
             {
-                HWPFList hwpfList = paragraph.getList();
+                try
+                {
+                    HWPFList hwpfList = paragraph.getList();
 
-                String label = AbstractWordUtils.getBulletText( numberingState,
-                        hwpfList, (char) paragraph.getIlvl() );
+                    String label = AbstractWordUtils.getBulletText(
+                            numberingState, hwpfList,
+                            (char) paragraph.getIlvl() );
 
-                processParagraph( wordDocument, flow, currentTableLevel,
-                        paragraph, label );
+                    processParagraph( wordDocument, flow, currentTableLevel,
+                            paragraph, label );
+                    processed = true;
+                }
+                catch ( Exception exc )
+                {
+                    log.log(
+                            POILogger.WARN,
+                            "Can't process paragraph as list entry, will be processed without list information",
+                            exc );
+                }
             }
-            else
+
+            if ( processed == false )
             {
                 processParagraph( wordDocument, flow, currentTableLevel,
                         paragraph, AbstractWordUtils.EMPTY );
