@@ -229,7 +229,7 @@ public final class FileInformationBlock implements Cloneable
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBTECHPX ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFBTEPAPX ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFSED ) );
-        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLCFLST ) );
+        knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLFLST ) );
         knownFieldSet.add( Integer.valueOf( FIBFieldHandler.PLFLFO ) );
 
         // field info
@@ -457,29 +457,78 @@ public final class FileInformationBlock implements Cloneable
       _fieldHandler.setFieldSize(FIBFieldHandler.PLCFSED, lcbPlcfSed);
     }
 
+    @Deprecated
     public int getFcPlcfLst()
     {
       return _fieldHandler.getFieldOffset(FIBFieldHandler.PLCFLST);
     }
 
+    /**
+     * An unsigned integer that specifies an offset in the Table Stream. A
+     * PlfLst that contains list formatting information begins at this offset.
+     * An array of LVLs is appended to the PlfLst. lcbPlfLst does not account
+     * for the array of LVLs. The size of the array of LVLs is specified by the
+     * LSTFs in PlfLst. For each LSTF whose fSimpleList is set to 0x1, there is
+     * one LVL in the array of LVLs that specifies the level formatting of the
+     * single level in the list which corresponds to the LSTF. And, for each
+     * LSTF whose fSimpleList is set to 0x0, there are 9 LVLs in the array of
+     * LVLs that specify the level formatting of the respective levels in the
+     * list which corresponds to the LSTF. This array of LVLs is in the same
+     * respective order as the LSTFs in PlfLst. If lcbPlfLst is 0, fcPlfLst is
+     * undefined and MUST be ignored.
+     * <p>
+     * Quote from
+     * "[MS-DOC] -- v20110315, Word (.doc) Binary File Format; page 76 / 621"
+     */
+    public int getFcPlfLst()
+    {
+        return _fieldHandler.getFieldOffset( FIBFieldHandler.PLFLST );
+    }
+
+    @Deprecated
     public int getLcbPlcfLst()
     {
       return _fieldHandler.getFieldSize(FIBFieldHandler.PLCFLST);
     }
 
-    public void setFcPlcfLst(int fcPlcfLst)
+    public int getLcbPlfLst()
     {
-      _fieldHandler.setFieldOffset(FIBFieldHandler.PLCFLST, fcPlcfLst);
+        return _fieldHandler.getFieldSize( FIBFieldHandler.PLFLST );
     }
 
-    public void setLcbPlcfLst(int lcbPlcfLst)
+    @Deprecated
+    public void setFcPlcfLst( int fcPlcfLst )
     {
-      _fieldHandler.setFieldSize(FIBFieldHandler.PLCFLST, lcbPlcfLst);
+        _fieldHandler.setFieldOffset( FIBFieldHandler.PLCFLST, fcPlcfLst );
     }
 
+    public void setFcPlfLst( int fcPlfLst )
+    {
+        _fieldHandler.setFieldOffset( FIBFieldHandler.PLFLST, fcPlfLst );
+    }
+
+    @Deprecated
+    public void setLcbPlcfLst( int lcbPlcfLst )
+    {
+        _fieldHandler.setFieldSize( FIBFieldHandler.PLCFLST, lcbPlcfLst );
+    }
+
+    public void setLcbPlfLst( int lcbPlfLst )
+    {
+        _fieldHandler.setFieldSize( FIBFieldHandler.PLFLST, lcbPlfLst );
+    }
+
+    /**
+     * An unsigned integer that specifies an offset in the Table Stream. A
+     * PlfLfo that contains list formatting override information begins at this
+     * offset. If lcbPlfLfo is zero, fcPlfLfo is undefined and MUST be ignored.
+     * <p>
+     * Quote from
+     * "[MS-DOC] -- v20110315, Word (.doc) Binary File Format; page 76 / 621"
+     */
     public int getFcPlfLfo()
     {
-      return _fieldHandler.getFieldOffset(FIBFieldHandler.PLFLFO);
+        return _fieldHandler.getFieldOffset( FIBFieldHandler.PLFLFO );
     }
 
     public int getLcbPlfLfo()
