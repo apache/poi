@@ -607,7 +607,7 @@ public short getStyleIndex()
 
     public boolean isInList()
     {
-        return getIlvl() != 0 && getIlfo() != 0x000 && getIlfo() != 0xF801;
+        return getIlfo() != 0x000 && getIlfo() != 0xF801;
     }
 
   /**
