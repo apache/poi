@@ -767,7 +767,7 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document
+     * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     public void testBug53380_1() throws Exception
     {
@@ -775,7 +775,7 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document
+     * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     public void testBug53380_2() throws Exception
     {
@@ -783,10 +783,18 @@ public class TestBugs extends TestCase
     }
 
     /**
-     * Bug 53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document
+     * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
      */
     public void testBug53380_3() throws Exception
     {
         HWPFTestDataSamples.openSampleFile( "Bug53380_3.doc" );
+    }
+
+    /**
+     * Bug 53380 - ArrayIndexOutOfBounds Exception parsing word 97 document
+     */
+    public void testBug53380_4() throws Exception
+    {
+        HWPFTestDataSamples.openSampleFile( "Bug53380_4.doc" );
     }
 }
