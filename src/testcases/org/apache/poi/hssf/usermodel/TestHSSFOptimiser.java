@@ -22,11 +22,21 @@ public final class TestHSSFOptimiser extends TestCase {
 	public void testDoesNoHarmIfNothingToDo() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
-		HSSFFont f = wb.createFont();
+		// New files start with 4 built in fonts, and 21 built in styles
+      assertEquals(4, wb.getNumberOfFonts());
+      assertEquals(21, wb.getNumCellStyles());
+
+      // Create a test font and style, and use them
+      HSSFFont f = wb.createFont();
 		f.setFontName("Testing");
 		HSSFCellStyle s = wb.createCellStyle();
 		s.setFont(f);
+		
+		HSSFSheet sheet = wb.createSheet();
+		HSSFRow row = sheet.createRow(0);
+		row.createCell(0).setCellStyle(s);
 
+		// Should have one more than the default of each
 		assertEquals(5, wb.getNumberOfFonts());
 		assertEquals(22, wb.getNumCellStyles());
 
@@ -226,5 +236,37 @@ public final class TestHSSFOptimiser extends TestCase {
 		assertEquals(21, r.getCell(6).getCellValueRecord().getXFIndex());
 		// cs2 -> 22
 		assertEquals(22, r.getCell(7).getCellValueRecord().getXFIndex());
+		
+		
+		// Add a new duplicate, and two that aren't used
+      HSSFCellStyle csD = wb.createCellStyle();
+      csD.setFont(f1);
+      r.createCell(8).setCellStyle(csD);
+      
+      HSSFFont f3 = wb.createFont();
+      f3.setFontHeight((short) 23);
+      f3.setFontName("Testing 3");
+      HSSFFont f4 = wb.createFont();
+      f4.setFontHeight((short) 24);
+      f4.setFontName("Testing 4");
+
+      HSSFCellStyle csU1 = wb.createCellStyle();
+      csU1.setFont(f3);
+      HSSFCellStyle csU2 = wb.createCellStyle();
+      csU2.setFont(f4);
+      
+      // Check before the optimise
+      assertEquals(8, wb.getNumberOfFonts());
+      assertEquals(28, wb.getNumCellStyles());
+      
+      // Optimise, should remove the two un-used ones and the one duplicate
+      HSSFOptimiser.optimiseCellStyles(wb);
+      
+      // Check
+      assertEquals(8, wb.getNumberOfFonts());
+      assertEquals(25, wb.getNumCellStyles());
+      
+      // csD -> cs1 -> 21
+      assertEquals(21, r.getCell(8).getCellValueRecord().getXFIndex());
 	}
 }
