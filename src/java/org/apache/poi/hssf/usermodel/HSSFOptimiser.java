@@ -17,11 +17,12 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Excel can get cranky if you give it files containing too
@@ -135,17 +136,13 @@ public class HSSFOptimiser {
 		//  the new locations of the fonts
 		// Remember that one underlying unicode string
 		//  may be shared by multiple RichTextStrings!
-		HashSet doneUnicodeStrings = new HashSet();
+		HashSet<UnicodeString> doneUnicodeStrings = new HashSet<UnicodeString>();
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
-			Iterator rIt = s.rowIterator();
-			while(rIt.hasNext()) {
-				HSSFRow row = (HSSFRow)rIt.next();
-				Iterator cIt = row.cellIterator();
-				while(cIt.hasNext()) {
-					HSSFCell cell = (HSSFCell)cIt.next();
-					if(cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
-						HSSFRichTextString rtr = cell.getRichStringCellValue();
+			for (Row row : s) {
+			   for (Cell cell : row) {
+					if(cell.getCellType() == Cell.CELL_TYPE_STRING) {
+						HSSFRichTextString rtr = (HSSFRichTextString)cell.getRichStringCellValue();
 						UnicodeString u = rtr.getRawUnicodeString();
 						
 						// Have we done this string already?
@@ -244,12 +241,9 @@ public class HSSFOptimiser {
 		//  their new extended format records
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
-			Iterator rIt = s.rowIterator();
-			while(rIt.hasNext()) {
-				HSSFRow row = (HSSFRow)rIt.next();
-				Iterator cIt = row.cellIterator();
-				while(cIt.hasNext()) {
-					HSSFCell cell = (HSSFCell)cIt.next();
+			for (Row row : s) {
+			   for (Cell cellI : row) {
+					HSSFCell cell = (HSSFCell)cellI;
 					short oldXf = cell.getCellValueRecord().getXFIndex();
 					HSSFCellStyle newStyle = workbook.getCellStyleAt(
 							newPos[oldXf]
