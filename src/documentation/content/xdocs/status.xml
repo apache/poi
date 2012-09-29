@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">HSSFOptimiser will now also tidy away un-used cell styles, in addition to duplicate styles</action>
           <action dev="poi-developers" type="fix">53493 - Fixed memory and temporary file leak in SXSSF </action>
           <action dev="poi-developers" type="fix">53780 - Fixed memory and temporary file leak in SXSSF </action>
           <action dev="poi-developers" type="fix">53380 - ArrayIndexOutOfBounds Excetion parsing word 97 document. </action>

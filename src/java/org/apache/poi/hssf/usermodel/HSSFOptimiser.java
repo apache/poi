@@ -165,7 +165,7 @@ public class HSSFOptimiser {
 	
 	/**
 	 * Goes through the Wokrbook, optimising the cell styles
-	 *  by removing duplicate ones.
+	 *  by removing duplicate ones, and ones that aren't used.
 	 * For best results, optimise the fonts via a call to
 	 *  {@link #optimiseFonts(HSSFWorkbook)} first.
 	 * @param workbook The workbook in which to optimise the cell styles
@@ -175,8 +175,10 @@ public class HSSFOptimiser {
 		//  delete the record for it. Start off with no change
 		short[] newPos = 
 			new short[workbook.getWorkbook().getNumExFormats()];
+		boolean[] isUsed = new boolean[newPos.length];
 		boolean[] zapRecords = new boolean[newPos.length];
 		for(int i=0; i<newPos.length; i++) {
+         isUsed[i] = false;
 			newPos[i] = (short)i;
 			zapRecords[i] = false;
 		}
@@ -211,6 +213,27 @@ public class HSSFOptimiser {
 			}
 		}
 		
+		// Loop over all the cells in the file, and identify any user defined
+		//  styles aren't actually being used (don't touch built-in ones)
+      for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
+         HSSFSheet s = workbook.getSheetAt(sheetNum);
+         for (Row row : s) {
+            for (Cell cellI : row) {
+               HSSFCell cell = (HSSFCell)cellI;
+               short oldXf = cell.getCellValueRecord().getXFIndex();
+               isUsed[oldXf] = true;
+            }
+         }
+      }
+      // Mark any that aren't used as needing zapping
+      for (int i=21; i<isUsed.length; i++) {
+         if (! isUsed[i]) {
+            // Un-used style, can be removed
+            zapRecords[i] = true;
+            newPos[i] = 0;
+         }
+      }
+		
 		// Update the new positions based on
 		//  deletes that have occurred between
 		//  the start and them
@@ -237,14 +260,14 @@ public class HSSFOptimiser {
 			}
 		}
 		
-		// Finally, update the cells to point at
-		//  their new extended format records
+		// Finally, update the cells to point at their new extended format records
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
 			HSSFSheet s = workbook.getSheetAt(sheetNum);
 			for (Row row : s) {
 			   for (Cell cellI : row) {
 					HSSFCell cell = (HSSFCell)cellI;
 					short oldXf = cell.getCellValueRecord().getXFIndex();
+					
 					HSSFCellStyle newStyle = workbook.getCellStyleAt(
 							newPos[oldXf]
 					);
