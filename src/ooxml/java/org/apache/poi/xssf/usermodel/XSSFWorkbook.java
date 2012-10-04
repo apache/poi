@@ -1672,6 +1672,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         // when set to 0, will tell Excel that it needs to recalculate all formulas
         // in the workbook the next time the file is opened.
         calcPr.setCalcId(0);
+
+        if(value && calcPr.getCalcMode() == STCalcMode.MANUAL) {
+            calcPr.setCalcMode(STCalcMode.AUTO);
+        }
     }
 
     /**

@@ -1502,7 +1502,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @see org.apache.poi.ss.usermodel.Workbook#setForceFormulaRecalculation(boolean)
      */
     public void setForceFormulaRecalculation(boolean value) {
-       if(worksheet.isSetSheetCalcPr()) {
+        CTCalcPr calcPr = getWorkbook().getCTWorkbook().getCalcPr();
+
+        if(worksheet.isSetSheetCalcPr()) {
           // Change the current setting
           CTSheetCalcPr calc = worksheet.getSheetCalcPr();
           calc.setFullCalcOnLoad(value);
@@ -1512,9 +1514,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
           CTSheetCalcPr calc = worksheet.addNewSheetCalcPr();
           calc.setFullCalcOnLoad(value);
        }
-       else {
-          // Not set, requested not, nothing to do
-       }
+        if(value && calcPr != null && calcPr.getCalcMode() == STCalcMode.MANUAL) {
+            calcPr.setCalcMode(STCalcMode.AUTO);
+        }
+
     }
 
     /**

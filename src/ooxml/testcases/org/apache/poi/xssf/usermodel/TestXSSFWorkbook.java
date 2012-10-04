@@ -35,6 +35,7 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
 public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
@@ -426,6 +427,12 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
         assertEquals(0, (int) calcPr.getCalcId());
         assertFalse(wb.getForceFormulaRecalculation());
+
+        // calcMode="manual" is unset when forceFormulaRecalculation=true
+        calcPr.setCalcMode(STCalcMode.MANUAL);
+        wb.setForceFormulaRecalculation(true);
+        assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
+
     }
 
     public void testChangeSheetNameWithSharedFormulas() {
