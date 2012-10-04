@@ -1074,11 +1074,18 @@ public final class TestXSSFSheet extends BaseTestSheet {
          // Set
          sheet.setForceFormulaRecalculation(true);
          assertEquals(true, sheet.getForceFormulaRecalculation());
-         
-         // Check
+
+        // calcMode="manual" is unset when forceFormulaRecalculation=true
+        CTCalcPr calcPr = workbook.getCTWorkbook().addNewCalcPr();
+        calcPr.setCalcMode(STCalcMode.MANUAL);
+        sheet.setForceFormulaRecalculation(true);
+        assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
+
+        // Check
          sheet.setForceFormulaRecalculation(false);
          assertEquals(false, sheet.getForceFormulaRecalculation());
-         
+
+
          // Save, re-load, and re-check
          workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
          sheet = workbook.getSheet("Sheet 1");
