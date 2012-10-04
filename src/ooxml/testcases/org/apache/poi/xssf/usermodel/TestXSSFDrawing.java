@@ -62,6 +62,8 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(shapes.get(4) instanceof XSSFSimpleShape);
         assertTrue(shapes.get(5) instanceof XSSFPicture);
 
+        for(XSSFShape sh : shapes) assertNotNull(sh.getAnchor());
+
     }
 
     public void testNew() throws Exception {
@@ -210,6 +212,35 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(Arrays.equals(
                 new byte[]{0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal()));
+
+    }
+
+    /**
+     *  test that anchor is not null when reading shapes from existing drawings
+     */
+    public void testReadAnchors(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+        XSSFClientAnchor anchor1 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4);
+        XSSFShape shape1 = drawing.createTextbox(anchor1);
+
+        XSSFClientAnchor anchor2 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 5);
+        XSSFShape shape2 = drawing.createTextbox(anchor2);
+
+        int pictureIndex= wb.addPicture(new byte[]{}, XSSFWorkbook.PICTURE_TYPE_PNG);
+        XSSFClientAnchor anchor3 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 6);
+        XSSFShape shape3 = drawing.createPicture(anchor3, pictureIndex);
+
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet = wb.getSheetAt(0);
+        drawing = sheet.createDrawingPatriarch();
+        List<XSSFShape> shapes = drawing.getShapes();
+        assertEquals(shapes.get(0).getAnchor(), anchor1);
+        assertEquals(shapes.get(1).getAnchor(), anchor2);
+        assertEquals(shapes.get(2).getAnchor(), anchor3);
+
 
     }
 }

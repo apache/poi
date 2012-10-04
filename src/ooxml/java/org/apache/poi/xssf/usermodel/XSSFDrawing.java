@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -370,12 +371,39 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
     public List<XSSFShape>  getShapes(){
         List<XSSFShape> lst = new ArrayList<XSSFShape>();
         for(XmlObject obj : drawing.selectPath("./*/*")) {
-            if(obj instanceof CTPicture) lst.add(new XSSFPicture(this, (CTPicture)obj)) ;
-            else if(obj instanceof CTConnector) lst.add(new XSSFConnector(this, (CTConnector)obj)) ;
-            else if(obj instanceof CTShape) lst.add(new XSSFSimpleShape(this, (CTShape)obj)) ;
-            else if(obj instanceof CTGraphicalObjectFrame) lst.add(new XSSFGraphicFrame(this, (CTGraphicalObjectFrame)obj)) ;
-            else if(obj instanceof CTGroupShape) lst.add(new XSSFShapeGroup(this, (CTGroupShape)obj)) ;
+            XSSFShape shape = null;
+            if(obj instanceof CTPicture) shape = new XSSFPicture(this, (CTPicture)obj) ;
+            else if(obj instanceof CTConnector) shape = new XSSFConnector(this, (CTConnector)obj) ;
+            else if(obj instanceof CTShape) shape = new XSSFSimpleShape(this, (CTShape)obj) ;
+            else if(obj instanceof CTGraphicalObjectFrame) shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame)obj) ;
+            else if(obj instanceof CTGroupShape) shape = new XSSFShapeGroup(this, (CTGroupShape)obj) ;
+
+            if(shape != null){
+                shape.anchor = getAnchorFromParent(obj);
+                lst.add(shape);
+            }
         }
         return lst;
     }
+
+
+    private XSSFAnchor getAnchorFromParent(XmlObject obj){
+        XSSFAnchor anchor = null;
+
+        XmlObject parentXbean = null;
+        XmlCursor cursor = obj.newCursor();
+        if(cursor.toParent()) parentXbean = cursor.getObject();
+        cursor.dispose();
+        if(parentXbean != null){
+            if (parentXbean instanceof CTTwoCellAnchor) {
+                CTTwoCellAnchor ct = (CTTwoCellAnchor)parentXbean;
+                anchor = new XSSFClientAnchor(ct.getFrom(), ct.getTo());
+            } else if (parentXbean instanceof CTOneCellAnchor) {
+                CTOneCellAnchor ct = (CTOneCellAnchor)parentXbean;
+                anchor = new XSSFClientAnchor(ct.getFrom(), CTMarker.Factory.newInstance());
+            }
+        }
+        return anchor;
+    }
+
 }

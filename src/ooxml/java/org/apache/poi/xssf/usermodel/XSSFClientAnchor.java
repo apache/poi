@@ -161,8 +161,14 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         if (o == null || !(o instanceof XSSFClientAnchor)) return false;
 
         XSSFClientAnchor anchor = (XSSFClientAnchor) o;
-        return cell1.toString().equals(anchor.getFrom().toString()) &&
-               cell2.toString().equals(anchor.getTo().toString()) ;
+        return  getDx1() == anchor.getDx1() &&
+                getDx2() == anchor.getDx2() &&
+                getDy1() == anchor.getDy1() &&
+                getDy2() == anchor.getDy2() &&
+                getCol1() == anchor.getCol1() &&
+                getCol2() == anchor.getCol2() &&
+                getRow1() == anchor.getRow1() &&
+                getRow2() == anchor.getRow2() ;
 
     }
 
