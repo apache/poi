@@ -134,16 +134,7 @@ public final class ContentType {
 	 *             If the specified content type is not valid with RFC 2616.
 	 */
 	public ContentType(String contentType) throws InvalidFormatException {
-		// Conversion en US-ASCII
-		String contentTypeASCII = null;
-		try {
-			contentTypeASCII = new String(contentType.getBytes(), "US-ASCII");
-		} catch (UnsupportedEncodingException e) {
-			throw new InvalidFormatException(
-					"The specified content type is not an ASCII value.");
-		}
-
-		Matcher mMediaType = patternMediaType.matcher(contentTypeASCII);
+		Matcher mMediaType = patternMediaType.matcher(contentType);
 		if (!mMediaType.matches())
 			throw new InvalidFormatException(
 					"The specified content type '"

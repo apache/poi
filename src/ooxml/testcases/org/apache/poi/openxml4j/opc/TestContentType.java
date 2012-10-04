@@ -85,7 +85,9 @@ public final class TestContentType extends TestCase {
 	 */
 	public void testContentTypeParameterFailure() {
 		String[] contentTypesToTest = new String[] { "mail/toto;titi=tata",
-				"text/xml;a=b;c=d", "mail/toto;\"titi=tata\"" };
+				"text/xml;a=b;c=d", "mail/toto;\"titi=tata\"",
+                "text/\u0080" // characters above ASCII are not allowed
+        };
 		for (int i = 0; i < contentTypesToTest.length; ++i) {
 			try {
 				new ContentType(contentTypesToTest[i]);
