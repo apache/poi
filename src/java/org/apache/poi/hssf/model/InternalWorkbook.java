@@ -1094,12 +1094,17 @@ public final class InternalWorkbook {
     private static WriteAccessRecord createWriteAccess() {
         WriteAccessRecord retval = new WriteAccessRecord();
 
+        String defaultUserName = "POI";
         try {
-            retval.setUsername(System.getProperty("user.name"));
+            String username = System.getProperty("user.name");
+            // Google App engine returns null for user.name, see Bug 53974
+            if(username == null) username = defaultUserName;
+
+            retval.setUsername(username);
         } catch (AccessControlException e) {
                 // AccessControlException can occur in a restricted context
                 // (client applet/jws application or restricted security server)
-                retval.setUsername("POI");
+                retval.setUsername(defaultUserName);
         }
         return retval;
     }
