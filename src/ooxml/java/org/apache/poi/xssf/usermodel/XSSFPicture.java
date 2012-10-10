@@ -290,13 +290,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      */
     public XSSFPictureData getPictureData() {
         String blipId = ctPicture.getBlipFill().getBlip().getEmbed();
-        for (POIXMLDocumentPart part : getDrawing().getRelations()) {
-            if(part.getPackageRelationship().getId().equals(blipId)){
-                return (XSSFPictureData)part;
-            }
-        }
-        logger.log(POILogger.WARN, "Picture data was not found for blipId=" + blipId);
-        return null;
+        return  (XSSFPictureData)getDrawing().getRelationById(blipId);
     }
 
     protected CTShapeProperties getShapeProperties(){

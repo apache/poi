@@ -23,13 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -56,6 +50,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.*;
+import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
 import org.apache.xmlbeans.XmlException;
@@ -694,27 +689,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @see #addPicture(byte[], int)
      */
     public List<XSSFPictureData> getAllPictures() {
-        if(pictures == null) {
-            //In OOXML pictures are referred to in sheets,
-            //dive into sheet's relations, select drawings and their images
-            pictures = new ArrayList<XSSFPictureData>();
-            for(XSSFSheet sh : sheets){
-                for(POIXMLDocumentPart dr : sh.getRelations()){
-                    if(dr instanceof XSSFDrawing){
-                        for(POIXMLDocumentPart img : dr.getRelations()){
-                            if(img instanceof XSSFPictureData){
-                                pictures.add((XSSFPictureData)img);
-                            }
-                        }
-                    }
-                }
+        if(pictures == null){
+            List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
+            pictures = new ArrayList<XSSFPictureData>(mediaParts.size());
+            for(PackagePart part : mediaParts){
+                pictures.add(new XSSFPictureData(part, null));
             }
         }
-        return pictures;
+        return pictures; //YK: should return Collections.unmodifiableList(pictures);
     }
 
     /**
-     * gGet the cell style object at the given index
+     * Get the cell style object at the given index
      *
      * @param idx  index within the set of styles
      * @return XSSFCellStyle object at the index

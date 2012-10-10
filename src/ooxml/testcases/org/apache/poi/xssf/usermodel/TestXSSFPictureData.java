@@ -102,4 +102,28 @@ public final class TestXSSFPictureData extends TestCase {
         assertTrue(Arrays.equals(pngData, pictures2.get(pngIdx).getData()));
 
     }
+
+    /**
+     * Bug 53568:  XSSFPicture.getPictureData() can return null.
+     */
+    public void test53568(){
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53568.xlsx");
+        List<XSSFPictureData> pictures = wb.getAllPictures();
+
+        XSSFSheet sheet1 = wb.getSheetAt(0);
+        List<XSSFShape> shapes1 = sheet1.createDrawingPatriarch().getShapes();
+
+        for(int i = 0; i < wb.getNumberOfSheets(); i++){
+            XSSFSheet sheet = wb.getSheetAt(i);
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            for(XSSFShape shape : drawing.getShapes()){
+                if(shape instanceof XSSFPicture){
+                    XSSFPicture pic = (XSSFPicture)shape;
+                    XSSFPictureData picData = pic.getPictureData();
+                    assertNotNull(picData);
+                }
+            }
+        }
+
+    }
 }

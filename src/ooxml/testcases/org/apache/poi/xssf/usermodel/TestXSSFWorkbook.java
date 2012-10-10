@@ -277,7 +277,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	public void testBug47668() throws Exception {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("47668.xlsx");
 		List<XSSFPictureData> allPictures = workbook.getAllPictures();
-		assertEquals(2, allPictures.size());
+		assertEquals(1, allPictures.size());
 
 		PackagePartName imagePartName = PackagingURIHelper
 				.createPartName("/xl/media/image1.jpeg");
