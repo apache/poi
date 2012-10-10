@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOperator;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
 
 /**
@@ -146,7 +147,10 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 		}
 		
 		if (validationType!=ValidationType.ANY && validationType!=ValidationType.LIST) {
-			newDataValidation.setOperator(XSSFDataValidation.operatorTypeMappings.get(constraint.getOperator()));			
+            STDataValidationOperator.Enum op = XSSFDataValidation.operatorTypeMappings.get(constraint.getOperator());
+			if(op != null) {
+                newDataValidation.setOperator(op);
+            }
 			if (constraint.getFormula1() != null) {
 				newDataValidation.setFormula1(constraint.getFormula1());
 			}
