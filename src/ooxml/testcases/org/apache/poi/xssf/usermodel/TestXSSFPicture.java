@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
@@ -92,4 +93,52 @@ public final class TestXSSFPicture extends BaseTestPicture {
         XSSFPicture shape2 = drawing.createPicture(anchor, jpegIdx);
         assertEquals(2, shape2.getCTPicture().getNvPicPr().getCNvPr().getId());
     }
+
+    /**
+     * same image refrerred by mulitple sheets
+     */
+    public void testMultiRelationShips(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        byte[] pic1Data = "test jpeg data".getBytes();
+        byte[] pic2Data = "test png data".getBytes();
+
+        List<XSSFPictureData> pictures = wb.getAllPictures();
+        assertEquals(0, pictures.size());
+
+        int pic1 = wb.addPicture(pic1Data, XSSFWorkbook.PICTURE_TYPE_JPEG);
+        int pic2 = wb.addPicture(pic2Data, XSSFWorkbook.PICTURE_TYPE_PNG);
+
+        XSSFSheet sheet1 = wb.createSheet();
+        XSSFDrawing drawing1 = sheet1.createDrawingPatriarch();
+        XSSFPicture shape1 = drawing1.createPicture(new XSSFClientAnchor(), pic1);
+        XSSFPicture shape2 = drawing1.createPicture(new XSSFClientAnchor(), pic2);
+
+        XSSFSheet sheet2 = wb.createSheet();
+        XSSFDrawing drawing2 = sheet2.createDrawingPatriarch();
+        XSSFPicture shape3 = drawing2.createPicture(new XSSFClientAnchor(), pic2);
+        XSSFPicture shape4 = drawing2.createPicture(new XSSFClientAnchor(), pic1);
+
+        assertEquals(2, pictures.size());
+
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        pictures = wb.getAllPictures();
+        assertEquals(2, pictures.size());
+
+        sheet1 = wb.getSheetAt(0);
+        drawing1 = sheet1.createDrawingPatriarch();
+        XSSFPicture shape11 = (XSSFPicture)drawing1.getShapes().get(0);
+        assertTrue(Arrays.equals(shape1.getPictureData().getData(), shape11.getPictureData().getData()));
+        XSSFPicture shape22 = (XSSFPicture)drawing1.getShapes().get(1);
+        assertTrue(Arrays.equals(shape2.getPictureData().getData(), shape22.getPictureData().getData()));
+
+        sheet2 = wb.getSheetAt(1);
+        drawing2 = sheet2.createDrawingPatriarch();
+        XSSFPicture shape33 = (XSSFPicture)drawing2.getShapes().get(0);
+        assertTrue(Arrays.equals(shape3.getPictureData().getData(), shape33.getPictureData().getData()));
+        XSSFPicture shape44 = (XSSFPicture)drawing2.getShapes().get(1);
+        assertTrue(Arrays.equals(shape4.getPictureData().getData(), shape44.getPictureData().getData()));
+
+    }
+
 }
