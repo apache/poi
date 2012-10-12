@@ -23,7 +23,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
 
+import javax.xml.namespace.QName;
 import java.io.*;
 import java.util.Iterator;
 
@@ -180,7 +183,11 @@ public class SheetDataWriter {
             }
             case Cell.CELL_TYPE_STRING: {
                 _out.write(" t=\"inlineStr\">");
-                _out.write("<is><t>");
+                _out.write("<is><t");
+                if(hasLeadingTrailingSpaces(cell.getStringCellValue())) {
+                    _out.write(" xml:space=\"preserve\"");
+                }
+                _out.write(">");
                 outputQuotedString(cell.getStringCellValue());
                 _out.write("</t></is>");
                 break;
@@ -207,6 +214,20 @@ public class SheetDataWriter {
             }
         }
         _out.write("</c>");
+    }
+
+
+    /**
+     * @return  whether the string has leading / trailing spaces that
+     *  need to be preserved with the xml:space=\"preserve\" attribute
+     */
+    boolean hasLeadingTrailingSpaces(String str) {
+        if (str != null && str.length() > 0) {
+            char firstChar = str.charAt(0);
+            char lastChar  = str.charAt(str.length() - 1);
+            return Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar) ;
+        }
+        return false;
     }
 
     //Taken from jdk1.3/src/javax/swing/text/html/HTMLWriter.java
