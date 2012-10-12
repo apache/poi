@@ -520,6 +520,13 @@ public abstract class AbstractWordConverter
                     processOle2( doc, characterRun, block );
                     continue;
                 }
+                if ( characterRun.isSymbol()
+                        && ( wordDocument instanceof HWPFDocument ) )
+                {
+                    HWPFDocument doc = (HWPFDocument) wordDocument;
+                    processSymbol( doc, characterRun, block );
+                    continue;
+                }
             }
 
             if ( text.getBytes()[0] == FIELD_BEGIN_MARK )
@@ -1002,6 +1009,12 @@ public abstract class AbstractWordConverter
                     exc );
             return false;
         }
+    }
+    
+    protected void processSymbol( HWPFDocument doc, CharacterRun characterRun,
+            Element block )
+    {
+        
     }
 
     @SuppressWarnings( "unused" )
