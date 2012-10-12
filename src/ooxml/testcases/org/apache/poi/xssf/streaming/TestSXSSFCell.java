@@ -22,7 +22,14 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+
+import javax.xml.namespace.QName;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  *
@@ -109,5 +116,32 @@ public class TestSXSSFCell extends BaseTestCell {
 
         assertEquals(xCell.getStringCellValue(), sCell.getStringCellValue());
 
+    }
+
+    public void testPreserveSpaces() throws IOException {
+        String[] samplesWithSpaces = {
+                " POI",
+                "POI ",
+                " POI ",
+                "\nPOI",
+                "\n\nPOI \n",
+        };
+        for(String str : samplesWithSpaces){
+            Workbook swb = new SXSSFWorkbook();
+            Cell sCell = swb.createSheet().createRow(0).createCell(0);
+            sCell.setCellValue(str);
+            assertEquals(sCell.getStringCellValue(), str);
+
+            // read back as XSSF and check that xml:spaces="preserve" is set
+            XSSFWorkbook xwb = (XSSFWorkbook)SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
+            XSSFCell xCell = xwb.getSheetAt(0).getRow(0).getCell(0);
+
+            CTRst is = xCell.getCTCell().getIs();
+            XmlCursor c = is.newCursor();
+            c.toNextToken();
+            String t = c.getAttributeText(new QName("http://www.w3.org/XML/1998/namespace", "space"));
+            c.dispose();
+            assertEquals("expected xml:spaces=\"preserve\" \"" + str + "\"", "preserve", t);
+        }
     }
 }
