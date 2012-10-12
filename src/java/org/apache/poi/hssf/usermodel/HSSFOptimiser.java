@@ -252,13 +252,18 @@ public class HSSFOptimiser {
 		}
 		
 		// Zap the un-needed user style records
-		for(int i=21; i<newPos.length; i++) {
-			if(zapRecords[i]) {
-				workbook.getWorkbook().removeExFormatRecord(
-						xfrs[i]
-				);
-			}
-		}
+        // removing by index, because removing by object may delete
+        // styles we did not intend to (the ones that _were_ duplicated and not the duplicates)
+        int max = newPos.length;
+        int removed = 0; // to adjust index after deletion
+        for(int i=21; i<max; i++) {
+            if(zapRecords[i + removed]) {
+                workbook.getWorkbook().removeExFormatRecord(i);
+                i--;
+                max--;
+                removed++;
+            }
+        }
 		
 		// Finally, update the cells to point at their new extended format records
 		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {

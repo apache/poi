@@ -82,12 +82,16 @@ import org.apache.poi.hssf.record.WindowProtectRecord;
 import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.record.WriteProtectRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.OperandPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -843,6 +847,19 @@ public final class InternalWorkbook {
      */
     public void removeExFormatRecord(ExtendedFormatRecord rec) {
         records.remove(rec); // this updates XfPos for us
+        numxfs--;
+    }
+    
+    /**
+     * Removes ExtendedFormatRecord record with given index from the
+     *  file's list. This will make all
+     *  subsequent font indicies drop by one,
+     *  so you'll need to update those yourself!
+     *  @param index of the Extended format record (0-based)
+     */
+    public void removeExFormatRecord(int index) {
+        int xfptr = records.getXfpos() - (numxfs - 1) + index;
+        records.remove(xfptr); // this updates XfPos for us
         numxfs--;
     }
 
