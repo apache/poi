@@ -65,7 +65,6 @@
     <target name="patchpackage" depends="createpatch,newfiles">
        <delete file="${patch.package}"/> 
        <tar includes="${tar.file.list}"
-            excludes="${patch.file}"  
             destfile="${patch.package}"   
             basedir="." 
             compression="gzip" >          
