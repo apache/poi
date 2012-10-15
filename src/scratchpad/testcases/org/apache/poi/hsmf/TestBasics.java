@@ -123,13 +123,14 @@ public final class TestBasics extends TestCase {
 	}
 	
 	/**
-	 * Test missing chunks
+	 * Test missing chunks.
+	 * Use a file with no HTML body
 	 */
 	public void testMissingChunks() throws Exception {
 	   assertEquals(false, attachments.isReturnNullOnMissingChunk());
 
 	   try {
-	      attachments.getMessageDate();
+	      attachments.getHtmlBody();
 	      fail();
 	   } catch(ChunkNotFoundException e) {
 	      // Good
@@ -137,12 +138,12 @@ public final class TestBasics extends TestCase {
 	   
 	   attachments.setReturnNullOnMissingChunk(true);
 	   
-	   assertEquals(null, attachments.getMessageDate());
+	   assertEquals(null, attachments.getHtmlBody());
 	   
       attachments.setReturnNullOnMissingChunk(false);
       
       try {
-         attachments.getMessageDate();
+         attachments.getHtmlBody();
          fail();
       } catch(ChunkNotFoundException e) {
          // Good
