@@ -19,6 +19,7 @@ package org.apache.poi.hsmf.dev;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
@@ -38,24 +39,27 @@ public class HSMFDump {
    }
    
    public void dump() throws IOException {
+      dump(System.out);
+   }
+   public void dump(PrintStream out) throws IOException {
       ChunkGroup[] chunkGroups = POIFSChunkParser.parse(fs);
       for(ChunkGroup chunks : chunkGroups) {
-         System.out.println(chunks.getClass().getSimpleName());
+         out.println(chunks.getClass().getSimpleName());
          for(Chunk chunk : chunks.getChunks()) {
             MAPIProperty attr = MAPIProperty.get(chunk.getChunkId());
             
             if (chunk instanceof PropertiesChunk) {
                PropertiesChunk props = (PropertiesChunk)chunk;
-               System.out.println(
+               out.println(
                      "   Properties - " + props.getProperties().size() + ":"
                );
                
                for (MAPIProperty prop : props.getProperties().keySet()) {
-                  System.out.println(
+                  out.println(
                         "       * " + prop
                   );
                   for (PropertyValue v : props.getValues(prop)) {
-                     System.out.println(
+                     out.println(
                            "        = " + v.toString()
                      );
                   }
@@ -66,15 +70,15 @@ public class HSMFDump {
                   idName = chunk.getChunkId() + " - (unknown)";
                }
                
-               System.out.println(
+               out.println(
                      "   " + idName + " - " + chunk.getType().getName()
                );
-               System.out.println(
+               out.println(
                      "       " + chunk.toString()
                );
             }
          }
-         System.out.println();
+         out.println();
       }
    }
    
