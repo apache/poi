@@ -38,6 +38,8 @@ import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
+import org.apache.poi.hsmf.datatypes.PropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
 import org.apache.poi.hsmf.datatypes.StringChunk;
@@ -511,9 +513,22 @@ public class MAPIMessage extends POIDocument {
     *  server on.
     */
    public Calendar getMessageDate() throws ChunkNotFoundException {
-      if(mainChunks.submissionChunk != null) {
+      if (mainChunks.submissionChunk != null) {
          return mainChunks.submissionChunk.getAcceptedAtTime();
       }
+      else if (mainChunks.messageProperties != null) {
+         // Try a few likely suspects...
+         for (MAPIProperty prop : new MAPIProperty[] {
+               MAPIProperty.CLIENT_SUBMIT_TIME, MAPIProperty.LAST_MODIFICATION_TIME,
+               MAPIProperty.CREATION_TIME
+         }) {
+            PropertyValue val = mainChunks.messageProperties.getValue(prop);
+            if (val != null) {
+               return ((TimePropertyValue)val).getValue();
+            }
+         }
+      }
+      
       if(returnNullOnMissingChunk)
          return null;
       throw new ChunkNotFoundException();

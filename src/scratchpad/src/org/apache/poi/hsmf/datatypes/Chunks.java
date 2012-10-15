@@ -44,7 +44,10 @@ public final class Chunks implements ChunkGroup {
    public ByteChunk rtfBodyChunk;
    /** Subject link chunk, in plain/text */
    public StringChunk subjectChunk;
-   /** Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes */
+   /** 
+    * Value that is in the TO field (not actually the addresses as they are 
+    * stored in recip directory nodes 
+    */
    public StringChunk displayToChunk;
    /** Value that is in the FROM field */
    public StringChunk displayFromChunk;
@@ -64,6 +67,9 @@ public final class Chunks implements ChunkGroup {
    public StringChunk emailFromChunk; 
    /** The message ID */
    public StringChunk messageId;
+   /** The message properties */
+   public MessagePropertiesChunk messageProperties;
+
 
    public Chunk[] getAll() {
       return allChunks.toArray(new Chunk[allChunks.size()]);
@@ -132,6 +138,11 @@ public final class Chunks implements ChunkGroup {
       }
       else if(chunk.getChunkId() == MAPIProperty.RTF_COMPRESSED.id) {
          rtfBodyChunk = (ByteChunk)chunk;
+      }
+      else if(chunk.getChunkId() == MAPIProperty.UNKNOWN.id &&
+              chunk instanceof MessagePropertiesChunk) {
+         // TODO Should we maybe collect the contents of this?
+         messageProperties = (MessagePropertiesChunk) chunk;
       }
       
       // And add to the main list

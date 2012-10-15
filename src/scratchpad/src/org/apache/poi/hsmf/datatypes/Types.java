@@ -120,6 +120,10 @@ public final class Types {
          return name;
       }
       
+      public String toString() {
+         return id + " / 0x" + asFileEnding() + " - " + name + " @ " + length;
+      }
+      
       /**
        * Return the 4 character hex encoded version,
        *  as used in file endings

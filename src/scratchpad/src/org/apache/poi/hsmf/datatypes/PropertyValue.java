@@ -17,6 +17,8 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import java.util.Calendar;
+
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -56,6 +58,10 @@ public class PropertyValue {
       this.data = value;
    }
    
+   public String toString() {
+      return property + " = " + getValue();
+   }
+   
    // TODO classes for the other important value types
    public static class LongLongPropertyValue extends PropertyValue {
       public LongLongPropertyValue(MAPIProperty property, long flags, byte[] data) {
@@ -70,6 +76,34 @@ public class PropertyValue {
             data = new byte[8];
          }
          LittleEndian.putLong(data, 0, value);
+      }
+   }
+   
+   /**
+    * 64-bit integer specifying the number of 100ns periods since Jan 1, 1601
+    */
+   public static class TimePropertyValue extends PropertyValue {
+      private static final long OFFSET = 1000L * 60L * 60L * 24L * (365L * 369L + 89L);
+      public TimePropertyValue(MAPIProperty property, long flags, byte[] data) {
+         super(property, flags, data);
+      }
+      
+      public Calendar getValue() {
+         long time = LittleEndian.getLong(data);
+         time = (time / 10 / 1000) - OFFSET;
+
+         Calendar timeC = Calendar.getInstance();
+         timeC.setTimeInMillis(time);
+
+         return timeC;
+      }
+      public void setValue(Calendar value) {
+         if (data.length != 8) {
+            data = new byte[8];
+         }
+         long time = value.getTimeInMillis();
+         time = (time + OFFSET) *10*1000;
+         LittleEndian.putLong(data, 0, time);
       }
    }
 }
