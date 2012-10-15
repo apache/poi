@@ -62,7 +62,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertEquals(-1, text.indexOf("Attachment:"));
       assertContains(text, "Subject: Test the content transformer\n");
       Calendar cal = new GregorianCalendar(2007, 5, 14, 9, 42, 55);
-      SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
+      SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z");
       String dateText = f.format(cal.getTime());
       assertContains(text, "Date: " + dateText + "\n");
       assertContains(text, "The quick brown fox jumps over the lazy dog");
@@ -81,7 +81,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
       assertContains(text, "Subject: test message\n");
-      assertContains(text, "Date: Fri, 6 Jul 2007 01:27:17 -0400\n");
+      assertContains(text, "Date: Fri, 6 Jul 2007 06:27:17 +0100\n");
       assertContains(text, "This is a test message.");
    }
 
@@ -132,7 +132,7 @@ public final class TestOutlookTextExtractor extends TestCase {
          assertContains(text, "BCC: 'David Caruana' <dave.caruana@alfresco.com>; " +
          		"'Vonka Jan' <jan.vonka@alfresco.com>\n");
          assertContains(text, "Subject: This is a test message please ignore\n");
-         assertEquals(-1, text.indexOf("Date:"));
+         assertContains(text, "Date:");
          assertContains(text, "The quick brown fox jumps over the lazy dog");
       }
    }
@@ -168,7 +168,7 @@ public final class TestOutlookTextExtractor extends TestCase {
                "nick.burch@alfresco.com; 'Roy Wetherall' <roy.wetherall@alfresco.com>\n");
          assertEquals(-1, text.indexOf("BCC:"));
          assertContains(text, "Subject: This is a test message please ignore\n");
-         assertContains(text, "Date: Mon, 11 Jan 2010 16:25:07 +0000 (GMT)\n");
+         assertContains(text, "Date: Mon, 11 Jan 2010 16:2"); // Exact times differ slightly
          assertContains(text, "The quick brown fox jumps over the lazy dog");
       }
    }
@@ -191,7 +191,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
       assertContains(text, "Subject: test");
-      assertEquals(-1, text.indexOf("Date:"));
+      assertContains(text, "Date: Wed, 22 Apr");
       assertContains(text, "Attachment: test-unicode.doc\n");
       assertContains(text, "Attachment: pj1.txt\n");
       assertContains(text, "contenu");

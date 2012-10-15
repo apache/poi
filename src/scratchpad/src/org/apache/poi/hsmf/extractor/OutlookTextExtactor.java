@@ -116,7 +116,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       // Date - try two ways to find it
       try {
          // First try via the proper chunk
-         SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
+         SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z");
          s.append("Date: " + f.format(msg.getMessageDate().getTime()) + "\n");
       } catch(ChunkNotFoundException e) {
          try {
