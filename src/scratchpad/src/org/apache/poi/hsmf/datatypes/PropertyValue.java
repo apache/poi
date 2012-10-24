@@ -18,6 +18,7 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -92,7 +93,7 @@ public class PropertyValue {
          long time = LittleEndian.getLong(data);
          time = (time / 10 / 1000) - OFFSET;
 
-         Calendar timeC = Calendar.getInstance();
+         Calendar timeC = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
          timeC.setTimeInMillis(time);
 
          return timeC;

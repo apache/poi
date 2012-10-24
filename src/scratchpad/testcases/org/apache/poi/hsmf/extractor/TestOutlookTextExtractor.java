@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -63,6 +64,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertContains(text, "Subject: Test the content transformer\n");
       Calendar cal = new GregorianCalendar(2007, 5, 14, 9, 42, 55);
       SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z");
+      f.setTimeZone(TimeZone.getTimeZone("UTC"));
       String dateText = f.format(cal.getTime());
       assertContains(text, "Date: " + dateText + "\n");
       assertContains(text, "The quick brown fox jumps over the lazy dog");
@@ -81,7 +83,7 @@ public final class TestOutlookTextExtractor extends TestCase {
       assertEquals(-1, text.indexOf("CC:"));
       assertEquals(-1, text.indexOf("BCC:"));
       assertContains(text, "Subject: test message\n");
-      assertContains(text, "Date: Fri, 6 Jul 2007 06:27:17 +0100\n");
+      assertContains(text, "Date: Fri, 6 Jul 2007 05:27:17 +0000\n");
       assertContains(text, "This is a test message.");
    }
 
