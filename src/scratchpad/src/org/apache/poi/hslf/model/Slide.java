@@ -18,7 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import java.awt.Graphics2D;
-import java.util.Vector;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
@@ -26,11 +27,13 @@ import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 
@@ -53,7 +56,7 @@ public final class Slide extends Sheet
 	/**
 	 * Constructs a Slide from the Slide record, and the SlideAtomsSet
 	 *  containing the text.
-	 * Initialises TextRuns, to provide easier access to the text
+	 * Initializes TextRuns, to provide easier access to the text
 	 *
 	 * @param slide the Slide record we're based on
 	 * @param notes the Notes sheet attached to us
@@ -72,7 +75,7 @@ public final class Slide extends Sheet
 		// For the text coming in from the SlideAtomsSet:
 		// Build up TextRuns from pairs of TextHeaderAtom and
 		//  one of TextBytesAtom or TextCharsAtom
-		Vector textRuns = new Vector();
+		final List<TextRun> textRuns = new LinkedList<TextRun>();
 		if(_atomSet != null) {
 			findTextRuns(_atomSet.getSlideRecords(),textRuns);
 		} else {
@@ -476,4 +479,13 @@ public final class Slide extends Sheet
             _runs = tmp;
         }
     }
+
+    /** This will return an atom per TextBox, so if the page has two text boxes the method should return two atoms. */
+    public StyleTextProp9Atom[] getNumberedListInfo() {
+    	return this.getPPDrawing().getNumberedListInfo();
+    }
+
+	public EscherTextboxWrapper[] getTextboxWrappers() {
+		return this.getPPDrawing().getTextboxWrappers();
+	}
 }

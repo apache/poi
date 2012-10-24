@@ -54,6 +54,8 @@ public final class TextRun
      * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
      */
     protected Record[] _records;
+	private StyleTextPropAtom styleTextPropAtom;
+	private StyleTextProp9Atom styleTextProp9Atom;
 
 	/**
 	* Constructs a Text Run from a Unicode text block
@@ -702,5 +704,18 @@ public final class TextRun
     public Record[] getRecords(){
         return _records;
     }
+    /** Numbered List info */
+	public void setStyleTextProp9Atom(final StyleTextProp9Atom styleTextProp9Atom) {
+		this.styleTextProp9Atom = styleTextProp9Atom;
+	}
+    /** Numbered List info */
+	public StyleTextProp9Atom getStyleTextProp9Atom() {
+		return this.styleTextProp9Atom;
+	}
+
+    /** Characters covered */
+	public StyleTextPropAtom getStyleTextPropAtom() {
+		return this._styleAtom;		
+	}
 
 }

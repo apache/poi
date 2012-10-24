@@ -25,6 +25,7 @@ import org.apache.poi.hslf.model.ShapeTypes;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
@@ -78,29 +79,69 @@ public final class PPDrawing extends RecordAtom {
 		_type = LittleEndian.getUShort(_header,2);
 
 		// Get the contents for now
-		byte[] contents = new byte[len];
+		final byte[] contents = new byte[len];
 		System.arraycopy(source,start,contents,0,len);
 
-
 		// Build up a tree of Escher records contained within
-		DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
-		Vector escherChildren = new Vector();
-		findEscherChildren(erf,contents,8,len-8,escherChildren);
+		final DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
+		final Vector<EscherRecord> escherChildren = new Vector<EscherRecord>();
+		findEscherChildren(erf, contents, 8, len-8, escherChildren);
+		this.childRecords = (EscherRecord[]) escherChildren.toArray(new EscherRecord[escherChildren.size()]);
 
-		childRecords = new EscherRecord[escherChildren.size()];
-		for(int i=0; i<childRecords.length; i++) {
-			childRecords[i] = (EscherRecord)escherChildren.get(i);
-		}
-
-		// Find and EscherTextboxRecord's, and wrap them up
-		Vector textboxes = new Vector();
-		findEscherTextboxRecord(childRecords, textboxes);
-		textboxWrappers = new EscherTextboxWrapper[textboxes.size()];
-		for(int i=0; i<textboxWrappers.length; i++) {
-			textboxWrappers[i] = (EscherTextboxWrapper)textboxes.get(i);
+		if (1 == this.childRecords.length && (short)0xf002 == this.childRecords[0].getRecordId() && this.childRecords[0] instanceof EscherContainerRecord) {
+			this.textboxWrappers = findInDgContainer((EscherContainerRecord) this.childRecords[0]);
+		} else {
+			// Find and EscherTextboxRecord's, and wrap them up
+			final Vector<EscherTextboxWrapper> textboxes = new Vector<EscherTextboxWrapper>();
+			findEscherTextboxRecord(childRecords, textboxes);
+			this.textboxWrappers = (EscherTextboxWrapper[]) textboxes.toArray(new EscherTextboxWrapper[textboxes.size()]);
 		}
 	}
-
+	private EscherTextboxWrapper[] findInDgContainer(final EscherContainerRecord escherContainerF002) {
+		final List<EscherTextboxWrapper> found = new LinkedList<EscherTextboxWrapper>();
+		final EscherContainerRecord SpgrContainer = findFirstEscherContainerRecordOfType((short)0xf003, escherContainerF002);
+		final EscherContainerRecord[] escherContainersF004 = findAllEscherContainerRecordOfType((short)0xf004, SpgrContainer);
+		for (EscherContainerRecord spContainer : escherContainersF004) {
+			StyleTextProp9Atom nineAtom = findInSpContainer(spContainer);
+			EscherSpRecord sp = null;
+			final EscherRecord escherContainerF00A = findFirstEscherRecordOfType((short)0xf00a, spContainer);
+			if (null != escherContainerF00A) {
+				if (escherContainerF00A instanceof EscherSpRecord) {
+					sp = (EscherSpRecord) escherContainerF00A;
+				}
+			}
+			final EscherRecord escherContainerF00D = findFirstEscherRecordOfType((short)0xf00d, spContainer);
+			if (null == escherContainerF00D) { continue; }
+			if (escherContainerF00D instanceof EscherTextboxRecord) {
+				EscherTextboxRecord tbr = (EscherTextboxRecord) escherContainerF00D;
+				EscherTextboxWrapper w = new EscherTextboxWrapper(tbr);
+				w.setStyleTextProp9Atom(nineAtom);
+				if (null != sp) {
+					w.setShapeId(sp.getShapeId());
+				}
+				found.add(w);
+			}
+		}
+		return (EscherTextboxWrapper[]) found.toArray(new EscherTextboxWrapper[found.size()]);
+	}
+	private StyleTextProp9Atom findInSpContainer(final EscherContainerRecord spContainer) {
+		final EscherContainerRecord escherContainerF011 = findFirstEscherContainerRecordOfType((short)0xf011, spContainer);
+		if (null == escherContainerF011) { return null; }
+		final EscherContainerRecord escherContainer1388 = findFirstEscherContainerRecordOfType((short)0x1388, escherContainerF011);
+		if (null == escherContainer1388) { return null; }
+		final EscherContainerRecord escherContainer138A = findFirstEscherContainerRecordOfType((short)0x138A, escherContainer1388);
+		if (null == escherContainer138A) { return null; }
+		int size = escherContainer138A.getChildRecords().size();
+		if (2 != size) { return null; }
+		final Record r0 = buildFromUnknownEscherRecord((UnknownEscherRecord) escherContainer138A.getChild(0));
+		final Record r1 = buildFromUnknownEscherRecord((UnknownEscherRecord) escherContainer138A.getChild(1));
+		if (!(r0 instanceof CString)) { return null; }
+		if (!("___PPT9".equals(((CString) r0).getText()))) { return null; };
+		if (!(r1 instanceof BinaryTagDataBlob )) { return null; }
+		final BinaryTagDataBlob blob = (BinaryTagDataBlob) r1;
+		if (1 != blob.getChildRecords().length) { return null; }
+		return (StyleTextProp9Atom) blob.findFirstOfType(0x0FACL);
+	}
 	/**
 	 * Creates a new, empty, PPDrawing (typically for use with a new Slide
 	 *  or Notes)
@@ -118,7 +159,7 @@ public final class PPDrawing extends RecordAtom {
 	/**
 	 * Tree walking way of finding Escher Child Records
 	 */
-	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, Vector found) {
+	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, Vector<EscherRecord> found) {
 
 		int escherBytes = LittleEndian.getInt( source, startPos + 4 ) + 8;
 
@@ -138,7 +179,7 @@ public final class PPDrawing extends RecordAtom {
 		/**
 		 * Sanity check. Always advance the cursor by the correct value.
 		 *
-		 * getRecordSize() must return exatcly the same number of bytes that was written in fillFields.
+		 * getRecordSize() must return exactly the same number of bytes that was written in fillFields.
 		 * Sometimes it is not so, see an example in bug #44770. Most likely reason is that one of ddf records calculates wrong size.
 		 */
 		if(size != escherBytes){
@@ -155,7 +196,7 @@ public final class PPDrawing extends RecordAtom {
 	/**
 	 * Look for EscherTextboxRecords
 	 */
-	private void findEscherTextboxRecord(EscherRecord[] toSearch, Vector found) {
+	private void findEscherTextboxRecord(EscherRecord[] toSearch, Vector<EscherTextboxWrapper> found) {
 		for(int i=0; i<toSearch.length; i++) {
 			if(toSearch[i] instanceof EscherTextboxRecord) {
 				EscherTextboxRecord tbr = (EscherTextboxRecord)toSearch[i];
@@ -312,5 +353,80 @@ public final class PPDrawing extends RecordAtom {
 			}
 		}
 		return dg;
+	}
+
+    protected EscherContainerRecord findFirstEscherContainerRecordOfType(short type, EscherContainerRecord parent) {
+    	if (null == parent) { return null; }
+		final List<EscherContainerRecord> children = parent.getChildContainers();
+		for (EscherContainerRecord child : children) {
+			if (type == child.getRecordId()) {
+				return child;
+			}
+		}
+		return null;
+    }
+    protected EscherRecord findFirstEscherRecordOfType(short type, EscherContainerRecord parent) {
+    	if (null == parent) { return null; }
+		final List<EscherRecord> children = parent.getChildRecords();
+		for (EscherRecord child : children) {
+			if (type == child.getRecordId()) {
+				return child;
+			}
+		}
+		return null;
+    }
+    protected EscherContainerRecord[] findAllEscherContainerRecordOfType(short type, EscherContainerRecord parent) {
+    	if (null == parent) { return new EscherContainerRecord[0]; }
+		final List<EscherContainerRecord> children = parent.getChildContainers();
+		final List<EscherContainerRecord> result = new LinkedList<EscherContainerRecord>();
+		for (EscherContainerRecord child : children) {
+			if (type == child.getRecordId()) {
+				result.add(child);
+			}
+		}
+		return (EscherContainerRecord[]) result.toArray(new EscherContainerRecord[result.size()]);
+    }
+    protected Record buildFromUnknownEscherRecord(UnknownEscherRecord unknown) {
+		byte[] bingo = unknown.getData();
+		byte[] restoredRecord = new byte[8 + bingo.length];
+		System.arraycopy(bingo, 0, restoredRecord, 8, bingo.length);
+		short recordVersion = unknown.getVersion();
+		short recordId = unknown.getRecordId();
+		int recordLength = unknown.getRecordSize();
+		LittleEndian.putShort(restoredRecord, 0, recordVersion);
+		LittleEndian.putShort(restoredRecord, 2, recordId);
+		LittleEndian.putInt(restoredRecord, 4, recordLength);
+		return Record.createRecordForType(recordId, restoredRecord, 0, restoredRecord.length);
+    }
+
+    public StyleTextProp9Atom[] getNumberedListInfo() {
+    	final List<StyleTextProp9Atom> result = new LinkedList<StyleTextProp9Atom>();
+    	EscherRecord[] escherRecords = this.getEscherRecords();
+    	for (EscherRecord escherRecord : escherRecords) {
+			if (escherRecord instanceof EscherContainerRecord && (short)0xf002 == escherRecord.getRecordId()) {
+				EscherContainerRecord escherContainerF002 = (EscherContainerRecord) escherRecord;
+				final EscherContainerRecord escherContainerF003 = findFirstEscherContainerRecordOfType((short)0xf003, escherContainerF002);
+				final EscherContainerRecord[] escherContainersF004 = findAllEscherContainerRecordOfType((short)0xf004, escherContainerF003);
+				for (EscherContainerRecord containerF004 : escherContainersF004) {
+					final EscherContainerRecord escherContainerF011 = findFirstEscherContainerRecordOfType((short)0xf011, containerF004);
+					if (null == escherContainerF011) { continue; }
+					final EscherContainerRecord escherContainer1388 = findFirstEscherContainerRecordOfType((short)0x1388, escherContainerF011);
+					if (null == escherContainer1388) { continue; }
+					final EscherContainerRecord escherContainer138A = findFirstEscherContainerRecordOfType((short)0x138A, escherContainer1388);
+					if (null == escherContainer138A) { continue; }
+					int size = escherContainer138A.getChildRecords().size();
+					if (2 != size) { continue; }
+					final Record r0 = buildFromUnknownEscherRecord((UnknownEscherRecord) escherContainer138A.getChild(0));
+					final Record r1 = buildFromUnknownEscherRecord((UnknownEscherRecord) escherContainer138A.getChild(1));
+					if (!(r0 instanceof CString)) { continue; }
+					if (!("___PPT9".equals(((CString) r0).getText()))) { continue; };
+					if (!(r1 instanceof BinaryTagDataBlob )) { continue; }
+					final BinaryTagDataBlob blob = (BinaryTagDataBlob) r1;
+					if (1 != blob.getChildRecords().length) { continue; }
+					result.add((StyleTextProp9Atom) blob.findFirstOfType(0x0FACL));
+				}
+			}
+    	}
+    	return (StyleTextProp9Atom[]) result.toArray(new StyleTextProp9Atom[result.size()]);
 	}
 }

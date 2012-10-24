@@ -36,6 +36,8 @@ public final class EscherTextboxWrapper extends RecordContainer {
 	private EscherTextboxRecord _escherRecord;
 	private long _type;
 	private int shapeId;
+	private StyleTextPropAtom styleTextPropAtom;
+	private StyleTextProp9Atom styleTextProp9Atom;
 
 	/**
 	 * Returns the underlying DDF Escher Record
@@ -52,6 +54,9 @@ public final class EscherTextboxWrapper extends RecordContainer {
 		// Find the child records in the escher data
 		byte[] data = _escherRecord.getData();
 		_children = Record.findChildRecords(data,0,data.length);
+		for (Record r : this._children) {
+			if (r instanceof StyleTextPropAtom) { this.styleTextPropAtom = (StyleTextPropAtom) r; }
+		}
 	}
 
 	/**
@@ -103,5 +108,16 @@ public final class EscherTextboxWrapper extends RecordContainer {
 	 */
 	public void setShapeId(int id){
 		shapeId = id;
+	}
+
+	public StyleTextPropAtom getStyleTextPropAtom() {
+		return styleTextPropAtom;
+	}
+
+	public void setStyleTextProp9Atom(final StyleTextProp9Atom nineAtom) {
+		this.styleTextProp9Atom = nineAtom;
+	}
+	public StyleTextProp9Atom getStyleTextProp9Atom() {
+		return this.styleTextProp9Atom;
 	}
 }
