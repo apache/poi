@@ -1062,7 +1062,11 @@ public final class SlideShow {
 		ExHyperlink ctrl = new ExHyperlink();
 		ExHyperlinkAtom obj = ctrl.getExHyperlinkAtom();
 		obj.setNumber(objectId);
-		ctrl.setLinkURL(link.getAddress());
+        if(link.getType() == Hyperlink.LINK_SLIDENUMBER) {
+            ctrl.setLinkURL(link.getAddress(), 0x30);
+        } else {
+            ctrl.setLinkURL(link.getAddress());
+        }
 		ctrl.setLinkTitle(link.getTitle());
 		lst.addChildAfter(ctrl, objAtom);
 		link.setId(objectId);

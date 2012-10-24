@@ -37,6 +37,7 @@ public final class Hyperlink {
     public static final byte LINK_PREVIOUSSLIDE = InteractiveInfoAtom.LINK_PreviousSlide;
     public static final byte LINK_FIRSTSLIDE = InteractiveInfoAtom.LINK_FirstSlide;
     public static final byte LINK_LASTSLIDE = InteractiveInfoAtom.LINK_LastSlide;
+    public static final byte LINK_SLIDENUMBER = InteractiveInfoAtom.LINK_SlideNumber;
     public static final byte LINK_URL = InteractiveInfoAtom.LINK_Url;
     public static final byte LINK_NULL = InteractiveInfoAtom.LINK_NULL;
 
@@ -76,6 +77,8 @@ public final class Hyperlink {
                 title = "LAST";
                 address = "1,-1,LAST";
                 break;
+            case LINK_SLIDENUMBER:
+                break;
             default:
                 title = "";
                 address = "";
@@ -90,6 +93,13 @@ public final class Hyperlink {
      */
     public String getAddress() {
         return address;
+    }
+
+    public void setAddress(Slide slide) {
+        String href = slide._getSheetNumber() + ","+slide.getSlideNumber()+",Slide " + slide.getSlideNumber();
+        setAddress(href);;
+        setTitle("Slide " + slide.getSlideNumber());
+        setType(Hyperlink.LINK_SLIDENUMBER);
     }
 
     public void setAddress(String str) {
