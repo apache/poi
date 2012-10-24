@@ -401,7 +401,12 @@ public abstract class SimpleShape extends Shape {
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_Url);
                 break;
-          }
+            case Hyperlink.LINK_SLIDENUMBER:
+                infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
+                infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
+                infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_SlideNumber);
+                break;
+        }
 
         infoAtom.setHyperlinkID(link.getId());
 

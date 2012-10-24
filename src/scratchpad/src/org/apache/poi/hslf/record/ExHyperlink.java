@@ -67,6 +67,13 @@ public class ExHyperlink extends RecordContainer {
 			linkDetailsB.setText(url);
 		}
 	}
+    public void setLinkURL(String url, int options) {
+        if(linkDetailsB != null) {
+            linkDetailsB.setText(url);
+            linkDetailsB.setOptions(options);
+        }
+    }
+
     public void setLinkTitle(String title) {
         if(linkDetailsA != null) {
             linkDetailsA.setText(title);
