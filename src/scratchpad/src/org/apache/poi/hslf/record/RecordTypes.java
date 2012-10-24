@@ -84,7 +84,7 @@ public final class RecordTypes {
     public static final Type OutlineTextRefAtom = new Type(3998,OutlineTextRefAtom.class);
     public static final Type TextHeaderAtom = new Type(3999,TextHeaderAtom.class);
     public static final Type TextCharsAtom = new Type(4000,TextCharsAtom.class);
-    public static final Type StyleTextPropAtom = new Type(4001,StyleTextPropAtom.class);
+    public static final Type StyleTextPropAtom = new Type(4001, StyleTextPropAtom.class);//0x0fa1 RT_StyleTextPropAtom
     public static final Type BaseTextPropAtom = new Type(4002,null);
     public static final Type TxMasterStyleAtom = new Type(4003,TxMasterStyleAtom.class);
     public static final Type TxCFStyleAtom = new Type(4004,null);
@@ -95,6 +95,7 @@ public final class RecordTypes {
     public static final Type TxSIStyleAtom = new Type(4009,null);
     public static final Type TextSpecInfoAtom = new Type(4010, TextSpecInfoAtom.class);
     public static final Type DefaultRulerAtom = new Type(4011,null);
+    public static final Type StyleTextProp9Atom = new Type(4012, StyleTextProp9Atom.class); //0x0FAC RT_StyleTextProp9Atom
     public static final Type FontEntityAtom = new Type(4023,FontEntityAtom.class);
     public static final Type FontEmbeddedData = new Type(4024,null);
     public static final Type CString = new Type(4026,CString.class);
@@ -146,7 +147,7 @@ public final class RecordTypes {
     public static final Type ProgTags = new Type(5000,DummyPositionSensitiveRecordWithChildren.class);
     public static final Type ProgStringTag = new Type(5001,null);
     public static final Type ProgBinaryTag = new Type(5002,DummyPositionSensitiveRecordWithChildren.class);
-    public static final Type BinaryTagData = new Type(5003,DummyPositionSensitiveRecordWithChildren.class);
+    public static final Type BinaryTagData = new Type(5003, BinaryTagDataBlob.class);//0x138b RT_BinaryTagDataBlob
     public static final Type PrpublicintOptions = new Type(6000,null);
     public static final Type PersistPtrFullBlock = new Type(6001,PersistPtrHolder.class);
     public static final Type PersistPtrIncrementalBlock = new Type(6002,PersistPtrHolder.class);
