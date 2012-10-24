@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
@@ -117,6 +118,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       try {
          // First try via the proper chunk
          SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z");
+         f.setTimeZone(TimeZone.getTimeZone("UTC"));
          s.append("Date: " + f.format(msg.getMessageDate().getTime()) + "\n");
       } catch(ChunkNotFoundException e) {
          try {
