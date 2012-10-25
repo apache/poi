@@ -40,10 +40,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.TempFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -2294,6 +2291,25 @@ if(1==2) {
 
         tb.setString(new HSSFRichTextString("POI test"));
         tb.setAnchor(new HSSFClientAnchor(0,0,0,0,(short)0,0,(short)10,10));
+
+        wb = writeOutAndReadBack((HSSFWorkbook) wb);
+    }
+
+    public void test53404(){
+        Workbook wb = openSample("53404.xls");
+        Sheet sheet = wb.getSheet("test-sheet");
+        int rowCount = sheet.getLastRowNum() + 1;
+        int newRows = 5;
+        for (int r = rowCount; r < rowCount + newRows; r++) {
+            Row row = sheet.createRow((short) r);
+            row.createCell(0).setCellValue(1.03 * (r + 7));
+            row.createCell(1).setCellValue(new Date());
+            row.createCell(2).setCellValue(Calendar.getInstance());
+            row.createCell(3).setCellValue(String.format("row:%d/col:%d", r, 3));
+            row.createCell(4).setCellValue(true);
+            row.createCell(5).setCellType(Cell.CELL_TYPE_ERROR);
+            row.createCell(6).setCellValue("added cells.");
+        }
 
         wb = writeOutAndReadBack((HSSFWorkbook) wb);
     }
