@@ -740,15 +740,6 @@ public final class InternalWorkbook {
             boundsheets.add(bsr);
             getOrCreateLinkTable().checkExternSheet(sheetnum);
             fixTabIdRecord();
-        } else {
-           // Ensure we have enough tab IDs
-           // Can be a few short if new sheets were added
-           if(records.getTabpos() > 0) {
-              TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
-              if(tir._tabids.length < boundsheets.size()) {
-                 fixTabIdRecord();
-              }
-           }
         }
     }
 
@@ -787,15 +778,19 @@ public final class InternalWorkbook {
     /**
      * make the tabid record look like the current situation.
      *
+     * @return number of bytes written in the TabIdRecord
      */
-    private void fixTabIdRecord() {
+    private int fixTabIdRecord() {
         TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
+        int sz = tir.getRecordSize();
         short[]     tia = new short[ boundsheets.size() ];
 
         for (short k = 0; k < tia.length; k++) {
             tia[ k ] = k;
         }
         tir.setTabIdArray(tia);
+        return tir.getRecordSize() - sz;
+
     }
 
     /**
@@ -1064,6 +1059,22 @@ public final class InternalWorkbook {
         if (log.check( POILogger.DEBUG ))
             log.log( DEBUG, "Exiting serialize workbook" );
         return pos;
+    }
+
+    /**
+     * Perform any work necessary before the workbook is about to be serialized.
+     *
+     * Include in it ant code that modifies the workbook record stream and affects its size.
+     */
+    public void preSerialize(){
+        // Ensure we have enough tab IDs
+        // Can be a few short if new sheets were added
+        if(records.getTabpos() > 0) {
+            TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
+            if(tir._tabids.length < boundsheets.size()) {
+                fixTabIdRecord();
+            }
+        }
     }
 
     public int getSize()
