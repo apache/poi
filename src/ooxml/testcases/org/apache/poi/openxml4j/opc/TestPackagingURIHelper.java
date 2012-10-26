@@ -123,7 +123,8 @@ public class TestPackagingURIHelper extends TestCase {
                 "..\\Program%20Files\\AGEIA%20Technologies\\v2.3.3\\NxCooking.dll",
                 "file:///D:\\seva\\1981\\r810102ns.mp3",
                 "..\\cygwin\\home\\yegor\\dinom\\%5baccess%5d.2010-10-26.log",
-                "#'Instructions (Text)'!B21"
+                "#'Instructions (Text)'!B21",
+                "javascript://"
         };
         for(String s : href){
             try {
@@ -132,6 +133,13 @@ public class TestPackagingURIHelper extends TestCase {
                 fail("Failed to create URI from " + s);
             }
         }
+    }
+
+    public void test53734() throws Exception {
+        URI uri = PackagingURIHelper.toURI("javascript://");
+        // POI appends a trailing slash tpo avoid "Expected authority at index 13: javascript://"
+        // https://issues.apache.org/bugzilla/show_bug.cgi?id=53734
+        assertEquals("javascript:///", uri.toASCIIString());
     }
 
 }

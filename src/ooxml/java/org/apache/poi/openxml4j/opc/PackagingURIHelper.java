@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.io.UnsupportedEncodingException;
+import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -146,6 +147,8 @@ public final class PackagingURIHelper {
 		CORE_PROPERTIES_PART_NAME = tmpCORE_PROPERTIES_URI;
 		PACKAGE_ROOT_PART_NAME = tmpPACKAGE_ROOT_PART_NAME;
 	}
+
+    private static final Pattern missingAuthPattern = Pattern.compile("\\w+://");
 
 	/**
 	 * Gets the URI for the package root.
@@ -706,6 +709,9 @@ public final class PackagingURIHelper {
             value = path + "#" + encode(fragment);
         }
 
+        if(missingAuthPattern.matcher(value).matches()){
+            value += "/";
+        }
         return new URI(value);
     }
 
