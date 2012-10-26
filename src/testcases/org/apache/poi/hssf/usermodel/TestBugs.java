@@ -2313,4 +2313,10 @@ if(1==2) {
 
         wb = writeOutAndReadBack((HSSFWorkbook) wb);
     }
+
+    public void test54016() {
+        // This used to break
+        HSSFWorkbook wb = openSample("54016.xls");
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+    }
 }
