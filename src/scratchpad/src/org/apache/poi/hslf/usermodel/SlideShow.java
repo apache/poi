@@ -853,13 +853,13 @@ public final class SlideShow {
 	public int addPicture(File pict, int format) throws IOException {
 		int length = (int) pict.length();
 		byte[] data = new byte[length];
-		try {
-			FileInputStream is = new FileInputStream(pict);
+        FileInputStream is = null;
+        try {
+			is = new FileInputStream(pict);
 			is.read(data);
-			is.close();
-		} catch (IOException e) {
-			throw new HSLFException(e);
-		}
+		} finally {
+            if(is != null) is.close();
+        }
 		return addPicture(data, format);
 	}
 
