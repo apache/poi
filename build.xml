@@ -735,7 +735,12 @@ under the License.
             <classpath refid="test.ooxml.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
-            <arg line="-ooxml ${ooxml.xsds.jar} -test ${ooxml.output.test.dir} -dest ${ooxml.lite.output.dir}"/>
+            <arg value="-ooxml"/>
+            <arg value="${ooxml.xsds.jar}"/>
+            <arg value="-test"/>
+            <arg value="${ooxml.output.test.dir}"/>
+            <arg value="-dest"/>
+            <arg value="${ooxml.lite.output.dir}"/>
         </java>
     </target>
 
