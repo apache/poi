@@ -24,20 +24,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.ArrayRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.hssf.record.DBCellRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.MulBlankRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
-import org.apache.poi.hssf.record.TableRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.SpreadsheetVersion;
 
@@ -86,7 +73,10 @@ public final class RowRecordsAggregate extends RecordAggregate {
 				case RowRecord.sid:
 					insertRow((RowRecord) rec);
 					continue;
-				case DBCellRecord.sid:
+                case DConRefRecord.sid:
+                    addUnknownRecord(rec);
+                    continue;
+                case DBCellRecord.sid:
 					// end of 'Row Block'.  Should only occur after cell records
 					// ignore DBCELL records because POI generates them upon re-serialization
 					continue;
