@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="add">53374 - Avoid exceptions when parsing hyperlinks of type "javascript://"</action>
           <action dev="poi-developers" type="add">53404 - Fixed compatibility bug with modifying xls files created by POI-3.6 and earlier</action>
           <action dev="poi-developers" type="add">53979 - Support fetching properties of Numbered Lists from PPT files</action>
           <action dev="poi-developers" type="add">53784 - Partial HSMF support for fixed sized properties</action>

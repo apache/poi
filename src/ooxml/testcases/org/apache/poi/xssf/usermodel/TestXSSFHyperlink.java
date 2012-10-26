@@ -243,4 +243,13 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         assertEquals("B1", l2.getCellRef());
     }
 
+    public void test53734() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53734.xlsx");
+        XSSFHyperlink link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
+        assertEquals("javascript:///", link.getAddress());
+
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
+        assertEquals("javascript:///", link.getAddress());
+    }
 }
