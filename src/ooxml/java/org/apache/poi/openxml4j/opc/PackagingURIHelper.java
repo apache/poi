@@ -709,6 +709,25 @@ public final class PackagingURIHelper {
             value = path + "#" + encode(fragment);
         }
 
+        // trailing white spaces must be url-encoded, see Bugzilla 53282
+        if(value.length() > 0 ){
+            StringBuilder b = new StringBuilder();
+            int idx = value.length() - 1;
+            for(; idx >= 0; idx--){
+                char c = value.charAt(idx);
+                if(Character.isWhitespace(c) || c == '\u00A0') {
+                    b.append(c);
+                } else {
+                    break;
+                }
+            }
+            if(b.length() > 0){
+                value = value.substring(0, idx+1) + encode(b.reverse().toString());
+            }
+        }
+
+        // MS Office can insert URIs with missing authority, e.g. "http://" or "javascript://"
+        // append a forward slash to avoid parse exception
         if(missingAuthPattern.matcher(value).matches()){
             value += "/";
         }
@@ -756,7 +775,7 @@ public final class PackagingURIHelper {
     };
 
     private static boolean isUnsafe(int ch) {
-        return ch > 0x80 || " ".indexOf(ch) >= 0;
+        return ch > 0x80 || Character.isWhitespace(ch) || ch == '\u00A0';
     }
 
 }

@@ -19,6 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 import java.io.*;
 import java.net.URI;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -343,5 +344,33 @@ public class TestRelationships extends TestCase {
        assertEquals(rel1.getSourceURI(), rel2.getSourceURI());
        assertEquals(rel1.getTargetURI(), rel2.getTargetURI());
        assertEquals(rel1.getTargetMode(), rel2.getTargetMode());
+    }
+
+    public void testTrailingSpacesInURI_53282() throws Exception {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("53282.xlsx");
+        OPCPackage pkg = OPCPackage.open(is);
+        is.close();
+
+        PackageRelationshipCollection sheetRels = pkg.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
+        assertEquals(3, sheetRels.size());
+        PackageRelationship rId1 = sheetRels.getRelationshipByID("rId1");
+        assertEquals(TargetMode.EXTERNAL, rId1.getTargetMode());
+        URI targetUri = rId1.getTargetURI();
+        assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
+        assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        pkg.save(out);
+        out.close();
+
+        pkg =  OPCPackage.open(new ByteArrayInputStream(out.toByteArray()));
+        sheetRels = pkg.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
+        assertEquals(3, sheetRels.size());
+        rId1 = sheetRels.getRelationshipByID("rId1");
+        assertEquals(TargetMode.EXTERNAL, rId1.getTargetMode());
+        targetUri = rId1.getTargetURI();
+        assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
+        assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
+
     }
 }
