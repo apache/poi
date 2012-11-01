@@ -119,7 +119,7 @@ public class Picture extends SimpleShape {
     /**
      * Create a new Picture and populate the inital structure of the <code>EscherSp</code> record which holds information about this picture.
 
-     * @param idx the index of the picture which referes to <code>EscherBSE</code> container.
+     * @param idx the index of the picture which refers to <code>EscherBSE</code> container.
      * @return the create Picture object
      */
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {

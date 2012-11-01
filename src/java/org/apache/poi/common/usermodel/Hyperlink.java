@@ -21,7 +21,7 @@ package org.apache.poi.common.usermodel;
  */
 public interface Hyperlink {
     /**
-     * Link to a existing file or web page
+     * Link to an existing file or web page
      */
     public static final int LINK_URL = 1;
 
@@ -42,14 +42,14 @@ public interface Hyperlink {
 
     
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @return  the address of this hyperlink
      */
     public String getAddress();
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @param address  the address of this hyperlink
      */

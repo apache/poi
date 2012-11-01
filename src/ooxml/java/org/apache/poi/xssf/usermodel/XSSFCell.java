@@ -906,9 +906,9 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * Assign a hypelrink to this cell
+     * Assign a hyperlink to this cell
      *
-     * @param hyperlink the hypelrink to associate with this cell
+     * @param hyperlink the hyperlink to associate with this cell
      */
     public void setHyperlink(Hyperlink hyperlink) {
         XSSFHyperlink link = (XSSFHyperlink)hyperlink;

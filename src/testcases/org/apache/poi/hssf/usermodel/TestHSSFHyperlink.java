@@ -223,13 +223,13 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertNull(sheet.getRow(2).getCell(0).getHyperlink());
         assertNull(sheet.getRow(3).getCell(0).getHyperlink());
 
-        //the first hypelink now belongs to A5
+        //the first hyperlink now belongs to A5
         HSSFHyperlink link1_shifted = sheet.getRow(2+2).getCell(0).getHyperlink();
         assertNotNull(link1_shifted);
         assertEquals(4, link1_shifted.getFirstRow());
         assertEquals(4, link1_shifted.getLastRow());
 
-        //the second hypelink now belongs to A6
+        //the second hyperlink now belongs to A6
         HSSFHyperlink link2_shifted = sheet.getRow(3+2).getCell(0).getHyperlink();
         assertNotNull(link2_shifted);
         assertEquals(5, link2_shifted.getFirstRow());

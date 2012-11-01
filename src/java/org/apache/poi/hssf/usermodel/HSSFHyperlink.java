@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 public class HSSFHyperlink implements Hyperlink {
 
     /**
-     * Link to a existing file or web page
+     * Link to an existing file or web page
      */
     public static final int LINK_URL = 1;
 
@@ -52,7 +52,7 @@ public class HSSFHyperlink implements Hyperlink {
     protected HyperlinkRecord record = null;
 
     /**
-     * If we create a new hypelrink remember its type
+     * If we create a new hyperlink remember its type
      */
     protected int link_type;
 
@@ -176,7 +176,7 @@ public class HSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @return  the address of this hyperlink
      */
@@ -190,7 +190,7 @@ public class HSSFHyperlink implements Hyperlink {
     /**
      * Convenience method equivalent to {@link #setAddress(String)}
      *
-     * @param textMark the place in worksheet this hypelrink referes to, e.g. 'Target Sheet'!A1'
+     * @param textMark the place in worksheet this hyperlink refers to, e.g. 'Target Sheet'!A1'
      */
     public void setTextMark(String textMark) {
         record.setTextMark(textMark);
@@ -201,14 +201,14 @@ public class HSSFHyperlink implements Hyperlink {
     /**
      * Convenience method equivalent to {@link #setAddress(String)}
      *
-     * @param shortFilename the path to a file this hypelrink points to, e.g. 'readme.txt'
+     * @param shortFilename the path to a file this hyperlink points to, e.g. 'readme.txt'
      */
     public void setShortFilename(String shortFilename) {
         record.setShortFilename(shortFilename);
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, patrh to a file, etc.
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
      * @param address  the address of this hyperlink
      */

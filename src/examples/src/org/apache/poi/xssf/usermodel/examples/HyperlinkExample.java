@@ -33,7 +33,7 @@ public class HyperlinkExample {
         CreationHelper createHelper = wb.getCreationHelper();
 
         //cell style for hyperlinks
-        //by default hypelrinks are blue and underlined
+        //by default hyperlinks are blue and underlined
         CellStyle hlink_style = wb.createCellStyle();
         Font hlink_font = wb.createFont();
         hlink_font.setUnderline(Font.U_SINGLE);
