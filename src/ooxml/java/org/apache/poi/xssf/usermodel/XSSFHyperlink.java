@@ -139,7 +139,7 @@ public class XSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Hypelink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
+     * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file
      *
      * @return the address of this hyperlink
      */

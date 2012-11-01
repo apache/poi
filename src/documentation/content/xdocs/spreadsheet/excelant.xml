@@ -70,7 +70,7 @@ workbooks then you need to have the following jars in your path:</p>
     <typedef resource="org/apache/poi/ss/excelant/antlib.xml" classpathref="excelant.path" />
 ]]></source>
 <p>
- Where excelant.path referes to the classpath with POI jars.
+ Where excelant.path refers to the classpath with POI jars.
  Using this approach the provided extensions will live in the default namespace. Note that the default task/typenames (evaluate, test) may be too generic and should either be explicitly overridden or used with a namespace.
 </p>
 <ul><li>Similar, but assigning a namespace URI:</li></ul> 
