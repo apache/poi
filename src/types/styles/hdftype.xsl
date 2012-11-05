@@ -30,7 +30,24 @@
         <xsl:value-of select="/record/suffix"/>
     </xsl:template>
 
-<xsl:template match="record">
+	<xsl:template match="record">
+		<xsl:text>/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+</xsl:text>
 
 <xsl:if test="@package">
 package <xsl:value-of select="@package"/>;
@@ -243,7 +260,20 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
                 <xsl:text>return false;</xsl:text>
                 <xsl:call-template name="linebreak"/>
             </xsl:when>
-            <xsl:when test="@type='Grfhic'">
+            <xsl:when test="@type='boolean' or @type='byte' or @type='double' or @type='int' or @type='long' or @type='short'">
+                <xsl:text>if ( </xsl:text>
+                <xsl:value-of select="$fieldName"/>
+                <xsl:text> != other.</xsl:text>
+                <xsl:value-of select="$fieldName"/>
+                <xsl:text> )</xsl:text>
+                <xsl:call-template name="linebreak"/>
+                <xsl:call-template name="indent"/>
+                <xsl:call-template name="indent"/>
+                <xsl:call-template name="indent"/>
+                <xsl:text>return false;</xsl:text>
+                <xsl:call-template name="linebreak"/>
+            </xsl:when>
+            <xsl:otherwise>
                 <xsl:text>if ( </xsl:text>
                 <xsl:value-of select="$fieldName"/>
                 <xsl:text> == null )</xsl:text>
@@ -282,19 +312,6 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
                 <xsl:call-template name="indent"/>
                 <xsl:text>return false;</xsl:text>
                 <xsl:call-template name="linebreak"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text>if ( </xsl:text>
-                <xsl:value-of select="$fieldName"/>
-                <xsl:text> != other.</xsl:text>
-                <xsl:value-of select="$fieldName"/>
-                <xsl:text> )</xsl:text>
-                <xsl:call-template name="linebreak"/>
-                <xsl:call-template name="indent"/>
-                <xsl:call-template name="indent"/>
-                <xsl:call-template name="indent"/>
-                <xsl:text>return false;</xsl:text>
-                <xsl:call-template name="linebreak"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:for-each>
@@ -320,19 +337,36 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
     <xsl:for-each select="//fields/field">
         <xsl:call-template name="indent"/>
         <xsl:call-template name="indent"/>
-        <xsl:text>result = prime * result + </xsl:text>
+        <xsl:text>result = prime * result</xsl:text>
+        <xsl:variable name="fieldName" select="recutil:getFieldName(position(),@name,0)" />
         <xsl:choose>
             <xsl:when test="substring(@type, string-length(@type)-1)='[]'">
+        		<xsl:text> + </xsl:text>
                 <xsl:text>Arrays.hashCode( </xsl:text>
-                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+                <xsl:value-of select="$fieldName"/>
                 <xsl:text> )</xsl:text>
             </xsl:when>
-            <xsl:when test="@type='Grfhic'">
-                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
-                <xsl:text>.hashCode()</xsl:text>
+            <xsl:when test="@type='boolean'">
+        		<xsl:text> + </xsl:text>
+                <xsl:text>( </xsl:text>
+                <xsl:value-of select="$fieldName"/>
+                <xsl:text>? 1231 : 1237 )</xsl:text>
+            </xsl:when>
+            <xsl:when test="@type='byte' or @type='double' or @type='int' or @type='long' or @type='short'">
+        		<xsl:text> + </xsl:text>
+                <xsl:value-of select="$fieldName"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="recutil:getFieldName(position(),@name,0)"/>
+				<xsl:call-template name="linebreak" />
+				<xsl:call-template name="indent" />
+				<xsl:call-template name="indent" />
+				<xsl:call-template name="indent" />
+				<xsl:call-template name="indent" />
+				<xsl:text>+ ((</xsl:text>
+				<xsl:value-of select="$fieldName" />
+				<xsl:text> == null) ? 0 : </xsl:text>
+				<xsl:value-of select="$fieldName" />
+				<xsl:text>.hashCode())</xsl:text>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:text>;</xsl:text>
