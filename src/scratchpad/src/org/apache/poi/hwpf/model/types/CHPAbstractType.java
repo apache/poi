@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwpf.model.types;
 
+
+import java.util.Arrays;
+
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.Hyphenation;
 import org.apache.poi.hwpf.usermodel.BorderCode;
@@ -27,8 +30,12 @@ import org.apache.poi.util.Internal;
 
 /**
  * Character Properties.
+ * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
+ *       remove the record in src/types/definitions.
+ * <p>
+ * This class is internal. It content or properties may change without notice 
+ * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author S. Ryan Ackley
  */
@@ -37,30 +44,39 @@ public abstract class CHPAbstractType
 {
 
     protected int field_1_grpfChp;
-    /**/private static BitField fBold = new BitField(0x00000001);
-    /**/private static BitField fItalic = new BitField(0x00000002);
-    /**/private static BitField fRMarkDel = new BitField(0x00000004);
-    /**/private static BitField fOutline = new BitField(0x00000008);
-    /**/private static BitField fFldVanish = new BitField(0x00000010);
-    /**/private static BitField fSmallCaps = new BitField(0x00000020);
-    /**/private static BitField fCaps = new BitField(0x00000040);
-    /**/private static BitField fVanish = new BitField(0x00000080);
-    /**/private static BitField fRMark = new BitField(0x00000100);
-    /**/private static BitField fSpec = new BitField(0x00000200);
-    /**/private static BitField fStrike = new BitField(0x00000400);
-    /**/private static BitField fObj = new BitField(0x00000800);
-    /**/private static BitField fShadow = new BitField(0x00001000);
-    /**/private static BitField fLowerCase = new BitField(0x00002000);
-    /**/private static BitField fData = new BitField(0x00004000);
-    /**/private static BitField fOle2 = new BitField(0x00008000);
-    /**/private static BitField fEmboss = new BitField(0x00010000);
-    /**/private static BitField fImprint = new BitField(0x00020000);
-    /**/private static BitField fDStrike = new BitField(0x00040000);
-    /**/private static BitField fUsePgsuSettings = new BitField(0x00080000);
-    /**/private static BitField fBoldBi = new BitField(0x00100000);
-    /**/private static BitField fComplexScripts = new BitField(0x00200000);
-    /**/private static BitField fItalicBi = new BitField(0x00400000);
-    /**/private static BitField fBiDi = new BitField(0x00800000);
+    /**/private static final BitField fBold = new BitField(0x00000001);
+    /**/private static final BitField fItalic = new BitField(0x00000002);
+    /**/private static final BitField fRMarkDel = new BitField(0x00000004);
+    /**/private static final BitField fOutline = new BitField(0x00000008);
+    /**/private static final BitField fFldVanish = new BitField(0x00000010);
+    /**/private static final BitField fSmallCaps = new BitField(0x00000020);
+    /**/private static final BitField fCaps = new BitField(0x00000040);
+    /**/private static final BitField fVanish = new BitField(0x00000080);
+    /**/private static final BitField fRMark = new BitField(0x00000100);
+    /**/private static final BitField fSpec = new BitField(0x00000200);
+    /**/private static final BitField fStrike = new BitField(0x00000400);
+    /**/private static final BitField fObj = new BitField(0x00000800);
+    /**/private static final BitField fShadow = new BitField(0x00001000);
+    /**/private static final BitField fLowerCase = new BitField(0x00002000);
+    /**/private static final BitField fData = new BitField(0x00004000);
+    /**/private static final BitField fOle2 = new BitField(0x00008000);
+    /**/private static final BitField fEmboss = new BitField(0x00010000);
+    /**/private static final BitField fImprint = new BitField(0x00020000);
+    /**/private static final BitField fDStrike = new BitField(0x00040000);
+    /**/private static final BitField fUsePgsuSettings = new BitField(0x00080000);
+    /**/private static final BitField fBoldBi = new BitField(0x00100000);
+    /**/private static final BitField fComplexScripts = new BitField(0x00100000);
+    /**/private static final BitField fItalicBi = new BitField(0x00200000);
+    /**/private static final BitField fBiDi = new BitField(0x00400000);
+    /**/private static final BitField fIcoBi = new BitField(0x00800000);
+    /**/private static final BitField fNonGlyph = new BitField(0x01000000);
+    /**/private static final BitField fBoldOther = new BitField(0x02000000);
+    /**/private static final BitField fItalicOther = new BitField(0x04000000);
+    /**/private static final BitField fNoProof = new BitField(0x08000000);
+    /**/private static final BitField fWebHidden = new BitField(0x10000000);
+    /**/private static final BitField fFitText = new BitField(0x20000000);
+    /**/private static final BitField fCalc = new BitField(0x40000000);
+    /**/private static final BitField fFmtLineProp = new BitField(0x80000000);
     protected int field_2_hps;
     protected int field_3_ftcAscii;
     protected int field_4_ftcFE;
@@ -124,20 +140,20 @@ public abstract class CHPAbstractType
     protected boolean field_27_fDblBdr;
     protected boolean field_28_fBorderWS;
     protected short field_29_ufel;
-    /**/private static BitField itypFELayout = new BitField(0x00ff);
-    /**/private static BitField fTNY = new BitField(0x0100);
-    /**/private static BitField fWarichu = new BitField(0x0200);
-    /**/private static BitField fKumimoji = new BitField(0x0400);
-    /**/private static BitField fRuby = new BitField(0x0800);
-    /**/private static BitField fLSFitText = new BitField(0x1000);
-    /**/private static BitField spare = new BitField(0xe000);
+    /**/private static final BitField itypFELayout = new BitField(0x00ff);
+    /**/private static final BitField fTNY = new BitField(0x0100);
+    /**/private static final BitField fWarichu = new BitField(0x0200);
+    /**/private static final BitField fKumimoji = new BitField(0x0400);
+    /**/private static final BitField fRuby = new BitField(0x0800);
+    /**/private static final BitField fLSFitText = new BitField(0x1000);
+    /**/private static final BitField spare = new BitField(0xe000);
     protected byte field_30_copt;
-    /**/private static BitField iWarichuBracket = new BitField(0x07);
-    /**/private static BitField fWarichuNoOpenBracket = new BitField(0x08);
-    /**/private static BitField fTNYCompress = new BitField(0x10);
-    /**/private static BitField fTNYFetchTxm = new BitField(0x20);
-    /**/private static BitField fCellFitText = new BitField(0x40);
-    /**/private static BitField unused = new BitField(0x80);
+    /**/private static final BitField iWarichuBracket = new BitField(0x07);
+    /**/private static final BitField fWarichuNoOpenBracket = new BitField(0x08);
+    /**/private static final BitField fTNYCompress = new BitField(0x10);
+    /**/private static final BitField fTNYFetchTxm = new BitField(0x20);
+    /**/private static final BitField fCellFitText = new BitField(0x40);
+    /**/private static final BitField unused = new BitField(0x80);
     protected int field_31_hpsAsci;
     protected int field_32_hpsFE;
     protected int field_33_hpsBi;
@@ -156,11 +172,11 @@ public abstract class CHPAbstractType
     protected int field_46_idslReasonDel;
     protected int field_47_cpg;
     protected short field_48_Highlight;
-    /**/private static BitField icoHighlight = new BitField(0x001f);
-    /**/private static BitField fHighlight = new BitField(0x0020);
+    /**/private static final BitField icoHighlight = new BitField(0x001f);
+    /**/private static final BitField fHighlight = new BitField(0x0020);
     protected short field_49_CharsetFlags;
-    /**/private static BitField fChsDiff = new BitField(0x0001);
-    /**/private static BitField fMacChs = new BitField(0x0020);
+    /**/private static final BitField fChsDiff = new BitField(0x0001);
+    /**/private static final BitField fMacChs = new BitField(0x0020);
     protected short field_50_chse;
     protected boolean field_51_fPropRMark;
     protected int field_52_ibstPropRMark;
@@ -202,10 +218,295 @@ public abstract class CHPAbstractType
         this.field_53_dttmPropRMark = new DateAndTime();
         this.field_58_dttmConflict = new DateAndTime();
         this.field_61_dttmDispFldRMark = new DateAndTime();
-        this.field_62_xstDispFldRMark = new byte[0];
+        this.field_62_xstDispFldRMark = new byte[32];
         this.field_68_wCharScale = 100;
     }
 
+
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        CHPAbstractType other = (CHPAbstractType) obj;
+        if ( field_1_grpfChp != other.field_1_grpfChp )
+            return false;
+        if ( field_2_hps != other.field_2_hps )
+            return false;
+        if ( field_3_ftcAscii != other.field_3_ftcAscii )
+            return false;
+        if ( field_4_ftcFE != other.field_4_ftcFE )
+            return false;
+        if ( field_5_ftcOther != other.field_5_ftcOther )
+            return false;
+        if ( field_6_ftcBi != other.field_6_ftcBi )
+            return false;
+        if ( field_7_dxaSpace != other.field_7_dxaSpace )
+            return false;
+        if ( field_8_cv == null )
+        {
+            if ( other.field_8_cv != null )
+                return false;
+        }
+        else if ( !field_8_cv.equals( other.field_8_cv ) )
+            return false;
+        if ( field_9_ico != other.field_9_ico )
+            return false;
+        if ( field_10_pctCharWidth != other.field_10_pctCharWidth )
+            return false;
+        if ( field_11_lidDefault != other.field_11_lidDefault )
+            return false;
+        if ( field_12_lidFE != other.field_12_lidFE )
+            return false;
+        if ( field_13_kcd != other.field_13_kcd )
+            return false;
+        if ( field_14_fUndetermine != other.field_14_fUndetermine )
+            return false;
+        if ( field_15_iss != other.field_15_iss )
+            return false;
+        if ( field_16_fSpecSymbol != other.field_16_fSpecSymbol )
+            return false;
+        if ( field_17_idct != other.field_17_idct )
+            return false;
+        if ( field_18_idctHint != other.field_18_idctHint )
+            return false;
+        if ( field_19_kul != other.field_19_kul )
+            return false;
+        if ( field_20_hresi == null )
+        {
+            if ( other.field_20_hresi != null )
+                return false;
+        }
+        else if ( !field_20_hresi.equals( other.field_20_hresi ) )
+            return false;
+        if ( field_21_hpsKern != other.field_21_hpsKern )
+            return false;
+        if ( field_22_hpsPos != other.field_22_hpsPos )
+            return false;
+        if ( field_23_shd == null )
+        {
+            if ( other.field_23_shd != null )
+                return false;
+        }
+        else if ( !field_23_shd.equals( other.field_23_shd ) )
+            return false;
+        if ( field_24_brc == null )
+        {
+            if ( other.field_24_brc != null )
+                return false;
+        }
+        else if ( !field_24_brc.equals( other.field_24_brc ) )
+            return false;
+        if ( field_25_ibstRMark != other.field_25_ibstRMark )
+            return false;
+        if ( field_26_sfxtText != other.field_26_sfxtText )
+            return false;
+        if ( field_27_fDblBdr != other.field_27_fDblBdr )
+            return false;
+        if ( field_28_fBorderWS != other.field_28_fBorderWS )
+            return false;
+        if ( field_29_ufel != other.field_29_ufel )
+            return false;
+        if ( field_30_copt != other.field_30_copt )
+            return false;
+        if ( field_31_hpsAsci != other.field_31_hpsAsci )
+            return false;
+        if ( field_32_hpsFE != other.field_32_hpsFE )
+            return false;
+        if ( field_33_hpsBi != other.field_33_hpsBi )
+            return false;
+        if ( field_34_ftcSym != other.field_34_ftcSym )
+            return false;
+        if ( field_35_xchSym != other.field_35_xchSym )
+            return false;
+        if ( field_36_fcPic != other.field_36_fcPic )
+            return false;
+        if ( field_37_fcObj != other.field_37_fcObj )
+            return false;
+        if ( field_38_lTagObj != other.field_38_lTagObj )
+            return false;
+        if ( field_39_fcData != other.field_39_fcData )
+            return false;
+        if ( field_40_hresiOld == null )
+        {
+            if ( other.field_40_hresiOld != null )
+                return false;
+        }
+        else if ( !field_40_hresiOld.equals( other.field_40_hresiOld ) )
+            return false;
+        if ( field_41_ibstRMarkDel != other.field_41_ibstRMarkDel )
+            return false;
+        if ( field_42_dttmRMark == null )
+        {
+            if ( other.field_42_dttmRMark != null )
+                return false;
+        }
+        else if ( !field_42_dttmRMark.equals( other.field_42_dttmRMark ) )
+            return false;
+        if ( field_43_dttmRMarkDel == null )
+        {
+            if ( other.field_43_dttmRMarkDel != null )
+                return false;
+        }
+        else if ( !field_43_dttmRMarkDel.equals( other.field_43_dttmRMarkDel ) )
+            return false;
+        if ( field_44_istd != other.field_44_istd )
+            return false;
+        if ( field_45_idslRMReason != other.field_45_idslRMReason )
+            return false;
+        if ( field_46_idslReasonDel != other.field_46_idslReasonDel )
+            return false;
+        if ( field_47_cpg != other.field_47_cpg )
+            return false;
+        if ( field_48_Highlight != other.field_48_Highlight )
+            return false;
+        if ( field_49_CharsetFlags != other.field_49_CharsetFlags )
+            return false;
+        if ( field_50_chse != other.field_50_chse )
+            return false;
+        if ( field_51_fPropRMark != other.field_51_fPropRMark )
+            return false;
+        if ( field_52_ibstPropRMark != other.field_52_ibstPropRMark )
+            return false;
+        if ( field_53_dttmPropRMark == null )
+        {
+            if ( other.field_53_dttmPropRMark != null )
+                return false;
+        }
+        else if ( !field_53_dttmPropRMark.equals( other.field_53_dttmPropRMark ) )
+            return false;
+        if ( field_54_fConflictOrig != other.field_54_fConflictOrig )
+            return false;
+        if ( field_55_fConflictOtherDel != other.field_55_fConflictOtherDel )
+            return false;
+        if ( field_56_wConflict != other.field_56_wConflict )
+            return false;
+        if ( field_57_IbstConflict != other.field_57_IbstConflict )
+            return false;
+        if ( field_58_dttmConflict == null )
+        {
+            if ( other.field_58_dttmConflict != null )
+                return false;
+        }
+        else if ( !field_58_dttmConflict.equals( other.field_58_dttmConflict ) )
+            return false;
+        if ( field_59_fDispFldRMark != other.field_59_fDispFldRMark )
+            return false;
+        if ( field_60_ibstDispFldRMark != other.field_60_ibstDispFldRMark )
+            return false;
+        if ( field_61_dttmDispFldRMark == null )
+        {
+            if ( other.field_61_dttmDispFldRMark != null )
+                return false;
+        }
+        else if ( !field_61_dttmDispFldRMark.equals( other.field_61_dttmDispFldRMark ) )
+            return false;
+        if ( !Arrays.equals( field_62_xstDispFldRMark, other.field_62_xstDispFldRMark ) )
+            return false;
+        if ( field_63_fcObjp != other.field_63_fcObjp )
+            return false;
+        if ( field_64_lbrCRJ != other.field_64_lbrCRJ )
+            return false;
+        if ( field_65_fSpecVanish != other.field_65_fSpecVanish )
+            return false;
+        if ( field_66_fHasOldProps != other.field_66_fHasOldProps )
+            return false;
+        if ( field_67_fSdtVanish != other.field_67_fSdtVanish )
+            return false;
+        if ( field_68_wCharScale != other.field_68_wCharScale )
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + field_1_grpfChp;
+        result = prime * result + field_2_hps;
+        result = prime * result + field_3_ftcAscii;
+        result = prime * result + field_4_ftcFE;
+        result = prime * result + field_5_ftcOther;
+        result = prime * result + field_6_ftcBi;
+        result = prime * result + field_7_dxaSpace;
+        result = prime * result
+                + ((field_8_cv == null) ? 0 : field_8_cv.hashCode());
+        result = prime * result + field_9_ico;
+        result = prime * result + field_10_pctCharWidth;
+        result = prime * result + field_11_lidDefault;
+        result = prime * result + field_12_lidFE;
+        result = prime * result + field_13_kcd;
+        result = prime * result + ( field_14_fUndetermine? 1231 : 1237 );
+        result = prime * result + field_15_iss;
+        result = prime * result + ( field_16_fSpecSymbol? 1231 : 1237 );
+        result = prime * result + field_17_idct;
+        result = prime * result + field_18_idctHint;
+        result = prime * result + field_19_kul;
+        result = prime * result
+                + ((field_20_hresi == null) ? 0 : field_20_hresi.hashCode());
+        result = prime * result + field_21_hpsKern;
+        result = prime * result + field_22_hpsPos;
+        result = prime * result
+                + ((field_23_shd == null) ? 0 : field_23_shd.hashCode());
+        result = prime * result
+                + ((field_24_brc == null) ? 0 : field_24_brc.hashCode());
+        result = prime * result + field_25_ibstRMark;
+        result = prime * result + field_26_sfxtText;
+        result = prime * result + ( field_27_fDblBdr? 1231 : 1237 );
+        result = prime * result + ( field_28_fBorderWS? 1231 : 1237 );
+        result = prime * result + field_29_ufel;
+        result = prime * result + field_30_copt;
+        result = prime * result + field_31_hpsAsci;
+        result = prime * result + field_32_hpsFE;
+        result = prime * result + field_33_hpsBi;
+        result = prime * result + field_34_ftcSym;
+        result = prime * result + field_35_xchSym;
+        result = prime * result + field_36_fcPic;
+        result = prime * result + field_37_fcObj;
+        result = prime * result + field_38_lTagObj;
+        result = prime * result + field_39_fcData;
+        result = prime * result
+                + ((field_40_hresiOld == null) ? 0 : field_40_hresiOld.hashCode());
+        result = prime * result + field_41_ibstRMarkDel;
+        result = prime * result
+                + ((field_42_dttmRMark == null) ? 0 : field_42_dttmRMark.hashCode());
+        result = prime * result
+                + ((field_43_dttmRMarkDel == null) ? 0 : field_43_dttmRMarkDel.hashCode());
+        result = prime * result + field_44_istd;
+        result = prime * result + field_45_idslRMReason;
+        result = prime * result + field_46_idslReasonDel;
+        result = prime * result + field_47_cpg;
+        result = prime * result + field_48_Highlight;
+        result = prime * result + field_49_CharsetFlags;
+        result = prime * result + field_50_chse;
+        result = prime * result + ( field_51_fPropRMark? 1231 : 1237 );
+        result = prime * result + field_52_ibstPropRMark;
+        result = prime * result
+                + ((field_53_dttmPropRMark == null) ? 0 : field_53_dttmPropRMark.hashCode());
+        result = prime * result + ( field_54_fConflictOrig? 1231 : 1237 );
+        result = prime * result + ( field_55_fConflictOtherDel? 1231 : 1237 );
+        result = prime * result + field_56_wConflict;
+        result = prime * result + field_57_IbstConflict;
+        result = prime * result
+                + ((field_58_dttmConflict == null) ? 0 : field_58_dttmConflict.hashCode());
+        result = prime * result + ( field_59_fDispFldRMark? 1231 : 1237 );
+        result = prime * result + field_60_ibstDispFldRMark;
+        result = prime * result
+                + ((field_61_dttmDispFldRMark == null) ? 0 : field_61_dttmDispFldRMark.hashCode());
+        result = prime * result + Arrays.hashCode( field_62_xstDispFldRMark );
+        result = prime * result + field_63_fcObjp;
+        result = prime * result + field_64_lbrCRJ;
+        result = prime * result + ( field_65_fSpecVanish? 1231 : 1237 );
+        result = prime * result + ( field_66_fHasOldProps? 1231 : 1237 );
+        result = prime * result + ( field_67_fSdtVanish? 1231 : 1237 );
+        result = prime * result + field_68_wCharScale;
+        return result;
+    }
 
     public String toString()
     {
@@ -237,6 +538,15 @@ public abstract class CHPAbstractType
         builder.append("         .fComplexScripts          = ").append(isFComplexScripts()).append('\n');
         builder.append("         .fItalicBi                = ").append(isFItalicBi()).append('\n');
         builder.append("         .fBiDi                    = ").append(isFBiDi()).append('\n');
+        builder.append("         .fIcoBi                   = ").append(isFIcoBi()).append('\n');
+        builder.append("         .fNonGlyph                = ").append(isFNonGlyph()).append('\n');
+        builder.append("         .fBoldOther               = ").append(isFBoldOther()).append('\n');
+        builder.append("         .fItalicOther             = ").append(isFItalicOther()).append('\n');
+        builder.append("         .fNoProof                 = ").append(isFNoProof()).append('\n');
+        builder.append("         .fWebHidden               = ").append(isFWebHidden()).append('\n');
+        builder.append("         .fFitText                 = ").append(isFFitText()).append('\n');
+        builder.append("         .fCalc                    = ").append(isFCalc()).append('\n');
+        builder.append("         .fFmtLineProp             = ").append(isFFmtLineProp()).append('\n');
         builder.append("    .hps                  = ");
         builder.append(" (").append(getHps()).append(" )\n");
         builder.append("    .ftcAscii             = ");
@@ -1727,7 +2037,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFBold( boolean value )
     {
-        field_1_grpfChp = (int)fBold.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fBold.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1747,7 +2057,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFItalic( boolean value )
     {
-        field_1_grpfChp = (int)fItalic.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fItalic.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1767,7 +2077,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFRMarkDel( boolean value )
     {
-        field_1_grpfChp = (int)fRMarkDel.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fRMarkDel.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1787,7 +2097,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFOutline( boolean value )
     {
-        field_1_grpfChp = (int)fOutline.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fOutline.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1807,7 +2117,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFFldVanish( boolean value )
     {
-        field_1_grpfChp = (int)fFldVanish.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fFldVanish.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1827,7 +2137,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFSmallCaps( boolean value )
     {
-        field_1_grpfChp = (int)fSmallCaps.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fSmallCaps.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1847,7 +2157,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFCaps( boolean value )
     {
-        field_1_grpfChp = (int)fCaps.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fCaps.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1867,7 +2177,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFVanish( boolean value )
     {
-        field_1_grpfChp = (int)fVanish.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fVanish.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1887,7 +2197,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFRMark( boolean value )
     {
-        field_1_grpfChp = (int)fRMark.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fRMark.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1907,7 +2217,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFSpec( boolean value )
     {
-        field_1_grpfChp = (int)fSpec.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fSpec.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1927,7 +2237,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFStrike( boolean value )
     {
-        field_1_grpfChp = (int)fStrike.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fStrike.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1947,7 +2257,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFObj( boolean value )
     {
-        field_1_grpfChp = (int)fObj.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fObj.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1967,7 +2277,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFShadow( boolean value )
     {
-        field_1_grpfChp = (int)fShadow.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fShadow.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -1987,7 +2297,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFLowerCase( boolean value )
     {
-        field_1_grpfChp = (int)fLowerCase.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fLowerCase.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2007,7 +2317,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFData( boolean value )
     {
-        field_1_grpfChp = (int)fData.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fData.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2027,7 +2337,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFOle2( boolean value )
     {
-        field_1_grpfChp = (int)fOle2.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fOle2.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2047,7 +2357,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFEmboss( boolean value )
     {
-        field_1_grpfChp = (int)fEmboss.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fEmboss.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2067,7 +2377,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFImprint( boolean value )
     {
-        field_1_grpfChp = (int)fImprint.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fImprint.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2087,7 +2397,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFDStrike( boolean value )
     {
-        field_1_grpfChp = (int)fDStrike.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fDStrike.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2107,7 +2417,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFUsePgsuSettings( boolean value )
     {
-        field_1_grpfChp = (int)fUsePgsuSettings.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fUsePgsuSettings.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2127,7 +2437,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFBoldBi( boolean value )
     {
-        field_1_grpfChp = (int)fBoldBi.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fBoldBi.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2147,7 +2457,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFComplexScripts( boolean value )
     {
-        field_1_grpfChp = (int)fComplexScripts.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fComplexScripts.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2167,7 +2477,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFItalicBi( boolean value )
     {
-        field_1_grpfChp = (int)fItalicBi.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fItalicBi.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2187,7 +2497,7 @@ public abstract class CHPAbstractType
     @Internal
     public void setFBiDi( boolean value )
     {
-        field_1_grpfChp = (int)fBiDi.setBoolean(field_1_grpfChp, value);
+        field_1_grpfChp = fBiDi.setBoolean(field_1_grpfChp, value);
     }
 
     /**
@@ -2198,6 +2508,186 @@ public abstract class CHPAbstractType
     public boolean isFBiDi()
     {
         return fBiDi.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fIcoBi field value.
+     * Used internally by Word
+     */
+    @Internal
+    public void setFIcoBi( boolean value )
+    {
+        field_1_grpfChp = fIcoBi.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Used internally by Word
+     * @return  the fIcoBi field value.
+     */
+    @Internal
+    public boolean isFIcoBi()
+    {
+        return fIcoBi.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fNonGlyph field value.
+     * Used internally by Word
+     */
+    @Internal
+    public void setFNonGlyph( boolean value )
+    {
+        field_1_grpfChp = fNonGlyph.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Used internally by Word
+     * @return  the fNonGlyph field value.
+     */
+    @Internal
+    public boolean isFNonGlyph()
+    {
+        return fNonGlyph.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fBoldOther field value.
+     * Used internally by Word 97 and earlier versions
+     */
+    @Internal
+    public void setFBoldOther( boolean value )
+    {
+        field_1_grpfChp = fBoldOther.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Used internally by Word 97 and earlier versions
+     * @return  the fBoldOther field value.
+     */
+    @Internal
+    public boolean isFBoldOther()
+    {
+        return fBoldOther.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fItalicOther field value.
+     * Used internally by Word 97 and earlier versions
+     */
+    @Internal
+    public void setFItalicOther( boolean value )
+    {
+        field_1_grpfChp = fItalicOther.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Used internally by Word 97 and earlier versions
+     * @return  the fItalicOther field value.
+     */
+    @Internal
+    public boolean isFItalicOther()
+    {
+        return fItalicOther.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fNoProof field value.
+     * When set to 1, do not check spelling or grammar
+     */
+    @Internal
+    public void setFNoProof( boolean value )
+    {
+        field_1_grpfChp = fNoProof.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * When set to 1, do not check spelling or grammar
+     * @return  the fNoProof field value.
+     */
+    @Internal
+    public boolean isFNoProof()
+    {
+        return fNoProof.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fWebHidden field value.
+     * Text should be hidden in Web View when set to 1
+     */
+    @Internal
+    public void setFWebHidden( boolean value )
+    {
+        field_1_grpfChp = fWebHidden.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Text should be hidden in Web View when set to 1
+     * @return  the fWebHidden field value.
+     */
+    @Internal
+    public boolean isFWebHidden()
+    {
+        return fWebHidden.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fFitText field value.
+     * Fit text when set to 1
+     */
+    @Internal
+    public void setFFitText( boolean value )
+    {
+        field_1_grpfChp = fFitText.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Fit text when set to 1
+     * @return  the fFitText field value.
+     */
+    @Internal
+    public boolean isFFitText()
+    {
+        return fFitText.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fCalc field value.
+     * Used internally by Word
+     */
+    @Internal
+    public void setFCalc( boolean value )
+    {
+        field_1_grpfChp = fCalc.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Used internally by Word
+     * @return  the fCalc field value.
+     */
+    @Internal
+    public boolean isFCalc()
+    {
+        return fCalc.isSet(field_1_grpfChp);
+    }
+
+    /**
+     * Sets the fFmtLineProp field value.
+     * Used internally by Word
+     */
+    @Internal
+    public void setFFmtLineProp( boolean value )
+    {
+        field_1_grpfChp = fFmtLineProp.setBoolean(field_1_grpfChp, value);
+    }
+
+    /**
+     * Used internally by Word
+     * @return  the fFmtLineProp field value.
+     */
+    @Internal
+    public boolean isFFmtLineProp()
+    {
+        return fFmtLineProp.isSet(field_1_grpfChp);
     }
 
     /**

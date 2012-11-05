@@ -57,19 +57,23 @@
 
             <!-- Microsoft Office Word 97-2007 Binary File Format (.doc) Specification -->
             <!-- Page 103 of 210 -->
-            <bit number="21" mask="0x00200000" name="fComplexScripts"
+            <bit number="21" mask="0x00100000" name="fComplexScripts"
                 description="Complex Scripts text that requires special processing to display and process"/>
-            <bit number="22" mask="0x00400000" name="fItalicBi" description="Complex Scripts text is italics"/>
-            <bit number="23" mask="0x00800000" name="fBiDi"
+            <bit number="22" mask="0x00200000" name="fItalicBi" description="Complex Scripts text is italics"/>
+            <bit number="23" mask="0x00400000" name="fBiDi"
                 description="Complex Scripts right-to-left text that requires special processing to display and process (character reordering; contextual shaping; display of combining characters and diacritics; specialized justification rules; cursor positioning)"/>
-            <!-- fIcoBi -->
-            <!-- fNonGlyph -->
-            <!-- fBoldOther -->
-            <!-- fItalicOther -->
-            <!-- fNoProof -->
-            <!-- fWebHidden -->
-            <!-- fFitText -->
-            <!-- fCalc -->
+            
+            <bit number="24" mask="0x00800000" name="fIcoBi" description="Used internally by Word"/>
+            <bit number="25" mask="0x01000000" name="fNonGlyph" description="Used internally by Word"/>
+            <bit number="25" mask="0x02000000" name="fBoldOther" description="Used internally by Word 97 and earlier versions"/>
+            <bit number="26" mask="0x04000000" name="fItalicOther" description="Used internally by Word 97 and earlier versions"/>
+
+            <bit number="27" mask="0x08000000" name="fNoProof" description="When set to 1, do not check spelling or grammar"/>
+            <bit number="28" mask="0x10000000" name="fWebHidden" description="Text should be hidden in Web View when set to 1"/>
+            <bit number="29" mask="0x20000000" name="fFitText" description="Fit text when set to 1"/>
+
+            <bit number="30" mask="0x40000000" name="fCalc" description="Used internally by Word"/>
+            <bit number="31" mask="0x80000000" name="fFmtLineProp" description="Used internally by Word"/>
         </field>
         <field type="int" size="2" name="hps" default="20" description="Font size in half points"/>
         <field type="int" size="2" name="ftcAscii" description="Font for ASCII text"/>
