@@ -370,19 +370,27 @@ public final class CharacterProperties
         setCv( new Colorref( colour24 & 0xFFFFFF ) );
     }
 
-    public Object clone() throws CloneNotSupportedException
+    public CharacterProperties clone()
     {
-        CharacterProperties cp = (CharacterProperties) super.clone();
+        try
+        {
+            CharacterProperties cp = (CharacterProperties) super.clone();
 
-        cp.setCv( getCv().clone() );
-        cp.setDttmRMark( (DateAndTime) getDttmRMark().clone() );
-        cp.setDttmRMarkDel( (DateAndTime) getDttmRMarkDel().clone() );
-        cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
-        cp.setDttmDispFldRMark( (DateAndTime) getDttmDispFldRMark().clone() );
-        cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
-        cp.setShd( (ShadingDescriptor) getShd().clone() );
-        cp.setBrc( (BorderCode) getBrc().clone() );
+            cp.setCv( getCv().clone() );
+            cp.setDttmRMark( (DateAndTime) getDttmRMark().clone() );
+            cp.setDttmRMarkDel( (DateAndTime) getDttmRMarkDel().clone() );
+            cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
+            cp.setDttmDispFldRMark( (DateAndTime) getDttmDispFldRMark().clone() );
+            cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
+            cp.setShd( (ShadingDescriptor) getShd().clone() );
+            cp.setBrc( (BorderCode) getBrc().clone() );
 
-        return cp;
+            return cp;
+        }
+        catch ( CloneNotSupportedException exc )
+        {
+            throw new UnsupportedOperationException(
+                    "Impossible CloneNotSupportedException occured", exc );
+        }
     }
 }
