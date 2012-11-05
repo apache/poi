@@ -71,14 +71,30 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         Integer style = getIstd( grpprl, offset );
         if ( style != null )
         {
-            applySprms( parStyle, styleSheet.getCHPX( style ), 0, false,
-                    newProperties );
+            try
+            {
+                applySprms( parStyle, styleSheet.getCHPX( style ), 0, false,
+                        newProperties );
+            }
+            catch ( Exception exc )
+            {
+                logger.log( POILogger.ERROR, "Unable to apply all style ",
+                        style, " CHP SPRMs to CHP: ", exc, exc );
+            }
         }
 
         CharacterProperties styleProperties = newProperties;
         newProperties = styleProperties.clone();
 
-        applySprms( styleProperties, grpprl, offset, true, newProperties );
+        try
+        {
+            applySprms( styleProperties, grpprl, offset, true, newProperties );
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.ERROR,
+                    "Unable to process all direct CHP SPRMs: ", exc, exc );
+        }
         return newProperties;
     }
 
@@ -109,6 +125,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
     private static Integer getIstd( byte[] grpprl, int offset )
     {
         Integer style = null;
+        try
         {
             SprmIterator sprmIt = new SprmIterator( grpprl, offset );
             while ( sprmIt.hasNext() )
@@ -121,6 +138,11 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
                     style = Integer.valueOf( sprm.getOperand() );
                 }
             }
+        }
+        catch ( Exception exc )
+        {
+            logger.log( POILogger.ERROR,
+                    "Unable to extract istd from direct CHP SPRM: ", exc, exc );
         }
         return style;
     }
