@@ -36,6 +36,21 @@ public class TestWordToTextConverter extends TestCase
                 .contains( "Soak the rice in water for three to four hours" ) );
     }
 
+    public void testBug52311() throws Exception
+    {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile( "Bug52311.doc" );
+        String result = WordToTextConverter.getText( doc );
+
+        assertTrue( result.contains( "2.1\tHeader 2.1" ) );
+        assertTrue( result.contains( "2.2\tHeader 2.2" ) );
+        assertTrue( result.contains( "2.3\tHeader 2.3" ) );
+        assertTrue( result.contains( "2.3.1\tHeader 2.3.1" ) );
+        assertTrue( result.contains( "2.99\tHeader 2.99" ) );
+        assertTrue( result.contains( "2.99.1\tHeader 2.99.1" ) );
+        assertTrue( result.contains( "2.100\tHeader 2.100" ) );
+        assertTrue( result.contains( "2.101\tHeader 2.101" ) );
+    }
+
     public void testBug53380_3() throws Exception
     {
         HWPFDocument doc = HWPFTestDataSamples

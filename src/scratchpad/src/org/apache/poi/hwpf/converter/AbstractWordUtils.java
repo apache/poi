@@ -226,13 +226,15 @@ public class AbstractWordUtils
         return stringBuilder.toString();
     }
 
-    public static class NumberingState {
-        
+    public static class NumberingState
+    {
+
         private final Map<String, Integer> levels = new HashMap<String, Integer>();
-        
+
     }
-    
-    public static String getBulletText(NumberingState numberingState, HWPFList list, char level )
+
+    public static String getBulletText( NumberingState numberingState,
+            HWPFList list, char level )
     {
         StringBuffer bulletBuffer = new StringBuffer();
         char[] xst = list.getNumberText( level ).toCharArray();
@@ -240,25 +242,38 @@ public class AbstractWordUtils
         {
             if ( element < 9 )
             {
-                final String key = list.getLsid() + "#" + ( (int) element );
+                int lsid = list.getLsid();
+                final String key = lsid + "#" + ( (int) element );
                 int num;
-                if ( numberingState.levels.containsKey( key ) )
+
+                if ( !list.isStartAtOverriden( element )
+                        && numberingState.levels.containsKey( key ) )
                 {
                     num = numberingState.levels.get( key ).intValue();
+                    if ( level == element )
+                    {
+                        num++;
+                        numberingState.levels.put( key, Integer.valueOf( num ) );
+                    }
                 }
                 else
                 {
-                    num = list.getStartAt( level );
+                    num = list.getStartAt( element );
                     numberingState.levels.put( key, Integer.valueOf( num ) );
                 }
 
-                bulletBuffer.append( NumberFormatter.getNumber( num,
-                        list.getNumberFormat( level ) ) );
-
                 if ( level == element )
                 {
-                    numberingState.levels.put( key, Integer.valueOf( num + 1 ) );
+                    // cleaning states of nested levels to reset numbering
+                    for ( int i = element + 1; i < 9; i++ )
+                    {
+                        final String childKey = lsid + "#" + i;
+                        numberingState.levels.remove( childKey );
+                    }
                 }
+                
+                bulletBuffer.append( NumberFormatter.getNumber( num,
+                        list.getNumberFormat( level ) ) );
             }
             else
             {
@@ -266,7 +281,7 @@ public class AbstractWordUtils
             }
         }
 
-        byte follow = list.getTypeOfCharFollowingTheNumber(level);
+        byte follow = list.getTypeOfCharFollowingTheNumber( level );
         switch ( follow )
         {
         case 0:

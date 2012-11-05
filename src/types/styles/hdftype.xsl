@@ -381,27 +381,8 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
     <xsl:call-template name="linebreak"/>
 
     <xsl:call-template name="linebreak"/>
-    <xsl:call-template name="indent"/>
-    <xsl:text>public String toString()
-    {
-        StringBuilder builder = new StringBuilder();
-</xsl:text>
-    <xsl:call-template name="indent"/>
-    <xsl:call-template name="indent"/>
-    <xsl:text>builder.append("[</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>]\n");</xsl:text>
-    <xsl:call-template name="linebreak"/>
-    <xsl:apply-templates select="//field" mode="tostring"/>
-    <xsl:call-template name="linebreak"/>
-    <xsl:call-template name="indent"/>
-    <xsl:call-template name="indent"/>
-    <xsl:text>builder.append("[/</xsl:text>
-    <xsl:value-of select="@name"/>
-    <xsl:text>]\n");
-        return builder.toString();
-    }
-</xsl:text>
+    
+    <xsl:call-template name="toString" />
 
 <xsl:apply-templates select="//field" mode="getset"/>
 <xsl:apply-templates select="//field" mode="bits"/>
@@ -549,21 +530,72 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
     }
 </xsl:template>
 
-    <xsl:template match="field" mode="tostring">
-        <xsl:call-template name="indent"/>
-        <xsl:call-template name="indent"/>
-        <xsl:text>builder.append("    .</xsl:text>
-        <xsl:value-of select="recutil:getFieldName(@name,20)"/>
-        <xsl:text> = ");</xsl:text>
-        <xsl:call-template name="linebreak"/>
-        <xsl:call-template name="indent"/>
-        <xsl:call-template name="indent"/>
-        <xsl:text>builder.append(" (").append(get</xsl:text>
-        <xsl:value-of select="recutil:getFieldName1stCap(@name,0)"/>
-        <xsl:text>()).append(" )\n");</xsl:text>
-        <xsl:call-template name="linebreak"/>
-        <xsl:apply-templates select="bit" mode="bittostring"/>
-    </xsl:template>
+	<xsl:template name="toString">
+		<xsl:call-template name="indent" />
+		<xsl:text>public String toString()</xsl:text>
+		<xsl:call-template name="linebreak" />
+
+		<xsl:call-template name="indent" />
+		<xsl:text>{</xsl:text>
+		<xsl:call-template name="linebreak" />
+
+		<xsl:call-template name="indent" />
+		<xsl:call-template name="indent" />
+		<xsl:text>StringBuilder builder = new StringBuilder();</xsl:text>
+		<xsl:call-template name="linebreak" />
+		<xsl:call-template name="linebreak" />
+
+		<xsl:call-template name="indent" />
+		<xsl:call-template name="indent" />
+		<xsl:text>builder.append("[</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>]\n");</xsl:text>
+		<xsl:call-template name="linebreak" />
+
+		<xsl:apply-templates select="//field" mode="tostring" />
+
+		<xsl:call-template name="linebreak" />
+		<xsl:call-template name="indent" />
+		<xsl:call-template name="indent" />
+		<xsl:text>builder.append("[/</xsl:text>
+		<xsl:value-of select="@name" />
+		<xsl:text>]");
+        return builder.toString();
+    }
+</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="field" mode="tostring">
+		<xsl:variable name="fieldName"
+			select="recutil:getFieldName(position(),@name,0)" />
+
+		<xsl:call-template name="indent" />
+		<xsl:call-template name="indent" />
+		<xsl:text>builder.append( "    .</xsl:text>
+		<xsl:value-of select="recutil:getFieldName(@name,20)" />
+		<xsl:text> = " );</xsl:text>
+		<xsl:call-template name="linebreak" />
+
+		<xsl:call-template name="indent" />
+		<xsl:call-template name="indent" />
+		<xsl:text>builder.append(" ( ").append( </xsl:text>
+		<xsl:choose>
+			<xsl:when
+				test="@type='boolean' or @type='byte' or @type='double' or @type='int' or @type='long' or @type='short'">
+				<xsl:value-of select="$fieldName" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="$fieldName" />
+				<xsl:text> == null ? "null" : </xsl:text>
+				<xsl:value-of select="$fieldName" />
+				<xsl:text>.toString().replaceAll( "\n", "\n    " )</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text> ).append( " )\n" );</xsl:text>
+		<xsl:call-template name="linebreak" />
+
+		<xsl:apply-templates select="bit" mode="bittostring" />
+	</xsl:template>
 
     <xsl:template match="bit" mode="bittostring">
         <xsl:call-template name="indent"/>
