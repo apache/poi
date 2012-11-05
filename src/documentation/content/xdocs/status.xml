@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">52311 - Conversion to html : Problem in titles number </action>
           <action dev="poi-developers" type="fix">53914 - TableRow#getTopBorder() return bottom's border</action>
           <action dev="poi-developers" type="fix">53282 - Avoid exception when parsing OPC relationships with non-breaking spaces</action>
           <action dev="poi-developers" type="fix">54016 - Avoid exception when parsing workbooks with DConRefRecord in row aggregate</action>

@@ -28,6 +28,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.hwpf.model.LFO;
 import org.apache.poi.hwpf.model.LFOData;
 import org.apache.poi.hwpf.model.ListData;
+import org.apache.poi.hwpf.model.ListFormatOverrideLevel;
 import org.apache.poi.hwpf.model.ListLevel;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
@@ -167,6 +168,11 @@ public final class HWPFList
 
     public int getStartAt( char level )
     {
+        if ( isStartAtOverriden( level ) )
+        {
+            return _lfoData.getRgLfoLvl()[level].getIStartAt();
+        }
+
         return getLVL( level ).getStartAt();
     }
 
@@ -181,6 +187,15 @@ public final class HWPFList
     public boolean isIgnoreLogicalLeftIdentation()
     {
         return _ignoreLogicalLeftIdentation;
+    }
+
+    public boolean isStartAtOverriden( char level )
+    {
+        ListFormatOverrideLevel lfolvl = _lfoData.getRgLfoLvl().length > level ? _lfoData
+                .getRgLfoLvl()[level] : null;
+
+        return lfolvl != null && lfolvl.getIStartAt() != 0
+                && !lfolvl.isFormatting();
     }
 
     public void setIgnoreLogicalLeftIdentation(
