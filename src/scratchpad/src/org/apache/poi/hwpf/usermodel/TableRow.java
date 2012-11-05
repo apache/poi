@@ -110,7 +110,7 @@ public final class TableRow extends Range
 
     public BorderCode getTopBorder()
     {
-        return _tprops.getBrcBottom();
+        return _tprops.getBrcTop();
     }
 
     public BorderCode getVerticalBorder()
