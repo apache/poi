@@ -103,6 +103,8 @@ public class HWPFTestDataSamples {
         final long start = System.currentTimeMillis();
         try
         {
+			logger.log(POILogger.DEBUG, "Downloading ", sampleFileUrl, " ...");
+
             InputStream is = new URL( sampleFileUrl ).openStream();
             try
             {
