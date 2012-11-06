@@ -352,9 +352,21 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
                 <xsl:value-of select="$fieldName"/>
                 <xsl:text>? 1231 : 1237 )</xsl:text>
             </xsl:when>
-            <xsl:when test="@type='byte' or @type='double' or @type='int' or @type='long' or @type='short'">
+            <xsl:when test="@type='byte' or @type='double' or @type='int' or @type='short'">
         		<xsl:text> + </xsl:text>
                 <xsl:value-of select="$fieldName"/>
+            </xsl:when>
+            <xsl:when test="@type='long'">
+				<xsl:call-template name="linebreak" />
+				<xsl:call-template name="indent" />
+				<xsl:call-template name="indent" />
+				<xsl:call-template name="indent" />
+				<xsl:call-template name="indent" />
+        		<xsl:text> + (int) ( </xsl:text>
+                <xsl:value-of select="$fieldName"/>
+        		<xsl:text> ^ ( </xsl:text>
+                <xsl:value-of select="$fieldName"/>
+        		<xsl:text> >>> 32 ) )</xsl:text>
             </xsl:when>
             <xsl:otherwise>
 				<xsl:call-template name="linebreak" />
@@ -440,27 +452,42 @@ public abstract class </xsl:text><xsl:call-template name="outputClassName"/><xsl
         <xsl:value-of select="@mask"/>
         <xsl:text>);</xsl:text>
         <xsl:call-template name="linebreak"/>
+        <xsl:apply-templates select="const"/>
     </xsl:template>
 
-    <xsl:template match="const">
-        <xsl:if test="@description">
-            <xsl:call-template name="indent"/>
-            <xsl:text>/** </xsl:text>
-            <xsl:value-of select="@description"/>
-            <xsl:text> */</xsl:text>
-            <xsl:call-template name="linebreak"/>
-        </xsl:if>
-        <xsl:call-template name="indent"/>
-        <xsl:text>/**/</xsl:text>
-        <xsl:text>protected final static </xsl:text>
-        <xsl:value-of select="@type"/>
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="recutil:getConstName(../@name,@name,0)"/>
-        <xsl:text> = </xsl:text>
-        <xsl:value-of select="@value"/>
-        <xsl:text>;</xsl:text>
-        <xsl:call-template name="linebreak"/>
-    </xsl:template>
+	<xsl:template match="const">
+		<xsl:if test="@description">
+			<xsl:call-template name="indent" />
+			<xsl:choose>
+				<xsl:when test="name(..) = 'bit'">
+					<xsl:text>/**   </xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>/** </xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:value-of select="@description" />
+			<xsl:text> */</xsl:text>
+			<xsl:call-template name="linebreak" />
+		</xsl:if>
+		<xsl:call-template name="indent" />
+		<xsl:choose>
+			<xsl:when test="name(..) = 'bit'">
+				<xsl:text>/*  */</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>/**/</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text>protected final static </xsl:text>
+		<xsl:value-of select="@type" />
+		<xsl:text> </xsl:text>
+		<xsl:value-of select="recutil:getConstName(../@name,@name,0)" />
+		<xsl:text> = </xsl:text>
+		<xsl:value-of select="@value" />
+		<xsl:text>;</xsl:text>
+		<xsl:call-template name="linebreak" />
+	</xsl:template>
 
     <xsl:template match="const" mode="listconsts">
         <xsl:call-template name="linebreak"/>

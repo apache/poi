@@ -167,6 +167,7 @@ public abstract class AbstractWordConverter
         }
         structures.add( structure );
     }
+
     private final Set<Bookmark> bookmarkStack = new LinkedHashSet<Bookmark>();
 
     private FontReplacer fontReplacer = new DefaultFontReplacer();
@@ -778,6 +779,12 @@ public abstract class AbstractWordConverter
             CharacterRun characterRun, OfficeDrawing officeDrawing,
             String path, Element block );
 
+    protected void processDropDownList( Element block,
+            CharacterRun characterRun, String[] values, int defaultIndex )
+    {
+        outputCharacters( block, characterRun, values[defaultIndex] );
+    }
+
     protected abstract void processEndnoteAutonumbered(
             HWPFDocument wordDocument, int noteIndex, Element block,
             Range endnoteTextRange );
@@ -833,6 +840,22 @@ public abstract class AbstractWordConverter
                 return;
             }
 
+            break;
+        }
+        case 83: // drop down
+        {
+            Range fieldContent = field.firstSubrange( parentRange );
+            CharacterRun cr = fieldContent.getCharacterRun( fieldContent
+                    .numCharacterRuns() - 1 );
+            String[] values = cr.getDropDownListValues();
+            Integer defIndex = cr.getDropDownListDefaultItemIndex();
+
+            if ( values != null )
+            {
+                processDropDownList( currentBlock, cr, values,
+                        defIndex == null ? -1 : defIndex.intValue() );
+                return;
+            }
             break;
         }
         case 88: // hyperlink
@@ -1010,12 +1033,6 @@ public abstract class AbstractWordConverter
             return false;
         }
     }
-    
-    protected void processSymbol( HWPFDocument doc, CharacterRun characterRun,
-            Element block )
-    {
-        
-    }
 
     @SuppressWarnings( "unused" )
     protected boolean processOle2( HWPFDocument wordDocument, Element block,
@@ -1107,6 +1124,12 @@ public abstract class AbstractWordConverter
             Section section )
     {
         processSection( wordDocument, section, 0 );
+    }
+
+    protected void processSymbol( HWPFDocument doc, CharacterRun characterRun,
+            Element block )
+    {
+
     }
 
     protected abstract void processTable( HWPFDocumentCore wordDocument,
