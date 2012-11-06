@@ -17,8 +17,11 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.CHPX;
+import org.apache.poi.hwpf.model.FFData;
 import org.apache.poi.hwpf.model.Ffn;
+import org.apache.poi.hwpf.model.NilPICFAndBinData;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
@@ -631,4 +634,42 @@ public final class CharacterRun
      String text = text();
      return "CharacterRun of " + text.length() + " characters - " + text; 
   }
+
+    public String[] getDropDownListValues()
+    {
+        if ( getDocument() instanceof HWPFDocument )
+        {
+            char c = _text.charAt( _start );
+            if ( c == 0x01 )
+            {
+                NilPICFAndBinData data = new NilPICFAndBinData(
+                        ( (HWPFDocument) getDocument() ).getDataStream(),
+                        getPicOffset() );
+                FFData ffData = new FFData( data.getBinData(), 0 );
+
+                String[] values = ffData.getDropList();
+                return values;
+            }
+        }
+        return null;
+    }
+
+    public Integer getDropDownListDefaultItemIndex()
+    {
+        if ( getDocument() instanceof HWPFDocument )
+        {
+            char c = _text.charAt( _start );
+            if ( c == 0x01 )
+            {
+                NilPICFAndBinData data = new NilPICFAndBinData(
+                        ( (HWPFDocument) getDocument() ).getDataStream(),
+                        getPicOffset() );
+                FFData ffData = new FFData( data.getBinData(), 0 );
+
+                return Integer.valueOf( ffData.getDefaultDropDownItemIndex() );
+            }
+        }
+        return null;
+    }
+
 }

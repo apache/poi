@@ -161,9 +161,26 @@ public class HtmlDocumentFacade
         return document.createElement( "li" );
     }
 
+    public Element createOption( String value, boolean selected )
+    {
+        Element result = document.createElement( "option" );
+        result.appendChild( createText( value ) );
+        if ( selected )
+        {
+            result.setAttribute( "selected", "selected" );
+        }
+        return result;
+    }
+
     public Element createParagraph()
     {
         return document.createElement( "p" );
+    }
+
+    public Element createSelect()
+    {
+        Element result = document.createElement( "select" );
+        return result;
     }
 
     public Element createTable()

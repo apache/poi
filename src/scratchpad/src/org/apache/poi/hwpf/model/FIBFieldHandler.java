@@ -90,7 +90,8 @@ public final class FIBFieldHandler
     public static final int PLCFATNBKL = 43;
     // 506 == 0x01FA; 510 == 0x01FE
     public static final int PMS = 44;
-  public static final int FORMFLDSTTBS = 45;
+    // 514 == 0x0202; 518 == 0x0206
+    public static final int FORMFLDSTTBS = 45;
   public static final int PLCFENDREF = 46;
   public static final int PLCFENDTXT = 47;
   public static final int PLCFFLDEDN = 48;

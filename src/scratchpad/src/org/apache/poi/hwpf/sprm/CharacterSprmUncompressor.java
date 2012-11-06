@@ -180,16 +180,13 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         case 0x3:
             // sprmCPicLocation -- 0x6A03
             /*
-             * Microsoft Office Word 97-2007 Binary File Format (.doc)
-             * Specification
+             * [MS-DOC]
              * 
-             * Page 75 of 210
+             * Page 104 of 622
              * 
-             * sprmCPicLocation (opcode 0x6A03) is used ONLY IN CHPX FKPs. This
-             * sprm moves the 4-byte operand of the sprm into the chp.fcPic
-             * field. It simultaneously sets chp.fSpec to 1. This sprm is also
-             * used when the chp.lTagObj field that is unioned with chp.fcPic is
-             * to be set for OLE objects.
+             * A signed 32-bit integer that specifies either the position in the
+             * Data Stream of a picture or binary data or the name of an OLE
+             * object storage.
              */
             newCHP.setFcPic( sprm.getOperand() );
             newCHP.setFSpec( true );

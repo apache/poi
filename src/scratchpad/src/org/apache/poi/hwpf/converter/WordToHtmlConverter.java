@@ -82,6 +82,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     private static final POILogger logger = POILogFactory
             .getLogger( WordToHtmlConverter.class );
 
+    
     private static String getSectionStyle( Section section )
     {
         float leftMargin = section.getMarginLeft() / TWIPS_PER_INCH;
@@ -278,6 +279,19 @@ public class WordToHtmlConverter extends AbstractWordConverter
     {
         super.processDocumentPart( wordDocument, range );
         afterProcess();
+    }
+
+    @Override
+    protected void processDropDownList( Element block,
+            CharacterRun characterRun, String[] values, int defaultIndex )
+    {
+        Element select = htmlDocumentFacade.createSelect();
+        for ( int i = 0; i < values.length; i++ )
+        {
+            select.appendChild( htmlDocumentFacade.createOption( values[i],
+                    defaultIndex == i ) );
+        }
+        block.appendChild( select );
     }
 
     @Override

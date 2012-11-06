@@ -141,6 +141,14 @@ public class TestWordToHtmlConverter extends TestCase
         getHtmlText( "Bug48075.doc" );
     }
 
+    public void testBug52583() throws Exception
+    {
+        String result = getHtmlText( "Bug52583.doc" );
+        assertContains(
+                result,
+                "<select><option selected>riri</option><option>fifi</option><option>loulou</option></select>" );
+    }
+
     public void testBug53182() throws Exception
     {
         String result = getHtmlText( "Bug53182.doc" );
