@@ -17,9 +17,10 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
+
+import java.awt.*;
 
 /**
  * @author Yegor Kozlov
@@ -104,6 +105,39 @@ public class TestXSLFConnectorShape extends TestCase {
         assertEquals(STLineEndLength.MED, shape.getSpPr().getLn().getHeadEnd().getLen());
         assertEquals(STLineEndLength.LG, shape.getSpPr().getLn().getTailEnd().getLen());
 
+    }
+
+    public void testAddConnector(){
+        XMLSlideShow pptx = new XMLSlideShow();
+        XSLFSlide slide = pptx.createSlide();
+
+        XSLFAutoShape rect1 = slide.createAutoShape();
+        rect1.setShapeType(XSLFShapeType.RECT);
+        rect1.setAnchor(new Rectangle(100, 100, 100, 100));
+        rect1.setFillColor(Color.blue);
+
+        XSLFAutoShape rect2 = slide.createAutoShape();
+        rect2.setShapeType(XSLFShapeType.RECT);
+        rect2.setAnchor(new Rectangle(300, 300, 100, 100));
+        rect2.setFillColor(Color.red);
+
+
+        XSLFConnectorShape connector1 = slide.createConnector();
+        connector1.setAnchor(new Rectangle(200, 150, 100, 200));
+
+        CTConnector ctConnector = (CTConnector)connector1.getXmlObject();
+        ctConnector.getSpPr().getPrstGeom().setPrst(STShapeType.BENT_CONNECTOR_3);
+        CTNonVisualConnectorProperties cx = ctConnector.getNvCxnSpPr().getCNvCxnSpPr();
+        // connection start
+        CTConnection stCxn = cx.addNewStCxn();
+        stCxn.setId(rect1.getShapeId());
+        // side of the rectangle to attach the connector: left=1, bottom=2,right=3, top=4
+        stCxn.setIdx(2);
+
+        CTConnection end = cx.addNewEndCxn();
+        end.setId(rect2.getShapeId());
+        // side of the rectangle to attach the connector: left=1, bottom=2,right=3, top=4
+        end.setIdx(3);
     }
 
 }
