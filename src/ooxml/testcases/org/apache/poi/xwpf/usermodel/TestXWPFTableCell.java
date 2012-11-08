@@ -22,11 +22,7 @@ package org.apache.poi.xwpf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 public class TestXWPFTableCell extends TestCase {
 
@@ -79,9 +75,20 @@ public class TestXWPFTableCell extends TestCase {
         assertEquals("F0000F", clr);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
+    /**
+     * ensure that CTHMerge & CTTcBorders go in poi-ooxml.jar
+     */
+	public void test54099(){
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        XWPFTableRow tr = table.getRow(0);
+        XWPFTableCell cell = tr.getCell(0);
 
+        CTTc ctTc = cell.getCTTc();
+        CTTcPr tcPr = ctTc.addNewTcPr();
+        CTHMerge hMerge = tcPr.addNewHMerge();
+
+        CTTcBorders tblBorders = tcPr.addNewTcBorders();
+    }
 }
