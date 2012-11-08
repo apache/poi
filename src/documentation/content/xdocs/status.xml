@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">54099 - Ensure that CTHMerge and CTTcBorders go to poi-ooxml-schemas jar</action>
           <action dev="poi-developers" type="fix">54111 - Fixed extracting text from table cells in HSLF</action>
           <action dev="poi-developers" type="add">52583 - add support for drop-down lists in doc to html convertion</action>
           <action dev="poi-developers" type="add">52863 - add workaround for files with broken CHP SPRMs</action>
