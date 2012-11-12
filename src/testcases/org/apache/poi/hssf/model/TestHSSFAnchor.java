@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.util.HexDump;
 
 /**
  * @author Evgeniy Berlog

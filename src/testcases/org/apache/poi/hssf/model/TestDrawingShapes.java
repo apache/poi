@@ -28,9 +28,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.HexDump;
 
 import java.io.IOException;
-import java.util.Arrays;
-
-import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Evgeniy Berlog

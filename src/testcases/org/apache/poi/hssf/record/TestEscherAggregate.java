@@ -20,9 +20,7 @@ package org.apache.poi.hssf.record;
 import junit.framework.TestCase;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
