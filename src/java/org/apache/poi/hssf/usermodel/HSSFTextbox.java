@@ -19,7 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * A textbox is a shape that may hold a rich text string.

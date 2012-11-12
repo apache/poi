@@ -24,7 +24,6 @@ import org.apache.poi.util.LittleEndian;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * An abstract shape.
