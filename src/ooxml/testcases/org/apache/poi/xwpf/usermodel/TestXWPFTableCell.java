@@ -88,7 +88,9 @@ public class TestXWPFTableCell extends TestCase {
         CTTc ctTc = cell.getCTTc();
         CTTcPr tcPr = ctTc.addNewTcPr();
         CTHMerge hMerge = tcPr.addNewHMerge();
+        hMerge.setVal(STMerge.RESTART);
 
         CTTcBorders tblBorders = tcPr.addNewTcBorders();
+        CTVMerge vMerge = tcPr.addNewVMerge();
     }
 }
