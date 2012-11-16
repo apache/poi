@@ -13,6 +13,10 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+   2012 - Alfresco Software, Ltd.
+   Alfresco Software has modified source of this file
+   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src 
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
@@ -248,6 +252,12 @@ public class DataFormatter {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
+//      // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
+//      // That however would require other code to be re factored.
+//      String[] formatBits = formatStrIn.split(";");
+//      int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2; 
+//      String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
+
         String formatStr = formatStrIn;
         // Excel supports positive/negative/zero, but java
         // doesn't, so we need to do it specially
@@ -364,10 +374,21 @@ public class DataFormatter {
         }
         
         // Excel supports fractions in format strings, which Java doesn't
-        if (!formatStr.contains("-") &&
-              (formatStr.indexOf("#/#") >= 0 && formatStr.indexOf("#/#") == formatStr.lastIndexOf("#/#")) ||
-              (formatStr.indexOf("?/?") >= 0 && formatStr.indexOf("?/?") == formatStr.lastIndexOf("?/?"))) {
-            return new FractionFormat(formatStr);
+        if (formatStr.indexOf("#/#") >= 0 || formatStr.indexOf("?/?") >= 0) {
+            // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
+        	String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ");
+
+        	boolean ok = true;
+        	for (String part: strippedFormatStr.split(";")) {
+        		int indexOfFraction = indexOfFraction(part);
+        		if (indexOfFraction == -1 || indexOfFraction != lastIndexOfFraction(part)) {
+        			ok = false;
+        			break;
+        		}
+        	}
+            if (ok) {
+                return new FractionFormat(strippedFormatStr);
+            }
         }
         
         if (numPattern.matcher(formatStr).find()) {
@@ -379,6 +400,18 @@ public class DataFormatter {
         }
         // TODO - when does this occur?
         return null;
+    }
+    
+    private int indexOfFraction(String format) {
+    	int i = format.indexOf("#/#");
+    	int j = format.indexOf("?/?");
+    	return i == -1 ? j : j == -1 ? i : Math.min(i,  j);
+    }
+
+    private int lastIndexOfFraction(String format) {
+    	int i = format.lastIndexOf("#/#");
+    	int j = format.lastIndexOf("?/?");
+    	return i == -1 ? j : j == -1 ? i : Math.max(i,  j);
     }
 
     private Format createDateFormat(String pFormatStr, double cellValue) {
@@ -996,14 +1029,26 @@ public class DataFormatter {
        }
        
        public String format(Number num) {
-          double wholePart = Math.floor(num.doubleValue());
-          double decPart = num.doubleValue() - wholePart;
+    	   
+    	  double doubleValue = num.doubleValue();
+          
+          // Format may be p or p;n or p;n;z (okay we never get a z).
+    	  // Fall back to p when n or z is not specified.
+          String[] formatBits = str.split(";");
+          int f = doubleValue > 0.0 ? 0 : doubleValue < 0.0 ? 1 : 2; 
+          String str = (f < formatBits.length) ? formatBits[f] : formatBits[0];
+          
+          double wholePart = Math.floor(Math.abs(doubleValue));
+          double decPart = Math.abs(doubleValue) - wholePart;
           if (wholePart + decPart == 0) {
              return "0";
           }
-          
+          if (doubleValue < 0.0) {
+        	  wholePart *= -1.0;
+          }
+
           // Split the format string into decimal and fraction parts
-          String[] parts = str.split(" ");
+          String[] parts = str.replaceAll("  *", " ").split(" ");
           String[] fractParts;
           if (parts.length == 2) {
              fractParts = parts[1].split("/");
@@ -1017,11 +1062,12 @@ public class DataFormatter {
           }
 
           if (fractParts.length == 2) {
+         	 int fractPart1Length = Math.min(countHashes(fractParts[1]), 4); // Any more than 3 and we go around the loops for ever
              double minVal = 1.0;
-             double currDenom = Math.pow(10 ,  fractParts[1].length()) - 1d;
+             double currDenom = Math.pow(10 ,  fractPart1Length) - 1d;
              double currNeum = 0;
-             for (int i = (int)(Math.pow(10,  fractParts[1].length())- 1d); i > 0; i--) {
-                for(int i2 = (int)(Math.pow(10,  fractParts[1].length())- 1d); i2 > 0; i2--){
+             for (int i = (int)(Math.pow(10,  fractPart1Length)- 1d); i > 0; i--) {
+                for(int i2 = (int)(Math.pow(10,  fractPart1Length)- 1d); i2 > 0; i2--){
                    if (minVal >=  Math.abs((double)i2/(double)i - decPart)) {
                       currDenom = i;
                       currNeum = i2;
@@ -1040,8 +1086,18 @@ public class DataFormatter {
                 return result;
              }
           } else {
-             throw new IllegalArgumentException("Fraction must have 2 parts, found " + fractParts.length + " for fraction format " + str);
+             throw new IllegalArgumentException("Fraction must have 2 parts, found " + fractParts.length + " for fraction format " + this.str);
           }
+       }
+       
+       private int countHashes(String format) {
+    	   int count = 0;
+    	   for (int i=format.length()-1; i >= 0; i--) {
+    		   if (format.charAt(i) == '#') {
+    			   count++;
+    		   }
+    	   }
+    	   return count;
        }
 
        public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {

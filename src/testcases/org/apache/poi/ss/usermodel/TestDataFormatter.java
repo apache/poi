@@ -13,6 +13,10 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+   2012 - Alfresco Software, Ltd.
+   Alfresco Software has modified source of this file
+   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src 
 ==================================================================== */
 
 package org.apache.poi.ss.usermodel;
@@ -195,6 +199,41 @@ public class TestDataFormatter extends TestCase {
        assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/?"));
        assertEquals("321 26/81", dfUS.formatRawCellContents(321.321, -1, "# ?/??"));
        assertEquals("26027/81",  dfUS.formatRawCellContents(321.321, -1, "?/??"));
+       
+       // p;n;z;s parts
+       assertEquals( "321 1/3",  dfUS.formatRawCellContents(321.321,  -1, "# #/#;# ##/#;0;xxx"));
+       assertEquals("-321 1/3",  dfUS.formatRawCellContents(-321.321, -1, "# #/#;# ##/#;0;xxx"));
+       assertEquals("0",         dfUS.formatRawCellContents(0,        -1, "# #/#;# ##/#;0;xxx"));
+//     assertEquals("0.0",       dfUS.formatRawCellContents(0,        -1, "# #/#;# ##/#;#.#;xxx")); // currently hard coded to 0
+       
+       // Custom formats with text are not currently supported
+//     assertEquals("+ve",       dfUS.formatRawCellContents(0,        -1, "+ve;-ve;zero;xxx"));
+//     assertEquals("-ve",       dfUS.formatRawCellContents(0,        -1, "-ve;-ve;zero;xxx"));
+//     assertEquals("zero",      dfUS.formatRawCellContents(0,        -1, "zero;-ve;zero;xxx"));
+       
+       // Custom formats - check text is stripped, including multiple spaces
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#   #/#"));
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"  \" #/#"));
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\"FRED\" #/#"));
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "#\\ #/#"));
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# \\q#/#"));
+
+       // Cases that were very slow
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0\" \"?/?;?/?")); // 0" "?/?;?/?     - length of -ve part was used
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "0 \"#\"\\#\\#?/?")); // 0 "#"\#\#?/? - length of text was used
+
+       assertEquals("321 295/919",  dfUS.formatRawCellContents(321.321, -1, "# #/###"));
+       assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/####")); // Code limits to #### as that is as slow as we want to get
+       assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/##########"));
+       
+       // Not a valid fraction formats (too many #/# or ?/?) - hence the strange expected results
+       assertEquals("321 / ?/?",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
+       assertEquals("321 / /",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
+       assertEquals("321 ?/? ?/?",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
+       assertEquals("321 ?/? / /",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
+
+       // Where both p and n don't include a fraction, so cannot always be formatted
+       assertEquals("123", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
     }
     
     /**
