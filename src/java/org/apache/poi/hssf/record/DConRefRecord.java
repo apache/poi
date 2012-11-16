@@ -278,7 +278,7 @@ public class DConRefRecord extends StandardRecord
 
     /**
      * @return the link's path, with the special characters stripped/replaced. May be null.
-     * @see MS-XLS 2.5.277 (VirtualPath)
+     * See MS-XLS 2.5.277 (VirtualPath)
      */
     public String getReadablePath()
     {

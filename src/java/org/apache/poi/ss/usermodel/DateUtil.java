@@ -256,7 +256,7 @@ public class DateUtil {
 
     /**
      * Get EXCEL date as Java Calendar with given time zone.
-     * @see getJavaDate(double, TimeZone)
+     * @see #getJavaDate(double, TimeZone)
      * @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone) {

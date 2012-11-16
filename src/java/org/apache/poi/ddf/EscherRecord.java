@@ -297,7 +297,7 @@ public abstract class EscherRecord {
 
     /**
      * @param tab - each children must be a right of his parent
-     * @return
+     * @return xml representation of this record
      */
     public String toXml(String tab){
         StringBuilder builder = new StringBuilder();

@@ -719,7 +719,7 @@ public final class WorkbookEvaluator {
      * </ul>
      *
      * @param ignore whether to ignore missing references to external workbooks
-     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52575">Bug 52575</a> for details
+     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52575">Bug 52575 for details</a>
      */
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _ignoreMissingWorkbooks = ignore;

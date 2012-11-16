@@ -302,8 +302,6 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
      * If bulletSize >= 0, then bulletSize is a percentage of the font size.
      * If bulletSize < 0, then it specifies the size in points
      * </p>
-     *
-     * @return the bullet size
      */
     public void setBulletFontSize(double bulletSize){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
