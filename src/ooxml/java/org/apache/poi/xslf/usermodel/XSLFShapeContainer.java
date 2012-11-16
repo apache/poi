@@ -52,9 +52,6 @@ public interface XSLFShapeContainer extends Iterable<XSLFShape> {
 
     /**
      * create a picture belonging to this container
-     *
-     * @param pictureIndex
-     * @return
      */
     XSLFPictureShape createPicture(int pictureIndex);
 

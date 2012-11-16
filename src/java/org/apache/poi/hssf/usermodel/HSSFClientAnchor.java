@@ -180,7 +180,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     }
 
     /**
-     * @return the row(0 based) of the second cell.
+     * @param row2 the row(0 based) of the second cell.
      */
     public void setRow2(int row2) {
         checkRange(row2, 0, 256 * 256, "row2");

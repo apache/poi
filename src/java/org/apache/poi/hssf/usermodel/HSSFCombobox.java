@@ -22,7 +22,6 @@ import org.apache.poi.hssf.record.*;
 
 /**
  * @author Evgeniy Berlog
- * @date 12.07.12
  */
 public class HSSFCombobox extends HSSFSimpleShape {
 
