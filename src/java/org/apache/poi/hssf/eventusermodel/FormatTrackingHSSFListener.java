@@ -31,6 +31,8 @@ import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * A proxy HSSFListener that keeps track of the document formatting records, and
@@ -38,6 +40,7 @@ import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
  * ids.
  */
 public class FormatTrackingHSSFListener implements HSSFListener {
+	private static POILogger logger = POILogFactory.getLogger(FormatTrackingHSSFListener.class);
 	private final HSSFListener _childListener;
 	private final HSSFDataFormatter _formatter;
 	private final NumberFormat _defaultFormat;
@@ -137,7 +140,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 		if (formatIndex >= HSSFDataFormat.getNumberOfBuiltinBuiltinFormats()) {
 			FormatRecord tfr = _customFormatRecords.get(Integer.valueOf(formatIndex));
 			if (tfr == null) {
-				System.err.println("Requested format at index " + formatIndex
+				logger.log( POILogger.ERROR, "Requested format at index " + formatIndex
 						+ ", but it wasn't found");
 			} else {
 				format = tfr.getFormatString();
@@ -167,7 +170,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	public int getFormatIndex(CellValueRecordInterface cell) {
 		ExtendedFormatRecord xfr = _xfRecords.get(cell.getXFIndex());
 		if (xfr == null) {
-			System.err.println("Cell " + cell.getRow() + "," + cell.getColumn()
+			logger.log( POILogger.ERROR, "Cell " + cell.getRow() + "," + cell.getColumn()
 					+ " uses XF with index " + cell.getXFIndex() + ", but we don't have that");
 			return -1;
 		}

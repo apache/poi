@@ -17,8 +17,6 @@
 
 package org.apache.poi.hpsf;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 
 /**
  * <p>This exception is the superclass of all other unchecked
@@ -30,8 +28,8 @@ import java.io.PrintWriter;
  */
 public class HPSFRuntimeException extends RuntimeException
 {
-
-    /** <p>The underlying reason for this exception - may be
+	private static final long serialVersionUID = -7804271670232727159L;
+	/** <p>The underlying reason for this exception - may be
      * <code>null</code>.</p> */
     private Throwable reason;
 
@@ -105,44 +103,44 @@ public class HPSFRuntimeException extends RuntimeException
 
 
 
-    /**
-     * @see Throwable#printStackTrace()
-     */
-    public void printStackTrace()
-    {
-        printStackTrace(System.err);
-    }
+//    /**
+//     * @see Throwable#printStackTrace()
+//     */
+//    public void printStackTrace()
+//    {
+//        printStackTrace(System.err);
+//    }
 
 
 
-    /**
-     * @see Throwable#printStackTrace(java.io.PrintStream)
-     */
-    public void printStackTrace(final PrintStream p)
-    {
-        final Throwable reason = getReason();
-        super.printStackTrace(p);
-        if (reason != null)
-        {
-            p.println("Caused by:");
-            reason.printStackTrace(p);
-        }
-    }
+//    /**
+//     * @see Throwable#printStackTrace(java.io.PrintStream)
+//     */
+//    public void printStackTrace(final PrintStream p)
+//    {
+//        final Throwable reason = getReason();
+//        super.printStackTrace(p);
+//        if (reason != null)
+//        {
+//            p.println("Caused by:");
+//            reason.printStackTrace(p);
+//        }
+//    }
 
 
 
-    /**
-     * @see Throwable#printStackTrace(java.io.PrintWriter)
-     */
-    public void printStackTrace(final PrintWriter p)
-    {
-        final Throwable reason = getReason();
-        super.printStackTrace(p);
-        if (reason != null)
-        {
-            p.println("Caused by:");
-            reason.printStackTrace(p);
-        }
-    }
+//    /**
+//     * @see Throwable#printStackTrace(java.io.PrintWriter)
+//     */
+//    public void printStackTrace(final PrintWriter p)
+//    {
+//        final Throwable reason = getReason();
+//        super.printStackTrace(p);
+//        if (reason != null)
+//        {
+//            p.println("Caused by:");
+//            reason.printStackTrace(p);
+//        }
+//    }
 
 }

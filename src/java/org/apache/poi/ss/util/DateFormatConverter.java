@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  *  Convert java DateFormat patterns into Excel custom number formats.
  *  For example, to format a date in excel using the "dd MMMM, yyyy" pattern and Japanese
@@ -45,6 +48,7 @@ import java.util.Map;
  *
  */
 public class DateFormatConverter  {
+	private static POILogger logger = POILogFactory.getLogger(DateFormatConverter.class);
 	
 	public static class DateFormatTokenizer {
 		String format;
@@ -329,7 +333,7 @@ public class DateFormatConverter  {
 			result = localePrefixes.get( localeString.substring( 0, 2 ) );
 			if( result ==  null ) {
 				Locale parentLocale = new Locale(localeString.substring( 0, 2 ));
-				System.out.println( "Unable to find prefix for " + locale + "(" + locale.getDisplayName() + ") or " 
+				logger.log( POILogger.ERROR, "Unable to find prefix for " + locale + "(" + locale.getDisplayName() + ") or " 
 						+ localeString.substring( 0, 2 ) + "(" + parentLocale.getDisplayName() + ")" );
 				return "";
 			}

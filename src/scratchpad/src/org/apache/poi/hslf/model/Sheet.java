@@ -20,6 +20,8 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,6 +37,8 @@ import java.awt.*;
  */
 
 public abstract class Sheet {
+	private static POILogger logger = POILogFactory.getLogger(Sheet.class);
+
     /**
      * The <code>SlideShow</code> we belong to
      */
@@ -194,7 +198,7 @@ public abstract class Sheet {
                 } else if (records[i + 1].getRecordType() == 4010l) {
                     // TextSpecInfoAtom - Safe to ignore
                 } else {
-                    System.err.println("Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i + 1].getRecordType());
+                	logger.log(POILogger.ERROR, "Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i + 1].getRecordType());
                 }
 
                 if (trun != null) {

@@ -24,6 +24,8 @@ import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.SharedFeature;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Title: Feat (Feature) Record
@@ -32,6 +34,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *  up with a {@link FeatHdrRecord}.
  */
 public final class FeatRecord extends StandardRecord  {
+	private static POILogger logger = POILogFactory.getLogger(FeatRecord.class);
 	public final static short sid = 0x0868;
 	
 	private FtrHeader futureHeader;
@@ -90,7 +93,7 @@ public final class FeatRecord extends StandardRecord  {
 			sharedFeature = new FeatSmartTag(in);
 			break;
 		default:
-			System.err.println("Unknown Shared Feature " + isf_sharedFeatureType + " found!");
+			logger.log( POILogger.ERROR, "Unknown Shared Feature " + isf_sharedFeatureType + " found!");
 		}
 	}
 

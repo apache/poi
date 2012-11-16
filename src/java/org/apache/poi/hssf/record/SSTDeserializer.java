@@ -21,6 +21,8 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.util.IntMapper;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Handles the task of deserializing a SST string.  The two main entry points are
@@ -30,7 +32,7 @@ import org.apache.poi.util.IntMapper;
  */
 class SSTDeserializer
 {
-
+	private static POILogger logger = POILogFactory.getLogger(SSTDeserializer.class);
     private IntMapper<UnicodeString> strings;
 
     public SSTDeserializer( IntMapper<UnicodeString> strings )
@@ -49,7 +51,7 @@ class SSTDeserializer
          // Extract exactly the count of strings from the SST record.
          UnicodeString str;
          if(in.available() == 0 && ! in.hasNextRecord()) {
-            System.err.println("Ran out of data before creating all the strings! String at index " + i + "");
+        	 logger.log( POILogger.ERROR, "Ran out of data before creating all the strings! String at index " + i + "");
             str = new UnicodeString("");
          } else {
             str = new UnicodeString(in);

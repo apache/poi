@@ -27,12 +27,15 @@ import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hpsf.Util;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * A Date attribute which applies to a {@link HMEFMessage}
  *  or one of its {@link Attachment}s.
  */
 public final class TNEFDateAttribute extends TNEFAttribute {
+   private static POILogger logger = POILogFactory.getLogger(TNEFDateAttribute.class);
    private Date data;
    
    /**
@@ -85,7 +88,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
          return ((TNEFDateAttribute)attr).getDate();
       }
       
-      System.err.println("Warning, non date property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non date property found: " + attr.toString());
       return null;
   }
 }

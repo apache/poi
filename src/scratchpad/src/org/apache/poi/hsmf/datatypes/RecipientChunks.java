@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 
 /**
  * Collection of convenience chunks for the
@@ -30,6 +33,8 @@ import java.util.List;
  *  several of these.
  */
 public final class RecipientChunks implements ChunkGroup {
+   private static POILogger logger = POILogFactory.getLogger(RecipientChunks.class);
+
    public static final String PREFIX = "__recip_version1.0_#";
    
    public static final MAPIProperty RECIPIENT_NAME   = MAPIProperty.DISPLAY_NAME;
@@ -82,7 +87,7 @@ public final class RecipientChunks implements ChunkGroup {
          try {
             recipientNumber = Integer.parseInt(number, 16);
          } catch(NumberFormatException e) {
-            System.err.println("Invalid recipient number in name " + name);
+        	 logger.log(POILogger.ERROR, "Invalid recipient number in name " + name);
          }
       }
    }
