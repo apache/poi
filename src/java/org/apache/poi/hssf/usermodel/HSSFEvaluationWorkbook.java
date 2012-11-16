@@ -34,6 +34,8 @@ import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Internal POI use only
@@ -41,7 +43,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
  * @author Josh Micich
  */
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
-
+	private static POILogger logger = POILogFactory.getLogger(HSSFEvaluationWorkbook.class);
 	private final HSSFWorkbook _uBook;
 	private final InternalWorkbook _iBook;
 
@@ -139,7 +141,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 				// Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
 				// IntesectionPtg.  However it is still not capable of parsing it.
 				// So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
-				System.err.println(e.getMessage());
+				logger.log( POILogger.ERROR, e.getMessage());
 			}
 		}
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();

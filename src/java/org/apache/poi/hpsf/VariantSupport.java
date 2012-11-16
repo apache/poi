@@ -24,6 +24,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  * <p>Supports reading and writing of variant data.</p>
  *
@@ -45,7 +48,7 @@ import java.util.List;
  */
 public class VariantSupport extends Variant
 {
-
+	private static POILogger logger = POILogFactory.getLogger(VariantSupport.class);
     private static boolean logUnsupportedTypes = false;
 
     /**
@@ -78,7 +81,7 @@ public class VariantSupport extends Variant
      * <p>Keeps a list of the variant types an "unsupported" message has already
      * been issued for.</p>
      */
-    protected static List unsupportedMessage;
+    protected static List<Long> unsupportedMessage;
 
     /**
      * <p>Writes a warning to <code>System.err</code> that a variant type is
@@ -93,11 +96,11 @@ public class VariantSupport extends Variant
         if (isLogUnsupportedTypes())
         {
             if (unsupportedMessage == null)
-                unsupportedMessage = new LinkedList();
+                unsupportedMessage = new LinkedList<Long>();
             Long vt = Long.valueOf(ex.getVariantType());
             if (!unsupportedMessage.contains(vt))
             {
-                System.err.println(ex.getMessage());
+            	logger.log( POILogger.ERROR, ex.getMessage());
                 unsupportedMessage.add(vt);
             }
         }

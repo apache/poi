@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * A Chunk that holds the details given back by the
@@ -36,6 +38,7 @@ import org.apache.poi.util.IOUtils;
  */
 
 public class MessageSubmissionChunk extends Chunk {
+	private static POILogger logger = POILogFactory.getLogger(MessageSubmissionChunk.class);
 	private String rawId;
 	private Calendar date;
 	
@@ -87,7 +90,7 @@ public class MessageSubmissionChunk extends Chunk {
                   date.set(Calendar.SECOND,      Integer.parseInt(m.group(6)));
                   date.set(Calendar.MILLISECOND, 0);
                } else {
-                  System.err.println("Warning - unable to make sense of date " + dateS);
+            	   logger.log(POILogger.WARN, "Warning - unable to make sense of date " + dateS);
                }
             }
          }

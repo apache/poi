@@ -41,6 +41,8 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Processes a POIFS of a .msg file into groups of Chunks, such as
@@ -48,6 +50,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * data and so on.
  */
 public final class POIFSChunkParser {
+   private static POILogger logger = POILogFactory.getLogger(POIFSChunkParser.class);
+
    public static ChunkGroup[] parse(POIFSFileSystem fs) throws IOException {
       return parse(fs.getRoot());
    }
@@ -200,7 +204,7 @@ public final class POIFSChunkParser {
                 chunk.readValue(inp);
                 grouping.record(chunk);
              } catch(IOException e) {
-                System.err.println("Error reading from part " + entry.getName() + " - " + e.toString());
+            	 logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e.toString());
              }
           } else {
              grouping.record(chunk);

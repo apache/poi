@@ -27,6 +27,8 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**
@@ -36,6 +38,8 @@ import org.apache.poi.hssf.model.InternalWorkbook;
  * @author Yegor Kozlov (yegor at apache.org)
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
+	private static POILogger logger = POILogFactory.getLogger(HSSFPicture.class);
+	
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
     public static final int PICTURE_TYPE_PICT = HSSFWorkbook.PICTURE_TYPE_PICT;              // Macintosh PICT
@@ -283,7 +287,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
             EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, data.getBytes("UTF-16LE"));
             setPropertyValue(prop);
         } catch (UnsupportedEncodingException e) {
-            System.out.println("Unsupported encoding: UTF-16LE");
+        	logger.log( POILogger.ERROR, "Unsupported encoding: UTF-16LE");
         }
     }
 

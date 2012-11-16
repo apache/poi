@@ -179,7 +179,7 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
 
           int extraDataLength = runData - (numRuns*6);
           if(extraDataLength < 0) {
-             System.err.println("Warning - ExtRst overran by " + (0-extraDataLength) + " bytes");
+        	 _logger.log( POILogger.WARN, "Warning - ExtRst overran by " + (0-extraDataLength) + " bytes");
              extraDataLength = 0;
           }
           extraData = new byte[extraDataLength];

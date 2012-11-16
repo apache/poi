@@ -34,6 +34,7 @@
 
     <changes>
         <release version="3.9-beta1" date="2012-??-??">
+          <action dev="poi-developers" type="fix">52628 - Replace System.err info messages with a POILogger</action>
           <action dev="poi-developers" type="fix">54137 - improved performance of DataFormatter with Fractions</action>
           <action dev="poi-developers" type="fix">54099 - Ensure that CTHMerge and CTTcBorders go to poi-ooxml-schemas jar</action>
           <action dev="poi-developers" type="fix">54111 - Fixed extracting text from table cells in HSLF</action>

@@ -453,7 +453,7 @@ public class AbstractWordUtils
     {
 
         if ( format != 0 )
-            System.err.println( "NYI: toListItemNumberLabel(): " + format );
+        	logger.log( POILogger.INFO, "NYI: toListItemNumberLabel(): " + format );
 
         return String.valueOf( number );
     }

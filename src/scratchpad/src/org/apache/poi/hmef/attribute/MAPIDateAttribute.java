@@ -24,12 +24,15 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hpsf.Util;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * A pure-MAPI attribute holding a Date, which applies 
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIDateAttribute extends MAPIAttribute {
+   private static POILogger logger = POILogFactory.getLogger(MAPIDateAttribute.class);
    private Date data;
    
    /**
@@ -64,7 +67,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
          return ((MAPIDateAttribute)attr).getDate();
       }
       
-      System.err.println("Warning, non date property found: " + attr.toString());
+      logger.log(POILogger.WARN, "Warning, non date property found: " + attr.toString());
       return null;
   }
 }

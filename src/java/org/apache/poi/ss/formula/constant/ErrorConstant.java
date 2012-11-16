@@ -18,6 +18,8 @@
 package org.apache.poi.ss.formula.constant;
 
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 /**
  * Represents a constant error code value as encoded in a constant values array. <p/>
  * 
@@ -27,6 +29,7 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  * @author Josh Micich
  */
 public class ErrorConstant {
+	private static POILogger logger = POILogFactory.getLogger(ErrorConstant.class);
 	// convenient access to name space
 	private static final ErrorConstants EC = null;
 
@@ -64,7 +67,7 @@ public class ErrorConstant {
 			case ErrorConstants.ERROR_NUM:   return NUM;
 			case ErrorConstants.ERROR_NA:	return NA;
 		}
-		System.err.println("Warning - unexpected error code (" + errorCode + ")");
+		logger.log( POILogger.WARN, "Warning - unexpected error code (" + errorCode + ")");
 		return new ErrorConstant(errorCode);
 	}
 	public String toString() {

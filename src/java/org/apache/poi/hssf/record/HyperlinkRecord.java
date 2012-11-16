@@ -41,7 +41,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public final static short sid = 0x01B8;
-    private POILogger logger = POILogFactory.getLogger(getClass());
+    private static POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
 
     static final class GUID {
 		/*
@@ -641,7 +641,7 @@ public final class HyperlinkRecord extends StandardRecord {
     	if (false) { // Quite a few examples in the unit tests which don't have the exact expected tail
             for (int i = 0; i < expectedTail.length; i++) {
                 if (expectedTail[i] != result[i]) {
-                    System.err.println("Mismatch in tail byte [" + i + "]"
+                	logger.log( POILogger.ERROR, "Mismatch in tail byte [" + i + "]"
                     		+ "expected " + (expectedTail[i] & 0xFF) + " but got " + (result[i] & 0xFF));
                 }
             }

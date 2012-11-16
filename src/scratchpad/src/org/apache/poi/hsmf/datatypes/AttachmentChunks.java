@@ -37,11 +37,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Collection of convenence chunks for standard parts of the MSG file attachment.
  */
 public class AttachmentChunks implements ChunkGroup {
+   private static POILogger logger = POILogFactory.getLogger(AttachmentChunks.class);
    public static final String PREFIX = "__attach_version1.0_#";
    
    public ByteChunk attachData;
@@ -131,7 +134,7 @@ public class AttachmentChunks implements ChunkGroup {
          } else if(chunk instanceof DirectoryChunk) {
              attachmentDirectory = (DirectoryChunk)chunk;
          } else {
-             System.err.println("Unexpected data chunk of type " + chunk);
+        	 logger.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk);
          }
       }
       else if(chunk.getChunkId() == ATTACH_DISPOSITION.id) {

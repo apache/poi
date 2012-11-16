@@ -36,7 +36,7 @@ public class EntryUtils
     public static void copyNodeRecursively( Entry entry, DirectoryEntry target )
             throws IOException
     {
-        // System.err.println("copyNodeRecursively called with "+entry.getName()+
+        // logger.log( POILogger.ERROR, "copyNodeRecursively called with "+entry.getName()+
         // ","+target.getName());
         DirectoryEntry newTarget = null;
         if ( entry.isDirectoryEntry() )

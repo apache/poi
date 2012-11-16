@@ -20,12 +20,14 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * @author Glen Stampoultzis  (glens at superlinksoftware.com)
  */
 public class HSSFPolygon  extends HSSFSimpleShape {
-
+	private static POILogger logger = POILogFactory.getLogger(HSSFPolygon.class);
     public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 0x1E;
 
     public HSSFPolygon(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord _textObjectRecord) {
@@ -157,11 +159,11 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      */
     public void setPoints(int[] xPoints, int[] yPoints) {
         if (xPoints.length != yPoints.length){
-            System.out.println("xPoint.length must be equal to yPoints.length");
+        	logger.log( POILogger.ERROR, "xPoint.length must be equal to yPoints.length");
             return;
         }
         if (xPoints.length == 0){
-            System.out.println("HSSFPolygon must have at least one point");
+        	logger.log( POILogger.ERROR, "HSSFPolygon must have at least one point");
         }
         EscherArrayProperty verticesProp = new EscherArrayProperty(EscherProperties.GEOMETRY__VERTICES, false, new byte[0] );
         verticesProp.setNumberOfElementsInArray(xPoints.length+1);
