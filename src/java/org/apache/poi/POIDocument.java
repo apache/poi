@@ -148,7 +148,7 @@ public abstract class POIDocument {
 	 */
 	protected PropertySet getPropertySet(String setName) {
 	   //directory can be null when creating new documents
-	   if(directory == null) return null;
+	   if(directory == null || !directory.hasEntry(setName)) return null;
 
 	   DocumentInputStream dis;
 	   try {
