@@ -33,7 +33,7 @@
     </developers>
 
     <changes>
-        <release version="3.9-beta1" date="2012-??-??">
+        <release version="3.9" date="2012-12-03">
           <action dev="poi-developers" type="fix">54188 - Avoid NPE in PPT2PNG</action>
           <action dev="poi-developers" type="fix">52628 - Replace System.err info messages with a POILogger</action>
           <action dev="poi-developers" type="fix">54137 - improved performance of DataFormatter with Fractions</action>
