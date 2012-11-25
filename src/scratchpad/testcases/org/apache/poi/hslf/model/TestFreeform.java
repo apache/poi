@@ -71,4 +71,16 @@ public final class TestFreeform extends TestCase {
         java.awt.Shape path2 = p.getOutline();
         assertTrue(new Area(path1).equals(new Area(path2)));
    }
+
+    /**
+     * Avoid NPE in  Freeform.getOutline() if either GEOMETRY__VERTICES or
+     * GEOMETRY__SEGMENTINFO is missing, see Bugzilla 54188
+     */
+    public void test54188() {
+
+        Freeform p = new Freeform();
+        GeneralPath path = (GeneralPath)p.getOutline();
+        GeneralPath emptyPath = new GeneralPath();
+        assertEquals(emptyPath.getBounds2D(), path.getBounds2D());
+    }
 }

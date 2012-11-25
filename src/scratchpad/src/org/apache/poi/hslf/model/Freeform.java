@@ -244,6 +244,11 @@ public final class Freeform extends AutoShape {
 
     public java.awt.Shape getOutline(){
         GeneralPath path =  getPath();
+        if(path == null) {
+            // return empty path if either GEOMETRY__VERTICES or GEOMETRY__SEGMENTINFO is missing, see Bugzilla 54188
+            return new GeneralPath();
+        }
+
         Rectangle2D anchor = getAnchor2D();
         Rectangle2D bounds = path.getBounds2D();
         AffineTransform at = new AffineTransform();
