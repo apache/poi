@@ -47,7 +47,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
  * @author Roberto Manicardi
  */
 public class XSSFTable extends POIXMLDocumentPart {
-	
+
 	private CTTable ctTable;
 	private List<XSSFXmlColumnPr> xmlColumnPr;
 	private CellReference startCellReference;
@@ -81,7 +81,9 @@ public class XSSFTable extends POIXMLDocumentPart {
 	}
 
 	public void writeTo(OutputStream out) throws IOException {
-		TableDocument doc = TableDocument.Factory.newInstance();
+        updateHeaders();
+
+        TableDocument doc = TableDocument.Factory.newInstance();
 		doc.setTable(ctTable);
 		doc.save(out, DEFAULT_XML_OPTIONS);
 	}
@@ -234,9 +236,11 @@ public class XSSFTable extends POIXMLDocumentPart {
 		
 		if(startCellReference==null){			
 				String ref = ctTable.getRef();
-				String[] boundaries = ref.split(":");
-				String from = boundaries[0];
-				startCellReference = new CellReference(from);
+                if(ref != null) {
+                    String[] boundaries = ref.split(":");
+                    String from = boundaries[0];
+                    startCellReference = new CellReference(from);
+                }
 		}
 		return startCellReference;
 	}
@@ -275,4 +279,28 @@ public class XSSFTable extends POIXMLDocumentPart {
 		}
 		return rowCount;
 	}
+
+    /**
+     * Synchronize table headers with cell values in the parent sheet.
+     * Headers <em>must</em> be in sync, otherwise Excel will display a
+     * "Found unreadable content" message on startup.
+     */
+    public void updateHeaders(){
+        XSSFSheet sheet = (XSSFSheet)getParent();
+        CellReference ref = getStartCellReference();
+        if(ref == null) return;
+
+        int headerRow = ref.getRow();
+        int firstHeaderColumn = ref.getCol();
+        XSSFRow row = sheet.getRow(headerRow);
+
+        if(row != null) for(CTTableColumn col : getCTTable().getTableColumns().getTableColumnList()){
+            int colIdx = (int)col.getId() - 1 + firstHeaderColumn;
+            XSSFCell cell = row.getCell(colIdx);
+            if(cell != null) {
+                col.setName(cell.getStringCellValue());
+            }
+        }
+
+    }
 }
