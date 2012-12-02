@@ -24,6 +24,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
@@ -94,6 +95,8 @@ public final class TextPainter {
     }
 
     public void paint(Graphics2D graphics){
+        AffineTransform tx = graphics.getTransform();
+
         Rectangle2D anchor = _shape.getLogicalAnchor2D();
         TextElement[] elem = getTextElements((float)anchor.getWidth(), graphics.getFontRenderContext());
         if(elem == null) return;
@@ -118,6 +121,32 @@ public final class TextPainter {
                 float delta =  (float)anchor.getHeight() - textHeight - _shape.getMarginTop() - _shape.getMarginBottom();
                 y0 += _shape.getMarginTop()  + delta/2;
                 break;
+        }
+
+
+        // Transform of text in flipped shapes is special.
+        // At this point the flip and rotation transform is already applied
+        // (see XSLFShape#applyTransform ), but we need to restore it to avoid painting "upside down".
+        // See Bugzilla 54210.
+        if(_shape.getFlipVertical()){
+            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
+            graphics.scale(1, -1);
+            graphics.translate(-anchor.getX(), -anchor.getY());
+
+            // text in vertically flipped shapes is rotated by 180 degrees
+            double centerX = anchor.getX() + anchor.getWidth()/2;
+            double centerY = anchor.getY() + anchor.getHeight()/2;
+            graphics.translate(centerX, centerY);
+            graphics.rotate(Math.toRadians(180));
+            graphics.translate(-centerX, -centerY);
+        }
+
+        // Horizontal flipping applies only to shape outline and not to the text in the shape.
+        // Applying flip second time restores the original not-flipped transform
+        if(_shape.getFlipHorizontal()){
+            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
+            graphics.scale(-1, 1);
+            graphics.translate(-anchor.getX() , -anchor.getY());
         }
 
         //finally draw the text fragments
@@ -149,6 +178,8 @@ public final class TextPainter {
             }
             y0 += elem[i].descent;
         }
+
+        graphics.setTransform(tx);
     }
 
     public TextElement[] getTextElements(float textWidth, FontRenderContext frc){
