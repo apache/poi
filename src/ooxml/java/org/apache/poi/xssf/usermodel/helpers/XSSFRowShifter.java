@@ -28,10 +28,7 @@ import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -156,7 +153,13 @@ public final class XSSFRowShifter {
                     String shiftedFormula = shiftFormula(row, formula, shifter);
                     if (shiftedFormula != null) {
                         f.setStringValue(shiftedFormula);
+                        if(f.getT() == STCellFormulaType.SHARED){
+                            int si = (int)f.getSi();
+                            CTCellFormula sf = row.getSheet().getSharedFormula(si);
+                            sf.setStringValue(shiftedFormula);
+                        }
                     }
+
                 }
 
                 if (f.isSetRef()) { //Range of cells which the formula applies to.

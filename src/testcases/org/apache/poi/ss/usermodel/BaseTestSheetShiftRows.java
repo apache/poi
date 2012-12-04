@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Tests row shifting capabilities.
@@ -41,8 +42,6 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
      * After each shift, writes the workbook to file and reads back to
      * check.  This ensures that if some changes code that breaks
      * writing or what not, they realize it.
-     *
-     * @param sampleName the sample file to test against
      */
     public final void testShiftRows(){
         // Read initial file in
@@ -323,5 +322,62 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
         Cell cell = sheet.getRow(rowIx).getCell(colIx);
         assertEquals(expectedValue, cell.getNumericCellValue(), 0.0);
         assertEquals(expectedFormula, cell.getCellFormula());
+    }
+
+    public final void testShiftSharedFormulasBug54206() {
+        Workbook wb = _testDataProvider.openSampleWorkbook("54206." + _testDataProvider.getStandardFileNameExtension());
+
+        Sheet sheet = wb.getSheetAt(0);
+        assertEquals("SUMIF($B$19:$B$82,$B4,G$19:G$82)", sheet.getRow(3).getCell(6).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$82,$B4,H$19:H$82)", sheet.getRow(3).getCell(7).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$82,$B4,I$19:I$82)", sheet.getRow(3).getCell(8).getCellFormula());
+
+        assertEquals("SUMIF($B$19:$B$82,$B15,G$19:G$82)", sheet.getRow(14).getCell(6).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$82,$B15,H$19:H$82)", sheet.getRow(14).getCell(7).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$82,$B15,I$19:I$82)", sheet.getRow(14).getCell(8).getCellFormula());
+
+        // now the whole block G4L:15
+        for(int i = 3; i <= 14; i++){
+            for(int j = 6; j <= 8; j++){
+                String col = CellReference.convertNumToColString(j);
+                String expectedFormula = "SUMIF($B$19:$B$82,$B"+(i+1)+","+col+"$19:"+col+"$82)";
+                assertEquals(expectedFormula, sheet.getRow(i).getCell(j).getCellFormula());
+            }
+        }
+
+        assertEquals("SUM(G24:I24)", sheet.getRow(23).getCell(9).getCellFormula());
+        assertEquals("SUM(G25:I25)", sheet.getRow(24).getCell(9).getCellFormula());
+        assertEquals("SUM(G26:I26)", sheet.getRow(25).getCell(9).getCellFormula());
+
+        sheet.shiftRows(24, sheet.getLastRowNum(), 4, true, false);
+
+        assertEquals("SUMIF($B$19:$B$86,$B4,G$19:G$86)", sheet.getRow(3).getCell(6).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$86,$B4,H$19:H$86)", sheet.getRow(3).getCell(7).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$86,$B4,I$19:I$86)", sheet.getRow(3).getCell(8).getCellFormula());
+
+        assertEquals("SUMIF($B$19:$B$86,$B15,G$19:G$86)", sheet.getRow(14).getCell(6).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$86,$B15,H$19:H$86)", sheet.getRow(14).getCell(7).getCellFormula());
+        assertEquals("SUMIF($B$19:$B$86,$B15,I$19:I$86)", sheet.getRow(14).getCell(8).getCellFormula());
+
+        // now the whole block G4L:15
+        for(int i = 3; i <= 14; i++){
+            for(int j = 6; j <= 8; j++){
+                String col = CellReference.convertNumToColString(j);
+                String expectedFormula = "SUMIF($B$19:$B$86,$B"+(i+1)+","+col+"$19:"+col+"$86)";
+                assertEquals(expectedFormula, sheet.getRow(i).getCell(j).getCellFormula());
+            }
+        }
+
+        assertEquals("SUM(G24:I24)", sheet.getRow(23).getCell(9).getCellFormula());
+
+        // shifted rows
+        assertTrue( sheet.getRow(24) == null || sheet.getRow(24).getCell(9) == null);
+        assertTrue( sheet.getRow(25) == null || sheet.getRow(25).getCell(9) == null);
+        assertTrue( sheet.getRow(26) == null || sheet.getRow(26).getCell(9) == null);
+        assertTrue( sheet.getRow(27) == null || sheet.getRow(27).getCell(9) == null);
+
+        assertEquals("SUM(G29:I29)", sheet.getRow(28).getCell(9).getCellFormula());
+        assertEquals("SUM(G30:I30)", sheet.getRow(29).getCell(9).getCellFormula());
+
     }
 }
