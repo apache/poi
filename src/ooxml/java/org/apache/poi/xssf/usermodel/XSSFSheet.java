@@ -2617,7 +2617,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param sid shared group index
      * @return a CTCellFormula bean holding shared formula or <code>null</code> if not found
      */
-    CTCellFormula getSharedFormula(int sid){
+    @Internal
+    public CTCellFormula getSharedFormula(int sid){
         return sharedFormulas.get(sid);
     }
 

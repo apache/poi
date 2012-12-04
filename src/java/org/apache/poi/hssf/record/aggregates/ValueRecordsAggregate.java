@@ -292,12 +292,14 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 			for (int j = 0; j < rowCells.length; j++) {
 				CellValueRecordInterface cell = rowCells[j];
 				if (cell instanceof FormulaRecordAggregate) {
-					FormulaRecord fr = ((FormulaRecordAggregate)cell).getFormulaRecord();
-					Ptg[] ptgs = fr.getParsedExpression(); // needs clone() inside this getter?
-					if (shifter.adjustFormula(ptgs, currentExternSheetIndex)) {
-						fr.setParsedExpression(ptgs);
-					}
-				}
+                    FormulaRecordAggregate fra = (FormulaRecordAggregate)cell;
+                    Ptg[] ptgs = fra.getFormulaTokens(); // needs clone() inside this getter?
+                    Ptg[] ptgs2 = ((FormulaRecordAggregate)cell).getFormulaRecord().getParsedExpression(); // needs clone() inside this getter?
+
+                    if (shifter.adjustFormula(ptgs, currentExternSheetIndex)) {
+                        fra.setParsedExpression(ptgs);
+                    }
+                }
 			}
 		}
 	}
