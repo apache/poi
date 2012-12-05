@@ -23,6 +23,9 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * @author Yegor Kozlov
  */
@@ -182,4 +185,96 @@ public final class TestXSSFCell extends BaseTestCell {
         wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
         assertEquals(36, cell.getErrorCellValue());
     }
+
+    public void testMissingRAttribute() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
+        XSSFCell a1 = row.createCell(0);
+        a1.setCellValue("A1");
+        XSSFCell a2 = row.createCell(1);
+        a2.setCellValue("B1");
+        XSSFCell a4 = row.createCell(4);
+        a4.setCellValue("E1");
+        XSSFCell a6 = row.createCell(5);
+        a6.setCellValue("F1");
+
+        assertCellsWithMissingR(row);
+
+        a2.getCTCell().unsetR();
+        a6.getCTCell().unsetR();
+
+        assertCellsWithMissingR(row);
+
+        wb = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(wb);
+        row = wb.getSheetAt(0).getRow(0);
+        assertCellsWithMissingR(row);
+    }
+
+    private void assertCellsWithMissingR(XSSFRow row){
+        XSSFCell a1 = row.getCell(0);
+        assertNotNull(a1);
+        XSSFCell a2 = row.getCell(1);
+        assertNotNull(a2);
+        XSSFCell a5 = row.getCell(4);
+        assertNotNull(a5);
+        XSSFCell a6 = row.getCell(5);
+        assertNotNull(a6);
+
+        assertEquals(6, row.getLastCellNum());
+        assertEquals(4, row.getPhysicalNumberOfCells());
+
+        assertEquals("A1", a1.getStringCellValue());
+        assertEquals("B1", a2.getStringCellValue());
+        assertEquals("E1", a5.getStringCellValue());
+        assertEquals("F1", a6.getStringCellValue());
+
+        // even if R attribute is not set,
+        // POI is able to re-construct it from column and row indexes
+        assertEquals("A1", a1.getReference());
+        assertEquals("B1", a2.getReference());
+        assertEquals("E1", a5.getReference());
+        assertEquals("F1", a6.getReference());
+    }
+
+    public void testMissingRAttributeBug54288() {
+        // workbook with cells missing the R attribute
+        XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("54288.xlsx");
+        // same workbook re-saved in Excel 2010, the R attribute is updated for every cell with the right value.
+        XSSFWorkbook wbRef = (XSSFWorkbook)_testDataProvider.openSampleWorkbook("54288-ref.xlsx");
+
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFSheet sheetRef = wbRef.getSheetAt(0);
+        assertEquals(sheetRef.getPhysicalNumberOfRows(), sheet.getPhysicalNumberOfRows());
+
+        // Test idea: iterate over cells in the reference worksheet, they all have the R attribute set.
+        // For each cell from the reference sheet find the corresponding cell in the problematic file (with missing R)
+        // and assert that POI reads them equally:
+        DataFormatter formater = new DataFormatter();
+        for(Row r : sheetRef){
+            XSSFRow rowRef = (XSSFRow)r;
+            XSSFRow row = sheet.getRow(rowRef.getRowNum());
+
+            assertEquals("number of cells in row["+row.getRowNum()+"]",
+                    rowRef.getPhysicalNumberOfCells(), row.getPhysicalNumberOfCells());
+
+            for(Cell c :  rowRef){
+                XSSFCell cellRef = (XSSFCell)c;
+                XSSFCell cell = row.getCell(cellRef.getColumnIndex());
+
+                assertEquals(cellRef.getColumnIndex(), cell.getColumnIndex());
+                assertEquals(cellRef.getReference(), cell.getReference());
+
+                if(!cell.getCTCell().isSetR()){
+                    assertTrue("R must e set in cellRef", cellRef.getCTCell().isSetR());
+
+                    String valRef = formater.formatCellValue(cellRef);
+                    String val = formater.formatCellValue(cell);
+                    assertEquals(valRef, val);
+                }
+
+            }
+        }
+    }
+
 }

@@ -104,6 +104,11 @@ public final class XSSFCell implements Cell {
         _row = row;
         if (cell.getR() != null) {
             _cellNum = new CellReference(cell.getR()).getCol();
+        } else {
+            int prevNum = row.getLastCellNum();
+            if(prevNum != -1){
+                _cellNum = row.getCell(prevNum-1).getColumnIndex() + 1;
+            }
         }
         _sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
         _stylesSource = row.getSheet().getWorkbook().getStylesSource();
@@ -468,7 +473,11 @@ public final class XSSFCell implements Cell {
      * @return A1 style reference to the location of this cell
      */
     public String getReference() {
-        return _cell.getR();
+        String ref = _cell.getR();
+        if(ref == null) {
+            return new CellReference(this).formatAsString();
+        }
+        return ref;
     }
 
     /**
@@ -685,7 +694,7 @@ public final class XSSFCell implements Cell {
      * Sets this cell as the active cell for the worksheet.
      */
     public void setAsActiveCell() {
-        getSheet().setActiveCell(_cell.getR());
+        getSheet().setActiveCell(getReference());
     }
 
     /**
@@ -889,7 +898,7 @@ public final class XSSFCell implements Cell {
     public void removeCellComment() {
         XSSFComment comment = getCellComment();
         if(comment != null){
-            String ref = _cell.getR();
+            String ref = getReference();
             XSSFSheet sh = getSheet();
             sh.getCommentsTable(false).removeComment(ref);
             sh.getVMLDrawing(false).removeCommentShape(getRowIndex(), getColumnIndex());
@@ -1009,7 +1018,7 @@ public final class XSSFCell implements Cell {
     public CellRangeAddress getArrayFormulaRange() {
         XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
         if (cell == null) {
-            throw new IllegalStateException("Cell " + _cell.getR()
+            throw new IllegalStateException("Cell " + getReference()
                     + " is not part of an array formula.");
         }
         String formulaRef = cell._cell.getF().getRef();
