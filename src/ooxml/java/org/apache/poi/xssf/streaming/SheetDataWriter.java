@@ -44,6 +44,7 @@ public class SheetDataWriter {
     int _numberOfFlushedRows;
     int _lowestIndexOfFlushedRows; // meaningful only of _numberOfFlushedRows>0
     int _numberOfCellsOfLastFlushedRow; // meaningful only of _numberOfFlushedRows>0
+    int _numberLastFlushedRow = -1; // meaningful only of _numberOfFlushedRows>0
 
     public SheetDataWriter() throws IOException {
         _fd = createTempFile();
@@ -105,6 +106,10 @@ public class SheetDataWriter {
         return _lowestIndexOfFlushedRows;
     }
 
+    public int getLastFlushedRow() {
+        return _numberLastFlushedRow;
+    }
+
     protected void finalize() throws Throwable {
         _fd.delete();
     }
@@ -118,6 +123,7 @@ public class SheetDataWriter {
     public void writeRow(int rownum, SXSSFRow row) throws IOException {
         if (_numberOfFlushedRows == 0)
             _lowestIndexOfFlushedRows = rownum;
+        _numberLastFlushedRow = Math.max(rownum, _numberLastFlushedRow);
         _numberOfCellsOfLastFlushedRow = row.getLastCellNum();
         _numberOfFlushedRows++;
         beginRow(rownum, row);

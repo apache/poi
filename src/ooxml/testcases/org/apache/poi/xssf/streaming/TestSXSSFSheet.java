@@ -19,8 +19,10 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class TestSXSSFSheet extends BaseTestSheet {
@@ -89,5 +91,45 @@ public class TestSXSSFSheet extends BaseTestSheet {
     @Override
     public void testDefaultColumnStyle() {
         //TODO column styles are not yet supported by XSSF
+    }
+
+    public void testOverrideFlushedRows() {
+        Workbook wb = new SXSSFWorkbook(3);
+        Sheet sheet = wb.createSheet();
+
+        sheet.createRow(1);
+        sheet.createRow(2);
+        sheet.createRow(3);
+        sheet.createRow(4);
+        try {
+            sheet.createRow(1);
+            fail("expected exception");
+        } catch (Throwable e){
+            assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", e.getMessage());
+        }
+
+    }
+
+    public void testOverrideRowsInTemplate() {
+        XSSFWorkbook template = new XSSFWorkbook();
+        template.createSheet().createRow(1);
+
+        Workbook wb = new SXSSFWorkbook(template);
+        Sheet sheet = wb.getSheetAt(0);
+
+        try {
+            sheet.createRow(1);
+            fail("expected exception");
+        } catch (Throwable e){
+            assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", e.getMessage());
+        }
+        try {
+            sheet.createRow(0);
+            fail("expected exception");
+        } catch (Throwable e){
+            assertEquals("Attempting to write a row[0] in the range [0,1] that is already written to disk.", e.getMessage());
+        }
+        sheet.createRow(2);
+
     }
 }

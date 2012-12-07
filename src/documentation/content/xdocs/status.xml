@@ -34,6 +34,7 @@
 
     <changes>
         <release version="4.0-beta1" date="2013-??-??">
+          <action dev="poi-developers" type="fix">53650 - Prevent unreadable content and disalow to overwrite rows from input template in SXSSF</action>
           <action dev="poi-developers" type="fix">54228,53672 - Fixed XSSF to read cells with missing R attribute</action>
           <action dev="poi-developers" type="fix">54206 - Ensure that shared formuals are updated when shifting rows in a spreadsheet</action>
           <action dev="poi-developers" type="fix">Synchronize table headers with parent sheet in XSSF</action>
