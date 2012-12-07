@@ -106,6 +106,20 @@ public class SXSSFSheet implements Sheet, Cloneable
                     + ") outside allowable range (0.." + maxrow + ")");
         }
 
+        // attempt to overwrite a row that is already flushed to disk
+        if(rownum <= _writer.getLastFlushedRow() ) {
+            throw new IllegalArgumentException(
+                    "Attempting to write a row["+rownum+"] " +
+                    "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");
+        }
+
+        // attempt to overwrite a existing row in the input template
+        if(_sh.getPhysicalNumberOfRows() > 0 && rownum <= _sh.getLastRowNum() ) {
+            throw new IllegalArgumentException(
+                    "Attempting to write a row["+rownum+"] " +
+                            "in the range [0," + _sh.getLastRowNum() + "] that is already written to disk.");
+        }
+
 //Make the initial allocation as big as the row above.
         Row previousRow=rownum>0?getRow(rownum-1):null;
         int initialAllocationSize=0;
