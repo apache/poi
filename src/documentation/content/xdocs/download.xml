@@ -62,16 +62,16 @@
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.9-20121203.tar.gz">poi-bin-3.9-20121203.tar.gz</link> (
           16MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.9-20121203.tar.gz.asc">signed</link>)
           <br/>
-          MD5 checksum: 7f094e58310a1dff6963e5d7812acda6 
+          MD5 checksum: 09c4dfd63317bb9eb37fe12d6febea74 
           <br/>
-          SHA1 checksum: 0840b38316eeb247f208117a838a6e400715f0b3 
+          SHA1 checksum: 5e5747efebd65623bed5b8562b30fae24f75b198 
         </li>
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.9-20121203.zip">poi-bin-3.9-20121203.zip</link> (
           23MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.9-20121203.zip.asc">signed</link>)
           <br/>
-          MD5 checksum: 8b8c46bb8edf39bb5755b9033aab508d 
+          MD5 checksum: 24aea12578d5745dfb8eba9d185b9136 
           <br/>
-          SHA1 checksum: 53ff3ee220824a1f8b9267dee305eaa30429e28b 
+          SHA1 checksum: 231e738b40175a40c51af5549c82d554bf13f97e 
         </li>
       </ul>
       </section>
@@ -80,16 +80,16 @@
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.9-20121203.tar.gz">poi-src-3.9-20121203.tar.gz</link> (
           48MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.9-20121203.tar.gz.asc">signed</link>)
           <br/>
-          MD5 checksum: 23529f68f6055d6f9ee36a4f7fadfee4 
+          MD5 checksum: fe12cf4620340f61dd42e43f6087a336 
           <br/>
-          SHA1 checksum: 971a6177d19badc5ef87717dc04816d43cf3665b 
+          SHA1 checksum: 3a8660b9c99111b72365269e23fefae5e6bdcf4b 
         </li>
         <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.9-20121203.zip">poi-src-3.9-20121203.zip</link> (
           58MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.9-20121203.zip.asc">signed</link>)
           <br/>
-          MD5 checksum: 4d1c7d0428fc04f8c3bc53af761d4013 
+          MD5 checksum: c08d4bf7a7f63a29bedcb2b5b2d61efa 
           <br/>
-          SHA1 checksum: 94cc79f45c84274730c30f3a4198d7042d3d47f1 
+          SHA1 checksum: 8bdb2cac1b3bfd7dd816ba574b0f20c52a8092ed 
         </li>
       </ul>
       </section>
