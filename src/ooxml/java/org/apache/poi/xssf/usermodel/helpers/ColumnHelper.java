@@ -112,7 +112,8 @@ public class ColumnHelper {
 
     public CTCols addCleanColIntoCols(CTCols cols, CTCol col) {
         boolean colOverlaps = false;
-        for (int i = 0; i < cols.sizeOfColArray(); i++) {
+        int sizeOfColArray = cols.sizeOfColArray();
+        for (int i = 0; i < sizeOfColArray; i++) {
             CTCol ithCol = cols.getColArray(i);
             long[] range1 = { ithCol.getMin(), ithCol.getMax() };
             long[] range2 = { col.getMin(), col.getMax() };
