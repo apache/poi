@@ -136,10 +136,11 @@ public final class HeaderBlock implements HeaderBlockConstants {
 						+ "POI only supports BIFF8 format");
 			}
 
-			// Give a generic error
+			// Give a generic error if the OLE2 signature isn't found
 			throw new IOException("Invalid header signature; read "
 				                  + longToHex(signature) + ", expected "
-				                  + longToHex(_signature));
+				                  + longToHex(_signature) + " - Your file appears "
+				                  + "not to be a valid OLE2 document");
 		}
 
 
