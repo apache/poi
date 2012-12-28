@@ -22,8 +22,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import java.util.*;
 
 /**
- * @author Josh Micich
- * @author Petr Udalau - systematized work of add-in libraries and user defined functions.
+ * Analysis Toolpack Function Definitions 
  */
 public final class AnalysisToolPak implements UDFFinder {
 
@@ -112,7 +111,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "HEX2BIN", null);
         r(m, "HEX2DEC", null);
         r(m, "HEX2OCT", null);
-        r(m, "IFERROR", null);
+        r(m, "IFERROR", IfError.instance);
         r(m, "IMABS", null);
         r(m, "IMAGINARY", null);
         r(m, "IMARGUMENT", null);
