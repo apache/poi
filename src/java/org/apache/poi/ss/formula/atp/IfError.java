@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.atp;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -47,7 +48,7 @@ final class IfError implements FreeRefFunction {
 
 		ValueEval val;
 		try {
-			val = evaluateArgParity(args[0], args[1], ec.getRowIndex(), ec.getColumnIndex());
+			val = evaluateInternal(args[0], args[1], ec.getRowIndex(), ec.getColumnIndex());
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
@@ -55,7 +56,8 @@ final class IfError implements FreeRefFunction {
 		return val;
 	}
 
-	private static ValueEval evaluateArgParity(ValueEval arg, ValueEval iferror, int srcCellRow, int srcCellCol) throws EvaluationException {
+	private static ValueEval evaluateInternal(ValueEval arg, ValueEval iferror, int srcCellRow, int srcCellCol) throws EvaluationException {
+		arg = WorkbookEvaluator.dereferenceResult(arg, srcCellRow, srcCellCol);
 		if(arg instanceof ErrorEval) {
 			return iferror;
 		} else {
