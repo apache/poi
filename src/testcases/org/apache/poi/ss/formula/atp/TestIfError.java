@@ -36,6 +36,7 @@ public class TestIfError extends TestCase {
     /**
      * =IFERROR(210/35,\"Error in calculation\")"  Divides 210 by 35 and returns 6.0
      * =IFERROR(55/0,\"Error in calculation\")"    Divides 55 by 0 and returns the error text
+     * =IFERROR(C1,\"Error in calculation\")"      References the result of dividing 55 by 0 and returns the error text
      */
     public static void testEvaluate(){
         Workbook wb = new HSSFWorkbook();
@@ -46,6 +47,7 @@ public class TestIfError extends TestCase {
         // Create cells
         row1.createCell(0, Cell.CELL_TYPE_NUMERIC);
         row1.createCell(1, Cell.CELL_TYPE_NUMERIC);
+        row1.createCell(2, Cell.CELL_TYPE_NUMERIC);
         row2.createCell(0, Cell.CELL_TYPE_NUMERIC);
         row2.createCell(1, Cell.CELL_TYPE_NUMERIC);
 
@@ -54,18 +56,22 @@ public class TestIfError extends TestCase {
         CellReference a2 = new CellReference("A2");
         CellReference b1 = new CellReference("B1");
         CellReference b2 = new CellReference("B2");
+        CellReference c1 = new CellReference("C1");
         
         // Set values
         sh.getRow(a1.getRow()).getCell(a1.getCol()).setCellValue(210);
         sh.getRow(a2.getRow()).getCell(a2.getCol()).setCellValue(55);
         sh.getRow(b1.getRow()).getCell(b1.getCol()).setCellValue(35);
         sh.getRow(b2.getRow()).getCell(b2.getCol()).setCellValue(0);
+        sh.getRow(c1.getRow()).getCell(c1.getCol()).setCellFormula("A1/B2");
         
         Cell cell1 = sh.createRow(3).createCell(0);
         cell1.setCellFormula("IFERROR(A1/B1,\"Error in calculation\")");
         Cell cell2 = sh.createRow(3).createCell(0);
         cell2.setCellFormula("IFERROR(A2/B2,\"Error in calculation\")");
-
+        Cell cell3 = sh.createRow(3).createCell(0);
+        cell3.setCellFormula("IFERROR(C1,\"error\")");
+        
         double accuracy = 1E-9;
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -80,5 +86,10 @@ public class TestIfError extends TestCase {
         		Cell.CELL_TYPE_STRING, evaluator.evaluate(cell2).getCellType());        
         assertEquals("Rounds -10 to a nearest multiple of -3 (-9)",
                 "Error in calculation", evaluator.evaluate(cell2).getStringValue());
+        
+        assertEquals("Check that C1 returns string", 
+        		Cell.CELL_TYPE_STRING, evaluator.evaluate(cell3).getCellType());
+        assertEquals("Check that C1 returns string \"error\"", 
+        		"error", evaluator.evaluate(cell3).getStringValue());
     }
 }
