@@ -23,21 +23,21 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.LinearRegressionFunction.FUNCTION;
 
 /**
- * Implementation of Excel function INTERCEPT()<p/>
+ * Implementation of Excel function SLOPE()<p/>
  *
- * Calculates the INTERCEPT of the linear regression line that is used to predict y values from x values<br/>
+ * Calculates the SLOPE of the linear regression line that is used to predict y values from x values<br/>
  * (http://introcs.cs.princeton.edu/java/97data/LinearRegression.java.html)
  * <b>Syntax</b>:<br/>
- * <b>INTERCEPT</b>(<b>arrayX</b>, <b>arrayY</b>)<p/>
+ * <b>SLOPE</b>(<b>arrayX</b>, <b>arrayY</b>)<p/>
  *
  *
  * @author Johan Karlsteen
  */
-public final class Intercept extends Fixed2ArgFunction {
-
+public final class Slope extends Fixed2ArgFunction {
+	
 	private final LinearRegressionFunction func;
-	public Intercept() {
-		func = new LinearRegressionFunction(FUNCTION.INTERCEPT);
+	public Slope() {
+		func = new LinearRegressionFunction(FUNCTION.SLOPE);
 	}
 	
 	@Override
