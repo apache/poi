@@ -28,7 +28,7 @@ import java.util.TreeSet;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- * @author Johan Karlsteen - added Intercept
+ * @author Johan Karlsteen - added Intercept and Slope
  */
 public final class FunctionEval {
 	/**
@@ -210,6 +210,7 @@ public final class FunctionEval {
 		retval[305] = new Sumx2py2();
 
 		retval[311] = new Intercept();
+		retval[315] = new Slope();
 
 		retval[318] = AggregateFunction.DEVSQ;
 
