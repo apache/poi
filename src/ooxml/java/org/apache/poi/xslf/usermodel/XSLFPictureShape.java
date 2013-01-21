@@ -23,17 +23,15 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
 import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -152,6 +150,21 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         if(nvPr.isSetCustDataLst()) {
             // discard any custom tags associated with the picture being copied
             nvPr.unsetCustDataLst();
+        }
+        if(blip.isSetExtLst()) {
+
+            CTOfficeArtExtensionList extLst = blip.getExtLst();
+            for(CTOfficeArtExtension ext : extLst.getExtList()){
+                String xpath = "declare namespace a14='http://schemas.microsoft.com/office/drawing/2010/main' $this//a14:imgProps/a14:imgLayer";
+                XmlObject[] obj = ext.selectPath(xpath);
+                if(obj != null && obj.length == 1){
+                    XmlCursor c = obj[0].newCursor();
+                    String id = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"));//selectPath("declare namespace r='http://schemas.openxmlformats.org/officeDocument/2006/relationships' $this//[@embed]");
+                    String newId = getSheet().importBlip(id, p.getSheet().getPackagePart());
+                    c.setAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"), newId);
+                    c.dispose();
+                }
+            }
         }
 
     }

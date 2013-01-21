@@ -93,12 +93,17 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
     public static final int PICTURE_TYPE_WPG = 12;
 
     /**
+     * Microsoft Windows Media Photo image (.wdp)
+     */
+    public static final int PICTURE_TYPE_WDP = 13;
+
+    /**
      * Relationships for each known picture type
      */
     protected static final POIXMLRelation[] RELATIONS;
 
     static {
-        RELATIONS = new POIXMLRelation[13];
+        RELATIONS = new POIXMLRelation[14];
         RELATIONS[PICTURE_TYPE_EMF] = XSLFRelation.IMAGE_EMF;
         RELATIONS[PICTURE_TYPE_WMF] = XSLFRelation.IMAGE_WMF;
         RELATIONS[PICTURE_TYPE_PICT] = XSLFRelation.IMAGE_PICT;
@@ -110,6 +115,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
         RELATIONS[PICTURE_TYPE_EPS] = XSLFRelation.IMAGE_EPS;
         RELATIONS[PICTURE_TYPE_BMP] = XSLFRelation.IMAGE_BMP;
         RELATIONS[PICTURE_TYPE_WPG] = XSLFRelation.IMAGE_WPG;
+        RELATIONS[PICTURE_TYPE_WDP] = XSLFRelation.IMAGE_WDP;
     }
 
     private Long checksum = null;

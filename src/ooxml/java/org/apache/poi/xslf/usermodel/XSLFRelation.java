@@ -213,6 +213,12 @@ public class XSLFRelation extends POIXMLRelation {
             "/ppt/media/image#.wpg",
             XSLFPictureData.class
     );
+    public static final XSLFRelation IMAGE_WDP = new XSLFRelation(
+            "image/vnd.ms-photo",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+            "/ppt/media/image#.wdp",
+            XSLFPictureData.class
+    );
 
     public static final XSLFRelation IMAGES = new XSLFRelation(
             null,
