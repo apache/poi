@@ -47,7 +47,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 		protected ValueArray(int size) {
 			_size = size;
 		}
-		@Override
+
 		public ValueEval getItem(int index) {
 			if (index < 0 || index > _size) {
 				throw new IllegalArgumentException("Specified index " + index
@@ -56,7 +56,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 			return getItemInternal(index);
 		}
 		protected abstract ValueEval getItemInternal(int index);
-		@Override
+
 		public final int getSize() {
 			return _size;
 		}
@@ -110,7 +110,6 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 		this.function = function;
 	}
 	
-	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex,
 			ValueEval arg0, ValueEval arg1) {
 		double result;
