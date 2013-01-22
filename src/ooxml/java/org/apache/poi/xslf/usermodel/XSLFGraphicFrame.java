@@ -19,13 +19,21 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
+import javax.xml.namespace.QName;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
@@ -151,5 +159,54 @@ public class XSLFGraphicFrame extends XSLFShape {
 
     }
 
+    @Override
+    void copy(XSLFShape sh){
+        super.copy(sh);
+
+        CTGraphicalObjectData data = _shape.getGraphic().getGraphicData();
+        String uri = data.getUri();
+        if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/diagram")){
+            copyDiagram(data, (XSLFGraphicFrame)sh);
+        } else {
+            // TODO  support other types of objects
+
+        }
+    }
+
+    // TODO should be moved to a sub-class
+    private void copyDiagram(CTGraphicalObjectData objData, XSLFGraphicFrame srcShape){
+        String xpath = "declare namespace dgm='http://schemas.openxmlformats.org/drawingml/2006/diagram' $this//dgm:relIds";
+        XmlObject[] obj = objData.selectPath(xpath);
+        if(obj != null && obj.length == 1){
+            XmlCursor c = obj[0].newCursor();
+
+            XSLFSheet sheet = srcShape.getSheet();
+            try {
+                String dm = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "dm"));
+                PackageRelationship dmRel = sheet.getPackagePart().getRelationship(dm);
+                PackagePart dmPart = sheet.getPackagePart().getRelatedPart(dmRel);
+                _sheet.importPart(dmRel, dmPart);
+
+                String lo = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "lo"));
+                PackageRelationship loRel = sheet.getPackagePart().getRelationship(lo);
+                PackagePart loPart = sheet.getPackagePart().getRelatedPart(loRel);
+                _sheet.importPart(loRel, loPart);
+
+                String qs = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "qs"));
+                PackageRelationship qsRel = sheet.getPackagePart().getRelationship(qs);
+                PackagePart qsPart = sheet.getPackagePart().getRelatedPart(qsRel);
+                _sheet.importPart(qsRel, qsPart);
+
+                String cs = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "cs"));
+                PackageRelationship csRel = sheet.getPackagePart().getRelationship(cs);
+                PackagePart csPart = sheet.getPackagePart().getRelatedPart(csRel);
+                _sheet.importPart(csRel, csPart);
+
+            } catch (InvalidFormatException e){
+                throw new POIXMLException(e);
+            }
+            c.dispose();
+        }
+    }
 
 }
