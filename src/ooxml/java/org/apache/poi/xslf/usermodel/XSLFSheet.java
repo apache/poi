@@ -18,11 +18,13 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -39,6 +41,7 @@ import javax.xml.namespace.QName;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -297,6 +300,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _spTree = null;
         _drawing = null;
         _spTree = null;
+        _placeholders = null;
+
         // first copy the source xml
         getSpTree().set(src.getSpTree());
 
@@ -533,5 +538,31 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         addRelation(rel.getId(), new XSLFPictureData(pic, rel));
 
         return rel.getId();
+    }
+
+    /**
+     * Import a package part into this sheet.
+     */
+    PackagePart importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
+
+        OPCPackage pkg = getPackagePart().getPackage();
+        if(!pkg.containPart(srcPafrt.getPartName())){
+            PackageRelationship rel = getPackagePart().addRelationship(
+                    srcPafrt.getPartName(), TargetMode.INTERNAL, srcRel.getRelationshipType());
+
+            PackagePart part = pkg.createPart(srcPafrt.getPartName(), srcPafrt.getContentType());
+            OutputStream out = part.getOutputStream();
+            try {
+                InputStream is = srcPafrt.getInputStream();
+                IOUtils.copy(is, out);
+                out.close();
+            } catch (IOException e){
+                throw new POIXMLException(e);
+            }
+            return part;
+        }  else {
+            // already exists
+            return pkg.getPart(srcPafrt.getPartName());
+        }
     }
 }
