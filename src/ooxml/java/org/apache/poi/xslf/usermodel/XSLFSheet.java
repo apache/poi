@@ -346,6 +346,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _spTree = null;
         _drawing = null;
         _spTree = null;
+        _placeholders = null;
 
         // recursively update each shape
         List<XSLFShape> tgtShapes = getShapeList();
