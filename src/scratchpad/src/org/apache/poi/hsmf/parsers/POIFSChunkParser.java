@@ -95,7 +95,7 @@ public final class POIFSChunkParser {
       // All chunks are now processed, have the ChunkGroup
       // match up variable-length properties and their chunks
       for (ChunkGroup group : groups) {
-         // TODO
+         group.chunksComplete();
       }
       
       // Finish

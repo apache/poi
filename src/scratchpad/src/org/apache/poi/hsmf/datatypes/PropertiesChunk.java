@@ -56,7 +56,6 @@ public abstract class PropertiesChunk extends Chunk {
    /**
     * The ChunkGroup that these properties apply to. Used when
     *  matching chunks to variable sized properties
-    * TODO Make use of this
     */
    private ChunkGroup parentGroup;
    
@@ -73,31 +72,39 @@ public abstract class PropertiesChunk extends Chunk {
 	   return NAME;
    }
 	
-	/**
-	 * Returns all the properties in the chunk
-	 */
-	public Map<MAPIProperty, List<PropertyValue>> getProperties() {
-	   return properties;
-	}
+   /**
+    * Returns all the properties in the chunk
+    */
+   public Map<MAPIProperty, List<PropertyValue>> getProperties() {
+      return properties;
+   }
+
+   /**
+    * Returns all values for the given property, of null if none exist
+    */
+   public List<PropertyValue> getValues(MAPIProperty property) {
+      return properties.get(property);
+   }
+
+   /**
+    * Returns the (first/only) value for the given property, or
+    *  null if none exist
+    */
+   public PropertyValue getValue(MAPIProperty property) {
+      List<PropertyValue> values = properties.get(property);
+      if (values != null && values.size() > 0) {
+         return values.get(0);
+      }
+      return null;
+   }
 	
-	/**
-	 * Returns all values for the given property, of null if none exist
-	 */
-	public List<PropertyValue> getValues(MAPIProperty property) {
-	   return properties.get(property);
-	}
-	
-	/**
-	 * Returns the (first/only) value for the given property, or
-	 *  null if none exist
-	 */
-	public PropertyValue getValue(MAPIProperty property) {
-	   List<PropertyValue> values = properties.get(property);
-	   if (values != null && values.size() > 0) {
-	      return values.get(0);
-	   }
-	   return null;
-	}
+   /**
+    * Called once the parent ChunkGroup has been populated, to match
+    *  up the Chunks in it with our Variable Sized Properties.
+    */
+   protected void matchVariableSizedPropertiesToChunks() {
+      // TODO
+   }
 
    protected void readProperties(InputStream value) throws IOException {
       boolean going = true;
@@ -141,6 +148,7 @@ public abstract class PropertiesChunk extends Chunk {
             // Wrap and store
             PropertyValue propVal = null;
             if (isPointer) {
+               // We'll match up the chunk later
                propVal = new ChunkBasedPropertyValue(prop, flags, data);
             }
             else if (type == Types.LONG_LONG) {
