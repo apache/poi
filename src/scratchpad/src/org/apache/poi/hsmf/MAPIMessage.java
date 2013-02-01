@@ -418,14 +418,14 @@ public class MAPIMessage extends POIDocument {
     * @see #guess7BitEncoding()
     */
    public void set7BitEncoding(String charset) {
-      for(Chunk c : mainChunks.getAll()) {
+      for(Chunk c : mainChunks.getChunks()) {
          if(c instanceof StringChunk) {
             ((StringChunk)c).set7BitEncoding(charset);
          }
       }
 
       if (nameIdChunks!=null) {
-         for(Chunk c : nameIdChunks.getAll()) {
+         for(Chunk c : nameIdChunks.getChunks()) {
             if(c instanceof StringChunk) {
                 ((StringChunk)c).set7BitEncoding(charset);
             }
@@ -446,7 +446,7 @@ public class MAPIMessage extends POIDocument {
     *  are stored as 7 bit rather than unicode?
     */
    public boolean has7BitEncodingStrings() {
-      for(Chunk c : mainChunks.getAll()) {
+      for(Chunk c : mainChunks.getChunks()) {
          if(c instanceof StringChunk) {
             if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
                return true;
@@ -455,7 +455,7 @@ public class MAPIMessage extends POIDocument {
       }
       
       if (nameIdChunks!=null) {
-         for(Chunk c : nameIdChunks.getAll()) {
+         for(Chunk c : nameIdChunks.getChunks()) {
             if(c instanceof StringChunk) {
                if( ((StringChunk)c).getType() == Types.ASCII_STRING ) {
                   return true;

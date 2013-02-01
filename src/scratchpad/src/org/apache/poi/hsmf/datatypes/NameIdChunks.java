@@ -44,4 +44,13 @@ public final class NameIdChunks implements ChunkGroup {
    public void record(Chunk chunk) {
       allChunks.add(chunk);
    }
+   
+   /**
+    * Used to flag that all the chunks of the NameID
+    *  have now been located.
+    */
+   public void chunksComplete() {
+      // Currently, we don't need to do anything special once
+      //  all the chunks have been located
+   }
 }

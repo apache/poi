@@ -33,8 +33,8 @@ public class MessagePropertiesChunk extends PropertiesChunk {
    private long recipientCount;
    private long attachmentCount;
 
-   public MessagePropertiesChunk() {
-      super();
+   public MessagePropertiesChunk(ChunkGroup parentGroup) {
+      super(parentGroup);
    }
    
    public long getNextRecipientId() {
