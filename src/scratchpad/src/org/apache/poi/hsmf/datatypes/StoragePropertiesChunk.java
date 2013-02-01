@@ -29,8 +29,8 @@ import org.apache.poi.util.LittleEndian;
  * This only has a 8 byte header
  */
 public class StoragePropertiesChunk extends PropertiesChunk {
-   public StoragePropertiesChunk() {
-      super();
+   public StoragePropertiesChunk(ChunkGroup parentGroup) {
+      super(parentGroup);
    }
    
    @Override

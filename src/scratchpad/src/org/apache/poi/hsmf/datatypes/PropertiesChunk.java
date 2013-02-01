@@ -25,8 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hsmf.datatypes.PropertyValue.LongLongPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
-import org.apache.poi.hsmf.datatypes.PropertyValue.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
@@ -52,11 +53,19 @@ public abstract class PropertiesChunk extends Chunk {
    private Map<MAPIProperty, List<PropertyValue>> properties = 
          new HashMap<MAPIProperty, List<PropertyValue>>();
 
+   /**
+    * The ChunkGroup that these properties apply to. Used when
+    *  matching chunks to variable sized properties
+    * TODO Make use of this
+    */
+   private ChunkGroup parentGroup;
+   
 	/**
 	 * Creates a Properties Chunk.
 	 */
-	protected PropertiesChunk() {
+	protected PropertiesChunk(ChunkGroup parentGroup) {
 		super(NAME, -1, Types.UNKNOWN);
+		this.parentGroup = parentGroup;
 	}
 
 	@Override
@@ -132,7 +141,7 @@ public abstract class PropertiesChunk extends Chunk {
             // Wrap and store
             PropertyValue propVal = null;
             if (isPointer) {
-               // TODO Pointer type which can do lookup
+               propVal = new ChunkBasedPropertyValue(prop, flags, data);
             }
             else if (type == Types.LONG_LONG) {
                propVal = new LongLongPropertyValue(prop, flags, data);

@@ -77,7 +77,11 @@ public final class RecipientChunks implements ChunkGroup {
     *  as in recipientNameChunk
     */
    public StringChunk recipientDisplayNameChunk;
-   
+   /**
+    * Holds the fixed sized properties, and the
+    *  pointers to the data of variable sized ones
+    */
+   private PropertiesChunk recipientProperties;
    
    public RecipientChunks(String name) {
       recipientNumber = -1;
@@ -191,11 +195,18 @@ public final class RecipientChunks implements ChunkGroup {
       else if(chunk.getChunkId() == DELIVERY_TYPE.id) {
          deliveryTypeChunk = (StringChunk)chunk;
       }
+      else if(chunk instanceof PropertiesChunk) {
+         recipientProperties = (PropertiesChunk) chunk;
+      }
 
       // And add to the main list
       allChunks.add(chunk);
    }
    
+   public void chunksComplete() {
+      // TODO Match variable sized properties to their chunks + index
+   }
+
    /**
     * Orders by the recipient number.
     */

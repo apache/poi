@@ -17,25 +17,28 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+
 /**
- * A group of chunks, that are at the same point in the
- *  file structure.
+ * A variable length {@link PropertyValue} that is
+ *  backed by a {@link Chunk}
+ * TODO Provide a way to link these up with the chunks
  */
-public interface ChunkGroup {
+public class ChunkBasedPropertyValue extends PropertyValue {
+   public ChunkBasedPropertyValue(MAPIProperty property, long flags, byte[] offsetData) {
+      super(property, flags, offsetData);
+   }
+
+   @Override
+   public Chunk getValue() {
+      // TODO Decode the value into an offset
+      // TODO Look up the chunk based on that
+      return null;
+   }
+   
    /**
-    * Returns the chunks that make up the group.
-    * Should certainly contain all the interesting Chunks,
-    *  but needn't always contain all of the Chunks.
+    * Stores the offset of the chunk as the property value
     */
-	public Chunk[] getChunks();
-	
-	/**
-	 * Called by the parser whenever a chunk is found.
-	 */
-	public void record(Chunk chunk);
-	
-	/**
-	 * Called by the parser when all chunks have been found.
-	 */
-	public void chunksComplete();
+   public void setValue(Chunk chunk) {
+      // TODO
+   }
 }

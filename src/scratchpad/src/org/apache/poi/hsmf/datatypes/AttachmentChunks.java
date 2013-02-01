@@ -171,7 +171,17 @@ public class AttachmentChunks implements ChunkGroup {
       // And add to the main list
       allChunks.add(chunk);
    }
-   
+
+   /**
+    * Used to flag that all the chunks of the attachment
+    *  have now been located.
+    */
+   public void chunksComplete() {
+      // Currently, we don't need to do anything special once
+      //  all the chunks have been located
+   }
+
+
    /**
     * Orders by the attachment number.
     */

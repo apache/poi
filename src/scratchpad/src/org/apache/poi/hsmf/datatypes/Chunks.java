@@ -18,7 +18,9 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -30,8 +32,8 @@ import java.util.List;
  *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
 public final class Chunks implements ChunkGroup {
-   /** Holds all the chunks that were found. */
-   private List<Chunk> allChunks = new ArrayList<Chunk>();
+   /** Holds all the chunks that were found, indexed by their MAPIProperty */
+   private Map<MAPIProperty,List<Chunk>> allChunks = new HashMap<MAPIProperty,List<Chunk>>();
    
    /** Type of message that the MSG represents (ie. IPM.Note) */
    public StringChunk messageClass;
@@ -70,65 +72,72 @@ public final class Chunks implements ChunkGroup {
    /** The message properties */
    public MessagePropertiesChunk messageProperties;
 
-
-   public Chunk[] getAll() {
-      return allChunks.toArray(new Chunk[allChunks.size()]);
+   public Map<MAPIProperty,List<Chunk>> getAll() {
+      return allChunks;
    }
    public Chunk[] getChunks() {
-      return getAll();
+      ArrayList<Chunk> chunks = new ArrayList<Chunk>(allChunks.size());
+      for (List<Chunk> c : allChunks.values()) {
+         chunks.addAll(c);
+      }
+      return chunks.toArray(new Chunk[chunks.size()]);
    }
 	
    /**
     * Called by the parser whenever a chunk is found.
     */
    public void record(Chunk chunk) {
-      if(chunk.getChunkId() == MAPIProperty.MESSAGE_CLASS.id) {
+      // Work out what MAPIProperty this corresponds to
+      MAPIProperty prop = MAPIProperty.get(chunk.getChunkId());
+      
+      // Assign it for easy lookup, as best we can
+      if(prop == MAPIProperty.MESSAGE_CLASS) {
          messageClass = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.INTERNET_MESSAGE_ID.id) {
+      else if(prop == MAPIProperty.INTERNET_MESSAGE_ID) {
          messageId = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.MESSAGE_SUBMISSION_ID.id) {
+      else if(prop == MAPIProperty.MESSAGE_SUBMISSION_ID) {
          // TODO - parse
          submissionChunk = (MessageSubmissionChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.RECEIVED_BY_ADDRTYPE.id) {
+      else if(prop == MAPIProperty.RECEIVED_BY_ADDRTYPE) {
          sentByServerType = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.TRANSPORT_MESSAGE_HEADERS.id) {
+      else if(prop == MAPIProperty.TRANSPORT_MESSAGE_HEADERS) {
          messageHeaders = (StringChunk)chunk;
       }
       
-      else if(chunk.getChunkId() == MAPIProperty.CONVERSATION_TOPIC.id) {
+      else if(prop == MAPIProperty.CONVERSATION_TOPIC) {
          conversationTopic = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.SUBJECT.id) {
+      else if(prop == MAPIProperty.SUBJECT) {
          subjectChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.ORIGINAL_SUBJECT.id) {
+      else if(prop == MAPIProperty.ORIGINAL_SUBJECT) {
          // TODO
       }
       
-      else if(chunk.getChunkId() == MAPIProperty.DISPLAY_TO.id) {
+      else if(prop == MAPIProperty.DISPLAY_TO) {
          displayToChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.DISPLAY_CC.id) {
+      else if(prop == MAPIProperty.DISPLAY_CC) {
          displayCCChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.DISPLAY_BCC.id) {
+      else if(prop == MAPIProperty.DISPLAY_BCC) {
          displayBCCChunk = (StringChunk)chunk;
       }
       
-      else if(chunk.getChunkId() == MAPIProperty.SENDER_EMAIL_ADDRESS.id) {
+      else if(prop == MAPIProperty.SENDER_EMAIL_ADDRESS) {
          emailFromChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.SENDER_NAME.id) {
+      else if(prop == MAPIProperty.SENDER_NAME) {
          displayFromChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.BODY.id) {
+      else if(prop == MAPIProperty.BODY) {
          textBodyChunk = (StringChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.BODY_HTML.id) {
+      else if(prop == MAPIProperty.BODY_HTML) {
          if(chunk instanceof StringChunk) {
             htmlBodyChunkString = (StringChunk)chunk;
          }
@@ -136,16 +145,21 @@ public final class Chunks implements ChunkGroup {
             htmlBodyChunkBinary = (ByteChunk)chunk;
          }
       }
-      else if(chunk.getChunkId() == MAPIProperty.RTF_COMPRESSED.id) {
+      else if(prop == MAPIProperty.RTF_COMPRESSED) {
          rtfBodyChunk = (ByteChunk)chunk;
       }
-      else if(chunk.getChunkId() == MAPIProperty.UNKNOWN.id &&
-              chunk instanceof MessagePropertiesChunk) {
-         // TODO Should we maybe collect the contents of this?
+      else if(chunk instanceof MessagePropertiesChunk) {
          messageProperties = (MessagePropertiesChunk) chunk;
       }
       
       // And add to the main list
-      allChunks.add(chunk);
+      if (allChunks.get(prop) == null) {
+         allChunks.put(prop, new ArrayList<Chunk>());
+      }
+      allChunks.get(prop).add(chunk);
+   }
+   
+   public void chunksComplete() {
+      // TODO Match variable sized properties to their chunks + index
    }
 }

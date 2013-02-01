@@ -92,6 +92,12 @@ public final class POIFSChunkParser {
       // Now do the top level chunks
       processChunks(node, mainChunks);
       
+      // All chunks are now processed, have the ChunkGroup
+      // match up variable-length properties and their chunks
+      for (ChunkGroup group : groups) {
+         // TODO
+      }
+      
       // Finish
       return groups.toArray(new ChunkGroup[groups.size()]);
    }
@@ -123,10 +129,10 @@ public final class POIFSChunkParser {
       if (entryName.equals(PropertiesChunk.NAME)) {
          if (grouping instanceof Chunks) {
             // These should be the properties for the message itself
-            chunk = new MessagePropertiesChunk();
+            chunk = new MessagePropertiesChunk(grouping);
          } else {
             // Will be properties on an attachment or recipient
-            chunk = new StoragePropertiesChunk();
+            chunk = new StoragePropertiesChunk(grouping);
          }
       } else {
          // Check it's a regular chunk
