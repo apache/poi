@@ -18,8 +18,10 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -32,7 +34,7 @@ import org.apache.poi.util.POILogger;
  * If a message has multiple recipients, there will be
  *  several of these.
  */
-public final class RecipientChunks implements ChunkGroup {
+public final class RecipientChunks implements ChunkGroupWithProperties {
    private static POILogger logger = POILogFactory.getLogger(RecipientChunks.class);
 
    public static final String PREFIX = "__recip_version1.0_#";
@@ -165,6 +167,12 @@ public final class RecipientChunks implements ChunkGroup {
    /** Holds all the chunks that were found. */
    private List<Chunk> allChunks = new ArrayList<Chunk>();
 
+   public Map<MAPIProperty,List<PropertyValue>> getProperties() {
+      if (recipientProperties != null) {
+         return recipientProperties.getProperties();
+      }
+      else return Collections.emptyMap();
+   }
    public Chunk[] getAll() {
       return allChunks.toArray(new Chunk[allChunks.size()]);
    }
@@ -204,7 +212,11 @@ public final class RecipientChunks implements ChunkGroup {
    }
    
    public void chunksComplete() {
-      // TODO Match variable sized properties to their chunks + index
+      if (recipientProperties != null) {
+         recipientProperties.matchVariableSizedPropertiesToChunks();
+      } else {
+         logger.log(POILogger.WARN, "Recipeints Chunk didn't contain a list of properties!");
+      }
    }
 
    /**

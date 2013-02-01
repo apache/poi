@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -516,15 +517,15 @@ public class MAPIMessage extends POIDocument {
       if (mainChunks.submissionChunk != null) {
          return mainChunks.submissionChunk.getAcceptedAtTime();
       }
-      else if (mainChunks.messageProperties != null) {
+      else {
          // Try a few likely suspects...
          for (MAPIProperty prop : new MAPIProperty[] {
                MAPIProperty.CLIENT_SUBMIT_TIME, MAPIProperty.LAST_MODIFICATION_TIME,
                MAPIProperty.CREATION_TIME
          }) {
-            PropertyValue val = mainChunks.messageProperties.getValue(prop);
-            if (val != null) {
-               return ((TimePropertyValue)val).getValue();
+            List<PropertyValue> val = mainChunks.getProperties().get(prop);
+            if (val != null && val.size() > 0) {
+               return ((TimePropertyValue)val.get(0)).getValue();
             }
          }
       }

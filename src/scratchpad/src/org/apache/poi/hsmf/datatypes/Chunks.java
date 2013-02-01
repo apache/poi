@@ -18,9 +18,13 @@
 package org.apache.poi.hsmf.datatypes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 
 /**
@@ -30,9 +34,17 @@ import java.util.Map;
  * 
  * A partial list is available at:
  *  http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
+ *  
+ * TODO Deprecate the public Chunks in favour of Property Lookups
  */
-public final class Chunks implements ChunkGroup {
-   /** Holds all the chunks that were found, indexed by their MAPIProperty */
+public final class Chunks implements ChunkGroupWithProperties {
+   private static POILogger logger = POILogFactory.getLogger(Chunks.class);
+
+   /** 
+    * Holds all the chunks that were found, indexed by their MAPIProperty.
+    * Normally a property will have zero chunks (fixed sized) or one chunk 
+    *  (variable size), but in some cases (eg Unknown) you may get more.
+    */
    private Map<MAPIProperty,List<Chunk>> allChunks = new HashMap<MAPIProperty,List<Chunk>>();
    
    /** Type of message that the MSG represents (ie. IPM.Note) */
@@ -70,8 +82,14 @@ public final class Chunks implements ChunkGroup {
    /** The message ID */
    public StringChunk messageId;
    /** The message properties */
-   public MessagePropertiesChunk messageProperties;
+   private MessagePropertiesChunk messageProperties;
 
+   public Map<MAPIProperty,List<PropertyValue>> getProperties() {
+      if (messageProperties != null) {
+         return messageProperties.getProperties();
+      }
+      else return Collections.emptyMap();
+   }
    public Map<MAPIProperty,List<Chunk>> getAll() {
       return allChunks;
    }
@@ -160,6 +178,10 @@ public final class Chunks implements ChunkGroup {
    }
    
    public void chunksComplete() {
-      // TODO Match variable sized properties to their chunks + index
+      if (messageProperties != null) {
+         messageProperties.matchVariableSizedPropertiesToChunks();
+      } else {
+         logger.log(POILogger.WARN, "Message didn't contain a root list of properties!");
+      }
    }
 }
