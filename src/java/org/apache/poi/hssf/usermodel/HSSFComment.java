@@ -30,6 +30,10 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     private final static int FILL_TYPE_SOLID = 0;
     private final static int FILL_TYPE_PICTURE = 3;
 
+    private final static int GROUP_SHAPE_PROPERTY_DEFAULT_VALUE = 655362;
+    private final static int GROUP_SHAPE_HIDDEN_MASK = 0x1000002;
+    private final static int GROUP_SHAPE_NOT_HIDDEN_MASK = 0xFEFFFFFD;
+
     /*
       * TODO - make HSSFComment more consistent when created vs read from file.
       * Currently HSSFComment has two main forms (corresponding to the two constructors).   There
@@ -85,7 +89,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         opt.removeEscherProperty(EscherProperties.TEXT__TEXTRIGHT);
         opt.removeEscherProperty(EscherProperties.TEXT__TEXTTOP);
         opt.removeEscherProperty(EscherProperties.TEXT__TEXTBOTTOM);
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, 655362));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, GROUP_SHAPE_PROPERTY_DEFAULT_VALUE));
         return spContainer;
     }
 
@@ -129,6 +133,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      */
     public void setVisible(boolean visible) {
         _note.setFlags(visible ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
+        setHidden(!visible);
     }
 
     /**
@@ -250,5 +255,15 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     public int getBackgroundImageId(){
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
         return property == null ? 0 : property.getPropertyValue();
+    }
+
+    private void setHidden(boolean value){
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GROUPSHAPE__PRINT);
+        // see http://msdn.microsoft.com/en-us/library/dd949807(v=office.12).aspx
+        if (value){
+            setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() | GROUP_SHAPE_HIDDEN_MASK));
+        } else {
+            setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() & GROUP_SHAPE_NOT_HIDDEN_MASK));
+        }
     }
 }
