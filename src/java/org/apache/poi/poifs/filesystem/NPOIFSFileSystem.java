@@ -356,6 +356,9 @@ public class NPOIFSFileSystem extends BlockStore
           readBAT(fatAt, loopDetector);
        }
        
+       // Work out how many FAT blocks remain in the XFATs
+       int remainingFATs = _header.getBATCount() - _header.getBATArray().length;
+       
        // Now read the XFAT blocks, and the FATs within them
        BATBlock xfat; 
        int nextAt = _header.getXBATIndex();
@@ -367,11 +370,14 @@ public class NPOIFSFileSystem extends BlockStore
           nextAt = xfat.getValueAt(bigBlockSize.getXBATEntriesPerBlock());
           _xbat_blocks.add(xfat);
           
-          for(int j=0; j<bigBlockSize.getXBATEntriesPerBlock(); j++) {
+          // Process all the (used) FATs from this XFAT
+          int xbatFATs = Math.min(remainingFATs, bigBlockSize.getXBATEntriesPerBlock());
+          for(int j=0; j<xbatFATs; j++) {
              int fatAt = xfat.getValueAt(j);
              if(fatAt == POIFSConstants.UNUSED_BLOCK || fatAt == POIFSConstants.END_OF_CHAIN) break;
              readBAT(fatAt, loopDetector);
           }
+          remainingFATs -= xbatFATs;
        }
        
        // We're now able to load steams
