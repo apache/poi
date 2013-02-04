@@ -15,6 +15,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.functions.EDate;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Sumifs;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -99,7 +100,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "DOLLARDE", null);
         r(m, "DOLLARFR", null);
         r(m, "DURATION", null);
-        r(m, "EDATE", null);
+        r(m, "EDATE", EDate.instance);
         r(m, "EFFECT", null);
         r(m, "EOMONTH", null);
         r(m, "ERF", null);
