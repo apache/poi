@@ -1058,6 +1058,15 @@ public class MAPIProperty {
          attributes.put(id, this);
       }
    }
+   
+   public String asFileName() {
+      String str = Integer.toHexString(id).toUpperCase();
+      while(str.length() < 4) {
+         str = "0" + str;
+      }
+      return str + usualType.asFileEnding();
+   }
+
    public String toString() {
       StringBuffer str = new StringBuffer();
       str.append(name);

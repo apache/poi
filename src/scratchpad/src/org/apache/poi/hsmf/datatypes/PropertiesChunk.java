@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongLongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
@@ -103,7 +104,33 @@ public abstract class PropertiesChunk extends Chunk {
     *  up the Chunks in it with our Variable Sized Properties.
     */
    protected void matchVariableSizedPropertiesToChunks() {
-      // TODO
+      // Index the Parent Group chunks for easy lookup
+      // TODO Is this the right way?
+      Map<Integer,Chunk> chunks = new HashMap<Integer, Chunk>();
+      for (Chunk chunk : parentGroup.getChunks()) {
+         chunks.put(chunk.chunkId, chunk);
+      }
+      
+      // Loop over our values, looking for chunk based ones
+      for (List<PropertyValue> vals : properties.values()) {
+         if (vals != null) {
+            for (PropertyValue val : vals) {
+               if (val instanceof ChunkBasedPropertyValue) {
+                  ChunkBasedPropertyValue cVal = (ChunkBasedPropertyValue)val;
+                  Chunk chunk = chunks.get(cVal.getProperty().id);
+//System.err.println(cVal + " -> " + HexDump.toHex(cVal.data));                  
+                  
+                  // TODO Make sense of the raw offset value
+                  
+                  if (chunk != null) {
+                     cVal.setValue(chunk);
+                  } else {
+                     logger.log(POILogger.WARN, "No chunk found matching Property " + cVal);
+                  }
+               }
+            }
+         }
+      }
    }
 
    protected void readProperties(InputStream value) throws IOException {
