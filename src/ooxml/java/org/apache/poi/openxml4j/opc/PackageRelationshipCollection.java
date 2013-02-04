@@ -72,6 +72,12 @@ public final class PackageRelationshipCollection implements
 	 * Reference to the package.
 	 */
 	private OPCPackage container;
+	
+	/**
+	 * The ID number of the next rID# to generate, or -1
+	 *  if that is still to be determined.
+	 */
+	private int nextRelationshipId = -1;
 
 	/**
 	 * Constructor.
@@ -206,14 +212,17 @@ public final class PackageRelationshipCollection implements
 	 */
 	public PackageRelationship addRelationship(URI targetUri,
 			TargetMode targetMode, String relationshipType, String id) {
+      if (id == null) {
+         // Generate a unique ID is id parameter is null.
+         if (nextRelationshipId == -1) {
+            nextRelationshipId = size() + 1;
+         }
 
-		if (id == null) {
-			// Generate a unique ID is id parameter is null.
-			int i = 0;
-			do {
-				id = "rId" + ++i;
-			} while (relationshipsByID.get(id) != null);
-		}
+         // Work up until we find a unique number (there could be gaps etc)
+         do {
+            id = "rId" + nextRelationshipId++;
+         } while (relationshipsByID.get(id) != null);
+      }
 
 		PackageRelationship rel = new PackageRelationship(container,
 				sourcePart, targetUri, targetMode, relationshipType, id);
