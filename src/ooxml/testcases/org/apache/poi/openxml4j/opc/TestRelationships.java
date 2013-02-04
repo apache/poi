@@ -254,6 +254,25 @@ public class TestRelationships extends TestCase {
     	// Check core too
     	assertEquals("/docProps/core.xml",
     			pkg.getRelationshipsByType("http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties").getRelationship(0).getTargetURI().toString());
+    	
+    	
+    	// Add some more
+      partB.addExternalRelationship("http://poi.apache.org/new", "http://example/poi/new");
+      partB.addExternalRelationship("http://poi.apache.org/alt", "http://example/poi/alt");
+      
+      // Check the relations
+      assertEquals(2, partA.getRelationships().size());
+      assertEquals(3, partB.getRelationships().size());
+      
+      assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
+      assertEquals("http://poi.apache.org/", 
+            partA.getRelationship("rId2").getTargetURI().toString());
+      assertEquals("http://poi.apache.org/ss/", 
+            partB.getRelationship("rId1").getTargetURI().toString());
+      assertEquals("http://poi.apache.org/new", 
+            partB.getRelationship("rId2").getTargetURI().toString());
+      assertEquals("http://poi.apache.org/alt", 
+            partB.getRelationship("rId3").getTargetURI().toString());
     }
 
 
