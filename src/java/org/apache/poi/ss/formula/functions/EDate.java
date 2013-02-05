@@ -10,7 +10,6 @@ import java.util.Date;
 public class EDate implements FreeRefFunction {
     public static final FreeRefFunction instance = new EDate();
 
-    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length != 2) {
             return ErrorEval.VALUE_INVALID;
