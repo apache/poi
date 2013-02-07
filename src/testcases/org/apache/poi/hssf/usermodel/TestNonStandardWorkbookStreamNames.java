@@ -29,17 +29,17 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests for how HSSFWorkbook behaves with XLS files
- *  with a WORKBOOK directory entry (instead of the more
- *  usual, Workbook)
+ *  with a WORKBOOK or BOOK directory entry (instead of 
+ *  the more usual, Workbook)
  */
-public final class TestUppercaseWorkbook extends TestCase {
-
+public final class TestNonStandardWorkbookStreamNames extends TestCase {
 	private String xlsA = "WORKBOOK_in_capitals.xls";
+   private String xlsB = "BOOK_in_capitals.xls";
 
 	/**
 	 * Test that we can open a file with WORKBOOK
 	 */
-	public void testOpen() throws Exception {
+	public void testOpenWORKBOOK() throws Exception {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
 		
 		POIFSFileSystem fs = new POIFSFileSystem(is);
@@ -60,31 +60,64 @@ public final class TestUppercaseWorkbook extends TestCase {
 		HSSFWorkbook wb = new HSSFWorkbook(fs);
 	}
 
+   /**
+    * Test that we can open a file with BOOK
+    */
+   public void testOpenBOOK() throws Exception {
+      InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsB);
+      
+      POIFSFileSystem fs = new POIFSFileSystem(is);
+
+      // Ensure that we have a BOOK entry
+      fs.getRoot().getEntry("BOOK");
+      assertTrue(true);
+
+      // But not a Workbook one
+      try {
+         fs.getRoot().getEntry("Workbook");
+         fail();
+      } catch(FileNotFoundException e) {}
+      // And not a Summary one
+      try {
+         fs.getRoot().getEntry("\005SummaryInformation");
+         fail();
+      } catch(FileNotFoundException e) {}
+      
+      // Try to open the workbook
+      HSSFWorkbook wb = new HSSFWorkbook(fs);
+   }
+
 	/**
 	 * Test that when we write out, we go back to the correct case
 	 */
 	public void testWrite() throws Exception {
-		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
-		POIFSFileSystem fs = new POIFSFileSystem(is);
-
-		// Open the workbook, not preserving nodes
-		HSSFWorkbook wb = new HSSFWorkbook(fs);
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		wb.write(out);
-
-		// Check now
-		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		POIFSFileSystem fs2 = new POIFSFileSystem(in);
-
-		// Check that we have the new entries
-		fs2.getRoot().getEntry("Workbook");
-		try {
-			fs2.getRoot().getEntry("WORKBOOK");
-			fail();
-		} catch(FileNotFoundException e) {}
-
-		// And it can be opened
-		HSSFWorkbook wb2 = new HSSFWorkbook(fs2);
+	   for (String file : new String[] {xlsA, xlsB}) {
+   		InputStream is = HSSFTestDataSamples.openSampleFileStream(file);
+   		POIFSFileSystem fs = new POIFSFileSystem(is);
+   
+   		// Open the workbook, not preserving nodes
+   		HSSFWorkbook wb = new HSSFWorkbook(fs);
+   		ByteArrayOutputStream out = new ByteArrayOutputStream();
+   		wb.write(out);
+   
+   		// Check now
+   		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+   		POIFSFileSystem fs2 = new POIFSFileSystem(in);
+   
+   		// Check that we have the new entries
+   		fs2.getRoot().getEntry("Workbook");
+   		try {
+   			fs2.getRoot().getEntry("BOOK");
+   			fail();
+   		} catch(FileNotFoundException e) {}
+         try {
+            fs2.getRoot().getEntry("WORKBOOK");
+            fail();
+         } catch(FileNotFoundException e) {}
+   
+   		// And it can be opened
+   		HSSFWorkbook wb2 = new HSSFWorkbook(fs2);
+	   }
 	}
 
 	/**

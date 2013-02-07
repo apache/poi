@@ -75,7 +75,7 @@ public class AllUserModelTests {
 			result.addTestSuite(TestUnfixedBugs.class);
 		}
 		result.addTestSuite(TestUnicodeWorkbook.class);
-		result.addTestSuite(TestUppercaseWorkbook.class);
+		result.addTestSuite(TestNonStandardWorkbookStreamNames.class);
 		result.addTestSuite(TestWorkbook.class);
 
 		return result;
