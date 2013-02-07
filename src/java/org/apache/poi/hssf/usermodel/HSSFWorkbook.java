@@ -193,7 +193,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     private static final String[] WORKBOOK_DIR_ENTRY_NAMES = {
         "Workbook", // as per BIFF8 spec
-        "WORKBOOK",
+        "WORKBOOK", // Typically from third party programs
+        "BOOK",     // Typically odd Crystal Reports exports 
     };
 
 
@@ -1180,9 +1181,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (preserveNodes) {
             // Don't write out the old Workbook, we'll be doing our new one
             excepts.add("Workbook");
-            // If the file had WORKBOOK instead of Workbook, we'll write it
-            //  out correctly shortly, so don't include the old one
-            excepts.add("WORKBOOK");
+            // If the file had an "incorrect" name for the workbook stream,
+            // don't write the old one as we'll use the correct name shortly
+            for (String wrongName : WORKBOOK_DIR_ENTRY_NAMES) {
+               excepts.add(wrongName);
+            }
 
             // Copy over all the other nodes to our new poifs
             copyNodes(this.directory, fs.getRoot(), excepts);
