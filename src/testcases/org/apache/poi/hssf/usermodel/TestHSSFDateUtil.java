@@ -499,5 +499,14 @@ public final class TestHSSFDateUtil extends TestCase {
         assertEquals(valueToTest.getTime(), returnedValue.getTime());
     }
 
-
+    /**
+     * DateUtil.isCellFormatted(Cell) should not true for a numeric cell 
+     * that's formatted as ".0000"
+     */
+    public void testBug54557() throws Exception {
+       final String format = ".0000";
+       boolean isDateFormat = HSSFDateUtil.isADateFormat(165, format);
+       
+       assertEquals(false, isDateFormat);
+    }
 }

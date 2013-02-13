@@ -55,7 +55,8 @@ public class DateUtil {
      */
     private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
-    private static final Pattern date_ptrn3 = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*$");
+    private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
+    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
 
@@ -364,10 +365,16 @@ public class DateUtil {
            fs = fs.substring(0, fs.indexOf(';'));
         }
 
-        // Otherwise, check it's only made up, in any case, of:
-        //  y m d h s - \ / , . :
+        // Ensure it has some date letters in it
+        // (Avoids false positives on the rest of pattern 3)
+        if (! date_ptrn3a.matcher(fs).find()) {
+           return false;
+        }
+        
+        // If we get here, check it's only made up, in any case, of:
+        //  y m d h s - \ / , . : [ ]
         // optionally followed by AM/PM
-        return date_ptrn3.matcher(fs).matches();
+        return date_ptrn3b.matcher(fs).matches();
     }
 
     /**
