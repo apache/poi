@@ -84,7 +84,7 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
         t = t.replaceAll("\\[mm\\]", String.valueOf(MM_BRACKET_SYMBOL));
         t = t.replaceAll("\\[s\\]", String.valueOf(S_BRACKET_SYMBOL));
         t = t.replaceAll("\\[ss\\]", String.valueOf(SS_BRACKET_SYMBOL));
-        t = t.replaceAll("s.000", "s.S");
+        t = t.replaceAll("s.000", "s.SSS");
         t = t.replaceAll("s.00", "s." + LL_BRACKET_SYMBOL);
         t = t.replaceAll("s.0", "s." + L_BRACKET_SYMBOL);
         return t;
