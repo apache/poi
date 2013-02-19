@@ -21,7 +21,9 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import junit.framework.TestCase;
@@ -488,5 +490,37 @@ public class TestDataFormatter extends TestCase {
        
        fmt = "0 \"dollars and\" .00 \"cents\"";
        assertEquals("19 dollars and .99 cents", dfUS.formatRawCellContents(19.99, -1, fmt));
+    }
+    
+    /**
+     * ExcelStyleDateFormatter should work for Milliseconds too
+     */
+    public void testExcelStyleDateFormatterStringOnMillis() {
+       // Test directly with the .000 style
+       DateFormat formatter1 = new ExcelStyleDateFormatter("ss.000");
+
+       assertEquals("00.001", formatter1.format(new Date(1L)));
+       assertEquals("00.010", formatter1.format(new Date(10L)));
+       assertEquals("00.100", formatter1.format(new Date(100L)));
+       assertEquals("01.000", formatter1.format(new Date(1000L)));
+       assertEquals("01.001", formatter1.format(new Date(1001L)));
+       assertEquals("10.000", formatter1.format(new Date(10000L)));
+       assertEquals("10.001", formatter1.format(new Date(10001L)));
+
+       // Test directly with the .SSS style
+       DateFormat formatter2 = new ExcelStyleDateFormatter("ss.SSS");
+       
+       assertEquals("00.001", formatter2.format(new Date(1L)));
+       assertEquals("00.010", formatter2.format(new Date(10L)));
+       assertEquals("00.100", formatter2.format(new Date(100L)));
+       assertEquals("01.000", formatter2.format(new Date(1000L)));
+       assertEquals("01.001", formatter2.format(new Date(1001L)));
+       assertEquals("10.000", formatter2.format(new Date(10000L)));
+       assertEquals("10.001", formatter2.format(new Date(10001L)));
+
+
+       // Test via DataFormatter
+       DataFormatter dfUS = new DataFormatter(Locale.US, true);
+       assertEquals("01.010", dfUS.formatRawCellContents(0.0000116898, -1, "ss.000"));
     }
 }
