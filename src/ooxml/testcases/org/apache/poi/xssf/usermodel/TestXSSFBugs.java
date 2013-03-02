@@ -26,6 +26,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -1339,4 +1343,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(259.0, a1Value, 0.0);
     }
 
+    public void test54436(){
+        Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("54436.xlsx");
+        if(!WorkbookEvaluator.getSupportedFunctionNames().contains("GETPIVOTDATA")){
+            Function func = new Function() {
+                public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+                    return ErrorEval.NA;
+                }
+            };
+
+            WorkbookEvaluator.registerFunction("GETPIVOTDATA", func);
+        }
+        workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+    }
 }
