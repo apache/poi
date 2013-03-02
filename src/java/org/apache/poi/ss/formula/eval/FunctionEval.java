@@ -161,6 +161,8 @@ public final class FunctionEval {
 
 		retval[ID.INDIRECT] = null; // Indirect.evaluate has different signature
         retval[162] = TextFunction.CLEAN;  //Aniket Banerjee    
+        retval[167] = new IPMT();
+        retval[168] = new PPMT();
 		retval[169] = new Counta();
 
 		retval[183] = AggregateFunction.PRODUCT;
