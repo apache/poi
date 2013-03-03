@@ -31,7 +31,7 @@ import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.xssf.model.IndexedUDFFinder;
+import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
