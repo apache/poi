@@ -57,6 +57,7 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 
 
 /**
@@ -145,7 +146,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private UDFFinder _udfFinder = UDFFinder.DEFAULT;
+    private UDFFinder _udfFinder = new IndexedUDFFinder(UDFFinder.DEFAULT);
 
     public static HSSFWorkbook create(InternalWorkbook book) {
     	return new HSSFWorkbook(book);
