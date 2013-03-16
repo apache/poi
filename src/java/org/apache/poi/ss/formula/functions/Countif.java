@@ -43,6 +43,7 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  * </p>
  *
  * @author Josh Micich
+ * @author Cedric Walter at innoveo.com
  */
 public final class Countif extends Fixed2ArgFunction {
 
@@ -309,7 +310,7 @@ public final class Countif extends Fixed2ArgFunction {
 			return false;
 		}
 	}
-	private static final class StringMatcher extends MatcherBase {
+	public static final class StringMatcher extends MatcherBase {
 
 		private final String _value;
 		private final Pattern _pattern;
@@ -378,19 +379,19 @@ public final class Countif extends Fixed2ArgFunction {
 		 * Translates Excel countif wildcard strings into java regex strings
 		 * @return <code>null</code> if the specified value contains no special wildcard characters.
 		 */
-		private static Pattern getWildCardPattern(String value) {
+		public static Pattern getWildCardPattern(String value) {
 			int len = value.length();
 			StringBuffer sb = new StringBuffer(len);
 			boolean hasWildCard = false;
 			for(int i=0; i<len; i++) {
 				char ch = value.charAt(i);
 				switch(ch) {
-					case '?':
+					case '?':  //Any single character
 						hasWildCard = true;
 						// match exactly one character
 						sb.append('.');
 						continue;
-					case '*':
+					case '*': //Zero or more characters
 						hasWildCard = true;
 						// match one or more occurrences of any character
 						sb.append(".*");
