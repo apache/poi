@@ -62,6 +62,7 @@ import org.apache.poi.ss.formula.TwoDEval;
  *
  *
  * @author Josh Micich
+ * @author Cedric Walter at innoveo.com
  */
 public final class Match extends Var2or3ArgFunction {
 
@@ -232,14 +233,7 @@ public final class Match extends Var2or3ArgFunction {
 	}
 
 	private static LookupValueComparer createLookupComparer(ValueEval lookupValue, boolean matchExact) {
-		if (matchExact && lookupValue instanceof StringEval) {
-			String stringValue = ((StringEval) lookupValue).getStringValue();
-			if(isLookupValueWild(stringValue)) {
-				throw new RuntimeException("Wildcard lookup values '" + stringValue + "' not supported yet");
-			}
-
-		}
-		return LookupUtils.createLookupComparer(lookupValue);
+		return LookupUtils.createLookupComparer(lookupValue, matchExact, true);
 	}
 
 	private static boolean isLookupValueWild(String stringValue) {

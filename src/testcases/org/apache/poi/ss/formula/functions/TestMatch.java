@@ -19,6 +19,8 @@ package org.apache.poi.ss.formula.functions;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -26,11 +28,13 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Test cases for MATCH()
  *
  * @author Josh Micich
+ * @author Cedric Walter at innoveo.com
  */
 public final class TestMatch extends TestCase {
 	/** less than or equal to */
@@ -93,7 +97,7 @@ public final class TestMatch extends TestCase {
 	}
 
 	public void testSimpleString() {
-
+        // Arrange
 		ValueEval[] values = {
 			new StringEval("Albert"),
 			new StringEval("Charles"),
@@ -109,9 +113,51 @@ public final class TestMatch extends TestCase {
 		confirmInt(3, invokeMatch(new StringEval("eD"), ae, MATCH_LARGEST_LTE));
 		confirmInt(3, invokeMatch(new StringEval("Ed"), ae, MATCH_EXACT));
 		confirmInt(3, invokeMatch(new StringEval("ed"), ae, MATCH_EXACT));
-		confirmInt(4, invokeMatch(new StringEval("Hugh"), ae, MATCH_LARGEST_LTE));
+
 		assertEquals(ErrorEval.NA, invokeMatch(new StringEval("Hugh"), ae, MATCH_EXACT));
 	}
+
+    public void testSimpleWildcardValuesString() {
+        // Arrange
+        ValueEval[] values = {
+                new StringEval("Albert"),
+                new StringEval("Charles"),
+                new StringEval("Ed"),
+                new StringEval("Greg"),
+                new StringEval("Ian"),
+        };
+
+        AreaEval ae = EvalFactory.createAreaEval("A1:A5", values);
+
+        // Note String comparisons are case insensitive
+        confirmInt(3, invokeMatch(new StringEval("e*"), ae, MATCH_EXACT));
+        confirmInt(3, invokeMatch(new StringEval("*d"), ae, MATCH_EXACT));
+
+        confirmInt(1, invokeMatch(new StringEval("Al*"), ae, MATCH_EXACT));
+        confirmInt(2, invokeMatch(new StringEval("Char*"), ae, MATCH_EXACT));
+
+        confirmInt(4, invokeMatch(new StringEval("*eg"), ae, MATCH_EXACT));
+        confirmInt(4, invokeMatch(new StringEval("G?eg"), ae, MATCH_EXACT));
+        confirmInt(4, invokeMatch(new StringEval("??eg"), ae, MATCH_EXACT));
+        confirmInt(4, invokeMatch(new StringEval("G*?eg"), ae, MATCH_EXACT));
+        confirmInt(4, invokeMatch(new StringEval("Hugh"), ae, MATCH_LARGEST_LTE));
+
+        confirmInt(5, invokeMatch(new StringEval("*Ian*"), ae, MATCH_EXACT));
+        confirmInt(5, invokeMatch(new StringEval("*Ian*"), ae, MATCH_LARGEST_LTE));
+    }
+
+    public void testTildeString() {
+
+        ValueEval[] values = {
+                new StringEval("what?"),
+                new StringEval("all*")
+        };
+
+        AreaEval ae = EvalFactory.createAreaEval("A1:A2", values);
+
+        confirmInt(1, invokeMatch(new StringEval("what~?"), ae, MATCH_EXACT));
+        confirmInt(2, invokeMatch(new StringEval("all~*"), ae, MATCH_EXACT));
+    }
 
 	public void testSimpleBoolean() {
 
@@ -159,11 +205,17 @@ public final class TestMatch extends TestCase {
 		confirmInt(3, invokeMatch(new NumberEval(5), ae, MATCH_EXACT));
 
 		confirmInt(8, invokeMatch(new StringEval("CHARLES"), ae, MATCH_EXACT));
+        //wildcard values
+        confirmInt(8, invokeMatch(new StringEval("CHAR*"), ae, MATCH_EXACT));
+        confirmInt(8, invokeMatch(new StringEval("*CHARLES"), ae, MATCH_EXACT));
 
 		confirmInt(4, invokeMatch(new StringEval("Ben"), ae, MATCH_LARGEST_LTE));
 
 		confirmInt(13, invokeMatch(new StringEval("ED"), ae, MATCH_LARGEST_LTE));
+		confirmInt(13, invokeMatch(new StringEval("ED*"), ae, MATCH_LARGEST_LTE));
+		confirmInt(13, invokeMatch(new StringEval("*ED"), ae, MATCH_LARGEST_LTE));
 		confirmInt(9, invokeMatch(new StringEval("ED"), ae, MATCH_EXACT));
+		confirmInt(9, invokeMatch(new StringEval("ED*"), ae, MATCH_EXACT));
 
 		confirmInt(13, invokeMatch(new StringEval("Hugh"), ae, MATCH_LARGEST_LTE));
 		assertEquals(ErrorEval.NA, invokeMatch(new StringEval("Hugh"), ae, MATCH_EXACT));

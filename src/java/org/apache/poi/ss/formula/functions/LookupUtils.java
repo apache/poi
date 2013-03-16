@@ -29,10 +29,14 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.TwoDEval;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
  *
  * @author Josh Micich
+ * @author Cedric Walter at innoveo.com
  */
 final class LookupUtils {
 
@@ -167,6 +171,14 @@ final class LookupUtils {
 			return EQUAL;
 		}
 
+        public static final CompareResult valueOf(boolean matches) {
+            if(matches) {
+                return EQUAL ;
+            }
+            return LESS_THAN;
+        }
+
+
 		public boolean isTypeMismatch() {
 			return _isTypeMismatch;
 		}
@@ -243,16 +255,37 @@ final class LookupUtils {
 		protected abstract String getValueAsString();
 	}
 
-	private static final class StringLookupComparer extends LookupValueComparerBase {
-		private String _value;
 
-		protected StringLookupComparer(StringEval se) {
+    private static final class StringLookupComparer extends LookupValueComparerBase {
+		
+        private String _value;
+        private final Pattern _wildCardPattern;
+        private boolean _matchExact;
+        private boolean _isMatchFunction;
+
+        protected StringLookupComparer(StringEval se, boolean matchExact, boolean isMatchFunction) {
 			super(se);
 			_value = se.getStringValue();
+            _wildCardPattern = Countif.StringMatcher.getWildCardPattern(_value);
+            _matchExact = matchExact;
+            _isMatchFunction = isMatchFunction;
 		}
+
 		protected CompareResult compareSameType(ValueEval other) {
-			StringEval se = (StringEval) other;
-			return CompareResult.valueOf(_value.compareToIgnoreCase(se.getStringValue()));
+            StringEval se = (StringEval) other;
+
+            String stringValue = se.getStringValue();
+            if (_wildCardPattern != null) {
+                Matcher matcher = _wildCardPattern.matcher(stringValue);
+                boolean matches = matcher.matches();
+
+                if (_isMatchFunction ||
+                    !_matchExact) {
+                  return CompareResult.valueOf(matches);
+                }
+            }
+
+            return CompareResult.valueOf(_value.compareToIgnoreCase(stringValue));
 		}
 		protected String getValueAsString() {
 			return _value;
@@ -423,7 +456,7 @@ final class LookupUtils {
 	}
 
 	public static int lookupIndexOfValue(ValueEval lookupValue, ValueVector vector, boolean isRangeLookup) throws EvaluationException {
-		LookupValueComparer lookupComparer = createLookupComparer(lookupValue);
+		LookupValueComparer lookupComparer = createLookupComparer(lookupValue, isRangeLookup, false);
 		int result;
 		if(isRangeLookup) {
 			result = performBinarySearch(vector, lookupComparer);
@@ -439,7 +472,7 @@ final class LookupUtils {
 
 	/**
 	 * Finds first (lowest index) exact occurrence of specified value.
-	 * @param lookupValue the value to be found in column or row vector
+	 * @param lookupComparer the value to be found in column or row vector
 	 * @param vector the values to be searched. For VLOOKUP this is the first column of the
 	 * 	tableArray. For HLOOKUP this is the first row of the tableArray.
 	 * @return zero based index into the vector, -1 if value cannot be found
@@ -581,7 +614,7 @@ final class LookupUtils {
 		return maxIx - 1;
 	}
 
-	public static LookupValueComparer createLookupComparer(ValueEval lookupValue) {
+	public static LookupValueComparer createLookupComparer(ValueEval lookupValue, boolean matchExact, boolean isMatchFunction) {
 
 		if (lookupValue == BlankEval.instance) {
 			// blank eval translates to zero
@@ -590,7 +623,8 @@ final class LookupUtils {
 			return new NumberLookupComparer(NumberEval.ZERO);
 		}
 		if (lookupValue instanceof StringEval) {
-			return new StringLookupComparer((StringEval) lookupValue);
+            //TODO eventually here return a WildcardStringLookupComparer
+			return new StringLookupComparer((StringEval) lookupValue, matchExact, isMatchFunction);
 		}
 		if (lookupValue instanceof NumberEval) {
 			return new NumberLookupComparer((NumberEval) lookupValue);

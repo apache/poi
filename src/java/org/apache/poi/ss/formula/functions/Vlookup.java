@@ -38,6 +38,7 @@ import org.apache.poi.ss.formula.TwoDEval;
  * the lookup_value.  If FALSE, only exact matches will be considered<br/>
  *
  * @author Josh Micich
+ * @author Cedric Walter at innoveo.com
  */
 public final class Vlookup extends Var3or4ArgFunction {
 	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;
@@ -47,16 +48,16 @@ public final class Vlookup extends Var3or4ArgFunction {
 		return evaluate(srcRowIndex, srcColumnIndex, arg0, arg1, arg2, DEFAULT_ARG3);
 	}
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2, ValueEval arg3) {
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookup_value, ValueEval table_array,
+			ValueEval col_index, ValueEval range_lookup) {
 		try {
 			// Evaluation order:
-			// arg0 lookup_value, arg1 table_array, arg3 range_lookup, find lookup value, arg2 col_index, fetch result
-			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			TwoDEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
-			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcRowIndex, srcColumnIndex);
+			// lookup_value , table_array, range_lookup, find lookup value, col_index, fetch result
+			ValueEval lookupValue = OperandResolver.getSingleValue(lookup_value, srcRowIndex, srcColumnIndex);
+			TwoDEval tableArray = LookupUtils.resolveTableArrayArg(table_array);
+			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(range_lookup, srcRowIndex, srcColumnIndex);
 			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
-			int colIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
+			int colIndex = LookupUtils.resolveRowOrColIndexArg(col_index, srcRowIndex, srcColumnIndex);
 			ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
 			return resultCol.getItem(rowIndex);
 		} catch (EvaluationException e) {
