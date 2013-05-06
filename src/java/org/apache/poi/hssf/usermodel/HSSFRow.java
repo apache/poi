@@ -129,8 +129,10 @@ public final class HSSFRow implements Row {
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a CELL_TYPE_BLANK. The type can be changed
-     * either through calling setCellValue or setCellType.
+     * The cell that is returned will be of the requested type.
+     * The type can be changed either through calling setCellValue 
+     *  or setCellType, but there is a small overhead to doing this,
+     *  so it is best to create of the required type up front.
      *
      * @param columnIndex - the column number this cell represents
      *
