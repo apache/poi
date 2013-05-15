@@ -30,6 +30,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
@@ -522,6 +523,35 @@ public final class TestPackage extends TestCase {
         assertTrue(selected.containsKey("/word/styles.xml"));
         assertTrue(selected.containsKey("/word/theme/theme1.xml"));
         assertTrue(selected.containsKey("/word/webSettings.xml"));
+    }
+    
+    public void testGetPartSize() throws Exception {
+       String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+       OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ);
+
+       int checked = 0;
+       for (PackagePart part : pkg.getParts()) {
+          // Can get the size of zip parts
+          if (part.getPartName().getName().equals("/word/document.xml")) {
+             checked++;
+             assertEquals(ZipPackagePart.class, part.getClass());
+             assertEquals(6031l, part.getSize());
+          }
+          if (part.getPartName().getName().equals("/word/fontTable.xml")) {
+             checked++;
+             assertEquals(ZipPackagePart.class, part.getClass());
+             assertEquals(1312l, part.getSize());
+          }
+          
+          // But not from the others
+          if (part.getPartName().getName().equals("/docProps/core.xml")) {
+             checked++;
+             assertEquals(PackagePropertiesPart.class, part.getClass());
+             assertEquals(-1, part.getSize());
+          }
+       }
+       // Ensure we actually found the parts we want to check
+       assertEquals(3, checked);
     }
 
     public void testReplaceContentType() throws Exception {

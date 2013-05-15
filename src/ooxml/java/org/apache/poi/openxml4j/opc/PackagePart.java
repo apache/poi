@@ -624,6 +624,13 @@ public abstract class PackagePart implements RelationshipSource {
 	public void setDeleted(boolean isDeleted) {
 		this._isDeleted = isDeleted;
 	}
+	
+	/**
+	 * @return The length of the part in bytes, or -1 if not known
+	 */
+	public long getSize() {
+	   return -1;
+	}
 
 	@Override
 	public String toString() {

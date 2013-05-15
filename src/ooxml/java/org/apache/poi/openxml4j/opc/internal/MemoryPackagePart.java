@@ -102,6 +102,11 @@ public final class MemoryPackagePart extends PackagePart {
 		return new MemoryPackagePartOutputStream(this);
 	}
 
+	@Override
+	public long getSize() {
+		return length;
+	}
+
 	public void clear() {
 		data = null;
 		length = 0;
