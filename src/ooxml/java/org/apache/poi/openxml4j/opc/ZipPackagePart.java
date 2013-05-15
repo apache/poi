@@ -114,6 +114,11 @@ public class ZipPackagePart extends PackagePart {
 	}
 
 	@Override
+	public long getSize() {
+		return zipEntry.getSize();
+	}
+
+	@Override
 	public boolean save(OutputStream os) throws OpenXML4JException {
 		return new ZipPartMarshaller().marshall(this, os);
 	}
