@@ -825,7 +825,8 @@ under the License.
     <target name="javadocs"
             description="Generates the API documentation">
         <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
-                 windowtitle="POI API Documentation" use="true" version="true" maxmemory="256M">
+                 windowtitle="POI API Documentation" use="true" version="true" 
+                 maxmemory="256M" additionalparam="-notimestamp">
 
             <packageset dir="${main.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
