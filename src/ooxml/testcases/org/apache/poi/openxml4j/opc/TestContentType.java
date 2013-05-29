@@ -79,6 +79,17 @@ public final class TestContentType extends TestCase {
 		}
 	}
 
+   /**
+    * Parameters are allowed, provides that they meet the
+    *  criteria of rule [01.2]
+    * Invalid parameters are verified as incorrect in 
+    *  {@link #testContentTypeParameterFailure()}
+    */
+   public void testContentTypeParam() {
+      // TODO Review [01.2], then add tests for valid ones
+      // TODO See bug #55026
+   }
+   
 	/**
 	 * Check rule [O1.2]: Format designers might restrict the usage of
 	 * parameters for content types.
@@ -115,5 +126,13 @@ public final class TestContentType extends TestCase {
 			fail("Must have fail for content type: '" + contentTypesToTest[i]
 					+ "' !");
 		}
+	}
+	
+	/**
+	 * Check that we can open a file where there are valid
+	 *  parameters on a content type
+	 */
+	public void testFileWithContentTypeParams() {
+	   // TODO Implement with ContentTypeHasParameters.ooxml
 	}
 }
