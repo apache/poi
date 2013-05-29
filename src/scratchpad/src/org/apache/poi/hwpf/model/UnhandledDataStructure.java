@@ -34,10 +34,12 @@ public final class UnhandledDataStructure
   public UnhandledDataStructure(byte[] buf, int offset, int length)
   {
     // Sanity check the size they've asked for
-    if (offset + length > buf.length)
+    int offsetEnd = offset + length;
+    if (offsetEnd > buf.length || offsetEnd < 0)
     {
       throw new IndexOutOfBoundsException("Buffer Length is " + buf.length + " " +
-                                          "but code is tried to read " + length + " from offset " + offset);
+                                          "but code is tried to read " + length + " " + 
+                                          "from offset " + offset + " to " + offsetEnd);
     }
     if (offset < 0 || length < 0)
     {
@@ -46,7 +48,7 @@ public final class UnhandledDataStructure
     }
     
     // Save that requested portion of the data 
-    _buf = Arrays.copyOfRange(buf, offset, offset + length);
+    _buf = Arrays.copyOfRange(buf, offset, offsetEnd);
   }
 
   byte[] getBuf()
