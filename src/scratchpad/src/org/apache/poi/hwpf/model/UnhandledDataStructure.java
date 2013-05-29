@@ -17,8 +17,15 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.Internal;
 
+/**
+ * A data structure used to hold some data we don't
+ *  understand / can't handle, so we have it available
+ *  for when we come to write back out again 
+ */
 @Internal
 public final class UnhandledDataStructure
 {
@@ -26,14 +33,20 @@ public final class UnhandledDataStructure
 
   public UnhandledDataStructure(byte[] buf, int offset, int length)
   {
-//    System.out.println("Yes, using my code");
-    _buf = new byte[length];
+    // Sanity check the size they've asked for
     if (offset + length > buf.length)
     {
-      throw new IndexOutOfBoundsException("buffer length is " + buf.length +
-                                          "but code is trying to read " + length + " from offset " + offset);
+      throw new IndexOutOfBoundsException("Buffer Length is " + buf.length + " " +
+                                          "but code is tried to read " + length + " from offset " + offset);
     }
-    System.arraycopy(buf, offset, _buf, 0, length);
+    if (offset < 0 || length < 0)
+    {
+       throw new IndexOutOfBoundsException("Offset and Length must both be >= 0, negative " +
+       		"indicies are not permitted - code is tried to read " + length + " from offset " + offset);
+    }
+    
+    // Save that requested portion of the data 
+    _buf = Arrays.copyOfRange(buf, offset, offset + length);
   }
 
   byte[] getBuf()
