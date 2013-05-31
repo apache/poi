@@ -38,24 +38,25 @@ import org.apache.poi.POIDataSamples;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestRichTextRun extends TestCase {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+   private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-	// SlideShow primed on the test data
-	private SlideShow ss;
-	private SlideShow ssRichA;
-	private SlideShow ssRichB;
-	private SlideShow ssRichC;
-	private HSLFSlideShow hss;
-	private HSLFSlideShow hssRichA;
-	private HSLFSlideShow hssRichB;
-	private HSLFSlideShow hssRichC;
-	private static String filenameC;
+   // SlideShow primed on the test data
+   private SlideShow ss;
+   private SlideShow ssRichA;
+   private SlideShow ssRichB;
+   private SlideShow ssRichC;
+   private SlideShow ssChinese;
+   private HSLFSlideShow hss;
+   private HSLFSlideShow hssRichA;
+   private HSLFSlideShow hssRichB;
+   private HSLFSlideShow hssRichC;
+   private HSLFSlideShow hssChinese;
+   private static String filenameC;
 
-	protected void setUp() throws Exception {
-
-		// Basic (non rich) test file
-        hss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+   protected void setUp() throws Exception {
+      // Basic (non rich) test file
+      hss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+      ss = new SlideShow(hss);
 
 		// Rich test file A
 		hssRichA = new HSLFSlideShow(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
@@ -70,8 +71,18 @@ public final class TestRichTextRun extends TestCase {
 		filenameC = "ParagraphStylesShorterThanCharStyles.ppt";
         hssRichC = new HSLFSlideShow(_slTests.openResourceAsStream(filenameC));
 		ssRichC = new SlideShow(hssRichC);
+		
+		// Rich test file with Chinese + English text in it
+      hssChinese = new HSLFSlideShow(_slTests.openResourceAsStream("54880_chinese.ppt"));
+      ssChinese = new SlideShow(hssChinese);
 	}
 
+   private static void assertContains(String haystack, String needle) {
+      assertTrue(
+            "Unable to find expected text '" + needle + "' in text:\n" + haystack,
+            haystack.contains(needle)
+      );
+   }
 	/**
 	 * Test the stuff about getting/setting bold
 	 *  on a non rich text run
@@ -622,5 +633,38 @@ if(false) {
 
 //		FileOutputStream fout = new FileOutputStream("/tmp/foo.ppt");
 //		ppt.write(fout);
+	}
+	
+	public void testChineseParagraphs() throws Exception {
+      RichTextRun[] rts;
+      RichTextRun rt;
+      TextRun[] txt;
+      Slide[] slides = ssChinese.getSlides();
+
+      // One slide
+      assertEquals(1, slides.length);
+      
+      // One block of text within that
+      txt = slides[0].getTextRuns();
+      assertEquals(1, txt.length);
+      
+      // One rich block of text in that - text is all the same style
+      // TODO Is this completely correct?
+      rts = txt[0].getRichTextRuns();
+      assertEquals(1, rts.length);
+      rt = rts[0];
+      
+      // Check we can get the english text out of that
+      String text = rt.getText();
+      assertContains(text, "Single byte");
+      // And the chinese - ﾊﾝｶｸ
+      assertContains(text, "\uff8a\uff9d\uff76\uff78");
+      
+      // It isn't bold or italic
+      assertFalse(rt.isBold());
+      assertFalse(rt.isItalic());
+      
+      // Font is Calibri
+      assertEquals("Calibri", rt.getFontName());
 	}
 }
