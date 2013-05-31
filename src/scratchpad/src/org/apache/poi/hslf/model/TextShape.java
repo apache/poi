@@ -486,27 +486,32 @@ public abstract class TextShape extends SimpleShape {
       * @return the TextRun object for this text box
       */
     public TextRun getTextRun(){
-        if (null == this._txtrun) initTextRun();
-        if (null == this._txtrun && null != this._txtbox) {
-        	TextHeaderAtom    tha = null; 
-        	TextBytesAtom     tba = null;
-        	StyleTextPropAtom sta = null;
-        	Record[] childRecords = this._txtbox.getChildRecords();
-        	for (Record r : childRecords) {
-        		if (r instanceof TextHeaderAtom) {
-        			tha = (TextHeaderAtom) r;
-				} else if (r instanceof TextBytesAtom) {
-					tba = (TextBytesAtom) r;
-				} else if (r instanceof StyleTextPropAtom) {
-					sta = (StyleTextPropAtom) r;
-				}
-        	}
-        	if (null != tba) {
-        		this._txtrun = new TextRun(tha, tba, sta);
-        	}
-         }
-         return _txtrun;
-     }
+       if (null == this._txtrun) initTextRun();
+       if (null == this._txtrun && null != this._txtbox) {
+          TextHeaderAtom    tha = null; 
+          TextBytesAtom     tba = null;
+          TextCharsAtom     tca = null;
+          StyleTextPropAtom sta = null;
+          Record[] childRecords = this._txtbox.getChildRecords();
+          for (Record r : childRecords) {
+             if (r instanceof TextHeaderAtom) {
+                tha = (TextHeaderAtom) r;
+             } else if (r instanceof TextBytesAtom) {
+                tba = (TextBytesAtom) r;
+             } else if (r instanceof TextCharsAtom) {
+                tca = (TextCharsAtom) r;
+             } else if (r instanceof StyleTextPropAtom) {
+                sta = (StyleTextPropAtom) r;
+             }
+          }
+          if (tba != null) {
+             this._txtrun = new TextRun(tha, tba, sta);
+          } else if (tca != null) {
+             this._txtrun = new TextRun(tha, tca, sta);
+          }
+       }
+       return _txtrun;
+    }
 
     public void setSheet(Sheet sheet) {
         _sheet = sheet;
