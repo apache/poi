@@ -329,6 +329,27 @@ public final class TestExtractor extends TestCase {
        assertContains(text, masterText);
     }
 
+    /**
+     * Bug #54880 Chinese text not extracted properly
+     */
+    public void testChineseText() throws Exception {
+       HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("54880_chinese.ppt"));
+       ppe = new PowerPointExtractor(hslf);
+       
+       String text = ppe.getText();
+       
+       // Check for the english text line
+       assertContains(text, "Single byte");
+       
+       // Check for the english text in the mixed line
+       assertContains(text, "Mix");
+       
+       // Check for the chinese text in the mixed line - 表
+       assertContains(text, "\u8868");
+       
+       // Check for the chinese only text line - ﾊﾝｶｸ
+       assertContains(text, "\uff8a\uff9d\uff76\uff78");
+    }
     
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
