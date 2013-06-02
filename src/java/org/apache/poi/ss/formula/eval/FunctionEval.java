@@ -89,6 +89,7 @@ public final class FunctionEval {
 		retval[27] = NumericFunction.ROUND;
 		retval[28] = new Lookup();
 		retval[29] = new Index();
+		retval[30] = new Rept();
 
 		retval[31] = TextFunction.MID;
 		retval[32] = TextFunction.LEN;
