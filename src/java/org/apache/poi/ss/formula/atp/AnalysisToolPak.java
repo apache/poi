@@ -15,9 +15,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.EDate;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Sumifs;
+import org.apache.poi.ss.formula.functions.*;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 
 import java.util.*;
@@ -74,7 +72,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "BIN2DEC", null);
         r(m, "BIN2HEX", null);
         r(m, "BIN2OCT", null);
-        r(m, "COMPLEX", null);
+        r(m, "COMPLEX", Complex.instance);
         r(m, "CONVERT", null);
         r(m, "COUNTIFS", null);
         r(m, "COUPDAYBS", null);
