@@ -1,5 +1,6 @@
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
@@ -30,7 +31,9 @@ import org.apache.poi.ss.formula.eval.*;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class Complex extends Var2or3ArgFunction {
+public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
+
+    public static final FreeRefFunction instance = new Complex();
 
     public static final String DEFAULT_SUFFIX = "i";
     public static final String SUPPORTED_SUFFIX = "j";
@@ -116,4 +119,15 @@ public class Complex extends Var2or3ArgFunction {
         return (number == Math.floor(number)) && !Double.isInfinite(number);
     }
 
+    @Override
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length == 2) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
+        }
+        if (args.length == 3) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1], args[2]);
+        }
+
+        return ErrorEval.VALUE_INVALID;
+    }
 }
