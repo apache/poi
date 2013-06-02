@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.Configurator;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -39,7 +40,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 public final class HSSFRow implements Row {
 
     // used for collections
-    public final static int INITIAL_CAPACITY = 5;
+    public final static int INITIAL_CAPACITY = Configurator.getIntValue("HSSFRow.ColInitialCapacity", 5);
 
     private int rowNum;
     private HSSFCell[] cells;
