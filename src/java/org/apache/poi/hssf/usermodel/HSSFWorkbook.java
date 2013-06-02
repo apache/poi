@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
@@ -54,9 +55,9 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.util.Configurator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 
 
@@ -93,7 +94,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * since you're never allowed to have more or less than three sheets!
      */
 
-    public final static int INITIAL_CAPACITY = 3;
+    public final static int INITIAL_CAPACITY = Configurator.getIntValue("HSSFWorkbook.SheetInitialCapacity",3);
 
     /**
      * this is the reference to the low level Workbook object
