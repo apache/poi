@@ -42,7 +42,6 @@ public final class Delta extends Fixed2ArgFunction {
     private final static NumberEval ONE = new NumberEval(1);
     private final static NumberEval ZERO = new NumberEval(0);
 
-    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2) {
         ValueEval veText1;
         try {

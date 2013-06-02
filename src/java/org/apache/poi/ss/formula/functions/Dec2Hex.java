@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 /**
@@ -51,13 +52,12 @@ import org.apache.poi.ss.formula.eval.*;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class Dec2Hex extends Var1or2ArgFunction {
+public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction {
 
     private final static long MIN_VALUE = new Long("-549755813888").longValue();
     private final static long MAX_VALUE = new Long("549755813887").longValue();
     private final static int DEFAULT_PLACES_VALUE = 10;;
 
-    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval number, ValueEval places) {
         ValueEval veText1;
         try {
@@ -115,8 +115,15 @@ public final class Dec2Hex extends Var1or2ArgFunction {
         return new StringEval(hex.toUpperCase());
     }
 
-    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
         return this.evaluate(srcRowIndex, srcColumnIndex, arg0, new StringEval(String.valueOf(DEFAULT_PLACES_VALUE)));
     }
+
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
+    }
+
 }
