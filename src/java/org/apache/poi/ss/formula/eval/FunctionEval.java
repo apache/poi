@@ -151,6 +151,7 @@ public final class FunctionEval {
 		retval[118] = TextFunction.TRIM;
 		retval[119] = new Replace();
 		retval[120] = new Substitute();
+        retval[121] = new Code();
 
 		retval[124] = TextFunction.FIND;
 
