@@ -38,12 +38,10 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
     public static final String DEFAULT_SUFFIX = "i";
     public static final String SUPPORTED_SUFFIX = "j";
 
-    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval real_num, ValueEval i_num) {
         return this.evaluate(srcRowIndex, srcColumnIndex, real_num, i_num, new StringEval(DEFAULT_SUFFIX));
     }
 
-    @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval real_num, ValueEval i_num, ValueEval suffix) {
         ValueEval veText1;
         try {
@@ -119,7 +117,6 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         return (number == Math.floor(number)) && !Double.isInfinite(number);
     }
 
-    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length == 2) {
             return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
