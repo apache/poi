@@ -48,8 +48,22 @@ public final class UnhandledDataStructure
     }
     
     // Save that requested portion of the data 
-    _buf = Arrays.copyOfRange(buf, offset, offsetEnd);
+    _buf = copyOfRange(buf, offset, offsetEnd);
+
   }
+
+    /**
+     * YK: Arrays.copyOfRange is not in JDK 1.5
+     */
+    static byte[] copyOfRange(byte[] original, int from, int to) {
+        int newLength = to - from;
+        if (newLength < 0)
+            throw new IllegalArgumentException(from + " > " + to);
+        byte[] copy = new byte[newLength];
+        System.arraycopy(original, from, copy, 0,
+                Math.min(original.length - from, newLength));
+        return copy;
+    }
 
   byte[] getBuf()
   {

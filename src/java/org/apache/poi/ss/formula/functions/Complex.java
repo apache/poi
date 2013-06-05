@@ -70,7 +70,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         }
 
         String suffixValue = OperandResolver.coerceValueToString(suffix);
-        if (suffixValue.isEmpty()) {
+        if (suffixValue.length() == 0) {
             suffixValue = DEFAULT_SUFFIX;
         }
         if (suffixValue.equals(DEFAULT_SUFFIX.toUpperCase()) || suffixValue.equals(SUPPORTED_SUFFIX.toUpperCase())) {

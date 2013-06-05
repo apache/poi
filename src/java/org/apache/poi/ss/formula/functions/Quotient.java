@@ -23,7 +23,7 @@ import org.apache.poi.ss.formula.eval.*;
  * @author cedric dot walter @ gmail dot com
  */
 public class Quotient extends Fixed2ArgFunction {
-    @Override
+
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval venumerator, ValueEval vedenominator) {
 
         double enumerator = 0;
