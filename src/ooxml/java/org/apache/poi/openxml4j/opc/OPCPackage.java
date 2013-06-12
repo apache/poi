@@ -755,7 +755,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *             If rule M1.12 is not verified : Packages shall not contain
 	 *             equivalent part names and package implementers shall neither
 	 *             create nor recognize packages with equivalent part names.
-	 * @see {@link#createPartImpl(URI, String)}
+	 * @see #createPartImpl(PackagePartName, String, boolean)
 	 */
 	PackagePart createPart(PackagePartName partName, String contentType,
 			boolean loadRelationships) {
