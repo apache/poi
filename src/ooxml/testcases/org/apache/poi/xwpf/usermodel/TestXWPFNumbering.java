@@ -56,4 +56,22 @@ public class TestXWPFNumbering extends TestCase {
 		assertEquals(abstractNumId, compareAbstractNum);
 	}
 
+	public void testGetNumIlvl() throws IOException{
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+		BigInteger numIlvl = BigInteger.valueOf(0);
+		assertEquals(numIlvl, doc.getParagraphs().get(0).getNumIlvl());
+		numIlvl = BigInteger.valueOf(1);
+      assertEquals(numIlvl, doc.getParagraphs().get(5).getNumIlvl());
+	}
+
+	public void testGetNumFmt() throws IOException{
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+		assertEquals("bullet", doc.getParagraphs().get(0).getNumFmt());
+		assertEquals("bullet", doc.getParagraphs().get(1).getNumFmt());
+		assertEquals("bullet", doc.getParagraphs().get(2).getNumFmt());
+		assertEquals("bullet", doc.getParagraphs().get(3).getNumFmt());
+		assertEquals("decimal", doc.getParagraphs().get(4).getNumFmt());
+		assertEquals("lowerLetter", doc.getParagraphs().get(5).getNumFmt());
+		assertEquals("lowerRoman", doc.getParagraphs().get(6).getNumFmt());
+  }
 }

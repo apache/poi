@@ -25,11 +25,13 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
@@ -211,6 +213,50 @@ public class XWPFParagraph implements IBodyElement {
             if(paragraph.getPPr().getNumPr()!=null){
                 if(paragraph.getPPr().getNumPr().getNumId()!=null)
                     return paragraph.getPPr().getNumPr().getNumId().getVal();
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Returns Ilvl of the numeric style for this paragraph.
+     * Returns null if this paragraph does not have numeric style.
+     * @return Ilvl as BigInteger
+     */
+    public BigInteger getNumIlvl() {
+        if(paragraph.getPPr()!=null){
+            if(paragraph.getPPr().getNumPr()!=null){
+                if(paragraph.getPPr().getNumPr().getIlvl()!=null)
+                    return paragraph.getPPr().getNumPr().getIlvl().getVal();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns numbering format for this paragraph, eg bullet or
+     *  lowerLetter.
+     * Returns null if this paragraph does not have numeric style.
+     */
+    public String getNumFmt() {
+        BigInteger numID = getNumID();
+        XWPFNumbering numbering = document.getNumbering();
+        if(numID != null && numbering != null) {
+            XWPFNum num = numbering.getNum(numID);
+            if(num != null) {
+                BigInteger ilvl = getNumIlvl();
+                BigInteger abstractNumId = num.getCTNum().getAbstractNumId().getVal();
+                CTAbstractNum anum = numbering.getAbstractNum(abstractNumId).getAbstractNum();
+                CTLvl level = null;
+                for(int i = 0; i < anum.sizeOfLvlArray(); i++) {
+                    CTLvl lvl = anum.getLvlArray(i);
+                    if(lvl.getIlvl().equals(ilvl)) {
+                        level = lvl;
+                        break;
+                    }
+                }
+                if(level != null)
+                    return level.getNumFmt().getVal().toString();
             }
         }
         return null;
@@ -1300,4 +1346,4 @@ public class XWPFParagraph implements IBodyElement {
         return null;
     }
 
-}//end class
+}
