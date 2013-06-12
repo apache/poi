@@ -261,6 +261,8 @@ public class AreaReference {
     }
 
     /**
+     * Returns a text representation of this area reference.
+     * <p/>
      *  Example return values:
      *    <table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
      *      <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>

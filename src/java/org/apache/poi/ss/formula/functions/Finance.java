@@ -107,7 +107,7 @@ public class Finance {
      * @return <code>double</code> representing principal portion of payment.
      * 
      * @see #pmt(double, int, double, double, int)
-     * @see #ipmt(double, int, int, double, double, boolean)
+     * @see #ipmt(double, int, int, double, double, int)
      */
 	static public double ppmt(double r, int per, int nper, double pv, double fv, int type) {
 	    return pmt(r, nper, pv, fv, type) - ipmt(r, per, nper, pv, fv, type);

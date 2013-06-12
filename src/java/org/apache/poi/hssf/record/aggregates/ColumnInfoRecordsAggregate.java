@@ -171,7 +171,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	/**
 	 * 'Collapsed' state is stored in a single column col info record immediately after the outline group
 	 * @param idx
-	 * @return
+	 * @return true, if the column is collapsed, false otherwise.
 	 */
 	private boolean isColumnGroupCollapsed(int idx) {
 		int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
