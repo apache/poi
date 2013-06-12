@@ -52,6 +52,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
@@ -817,6 +818,12 @@ public class XWPFRun {
                     text.append("\n");
                 }
             }
+            if (o instanceof CTFtnEdnRef) {
+                CTFtnEdnRef ftn = (CTFtnEdnRef)o;
+                String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
+                    "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
+                text.append(footnoteRef);
+            }            
         }
 
         c.dispose();
