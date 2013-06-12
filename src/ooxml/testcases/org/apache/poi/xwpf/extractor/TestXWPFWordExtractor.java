@@ -166,8 +166,9 @@ public class TestXWPFWordExtractor extends TestCase {
     public void testFootnotes() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
-
-        assertTrue(extractor.getText().contains("snoska"));
+        String text = extractor.getText();
+        assertTrue(text.contains("snoska"));
+        assertTrue(text.contains("Eto ochen prostoy[footnoteRef:1] text so snoskoy"));
     }
 
 
@@ -190,8 +191,9 @@ public class TestXWPFWordExtractor extends TestCase {
     public void testEndnotes() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx");
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
-
-        assertTrue(extractor.getText().contains("XXX"));
+        String text = extractor.getText();
+        assertTrue(text.contains("XXX"));
+        assertTrue(text.contains("tilaka [endnoteRef:2]or 'tika'"));
     }
 
     public void testInsertedDeletedText() throws IOException {
