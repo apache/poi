@@ -18,20 +18,12 @@
 package org.apache.poi.xwpf.usermodel;
 
 /**
- * <p>
- * 9 Jan 2010
- * </p>
- * <p>
- * // TODO insert Javadoc here!
- * </p>
- * @author epp
- *
+ * The different kinds of {@link IBody} that exist
  */
 public enum BodyType {
-	DOCUMENT,
-	HEADER,
-	FOOTER,
-	FOOTNOTE,
-	TABLECELL
-	
+    DOCUMENT,
+    HEADER,
+    FOOTER,
+    FOOTNOTE,
+    TABLECELL
 }
