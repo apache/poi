@@ -77,7 +77,7 @@ public class XWPFTable implements IBodyElement {
         stBorderTypeMap.put(STBorder.INT_DOUBLE, XWPFBorderType.DOUBLE);
         stBorderTypeMap.put(STBorder.INT_DOTTED, XWPFBorderType.DOTTED);
         stBorderTypeMap.put(STBorder.INT_DASHED, XWPFBorderType.DASHED);
-        stBorderTypeMap.put(STBorder.INT_DOT_DASH, XWPFBorderType.DOT_DASH);    	
+        stBorderTypeMap.put(STBorder.INT_DOT_DASH, XWPFBorderType.DOT_DASH); 
     }
     
     public XWPFTable(CTTbl table, IBody part, int row, int col) {
@@ -94,9 +94,9 @@ public class XWPFTable implements IBodyElement {
     }
 
     public XWPFTable(CTTbl table, IBody part){
-    	this.part = part;
+        this.part = part;
         this.ctTbl = table;
-     
+
         tableRows = new ArrayList<XWPFTableRow>();
 
         // is an empty table: I add one row and one column as default
@@ -203,7 +203,7 @@ public class XWPFTable implements IBodyElement {
     public XWPFTableRow getRow(int pos) {
         if (pos >= 0 && pos < ctTbl.sizeOfTrArray()) {
             //return new XWPFTableRow(ctTbl.getTrArray(pos));
-        	return getRows().get(pos);
+            return getRows().get(pos);
         }
         return null;
     }
@@ -277,167 +277,167 @@ public class XWPFTable implements IBodyElement {
     }
 
     public XWPFBorderType getInsideHBorderType() {
-	XWPFBorderType bt = null;
+        XWPFBorderType bt = null;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideH()) {
-		CTBorder border = ctb.getInsideH();
-		bt = stBorderTypeMap.get(border.getVal().intValue());
-	    }
-	}
-	return bt;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideH()) {
+                CTBorder border = ctb.getInsideH();
+                bt = stBorderTypeMap.get(border.getVal().intValue());
+            }
+        }
+        return bt;
     }
 
     public int getInsideHBorderSize() {
-	int size = -1;
+        int size = -1;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideH()) {
-		CTBorder border = ctb.getInsideH();
-		size = border.getSz().intValue();
-	    }
-	}
-	return size;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideH()) {
+                CTBorder border = ctb.getInsideH();
+                size = border.getSz().intValue();
+            }
+        }
+        return size;
     }
 
     public int getInsideHBorderSpace() {
-	int space = -1;
+        int space = -1;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideH()) {
-		CTBorder border = ctb.getInsideH();
-		space = border.getSpace().intValue();
-	    }
-	}
-	return space;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideH()) {
+                CTBorder border = ctb.getInsideH();
+                space = border.getSpace().intValue();
+            }
+        }
+        return space;
     }
 
     public String getInsideHBorderColor() {
-	String color = null;
+        String color = null;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideH()) {
-		CTBorder border = ctb.getInsideH();
-		color = border.xgetColor().getStringValue();
-	    }
-	}
-	return color;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideH()) {
+                CTBorder border = ctb.getInsideH();
+                color = border.xgetColor().getStringValue();
+            }
+        }
+        return color;
     }
 
     public XWPFBorderType getInsideVBorderType() {
-	XWPFBorderType bt = null;
+        XWPFBorderType bt = null;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideV()) {
-		CTBorder border = ctb.getInsideV();
-		bt = stBorderTypeMap.get(border.getVal().intValue());
-	    }
-	}
-	return bt;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideV()) {
+                CTBorder border = ctb.getInsideV();
+                bt = stBorderTypeMap.get(border.getVal().intValue());
+            }
+        }
+        return bt;
     }
 
     public int getInsideVBorderSize() {
-	int size = -1;
+        int size = -1;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideV()) {
-		CTBorder border = ctb.getInsideV();
-		size = border.getSz().intValue();
-	    }
-	}
-	return size;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideV()) {
+                CTBorder border = ctb.getInsideV();
+                size = border.getSz().intValue();
+            }
+        }
+        return size;
     }
 
     public int getInsideVBorderSpace() {
-	int space = -1;
+        int space = -1;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideV()) {
-		CTBorder border = ctb.getInsideV();
-		space = border.getSpace().intValue();
-	    }
-	}
-	return space;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideV()) {
+                CTBorder border = ctb.getInsideV();
+                space = border.getSpace().intValue();
+            }
+        }
+        return space;
     }
 
     public String getInsideVBorderColor() {
-	String color = null;
+        String color = null;
 
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblBorders()) {
-	    CTTblBorders ctb = tblPr.getTblBorders();
-	    if (ctb.isSetInsideV()) {
-		CTBorder border = ctb.getInsideV();
-		color = border.xgetColor().getStringValue();
-	    }
-	}
-	return color;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblBorders()) {
+            CTTblBorders ctb = tblPr.getTblBorders();
+            if (ctb.isSetInsideV()) {
+                CTBorder border = ctb.getInsideV();
+                color = border.xgetColor().getStringValue();
+            }
+        }
+        return color;
     }
 
     public int getRowBandSize() {
-	int size = 0;
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblStyleRowBandSize()) {
-	    CTDecimalNumber rowSize = tblPr.getTblStyleRowBandSize();
-	    size = rowSize.getVal().intValue();
-	}
-	return size;
+        int size = 0;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblStyleRowBandSize()) {
+            CTDecimalNumber rowSize = tblPr.getTblStyleRowBandSize();
+            size = rowSize.getVal().intValue();
+        }
+        return size;
     }
 
     public void setRowBandSize(int size) {
-	CTTblPr tblPr = getTrPr();
-	CTDecimalNumber rowSize = tblPr.isSetTblStyleRowBandSize() ? tblPr.getTblStyleRowBandSize() : tblPr.addNewTblStyleRowBandSize();
-	rowSize.setVal(BigInteger.valueOf(size));
+        CTTblPr tblPr = getTrPr();
+        CTDecimalNumber rowSize = tblPr.isSetTblStyleRowBandSize() ? tblPr.getTblStyleRowBandSize() : tblPr.addNewTblStyleRowBandSize();
+        rowSize.setVal(BigInteger.valueOf(size));
     }
 
     public int getColBandSize() {
-	int size = 0;
-	CTTblPr tblPr = getTrPr();
-	if (tblPr.isSetTblStyleColBandSize()) {
-	    CTDecimalNumber colSize = tblPr.getTblStyleColBandSize();
-	    size = colSize.getVal().intValue();
-	}
-	return size;
+        int size = 0;
+        CTTblPr tblPr = getTrPr();
+        if (tblPr.isSetTblStyleColBandSize()) {
+            CTDecimalNumber colSize = tblPr.getTblStyleColBandSize();
+            size = colSize.getVal().intValue();
+        }
+        return size;
     }
 
     public void setColBandSize(int size) {
-	CTTblPr tblPr = getTrPr();
-	CTDecimalNumber colSize = tblPr.isSetTblStyleColBandSize() ? tblPr.getTblStyleColBandSize() : tblPr.addNewTblStyleColBandSize();
-	colSize.setVal(BigInteger.valueOf(size));
+        CTTblPr tblPr = getTrPr();
+        CTDecimalNumber colSize = tblPr.isSetTblStyleColBandSize() ? tblPr.getTblStyleColBandSize() : tblPr.addNewTblStyleColBandSize();
+        colSize.setVal(BigInteger.valueOf(size));
     }
 
     public void setInsideHBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-	CTTblPr tblPr = getTrPr();
-	CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
-	CTBorder b = ctb.isSetInsideH() ? ctb.getInsideH() : ctb.addNewInsideH();
-	b.setVal(xwpfBorderTypeMap.get(type));
-	b.setSz(BigInteger.valueOf(size));
-	b.setSpace(BigInteger.valueOf(space));
-	b.setColor(rgbColor);
+        CTTblPr tblPr = getTrPr();
+        CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
+        CTBorder b = ctb.isSetInsideH() ? ctb.getInsideH() : ctb.addNewInsideH();
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
     }
 
     public void setInsideVBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-	CTTblPr tblPr = getTrPr();
-	CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
-	CTBorder b = ctb.isSetInsideV() ? ctb.getInsideV() : ctb.addNewInsideV();
-	b.setVal(xwpfBorderTypeMap.get(type));
-	b.setSz(BigInteger.valueOf(size));
-	b.setSpace(BigInteger.valueOf(space));
-	b.setColor(rgbColor);
+        CTTblPr tblPr = getTrPr();
+        CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
+        CTBorder b = ctb.isSetInsideV() ? ctb.getInsideV() : ctb.addNewInsideV();
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
     }
 
     public int getCellMarginTop() {
@@ -445,10 +445,10 @@ public class XWPFTable implements IBodyElement {
         CTTblPr tblPr = getTrPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
-        	CTTblWidth tw = tcm.getTop();
-        	if (tw != null) {
-        		margin = tw.getW().intValue();
-        	}
+            CTTblWidth tw = tcm.getTop();
+            if (tw != null) {
+                margin = tw.getW().intValue();
+            }
         }
         return margin;
     }
@@ -458,10 +458,10 @@ public class XWPFTable implements IBodyElement {
         CTTblPr tblPr = getTrPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
-        	CTTblWidth tw = tcm.getLeft();
-        	if (tw != null) {
-        		margin = tw.getW().intValue();
-        	}
+            CTTblWidth tw = tcm.getLeft();
+            if (tw != null) {
+                margin = tw.getW().intValue();
+            }
         }
         return margin;
     }
@@ -471,46 +471,46 @@ public class XWPFTable implements IBodyElement {
         CTTblPr tblPr = getTrPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
-        	CTTblWidth tw = tcm.getBottom();
-        	if (tw != null) {
-        		margin = tw.getW().intValue();
-        	}
+            CTTblWidth tw = tcm.getBottom();
+            if (tw != null) {
+                margin = tw.getW().intValue();
+            }
         }
         return margin;
     }
 
     public int getCellMarginRight() {
-	int margin = 0;
-	CTTblPr tblPr = getTrPr();
-	CTTblCellMar tcm = tblPr.getTblCellMar();
-	if (tcm != null) {
-	    CTTblWidth tw = tcm.getRight();
-	    if (tw != null) {
-		margin = tw.getW().intValue();
-	    }
-	}
-	return margin;
+        int margin = 0;
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.getTblCellMar();
+        if (tcm != null) {
+            CTTblWidth tw = tcm.getRight();
+            if (tw != null) {
+                margin = tw.getW().intValue();
+            }
+        }
+        return margin;
     }
 
     public void setCellMargins(int top, int left, int bottom, int right) {
-	CTTblPr tblPr = getTrPr();
-	CTTblCellMar tcm = tblPr.isSetTblCellMar() ? tblPr.getTblCellMar() : tblPr.addNewTblCellMar();
+        CTTblPr tblPr = getTrPr();
+        CTTblCellMar tcm = tblPr.isSetTblCellMar() ? tblPr.getTblCellMar() : tblPr.addNewTblCellMar();
 
-	CTTblWidth tw = tcm.isSetLeft() ? tcm.getLeft() : tcm.addNewLeft();
-	tw.setType(STTblWidth.DXA);
-	tw.setW(BigInteger.valueOf(left));
+        CTTblWidth tw = tcm.isSetLeft() ? tcm.getLeft() : tcm.addNewLeft();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(left));
 
-	tw = tcm.isSetTop() ? tcm.getTop() : tcm.addNewTop();
-	tw.setType(STTblWidth.DXA);
-	tw.setW(BigInteger.valueOf(top));
+        tw = tcm.isSetTop() ? tcm.getTop() : tcm.addNewTop();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(top));
 
-	tw = tcm.isSetBottom() ? tcm.getBottom() : tcm.addNewBottom();
-	tw.setType(STTblWidth.DXA);
-	tw.setW(BigInteger.valueOf(bottom));
+        tw = tcm.isSetBottom() ? tcm.getBottom() : tcm.addNewBottom();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(bottom));
 
-	tw = tcm.isSetRight() ? tcm.getRight() : tcm.addNewRight();
-	tw.setType(STTblWidth.DXA);
-	tw.setW(BigInteger.valueOf(right));
+        tw = tcm.isSetRight() ? tcm.getRight() : tcm.addNewRight();
+        tw.setType(STTblWidth.DXA);
+        tw.setW(BigInteger.valueOf(right));
     }
 
     /**
@@ -518,103 +518,102 @@ public class XWPFTable implements IBodyElement {
      * 
      * @param row	the row which should be added
      */
-     public void addRow(XWPFTableRow row){
-	ctTbl.addNewTr();
-	ctTbl.setTrArray(getNumberOfRows()-1, row.getCtRow());
-	tableRows.add(row);
-     }
+    public void addRow(XWPFTableRow row){
+        ctTbl.addNewTr();
+        ctTbl.setTrArray(getNumberOfRows()-1, row.getCtRow());
+        tableRows.add(row);
+    }
 
-     /**
-      * add a new Row to the table
-      * at position pos
-      * @param row	the row which should be added
-      */
-     public boolean addRow(XWPFTableRow row, int pos){
-	 if(pos >= 0 && pos <= tableRows.size()){
-	     ctTbl.insertNewTr(pos);
-	     ctTbl.setTrArray(pos,row.getCtRow());
-	     tableRows.add(pos, row);
-	     return true;
-	 }
-	 return false;
-     }
+    /**
+     * add a new Row to the table
+     * at position pos
+     * @param row	the row which should be added
+     */
+    public boolean addRow(XWPFTableRow row, int pos){
+        if(pos >= 0 && pos <= tableRows.size()){
+            ctTbl.insertNewTr(pos);
+            ctTbl.setTrArray(pos,row.getCtRow());
+            tableRows.add(pos, row);
+            return true;
+        }
+        return false;
+    }
 
-     /**
-      * inserts a new tablerow 
-      * @param pos
-      * @return  the inserted row
-      */
-     public XWPFTableRow insertNewTableRow(int pos){
-	 if(pos >= 0 && pos <= tableRows.size()){
-	     CTRow row = ctTbl.insertNewTr(pos);
-	     XWPFTableRow tableRow = new XWPFTableRow(row, this);
-	     tableRows.add(pos, tableRow);
-	     return tableRow;
-	 }
-	 return null;
-     }
-
-
-     /**
-      * Remove a row at position pos from the table
-      * @param pos	position the Row in the Table
-      */
-     public boolean removeRow(int pos) throws IndexOutOfBoundsException {
-	 if (pos >= 0 && pos < tableRows.size()) {
-	     if (ctTbl.sizeOfTrArray() > 0) {
-		 ctTbl.removeTr(pos);
-	     }
-	     tableRows.remove(pos);
-	     return true;
-	 }
-	 return false;
-     }
-
-     public List<XWPFTableRow> getRows() {
-	 return tableRows;
-     }
+    /**
+     * inserts a new tablerow 
+     * @param pos
+     * @return  the inserted row
+     */
+    public XWPFTableRow insertNewTableRow(int pos){
+        if(pos >= 0 && pos <= tableRows.size()){
+            CTRow row = ctTbl.insertNewTr(pos);
+            XWPFTableRow tableRow = new XWPFTableRow(row, this);
+            tableRows.add(pos, tableRow);
+            return tableRow;
+        }
+        return null;
+    }
 
 
-     /**
-      * returns the type of the BodyElement Table
-      * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
-      */
-     public BodyElementType getElementType() {
-	 return BodyElementType.TABLE;
-     }
+    /**
+     * Remove a row at position pos from the table
+     * @param pos	position the Row in the Table
+     */
+    public boolean removeRow(int pos) throws IndexOutOfBoundsException {
+        if (pos >= 0 && pos < tableRows.size()) {
+            if (ctTbl.sizeOfTrArray() > 0) {
+                ctTbl.removeTr(pos);
+            }
+            tableRows.remove(pos);
+            return true;
+        }
+        return false;
+    }
 
-     public IBody getBody()
-     {
-	 return part;
-     }
+    public List<XWPFTableRow> getRows() {
+        return tableRows;
+    }
 
-     /**
-      * returns the part of the bodyElement
-      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
-      */
-     public POIXMLDocumentPart getPart() {
-	 if(part != null){
-	     return part.getPart();
-	 }
-	 return null;
-     }
 
-     /**
-      * returns the partType of the bodyPart which owns the bodyElement
-      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
-      */
-     public BodyType getPartType() {
-	 return part.getPartType();
-     }
+    /**
+     * returns the type of the BodyElement Table
+     * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
+     */
+    public BodyElementType getElementType() {
+        return BodyElementType.TABLE;
+    }
 
-     /**
-      * returns the XWPFRow which belongs to the CTRow row
-      * if this row is not existing in the table null will be returned
-      */
-     public XWPFTableRow getRow(CTRow row) {
-	 for(int i=0; i<getRows().size(); i++){
-	     if(getRows().get(i).getCtRow()== row) return getRow(i); 
-	 }
-	 return null;
-     }
+    public IBody getBody() {
+        return part;
+    }
+
+    /**
+     * returns the part of the bodyElement
+     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     */
+    public POIXMLDocumentPart getPart() {
+        if(part != null){
+            return part.getPart();
+        }
+        return null;
+    }
+
+    /**
+     * returns the partType of the bodyPart which owns the bodyElement
+     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     */
+    public BodyType getPartType() {
+        return part.getPartType();
+    }
+
+    /**
+     * returns the XWPFRow which belongs to the CTRow row
+     * if this row is not existing in the table null will be returned
+     */
+    public XWPFTableRow getRow(CTRow row) {
+        for(int i=0; i<getRows().size(); i++){
+            if(getRows().get(i).getCtRow()== row) return getRow(i); 
+        }
+        return null;
+    }
 }

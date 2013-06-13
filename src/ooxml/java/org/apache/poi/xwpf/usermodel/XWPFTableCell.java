@@ -73,38 +73,38 @@ public class XWPFTableCell implements IBody {
      * If a table cell does not include at least one block-level element, then this document shall be considered corrupt
      */
     public XWPFTableCell(CTTc cell, XWPFTableRow tableRow, IBody part) {
-	this.ctTc = cell;
-	this.part = part;
-	this.tableRow = tableRow;
-	// NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
-	if(cell.getPList().size()<1)
-	    cell.addNewP();
-	bodyElements = new ArrayList<IBodyElement>();
-	paragraphs = new ArrayList<XWPFParagraph>();
-	tables = new ArrayList<XWPFTable>();
+        this.ctTc = cell;
+        this.part = part;
+        this.tableRow = tableRow;
+        // NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
+        if(cell.getPList().size()<1)
+            cell.addNewP();
+        bodyElements = new ArrayList<IBodyElement>();
+        paragraphs = new ArrayList<XWPFParagraph>();
+        tables = new ArrayList<XWPFTable>();
 
-	XmlCursor cursor = ctTc.newCursor();
-	cursor.selectPath("./*");
-	while (cursor.toNextSelection()) {
-	    XmlObject o = cursor.getObject();
-	    if (o instanceof CTP) {
-		XWPFParagraph p = new XWPFParagraph((CTP)o, this);
-		paragraphs.add(p);
-		bodyElements.add(p);
-	    }
-	    if (o instanceof CTTbl) {
-		XWPFTable t = new XWPFTable((CTTbl)o, this);
-		tables.add(t);
-		bodyElements.add(t);
-	    }
-	}
-	cursor.dispose();
+        XmlCursor cursor = ctTc.newCursor();
+        cursor.selectPath("./*");
+        while (cursor.toNextSelection()) {
+            XmlObject o = cursor.getObject();
+            if (o instanceof CTP) {
+                XWPFParagraph p = new XWPFParagraph((CTP)o, this);
+                paragraphs.add(p);
+                bodyElements.add(p);
+            }
+            if (o instanceof CTTbl) {
+                XWPFTable t = new XWPFTable((CTTbl)o, this);
+                tables.add(t);
+                bodyElements.add(t);
+            }
+        }
+        cursor.dispose();
     }
 
 
     @Internal
     public CTTc getCTTc() {
-	return ctTc;
+        return ctTc;
     }
 
     /**

@@ -40,14 +40,14 @@ public class XWPFTableRow {
     private List<XWPFTableCell> tableCells;
 
     public XWPFTableRow(CTRow row, XWPFTable table) {
-	this.table = table;
-	this.ctRow = row;
-	getTableCells();
+        this.table = table;
+        this.ctRow = row;
+        getTableCells();
     }
 
     @Internal
     public CTRow getCtRow() {
-	return ctRow;
+        return ctRow;
     }
 
     /**

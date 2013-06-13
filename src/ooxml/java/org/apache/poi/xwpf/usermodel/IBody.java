@@ -44,7 +44,7 @@ public interface IBody {
 
     /**
      * get the PartType of the body, for example
-     * DOCUMENT, HEADER, FOOTER,	FOOTNOTE, 
+     * DOCUMENT, HEADER, FOOTER, FOOTNOTE, 
      * @return the PartType of the body
      */
     public BodyType getPartType();
