@@ -55,7 +55,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 
 /**
- * Sketch of XWPF paragraph class
+ * <p>A Paragraph within a Document, Table, Header etc.</p> 
+ * 
+ * <p>A paragraph has a lot of styling information, but the
+ *  actual text (possibly along with more styling) is held on
+ *  the child {@link XWPFRun}s.</p>
  */
 public class XWPFParagraph implements IBodyElement {
     private final CTP paragraph;
@@ -182,25 +186,25 @@ public class XWPFParagraph implements IBodyElement {
     public String getText() {
         StringBuffer out = new StringBuffer();
         for(XWPFRun run : runs) {
-           out.append(run.toString());
+            out.append(run.toString());
         }
         out.append(footnoteText);
         return out.toString();
     }
-    
+
     /**
      * Return styleID of the paragraph if style exist for this paragraph
      * if not, null will be returned     
      * @return        styleID as String
      */
-    public String getStyleID(){
-           if (paragraph.getPPr() != null){
-               if(paragraph.getPPr().getPStyle()!= null){
-                   if (paragraph.getPPr().getPStyle().getVal()!= null)
-                       return paragraph.getPPr().getPStyle().getVal();
-               }
-           }
-           return null;
+    public String getStyleID() {
+        if (paragraph.getPPr() != null) {
+            if(paragraph.getPPr().getPStyle()!= null) {
+                if (paragraph.getPPr().getPStyle().getVal()!= null)
+                    return paragraph.getPPr().getPStyle().getVal();
+            }
+        }
+        return null;
     }        
     /**
      * If style exist for this paragraph
@@ -217,7 +221,7 @@ public class XWPFParagraph implements IBodyElement {
         }
         return null;
     }
-    
+
     /**
      * Returns Ilvl of the numeric style for this paragraph.
      * Returns null if this paragraph does not have numeric style.
@@ -261,7 +265,7 @@ public class XWPFParagraph implements IBodyElement {
         }
         return null;
     }
-    
+
     /**
      * setNumID of Paragraph
      * @param numPos
@@ -282,22 +286,22 @@ public class XWPFParagraph implements IBodyElement {
      * paragraph
      */
     public String getParagraphText() {
-       StringBuffer out = new StringBuffer();
-       for(XWPFRun run : runs) {
-          out.append(run.toString());
-       }
-       return out.toString();
+        StringBuffer out = new StringBuffer();
+        for(XWPFRun run : runs) {
+            out.append(run.toString());
+        }
+        return out.toString();
     }
 
     /**
      * Returns any text from any suitable pictures in the paragraph
      */
     public String getPictureText() {
-       StringBuffer out = new StringBuffer();
-       for(XWPFRun run : runs) {
-          out.append(run.getPictureText());
-       }
-       return out.toString();
+        StringBuffer out = new StringBuffer();
+        for(XWPFRun run : runs) {
+            out.append(run.getPictureText());
+        }
+        return out.toString();
     }
 
     /**
@@ -383,7 +387,7 @@ public class XWPFParagraph implements IBodyElement {
         CTPPr pr = getCTPPr();
         return (pr == null || !pr.isSetTextAlignment()) ? TextAlignment.AUTO
                 : TextAlignment.valueOf(pr.getTextAlignment().getVal()
-                .intValue());
+                        .intValue());
     }
 
     /**
@@ -409,9 +413,9 @@ public class XWPFParagraph implements IBodyElement {
         CTPPr pr = getCTPPr();
         CTTextAlignment textAlignment = pr.isSetTextAlignment() ? pr
                 .getTextAlignment() : pr.addNewTextAlignment();
-        STTextAlignment.Enum en = STTextAlignment.Enum
-                .forInt(valign.getValue());
-        textAlignment.setVal(en);
+                STTextAlignment.Enum en = STTextAlignment.Enum
+                        .forInt(valign.getValue());
+                textAlignment.setVal(en);
     }
 
     /**
@@ -1162,8 +1166,7 @@ public class XWPFParagraph implements IBodyElement {
      * @param searched
      * @param startPos
      */
-    public TextSegement searchText(String searched,PositionInParagraph startPos){
-        
+    public TextSegement searchText(String searched,PositionInParagraph startPos) {
         int startRun = startPos.getRun(), 
             startText = startPos.getText(),
             startChar = startPos.getChar();
@@ -1182,7 +1185,8 @@ public class XWPFParagraph implements IBodyElement {
                         if(runPos==startRun)
                             charPos= startChar;
                         else
-                            charPos = 0;    
+                            charPos = 0;
+                        
                         for(; charPos<candidate.length(); charPos++){
                             if((candidate.charAt(charPos)==searched.charAt(0))&&(candCharPos==0)){
                                 beginTextPos = textPos;
@@ -1204,8 +1208,9 @@ public class XWPFParagraph implements IBodyElement {
                                     return segement;
                                 }
                             }
-                            else
+                            else {
                                 candCharPos=0;
+                            }
                         }
                     }
                     textPos++;
@@ -1230,29 +1235,27 @@ public class XWPFParagraph implements IBodyElement {
      * @return  the inserted run
      */
     public XWPFRun insertNewRun(int pos){
-         if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
+        if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
             CTR ctRun = paragraph.insertNewR(pos);
             XWPFRun newRun = new XWPFRun(ctRun, this);
             runs.add(pos, newRun);
             return newRun;
-         }
-         return null;
+        }
+        return null;
     }
-    
-    
-    
+
     /**
      * get a Text
      * @param segment
      */
     public String getText(TextSegement segment){
-    int runBegin = segment.getBeginRun();
-    int textBegin = segment.getBeginText();
-    int charBegin = segment.getBeginChar(); 
-    int runEnd = segment.getEndRun();
-    int textEnd = segment.getEndText();
-    int charEnd    = segment.getEndChar();
-    StringBuffer out = new StringBuffer();
+        int runBegin = segment.getBeginRun();
+        int textBegin = segment.getBeginText();
+        int charBegin = segment.getBeginChar(); 
+        int runEnd = segment.getEndRun();
+        int textEnd = segment.getEndText();
+        int charEnd    = segment.getEndChar();
+        StringBuffer out = new StringBuffer();
         for(int i=runBegin; i<=runEnd;i++){
             int startText=0, endText = paragraph.getRArray(i).getTList().size()-1;
             if(i==runBegin)
@@ -1267,8 +1270,8 @@ public class XWPFParagraph implements IBodyElement {
                 if((j==textEnd)&&(i==runEnd)){
                     endChar = charEnd;
                 }
-                   out.append(tmpText.substring(startChar, endChar+1));
-        
+                out.append(tmpText.substring(startChar, endChar+1));
+
             }
         }
         return out.toString();
@@ -1280,12 +1283,12 @@ public class XWPFParagraph implements IBodyElement {
      * @return true if the run was removed
      */
     public boolean removeRun(int pos){
-         if (pos >= 0 && pos < paragraph.sizeOfRArray()){
-             getCTP().removeR(pos);
-             runs.remove(pos);
-             return true;
-         }
-         return false;
+        if (pos >= 0 && pos < paragraph.sizeOfRArray()) {
+            getCTP().removeR(pos);
+            runs.remove(pos);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1345,5 +1348,4 @@ public class XWPFParagraph implements IBodyElement {
         }
         return null;
     }
-
 }

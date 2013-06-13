@@ -53,7 +53,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     CTHdrFtr headerFooter;
     XWPFDocument document;
 
-    XWPFHeaderFooter(XWPFDocument doc, CTHdrFtr hdrFtr){
+    XWPFHeaderFooter(XWPFDocument doc, CTHdrFtr hdrFtr) {
         if (doc==null) {
             throw new NullPointerException();
         }
@@ -171,7 +171,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             if(table==null)
                 return null;
             if(table.getCTTbl().equals(ctTable))
-                return table;	
+                return table;
         }
         return null;
     }
@@ -257,7 +257,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                     // ignore
                 }
             }
-            
+
             document.registerPackagePictureData(xwpfPicData);
             pictures.add(xwpfPicData);
             return getRelationId(xwpfPicData);
@@ -313,7 +313,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         if (relatedPart != null && relatedPart instanceof XWPFPictureData) {
             return (XWPFPictureData) relatedPart;
         }
-        return null;	    	
+        return null;   
     }
 
     /**
@@ -499,15 +499,15 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     }
 
     public void setXWPFDocument(XWPFDocument doc) {
-       document = doc;
+        document = doc;
     }
 
     public XWPFDocument getXWPFDocument() {
-       if (document!=null) {
-          return document;
-       } else {
-          return (XWPFDocument)getParent();
-       }
+        if (document!=null) {
+            return document;
+        } else {
+            return (XWPFDocument)getParent();
+        }
     }
 
     /**
@@ -517,4 +517,4 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public POIXMLDocumentPart getPart() {
         return this;
     }
-}//end class
+}

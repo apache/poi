@@ -41,13 +41,13 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     public XWPFFootnote(CTFtnEdn note, XWPFFootnotes xFootnotes) {
        footnotes = xFootnotes;
        ctFtnEdn = note;
-       for (CTP p : ctFtnEdn.getPList())	{
+       for (CTP p : ctFtnEdn.getPList()) {
           paragraphs.add(new XWPFParagraph(p, this));
        }
     }
 
     public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPList())	{
+        for (CTP p : body.getPList()) {
             paragraphs.add(new XWPFParagraph(p, document));
         }
     }
@@ -96,7 +96,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      * @param pos
      * @param table
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
+     * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
      */
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
@@ -116,14 +116,14 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * the method will return this table
      * if there is no corresponding {@link XWPFTable} the method will return null 
      * @param ctTable
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
+     * @see org.apache.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
      */
     public XWPFTable getTable(CTTbl ctTable){
         for (XWPFTable table : tables) {
             if(table==null)
                 return null;
             if(table.getCTTbl().equals(ctTable))
-                return table;	
+                return table;
         }
         return null;
     }
@@ -135,7 +135,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * @param p is instance of CTP and is searching for an XWPFParagraph
      * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this header or footer
      * 		   XWPFParagraph with the correspondig CTP p
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
+     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
      */
     public XWPFParagraph getParagraph(CTP p){
         for (XWPFParagraph paragraph : paragraphs) {
@@ -148,7 +148,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * Returns the paragraph that holds
      *  the text of the header or footer.
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
+     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
      */
     public XWPFParagraph getParagraphArray(int pos) {
 
@@ -158,7 +158,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
     /**
      * get the TableCell which belongs to the TableCell
      * @param cell
-	 * @see org.apache.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
+     * @see org.apache.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
      */
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlCursor cursor = cell.newCursor();
@@ -207,7 +207,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * 
      * @param cursor
      * @return the inserted table
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
+     * @see org.apache.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
      */
     public XWPFTable insertNewTbl(XmlCursor cursor) {
         if(isCursorInFtn(cursor)){
@@ -248,7 +248,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * add a new paragraph at position of the cursor
      * @param cursor
      * @return the inserted paragraph
-	 * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
+     * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
      */
     public XWPFParagraph insertNewParagraph(XmlCursor cursor){
         if(isCursorInFtn(cursor)){
@@ -284,37 +284,37 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
         return null;
     }
 
-	/**
-	 * add a new table to the end of the footnote
-	 * @param table
-	 * @return the added XWPFTable
-	 */
+    /**
+     * add a new table to the end of the footnote
+     * @param table
+     * @return the added XWPFTable
+     */
     public XWPFTable addNewTbl(CTTbl table) {
-		CTTbl newTable = ctFtnEdn.addNewTbl();
-		newTable.set(table);
-		XWPFTable xTable = new XWPFTable(newTable, this);
-		tables.add(xTable);
-		return xTable;
+        CTTbl newTable = ctFtnEdn.addNewTbl();
+        newTable.set(table);
+        XWPFTable xTable = new XWPFTable(newTable, this);
+        tables.add(xTable);
+        return xTable;
     }
-	
-	/**
-	 * add a new paragraph to the end of the footnote
-	 * @param paragraph
-	 * @return the added XWPFParagraph
-	 */
+
+    /**
+     * add a new paragraph to the end of the footnote
+     * @param paragraph
+     * @return the added XWPFParagraph
+     */
     public XWPFParagraph addNewParagraph(CTP paragraph) {
-		CTP newPara = ctFtnEdn.addNewP();
-		newPara.set(paragraph);
-		XWPFParagraph xPara = new XWPFParagraph(newPara, this);
-		paragraphs.add(xPara);
-		return xPara;
+        CTP newPara = ctFtnEdn.addNewP();
+        newPara.set(paragraph);
+        XWPFParagraph xPara = new XWPFParagraph(newPara, this);
+        paragraphs.add(xPara);
+        return xPara;
     }
-	
+
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
      */
     public  XWPFDocument getXWPFDocument() {
-       return footnotes.getXWPFDocument();
+        return footnotes.getXWPFDocument();
     }
 
     /**
