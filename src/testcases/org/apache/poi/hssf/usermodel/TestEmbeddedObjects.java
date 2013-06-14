@@ -24,11 +24,9 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * @author Evgeniy Berlog
- * @date 13.07.12
+ * Tests for the embedded object fetching support in HSSF
  */
 public class TestEmbeddedObjects extends TestCase{
-    
     public void testReadExistingObject() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
@@ -37,5 +35,28 @@ public class TestEmbeddedObjects extends TestCase{
         assertNotNull(obj.getObjectData());
         assertNotNull(obj.getDirectory());
         assertNotNull(obj.getOLE2ClassName());
+    }
+    
+    /**
+     * Need to recurse into the shapes to find this one
+     * See https://github.com/apache/poi/pull/2
+     */
+    public void testReadNestedObject() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("WithCheckBoxes.xls");
+        List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
+        assertEquals(list.size(), 1);
+        HSSFObjectData obj = list.get(0);
+        assertNotNull(obj.getObjectData());
+        assertNotNull(obj.getOLE2ClassName());
+    }
+    
+    /**
+     * One with large numbers of recursivly embedded resources
+     * See https://github.com/apache/poi/pull/2
+     */
+    public void testReadManyNestedObjects() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45538_form_Header.xls");
+        List<HSSFObjectData> list = wb.getAllEmbeddedObjects();
+        assertEquals(list.size(), 40);
     }
 }

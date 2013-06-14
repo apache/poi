@@ -1723,13 +1723,24 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (null == patriarch){
             return;
         }
-        for (HSSFShape shape: patriarch.getChildren()){
-            if (shape instanceof HSSFObjectData){
+        getAllEmbeddedObjects(patriarch, objects);
+    }
+    /**
+     * Recursively iterates a shape container to get all embedded objects.
+     * 
+     * @param parent the parent.
+     * @param objects the list of embedded objects to populate.
+     */
+    private void getAllEmbeddedObjects(HSSFShapeContainer parent, List<HSSFObjectData> objects)
+    {
+        for (HSSFShape shape : parent.getChildren()) {
+            if (shape instanceof HSSFObjectData) {
                 objects.add((HSSFObjectData) shape);
+            } else if (shape instanceof HSSFShapeContainer) {
+                getAllEmbeddedObjects((HSSFShapeContainer) shape, objects);
             }
         }
     }
-
     public HSSFCreationHelper getCreationHelper() {
         return new HSSFCreationHelper(this);
     }
