@@ -1722,11 +1722,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (null == patriarch){
             return;
         }
-        for (HSSFShape shape: patriarch.getChildren()){
-            if (shape instanceof HSSFObjectData){
-                objects.add((HSSFObjectData) shape);
-            }
-        }
+        getAllEmbeddedObjects(patriarch, objects);
     }
 
     /**
