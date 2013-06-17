@@ -866,6 +866,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     public short getLeftCol() {
         String cellRef = worksheet.getSheetViews().getSheetViewArray(0).getTopLeftCell();
+        if(cellRef == null) {
+        	return 0;
+        }
         CellReference cellReference = new CellReference(cellRef);
         return cellReference.getCol();
     }
@@ -1178,6 +1181,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     public short getTopRow() {
         String cellRef = getSheetTypeSheetView().getTopLeftCell();
+        if(cellRef == null) {
+        	return 0;
+        }
         CellReference cellReference = new CellReference(cellRef);
         return (short) cellReference.getRow();
     }

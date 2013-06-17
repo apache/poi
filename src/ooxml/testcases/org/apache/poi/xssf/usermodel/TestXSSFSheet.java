@@ -17,18 +17,29 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.hssf.record.PasswordRecord;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
@@ -1090,5 +1101,67 @@ public final class TestXSSFSheet extends BaseTestSheet {
          workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
          sheet = workbook.getSheet("Sheet 1");
          assertEquals(false, sheet.getForceFormulaRecalculation());
+	}
+
+    public void test54607() {
+    	// run with the file provided in the Bug-Report
+    	runGetTopRow("54607.xlsx", true, 1, 0, 0);    	
+    	runGetLeftCol("54607.xlsx", true, 0, 0, 0);    	
+    	
+    	// run with some other flie to see 
+    	runGetTopRow("54436.xlsx", true, 0);
+    	runGetLeftCol("54436.xlsx", true, 0);
+    	runGetTopRow("TwoSheetsNoneHidden.xlsx", true, 0, 0);
+    	runGetLeftCol("TwoSheetsNoneHidden.xlsx", true, 0, 0);
+    	runGetTopRow("TwoSheetsNoneHidden.xls", false, 0, 0);
+    	runGetLeftCol("TwoSheetsNoneHidden.xls", false, 0, 0);
+    }
+
+	private void runGetTopRow(String file, boolean isXSSF, int... topRows) {
+		final Workbook wb;
+		if(isXSSF) {
+			wb = XSSFTestDataSamples.openSampleWorkbook(file);
+		} else {
+			wb = HSSFTestDataSamples.openSampleWorkbook(file);
+		}
+    	for (int si = 0; si < wb.getNumberOfSheets(); si++) {
+    		Sheet sh = wb.getSheetAt(si);
+    		assertNotNull(sh.getSheetName());
+    		assertEquals("Did not match for sheet " + si, topRows[si], sh.getTopRow());
+    	}
+
+    	// for XSSF also test with SXSSF
+    	if(isXSSF) {
+			Workbook swb = new SXSSFWorkbook((XSSFWorkbook) wb);
+	    	for (int si = 0; si < swb.getNumberOfSheets(); si++) {
+	    		Sheet sh = swb.getSheetAt(si);
+	    		assertNotNull(sh.getSheetName());
+	    		assertEquals("Did not match for sheet " + si, topRows[si], sh.getTopRow());
+	    	}
+    	}
+	}
+
+	private void runGetLeftCol(String file, boolean isXSSF, int... topRows) {
+		final Workbook wb;
+		if(isXSSF) {
+			wb = XSSFTestDataSamples.openSampleWorkbook(file);
+		} else {
+			wb = HSSFTestDataSamples.openSampleWorkbook(file);
+		}
+    	for (int si = 0; si < wb.getNumberOfSheets(); si++) {
+    		Sheet sh = wb.getSheetAt(si);
+    		assertNotNull(sh.getSheetName());
+    		assertEquals("Did not match for sheet " + si, topRows[si], sh.getLeftCol());
+    	}
+
+    	// for XSSF also test with SXSSF
+    	if(isXSSF) {
+			Workbook swb = new SXSSFWorkbook((XSSFWorkbook) wb);
+	    	for (int si = 0; si < swb.getNumberOfSheets(); si++) {
+	    		Sheet sh = swb.getSheetAt(si);
+	    		assertNotNull(sh.getSheetName());
+	    		assertEquals("Did not match for sheet " + si, topRows[si], sh.getLeftCol());
+	    	}
+    	}
 	}
 }
