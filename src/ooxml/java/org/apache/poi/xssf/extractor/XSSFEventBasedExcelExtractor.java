@@ -191,6 +191,15 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
        }
    }
    
+	@Override
+	public void close() throws IOException {
+		if (container != null) {
+			container.close();
+			container = null;
+		}
+		super.close();
+	}
+
    protected class SheetTextExtractor implements SheetContentsHandler {
       private final StringBuffer output;
       private boolean firstCellOfRow = true;

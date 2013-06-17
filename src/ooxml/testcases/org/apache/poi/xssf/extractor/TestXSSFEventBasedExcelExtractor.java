@@ -30,12 +30,10 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 /**
  * Tests for {@link XSSFEventBasedExcelExtractor}
  */
-public final class TestXSSFEventBasedExcelExtractor extends TestCase {
-
-
-	private static final XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
-		return new XSSFEventBasedExcelExtractor(XSSFTestDataSamples.
-		      openSamplePackage(sampleName));
+public class TestXSSFEventBasedExcelExtractor extends TestCase {
+	protected XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
+        return new XSSFEventBasedExcelExtractor(XSSFTestDataSamples.
+                openSamplePackage(sampleName));
 	}
 
 	/**
@@ -97,6 +95,8 @@ public final class TestXSSFEventBasedExcelExtractor extends TestCase {
 				CHUNK2 +
 				"Sheet3\n"
 				, text);
+		
+		extractor.close();
 	}
 	
 	public void testGetComplexText() throws Exception {
@@ -112,6 +112,8 @@ public final class TestXSSFEventBasedExcelExtractor extends TestCase {
 						"Avgtxfull\n" +
 						"(iii) AVERAGE TAX RATES ON ANNUAL"	
 		));
+		
+		extractor.close();
 	}
 	
    public void testInlineStrings() throws Exception {
@@ -134,6 +136,8 @@ public final class TestXSSFEventBasedExcelExtractor extends TestCase {
       // Formulas
       assertTrue("Unable to find expected word in text\n" + text, text.contains("A2"));
       assertTrue("Unable to find expected word in text\n" + text, text.contains("A5-A$2"));
+		
+      extractor.close();
    }
    
 	/**
@@ -159,5 +163,8 @@ public final class TestXSSFEventBasedExcelExtractor extends TestCase {
 			Matcher m = pattern.matcher(text);
 			assertTrue(m.matches());			
 		}
+		
+		ole2Extractor.close();
+		ooxmlExtractor.close();
 	}
 }

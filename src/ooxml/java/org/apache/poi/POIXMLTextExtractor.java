@@ -17,6 +17,8 @@
 
 package org.apache.poi;
 
+import java.io.IOException;
+
 import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.POIXMLProperties.CustomProperties;
 import org.apache.poi.POIXMLProperties.ExtendedProperties;
@@ -74,5 +76,17 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 */
 	public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
 		return new POIXMLPropertiesTextExtractor(_document);
+	}
+
+	@Override
+	public void close() throws IOException {
+		// e.g. XSSFEventBaseExcelExtractor passes a null-document
+		if(_document != null) {
+			OPCPackage pkg = _document.getPackage();
+			if(pkg != null) {
+				pkg.close();
+			}
+		}
+		super.close();
 	}
 }

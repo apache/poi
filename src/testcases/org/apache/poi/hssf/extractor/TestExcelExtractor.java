@@ -239,7 +239,7 @@ public final class TestExcelExtractor extends TestCase {
             ) > -1
       );
       
-      assertTrue(
+      assertTrue("Had: " + text + ", but should contain 'nn.nn\\t10.52\\n'",
             text.indexOf(
                "nn.nn\t10.52\n"
             ) > -1
