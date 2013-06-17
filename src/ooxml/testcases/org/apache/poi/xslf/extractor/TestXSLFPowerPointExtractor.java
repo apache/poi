@@ -43,8 +43,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 	 * Get text out of the simple file
 	 */
 	public void testGetSimpleText() throws Exception {
-		new XSLFPowerPointExtractor(xmlA);
-		new XSLFPowerPointExtractor(pkg);
+		new XSLFPowerPointExtractor(xmlA).close();
+		new XSLFPowerPointExtractor(pkg).close();
 		
 		XSLFPowerPointExtractor extractor = 
 			new XSLFPowerPointExtractor(xmlA);
@@ -148,6 +148,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 		assertEquals(
 				"\n\n\n\n", text
 		);
+		
+		extractor.close();
 	}
 	
    public void testGetComments() throws Exception {
@@ -165,6 +167,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 
       // Check the authors came through too
       assertTrue("Unable to find expected word in text\n" + text, text.contains("XPVMWARE01"));
+		
+		extractor.close();
    }
 	
 	public void testGetMasterText() throws Exception {
@@ -206,6 +210,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
             "This text comes from the Master Slide\n"
             , text
       );
+		
+		extractor.close();
 	}
 
     public void testTable() throws Exception {
@@ -219,6 +225,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
 
         // Check comments are there
         assertTrue("Unable to find expected word in text\n" + text, text.contains("TEST"));
+		
+		extractor.close();
     }
     
     /**
@@ -267,6 +275,8 @@ public class TestXSLFPowerPointExtractor extends TestCase {
                "Text missing for " + filename + "\n" + text, 
                text.contains("Mystery")
          );
+         
+ 		 extractor.close();
        }
     }
 }

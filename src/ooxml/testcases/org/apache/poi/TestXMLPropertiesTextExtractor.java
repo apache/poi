@@ -46,6 +46,9 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 
 		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
 		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
+		
+		textExt.close();
+		ext.close();
 	}
 
 	public void testCore() throws Exception {
@@ -63,6 +66,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 
 		assertTrue(text.contains("LastModifiedBy = Yury Batrakov"));
 		assertTrue(cText.contains("LastModifiedBy = Yury Batrakov"));
+		
+		ext.close();
 	}
 
 	public void testExtended() throws Exception {
@@ -82,6 +87,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 		assertTrue(text.contains("Company = Mera"));
 		assertTrue(eText.contains("Application = Microsoft Excel"));
 		assertTrue(eText.contains("Company = Mera"));
+
+		ext.close();
 	}
 
 	public void testCustom() throws Exception {
@@ -99,6 +106,8 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
       
       assertTrue(text.contains("description = another value"));
       assertTrue(cText.contains("description = another value"));
+
+      ext.close();
 	}
 	
 	/**
@@ -118,5 +127,7 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
       assertFalse(text.contains("Created =")); // With date is null
       assertTrue(text.contains("CreatedString = ")); // Via string is blank
       assertTrue(text.contains("LastModifiedBy = IT Client Services"));
+		
+      ext.close();
 	}
 }

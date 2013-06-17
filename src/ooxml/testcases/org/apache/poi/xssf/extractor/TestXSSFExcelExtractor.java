@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,17 +31,16 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 /**
  * Tests for {@link XSSFExcelExtractor}
  */
-public final class TestXSSFExcelExtractor extends TestCase {
-
-
-	private static final XSSFExcelExtractor getExtractor(String sampleName) {
+public class TestXSSFExcelExtractor extends TestCase {
+	protected XSSFExcelExtractor getExtractor(String sampleName) {
 		return new XSSFExcelExtractor(XSSFTestDataSamples.openSampleWorkbook(sampleName));
 	}
 
 	/**
 	 * Get text out of the simple file
+	 * @throws IOException 
 	 */
-	public void testGetSimpleText() {
+	public void testGetSimpleText() throws IOException {
 		// a very simple file
 		XSSFExcelExtractor extractor = getExtractor("sample.xlsx");
 		extractor.getText();
@@ -96,9 +96,11 @@ public final class TestXSSFExcelExtractor extends TestCase {
 				CHUNK2 +
 				"Sheet3\n"
 				, text);
+		
+		extractor.close();
 	}
 	
-	public void testGetComplexText() {
+	public void testGetComplexText() throws IOException {
 		// A fairly complex file
 		XSSFExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
 		extractor.getText();
@@ -112,14 +114,17 @@ public final class TestXSSFExcelExtractor extends TestCase {
 						"Avgtxfull\n" +
 						"null\t(iii) AVERAGE TAX RATES ON ANNUAL"	
 		));
+		
+		extractor.close();
 	}
 	
 	/**
 	 * Test that we return pretty much the same as
 	 *  ExcelExtractor does, when we're both passed
 	 *  the same file, just saved as xls and xlsx
+	 * @throws IOException 
 	 */
-	public void testComparedToOLE2() {
+	public void testComparedToOLE2() throws IOException {
 		// A fairly simple file - ooxml
 		XSSFExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
 
@@ -137,12 +142,16 @@ public final class TestXSSFExcelExtractor extends TestCase {
 			Matcher m = pattern.matcher(text);
 			assertTrue(m.matches());			
 		}
+
+		ole2Extractor.close();
+		ooxmlExtractor.close();
 	}
 	
 	/**
 	 * From bug #45540
+	 * @throws IOException 
 	 */
-	public void testHeaderFooter() {
+	public void testHeaderFooter() throws IOException {
 		String[] files = new String[] {
 			"45540_classic_Header.xlsx", "45540_form_Header.xlsx",
 			"45540_classic_Footer.xlsx", "45540_form_Footer.xlsx",
@@ -152,15 +161,17 @@ public final class TestXSSFExcelExtractor extends TestCase {
 			String text = extractor.getText();
 			
 			assertTrue("Unable to find expected word in text from " + sampleName + "\n" + text, text.contains("testdoc"));
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
+			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+			
+			extractor.close();
 		}
 	}
 
 	/**
 	 * From bug #45544
+	 * @throws IOException 
 	 */
-	public void testComments() {
-		
+	public void testComments() throws IOException {
 		XSSFExcelExtractor extractor = getExtractor("45544.xlsx");
 		String text = extractor.getText();
 
@@ -173,9 +184,11 @@ public final class TestXSSFExcelExtractor extends TestCase {
 		text = extractor.getText();
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
 		assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		
+		extractor.close();
 	}
 	
-	public void testInlineStrings() {
+	public void testInlineStrings() throws IOException {
       XSSFExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
       extractor.setFormulasNotResults(true);
       String text = extractor.getText();
@@ -195,5 +208,7 @@ public final class TestXSSFExcelExtractor extends TestCase {
       // Formulas
       assertTrue("Unable to find expected word in text\n" + text, text.contains("A2"));
       assertTrue("Unable to find expected word in text\n" + text, text.contains("A5-A$2"));
+      
+      extractor.close();
 	}
 }

@@ -57,6 +57,8 @@ public class TestXWPFWordExtractor extends TestCase {
             }
         }
         assertEquals(3, ps);
+        
+        extractor.close();
     }
 
     /**
@@ -93,6 +95,8 @@ public class TestXWPFWordExtractor extends TestCase {
             }
         }
         assertEquals(134, ps);
+        
+        extractor.close();
     }
 
     public void testGetWithHyperlinks() throws IOException {
@@ -118,6 +122,8 @@ public class TestXWPFWordExtractor extends TestCase {
 				"We have a hyperlink <http://poi.apache.org/> here, and another.\n",
                 extractor.getText()
         );
+        
+        extractor.close();
     }
 
     public void testHeadersFooters() throws IOException {
@@ -141,7 +147,11 @@ public class TestXWPFWordExtractor extends TestCase {
         // Now another file, expect multiple headers
         //  and multiple footers
         doc = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
+        extractor.close();
+
         extractor = new XWPFWordExtractor(doc);
+        extractor.close();
+
         extractor =
                 new XWPFWordExtractor(doc);
         extractor.getText();
@@ -161,6 +171,8 @@ public class TestXWPFWordExtractor extends TestCase {
                         "Footer Left\tFooter Middle\tFooter Right\n",
                 extractor.getText()
         );
+        
+        extractor.close();
     }
 
     public void testFootnotes() throws IOException {
@@ -169,6 +181,8 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue(text.contains("snoska"));
         assertTrue(text.contains("Eto ochen prostoy[footnoteRef:1] text so snoskoy"));
+        
+        extractor.close();
     }
 
 
@@ -177,6 +191,8 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
 
         assertTrue(extractor.getText().contains("snoska"));
+        
+        extractor.close();
     }
 
     public void testFormFootnotes() throws IOException {
@@ -186,6 +202,8 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
         assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+        
+        extractor.close();
     }
 
     public void testEndnotes() throws IOException {
@@ -194,6 +212,8 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue(text.contains("XXX"));
         assertTrue(text.contains("tilaka [endnoteRef:2]or 'tika'"));
+        
+        extractor.close();
     }
 
     public void testInsertedDeletedText() throws IOException {
@@ -202,6 +222,8 @@ public class TestXWPFWordExtractor extends TestCase {
 
         assertTrue(extractor.getText().contains("pendant worn"));
         assertTrue(extractor.getText().contains("extremely well"));
+        
+        extractor.close();
     }
 
     public void testParagraphHeader() throws IOException {
@@ -211,6 +233,8 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("Section 1"));
         assertTrue(extractor.getText().contains("Section 2"));
         assertTrue(extractor.getText().contains("Section 3"));
+        
+        extractor.close();
     }
 
     /**
@@ -225,6 +249,8 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(extractor.getText().contains("2004"));
         assertTrue(extractor.getText().contains("2008"));
         assertTrue(extractor.getText().contains("(120 "));
+        
+        extractor.close();
     }
     
     /**
@@ -244,6 +270,8 @@ public class TestXWPFWordExtractor extends TestCase {
        
        // Now check the first paragraph in total
        assertTrue(extractor.getText().contains("a\tb\n"));
+       
+       extractor.close();
     }
     
     /**
@@ -258,6 +286,8 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(text.length() > 0);
         assertFalse(text.contains("AUTHOR"));
         assertFalse(text.contains("CREATEDATE"));
+        
+        extractor.close();
     }
     
     /**
@@ -271,6 +301,8 @@ public class TestXWPFWordExtractor extends TestCase {
         String text = extractor.getText();
         assertTrue(text.length() > 0);
         assertTrue(text.contains("FldSimple.docx"));
+        
+        extractor.close();
     }
 
     /**
@@ -282,5 +314,7 @@ public class TestXWPFWordExtractor extends TestCase {
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
         String text = extractor.getText();
         assertTrue(text.length() > 0);
+        
+        extractor.close();
     }
 }
