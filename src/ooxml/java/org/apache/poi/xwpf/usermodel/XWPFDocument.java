@@ -521,7 +521,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * the position of this table in the table array list
      * @param pos position of the table in the bodyelement array list
      * @return if there is a table at the position in the bodyelement array list,
-     * 		   else it will return null. 
+     *         else it will return null. 
      */
     public int getTablePos(int pos) {
        return getBodyElementSpecificPos(pos, tables);
@@ -1062,9 +1062,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * 
      *  NOTICES:
      *  <ul>
-     *  	<li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"
-     *           (if "Update automatic links at open" is enabled)</li>
-     *  	<li>Flag is removed after saving with changes in Word </li>
+     *   <li>Causing Word to ask on open: "This document contains fields that may refer to other files. Do you want to update the fields in this document?"
+     *       (if "Update automatic links at open" is enabled)</li>
+     *   <li>Flag is removed after saving with changes in Word </li>
      *  </ul> 
      */
     public void enforceUpdateFields() {
@@ -1298,7 +1298,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
      */
     public XWPFParagraph getParagraphArray(int pos) {
-        if(pos >= 0 && pos < paragraphs.size()){		
+        if (pos >= 0 && pos < paragraphs.size()) {
             return paragraphs.get(pos);
         }
         return null;
@@ -1317,7 +1317,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * get the PartType of the body, for example
-     * DOCUMENT, HEADER, FOOTER,	FOOTNOTE,
+     * DOCUMENT, HEADER, FOOTER, FOOTNOTE,
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
