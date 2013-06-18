@@ -43,8 +43,7 @@ public final class TestXWPFSDT extends TestCase {
                 break;
             }
         }
-        // TODO Fix footnotes issues then enable
-//        assertEquals("controls size", 12, sdts.size());
+        assertEquals("controls size", 12, sdts.size());
 
         assertEquals("tag", "MyTag", tag);
         assertEquals("title", "MyTitle", title);
@@ -70,8 +69,6 @@ public final class TestXWPFSDT extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
         List<XWPFSDT> sdts = extractAllSDTs(doc);
 
-        // TODO Fix footnotes issue
-/*
         assertEquals("number of sdts", contents.length, sdts.size());
 
         for (int i = 0; i < sdts.size(); i++){//contents.length; i++){
@@ -79,7 +76,6 @@ public final class TestXWPFSDT extends TestCase {
 
             assertEquals(i+ ": " + contents[i], contents[i], sdt.getContent().toString());
         } 
-*/
     }
 
     public void testFailureToGetSDTAsCell() throws Exception{

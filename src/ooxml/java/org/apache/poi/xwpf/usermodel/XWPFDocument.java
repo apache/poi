@@ -237,11 +237,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
                 this.footnotes = (XWPFFootnotes)p;
                 this.footnotes.onDocumentRead();
-                // Warning - this apparently doubles footnotes - see bug #????
-                FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
-                for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteList()) {
-                    footnotes.addFootnote(ctFtnEdn);
-                }
             } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())){
                 EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
 
