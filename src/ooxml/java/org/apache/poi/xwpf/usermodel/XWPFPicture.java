@@ -67,7 +67,7 @@ public class XWPFPicture {
         }
 
         String blipId = blipProps.getBlip().getEmbed();
-        POIXMLDocumentPart part = run.getParagraph().getPart();
+        POIXMLDocumentPart part = run.getParent().getPart();
         if (part != null)
         {
             POIXMLDocumentPart relatedPart = part.getRelationById(blipId);

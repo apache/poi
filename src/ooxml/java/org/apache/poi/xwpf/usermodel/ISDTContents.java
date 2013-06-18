@@ -14,22 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.xwpf.usermodel;
 
 /**
- * <p>
- * 9 Jan 2010
- * </p>
- * <p>
- * // TODO insert Javadoc here!
- * </p>
- * @author epp
- *
+ * Interface for anything that can be within a STD:
+ *  {@link XWPFRun}, {@link XWPFTable}, {@link XWPFParagraph},
+ *  {@link XWPFSDT} etc
  */
-public enum BodyElementType {
-   CONTENTCONTROL,
-   PARAGRAPH,
-	TABLE,
-	
+public interface ISDTContents {
 }

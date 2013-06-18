@@ -27,7 +27,7 @@ public class XWPFHyperlinkRun extends XWPFRun
 {
    private CTHyperlink hyperlink;
    
-   public XWPFHyperlinkRun(CTHyperlink hyperlink, CTR run, XWPFParagraph p) {
+   public XWPFHyperlinkRun(CTHyperlink hyperlink, CTR run, IRunBody p) {
       super(run, p);
       this.hyperlink = hyperlink;
    }

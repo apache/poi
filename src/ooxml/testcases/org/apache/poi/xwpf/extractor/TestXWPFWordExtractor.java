@@ -80,10 +80,10 @@ public class TestXWPFWordExtractor extends TestCase {
                 "  \n(V) ILLUSTRATIVE CASES\n\n"
         ));
         assertTrue(text.contains(
-                "As well as gaining " + euro + "90 from child benefit increases, he will also receive the early childhood supplement of " + euro + "250 per quarter for Vincent for the full four quarters of the year.\n\n\n\n \n\n\n"
+                "As well as gaining " + euro + "90 from child benefit increases, he will also receive the early childhood supplement of " + euro + "250 per quarter for Vincent for the full four quarters of the year.\n\n\n\n"// \n\n\n"
         ));
         assertTrue(text.endsWith(
-                "11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\n\n"
+                "11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\n\n \n\n\n"
         ));
 
         // Check number of paragraphs
@@ -316,5 +316,40 @@ public class TestXWPFWordExtractor extends TestCase {
         assertTrue(text.length() > 0);
         
         extractor.close();
+    }
+    
+    /**
+     * Test for basic extraction of SDT content
+     * @throws IOException
+     */
+    public void testSimpleControlContent() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
+        String[] targs = new String[]{
+                "header_rich_text",
+                "rich_text",
+                "rich_text_pre_table\nrich_text_cell1\t\t\t\n\nrich_text_post_table",
+                "plain_text_no_newlines",
+                "plain_text_with_newlines1\nplain_text_with_newlines2\n",
+                "watermelon\n",
+                "dirt\n",
+                "4/16/2013\n",
+                "rich_text_in_paragraph_in_cell",
+                "footer_rich_text",
+                "footnote_sdt",
+                "endnote_sdt"
+        };
+        XWPFWordExtractor ex = new XWPFWordExtractor(doc);
+        String s = ex.getText().toLowerCase();
+        int hits = 0;
+    
+        for (String targ : targs){
+            boolean hit = false;
+            if (s.indexOf(targ) > -1){
+                hit = true;
+                hits++;
+            }
+            assertEquals("controlled content loading-"+targ, true, hit);
+        }
+        assertEquals("controlled content loading hit count", targs.length, hits);
     }
 }
