@@ -21,6 +21,7 @@ package org.apache.poi.xwpf.usermodel;
  * The different kinds of {@link IBody} that exist
  */
 public enum BodyType {
+    CONTENTCONTROL,
     DOCUMENT,
     HEADER,
     FOOTER,

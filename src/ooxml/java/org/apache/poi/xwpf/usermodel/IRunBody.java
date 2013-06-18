@@ -14,22 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.POIXMLDocumentPart;
+
 /**
- * <p>
- * 9 Jan 2010
- * </p>
- * <p>
- * // TODO insert Javadoc here!
- * </p>
- * @author epp
- *
+ * Simple interface describing both {@link XWPFParagraph}
+ * and {@link XWPFSDT}
  */
-public enum BodyElementType {
-   CONTENTCONTROL,
-   PARAGRAPH,
-	TABLE,
-	
+public interface IRunBody {
+   public XWPFDocument getDocument();
+   public POIXMLDocumentPart getPart();
 }

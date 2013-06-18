@@ -35,6 +35,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 
@@ -120,6 +121,10 @@ public class XWPFHeader extends XWPFHeaderFooter {
                     XWPFTable t = new XWPFTable((CTTbl)o, this);
                     tables.add(t);
                     bodyElements.add(t);
+                }
+                if (o instanceof CTSdtBlock){
+                    XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
+                    bodyElements.add(c);
                 }
             }
             cursor.dispose();

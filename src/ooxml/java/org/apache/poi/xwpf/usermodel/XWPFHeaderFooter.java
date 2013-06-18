@@ -129,7 +129,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public String getText() {
         StringBuffer t = new StringBuffer();
-
+      //TODO: simplify this to get ibody elements in order
         for(int i=0; i<paragraphs.size(); i++) {
             if(! paragraphs.get(i).isEmpty()) {
                 String text = paragraphs.get(i).getText();
@@ -148,7 +148,12 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                 t.append('\n');
             }
         }
-
+        
+        for (IBodyElement bodyElement : getBodyElements()){
+           if (bodyElement instanceof XWPFSDT){
+               t.append(((XWPFSDT) bodyElement).getContent().getText()+'\n');
+           }
+       }
         return t.toString(); 
     }
 

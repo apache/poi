@@ -40,6 +40,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTProofErr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRunTrackChange;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
@@ -61,12 +62,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
  *  actual text (possibly along with more styling) is held on
  *  the child {@link XWPFRun}s.</p>
  */
-public class XWPFParagraph implements IBodyElement {
+public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
     private final CTP paragraph;
     protected IBody part;
     /** For access to the document's hyperlink, comments, tables etc */
     protected XWPFDocument document;
     protected List<XWPFRun> runs;
+    protected List<IRunElement> iruns;
 
     private StringBuffer footnoteText = new StringBuffer();
 
@@ -82,6 +84,7 @@ public class XWPFParagraph implements IBodyElement {
 
         // Build up the character runs
         runs = new ArrayList<XWPFRun>();
+        iruns = new ArrayList<IRunElement>();
         buildRunsInOrderFromXml(paragraph);
 
         // Look for bits associated with the runs
@@ -96,7 +99,7 @@ public class XWPFParagraph implements IBodyElement {
                 XmlObject o = c.getObject();
                 if(o instanceof CTFtnEdnRef) {
                     CTFtnEdnRef ftn = (CTFtnEdnRef)o;
-                    footnoteText.append("[").append(ftn.getId()).append(": ");
+                    footnoteText.append(" [").append(ftn.getId()).append(": ");
                     XWPFFootnote footnote =
                         ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                             document.getFootnoteByID(ftn.getId().intValue()) :
@@ -111,7 +114,7 @@ public class XWPFParagraph implements IBodyElement {
                         footnoteText.append(p.getText());
                     }
 
-                    footnoteText.append("]");
+                    footnoteText.append("] ");
                 }
             }
             c.dispose();
@@ -129,30 +132,40 @@ public class XWPFParagraph implements IBodyElement {
         while (c.toNextSelection()) {
             XmlObject o = c.getObject();
             if (o instanceof CTR) {
-                runs.add(new XWPFRun((CTR) o, this));
-            }
-            if (o instanceof CTHyperlink) {
-                CTHyperlink link = (CTHyperlink) o;
-                for (CTR r : link.getRList()) {
-                    runs.add(new XWPFHyperlinkRun(link, r, this));
-                }
-            }
-            if (o instanceof CTSdtRun) {
-                CTSdtContentRun run = ((CTSdtRun) o).getSdtContent();
-                for (CTR r : run.getRList()) {
-                    runs.add(new XWPFRun(r, this));
-                }
-            }
-            if (o instanceof CTRunTrackChange) {
-                for (CTR r : ((CTRunTrackChange) o).getRList()) {
-                    runs.add(new XWPFRun(r, this));
-                }
-            }
-            if (o instanceof CTSimpleField) {
-                for (CTR r : ((CTSimpleField) o).getRList()) {
-                    runs.add(new XWPFRun(r, this));
-                }
-            }
+               XWPFRun r = new XWPFRun((CTR) o, this);
+               runs.add(r);
+               iruns.add(r);
+           }
+           if (o instanceof CTHyperlink) {
+               CTHyperlink link = (CTHyperlink) o;
+               for (CTR r : link.getRList()) {
+                   XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
+                   runs.add(hr);
+                   iruns.add(hr);
+               }
+           }
+           if (o instanceof CTSdtBlock) {
+               XWPFSDT cc = new XWPFSDT((CTSdtBlock) o, part);
+               iruns.add(cc);
+           }
+           if (o instanceof CTSdtRun) {
+               XWPFSDT cc = new XWPFSDT((CTSdtRun) o, part);
+               iruns.add(cc);
+           }
+           if (o instanceof CTRunTrackChange) {
+               for (CTR r : ((CTRunTrackChange) o).getRList()) {
+                   XWPFRun cr = new XWPFRun(r, this);
+                   runs.add(cr);
+                   iruns.add(cr);
+               }
+           }
+           if (o instanceof CTSimpleField) {
+               for (CTR r : ((CTSimpleField) o).getRList()) {
+                   XWPFRun cr = new XWPFRun(r, this);
+                   runs.add(cr);
+                   iruns.add(cr);
+               }
+           }
             if (o instanceof CTSmartTagRun) {
                 // Smart Tags can be nested many times. 
                 // This implementation does not preserve the tagging information
@@ -170,7 +183,15 @@ public class XWPFParagraph implements IBodyElement {
     public List<XWPFRun> getRuns(){
         return Collections.unmodifiableList(runs);
     }
-
+    
+    /**
+     * Return literal runs and sdt/content control objects.
+     * @return List<IRunElement>
+     */
+    public List<IRunElement> getIRuns() {
+        return Collections.unmodifiableList(iruns);
+    }
+    
     public boolean isEmpty(){
         return !paragraph.getDomNode().hasChildNodes();
     }
@@ -181,12 +202,16 @@ public class XWPFParagraph implements IBodyElement {
 
     /**
      * Return the textual content of the paragraph, including text from pictures
-     * in it.
+     * and sdt elements in it.
      */
     public String getText() {
         StringBuffer out = new StringBuffer();
-        for(XWPFRun run : runs) {
-            out.append(run.toString());
+        for (IRunElement run : iruns) {
+            if (run instanceof XWPFSDT){
+                out.append(((XWPFSDT)run).getContent().getText());
+            } else {
+                out.append(run.toString());
+            }
         }
         out.append(footnoteText);
         return out.toString();

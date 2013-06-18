@@ -43,7 +43,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
  * <p>Specifies the contents of a table present in the document. A table is a set
  * of paragraphs (and other block-level content) arranged in rows and columns.</p>
  */
-public class XWPFTable implements IBodyElement {
+public class XWPFTable implements IBodyElement, ISDTContents {
     protected StringBuffer text = new StringBuffer();
     private CTTbl ctTbl;
     protected List<XWPFTableRow> tableRows;

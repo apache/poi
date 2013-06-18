@@ -74,24 +74,20 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
- *
- * @author Yegor Kozlov
- * @author Gregg Morris (gregg dot morris at gmail dot com) - added getColor(), setColor()
- *
  */
-public class XWPFRun {
+public class XWPFRun implements ISDTContents, IRunElement{
     private CTR run;
     private String pictureText;
-    private XWPFParagraph paragraph;
+    private IRunBody parent;
     private List<XWPFPicture> pictures;
 
     /**
      * @param r the CTR bean which holds the run attributes
      * @param p the parent paragraph
      */
-    public XWPFRun(CTR r, XWPFParagraph p) {
+    public XWPFRun(CTR r, IRunBody p) {
         this.run = r;
-        this.paragraph = p;
+        this.parent = p;
 
         /**
          * reserve already occupied drawing ids, so reserving new ids later will
@@ -143,6 +139,12 @@ public class XWPFRun {
             }
         }
     }
+    /**
+     * @deprecated Use {@link XWPFRun#XWPFRun(CTR, IRunBody)}
+     */
+    public XWPFRun(CTR r, XWPFParagraph p) {
+        this(r, (IRunBody)p);
+    }
 
     private List<CTPicture> getCTPictures(XmlObject o) {
         List<CTPicture> pictures = new ArrayList<CTPicture>(); 
@@ -173,11 +175,20 @@ public class XWPFRun {
     }
 
     /**
-     * Get the currenty referenced paragraph object
-     * @return current paragraph
+     * Get the currently referenced paragraph/SDT object
+     * @return current parent
+     */
+    public IRunBody getParent() {
+        return parent;
+    }
+    /**
+     * Get the currently referenced paragraph, or null if a SDT object
+     * @deprecated use {@link XWPFRun#getParent()} instead
      */
     public XWPFParagraph getParagraph() {
-        return paragraph;
+        if (parent instanceof XWPFParagraph)
+            return (XWPFParagraph)parent;
+        return null;
     }
 
     /**
@@ -185,8 +196,8 @@ public class XWPFRun {
      *         <code>null</code> if parent structure (paragraph > document) is not properly set.
      */
     public XWPFDocument getDocument() {
-        if (paragraph != null) {
-            return paragraph.getDocument();
+        if (parent != null) {
+            return parent.getDocument();
         }
         return null;
     }
@@ -663,7 +674,7 @@ public class XWPFRun {
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
     throws InvalidFormatException, IOException {
-        XWPFDocument doc = paragraph.document;
+        XWPFDocument doc = parent.getDocument();
 
         // Add the picture + relationship
         String relationId = doc.addPictureData(pictureData, pictureType);
@@ -691,7 +702,7 @@ public class XWPFRun {
             inline.setDistL(0);
 
             CTNonVisualDrawingProps docPr = inline.addNewDocPr();
-            long id = getParagraph().document.getDrawingIdManager().reserveNew();
+            long id = getParent().getDocument().getDrawingIdManager().reserveNew();
             docPr.setId(id);
             /* This name is not visible in Word 2010 anywhere. */
             docPr.setName("Drawing " + id);

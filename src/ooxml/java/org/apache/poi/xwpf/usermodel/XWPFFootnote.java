@@ -26,6 +26,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 
@@ -37,20 +38,44 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
 
     private CTFtnEdn ctFtnEdn;
     private XWPFFootnotes footnotes;
+    private XWPFDocument document;
 
     public XWPFFootnote(CTFtnEdn note, XWPFFootnotes xFootnotes) {
        footnotes = xFootnotes;
        ctFtnEdn = note;
-       for (CTP p : ctFtnEdn.getPList()) {
-          paragraphs.add(new XWPFParagraph(p, this));
-       }
+       document = xFootnotes.getXWPFDocument();
+       init();
     }
 
     public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        for (CTP p : body.getPList()) {
-            paragraphs.add(new XWPFParagraph(p, document));
-        }
+       ctFtnEdn = body;
+       this.document = document;
+       init();
     }
+    
+    private void init(){
+       XmlCursor cursor = ctFtnEdn.newCursor();
+       //copied from XWPFDocument...should centralize this code
+       //to avoid duplication
+       cursor.selectPath("./*");
+       while (cursor.toNextSelection()) {
+           XmlObject o = cursor.getObject();
+           if (o instanceof CTP) {
+               XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+               bodyElements.add(p);
+               paragraphs.add(p);
+           } else if (o instanceof CTTbl) {
+               XWPFTable t = new XWPFTable((CTTbl) o, this);
+               bodyElements.add(t);
+               tables.add(t);
+           } else if (o instanceof CTSdtBlock){
+               XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
+               bodyElements.add(c);
+           }
+
+       }
+       cursor.dispose();
+   }
 
     public List<XWPFParagraph> getParagraphs() {
         return paragraphs;
@@ -314,7 +339,7 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
      */
     public  XWPFDocument getXWPFDocument() {
-        return footnotes.getXWPFDocument();
+        return document;
     }
 
     /**

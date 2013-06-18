@@ -28,6 +28,8 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
@@ -96,6 +98,15 @@ public class XWPFTableCell implements IBody {
                 XWPFTable t = new XWPFTable((CTTbl)o, this);
                 tables.add(t);
                 bodyElements.add(t);
+            }
+            if (o instanceof CTSdtBlock){
+               XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
+               bodyElements.add(c);
+            }
+            if (o instanceof CTSdtRun){
+               XWPFSDT c = new XWPFSDT((CTSdtRun)o, this);
+               System.out.println(c.getContent().getText());
+               bodyElements.add(c);
             }
         }
         cursor.dispose();
@@ -407,6 +418,48 @@ public class XWPFTableCell implements IBody {
 	return text.toString();
     }
 
+    /**
+     * extracts all text recursively through embedded tables and embedded SDTs
+     */
+    public String getTextRecursively(){
+
+        StringBuffer text = new StringBuffer();
+        for (int i = 0; i < bodyElements.size(); i++){
+            boolean isLast = (i== bodyElements.size()-1)? true : false;
+            appendBodyElementText(text, bodyElements.get(i), isLast);
+        }
+
+        return text.toString();
+    }
+
+    private void appendBodyElementText(StringBuffer text, IBodyElement e, boolean isLast){
+        if (e instanceof XWPFParagraph){
+            text.append(((XWPFParagraph)e).getText());
+            if (isLast == false){
+                text.append('\t');
+            }
+        } else if (e instanceof XWPFTable){
+            XWPFTable eTable = (XWPFTable)e;
+            for (XWPFTableRow row : eTable.getRows()){
+                for (XWPFTableCell cell : row.getTableCells()){
+                    List<IBodyElement> localBodyElements = cell.getBodyElements();
+                    for (int i = 0; i < localBodyElements.size(); i++){
+                        boolean localIsLast = (i== localBodyElements.size()-1)? true : false;
+                        appendBodyElementText(text, localBodyElements.get(i), localIsLast);
+                    }
+                }
+            }
+
+            if (isLast == false){
+                text.append('\n');
+            }
+        } else if (e instanceof XWPFSDT){
+            text.append(((XWPFSDT)e).getContent().getText());
+            if (isLast == false){
+                text.append('\t');
+            }
+        }
+    }
 
     /**
      * get the TableCell which belongs to the TableCell

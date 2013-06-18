@@ -98,6 +98,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected List<XWPFHyperlink> hyperlinks = new ArrayList<XWPFHyperlink>();
     protected List<XWPFParagraph> paragraphs = new ArrayList<XWPFParagraph>();
     protected List<XWPFTable> tables = new ArrayList<XWPFTable>();
+    protected List<XWPFSDT> contentControls = new ArrayList<XWPFSDT>();
     protected List<IBodyElement> bodyElements = new ArrayList<IBodyElement>();
     protected List<XWPFPictureData> pictures = new ArrayList<XWPFPictureData>();
     protected Map<Long, List<XWPFPictureData>> packagePictures = new HashMap<Long, List<XWPFPictureData>>();
@@ -150,7 +151,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                     XWPFTable t = new XWPFTable((CTTbl) o, this);
                     bodyElements.add(t);
                     tables.add(t);
-                }
+                } else if (o instanceof CTSdtBlock){
+                   XWPFSDT c = new XWPFSDT((CTSdtBlock)o, this);
+                   bodyElements.add(c);
+                   contentControls.add(c);
+               }
             }
             cursor.dispose();
 
@@ -230,10 +235,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         for(POIXMLDocumentPart p : getRelations()){
             String relation = p.getPackageRelationship().getRelationshipType();
             if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
-                FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
                 this.footnotes = (XWPFFootnotes)p;
                 this.footnotes.onDocumentRead();
-
+                // Warning - this apparently doubles footnotes - see bug #????
+                FootnotesDocument footnotesDocument = FootnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
                 for(CTFtnEdn ctFtnEdn : footnotesDocument.getFootnotes().getFootnoteList()) {
                     footnotes.addFootnote(ctFtnEdn);
                 }

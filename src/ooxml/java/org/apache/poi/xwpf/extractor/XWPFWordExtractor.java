@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.extractor;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLException;
@@ -26,13 +27,18 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.usermodel.IBodyElement;
+import org.apache.poi.xwpf.usermodel.IRunElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
@@ -86,59 +92,11 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 		// Start out with all headers
 		extractHeaders(text, hfPolicy);
 		
-		// First up, all our paragraph based text
-		Iterator<XWPFParagraph> i = document.getParagraphsIterator();
-		while(i.hasNext()) {
-			XWPFParagraph paragraph = i.next();
-
-			try {
-				CTSectPr ctSectPr = null;
-				if (paragraph.getCTP().getPPr()!=null) {
-					ctSectPr = paragraph.getCTP().getPPr().getSectPr();
-				}
-
-				XWPFHeaderFooterPolicy headerFooterPolicy = null;
-
-				if (ctSectPr!=null) {
-					headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
-					extractHeaders(text, headerFooterPolicy);
-				}
-
-				// Do the paragraph text
-				for(XWPFRun run : paragraph.getRuns()) {
-				   text.append(run.toString());
-				   if(run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
-				      XWPFHyperlink link = ((XWPFHyperlinkRun)run).getHyperlink(document);
-				      if(link != null)
-				         text.append(" <" + link.getURL() + ">");
-				   }
-				}
-
-				// Add comments
-				XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
-				text.append(decorator.getCommentText()).append('\n');
-				
-				// Do endnotes and footnotes
-				String footnameText = paragraph.getFootnoteText();
-			   if(footnameText != null && footnameText.length() > 0) {
-			      text.append(footnameText + "\n");
-			   }
-
-				if (ctSectPr!=null) {
-					extractFooters(text, headerFooterPolicy);
-				}
-			} catch (IOException e) {
-				throw new POIXMLException(e);
-			} catch (XmlException e) {
-				throw new POIXMLException(e);
-			}
-		}
-
-		// Then our table based text
-		Iterator<XWPFTable> j = document.getTablesIterator();
-		while(j.hasNext()) {
-			text.append(j.next().getText()).append('\n');
-		}
+		// body elements
+      for (IBodyElement e : document.getBodyElements()){
+         appendBodyElementText(text, e);
+         text.append('\n');
+     }
 		
 		// Finish up with all the footers
 		extractFooters(text, hfPolicy);
@@ -146,6 +104,79 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 		return text.toString();
 	}
 
+   public void appendBodyElementText(StringBuffer text, IBodyElement e){
+      if (e instanceof XWPFParagraph){
+          appendParagraphText(text, (XWPFParagraph)e);
+      } else if (e instanceof XWPFTable){
+          appendTableText(text, (XWPFTable)e);
+      } else if (e instanceof XWPFSDT){
+          text.append(((XWPFSDT)e).getContent().getText());
+      }
+   }
+   
+   public void appendParagraphText(StringBuffer text, XWPFParagraph paragraph){
+      try {
+          CTSectPr ctSectPr = null;
+          if (paragraph.getCTP().getPPr()!=null) {
+              ctSectPr = paragraph.getCTP().getPPr().getSectPr();
+          }
+
+          XWPFHeaderFooterPolicy headerFooterPolicy = null;
+
+          if (ctSectPr!=null) {
+              headerFooterPolicy = new XWPFHeaderFooterPolicy(document, ctSectPr);
+              extractHeaders(text, headerFooterPolicy);
+          }
+
+
+          for(IRunElement run : paragraph.getRuns()) {
+              text.append(run.toString());
+              if(run instanceof XWPFHyperlinkRun && fetchHyperlinks) {
+                  XWPFHyperlink link = ((XWPFHyperlinkRun)run).getHyperlink(document);
+                  if(link != null)
+                      text.append(" <" + link.getURL() + ">");
+              }
+          }
+
+          // Add comments
+          XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
+          String commentText = decorator.getCommentText();
+          if (commentText.length() > 0){
+              text.append(commentText).append('\n');
+          }
+
+          // Do endnotes and footnotes
+          String footnameText = paragraph.getFootnoteText();
+          if(footnameText != null && footnameText.length() > 0) {
+              text.append(footnameText + '\n');
+          }
+
+          if (ctSectPr!=null) {
+              extractFooters(text, headerFooterPolicy);
+          }
+      } catch (IOException e) {
+          throw new POIXMLException(e);
+      } catch (XmlException e) {
+          throw new POIXMLException(e);
+      }
+     
+   }
+
+   private void appendTableText(StringBuffer text, XWPFTable table){
+      //this works recursively to pull embedded tables from tables
+      for (XWPFTableRow row : table.getRows()){
+          List<XWPFTableCell> cells = row.getTableCells();
+          for (int i = 0; i < cells.size(); i++){
+              XWPFTableCell cell = cells.get(i);
+              text.append(cell.getTextRecursively());
+              if (i < cells.size()-1){
+                  text.append("\t");
+              }
+          }
+          text.append('\n');
+      }
+   }
+   
 	private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
 		if(hfPolicy.getFirstPageFooter() != null) {
 			text.append( hfPolicy.getFirstPageFooter().getText() );
