@@ -96,6 +96,11 @@ public abstract class Decryptor {
 
     protected byte[] hashPassword(EncryptionInfo info,
                                   String password) throws NoSuchAlgorithmException {
+        // If no password was given, use the default
+        if (password == null) {
+            password = DEFAULT_PASSWORD;
+        }
+        
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         byte[] bytes;
         try {
