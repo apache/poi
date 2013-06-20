@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -44,6 +45,26 @@ public class TestXWPFFootnotes extends TestCase {
 
 		XWPFFootnote note = docIn.getFootnoteByID(noteId.intValue());
 		assertEquals(note.getCTFtnEdn().getType(), STFtnEdn.NORMAL);
+	}
+
+   /**
+    * Bug 55066 - avoid double loading the footnotes
+    */
+	public void testLoadFootnotesOnce() throws IOException{
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
+		List<XWPFFootnote> footnotes = doc.getFootnotes();
+		int hits = 0;
+		for (XWPFFootnote fn : footnotes){
+			for (IBodyElement e : fn.getBodyElements()){
+				if (e instanceof XWPFParagraph){
+					String txt = ((XWPFParagraph)e).getText();
+					if (txt.indexOf("Footnote_sdt") > -1){
+						hits++;
+					}
+				}
+			}
+		}
+		assertEquals("Load footnotes once", 1, hits);
 	}
 }
 
