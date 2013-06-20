@@ -28,7 +28,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.text.Format;
-import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * DataFormatter contains methods for formatting the value stored in an
@@ -100,12 +98,10 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
  *  <li>simulate Excel's handling of a format string of all # when the value is 0.
  *   Excel will output "", <code>DataFormatter</code> will output "0".
  * </ul>
- * @author James May (james dot may at fmr dot com)
- * @author Robert Kish
-  *
  */
 public class DataFormatter {
-
+    private static final String defaultFractionWholePartFormat = "#";
+    private static final String defaultFractionFractionPartFormat = "#/##";
     /** Pattern to find a number format: "0" or  "#" */
     private static final Pattern numPattern = Pattern.compile("[0#]+");
 
@@ -130,6 +126,17 @@ public class DataFormatter {
        Pattern.compile("(\\[BLACK\\])|(\\[BLUE\\])|(\\[CYAN\\])|(\\[GREEN\\])|" +
        		"(\\[MAGENTA\\])|(\\[RED\\])|(\\[WHITE\\])|(\\[YELLOW\\])|" +
        		"(\\[COLOR\\s*\\d\\])|(\\[COLOR\\s*[0-5]\\d\\])", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * A regex to identify a fraction pattern.
+     * This requires that replaceAll("\\?", "#") has already been called 
+     */
+    private static final Pattern fractionPattern = Pattern.compile("(?:([#\\d]+)\\s+)?(#+)\\s*\\/\\s*([#\\d]+)");
+
+    /**
+     * A regex to strip junk out of fraction formats
+     */
+    private static final Pattern fractionStripper = Pattern.compile("(\"[^\"]*\")|([^ \\?#\\d\\/]+)");
 
     /**
       * Cells formatted with a date or time format and which contain invalid date or time values
@@ -372,23 +379,26 @@ public class DataFormatter {
                 DateUtil.isValidExcelDate(cellValue)) {
             return createDateFormat(formatStr, cellValue);
         }
-        
         // Excel supports fractions in format strings, which Java doesn't
-        if (formatStr.indexOf("#/#") >= 0 || formatStr.indexOf("?/?") >= 0) {
-            // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
-        	String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ");
-
-        	boolean ok = true;
-        	for (String part: strippedFormatStr.split(";")) {
-        		int indexOfFraction = indexOfFraction(part);
-        		if (indexOfFraction == -1 || indexOfFraction != lastIndexOfFraction(part)) {
-        			ok = false;
-        			break;
-        		}
-        	}
-            if (ok) {
-                return new FractionFormat(strippedFormatStr);
+        if (formatStr.indexOf("#/") >= 0 || formatStr.indexOf("?/") >= 0) {
+            String[] chunks = formatStr.split(";");
+            for (int i = 0; i < chunks.length; i++){
+                String chunk = chunks[i].replaceAll("\\?", "#");
+                Matcher matcher = fractionStripper.matcher(chunk);
+                chunk = matcher.replaceAll(" ");
+                chunk = chunk.replaceAll(" +", " ");
+                Matcher fractionMatcher = fractionPattern.matcher(chunk);
+                //take the first match
+                if (fractionMatcher.find()){
+                    String wholePart = (fractionMatcher.group(1) == null) ? "" : defaultFractionWholePartFormat;
+                    return new FractionFormat(wholePart, fractionMatcher.group(3));
+                }
             }
+            
+            // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
+            //String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ").replaceAll("\\?", "#");
+            //System.out.println("formatStr: "+strippedFormatStr);
+            return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
         }
         
         if (numPattern.matcher(formatStr).find()) {
@@ -402,17 +412,7 @@ public class DataFormatter {
         return null;
     }
     
-    private int indexOfFraction(String format) {
-    	int i = format.indexOf("#/#");
-    	int j = format.indexOf("?/?");
-    	return i == -1 ? j : j == -1 ? i : Math.min(i,  j);
-    }
-
-    private int lastIndexOfFraction(String format) {
-    	int i = format.lastIndexOf("#/#");
-    	int j = format.lastIndexOf("?/?");
-    	return i == -1 ? j : j == -1 ? i : Math.max(i,  j);
-    }
+ 
 
     private Format createDateFormat(String pFormatStr, double cellValue) {
         String formatStr = pFormatStr;
@@ -786,7 +786,7 @@ public class DataFormatter {
      * @return a string value of the cell
      */
     public String formatCellValue(Cell cell, FormulaEvaluator evaluator) {
-
+        
         if (cell == null) {
             return "";
         }
@@ -1018,97 +1018,9 @@ public class DataFormatter {
         }
     }
     
-    /**
-     * Format class that handles Excel style fractions, such as "# #/#" and "#/###"
-     */
-    @SuppressWarnings("serial")
-    private static final class FractionFormat extends Format {
-       private final String str;
-       public FractionFormat(String s) {
-          str = s;
-       }
-       
-       public String format(Number num) {
-    	   
-    	  double doubleValue = num.doubleValue();
-          
-          // Format may be p or p;n or p;n;z (okay we never get a z).
-    	  // Fall back to p when n or z is not specified.
-          String[] formatBits = str.split(";");
-          int f = doubleValue > 0.0 ? 0 : doubleValue < 0.0 ? 1 : 2; 
-          String str = (f < formatBits.length) ? formatBits[f] : formatBits[0];
-          
-          double wholePart = Math.floor(Math.abs(doubleValue));
-          double decPart = Math.abs(doubleValue) - wholePart;
-          if (wholePart + decPart == 0) {
-             return "0";
-          }
-          if (doubleValue < 0.0) {
-        	  wholePart *= -1.0;
-          }
 
-          // Split the format string into decimal and fraction parts
-          String[] parts = str.replaceAll("  *", " ").split(" ");
-          String[] fractParts;
-          if (parts.length == 2) {
-             fractParts = parts[1].split("/");
-          } else {
-             fractParts = str.split("/");
-          }
-          
-          // Excel supports both #/# and ?/?, but Java only the former
-          for (int i=0; i<fractParts.length; i++) {
-             fractParts[i] = fractParts[i].replace('?', '#');
-          }
-
-          if (fractParts.length == 2) {
-         	 int fractPart1Length = Math.min(countHashes(fractParts[1]), 4); // Any more than 3 and we go around the loops for ever
-             double minVal = 1.0;
-             double currDenom = Math.pow(10 ,  fractPart1Length) - 1d;
-             double currNeum = 0;
-             for (int i = (int)(Math.pow(10,  fractPart1Length)- 1d); i > 0; i--) {
-                for(int i2 = (int)(Math.pow(10,  fractPart1Length)- 1d); i2 > 0; i2--){
-                   if (minVal >=  Math.abs((double)i2/(double)i - decPart)) {
-                      currDenom = i;
-                      currNeum = i2;
-                      minVal = Math.abs((double)i2/(double)i  - decPart);
-                   }
-                }
-             }
-             NumberFormat neumFormatter = new DecimalFormat(fractParts[0]);
-             NumberFormat denomFormatter = new DecimalFormat(fractParts[1]);
-             if (parts.length == 2) {
-                NumberFormat wholeFormatter = new DecimalFormat(parts[0]);
-                String result = wholeFormatter.format(wholePart) + " " + neumFormatter.format(currNeum) + "/" + denomFormatter.format(currDenom);
-                return result;
-             } else {
-                String result = neumFormatter.format(currNeum + (currDenom * wholePart)) + "/" + denomFormatter.format(currDenom);
-                return result;
-             }
-          } else {
-             throw new IllegalArgumentException("Fraction must have 2 parts, found " + fractParts.length + " for fraction format " + this.str);
-          }
-       }
-       
-       private int countHashes(String format) {
-    	   int count = 0;
-    	   for (int i=format.length()-1; i >= 0; i--) {
-    		   if (format.charAt(i) == '#') {
-    			   count++;
-    		   }
-    	   }
-    	   return count;
-       }
-
-       public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-          return toAppendTo.append(format((Number)obj));
-       }
-
-       public Object parseObject(String source, ParsePosition pos) {
-          throw new NotImplementedException("Reverse parsing not supported");
-       }
-    }
-
+    
+    
     /**
      * Format class that does nothing and always returns a constant string.
      *

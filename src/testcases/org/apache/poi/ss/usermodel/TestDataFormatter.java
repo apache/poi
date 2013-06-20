@@ -229,13 +229,25 @@ public class TestDataFormatter extends TestCase {
        assertEquals("321 321/1000",  dfUS.formatRawCellContents(321.321, -1, "# #/##########"));
        
        // Not a valid fraction formats (too many #/# or ?/?) - hence the strange expected results
-       assertEquals("321 / ?/?",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
+       
+/*       assertEquals("321 / ?/?",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
        assertEquals("321 / /",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
        assertEquals("321 ?/? ?/?",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
        assertEquals("321 ?/? / /",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
+*/
+
+       //Bug54686 patch sets default behavior of # #/## if there is a failure to parse
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# #/# ?/?"));
+       assertEquals("321 1/3",     dfUS.formatRawCellContents(321.321, -1, "# #/# #/#"));
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? ?/?"));
+       assertEquals("321 1/3",   dfUS.formatRawCellContents(321.321, -1, "# ?/? #/# #/#"));
 
        // Where both p and n don't include a fraction, so cannot always be formatted
-       assertEquals("123", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+      // assertEquals("123", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+
+       //Bug54868 patch has a hit on the first string before the ";"
+       assertEquals("-123 1/3", dfUS.formatRawCellContents(-123.321, -1, "0 ?/?;0"));
+
     }
     
     /**
