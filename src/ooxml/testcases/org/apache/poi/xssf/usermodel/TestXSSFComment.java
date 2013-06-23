@@ -50,7 +50,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertEquals(1, sheetComments.getCTComments().getAuthors().sizeOfAuthorArray());
         assertEquals(1, sheetComments.getNumberOfAuthors());
 
-        CTComment ctComment = sheetComments.newComment();
+        CTComment ctComment = sheetComments.newComment("A1");
         CTShape vmlShape = CTShape.Factory.newInstance();
 
         XSSFComment comment = new XSSFComment(sheetComments, ctComment, vmlShape);
@@ -64,7 +64,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     public void testGetSetCol() {
         CommentsTable sheetComments = new CommentsTable();
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        CTComment ctComment = sheetComments.newComment();
+        CTComment ctComment = sheetComments.newComment("A1");
         CTShape vmlShape = vml.newCommentShape();
 
         XSSFComment comment = new XSSFComment(sheetComments, ctComment, vmlShape);
@@ -82,7 +82,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     public void testGetSetRow() {
         CommentsTable sheetComments = new CommentsTable();
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        CTComment ctComment = sheetComments.newComment();
+        CTComment ctComment = sheetComments.newComment("A1");
         CTShape vmlShape = vml.newCommentShape();
 
         XSSFComment comment = new XSSFComment(sheetComments, ctComment, vmlShape);
@@ -150,7 +150,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
     public void testAuthor() {
         CommentsTable sheetComments = new CommentsTable();
-        CTComment ctComment = sheetComments.newComment();
+        CTComment ctComment = sheetComments.newComment("A1");
 
         assertEquals(1, sheetComments.getNumberOfAuthors());
         XSSFComment comment = new XSSFComment(sheetComments, ctComment, null);

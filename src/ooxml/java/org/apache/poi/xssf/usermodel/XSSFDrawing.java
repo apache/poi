@@ -33,6 +33,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlCursor;
@@ -298,9 +299,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
                     ca.getCol2() + ", 0, " + ca.getRow2() + ", 0";
             vmlShape.getClientDataArray(0).setAnchorArray(0, position);
         }
-        XSSFComment shape = new XSSFComment(comments, comments.newComment(), vmlShape);
-        shape.setColumn(ca.getCol1());
-        shape.setRow(ca.getRow1());
+        String ref = new CellReference(ca.getRow1(), ca.getCol1()).formatAsString();
+		XSSFComment shape = new XSSFComment(comments, comments.newComment(ref), vmlShape);
         return shape;
     }
 
