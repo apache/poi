@@ -126,9 +126,20 @@ public class CommentsTable extends POIXMLDocumentPart {
         return commentRefs.get(cellRef);
     }
 
+    /**
+     * This method is deprecated and should not be used any more as
+     * it overwrites the comment in Cell A1.
+     *
+     * @return
+     */
+    @Deprecated
     public CTComment newComment() {
+        return newComment("A1");
+    }
+    
+    public CTComment newComment(String ref) {
         CTComment ct = comments.getCommentList().addNewComment();
-        ct.setRef("A1");
+        ct.setRef(ref);
         ct.setAuthorId(0);
         
         if(commentRefs != null) {

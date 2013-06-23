@@ -187,12 +187,9 @@ public class TestCommentsTable extends TestCase {
 
     public void testRemoveComment() throws Exception {
         CommentsTable sheetComments = new CommentsTable();
-        CTComment a1 = sheetComments.newComment();
-        a1.setRef("A1");
-        CTComment a2 = sheetComments.newComment();
-        a2.setRef("A2");
-        CTComment a3 = sheetComments.newComment();
-        a3.setRef("A3");
+        CTComment a1 = sheetComments.newComment("A1");
+        CTComment a2 = sheetComments.newComment("A2");
+        CTComment a3 = sheetComments.newComment("A3");
 
         assertSame(a1, sheetComments.getCTComment("A1"));
         assertSame(a2, sheetComments.getCTComment("A2"));
@@ -216,5 +213,77 @@ public class TestCommentsTable extends TestCase {
         assertNull(sheetComments.getCTComment("A1"));
         assertNull(sheetComments.getCTComment("A2"));
         assertNull(sheetComments.getCTComment("A3"));
+    }
+
+    public void testBug54920() {
+        final Workbook workbook = new XSSFWorkbook();
+        final Sheet sheet = workbook.createSheet("sheet01");
+        // create anchor
+        CreationHelper helper = sheet.getWorkbook().getCreationHelper();
+        ClientAnchor anchor = helper.createClientAnchor();
+
+        // place comment in A1
+        // NOTE - only occurs if a comment is placed in A1 first
+        Cell A1 = getCell(sheet, 0, 0);
+        //Cell A1 = getCell(sheet, 2, 2);
+        Drawing drawing = sheet.createDrawingPatriarch();
+        setComment(sheet, A1, drawing, "for A1", helper, anchor);
+        
+        // find comment in A1 before we set the comment in B2
+        Comment commentA1 = A1.getCellComment();
+        assertNotNull("Should still find the previous comment in A1, but had null", commentA1);
+        assertEquals("should find correct comment in A1, but had null: " + commentA1, "for A1", commentA1.getString().getString());
+        
+        // place comment in B2, according to Bug 54920 this removes the comment in A1!
+        Cell B2 = getCell(sheet, 1, 1);
+        setComment(sheet, B2, drawing, "for B2", helper, anchor);
+
+        // find comment in A1
+        Comment commentB2 = B2.getCellComment();
+        assertEquals("should find correct comment in B2, but had null: " + commentB2, "for B2", commentB2.getString().getString());
+        
+        // find comment in A1
+        commentA1 = A1.getCellComment();
+        assertNotNull("Should still find the previous comment in A1, but had null", commentA1);
+        assertEquals("should find correct comment in A1, but had null: " + commentA1, "for A1", commentA1.getString().getString());
+    }
+    
+    // Set the comment on a sheet
+    //
+    private static void setComment(Sheet sheet, Cell cell, Drawing drawing, String commentText, CreationHelper helper, ClientAnchor anchor) {
+        System.out.println("Setting col: " + cell.getColumnIndex() + " and row " + cell.getRowIndex());
+        anchor.setCol1(cell.getColumnIndex());
+        anchor.setCol2(cell.getColumnIndex());
+        anchor.setRow1(cell.getRowIndex());
+        anchor.setRow2(cell.getRowIndex());
+        
+        // get comment, or create if it does not exist
+        // NOTE - only occurs if getCellComment is called first
+        Comment comment = cell.getCellComment();
+        //Comment comment = null;
+        if (comment == null) {
+            comment = drawing.createCellComment(anchor);
+        }
+        comment.setAuthor("Test");
+        
+        // attach the comment to the cell
+        comment.setString(helper.createRichTextString(commentText));
+        cell.setCellComment(comment);
+    }
+    
+    // Get a cell, create as needed
+    //
+    private static Cell getCell(Sheet sheet, int rowIndex, int colIndex) {
+        Row row = sheet.getRow(rowIndex);
+        if (row == null) {
+            row = sheet.createRow(rowIndex);
+        }
+        
+        Cell cell = row.getCell(colIndex);
+        if (cell == null) {
+            cell = row.createCell(colIndex);
+        }
+        
+        return cell;
     }
 }
