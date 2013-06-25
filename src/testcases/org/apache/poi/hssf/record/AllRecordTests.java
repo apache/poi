@@ -77,6 +77,7 @@ public final class AllRecordTests {
 		result.addTestSuite(TestObjRecord.class);
 		result.addTestSuite(TestPaletteRecord.class);
 		result.addTestSuite(TestPaneRecord.class);
+		result.addTestSuite(TestPLVRecord.class);
 		result.addTestSuite(TestRecalcIdRecord.class);
 		result.addTestSuite(TestRecordFactory.class);
 		result.addTestSuite(TestRecordFactoryInputStream.class);
