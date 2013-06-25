@@ -57,7 +57,8 @@ public final class UnknownRecord extends StandardRecord {
 	public static final int SHEETEXT_0862        = 0x0862; // OOO calls this SHEETLAYOUT
 	public static final int SHEETPROTECTION_0867 = 0x0867;
 	public static final int HEADER_FOOTER_089C   = 0x089C;
-    public static final int CODENAME_1BA         = 0x01BA;
+	public static final int CODENAME_1BA         = 0x01BA;
+	public static final int PLV_MAC              = 0x08C8;
 
 	private int _sid;
 	private byte[] _rawData;

@@ -344,6 +344,7 @@ final class RecordOrderer {
 		switch(sid) {
 			case UnknownRecord.SHEETEXT_0862:
 			case UnknownRecord.SHEETPROTECTION_0867:
+			case UnknownRecord.PLV_MAC:
 			case FeatRecord.sid:
 			case EOFRecord.sid:
 				return true;
