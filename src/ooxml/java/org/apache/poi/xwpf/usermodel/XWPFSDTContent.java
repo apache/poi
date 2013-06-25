@@ -83,18 +83,23 @@ public class XWPFSDTContent  {
 
     public String getText(){
         StringBuilder text = new StringBuilder();
+        boolean addNewLine = false;
         for (int i = 0; i < bodyElements.size(); i++){
             Object o = bodyElements.get(i);
             if (o instanceof XWPFParagraph){
                 text.append(((XWPFParagraph)o).getText());
+                addNewLine = true;
             } else if (o instanceof XWPFTable){
                 text.append(((XWPFTable)o).getText());
+                addNewLine = true;
             } else if (o instanceof XWPFSDT){
                 text.append(((XWPFSDT)o).getContent().getText());
+                addNewLine = true;
             } else if (o instanceof XWPFRun){
                 text.append(((XWPFRun)o).toString());
+                addNewLine = false;
             }
-            if (i < bodyElements.size()-1){
+            if (addNewLine == true && i < bodyElements.size()-1){
                 text.append("\n");
             }
         }
