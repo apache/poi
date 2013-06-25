@@ -46,7 +46,6 @@ public final class TestPOIDocumentMain extends TestCase {
 	 * Set things up, two spreadsheets for our testing
 	 */
 	public void setUp() {
-
 		doc = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
 		doc2 = HSSFTestDataSamples.openSampleWorkbook("StringFormulas.xls");
 	}
