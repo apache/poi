@@ -93,6 +93,31 @@ public final class TestXWPFSDT extends TestCase {
         }
         assertEquals("SDT as cell known failure", false, found);
     }
+    
+    /**
+     * POI-55142 and Tika 1130
+     */
+    public void testNewLinesBetweenRuns() throws Exception{
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
+       List<XWPFSDT> sdts = extractAllSDTs(doc);
+       List<String> targs = new ArrayList<String>();
+       //these test newlines and tabs in paragraphs/body elements
+       targs.add("Rich-text1 abcdefghi");
+       targs.add("Rich-text2 abcd\t\tefgh");
+       targs.add("Rich-text3 abcd\nefg");
+       targs.add("Rich-text4 abcdefg");
+       targs.add("Rich-text5 abcdefg\nhijk");
+       targs.add("Plain-text1 abcdefg");
+       targs.add("Plain-text2 abcdefg\nhijk\nlmnop");
+       //this tests consecutive runs within a cell (not a paragraph)
+       //this test case was triggered by Tika-1130
+       targs.add("sdt_incell2 abcdefg");
+       
+       for (int i = 0; i < sdts.size(); i++){
+          XWPFSDT sdt = sdts.get(i);
+          assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
+       }
+    }
 
     private List<XWPFSDT> extractAllSDTs(XWPFDocument doc){
 
