@@ -273,6 +273,7 @@ public final class StyleTextPropAtom extends RecordAtom
         while(pos < rawContents.length && textHandled < prsize) {
             // First up, fetch the number of characters this applies to
             int textLen = LittleEndian.getInt(rawContents,pos);
+            textLen = checkTextLength(textLen, textHandled, size);
             textHandled += textLen;
             pos += 4;
 
@@ -308,6 +309,7 @@ public final class StyleTextPropAtom extends RecordAtom
         while(pos < rawContents.length && textHandled < chsize) {
             // First up, fetch the number of characters this applies to
             int textLen = LittleEndian.getInt(rawContents,pos);
+            textLen = checkTextLength(textLen, textHandled, size);
             textHandled += textLen;
             pos += 4;
 
@@ -344,6 +346,15 @@ public final class StyleTextPropAtom extends RecordAtom
         }
 
         initialised = true;
+    }
+    
+    private int checkTextLength(int readLength, int handledSoFar, int overallSize) {
+        if (readLength + handledSoFar > overallSize + 1) {
+            logger.log(POILogger.WARN, "Style length of " + readLength + " at " + handledSoFar + 
+                    " larger than stated size of " + overallSize + ", truncating");
+            return overallSize + 1 - handledSoFar;
+        }
+        return readLength;
     }
 
 
