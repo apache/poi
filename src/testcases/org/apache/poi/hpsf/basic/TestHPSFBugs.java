@@ -23,12 +23,20 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests various bugs have been fixed
  */
 public final class TestHPSFBugs extends TestCase {
+   private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+    
    /**
     * Ensure that we can create a new HSSF Workbook,
     *  then add some properties to it, save +
@@ -90,5 +98,32 @@ public final class TestHPSFBugs extends TestCase {
       assertEquals("Resaved", wb.getSummaryInformation().getComments());
       assertEquals(12345, wb.getSummaryInformation().getCreateDateTime().getTime());
       assertEquals("Apache", wb.getDocumentSummaryInformation().getCompany());
+   }
+   
+   /**
+    * Some files seem to want the length and data to be on a 4-byte boundary,
+    * and without that you'll hit an ArrayIndexOutOfBoundsException after
+    * reading junk
+    */
+   public void test54233() throws Exception {
+       DocumentInputStream dis;
+       POIFSFileSystem fs = 
+               new POIFSFileSystem(_samples.openResourceAsStream("TestNon4ByteBoundary.doc"));
+       
+       dis = fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME);
+       SummaryInformation si = (SummaryInformation)PropertySetFactory.create(dis);
+       
+       dis = fs.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+       DocumentSummaryInformation dsi = (DocumentSummaryInformation)PropertySetFactory.create(dis);
+      
+       // Test
+       assertEquals("Microsoft Word 10.0", si.getApplicationName());
+       assertEquals("", si.getTitle());
+       assertEquals("", si.getAuthor());
+       assertEquals("Cour de Justice", dsi.getCompany());
+       
+       
+       // Write out and read back, should still be valid
+       // TODO
    }
 }

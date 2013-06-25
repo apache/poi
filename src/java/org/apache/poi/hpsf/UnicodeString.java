@@ -23,17 +23,36 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 @Internal
-class UnicodeString
-{
-
-    private final static POILogger logger = POILogFactory
-            .getLogger( UnicodeString.class );
+class UnicodeString {
+    private final static POILogger logger = 
+            POILogFactory.getLogger( UnicodeString.class );
 
     private byte[] _value;
 
-    UnicodeString( byte[] data, int offset )
-    {
+    UnicodeString(byte[] data, int offset) {
         int length = LittleEndian.getInt( data, offset );
+        int dataOffset = offset + LittleEndian.INT_SIZE;
+        
+        if (! validLength(length, data, dataOffset)) {
+            // If the length looks wrong, this might be because the offset is sometimes expected 
+            // to be on a 4 byte boundary. Try checking with that if so, rather than blowing up with
+            // and  ArrayIndexOutOfBoundsException below
+            boolean valid = false;
+            int past4byte = offset % 4;
+            if (past4byte != 0) {
+                offset = offset + past4byte;
+                length = LittleEndian.getInt( data, offset );
+                dataOffset = offset + LittleEndian.INT_SIZE;
+                
+                valid = validLength(length, data, dataOffset);
+            }
+            
+            if (!valid) {
+                throw new IllegalPropertySetDataException(
+                        "UnicodeString started at offset #" + offset +
+                        " is not NULL-terminated" );
+            }
+        }
 
         if ( length == 0 )
         {
@@ -41,13 +60,30 @@ class UnicodeString
             return;
         }
 
-        _value = LittleEndian.getByteArray( data, offset
-                + LittleEndian.INT_SIZE, length * 2 );
+        _value = LittleEndian.getByteArray( data, dataOffset, length * 2 );
+    }
+    
+    /**
+     * Checks to see if the specified length seems valid,
+     *  given the amount of data available still to read,
+     *  and the requirement that the string be NULL-terminated
+     */
+    boolean validLength(int length, byte[] data, int offset) {
+        if (length == 0) {
+            return true;
+        }
 
-        if ( _value[length * 2 - 1] != 0 || _value[length * 2 - 2] != 0 )
-            throw new IllegalPropertySetDataException(
-                    "UnicodeString started at offset #" + offset
-                            + " is not NULL-terminated" );
+        int endOffset = offset + (length * 2);
+        if (endOffset <= data.length) {
+            // Data Length is OK, ensure it's null terminated too
+            if (data[endOffset-1] == 0 && data[endOffset-2] == 0) {
+                // Length looks plausible
+                return true;
+            }
+        }
+
+        // Something's up/invalid with that length for the given data+offset
+        return false;
     }
 
     int getSize()
