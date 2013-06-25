@@ -429,8 +429,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private void validateSheetIndex(int index) {
         int lastSheetIx = _sheets.size() - 1;
         if (index < 0 || index > lastSheetIx) {
+            String range = "(0.." +    lastSheetIx + ")";
+            if (lastSheetIx == -1) {
+                range = "(no sheets)";
+            }
             throw new IllegalArgumentException("Sheet index ("
-                    + index +") is out of range (0.." +    lastSheetIx + ")");
+                    + index +") is out of range " + range);
         }
     }
 

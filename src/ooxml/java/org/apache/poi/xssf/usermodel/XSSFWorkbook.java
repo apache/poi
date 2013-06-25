@@ -1040,8 +1040,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private void validateSheetIndex(int index) {
         int lastSheetIx = sheets.size() - 1;
         if (index < 0 || index > lastSheetIx) {
+            String range = "(0.." +    lastSheetIx + ")";
+            if (lastSheetIx == -1) {
+                range = "(no sheets)";
+            }
             throw new IllegalArgumentException("Sheet index ("
-                    + index +") is out of range (0.." +    lastSheetIx + ")");
+                    + index +") is out of range " + range);
         }
     }
 
