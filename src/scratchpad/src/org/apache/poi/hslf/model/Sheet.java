@@ -175,30 +175,35 @@ public abstract class Sheet {
     protected static void findTextRuns(final Record[] records, final List<TextRun> found, final StyleTextProp9Atom styleTextProp9Atom) {
         for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
             if (records[i] instanceof TextHeaderAtom) {
-                TextRun trun = null;
                 TextHeaderAtom tha = (TextHeaderAtom) records[i];
                 StyleTextPropAtom stpa = null;
-
-                // Look for a subsequent StyleTextPropAtom
+                TextRun trun = null;
+                Record next = null;
+                
+                // Is there a StyleTextPropAtom after the Text Atom?
+                // TODO Do we need to check for text ones two away as well?
                 if (i < (records.length - 2)) {
-                    if (records[i + 2] instanceof StyleTextPropAtom) {
-                        stpa = (StyleTextPropAtom) records[i + 2];
+                    next = records[i+2];
+                    if (next instanceof StyleTextPropAtom) {
+                        stpa = (StyleTextPropAtom)next;
                     }
                 }
 
                 // See what follows the TextHeaderAtom
-                if (records[i + 1] instanceof TextCharsAtom) {
-                    TextCharsAtom tca = (TextCharsAtom) records[i + 1];
+                next = records[i+1];
+                if (next instanceof TextCharsAtom) {
+                    TextCharsAtom tca = (TextCharsAtom)next;
                     trun = new TextRun(tha, tca, stpa);
-                } else if (records[i + 1] instanceof TextBytesAtom) {
-                    TextBytesAtom tba = (TextBytesAtom) records[i + 1];
+                } else if (next instanceof TextBytesAtom) {
+                    TextBytesAtom tba = (TextBytesAtom)next;
                     trun = new TextRun(tha, tba, stpa);
-                } else if (records[i + 1].getRecordType() == 4001l) {
-                	stpa = (StyleTextPropAtom) records[i + 1];
-                } else if (records[i + 1].getRecordType() == 4010l) {
-                    // TextSpecInfoAtom - Safe to ignore
+                } else if (next instanceof StyleTextPropAtom) {
+                    stpa = (StyleTextPropAtom)next;
+                } else if (next.getRecordType() == (long)RecordTypes.TextSpecInfoAtom.typeID ||
+                           next.getRecordType() == (long)RecordTypes.BaseTextPropAtom.typeID) { 
+                    // Safe to ignore these ones
                 } else {
-                	logger.log(POILogger.ERROR, "Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + records[i + 1].getRecordType());
+                    logger.log(POILogger.ERROR, "Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + next.getRecordType());
                 }
 
                 if (trun != null) {
