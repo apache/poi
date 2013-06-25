@@ -45,6 +45,8 @@ public abstract class BaseTestWorkbook extends TestCase {
             fail("should have thrown exceptiuon due to invalid sheet index");
         } catch (IllegalArgumentException e) {
             // expected during successful test
+            // no negative index in the range message
+            assertFalse(e.getMessage().contains("-1"));
         }
 
         Sheet sheet0 = wb.createSheet();
