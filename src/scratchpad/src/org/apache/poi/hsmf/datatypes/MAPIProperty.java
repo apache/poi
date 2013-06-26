@@ -408,7 +408,7 @@ public class MAPIProperty {
    public static final MAPIProperty INTERNET_ARTICLE_NUMBER =
       new MAPIProperty(0xe23, LONG, "InternetArticleNumber", "PR_INTERNET_ARTICLE_NUMBER");
    public static final MAPIProperty INTERNET_CPID =
-      new MAPIProperty(0x3fde, Types.UNKNOWN,  "InternetCPID", "PR_INTERNET_CPID");
+      new MAPIProperty(0x3fde, Types.LONG,  "InternetCPID", "PR_INTERNET_CPID");
    public static final MAPIProperty INTERNET_CONTROL =
       new MAPIProperty(0x1031, ASCII_STRING, "InternetControl", "PR_INTERNET_CONTROL");
    public static final MAPIProperty INTERNET_DISTRIBUTION =
@@ -510,7 +510,7 @@ public class MAPIProperty {
    public static final MAPIProperty MESSAGE_CLASS =
       new MAPIProperty(0x1a, ASCII_STRING, "MessageClass", "PR_MESSAGE_CLASS");
    public static final MAPIProperty MESSAGE_CODEPAGE =
-      new MAPIProperty(0x3ffd, Types.UNKNOWN,  "MessageCodepage", "PR_MESSAGE_CODEPAGE");
+      new MAPIProperty(0x3ffd, Types.LONG,  "MessageCodepage", "PR_MESSAGE_CODEPAGE");
    public static final MAPIProperty MESSAGE_DELIVERY_ID =
       new MAPIProperty(0x1b, BINARY, "MessageDeliveryId", "PR_MESSAGE_DELIVERY_ID");
    public static final MAPIProperty MESSAGE_DELIVERY_TIME =
@@ -788,7 +788,7 @@ public class MAPIProperty {
    public static final MAPIProperty RECEIVED_BY_NAME =
       new MAPIProperty(0x40, ASCII_STRING, "ReceivedByName", "PR_RECEIVED_BY_NAME");
    public static final MAPIProperty RECIPIENT_DISPLAY_NAME =
-      new MAPIProperty(0x5ff6, Types.UNKNOWN, "RecipientDisplayName", null);
+      new MAPIProperty(0x5ff6, Types.UNICODE_STRING, "RecipientDisplayName", null);
    public static final MAPIProperty RECIPIENT_ENTRY_ID =
       new MAPIProperty(0x5ff7, Types.UNKNOWN, "RecipientEntryId", null);
    public static final MAPIProperty RECIPIENT_FLAGS =
@@ -938,7 +938,7 @@ public class MAPIProperty {
    public static final MAPIProperty SEVEN_BIT_DISPLAY_NAME =
       new MAPIProperty(0x39ff, ASCII_STRING, "SevenBitDisplayName", "PR_SEVEN_BIT_DISPLAY_NAME");
    public static final MAPIProperty SMTP_ADDRESS =
-      new MAPIProperty(0x39fe, Types.UNKNOWN, "SmtpAddress", "PR_SMTP_ADDRESS");
+      new MAPIProperty(0x39fe, Types.UNICODE_STRING, "SmtpAddress", "PR_SMTP_ADDRESS");
    public static final MAPIProperty SPOOLER_STATUS =
       new MAPIProperty(0xe10, LONG, "SpoolerStatus", "PR_SPOOLER_STATUS");
    public static final MAPIProperty SPOUSE_NAME =
