@@ -36,70 +36,68 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  ones, for example Submission Dates
  */
 public final class TestFixedSizedProperties extends POITestCase {
-	protected static final String messageSucceeds = "53784_succeeds.msg";
-	protected static final String messageFails = "53784_fails.msg";
-	private MAPIMessage mapiMessageSucceeds;
-	private MAPIMessage mapiMessageFails;
-	private POIFSFileSystem fsMessageSucceeds;
-	private POIFSFileSystem fsMessageFails;	
+   protected static final String messageSucceeds = "53784_succeeds.msg";
+   protected static final String messageFails = "53784_fails.msg";
+   private MAPIMessage mapiMessageSucceeds;
+   private MAPIMessage mapiMessageFails;
+   private POIFSFileSystem fsMessageSucceeds;
+   private POIFSFileSystem fsMessageFails;	
 
-	/**
-	 * Initialize this test, load up the messages.
-	 * 
-	 * @throws Exception
-	 */
-	public TestFixedSizedProperties() throws Exception {
-		POIDataSamples samples = POIDataSamples.getHSMFInstance();
-		this.mapiMessageSucceeds = new MAPIMessage(
-				samples.openResourceAsStream(messageSucceeds));
-		this.mapiMessageFails = new MAPIMessage(
-				samples.openResourceAsStream(messageFails));		
-		this.fsMessageSucceeds = new POIFSFileSystem(new FileInputStream(samples.getFile(messageSucceeds)));
-		this.fsMessageFails = new POIFSFileSystem(new FileInputStream(samples.getFile(messageFails)));
-	}
+   /**
+    * Initialize this test, load up the messages.
+    */
+   public TestFixedSizedProperties() throws Exception {
+       POIDataSamples samples = POIDataSamples.getHSMFInstance();
+      this.mapiMessageSucceeds = new MAPIMessage(
+                samples.openResourceAsStream(messageSucceeds));
+      this.mapiMessageFails = new MAPIMessage(
+                samples.openResourceAsStream(messageFails));		
+      this.fsMessageSucceeds = new POIFSFileSystem(new FileInputStream(samples.getFile(messageSucceeds)));
+      this.fsMessageFails = new POIFSFileSystem(new FileInputStream(samples.getFile(messageFails)));
+   }
 
-	/**
-	 * Test to see if we can read the Date Chunk with OutlookTextExtractor.
-	 * TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix
-	 */
-	public void DISABLEDtestReadMessageDateSucceedsWithOutlookTextExtractor() {
-		OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageSucceeds);
-		String text = ext.getText();
+   /**
+    * Test to see if we can read the Date Chunk with OutlookTextExtractor.
+    * TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix
+    */
+   public void DISABLEDtestReadMessageDateSucceedsWithOutlookTextExtractor() {
+      OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageSucceeds);
+      String text = ext.getText();
 
-		assertContains(text, "Date: Fri, 22 Jun 2012 21:32:54\n");
-	}
+      assertContains(text, "Date: Fri, 22 Jun 2012 21:32:54\n");
+   }
 
-	/**
-	 * Test to see if we can read the Date Chunk with OutlookTextExtractor.
+   /**
+    * Test to see if we can read the Date Chunk with OutlookTextExtractor.
     * TODO Work out why the Thu 21st vs Monday 25th problem is occurring and fix
-	 */
-	public void DISABLEDtestReadMessageDateFailsWithOutlookTextExtractor() {
-		OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageFails);
-		String text = ext.getText();
+    */
+   public void DISABLEDtestReadMessageDateFailsWithOutlookTextExtractor() {
+      OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageFails);
+      String text = ext.getText();
 
-		assertContains(text, "Date: Thu, 21 Jun 2012 17:14:04\n");
-	}
-	
+      assertContains(text, "Date: Thu, 21 Jun 2012 17:14:04\n");
+   }
+
    /**
     * Test to see if we can read the Date Chunk with HSMFDump.
     * @throws IOException 
     */
    public void testReadMessageDateSucceedsWithHSMFDump() throws IOException {
-      PrintStream stream = new PrintStream(new ByteArrayOutputStream());
-      HSMFDump dump = new HSMFDump(fsMessageSucceeds);
-      dump.dump(stream);
+       PrintStream stream = new PrintStream(new ByteArrayOutputStream());
+       HSMFDump dump = new HSMFDump(fsMessageSucceeds);
+       dump.dump(stream);
    }	
-	
+
    /**
     * Test to see if we can read the Date Chunk with HSMFDump.
     * @throws Exception 
     */
    public void testReadMessageDateFailsWithHSMFDump() throws Exception {
-      PrintStream stream = new PrintStream(new ByteArrayOutputStream());
-      HSMFDump dump = new HSMFDump(fsMessageFails);
-      dump.dump(stream);
+       PrintStream stream = new PrintStream(new ByteArrayOutputStream());
+       HSMFDump dump = new HSMFDump(fsMessageFails);
+       dump.dump(stream);
    }
-	
+
    /**
     * TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix
     */

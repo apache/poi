@@ -38,26 +38,26 @@ public final class TestBasics extends TestCase {
    private MAPIMessage cyrillic;
    private MAPIMessage chinese;
 
-	/**
-	 * Initialize this test, load up the blank.msg mapi message.
-	 * @throws Exception
-	 */
-	public TestBasics() throws IOException {
-        POIDataSamples samples = POIDataSamples.getHSMFInstance();
-		simple = new MAPIMessage(samples.openResourceAsStream("simple_test_msg.msg"));
-      quick  = new MAPIMessage(samples.openResourceAsStream("quick.msg"));
-      outlook30  = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
-      attachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
-      noRecipientAddress = new MAPIMessage(samples.openResourceAsStream("no_recipient_address.msg"));
-      unicode = new MAPIMessage(samples.openResourceAsStream("example_received_unicode.msg"));
-      cyrillic = new MAPIMessage(samples.openResourceAsStream("cyrillic_message.msg"));
-      chinese = new MAPIMessage(samples.openResourceAsStream("chinese-traditional.msg"));
-	}
-	
-	/**
-	 * Can we always get the recipient's email?
-	 */
-	public void testRecipientEmail() throws Exception {
+   /**
+    * Initialize this test, load up the blank.msg mapi message.
+    * @throws Exception
+    */
+   public TestBasics() throws IOException {
+       POIDataSamples samples = POIDataSamples.getHSMFInstance();
+       simple = new MAPIMessage(samples.openResourceAsStream("simple_test_msg.msg"));
+       quick  = new MAPIMessage(samples.openResourceAsStream("quick.msg"));
+       outlook30  = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
+       attachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
+       noRecipientAddress = new MAPIMessage(samples.openResourceAsStream("no_recipient_address.msg"));
+       unicode = new MAPIMessage(samples.openResourceAsStream("example_received_unicode.msg"));
+       cyrillic = new MAPIMessage(samples.openResourceAsStream("cyrillic_message.msg"));
+       chinese = new MAPIMessage(samples.openResourceAsStream("chinese-traditional.msg"));
+   }
+
+   /**
+    * Can we always get the recipient's email?
+    */
+   public void testRecipientEmail() throws Exception {
       assertEquals("travis@overwrittenstack.com", simple.getRecipientEmailAddress());
       assertEquals("kevin.roast@alfresco.org", quick.getRecipientEmailAddress());
       assertEquals("nicolas1.23456@free.fr", attachments.getRecipientEmailAddress());
@@ -71,25 +71,25 @@ public final class TestBasics extends TestCase {
       		"debbie.payne@pnl.gov; stuart.rose@pnl.gov; randall.scarberry@pnl.gov; Leigh.Williams@pnl.gov", 
             outlook30.getRecipientEmailAddress()
       );
-	}
-	
-	/**
-	 * Test subject
-	 */
-	public void testSubject() throws Exception {
+   }
+
+   /**
+    * Test subject
+    */
+   public void testSubject() throws Exception {
       assertEquals("test message", simple.getSubject());
       assertEquals("Test the content transformer", quick.getSubject());
       assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", outlook30.getSubject());
       assertEquals("test pi\u00e8ce jointe 1", attachments.getSubject());
-	}
-	
-	/**
-	 * Test message headers
-	 */
-	public void testHeaders() throws Exception {
-	   // Simple email first
-	   assertEquals(26, simple.getHeaders().length);
-	   assertTrue(simple.getHeaders()[0].startsWith("Return-path:"));
+   }
+
+   /**
+    * Test message headers
+    */
+   public void testHeaders() throws Exception {
+      // Simple email first
+      assertEquals(26, simple.getHeaders().length);
+      assertTrue(simple.getHeaders()[0].startsWith("Return-path:"));
       assertTrue(simple.getHeaders()[1].equals("Envelope-to: travis@overwrittenstack.com"));
       assertTrue(simple.getHeaders()[25].startsWith("X-Antivirus-Scanner: Clean"));
       
@@ -110,35 +110,35 @@ public final class TestBasics extends TestCase {
       assertTrue(outlook30.getHeaders()[0].startsWith("Microsoft Mail Internet Headers"));
       assertTrue(outlook30.getHeaders()[1].startsWith("x-mimeole:"));
       assertTrue(outlook30.getHeaders()[32].startsWith("\t\"Williams")); // May need better parsing in future
-	}
-	
-	/**
-	 * Test attachments
-	 */
-	public void testAttachments() throws Exception {
+   }
+
+   /**
+    * Test attachments
+    */
+   public void testAttachments() throws Exception {
       assertEquals(0, simple.getAttachmentFiles().length);
       assertEquals(0, quick.getAttachmentFiles().length);
       assertEquals(0, outlook30.getAttachmentFiles().length);
       assertEquals(2, attachments.getAttachmentFiles().length);
-	}
-	
-	/**
-	 * Test missing chunks.
-	 * Use a file with no HTML body
-	 */
-	public void testMissingChunks() throws Exception {
-	   assertEquals(false, attachments.isReturnNullOnMissingChunk());
+   }
 
-	   try {
-	      attachments.getHtmlBody();
-	      fail();
-	   } catch(ChunkNotFoundException e) {
-	      // Good
-	   }
-	   
-	   attachments.setReturnNullOnMissingChunk(true);
-	   
-	   assertEquals(null, attachments.getHtmlBody());
+   /**
+    * Test missing chunks.
+    * Use a file with no HTML body
+    */
+   public void testMissingChunks() throws Exception {
+      assertEquals(false, attachments.isReturnNullOnMissingChunk());
+
+      try {
+          attachments.getHtmlBody();
+          fail();
+      } catch(ChunkNotFoundException e) {
+          // Good
+      }
+
+      attachments.setReturnNullOnMissingChunk(true);
+
+      assertEquals(null, attachments.getHtmlBody());
 	   
       attachments.setReturnNullOnMissingChunk(false);
       
@@ -148,13 +148,13 @@ public final class TestBasics extends TestCase {
       } catch(ChunkNotFoundException e) {
          // Good
       }
-	}
-	
-	/**
-	 * More missing chunk testing, this time for
-	 *  missing recipient email address
-	 */
-	public void testMissingAddressChunk() throws Exception {
+   }
+
+   /**
+    * More missing chunk testing, this time for
+    *  missing recipient email address
+    */
+   public void testMissingAddressChunk() throws Exception {
       assertEquals(false, noRecipientAddress.isReturnNullOnMissingChunk());
 
       try {
@@ -183,17 +183,17 @@ public final class TestBasics extends TestCase {
       assertEquals("New Outlook User", noRecipientAddress.getDisplayTo());
       
       noRecipientAddress.setReturnNullOnMissingChunk(false);
-	}
-	
-	/**
-	 * Test the 7 bit detection
-	 */
-	public void test7BitDetection() throws Exception {
-	   assertEquals(false, unicode.has7BitEncodingStrings());
+   }
+
+   /**
+    * Test the 7 bit detection
+    */
+   public void test7BitDetection() throws Exception {
+      assertEquals(false, unicode.has7BitEncodingStrings());
       assertEquals(true, simple.has7BitEncodingStrings());
       assertEquals(true, chinese.has7BitEncodingStrings());
       assertEquals(true, cyrillic.has7BitEncodingStrings());
-	}
+   }
 	
    /**
     * We default to CP1252, but can sometimes do better
