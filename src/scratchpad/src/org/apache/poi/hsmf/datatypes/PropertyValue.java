@@ -73,6 +73,39 @@ public class PropertyValue {
    }
    
    // TODO classes for the other important value types
+   
+   public static class ShortPropertyValue extends PropertyValue {
+       public ShortPropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public Short getValue() {
+          return LittleEndian.getShort(data);
+       }
+       public void setValue(short value) {
+          if (data.length != 2) {
+             data = new byte[2];
+          }
+          LittleEndian.putShort(data, 0, value);
+       }
+    }
+    
+   public static class LongPropertyValue extends PropertyValue {
+       public LongPropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public Integer getValue() {
+          return LittleEndian.getInt(data);
+       }
+       public void setValue(int value) {
+          if (data.length != 4) {
+             data = new byte[4];
+          }
+          LittleEndian.putInt(data, 0, value);
+       }
+    }
+    
    public static class LongLongPropertyValue extends PropertyValue {
       public LongLongPropertyValue(MAPIProperty property, long flags, byte[] data) {
          super(property, flags, data);
