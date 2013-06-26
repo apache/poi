@@ -364,6 +364,9 @@ public class MAPIMessage extends POIDocument {
     *  tries to use these to guess the correct encoding for
     *  your file.
     * Bug #49441 has more on why this is needed
+    * 
+    * TODO Try to also use PR_MESSAGE_CODEPAGE and PR_INTERNET_CPID
+    * Would need to refactor some of the codepage support in HPSF first
     */
    public void guess7BitEncoding() {
       try {
