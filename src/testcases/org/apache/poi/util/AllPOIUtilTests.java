@@ -19,13 +19,11 @@ package org.apache.poi.util;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 /**
  * Test suite for all sub-packages of org.apache.poi.util<br/>
- * 
- * @author Josh Micich
  */
 public final class AllPOIUtilTests {
-
     public static Test suite() {
         TestSuite result = new TestSuite(AllPOIUtilTests.class.getName());
         result.addTestSuite(TestArrayUtil.class);
