@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongLongPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.ShortPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
@@ -177,13 +179,19 @@ public abstract class PropertiesChunk extends Chunk {
                // We'll match up the chunk later
                propVal = new ChunkBasedPropertyValue(prop, flags, data);
             }
+            else if (type == Types.SHORT) {
+                propVal = new ShortPropertyValue(prop, flags, data);
+             }
+            else if (type == Types.LONG) {
+                propVal = new LongPropertyValue(prop, flags, data);
+             }
             else if (type == Types.LONG_LONG) {
                propVal = new LongLongPropertyValue(prop, flags, data);
             }
             else if (type == Types.TIME) {
                propVal = new TimePropertyValue(prop, flags, data);
             }
-            // TODO Add in the rest of the type
+            // TODO Add in the rest of the types
             else {
                propVal = new PropertyValue(prop, flags, data);
             }
