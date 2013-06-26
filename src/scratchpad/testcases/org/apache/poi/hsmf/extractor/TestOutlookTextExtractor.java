@@ -24,28 +24,20 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests to verify that the text extractor works
  */
-public final class TestOutlookTextExtractor extends TestCase {
+public final class TestOutlookTextExtractor extends POITestCase {
    private POIDataSamples samples;
 
-	public TestOutlookTextExtractor() throws IOException {
-        samples = POIDataSamples.getHSMFInstance();
-	}
-	
-	private void assertContains(String haystack, String needle) {
-	   if(haystack.indexOf(needle) > -1) {
-	      return;
-	   }
-	   fail("'" + needle + "' wasn't found in '" + haystack + "'");
-	}
+   public TestOutlookTextExtractor() throws IOException {
+       samples = POIDataSamples.getHSMFInstance();
+   }
 	
    public void testQuick() throws Exception {
       POIFSFileSystem simple = new POIFSFileSystem(

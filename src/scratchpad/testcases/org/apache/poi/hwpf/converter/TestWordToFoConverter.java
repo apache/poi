@@ -27,26 +27,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 
 /**
  * Test cases for {@link WordToFoConverter}
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestWordToFoConverter extends TestCase
+public class TestWordToFoConverter extends POITestCase
 {
-    private static void assertContains( String result, final String substring )
-    {
-        if ( !result.contains( substring ) )
-            fail( "Substring \"" + substring
-                    + "\" not found in the following string: \"" + result
-                    + "\"" );
-    }
-
     private static String getFoText( final String sampleFileName )
             throws Exception
     {

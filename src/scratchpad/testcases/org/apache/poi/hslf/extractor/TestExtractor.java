@@ -24,6 +24,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.SlideShow;
@@ -36,10 +37,8 @@ import org.apache.poi.util.IOUtils;
 
 /**
  * Tests that the extractor correctly gets the text out of our sample file
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestExtractor extends TestCase {
+public final class TestExtractor extends POITestCase {
    /** Extractor primed on the 2 page basic test data */
    private PowerPointExtractor ppe;
    private static final String expectText = "This is a test title\nThis is a test subtitle\nThis is on page 1\nThis is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n";
@@ -58,12 +57,6 @@ public final class TestExtractor extends TestCase {
       ppe2 = new PowerPointExtractor(slTests.openResourceAsStream("with_textbox.ppt"));
    }
 
-   private static void assertContains(String haystack, String needle) {
-      assertContains(
-            "Unable to find expected text '" + needle + "' in text:\n" + haystack,
-            haystack, needle
-      );
-   }
    private static void assertContains(String reason, String haystack, String needle) {
       assertTrue(reason, haystack.contains(needle));
    }

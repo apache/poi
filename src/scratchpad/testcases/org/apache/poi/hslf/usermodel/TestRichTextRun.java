@@ -21,23 +21,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextBox;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Test that the friendly getters and setters on RichTextRun
  *  behave as expected.
  * (model.TestTextRun tests the other functionality)
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestRichTextRun extends TestCase {
+public final class TestRichTextRun extends POITestCase {
    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
    // SlideShow primed on the test data
@@ -77,12 +75,6 @@ public final class TestRichTextRun extends TestCase {
       ssChinese = new SlideShow(hssChinese);
 	}
 
-   private static void assertContains(String haystack, String needle) {
-      assertTrue(
-            "Unable to find expected text '" + needle + "' in text:\n" + haystack,
-            haystack.contains(needle)
-      );
-   }
 	/**
 	 * Test the stuff about getting/setting bold
 	 *  on a non rich text run
