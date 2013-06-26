@@ -30,6 +30,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -418,7 +419,7 @@ public class MutableSection extends Section
                  * dictionary is present. In order to cope with this problem we
                  * add the codepage property and set it to Unicode. */
                 setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                            Integer.valueOf(Constants.CP_UNICODE));
+                            Integer.valueOf(CodePageUtil.CP_UNICODE));
             codepage = getCodepage();
         }
 
@@ -509,7 +510,7 @@ public class MutableSection extends Section
             final Long key = i.next();
             final String value = dictionary.get(key);
 
-            if (codepage == Constants.CP_UNICODE)
+            if (codepage == CodePageUtil.CP_UNICODE)
             {
                 /* Write the dictionary item in Unicode. */
                 int sLength = value.length() + 1;
@@ -517,8 +518,7 @@ public class MutableSection extends Section
                     sLength++;
                 length += TypeWriter.writeUIntToStream(out, key.longValue());
                 length += TypeWriter.writeUIntToStream(out, sLength);
-                final byte[] ca =
-                    value.getBytes(VariantSupport.codepageToEncoding(codepage));
+                final byte[] ca = CodePageUtil.getBytesInCodePage(value, codepage);
                 for (int j = 2; j < ca.length; j += 2)
                 {
                     out.write(ca[j+1]);
@@ -540,8 +540,7 @@ public class MutableSection extends Section
                  * Unicode. */
                 length += TypeWriter.writeUIntToStream(out, key.longValue());
                 length += TypeWriter.writeUIntToStream(out, value.length() + 1);
-                final byte[] ba =
-                    value.getBytes(VariantSupport.codepageToEncoding(codepage));
+                final byte[] ba = CodePageUtil.getBytesInCodePage(value, codepage);
                 for (int j = 0; j < ba.length; j++)
                 {
                     out.write(ba[j]);
@@ -634,7 +633,7 @@ public class MutableSection extends Section
                 (Integer) getProperty(PropertyIDMap.PID_CODEPAGE);
             if (codepage == null)
                 setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                            Integer.valueOf(Constants.CP_UNICODE));
+                            Integer.valueOf(CodePageUtil.CP_UNICODE));
         }
         else
             /* Setting the dictionary to null means to remove property 0.

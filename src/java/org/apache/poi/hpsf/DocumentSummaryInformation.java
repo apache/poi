@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.util.CodePageUtil;
 
 /**
  * <p>Convenience class representing a DocumentSummary Information stream in a
@@ -617,7 +618,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         if (cpCodepage < 0)
             cpCodepage = section.getCodepage();
         if (cpCodepage < 0)
-            cpCodepage = Constants.CP_UNICODE;
+            cpCodepage = CodePageUtil.CP_UNICODE;
         customProperties.setCodepage(cpCodepage);
         section.setCodepage(cpCodepage);
         section.setDictionary(dictionary);

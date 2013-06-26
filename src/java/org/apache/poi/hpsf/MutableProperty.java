@@ -20,6 +20,8 @@ package org.apache.poi.hpsf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.util.CodePageUtil;
+
 /**
  * <p>Adds writing capability to the {@link Property} class.</p>
  *
@@ -109,7 +111,7 @@ public class MutableProperty extends Property
         long variantType = getType();
 
         /* Ensure that wide strings are written if the codepage is Unicode. */
-        if (codepage == Constants.CP_UNICODE && variantType == Variant.VT_LPSTR)
+        if (codepage == CodePageUtil.CP_UNICODE && variantType == Variant.VT_LPSTR)
             variantType = Variant.VT_LPWSTR;
 
         length += TypeWriter.writeUIntToStream(out, variantType);
