@@ -16,18 +16,20 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import junit.framework.TestCase;
+import java.net.URI;
+import java.util.List;
+
+import org.apache.poi.POITestCase;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.xslf.usermodel.DrawingParagraph;
+import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 
-import java.net.URI;
-import java.util.List;
-
-public class TestXSLFBugs extends TestCase {
+public class TestXSLFBugs extends POITestCase {
 
     @SuppressWarnings("deprecation")
     public void test51187() throws Exception {
@@ -105,5 +107,43 @@ public class TestXSLFBugs extends TestCase {
              }
           }
        }
+    }
+    
+    /**
+     * A slideshow can have more than one rID pointing to a given 
+     *  slide, eg presentation.xml rID1 -> slide1.xml, but slide1.xml 
+     *  rID2 -> slide3.xml
+     */
+    public void DISABLEDtest54916() throws Exception {
+        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx");
+        XSLFSlide slide; 
+        
+        // Should find 4 slides
+        assertEquals(4, ss.getSlides().length);
+        
+        // Check the text, to see we got them in order
+        slide = ss.getSlides()[0];
+        assertContains("POI cannot read this", getSlideText(slide));
+        
+        slide = ss.getSlides()[1];
+        assertContains("POI can read this", getSlideText(slide));
+        assertContains("Has a relationship to another slide", getSlideText(slide));
+        
+        slide = ss.getSlides()[2];
+        assertContains("POI can read this", getSlideText(slide));
+        
+        slide = ss.getSlides()[3];
+        assertContains("POI can read this", getSlideText(slide));
+    }
+    
+    protected String getSlideText(XSLFSlide slide) {
+        StringBuffer text = new StringBuffer();
+        for(DrawingTextBody textBody : slide.getCommonSlideData().getDrawingText()) {
+            for (DrawingParagraph p : textBody.getParagraphs()) {
+                text.append(p.getText());
+                text.append("\n");
+            }
+        }
+        return text.toString();
     }
 }
