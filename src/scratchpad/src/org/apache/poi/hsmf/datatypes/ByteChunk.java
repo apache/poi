@@ -63,6 +63,42 @@ public class ByteChunk extends Chunk {
    }
    
    /**
+    * Returns the data in a debug-friendly string format
+    */
+   public String toString() {
+       return toDebugFriendlyString(value);
+   }
+   
+   /**
+    * Formats the byte array in a debug-friendly way,
+    *  showing all of a short array, and the start of a 
+    *  longer one.
+    */
+   protected static String toDebugFriendlyString(byte[] value) {
+      if (value == null)
+         return "(Null Byte Array)";
+          
+      StringBuffer text = new StringBuffer();
+      text.append("Bytes len=").append(value.length);
+      text.append(" [");
+      
+      int limit = Math.min(value.length, 16);
+      if (value.length > 16) {
+          limit = 12;
+      }
+      for (int i=0; i<limit; i++) {
+          if (i > 0)
+              text.append(',');
+          text.append(value[i]);
+      }
+      if (value.length > 16) {
+          text.append(",....");
+      }
+      text.append("]");
+      return text.toString();
+   }
+   
+   /**
     * Returns the data, formatted as a string assuming it
     *  was a non-unicode string.
     * If your data isn't in fact stored as basically
