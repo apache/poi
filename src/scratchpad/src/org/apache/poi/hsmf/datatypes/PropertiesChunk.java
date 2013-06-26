@@ -146,11 +146,36 @@ public abstract class PropertiesChunk extends Chunk {
             // Turn the Type and ID into helper objects
             MAPIType type = Types.getById(typeID);
             MAPIProperty prop = MAPIProperty.get(id);
+            
+            // Wrap properties we don't know about as custom ones
+            if (prop == MAPIProperty.UNKNOWN) {
+                prop = MAPIProperty.createCustom(id, type, "Unknown " + id);
+            }
+            if (type == null) {
+                logger.log(POILogger.WARN, "Invalid type found, expected ", prop.usualType, 
+                        " but got ", typeID, " for property ", prop);
+                going = false;
+                break;
+            }
+            
+            // Sanity check the property's type against the value's type
             if (prop.usualType != type) {
-               // Oh dear, something has gone wrong...
-               logger.log(POILogger.WARN, "Type mismatch, expected ", type, " but got ", prop.usualType);
-               going = false;
-               break;
+                // Is it an allowed substitution?
+                if (type == Types.ASCII_STRING && prop.usualType == Types.UNICODE_STRING ||
+                    type == Types.UNICODE_STRING && prop.usualType == Types.ASCII_STRING) {
+                    // It's fine to go with the specified instead of the normal
+                } else if (prop.usualType == Types.UNKNOWN) {
+                    // We don't know what this property normally is, but it has come
+                    // through with a valid type, so use that
+                    logger.log(POILogger.INFO, "Property definition for ", prop, 
+                            " is missing a type definition, found a value with type ", type);
+                } else {
+                   // Oh dear, something has gone wrong...
+                   logger.log(POILogger.WARN, "Type mismatch, expected ", prop.usualType, 
+                              " but got ", type, " for property ", prop);
+                   going = false;
+                   break;
+                }
             }
             
             // Work out how long the "data" is
