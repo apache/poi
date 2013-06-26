@@ -24,7 +24,9 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIDocument;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -124,6 +126,16 @@ public final class TestHPSFBugs extends TestCase {
        
        
        // Write out and read back, should still be valid
-       // TODO
+       POIDocument doc = new HPSFPropertiesOnlyDocument(fs);
+       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       doc.write(baos);
+       ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+       doc = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(bais));
+       
+       // Check properties are still there
+       assertEquals("Microsoft Word 10.0", si.getApplicationName());
+       assertEquals("", si.getTitle());
+       assertEquals("", si.getAuthor());
+       assertEquals("Cour de Justice", dsi.getCompany());
    }
 }
