@@ -28,25 +28,16 @@ import javax.xml.transform.stream.StreamResult;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.PictureType;
 import org.w3c.dom.Document;
 
 /**
  * Test cases for {@link WordToHtmlConverter}
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestWordToHtmlConverter extends TestCase
+public class TestWordToHtmlConverter extends POITestCase
 {
-    private static void assertContains( String result, final String substring )
-    {
-        if ( !result.contains( substring ) )
-            fail( "Substring \"" + substring
-                    + "\" not found in the following string: \"" + result
-                    + "\"" );
-    }
-
     private static String getHtmlText( final String sampleFileName )
             throws Exception
     {

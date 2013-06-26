@@ -25,9 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -36,7 +35,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Tests that we can read fixed sized properties, as well as variable
  *  ones, for example Submission Dates
  */
-public final class TestFixedSizedProperties extends TestCase {
+public final class TestFixedSizedProperties extends POITestCase {
 	protected static final String messageSucceeds = "53784_succeeds.msg";
 	protected static final String messageFails = "53784_fails.msg";
 	private MAPIMessage mapiMessageSucceeds;
@@ -104,18 +103,11 @@ public final class TestFixedSizedProperties extends TestCase {
    /**
     * TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix
     */
-	public void DISABLEDtestClientSubmitTime() throws Exception {
-	   SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
-	   f.setTimeZone(TimeZone.getTimeZone("GMT"));
+   public void DISABLEDtestClientSubmitTime() throws Exception {
+       SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
+       f.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-	   Calendar clientSubmitTime = mapiMessageSucceeds.getMessageDate();
-	   assertEquals("Fri, 22 Jun 2012 18:32:54", f.format(clientSubmitTime.getTime()));
-	}
-
-	private static void assertContains(String haystack, String needle) {
-      if (haystack.indexOf(needle) > -1) {
-         return;
-      }
-      fail("'" + needle + "' wasn't found in '" + haystack + "'");
+       Calendar clientSubmitTime = mapiMessageSucceeds.getMessageDate();
+       assertEquals("Fri, 22 Jun 2012 18:32:54", f.format(clientSubmitTime.getTime()));
    }
 }
