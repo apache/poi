@@ -229,8 +229,8 @@ public final class TestBasics extends TestCase {
       // Defaults to CP1251
       assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
       
-      // But after guessing goes to the correct one, Big 5
+      // But after guessing goes to the correct one, cp950 (Windows Traditional Chinese)
       chinese.guess7BitEncoding();
-      assertEquals("big5", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("cp950", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
    }
 }
