@@ -234,19 +234,41 @@ public class CodePageUtil
     
     /**
      * <p>Turns a codepage number into the equivalent character encoding's
-     * name.</p>
+     * name (in Java NIO canonical naming format).</p>
      *
      * @param codepage The codepage number
      *
      * @return The character encoding's name. If the codepage number is 65001,
      * the encoding name is "UTF-8". All other positive numbers are mapped to
-     * "cp" followed by the number, e.g. if the codepage number is 1252 the
-     * returned character encoding name will be "cp1252".
+     * their Java NIO names, normally either "windows-" followed by the number, 
+     * eg "windows-1251", or "cp" followed by the number, e.g. if the codepage 
+     * number is 1252 the returned character encoding name will be "cp1252".
      *
      * @exception UnsupportedEncodingException if the specified codepage is
      * less than zero.
      */
     public static String codepageToEncoding(final int codepage)
+    throws UnsupportedEncodingException
+    {
+        return codepageToEncoding(codepage, false);
+    }
+    
+    /**
+     * <p>Turns a codepage number into the equivalent character encoding's
+     * name, in either Java NIO or Java Lang canonical naming.</p>
+     *
+     * @param codepage The codepage number
+     * @param javaLangFormat Should Java Lang or Java NIO naming be used?
+     *
+     * @return The character encoding's name, in either Java Lang format 
+     *  (eg Cp1251, ISO8859_5) or Java NIO format (eg windows-1252, ISO-8859-9)
+     *  
+     * @see http://docs.oracle.com/javase/6/docs/technotes/guides/intl/encoding.doc.html
+     *
+     * @exception UnsupportedEncodingException if the specified codepage is
+     * less than zero.
+     */
+    public static String codepageToEncoding(final int codepage, boolean javaLangFormat)
     throws UnsupportedEncodingException
     {
         if (codepage <= 0)
@@ -266,23 +288,50 @@ public class CodePageUtil
             case CP_MS949:
                 return "ms949";
             case CP_WINDOWS_1250:
-                return "windows-1250";
+                if (javaLangFormat)
+                    return "Cp1250";
+                else
+                    return "windows-1250";
             case CP_WINDOWS_1251:
-                return "windows-1251";
+                if (javaLangFormat)
+                    return "Cp1251";
+                else
+                    return "windows-1251";
             case CP_WINDOWS_1252:
-                return "windows-1252";
+                if (javaLangFormat)
+                    return "Cp1252";
+                else
+                    return "windows-1252";
             case CP_WINDOWS_1253:
-                return "windows-1253";
+                if (javaLangFormat)
+                    return "Cp1253";
+                else
+                    return "windows-1253";
             case CP_WINDOWS_1254:
-                return "windows-1254";
+                if (javaLangFormat)
+                    return "Cp1254";
+                else
+                    return "windows-1254";
             case CP_WINDOWS_1255:
-                return "windows-1255";
+                if (javaLangFormat)
+                    return "Cp1255";
+                else
+                    return "windows-1255";
             case CP_WINDOWS_1256:
-                return "windows-1256";
+                if (javaLangFormat)
+                    return "Cp1255";
+                else
+                    return "windows-1256";
             case CP_WINDOWS_1257:
-                return "windows-1257";
+                if (javaLangFormat)
+                    return "Cp1257";
+                else
+                    return "windows-1257";
             case CP_WINDOWS_1258:
-                return "windows-1258";
+                if (javaLangFormat)
+                    return "Cp1258";
+                else
+                    return "windows-1258";
             case CP_JOHAB:
                 return "johab";
             case CP_MAC_ROMAN:
@@ -323,23 +372,50 @@ public class CodePageUtil
             case CP_KOI8_R:
                 return "KOI8-R";
             case CP_ISO_8859_1:
-                return "ISO-8859-1";
+                if (javaLangFormat)
+                    return "ISO8859_1";
+                else
+                    return "ISO-8859-1";
             case CP_ISO_8859_2:
-                return "ISO-8859-2";
+                if (javaLangFormat)
+                    return "ISO8859_2";
+                else
+                    return "ISO-8859-2";
             case CP_ISO_8859_3:
-                return "ISO-8859-3";
+                if (javaLangFormat)
+                    return "ISO8859_3";
+                else
+                    return "ISO-8859-3";
             case CP_ISO_8859_4:
-                return "ISO-8859-4";
+                if (javaLangFormat)
+                    return "ISO8859_4";
+                else
+                    return "ISO-8859-4";
             case CP_ISO_8859_5:
-                return "ISO-8859-5";
+                if (javaLangFormat)
+                    return "ISO8859_5";
+                else
+                    return "ISO-8859-5";
             case CP_ISO_8859_6:
-                return "ISO-8859-6";
+                if (javaLangFormat)
+                    return "ISO8859_6";
+                else
+                    return "ISO-8859-6";
             case CP_ISO_8859_7:
-                return "ISO-8859-7";
+                if (javaLangFormat)
+                    return "ISO8859_7";
+                else
+                    return "ISO-8859-7";
             case CP_ISO_8859_8:
-                return "ISO-8859-8";
+                if (javaLangFormat)
+                    return "ISO8859_8";
+                else
+                    return "ISO-8859-8";
             case CP_ISO_8859_9:
-                return "ISO-8859-9";
+                if (javaLangFormat)
+                    return "ISO8859_9";
+                else
+                    return "ISO-8859-9";
             case CP_ISO_2022_JP1:
             case CP_ISO_2022_JP2:
             case CP_ISO_2022_JP3:
