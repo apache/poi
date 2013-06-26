@@ -28,9 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import junit.framework.TestCase;
 
@@ -629,10 +627,7 @@ public class TestWriteWellKnown extends TestCase {
                     /* The document does not have custom properties. */
                     return;
 
-                for (final Iterator i = cps.entrySet().iterator(); i.hasNext();)
-                {
-                    final Map.Entry e = (Entry) i.next();
-                    final CustomProperty cp = (CustomProperty) e.getValue();
+                for (CustomProperty cp : cps.values()) {
                     cp.getName();
                     cp.getValue();
                 }
@@ -704,7 +699,7 @@ public class TestWriteWellKnown extends TestCase {
         final int ID_2 = 3;
         final String NAME_1 = "Schl\u00fcssel \u00e4";
         final String VALUE_1 = "Wert 1";
-        final Map dictionary = new HashMap();
+        final Map<Long,String> dictionary = new HashMap<Long, String>();
 
         DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
         CustomProperties cps;
@@ -717,7 +712,7 @@ public class TestWriteWellKnown extends TestCase {
         /* Test an empty custom properties set. */
         s = new MutableSection();
         s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[1]);
-        // s.setCodepage(Constants.CP_UNICODE);
+        // s.setCodepage(CodePageUtil.CP_UNICODE);
         dsi.addSection(s);
         cps = dsi.getCustomProperties();
         assertEquals(0, cps.size());

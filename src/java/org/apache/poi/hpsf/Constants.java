@@ -17,11 +17,12 @@
 
 package org.apache.poi.hpsf;
 
+import org.apache.poi.util.CodePageUtil;
+
 /**
- * <p>Defines constants of general use.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
+ * <p>Defines constants of general use (currently only codepages).</p>
+ * 
+ * @deprecated Use {@link CodePageUtil} to lookup code pages 
  */
 public class Constants
 {

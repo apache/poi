@@ -38,7 +38,6 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassID;
-import org.apache.poi.hpsf.Constants;
 import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.IllegalPropertySetDataException;
 import org.apache.poi.hpsf.MutableProperty;
@@ -61,6 +60,7 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 
@@ -351,8 +351,8 @@ public class TestWrite extends TestCase
 
     private static final int CODEPAGE_DEFAULT = -1;
     private static final int CODEPAGE_1252 = 1252;
-    private static final int CODEPAGE_UTF8 = Constants.CP_UTF8;
-    private static final int CODEPAGE_UTF16 = Constants.CP_UTF16;
+    private static final int CODEPAGE_UTF8 = CodePageUtil.CP_UTF8;
+    private static final int CODEPAGE_UTF16 = CodePageUtil.CP_UTF16;
 
 
 
@@ -472,7 +472,7 @@ public class TestWrite extends TestCase
                 check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6", cp);
                 check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc", cp);
                 check(t, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
-                if (cp == Constants.CP_UTF16 || cp == Constants.CP_UTF8)
+                if (cp == CodePageUtil.CP_UTF16 || cp == CodePageUtil.CP_UTF8)
                     check(t, "\u79D1\u5B78", cp);
             }
             catch (Exception ex)
@@ -759,13 +759,13 @@ public class TestWrite extends TestCase
             final POIFSFileSystem poiFs = new POIFSFileSystem();
             final MutablePropertySet ps1 = new MutablePropertySet();
             final MutableSection s = (MutableSection) ps1.getSections().get(0);
-            final Map m = new HashMap(3, 1.0f);
+            final Map<Long,String> m = new HashMap<Long,String>(3, 1.0f);
             m.put(Long.valueOf(1), "String 1");
             m.put(Long.valueOf(2), "String 2");
             m.put(Long.valueOf(3), "String 3");
             s.setDictionary(m);
             s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
-            int codepage = Constants.CP_UNICODE;
+            int codepage = CodePageUtil.CP_UNICODE;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
                           Integer.valueOf(codepage));
             poiFs.createDocument(ps1.toInputStream(), "Test");
@@ -811,7 +811,7 @@ public class TestWrite extends TestCase
             final POIFSFileSystem poiFs = new POIFSFileSystem();
             final MutablePropertySet ps1 = new MutablePropertySet();
             final MutableSection s = (MutableSection) ps1.getSections().get(0);
-            final Map m = new HashMap(3, 1.0f);
+            final Map<Long,String> m = new HashMap<Long, String>(3, 1.0f);
             m.put(Long.valueOf(1), "String 1");
             m.put(Long.valueOf(2), "String 2");
             m.put(Long.valueOf(3), "String 3");

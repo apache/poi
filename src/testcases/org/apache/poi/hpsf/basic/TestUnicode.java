@@ -25,14 +25,14 @@ import java.io.IOException;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.apache.poi.hpsf.Constants;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.CodePageUtil;
 
 /**
  * <p>Tests whether Unicode string can be read from a
@@ -82,7 +82,7 @@ public class TestUnicode extends TestCase {
         Assert.assertEquals(ps.getSectionCount(), 2);
         Section s = (Section) ps.getSections().get(1);
         Assert.assertEquals(s.getProperty(1),
-                            Integer.valueOf(Constants.CP_UTF16));
+                            Integer.valueOf(CodePageUtil.CP_UTF16));
         Assert.assertEquals(s.getProperty(2),
                             Integer.valueOf(-96070278));
         Assert.assertEquals(s.getProperty(3),

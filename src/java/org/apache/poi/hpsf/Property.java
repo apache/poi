@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -240,7 +241,7 @@ public class Property
                         b.append(new String(src, o, (int) sLength));
                         break;
                     }
-                    case Constants.CP_UNICODE:
+                    case CodePageUtil.CP_UNICODE:
                     {
                         /* The length is the number of characters, i.e. the number
                          * of bytes is twice the number of the characters. */
@@ -252,7 +253,7 @@ public class Property
                             h[i2 + 1] = src[o + i2];
                         }
                         b.append(new String(h, 0, nrBytes,
-                                VariantSupport.codepageToEncoding(codepage)));
+                                CodePageUtil.codepageToEncoding(codepage)));
                         break;
                     }
                     default:
@@ -268,7 +269,7 @@ public class Property
                 /* Strip 0x00 characters from the end of the string: */
                 while (b.length() > 0 && b.charAt(b.length() - 1) == 0x00)
                     b.setLength(b.length() - 1);
-                if (codepage == Constants.CP_UNICODE)
+                if (codepage == CodePageUtil.CP_UNICODE)
                 {
                     if (sLength % 2 == 1)
                         sLength++;
