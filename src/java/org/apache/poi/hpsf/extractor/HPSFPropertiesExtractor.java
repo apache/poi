@@ -19,13 +19,13 @@ package org.apache.poi.hpsf.extractor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Iterator;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.SpecialPropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -47,10 +47,10 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
         super(doc);
     }
     public HPSFPropertiesExtractor(POIFSFileSystem fs) {
-        super(new PropertiesOnlyDocument(fs));
+        super(new HPSFPropertiesOnlyDocument(fs));
     }
     public HPSFPropertiesExtractor(NPOIFSFileSystem fs) {
-        super(new PropertiesOnlyDocument(fs));
+        super(new HPSFPropertiesOnlyDocument(fs));
     }
 
     public String getDocumentSummaryInformationText() {
@@ -141,23 +141,6 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
      */
     public POITextExtractor getMetadataTextExtractor() {
         throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
-    }
-
-    /**
-     * So we can get at the properties of any
-     *  random OLE2 document.
-     */
-    private static final class PropertiesOnlyDocument extends POIDocument {
-        public PropertiesOnlyDocument(NPOIFSFileSystem fs) {
-            super(fs.getRoot());
-        }
-        public PropertiesOnlyDocument(POIFSFileSystem fs) {
-            super(fs);
-        }
-
-        public void write(OutputStream out) {
-            throw new IllegalStateException("Unable to write, only for properties!");
-        }
     }
 
     public static void main(String[] args) throws IOException {
