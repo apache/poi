@@ -23,10 +23,18 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
+import org.apache.poi.hsmf.datatypes.ChunkBasedPropertyValue;
+import org.apache.poi.hsmf.datatypes.MAPIProperty;
+import org.apache.poi.hsmf.datatypes.PropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -41,7 +49,8 @@ public final class TestFixedSizedProperties extends POITestCase {
    private MAPIMessage mapiMessageSucceeds;
    private MAPIMessage mapiMessageFails;
    private POIFSFileSystem fsMessageSucceeds;
-   private POIFSFileSystem fsMessageFails;	
+   private POIFSFileSystem fsMessageFails;
+   private SimpleDateFormat messageDateFormat;
 
    /**
     * Initialize this test, load up the messages.
@@ -54,6 +63,41 @@ public final class TestFixedSizedProperties extends POITestCase {
                 samples.openResourceAsStream(messageFails));		
       this.fsMessageSucceeds = new POIFSFileSystem(new FileInputStream(samples.getFile(messageSucceeds)));
       this.fsMessageFails = new POIFSFileSystem(new FileInputStream(samples.getFile(messageFails)));
+      
+      messageDateFormat = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
+      messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+   }
+   
+   /**
+    * Check we can find a sensible number of properties on a few
+    * of our test files
+    */
+   public void testPropertiesFound() throws Exception {
+       Map<MAPIProperty,List<PropertyValue>> props;
+       
+       props = mapiMessageSucceeds.getMainChunks().getProperties();
+       assertTrue(props.toString(), props.size() > 10);
+       
+       props = mapiMessageFails.getMainChunks().getProperties();
+       assertTrue(props.toString(), props.size() > 10);
+   }
+   
+   /**
+    * Check we find properties of a variety of different types
+    */
+   public void testPropertyValueTypes() throws Exception {
+       Map<MAPIProperty,List<PropertyValue>> props =
+               mapiMessageSucceeds.getMainChunks().getProperties();
+       HashSet<Class<? extends PropertyValue>> seenTypes = new HashSet<Class<? extends PropertyValue>>();
+       for (List<PropertyValue> pvs : props.values()) {
+           for (PropertyValue pv : pvs) {
+               seenTypes.add(pv.getClass());
+           }
+       }
+       assertTrue(seenTypes.toString(), seenTypes.size() > 3);
+       assertTrue(seenTypes.toString(), seenTypes.contains(LongPropertyValue.class));
+       assertTrue(seenTypes.toString(), seenTypes.contains(TimePropertyValue.class));
+       assertTrue(seenTypes.toString(), seenTypes.contains(ChunkBasedPropertyValue.class));
    }
 
    /**
@@ -99,13 +143,25 @@ public final class TestFixedSizedProperties extends POITestCase {
    }
 
    /**
-    * TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix
+    * Will be based on the ClientSubmit time
     */
-   public void DISABLEDtestClientSubmitTime() throws Exception {
-       SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss");
-       f.setTimeZone(TimeZone.getTimeZone("GMT"));
-
+   public void testClientSubmitTime() throws Exception {
+       // Check via the message date
        Calendar clientSubmitTime = mapiMessageSucceeds.getMessageDate();
-       assertEquals("Fri, 22 Jun 2012 18:32:54", f.format(clientSubmitTime.getTime()));
+       assertEquals(
+               "Fri, 22 Jun 2012 18:32:54", 
+               messageDateFormat.format(clientSubmitTime.getTime()));
+       
+       // Fetch the property value directly
+       Map<MAPIProperty,List<PropertyValue>> props =
+               mapiMessageSucceeds.getMainChunks().getProperties();
+       List<PropertyValue> pv = props.get(MAPIProperty.CLIENT_SUBMIT_TIME); 
+       assertNotNull(pv);
+       assertEquals(1, pv.size());
+       
+       clientSubmitTime = (Calendar)pv.get(0).getValue();
+       assertEquals(
+               "Fri, 22 Jun 2012 18:32:54", 
+               messageDateFormat.format(clientSubmitTime.getTime()));
    }
 }
