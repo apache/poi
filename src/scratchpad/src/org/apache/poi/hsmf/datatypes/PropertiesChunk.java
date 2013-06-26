@@ -28,7 +28,6 @@ import java.util.Map;
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongLongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
@@ -60,17 +59,17 @@ public abstract class PropertiesChunk extends Chunk {
     */
    private ChunkGroup parentGroup;
    
-	/**
-	 * Creates a Properties Chunk.
-	 */
-	protected PropertiesChunk(ChunkGroup parentGroup) {
-		super(NAME, -1, Types.UNKNOWN);
-		this.parentGroup = parentGroup;
-	}
+   /**
+    * Creates a Properties Chunk.
+    */
+   protected PropertiesChunk(ChunkGroup parentGroup) {
+       super(NAME, -1, Types.UNKNOWN);
+       this.parentGroup = parentGroup;
+   }
 
-	@Override
+   @Override
    public String getEntryName() {
-	   return NAME;
+       return NAME;
    }
 	
    /**
@@ -198,9 +197,9 @@ public abstract class PropertiesChunk extends Chunk {
             going = false;
          }
       }
-	}
-	
-	protected void writeProperties(OutputStream out) throws IOException {
-	   // TODO
-	}
+   }
+
+   protected void writeProperties(OutputStream out) throws IOException {
+       // TODO
+   }
 }

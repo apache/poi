@@ -92,7 +92,7 @@ public class MAPIMessage extends POIDocument {
     * @throws IOException
     */
    public MAPIMessage(InputStream in) throws IOException {
-      this(new POIFSFileSystem(in));
+      this(new NPOIFSFileSystem(in));
    }
    /**
     * Constructor for reading MSG Files from a POIFS filesystem

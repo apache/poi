@@ -36,29 +36,28 @@ import org.apache.poi.util.POILogger;
  *  server, and an ID that's used if you want to cancel
  *  a message or similar
  */
-
 public class MessageSubmissionChunk extends Chunk {
-	private static POILogger logger = POILogFactory.getLogger(MessageSubmissionChunk.class);
-	private String rawId;
-	private Calendar date;
-	
-	private static final Pattern datePatern = 
-	   Pattern.compile("(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)Z?"); 
-	
-	/**
-	 * Creates a Byte Chunk.
-	 */
-	public MessageSubmissionChunk(String namePrefix, int chunkId, MAPIType type) {
-		super(namePrefix, chunkId, type);
-	}
-	
-	/**
-	 * Create a Byte Chunk, with the specified
-	 *  type.
-	 */
-	public MessageSubmissionChunk(int chunkId, MAPIType type) {
-	   super(chunkId, type);
-	}
+   private static POILogger logger = POILogFactory.getLogger(MessageSubmissionChunk.class);
+   private String rawId;
+   private Calendar date;
+
+   private static final Pattern datePatern = 
+            Pattern.compile("(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)Z?"); 
+
+   /**
+    * Creates a Byte Chunk.
+    */
+   public MessageSubmissionChunk(String namePrefix, int chunkId, MAPIType type) {
+      super(namePrefix, chunkId, type);
+   }
+
+   /**
+    * Create a Byte Chunk, with the specified
+    *  type.
+    */
+   public MessageSubmissionChunk(int chunkId, MAPIType type) {
+      super(chunkId, type);
+   }
 
    public void readValue(InputStream value) throws IOException {
       // Stored in the file as us-ascii

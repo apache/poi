@@ -24,29 +24,28 @@ import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
 
 /**
- * A Chunk that holds binary data, normally
- *  unparsed.
+ * A Chunk that holds binary data, normally unparsed.
  * Generally as we know how to make sense of the
  *  contents, we create a new Chunk class and add
  *  a special case in the parser for them.
  */
 
 public class ByteChunk extends Chunk {
-	private byte[] value;
-	
-	/**
-	 * Creates a Byte Chunk.
-	 */
+   private byte[] value;
+
+   /**
+    * Creates a Byte Chunk.
+    */
    public ByteChunk(String namePrefix, int chunkId, MAPIType type) {
       super(namePrefix, chunkId, type);
    }
-	/**
-	 * Create a Byte Chunk, with the specified
-	 *  type.
-	 */
-	public ByteChunk(int chunkId, MAPIType type) {
-	   super(chunkId, type);
-	}
+   /**
+    * Create a Byte Chunk, with the specified
+    *  type.
+    */
+   public ByteChunk(int chunkId, MAPIType type) {
+      super(chunkId, type);
+   }
 
    public void readValue(InputStream value) throws IOException {
       this.value = IOUtils.toByteArray(value);
