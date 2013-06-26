@@ -128,9 +128,8 @@ public class CommentsTable extends POIXMLDocumentPart {
 
     /**
      * This method is deprecated and should not be used any more as
-     * it overwrites the comment in Cell A1.
-     *
-     * @return
+     * it silently overwrites the comment in Cell A1 if present
+     * @deprecated Use {@link #newComment(String)} instead to explicitly set the cell reference to create for
      */
     @Deprecated
     public CTComment newComment() {
