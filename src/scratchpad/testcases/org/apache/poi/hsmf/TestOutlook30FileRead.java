@@ -29,117 +29,117 @@ import junit.framework.TestCase;
  * Tests to verify that we can still work on the newer Outlook 3.0 files.
  */
 public final class TestOutlook30FileRead extends TestCase {
-private MAPIMessage mapiMessage;
+    private MAPIMessage mapiMessage;
 
-	/**
-	 * Initialize this test, load up the blank.msg mapi message.
-	 * @throws Exception
-	 */
-	public TestOutlook30FileRead() throws IOException {
+    /**
+     * Initialize this test, load up the blank.msg mapi message.
+     * @throws Exception
+     */
+    public TestOutlook30FileRead() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
-		this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
-	}
+        this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
+    }
 
-	/**
-	 * Test to see if we can read the CC Chunk.
-	 * @throws ChunkNotFoundException
-	 *
-	 */
-	public void testReadDisplayCC() throws ChunkNotFoundException {
-		String obtained = mapiMessage.getDisplayCC();
-		String expected = "";
+    /**
+     * Test to see if we can read the CC Chunk.
+     * @throws ChunkNotFoundException
+     *
+     */
+    public void testReadDisplayCC() throws ChunkNotFoundException {
+        String obtained = mapiMessage.getDisplayCC();
+        String expected = "";
 
-		TestCase.assertEquals(obtained, expected);
-	}
+        TestCase.assertEquals(obtained, expected);
+    }
 
-	/**
-	 * Test to see if we can read the CC Chunk.
-	 * @throws ChunkNotFoundException
-	 *
-	 */
-	public void testReadDisplayTo() throws ChunkNotFoundException {
-		String obtained = mapiMessage.getDisplayTo();
+    /**
+     * Test to see if we can read the CC Chunk.
+     * @throws ChunkNotFoundException
+     *
+     */
+    public void testReadDisplayTo() throws ChunkNotFoundException {
+        String obtained = mapiMessage.getDisplayTo();
 
-		assertTrue(obtained.startsWith("Bohn, Shawn"));
-	}
+        assertTrue(obtained.startsWith("Bohn, Shawn"));
+    }
 
-	/**
-	 * Test to see if we can read the From Chunk.
-	 * @throws ChunkNotFoundException
-	 *
-	 */
-	public void testReadDisplayFrom() throws ChunkNotFoundException {
-		String obtained = mapiMessage.getDisplayFrom();
-		String expected = "Cramer, Nick";
+    /**
+     * Test to see if we can read the From Chunk.
+     * @throws ChunkNotFoundException
+     *
+     */
+    public void testReadDisplayFrom() throws ChunkNotFoundException {
+        String obtained = mapiMessage.getDisplayFrom();
+        String expected = "Cramer, Nick";
 
-		TestCase.assertEquals(obtained, expected);
-	}
+        TestCase.assertEquals(obtained, expected);
+    }
 
-	/**
-	 * Test to see if we can read the CC Chunk.
-	 * @throws ChunkNotFoundException
-	 *
-	 */
-	public void testReadDisplayBCC() throws ChunkNotFoundException {
-		String obtained = mapiMessage.getDisplayBCC();
-		String expected = "";
+    /**
+     * Test to see if we can read the CC Chunk.
+     * @throws ChunkNotFoundException
+     *
+     */
+    public void testReadDisplayBCC() throws ChunkNotFoundException {
+        String obtained = mapiMessage.getDisplayBCC();
+        String expected = "";
 
-		TestCase.assertEquals(obtained, expected);
-	}
+        TestCase.assertEquals(obtained, expected);
+    }
 
 
-	/**
-	 * Check if we can read the body of the blank message, we expect "".
-	 *
-	 * @throws Exception
-	 */
-	public void testReadBody() throws Exception {
-		String obtained = mapiMessage.getTextBody();
-		assertTrue(obtained.startsWith("I am shutting down"));
-	}
+    /**
+     * Check if we can read the body of the blank message, we expect "".
+     *
+     * @throws Exception
+     */
+    public void testReadBody() throws Exception {
+        String obtained = mapiMessage.getTextBody();
+        assertTrue(obtained.startsWith("I am shutting down"));
+    }
 
-	/**
-	 * Check if we can read the subject line of the blank message, we expect ""
-	 *
-	 * @throws Exception
-	 */
-	public void testReadSubject() throws Exception {
-		String obtained = mapiMessage.getSubject();
-		String expected = "IN-SPIRE servers going down for a bit, back up around 8am";
+    /**
+     * Check if we can read the subject line of the blank message, we expect ""
+     *
+     * @throws Exception
+     */
+    public void testReadSubject() throws Exception {
+        String obtained = mapiMessage.getSubject();
+        String expected = "IN-SPIRE servers going down for a bit, back up around 8am";
 
-		TestCase.assertEquals(expected, obtained);
-	}
+        TestCase.assertEquals(expected, obtained);
+    }
 
-	/**
-	 * Check if we can read the subject line of the blank message, we expect ""
-	 *
-	 * @throws Exception
-	 */
-	public void testReadConversationTopic() throws Exception {
-		String obtained = mapiMessage.getConversationTopic();
-		TestCase.assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", obtained);
-	}
+    /**
+     * Check if we can read the subject line of the blank message, we expect ""
+     *
+     * @throws Exception
+     */
+    public void testReadConversationTopic() throws Exception {
+        String obtained = mapiMessage.getConversationTopic();
+        TestCase.assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", obtained);
+    }
 
-	/**
-	 * Check if we can read the subject line of the blank message, we expect ""
-	 *
-	 * @throws Exception
-	 */
-	public void testReadMessageClass() throws Exception {
-		String obtained = mapiMessage.getMessageClass();
-		TestCase.assertEquals("IPM.Note", obtained);
-	}
-   
-   /**
-    * Ensure we can get the HTML and RTF versions
-    */
-   public void testReadBodyContents() throws Exception {
-      String html = mapiMessage.getHtmlBody();
-      String rtf = mapiMessage.getRtfBody();
-      assertNotNull(html);
-      assertNotNull(rtf);
-      
-      assertTrue("Wrong text:\n" + html, html.startsWith("<!DOCTYPE"));
-      assertTrue("Wrong text:\n" + rtf,  rtf.startsWith("{\\rtf1"));
-   }
+    /**
+     * Check if we can read the subject line of the blank message, we expect ""
+     *
+     * @throws Exception
+     */
+    public void testReadMessageClass() throws Exception {
+        String obtained = mapiMessage.getMessageClass();
+        TestCase.assertEquals("IPM.Note", obtained);
+    }
+
+    /**
+     * Ensure we can get the HTML and RTF versions
+     */
+    public void testReadBodyContents() throws Exception {
+        String html = mapiMessage.getHtmlBody();
+        String rtf = mapiMessage.getRtfBody();
+        assertNotNull(html);
+        assertNotNull(rtf);
+
+        assertTrue("Wrong text:\n" + html, html.startsWith("<!DOCTYPE"));
+        assertTrue("Wrong text:\n" + rtf,  rtf.startsWith("{\\rtf1"));
+    }
 }
