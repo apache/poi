@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -40,6 +41,7 @@ import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.NameIdChunks;
 import org.apache.poi.hsmf.datatypes.PropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.RecipientChunks;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
@@ -50,6 +52,9 @@ import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Reads an Outlook MSG File in and provides hooks into its data structure.
@@ -60,6 +65,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * [MS-OXCMSG]: Message and Attachment Object Protocol Specification
  */
 public class MAPIMessage extends POIDocument {
+   /** For logging problems we spot with the file */
+   private POILogger logger = POILogFactory.getLogger(MAPIMessage.class);
+   
    private Chunks mainChunks;
    private NameIdChunks nameIdChunks;
    private RecipientChunks[] recipientChunks;
@@ -356,19 +364,39 @@ public class MAPIMessage extends POIDocument {
    }
    
    /**
-    * Many messages store their strings as unicode, which is
+    * Tries to identify the correct encoding for 7-bit (non-unicode)
+    *  strings in the file.
+    * <p>Many messages store their strings as unicode, which is
     *  nice and easy. Some use one-byte encodings for their
-    *  strings, but don't easily store the encoding anywhere
-    *  in the file!
-    * This method looks at the headers for the message, and
-    *  tries to use these to guess the correct encoding for
-    *  your file.
-    * Bug #49441 has more on why this is needed
-    * 
-    * TODO Try to also use PR_MESSAGE_CODEPAGE and PR_INTERNET_CPID
-    * Would need to refactor some of the codepage support in HPSF first
+    *  strings, but don't always store the encoding anywhere
+    *  helpful in the file.</p>
+    * <p>This method checks for codepage properties, and failing that
+    *  looks at the headers for the message, and uses these to 
+    *  guess the correct encoding for your file.</p>
+    * <p>Bug #49441 has more on why this is needed</p>
     */
    public void guess7BitEncoding() {
+      // First choice is a codepage property
+      for (MAPIProperty prop : new MAPIProperty[] {
+               MAPIProperty.MESSAGE_CODEPAGE,
+               MAPIProperty.INTERNET_CPID
+      }) {
+        List<PropertyValue> val = mainChunks.getProperties().get(prop);
+        if (val != null && val.size() > 0) {
+           int codepage = ((LongPropertyValue)val.get(0)).getValue();
+           try {
+               String encoding = CodePageUtil.codepageToEncoding(codepage, true);
+               set7BitEncoding(encoding);
+               return;
+            } catch(UnsupportedEncodingException e) {
+               logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, 
+                          " set for the message via ", prop, ", ignoring");
+            }
+         }
+      }
+     
+       
+      // Second choice is a charset on a content type header
       try {
          String[] headers = getHeaders();
          if(headers != null && headers.length > 0) {
