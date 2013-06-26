@@ -60,7 +60,16 @@ public class PropertyValue {
    }
    
    public String toString() {
-      return property + " = " + getValue();
+      Object v = getValue();
+      if (v == null)
+          return "(No value available)";
+      
+      if (v instanceof byte[]) {
+          return ByteChunk.toDebugFriendlyString((byte[])v);
+      } else {
+          // Just use the normal toString on the value
+          return v.toString();
+      }
    }
    
    // TODO classes for the other important value types
