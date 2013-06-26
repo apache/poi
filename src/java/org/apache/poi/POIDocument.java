@@ -236,7 +236,7 @@ public abstract class POIDocument {
      * @param source is the source POIFS to copy from
      * @param target is the target POIFS to copy to
      * @param excepts is a list of Strings specifying what nodes NOT to copy
-     * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List<String)} instead
+     * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List<String>)} instead
      */
     @Deprecated
     protected void copyNodes( POIFSFileSystem source, POIFSFileSystem target,
@@ -249,7 +249,7 @@ public abstract class POIDocument {
     * @param sourceRoot is the source POIFS to copy from
     * @param targetRoot is the target POIFS to copy to
     * @param excepts is a list of Strings specifying what nodes NOT to copy
-     * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List<String)} instead
+    * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List<String>)} instead
     */
     @Deprecated
     protected void copyNodes( DirectoryNode sourceRoot,
