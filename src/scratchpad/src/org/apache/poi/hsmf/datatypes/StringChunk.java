@@ -35,68 +35,68 @@ public class StringChunk extends Chunk {
    private byte[] rawValue;
    private String value;
 
-	/**
-	 * Creates a String Chunk.
-	 */
-	public StringChunk(String namePrefix, int chunkId, MAPIType type) {
-		super(namePrefix, chunkId, type);
-	}
-	
-	/**
-	 * Create a String Chunk, with the specified
-	 *  type.
-	 */
-	public StringChunk(int chunkId, MAPIType type) {
-	   super(chunkId, type);
-	}
-	
-	/**
-	 * Returns the Encoding that will be used to
-	 *  decode any "7 bit" (non unicode) data.
-	 * Most files default to CP1252
-	 */
-	public String get7BitEncoding() {
-	   return encoding7Bit;
-	}
+   /**
+    * Creates a String Chunk.
+    */
+   public StringChunk(String namePrefix, int chunkId, MAPIType type) {
+      super(namePrefix, chunkId, type);
+   }
 
-	/**
-	 * Sets the Encoding that will be used to
-	 *  decode any "7 bit" (non unicode) data.
-	 * This doesn't appear to be stored anywhere
-	 *  specific in the file, so you may need
-	 *  to guess by looking at headers etc
-	 */
-	public void set7BitEncoding(String encoding) {
-	   this.encoding7Bit = encoding;
+   /**
+    * Create a String Chunk, with the specified
+    *  type.
+    */
+   public StringChunk(int chunkId, MAPIType type) {
+      super(chunkId, type);
+   }
 
-	   // Re-read the String if we're a 7 bit one
-	   if(type == Types.ASCII_STRING) {
-	      parseString();
-	   }
-	}
+   /**
+    * Returns the Encoding that will be used to
+    *  decode any "7 bit" (non unicode) data.
+    * Most files default to CP1252
+    */
+   public String get7BitEncoding() {
+      return encoding7Bit;
+   }
 
-	public void readValue(InputStream value) throws IOException {
-	   rawValue = IOUtils.toByteArray(value);
-	   parseString();
-	}
-	private void parseString() {
-	   String tmpValue;
-	   if (type == Types.ASCII_STRING) {
-	      tmpValue = parseAs7BitData(rawValue, encoding7Bit);
-	   } else if (type == Types.UNICODE_STRING) {
-	      tmpValue = StringUtil.getFromUnicodeLE(rawValue);
-	   } else {
-	      throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
-	   }
+   /**
+    * Sets the Encoding that will be used to
+    *  decode any "7 bit" (non unicode) data.
+    * This doesn't appear to be stored anywhere
+    *  specific in the file, so you may need
+    *  to guess by looking at headers etc
+    */
+   public void set7BitEncoding(String encoding) {
+      this.encoding7Bit = encoding;
 
-	   // Clean up
-	   this.value = tmpValue.replace("\0", "");
-	}
-	
-	public void writeValue(OutputStream out) throws IOException {
-	   out.write(rawValue);
-	}
-	private void storeString() {
+      // Re-read the String if we're a 7 bit one
+      if(type == Types.ASCII_STRING) {
+         parseString();
+      }
+   }
+
+   public void readValue(InputStream value) throws IOException {
+      rawValue = IOUtils.toByteArray(value);
+      parseString();
+   }
+   private void parseString() {
+      String tmpValue;
+      if (type == Types.ASCII_STRING) {
+         tmpValue = parseAs7BitData(rawValue, encoding7Bit);
+      } else if (type == Types.UNICODE_STRING) {
+         tmpValue = StringUtil.getFromUnicodeLE(rawValue);
+      } else {
+         throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
+      }
+
+      // Clean up
+      this.value = tmpValue.replace("\0", "");
+   }
+
+   public void writeValue(OutputStream out) throws IOException {
+      out.write(rawValue);
+   }
+   private void storeString() {
       if (type == Types.ASCII_STRING) {
          try {
             rawValue = value.getBytes(encoding7Bit);
@@ -109,15 +109,15 @@ public class StringChunk extends Chunk {
       } else {
          throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
       }
-	}
-	
-	/**
-	 * Returns the Text value of the chunk
-	 */
+   }
+
+   /**
+    * Returns the Text value of the chunk
+    */
    public String getValue() {
       return this.value;
    }
-   
+
    public byte[] getRawValue() {
       return this.rawValue;
    }
@@ -126,7 +126,7 @@ public class StringChunk extends Chunk {
       this.value = str;
       storeString();
    }
-   
+
    public String toString() {
       return this.value;
    }

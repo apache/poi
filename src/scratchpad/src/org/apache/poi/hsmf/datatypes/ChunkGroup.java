@@ -27,15 +27,15 @@ public interface ChunkGroup {
     * Should certainly contain all the interesting Chunks,
     *  but needn't always contain all of the Chunks.
     */
-	public Chunk[] getChunks();
-	
-	/**
-	 * Called by the parser whenever a chunk is found.
-	 */
-	public void record(Chunk chunk);
-	
-	/**
-	 * Called by the parser when all chunks have been found.
-	 */
-	public void chunksComplete();
+    public Chunk[] getChunks();
+
+    /**
+     * Called by the parser whenever a chunk is found.
+     */
+    public void record(Chunk chunk);
+
+    /**
+     * Called by the parser when all chunks have been found.
+     */
+    public void chunksComplete();
 }
