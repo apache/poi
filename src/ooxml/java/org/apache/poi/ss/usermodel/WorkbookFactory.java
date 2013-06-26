@@ -33,62 +33,69 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Factory for creating the appropriate kind of Workbook
- *  (be it HSSFWorkbook or XSSFWorkbook), from the given input
+ *  (be it {@link HSSFWorkbook} or {@link XSSFWorkbook}), 
+ *  by auto-detecting from the supplied input.
  */
 public class WorkbookFactory {
-	/**
-	 * Creates an HSSFWorkbook from the given POIFSFileSystem
-	 */
-	public static Workbook create(POIFSFileSystem fs) throws IOException {
-		return new HSSFWorkbook(fs);
-	}
-	/**
-	 * Creates an HSSFWorkbook from the given NPOIFSFileSystem
-	 */
-	public static Workbook create(NPOIFSFileSystem fs) throws IOException {
-		return new HSSFWorkbook(fs.getRoot(), true);
-	}
-	/**
-	 * Creates an XSSFWorkbook from the given OOXML Package
-	 */
-	public static Workbook create(OPCPackage pkg) throws IOException {
-		return new XSSFWorkbook(pkg);
-	}
-	/**
-	 * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
-	 *  the given InputStream.
-	 * Your input stream MUST either support mark/reset, or
-	 *  be wrapped as a {@link PushbackInputStream}!
-	 */
-	public static Workbook create(InputStream inp) throws IOException, InvalidFormatException {
-		// If clearly doesn't do mark/reset, wrap up
-		if(! inp.markSupported()) {
-			inp = new PushbackInputStream(inp, 8);
-		}
-		
-		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
-			return new HSSFWorkbook(inp);
-		}
-		if(POIXMLDocument.hasOOXMLHeader(inp)) {
-			return new XSSFWorkbook(OPCPackage.open(inp));
-		}
-		throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
-	}
-   /**
-    * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
-    *  the given File, which must exist and be readable.
-    */
-	public static Workbook create(File file) throws IOException, InvalidFormatException {
-	   if(! file.exists()) {
-	      throw new FileNotFoundException(file.toString());
-	   }
-	   
-	   try {
-	      NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
-	      return new HSSFWorkbook(fs.getRoot(), true);
-	   } catch(OfficeXmlFileException e) {
-	      OPCPackage pkg = OPCPackage.open(file);
-	      return new XSSFWorkbook(pkg);
-	   }
-	}
+    /**
+     * Creates a HSSFWorkbook from the given POIFSFileSystem
+     */
+    public static Workbook create(POIFSFileSystem fs) throws IOException {
+        return new HSSFWorkbook(fs);
+    }
+    
+    /**
+     * Creates a HSSFWorkbook from the given NPOIFSFileSystem
+     */
+    public static Workbook create(NPOIFSFileSystem fs) throws IOException {
+        return new HSSFWorkbook(fs.getRoot(), true);
+    }
+    
+    /**
+     * Creates a XSSFWorkbook from the given OOXML Package
+     */
+    public static Workbook create(OPCPackage pkg) throws IOException {
+        return new XSSFWorkbook(pkg);
+    }
+    
+    /**
+     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
+     *  the given InputStream.
+     * <p>Your input stream MUST either support mark/reset, or
+     *  be wrapped as a {@link PushbackInputStream}! Note that 
+     *  using an {@link InputStream} has a higher memory footprint 
+     *  than using a {@link File}.</p> 
+     */
+    public static Workbook create(InputStream inp) throws IOException, InvalidFormatException {
+        // If clearly doesn't do mark/reset, wrap up
+        if (! inp.markSupported()) {
+            inp = new PushbackInputStream(inp, 8);
+        }
+
+        if (POIFSFileSystem.hasPOIFSHeader(inp)) {
+            return new HSSFWorkbook(inp);
+        }
+        if (POIXMLDocument.hasOOXMLHeader(inp)) {
+            return new XSSFWorkbook(OPCPackage.open(inp));
+        }
+        throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
+    }
+    
+    /**
+     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
+     *  the given File, which must exist and be readable.
+     */
+    public static Workbook create(File file) throws IOException, InvalidFormatException {
+        if (! file.exists()) {
+            throw new FileNotFoundException(file.toString());
+        }
+
+        try {
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
+            return new HSSFWorkbook(fs.getRoot(), true);
+        } catch(OfficeXmlFileException e) {
+            OPCPackage pkg = OPCPackage.open(file);
+            return new XSSFWorkbook(pkg);
+        }
+    }
 }
