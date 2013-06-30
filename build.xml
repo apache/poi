@@ -79,6 +79,7 @@ under the License.
       JVM system properties for running tests,
       user.language and user.country are required as we have locale-sensitive formatters
     -->
+    <property name="testpattern" value="Test*"/>
     <property name="poi.test.locale" value="-Duser.language=en -Duser.country=US"/>
     <property name="POI.testdata.path" value="test-data"/>
     <property name="java.awt.headless" value="true"/>
@@ -134,8 +135,10 @@ under the License.
               value="${repository.m2}/maven2/commons-codec/commons-codec/1.5/commons-codec-1.5.jar"/>
     <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.13.jar"/>
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
-    <property name="main.junit.jar" location="${main.lib}/junit-3.8.1.jar"/>
-    <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/3.8.1/junit-3.8.1.jar"/>
+    <property name="main.junit.jar" location="${main.lib}/junit-4.11.jar"/>
+    <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/4.11/junit-4.11.jar"/>
+    <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
+    <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
     <property name="main.ant.jar" location="${main.lib}/ant-1.8.2.jar"/>
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.8.2/ant-1.8.2.jar"/>
 
@@ -180,6 +183,7 @@ under the License.
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.log4j.jar}"/>
         <pathelement location="${main.junit.jar}"/>
+        <pathelement location="${main.hamcrest.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -310,6 +314,7 @@ under the License.
                     <available file="${main.commons-codec.jar}"/>
                     <available file="${main.log4j.jar}"/>
                     <available file="${main.junit.jar}"/>
+                    <available file="${main.hamcrest.jar}"/>
                     <available file="${main.ant.jar}"/>
                 </and>
                 <isset property="disconnected"/>
@@ -335,6 +340,10 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${main.junit.url}"/>
             <param name="destfile" value="${main.junit.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${main.hamcrest.url}"/>
+            <param name="destfile" value="${main.hamcrest.jar}"/>
         </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${main.ant.url}"/>
@@ -636,7 +645,7 @@ under the License.
             <formatter type="plain"/>
             <batchtest todir="${main.reports.test}">
                 <fileset dir="${main.src.test}">
-                    <include name="**/Test*.java"/>
+                    <include name="**/${testpattern}.java"/>
                     <exclude name="**/All*Tests.java"/>
                     <exclude name="**/TestUnfixedBugs.java"/>
                     <exclude name="**/TestcaseRecordInputStream.java"/>
@@ -680,7 +689,7 @@ under the License.
             <formatter type="plain"/>
             <batchtest todir="${scratchpad.reports.test}">
                 <fileset dir="${scratchpad.src.test}">
-                    <include name="**/Test*.java"/>
+                    <include name="**/${testpattern}.java"/>
                     <exclude name="**/AllTests.java"/>
                 </fileset>
             </batchtest>
@@ -712,7 +721,7 @@ under the License.
               <formatter type="plain"/>
               <batchtest todir="${ooxml.reports.test}">
                   <fileset dir="${ooxml.src.test}">
-                      <include name="**/Test*.java"/>
+                      <include name="**/${testpattern}.java"/>
                       <exclude name="**/All*Tests.java"/>
                   </fileset>
               </batchtest>
@@ -772,7 +781,7 @@ under the License.
             <formatter type="plain"/>
             <batchtest todir="${excelant.reports.test}">
                 <fileset dir="${excelant.src.test}">
-                    <include name="**/Test*.java"/>
+                    <include name="**/${testpattern}.java"/>
                 </fileset>
             </batchtest>
         </junit>
