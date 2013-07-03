@@ -28,15 +28,10 @@ import org.apache.poi.util.CodePageUtil;
  * <p>Convenience class representing a DocumentSummary Information stream in a
  * Microsoft Office document.</p>
  *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @author Drew Varner (Drew.Varner closeTo sc.edu)
- * @author robert_flaherty@hyperion.com
  * @see SummaryInformation
  */
 public class DocumentSummaryInformation extends SpecialPropertySet
 {
-
     /**
      * <p>The document name a document summary information stream
      * usually has in a POIFS filesystem.</p>
@@ -67,8 +62,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
                 ("Not a " + getClass().getName());
     }
 
-
-
+    
     /**
      * <p>Returns the category (or <code>null</code>).</p>
      *
@@ -76,7 +70,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      */
     public String getCategory()
     {
-        return (String) getProperty(PropertyIDMap.PID_CATEGORY);
+        return getPropertyStringValue(PropertyIDMap.PID_CATEGORY);
     }
 
     /**
@@ -109,7 +103,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      */
     public String getPresentationFormat()
     {
-        return (String) getProperty(PropertyIDMap.PID_PRESFORMAT);
+        return getPropertyStringValue(PropertyIDMap.PID_PRESFORMAT);
     }
 
     /**
@@ -477,7 +471,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      */
     public String getManager()
     {
-        return (String) getProperty(PropertyIDMap.PID_MANAGER);
+        return getPropertyStringValue(PropertyIDMap.PID_MANAGER);
     }
 
     /**
@@ -509,7 +503,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
      */
     public String getCompany()
     {
-        return (String) getProperty(PropertyIDMap.PID_COMPANY);
+        return getPropertyStringValue(PropertyIDMap.PID_COMPANY);
     }
 
     /**
@@ -531,7 +525,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         final MutableSection s = (MutableSection) getFirstSection();
         s.removeProperty(PropertyIDMap.PID_COMPANY);
     }
-
 
 
     /**
@@ -563,7 +556,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         final MutableSection s = (MutableSection) getFirstSection();
         s.removeProperty(PropertyIDMap.PID_LINKSDIRTY);
     }
-
 
 
     /**
@@ -629,8 +621,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         }
     }
 
-
-
     /**
      * <p>Creates section 2 if it is not already present.</p>
      *
@@ -645,8 +635,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         }
     }
 
-
-
     /**
      * <p>Removes the custom properties.</p>
      */
@@ -657,7 +645,6 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         else
             throw new HPSFRuntimeException("Illegal internal format of Document SummaryInformation stream: second section is missing.");
     }
-
 
 
     /**
