@@ -32,7 +32,6 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Extracts all of the HPSF properties, both
@@ -66,7 +65,7 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
             Iterator<String> keys = cps.nameSet().iterator();
             while (keys.hasNext()) {
                 String key = keys.next();
-                String val = getPropertyValueText( cps.get(key) );
+                String val = HelperPropertySet.getPropertyValueText( cps.get(key) );
                 text.append(key + " = " + val + "\n");
             }
         }
@@ -98,34 +97,11 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
                 type = typeObj.toString();
             }
 
-            String val = getPropertyValueText( props[i].getValue() );
+            String val = HelperPropertySet.getPropertyValueText( props[i].getValue() );
             text.append(type + " = " + val + "\n");
         }
 
         return text.toString();
-    }
-    private static String getPropertyValueText(Object val) {
-        if (val == null) {
-            return "(not set)";
-        }
-        if (val instanceof byte[]) {
-            byte[] b = (byte[])val;
-            if (b.length == 0) {
-                return "";
-            }
-            if (b.length == 1) {
-                return Byte.toString(b[0]);
-            }
-            if (b.length == 2) {
-                return Integer.toString( LittleEndian.getUShort(b) );
-            }
-            if (b.length == 4) {
-                return Long.toString( LittleEndian.getUInt(b) );
-            }
-            // Maybe it's a string? who knows!
-            return new String(b);
-        }
-        return val.toString();
     }
 
     /**
@@ -141,6 +117,18 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
      */
     public POITextExtractor getMetadataTextExtractor() {
         throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
+    }
+    
+    private static abstract class HelperPropertySet extends SpecialPropertySet {
+        public HelperPropertySet() {
+            super(null);
+        }
+        public static String getPropertyValueText(Object val) {
+            if (val == null) {
+                return "(not set)";
+            }
+            return SpecialPropertySet.getPropertyStringValue(val);
+        }
     }
 
     public static void main(String[] args) throws IOException {

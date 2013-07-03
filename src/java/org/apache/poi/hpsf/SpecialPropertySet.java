@@ -51,17 +51,14 @@ import org.apache.poi.util.LittleEndian;
  * general {@link PropertySet}.  However, the current implementation
  * went the other way round historically: the convenience classes came
  * only late to my mind.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public abstract class SpecialPropertySet extends MutablePropertySet
 {
-	/**
-	 * The id to name mapping of the properties
-	 *  in this set.
-	 */
-	public abstract PropertyIDMap getPropertySetIDMap();
+    /**
+     * The id to name mapping of the properties
+     *  in this set.
+     */
+    public abstract PropertyIDMap getPropertySetIDMap();
 
     /**
      * <p>The "real" property set <code>SpecialPropertySet</code>
@@ -332,15 +329,17 @@ public abstract class SpecialPropertySet extends MutablePropertySet
      * @return The property as a String, or null if unavailable
      */
     protected String getPropertyStringValue(final int propertyId) {
-        Object o = getProperty(propertyId);
-        
+        Object propertyValue = getProperty(propertyId);
+        return getPropertyStringValue(propertyValue);
+    }
+    protected static String getPropertyStringValue(final Object propertyValue) {
         // Normal cases
-        if (o == null) return null;
-        if (o instanceof String) return (String)o;
+        if (propertyValue == null) return null;
+        if (propertyValue instanceof String) return (String)propertyValue;
         
         // Do our best with some edge cases
-        if (o instanceof byte[]) {
-            byte[] b = (byte[])o;
+        if (propertyValue instanceof byte[]) {
+            byte[] b = (byte[])propertyValue;
             if (b.length == 0) {
                 return "";
             }
@@ -356,7 +355,7 @@ public abstract class SpecialPropertySet extends MutablePropertySet
             // Maybe it's a string? who knows!
             return new String(b);
         }
-        return o.toString();
+        return propertyValue.toString();
     }
 
 
