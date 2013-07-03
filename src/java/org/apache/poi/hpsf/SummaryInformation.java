@@ -25,8 +25,6 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  * <p>Convenience class representing a Summary Information stream in a
  * Microsoft Office document.</p>
  *
- * @author Rainer Klute <a
- *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  * @see DocumentSummaryInformation
  */
 public final class SummaryInformation extends SpecialPropertySet {
@@ -69,7 +67,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getTitle()
     {
-        return (String) getProperty(PropertyIDMap.PID_TITLE);
+        return getPropertyStringValue(PropertyIDMap.PID_TITLE);
     }
 
 
@@ -105,7 +103,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getSubject()
     {
-        return (String) getProperty(PropertyIDMap.PID_SUBJECT);
+        return getPropertyStringValue(PropertyIDMap.PID_SUBJECT);
     }
 
 
@@ -141,7 +139,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getAuthor()
     {
-        return (String) getProperty(PropertyIDMap.PID_AUTHOR);
+        return getPropertyStringValue(PropertyIDMap.PID_AUTHOR);
     }
 
 
@@ -177,7 +175,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getKeywords()
     {
-        return (String) getProperty(PropertyIDMap.PID_KEYWORDS);
+        return getPropertyStringValue(PropertyIDMap.PID_KEYWORDS);
     }
 
 
@@ -213,7 +211,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getComments()
     {
-        return (String) getProperty(PropertyIDMap.PID_COMMENTS);
+        return getPropertyStringValue(PropertyIDMap.PID_COMMENTS);
     }
 
 
@@ -249,7 +247,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getTemplate()
     {
-        return (String) getProperty(PropertyIDMap.PID_TEMPLATE);
+        return getPropertyStringValue(PropertyIDMap.PID_TEMPLATE);
     }
 
 
@@ -285,7 +283,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getLastAuthor()
     {
-        return (String) getProperty(PropertyIDMap.PID_LASTAUTHOR);
+        return getPropertyStringValue(PropertyIDMap.PID_LASTAUTHOR);
     }
 
 
@@ -321,7 +319,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getRevNumber()
     {
-        return (String) getProperty(PropertyIDMap.PID_REVNUMBER);
+        return getPropertyStringValue(PropertyIDMap.PID_REVNUMBER);
     }
 
 
@@ -668,7 +666,7 @@ public final class SummaryInformation extends SpecialPropertySet {
      */
     public String getApplicationName()
     {
-        return (String) getProperty(PropertyIDMap.PID_APPNAME);
+        return getPropertyStringValue(PropertyIDMap.PID_APPNAME);
     }
 
 

@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * <p>Abstract superclass for the convenience classes {@link
@@ -149,7 +150,7 @@ public abstract class SpecialPropertySet extends MutablePropertySet
     /**
      * @see PropertySet#getSections
      */
-    public List getSections()
+    public List<Section> getSections()
     {
         return delegate.getSections();
     }
@@ -323,6 +324,40 @@ public abstract class SpecialPropertySet extends MutablePropertySet
         return delegate.getPropertyIntValue(id);
     }
 
+
+    
+    /**
+     * Fetches the property with the given ID, then does its
+     *  best to return it as a String
+     * @return The property as a String, or null if unavailable
+     */
+    protected String getPropertyStringValue(final int propertyId) {
+        Object o = getProperty(propertyId);
+        
+        // Normal cases
+        if (o == null) return null;
+        if (o instanceof String) return (String)o;
+        
+        // Do our best with some edge cases
+        if (o instanceof byte[]) {
+            byte[] b = (byte[])o;
+            if (b.length == 0) {
+                return "";
+            }
+            if (b.length == 1) {
+                return Byte.toString(b[0]);
+            }
+            if (b.length == 2) {
+                return Integer.toString( LittleEndian.getUShort(b) );
+            }
+            if (b.length == 4) {
+                return Long.toString( LittleEndian.getUInt(b) );
+            }
+            // Maybe it's a string? who knows!
+            return new String(b);
+        }
+        return o.toString();
+    }
 
 
     /**
