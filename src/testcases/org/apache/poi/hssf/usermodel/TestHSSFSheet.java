@@ -40,8 +40,11 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -84,22 +87,27 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         GridsetRecord gridsetRec = s.getSheet().getGridsetRecord();
-		assertEquals(true, gridsetRec.getGridset());
+		assertTrue(gridsetRec.getGridset());
         s.setGridsPrinted(true);
-        assertEquals(false, gridsetRec.getGridset());
+        assertFalse(gridsetRec.getGridset());
     }
 
     /**
      * Test vertically centered output.
      */
+    @SuppressWarnings("deprecation")
     public void testVerticallyCenter() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
         VCenterRecord record = s.getSheet().getPageSettings().getVCenter();
 
-        assertEquals(false, record.getVCenter());
+        assertFalse(record.getVCenter());
+        assertFalse(s.getVerticallyCenter(true));
+        assertFalse(s.getVerticallyCenter(false));
         s.setVerticallyCenter(true);
-        assertEquals(true, record.getVCenter());
+        assertTrue(record.getVCenter());
+        assertTrue(s.getVerticallyCenter(true));
+        assertTrue(s.getVerticallyCenter(false));
 
         // wb.write(new FileOutputStream("c:\\test.xls"));
     }
@@ -112,9 +120,9 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFSheet s = wb.createSheet();
         HCenterRecord record = s.getSheet().getPageSettings().getHCenter();
 
-        assertEquals(false, record.getHCenter());
+        assertFalse(record.getHCenter());
         s.setHorizontallyCenter(true);
-        assertEquals(true, record.getHCenter());
+        assertTrue(record.getHCenter());
     }
 
 
@@ -128,14 +136,14 @@ public final class TestHSSFSheet extends BaseTestSheet {
                 (WSBoolRecord) s.getSheet().findFirstRecordBySid(WSBoolRecord.sid);
 
         // Check defaults
-        assertEquals(true, record.getAlternateExpression());
-        assertEquals(true, record.getAlternateFormula());
-        assertEquals(false, record.getAutobreaks());
-        assertEquals(false, record.getDialog());
-        assertEquals(false, record.getDisplayGuts());
-        assertEquals(true, record.getFitToPage());
-        assertEquals(false, record.getRowSumsBelow());
-        assertEquals(false, record.getRowSumsRight());
+        assertTrue(record.getAlternateExpression());
+        assertTrue(record.getAlternateFormula());
+        assertFalse(record.getAutobreaks());
+        assertFalse(record.getDialog());
+        assertFalse(record.getDisplayGuts());
+        assertTrue(record.getFitToPage());
+        assertFalse(record.getRowSumsBelow());
+        assertFalse(record.getRowSumsRight());
 
         // Alter
         s.setAlternativeExpression(false);
@@ -148,22 +156,22 @@ public final class TestHSSFSheet extends BaseTestSheet {
         s.setRowSumsRight(true);
 
         // Check
-        assertEquals(true, record.getAlternateExpression()); //sheet.setRowSumsBelow alters this field too
-        assertEquals(false, record.getAlternateFormula());
-        assertEquals(true, record.getAutobreaks());
-        assertEquals(true, record.getDialog());
-        assertEquals(true, record.getDisplayGuts());
-        assertEquals(false, record.getFitToPage());
-        assertEquals(true, record.getRowSumsBelow());
-        assertEquals(true, record.getRowSumsRight());
-        assertEquals(true, s.getAlternateExpression());
-        assertEquals(false, s.getAlternateFormula());
-        assertEquals(true, s.getAutobreaks());
-        assertEquals(true, s.getDialog());
-        assertEquals(true, s.getDisplayGuts());
-        assertEquals(false, s.getFitToPage());
-        assertEquals(true, s.getRowSumsBelow());
-        assertEquals(true, s.getRowSumsRight());
+        assertTrue(record.getAlternateExpression()); //sheet.setRowSumsBelow alters this field too
+        assertFalse(record.getAlternateFormula());
+        assertTrue(record.getAutobreaks());
+        assertTrue(record.getDialog());
+        assertTrue(record.getDisplayGuts());
+        assertFalse(record.getFitToPage());
+        assertTrue(record.getRowSumsBelow());
+        assertTrue(record.getRowSumsRight());
+        assertTrue(s.getAlternateExpression());
+        assertFalse(s.getAlternateFormula());
+        assertTrue(s.getAutobreaks());
+        assertTrue(s.getDialog());
+        assertTrue(s.getDisplayGuts());
+        assertFalse(s.getFitToPage());
+        assertTrue(s.getRowSumsBelow());
+        assertTrue(s.getRowSumsRight());
     }
 
     /**
@@ -611,8 +619,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
        r.getCell(0).setCellStyle(cs);
        r.getCell(1).setCellStyle(cs);
        
-       assertEquals(true, DateUtil.isCellDateFormatted(r.getCell(0)));
-       assertEquals(true, DateUtil.isCellDateFormatted(r.getCell(1)));
+       assertTrue(DateUtil.isCellDateFormatted(r.getCell(0)));
+       assertTrue(DateUtil.isCellDateFormatted(r.getCell(1)));
        
        // Should get much bigger now
        s.autoSizeColumn((short)0);
@@ -898,9 +906,9 @@ public final class TestHSSFSheet extends BaseTestSheet {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
 
-        assertEquals(false, s.isRightToLeft());
+        assertFalse(s.isRightToLeft());
         s.setRightToLeft(true);
-        assertEquals(true, s.isRightToLeft());
+        assertTrue(s.isRightToLeft());
     }
 
     public void testAutoFilter(){
@@ -950,5 +958,71 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertTrue(subRecords.get(0) instanceof CommonObjectDataSubRecord );
         assertTrue(subRecords.get(1) instanceof FtCblsSubRecord ); // must be present, see Bug 51481
         assertTrue(subRecords.get(2) instanceof LbsDataSubRecord );
+    }
+
+    public void testGetSetColumnHiddenShort() {
+        Workbook workbook = new HSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Sheet 1");
+        sheet.setColumnHidden((short)2, true);
+        assertTrue(sheet.isColumnHidden((short)2));
+    }
+
+    public void testColumnWidthShort() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        //default column width measured in characters
+        sheet.setDefaultColumnWidth((short)10);
+        assertEquals(10, sheet.getDefaultColumnWidth());
+        //columns A-C have default width
+        assertEquals(256*10, sheet.getColumnWidth((short)0));
+        assertEquals(256*10, sheet.getColumnWidth((short)1));
+        assertEquals(256*10, sheet.getColumnWidth((short)2));
+
+        //set custom width for D-F
+        for (char i = 'D'; i <= 'F'; i++) {
+            //Sheet#setColumnWidth accepts the width in units of 1/256th of a character width
+            int w = 256*12;
+            sheet.setColumnWidth((short)i, w);
+            assertEquals(w, sheet.getColumnWidth((short)i));
+        }
+        //reset the default column width, columns A-C change, D-F still have custom width
+        sheet.setDefaultColumnWidth((short)20);
+        assertEquals(20, sheet.getDefaultColumnWidth());
+        assertEquals(256*20, sheet.getColumnWidth((short)0));
+        assertEquals(256*20, sheet.getColumnWidth((short)1));
+        assertEquals(256*20, sheet.getColumnWidth((short)2));
+        for (char i = 'D'; i <= 'F'; i++) {
+            int w = 256*12;
+            assertEquals(w, sheet.getColumnWidth((short)i));
+        }
+
+        // check for 16-bit signed/unsigned error:
+        sheet.setColumnWidth((short)10, 40000);
+        assertEquals(40000, sheet.getColumnWidth((short)10));
+
+        //The maximum column width for an individual cell is 255 characters
+        try {
+            sheet.setColumnWidth((short)9, 256*256);
+            fail("expected exception");
+        } catch(IllegalArgumentException e){
+            assertEquals("The maximum column width for an individual cell is 255 characters.", e.getMessage());
+        }
+
+        //serialize and read again
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+
+        sheet = wb.getSheetAt(0);
+        assertEquals(20, sheet.getDefaultColumnWidth());
+        //columns A-C have default width
+        assertEquals(256*20, sheet.getColumnWidth((short)0));
+        assertEquals(256*20, sheet.getColumnWidth((short)1));
+        assertEquals(256*20, sheet.getColumnWidth((short)2));
+        //columns D-F have custom width
+        for (char i = 'D'; i <= 'F'; i++) {
+            short w = (256*12);
+            assertEquals(w, sheet.getColumnWidth((short)i));
+        }
+        assertEquals(40000, sheet.getColumnWidth((short)10));
     }
 }

@@ -417,7 +417,7 @@ final class LinkTable {
 	}
 
 	public int getSheetIndexFromExternSheetIndex(int extRefIndex) {
-		if (extRefIndex >= _externSheetRecord.getNumOfRefs()) {
+		if (extRefIndex >= _externSheetRecord.getNumOfRefs() || extRefIndex < 0) {
 			return -1;
 		}
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
