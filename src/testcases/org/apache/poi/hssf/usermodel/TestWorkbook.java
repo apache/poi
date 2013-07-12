@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -453,8 +454,13 @@ public final class TestWorkbook extends TestCase {
         BackupRecord record   = workbook.getBackupRecord();
 
         assertEquals(0, record.getBackup());
+        assertFalse(wb.getBackupFlag());
         wb.setBackupFlag(true);
         assertEquals(1, record.getBackup());
+        assertTrue(wb.getBackupFlag());
+        wb.setBackupFlag(false);
+        assertEquals(0, record.getBackup());
+        assertFalse(wb.getBackupFlag());
     }
 
     private static final class RecordCounter implements RecordVisitor {
@@ -545,4 +551,56 @@ public final class TestWorkbook extends TestCase {
         assertTrue("file exists",file.exists());
     }
 
+    @SuppressWarnings("deprecation")
+    public void testRepeatingColsRowsMinusOne() throws IOException
+    {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("Test Print Titles");
+
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFCell cell = row.createCell(1);
+        cell.setCellValue(new HSSFRichTextString("hi"));
+
+
+        workbook.setRepeatingRowsAndColumns(0, -1, 1, -1, 0);
+
+        File file = TempFile.createTempFile("testPrintTitlesA",".xls");
+
+        FileOutputStream fileOut = new FileOutputStream(file);
+        workbook.write(fileOut);
+        fileOut.close();
+
+        assertTrue("file exists",file.exists());
+    }
+
+    @SuppressWarnings("deprecation")
+    public void testAddMergedRegionWithRegion() {
+        HSSFWorkbook     wb   = new HSSFWorkbook();
+        HSSFSheet        s    = wb.createSheet();
+
+        for (int rownum = 0; rownum < 100; rownum++) {
+            HSSFRow r = s.createRow(rownum);
+
+            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
+                HSSFCell c = r.createCell(cellnum);
+                c.setCellValue(rownum * 10000 + cellnum
+                               + ((( double ) rownum / 1000)
+                                  + (( double ) cellnum / 10000)));
+                c = r.createCell(cellnum + 1);
+                c.setCellValue(new HSSFRichTextString("TEST"));
+            }
+        }
+        s.addMergedRegion(new Region(0, (short)0, 10, (short)10));
+        s.addMergedRegion(new Region(30, (short)5, 40, (short)15));
+        sanityChecker.checkHSSFWorkbook(wb);
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+
+        s  = wb.getSheetAt(0);
+        CellRangeAddress r1 = s.getMergedRegion(0);
+        CellRangeAddress r2 = s.getMergedRegion(1);
+
+        confirmRegion(new CellRangeAddress(0, 10, 0, 10), r1);
+        confirmRegion(new CellRangeAddress(30, 40,5, 15), r2);
+    }
 }

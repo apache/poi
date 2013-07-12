@@ -175,6 +175,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(8, s.getLastRowNum());
     }
 
+    @SuppressWarnings("deprecation")
     public void testSelectedSheet_bug44523() {
         HSSFWorkbook wb=new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet("Sheet1");
@@ -188,6 +189,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         confirmActiveSelected(sheet4, false);
 
         wb.setSelectedTab(1);
+
+        // see Javadoc, in this case selected means "active"
+        assertEquals(wb.getActiveSheetIndex(), wb.getSelectedTab());
 
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
@@ -708,4 +712,169 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         changeSheetNameWithSharedFormulas("shared_formulas.xls");
     }
 
+    public void testEmptyDirectoryNode() throws IOException {
+        try {
+            assertNotNull(new HSSFWorkbook(new POIFSFileSystem()));
+            fail("Should catch exception about invalid POIFSFileSystem");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("does not contain a BIFF8"));
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void testSelectedSheetShort() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        HSSFSheet sheet1 = wb.createSheet("Sheet1");
+        HSSFSheet sheet2 = wb.createSheet("Sheet2");
+        HSSFSheet sheet3 = wb.createSheet("Sheet3");
+        HSSFSheet sheet4 = wb.createSheet("Sheet4");
+
+        confirmActiveSelected(sheet1, true);
+        confirmActiveSelected(sheet2, false);
+        confirmActiveSelected(sheet3, false);
+        confirmActiveSelected(sheet4, false);
+
+        wb.setSelectedTab((short)1);
+        
+        // see Javadoc, in this case selected means "active"
+        assertEquals(wb.getActiveSheetIndex(), wb.getSelectedTab());
+
+        // Demonstrate bug 44525:
+        // Well... not quite, since isActive + isSelected were also added in the same bug fix
+        if (sheet1.isSelected()) {
+            throw new AssertionFailedError("Identified bug 44523 a");
+        }
+        wb.setActiveSheet(1);
+        if (sheet1.isActive()) {
+            throw new AssertionFailedError("Identified bug 44523 b");
+        }
+
+        confirmActiveSelected(sheet1, false);
+        confirmActiveSelected(sheet2, true);
+        confirmActiveSelected(sheet3, false);
+        confirmActiveSelected(sheet4, false);
+        
+        assertEquals(0, wb.getFirstVisibleTab());
+        wb.setDisplayedTab((short)2);
+        assertEquals(2, wb.getFirstVisibleTab());
+        assertEquals(2, wb.getDisplayedTab());
+    }
+
+    public void testAddSheetTwice() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        HSSFSheet sheet1 = wb.createSheet("Sheet1");
+        assertNotNull(sheet1);
+        try {
+            wb.createSheet("Sheet1");
+            fail("Should fail if we add the same sheet twice");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("already contains a sheet of this name"));
+        }
+    }
+    
+    public void testGetSheetIndex() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        HSSFSheet sheet1 = wb.createSheet("Sheet1");
+        HSSFSheet sheet2 = wb.createSheet("Sheet2");
+        HSSFSheet sheet3 = wb.createSheet("Sheet3");
+        HSSFSheet sheet4 = wb.createSheet("Sheet4");
+        
+        assertEquals(0, wb.getSheetIndex(sheet1));
+        assertEquals(1, wb.getSheetIndex(sheet2));
+        assertEquals(2, wb.getSheetIndex(sheet3));
+        assertEquals(3, wb.getSheetIndex(sheet4));
+        
+        // remove sheets
+        wb.removeSheetAt(0);
+        wb.removeSheetAt(2);
+
+        // ensure that sheets are moved up and removed sheets are not found any more
+        assertEquals(-1, wb.getSheetIndex(sheet1));
+        assertEquals(0, wb.getSheetIndex(sheet2));
+        assertEquals(1, wb.getSheetIndex(sheet3));
+        assertEquals(-1, wb.getSheetIndex(sheet4));
+    }
+
+    @SuppressWarnings("deprecation")
+    public void testGetExternSheetIndex() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        wb.createSheet("Sheet1");
+        wb.createSheet("Sheet2");
+        
+        assertEquals(0, wb.getExternalSheetIndex(0));
+        assertEquals(1, wb.getExternalSheetIndex(1));
+        
+        assertEquals("Sheet1", wb.findSheetNameFromExternSheet(0));
+        assertEquals("Sheet2", wb.findSheetNameFromExternSheet(1));
+        //assertEquals(null, wb.findSheetNameFromExternSheet(2));
+        
+        assertEquals(0, wb.getSheetIndexFromExternSheetIndex(0));
+        assertEquals(1, wb.getSheetIndexFromExternSheetIndex(1));
+        assertEquals(-1, wb.getSheetIndexFromExternSheetIndex(2));
+        assertEquals(-1, wb.getSheetIndexFromExternSheetIndex(100));
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void testSSTString() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        
+        int sst = wb.addSSTString("somestring");
+        assertEquals("somestring", wb.getSSTString(sst));
+        //assertNull(wb.getSSTString(sst+1));
+    }
+    
+    public void testNames() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        
+        try {
+            wb.getNameAt(0);
+            fail("Fails without any defined names");
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("no defined names"));
+        }
+        
+        HSSFName name = wb.createName();
+        assertNotNull(name);
+        
+        assertNull(wb.getName("somename"));
+
+        name.setNameName("myname");
+        assertNotNull(wb.getName("myname"));
+        
+        assertEquals(0, wb.getNameIndex(name));
+        assertEquals(0, wb.getNameIndex("myname"));
+        
+        try {
+            wb.getNameAt(5);
+            fail("Fails without any defined names");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("outside the allowable range"));
+        }
+
+        try {
+            wb.getNameAt(-3);
+            fail("Fails without any defined names");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("outside the allowable range"));
+        }
+    }
+    
+    public void testTestMethods() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        wb.insertChartRecord();
+        //wb.dumpDrawingGroupRecords(true);
+        //wb.dumpDrawingGroupRecords(false);
+    }
+    
+    public void testWriteProtection() {
+        HSSFWorkbook wb=new HSSFWorkbook();
+        
+        assertFalse(wb.isWriteProtected());
+        
+        wb.writeProtectWorkbook("mypassword", "myuser");
+        assertTrue(wb.isWriteProtected());
+        
+        wb.unwriteProtectWorkbook();
+        assertFalse(wb.isWriteProtected());
+    }
 }
