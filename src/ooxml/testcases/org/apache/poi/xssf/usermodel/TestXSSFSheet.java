@@ -17,10 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -33,11 +29,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
@@ -45,6 +43,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
 public final class TestXSSFSheet extends BaseTestSheet {
+
+    private static final int ROW_COUNT = 40000;
 
     public TestXSSFSheet() {
         super(XSSFITestDataProvider.instance);
@@ -1079,28 +1079,28 @@ public final class TestXSSFSheet extends BaseTestSheet {
      * Test to trigger OOXML-LITE generating to include org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr
      */
     public void testSetForceFormulaRecalculation() {
-    	   XSSFWorkbook workbook = new XSSFWorkbook();
-         XSSFSheet sheet = workbook.createSheet("Sheet 1");
-
-         // Set
-         sheet.setForceFormulaRecalculation(true);
-         assertEquals(true, sheet.getForceFormulaRecalculation());
-
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
+        
+        // Set
+        sheet.setForceFormulaRecalculation(true);
+        assertEquals(true, sheet.getForceFormulaRecalculation());
+        
         // calcMode="manual" is unset when forceFormulaRecalculation=true
         CTCalcPr calcPr = workbook.getCTWorkbook().addNewCalcPr();
         calcPr.setCalcMode(STCalcMode.MANUAL);
         sheet.setForceFormulaRecalculation(true);
         assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
-
+        
         // Check
-         sheet.setForceFormulaRecalculation(false);
-         assertEquals(false, sheet.getForceFormulaRecalculation());
-
-
-         // Save, re-load, and re-check
-         workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-         sheet = workbook.getSheet("Sheet 1");
-         assertEquals(false, sheet.getForceFormulaRecalculation());
+        sheet.setForceFormulaRecalculation(false);
+        assertEquals(false, sheet.getForceFormulaRecalculation());
+        
+        
+        // Save, re-load, and re-check
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheet("Sheet 1");
+        assertEquals(false, sheet.getForceFormulaRecalculation());
 	}
 
     public void test54607() {
@@ -1164,4 +1164,49 @@ public final class TestXSSFSheet extends BaseTestSheet {
 	    	}
     	}
 	}
+	
+	public void testShowInPaneManyRowsBug55248() {
+	    XSSFWorkbook workbook = new XSSFWorkbook();
+	    XSSFSheet sheet = workbook.createSheet("Sheet 1");
+
+	    sheet.showInPane(0, 0);
+	    
+        for(int i = ROW_COUNT/2;i < ROW_COUNT;i++) {
+            sheet.createRow(i);
+            sheet.showInPane(i, 0);
+            // this one fails: sheet.showInPane((short)i, 0);
+        }
+        
+        short i = 0;
+        sheet.showInPane(i, i);
+        
+        XSSFWorkbook wb = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        checkRowCount(wb);
+	}
+
+    public void testShowInPaneManyRowsBug55248SXSSF() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook(new XSSFWorkbook());
+        SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet("Sheet 1");
+        
+        sheet.showInPane(0, 0);
+        
+        for(int i = ROW_COUNT/2;i < ROW_COUNT;i++) {
+            sheet.createRow(i);
+            sheet.showInPane(i, 0);
+            // this one fails: sheet.showInPane((short)i, 0);
+        }
+        
+        short i = 0;
+        sheet.showInPane(i, i);
+        
+        Workbook wb = SXSSFITestDataProvider.instance.writeOutAndReadBack(workbook);
+        checkRowCount(wb);
+    }
+
+    private void checkRowCount(Workbook wb) {
+        assertNotNull(wb);
+        final Sheet sh = wb.getSheet("Sheet 1");
+        assertNotNull(sh);
+        assertEquals(ROW_COUNT-1, sh.getLastRowNum());
+    }
 }

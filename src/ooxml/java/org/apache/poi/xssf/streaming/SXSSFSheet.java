@@ -778,6 +778,20 @@ public class SXSSFSheet implements Sheet, Cloneable
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
+    public void showInPane(int toprow, int leftcol)
+    {
+        _sh.showInPane(toprow, leftcol);
+    }
+
+    /**
+     * Sets desktop window pane display area, when the
+     * file is first opened in a viewer.
+     *
+     * @param toprow the top row to show in desktop window pane
+     * @param leftcol the left column to show in desktop window pane
+     * 
+     * @deprecated Use the version of showInPane() with ints as there can be more than 32767 rows. 
+     */
     public void showInPane(short toprow, short leftcol)
     {
         _sh.showInPane(toprow, leftcol);
