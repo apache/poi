@@ -2386,10 +2386,23 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
-    public void showInPane(short toprow, short leftcol) {
+    public void showInPane(int toprow, int leftcol) {
         CellReference cellReference = new CellReference(toprow, leftcol);
         String cellRef = cellReference.formatAsString();
         getPane().setTopLeftCell(cellRef);
+    }
+
+    /**
+     * Location of the top left visible cell Location of the top left visible cell in the bottom right
+     * pane (when in Left-to-Right mode).
+     *
+     * @param toprow the top row to show in desktop window pane
+     * @param leftcol the left column to show in desktop window pane
+     * 
+     * @deprecated Use the version of showInPane() with ints as there can be more than 32767 rows. 
+     */
+    public void showInPane(short toprow, short leftcol) {
+        showInPane((int)toprow, (int)leftcol);
     }
 
     public void ungroupColumn(int fromColumn, int toColumn) {
