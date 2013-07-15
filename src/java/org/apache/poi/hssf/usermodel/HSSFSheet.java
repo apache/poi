@@ -1798,10 +1798,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     /**
-     * Creates the top-level drawing patriarch.  This will have
-     * the effect of removing any existing drawings on this
-     * sheet.
-     * This may then be used to add graphics or charts
+     * Creates the top-level drawing patriarch. 
+     * <p>This may then be used to add graphics or charts.</p>
+     * <p>Note that this will normally have the effect of removing 
+     *  any existing drawings on this sheet.</p>
      *
      * @return The new patriarch.
      */

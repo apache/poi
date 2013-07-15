@@ -860,7 +860,10 @@ public interface Sheet extends Iterable<Row> {
     Comment getCellComment(int row, int column);
 
     /**
-     * Creates the top-level drawing patriarch.
+     * Creates the top-level drawing patriarch. 
+     * <p>This may then be used to add graphics or charts.</p>
+     * <p>Note that this will normally have the effect of removing 
+     *  any existing drawings on this sheet.</p>
      *
      * @return  The new drawing patriarch.
      */
