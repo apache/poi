@@ -46,6 +46,11 @@ public final class TestDocumentProperties
 
     for (int x = 0; x < fields.length; x++)
     {
+      // JaCoCo Code Coverage adds it's own field, don't look at this one here
+      if(fields[x].getName().equals("$jacocoData")) {
+    	  continue;
+      }
+
       if (!fields[x].getType().isArray())
       {
         assertEquals(fields[x].get(_documentProperties),
@@ -53,6 +58,10 @@ public final class TestDocumentProperties
       }
       else
       {
+    	// ensure that the class was not changed/enhanced, e.g. by code instrumentation like coverage tools
+    	assertEquals("Invalid type for field: " + fields[x].getName(), 
+    			"[B", fields[x].getType().getName());
+    	
         byte[] buf1 = (byte[])fields[x].get(_documentProperties);
         byte[] buf2 = (byte[])fields[x].get(newDocProperties);
         Arrays.equals(buf1, buf2);
