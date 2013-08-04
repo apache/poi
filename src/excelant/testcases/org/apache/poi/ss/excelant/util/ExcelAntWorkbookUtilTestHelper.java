@@ -30,23 +30,19 @@ public class ExcelAntWorkbookUtilTestHelper extends ExcelAntWorkbookUtil {
 
 	public ExcelAntWorkbookUtilTestHelper(String fName) {
 		super(fName);
-		// TODO Auto-generated constructor stub
 	}
 
 	public ExcelAntWorkbookUtilTestHelper(Workbook wb) {
 		super(wb);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public UDFFinder getFunctions() {
-		// TODO Auto-generated method stub
 		return super.getFunctions();
 	}
 
 	@Override
 	public FormulaEvaluator getEvaluator(String excelFileName) {
-		// TODO Auto-generated method stub
 		return super.getEvaluator(excelFileName);
 	}
 

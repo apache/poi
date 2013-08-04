@@ -16,14 +16,21 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.examples.formula.CalculateMortgageFunction;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.tools.ant.BuildException;
 
 public class TestExcelAntWorkbookUtil extends TestCase {
 	
@@ -39,6 +46,17 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 	public void testStringConstructor() {
 		fixture = new ExcelAntWorkbookUtilTestHelper( 
 				                                  mortgageCalculatorFileName ) ;
+		
+		assertNotNull( fixture ) ;
+		
+	}
+
+	public void testWorkbookConstructor() throws InvalidFormatException, IOException {
+        File workbookFile = new File(mortgageCalculatorFileName);
+        FileInputStream fis = new FileInputStream(workbookFile);
+        Workbook workbook = WorkbookFactory.create(fis);
+
+		fixture = new ExcelAntWorkbookUtilTestHelper( workbook ) ;
 		
 		assertNotNull( fixture ) ;
 		
