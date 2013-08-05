@@ -18,6 +18,8 @@
 package org.apache.poi.xssf.usermodel.helpers;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.xssf.util.CTColComparator;
@@ -112,6 +114,8 @@ public class ColumnHelper {
 
     public CTCols addCleanColIntoCols(CTCols cols, CTCol col) {
         boolean colOverlaps = false;
+        // a Map to remember overlapping columns
+        Map<Long, Boolean> overlappingCols = new LinkedHashMap<Long, Boolean>();
         int sizeOfColArray = cols.sizeOfColArray();
         for (int i = 0; i < sizeOfColArray; i++) {
             CTCol ithCol = cols.getColArray(i);
@@ -124,54 +128,65 @@ public class ColumnHelper {
             // different behavior required for each of the 4 different
             // overlapping types
             if (overlappingType == NumericRanges.OVERLAPS_1_MINOR) {
+            	// move the max border of the ithCol 
+            	// and insert a new column within the overlappingRange with merged column attributes
                 ithCol.setMax(overlappingRange[0] - 1);
-                CTCol rangeCol = insertCol(cols, overlappingRange[0],
+                insertCol(cols, overlappingRange[0],
                         overlappingRange[1], new CTCol[] { ithCol, col });
-                i++;
-                CTCol newCol = insertCol(cols, (overlappingRange[1] + 1), col
-                        .getMax(), new CTCol[] { col });
                 i++;
             } else if (overlappingType == NumericRanges.OVERLAPS_2_MINOR) {
+            	// move the min border of the ithCol 
+            	// and insert a new column within the overlappingRange with merged column attributes
                 ithCol.setMin(overlappingRange[1] + 1);
-                CTCol rangeCol = insertCol(cols, overlappingRange[0],
+                insertCol(cols, overlappingRange[0],
                         overlappingRange[1], new CTCol[] { ithCol, col });
                 i++;
-                CTCol newCol = insertCol(cols, col.getMin(),
-                        (overlappingRange[0] - 1), new CTCol[] { col });
-                i++;
             } else if (overlappingType == NumericRanges.OVERLAPS_2_WRAPS) {
+            	// merge column attributes, no new column is needed
                 setColumnAttributes(col, ithCol);
-                if (col.getMin() != ithCol.getMin()) {
-                    CTCol newColBefore = insertCol(cols, col.getMin(), (ithCol
-                            .getMin() - 1), new CTCol[] { col });
-                    i++;
-                }
-                if (col.getMax() != ithCol.getMax()) {
-                    CTCol newColAfter = insertCol(cols, (ithCol.getMax() + 1),
-                            col.getMax(), new CTCol[] { col });
-                    i++;
-                }
             } else if (overlappingType == NumericRanges.OVERLAPS_1_WRAPS) {
+            	// split the ithCol in three columns: before the overlappingRange, overlappingRange, and after the overlappingRange
+            	// before overlappingRange
                 if (col.getMin() != ithCol.getMin()) {
-                    CTCol newColBefore = insertCol(cols, ithCol.getMin(), (col
+                    insertCol(cols, ithCol.getMin(), (col
                             .getMin() - 1), new CTCol[] { ithCol });
                     i++;
                 }
+                // after the overlappingRange
                 if (col.getMax() != ithCol.getMax()) {
-                    CTCol newColAfter = insertCol(cols, (col.getMax() + 1),
+                    insertCol(cols, (col.getMax() + 1),
                             ithCol.getMax(), new CTCol[] { ithCol });
                     i++;
                 }
+                // within the overlappingRange
                 ithCol.setMin(overlappingRange[0]);
                 ithCol.setMax(overlappingRange[1]);
                 setColumnAttributes(col, ithCol);
             }
             if (overlappingType != NumericRanges.NO_OVERLAPS) {
                 colOverlaps = true;
+                // remember overlapped columns
+                for (long j = overlappingRange[0]; j <= overlappingRange[1]; j++) {
+                	overlappingCols.put(Long.valueOf(j), Boolean.TRUE);
+                }
             }
         }
         if (!colOverlaps) {
-            CTCol newCol = cloneCol(cols, col);
+            cloneCol(cols, col);
+        } else {
+            // insert new columns for ranges without overlaps
+        	long colMin = -1;
+        	for (long j = col.getMin(); j <= col.getMax(); j++) {
+        		if (!Boolean.TRUE.equals(overlappingCols.get(Long.valueOf(j)))) {
+        			if (colMin < 0) {
+        				colMin = j;
+        			}
+            		if ((j + 1) > col.getMax() || Boolean.TRUE.equals(overlappingCols.get(Long.valueOf(j + 1)))) {
+            			insertCol(cols, colMin, j, new CTCol[] { col });
+                    	colMin = -1;
+        			}
+        		}
+        	}
         }
         sortColumns(cols);
         return cols;

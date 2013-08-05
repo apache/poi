@@ -1220,6 +1220,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         worksheet.setColsArray(0,ctCols);
         setSheetFormatPrOutlineLevelCol();
     }
+    
+    /**
+     * Do not leave the width attribute undefined (see #52186).
+     */
+    private void setColWidthAttribute(CTCols ctCols) {
+        for (CTCol col : ctCols.getColList()) {
+        	if (!col.isSetWidth()) {
+        		col.setWidth(getDefaultColumnWidth());
+        		col.setCustomWidth(false);
+        	}
+        }
+    }
 
     /**
      * Tie a range of cell together so that they can be collapsed or expanded
@@ -1249,11 +1261,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
 
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     private short getMaxOutlineLevelCols() {
         CTCols ctCols = worksheet.getColsArray(0);
         short outlineLevel = 0;
-        for (CTCol col : ctCols.getColArray()) {
+        for (CTCol col : ctCols.getColList()) {
             outlineLevel = col.getOutlineLevel() > outlineLevel ? col.getOutlineLevel() : outlineLevel;
         }
         return outlineLevel;
@@ -2682,6 +2693,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             CTCols col = worksheet.getColsArray(0);
             if(col.sizeOfColArray() == 0) {
                 worksheet.setColsArray(null);
+            } else {
+            	setColWidthAttribute(col);
             }
         }
 

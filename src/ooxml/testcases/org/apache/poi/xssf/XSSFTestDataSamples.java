@@ -19,6 +19,9 @@ package org.apache.poi.xssf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -29,11 +32,17 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * Centralises logic for finding/opening sample files in the src/testcases/org/apache/poi/hssf/hssf/data folder. 
+ * Centralises logic for finding/opening sample files in the test-data/spreadsheet folder. 
  * 
  * @author Josh Micich
  */
 public class XSSFTestDataSamples {
+   /**
+    * Used by {@link writeOutAndReadBack(R wb, String testName)}.  If a
+    * value is set for this in the System Properties, the xlsx file
+    * will be written out to that directory.
+    */
+   public static final String TEST_OUTPUT_DIR = "poi.test.xssf.output.dir";
 
    public static OPCPackage openSamplePackage(String sampleName) {
       try {
@@ -72,5 +81,43 @@ public class XSSFTestDataSamples {
 		@SuppressWarnings("unchecked")
 		R r = (R) result;
 		return r;
+    }
+    
+    /**
+     * Writes the Workbook either into a file or into a byte array, depending on presence of 
+     * the system property {@value #TEST_OUTPUT_DIR}, and reads it in a new instance of the Workbook back.
+     * @param wb workbook to write
+     * @param testName file name to be used if writing into a file. The old file with the same name will be overridden.
+     * @return new instance read from the stream written by the wb parameter.
+     */
+    public static <R extends Workbook> R writeOutAndReadBack(R wb, String testName) {
+        XSSFWorkbook result = null;
+        if (System.getProperty(TEST_OUTPUT_DIR) != null) {
+            try {
+                File file = new File(System.getProperty(TEST_OUTPUT_DIR), testName + ".xlsx");
+                if (file.exists()) {
+                    file.delete();
+                }
+                FileOutputStream out = new FileOutputStream(file);
+                try {
+                    wb.write(out);
+                } finally {
+                    out.close();
+                }
+                FileInputStream in = new FileInputStream(file);
+                try {
+                    result = new XSSFWorkbook(in);
+                } finally {
+                    in.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            return writeOutAndReadBack(wb);
+        }
+        @SuppressWarnings("unchecked")
+        R r = (R) result;
+        return r;
     }
 }
