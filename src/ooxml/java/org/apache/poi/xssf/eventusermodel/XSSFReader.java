@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.POIXMLException;
@@ -37,7 +39,9 @@ import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -271,6 +275,35 @@ public class XSSFReader {
               return null;
            }
            return null;
+        }
+        
+        /**
+         * Returns the shapes associated with this sheet,
+         * an empty list or null if there is an exception
+         */
+        public List<XSSFShape> getShapes() {
+            PackagePart sheetPkg = getSheetPart();
+            List<XSSFShape> shapes= new LinkedList<XSSFShape>();
+           // Do we have a comments relationship? (Only ever one if so)
+           try {
+              PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
+              for (int i = 0; i < drawingsList.size(); i++){
+                  PackageRelationship drawings = drawingsList.getRelationship(i);
+                  PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
+                  PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
+                  XSSFDrawing drawing = new XSSFDrawing(drawingsPart, drawings);
+                  for (XSSFShape shape : drawing.getShapes()){
+                      shapes.add(shape);
+                  }
+              }
+           } catch (XmlException e){
+               return null;
+           } catch (InvalidFormatException e) {  
+              return null;
+           } catch (IOException e) {
+              return null;
+           }
+           return shapes;
         }
         
         public PackagePart getSheetPart() {

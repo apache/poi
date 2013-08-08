@@ -211,4 +211,16 @@ public class TestXSSFExcelExtractor extends TestCase {
       
       extractor.close();
 	}
+	/**
+	 * Simple test for text box text
+	 * @throws IOException
+	 */
+	public void testTextBoxes() throws IOException {
+	    XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx");
+	    extractor.setFormulasNotResults(true);
+	    String text = extractor.getText();
+	    assertTrue(text.indexOf("Line 1") > -1);
+	    assertTrue(text.indexOf("Line 2") > -1);
+	    assertTrue(text.indexOf("Line 3") > -1);
+	}
 }

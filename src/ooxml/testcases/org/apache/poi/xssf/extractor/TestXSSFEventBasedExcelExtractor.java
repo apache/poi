@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,7 +26,11 @@ import junit.framework.TestCase;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.usermodel.XSSFShape;
+import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 
 /**
  * Tests for {@link XSSFEventBasedExcelExtractor}
@@ -167,4 +172,19 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
 		ole2Extractor.close();
 		ooxmlExtractor.close();
 	}
+	
+	 /**
+	    * Test text extraction from text box using getShapes()
+	    * @throws Exception
+	    */
+    public void testShapes() throws Exception{
+	    XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsx");
+	       
+	    String text = ooxmlExtractor.getText();
+
+	    assertTrue(text.indexOf("Line 1") > -1);
+	    assertTrue(text.indexOf("Line 2") > -1);
+	    assertTrue(text.indexOf("Line 3") > -1);
+
+    }
 }

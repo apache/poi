@@ -76,7 +76,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * @param rel  the package relationship holding this drawing,
      * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing
      */
-    protected XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
+    public XSSFDrawing(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
         //Removing root element

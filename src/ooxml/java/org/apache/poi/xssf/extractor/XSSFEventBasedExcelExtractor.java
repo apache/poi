@@ -18,6 +18,7 @@ package org.apache.poi.xssf.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +38,8 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFShape;
+import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.xmlbeans.XmlException;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -54,6 +57,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
    private Locale locale;
 	private boolean includeSheetNames = true;
 	private boolean formulasNotResults = false;
+	private boolean includeTextBoxes = true;
 
 	public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(OPCPackage.open(path));
@@ -88,6 +92,14 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
 	 */
 	public void setFormulasNotResults(boolean formulasNotResults) {
 		this.formulasNotResults = formulasNotResults;
+	}
+
+	/**
+     * Should text from textboxes be included? Default is true
+     */
+
+	public void setIncludeTextBoxes(boolean includeTextBoxes) {
+	    this.includeTextBoxes = includeTextBoxes;
 	}
 	
 	public void setLocale(Locale locale) {
@@ -175,6 +187,9 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
                  text.append('\n');
               }
               processSheet(sheetExtractor, styles, strings, stream);
+              if (includeTextBoxes){
+                  processShapes(iter.getShapes(), text);
+              }
               stream.close();
           }
           
@@ -191,7 +206,20 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
        }
    }
    
-	@Override
+    private void processShapes(List<XSSFShape> shapes, StringBuffer text) {
+        if (shapes == null){
+            return;
+        }
+        for (XSSFShape shape : shapes){
+            if (shape instanceof XSSFSimpleShape){
+                String sText = ((XSSFSimpleShape)shape).getText();
+                if (sText != null && sText.length() > 0){
+                    text.append(sText).append('\n');
+                }
+            }
+        }
+    }
+    @Override
 	public void close() throws IOException {
 		if (container != null) {
 			container.close();

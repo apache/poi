@@ -31,8 +31,11 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.HeaderFooter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 
@@ -52,6 +55,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
     private boolean formulasNotResults = false;
     private boolean includeCellComments = false;
     private boolean includeHeadersFooters = true;
+    private boolean includeTextBoxes = true;
 
     /**
      * @deprecated  Use {@link #XSSFExcelExtractor(org.apache.poi.openxml4j.opc.OPCPackage)} instead.
@@ -102,6 +106,13 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
      */
     public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
         this.includeHeadersFooters = includeHeadersFooters;
+    }
+    /**
+     * Should text within textboxes be included? Default is true
+     * @param includeTextBoxes
+     */
+    public void setIncludeTextBoxes(boolean includeTextBoxes){
+        this.includeTextBoxes = includeTextBoxes;
     }
     /**
      * What Locale should be used for formatting numbers (based
@@ -180,7 +191,20 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor implements org.apach
                 }
                 text.append("\n");
             }
-
+            
+            // add textboxes
+            if (includeTextBoxes){
+                XSSFDrawing drawing = sheet.createDrawingPatriarch();
+                for (XSSFShape shape : drawing.getShapes()){
+                    if (shape instanceof XSSFSimpleShape){
+                        String boxText = ((XSSFSimpleShape)shape).getText();
+                        if (boxText.length() > 0){
+                            text.append(boxText);
+                            text.append('\n');
+                        }
+                    }
+                }
+            }
             // Finally footer(s), if present
             if(includeHeadersFooters) {
                 text.append(
