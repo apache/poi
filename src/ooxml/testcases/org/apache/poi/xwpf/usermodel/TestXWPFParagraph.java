@@ -342,4 +342,12 @@ public final class TestXWPFParagraph extends TestCase {
        r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic().getGraphicData();
        PicDocument pd = new PicDocumentImpl(null);
     }
-}
+    
+    public void testTika792() throws Exception{
+       //This test forces the loading of CTMoveBookmark and
+       //CTMoveBookmarkImpl into ooxml-lite.
+       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Tika-792.docx");
+       XWPFParagraph paragraph = doc.getParagraphs().get(0);
+       assertEquals("s", paragraph.getText());
+    }
+ }
