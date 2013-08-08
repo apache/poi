@@ -19,6 +19,7 @@ package org.apache.poi.xssf.eventusermodel;
 
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -27,6 +28,8 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFShape;
+import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -163,5 +166,34 @@ public final class TestXSSFReader extends TestCase {
           InputStream stream = it.next();
           stream.close();
       }
+   }
+   /**
+    * Test text extraction from text box using getShapes()
+    * @throws Exception
+    */
+   public void testShapes() throws Exception{
+       OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx");
+       XSSFReader r = new XSSFReader(pkg);
+       XSSFReader.SheetIterator it = (XSSFReader.SheetIterator)r.getSheetsData();
+       
+       StringBuilder sb = new StringBuilder();
+       while(it.hasNext())
+       {    
+          it.next();
+          List<XSSFShape> shapes = it.getShapes();
+          if (shapes != null){
+              for (XSSFShape shape : shapes){
+                  if (shape instanceof XSSFSimpleShape){
+                      String t = ((XSSFSimpleShape)shape).getText();
+                      sb.append(t).append('\n');
+                  }
+              }
+          }
+       }
+       String text = sb.toString();
+       assertTrue(text.indexOf("Line 1") > -1);
+       assertTrue(text.indexOf("Line 2") > -1);
+       assertTrue(text.indexOf("Line 3") > -1);
+
    }
 }
