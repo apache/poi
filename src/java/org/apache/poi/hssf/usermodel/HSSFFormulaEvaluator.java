@@ -22,8 +22,8 @@ import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
+import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
@@ -348,20 +348,20 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 
 	/**
 	 * Returns a CellValue wrapper around the supplied ValueEval instance.
-	 * @param eval
+	 * @param cell
 	 */
 	private CellValue evaluateFormulaCellValue(Cell cell) {
 		ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
-		if (eval instanceof NumberEval) {
-			NumberEval ne = (NumberEval) eval;
-			return new CellValue(ne.getNumberValue());
-		}
 		if (eval instanceof BoolEval) {
 			BoolEval be = (BoolEval) eval;
 			return CellValue.valueOf(be.getBooleanValue());
 		}
-		if (eval instanceof StringEval) {
-			StringEval ne = (StringEval) eval;
+		if (eval instanceof NumericValueEval) {
+			NumericValueEval ne = (NumericValueEval) eval;
+			return new CellValue(ne.getNumberValue());
+		}
+		if (eval instanceof StringValueEval) {
+			StringValueEval ne = (StringValueEval) eval;
 			return new CellValue(ne.getStringValue());
 		}
 		if (eval instanceof ErrorEval) {

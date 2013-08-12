@@ -22,9 +22,10 @@ import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.TwoDEval;
 
@@ -165,20 +166,24 @@ public abstract class MultiOperandNumericFunction implements Function {
 		if (ve == null) {
 			throw new IllegalArgumentException("ve must not be null");
 		}
-		if (ve instanceof NumberEval) {
-			NumberEval ne = (NumberEval) ve;
+		if (ve instanceof BoolEval) {
+			if (!isViaReference || _isReferenceBoolCounted) {
+				BoolEval boolEval = (BoolEval) ve;
+				temp.add(boolEval.getNumberValue());
+			}
+			return;
+		}
+		if (ve instanceof NumericValueEval) {
+			NumericValueEval ne = (NumericValueEval) ve;
 			temp.add(ne.getNumberValue());
 			return;
 		}
-		if (ve instanceof ErrorEval) {
-			throw new EvaluationException((ErrorEval) ve);
-		}
-		if (ve instanceof StringEval) {
+		if (ve instanceof StringValueEval) {
 			if (isViaReference) {
 				// ignore all ref strings
 				return;
 			}
-			String s = ((StringEval) ve).getStringValue();
+			String s = ((StringValueEval) ve).getStringValue();
 			Double d = OperandResolver.parseDouble(s);
 			if(d == null) {
 				throw new EvaluationException(ErrorEval.VALUE_INVALID);
@@ -186,12 +191,8 @@ public abstract class MultiOperandNumericFunction implements Function {
 			temp.add(d.doubleValue());
 			return;
 		}
-		if (ve instanceof BoolEval) {
-			if (!isViaReference || _isReferenceBoolCounted) {
-				BoolEval boolEval = (BoolEval) ve;
-				temp.add(boolEval.getNumberValue());
-			}
-			return;
+		if (ve instanceof ErrorEval) {
+			throw new EvaluationException((ErrorEval) ve);
 		}
 		if (ve == BlankEval.instance) {
 			if (_isBlankCounted) {

@@ -59,6 +59,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 	/**
 	 * Test for bug due to attempt to convert a cached formula error result to a boolean
 	 */
+	@Override
 	public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -132,6 +133,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 		public EvalCountListener() {
 			_evalCount = 0;
 		}
+		@Override
 		public void onStartEvaluate(EvaluationCell cell, ICacheEntry entry) {
 			_evalCount++;
 		}
