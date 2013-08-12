@@ -686,6 +686,15 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(BorderFormatting.BORDER_THICK, r1fp.getBorderTop());
         assertEquals(BorderFormatting.BORDER_THIN, r1fp.getBorderLeft());
         assertEquals(BorderFormatting.BORDER_HAIR, r1fp.getBorderRight());
-
+    }
+    
+    public void testBug55380() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        CellRangeAddress[] ranges = new CellRangeAddress[] {
+            CellRangeAddress.valueOf("C9:D30"), CellRangeAddress.valueOf("C7:C31")
+        };
+        ConditionalFormattingRule rule = sheet.getSheetConditionalFormatting().createConditionalFormattingRule("$A$1>0");
+        sheet.getSheetConditionalFormatting().addConditionalFormatting(ranges, rule);        
     }
 }

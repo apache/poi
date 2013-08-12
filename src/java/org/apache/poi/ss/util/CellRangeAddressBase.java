@@ -152,7 +152,8 @@ public abstract class CellRangeAddressBase {
 		return (_lastRow - _firstRow + 1) * (_lastCol - _firstCol + 1);
 	}
 
-	public final String toString() {
+	@Override
+    public final String toString() {
 		CellReference crA = new CellReference(_firstRow, _firstCol);
 		CellReference crB = new CellReference(_lastRow, _lastCol);
 		return getClass().getName() + " [" + crA.formatAsString() + ":" + crB.formatAsString() +"]";
