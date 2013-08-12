@@ -97,45 +97,47 @@ public final class CellRangeUtil
 		}
 
         List<CellRangeAddress> lst = new ArrayList<CellRangeAddress>();
-        for(CellRangeAddress cr : cellRanges) lst.add(cr);
-        List temp = mergeCellRanges(lst);
+        for(CellRangeAddress cr : cellRanges) {
+            lst.add(cr);
+        }
+        List<CellRangeAddress> temp = mergeCellRanges(lst);
 		return toArray(temp);
 	}
-	private static List mergeCellRanges(List cellRangeList)
-	{
 
-		while(cellRangeList.size() > 1)
-		{
-			boolean somethingGotMerged = false;
-			
-			for( int i=0; i<cellRangeList.size(); i++)
-			{
-				CellRangeAddress range1 = (CellRangeAddress)cellRangeList.get(i);
-				for( int j=i+1; j<cellRangeList.size(); j++)
-				{
-					CellRangeAddress range2 = (CellRangeAddress)cellRangeList.get(j);
-					
-					CellRangeAddress[] mergeResult = mergeRanges(range1, range2);
-					if(mergeResult == null) {
-						continue;
-					}
-					somethingGotMerged = true;
-					// overwrite range1 with first result 
-					cellRangeList.set(i, mergeResult[0]);
-					// remove range2
-					cellRangeList.remove(j--);
-					// add any extra results beyond the first
-					for(int k=1; k<mergeResult.length; k++) {
-						j++;
-						cellRangeList.add(j, mergeResult[k]);
-					}
-				}
-			}
-			if(!somethingGotMerged) {
-				break;
-			}
-		}
-		
+	private static List<CellRangeAddress> mergeCellRanges(List<CellRangeAddress> cellRangeList)
+	{
+	    // loop until either only one item is left or we did not merge anything any more
+        while (cellRangeList.size() > 1) {
+            boolean somethingGotMerged = false;
+
+            // look at all cell-ranges
+            for (int i = 0; i < cellRangeList.size(); i++) {
+                CellRangeAddress range1 = cellRangeList.get(i);
+                
+                // compare each cell range to all other cell-ranges
+                for (int j = i + 1; j < cellRangeList.size(); j++) {
+                    CellRangeAddress range2 = cellRangeList.get(j);
+
+                    CellRangeAddress[] mergeResult = mergeRanges(range1, range2);
+                    if (mergeResult == null) {
+                        continue;
+                    }
+                    somethingGotMerged = true;
+                    // overwrite range1 with first result
+                    cellRangeList.set(i, mergeResult[0]);
+                    // remove range2
+                    cellRangeList.remove(j--);
+                    // add any extra results beyond the first
+                    for (int k = 1; k < mergeResult.length; k++) {
+                        j++;
+                        cellRangeList.add(j, mergeResult[k]);
+                    }
+                }
+            }
+            if (!somethingGotMerged) {
+                break;
+            }
+        }
 
 		return cellRangeList;
 	}
@@ -144,122 +146,33 @@ public final class CellRangeUtil
 	 * @return the new range(s) to replace the supplied ones.  <code>null</code> if no merge is possible
 	 */
 	private static CellRangeAddress[] mergeRanges(CellRangeAddress range1, CellRangeAddress range2) {
-		
 		int x = intersect(range1, range2);
 		switch(x)
 		{
 			case CellRangeUtil.NO_INTERSECTION: 
+			    // nothing in common: at most they could be adjacent to each other and thus form a single bigger area  
 				if(hasExactSharedBorder(range1, range2)) {
 					return new CellRangeAddress[] { createEnclosingCellRange(range1, range2), };
 				}
 				// else - No intersection and no shared border: do nothing 
 				return null;
 			case CellRangeUtil.OVERLAP:
-				return resolveRangeOverlap(range1, range2);
+			    // commented out the cells overlap implementation, it caused endless loops, see Bug 55380
+			    // disabled for now, the algorithm will not detect some border cases this way currently!
+				//return resolveRangeOverlap(range1, range2);
+			    return null;
 			case CellRangeUtil.INSIDE:
 				// Remove range2, since it is completely inside of range1
-				return new CellRangeAddress[] { range1, };
+				return new CellRangeAddress[] { range1 };
 			case CellRangeUtil.ENCLOSES:
 				// range2 encloses range1, so replace it with the enclosing one
-				return new CellRangeAddress[] { range2, };
+				return new CellRangeAddress[] { range2 };
 		}
 		throw new RuntimeException("unexpected intersection result (" + x + ")");
 	}
+
 	
-	// TODO - write junit test for this
-	static CellRangeAddress[] resolveRangeOverlap(CellRangeAddress rangeA, CellRangeAddress rangeB) {
-		
-		if(rangeA.isFullColumnRange()) {
-			if(rangeA.isFullRowRange()) {
-				// Excel seems to leave these unresolved
-				return null;
-			}
-			return sliceUp(rangeA, rangeB);
-		}
-		if(rangeA.isFullRowRange()) {
-			if(rangeB.isFullColumnRange()) {
-				// Excel seems to leave these unresolved
-				return null;
-			}
-			return sliceUp(rangeA, rangeB);
-		}
-		if(rangeB.isFullColumnRange()) {
-			return sliceUp(rangeB, rangeA);
-		}
-		if(rangeB.isFullRowRange()) {
-			return sliceUp(rangeB, rangeA);
-		}
-		return sliceUp(rangeA, rangeB);
-	}
-
-	/**
-	 * @param crB never a full row or full column range
-	 * @return an array including <b>this</b> <tt>CellRange</tt> and all parts of <tt>range</tt> 
-	 * outside of this range  
-	 */
-	private static CellRangeAddress[] sliceUp(CellRangeAddress crA, CellRangeAddress crB) {
-		
-		List temp = new ArrayList();
-		
-		// Chop up range horizontally and vertically
-		temp.add(crB);
-		if(!crA.isFullColumnRange()) {
-			temp = cutHorizontally(crA.getFirstRow(), temp);
-			temp = cutHorizontally(crA.getLastRow()+1, temp);
-		}
-		if(!crA.isFullRowRange()) {
-			temp = cutVertically(crA.getFirstColumn(), temp);
-			temp = cutVertically(crA.getLastColumn()+1, temp);
-		}
-		CellRangeAddress[] crParts = toArray(temp);
-
-		// form result array
-		temp.clear();
-		temp.add(crA);
-		
-		for (int i = 0; i < crParts.length; i++) {
-			CellRangeAddress crPart = crParts[i];
-			// only include parts that are not enclosed by this
-			if(intersect(crA, crPart) != ENCLOSES) {
-				temp.add(crPart);
-			}
-		}
-		return toArray(temp);
-	}
-
-	private static List cutHorizontally(int cutRow, List input) {
-		
-		List result = new ArrayList();
-		CellRangeAddress[] crs = toArray(input);
-		for (int i = 0; i < crs.length; i++) {
-			CellRangeAddress cr = crs[i];
-			if(cr.getFirstRow() < cutRow && cutRow < cr.getLastRow()) {
-				result.add(new CellRangeAddress(cr.getFirstRow(), cutRow, cr.getFirstColumn(), cr.getLastColumn()));
-				result.add(new CellRangeAddress(cutRow+1, cr.getLastRow(), cr.getFirstColumn(), cr.getLastColumn()));
-			} else {
-				result.add(cr);
-			}
-		}
-		return result;
-	}
-	private static List cutVertically(int cutColumn, List input) {
-		
-		List result = new ArrayList();
-		CellRangeAddress[] crs = toArray(input);
-		for (int i = 0; i < crs.length; i++) {
-			CellRangeAddress cr = crs[i];
-			if(cr.getFirstColumn() < cutColumn && cutColumn < cr.getLastColumn()) {
-				result.add(new CellRangeAddress(cr.getFirstRow(), cr.getLastRow(), cr.getFirstColumn(), cutColumn));
-				result.add(new CellRangeAddress(cr.getFirstRow(), cr.getLastRow(), cutColumn+1, cr.getLastColumn()));
-			} else {
-				result.add(cr);
-			}
-		}
-		return result;
-	}
-
-
-	private static CellRangeAddress[] toArray(List temp) {
+	private static CellRangeAddress[] toArray(List<CellRangeAddress> temp) {
 		CellRangeAddress[] result = new CellRangeAddress[temp.size()];
 		temp.toArray(result);
 		return result;
@@ -284,7 +197,7 @@ public final class CellRangeUtil
 	}
    	
    /**
-	* Check if the specified cell range has a shared border with the current range.
+	* Check if the two cell ranges have a shared border.
 	* 
 	* @return <code>true</code> if the ranges have a complete shared border (i.e.
 	* the two ranges together make a simple rectangular region.
