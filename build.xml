@@ -656,6 +656,7 @@ under the License.
     </target>
 
     <target name="jacocotask" depends="">
+        <echo message="Coverage reporting: ${coverage.enabled}"/>
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
             <classpath refid="lib.jacoco"/>
         </taskdef>
@@ -665,7 +666,7 @@ under the License.
             description="Tests main, scratchpad and ooxml"/>
     <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"/>
 
-    <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="${coverage.enabled}">
+    <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
         <mkdir dir="${coverage.dir}"/>
 
