@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -25,9 +26,18 @@ import java.util.zip.CRC32;
 
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.ContentTypes;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -111,6 +121,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		sheet1 = workbook.getSheetAt(0);
 		assertEquals(1.2, sheet1.getRow(0).getCell(0).getNumericCellValue(), 0.0001);
 		assertEquals("hello world", sheet1.getRow(1).getCell(0).getRichStringCellValue().getString());
+
+		pkg.close();
 	}
 
 	public void testExisting() throws Exception {
@@ -128,6 +140,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertTrue(wbPart.hasRelationships());
 		assertEquals(6, wbPart.getRelationships().size());
 
+		pkg.close();
 	}
 
 	public void testGetCellStyleAt(){
@@ -357,7 +370,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		assertEquals("Numbers", wb.getSheetName(0));
 		assertEquals("Chart", wb.getSheetName(1));
 	}
-	
+
 	/**
 	 * Problems with the count of the number of styles
 	 *  coming out wrong
@@ -448,4 +461,24 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         assertEquals(IndexedColors.RED.index,
                 sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
     }
+
+	public void testColumnWidthPOI52233() throws Exception {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet();
+		XSSFRow row = sheet.createRow(0);
+		XSSFCell cell = row.createCell(0);
+		cell.setCellValue("hello world");
+		assertEquals("hello world", workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+		assertEquals(2048, workbook.getSheetAt(0).getColumnWidth(0)); // <-works
+
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		try {
+			workbook.write(stream);
+		} finally {
+			stream.close();
+		}
+
+		assertEquals("hello world", workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+		assertEquals(2048, workbook.getSheetAt(0).getColumnWidth(0)); // <- did throw IndexOutOfBoundsException before fixing the bug
+	}
 }

@@ -87,7 +87,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     private Map<Integer, CTCellFormula> sharedFormulas;
     private TreeMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
-    private XSSFDataValidationHelper dataValidationHelper;    
+    private XSSFDataValidationHelper dataValidationHelper;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -153,7 +153,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                tables.put( p.getPackageRelationship().getId(), (XSSFTable)p );
             }
         }
-        
+
         // Process external hyperlinks for the sheet, if there are any
         initHyperlinks();
     }
@@ -170,12 +170,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
-    private void initRows(CTWorksheet worksheet) {
+    private void initRows(CTWorksheet worksheetParam) {
         _rows = new TreeMap<Integer, XSSFRow>();
         tables = new TreeMap<String, XSSFTable>();
         sharedFormulas = new HashMap<Integer, CTCellFormula>();
         arrayFormulas = new ArrayList<CellRangeAddress>();
-        for (CTRow row : worksheet.getSheetData().getRowArray()) {
+        for (CTRow row : worksheetParam.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
             _rows.put(r.getRowNum(), r);
         }
@@ -426,7 +426,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return drawing;
     }
-    
+
     protected CTDrawing getCTDrawing() {
        return worksheet.getDrawing();
     }
@@ -480,7 +480,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         } else {
            if(pane.isSetYSplit()) pane.unsetYSplit();
         }
-        
+
         pane.setState(STPaneState.FROZEN);
         if (rowSplit == 0) {
             pane.setTopLeftCell(new CellReference(0, leftmostColumn).formatAsString());
@@ -1015,16 +1015,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public boolean getProtect() {
         return worksheet.isSetSheetProtection() && sheetProtectionEnabled();
     }
- 
+
     /**
      * Enables sheet protection and sets the password for the sheet.
      * Also sets some attributes on the {@link CTSheetProtection} that correspond to
      * the default values used by Excel
-     * 
+     *
      * @param password to set for protection. Pass <code>null</code> to remove protection
      */
     public void protectSheet(String password) {
-        	
+
     	if(password != null) {
     		CTSheetProtection sheetProtection = worksheet.addNewSheetProtection();
     		sheetProtection.xsetPassword(stringToExcelPassword(password));
@@ -1039,7 +1039,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 	/**
 	 * Converts a String to a {@link STUnsignedShortHex} value that contains the {@link PasswordRecord#hashPassword(String)}
 	 * value in hexadecimal format
-	 *  
+	 *
 	 * @param password the password string you wish convert to an {@link STUnsignedShortHex}
 	 * @return {@link STUnsignedShortHex} that contains Excel hashed password in Hex format
 	 */
@@ -1048,7 +1048,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 		hexPassword.setStringValue(String.valueOf(HexDump.shortToHex(PasswordRecord.hashPassword(password))).substring(2));
 		return hexPassword;
 	}
-	
+
     /**
      * Returns the logical row ( 0-based).  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
@@ -1220,7 +1220,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         worksheet.setColsArray(0,ctCols);
         setSheetFormatPrOutlineLevelCol();
     }
-    
+
     /**
      * Do not leave the width attribute undefined (see #52186).
      */
@@ -1539,7 +1539,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Whether Excel will be asked to recalculate all formulas when the
-     *  workbook is opened.  
+     *  workbook is opened.
      */
     public boolean getForceFormulaRecalculation() {
        if(worksheet.isSetSheetCalcPr()) {
@@ -1548,7 +1548,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
        }
        return false;
     }
-    
+
     /**
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
      * be the third row if say for instance the second row is undefined.
@@ -2409,10 +2409,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
-     * 
-     * @deprecated Use the version of showInPane() with ints as there can be more than 32767 rows. 
+     *
+     * @deprecated Use the version of showInPane() with ints as there can be more than 32767 rows.
      */
-    public void showInPane(short toprow, short leftcol) {
+    @Deprecated
+	public void showInPane(short toprow, short leftcol) {
         showInPane((int)toprow, (int)leftcol);
     }
 
@@ -2691,11 +2692,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         if(worksheet.sizeOfColsArray() == 1) {
             CTCols col = worksheet.getColsArray(0);
-            if(col.sizeOfColArray() == 0) {
-                worksheet.setColsArray(null);
-            } else {
+            if(col.sizeOfColArray() != 0) {
             	setColWidthAttribute(col);
-            }
+            } /*else {
+            	remove, see Bug 52233: worksheet.setColsArray(null);
+            }*/
         }
 
         // Now re-generate our CTHyperlinks, if needed
@@ -3109,7 +3110,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 	public DataValidationHelper getDataValidationHelper() {
 		return dataValidationHelper;
 	}
-    
+
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public List<XSSFDataValidation> getDataValidations() {
     	List<XSSFDataValidation> xssfValidations = new ArrayList<XSSFDataValidation>();
@@ -3117,7 +3118,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     	if( dataValidations!=null && dataValidations.getCount() > 0 ) {
     		for (CTDataValidation ctDataValidation : dataValidations.getDataValidationArray()) {
     			CellRangeAddressList addressList = new CellRangeAddressList();
-    			
+
     			@SuppressWarnings("unchecked")
     			List<String> sqref = ctDataValidation.getSqref();
     			for (String stRef : sqref) {
@@ -3138,7 +3139,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
 	public void addValidationData(DataValidation dataValidation) {
-		XSSFDataValidation xssfDataValidation = (XSSFDataValidation)dataValidation;		
+		XSSFDataValidation xssfDataValidation = (XSSFDataValidation)dataValidation;
 		CTDataValidations dataValidations = worksheet.getDataValidations();
 		if( dataValidations==null ) {
 			dataValidations = worksheet.addNewDataValidations();
@@ -3164,7 +3165,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
         if (name == null) {
             name = wb.createBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
-            name.getCTName().setHidden(true); 
+            name.getCTName().setHidden(true);
             CellReference r1 = new CellReference(getSheetName(), range.getFirstRow(), range.getFirstColumn(), true, true);
             CellReference r2 = new CellReference(null, range.getLastRow(), range.getLastColumn(), true, true);
             String fmla = r1.formatAsString() + ":" + r2.formatAsString();
@@ -3173,7 +3174,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         return new XSSFAutoFilter(this);
     }
-    
+
     /**
      * Creates a new Table, and associates it with this Sheet
      */
@@ -3181,21 +3182,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
        if(! worksheet.isSetTableParts()) {
           worksheet.addNewTableParts();
        }
-       
+
        CTTableParts tblParts = worksheet.getTableParts();
        CTTablePart tbl = tblParts.addNewTablePart();
-       
+
        // Table numbers need to be unique in the file, not just
        //  unique within the sheet. Find the next one
        int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
        XSSFTable table = (XSSFTable)createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber);
        tbl.setId(table.getPackageRelationship().getId());
-       
+
        tables.put(tbl.getId(), table);
-       
+
        return table;
     }
-    
+
     /**
      * Returns any tables associated with this Sheet
      */
@@ -3222,8 +3223,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         color.setIndexed(colorIndex);
         pr.setTabColor(color);
     }
-    
-    
+
+
     public CellRangeAddress getRepeatingRows() {
       return getRepeatingRowsOrColums(true);
     }
@@ -3238,24 +3239,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
     }
 
-    
+
     public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
       CellRangeAddress rowRangeRef = getRepeatingRows();
       setRepeatingRowsAndColumns(rowRangeRef, columnRangeRef);
     }
 
-    
+
     private void setRepeatingRowsAndColumns(
         CellRangeAddress rowDef, CellRangeAddress colDef) {
-      int col1 = -1; 
+      int col1 = -1;
       int col2 =  -1;
-      int row1 = -1; 
+      int row1 = -1;
       int row2 =  -1;
-      
+
       if (rowDef != null) {
         row1 = rowDef.getFirstRow();
         row2 = rowDef.getLastRow();
-        if ((row1 == -1 && row2 != -1) 
+        if ((row1 == -1 && row2 != -1)
             || row1 < -1 || row2 < -1 || row1 > row2) {
           throw new IllegalArgumentException("Invalid row range specification");
         }
@@ -3263,13 +3264,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       if (colDef != null) {
         col1 = colDef.getFirstColumn();
         col2 = colDef.getLastColumn();
-        if ((col1 == -1 && col2 != -1) 
+        if ((col1 == -1 && col2 != -1)
             || col1 < -1 || col2 < -1 || col1 > col2) {
           throw new IllegalArgumentException(
               "Invalid column range specification");
         }
       }
-      
+
       int sheetIndex = getWorkbook().getSheetIndex(this);
 
       boolean removeAll = rowDef == null && colDef == null;
@@ -3304,16 +3305,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     private static String getReferenceBuiltInRecord(
         String sheetName, int startC, int endC, int startR, int endR) {
-        // Excel example for built-in title: 
+        // Excel example for built-in title:
         //   'second sheet'!$E:$F,'second sheet'!$2:$3
-      
-        CellReference colRef = 
+
+        CellReference colRef =
           new CellReference(sheetName, 0, startC, true, true);
-        CellReference colRef2 = 
+        CellReference colRef2 =
           new CellReference(sheetName, 0, endC, true, true);
-        CellReference rowRef = 
+        CellReference rowRef =
           new CellReference(sheetName, startR, 0, true, true);
-        CellReference rowRef2 = 
+        CellReference rowRef2 =
           new CellReference(sheetName, endR, 0, true, true);
 
         String escapedName = SheetNameFormatter.format(sheetName);
@@ -3323,15 +3324,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         if(startC == -1 && endC == -1) {
         } else {
-          c = escapedName + "!$" + colRef.getCellRefParts()[2] 
+          c = escapedName + "!$" + colRef.getCellRefParts()[2]
               + ":$" + colRef2.getCellRefParts()[2];
         }
 
         if (startR == -1 && endR == -1) {
-          
-        } else if (!rowRef.getCellRefParts()[1].equals("0") 
+
+        } else if (!rowRef.getCellRefParts()[1].equals("0")
             && !rowRef2.getCellRefParts()[1].equals("0")) {
-           r = escapedName + "!$" + rowRef.getCellRefParts()[1] 
+           r = escapedName + "!$" + rowRef.getCellRefParts()[1]
                  + ":$" + rowRef2.getCellRefParts()[1];
         }
 
@@ -3361,16 +3362,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       int maxColIndex = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
       for (String part : parts) {
         CellRangeAddress range = CellRangeAddress.valueOf(part);
-        if ((range.getFirstColumn() == 0 
+        if ((range.getFirstColumn() == 0
             && range.getLastColumn() == maxColIndex)
-            || (range.getFirstColumn() == -1 
+            || (range.getFirstColumn() == -1
                 && range.getLastColumn() == -1)) {
           if (rows) {
             return range;
           }
-        } else if (range.getFirstRow() == 0 
+        } else if (range.getFirstRow() == 0
             && range.getLastRow() == maxRowIndex
-            || (range.getFirstRow() == -1 
+            || (range.getFirstRow() == -1
                 && range.getLastRow() == -1)) {
           if (!rows) {
             return range;
