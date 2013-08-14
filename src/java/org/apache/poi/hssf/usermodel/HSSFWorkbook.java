@@ -196,7 +196,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     private static final String[] WORKBOOK_DIR_ENTRY_NAMES = {
         "Workbook", // as per BIFF8 spec
         "WORKBOOK", // Typically from third party programs
-        "BOOK",     // Typically odd Crystal Reports exports 
+        "BOOK",     // Typically odd Crystal Reports exports
     };
 
 
@@ -245,7 +245,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     {
        this(directory, preserveNodes);
     }
-    
+
     /**
      * given a POI POIFSFileSystem object, and a specific directory
      *  within it, read in its Workbook and populate the high and
@@ -347,7 +347,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
       * the Workbook.
       *
       * @param records a collection of sheet's records.
-      * @param offset the offset to search at 
+      * @param offset the offset to search at
       * @see org.apache.poi.hssf.record.LabelRecord
       * @see org.apache.poi.hssf.record.LabelSSTRecord
       * @see org.apache.poi.hssf.record.SSTRecord
@@ -455,7 +455,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * deprecated May 2008
      * @deprecated use setSelectedTab(int)
      */
-    public void setSelectedTab(short index) {
+    @Deprecated
+	public void setSelectedTab(short index) {
         setSelectedTab((int)index);
     }
     public void setSelectedTabs(int[] indexes) {
@@ -506,7 +507,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * deprecated May 2008
      * @deprecated - Misleading name - use getActiveSheetIndex()
      */
-    public short getSelectedTab() {
+    @Deprecated
+	public short getSelectedTab() {
         return (short) getActiveSheetIndex();
     }
 
@@ -523,7 +525,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * deprecated May 2008
      * @deprecated - Misleading name - use setFirstVisibleTab()
      */
-    public void setDisplayedTab(short index) {
+    @Deprecated
+	public void setDisplayedTab(short index) {
        setFirstVisibleTab(index);
     }
 
@@ -537,7 +540,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * deprecated May 2008
      * @deprecated - Misleading name - use getFirstVisibleTab()
      */
-    public short getDisplayedTab() {
+    @Deprecated
+	public short getDisplayedTab() {
         return (short) getFirstVisibleTab();
     }
 
@@ -630,14 +634,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @deprecated for POI internal use only (formula parsing).  This method is likely to
      * be removed in future versions of POI.
      */
-    public int getExternalSheetIndex(int internalSheetIndex) {
+    @Deprecated
+	public int getExternalSheetIndex(int internalSheetIndex) {
         return workbook.checkExternSheet(internalSheetIndex);
     }
     /**
      * @deprecated for POI internal use only (formula rendering).  This method is likely to
      * be removed in future versions of POI.
      */
-    public String findSheetNameFromExternSheet(int externSheetIndex){
+    @Deprecated
+	public String findSheetNameFromExternSheet(int externSheetIndex){
         // TODO - don't expose internal ugliness like externSheet indexes to the user model API
         return workbook.findSheetNameFromExternSheet(externSheetIndex);
     }
@@ -649,7 +655,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param definedNameIndex zero-based to DEFINEDNAME or EXTERNALNAME record
      * @return the string representation of the defined or external name
      */
-    public String resolveNameXText(int refIndex, int definedNameIndex) {
+    @Deprecated
+	public String resolveNameXText(int refIndex, int definedNameIndex) {
         // TODO - make this less cryptic / move elsewhere
         return workbook.resolveNameXText(refIndex, definedNameIndex);
     }
@@ -830,7 +837,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFSheet getSheetAt(int index)
     {
         validateSheetIndex(index);
-        return (HSSFSheet) _sheets.get(index);
+        return _sheets.get(index);
     }
 
     /**
@@ -849,7 +856,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
             if (sheetname.equalsIgnoreCase(name))
             {
-                retval = (HSSFSheet) _sheets.get(k);
+                retval = _sheets.get(k);
             }
         }
         return retval;
@@ -959,11 +966,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @param endColumn     0 based end of repeating columns.
      * @param startRow      0 based start of repeating rows.
      * @param endRow        0 based end of repeating rows.
-     * 
+     *
      * @deprecated use {@link HSSFSheet#setRepeatingRows(CellRangeAddress)}
      *        or {@link HSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
-    public void setRepeatingRowsAndColumns(int sheetIndex,
+    @Deprecated
+	public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
                                            int startRow, int endRow) {
       HSSFSheet sheet = getSheetAt(sheetIndex);
@@ -999,16 +1007,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return -1;
     }
 
-    
+
     HSSFName createBuiltInName(byte builtinCode, int sheetIndex) {
-      NameRecord nameRecord = 
+      NameRecord nameRecord =
         workbook.createBuiltInName(builtinCode, sheetIndex + 1);
       HSSFName newName = new HSSFName(this, nameRecord, null);
       names.add(newName);
       return newName;
     }
 
-    
+
     HSSFName getBuiltInName(byte builtinCode, int sheetIndex) {
       int index = findExistingBuiltinNameRecordIdx(sheetIndex, builtinCode);
       if (index < 0) {
@@ -1018,7 +1026,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
       }
     }
 
-    
+
     /**
      * create a new Font and add it to the workbook's font table
      * @return new font object
@@ -1168,7 +1176,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      */
 
-    public void write(OutputStream stream)
+    @Override
+	public void write(OutputStream stream)
             throws IOException
     {
         byte[] bytes = getBytes();
@@ -1294,7 +1303,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /** @deprecated Do not call this method from your applications. Use the methods
      *  available in the HSSFRow to add string HSSFCells
      */
-    public int addSSTString(String string)
+    @Deprecated
+	public int addSSTString(String string)
     {
         return workbook.addSSTString(new UnicodeString(string));
     }
@@ -1302,7 +1312,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /** @deprecated Do not call this method from your applications. Use the methods
      *  available in the HSSFRow to get string HSSFCells
      */
-    public String getSSTString(int index)
+    @Deprecated
+	public String getSSTString(int index)
     {
         return workbook.getSSTString(index).getString();
     }
@@ -1321,7 +1332,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (nameIndex < 0) {
             return null;
         }
-        return (HSSFName) names.get(nameIndex);
+        return names.get(nameIndex);
     }
 
     public HSSFName getNameAt(int nameIndex) {
@@ -1333,7 +1344,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             throw new IllegalArgumentException("Specified name index " + nameIndex
                     + " is outside the allowable range (0.." + (nNames-1) + ").");
         }
-        return (HSSFName) names.get(nameIndex);
+        return names.get(nameIndex);
     }
 
     public NameRecord getNameRecord(int nameIndex) {
@@ -1452,12 +1463,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
 
     /**
-     * As {@link #getNameIndex(String)} is not necessarily unique 
+     * As {@link #getNameIndex(String)} is not necessarily unique
      * (name + sheet index is unique), this method is more accurate.
-     * 
+     *
      * @param name the name whose index in the list of names of this workbook
      *        should be looked up.
-     * @return an index value >= 0 if the name was found; -1, if the name was 
+     * @return an index value >= 0 if the name was found; -1, if the name was
      *         not found
      */
     int getNameIndex(HSSFName name) {
@@ -1495,9 +1506,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
 
     /**
-     * As {@link #removeName(String)} is not necessarily unique 
+     * As {@link #removeName(String)} is not necessarily unique
      * (name + sheet index is unique), this method is more accurate.
-     * 
+     *
      * @param name the name to remove.
      */
     void removeName(HSSFName name) {
@@ -1580,7 +1591,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public int addPicture(byte[] pictureData, int format)
     {
         initDrawings();
-        
+
         byte[] uid = DigestUtils.md5(pictureData);
         EscherBitmapBlip blipRecord = new EscherBitmapBlip();
         blipRecord.setRecordId( (short) ( EscherBitmapBlip.RECORD_ID_START + format ) );
@@ -1667,14 +1678,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                     HSSFPictureData picture = new HSSFPictureData(blip);
 					pictures.add(picture);
                 }
-                
-                
+
+
             }
 
             // Recursive call.
             searchForPictures(escherRecord.getChildRecords(), pictures);
         }
-        
+
     }
 
     /**
@@ -1731,7 +1742,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
     /**
      * Recursively iterates a shape container to get all embedded objects.
-     * 
+     *
      * @param parent the parent.
      * @param objects the list of embedded objects to populate.
      */
@@ -1806,7 +1817,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
 	/**
 	 * Changes an external referenced file to another file.
-	 * A formular in Excel which refers a cell in another file is saved in two parts: 
+	 * A formular in Excel which refers a cell in another file is saved in two parts:
 	 * The referenced file is stored in an reference table. the row/cell information is saved separate.
 	 * This method invokation will only change the reference in the lookup-table itself.
 	 * @param oldUrl The old URL to search for and which is to be replaced

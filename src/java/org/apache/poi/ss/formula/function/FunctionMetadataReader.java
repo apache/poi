@@ -31,13 +31,13 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
  * Converts the text meta-data file into a <tt>FunctionMetadataRegistry</tt>
- * 
+ *
  * @author Josh Micich
  */
 final class FunctionMetadataReader {
 
 	private static final String METADATA_FILE_NAME = "functionMetadata.txt";
-	
+
 	/** plain ASCII text metadata file uses three dots for ellipsis */
 	private static final String ELLIPSIS = "...";
 
@@ -50,7 +50,7 @@ final class FunctionMetadataReader {
 		// except in these cases
 		"LOG10", "ATAN2", "DAYS360", "SUMXMY2", "SUMX2MY2", "SUMX2PY2",
 	};
-	private static final Set DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
+	private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<String>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
 
 	public static FunctionMetadataRegistry createRegistry() {
 		InputStream is = FunctionMetadataReader.class.getResourceAsStream(METADATA_FILE_NAME);
@@ -106,10 +106,10 @@ final class FunctionMetadataReader {
 
 		validateFunctionName(functionName);
 		// TODO - make POI use isVolatile
-		fdb.add(functionIndex, functionName, minParams, maxParams, 
+		fdb.add(functionIndex, functionName, minParams, maxParams,
 				returnClassCode, parameterClassCodes, hasNote);
 	}
-	
+
 
 	private static byte parseReturnTypeCode(String code) {
 		if(code.length() == 0) {
@@ -163,7 +163,7 @@ final class FunctionMetadataReader {
 	}
 
 	/**
-	 * Makes sure that footnote digits from the original OOO document have not been accidentally 
+	 * Makes sure that footnote digits from the original OOO document have not been accidentally
 	 * left behind
 	 */
 	private static void validateFunctionName(String functionName) {
@@ -181,7 +181,7 @@ final class FunctionMetadataReader {
 		if(DIGIT_ENDING_FUNCTION_NAMES_SET.contains(functionName)) {
 			return;
 		}
-		throw new RuntimeException("Invalid function name '" + functionName 
+		throw new RuntimeException("Invalid function name '" + functionName
 				+ "' (is footnote number incorrectly appended)");
 	}
 

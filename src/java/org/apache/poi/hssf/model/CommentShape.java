@@ -99,7 +99,8 @@ public final class CommentShape extends TextboxShape {
      * @param opt     The escher records holding the proerties
      * @return number of escher options added
      */
-    protected int addStandardOptions( HSSFShape shape, EscherOptRecord opt )
+    @Override
+	protected int addStandardOptions( HSSFShape shape, EscherOptRecord opt )
     {
         super.addStandardOptions(shape, opt);
 
