@@ -23,41 +23,41 @@ import java.util.HashMap;
 /**
  * This is a factory class maps file names to WorkbookUtil instances.  This
  * helps ExcelAnt be more efficient when being run many times in an Ant build.
- * 
+ *
  * @author Jon Svede ( jon [at] loquatic [dot] com )
  * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
  *
  */
 public class ExcelAntWorkbookUtilFactory {
-    
+
     private static HashMap<String, ExcelAntWorkbookUtil> workbookUtilMap ;
-    
+
     private static ExcelAntWorkbookUtilFactory factory ;
-    
+
     private ExcelAntWorkbookUtilFactory() {
-        workbookUtilMap = new HashMap<String, ExcelAntWorkbookUtil>() ; 
+        workbookUtilMap = new HashMap<String, ExcelAntWorkbookUtil>() ;
     }
-    
+
     /**
-     * Using the fileName, check the internal map to see if an instance 
+     * Using the fileName, check the internal map to see if an instance
      * of the WorkbookUtil exists.  If not, then add an instance to the map.
-     * 
+     *
      * @param fileName
      * @return
      */
     public static ExcelAntWorkbookUtil getInstance( String fileName ) {
-        
+
         if( factory == null ) {
             factory = new ExcelAntWorkbookUtilFactory() ;
         }
-        if( workbookUtilMap != null && 
+        if( workbookUtilMap != null &&
                 workbookUtilMap.containsKey( fileName ) ) {
             return workbookUtilMap.get( fileName ) ;
-        } else {
-            ExcelAntWorkbookUtil wbu = new ExcelAntWorkbookUtil( fileName ) ;
-            workbookUtilMap.put( fileName, wbu ) ;
-            return wbu ;
         }
+
+        ExcelAntWorkbookUtil wbu = new ExcelAntWorkbookUtil( fileName ) ;
+        workbookUtilMap.put( fileName, wbu ) ;
+        return wbu ;
     }
 
 }

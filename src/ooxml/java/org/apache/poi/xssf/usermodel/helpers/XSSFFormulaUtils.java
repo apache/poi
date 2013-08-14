@@ -77,8 +77,10 @@ public final class XSSFFormulaUtils {
             }
 
             public String getSheetNameByExternSheet(int externSheetIndex) {
-                if (externSheetIndex == sheetIndex) return name;
-                else return _fpwb.getSheetNameByExternSheet(externSheetIndex);
+                if (externSheetIndex == sheetIndex)
+                	return name;
+
+                return _fpwb.getSheetNameByExternSheet(externSheetIndex);
             }
 
             public String resolveNameXText(NameXPtg nameXPtg) {

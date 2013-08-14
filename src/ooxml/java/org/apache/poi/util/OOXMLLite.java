@@ -17,6 +17,7 @@
 
 package org.apache.poi.util;
 
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
@@ -92,7 +93,8 @@ public final class OOXMLLite {
 
             String cls = arg.replace(".class", "");
             try {
-                Class test = Class.forName(cls);
+                @SuppressWarnings("unchecked")
+				Class<? extends TestCase> test = (Class<? extends TestCase>) Class.forName(cls);
                 suite.addTestSuite(test);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -115,7 +117,7 @@ public final class OOXMLLite {
                 /**
                  * Copy classes and interfaces declared as members of this class
                  */
-                for(Class fc : cls.getDeclaredClasses()){
+                for(Class<?> fc : cls.getDeclaredClasses()){
                     className = fc.getName();
                     classRef = className.replace('.', '/') + ".class";
                     destFile = new File(_destDest, classRef);
@@ -159,7 +161,7 @@ public final class OOXMLLite {
 
     /**
      *
-     * @param ptrn the pattern to filter output 
+     * @param ptrn the pattern to filter output
      * @return the classes loaded by the system class loader keyed by class name
      */
     @SuppressWarnings("unchecked")

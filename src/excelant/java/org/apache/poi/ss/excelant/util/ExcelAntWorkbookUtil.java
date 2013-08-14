@@ -41,10 +41,10 @@ import java.util.Iterator;
 /**
  * A general utility class that abstracts the POI details of loading the
  * workbook, accessing and updating cells.
- * 
+ *
  * @author Jon Svede ( jon [at] loquatic [dot] com )
  * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
- * 
+ *
  */
 public class ExcelAntWorkbookUtil extends Typedef {
 
@@ -53,24 +53,24 @@ public class ExcelAntWorkbookUtil extends Typedef {
     private Workbook workbook;
 
     private HashMap<String, FreeRefFunction> xlsMacroList;
-    
+
     /**
      * Constructs an instance using a String that contains the fully qualified
      * path of the Excel file. This constructor initializes a Workbook instance
      * based on that file name.
-     * 
+     *
      * @param fName
      */
     protected ExcelAntWorkbookUtil(String fName) {
         excelFileName = fName;
         xlsMacroList = new HashMap<String, FreeRefFunction>() ;
         loadWorkbook();
-        
+
     }
 
     /**
      * Constructs an instance based on a Workbook instance.
-     * 
+     *
      * @param wb
      */
     protected ExcelAntWorkbookUtil(Workbook wb) {
@@ -87,7 +87,11 @@ public class ExcelAntWorkbookUtil extends Typedef {
         File workbookFile = new File(excelFileName);
         try {
             FileInputStream fis = new FileInputStream(workbookFile);
-            workbook = WorkbookFactory.create(fis);
+            try {
+            	workbook = WorkbookFactory.create(fis);
+            } finally {
+            	fis.close();
+            }
         } catch(Exception e) {
             throw new BuildException("Cannot load file " + excelFileName
                     + ". Make sure the path and file permissions are correct.", e);
@@ -95,9 +99,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
         return workbook ;
     }
-    
+
     /**
-     * Used to add a UDF to the evaluator.  
+     * Used to add a UDF to the evaluator.
      * @param name
      * @param clazzName
      * @throws ClassNotFoundException
@@ -105,18 +109,18 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @throws IllegalAccessException
      */
     public void addFunction( String name, String clazzName ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        Class clazzInst = Class.forName( clazzName ) ;
+        Class<?> clazzInst = Class.forName( clazzName ) ;
         Object newInst = clazzInst.newInstance() ;
         if( newInst instanceof FreeRefFunction ) {
             addFunction( name, (FreeRefFunction)newInst ) ;
         }
-        
+
     }
- 
+
     /**
      * Updates the internal HashMap of functions with instance and alias passed
      * in.
-     * 
+     *
      * @param name
      * @param func
      */
@@ -126,7 +130,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * returns a UDFFinder that contains all of the functions added.
-     * 
+     *
      * @return
      */
     protected UDFFinder getFunctions() {
@@ -149,17 +153,17 @@ public class ExcelAntWorkbookUtil extends Typedef {
         return udff;
 
     }
-    
+
     /**
      * Returns a formula evaluator that is loaded with the functions that
      * have been supplied.
-     * 
-     * @param excelFileName
+     *
+     * @param fileName
      * @return
      */
-    protected FormulaEvaluator getEvaluator( String excelFileName ) {
+    protected FormulaEvaluator getEvaluator( String fileName ) {
         FormulaEvaluator evaluator ;
-        if (excelFileName.endsWith(".xlsx")) {
+        if (fileName.endsWith(".xlsx")) {
             if( xlsMacroList != null && xlsMacroList.size() > 0 ) {
                 evaluator = XSSFFormulaEvaluator.create( (XSSFWorkbook) workbook,
                                                          null,
@@ -182,7 +186,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Returns the Workbook instance associated with this WorkbookUtil.
-     * 
+     *
      * @return
      */
     public Workbook getWorkbook() {
@@ -192,34 +196,34 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * Returns the fileName that was used to initialize this instance. May
      * return null if the instance was constructed from a Workbook object.
-     * 
+     *
      * @return
      */
     public String getFileName() {
         return excelFileName;
     }
-    
+
     /**
      * Returns the list of sheet names.
-     * 
+     *
      * @return
      */
     public ArrayList<String> getSheets() {
     	ArrayList<String> sheets = new ArrayList<String>() ;
-    	
+
     	int sheetCount = workbook.getNumberOfSheets() ;
-    	
+
     	for( int x=0; x<sheetCount; x++ ) {
     		sheets.add( workbook.getSheetName( x ) ) ;
     	}
-    	
+
     	return sheets ;
     }
 
     /**
      * This method uses a String in standard Excel format (SheetName!CellId) to
      * locate the cell and set it to the value of the double in value.
-     * 
+     *
      * @param cellName
      * @param value
      */
@@ -235,18 +239,18 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Utility method for setting the value of a Cell with a String.
-     * 
+     *
      * @param cellName
      * @param value
      */
     public void setStringValue( String cellName, String value ) {
         Cell cell = getCell(cellName);
-        cell.setCellValue(value);        
+        cell.setCellValue(value);
     }
-    
+
     /**
      * Utility method for setting the value of a Cell with a Formula.
-     * 
+     *
      * @param cellName
      * @param formula
      */
@@ -254,7 +258,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
         Cell cell = getCell(cellName);
         cell.setCellFormula( formula );
     }
-    
+
     /**
      * Utility method for setting the value of a Cell with a Date.
      * @param cellName
@@ -267,7 +271,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * Uses a String in standard Excel format (SheetName!CellId) to locate a
      * cell and evaluate it.
-     * 
+     *
      * @param cellName
      * @param expectedValue
      * @param precision
@@ -304,10 +308,10 @@ public class ExcelAntWorkbookUtil extends Typedef {
                 errorMeaning = ErrorConstants.getText( resultOfEval
                         .getErrorValue() ) ;
             } catch( IllegalArgumentException iae ) {
-                errorMeaning =  "unknown error code: " + 
-                                Byte.toString( resultOfEval.getErrorValue() ) ; 
+                errorMeaning =  "unknown error code: " +
+                                Byte.toString( resultOfEval.getErrorValue() ) ;
             }
-            
+
             evalResults = new ExcelAntEvaluationResult(false, false,
                     resultOfEval.getNumberValue(),
                     "Evaluation failed due to an evaluation error of "
@@ -321,7 +325,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Returns a Cell as a String value.
-     * 
+     *
      * @param cellName
      * @return
      */
@@ -332,11 +336,11 @@ public class ExcelAntWorkbookUtil extends Typedef {
     	}
     	return "" ;
     }
-    
-    
+
+
     /**
      * Returns the value of the Cell as a double.
-     * 
+     *
      * @param cellName
      * @return
      */
@@ -351,12 +355,12 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Returns a cell reference based on a String in standard Excel format
      * (SheetName!CellId).  This method will create a new cell if the
      * requested cell isn't initialized yet.
-     * 
+     *
      * @param cellName
      * @return
      */
     private Cell getCell(String cellName) {
-        
+
         CellReference cellRef = new CellReference(cellName);
         String sheetName = cellRef.getSheetName();
         Sheet sheet = workbook.getSheet(sheetName);
@@ -367,13 +371,13 @@ public class ExcelAntWorkbookUtil extends Typedef {
         int rowIdx = cellRef.getRow();
         int colIdx = cellRef.getCol();
         Row row = sheet.getRow(rowIdx);
-        
+
         if( row == null ) {
         	row = sheet.createRow( rowIdx ) ;
         }
-        
+
         Cell cell = row.getCell(colIdx);
-        
+
         if( cell == null ) {
         	cell = row.createCell( colIdx ) ;
         }
