@@ -22,6 +22,7 @@ import java.text.ParsePosition;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.format.SimpleFraction;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
@@ -35,7 +36,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
  *  If further uses for Commons Math are found, we will consider adding it as a dependency.
  *  For now, we have in-lined the one method to keep things simple.</p>
  */
-/* One question remains...is the value of epsilon in calcFractionMaxDenom reasonable? */
+
 @SuppressWarnings("serial")
 public class FractionFormat extends Format {
     private final static Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(?:(#+)|(\\d+))");
@@ -113,7 +114,6 @@ public class FractionFormat extends Format {
         }
         
         //this is necessary to prevent overflow in the maxDenom calculation
-        //stink1
         if (wholePart+(int)decPart == wholePart+decPart){
             
             StringBuilder sb = new StringBuilder();
@@ -128,11 +128,11 @@ public class FractionFormat extends Format {
         try{
             //this should be the case because of the constructor
             if (exactDenom > 0){
-                fract = calcFractionExactDenom(decPart, exactDenom);
+                fract = SimpleFraction.buildFractionExactDenominator(decPart, exactDenom);
             } else {
-                fract = calcFractionMaxDenom(decPart, maxDenom);
+                fract = SimpleFraction.buildFractionMaxDenominator((double)decPart, maxDenom);
             }
-        } catch (SimpleFractionException e){
+        } catch (RuntimeException e){
             e.printStackTrace();
             return Double.toString(doubleValue);
         }
@@ -175,97 +175,5 @@ public class FractionFormat extends Format {
     public Object parseObject(String source, ParsePosition pos) {
         throw new NotImplementedException("Reverse parsing not supported");
     }
-
-    private SimpleFraction calcFractionMaxDenom(double value, int maxDenominator) 
-            throws SimpleFractionException{
-        /*
-         * Lifted wholesale from org.apache.math.fraction.Fraction 2.2
-         */
-        double epsilon = 0.000000000001f;
-        int maxIterations = 100;
-        long overflow = Integer.MAX_VALUE;
-        double r0 = value;
-        long a0 = (long)Math.floor(r0);
-        if (Math.abs(a0) > overflow) {
-            throw new SimpleFractionException(
-                    String.format("value > Integer.MAX_VALUE: %d.", a0));
-        }
-
-        // check for (almost) integer arguments, which should not go
-        // to iterations.
-        if (Math.abs(a0 - value) < epsilon) {
-            return new SimpleFraction((int) a0, 1);
-        }
-
-        long p0 = 1;
-        long q0 = 0;
-        long p1 = a0;
-        long q1 = 1;
-
-        long p2 = 0;
-        long q2 = 1;
-
-        int n = 0;
-        boolean stop = false;
-        do {
-            ++n;
-            double r1 = 1.0 / (r0 - a0);
-            long a1 = (long)Math.floor(r1);
-            p2 = (a1 * p1) + p0;
-            q2 = (a1 * q1) + q0;
-            if ((Math.abs(p2) > overflow) || (Math.abs(q2) > overflow)) {
-                throw new SimpleFractionException(
-                        String.format("Greater than overflow in loop %f, %d, %d", value, p2, q2));
-            }
-
-            double convergent = (double)p2 / (double)q2;
-            if (n < maxIterations && Math.abs(convergent - value) > epsilon && q2 < maxDenominator) {
-                p0 = p1;
-                p1 = p2;
-                q0 = q1;
-                q1 = q2;
-                a0 = a1;
-                r0 = r1;
-            } else {
-                stop = true;
-            }
-        } while (!stop);
-
-        if (n >= maxIterations) {
-            throw new SimpleFractionException("n greater than max iterations " + value + " : " + maxIterations);
-        }
-
-        if (q2 < maxDenominator) {
-            return new SimpleFraction((int) p2, (int) q2);
-        } else {
-            return new SimpleFraction((int) p1, (int) q1);
-        }
-    }
-
-    private SimpleFraction calcFractionExactDenom(double val, int exactDenom){
-        int num =  (int)Math.round(val*(double)exactDenom);
-        return new SimpleFraction(num,exactDenom);
-    }
-
-    private class SimpleFraction {
-        private final int num;
-        private final int denom;
-
-        public SimpleFraction(int num, int denom) {
-            this.num = num;
-            this.denom = denom;
-        }
-
-        public int getNumerator() {
-            return num;
-        }
-        public int getDenominator() {
-            return denom;
-        }
-    }
-    private class SimpleFractionException extends Throwable{
-        private SimpleFractionException(String message){
-            super(message);
-        }
-    }
+   
 }
