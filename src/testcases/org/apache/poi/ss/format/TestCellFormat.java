@@ -825,4 +825,15 @@ public class TestCellFormat extends TestCase {
         
     }
     
+    public void testSimpleFractionFormat() {
+        CellFormat cf1 = CellFormat.getInstance("# ?/?");
+        // Create a workbook, row and cell to test with
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue(123456.6);
+        System.out.println(cf1.apply(cell).text);
+        assertEquals("123456 3/5", cf1.apply(cell).text);
+    }
 }
