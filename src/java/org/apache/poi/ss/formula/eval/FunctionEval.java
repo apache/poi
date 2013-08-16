@@ -236,6 +236,8 @@ public final class FunctionEval {
 		retval[346] = new Countif();
 		retval[347] = new Countblank();
 
+        retval[354] = new Roman();
+
 		retval[359] = new Hyperlink();
 
 		retval[362] = MinaMaxa.MAXA;
