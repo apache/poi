@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Tests for {@link Value}
  *
  * @author Josh Micich
+ * @author Cédric Walter
  */
 public final class TestValue extends TestCase {
 
@@ -71,6 +72,8 @@ public final class TestValue extends TestCase {
 		confirmValue("1,000e2", 100000);
 		confirmValue("$10e2", 1000);
 		confirmValue("$1,000e2", 100000);
+        confirmValue("30%", 0.3);
+        confirmValue("30 %", 0.3);
 	}
 
 	public void testErrors() {

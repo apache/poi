@@ -34,6 +34,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * properly the result is <b>#VALUE!</b> error. Blank string converts to zero.
  *
  * @author Josh Micich
+ * @author Cédric Walter
  */
 public final class Value extends Fixed1ArgFunction {
 
@@ -65,6 +66,7 @@ public final class Value extends Fixed1ArgFunction {
 		boolean foundCurrency = false;
 		boolean foundUnaryPlus = false;
 		boolean foundUnaryMinus = false;
+		boolean foundPercentage = false;
 
 		int len = strText.length();
 		int i;
@@ -123,8 +125,13 @@ public final class Value extends Fixed1ArgFunction {
 			}
 			switch (ch) {
 				case ' ':
-					String remainingText = strText.substring(i);
-					if (remainingText.trim().length() > 0) {
+					String remainingTextTrimmed = strText.substring(i).trim();
+                    // support for value[space]%
+                    if (remainingTextTrimmed.equals("%")) {
+                        foundPercentage= true;
+                        break;
+                    }
+                    if (remainingTextTrimmed.length() > 0) {
 						// intervening spaces not allowed once the digits start
 						return null;
 					}
@@ -162,6 +169,9 @@ public final class Value extends Fixed1ArgFunction {
 					sb.append(strText.substring(i));
 					i = len;
 					break;
+                case '%':
+                    foundPercentage = true;
+                    break;
 				default:
 					// all other characters are illegal
 					return null;
@@ -179,6 +189,7 @@ public final class Value extends Fixed1ArgFunction {
 			// still a problem parsing the number - probably out of range
 			return null;
 		}
-		return new Double(foundUnaryMinus ? -d : d);
+        Double result = new Double(foundUnaryMinus ? -d : d);
+        return foundPercentage ? result /100 : result;
 	}
 }
