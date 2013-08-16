@@ -17,10 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-
-
 /**
- * Tests Match functions as loaded from a test data spreadsheet.<p/>
+ * Tests INDIRECT() as loaded from a test data spreadsheet.<p/>
  *
  * Tests for bug fixes and specific/tricky behaviour can be found in the corresponding test class
  * (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, where execution can be observed
@@ -28,10 +26,10 @@ package org.apache.poi.ss.formula.functions;
  *
  * @author Cédric Walter
  */
-public final class TestMatchFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+public final class TestIndirectFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
 
     @Override
     protected String getFilename() {
-        return "MatchFunctionTestCaseData.xls";
+        return "IndirectFunctionTestCaseData.xls";
     }
 }
