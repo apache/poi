@@ -123,7 +123,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "IMLOG2", null);
         r(m, "IMPOWER", null);
         r(m, "IMPRODUCT", null);
-        r(m, "IMREAL", null);
+        r(m, "IMREAL", ImReal.instance);
         r(m, "IMSIN", null);
         r(m, "IMSQRT", null);
         r(m, "IMSUB", null);
