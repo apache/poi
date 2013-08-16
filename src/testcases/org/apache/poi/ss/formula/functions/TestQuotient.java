@@ -18,6 +18,7 @@ package org.apache.poi.ss.formula.functions;
 
 import junit.framework.TestCase;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
@@ -34,8 +35,8 @@ public class TestQuotient extends TestCase {
 
     private static void confirmValue(String msg, String numerator, String denominator, String expected) {
         ValueEval result = invokeValue(numerator, denominator);
-        assertEquals(StringEval.class, result.getClass());
-        assertEquals(msg, expected, ((StringEval) result).getStringValue());
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals(msg, expected, ((NumberEval) result).getStringValue());
     }
 
     private static void confirmValueError(String msg, String numerator, String denominator, ErrorEval numError) {
@@ -58,6 +59,6 @@ public class TestQuotient extends TestCase {
         confirmValueError("numerator is nonnumeric", "ABCD", "", ErrorEval.VALUE_INVALID);
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);
 
-        confirmValueError("denominator is nonnumeric", "3.14159", "0", ErrorEval.DIV_ZERO);
+        confirmValueError("dividing by zero", "3.14159", "0", ErrorEval.DIV_ZERO);
     }
 }

@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 import org.apache.poi.ss.formula.eval.*;
@@ -35,8 +36,12 @@ import org.apache.poi.ss.formula.eval.*;
  *
  * If either enumerator/denominator is non numeric, QUOTIENT returns the #VALUE! error value.
  * If denominator is equals to zero, QUOTIENT returns the #DIV/0! error value.
+ *
+ * @author Cédric Walter
  */
-public class Quotient extends Fixed2ArgFunction {
+public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
+
+    public static final FreeRefFunction instance = new Quotient();
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval venumerator, ValueEval vedenominator) {
 
@@ -58,6 +63,13 @@ public class Quotient extends Fixed2ArgFunction {
             return ErrorEval.DIV_ZERO;
         }
 
-        return new StringEval(String.valueOf((int)(enumerator / denominator)));
+        return new NumberEval((int)(enumerator / denominator));
+    }
+
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
     }
 }

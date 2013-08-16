@@ -39,8 +39,6 @@ public final class AnalysisToolPak implements UDFFinder {
         }
     }
 
-    ;
-
     private final Map<String, FreeRefFunction> _functionsByName = createFunctionsMap();
 
     private AnalysisToolPak() {
@@ -148,7 +146,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "PRICE", null);
         r(m, "PRICEDISC", null);
         r(m, "PRICEMAT", null);
-        r(m, "QUOTIENT", null);
+        r(m, "QUOTIENT", Quotient.instance);
         r(m, "RANDBETWEEN", RandBetween.instance);
         r(m, "RECEIVED", null);
         r(m, "RTD", null);
