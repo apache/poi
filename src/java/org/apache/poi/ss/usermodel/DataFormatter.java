@@ -423,6 +423,8 @@ public class DataFormatter {
         formatStr = formatStr.replaceAll("\\\\/","/"); // weird: m\\/d\\/yyyy 
         formatStr = formatStr.replaceAll(";@", "");
         formatStr = formatStr.replaceAll("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
+        formatStr = formatStr.replace("\"\"", "'");	// replace Excel quoting with Java style quoting
+
 
         boolean hasAmPm = false;
         Matcher amPmMatcher = amPmPattern.matcher(formatStr);
@@ -456,7 +458,21 @@ public class DataFormatter {
         boolean isElapsed = false;
         for(int j=0; j<chars.length; j++) {
             char c = chars[j];
-            if (c == '[' && !isElapsed) {
+            if (c == '\'') {
+                sb.append(c);
+                j++;
+
+                // skip until the next quote
+                while(j<chars.length) {
+                    c = chars[j];
+                    sb.append(c);
+                    if(c == '\'') {
+                        break;
+                    }
+                    j++;
+                }
+            }
+            else if (c == '[' && !isElapsed) {
                 isElapsed = true;
                 mIsMonth = false;
                 sb.append(c);
@@ -932,10 +948,12 @@ public class DataFormatter {
             return sb.toString();
         }
 
+        @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             return toAppendTo.append(format((Number)obj));
         }
 
+        @Override
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
         }
@@ -963,10 +981,12 @@ public class DataFormatter {
             return sb.toString();
         }
 
+        @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             return toAppendTo.append(format((Number)obj));
         }
 
+        @Override
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
         }
@@ -1009,10 +1029,12 @@ public class DataFormatter {
             return sb.toString();
         }
 
+        @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             return toAppendTo.append(format((Number)obj));
         }
 
+        @Override
         public Object parseObject(String source, ParsePosition pos) {
             return df.parseObject(source, pos);
         }

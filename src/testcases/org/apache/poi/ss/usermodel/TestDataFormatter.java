@@ -37,7 +37,9 @@ import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
  *  more tests.
  */
 public class TestDataFormatter extends TestCase {
-    /**
+    private static final double _15_MINUTES = 0.041666667;
+
+	/**
      * Test that we use the specified locale when deciding
      *   how to format normal numbers
      */
@@ -538,4 +540,28 @@ public class TestDataFormatter extends TestCase {
        DataFormatter dfUS = new DataFormatter(Locale.US, true);
        assertEquals("01.010", dfUS.formatRawCellContents(0.0000116898, -1, "ss.000"));
     }
+
+	public void testBug54786() {
+		DataFormatter formatter = new DataFormatter();
+		String format = "[h]\"\"h\"\" m\"\"m\"\"";
+		assertTrue(DateUtil.isADateFormat(-1,format));
+		assertTrue(DateUtil.isValidExcelDate(_15_MINUTES));
+		
+		assertEquals("1h 0m", formatter.formatRawCellContents(_15_MINUTES, -1, format, false));
+		assertEquals("0.041666667", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]'h'", false));
+		assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"", false));
+		assertEquals("1h", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\"", false));
+		assertEquals("h1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[h]", false));
+		assertEquals("h1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"h", false));
+		assertEquals(" 60", formatter.formatRawCellContents(_15_MINUTES, -1, " [m]", false));
+		assertEquals("h60", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[m]", false));
+		assertEquals("m1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"m\"\"h", false));
+		
+		try {
+			assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"\"", false));
+			fail("Catches exception because of invalid format, i.e. trailing quoting");
+		} catch (IllegalArgumentException e) {
+			assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
+		}
+	}
 }
