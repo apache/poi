@@ -112,7 +112,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "HEX2OCT", null);
         r(m, "IFERROR", IfError.instance);
         r(m, "IMABS", null);
-        r(m, "IMAGINARY", null);
+        r(m, "IMAGINARY", Imaginary.instance);
         r(m, "IMARGUMENT", null);
         r(m, "IMCONJUGATE", null);
         r(m, "IMCOS", null);
