@@ -151,24 +151,14 @@ public class CellReference {
 	 * @return zero based column index
 	 */
 	public static int convertColStringToIndex(String ref) {
-	
-		int pos = 0;
-		int retval=0;
-		for (int k = ref.length()-1; k >= 0; k--) {
-			char thechar = ref.charAt(k);
-			if (thechar == ABSOLUTE_REFERENCE_MARKER) {
-				if (k != 0) {
-					throw new IllegalArgumentException("Bad col ref format '" + ref + "'");
-				}
-				break;
-			}
-			// Character.getNumericValue() returns the values
-			//  10-35 for the letter A-Z
-			int shift = (int)Math.pow(26, pos);
-			retval += (Character.getNumericValue(thechar)-9) * shift;
-			pos++;
+		ref = ref.toUpperCase();
+		int count = 0;
+
+		for (char c : ref.toCharArray()) {
+			count = count * 26 + (c - 'A' + 1);
 		}
-		return retval-1;
+
+		return count - 1;
 	}
 
 	/**
@@ -389,24 +379,17 @@ public class CellReference {
 	 * eg column #3 -> D
 	 */
 	protected static String convertNumToColString(int col) {
-		// Excel counts column A as the 1st column, we
-		//  treat it as the 0th one
-		int excelColNum = col + 1;
-		
-		String colRef = "";
-		int colRemain = excelColNum;
-		
-		while(colRemain > 0) {
-			int thisPart = colRemain % 26;
-			if(thisPart == 0) { thisPart = 26; }
-			colRemain = (colRemain - thisPart) / 26;
-			
-			// The letter A is at 65
-			char colChar = (char)(thisPart+64);
-			colRef = colChar + colRef;
+		col += 1;
+		StringBuilder sb = new StringBuilder();
+		sb.setLength(0);
+
+		while (col > 0) {
+			final int j = (i % 26);
+			sb.append("" + (char) ('A' + (j == 0 ? 25 : (j - 1))));
+			col = (col - 1) / 26;
 		}
-		
-		return colRef;
+
+		return sb.reverse().toString();
 	}
 
 	/**
