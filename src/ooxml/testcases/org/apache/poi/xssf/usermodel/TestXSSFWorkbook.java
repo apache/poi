@@ -462,15 +462,20 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
                 sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
     }
 
-    // TODO: disabled as the fix for this had severe side-effects
-	public void doNotRuntestColumnWidthPOI52233() throws Exception {
+	public void testColumnWidthPOI52233() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
 		XSSFRow row = sheet.createRow(0);
 		XSSFCell cell = row.createCell(0);
 		cell.setCellValue("hello world");
-		assertEquals("hello world", workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-		assertEquals(2048, workbook.getSheetAt(0).getColumnWidth(0)); // <-works
+
+		sheet = workbook.createSheet();
+        sheet.setColumnWidth(4, 5000);
+        sheet.setColumnWidth(5, 5000);
+       
+        sheet.groupColumn((short) 4, (short) 5);
+
+        accessWorkbook(workbook);
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
@@ -479,7 +484,14 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 			stream.close();
 		}
 
+		accessWorkbook(workbook);
+	}
+
+	private void accessWorkbook(XSSFWorkbook workbook) {
+		workbook.getSheetAt(1).setColumnGroupCollapsed(4, true);
+		workbook.getSheetAt(1).setColumnGroupCollapsed(4, false);
+
 		assertEquals("hello world", workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-		assertEquals(2048, workbook.getSheetAt(0).getColumnWidth(0)); // <- did throw IndexOutOfBoundsException before fixing the bug
+		assertEquals(2048, workbook.getSheetAt(0).getColumnWidth(0)); // <-works
 	}
 }
