@@ -462,7 +462,8 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
                 sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
     }
 
-	public void testColumnWidthPOI52233() throws Exception {
+    // TODO: disabled as the fix for this had severe side-effects
+	public void doNotRuntestColumnWidthPOI52233() throws Exception {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
 		XSSFRow row = sheet.createRow(0);

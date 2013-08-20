@@ -2689,14 +2689,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     protected void write(OutputStream out) throws IOException {
-
         if(worksheet.sizeOfColsArray() == 1) {
-            CTCols col = worksheet.getColsArray(0);
-            if(col.sizeOfColArray() != 0) {
+        	CTCols col = worksheet.getColsArray(0);
+            if(col.sizeOfColArray() == 0) {
+            	// this is necessary so that we do not write an empty <cols/> item into the sheet-xml in the xlsx-file
+            	// Excel complains about a corrupted file if this shows up there!
+                worksheet.setColsArray(null);
+            } else {
             	setColWidthAttribute(col);
-            } /*else {
-            	remove, see Bug 52233: worksheet.setColsArray(null);
-            }*/
+            }
         }
 
         // Now re-generate our CTHyperlinks, if needed
