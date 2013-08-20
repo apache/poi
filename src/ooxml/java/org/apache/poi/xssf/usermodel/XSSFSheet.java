@@ -1554,7 +1554,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * be the third row if say for instance the second row is undefined.
      * Call getRowNum() on each row if you care which one it is.
      */
-    public Iterator<Row> rowIterator() {
+    @SuppressWarnings("unchecked")
+	public Iterator<Row> rowIterator() {
         return (Iterator<Row>)(Iterator<? extends Row>) _rows.values().iterator();
     }
 
@@ -2689,9 +2690,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     protected void write(OutputStream out) throws IOException {
+    	boolean setToNull = false;
         if(worksheet.sizeOfColsArray() == 1) {
         	CTCols col = worksheet.getColsArray(0);
             if(col.sizeOfColArray() == 0) {
+            	setToNull = true;
             	// this is necessary so that we do not write an empty <cols/> item into the sheet-xml in the xlsx-file
             	// Excel complains about a corrupted file if this shows up there!
                 worksheet.setColsArray(null);
@@ -2728,6 +2731,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         xmlOptions.setSaveSuggestedPrefixes(map);
 
         worksheet.save(out, xmlOptions);
+
+        // Bug 52233: Ensure that we have a col-array even if write() removed it
+    	if(setToNull) {
+    		worksheet.addNewCols();
+    	}
     }
 
     /**
