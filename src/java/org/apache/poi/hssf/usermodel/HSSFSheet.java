@@ -1249,6 +1249,19 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * @param toprow  the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
+    public void showInPane(int toprow, int leftcol) {
+        int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        if (toprow > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
+        
+        showInPane((short)toprow, (short)leftcol);
+    }
+    /**
+     * Sets desktop window pane display area, when the
+     * file is first opened in a viewer.
+     *
+     * @param toprow  the top row to show in desktop window pane
+     * @param leftcol the left column to show in desktop window pane
+     */
     public void showInPane(short toprow, short leftcol) {
         _sheet.setTopRow(toprow);
         _sheet.setLeftCol(leftcol);
