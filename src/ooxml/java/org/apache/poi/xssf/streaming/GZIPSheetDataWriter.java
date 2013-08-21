@@ -19,7 +19,13 @@
 
 package org.apache.poi.xssf.streaming;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -35,7 +41,8 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
     /**
      * @return temp file to write sheet data
      */
-    public File createTempFile()throws IOException {
+    @Override
+	public File createTempFile()throws IOException {
         File fd = File.createTempFile("poi-sxssf-sheet-xml", ".gz");
         return fd;
     }
@@ -43,7 +50,8 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
     /**
      * @return a wrapped instance of GZIPOutputStream
      */
-    public Writer createWriter(File fd)throws IOException {
+    @Override
+	public Writer createWriter(File fd)throws IOException {
         return new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fd)));
     }
 
@@ -51,7 +59,8 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
     /**
      * @return a GZIPInputStream stream to read the compressed temp file
      */
-    public InputStream getWorksheetXMLInputStream() throws IOException {
+    @Override
+	public InputStream getWorksheetXMLInputStream() throws IOException {
         File fd = getTempFile();
         return new GZIPInputStream(new FileInputStream(fd));
     }
