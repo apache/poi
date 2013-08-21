@@ -2411,7 +2411,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      *
-     * @deprecated Use the version of showInPane() with ints as there can be more than 32767 rows.
+     * @deprecated Use {@link #showInPane(int, int)} as there can be more than 32767 rows.
      */
     @Deprecated
 	public void showInPane(short toprow, short leftcol) {

@@ -582,6 +582,16 @@ public interface Sheet extends Iterable<Row> {
      * @param toprow the top row to show in desktop window pane
      * @param leftcol the left column to show in desktop window pane
      */
+    void showInPane(int toprow, int leftcol);
+
+    /**
+     * Sets desktop window pane display area, when the
+     * file is first opened in a viewer.
+     *
+     * @param toprow the top row to show in desktop window pane
+     * @param leftcol the left column to show in desktop window pane
+     * @deprecated Use {@link #showInPane(int, int)} as there can be more than 32767 rows.
+     */
     void showInPane(short toprow, short leftcol);
 
     /**
