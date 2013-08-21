@@ -26,61 +26,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRGBProperty;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.BookBoolRecord;
-import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.CodepageRecord;
-import org.apache.poi.hssf.record.CountryRecord;
-import org.apache.poi.hssf.record.DSFRecord;
-import org.apache.poi.hssf.record.DateWindow1904Record;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.ExtSSTRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.FileSharingRecord;
-import org.apache.poi.hssf.record.FnGroupCountRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.record.HideObjRecord;
-import org.apache.poi.hssf.record.HyperlinkRecord;
-import org.apache.poi.hssf.record.InterfaceEndRecord;
-import org.apache.poi.hssf.record.InterfaceHdrRecord;
-import org.apache.poi.hssf.record.MMSRecord;
-import org.apache.poi.hssf.record.NameCommentRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.PaletteRecord;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.apache.poi.hssf.record.PasswordRev4Record;
-import org.apache.poi.hssf.record.PrecisionRecord;
-import org.apache.poi.hssf.record.ProtectRecord;
-import org.apache.poi.hssf.record.ProtectionRev4Record;
-import org.apache.poi.hssf.record.RecalcIdRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RefreshAllRecord;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.StyleRecord;
-import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.hssf.record.TabIdRecord;
-import org.apache.poi.hssf.record.UseSelFSRecord;
-import org.apache.poi.hssf.record.WindowOneRecord;
-import org.apache.poi.hssf.record.WindowProtectRecord;
-import org.apache.poi.hssf.record.WriteAccessRecord;
-import org.apache.poi.hssf.record.WriteProtectRecord;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
@@ -405,14 +352,14 @@ public final class InternalWorkbook {
         }
 
         for (int k = 0; k < 21; k++) {
-            records.add(retval.createExtendedFormat(k));
+            records.add(InternalWorkbook.createExtendedFormat(k));
             retval.numxfs++;
         }
         retval.records.setXfpos( records.size() - 1 );
         for (int k = 0; k < 6; k++) {
-            records.add(retval.createStyle(k));
+            records.add(InternalWorkbook.createStyle(k));
         }
-        records.add(retval.createUseSelFS());
+        records.add(InternalWorkbook.createUseSelFS());
 
         int nBoundSheets = 1; // now just do 1
         for (int k = 0; k < nBoundSheets; k++) {
@@ -422,13 +369,13 @@ public final class InternalWorkbook {
             retval.boundsheets.add(bsr);
             retval.records.setBspos(records.size() - 1);
         }
-        records.add( retval.createCountry() );
+        records.add( InternalWorkbook.createCountry() );
         for ( int k = 0; k < nBoundSheets; k++ ) {
             retval.getOrCreateLinkTable().checkExternSheet(k);
         }
         retval.sst = new SSTRecord();
         records.add(retval.sst);
-        records.add(retval.createExtendedSST());
+        records.add(InternalWorkbook.createExtendedSST());
 
         records.add(EOFRecord.instance);
         if (log.check( POILogger.DEBUG ))
@@ -628,9 +575,15 @@ public final class InternalWorkbook {
      */
 
     public void setSheetOrder(String sheetname, int pos ) {
-    int sheetNumber = getSheetIndex(sheetname);
-    //remove the sheet that needs to be reordered and place it in the spot we want
-    boundsheets.add(pos, boundsheets.remove(sheetNumber));
+        int sheetNumber = getSheetIndex(sheetname);
+        //remove the sheet that needs to be reordered and place it in the spot we want
+        boundsheets.add(pos, boundsheets.remove(sheetNumber));
+        
+        // also adjust order of Records, calculate the position of the Boundsheets via getBspos()...
+        int pos0 = records.getBspos() - (boundsheets.size() - 1);
+        Record removed = records.get(pos0 + sheetNumber);
+        records.remove(pos0 + sheetNumber);
+		records.add(pos0 + pos, removed);
     }
 
     /**
@@ -1087,11 +1040,13 @@ public final class InternalWorkbook {
             Record record = records.get( k );
             if (record instanceof SSTRecord)
                 sst = (SSTRecord)record;
+
             if (record.getSid() == ExtSSTRecord.sid && sst != null)
                 retval += sst.calcExtSSTRecordSize();
             else
                 retval += record.getRecordSize();
         }
+
         return retval;
     }
 
@@ -2320,10 +2275,9 @@ public final class InternalWorkbook {
      * @param password to set
      */
     public void writeProtectWorkbook( String password, String username ) {
-        int protIdx = -1;
         FileSharingRecord frec = getFileSharing();
         WriteAccessRecord waccess = getWriteAccess();
-        WriteProtectRecord wprotect = getWriteProtect();
+        /* WriteProtectRecord wprotect =*/ getWriteProtect();
         frec.setReadOnly((short)1);
         frec.setPassword(FileSharingRecord.hashPassword(password));
         frec.setUsername(username);
