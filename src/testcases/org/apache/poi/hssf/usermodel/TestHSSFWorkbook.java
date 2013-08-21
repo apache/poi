@@ -17,29 +17,40 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.TempFile;
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.TempFile;
 
 /**
  * Tests for {@link HSSFWorkbook}
@@ -455,13 +466,16 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         public BadlyBehavedRecord() {
             //
         }
-        public short getSid() {
+        @Override
+		public short getSid() {
             return 0x777;
         }
-        public int serialize(int offset, byte[] data) {
+        @Override
+		public int serialize(int offset, byte[] data) {
             return 4;
         }
-        public int getRecordSize() {
+        @Override
+		public int getRecordSize() {
             return 8;
         }
     }
@@ -598,6 +612,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
        assertEquals(3, wb.getNumberOfSheets());
        assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+       
+       fs.close();
     }
    
     public void testCellStylesLimit() {
@@ -606,12 +622,12 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         int MAX_STYLES = 4030;
         int limit = MAX_STYLES - numBuiltInStyles;
         for(int i=0; i < limit; i++){
-            HSSFCellStyle style = wb.createCellStyle();
+            /* HSSFCellStyle style =*/ wb.createCellStyle();
         }
 
         assertEquals(MAX_STYLES, wb.getNumCellStyles());
         try {
-            HSSFCellStyle style = wb.createCellStyle();
+            /*HSSFCellStyle style =*/ wb.createCellStyle();
             fail("expected exception");
         } catch (IllegalStateException e){
             assertEquals("The maximum number of cell styles was exceeded. " +
@@ -877,4 +893,31 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.unwriteProtectWorkbook();
         assertFalse(wb.isWriteProtected());
     }
+
+	public void testBug50298() throws Exception {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("50298.xls");
+
+		
+		HSSFSheet sheet = wb.cloneSheet(0);
+
+		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
+
+		wb.setSheetOrder("copy", 0);
+
+		wb.removeSheetAt(0);
+		
+		// check that the overall workbook serializes with its correct size
+		int expected = wb.getWorkbook().getSize();
+		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
+		
+		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
+				expected, written);
+		
+		FileOutputStream fileOut = new FileOutputStream("/tmp/workbook.xls");
+		try {
+			wb.write(fileOut);
+		} finally {
+			fileOut.close();
+		}
+	}
 }
