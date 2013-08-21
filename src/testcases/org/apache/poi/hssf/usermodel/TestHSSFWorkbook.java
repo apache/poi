@@ -897,14 +897,66 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	public void testBug50298() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("50298.xls");
 
-		
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
 		HSSFSheet sheet = wb.cloneSheet(0);
+		
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
 
 		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
 
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "copy");
+
 		wb.setSheetOrder("copy", 0);
 
+		assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
 		wb.removeSheetAt(0);
+		
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
+		// check that the overall workbook serializes with its correct size
+		int expected = wb.getWorkbook().getSize();
+		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
+		
+		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
+				expected, written);
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+		
+		HSSFWorkbook read = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+	}
+
+	public void testBug50298a() throws Exception {
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("50298.xls");
+
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
+		HSSFSheet sheet = wb.cloneSheet(0);
+		
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
+
+		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
+
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "copy");
+
+		wb.setSheetOrder("copy", 0);
+
+		assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
+		wb.removeSheetAt(0);
+		
+		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
+
+		wb.removeSheetAt(1);
+		
+		assertSheetOrder(wb, "Invoice", "Digest", "Deferred", "Received");
+		
+		wb.setSheetOrder("Digest", 3);
+
+		assertSheetOrder(wb, "Invoice", "Deferred", "Received", "Digest");
 		
 		// check that the overall workbook serializes with its correct size
 		int expected = wb.getWorkbook().getSize();
@@ -913,11 +965,23 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
 				expected, written);
 		
-		FileOutputStream fileOut = new FileOutputStream("/tmp/workbook.xls");
-		try {
-			wb.write(fileOut);
-		} finally {
-			fileOut.close();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		wb.write(out);
+		
+		HSSFWorkbook read = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		assertSheetOrder(wb, "Invoice", "Deferred", "Received", "Digest");
+	}
+	
+	private void assertSheetOrder(HSSFWorkbook wb, String... sheets) {
+		StringBuilder sheetNames = new StringBuilder();
+		for(int i = 0;i < wb.getNumberOfSheets();i++) {
+			sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
+		}
+		assertEquals("Had: " + sheetNames.toString(), 
+				sheets.length, wb.getNumberOfSheets());
+		for(int i = 0;i < wb.getNumberOfSheets();i++) {
+			assertEquals("Had: " + sheetNames.toString(), 
+					sheets[i], wb.getSheetAt(i).getSheetName());
 		}
 	}
 }
