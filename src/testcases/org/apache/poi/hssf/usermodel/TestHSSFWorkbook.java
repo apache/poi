@@ -922,10 +922,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
 				expected, written);
 		
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		wb.write(out);
-		
-		HSSFWorkbook read = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
+		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 	}
 
@@ -965,11 +962,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
 				expected, written);
 		
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		wb.write(out);
-		
-		HSSFWorkbook read = new HSSFWorkbook(new ByteArrayInputStream(out.toByteArray()));
-		assertSheetOrder(wb, "Invoice", "Deferred", "Received", "Digest");
+		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
+		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
 	}
 	
 	private void assertSheetOrder(HSSFWorkbook wb, String... sheets) {
