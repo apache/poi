@@ -36,11 +36,11 @@ import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
@@ -51,6 +51,7 @@ import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -58,7 +59,6 @@ import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 
 
 /**
@@ -118,7 +118,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * this holds the HSSFFont objects attached to this workbook.
      * We only create these from the low level records as required.
      */
-    private Hashtable fonts;
+    private Hashtable<Short,HSSFFont> fonts;
 
     /**
      * holds whether or not to preserve other nodes in the POIFS.  Used
@@ -285,7 +285,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         workbook = InternalWorkbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
         int recOffset = workbook.getNumRecords();
-        int sheetNum = 0;
 
         // convert all LabelRecord records to LabelSSTRecord
         convertLabelRecords(records, recOffset);
@@ -353,13 +352,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
       * @see org.apache.poi.hssf.record.SSTRecord
       */
 
-     private void convertLabelRecords(List records, int offset)
+     private void convertLabelRecords(List<Record> records, int offset)
      {
          if (log.check( POILogger.DEBUG ))
              log.log(POILogger.DEBUG, "convertLabelRecords called");
          for (int k = offset; k < records.size(); k++)
          {
-             Record rec = ( Record ) records.get(k);
+             Record rec = records.get(k);
 
              if (rec.getSid() == LabelRecord.sid)
              {
@@ -660,9 +659,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // TODO - make this less cryptic / move elsewhere
         return workbook.resolveNameXText(refIndex, definedNameIndex);
     }
-
-
-
 
     /**
      * create an HSSFSheet for this HSSFWorkbook, adds it to the sheets and returns
@@ -1034,7 +1030,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     public HSSFFont createFont()
     {
-        FontRecord font = workbook.createNewFont();
+        /*FontRecord font =*/ workbook.createNewFont();
         short fontindex = (short) (getNumberOfFonts() - 1);
 
         if (fontindex > 3)
@@ -1094,14 +1090,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @return HSSFFont at the index
      */
     public HSSFFont getFontAt(short idx) {
-        if(fonts == null) fonts = new Hashtable();
+        if(fonts == null) fonts = new Hashtable<Short, HSSFFont>();
 
         // So we don't confuse users, give them back
         //  the same object every time, but create
         //  them lazily
         Short sIdx = Short.valueOf(idx);
         if(fonts.containsKey(sIdx)) {
-            return (HSSFFont)fonts.get(sIdx);
+            return fonts.get(sIdx);
         }
 
         FontRecord font = workbook.getFontRecordAt(idx);
@@ -1118,7 +1114,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *  and that's not something you should normally do
      */
     protected void resetFontCache() {
-        fonts = new Hashtable();
+        fonts = new Hashtable<Short, HSSFFont>();
     }
 
     /**
@@ -1217,12 +1213,12 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     private static final class SheetRecordCollector implements RecordVisitor {
 
-        private List _list;
+        private List<Record> _list;
         private int _totalSize;
 
         public SheetRecordCollector() {
             _totalSize = 0;
-            _list = new ArrayList(128);
+            _list = new ArrayList<Record>(128);
         }
         public int getTotalSize() {
             return _totalSize;
@@ -1230,12 +1226,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         public void visitRecord(Record r) {
             _list.add(r);
             _totalSize+=r.getRecordSize();
+            
         }
         public int serialize(int offset, byte[] data) {
             int result = 0;
             int nRecs = _list.size();
             for(int i=0; i<nRecs; i++) {
-                Record rec = (Record)_list.get(i);
+                Record rec = _list.get(i);
                 result += rec.serialize(offset + result, data);
             }
             return result;
@@ -1556,11 +1553,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     {
         DrawingGroupRecord r = (DrawingGroupRecord) workbook.findFirstRecordBySid( DrawingGroupRecord.sid );
         r.decode();
-        List escherRecords = r.getEscherRecords();
+        List<EscherRecord> escherRecords = r.getEscherRecords();
         PrintWriter w = new PrintWriter(System.out);
-        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            EscherRecord escherRecord = (EscherRecord) iterator.next();
+            EscherRecord escherRecord = iterator.next();
             if (fat)
                 System.out.println(escherRecord.toString());
             else
