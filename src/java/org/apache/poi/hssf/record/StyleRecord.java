@@ -61,7 +61,7 @@ public final class StyleRecord extends StandardRecord {
 			field_3_outline_style_level = in.readByte();
 		} else {
 			int field_2_name_length = in.readShort();
-			
+
 			if(in.remaining() < 1) {
 				// Some files from Crystal Reports lack the is16BitUnicode byte
 				//  the remaining fields, which is naughty
@@ -71,7 +71,7 @@ public final class StyleRecord extends StandardRecord {
 				// guess this is OK if the string length is zero
 				field_4_name = "";
 			} else {
-				
+
 				field_3_stringHasMultibyte = in.readByte() != 0x00;
 				if (field_3_stringHasMultibyte) {
 					field_4_name = StringUtil.readUnicodeLE(in, field_2_name_length);
@@ -92,7 +92,7 @@ public final class StyleRecord extends StandardRecord {
 
 	/**
 	 * get the actual index of the style extended format record
-	 * @see #getXFIndex() 
+	 * @see #getXFIndex()
 	 * @return index of the xf record
 	 */
 	public int getXFIndex() {
@@ -138,6 +138,7 @@ public final class StyleRecord extends StandardRecord {
 		return field_4_name;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 
@@ -155,16 +156,18 @@ public final class StyleRecord extends StandardRecord {
 		return sb.toString();
 	}
 
-	
+
+	@Override
 	protected int getDataSize() {
 		if (isBuiltin()) {
 			return 4; // short, byte, byte
 		}
-		return 2 // short xf index 
-			+ 3 // str len + flag 
+		return 2 // short xf index
+			+ 3 // str len + flag
 			+ field_4_name.length() * (field_3_stringHasMultibyte ? 2 : 1);
 	}
 
+	@Override
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(field_1_xf_index);
 		if (isBuiltin()) {
@@ -181,6 +184,7 @@ public final class StyleRecord extends StandardRecord {
 		}
 	}
 
+	@Override
 	public short getSid() {
 		return sid;
 	}

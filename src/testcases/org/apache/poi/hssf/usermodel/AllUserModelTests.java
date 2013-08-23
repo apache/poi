@@ -71,9 +71,8 @@ public class AllUserModelTests {
 		result.addTestSuite(TestRowStyle.class);
 		result.addTestSuite(TestSanityChecker.class);
 		result.addTestSuite(TestSheetHiding.class);
-		if (false) { // deliberately avoiding this one
-			result.addTestSuite(TestUnfixedBugs.class);
-		}
+		/* deliberately avoiding this one
+		result.addTestSuite(TestUnfixedBugs.class);*/
 		result.addTestSuite(TestUnicodeWorkbook.class);
 		result.addTestSuite(TestNonStandardWorkbookStreamNames.class);
 		result.addTestSuite(TestWorkbook.class);

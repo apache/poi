@@ -16,7 +16,12 @@
 ==================================================================== */
 package org.apache.poi;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Centralises logic for finding/opening sample files
@@ -219,16 +224,20 @@ public final class POIDataSamples {
             _is = is;
         }
 
-        public int read() throws IOException {
+        @Override
+		public int read() throws IOException {
             return _is.read();
         }
-        public int read(byte[] b, int off, int len) throws IOException {
+        @Override
+		public int read(byte[] b, int off, int len) throws IOException {
             return _is.read(b, off, len);
         }
-        public boolean markSupported() {
+        @Override
+		public boolean markSupported() {
             return false;
         }
-        public void close() throws IOException {
+        @Override
+		public void close() throws IOException {
             _is.close();
         }
     }
