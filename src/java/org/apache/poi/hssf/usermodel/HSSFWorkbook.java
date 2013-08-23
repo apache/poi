@@ -68,9 +68,6 @@ import org.apache.poi.util.POILogger;
  *
  * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (slaubach at apache dot org)
  */
 public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");

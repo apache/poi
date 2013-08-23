@@ -33,8 +33,6 @@ import java.util.Properties;
  * resource from the POI jar file (or classpath) and should be contained in path
  * "/font_metrics.properties". The font widths are for a 10 point version of the
  * font. Use a multiplier for other sizes.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 final class StaticFontMetrics {
 	/** The font metrics property file we're using */

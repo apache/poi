@@ -22,8 +22,6 @@ import org.apache.poi.hssf.record.*;
 
 /**
  * A textbox is a shape that may hold a rich text string.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFTextbox extends HSSFSimpleShape {
     public final static short OBJECT_TYPE_TEXT = 6;

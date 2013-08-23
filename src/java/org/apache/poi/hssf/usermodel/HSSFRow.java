@@ -33,9 +33,6 @@ import org.apache.poi.util.Configurator;
  * High level representation of a row of a spreadsheet.
  *
  * Only rows that have cells should be added to a Sheet.
- *
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFRow implements Row {
 

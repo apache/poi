@@ -44,9 +44,6 @@ import org.apache.poi.ss.usermodel.DataFormat;
  * <a href="http://office.microsoft.com/assistance/hfws.aspx?AssetID=HA010346351033&CTT=6&Origin=EC010272491033">
  *   Creating international number formats
  * </a> for more details on these codes.
- *
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Shawn M. Laubach (slaubach at apache dot org)
  */
 public final class HSSFDataFormat implements DataFormat {
 	private static final String[] _builtinFormats = BuiltinFormats.getAll();

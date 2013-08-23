@@ -26,8 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Evgeniy Berlog
- * date: 05.06.12
+ * Factory class for producing Excel Shapes from Escher records
  */
 public class HSSFShapeFactory {
 

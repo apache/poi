@@ -22,8 +22,6 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 
 /**
  * HSSF wrapper for a sheet under evaluation
- * 
- * @author Josh Micich
  */
 final class HSSFEvaluationSheet implements EvaluationSheet {
 

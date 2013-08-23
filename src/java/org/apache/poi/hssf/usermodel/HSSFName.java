@@ -28,8 +28,6 @@ import org.apache.poi.ss.usermodel.Name;
 /**
  * High Level Representation of a 'defined name' which could be a 'built-in' name,
  * 'named range' or name of a user defined function.
- *
- * @author Libin Roman (Vista Portal LDT. Developer)
  */
 public final class HSSFName implements Name {
     private HSSFWorkbook _book;

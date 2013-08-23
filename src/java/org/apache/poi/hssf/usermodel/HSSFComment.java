@@ -22,8 +22,6 @@ import org.apache.poi.ss.usermodel.Comment;
 
 /**
  * Represents a cell comment - a sticky note associated with a cell.
- *
- * @author Yegor Kozlov
  */
 public class HSSFComment extends HSSFTextbox implements Comment {
 

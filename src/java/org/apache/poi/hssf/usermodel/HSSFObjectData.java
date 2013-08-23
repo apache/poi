@@ -31,8 +31,6 @@ import org.apache.poi.util.HexDump;
  * Represents binary object (i.e. OLE) data stored in the file.  Eg. A GIF, JPEG etc...
  * <p/>
  * Right now, 13, july, 2012 can not be created from scratch
- *
- * @author Daniel Noll
  */
 public final class HSSFObjectData extends HSSFPicture {
     /**

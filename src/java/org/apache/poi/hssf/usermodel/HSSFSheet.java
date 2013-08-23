@@ -56,15 +56,6 @@ import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a worksheet.
- *
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Libin Roman (romal at vistaportal.com)
- * @author Shawn Laubach (slaubach at apache dot org) (Just a little)
- * @author Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little, too)
- * @author Yegor Kozlov (yegor at apache.org) (Autosizing columns)
- * @author Josh Micich
- * @author Petr Udalau(Petr.Udalau at exigenservices.com) - set/remove array formulas
  */
 public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     private static final POILogger log = POILogFactory.getLogger(HSSFSheet.class);

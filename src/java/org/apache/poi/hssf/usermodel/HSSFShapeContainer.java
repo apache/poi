@@ -21,8 +21,6 @@ import java.util.List;
 
 /**
  * An interface that indicates whether a class can contain children.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public interface HSSFShapeContainer extends Iterable<HSSFShape>
 {

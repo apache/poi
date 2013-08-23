@@ -26,8 +26,6 @@ import org.apache.poi.util.PngUtils;
 
 /**
  * Represents binary data stored in the file.  Eg. A GIF, JPEG etc...
- *
- * @author Daniel Noll
  */
 public class HSSFPictureData implements PictureData
 {

@@ -35,8 +35,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
  *  public static final short ENVELOPE_DL_PAPERSIZE 	  = 27;<br>
  *  public static final short ENVELOPE_CS_PAPERSIZE 	  = 28;<br>
  *  public static final short ENVELOPE_MONARCH_PAPERSIZE  = 37;<br>
- * <P>
- * @author Shawn Laubach (slaubach at apache dot org) */
+ */
 public class HSSFPrintSetup implements PrintSetup {    
     PrintSetupRecord printSetupRecord;
     

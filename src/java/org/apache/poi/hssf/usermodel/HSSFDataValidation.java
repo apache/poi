@@ -25,9 +25,7 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
- *Utility class for creating data validation cells
- * 
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
+ * Utility class for creating data validation cells
  */
 public final class HSSFDataValidation implements DataValidation {
 	private String _prompt_title;

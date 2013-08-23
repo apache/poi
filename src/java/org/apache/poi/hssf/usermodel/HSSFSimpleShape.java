@@ -23,8 +23,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
 
 /**
  * Represents a simple shape such as a line, rectangle or oval.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFSimpleShape extends HSSFShape
 {

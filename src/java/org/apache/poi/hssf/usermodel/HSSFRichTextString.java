@@ -64,10 +64,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
  *
  * <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47543">
  * https://issues.apache.org/bugzilla/show_bug.cgi?id=47543</a>
- * <p>
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Jason Height (jheight at apache.org)
  */
 public final class HSSFRichTextString implements Comparable<HSSFRichTextString>, RichTextString {
     /** Place holder for indicating that NO_FONT has been applied here */

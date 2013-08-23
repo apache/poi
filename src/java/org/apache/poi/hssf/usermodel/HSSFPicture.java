@@ -33,9 +33,6 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
- *
- * @author Glen Stampoultzis
- * @author Yegor Kozlov (yegor at apache.org)
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
 	private static POILogger logger = POILogFactory.getLogger(HSSFPicture.class);
