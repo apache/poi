@@ -528,4 +528,50 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 		}
 		System.out.println("Done");
 	}
+	
+	public void testBug47090a() {
+	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
+		assertSheetOrder(workbook, "Sheet1", "Sheet2");
+	    workbook.removeSheetAt(0);
+		assertSheetOrder(workbook, "Sheet2");
+	    workbook.createSheet();
+		assertSheetOrder(workbook, "Sheet2", "Sheet1");
+	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+		assertSheetOrder(read, "Sheet2", "Sheet1");
+	}
+	
+	public void testBug47090b() {
+	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
+	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
+	    workbook.removeSheetAt(1);
+		assertSheetOrder(workbook, "Sheet1");
+	    workbook.createSheet();
+		assertSheetOrder(workbook, "Sheet1", "Sheet0");		// Sheet0 because it uses "Sheet" + sheets.size() as starting point!
+	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+		assertSheetOrder(read, "Sheet1", "Sheet0");
+	}
+
+	public void testBug47090c() {
+	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
+	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
+	    workbook.removeSheetAt(0);
+		assertSheetOrder(workbook, "Sheet2");
+	    workbook.cloneSheet(0);	
+		assertSheetOrder(workbook, "Sheet2", "Sheet2 (2)");
+	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+		assertSheetOrder(read, "Sheet2", "Sheet2 (2)");
+	}
+	
+	public void testBug47090d() {
+	    Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("47090.xlsx");
+	    assertSheetOrder(workbook, "Sheet1", "Sheet2");
+	    workbook.createSheet();
+		assertSheetOrder(workbook, "Sheet1", "Sheet2", "Sheet0");
+	    workbook.removeSheetAt(0);
+		assertSheetOrder(workbook, "Sheet2", "Sheet0");
+	    workbook.createSheet();	
+		assertSheetOrder(workbook, "Sheet2", "Sheet0", "Sheet1");
+	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+		assertSheetOrder(read, "Sheet2", "Sheet0", "Sheet1");
+	}
 }
