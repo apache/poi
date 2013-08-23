@@ -29,8 +29,6 @@ import org.apache.poi.ss.usermodel.Font;
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
  *
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(short)
  * @see org.apache.poi.hssf.usermodel.HSSFCell#setCellStyle(HSSFCellStyle)

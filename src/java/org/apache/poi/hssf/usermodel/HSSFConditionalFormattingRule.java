@@ -31,8 +31,6 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
  * High level representation of Conditional Formatting Rule.
  * It allows to specify formula based conditions for the Conditional Formatting
  * and the formatting settings such as font, border and pattern.
- *
- * @author Dmitriy Kumshayev
  */
 public final class HSSFConditionalFormattingRule implements ConditionalFormattingRule
 {

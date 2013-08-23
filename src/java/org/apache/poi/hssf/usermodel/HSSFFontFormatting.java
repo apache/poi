@@ -22,9 +22,6 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
- * 
- * @author Dmitriy Kumshayev
- *
  */
 public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.FontFormatting
 {

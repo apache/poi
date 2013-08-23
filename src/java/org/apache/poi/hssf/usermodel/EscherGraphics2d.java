@@ -67,8 +67,6 @@ import java.util.Map;
  * height of the group can be calculated by using a convenience called
  * <code>HSSFClientAnchor.getAnchorHeightInPoints()</code>.
  * </blockquote>
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class EscherGraphics2d extends Graphics2D {
     private EscherGraphics _escherGraphics;

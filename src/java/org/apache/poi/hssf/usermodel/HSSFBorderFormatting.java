@@ -23,9 +23,6 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
 /**
  * High level representation for Border Formatting component
  * of Conditional Formatting settings
- * 
- * @author Dmitriy Kumshayev
- *
  */
 public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.BorderFormatting
 {

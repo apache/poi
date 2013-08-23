@@ -23,9 +23,7 @@ import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Represents a Font used in a workbook.
- *
- *
- * @author  Andrew C. Oliver
+ * 
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)

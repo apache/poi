@@ -24,8 +24,7 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
- * @author <a href="rjankiraman@emptoris.com">Radhakrishnan J</a>
- * 
+ * Helper for working with Data Validation
  */
 public class HSSFDataValidationHelper implements DataValidationHelper {
 	@SuppressWarnings("unused")

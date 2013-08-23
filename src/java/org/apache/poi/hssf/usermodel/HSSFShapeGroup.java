@@ -28,8 +28,6 @@ import java.util.Iterator;
 /**
  * A shape group may contain other shapes.  It was no actual form on the
  * sheet.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     private final List<HSSFShape> shapes = new ArrayList<HSSFShape>();

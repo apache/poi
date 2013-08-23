@@ -22,9 +22,6 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
 
 /**
  * High level representation for Conditional Formatting settings
- * 
- * @author Dmitriy Kumshayev
- *
  */
 public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.PatternFormatting
 {

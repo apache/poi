@@ -27,8 +27,6 @@ import java.io.IOException;
 
 /**
  * An abstract shape.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public abstract class HSSFShape {
     public static final int LINEWIDTH_ONE_PT = 12700;

@@ -62,8 +62,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
  * HSSFDataFormatter.setDefaultNumberFormat(Format)</code>. <b>Note:</b> the
  * default format will only be used when a Format cannot be created from the
  * cell's data format string.
- *
- * @author James May (james dot may at fmr dot com)
  */
 public final class HSSFDataFormatter extends DataFormatter {
 

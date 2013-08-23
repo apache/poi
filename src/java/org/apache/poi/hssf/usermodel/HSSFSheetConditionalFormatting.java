@@ -28,8 +28,6 @@ import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
- *
- * @author Dmitriy Kumshayev
  */
 public final class HSSFSheetConditionalFormatting implements SheetConditionalFormatting {
 

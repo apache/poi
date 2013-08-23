@@ -56,8 +56,6 @@ import java.text.AttributedCharacterIterator;
  * height of the group can be calculated by using a convenience called
  * <code>HSSFClientAnchor.getAnchorHeightInPoints()</code>.
  * </blockquote>
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherGraphics
         extends Graphics

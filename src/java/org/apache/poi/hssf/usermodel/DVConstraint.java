@@ -29,8 +29,7 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 
 /**
- * 
- * @author Josh Micich
+ * Data Validation Constraint
  */
 public class DVConstraint implements DataValidationConstraint {
 	/* package */ public static final class FormulaPair {

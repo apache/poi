@@ -58,11 +58,6 @@ import org.apache.poi.util.POILogFactory;
  * Cells should have their number (0 based) before being added to a row.  Only
  * cells that have values should be added.
  * <p>
- *
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Dan Sherman (dsherman at isisph.com)
- * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
- * @author  Yegor Kozlov cell comments support
  */
 public class HSSFCell implements Cell {
     private static POILogger log = POILogFactory.getLogger(HSSFCell.class);

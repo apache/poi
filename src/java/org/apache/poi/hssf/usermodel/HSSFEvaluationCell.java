@@ -21,8 +21,6 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 /**
  * HSSF wrapper for a cell under evaluation
- * 
- * @author Josh Micich
  */
 final class HSSFEvaluationCell implements EvaluationCell {
 

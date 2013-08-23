@@ -21,8 +21,6 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 
 /**
  * Represents an Excel hyperlink.
- *
- * @author Yegor Kozlov (yegor at apache dot org)
  */
 public class HSSFHyperlink implements Hyperlink {
 

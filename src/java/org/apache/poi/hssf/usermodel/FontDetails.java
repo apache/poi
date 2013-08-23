@@ -24,8 +24,6 @@ import java.util.StringTokenizer;
 
 /**
  * Stores width and height details about a font.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class FontDetails
 {

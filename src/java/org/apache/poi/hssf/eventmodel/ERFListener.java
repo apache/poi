@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.Record;
  * via the EventRecordFactory
  * 
  * @see EventRecordFactory
- * @author Andrew C. Oliver acoliver@apache.org
  */
 public interface ERFListener
 {

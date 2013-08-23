@@ -24,7 +24,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * @author Glen Stampoultzis  (glens at superlinksoftware.com)
+ * 
  */
 public class HSSFPolygon  extends HSSFSimpleShape {
 	private static POILogger logger = POILogFactory.getLogger(HSSFPolygon.class);

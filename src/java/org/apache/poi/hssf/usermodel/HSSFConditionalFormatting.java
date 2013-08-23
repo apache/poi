@@ -72,8 +72,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * // Apply Conditional Formatting rule defined above to the regions  
  * sheet.addConditionalFormatting(regions, rule);
  * </PRE>
- * 
- * @author Dmitriy Kumshayev
  */
 public final class HSSFConditionalFormatting  implements ConditionalFormatting
 {

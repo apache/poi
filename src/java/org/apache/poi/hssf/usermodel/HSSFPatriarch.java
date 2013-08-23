@@ -35,8 +35,6 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 /**
  * The patriarch is the toplevel container for shapes in a sheet.  It does
  * little other than act as a container for other shapes and groups.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     private static POILogger log = POILogFactory.getLogger(HSSFPatriarch.class);

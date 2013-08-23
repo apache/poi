@@ -25,8 +25,6 @@ import org.apache.poi.hssf.util.HSSFColor;
  * Internally, the XLS format refers to colors using an offset into the palette
  * record.  Thus, the first color in the palette has the index 0x8, the second
  * has the index 0x9, etc. through 0x40
- *
- * @author Brian Sanders (bsanders at risklabs dot com)
  */
 public final class HSSFPalette {
     private PaletteRecord _palette;

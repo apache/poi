@@ -26,8 +26,6 @@ import org.apache.poi.ddf.EscherRecord;
 /**
  * An anchor is what specifics the position of a shape within a client object
  * or within another containing shape.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public abstract class HSSFAnchor {
 

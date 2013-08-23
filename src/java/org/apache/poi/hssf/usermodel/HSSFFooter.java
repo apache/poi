@@ -30,8 +30,6 @@ import org.apache.poi.ss.usermodel.Footer;
  * For special things (such as page numbers and date), one can use a the methods
  * that return the characters used to represent these.  One can also change the
  * fonts by using similar methods.
- * <P>
- * @author Shawn Laubach (slaubach at apache dot org)
  */
 public final class HSSFFooter extends HeaderFooter implements Footer {
 	private final PageSettingsBlock _psb;
