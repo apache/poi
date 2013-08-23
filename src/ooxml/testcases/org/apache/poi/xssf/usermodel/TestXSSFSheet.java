@@ -19,17 +19,32 @@ package org.apache.poi.xssf.usermodel;
 
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.ss.usermodel.BaseTestSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.hssf.record.PasswordRecord;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
 
 @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
@@ -40,7 +55,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
     }
 
     //TODO column styles are not yet supported by XSSF
-    public void testDefaultColumnStyle() {
+    @Override
+	public void testDefaultColumnStyle() {
         //super.testDefaultColumnStyle();
     }
 
@@ -903,7 +919,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
      * Rows and cells can be created in random order,
      * but CTRows are kept in ascending order
      */
-    public void testCreateRow() {
+	public void testCreateRowXSSF() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet wsh = sheet.getCTWorksheet();
@@ -1031,7 +1047,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals("XSSFSheet#removeRow did not clear calcChain entries",
                 0, calcChain.getCTCalcChain().sizeOfCArray());
 
-        //calcChain should be gone 
+        //calcChain should be gone
         wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         assertNull(wb.getCalculationChain());
 
@@ -1043,37 +1059,37 @@ public final class TestXSSFSheet extends BaseTestSheet {
     public void testTables() {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTable.xlsx");
        assertEquals(3, wb.getNumberOfSheets());
-       
+
        // Check the table sheet
        XSSFSheet s1 = wb.getSheetAt(0);
        assertEquals("a", s1.getRow(0).getCell(0).getRichStringCellValue().toString());
        assertEquals(1.0, s1.getRow(1).getCell(0).getNumericCellValue());
-       
+
        List<XSSFTable> tables = s1.getTables();
        assertNotNull(tables);
        assertEquals(1, tables.size());
-       
+
        XSSFTable table = tables.get(0);
        assertEquals("Tabella1", table.getName());
        assertEquals("Tabella1", table.getDisplayName());
-       
+
        // And the others
        XSSFSheet s2 = wb.getSheetAt(1);
        assertEquals(0, s2.getTables().size());
        XSSFSheet s3 = wb.getSheetAt(2);
        assertEquals(0, s3.getTables().size());
     }
-    
+
     /**
      * Test to trigger OOXML-LITE generating to include org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr
      */
     public void testSetForceFormulaRecalculation() {
-    	   XSSFWorkbook workbook = new XSSFWorkbook();
-         XSSFSheet sheet = workbook.createSheet("Sheet 1");
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Sheet 1");
 
-         // Set
-         sheet.setForceFormulaRecalculation(true);
-         assertEquals(true, sheet.getForceFormulaRecalculation());
+        // Set
+        sheet.setForceFormulaRecalculation(true);
+        assertEquals(true, sheet.getForceFormulaRecalculation());
 
         // calcMode="manual" is unset when forceFormulaRecalculation=true
         CTCalcPr calcPr = workbook.getCTWorkbook().addNewCalcPr();
@@ -1082,13 +1098,13 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
 
         // Check
-         sheet.setForceFormulaRecalculation(false);
-         assertEquals(false, sheet.getForceFormulaRecalculation());
+        sheet.setForceFormulaRecalculation(false);
+        assertEquals(false, sheet.getForceFormulaRecalculation());
 
 
-         // Save, re-load, and re-check
-         workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-         sheet = workbook.getSheet("Sheet 1");
-         assertEquals(false, sheet.getForceFormulaRecalculation());
+        // Save, re-load, and re-check
+        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        sheet = workbook.getSheet("Sheet 1");
+        assertEquals(false, sheet.getForceFormulaRecalculation());
 	}
 }
