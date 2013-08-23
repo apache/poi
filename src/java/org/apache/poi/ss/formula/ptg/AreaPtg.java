@@ -39,6 +39,7 @@ public final class AreaPtg extends Area2DPtgBase {
 	public AreaPtg(AreaReference areaRef) {
 		super(areaRef);
 	}
+	@Override
 	protected byte getSid() {
 		return sid;
 	}
