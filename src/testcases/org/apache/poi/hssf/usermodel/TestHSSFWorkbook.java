@@ -965,17 +965,4 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
 	}
-	
-	private void assertSheetOrder(HSSFWorkbook wb, String... sheets) {
-		StringBuilder sheetNames = new StringBuilder();
-		for(int i = 0;i < wb.getNumberOfSheets();i++) {
-			sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
-		}
-		assertEquals("Had: " + sheetNames.toString(), 
-				sheets.length, wb.getNumberOfSheets());
-		for(int i = 0;i < wb.getNumberOfSheets();i++) {
-			assertEquals("Had: " + sheetNames.toString(), 
-					sheets[i], wb.getSheetAt(i).getSheetName());
-		}
-	}
 }

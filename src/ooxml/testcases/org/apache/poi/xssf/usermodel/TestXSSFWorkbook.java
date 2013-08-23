@@ -37,7 +37,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -493,5 +495,37 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
 		assertEquals("hello world", workbook.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
 		assertEquals(2048, workbook.getSheetAt(0).getColumnWidth(0)); // <-works
+	}
+
+
+	public void testBug48495() {
+		try {
+			Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48495.xlsx");
+			
+			assertSheetOrder(wb, "Sheet1");
+			
+			Sheet sheet = wb.getSheetAt(0);
+			sheet.shiftRows(2, sheet.getLastRowNum(), 1, true, false);
+			Row newRow = sheet.getRow(2);
+			if (newRow == null) newRow = sheet.createRow(2);
+			newRow.createCell(0).setCellValue(" Another Header");
+			wb.cloneSheet(0);
+
+			assertSheetOrder(wb, "Sheet1", "Sheet1 (2)");
+
+			//		    FileOutputStream fileOut = new FileOutputStream("/tmp/bug48495.xlsx");
+//		    try {
+//		    	wb.write(fileOut);
+//		    } finally {
+//		    	fileOut.close();
+//		    }
+			
+			Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
+			assertNotNull(read);
+			assertSheetOrder(read, "Sheet1", "Sheet1 (2)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("Done");
 	}
 }
