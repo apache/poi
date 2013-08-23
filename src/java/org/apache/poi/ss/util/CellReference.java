@@ -170,22 +170,19 @@ public class CellReference {
 	 * @return zero based column index
 	 */
 	public static int convertColStringToIndex(String ref) {
-
-		int pos = 0;
 		int retval=0;
-		for (int k = ref.length()-1; k >= 0; k--) {
-			char thechar = ref.charAt(k);
+		char[] refs = ref.toUpperCase().toCharArray();
+		for (int k=0; k<refs.length; k++) {
+			char thechar = refs[k];
 			if (thechar == ABSOLUTE_REFERENCE_MARKER) {
 				if (k != 0) {
 					throw new IllegalArgumentException("Bad col ref format '" + ref + "'");
 				}
-				break;
+				continue;
 			}
-			// Character.getNumericValue() returns the values
-			//  10-35 for the letter A-Z
-			int shift = (int)Math.pow(26, pos);
-			retval += (Character.getNumericValue(thechar)-9) * shift;
-			pos++;
+			
+			// Character is uppercase letter, find relative value to A
+			retval = (retval * 26) + (thechar - 'A' + 1);
 		}
 		return retval-1;
 	}
