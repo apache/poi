@@ -17,10 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
@@ -30,8 +26,12 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -67,7 +67,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	 * @return  the external sheet index of the sheet with the given internal
 	 * index. Used by some of the more obscure formula and named range things.
 	 * Fairly easy on XSSF (we think...) since the internal and external
-	 * indicies are the same
+	 * indices are the same
 	 */
 	private int convertToExternalSheetIndex(int sheetIndex) {
 		return sheetIndex;

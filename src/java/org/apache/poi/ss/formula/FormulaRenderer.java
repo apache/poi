@@ -49,8 +49,7 @@ public class FormulaRenderer {
         }
         Stack<String> stack = new Stack<String>();
 
-        for (int i=0 ; i < ptgs.length; i++) {
-            Ptg ptg = ptgs[i];
+        for (Ptg ptg : ptgs) {
             // TODO - what about MemNoMemPtg?
             if(ptg instanceof MemAreaPtg || ptg instanceof MemFuncPtg || ptg instanceof MemErrPtg) {
                 // marks the start of a list of area expressions which will be naturally combined

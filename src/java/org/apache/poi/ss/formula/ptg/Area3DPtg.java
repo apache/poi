@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -61,6 +61,7 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 		setExternSheetIndex(externIdx);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName());
@@ -72,12 +73,14 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 		return sb.toString();
 	}
 
+	@Override
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
 		out.writeShort(field_1_index_extern_sheet);
 		writeCoordinates(out);
 	}
 
+	@Override
 	public int getSize() {
 		return SIZE;
 	}
@@ -99,6 +102,7 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 	public String toFormulaString(FormulaRenderingWorkbook book) {
 		return ExternSheetNameResolver.prependSheetName(book, field_1_index_extern_sheet, formatReferenceAsString());
 	}
+	@Override
 	public String toFormulaString() {
 		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
