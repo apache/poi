@@ -420,7 +420,7 @@ public class CellReference {
 		//  treat it as the 0th one
 		int excelColNum = col + 1;
 
-		String colRef = "";
+		StringBuilder colRef = new StringBuilder(2);
 		int colRemain = excelColNum;
 
 		while(colRemain > 0) {
@@ -430,10 +430,10 @@ public class CellReference {
 
 			// The letter A is at 65
 			char colChar = (char)(thisPart+64);
-			colRef = colChar + colRef;
+			colRef.append(colChar);
 		}
 
-		return colRef;
+		return colRef.toString();
 	}
 
 	/**
