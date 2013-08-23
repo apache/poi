@@ -44,6 +44,17 @@ public final class TestCellReference extends TestCase {
         assertEquals("ZZ", CellReference.convertNumToColString(701));
         assertEquals("AAA", CellReference.convertNumToColString(702));
         assertEquals("ZZZ", CellReference.convertNumToColString(18277));
+        
+        // Absolute references are allowed for the string ones
+        assertEquals(0, CellReference.convertColStringToIndex("$A"));
+        assertEquals(25, CellReference.convertColStringToIndex("$Z"));
+        assertEquals(26, CellReference.convertColStringToIndex("$AA"));
+        
+        // $ sign isn't allowed elsewhere though
+        try {
+            CellReference.convertColStringToIndex("A$B$");
+            fail("Column reference is invalid and shouldn't be accepted");
+        } catch (IllegalArgumentException e) {}
     }
 
     public void testAbsRef1(){
