@@ -33,8 +33,6 @@ import org.apache.poi.hssf.eventusermodel.HSSFUserException;
  * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
  * @see org.apache.poi.hssf.eventusermodel.HSSFUserException
- *
- * @author Carey Sublette (careysub@earthling.net)
  */
 
 public abstract class AbortableHSSFListener implements HSSFListener

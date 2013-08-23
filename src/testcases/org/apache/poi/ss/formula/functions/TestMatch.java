@@ -32,9 +32,6 @@ import org.apache.poi.ss.usermodel.CellValue;
 
 /**
  * Test cases for MATCH()
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 public final class TestMatch extends TestCase {
 	/** less than or equal to */

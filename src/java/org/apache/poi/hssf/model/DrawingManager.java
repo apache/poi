@@ -25,8 +25,6 @@ import java.util.HashMap;
 
 /**
  * Provides utilities to manage drawing groups.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class DrawingManager
 {

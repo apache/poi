@@ -24,8 +24,6 @@ import org.apache.poi.hssf.usermodel.*;
 
 /**
  * Represents a combobox shape.
- * 
- * @author Yegor Kozlov
  */
 @Deprecated
 public class ComboboxShape

@@ -31,8 +31,6 @@ package org.apache.poi.hssf.eventusermodel;
  * <p>The HSSF package does not itself throw any of these 
  * exceptions.</p>
  *
- * @author Rainer Klute (klute@rainer-klute.de)
- * @author Carey Sublette (careysub@earthling.net)
  * @version HSSFUserException.java,v 1.0
  * @since 2002-04-19
  */

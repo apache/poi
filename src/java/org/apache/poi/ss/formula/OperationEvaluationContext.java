@@ -35,9 +35,6 @@ import org.apache.poi.ss.util.CellReference.NameType;
  * within a formula
  *
  * For POI internal use only
- *
- * @author Josh Micich
- * @author Cédric Walter
  */
 public final class OperationEvaluationContext {
 	public static final FreeRefFunction UDF = UserDefinedFunction.instance;

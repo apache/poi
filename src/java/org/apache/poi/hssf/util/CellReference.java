@@ -21,8 +21,6 @@ package org.apache.poi.hssf.util;
  * Common conversion functions between Excel style A1, C27 style
  *  cell references, and POI usermodel style row=0, column=0
  *  style references.
- * @author  Avik Sengupta
- * @author  Dennis Doubleday (patch to seperateRowColumns())
  */
 public final class CellReference extends org.apache.poi.ss.util.CellReference {
     /**

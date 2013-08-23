@@ -26,8 +26,6 @@ import org.apache.poi.util.StringUtil;
  * An augmented {@link LittleEndianOutput} used for serialization of {@link ContinuableRecord}s.
  * This class keeps track of how much remaining space is available in the current BIFF record and
  * can start new {@link ContinueRecord}s as required.
- *
- * @author Josh Micich
  */
 public final class ContinuableRecordOutput implements LittleEndianOutput {
 

@@ -24,8 +24,6 @@ import org.apache.poi.hssf.usermodel.*;
 
 /**
  * Represents a picture shape and creates all specific low level records.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class PictureShape
         extends AbstractShape

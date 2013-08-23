@@ -19,9 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 /**
  * Tests INDEX() as loaded from a test data spreadsheet.<p/>
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 public final class TestIndexFunctionFromSpreadsheet  extends BaseTestFunctionsFromSpreadsheet {
 

@@ -36,9 +36,6 @@ import org.apache.poi.ss.formula.TwoDEval;
  * <b>col_index_num</b> a 1 based index specifying which column value of the lookup data will be returned.<br/>
  * <b>range_lookup</b> If TRUE (default), VLOOKUP finds the largest value less than or equal to
  * the lookup_value.  If FALSE, only exact matches will be considered<br/>
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 public final class Vlookup extends Var3or4ArgFunction {
 	private static final ValueEval DEFAULT_ARG3 = BoolEval.TRUE;

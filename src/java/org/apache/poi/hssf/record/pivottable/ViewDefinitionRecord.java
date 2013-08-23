@@ -25,8 +25,6 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * SXVIEW - View Definition (0x00B0)<br/>
- * 
- * @author Patrick Cheng
  */
 public final class ViewDefinitionRecord extends StandardRecord {
 	public static final short sid = 0x00B0;

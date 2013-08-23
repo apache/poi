@@ -27,7 +27,6 @@ import org.apache.poi.hssf.record.Record;
  *
  * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
- * @author  acoliver@apache.org
  */
 
 public interface HSSFListener

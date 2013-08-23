@@ -18,11 +18,9 @@ package org.apache.poi.util;
 ==================================================================== */
 
 /**
- *
- * @author Cedric Walter (cedric.walter at innoveo.com)
+ * Helper for fetching int values from system properties
  */
 public class Configurator {
-
     private static POILogger logger = POILogFactory.getLogger(Configurator.class);
 
     public static int getIntValue(String systemProperty, int defaultValue) {
@@ -35,6 +33,4 @@ public class Configurator {
         }
         return result;
     }
-
-
 }

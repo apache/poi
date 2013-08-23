@@ -33,8 +33,6 @@ import org.apache.poi.ss.util.CellReference;
 /**
  * Segregates the 'Row Blocks' section of a single sheet into plain row/cell records and
  * shared formula records.
- *
- * @author Josh Micich
  */
 public final class RowBlocksReader {
 

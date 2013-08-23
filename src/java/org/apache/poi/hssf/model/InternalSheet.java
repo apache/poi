@@ -52,12 +52,6 @@ import org.apache.poi.util.POILogger;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  * <P>
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Shawn Laubach (slaubach at apache dot org) Gridlines, Headers, Footers, PrintSetup, and Setting Default Column Styles
- * @author Jason Height (jheight at chariot dot net dot au) Clone support. DBCell & Index Record writing support
- * @author  Brian Sanders (kestrel at burdell dot org) Active Cell support
- * @author  Jean-Pierre Paris (jean-pierre.paris at m4x dot org) (Just a little)
  *
  * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet

@@ -34,9 +34,6 @@ import java.util.regex.Pattern;
 
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 final class LookupUtils {
 

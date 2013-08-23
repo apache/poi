@@ -26,7 +26,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * Description:  defines whether to store with full precision or what's displayed by the gui
  *               (meaning have really screwed up and skewed figures or only think you do!)<P>
  * REFERENCE:  PG 372 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
 

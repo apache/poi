@@ -32,8 +32,6 @@ import org.apache.poi.hssf.record.RecordFactory;
  * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventusermodel.HSSFListener
  * @see org.apache.poi.hssf.eventusermodel.HSSFUserException
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author Carey Sublette (careysub@earthling.net)
  */
 public class HSSFRequest {
 	private final Map<Short, List<HSSFListener>> _records;

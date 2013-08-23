@@ -24,8 +24,6 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Common superclass of all records that can produce {@link ContinueRecord}s while being serialized.
- *
- * @author Josh Micich
  */
 public abstract class ContinuableRecord extends Record {
 

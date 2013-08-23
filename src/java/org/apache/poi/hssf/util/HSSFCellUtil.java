@@ -33,8 +33,6 @@ import org.apache.poi.ss.util.CellUtil;
  * exists that meets your needs.  If not, then it will create a new style.  This is to prevent
  * creating too many styles.  there is an upper limit in Excel on the number of styles that
  * can be supported.
- *
- *@author     Eric Pugh epugh@upstate.com
  */
 public final class HSSFCellUtil {
 

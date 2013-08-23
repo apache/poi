@@ -23,8 +23,6 @@ import org.apache.poi.hssf.usermodel.*;
 
 /**
  * An abstract shape is the lowlevel model for a shape.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 @Deprecated
 public abstract class AbstractShape

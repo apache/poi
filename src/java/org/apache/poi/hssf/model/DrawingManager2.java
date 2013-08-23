@@ -26,8 +26,6 @@ import java.util.ArrayList;
 
 /**
  * Provides utilities to manage drawing groups.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class DrawingManager2
 {

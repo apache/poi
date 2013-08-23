@@ -25,8 +25,6 @@ package org.apache.poi.ss.formula.functions;
  * Tests for bug fixes and specific/tricky behaviour can be found in the corresponding test class
  * (<tt>TestXxxx</tt>) of the target (<tt>Xxxx</tt>) implementor, where execution can be observed
  *  more easily.
- *
- * @author Cédric Walter
  */
 public final class TestMatchFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
 

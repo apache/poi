@@ -47,8 +47,6 @@ import org.apache.poi.util.LittleEndianInput;
  *   @link org.apache.poi.hssf.record.common.UnicodeString.ExtRst} blocks of a UnicodeString.
  *
  * </p>
- *
- * @author Yegor Kozlov
  */
 public class ContinuableRecordInput implements LittleEndianInput {
     private final RecordInputStream _in;

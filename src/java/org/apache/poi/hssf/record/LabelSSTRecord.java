@@ -25,8 +25,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * Description:  Refers to a string in the shared string table and is a column
  *               value.  <P>
  * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class LabelSSTRecord extends CellRecord {
     public final static short sid = 0xfd;

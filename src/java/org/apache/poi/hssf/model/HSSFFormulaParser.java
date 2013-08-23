@@ -28,8 +28,6 @@ import org.apache.poi.ss.formula.FormulaType;
 
 /**
  * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer}
- *
- * @author Josh Micich
  */
 public final class HSSFFormulaParser {
 

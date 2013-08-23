@@ -41,9 +41,6 @@ import org.apache.poi.ss.util.CellReference;
 
 /**
  * Test cases for COUNT(), COUNTA() COUNTIF(), COUNTBLANK()
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 public final class TestCountFuncs extends TestCase {
 

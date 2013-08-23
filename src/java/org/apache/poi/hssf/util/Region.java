@@ -23,7 +23,6 @@ package org.apache.poi.hssf.util;
  * that can be used to represent row,col - row,col just as one would use String
  * to represent a string of characters.  Its really only useful for HSSF though.
  *
- * @author  Andrew C. Oliver acoliver at apache dot org
  * @deprecated (Aug-2008) use {@link org.apache.poi.ss.util.CellRangeAddress}
  */
 

@@ -34,8 +34,7 @@ import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
+ * 
  */
 public abstract class BaseTestFunctionsFromSpreadsheet extends TestCase {
 
