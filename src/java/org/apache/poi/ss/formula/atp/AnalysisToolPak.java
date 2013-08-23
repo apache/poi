@@ -21,7 +21,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import java.util.*;
 
 /**
- * Analysis Toolpack Function Definitions 
+ * Analysis Toolpack Function Definitions
  */
 public final class AnalysisToolPak implements UDFFinder {
 
@@ -229,9 +229,9 @@ public final class AnalysisToolPak implements UDFFinder {
             if(metaData != null) {
                 throw new IllegalArgumentException(name + " is a built-in Excel function. " +
                         "Use FunctoinEval.registerFunction(String name, Function func) instead.");
-            } else {
-                throw new IllegalArgumentException(name + " is not a function from the Excel Analysis Toolpack.");
             }
+
+            throw new IllegalArgumentException(name + " is not a function from the Excel Analysis Toolpack.");
         }
         FreeRefFunction f = inst.findFunction(name);
         if(f != null && !(f instanceof NotImplemented)) {

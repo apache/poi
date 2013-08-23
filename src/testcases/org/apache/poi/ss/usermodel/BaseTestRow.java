@@ -89,36 +89,41 @@ public abstract class BaseTestRow extends TestCase {
 
     public void testRemoveCell() {
         Workbook workbook = _testDataProvider.createWorkbook();
-        Sheet sheet = workbook.createSheet();
-        Row row = sheet.createRow(0);
+        {
+            Sheet sheet = workbook.createSheet();
+            Row row = sheet.createRow(0);
 
-        assertEquals(0, row.getPhysicalNumberOfCells());
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
+            assertEquals(0, row.getPhysicalNumberOfCells());
+            assertEquals(-1, row.getLastCellNum());
+            assertEquals(-1, row.getFirstCellNum());
 
-        row.createCell(1);
-        assertEquals(2, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        assertEquals(1, row.getPhysicalNumberOfCells());
-        row.createCell(3);
-        assertEquals(4, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        assertEquals(2, row.getPhysicalNumberOfCells());
-        row.removeCell(row.getCell(3));
-        assertEquals(2, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        assertEquals(1, row.getPhysicalNumberOfCells());
-        row.removeCell(row.getCell(1));
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
-        assertEquals(0, row.getPhysicalNumberOfCells());
+            row.createCell(1);
+            assertEquals(2, row.getLastCellNum());
+            assertEquals(1, row.getFirstCellNum());
+            assertEquals(1, row.getPhysicalNumberOfCells());
+            row.createCell(3);
+            assertEquals(4, row.getLastCellNum());
+            assertEquals(1, row.getFirstCellNum());
+            assertEquals(2, row.getPhysicalNumberOfCells());
+            row.removeCell(row.getCell(3));
+            assertEquals(2, row.getLastCellNum());
+            assertEquals(1, row.getFirstCellNum());
+            assertEquals(1, row.getPhysicalNumberOfCells());
+            row.removeCell(row.getCell(1));
+            assertEquals(-1, row.getLastCellNum());
+            assertEquals(-1, row.getFirstCellNum());
+            assertEquals(0, row.getPhysicalNumberOfCells());
+        }
 
         workbook = _testDataProvider.writeOutAndReadBack(workbook);
-        sheet = workbook.getSheetAt(0);
-        row = sheet.getRow(0);
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
-        assertEquals(0, row.getPhysicalNumberOfCells());
+
+        {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            assertEquals(-1, row.getLastCellNum());
+            assertEquals(-1, row.getFirstCellNum());
+            assertEquals(0, row.getPhysicalNumberOfCells());
+        }
     }
 
     public void baseTestRowBounds(int maxRowNum) {
@@ -387,30 +392,30 @@ public abstract class BaseTestRow extends TestCase {
         assertTrue(cell2 == it.next());
         assertEquals(Cell.CELL_TYPE_STRING, cell5.getCellType());
     }
-    
+
     public void testRowStyle() {
        Workbook workbook = _testDataProvider.createWorkbook();
        Sheet sheet = workbook.createSheet("test");
        Row row1 = sheet.createRow(0);
        Row row2 = sheet.createRow(1);
-       
+
        // Won't be styled currently
        assertEquals(false, row1.isFormatted());
        assertEquals(false, row2.isFormatted());
        assertEquals(null, row1.getRowStyle());
        assertEquals(null, row2.getRowStyle());
-       
+
        // Style one
        CellStyle style = workbook.createCellStyle();
        style.setDataFormat((short)4);
        row2.setRowStyle(style);
-       
+
        // Check
        assertEquals(false, row1.isFormatted());
        assertEquals(true, row2.isFormatted());
        assertEquals(null, row1.getRowStyle());
        assertEquals(style, row2.getRowStyle());
-       
+
        // Save, load and re-check
        workbook = _testDataProvider.writeOutAndReadBack(workbook);
        sheet = workbook.getSheetAt(0);
@@ -418,7 +423,7 @@ public abstract class BaseTestRow extends TestCase {
        row1 = sheet.getRow(0);
        row2 = sheet.getRow(1);
        style = workbook.getCellStyleAt(style.getIndex());
-       
+
        assertEquals(false, row1.isFormatted());
        assertEquals(true, row2.isFormatted());
        assertEquals(null, row1.getRowStyle());

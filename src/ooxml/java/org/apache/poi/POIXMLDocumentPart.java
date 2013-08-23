@@ -106,7 +106,7 @@ public class POIXMLDocumentPart {
      *
      * @param part - The package part that holds xml data represenring this sheet.
      * @param rel - the relationship of the given package part
-     * @see #read(POIXMLFactory, java.util.Map) 
+     * @see #read(POIXMLFactory, java.util.Map)
      */
     public POIXMLDocumentPart(PackagePart part, PackageRelationship rel){
         this.packagePart = part;
@@ -131,7 +131,7 @@ public class POIXMLDocumentPart {
     /**
      * When you open something like a theme, call this to
      *  re-base the XML Document onto the core child of the
-     *  current core document 
+     *  current core document
      */
     protected final void rebase(OPCPackage pkg) throws InvalidFormatException {
         PackageRelationshipCollection cores =
@@ -179,7 +179,7 @@ public class POIXMLDocumentPart {
      * {@link POIXMLDocumentPart} to the {@link PackagePart} of the target
      * {@link POIXMLDocumentPart} with a {@link PackageRelationship#getId()}
      * matching the given parameter value.
-     * 
+     *
      * @param id
      *            The relation id to look for
      * @return the target part of the relation, or null, if none exists
@@ -193,7 +193,7 @@ public class POIXMLDocumentPart {
      * {@link PackageRelationship}, that sources from the {@link PackagePart} of
      * this {@link POIXMLDocumentPart} to the {@link PackagePart} of the given
      * parameter value.
-     * 
+     *
      * @param part
      *            The {@link POIXMLDocumentPart} for which the according
      *            relation-id shall be found.
@@ -233,7 +233,7 @@ public class POIXMLDocumentPart {
     /**
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed and flag is set to true.
-     * 
+     *
      * @param part
      *            The related part, to which the relation shall be removed.
      * @param removeUnusedParts
@@ -343,7 +343,8 @@ public class POIXMLDocumentPart {
      * @param noRelation if true, then no relationship is added.
      * @return the created child POIXMLDocumentPart
      */
-    protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
+    @SuppressWarnings("null")
+	protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
             PackageRelationship rel = null;
@@ -414,7 +415,7 @@ public class POIXMLDocumentPart {
             }
         }
     }
-    
+
     /**
      * Get the PackagePart that is the target of a relationship from this Part.
      *
