@@ -26,6 +26,25 @@ import org.apache.poi.ss.SpreadsheetVersion;
 
 
 public final class TestCellReference extends TestCase {
+    public void testColNumConversion() {
+        assertEquals(0, CellReference.convertColStringToIndex("A"));
+        assertEquals(1, CellReference.convertColStringToIndex("B"));
+        assertEquals(25, CellReference.convertColStringToIndex("Z"));
+        assertEquals(26, CellReference.convertColStringToIndex("AA"));
+        assertEquals(27, CellReference.convertColStringToIndex("AB"));
+        assertEquals(51, CellReference.convertColStringToIndex("AZ"));
+        assertEquals(701, CellReference.convertColStringToIndex("ZZ"));
+        assertEquals(702, CellReference.convertColStringToIndex("AAA"));
+        assertEquals(18277, CellReference.convertColStringToIndex("ZZZ"));
+        
+        assertEquals("A", CellReference.convertNumToColString(0));
+        assertEquals("B", CellReference.convertNumToColString(1));
+        assertEquals("Z", CellReference.convertNumToColString(25));
+        assertEquals("AA", CellReference.convertNumToColString(26));
+        assertEquals("ZZ", CellReference.convertNumToColString(701));
+        assertEquals("AAA", CellReference.convertNumToColString(702));
+        assertEquals("ZZZ", CellReference.convertNumToColString(18277));
+    }
 
     public void testAbsRef1(){
         CellReference cf = new CellReference("$B$5");
