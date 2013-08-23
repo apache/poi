@@ -604,4 +604,17 @@ public abstract class BaseTestWorkbook extends TestCase {
             assertEquals(cellB.getStringCellValue(), evaluator.evaluate(cellA).getStringValue());
         }
     }
+
+	protected void assertSheetOrder(Workbook wb, String... sheets) {
+		StringBuilder sheetNames = new StringBuilder();
+		for(int i = 0;i < wb.getNumberOfSheets();i++) {
+			sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
+		}
+		assertEquals("Had: " + sheetNames.toString(), 
+				sheets.length, wb.getNumberOfSheets());
+		for(int i = 0;i < wb.getNumberOfSheets();i++) {
+			assertEquals("Had: " + sheetNames.toString(), 
+					sheets[i], wb.getSheetAt(i).getSheetName());
+		}
+	}
 }
