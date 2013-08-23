@@ -26,9 +26,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Tests for {@link Value}
- *
- * @author Josh Micich
- * @author Cédric Walter
  */
 public final class TestValue extends TestCase {
 

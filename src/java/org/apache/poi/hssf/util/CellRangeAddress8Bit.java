@@ -26,8 +26,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
  *
  * Like {@link CellRangeAddress} except column fields are 8-bit.
- *
- * @author Josh Micich
  */
 public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 

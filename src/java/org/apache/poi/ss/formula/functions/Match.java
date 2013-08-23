@@ -59,10 +59,6 @@ import org.apache.poi.ss.formula.TwoDEval;
  *  numbers (low to high), strings (A to Z), boolean (FALSE to TRUE)<br/>
  *  MATCH() ignores all elements in the lookup_array with a different type to the lookup_value.
  *  Type conversion of the lookup_array elements is never performed.
- *
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 public final class Match extends Var2or3ArgFunction {
 

@@ -36,8 +36,6 @@ import org.apache.poi.hssf.usermodel.HSSFShape;
  * Represents a cell comment.
  * This class converts highlevel model data from <code>HSSFComment</code>
  * to low-level records.
- *
- * @author Yegor Kozlov
  */
 @Deprecated
 public final class CommentShape extends TextboxShape {

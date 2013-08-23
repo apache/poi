@@ -60,9 +60,6 @@ import org.apache.poi.ss.formula.ptg.*;
  *  <li>zero or one EXTERNSHEET (0x0017) record</li>
  *  <li>zero or more DEFINEDNAME (0x0018) records</li>
  *  </ul>
- *
- *
- * @author Josh Micich
  */
 final class LinkTable {
 

@@ -34,9 +34,6 @@ import org.apache.poi.ss.usermodel.Color;
  * color would be represented by Gnumeric.  Having (string) this here is a bit of a
  * collusion of function between HSSF and the HSSFSerializer but I think its
  * a reasonable one in this case.
- *
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Brian Sanders (bsanders at risklabs dot com) - full default color palette
  */
 public class HSSFColor implements Color {
     private static Map<Integer,HSSFColor> indexHash; 

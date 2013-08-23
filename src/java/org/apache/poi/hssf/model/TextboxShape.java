@@ -25,8 +25,6 @@ import org.apache.poi.hssf.usermodel.*;
 /**
  * Represents an textbox shape and converts between the highlevel records
  * and lowlevel records for an oval.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 @Deprecated
 public class TextboxShape

@@ -41,9 +41,6 @@ import org.apache.poi.ss.usermodel.ErrorConstants;
  *      <tr><th>criteria</th><td>is used to determine which cells to count</td></tr>
  *    </table>
  * </p>
- *
- * @author Josh Micich
- * @author Cedric Walter at innoveo.com
  */
 public final class Countif extends Fixed2ArgFunction {
 

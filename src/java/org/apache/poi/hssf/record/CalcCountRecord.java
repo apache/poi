@@ -29,8 +29,6 @@ import org.apache.poi.util.LittleEndianOutput;
  *               changes.  This is essentially a failsafe against an infinate
  *               loop in the event the formulas are not independant. <P>
  * REFERENCE:  PG 292 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.CalcModeRecord
  */

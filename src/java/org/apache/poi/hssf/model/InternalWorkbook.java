@@ -57,14 +57,6 @@ import org.apache.poi.util.POILogger;
  * Kit (Microsoft Press) and the documentation at http://sc.openoffice.org/excelfileformat.pdf
  * before even attempting to use this.
  *
- *
- * @author  Luc Girardin (luc dot girardin at macrofocus dot com)
- * @author  Sergei Kozello (sergeikozello at mail.ru)
- * @author  Shawn Laubach (slaubach at apache dot org) (Data Formats)
- * @author  Andrew C. Oliver (acoliver at apache dot org)
- * @author  Brian Sanders (bsanders at risklabs dot com) - custom palette
- * @author  Dan Sherman (dsherman at isisph.com)
- * @author  Glen Stampoultzis (glens at apache.org)
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook
  */
 @Internal

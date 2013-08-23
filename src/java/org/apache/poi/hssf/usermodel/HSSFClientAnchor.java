@@ -24,8 +24,6 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 /**
  * A client anchor is attached to an excel worksheet.  It anchors against a
  * top-left and buttom-right cell.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 

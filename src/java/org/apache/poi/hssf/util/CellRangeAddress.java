@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.SelectionRecord;
  *
  * Note - {@link SelectionRecord} uses the BIFF5 version of this structure
  * @deprecated use {@link org.apache.poi.ss.util.CellRangeAddress}
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddress extends org.apache.poi.ss.util.CellRangeAddress {
 

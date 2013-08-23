@@ -22,8 +22,6 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * The UserSViewEnd record marks the end of the settings for a custom view associated with the sheet
- *
- * @author Yegor Kozlov
  */
 public final class UserSViewEnd extends StandardRecord {
 

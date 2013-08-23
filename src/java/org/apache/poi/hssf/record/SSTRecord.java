@@ -33,9 +33,6 @@ import org.apache.poi.util.LittleEndianConsts;
  * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN:
  *               1-57231-498-2)
  * <P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
  *
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord

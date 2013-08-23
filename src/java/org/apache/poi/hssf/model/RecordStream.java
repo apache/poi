@@ -22,8 +22,6 @@ import java.util.List;
 import org.apache.poi.hssf.record.Record;
 /**
  * Simplifies iteration over a sequence of <tt>Record</tt> objects.
- *
- * @author Josh Micich
  */
 public final class RecordStream {
 

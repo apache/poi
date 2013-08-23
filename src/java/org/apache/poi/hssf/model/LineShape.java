@@ -24,8 +24,6 @@ import org.apache.poi.hssf.usermodel.*;
 
 /**
  * Represents a line shape and creates all the line specific low level records.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 @Deprecated
 public class LineShape

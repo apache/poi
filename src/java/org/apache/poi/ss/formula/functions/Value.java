@@ -32,9 +32,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * ignored. Currency symbols and thousands separators are stripped out.
  * Scientific notation is also supported. If the supplied text does not convert
  * properly the result is <b>#VALUE!</b> error. Blank string converts to zero.
- *
- * @author Josh Micich
- * @author Cédric Walter
  */
 public final class Value extends Fixed1ArgFunction {
 

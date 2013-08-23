@@ -36,8 +36,6 @@ import org.apache.poi.ss.formula.eval.*;
  *
  * If either enumerator/denominator is non numeric, QUOTIENT returns the #VALUE! error value.
  * If denominator is equals to zero, QUOTIENT returns the #DIV/0! error value.
- *
- * @author Cédric Walter
  */
 public class Quotient extends Fixed2ArgFunction implements FreeRefFunction {
 

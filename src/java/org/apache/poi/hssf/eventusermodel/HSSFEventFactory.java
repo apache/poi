@@ -33,9 +33,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * This will cause your file to be processed a record at a time.  Each record with
  * a static id matching one that you have registered in your HSSFRequest will be passed
  * to your associated HSSFListener.
- *
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Carey Sublette  (careysub@earthling.net)
  */
 public class HSSFEventFactory {
 	/** Creates a new instance of HSSFEventFactory */

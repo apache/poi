@@ -31,8 +31,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
  * </p>
  * 
  * @deprecated use {@link org.apache.poi.ss.util.CellRangeAddressList}
- * 
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddressList extends org.apache.poi.ss.util.CellRangeAddressList {
 	public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {

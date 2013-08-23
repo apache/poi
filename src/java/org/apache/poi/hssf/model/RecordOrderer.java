@@ -76,8 +76,6 @@ import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
  * Finds correct insert positions for records in workbook streams<p/>
  *
  * See OOO excelfileformat.pdf sec. 4.2.5 'Record Order in a BIFF8 Workbook Stream'
- *
- * @author Josh Micich
  */
 final class RecordOrderer {
 

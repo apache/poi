@@ -24,8 +24,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Various utility functions that make working with a region of cells easier.
- *
- * @author Eric Pugh epugh@upstate.com
  */
 public final class HSSFRegionUtil {
 

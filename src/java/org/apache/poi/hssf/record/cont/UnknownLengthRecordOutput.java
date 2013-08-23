@@ -25,8 +25,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * Allows the writing of BIFF records when the 'ushort size' header field is not known in advance.
  * When the client is finished writing data, it calls {@link #terminate()}, at which point this
  * class updates the 'ushort size' with its final value.
- *
- * @author Josh Micich
  */
 final class UnknownLengthRecordOutput implements LittleEndianOutput {
 	private static final int MAX_DATA_SIZE = RecordInputStream.MAX_RECORD_DATA_SIZE;
