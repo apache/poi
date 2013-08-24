@@ -17,15 +17,24 @@
 
 package org.apache.poi.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-
-import java.io.*;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.lang.reflect.Field;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -84,7 +93,8 @@ public final class OOXMLLite {
         List<String> lst = new ArrayList<String>();
         //collect unit tests
         System.out.println("Collecting unit tests from " + _testDir);
-        collectTests(_testDir, _testDir, lst, ".+?\\.Test.+?\\.class$");
+        collectTests(_testDir, _testDir, lst, ".+?\\.Test.+?\\.class$", ".+TestUnfixedBugs.class");
+        System.out.println("Found " + lst.size() + " tests");
 
         TestSuite suite = new TestSuite();
         for (String arg : lst) {
@@ -146,16 +156,16 @@ public final class OOXMLLite {
      * @param out   output
      * @param ptrn  the pattern (regexp) to filter found files
      */
-    private static void collectTests(File root, File arg, List<String> out, String ptrn) {
+    private static void collectTests(File root, File arg, List<String> out, String ptrn, String exclude) {
         if (arg.isDirectory()) {
             for (File f : arg.listFiles()) {
-                collectTests(root, f, out, ptrn);
+                collectTests(root, f, out, ptrn, exclude);
             }
         } else {
             String path = arg.getAbsolutePath();
             String prefix = root.getAbsolutePath();
             String cls = path.substring(prefix.length() + 1).replace(File.separator, ".");
-            if(cls.matches(ptrn)) out.add(cls);
+            if(cls.matches(ptrn) && !cls.matches(exclude)) out.add(cls);
         }
     }
 
