@@ -20,8 +20,8 @@ package org.apache.poi.ss.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
@@ -427,7 +427,7 @@ public class CellReference {
 
 			// The letter A is at 65
 			char colChar = (char)(thisPart+64);
-			colRef.append(colChar);
+			colRef.insert(0, colChar);
 		}
 
 		return colRef.toString();
@@ -455,6 +455,7 @@ public class CellReference {
 		return sb.toString();
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");
