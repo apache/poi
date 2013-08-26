@@ -85,6 +85,7 @@ public final class FormulaShifter {
         return new FormulaShifter(srcSheetIndex, dstSheetIndex);
     }
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 
@@ -322,7 +323,7 @@ public final class FormulaShifter {
 			aptg.setFirstRow(destLastRowIndex+1);
 			return aptg;
 		}
-		if (destFirstRowIndex < aLastRow && aLastRow <= destLastRowIndex) {
+		if (destFirstRowIndex <= aLastRow && aLastRow < destLastRowIndex) {
 			// dest rows overlap bottom of area
 			// - truncate the bottom
 			aptg.setLastRow(destFirstRowIndex-1);
