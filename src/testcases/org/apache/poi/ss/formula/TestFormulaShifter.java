@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;

@@ -17,8 +17,13 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 /**
  * @author Yegor Kozlov
@@ -36,4 +41,17 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     public void testShiftWithComments() { // disabled test from superclass
         // TODO - support shifting of comments.
     }
+
+	public void testBug54524() throws IOException {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54524.xlsx");
+        XSSFSheet sheet = workbook.getSheetAt(0);
+		sheet.shiftRows(3, 5, -1);
+
+        Cell cell = CellUtil.getCell(sheet.getRow(1), 0);
+		assertEquals(1.0, cell.getNumericCellValue());
+		cell = CellUtil.getCell(sheet.getRow(2), 0);
+		assertEquals("SUM(A2:A2)", cell.getCellFormula());
+		cell = CellUtil.getCell(sheet.getRow(3), 0);
+		assertEquals("X", cell.getStringCellValue());
+	}
 }
