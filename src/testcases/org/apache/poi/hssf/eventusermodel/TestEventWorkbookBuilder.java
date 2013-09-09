@@ -30,11 +30,11 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 /**
  * Tests for {@link EventWorkbookBuilder}
  */
@@ -42,6 +42,7 @@ public final class TestEventWorkbookBuilder extends TestCase {
 	private MockHSSFListener mockListen;
 	private SheetRecordCollectingListener listener;
 
+	@Override
 	public void setUp() {
 		HSSFRequest req = new HSSFRequest();
 		mockListen = new MockHSSFListener();
@@ -146,8 +147,8 @@ public final class TestEventWorkbookBuilder extends TestCase {
 
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
-		private final List _records = new ArrayList();
-		private final List _frecs = new ArrayList();
+		private final List<Record> _records = new ArrayList<Record>();
+		private final List<Record> _frecs = new ArrayList<Record>();
 
 		public void processRecord(Record record) {
 			_records.add(record);

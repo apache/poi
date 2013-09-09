@@ -64,7 +64,7 @@ public final class HSSFPalette {
     }
 
     /**
-     * Finds the first occurance of a given color
+     * Finds the first occurrence of a given color
      *
      * @param red the RGB red component, between 0 and 255 inclusive
      * @param green the RGB green component, between 0 and 255 inclusive
@@ -194,11 +194,13 @@ public final class HSSFPalette {
             _blue = blue;
         }
 
+        @Override
         public short getIndex()
         {
             return _byteOffset;
         }
 
+        @Override
         public short[] getTriplet()
         {
             return new short[]
@@ -209,6 +211,7 @@ public final class HSSFPalette {
             };
         }
 
+        @Override
         public String getHexString()
         {
             StringBuffer sb = new StringBuffer();
