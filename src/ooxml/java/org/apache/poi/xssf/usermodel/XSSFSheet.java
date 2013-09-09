@@ -2341,26 +2341,26 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
+    	// first remove all rows which will be overwritten
     	for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
-            if(rownum < startRow) continue;
-
-            if (!copyRowHeight) {
-                row.setHeight((short)-1);
-            }
-
+            
+            // check if we should remove this row as it will be overwritten by the data later
             if (removeRow(startRow, endRow, n, rownum)) {
             	// remove row from worksheet.getSheetData row array
             	int idx = _rows.headMap(row.getRowNum()).size();
-                worksheet.getSheetData().removeRow(idx);
+            	worksheet.getSheetData().removeRow(idx);
                 // remove row from _rows
                 it.remove();
             }
-            else if (rownum >= startRow && rownum <= endRow) {
-                row.shift(n);
-            }
+    	}
 
+    	// then do the actual moving and also adjust comments/rowHeight 
+    	for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+            XSSFRow row = (XSSFRow)it.next();
+            int rownum = row.getRowNum();
+            
             if(sheetComments != null){
                 //TODO shift Note's anchor in the associated /xl/drawing/vmlDrawings#.vml
                 CTCommentList lst = sheetComments.getCTComments().getCommentList();
@@ -2372,6 +2372,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                     }
                 }
             }
+            
+            if(rownum < startRow || rownum > endRow) continue;
+
+            if (!copyRowHeight) {
+                row.setHeight((short)-1);
+            }
+
+            row.shift(n);
         }
         XSSFRowShifter rowShifter = new XSSFRowShifter(this);
 
@@ -2625,7 +2633,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private boolean removeRow(int startRow, int endRow, int n, int rownum) {
+    	// is this row in the target-window where the moved rows will land?
         if (rownum >= (startRow + n) && rownum <= (endRow + n)) {
+        	// only remove it if the current row is not part of the data that is copied
             if (n > 0 && rownum > endRow) {
                 return true;
             }
