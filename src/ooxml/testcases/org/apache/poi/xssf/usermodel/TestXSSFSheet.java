@@ -51,7 +51,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
     }
 
     //TODO column styles are not yet supported by XSSF
-    public void testDefaultColumnStyle() {
+    @Override
+	public void testDefaultColumnStyle() {
         //super.testDefaultColumnStyle();
     }
 
@@ -914,7 +915,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
      * Rows and cells can be created in random order,
      * but CTRows are kept in ascending order
      */
-    public void testCreateRow() {
+    public void testCreateRowA() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet();
         CTWorksheet wsh = sheet.getCTWorksheet();

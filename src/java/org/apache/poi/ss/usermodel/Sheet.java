@@ -592,7 +592,8 @@ public interface Sheet extends Iterable<Row> {
      * @param leftcol the left column to show in desktop window pane
      * @deprecated Use {@link #showInPane(int, int)} as there can be more than 32767 rows.
      */
-    void showInPane(short toprow, short leftcol);
+    @Deprecated
+	void showInPane(short toprow, short leftcol);
 
     /**
      * Shifts rows between startRow and endRow n number of rows.

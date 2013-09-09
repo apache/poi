@@ -394,6 +394,7 @@ public abstract class BaseTestSheet extends TestCase {
         assertEquals(40000, sheet.getColumnWidth(10));
     }
 
+    
     public void testDefaultRowHeight() {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
@@ -538,8 +539,8 @@ public abstract class BaseTestSheet extends TestCase {
         double marginRight = defaultMargins[1];
         double marginTop = defaultMargins[2];
         double marginBottom = defaultMargins[3];
-        double marginHeader = defaultMargins[4];
-        double marginFooter = defaultMargins[5];
+        //double marginHeader = defaultMargins[4];
+        //double marginFooter = defaultMargins[5];
 
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("Sheet 1");

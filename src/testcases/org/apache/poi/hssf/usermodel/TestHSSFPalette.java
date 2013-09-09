@@ -25,7 +25,6 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PaletteRecord;
-import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
@@ -36,6 +35,7 @@ public final class TestHSSFPalette extends TestCase {
     private HSSFPalette _hssfPalette;
 
 
+    @Override
     public void setUp()
     {
         _palette = new PaletteRecord();
@@ -268,12 +268,12 @@ public final class TestHSSFPalette extends TestCase {
     }
 
     private void compareToDefaults(ColorComparator c) {
-        Map colors = HSSFColor.getIndexHash();
-        Iterator it = colors.keySet().iterator();
+        Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
+        Iterator<Integer> it = colors.keySet().iterator();
         while (it.hasNext())
         {
-            Number index = (Number) it.next();
-            HSSFColor expectedColor = (HSSFColor) colors.get(index);
+            Number index = it.next();
+            HSSFColor expectedColor = colors.get(index);
             HSSFColor paletteColor = _hssfPalette.getColor(index.shortValue());
             c.compare(expectedColor, paletteColor);
         }
