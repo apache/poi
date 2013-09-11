@@ -27,8 +27,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.poi.EncryptedDocumentException;
 
 /**
- *  @author Maxim Valyanskiy
- *  @author Gary King
+ * Reads and processes OOXML Encryption Headers
+ * The constants are largely based on ZIP constants.
  */
 public class EncryptionHeader {
     public static final int ALGORITHM_RC4 = 0x6801;
@@ -36,7 +36,11 @@ public class EncryptionHeader {
     public static final int ALGORITHM_AES_192 = 0x660F;
     public static final int ALGORITHM_AES_256 = 0x6610;
 
+    public static final int HASH_NONE = 0x0000;
     public static final int HASH_SHA1 = 0x8004;
+    public static final int HASH_SHA256 = 0x800C;
+    public static final int HASH_SHA384 = 0x800D;
+    public static final int HASH_SHA512 = 0x800E;
 
     public static final int PROVIDER_RC4 = 1;
     public static final int PROVIDER_AES = 0x18;
@@ -112,9 +116,9 @@ public class EncryptionHeader {
             else if (blockSize == 32)
                 algorithm = ALGORITHM_AES_256;
             else
-                throw new EncryptedDocumentException("Unsupported key length");
+                throw new EncryptedDocumentException("Unsupported key length " + blockSize);
         } else {
-            throw new EncryptedDocumentException("Unsupported cipher");
+            throw new EncryptedDocumentException("Unsupported cipher " + cipher);
         }
 
         String chaining = keyData.getNamedItem("cipherChaining").getNodeValue();
@@ -124,16 +128,28 @@ public class EncryptionHeader {
         else if ("ChainingModeCFB".equals(chaining))
             cipherMode = MODE_CFB;
         else
-            throw new EncryptedDocumentException("Unsupported chaining mode");
+            throw new EncryptedDocumentException("Unsupported chaining mode " + chaining);
 
         String hashAlg = keyData.getNamedItem("hashAlgorithm").getNodeValue();
         int hashSize = Integer.parseInt(keyData.getNamedItem("hashSize")
                                         .getNodeValue());
 
-        if ("SHA1".equals(hashAlg) && hashSize == 20)
+        if ("SHA1".equals(hashAlg) && hashSize == 20) {
             hashAlgorithm = HASH_SHA1;
-        else
-            throw new EncryptedDocumentException("Unsupported hash algorithm");
+        }
+        else if ("SHA256".equals(hashAlg) && hashSize == 32) {
+            hashAlgorithm = HASH_SHA256;
+        }
+        else if ("SHA384".equals(hashAlg) && hashSize == 64) {
+            hashAlgorithm = HASH_SHA384;
+        }
+        else if ("SHA512".equals(hashAlg) && hashSize == 64) {
+            hashAlgorithm = HASH_SHA512;
+        }
+        else {
+            throw new EncryptedDocumentException("Unsupported hash algorithm: " + 
+                                                  hashAlg + " @ " + hashSize + " bytes");
+        }
 
         String salt = keyData.getNamedItem("saltValue").getNodeValue();
         int saltLength = Integer.parseInt(keyData.getNamedItem("saltSize")

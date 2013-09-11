@@ -37,9 +37,24 @@ public class TestEncryptionInfo extends TestCase {
         assertEquals(EncryptionHeader.ALGORITHM_AES_128, info.getHeader().getAlgorithm());
         assertEquals(EncryptionHeader.HASH_SHA1, info.getHeader().getHashAlgorithm());
         assertEquals(128, info.getHeader().getKeySize());
+        assertEquals(32, info.getVerifier().getVerifierHash().length);
         assertEquals(EncryptionHeader.PROVIDER_AES, info.getHeader().getProviderType());                
         assertEquals("Microsoft Enhanced RSA and AES Cryptographic Provider", info.getHeader().getCspName());
+    }
+    
+    public void testEncryptionInfoSHA512() throws Exception {
+        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_sha512.xlsx"));
 
-        assertEquals(32, info.getVerifier().getVerifierHash().length);
+        EncryptionInfo info = new EncryptionInfo(fs);
+
+        assertEquals(4, info.getVersionMajor());
+        assertEquals(4, info.getVersionMinor());
+
+        assertEquals(EncryptionHeader.ALGORITHM_AES_128, info.getHeader().getAlgorithm());
+        assertEquals(EncryptionHeader.HASH_SHA512, info.getHeader().getHashAlgorithm());
+        assertEquals(256, info.getHeader().getKeySize());
+        assertEquals(64, info.getVerifier().getVerifierHash().length);
+        assertEquals(EncryptionHeader.PROVIDER_AES, info.getHeader().getProviderType());                
+//        assertEquals("Microsoft Enhanced RSA and AES Cryptographic Provider", info.getHeader().getCspName());
     }
 }
