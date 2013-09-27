@@ -231,9 +231,11 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                             }
                             TextShape tsh = (TextShape)sh;
                             String text = tsh.getText();
-                            ret.append(text);
-                            if (!text.endsWith("\n")) {
-                                ret.append("\n");
+                            if (text != null){
+                                ret.append(text);
+                                if (!text.endsWith("\n")) {
+                                    ret.append("\n");
+                                }
                             }
                         }
                     }
