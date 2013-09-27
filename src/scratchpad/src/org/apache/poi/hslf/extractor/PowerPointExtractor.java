@@ -252,6 +252,12 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 				// Slide text
                 textRunsToText(ret, slide.getTextRuns());
 
+                // Table text
+                for (Shape shape : slide.getShapes()){
+                    if (shape instanceof Table){
+                        extractTableText(ret, (Table)shape);
+                    }
+                }
                 // Slide footer, if set
 				if (hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
 					ret.append(hf.getFooterText() + "\n");
@@ -306,6 +312,23 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		return ret.toString();
 	}
 
+    private void extractTableText(StringBuffer ret, Table table) {
+        for (int row = 0; row < table.getNumberOfRows(); row++){
+            for (int col = 0; col < table.getNumberOfColumns(); col++){
+                TableCell cell = table.getCell(row, col);
+                //defensive null checks; don't know if they're necessary
+                if (cell != null){
+                    String txt = cell.getText();
+                    txt = (txt == null) ? "" : txt;
+                    ret.append(txt);
+                    if (col < table.getNumberOfColumns()-1){
+                        ret.append("\t");
+                    }
+                }
+            }
+            ret.append('\n');
+        }
+    }
     private void textRunsToText(StringBuffer ret, TextRun[] runs) {
         if (runs==null) {
             return;

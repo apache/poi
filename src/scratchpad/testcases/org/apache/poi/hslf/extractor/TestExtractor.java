@@ -367,4 +367,23 @@ public final class TestExtractor extends POITestCase {
           assertEquals(expectText, extractor.getText());
        }
     }
+
+    public void testTable() throws Exception{
+        ppe = new PowerPointExtractor(slTests.openResourceAsStream("54111.ppt"));
+        String text = ppe.getText();
+        String target = "TH Cell 1\tTH Cell 2\tTH Cell 3\tTH Cell 4\n"+
+                         "Row 1, Cell 1\tRow 1, Cell 2\tRow 1, Cell 3\tRow 1, Cell 4\n"+   
+                         "Row 2, Cell 1\tRow 2, Cell 2\tRow 2, Cell 3\tRow 2, Cell 4\n"+
+                         "Row 3, Cell 1\tRow 3, Cell 2\tRow 3, Cell 3\tRow 3, Cell 4\n"+
+                         "Row 4, Cell 1\tRow 4, Cell 2\tRow 4, Cell 3\tRow 4, Cell 4\n"+ 
+                         "Row 5, Cell 1\tRow 5, Cell 2\tRow 5, Cell 3\tRow 5, Cell 4\n";
+        assertTrue(text.contains(target));
+
+        ppe = new PowerPointExtractor(slTests.openResourceAsStream("54722.ppt"));
+        text = ppe.getText();
+
+        target = "this\tText\tis\twithin\ta\n"+
+                "table\t1\t2\t3\t4";
+        assertTrue(text.contains(target));
+    }    
 }
