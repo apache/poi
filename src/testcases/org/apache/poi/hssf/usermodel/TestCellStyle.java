@@ -17,15 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.util.TempFile;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.util.TempFile;
 
 /**
  * Class to test cell styling functionality
@@ -331,5 +333,47 @@ public final class TestCellStyle extends TestCase {
         c4.setCellStyle(cs2);
         assertEquals("style1", c4.getCellStyle().getParentStyle().getUserStyleName());
     }
+    
+	public void testGetSetBorderHair() {
+        HSSFWorkbook wb = openSample("55341_CellStyleBorder.xls");
+        HSSFSheet s = wb.getSheetAt(0);
+        HSSFCellStyle cs;
+        
+        cs = s.getRow(0).getCell(0).getCellStyle();
+        assertEquals(CellStyle.BORDER_HAIR, cs.getBorderRight());
+        
+        cs = s.getRow(1).getCell(1).getCellStyle();
+        assertEquals(CellStyle.BORDER_DOTTED, cs.getBorderRight());
+
+        cs = s.getRow(2).getCell(2).getCellStyle();
+        assertEquals(CellStyle.BORDER_DASH_DOT_DOT, cs.getBorderRight());
+
+        cs = s.getRow(3).getCell(3).getCellStyle();
+        assertEquals(CellStyle.BORDER_DASHED, cs.getBorderRight());
+
+        cs = s.getRow(4).getCell(4).getCellStyle();
+        assertEquals(CellStyle.BORDER_THIN, cs.getBorderRight());
+
+        cs = s.getRow(5).getCell(5).getCellStyle();
+        assertEquals(CellStyle.BORDER_MEDIUM_DASH_DOT_DOT, cs.getBorderRight());
+
+        cs = s.getRow(6).getCell(6).getCellStyle();
+        assertEquals(CellStyle.BORDER_SLANTED_DASH_DOT, cs.getBorderRight());
+
+        cs = s.getRow(7).getCell(7).getCellStyle();
+        assertEquals(CellStyle.BORDER_MEDIUM_DASH_DOT, cs.getBorderRight());
+
+        cs = s.getRow(8).getCell(8).getCellStyle();
+        assertEquals(CellStyle.BORDER_MEDIUM_DASHED, cs.getBorderRight());
+
+        cs = s.getRow(9).getCell(9).getCellStyle();
+        assertEquals(CellStyle.BORDER_MEDIUM, cs.getBorderRight());
+
+        cs = s.getRow(10).getCell(10).getCellStyle();
+        assertEquals(CellStyle.BORDER_THICK, cs.getBorderRight());
+
+        cs = s.getRow(11).getCell(11).getCellStyle();
+        assertEquals(CellStyle.BORDER_DOUBLE, cs.getBorderRight());
+	}
 
 }
