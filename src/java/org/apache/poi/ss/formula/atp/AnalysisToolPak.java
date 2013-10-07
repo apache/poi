@@ -91,7 +91,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "DEC2BIN", null);
         r(m, "DEC2HEX", null);
         r(m, "DEC2OCT", null);
-        r(m, "DELTA", null);
+        r(m, "DELTA", Delta.instance);
         r(m, "DISC", null);
         r(m, "DOLLARDE", null);
         r(m, "DOLLARFR", null);

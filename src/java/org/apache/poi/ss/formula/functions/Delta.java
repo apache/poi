@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.*;
 
 import java.math.BigDecimal;
@@ -37,7 +38,9 @@ import java.math.BigDecimal;
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class Delta extends Fixed2ArgFunction {
+public final class Delta extends Fixed2ArgFunction implements FreeRefFunction {
+
+    public static final FreeRefFunction instance = new Delta();
 
     private final static NumberEval ONE = new NumberEval(1);
     private final static NumberEval ZERO = new NumberEval(0);
@@ -72,4 +75,11 @@ public final class Delta extends Fixed2ArgFunction {
         return result == 0 ? ONE : ZERO;
     }
 
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+         if (args.length == 2) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
+        }
+
+        return ErrorEval.VALUE_INVALID;
+    }
 }
