@@ -156,7 +156,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "TBILLEQ", null);
         r(m, "TBILLPRICE", null);
         r(m, "TBILLYIELD", null);
-        r(m, "WEEKNUM", null);
+        r(m, "WEEKNUM", WeekNum.instance);
         r(m, "WORKDAY", WorkdayFunction.instance);
         r(m, "XIRR", null);
         r(m, "XNPV", null);
