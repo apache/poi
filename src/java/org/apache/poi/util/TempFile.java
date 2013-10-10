@@ -37,6 +37,7 @@ public final class TempFile {
      * Don't forget to close all files or it might not be possible to delete them.
      */
     public static File createTempFile(String prefix, String suffix) {
+        // Identify and create our temp dir, if needed
         if (dir == null)
         {
             dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
@@ -45,9 +46,19 @@ public final class TempFile {
                 dir.deleteOnExit();
         }
 
+        // Generate a unique new filename 
         File newFile = new File(dir, prefix + rnd.nextInt() + suffix);
+        if (newFile.exists())
+        {
+           // That name is already taken, try another
+           newFile = createTempFile(prefix, suffix);
+        }
+
+        // Set the delete on exit flag, unless explicitly disabled
         if (System.getProperty("poi.keep.tmp.files") == null)
             newFile.deleteOnExit();
+
+        // All done
         return newFile;
     }
 }
