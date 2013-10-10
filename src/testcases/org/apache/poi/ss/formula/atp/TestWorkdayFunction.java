@@ -85,6 +85,46 @@ public class TestWorkdayFunction extends TestCase {
                 new StringEval(STARTING_DATE.toString()), new NumberEval(151) }, EC)).getNumberValue()));
     }
 
+    public void testReturnWorkdaysSpanningAWeekendSubtractingDays() {
+    	String startDate = "2013/09/30";
+    	int days = -1;
+    	String expectedWorkDay = "2013/09/27";
+		StringEval stringEval = new StringEval(startDate);
+		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
+                stringEval, new NumberEval(days) }, EC)).getNumberValue();
+		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+    }
+    
+    public void testReturnWorkdaysSpanningAWeekendAddingDays() {
+    	String startDate = "2013/09/27";
+    	int days = 1;
+    	String expectedWorkDay = "2013/09/30";
+		StringEval stringEval = new StringEval(startDate);
+		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
+                stringEval, new NumberEval(days) }, EC)).getNumberValue();
+		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+    }
+    
+    public void testReturnWorkdaysWhenStartIsWeekendAddingDays() {
+    	String startDate = "2013/10/06";
+    	int days = 1;
+    	String expectedWorkDay = "2013/10/07";
+		StringEval stringEval = new StringEval(startDate);
+		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
+                stringEval, new NumberEval(days) }, EC)).getNumberValue();
+		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+    }
+    
+    public void testReturnWorkdaysWhenStartIsWeekendSubtractingDays() {
+    	String startDate = "2013/10/06";
+    	int days = -1;
+    	String expectedWorkDay = "2013/10/04";
+		StringEval stringEval = new StringEval(startDate);
+		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
+                stringEval, new NumberEval(days) }, EC)).getNumberValue();
+		assertEquals(expectedWorkDay, formatter.format(DateUtil.getJavaDate(numberValue)));
+    }
+
     public void testReturnWorkdaysWithDaysTruncated() {
         assertEquals(new Date(109, APRIL, 30), DateUtil.getJavaDate(((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
                 new StringEval(STARTING_DATE.toString()), new NumberEval(151.99999) }, EC)).getNumberValue()));

@@ -61,24 +61,24 @@ public class WorkdayCalculator {
      * @param holidays an array of holidays.
      * @return date past x workdays.
      */
-    public Date calculateWorkdays(double start, int workdays, double[] holidays) {
-        Date startDate = DateUtil.getJavaDate(start);
-        Calendar endDate = Calendar.getInstance();
-        endDate.setTime(startDate);
-        endDate.add(Calendar.DAY_OF_YEAR, workdays);
-        int skippedDays = 0;
-        do {
-            double end = DateUtil.getExcelDate(endDate.getTime());
-            int saturdaysPast = this.pastDaysOfWeek(start, end, Calendar.SATURDAY);
-            int sundaysPast = this.pastDaysOfWeek(start, end, Calendar.SUNDAY);
-            int nonWeekendHolidays = this.calculateNonWeekendHolidays(start, end, holidays);
-            skippedDays = saturdaysPast + sundaysPast + nonWeekendHolidays;
-            endDate.add(Calendar.DAY_OF_YEAR, skippedDays);
-            start = end + isNonWorkday(end, holidays);
-        } while (skippedDays != 0);
-        return endDate.getTime();
-    }
-
+	public Date calculateWorkdays(double start, int workdays, double[] holidays) {
+		Date startDate = DateUtil.getJavaDate(start);
+		int direction = workdays < 0 ? -1 : 1;
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(startDate);
+		double excelEndDate = DateUtil.getExcelDate(endDate.getTime());
+		while (workdays != 0) {
+			endDate.add(Calendar.DAY_OF_YEAR, direction);
+			excelEndDate += direction;
+			if (endDate.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
+					&& endDate.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY
+					&& !isHoliday(excelEndDate,	holidays)) {
+				workdays -= direction;
+			}
+		}
+		return endDate.getTime();
+	}
+    
     /**
      * Calculates how many days of week past between a start and an end date.
      * 
