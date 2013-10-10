@@ -101,7 +101,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "EOMONTH", null);
         r(m, "ERF", null);
         r(m, "ERFC", null);
-        r(m, "FACTDOUBLE", null);
+        r(m, "FACTDOUBLE", FactDouble.instance);
         r(m, "FVSCHEDULE", null);
         r(m, "GCD", null);
         r(m, "GESTEP", null);
