@@ -45,7 +45,7 @@ import org.apache.poi.ss.formula.eval.*;
  * <ul>
  * <li>If this argument is omitted, this function uses the minimum number of characters necessary.</li>
  * <li>If this function requires more than places characters, it returns the #NUM! error value.</li>
- * <li>If this argument is nonnumeric, this function returns the #VALUE! error value.</li>
+ * <li>If this argument is non numeric, this function returns the #VALUE! error value.</li>
  * <li>If this argument is negative, this function returns the #NUM! error value.</li>
  * <li>If this argument contains a decimal value, this function ignores the numbers to the right side of the decimal point.</li>
  * </ul>
@@ -54,9 +54,11 @@ import org.apache.poi.ss.formula.eval.*;
  */
 public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction {
 
-    private final static long MIN_VALUE = new Long("-549755813888").longValue();
-    private final static long MAX_VALUE = new Long("549755813887").longValue();
-    private final static int DEFAULT_PLACES_VALUE = 10;;
+    public static final FreeRefFunction instance = new Dec2Hex();
+
+    private final static long MIN_VALUE = Long.parseLong("-549755813888");
+    private final static long MAX_VALUE = Long.parseLong("549755813887");
+    private final static int DEFAULT_PLACES_VALUE = 10;
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval number, ValueEval places) {
         ValueEval veText1;
@@ -81,7 +83,8 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
         int placesNumber = 0;
         if (number1 < 0) {
             placesNumber = DEFAULT_PLACES_VALUE;
-        } else  {
+        }
+        else if (places != null) {
             ValueEval placesValueEval;
             try {
                 placesValueEval = OperandResolver.getSingleValue(places, srcRowIndex, srcColumnIndex);
@@ -104,26 +107,32 @@ public final class Dec2Hex extends Var1or2ArgFunction implements FreeRefFunction
             }
         }
 
-        String hex = "";
+        String hex;
         if (placesNumber != 0) {
-            hex = String.format("%0"+placesNumber+"X", number1.intValue() & 0x0FFFFF);
+            hex = String.format("%0"+placesNumber+"X", number1.intValue());
         }
         else {
             hex = Integer.toHexString(number1.intValue());
+        }
+
+        if (number1 < 0) {
+            hex =  "FF"+  hex.substring(2);
         }
 
         return new StringEval(hex.toUpperCase());
     }
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-        return this.evaluate(srcRowIndex, srcColumnIndex, arg0, new StringEval(String.valueOf(DEFAULT_PLACES_VALUE)));
+        return this.evaluate(srcRowIndex, srcColumnIndex, arg0, null);
     }
 
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-        if (args.length != 2) {
-            return ErrorEval.VALUE_INVALID;
+        if (args.length == 1) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0]);
         }
-        return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
+        if (args.length == 2) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
+        }
+        return ErrorEval.VALUE_INVALID;
     }
-
 }
