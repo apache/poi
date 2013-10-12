@@ -64,9 +64,8 @@ public final class TestDec2Hex extends TestCase {
 		confirmValue("Converts decimal 100 to hexadecimal with 10 (default) characters", "100","10", "0000000064");
 		confirmValue("If argument places contains a decimal value, dec2hex ignores the numbers to the right side of the decimal point.", "100","10.0", "0000000064");
 
-		confirmValue("Converts decimal -54 to hexadecimal, 0 is ignored", "-54", "0",  "00000FFFCA");
-		confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "00000FFFCA");
-		confirmValue("places is optionnal","-54", "00000FFFCA");
+		confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "FFFFFFFFCA");
+		confirmValue("places is optionnal","-54", "FFFFFFFFCA");
 	}
 
     public void testErrors() {
