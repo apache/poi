@@ -34,6 +34,7 @@ import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherMetafileBlip;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.DrawingManager2;
@@ -57,6 +58,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -1587,7 +1589,40 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         initDrawings();
 
         byte[] uid = DigestUtils.md5(pictureData);
-        EscherBitmapBlip blipRecord = new EscherBitmapBlip();
+        EscherBlipRecord blipRecord;
+        int blipSize;
+        short escherTag;
+        switch (format) {
+            case PICTURE_TYPE_WMF:
+                // remove first 22 bytes if file starts with magic bytes D7-CD-C6-9A
+                // see also http://de.wikipedia.org/wiki/Windows_Metafile#Hinweise_zur_WMF-Spezifikation
+                if (LittleEndian.getInt(pictureData) == 0x9AC6CDD7) {
+                    byte picDataNoHeader[] = new byte[pictureData.length-22];
+                    System.arraycopy(pictureData, 22, picDataNoHeader, 0, pictureData.length-22);
+                    pictureData = picDataNoHeader;
+                }
+                // fall through
+            case PICTURE_TYPE_EMF:
+                EscherMetafileBlip blipRecordMeta = new EscherMetafileBlip();
+                blipRecord = blipRecordMeta;
+                blipRecordMeta.setUID(uid);
+                blipRecordMeta.setPictureData(pictureData);
+                // taken from libre office export, it won't open, if this is left to 0
+                blipRecordMeta.setFilter((byte)-2);
+                blipSize = blipRecordMeta.getCompressedSize() + 58;
+                escherTag = 0;
+                break;
+            default:
+                EscherBitmapBlip blipRecordBitmap = new EscherBitmapBlip();
+                blipRecord = blipRecordBitmap;
+                blipRecordBitmap.setUID( uid );
+                blipRecordBitmap.setMarker( (byte) 0xFF );
+                blipRecordBitmap.setPictureData( pictureData );
+                blipSize = pictureData.length + 25;
+                escherTag = (short) 0xFF;
+    	        break;
+        }
+
         blipRecord.setRecordId( (short) ( EscherBitmapBlip.RECORD_ID_START + format ) );
         switch (format)
         {
@@ -1610,23 +1645,19 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                 blipRecord.setOptions(HSSFPictureData.MSOBI_DIB);
                 break;
         }
-
-        blipRecord.setUID( uid );
-        blipRecord.setMarker( (byte) 0xFF );
-        blipRecord.setPictureData( pictureData );
-
+        
         EscherBSERecord r = new EscherBSERecord();
         r.setRecordId( EscherBSERecord.RECORD_ID );
         r.setOptions( (short) ( 0x0002 | ( format << 4 ) ) );
         r.setBlipTypeMacOS( (byte) format );
         r.setBlipTypeWin32( (byte) format );
         r.setUid( uid );
-        r.setTag( (short) 0xFF );
-        r.setSize( pictureData.length + 25 );
+        r.setTag( escherTag );
+        r.setSize( blipSize );
         r.setRef( 0 );
         r.setOffset( 0 );
         r.setBlipRecord( blipRecord );
-
+        
         return workbook.addBSERecord( r );
     }
 

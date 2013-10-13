@@ -21,6 +21,7 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.hssf.usermodel.HSSFPictureData;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -28,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.DeflaterOutputStream;
 
 /**
  * @author Daniel Noll
@@ -38,13 +40,6 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     public static final short RECORD_ID_EMF = (short) 0xF018 + 2;
     public static final short RECORD_ID_WMF = (short) 0xF018 + 3;
     public static final short RECORD_ID_PICT = (short) 0xF018 + 4;
-
-    /**
-     * BLIP signatures as defined in the escher spec
-     */
-    public static final short SIGNATURE_EMF  = 0x3D40;
-    public static final short SIGNATURE_WMF  = 0x2160;
-    public static final short SIGNATURE_PICT = 0x5420;
 
     private static final int HEADER_SIZE = 8;
 
@@ -288,11 +283,37 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
      */
     public short getSignature() {
         switch (getRecordId()) {
-            case RECORD_ID_EMF:  return SIGNATURE_EMF;
-            case RECORD_ID_WMF:  return SIGNATURE_WMF;
-            case RECORD_ID_PICT: return  SIGNATURE_PICT;
+            case RECORD_ID_EMF:  return HSSFPictureData.MSOBI_EMF;
+            case RECORD_ID_WMF:  return HSSFPictureData.MSOBI_WMF;
+            case RECORD_ID_PICT: return HSSFPictureData.MSOBI_PICT;
         }
         log.log(POILogger.WARN, "Unknown metafile: " + getRecordId());
         return 0;
+    }
+
+    public void setPictureData(byte[] pictureData) {
+    	super.setPictureData(pictureData);
+        setUncompressedSize(pictureData.length);
+
+        // info of chicago project:
+        // "... LZ compression algorithm in the format used by GNU Zip deflate/inflate with a 32k window ..."
+        // not sure what to do, when lookup tables exceed 32k ...
+
+        try {
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        DeflaterOutputStream dos = new DeflaterOutputStream(bos);
+	        dos.write(pictureData);
+	        dos.close();
+	        raw_pictureData = bos.toByteArray();
+        } catch (IOException e) {
+        	throw new RuntimeException("Can't compress metafile picture data", e);
+        }
+        
+        setCompressedSize(raw_pictureData.length);
+        setCompressed(true);
+    }
+
+    public void setFilter(byte filter) {
+    	field_7_fFilter = filter;
     }
 }

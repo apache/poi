@@ -17,16 +17,22 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.HSSFITestDataProvider;
-import org.apache.poi.hssf.model.InternalSheet;
-import org.apache.poi.ss.usermodel.BaseTestPicture;
-import org.apache.poi.ss.usermodel.PictureData;
-import org.apache.poi.ss.usermodel.Workbook;
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.ss.usermodel.BaseTestPicture;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Test <code>HSSFPicture</code>.
@@ -210,4 +216,56 @@ public final class TestHSSFPicture extends BaseTestPicture {
         p1 = (HSSFPicture) dr.getChildren().get(0);
         assertEquals(p1.getFileName(), "aaa");
     }
+
+    public void test49658() throws IOException {
+    	// test if inserted EscherMetafileBlip will be read again
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        byte pictureDataEmf[] = POIDataSamples.getDocumentInstance().readFile("vector_image.emf");
+        int indexEmf = wb.addPicture(pictureDataEmf, HSSFWorkbook.PICTURE_TYPE_EMF);
+        byte pictureDataPng[] = POIDataSamples.getSpreadSheetInstance().readFile("logoKarmokar4.png");
+        int indexPng = wb.addPicture(pictureDataPng, HSSFWorkbook.PICTURE_TYPE_PNG);
+        byte pictureDataWmf[] = POIDataSamples.getSlideShowInstance().readFile("santa.wmf");
+        int indexWmf = wb.addPicture(pictureDataWmf, HSSFWorkbook.PICTURE_TYPE_WMF);
+
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+        CreationHelper ch = wb.getCreationHelper();
+
+        ClientAnchor anchor = ch.createClientAnchor();
+        anchor.setCol1(2);
+        anchor.setCol2(5);
+        anchor.setRow1(1);
+        anchor.setRow2(6);
+        patriarch.createPicture(anchor, indexEmf);
+        
+        anchor = ch.createClientAnchor();
+        anchor.setCol1(2);
+        anchor.setCol2(5);
+        anchor.setRow1(10);
+        anchor.setRow2(16);
+        patriarch.createPicture(anchor, indexPng);
+
+        anchor = ch.createClientAnchor();
+        anchor.setCol1(6);
+        anchor.setCol2(9);
+        anchor.setRow1(1);
+        anchor.setRow2(6);
+        patriarch.createPicture(anchor, indexWmf);
+        
+        
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        byte pictureDataOut[] = wb.getAllPictures().get(0).getData();
+        assertTrue(Arrays.equals(pictureDataEmf, pictureDataOut));
+
+        byte wmfNoHeader[] = new byte[pictureDataWmf.length-22];
+        System.arraycopy(pictureDataWmf, 22, wmfNoHeader, 0, pictureDataWmf.length-22);
+        pictureDataOut = wb.getAllPictures().get(2).getData();
+        assertTrue(Arrays.equals(wmfNoHeader, pictureDataOut));
+        
+        FileOutputStream fos = new FileOutputStream("vect.xls");
+        wb.write(fos);
+        fos.close();
+    }
+
 }
