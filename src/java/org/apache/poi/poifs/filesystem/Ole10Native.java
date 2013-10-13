@@ -17,8 +17,10 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -32,20 +34,20 @@ import org.apache.poi.util.StringUtil;
  * @author Rainer Schwarze
  */
 public class Ole10Native {
-  // (the fields as they appear in the raw record:)
-  private final int totalSize;                // 4 bytes, total size of record not including this field
-  private short flags1;                // 2 bytes, unknown, mostly [02 00]
-  private final String label;                // ASCIIZ, stored in this field without the terminating zero
-  private final String fileName;        // ASCIIZ, stored in this field without the terminating zero
-  private short flags2;                // 2 bytes, unknown, mostly [00 00]
-  // private byte unknown1Length;	// 1 byte, specifying the length of the following byte array (unknown1)
-  private byte[] unknown1;        // see below
-  private byte[] unknown2;        // 3 bytes, unknown, mostly [00 00 00]
-  private final String command;                // ASCIIZ, stored in this field without the terminating zero
-  private final int dataSize;                // 4 bytes (if space), size of following buffer
-  private final byte[] dataBuffer;        // varying size, the actual native data
-  private short flags3;                // some final flags? or zero terminators?, sometimes not there
+
   public static final String OLE10_NATIVE = "\u0001Ole10Native";
+  protected static final String ISO1 = "ISO-8859-1";
+
+  // (the fields as they appear in the raw record:)
+  private int totalSize;             // 4 bytes, total size of record not including this field
+  private short flags1 = 2;          // 2 bytes, unknown, mostly [02 00]
+  private String label;              // ASCIIZ, stored in this field without the terminating zero
+  private String fileName;           // ASCIIZ, stored in this field without the terminating zero
+  private short flags2 = 0;          // 2 bytes, unknown, mostly [00 00]
+  private short unknown1 = 3;        // see below
+  private String command;            // ASCIIZ, stored in this field without the terminating zero
+  private byte[] dataBuffer;         // varying size, the actual native data
+  private short flags3 = 0;          // some final flags? or zero terminators?, sometimes not there
 
   /**
    * Creates an instance of this class from an embedded OLE Object. The OLE Object is expected
@@ -90,6 +92,16 @@ public class Ole10Native {
   }
   
   /**
+   * Creates an instance and fills the fields based on ... the fields
+   */
+  public Ole10Native(String label, String filename, String command, byte[] data) {
+	  setLabel(label);
+	  setFileName(filename);
+	  setCommand(command);
+	  setDataBuffer(data);
+  }
+  
+  /**
    * Creates an instance and fills the fields based on the data in the given buffer.
    *
    * @param data   The buffer containing the Ole10Native record
@@ -120,7 +132,7 @@ public class Ole10Native {
     if (plain) {
       dataBuffer = new byte[totalSize-4];
       System.arraycopy(data, 4, dataBuffer, 0, dataBuffer.length);
-      dataSize = totalSize - 4;
+      // int dataSize = totalSize - 4;
       
       byte[] oleLabel = new byte[8];
       System.arraycopy(dataBuffer, 0, oleLabel, 0, Math.min(dataBuffer.length, 8));
@@ -130,45 +142,41 @@ public class Ole10Native {
     } else {
       flags1 = LittleEndian.getShort(data, ofs);
       ofs += LittleEndianConsts.SHORT_SIZE;
+      
       int len = getStringLength(data, ofs);
       label = StringUtil.getFromCompressedUnicode(data, ofs, len - 1);
       ofs += len;
+      
       len = getStringLength(data, ofs);
       fileName = StringUtil.getFromCompressedUnicode(data, ofs, len - 1);
       ofs += len;
+      
       flags2 = LittleEndian.getShort(data, ofs);
       ofs += LittleEndianConsts.SHORT_SIZE;
-      len = LittleEndian.getUByte(data, ofs);
-      unknown1 = new byte[len];
-      ofs += len;
-      len = 3;
-      unknown2 = new byte[len];
-      ofs += len;
-      len = getStringLength(data, ofs);
+      
+      unknown1 = LittleEndian.getShort(data, ofs);
+      ofs += LittleEndianConsts.SHORT_SIZE;
+
+      len = LittleEndian.getInt(data, ofs);
+      ofs += LittleEndianConsts.INT_SIZE;
+
       command = StringUtil.getFromCompressedUnicode(data, ofs, len - 1);
       ofs += len;
-
-      if (totalSize + LittleEndianConsts.INT_SIZE - ofs > LittleEndianConsts.INT_SIZE) {
-        dataSize = LittleEndian.getInt(data, ofs);
-        ofs += LittleEndianConsts.INT_SIZE;
-
-        if (dataSize > totalSize || dataSize<0) {
+      
+      if (totalSize < ofs) {
           throw new Ole10NativeException("Invalid Ole10Native");
-        }
-
-        dataBuffer = new byte[dataSize];
-        System.arraycopy(data, ofs, dataBuffer, 0, dataSize);
-        ofs += dataSize;
-
-        if (unknown1.length > 0) {
-          flags3 = LittleEndian.getShort(data, ofs);
-          ofs += LittleEndianConsts.SHORT_SIZE;
-        } else {
-          flags3 = 0;
-        }
-      } else {
-        throw new Ole10NativeException("Invalid Ole10Native");
       }
+
+      int dataSize = LittleEndian.getInt(data, ofs);
+      ofs += LittleEndianConsts.INT_SIZE;
+
+      if (dataSize < 0 || totalSize - (ofs - LittleEndianConsts.INT_SIZE) < dataSize) {
+          throw new Ole10NativeException("Invalid Ole10Native");
+      }
+      
+      dataBuffer = new byte[dataSize];
+      System.arraycopy(data, ofs, dataBuffer, 0, dataSize);
+      ofs += dataSize;
     }
   }
 
@@ -237,17 +245,8 @@ public class Ole10Native {
    *
    * @return the unknown1
    */
-  public byte[] getUnknown1() {
+  public short getUnknown1() {
     return unknown1;
-  }
-
-  /**
-   * Returns the unknown2 field - currently being a byte[3] - mostly {0, 0, 0}.
-   *
-   * @return the unknown2
-   */
-  public byte[] getUnknown2() {
-    return unknown2;
   }
 
   /**
@@ -268,7 +267,7 @@ public class Ole10Native {
    * @return the dataSize
    */
   public int getDataSize() {
-    return dataSize;
+    return dataBuffer.length;
   }
 
   /**
@@ -290,5 +289,87 @@ public class Ole10Native {
    */
   public short getFlags3() {
     return flags3;
+  }
+
+  /**
+   * Have the contents printer out into an OutputStream, used when writing a
+   * file back out to disk (Normally, atom classes will keep their bytes
+   * around, but non atom classes will just request the bytes from their
+   * children, then chuck on their header and return)
+   */
+  public void writeOut(OutputStream out) throws IOException {
+      byte intbuf[] = new byte[LittleEndianConsts.INT_SIZE];
+      byte shortbuf[] = new byte[LittleEndianConsts.SHORT_SIZE];
+
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      bos.write(intbuf); // total size, will be determined later ..
+
+      LittleEndian.putShort(shortbuf, 0, getFlags1());
+      bos.write(shortbuf);
+
+      bos.write(getLabel().getBytes(ISO1));
+      bos.write(0);
+
+      bos.write(getFileName().getBytes(ISO1));
+      bos.write(0);
+
+      LittleEndian.putShort(shortbuf, 0, getFlags2());
+      bos.write(shortbuf);
+
+      LittleEndian.putShort(shortbuf, 0, getUnknown1());
+      bos.write(shortbuf);
+
+      LittleEndian.putInt(intbuf, 0, getCommand().length()+1);
+      bos.write(intbuf);
+
+      bos.write(getCommand().getBytes(ISO1));
+      bos.write(0);
+
+      LittleEndian.putInt(intbuf, 0, getDataBuffer().length);
+      bos.write(intbuf);
+
+      bos.write(getDataBuffer());
+
+      LittleEndian.putShort(shortbuf, 0, getFlags3());
+      bos.write(shortbuf);
+
+      // update total size - length of length-field (4 bytes)
+      byte data[] = bos.toByteArray();
+      totalSize = data.length - LittleEndianConsts.INT_SIZE;
+      LittleEndian.putInt(data, 0, totalSize);
+
+      out.write(data);
+  }
+
+  public void setFlags1(short flags1) {
+      this.flags1 = flags1;
+  }
+
+  public void setFlags2(short flags2) {
+      this.flags2 = flags2;
+  }
+
+  public void setFlags3(short flags3) {
+      this.flags3 = flags3;
+  }
+
+  public void setLabel(String label) {
+      this.label = label;
+  }
+
+  public void setFileName(String fileName) {
+      this.fileName = fileName;
+  }
+
+  public void setCommand(String command) {
+      this.command = command;
+  }
+
+  public void setUnknown1(short unknown1) {
+      this.unknown1 = unknown1;
+  }
+
+  public void setDataBuffer(byte dataBuffer[]) {
+      this.dataBuffer = dataBuffer;
   }
 }

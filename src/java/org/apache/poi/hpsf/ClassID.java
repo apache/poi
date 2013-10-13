@@ -30,7 +30,12 @@ import org.apache.poi.util.HexDump;
  */
 public class ClassID
 {
-
+    public static final ClassID OLE10_PACKAGE = new ClassID("{0003000C-0000-0000-C000-000000000046}");
+    public static final ClassID PPT_SHOW = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
+    public static final ClassID XLS_WORKBOOK = new ClassID("{00020841-0000-0000-C000-000000000046}");
+    public static final ClassID TXT_ONLY = new ClassID("{5e941d80-bf96-11cd-b579-08002b30bfeb}"); // ???
+	
+	
     /**
      * <p>The bytes making out the class ID in correct order,
      * i.e. big-endian.</p>
@@ -64,6 +69,20 @@ public class ClassID
     }
 
 
+    /**
+     * <p>Creates a {@link ClassID} from a human-readable representation of the Class ID in standard 
+     * format <code>"{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"</code>.</p>
+     * 
+     * @param externalForm representation of the Class ID represented by this object.
+     */
+    public ClassID(String externalForm) {
+    	bytes = new byte[LENGTH];
+        String clsStr = externalForm.replaceAll("[{}-]", "");
+        for (int i=0; i<clsStr.length(); i+=2) {
+        	bytes[i/2] = (byte)Integer.parseInt(clsStr.substring(i, i+2), 16);
+        }
+    }
+    
 
     /** <p>The number of bytes occupied by this object in the byte
      * stream.</p> */

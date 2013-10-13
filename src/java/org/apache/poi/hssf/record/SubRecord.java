@@ -59,6 +59,10 @@ public abstract class SubRecord {
 				return new LbsDataSubRecord(in, secondUShort, cmoOt);
             case FtCblsSubRecord.sid:
                 return new FtCblsSubRecord(in, secondUShort);
+            case FtPioGrbitSubRecord.sid:
+            	return new FtPioGrbitSubRecord(in, secondUShort);
+            case FtCfSubRecord.sid:
+            	return new FtCfSubRecord(in, secondUShort);
 		}
 		return new UnknownSubRecord(in, sid, secondUShort);
 	}
