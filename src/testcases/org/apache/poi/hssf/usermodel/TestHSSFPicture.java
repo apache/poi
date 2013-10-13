@@ -262,10 +262,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
         System.arraycopy(pictureDataWmf, 22, wmfNoHeader, 0, pictureDataWmf.length-22);
         pictureDataOut = wb.getAllPictures().get(2).getData();
         assertTrue(Arrays.equals(wmfNoHeader, pictureDataOut));
-        
-        FileOutputStream fos = new FileOutputStream("vect.xls");
-        wb.write(fos);
-        fos.close();
+
     }
 
 }

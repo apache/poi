@@ -41,8 +41,10 @@ public class EntryUtils
         DirectoryEntry newTarget = null;
         if ( entry.isDirectoryEntry() )
         {
+        	DirectoryEntry dirEntry = (DirectoryEntry)entry;
             newTarget = target.createDirectory( entry.getName() );
-            Iterator<Entry> entries = ( (DirectoryEntry) entry ).getEntries();
+            newTarget.setStorageClsid( dirEntry.getStorageClsid() );
+            Iterator<Entry> entries = dirEntry.getEntries();
 
             while ( entries.hasNext() )
             {

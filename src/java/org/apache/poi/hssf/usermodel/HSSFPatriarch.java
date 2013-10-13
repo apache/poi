@@ -17,27 +17,35 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.model.DrawingManager2;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.FtCfSubRecord;
+import org.apache.poi.hssf.record.FtPioGrbitSubRecord;
 import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.Internal;
-import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 
 /**
  * The patriarch is the toplevel container for shapes in a sheet.  It does
  * little other than act as a container for other shapes and groups.
  */
 public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
-    private static POILogger log = POILogFactory.getLogger(HSSFPatriarch.class);
+    // private static POILogger log = POILogFactory.getLogger(HSSFPatriarch.class);
     private final List<HSSFShape> _shapes = new ArrayList<HSSFShape>();
 
     private final EscherSpgrRecord _spgrRecord;
@@ -193,6 +201,87 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
         return createPicture((HSSFClientAnchor) anchor, pictureIndex);
     }
 
+    /**
+     * Adds a new OLE Package Shape 
+     * 
+     * @param anchor       the client anchor describes how this picture is
+     *                     attached to the sheet.
+     * @param storageId    the storageId returned by {@Link HSSFWorkbook.addOlePackage}
+     * @param pictureIndex the index of the picture (used as preview image) in the
+     *                     workbook collection of pictures.
+     *
+     * @return newly created shape
+     */
+    public HSSFObjectData createObjectData(HSSFClientAnchor anchor, int storageId, int pictureIndex) {
+        ObjRecord obj = new ObjRecord();
+
+        CommonObjectDataSubRecord ftCmo = new CommonObjectDataSubRecord();
+        ftCmo.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE);
+        // ftCmo.setObjectId(oleShape.getShapeId()); ... will be set by onCreate(...)
+        ftCmo.setLocked(true);
+        ftCmo.setPrintable(true);
+        ftCmo.setAutofill(true);
+        ftCmo.setAutoline(true);
+        ftCmo.setReserved1(0);
+        ftCmo.setReserved2(0);
+        ftCmo.setReserved3(0);
+        obj.addSubRecord(ftCmo);
+        
+        // FtCf (pictFormat) 
+        FtCfSubRecord ftCf = new FtCfSubRecord();
+        HSSFPictureData pictData = getSheet().getWorkbook().getAllPictures().get(pictureIndex-1);
+        switch (pictData.getFormat()) {
+	        case HSSFWorkbook.PICTURE_TYPE_WMF:
+	        case HSSFWorkbook.PICTURE_TYPE_EMF:
+	        	// this needs patch #49658 to be applied to actually work 
+	            ftCf.setFlags(FtCfSubRecord.METAFILE_BIT);
+	            break;
+	        case HSSFWorkbook.PICTURE_TYPE_DIB:
+	        case HSSFWorkbook.PICTURE_TYPE_PNG:
+	        case HSSFWorkbook.PICTURE_TYPE_JPEG:
+	        case HSSFWorkbook.PICTURE_TYPE_PICT:
+	            ftCf.setFlags(FtCfSubRecord.BITMAP_BIT);
+	            break;
+        }
+        obj.addSubRecord(ftCf);
+        // FtPioGrbit (pictFlags)
+        FtPioGrbitSubRecord ftPioGrbit = new FtPioGrbitSubRecord();
+        ftPioGrbit.setFlagByBit(FtPioGrbitSubRecord.AUTO_PICT_BIT, true);
+        obj.addSubRecord(ftPioGrbit);
+        
+        EmbeddedObjectRefSubRecord ftPictFmla = new EmbeddedObjectRefSubRecord();
+        ftPictFmla.setUnknownFormulaData(new byte[]{2, 0, 0, 0, 0});
+        ftPictFmla.setOleClassname("Paket");
+        ftPictFmla.setStorageId(storageId);
+        
+        obj.addSubRecord(ftPictFmla);
+        obj.addSubRecord(new EndSubRecord());
+
+        String entryName = "MBD"+HexDump.toHex(storageId);
+        DirectoryEntry oleRoot;
+        try {
+            DirectoryNode dn = _sheet.getWorkbook().getRootDirectory();
+        	if (dn == null) throw new FileNotFoundException();
+        	oleRoot = (DirectoryEntry)dn.getEntry(entryName);
+        } catch (FileNotFoundException e) {
+        	throw new IllegalStateException("trying to add ole shape without actually adding data first - use HSSFWorkbook.addOlePackage first", e);
+        }
+        
+        // create picture shape, which need to be minimal modified for oleshapes
+        HSSFPicture shape = new HSSFPicture(null, anchor);
+        shape.setPictureIndex(pictureIndex);
+        EscherContainerRecord spContainer = shape.getEscherContainer();
+        EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        spRecord.setFlags(spRecord.getFlags() |  EscherSpRecord.FLAG_OLESHAPE);
+        
+        HSSFObjectData oleShape = new HSSFObjectData(spContainer, obj, oleRoot); 
+        addShape(oleShape);
+        onCreate(oleShape);
+        
+        
+        return oleShape;
+    }
+    
     /**
      * Creates a polygon
      *

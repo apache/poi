@@ -18,15 +18,19 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,6 +40,7 @@ import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherMetafileBlip;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -46,7 +51,11 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.EntryUtils;
+import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
+import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
@@ -57,10 +66,7 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.util.Configurator;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.*;
 
 
 /**
@@ -1190,15 +1196,15 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         if (preserveNodes) {
             // Don't write out the old Workbook, we'll be doing our new one
-            excepts.add("Workbook");
             // If the file had an "incorrect" name for the workbook stream,
             // don't write the old one as we'll use the correct name shortly
-            for (String wrongName : WORKBOOK_DIR_ENTRY_NAMES) {
-               excepts.add(wrongName);
-            }
+        	excepts.addAll(Arrays.asList(WORKBOOK_DIR_ENTRY_NAMES));
 
             // Copy over all the other nodes to our new poifs
-            copyNodes(this.directory, fs.getRoot(), excepts);
+            EntryUtils.copyNodes(
+                    new FilteringDirectoryNode(this.directory, excepts)
+                    , new FilteringDirectoryNode(fs.getRoot(), excepts)
+            );
 
             // YK: preserve StorageClsid, it is important for embedded workbooks,
             // see Bugzilla 47920
@@ -1623,7 +1629,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     	        break;
         }
 
-        blipRecord.setRecordId( (short) ( EscherBitmapBlip.RECORD_ID_START + format ) );
+        blipRecord.setRecordId((short) (EscherBitmapBlip.RECORD_ID_START + format));
         switch (format)
         {
             case PICTURE_TYPE_EMF:
@@ -1713,6 +1719,65 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     }
 
+    protected static Map<String,ClassID> getOleMap() {
+    	Map<String,ClassID> olemap = new HashMap<String,ClassID>();
+    	olemap.put("PowerPoint Document", ClassID.PPT_SHOW);
+    	for (String str : WORKBOOK_DIR_ENTRY_NAMES) {
+    		olemap.put(str, ClassID.XLS_WORKBOOK);
+    	}
+    	// ... to be continued
+    	return olemap;
+    }
+    
+    public int addOlePackage(POIFSFileSystem poiData, String label, String fileName, String command)
+    throws IOException {
+    	DirectoryNode root = poiData.getRoot();
+    	Map<String,ClassID> olemap = getOleMap();
+    	for (Map.Entry<String,ClassID> entry : olemap.entrySet()) {
+    		if (root.hasEntry(entry.getKey())) {
+    			root.setStorageClsid(entry.getValue());
+    			break;
+    		}
+    	}
+    	
+    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    	poiData.writeFilesystem(bos);
+        return addOlePackage(bos.toByteArray(), label, fileName, command);
+    }
+    
+    public int addOlePackage(byte[] oleData, String label, String fileName, String command)
+    throws IOException {
+    	// check if we were created by POIFS otherwise create a new dummy POIFS for storing the package data
+    	if (directory == null) {
+    		directory = new POIFSFileSystem().getRoot();
+    		preserveNodes = true;
+    	}
+    	
+        // get free MBD-Node
+        int storageId = 0;
+        DirectoryEntry oleDir = null;
+        do {
+            String storageStr = "MBD"+ HexDump.toHex(++storageId);
+            if (!directory.hasEntry(storageStr)) {
+                oleDir = directory.createDirectory(storageStr);
+                oleDir.setStorageClsid(ClassID.OLE10_PACKAGE);
+            }
+        } while (oleDir == null);
+    	
+        // the following data was taken from an example libre office document
+        // beside this "\u0001Ole" record there were several other records, e.g. CompObj,
+        // OlePresXXX, but it seems, that they aren't neccessary
+        byte oleBytes[] = { 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        oleDir.createDocument("\u0001Ole", new ByteArrayInputStream(oleBytes));
+        
+        Ole10Native oleNative = new Ole10Native(label, fileName, command, oleData);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        oleNative.writeOut(bos);
+        oleDir.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+        
+    	return storageId;
+    }
+    
     /**
      * Is the workbook protected with a password (not encrypted)?
      */
