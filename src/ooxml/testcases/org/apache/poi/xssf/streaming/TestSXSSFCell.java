@@ -19,17 +19,21 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.*;
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
+import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-
-import javax.xml.namespace.QName;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  *
@@ -143,5 +147,25 @@ public class TestSXSSFCell extends BaseTestCell {
             c.dispose();
             assertEquals("expected xml:spaces=\"preserve\" \"" + str + "\"", "preserve", t);
         }
+    }
+
+    public void testBug55658SetNumericValue(){
+        Workbook wb = new SXSSFWorkbook();
+        Sheet sh = wb.createSheet();
+        Row row = sh.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue(Integer.valueOf(23));
+        
+        cell.setCellValue("some");
+
+        cell = row.createCell(1);
+        cell.setCellValue(Integer.valueOf(23));
+        
+        cell.setCellValue("24");
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+
+        assertEquals("some", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+        assertEquals("24", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
     }
 }

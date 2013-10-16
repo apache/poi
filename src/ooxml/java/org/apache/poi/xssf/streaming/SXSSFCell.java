@@ -22,9 +22,17 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFHyperlink;
@@ -611,6 +619,7 @@ public class SXSSFCell implements Cell
      * Errors are displayed as #ERR&lt;errIdx&gt;
      * </p>
      */
+    @Override
     public String toString() {
         switch (getCellType()) {
             case CELL_TYPE_BLANK:
@@ -887,6 +896,7 @@ public class SXSSFCell implements Cell
             case CELL_TYPE_STRING:
                 return getStringCellValue();
             case CELL_TYPE_NUMERIC:
+            	return Double.toString( getNumericCellValue() );
             case CELL_TYPE_ERROR:
                 byte errVal = getErrorCellValue();
                 return FormulaError.forInt(errVal).getString();
@@ -925,6 +935,7 @@ public class SXSSFCell implements Cell
         {
             super(value);
         }
+        @Override
         public int getType()
         {
             return COMMENT;
@@ -936,6 +947,7 @@ public class SXSSFCell implements Cell
         {
             super(value);
         }
+        @Override
         public int getType()
         {
             return HYPERLINK;
@@ -981,6 +993,7 @@ public class SXSSFCell implements Cell
         {
             return _value;
         }
+        @Override
         boolean isRichText()
         {
             return false;
@@ -989,6 +1002,7 @@ public class SXSSFCell implements Cell
     static class RichTextValue extends StringValue
     {
         RichTextString _value;
+        @Override
         public int getType()
         {
             return CELL_TYPE_STRING;
@@ -1001,6 +1015,7 @@ public class SXSSFCell implements Cell
         {
             return _value;
         }
+        @Override
         boolean isRichText()
         {
             return true;
@@ -1026,6 +1041,7 @@ public class SXSSFCell implements Cell
     static class NumericFormulaValue extends FormulaValue
     {
         double _preEvaluatedValue;
+        @Override
         int getFormulaType()
         {
             return CELL_TYPE_NUMERIC;
@@ -1042,6 +1058,7 @@ public class SXSSFCell implements Cell
     static class StringFormulaValue extends FormulaValue
     {
         String _preEvaluatedValue;
+        @Override
         int getFormulaType()
         {
             return CELL_TYPE_STRING;
@@ -1058,6 +1075,7 @@ public class SXSSFCell implements Cell
     static class BooleanFormulaValue extends FormulaValue
     {
         boolean _preEvaluatedValue;
+        @Override
         int getFormulaType()
         {
             return CELL_TYPE_BOOLEAN;
@@ -1074,6 +1092,7 @@ public class SXSSFCell implements Cell
     static class ErrorFormulaValue extends FormulaValue
     {
         byte _preEvaluatedValue;
+        @Override
         int getFormulaType()
         {
             return CELL_TYPE_ERROR;
