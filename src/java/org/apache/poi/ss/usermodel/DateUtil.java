@@ -299,7 +299,7 @@ public class DateUtil {
      * @see #isInternalDateFormat(int)
      */
 
-    public static boolean isADateFormat(int formatIndex, String formatString) {
+    public static synchronized boolean isADateFormat(int formatIndex, String formatString) {
        
          if (formatString != null && formatIndex == lastFormatIndex && formatString.equals(lastFormatString)) {
            		return cached;
