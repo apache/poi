@@ -277,6 +277,14 @@ public class DateUtil {
     }
 
 
+    // variables for performance optimization:
+    // avoid re-checking DataUtil.isADateFormat(int, String) if a given format
+    // string represents a date format if the same string is passed multiple times.
+    // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
+    private static int lastFormatIndex = -1;
+    private static String lastFormatString = null;
+    private static boolean cached = false;
+
     /**
      * Given a format ID and its format String, will check to see if the
      *  format represents a date format or not.
@@ -290,14 +298,25 @@ public class DateUtil {
      * @param formatString The format string, eg from FormatRecord.getFormatString
      * @see #isInternalDateFormat(int)
      */
+
     public static boolean isADateFormat(int formatIndex, String formatString) {
+       
+         if (formatString != null && formatIndex == lastFormatIndex && formatString.equals(lastFormatString)) {
+           		return cached;
+         }
         // First up, is this an internal date format?
         if(isInternalDateFormat(formatIndex)) {
+            lastFormatIndex = formatIndex;
+            lastFormatString = formatString;
+            cached = true;
             return true;
         }
 
         // If we didn't get a real string, it can't be
         if(formatString == null || formatString.length() == 0) {
+            lastFormatIndex = formatIndex;
+            lastFormatString = formatString;
+            cached = false;
             return false;
         }
 
@@ -349,6 +368,9 @@ public class DateUtil {
 
         // short-circuit if it indicates elapsed time: [h], [m] or [s]
         if(date_ptrn4.matcher(fs).matches()){
+            lastFormatIndex = formatIndex;
+            lastFormatString = formatString;
+            cached = true;
             return true;
         }
 
@@ -374,7 +396,12 @@ public class DateUtil {
         // If we get here, check it's only made up, in any case, of:
         //  y m d h s - \ / , . : [ ]
         // optionally followed by AM/PM
-        return date_ptrn3b.matcher(fs).matches();
+
+        boolean result = date_ptrn3b.matcher(fs).matches();
+        lastFormatIndex = formatIndex;
+        lastFormatString = formatString;
+        cached = result;
+        return result;
     }
 
     /**
