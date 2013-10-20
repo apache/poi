@@ -40,7 +40,10 @@ public class SXSSFRow implements Row
     short _height=-1;
     boolean _zHeight = false;
     int _outlineLevel = 0;   // Outlining level of the row, when outlining is on
-
+    // use Boolean to have a tri-state for on/off/undefined 
+    Boolean _hidden;
+    Boolean _collapsed;
+	
     public SXSSFRow(SXSSFSheet sheet, int initialSize)
     {
         _sheet=sheet;
@@ -61,7 +64,22 @@ public class SXSSFRow implements Row
     void setOutlineLevel(int level){
         _outlineLevel = level;
     }
+    
+    public Boolean getHidden() {
+        return _hidden;
+    }
 
+    public void setHidden(Boolean hidden) {
+        this._hidden = hidden;
+    }
+
+    public Boolean getCollapsed() {
+        return _collapsed;
+    }
+
+    public void setCollapsed(Boolean collapsed) {
+        this._collapsed = collapsed;
+    }
 //begin of interface implementation
     public Iterator<Cell> iterator()
     {
