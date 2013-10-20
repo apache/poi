@@ -1143,8 +1143,65 @@ public class SXSSFSheet implements Sheet, Cloneable
      */
     public void setRowGroupCollapsed(int row, boolean collapse)
     {
-        //_sh.setRowGroupCollapsed(row, collapse);
-        throw new RuntimeException("Not Implemented");
+        if (collapse) {
+            collapseRow(row);
+        } else {
+            //expandRow(rowIndex);
+            throw new RuntimeException("Not Implemented");
+        }
+    }
+    
+    /**
+     * @param rowIndex the zero based row index to collapse
+     */
+    private void collapseRow(int rowIndex) {
+        SXSSFRow row = (SXSSFRow) getRow(rowIndex);
+        if(row == null) {
+			throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
+		} else {
+            int startRow = findStartOfRowOutlineGroup(rowIndex);
+
+            // Hide all the columns until the end of the group
+            int lastRow = writeHidden(row, startRow, true);
+            SXSSFRow lastRowObj = (SXSSFRow) getRow(lastRow); 
+            if (lastRowObj != null) {
+                lastRowObj.setCollapsed(true);
+            } else {
+                SXSSFRow newRow = (SXSSFRow) createRow(lastRow);
+                newRow.setCollapsed(true);
+            }
+        }
+    }
+    
+    /**
+     * @param rowIndex the zero based row index to find from
+     */
+    private int findStartOfRowOutlineGroup(int rowIndex) {
+        // Find the start of the group.
+		Row row = getRow(rowIndex);
+        int level = ((SXSSFRow) row).getOutlineLevel();
+        if(level == 0) {
+        	throw new IllegalArgumentException("Outline level is zero for the row (" + rowIndex + ").");
+        }
+        int currentRow = rowIndex;
+        while (getRow(currentRow) != null) {
+            if (((SXSSFRow) getRow(currentRow)).getOutlineLevel() < level)
+                return currentRow + 1;
+            currentRow--;
+        }
+        return currentRow + 1;
+    }
+    
+    private int writeHidden(SXSSFRow xRow, int rowIndex, boolean hidden) {
+        int level = xRow.getOutlineLevel();
+        SXSSFRow currRow = (SXSSFRow) getRow(rowIndex);
+
+        while (currRow != null && currRow.getOutlineLevel() >= level) {
+            currRow.setHidden(hidden);
+            rowIndex++;
+            currRow = (SXSSFRow) getRow(rowIndex);
+        }
+        return rowIndex;
     }
 
     /**

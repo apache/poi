@@ -19,16 +19,19 @@
 
 package org.apache.poi.xssf.streaming;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.Iterator;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.xmlbeans.XmlCursor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
-
-import javax.xml.namespace.QName;
-import java.io.*;
-import java.util.Iterator;
 
 /**
  * Initially copied from BigGridDemo "SpreadsheetWriter".
@@ -110,6 +113,7 @@ public class SheetDataWriter {
         return _numberLastFlushedRow;
     }
 
+    @Override
     protected void finalize() throws Throwable {
         _fd.delete();
     }
@@ -148,6 +152,13 @@ public class SheetDataWriter {
         if (row.getOutlineLevel() != 0) {
             _out.write(" outlineLevel=\"" + row.getOutlineLevel() + "\"");
         }
+        if(row.getHidden() != null) {
+            _out.write(" hidden=\"" + (row.getHidden() ? "1" : "0") + "\"");
+        }
+        if(row.getCollapsed() != null) {
+        	_out.write(" collapsed=\"" + (row.getCollapsed() ? "1" : "0") + "\"");
+        }
+        
         _out.write(">\n");
         this._rownum = rownum;
         _rowContainedNullCells = false;
