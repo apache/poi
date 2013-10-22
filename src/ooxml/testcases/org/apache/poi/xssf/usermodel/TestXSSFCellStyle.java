@@ -836,4 +836,18 @@ public class TestXSSFCellStyle extends TestCase {
         assertNull(style.getStyleXf());
     }
 
+    /**
+     * Avoid ArrayIndexOutOfBoundsException  when getting cell style
+     * in a workbook that has an empty xf table.
+     */
+    public void testBug55650() {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("52348.xlsx");
+        StylesTable st = workbook.getStylesSource();
+        assertEquals(0, st._getStyleXfsSize());
+
+        // no exception at this point
+        XSSFCellStyle style = workbook.getSheetAt(0).getRow(0).getCell(0).getCellStyle();
+        assertNull(style.getStyleXf());
+    }
+
 }
