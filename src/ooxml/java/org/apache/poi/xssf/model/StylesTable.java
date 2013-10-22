@@ -20,17 +20,23 @@ package org.apache.poi.xssf.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
-import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
@@ -49,8 +55,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 
 
 /**
@@ -302,7 +306,7 @@ public class StylesTable extends POIXMLDocumentPart {
    }
 
 	public CTXf getCellStyleXfAt(int idx) {
-		return styleXfs.get(idx);
+		return idx < styleXfs.size() ? styleXfs.get(idx) : null;
 	}
 	public int putCellStyleXf(CTXf cellStyleXf) {
 		styleXfs.add(cellStyleXf);
