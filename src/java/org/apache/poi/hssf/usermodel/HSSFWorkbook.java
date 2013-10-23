@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDocument;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBitmapBlip;
@@ -47,7 +48,19 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.CellReference;
@@ -66,7 +79,11 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.util.*;
+import org.apache.poi.util.Configurator;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 
 /**
@@ -216,6 +233,15 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             } catch (FileNotFoundException e) {
                 // continue - to try other options
             }
+        }
+        
+        // check for an encrypted .xlsx file - they get OLE2 wrapped
+        try {
+        	directory.getEntry("EncryptedPackage");
+        	throw new EncryptedDocumentException("The supplied spreadsheet seems to be an Encrypted .xlsx file. " +
+        			"It must be decrypted before use by XSSF, it cannot be used by HSSF");
+        } catch (FileNotFoundException e) {
+            // fall through
         }
 
         // check for previous version of file format

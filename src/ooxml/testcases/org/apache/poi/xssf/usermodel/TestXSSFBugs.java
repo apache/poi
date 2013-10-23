@@ -19,13 +19,18 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -47,6 +52,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -1355,5 +1361,36 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             WorkbookEvaluator.registerFunction("GETPIVOTDATA", func);
         }
         workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+    }
+    
+    /**
+     * Password Protected .xlsx files should give a helpful
+     *  error message when called via WorkbookFactory.
+     * (You need to supply a password explicitly for them)
+     */
+    public void test55692() throws Exception {
+    	InputStream inpA = POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx");
+    	InputStream inpB = POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx");
+    	InputStream inpC = POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx");
+
+    	// Directly on a Stream
+    	try {
+    		WorkbookFactory.create(inpA);
+    		fail("Should've raised a EncryptedDocumentException error");
+    	} catch (EncryptedDocumentException e) {}
+    	
+    	// Via a POIFSFileSystem
+    	POIFSFileSystem fsP = new POIFSFileSystem(inpB);
+    	try {
+    		WorkbookFactory.create(fsP);
+    		fail("Should've raised a EncryptedDocumentException error");
+    	} catch (EncryptedDocumentException e) {}
+
+    	// Via a NPOIFSFileSystem
+    	NPOIFSFileSystem fsNP = new NPOIFSFileSystem(inpC);
+    	try {
+    		WorkbookFactory.create(fsNP);
+    		fail("Should've raised a EncryptedDocumentException error");
+    	} catch (EncryptedDocumentException e) {}
     }
 }
