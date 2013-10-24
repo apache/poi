@@ -28,8 +28,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
 import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * @deprecated (name clash with {@link java.lang.Package} use {@link OPCPackage} instead.
@@ -43,7 +41,7 @@ public abstract class Package extends OPCPackage {
 	/**
 	 * Logger.
 	 */
-    private static POILogger logger = POILogFactory.getLogger(Package.class);
+    //private static POILogger logger = POILogFactory.getLogger(Package.class);
 
 
 	/**

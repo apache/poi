@@ -104,7 +104,7 @@ public final class ConstantValueParser {
 		if(object == EMPTY_REPRESENTATION) {
 			return 8;
 		}
-		Class cls = object.getClass();
+		Class<?> cls = object.getClass();
 		
 		if(cls == Boolean.class || cls == Double.class || cls == ErrorConstant.class) {
 			return 8;
