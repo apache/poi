@@ -18,9 +18,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FormatRecord;
 import org.apache.poi.hssf.record.StyleRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -104,9 +108,26 @@ public final class HSSFCellStyle implements CellStyle {
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      * @return the format string or "General" if not found
      */
+     
+    private static short lastDateFormat = Short.MIN_VALUE;
+    private static List<FormatRecord> lastFormats = null;
+    private static String getDataFormatStringCache = null;
+    
     public String getDataFormatString() {
-        return getDataFormatString(_workbook);
+        if (getDataFormatStringCache != null) {
+            if (lastDateFormat == getDataFormat() && _workbook.getFormats().equals(lastFormats)) {
+                return getDataFormatStringCache;
+            }
+        }
+
+        lastFormats = _workbook.getFormats();
+        lastDateFormat = getDataFormat();
+
+        getDataFormatStringCache = getDataFormatString(_workbook);
+
+        return getDataFormatStringCache;
     }
+
     /**
      * Get the contents of the format string, by looking up
      *  the DataFormat against the supplied workbook
@@ -826,6 +847,11 @@ public final class HSSFCellStyle implements CellStyle {
 
     	// Handle matching things if we cross workbooks
     	if(_workbook != source._workbook) {
+
+            lastDateFormat = Short.MIN_VALUE;
+            lastFormats = null;
+            getDataFormatStringCache = null;
+    	   
 			// Then we need to clone the format string,
 			//  and update the format record for this
     		short fmt = (short)_workbook.createFormat(source.getDataFormatString() );
@@ -872,4 +898,5 @@ public final class HSSFCellStyle implements CellStyle {
 		}
 		return false;
 	}
+	
 }
