@@ -137,18 +137,22 @@ public final class ObjRecord extends Record {
 		return true;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("[OBJ]\n");
-		for (int i = 0; i < subrecords.size(); i++) {
-			SubRecord record = subrecords.get(i);
-			sb.append("SUBRECORD: ").append(record.toString());
+		if(subrecords != null) {	// there are special cases where this can be, see comments in constructor above
+    		for (int i = 0; i < subrecords.size(); i++) {
+    			SubRecord record = subrecords.get(i);
+    			sb.append("SUBRECORD: ").append(record.toString());
+    		}
 		}
 		sb.append("[/OBJ]\n");
 		return sb.toString();
 	}
 	
+	@Override
 	public int getRecordSize() {
 		if (_uninterpretedData != null) {
 			return _uninterpretedData.length + 4;
@@ -170,6 +174,7 @@ public final class ObjRecord extends Record {
 		return size + 4;
 	}
 
+	@Override
 	public int serialize(int offset, byte[] data) {
 		int recSize = getRecordSize();
 		int dataSize = recSize - 4;
@@ -195,6 +200,7 @@ public final class ObjRecord extends Record {
 		return recSize;
 	}
 
+	@Override
 	public short getSid() {
 		return sid;
 	}
@@ -215,6 +221,7 @@ public final class ObjRecord extends Record {
 		return subrecords.add(o);
 	}
 
+	@Override
 	public Object clone() {
 		ObjRecord rec = new ObjRecord();
 

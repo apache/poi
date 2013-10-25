@@ -83,7 +83,8 @@ public final class CatLabRecord extends StandardRecord {
 		buffer.append("    .wOffset =").append(HexDump.shortToHex(wOffset)).append('\n');
 		buffer.append("    .at      =").append(HexDump.shortToHex(at)).append('\n');
 		buffer.append("    .grbit   =").append(HexDump.shortToHex(grbit)).append('\n');
-		buffer.append("    .unused  =").append(HexDump.shortToHex(unused)).append('\n');
+		if(unused != null)
+			buffer.append("    .unused  =").append(HexDump.shortToHex(unused)).append('\n');
 
 		buffer.append("[/CATLAB]\n");
 		return buffer.toString();
