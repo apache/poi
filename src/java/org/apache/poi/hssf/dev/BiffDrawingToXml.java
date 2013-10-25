@@ -19,17 +19,22 @@
 
 package org.apache.poi.hssf.dev;
 
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Utility for representing drawings contained in a binary Excel file as a XML tree
@@ -132,7 +137,7 @@ public class BiffDrawingToXml {
         outputStream.close();
     }
 
-    public static void writeToFile(FileOutputStream fos, InputStream xlsWorkbook, boolean excludeWorkbookRecords, String[] params) throws IOException {
+    public static void writeToFile(OutputStream fos, InputStream xlsWorkbook, boolean excludeWorkbookRecords, String[] params) throws IOException {
         POIFSFileSystem fs = new POIFSFileSystem(xlsWorkbook);
         HSSFWorkbook workbook = new HSSFWorkbook(fs);
         InternalWorkbook internalWorkbook = getInternalWorkbook(workbook);

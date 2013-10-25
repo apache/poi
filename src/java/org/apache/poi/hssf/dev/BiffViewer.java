@@ -17,23 +17,20 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.pivottable.*;
+import org.apache.poi.hssf.record.pivottable.DataItemRecord;
+import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
+import org.apache.poi.hssf.record.pivottable.PageItemRecord;
+import org.apache.poi.hssf.record.pivottable.StreamIDRecord;
+import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
+import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
+import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -413,14 +410,21 @@ public final class BiffViewer {
 				boolean dumpInterpretedRecords = cmdArgs.shouldDumpRecordInterpretations();
 				boolean dumpHex = cmdArgs.shouldDumpBiffHex();
 				boolean zeroAlignHexDump = dumpInterpretedRecords;  // TODO - fix non-zeroAlign
-				BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null, zeroAlignHexDump, cmdArgs.suppressHeader());
-				is = new BiffDumpingStream(is, recListener);
-				createRecords(is, ps, recListener, dumpInterpretedRecords);
+				runBiffViewer(ps, is, dumpInterpretedRecords, dumpHex, zeroAlignHexDump,
+						cmdArgs.suppressHeader());
 			}
 			ps.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected static void runBiffViewer(PrintStream ps, InputStream is,
+			boolean dumpInterpretedRecords, boolean dumpHex, boolean zeroAlignHexDump,
+			boolean suppressHeader) {
+		BiffRecordListener recListener = new BiffRecordListener(dumpHex ? new OutputStreamWriter(ps) : null, zeroAlignHexDump, suppressHeader);
+		is = new BiffDumpingStream(is, recListener);
+		createRecords(is, ps, recListener, dumpInterpretedRecords);
 	}
 
 	private static final class BiffRecordListener implements IBiffRecordListener {
@@ -497,6 +501,7 @@ public final class BiffViewer {
 			_currentPos = 0;
 		}
 
+		@Override
 		public int read() throws IOException {
 			if (_currentPos >= _currentSize) {
 				fillNextBuffer();
@@ -510,6 +515,7 @@ public final class BiffViewer {
 			formatBufferIfAtEndOfRec();
 			return result;
 		}
+		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
 			if (_currentPos >= _currentSize) {
 				fillNextBuffer();
@@ -532,6 +538,7 @@ public final class BiffViewer {
 			return result;
 		}
 
+		@Override
 		public int available() throws IOException {
 			return _currentSize - _currentPos + _is.available();
 		}
@@ -561,6 +568,7 @@ public final class BiffViewer {
 			int globalOffset = _overallStreamPos-_currentSize;
 			_listener.processRecord(globalOffset, _recordCounter, sid, dataSize, _data);
 		}
+		@Override
 		public void close() throws IOException {
 			_is.close();
 		}

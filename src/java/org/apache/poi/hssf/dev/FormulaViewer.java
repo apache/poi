@@ -24,12 +24,12 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.OperationPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display
@@ -68,7 +68,7 @@ public class FormulaViewer
 
         for (int k = 0; k < records.size(); k++)
         {
-            Record record = ( Record ) records.get(k);
+            Record record = records.get(k);
 
             if (record.getSid() == FormulaRecord.sid)
             {
