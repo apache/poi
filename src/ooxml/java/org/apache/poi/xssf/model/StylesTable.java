@@ -39,22 +39,7 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFills;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
 /**
@@ -367,7 +352,7 @@ public class StylesTable extends POIXMLDocumentPart {
 		// Work on the current one
 		// Need to do this, as we don't handle
 		//  all the possible entries yet
-        CTStylesheet styleSheet = doc.getStyleSheet();
+		CTStylesheet styleSheet = doc.getStyleSheet();
 
 		// Formats
 		CTNumFmts formats = CTNumFmts.Factory.newInstance();
@@ -381,7 +366,10 @@ public class StylesTable extends POIXMLDocumentPart {
 
 		int idx;
 		// Fonts
-		CTFonts ctFonts = CTFonts.Factory.newInstance();
+		CTFonts ctFonts = styleSheet.getFonts();
+		if (ctFonts == null) {
+			ctFonts = CTFonts.Factory.newInstance();
+		}
 		ctFonts.setCount(fonts.size());
 		CTFont[] ctfnt = new CTFont[fonts.size()];
 		idx = 0;
@@ -390,7 +378,10 @@ public class StylesTable extends POIXMLDocumentPart {
 		styleSheet.setFonts(ctFonts);
 
 		// Fills
-		CTFills ctFills = CTFills.Factory.newInstance();
+		CTFills ctFills = styleSheet.getFills();
+		if (ctFills == null) {
+			ctFills = CTFills.Factory.newInstance();
+		}
 		ctFills.setCount(fills.size());
 		CTFill[] ctf = new CTFill[fills.size()];
 		idx = 0;
@@ -399,7 +390,10 @@ public class StylesTable extends POIXMLDocumentPart {
 		styleSheet.setFills(ctFills);
 
 		// Borders
-		CTBorders ctBorders = CTBorders.Factory.newInstance();
+		CTBorders ctBorders = styleSheet.getBorders();
+		if (ctBorders == null) {
+			ctBorders = CTBorders.Factory.newInstance();
+		}
 		ctBorders.setCount(borders.size());
 		CTBorder[] ctb = new CTBorder[borders.size()];
 		idx = 0;
@@ -409,7 +403,10 @@ public class StylesTable extends POIXMLDocumentPart {
 
 		// Xfs
 		if(xfs.size() > 0) {
-			CTCellXfs ctXfs = CTCellXfs.Factory.newInstance();
+			CTCellXfs ctXfs = styleSheet.getCellXfs();
+			if (ctXfs == null) {
+				ctXfs = CTCellXfs.Factory.newInstance();
+			}
 			ctXfs.setCount(xfs.size());
 			ctXfs.setXfArray(
 					xfs.toArray(new CTXf[xfs.size()])
@@ -419,7 +416,10 @@ public class StylesTable extends POIXMLDocumentPart {
 
 		// Style xfs
 		if(styleXfs.size() > 0) {
-			CTCellStyleXfs ctSXfs = CTCellStyleXfs.Factory.newInstance();
+			CTCellStyleXfs ctSXfs = styleSheet.getCellStyleXfs();
+			if (ctSXfs == null) {
+				ctSXfs = CTCellStyleXfs.Factory.newInstance();
+			}
 			ctSXfs.setCount(styleXfs.size());
 			ctSXfs.setXfArray(
 					styleXfs.toArray(new CTXf[styleXfs.size()])
@@ -429,7 +429,10 @@ public class StylesTable extends POIXMLDocumentPart {
 
 		// Style dxfs
 		if(dxfs.size() > 0) {
-			CTDxfs ctDxfs = CTDxfs.Factory.newInstance();
+			CTDxfs ctDxfs = styleSheet.getDxfs();
+			if (ctDxfs == null) {
+				ctDxfs = CTDxfs.Factory.newInstance();
+			}
 			ctDxfs.setCount(dxfs.size());
 			ctDxfs.setDxfArray(dxfs.toArray(new CTDxf[dxfs.size()])
 			);

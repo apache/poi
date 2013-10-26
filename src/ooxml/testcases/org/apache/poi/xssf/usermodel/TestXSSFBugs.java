@@ -35,24 +35,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -181,7 +164,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  read the file despite the naughtyness
      */
     public void test49020() throws Exception {
-       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("BrNotClosed.xlsx");
+       /*XSSFWorkbook wb =*/ XSSFTestDataSamples.openSampleWorkbook("BrNotClosed.xlsx");
     }
 
     /**
@@ -326,9 +309,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           assertEquals(startingFonts+1, wb.getNumberOfFonts());
           
           // Get two more, unchanged
-          Font b = wb.createFont();
+          /*Font b =*/ wb.createFont();
           assertEquals(startingFonts+2, wb.getNumberOfFonts());
-          Font c = wb.createFont();
+          /*Font c =*/ wb.createFont();
           assertEquals(startingFonts+3, wb.getNumberOfFonts());
        }
     }
@@ -550,9 +533,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     
     /**
      * Repeatedly writing the same file which has styles
-     * TODO Currently failing
      */
-    public void DISABLEDtest49940() throws Exception {
+    public void test49940() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx");
        assertEquals(3, wb.getNumberOfSheets());
        assertEquals(10, wb.getStylesSource().getNumCellStyles());
@@ -1004,7 +986,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Setting repeating rows and columns shouldn't break
      *  any print settings that were there before
      */
-    public void test49253() throws Exception {
+    @SuppressWarnings("deprecation")
+	public void test49253() throws Exception {
        XSSFWorkbook wb1 = new XSSFWorkbook();
        XSSFWorkbook wb2 = new XSSFWorkbook();
        
@@ -1342,7 +1325,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(259.0, a1Value, 0.0);
 
         // KY: SUM(B1: IZ1)
-        double ky1Value =
+        /*double ky1Value =*/
                 evaluator.evaluate(workbook.getSheetAt(0).getRow(0).getCell(310)).getNumberValue();
 
         // Assert
