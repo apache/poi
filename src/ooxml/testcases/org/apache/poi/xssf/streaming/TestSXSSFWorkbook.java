@@ -19,12 +19,20 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import java.io.File;
 
 public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     public static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
@@ -264,4 +272,81 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         assertWorkbookDispose(wb);
 
     }
+
+    // currently writing the same sheet multiple times is not supported...
+	public void DISABLEDtestBug53515() throws Exception {
+		Workbook wb = new SXSSFWorkbook(10);
+		populateWorkbook(wb);
+		saveTwice(wb);
+		wb = new XSSFWorkbook();
+		populateWorkbook(wb);
+		saveTwice(wb);
+	}
+
+	// Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files
+	// See http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html
+	public void DISABLEDtestBug53515a() throws Exception {
+		File out = new File("Test.xlsx");
+		out.delete();
+		for (int i = 0; i < 2; i++) {
+			System.out.println("Iteration " + i);
+			final SXSSFWorkbook wb;
+			if (out.exists()) {
+				wb = new SXSSFWorkbook(
+						(XSSFWorkbook) WorkbookFactory.create(out));
+			} else {
+				wb = new SXSSFWorkbook(10);
+			}
+
+			try {
+				FileOutputStream outSteam = new FileOutputStream(out);
+				if (i == 0) {
+					populateWorkbook(wb);
+				} else {
+					System.gc();
+					System.gc();
+					System.gc();
+				}
+
+				wb.write(outSteam);
+				// wb.dispose();
+				outSteam.close();
+			} finally {
+				wb.dispose();
+			}
+		}
+		out.delete();
+	}
+
+	private static void populateWorkbook(Workbook wb) {
+		Sheet sh = wb.createSheet();
+		for (int rownum = 0; rownum < 100; rownum++) {
+			Row row = sh.createRow(rownum);
+			for (int cellnum = 0; cellnum < 10; cellnum++) {
+				Cell cell = row.createCell(cellnum);
+				String address = new CellReference(cell).formatAsString();
+				cell.setCellValue(address);
+			}
+		}
+	}
+
+	private static void saveTwice(Workbook wb) throws Exception {
+		for (int i = 0; i < 2; i++) {
+			try {
+				NullOutputStream out = new NullOutputStream();
+				wb.write(out);
+				out.close();
+			} catch (Exception e) {
+				throw new Exception("ERROR: failed on " + (i + 1)
+						+ "th time calling " + wb.getClass().getName()
+						+ ".write() with exception " + e.getMessage(), e);
+			}
+		}
+	}
+
+	private static class NullOutputStream extends OutputStream {
+		@Override
+		public void write(int b) throws IOException {
+		}
+	}
 }
