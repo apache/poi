@@ -156,7 +156,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         String sheetName2 = "My very long sheet name which is longer than 31 chars " +
                 "and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)";
         try {
-            Sheet sh2 = wb.createSheet(sheetName2);
+            /*Sheet sh2 =*/ wb.createSheet(sheetName2);
             fail("expected exception");
         } catch (IllegalArgumentException e) {
             // expected during successful test
@@ -415,7 +415,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         c.setCellValue(12.34);
         c.getCellStyle().setDataFormat(fmt);
 
-        Cell c2 = r.createCell(2); // TODO - c2 unused but changing next line ('c'->'c2') causes test to fail
+        /*Cell c2 =*/ r.createCell(2); // TODO - c2 unused but changing next line ('c'->'c2') causes test to fail
         c.setCellValue(factory.createRichTextString("\u20ac"));
 
         Cell c3 = r.createCell(3);
@@ -447,7 +447,7 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(formatStr, df.getFormat(c.getCellStyle().getDataFormat()));
 
         //Test the cell string value
-        c2 = r.getCell(2);
+        /*c2 =*/ r.getCell(2);
         assertEquals(c.getRichStringCellValue().getString(), "\u20ac");
 
         //Test the cell formula
