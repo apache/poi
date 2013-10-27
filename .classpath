@@ -8,6 +8,7 @@
 	<classpathentry kind="src" path="src/resources/ooxml"/>
 	<classpathentry kind="src" path="src/scratchpad/src"/>
 	<classpathentry kind="src" path="src/scratchpad/testcases"/>
+	<classpathentry kind="src" path="src/resources/scratchpad"/>
 	<classpathentry kind="src" path="src/contrib/poi-ruby/java"/>
 	<classpathentry kind="src" path="src/examples/src"/>
 	<classpathentry kind="src" path="src/excelant/java"/>
