@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
@@ -130,8 +130,10 @@ public final class ExternalNameRecord extends StandardRecord {
 
         if(!isOLELink() && !isStdDocumentNameIdentifier()){
             if(isAutomaticLink()){
-                result += 3; // byte, short
-                result += ConstantValueParser.getEncodedSize(_ddeValues);
+            	if(_ddeValues != null) {
+                    result += 3; // byte, short
+                    result += ConstantValueParser.getEncodedSize(_ddeValues);
+            	}
             } else {
                 result += field_5_name_definition.getEncodedSize();
             }
@@ -149,9 +151,11 @@ public final class ExternalNameRecord extends StandardRecord {
 
         if(!isOLELink() && !isStdDocumentNameIdentifier()){
             if(isAutomaticLink()){
-                out.writeByte(_nColumns-1);
-                out.writeShort(_nRows-1);
-                ConstantValueParser.encode(out, _ddeValues);
+            	if(_ddeValues != null) {
+                    out.writeByte(_nColumns-1);
+                    out.writeShort(_nRows-1);
+                    ConstantValueParser.encode(out, _ddeValues);
+            	}
             } else {
                 field_5_name_definition.serialize(out);
             }

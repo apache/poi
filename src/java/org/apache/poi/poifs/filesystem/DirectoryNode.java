@@ -289,13 +289,13 @@ public class DirectoryNode
         if (rval)
         {
             _entries.remove(entry);
-        	   _byname.remove(entry.getName());
+               _byname.remove(entry.getName());
 
-        	   if(_ofilesystem != null) {
+               if(_ofilesystem != null) {
                _ofilesystem.remove(entry);
-        	   } else {
-        	      _nfilesystem.remove(entry);
-        	   }
+               } else {
+                  _nfilesystem.remove(entry);
+               }
         }
         return rval;
     }
@@ -359,21 +359,16 @@ public class DirectoryNode
      *            name exists in this DirectoryEntry
      */
 
-    public Entry getEntry(final String name)
-        throws FileNotFoundException
-    {
+    public Entry getEntry(final String name) throws FileNotFoundException {
         Entry rval = null;
 
-        if (name != null)
-        {
+        if (name != null) {
             rval = _byname.get(name);
         }
-        if (rval == null)
-        {
-
+        if (rval == null) {
             // either a null name was given, or there is no such name
             throw new FileNotFoundException("no such entry: \"" + name
-                                            + "\"");
+                    + "\", had: " + _byname.keySet());
         }
         return rval;
     }
@@ -479,6 +474,7 @@ public class DirectoryNode
      * @return true if the Entry is a DirectoryEntry, else false
      */
 
+    @Override
     public boolean isDirectoryEntry()
     {
         return true;
@@ -495,6 +491,7 @@ public class DirectoryNode
      *         false
      */
 
+    @Override
     protected boolean isDeleteOK()
     {
 
@@ -524,7 +521,7 @@ public class DirectoryNode
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Iterator getViewableIterator()
     {
         List components = new ArrayList();

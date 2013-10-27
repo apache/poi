@@ -9,11 +9,9 @@ public class TestRecordLister extends BaseXLSIteratingTest {
 	static {
 		// TODO: is it ok to fail these? 
 		// Look at the output of the test for the detailed stacktrace of the failures...
-		EXCLUDED.add("WORKBOOK_in_capitals.xls"); 	
-		EXCLUDED.add("NoGutsRecords.xls"); 
-		EXCLUDED.add("BOOK_in_capitals.xls"); 
-		EXCLUDED.add("OddStyleRecord.xls");		
+		//EXCLUDED.add("");
 
+		// these are likely ok to fail
 		SILENT_EXCLUDED.add("46904.xls"); 
 	};
 	
