@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * This is a low-level debugging class, which simply prints
@@ -50,9 +49,7 @@ public class RecordLister
     public void run()
         throws IOException
     {
-        FileInputStream   fin   = new FileInputStream(file);
-        POIFSFileSystem   poifs = new POIFSFileSystem(fin);
-        InputStream       din   = poifs.createDocumentInputStream("Workbook");
+        InputStream       din   = BiffViewer.getPOIFSInputStream(new File(file));
         RecordInputStream rinp  = new RecordInputStream(din);
 
         while(rinp.hasNextRecord()) {

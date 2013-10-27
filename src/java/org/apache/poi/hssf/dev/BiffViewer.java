@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.pivottable.StreamIDRecord;
 import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
@@ -397,8 +398,7 @@ public final class BiffViewer {
 				ps = System.out;
 			}
 
-			POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(cmdArgs.getFile()));
-			InputStream is = fs.createDocumentInputStream("Workbook");
+			InputStream is = getPOIFSInputStream(cmdArgs.getFile());
 
 			if (cmdArgs.shouldOutputRawHexOnly()) {
 				int size = is.available();
@@ -417,6 +417,13 @@ public final class BiffViewer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected static InputStream getPOIFSInputStream(File file)
+			throws IOException, FileNotFoundException {
+		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
+		return fs.createDocumentInputStream(workbookName);
 	}
 
 	protected static void runBiffViewer(PrintStream ps, InputStream is,

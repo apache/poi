@@ -17,16 +17,14 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.hssf.record.Record;
-
-import org.apache.poi.hssf.eventusermodel.HSSFRequest;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
+import org.apache.poi.hssf.eventusermodel.HSSFListener;
+import org.apache.poi.hssf.eventusermodel.HSSFRequest;
+import org.apache.poi.hssf.record.Record;
 
 /**
  *
@@ -43,12 +41,8 @@ public class EFBiffViewer
     {
     }
 
-    public void run()
-        throws IOException
-    {
-        FileInputStream fin   = new FileInputStream(file);
-        POIFSFileSystem poifs = new POIFSFileSystem(fin);
-        InputStream     din   = poifs.createDocumentInputStream("Workbook");
+    public void run() throws IOException {
+        InputStream     din   = BiffViewer.getPOIFSInputStream(new File(file));
         HSSFRequest     req   = new HSSFRequest();
 
         req.addListenerForAllRecords(new HSSFListener()

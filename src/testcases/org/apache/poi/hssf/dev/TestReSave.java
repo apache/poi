@@ -1,20 +1,25 @@
 package org.apache.poi.hssf.dev;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Test;
 
 public class TestReSave extends BaseXLSIteratingTest {
 	static {
 		// TODO: is it ok to fail these? 
 		// Look at the output of the test for the detailed stacktrace of the failures...
-		EXCLUDED.add("password.xls"); 
-		EXCLUDED.add("43493.xls");
-		EXCLUDED.add("51832.xls"); 
-		EXCLUDED.add("49219.xls");
 		EXCLUDED.add("49931.xls");
 
+		// these are likely ok to fail
+		SILENT_EXCLUDED.add("password.xls"); 
+		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
 		SILENT_EXCLUDED.add("46904.xls"); 
+		SILENT_EXCLUDED.add("51832.xls");	// password 
 	};
 	
 	@Override
@@ -31,6 +36,10 @@ public class TestReSave extends BaseXLSIteratingTest {
 
 			try {
 				ReSave.main(new String[] { new File(dir, file).getAbsolutePath() });
+				
+				// also try BiffViewer on the saved file
+				new TestBiffViewer().runOneFile(dir, file.replace(".xls", "-saved.xls"), failed);
+
     			try {
         			// had one case where the re-saved could not be re-saved!
         			ReSave.main(new String[] { new File(dir, file.replace(".xls", "-saved.xls")).getAbsolutePath() });
@@ -46,5 +55,14 @@ public class TestReSave extends BaseXLSIteratingTest {
 		} finally {
 			System.setOut(save);
 		}
+	}
+
+	@Test
+	public void testOneFile() throws Exception {
+		List<String> failed = new ArrayList<String>();
+		runOneFile("test-data/spreadsheet", "49219.xls", failed);
+
+		assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
+				failed.isEmpty());
 	}
 }

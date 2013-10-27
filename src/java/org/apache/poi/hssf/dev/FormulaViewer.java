@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.util.List;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.OperationPtg;
@@ -60,11 +59,9 @@ public class FormulaViewer
     public void run()
         throws Exception
     {
-        POIFSFileSystem fs      =
-            new POIFSFileSystem(new FileInputStream(file));
         List<Record>    records =
             RecordFactory
-                .createRecords(fs.createDocumentInputStream("Workbook"));
+                .createRecords(BiffViewer.getPOIFSInputStream(new File(file)));
 
         for (int k = 0; k < records.size(); k++)
         {

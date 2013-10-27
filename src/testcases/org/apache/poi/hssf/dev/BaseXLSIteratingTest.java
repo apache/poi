@@ -1,14 +1,17 @@
 package org.apache.poi.hssf.dev;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 
 /**
@@ -29,7 +32,7 @@ public abstract class BaseXLSIteratingTest {
 		System.out.println("Had " + count + " files");
 	}
 
-	private int runWithDir(String dir) {
+	private int runWithDir(String dir) throws IOException {
 		List<String> failed = new ArrayList<String>();
 
 		String[] files = new File(dir).list(new FilenameFilter() {
@@ -46,7 +49,7 @@ public abstract class BaseXLSIteratingTest {
 		return files.length;
 	}
 
-	private void runWithArrayOfFiles(String[] files, String dir, List<String> failed) {
+	private void runWithArrayOfFiles(String[] files, String dir, List<String> failed) throws IOException {
 		for(String file : files) {
 			try {
 				runOneFile(dir, file, failed);
@@ -57,6 +60,15 @@ public abstract class BaseXLSIteratingTest {
 				}
 
 				e.printStackTrace();
+				
+				// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably can use SILENT_EXCLUDED instead
+				FileInputStream stream = new FileInputStream(new File(dir, file));
+				try {
+					assertNotNull(new HSSFWorkbook(stream));
+				} finally {
+					stream.close();
+				}
+				
 				if(!EXCLUDED.contains(file)) {
 					failed.add(file);
 				}

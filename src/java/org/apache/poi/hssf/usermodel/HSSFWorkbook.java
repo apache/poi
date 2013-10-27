@@ -48,19 +48,7 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.LabelRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.RecalcIdRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.CellReference;
@@ -222,11 +210,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     };
 
 
-    private static String getWorkbookDirEntryName(DirectoryNode directory) {
+    public static String getWorkbookDirEntryName(DirectoryNode directory) {
 
-        String[] potentialNames = WORKBOOK_DIR_ENTRY_NAMES;
-        for (int i = 0; i < potentialNames.length; i++) {
-            String wbName = potentialNames[i];
+        for (int i = 0; i < WORKBOOK_DIR_ENTRY_NAMES.length; i++) {
+            String wbName = WORKBOOK_DIR_ENTRY_NAMES[i];
             try {
                 directory.getEntry(wbName);
                 return wbName;

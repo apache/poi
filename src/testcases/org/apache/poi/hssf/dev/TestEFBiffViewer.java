@@ -7,12 +7,14 @@ import java.util.List;
 
 public class TestEFBiffViewer extends BaseXLSIteratingTest {
 	static {
-		// TODO: is it ok to fail these? 
 		// Look at the output of the test for the detailed stacktrace of the failures...
-		EXCLUDED.add("password.xls"); 
-		EXCLUDED.add("XRefCalc.xls"); 
-		EXCLUDED.add("43493.xls");
-		EXCLUDED.add("51832.xls"); 
+		//EXCLUDED.add("");
+
+		// these are likely ok to fail
+		SILENT_EXCLUDED.add("XRefCalc.xls"); 
+		SILENT_EXCLUDED.add("password.xls"); 
+		SILENT_EXCLUDED.add("51832.xls"); 		// password
+		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
 	};
 	
 	@Override
