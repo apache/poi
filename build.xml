@@ -681,7 +681,7 @@ under the License.
                 <group name="Main">
                     <classfiles>
                         <fileset dir="${main.output.dir}">
-                            <exclude name=""/>
+                            <exclude name="org/apache/poi/hssf/usermodel/DummyGraphics2d.class"/>
                         </fileset>
                     </classfiles>
                     <sourcefiles encoding="UTF-8">

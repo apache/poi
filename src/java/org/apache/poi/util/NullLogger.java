@@ -29,6 +29,7 @@ package org.apache.poi.util;
  */
 public class NullLogger extends POILogger
 {
+    @Override
     public void initialize(final String cat)
     {
        //do nothing
@@ -41,6 +42,7 @@ public class NullLogger extends POILogger
      * @param obj1 The object to log.
      */
 
+    @Override
     public void log(final int level, final Object obj1)
     {
         //do nothing
@@ -52,6 +54,7 @@ public class NullLogger extends POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
 
+    @Override
     public boolean check(final int level)
     {
        return false;
@@ -65,6 +68,7 @@ public class NullLogger extends POILogger
      * @param obj2 second object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2)
     {
        //do nothing
@@ -79,6 +83,7 @@ public class NullLogger extends POILogger
      * @param obj3 third Object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3)
     {
@@ -95,6 +100,7 @@ public class NullLogger extends POILogger
      * @param obj4 fourth Object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4)
     {
@@ -112,6 +118,7 @@ public class NullLogger extends POILogger
      * @param obj5 fifth Object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5)
     {
@@ -130,6 +137,7 @@ public class NullLogger extends POILogger
      * @param obj6 sixth Object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6)
@@ -150,6 +158,7 @@ public class NullLogger extends POILogger
      * @param obj7 seventh Object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7)
@@ -171,6 +180,7 @@ public class NullLogger extends POILogger
      * @param obj8 eighth Object to place in the message
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7, final Object obj8)
@@ -186,6 +196,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1,
                     final Throwable exception)
     {
@@ -201,6 +212,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Throwable exception)
     {
@@ -217,6 +229,7 @@ public class NullLogger extends POILogger
      * @param exception An error message to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Throwable exception)
     {
@@ -234,6 +247,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4,
                     final Throwable exception)
@@ -253,6 +267,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Throwable exception)
@@ -273,6 +288,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Throwable exception)
@@ -294,6 +310,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7,
@@ -317,6 +334,7 @@ public class NullLogger extends POILogger
      * @param exception An exception to be logged
      */
 
+    @Override
     public void log(final int level, final Object obj1, final Object obj2,
                     final Object obj3, final Object obj4, final Object obj5,
                     final Object obj6, final Object obj7, final Object obj8,
@@ -350,6 +368,7 @@ public class NullLogger extends POILogger
      * @param obj1 The first object to match against.
      */
 
+    @Override
     public void logFormatted(final int level, final String message,
                              final Object obj1)
     {
@@ -382,6 +401,7 @@ public class NullLogger extends POILogger
      * @param obj2 The second object to match against.
      */
 
+    @Override
     public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2)
     {
@@ -415,6 +435,7 @@ public class NullLogger extends POILogger
      * @param obj3 The third object to match against.
      */
 
+    @Override
     public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2,
                              final Object obj3)
@@ -450,6 +471,7 @@ public class NullLogger extends POILogger
      * @param obj4 The forth object to match against.
      */
 
+    @Override
     public void logFormatted(final int level, final String message,
                              final Object obj1, final Object obj2,
                              final Object obj3, final Object obj4)

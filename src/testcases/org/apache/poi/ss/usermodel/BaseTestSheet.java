@@ -787,4 +787,17 @@ public abstract class BaseTestSheet extends TestCase {
       }
     }
 
+    public void testBaseZoom() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        // here we can only verify that setting some zoom values works, range-checking is different between the implementations
+        sheet.setZoom(3,4);
+    }
+    
+    public void testBaseShowInPane() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        sheet.showInPane(2, 3);
+    }
 }

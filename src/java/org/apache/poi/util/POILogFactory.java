@@ -19,7 +19,8 @@
 
 package org.apache.poi.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides logging without clients having to mess with
@@ -64,7 +65,7 @@ public class POILogFactory
      * @return a POILogger for the specified class
      */
 
-    public static POILogger getLogger(final Class theclass)
+    public static POILogger getLogger(final Class<?> theclass)
     {
         return getLogger(theclass.getName());
     }
@@ -111,7 +112,8 @@ public class POILogFactory
             logger = _loggers.get(cat);
         } else {
             try {
-              Class<? extends POILogger> loggerClass = 
+              @SuppressWarnings("unchecked")
+			Class<? extends POILogger> loggerClass = 
                  (Class<? extends POILogger>)Class.forName(_loggerClassName);
               logger = loggerClass.newInstance();
               logger.initialize(cat);

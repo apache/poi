@@ -32,14 +32,14 @@ import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
-import org.apache.poi.ss.formula.FormulaShifter;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -1203,9 +1203,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public void setZoom(int numerator, int denominator) {
         if (numerator < 1 || numerator > 65535)
-            throw new IllegalArgumentException("Numerator must be greater than 1 and less than 65536");
+            throw new IllegalArgumentException("Numerator must be greater than 0 and less than 65536");
         if (denominator < 1 || denominator > 65535)
-            throw new IllegalArgumentException("Denominator must be greater than 1 and less than 65536");
+            throw new IllegalArgumentException("Denominator must be greater than 0 and less than 65536");
 
         SCLRecord sclRecord = new SCLRecord();
         sclRecord.setNumerator((short) numerator);
