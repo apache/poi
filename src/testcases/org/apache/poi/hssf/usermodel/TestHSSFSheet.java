@@ -347,17 +347,23 @@ public final class TestHSSFSheet extends BaseTestSheet {
         int expectedHashB = -14556;
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = workbook.createSheet();
+        assertFalse(hssfSheet.getObjectProtect());
         hssfSheet.protectSheet(passwordA);
+        assertTrue(hssfSheet.getObjectProtect());
+        assertEquals(expectedHashA, hssfSheet.getPassword());
 
         assertEquals(expectedHashA, hssfSheet.getSheet().getProtectionBlock().getPasswordHash());
 
         // Clone the sheet, and make sure the password hash is preserved
         HSSFSheet sheet2 = workbook.cloneSheet(0);
+        assertTrue(hssfSheet.getObjectProtect());
         assertEquals(expectedHashA, sheet2.getSheet().getProtectionBlock().getPasswordHash());
 
         // change the password on the first sheet
         hssfSheet.protectSheet(passwordB);
+        assertTrue(hssfSheet.getObjectProtect());
         assertEquals(expectedHashB, hssfSheet.getSheet().getProtectionBlock().getPasswordHash());
+        assertEquals(expectedHashB, hssfSheet.getPassword());
         // but the cloned sheet's password should remain unchanged
         assertEquals(expectedHashA, sheet2.getSheet().getProtectionBlock().getPasswordHash());
     }
@@ -452,6 +458,32 @@ public final class TestHSSFSheet extends BaseTestSheet {
         int sclLoc = sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid);
         int window2Loc = sheet.getSheet().findFirstRecordLocBySid(WindowTwoRecord.sid);
         assertTrue(sclLoc == window2Loc + 1);
+        
+        // verify limits
+        try {
+        	sheet.setZoom(0, 2);
+        	fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+        	assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
+        }
+        try {
+        	sheet.setZoom(65536, 2);
+        	fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+        	assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
+        }
+        try {
+        	sheet.setZoom(2, 0);
+        	fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+        	assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
+        }
+        try {
+        	sheet.setZoom(2, 65536);
+        	fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+        	assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
+        }
     }
 
 
@@ -538,7 +570,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
         workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
     }
 
-    public void testAutoSizeColumn() {
+    @SuppressWarnings("deprecation")
+	public void testAutoSizeColumn() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("43902.xls");
         String sheetName = "my sheet";
         HSSFSheet sheet = wb.getSheet(sheetName);
@@ -561,6 +594,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
         //create a region over the 2nd row and auto size the first column
         sheet.addMergedRegion(new CellRangeAddress(1,1,0,1));
+        assertNotNull(sheet.getMergedRegionAt(0));
         sheet.autoSizeColumn((short)0);
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
 
@@ -1008,5 +1042,28 @@ public final class TestHSSFSheet extends BaseTestSheet {
             assertEquals(w, sheet.getColumnWidth((short)i));
         }
         assertEquals(40000, sheet.getColumnWidth((short)10));
+    }
+
+    public void testShowInPane() {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        sheet.showInPane(2, 3);
+        
+        try {
+        	sheet.showInPane(Integer.MAX_VALUE, 3);
+        	fail("Should catch exception here");
+        } catch (IllegalArgumentException e) {
+        	assertEquals("Maximum row number is 65535", e.getMessage());
+        }
+    }
+    
+    public void testDrawingRecords() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+
+        /* TODO: NPE?
+        sheet.dumpDrawingRecords(false);
+        sheet.dumpDrawingRecords(true);*/
+        assertNull(sheet.getDrawingEscherAggregate());
     }
 }
