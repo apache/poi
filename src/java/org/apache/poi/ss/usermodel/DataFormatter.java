@@ -829,6 +829,8 @@ public class DataFormatter {
                 return String.valueOf(cell.getBooleanCellValue());
             case Cell.CELL_TYPE_BLANK :
                 return "";
+            case Cell.CELL_TYPE_ERROR:
+            	return FormulaError.forInt(cell.getErrorCellValue()).getString();
         }
         throw new RuntimeException("Unexpected celltype (" + cellType + ")");
     }

@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
 
 /**
@@ -490,6 +491,22 @@ public class TestDataFormatter extends TestCase {
         assertEquals("-12.34 ", dfUS.formatRawCellContents(-12.34, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals(" -   ", dfUS.formatRawCellContents(0.0, -1, "_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-"));
         assertEquals(" $-   ", dfUS.formatRawCellContents(0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
+    }
+    
+    public void testErrors() {
+        DataFormatter dfUS = new DataFormatter(Locale.US, true);
+
+        // Create a spreadsheet with some formula errors in it
+        Workbook wb = new HSSFWorkbook();
+        Sheet s = wb.createSheet();
+        Row r = s.createRow(0);
+        Cell c = r.createCell(0, Cell.CELL_TYPE_ERROR);
+        
+        c.setCellErrorValue(FormulaError.DIV0.getCode());
+        assertEquals(FormulaError.DIV0.getString(), dfUS.formatCellValue(c));
+        
+        c.setCellErrorValue(FormulaError.REF.getCode());
+        assertEquals(FormulaError.REF.getString(), dfUS.formatCellValue(c));
     }
 
     /**
