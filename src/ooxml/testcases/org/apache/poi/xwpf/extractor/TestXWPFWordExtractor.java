@@ -351,5 +351,16 @@ public class TestXWPFWordExtractor extends TestCase {
             assertEquals("controlled content loading-"+targ, true, hit);
         }
         assertEquals("controlled content loading hit count", targs.length, hits);
+        ex.close();
+    }
+
+    /** No Header or Footer in document */
+    public void testBug55733() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55733.docx");
+    	XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        // Check it gives text without error
+        extractor.getText();
+        extractor.close();
     }
 }

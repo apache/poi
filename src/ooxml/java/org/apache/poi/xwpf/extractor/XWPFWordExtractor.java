@@ -17,7 +17,6 @@
 package org.apache.poi.xwpf.extractor;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
@@ -34,7 +33,6 @@ import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
@@ -85,24 +83,24 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 		System.out.println(extractor.getText());
 	}
 	
-	public String getText() {
-		StringBuffer text = new StringBuffer();
-		XWPFHeaderFooterPolicy hfPolicy = document.getHeaderFooterPolicy();
+    public String getText() {
+        StringBuffer text = new StringBuffer();
+        XWPFHeaderFooterPolicy hfPolicy = document.getHeaderFooterPolicy();
 
-		// Start out with all headers
-		extractHeaders(text, hfPolicy);
-		
-		// body elements
-      for (IBodyElement e : document.getBodyElements()){
-         appendBodyElementText(text, e);
-         text.append('\n');
-     }
-		
-		// Finish up with all the footers
-		extractFooters(text, hfPolicy);
-		
-		return text.toString();
-	}
+        // Start out with all headers
+        extractHeaders(text, hfPolicy);
+
+        // Process all body elements
+        for (IBodyElement e : document.getBodyElements()){
+        	appendBodyElementText(text, e);
+        	text.append('\n');
+        }
+
+        // Finish up with all the footers
+        extractFooters(text, hfPolicy);
+
+        return text.toString();
+    }
 
    public void appendBodyElementText(StringBuffer text, IBodyElement e){
       if (e instanceof XWPFParagraph){
@@ -178,6 +176,8 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
    }
    
 	private void extractFooters(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+		if (hfPolicy == null) return;
+		
 		if(hfPolicy.getFirstPageFooter() != null) {
 			text.append( hfPolicy.getFirstPageFooter().getText() );
 		}
@@ -190,6 +190,8 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 	}
 
 	private void extractHeaders(StringBuffer text, XWPFHeaderFooterPolicy hfPolicy) {
+		if (hfPolicy == null) return;
+		
 		if(hfPolicy.getFirstPageHeader() != null) {
 			text.append( hfPolicy.getFirstPageHeader().getText() );
 		}
