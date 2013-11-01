@@ -45,5 +45,4 @@ public final class TestWordExtractorBugs extends TestCase {
         // Check it gives text without error
         extractor.getText();
     }
-    
 }
