@@ -18,15 +18,16 @@ package org.apache.poi.ss.excelant.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.examples.formula.CalculateMortgageFunction;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -39,6 +40,7 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 	private ExcelAntWorkbookUtilTestHelper fixture ;
 		
 	
+	@Override
 	public void tearDown() {
 		fixture = null ;
 	}
@@ -48,9 +50,18 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 				                                  mortgageCalculatorFileName ) ;
 		
 		assertNotNull( fixture ) ;
-		
 	}
 
+	public void testLoadNotExistingFile() {
+		try {
+			assertNotNull(new ExcelAntWorkbookUtilTestHelper( 
+				                                  "notexistingFile" ));
+			fail("Should catch exception here");
+		} catch (BuildException e) {
+			assertTrue(e.getMessage().contains("notexistingFile"));			
+		}
+	}
+	
 	public void testWorkbookConstructor() throws InvalidFormatException, IOException {
         File workbookFile = new File(mortgageCalculatorFileName);
         FileInputStream fis = new FileInputStream(workbookFile);
@@ -112,6 +123,16 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 		
  	}
 
+	public void testGetEvaluatorXLSX() {
+		fixture = new ExcelAntWorkbookUtilTestHelper( 
+                "test-data/spreadsheet/sample.xlsx") ;
+		
+		FormulaEvaluator evaluator = fixture.getEvaluator( 
+				"test-data/spreadsheet/sample.xlsx" ) ;
+		
+		assertNotNull( evaluator ) ;
+ 	}
+
 	public void testEvaluateCell() {
 		String cell = "'MortgageCalculator'!B4" ;
 		double expectedValue = 790.79 ;
@@ -154,5 +175,44 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 		
 		assertEquals( cellValue, value ) ;
 		
+	}
+	
+	public void testSetDate() {
+		String cell = "'MortgageCalculator'!C14" ;
+		Date cellValue = new Date();
+		
+		fixture = new ExcelAntWorkbookUtilTestHelper( 
+                mortgageCalculatorFileName ) ;
+		
+		fixture.setDateValue( cell, cellValue ) ;
+		
+		double value = fixture.getCellAsDouble( cell ) ;
+		
+		assertNotNull( value ) ;
+		
+		assertEquals( DateUtil.getExcelDate(cellValue, false), value ) ;
+		
+	}
+
+	public void testGetNonexistingString() {
+		String cell = "'MortgageCalculator'!C33" ;
+		
+		fixture = new ExcelAntWorkbookUtilTestHelper( 
+                mortgageCalculatorFileName ) ;
+		
+		String value = fixture.getCellAsString( cell ) ;
+		
+		assertEquals( "", value ) ;
+	}
+
+	public void testGetNonexistingDouble() {
+		String cell = "'MortgageCalculator'!C33" ;
+		
+		fixture = new ExcelAntWorkbookUtilTestHelper( 
+                mortgageCalculatorFileName ) ;
+		
+		double value = fixture.getCellAsDouble( cell ) ;
+		
+		assertEquals( 0.0, value ) ;
 	}
 }
