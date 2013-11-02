@@ -716,6 +716,9 @@ public final class InternalWorkbook {
                 // Bump down by one, so still points
                 //  at the same sheet
                 nr.setSheetNumber(nr.getSheetNumber()-1);
+                
+                // also update the link-table as otherwise references might point at invalid sheets
+                linkTable.updateIndexToInternalSheet(i, -1);
             }
         }
     }

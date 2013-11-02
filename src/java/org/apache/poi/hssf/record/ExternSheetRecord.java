@@ -41,6 +41,10 @@ public class ExternSheetRecord extends StandardRecord {
 		private int _firstSheetIndex; // may be -1 (0xFFFF)
 		private int _lastSheetIndex;  // may be -1 (0xFFFF)
 		
+		public void adjustIndex(int offset) {
+			_firstSheetIndex += offset;
+			_lastSheetIndex += offset;
+		}
 		
 		/** a Constructor for making new sub record
 		 */
@@ -66,6 +70,7 @@ public class ExternSheetRecord extends StandardRecord {
 			return _lastSheetIndex;
 		}
 		
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("extBook=").append(_extBookIndex);
@@ -122,6 +127,7 @@ public class ExternSheetRecord extends StandardRecord {
 	}
 	
 	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		int nItems = _list.size();
@@ -138,10 +144,12 @@ public class ExternSheetRecord extends StandardRecord {
 		return sb.toString();
 	}
 	
+	@Override
 	protected int getDataSize() {
 		return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
 	}
 	
+	@Override
 	public void serialize(LittleEndianOutput out) {
 		int nItems = _list.size();
 
@@ -156,9 +164,14 @@ public class ExternSheetRecord extends StandardRecord {
 		return _list.get(i);
 	}
 	
+	public void adjustIndex(int extRefIndex, int offset) {
+		getRef(extRefIndex).adjustIndex(offset);
+	}
+	
 	/**
 	 * return the non static version of the id for this record.
 	 */
+	@Override
 	public short getSid() {
 		return sid;
 	}

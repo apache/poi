@@ -31,13 +31,17 @@ import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SupBookRecord;
-import org.apache.poi.ss.formula.ptg.*;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p/>
  *
  * The main data of all types of references is stored in the Link Table inside the Workbook Globals
- * Substream (4.2.5). The Link Table itself is optional and occurs only, if  there are any
+ * Substream (4.2.5). The Link Table itself is optional and occurs only if there are any
  * references in the document.
  *  <p/>
  *
@@ -63,9 +67,7 @@ import org.apache.poi.ss.formula.ptg.*;
  */
 final class LinkTable {
 
-
 	// TODO make this class into a record aggregate
-
 	private static final class CRNBlock {
 
 		private final CRNCountRecord _countRecord;
@@ -174,7 +176,7 @@ final class LinkTable {
 	private final int _recordCount;
 	private final WorkbookRecordList _workbookRecordList; // TODO - would be nice to remove this
 
-	public LinkTable(List inputList, int startIndex, WorkbookRecordList workbookRecordList, Map<String, NameCommentRecord> commentRecords) {
+	public LinkTable(List<Record> inputList, int startIndex, WorkbookRecordList workbookRecordList, Map<String, NameCommentRecord> commentRecords) {
 
 		_workbookRecordList = workbookRecordList;
 		RecordStream rs = new RecordStream(inputList, startIndex);
@@ -412,6 +414,10 @@ final class LinkTable {
 	public int getIndexToInternalSheet(int extRefIndex) {
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
+	
+	public void updateIndexToInternalSheet(int extRefIndex, int offset) {
+		_externSheetRecord.adjustIndex(extRefIndex, offset);
+	}
 
 	public int getSheetIndexFromExternSheetIndex(int extRefIndex) {
 		if (extRefIndex >= _externSheetRecord.getNumOfRefs() || extRefIndex < 0) {
@@ -441,7 +447,6 @@ final class LinkTable {
 		//We haven't found reference to this sheet
 		return _externSheetRecord.addRef(thisWbIndex, sheetIndex, sheetIndex);
 	}
-
 
 	/**
 	 * copied from Workbook
@@ -533,8 +538,8 @@ final class LinkTable {
         int supLinkIndex = 0;
         // find the posistion of the Add-In SupBookRecord in the workbook stream,
         // the created ExternalNameRecord will be appended to it
-        for (Iterator iterator = _workbookRecordList.iterator(); iterator.hasNext(); supLinkIndex++) {
-            Record record = (Record) iterator.next();
+        for (Iterator<Record> iterator = _workbookRecordList.iterator(); iterator.hasNext(); supLinkIndex++) {
+            Record record = iterator.next();
             if (record instanceof SupBookRecord) {
                 if (((SupBookRecord) record).isAddInFunctions()) break;
             }

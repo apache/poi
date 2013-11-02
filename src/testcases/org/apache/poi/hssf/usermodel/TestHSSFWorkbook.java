@@ -48,6 +48,7 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
@@ -964,5 +965,54 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
+	}
+	
+	public void testBug54500() throws Exception {
+		String nameName = "AName";
+		String sheetName = "ASheet";
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("54500.xls");
+
+		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3");
+		
+		wb.createSheet(sheetName);
+
+		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+
+		Name n = wb.createName();
+		n.setNameName(nameName);
+		n.setSheetIndex(3);
+		n.setRefersToFormula(sheetName + "!A1");
+
+		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		wb.write(stream);
+
+		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
+		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+
+		wb.removeSheetAt(1);
+
+		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
+		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+
+		ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+		wb.write(stream2);
+
+		assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
+		assertEquals("ASheet!A1", wb.getName(nameName).getRefersToFormula());
+
+		expectName(
+				new HSSFWorkbook(new ByteArrayInputStream(stream.toByteArray())),
+				nameName, "ASheet!A1");
+		expectName(
+				new HSSFWorkbook(
+						new ByteArrayInputStream(stream2.toByteArray())),
+				nameName, "ASheet!A1");
+	}
+
+	private void expectName(HSSFWorkbook wb, String name, String expect) {
+		assertEquals(expect, wb.getName(name).getRefersToFormula());
 	}
 }
