@@ -39,7 +39,7 @@ import org.apache.poi.util.LittleEndian;
  *   http://search.cpan.org/dist/Convert-TNEF/
  */
 public final class HMEFMessage {
-   public static final long HEADER_SIGNATURE = 0x223e9f78;
+   public static final int HEADER_SIGNATURE = 0x223e9f78;
    
    private int fileId; 
    private List<TNEFAttribute> messageAttributes = new ArrayList<TNEFAttribute>();
@@ -48,7 +48,7 @@ public final class HMEFMessage {
    
    public HMEFMessage(InputStream inp) throws IOException {
       // Check the signature matches
-      long sig = LittleEndian.readInt(inp);
+      int sig = LittleEndian.readInt(inp);
       if(sig != HEADER_SIGNATURE) {
          throw new IllegalArgumentException(
                "TNEF signature not detected in file, " +
@@ -60,42 +60,59 @@ public final class HMEFMessage {
       fileId = LittleEndian.readUShort(inp);
       
       // Now begin processing the contents
-      process(inp, 0);
+      process(inp);
    }
    
-   private void process(InputStream inp, int lastLevel) throws IOException {
-      // Fetch the level
-      int level = inp.read();
-      if(level == TNEFProperty.LEVEL_END_OF_FILE) {
-         return;
-      }
-    
+   private void process(InputStream inp) throws IOException {
+      int level;
+      do {
+         // Fetch the level
+         level = inp.read();
+
+         // Decide what to attach it to, based on the levels and IDs
+         switch (level) {
+         case TNEFProperty.LEVEL_MESSAGE:
+            processMessage(inp);
+            break;
+         case TNEFProperty.LEVEL_ATTACHMENT:
+            processAttachment(inp);
+            break;
+         // ignore trailing newline
+         case '\r':
+         case '\n':
+         case TNEFProperty.LEVEL_END_OF_FILE:
+            break;
+         default:
+            throw new IllegalStateException("Unhandled level " + level);
+         }
+      } while (level != TNEFProperty.LEVEL_END_OF_FILE);
+   }
+
+   void processMessage(InputStream inp) throws IOException {
       // Build the attribute
       TNEFAttribute attr = TNEFAttribute.create(inp);
-      
-      // Decide what to attach it to, based on the levels and IDs
-      if(level == TNEFProperty.LEVEL_MESSAGE) {
-         messageAttributes.add(attr);
-         
-         if(attr instanceof TNEFMAPIAttribute) {
-            TNEFMAPIAttribute tnefMAPI = (TNEFMAPIAttribute)attr;
-            mapiAttributes.addAll( tnefMAPI.getMAPIAttributes() );
-         }
-      } else if(level == TNEFProperty.LEVEL_ATTACHMENT) {
-         // Previous attachment or a new one?
-         if(attachments.size() == 0 || attr.getProperty() == TNEFProperty.ID_ATTACHRENDERDATA) {
-            attachments.add(new Attachment());
-         }
-         
-         // Save the attribute for it
-         Attachment attach = attachments.get(attachments.size()-1);
-         attach.addAttribute(attr);
-      } else {
-         throw new IllegalStateException("Unhandled level " + level);
+
+      messageAttributes.add(attr);
+
+      if (attr instanceof TNEFMAPIAttribute) {
+         TNEFMAPIAttribute tnefMAPI = (TNEFMAPIAttribute) attr;
+         mapiAttributes.addAll(tnefMAPI.getMAPIAttributes());
       }
-      
-      // Handle the next one down
-      process(inp, level);
+   }
+
+   void processAttachment(InputStream inp) throws IOException {
+      // Build the attribute
+      TNEFAttribute attr = TNEFAttribute.create(inp);
+
+      // Previous attachment or a new one?
+      if (attachments.isEmpty()
+         || attr.getProperty() == TNEFProperty.ID_ATTACHRENDERDATA) {
+         attachments.add(new Attachment());
+      }
+
+      // Save the attribute for it
+      Attachment attach = attachments.get(attachments.size() - 1);
+      attach.addAttribute(attr);
    }
    
    /**

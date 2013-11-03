@@ -17,6 +17,10 @@
 
 package org.apache.poi.hmef;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
@@ -119,5 +123,80 @@ public final class TestHMEFMessage extends HMEFTest {
       // It's all low bytes
       byte[] contentsBytes = contents.getBytes("ASCII");
       assertContents("message.rtf", contentsBytes);
+      
+      // try to get a message id that does not exist
+      assertNull(msg.getMessageMAPIAttribute(MAPIProperty.AB_DEFAULT_DIR));
+   }
+   
+   public void testMessageSample1() throws Exception {
+		HMEFMessage msg = new HMEFMessage(
+				_samples.openResourceAsStream("winmail-sample1.dat"));
+
+		// Firstly by byte
+		MAPIRtfAttribute rtf = (MAPIRtfAttribute) msg
+				.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+		// assertContents("message.rtf", rtf.getData());
+		assertNotNull(rtf);
+
+		// Then by String
+		String contents = msg.getBody();
+		//System.out.println(contents);
+		// It's all low bytes
+		byte[] contentsBytes = contents.getBytes("ASCII");
+		// assertContents("message.rtf", contentsBytes);
+		assertNotNull(contentsBytes);
+		
+		assertNotNull(msg.getSubject());
+		assertNotNull(msg.getBody());
+   }
+   
+   public void testInvalidMessage() throws Exception {
+	   InputStream str = new ByteArrayInputStream(new byte[] {0, 0, 0, 0});
+	   try {
+		   assertNotNull(new HMEFMessage(str));
+		   fail("Should catch an exception here");
+	   } catch (IllegalArgumentException e) {
+		   assertTrue(e.getMessage().contains("TNEF signature not detected in file, expected 574529400 but got 0"));
+	   }
+   }
+   
+   
+   public void testNoData() throws Exception {
+	   ByteArrayOutputStream out = new ByteArrayOutputStream();
+	   
+	   // Header
+	   LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);
+	   
+	   // field
+	   LittleEndian.putUShort(0, out);
+	   
+	   byte[] bytes = out.toByteArray();
+	   InputStream str = new ByteArrayInputStream(bytes);
+	   HMEFMessage msg = new HMEFMessage(str);
+	   assertNull(msg.getSubject());
+	   assertNull(msg.getBody());
+   }
+   
+   public void testInvalidLevel() throws Exception {
+	   ByteArrayOutputStream out = new ByteArrayOutputStream();
+	   
+	   // Header
+	   LittleEndian.putInt(HMEFMessage.HEADER_SIGNATURE, out);
+	   
+	   // field
+	   LittleEndian.putUShort(0, out);
+	   
+	   // invalid level
+	   LittleEndian.putUShort(90, out);
+	   
+	   byte[] bytes = out.toByteArray();
+	   InputStream str = new ByteArrayInputStream(bytes);
+	   try {
+		   assertNotNull(new HMEFMessage(str));
+		   fail("Should catch an exception here");
+	   } catch (IllegalStateException e) {
+		   assertTrue(e.getMessage().contains("Unhandled level 90"));
+	   }
    }
 }
+
