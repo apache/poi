@@ -65,7 +65,7 @@ public class TestBug47563 extends TestCase {
 
 				par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
 				par.sanityCheck();
-
+				
 				row.sanityCheck();
 				table.sanityCheck();
 				range.sanityCheck();
@@ -77,10 +77,9 @@ public class TestBug47563 extends TestCase {
 		int mustBeAfter = 0;
 		for (int i = 0; i < rows * columns; i++) {
 			int next = text.indexOf(Integer.toString(i), mustBeAfter);
-			assertFalse(next == -1);
+			assertTrue("Test with " + rows + "/" + columns + ": Should not find " + i + " but found it at " + next + " in " + text, 
+					next != -1);
 			mustBeAfter = next;
 		}
 	}
-
-
 }
