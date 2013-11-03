@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.hmef.HMEFMessage;
-import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
+import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.TNEFDateAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hmef.attribute.TNEFStringAttribute;
@@ -62,7 +62,7 @@ public final class HMEFDumper {
       this.inp = inp;
       
       // Check the signature matches
-      long sig = LittleEndian.readInt(inp);
+      int sig = LittleEndian.readInt(inp);
       if(sig != HMEFMessage.HEADER_SIGNATURE) {
          throw new IllegalArgumentException(
                "TNEF signature not detected in file, " +
