@@ -14,38 +14,42 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel HEX2DEC() function.<p/>
+ * <p>Implementation for Excel Oct2Dec() function.<p/>
+ * <p>
+ * Converts an octal number to decimal.
+ * </p>
+ * <p>
+ * <b>Syntax</b>:<br/> <b>Oct2Dec  </b>(<b>number</b> )
+ * </p>
  * <p/>
- * <b>Syntax</b>:<br/> <b>HEX2DEC  </b>(<b>number</b>)<br/>
+ * Number     is the octal number you want to convert. Number may not contain more than 10 octal characters (30 bits).
+ * The most significant bit of number is the sign bit. The remaining 29 bits are magnitude bits.
+ * Negative numbers are represented using two's-complement notation..
  * <p/>
- * Converts a hexadecimal number to decimal.
- * <p/>
- * Number     is the hexadecimal number you want to convert. Number cannot contain more than 10 characters (40 bits).
- * The most significant bit of number is the sign bit.
- * The remaining 39 bits are magnitude bits. Negative numbers are represented using two's-complement notation.
- * Remark
- * If number is not a valid hexadecimal number, HEX2DEC returns the #NUM! error value.
+ * If number is not a valid octal number, OCT2DEC returns the #NUM! error value.
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class Hex2Dec extends Fixed1ArgFunction implements FreeRefFunction {
+public class Oct2Dec extends Fixed1ArgFunction implements FreeRefFunction {
 
-    public static final FreeRefFunction instance = new Hex2Dec();
+    public static final FreeRefFunction instance = new Oct2Dec();
 
-    static final int HEXADECIMAL_BASE = 16;
     static final int MAX_NUMBER_OF_PLACES = 10;
+    static final int OCTAL_BASE = 8;
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
-        String hex = OperandResolver.coerceValueToString(numberVE);
+        String octal = OperandResolver.coerceValueToString(numberVE);
         try {
-            return new NumberEval(BaseNumberUtils.convertToDecimal(hex, HEXADECIMAL_BASE, MAX_NUMBER_OF_PLACES));
+           return new NumberEval(BaseNumberUtils.convertToDecimal(octal, OCTAL_BASE, MAX_NUMBER_OF_PLACES));
         }  catch (IllegalArgumentException e) {
             return ErrorEval.NUM_ERROR;
         }
