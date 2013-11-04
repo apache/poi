@@ -68,7 +68,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 			super(1);
 			_value = value;
 		}
-		@Override
+
 		protected ValueEval getItemInternal(int index) {
 			return _value;
 		}
@@ -80,7 +80,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 			super(1);
 			_ref = ref;
 		}
-		@Override
+
 		protected ValueEval getItemInternal(int index) {
 			return _ref.getInnerValueEval();
 		}
@@ -95,7 +95,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 			_ae = ae;
 			_width = ae.getWidth();
 		}
-		@Override
+
 		protected ValueEval getItemInternal(int index) {
 			int rowIx = index / _width;
 			int colIx = index % _width;
@@ -114,8 +114,8 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 			ValueEval arg0, ValueEval arg1) {
 		double result;
 		try {
-			ValueVector vvX = createValueVector(arg0);
-			ValueVector vvY = createValueVector(arg1);
+			ValueVector vvY = createValueVector(arg0);
+			ValueVector vvX = createValueVector(arg1);
 			int size = vvX.getSize();
 			if (size == 0 || vvY.getSize() != size) {
 				return ErrorEval.NA;
@@ -137,7 +137,6 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 		ErrorEval firstXerr = null;
 		ErrorEval firstYerr = null;
 		boolean accumlatedSome = false;
-		double result = 0.0;
         // first pass: read in data, compute xbar and ybar
         double sumx = 0.0, sumy = 0.0;
         

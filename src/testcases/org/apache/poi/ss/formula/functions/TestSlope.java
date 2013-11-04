@@ -54,7 +54,7 @@ public final class TestSlope extends TestCase {
 
 	public void testBasic() {
 		Double exp = Math.pow(10, 7.5);
-		ValueEval[] xValues = {
+		ValueEval[] yValues = {
 			new NumberEval(3+exp),
 			new NumberEval(4+exp),
 			new NumberEval(2+exp),
@@ -62,9 +62,9 @@ public final class TestSlope extends TestCase {
 			new NumberEval(4+exp),
 			new NumberEval(7+exp),
 		};
-		ValueEval areaEvalX = createAreaEval(xValues);
+		ValueEval areaEvalY = createAreaEval(yValues);
 
-		ValueEval[] yValues = {
+		ValueEval[] xValues = {
 			new NumberEval(1),
 			new NumberEval(2),
 			new NumberEval(3),
@@ -72,7 +72,7 @@ public final class TestSlope extends TestCase {
 			new NumberEval(5),
 			new NumberEval(6),
 		};
-		ValueEval areaEvalY = createAreaEval(yValues);
+		ValueEval areaEvalX = createAreaEval(xValues);
 		confirm(SLOPE, areaEvalX, areaEvalY, 0.7752808988764045);
 		// Excel 2010 gives 0.775280898876405
 	}
@@ -81,9 +81,9 @@ public final class TestSlope extends TestCase {
 	 * number of items in array is not limited to 30
 	 */
 	public void testLargeArrays() {
-		ValueEval[] xValues = createMockNumberArray(100, 3); // [1,2,0,1,2,0,...,0,1]
-		xValues[0] = new NumberEval(2.0); // Changes first element to 2
-		ValueEval[] yValues = createMockNumberArray(100, 101); // [1,2,3,4,...,99,100]
+		ValueEval[] yValues = createMockNumberArray(100, 3); // [1,2,0,1,2,0,...,0,1]
+		yValues[0] = new NumberEval(2.0); // Changes first element to 2
+		ValueEval[] xValues = createMockNumberArray(100, 101); // [1,2,3,4,...,99,100]
 
 		confirm(SLOPE, createAreaEval(xValues), createAreaEval(yValues), -1.231527093596059);
 		// Excel 2010 gives -1.23152709359606
@@ -131,7 +131,7 @@ public final class TestSlope extends TestCase {
 		confirmError(areaEvalX, areaEvalX, ErrorEval.REF_INVALID);
 
 		// search for errors array by array, not pair by pair
-		confirmError(areaEvalX, areaEvalY, ErrorEval.REF_INVALID);
-		confirmError(areaEvalY, areaEvalX, ErrorEval.NULL_INTERSECTION);
+		confirmError(areaEvalX, areaEvalY, ErrorEval.NULL_INTERSECTION);
+		confirmError(areaEvalY, areaEvalX, ErrorEval.REF_INVALID);
 	}
 }
