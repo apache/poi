@@ -110,6 +110,8 @@ public final class FunctionEval {
 		retval[59] = FinanceFunction.PMT;
 
       retval[60] = new Rate();
+      retval[61] = new Mirr();
+
 		retval[62] = new Irr();
 		retval[63] = NumericFunction.RAND;
 		retval[64] = new Match();
