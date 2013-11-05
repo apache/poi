@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
 /**
  * Represents a SpreadsheetML chart legend
  * @author Roman Kashitsyn
+ * @author Martin Andersson
  */
 @Beta
 public final class XSSFChartLegend implements ChartLegend {
@@ -47,6 +48,18 @@ public final class XSSFChartLegend implements ChartLegend {
 		this.legend = (ctChart.isSetLegend()) ?
 			ctChart.getLegend() :
 			ctChart.addNewLegend();
+
+		setDefaults();
+	}
+
+	/**
+	 * Set sensible default styling.
+	 */
+	private void setDefaults() {
+		if (!legend.isSetOverlay()) {
+			legend.addNewOverlay();
+		}
+		legend.getOverlay().setVal(false);
 	}
 
 	/**
@@ -82,6 +95,14 @@ public final class XSSFChartLegend implements ChartLegend {
 			legend.addNewLayout();
 		}
 		return new XSSFManualLayout(legend.getLayout());
+	}
+
+	public boolean isOverlay() {
+		return legend.getOverlay().getVal();
+	}
+
+	public void setOverlay(boolean value) {
+		legend.getOverlay().setVal(value);
 	}
 
 	private STLegendPos.Enum fromLegendPosition(LegendPosition position) {
