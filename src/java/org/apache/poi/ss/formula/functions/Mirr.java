@@ -37,7 +37,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
  * Reinvest_rate     is the interest rate you receive on the cash flows as you reinvest them.
  *
  * @author Carlos Delgado (carlos dot del dot est at gmail dot com)
- * @author Cédric Walter (cedric dot walter at gmail dot com)
+ * @author Cedric Walter (cedric dot walter at gmail dot com)
  *
  * @see <a href="http://en.wikipedia.org/wiki/MIRR">Wikipedia on MIRR</a>
  * @see <a href="http://office.microsoft.com/en-001/excel-help/mirr-HP005209180.aspx">Excel MIRR</a>
