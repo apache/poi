@@ -67,6 +67,72 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 			return new NumberEval(result);
 		}
 	}
+
+    /**
+     *  Returns the k-th percentile of values in a range. You can use this function to establish a threshold of
+     *  acceptance. For example, you can decide to examine candidates who score above the 90th percentile.
+     *
+     *  PERCENTILE(array,k)
+     *  Array     is the array or range of data that defines relative standing.
+     *  K     is the percentile value in the range 0..1, inclusive.
+     *
+     * <strong>Remarks</strong>
+     * <ul>
+     *     <li>if array is empty or contains more than 8,191 data points, PERCENTILE returns the #NUM! error value.</li>
+     *     <li>If k is nonnumeric, PERCENTILE returns the #VALUE! error value.</li>
+     *     <li>If k is < 0 or if k > 1, PERCENTILE returns the #NUM! error value.</li>
+     *     <li>If k is not a multiple of 1/(n - 1), PERCENTILE interpolates to determine the value at the k-th percentile.</li>
+     * </ul>
+     */
+	private static final class Percentile extends Fixed2ArgFunction {
+		
+		protected Percentile() {
+		}
+
+		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0,
+				ValueEval arg1) {
+			double dn;
+			try {
+				ValueEval ve1 = OperandResolver.getSingleValue(arg1, srcRowIndex, srcColumnIndex);
+				dn = OperandResolver.coerceValueToDouble(ve1);
+			} catch (EvaluationException e1) {
+				// all errors in the second arg translate to #VALUE!
+				return ErrorEval.VALUE_INVALID;
+			}
+			if (dn < 0 || dn > 1) { // has to be percentage
+				return ErrorEval.NUM_ERROR;
+			}
+
+			double result;
+			try {
+				double[] ds = ValueCollector.collectValues(arg0);
+				int N = ds.length;
+
+			    if (N == 0 || N > 8191) {
+                    return ErrorEval.NUM_ERROR;
+                }
+
+				double n = (N - 1) * dn + 1;
+				if (n == 1d) {
+					result = StatsLib.kthSmallest(ds, 1);
+				} else if (n == N) {
+					result = StatsLib.kthLargest(ds, 1);
+				} else {
+					int k = (int) n;
+					double d = n - k;
+					result = StatsLib.kthSmallest(ds, k) + d
+							* (StatsLib.kthSmallest(ds, k + 1) - StatsLib.kthSmallest(ds, k));
+				}
+
+				NumericFunction.checkValue(result);
+			} catch (EvaluationException e) {
+				return e.getErrorEval();
+			}
+
+			return new NumberEval(result);
+		}
+	}
+	
 	static final class ValueCollector extends MultiOperandNumericFunction {
 		private static final ValueCollector instance = new ValueCollector();
 		public ValueCollector() {
@@ -148,6 +214,9 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 			return values.length > 0 ? MathX.min(values) : 0;
 		}
 	};
+	
+	public static final Function PERCENTILE = new Percentile();
+	
 	public static final Function PRODUCT = new AggregateFunction() {
 		protected double evaluate(double[] values) {
 			return MathX.product(values);
