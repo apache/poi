@@ -224,7 +224,8 @@ public final class FunctionEval {
 
 		retval[325] = AggregateFunction.LARGE;
 		retval[326] = AggregateFunction.SMALL;
-
+		retval[328] = AggregateFunction.PERCENTILE;
+		
 		retval[330] = new Mode();
 
 		retval[336] = TextFunction.CONCATENATE;
