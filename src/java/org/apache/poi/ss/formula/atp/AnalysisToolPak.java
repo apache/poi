@@ -136,8 +136,8 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "MULTINOMIAL", null);
         r(m, "NETWORKDAYS", NetworkdaysFunction.instance);
         r(m, "NOMINAL", null);
-        r(m, "OCT2BIN", Oct2Dec.instance);
-        r(m, "OCT2DEC", null);
+        r(m, "OCT2BIN", null);
+        r(m, "OCT2DEC", Oct2Dec.instance);
         r(m, "OCT2HEX", null);
         r(m, "ODDFPRICE", null);
         r(m, "ODDFYIELD", null);
