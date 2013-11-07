@@ -24,6 +24,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
@@ -40,9 +42,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
-
 public class TestXSSFCellStyle extends TestCase {
-
 	private StylesTable stylesTable;
 	private CTBorder ctBorderA;
 	private CTFill ctFill;
@@ -850,4 +850,33 @@ public class TestXSSFCellStyle extends TestCase {
         assertNull(style.getStyleXf());
     }
 
+    public void testShrinkToFit() {
+    	// Existing file
+    	XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ShrinkToFit.xlsx");
+    	Sheet s = wb.getSheetAt(0);
+    	Row r = s.getRow(0);
+    	CellStyle cs = r.getCell(0).getCellStyle();
+
+    	assertEquals(true, cs.getShrinkToFit());
+
+    	// New file
+    	XSSFWorkbook wbOrig = new XSSFWorkbook();
+    	s = wbOrig.createSheet();
+    	r = s.createRow(0);
+
+    	cs = wbOrig.createCellStyle();
+    	cs.setShrinkToFit(false);
+    	r.createCell(0).setCellStyle(cs);
+
+    	cs = wbOrig.createCellStyle();
+    	cs.setShrinkToFit(true);
+    	r.createCell(1).setCellStyle(cs);
+
+    	// Write out, read, and check
+    	wb = XSSFTestDataSamples.writeOutAndReadBack(wbOrig);
+    	s = wb.getSheetAt(0);
+    	r = s.getRow(0);
+    	assertEquals(false, r.getCell(0).getCellStyle().getShrinkToFit());
+    	assertEquals(true,  r.getCell(1).getCellStyle().getShrinkToFit());
+    }
 }
