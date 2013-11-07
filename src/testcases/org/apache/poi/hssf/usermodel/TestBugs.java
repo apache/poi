@@ -2319,4 +2319,13 @@ if(1==2) {
         HSSFWorkbook wb = openSample("54016.xls");
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
     }
+
+    /** Row style information is 12 not 16 bits */
+    public void testFile() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49237.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFRow row = sheet.getRow(0);
+        HSSFCellStyle rstyle = row.getRowStyle();
+        assertEquals(rstyle.getBorderBottom(), HSSFCellStyle.BORDER_DOUBLE);
+    }
 }

@@ -36,7 +36,7 @@ public final class RowRecord extends StandardRecord {
     public static final int ENCODED_SIZE = 20;
     
     private static final int OPTION_BITS_ALWAYS_SET = 0x0100;
-    private static final int DEFAULT_HEIGHT_BIT = 0x8000;
+    //private static final int DEFAULT_HEIGHT_BIT = 0x8000;
 
     private int field_1_row_number;
     private int field_2_first_col;
@@ -49,13 +49,19 @@ public final class RowRecord extends StandardRecord {
     /** 16 bit options flags */
     private int field_7_option_flags;
     private static final BitField          outlineLevel  = BitFieldFactory.getInstance(0x07);
-
     // bit 3 reserved
     private static final BitField          colapsed      = BitFieldFactory.getInstance(0x10);
     private static final BitField          zeroHeight    = BitFieldFactory.getInstance(0x20);
     private static final BitField          badFontHeight = BitFieldFactory.getInstance(0x40);
     private static final BitField          formatted     = BitFieldFactory.getInstance(0x80);
-    private short field_8_xf_index;   // only if isFormatted
+    
+    /** 16 bit options flags */
+    private int field_8_option_flags;   // only if isFormatted
+    private static final BitField          xfIndex       = BitFieldFactory.getInstance(0xFFF);
+    private static final BitField          topBorder     = BitFieldFactory.getInstance(0x1000);
+    private static final BitField          bottomBorder  = BitFieldFactory.getInstance(0x2000);
+    private static final BitField          phoeneticGuide  = BitFieldFactory.getInstance(0x4000);
+    // bit 15 is unused
 
     public RowRecord(int rowNumber) {
         field_1_row_number = rowNumber;
@@ -64,7 +70,7 @@ public final class RowRecord extends StandardRecord {
         field_6_reserved = ( short ) 0;
         field_7_option_flags = OPTION_BITS_ALWAYS_SET; // seems necessary for outlining
 
-        field_8_xf_index = ( short ) 0xf;
+        field_8_option_flags = ( short ) 0xf;
         setEmpty();
     }
 
@@ -76,7 +82,7 @@ public final class RowRecord extends StandardRecord {
         field_5_optimize     = in.readShort();
         field_6_reserved     = in.readShort();
         field_7_option_flags = in.readShort();
-        field_8_xf_index     = in.readShort();
+        field_8_option_flags = in.readShort();
     }
 
     /**
@@ -180,9 +186,37 @@ public final class RowRecord extends StandardRecord {
      * @param index to the XF record
      */
     public void setXFIndex(short index) {
-        field_8_xf_index = index;
+    	field_8_option_flags = xfIndex.setValue(field_8_option_flags, index);
     }
 
+    /**
+     * bit that specifies whether any cell in the row has a thick top border, or any
+     * cell in the row directly above the current row has a thick bottom border.
+     * @param f has thick top border
+     */
+    public void setTopBorder(boolean f) {
+    	field_8_option_flags = topBorder.setBoolean(field_8_option_flags, f);
+    }
+    
+    /**
+     * A bit that specifies whether any cell in the row has a medium or thick
+     * bottom border, or any cell in the row directly below the current row has
+     * a medium or thick top border.
+     * @param f has thick bottom border
+     */
+    public void setBottomBorder(boolean f) {
+    	field_8_option_flags = bottomBorder.setBoolean(field_8_option_flags, f);
+    }
+    
+    /**
+     * A bit that specifies whether the phonetic guide feature is enabled for
+     * any cell in this row.
+     * @param f use phoenetic guide
+     */
+    public void setPhoeneticGuide(boolean f) {
+    	field_8_option_flags = phoeneticGuide.setBoolean(field_8_option_flags, f);
+    }
+    
     /**
      * get the logical row number for this row (0 based index)
      * @return row - the row number
@@ -282,14 +316,50 @@ public final class RowRecord extends StandardRecord {
     // end bitfields
 
     /**
+     * gets the 2nd option bitmask.  (use the individual bit setters that refer to this
+     * method)
+     * @return options - the bitmask
+     */
+    public short getOptionFlags2() {
+        return (short)field_8_option_flags;
+    }
+    
+    /**
      * if the row is formatted then this is the index to the extended format record
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
      * @return index to the XF record or bogus value (undefined) if isn't formatted
      */
     public short getXFIndex() {
-        return field_8_xf_index;
+    	return xfIndex.getShortValue((short)field_8_option_flags);
     }
 
+    /**
+     * A bit that specifies whether any cell in the row has a thick top border, or any
+     * cell in the row directly above the current row has a thick bottom border.
+     * @return has cells with a thick top border
+     */
+    public boolean getTopBorder() {
+    	return topBorder.isSet(field_8_option_flags);
+    }
+
+    /**
+     * A bit that specifies whether any cell in the row has a medium or thick bottom border,
+     * or any cell in the row directly below the current row has a medium or thick top border.
+     * @return has cells with a thick bottom border
+     */
+    public boolean getBottomBorder() {
+    	return bottomBorder.isSet(field_8_option_flags);
+    }
+
+    /**
+     * A bit that specifies whether the phonetic guide feature is enabled for
+     * any cell in this row.
+     * @return has phoentic guide
+     */
+    public boolean getPhoeneticGuide() {
+    	return phoeneticGuide.isSet(field_8_option_flags);
+    }
+    
     public String toString() {
         StringBuffer sb = new StringBuffer();
 
@@ -307,7 +377,11 @@ public final class RowRecord extends StandardRecord {
         sb.append("        .zeroheight = ").append(getZeroHeight()).append("\n");
         sb.append("        .badfontheig= ").append(getBadFontHeight()).append("\n");
         sb.append("        .formatted  = ").append(getFormatted()).append("\n");
-        sb.append("    .xfindex        = ").append(Integer.toHexString(getXFIndex())).append("\n");
+        sb.append("    .optionsflags2  = ").append(HexDump.shortToHex(getOptionFlags2())).append("\n");
+        sb.append("        .xfindex       = ").append(Integer.toHexString(getXFIndex())).append("\n");
+        sb.append("        .topBorder     = ").append(getTopBorder()).append("\n");
+        sb.append("        .bottomBorder  = ").append(getBottomBorder()).append("\n");
+        sb.append("        .phoeneticGuide= ").append(getPhoeneticGuide()).append("\n");
         sb.append("[/ROW]\n");
         return sb.toString();
     }
@@ -320,7 +394,7 @@ public final class RowRecord extends StandardRecord {
         out.writeShort(getOptimize());
         out.writeShort(field_6_reserved);
         out.writeShort(getOptionFlags());
-        out.writeShort(getXFIndex());
+        out.writeShort(getOptionFlags2());
     }
 
     protected int getDataSize() {
@@ -339,7 +413,7 @@ public final class RowRecord extends StandardRecord {
       rec.field_5_optimize = field_5_optimize;
       rec.field_6_reserved = field_6_reserved;
       rec.field_7_option_flags = field_7_option_flags;
-      rec.field_8_xf_index = field_8_xf_index;
+      rec.field_8_option_flags = field_8_option_flags;
       return rec;
     }
 }
