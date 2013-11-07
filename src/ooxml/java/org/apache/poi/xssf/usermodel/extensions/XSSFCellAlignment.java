@@ -16,19 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.extensions;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 
 /**
- * Cell settings avaiable in the Format/Alignment tab
+ * Cell settings available in the Format/Alignment tab
  */
 public class XSSFCellAlignment {
-
     private CTCellAlignment cellAlignement;
 
     /**
@@ -158,6 +157,14 @@ public class XSSFCellAlignment {
         cellAlignement.setWrapText(wrapped);
     }
 
+    public boolean getShrinkToFit() {
+    	return cellAlignement.getShrinkToFit();
+    }
+    
+    public void setShrinkToFit(boolean shrink) {
+    	cellAlignement.setShrinkToFit(shrink);
+    }
+    
     /**
      * Access to low-level data
      */

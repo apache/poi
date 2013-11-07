@@ -30,8 +30,8 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder.BorderSide;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
@@ -668,6 +668,11 @@ public class XSSFCellStyle implements CellStyle {
         return (short)(align == null ? 0 : align.getTextRotation());
     }
 
+    public boolean getShrinkToFit() {
+        CTCellAlignment align = _cellXf.getAlignment();
+        return align != null && align.getShrinkToFit();
+    }
+    
     /**
      * Get the color to use for the top border
      *
@@ -1390,6 +1395,11 @@ public class XSSFCellStyle implements CellStyle {
                 break;
         }
     }
+    
+    public void setShrinkToFit(boolean shrinkToFit) {
+        getCellAlignment().setShrinkToFit(shrinkToFit);
+    }
+
     private int getFontId() {
         if (_cellXf.isSetFontId()) {
             return (int) _cellXf.getFontId();

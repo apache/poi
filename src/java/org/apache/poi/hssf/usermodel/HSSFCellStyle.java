@@ -18,7 +18,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -807,6 +806,21 @@ public final class HSSFCellStyle implements CellStyle {
     	sr.setName(styleName);
     }
 
+    /**
+     * Controls if the Cell should be auto-sized
+     *  to shrink to fit if the text is too long
+     */
+    public void setShrinkToFit(boolean shrinkToFit) {
+    	_format.setShrinkToFit(shrinkToFit);
+    }
+    /**
+     * Should the Cell be auto-sized by Excel to shrink
+     *  it to fit if this text is too long?
+     */
+    public boolean getShrinkToFit() {
+    	return _format.getShrinkToFit();
+    }
+	
     /**
      * Verifies that this style belongs to the supplied Workbook.
      * Will throw an exception if it belongs to a different one.
