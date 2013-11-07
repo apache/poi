@@ -41,6 +41,7 @@ public final class AllXWPFTests {
 
 	public static Test suite() {
 		TestSuite result = new TestSuite(AllXWPFTests.class.getName());
+		result.addTestSuite(TestXWPFBugs.class);
 		result.addTestSuite(TestXWPFDocument.class);
 		result.addTestSuite(TestXWPFWordExtractor.class);
 		result.addTestSuite(TestXWPFHeaderFooterPolicy.class);

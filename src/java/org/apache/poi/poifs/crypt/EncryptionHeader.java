@@ -16,15 +16,16 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
-import org.w3c.dom.NamedNodeMap;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.util.LittleEndianConsts;
+import org.w3c.dom.NamedNodeMap;
 
 /**
  * Reads and processes OOXML Encryption Headers
@@ -69,18 +70,24 @@ public class EncryptionHeader {
 
         is.readLong(); // skip reserved
 
-        StringBuilder builder = new StringBuilder();
-
-        while (true) {
-            char c = (char) is.readShort();
-
-            if (c == 0) {
-                break;
+        // CSPName may not always be specified
+        // In some cases, the sale value of the EncryptionVerifier has the details
+        is.mark(LittleEndianConsts.INT_SIZE+1);
+        int checkForSalt = is.readInt();
+        is.reset();
+        
+        if (checkForSalt == 16) {
+        	cspName = "";
+        } else {
+            StringBuilder builder = new StringBuilder();
+            while (true) {
+                char c = (char) is.readShort();
+                if (c == 0) break;
+                builder.append(c);
             }
-
-            builder.append(c);
+            cspName = builder.toString();
         }
-        cspName = builder.toString();
+        
         cipherMode = MODE_ECB;
         keySalt = null;
     }
