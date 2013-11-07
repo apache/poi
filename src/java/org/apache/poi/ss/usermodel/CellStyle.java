@@ -701,4 +701,16 @@ public interface CellStyle {
      *  XSSFCellStyle)
      */
     public void cloneStyleFrom(CellStyle source);
+    
+    /**
+     * Controls if the Cell should be auto-sized
+     *  to shrink to fit if the text is too long
+     */
+    public void setShrinkToFit(boolean shrinkToFit);
+
+    /**
+     * Should the Cell be auto-sized by Excel to shrink
+     *  it to fit if this text is too long?
+     */
+    public boolean getShrinkToFit();
 }
