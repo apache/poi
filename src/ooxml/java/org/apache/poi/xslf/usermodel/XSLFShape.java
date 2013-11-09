@@ -141,11 +141,42 @@ public abstract class XSLFShape {
         double rotation = getRotation();
         if (rotation != 0.) {
             // PowerPoint rotates shapes relative to the geometric center
-            double centerX = anchor.getX() + anchor.getWidth() / 2;
-            double centerY = anchor.getY() + anchor.getHeight() / 2;
+            double centerX = anchor.getCenterX();
+            double centerY = anchor.getCenterY();
 
+            // normalize rotation
+            rotation = (360.+(rotation%360.))%360.;
+            int quadrant = (((int)rotation+45)/90)%4;
+            double scaleX = 1.0, scaleY = 1.0;
+
+            // scale to bounding box (bug #53176)
+            if (quadrant == 1 || quadrant == 3) {
+                // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation (45°-135° and 225°-315°),
+                // we need to first rotate the shape by a multiple of 90° and then resize the bounding box  
+                // to its original bbox. After that we can rotate the shape to the exact rotation amount.
+                // It's strange that you'll need to rotate the shape back and forth again, but you can
+                // think of it, as if you paint the shape on a canvas. First you rotate the canvas, which might
+                // be already (differently) scaled, so you can paint the shape in its default orientation
+                // and later on, turn it around again to compare it with its original size ...
+                AffineTransform txg = new AffineTransform(); // graphics coordinate space
+                AffineTransform txs = new AffineTransform(tx); // shape coordinate space
+                txg.translate(centerX, centerY);
+                txg.rotate(Math.toRadians(quadrant*90));
+                txg.translate(-centerX, -centerY);
+                txs.translate(centerX, centerY);
+                txs.rotate(Math.toRadians(-quadrant*90));
+                txs.translate(-centerX, -centerY);
+                txg.concatenate(txs);
+                Rectangle2D anchor2 = txg.createTransformedShape(getAnchor()).getBounds2D();
+                scaleX = anchor.getWidth() == 0. ? 1.0 : anchor.getWidth() / anchor2.getWidth();
+                scaleY = anchor.getHeight() == 0. ? 1.0 : anchor.getHeight() / anchor2.getHeight();
+            }
+
+            // transformation is applied reversed ...
             graphics.translate(centerX, centerY);
-            graphics.rotate(Math.toRadians(rotation));
+            graphics.rotate(Math.toRadians(rotation-(double)(quadrant*90)));
+            graphics.scale(scaleX, scaleY);
+            graphics.rotate(Math.toRadians(quadrant*90));
             graphics.translate(-centerX, -centerY);
         }
 
