@@ -32,6 +32,7 @@ import org.apache.poi.hslf.record.HeadersFootersContainer;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SSSlideInfoAtom;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -487,5 +488,26 @@ public final class Slide extends Sheet
 
 	public EscherTextboxWrapper[] getTextboxWrappers() {
 		return this.getPPDrawing().getTextboxWrappers();
+	}
+
+	public void setHidden(boolean hidden) {
+		org.apache.poi.hslf.record.Slide cont =	getSlideRecord();
+		
+		SSSlideInfoAtom slideInfo = 
+			(SSSlideInfoAtom)cont.findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
+		if (slideInfo == null) {
+			slideInfo = new SSSlideInfoAtom();
+			cont.addChildAfter(slideInfo, cont.findFirstOfType(RecordTypes.SlideAtom.typeID));
+		}
+		
+		slideInfo.setEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT, hidden);
+	}
+	
+	public boolean getHidden() {
+		SSSlideInfoAtom slideInfo = 
+			(SSSlideInfoAtom)getSlideRecord().findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
+		return (slideInfo == null)
+			? false
+			: slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
 	}
 }
