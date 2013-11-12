@@ -58,8 +58,9 @@ public final class ZipPackage extends Package {
     private final ZipEntrySource zipArchive;
 
     /**
-     * Constructor. Creates a new ZipPackage.
+     * Constructor. Creates a new, empty ZipPackage.
      */
+    @SuppressWarnings("deprecation")
     public ZipPackage() {
     	super(defaultPackageAccess);
     	this.zipArchive = null;
@@ -77,6 +78,7 @@ public final class ZipPackage extends Package {
      *             If the specified input stream not an instance of
      *             ZipInputStream.
      */
+    @SuppressWarnings("deprecation")
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
     	super(access);
     	this.zipArchive = new ZipInputStreamZipEntrySource(
@@ -85,7 +87,7 @@ public final class ZipPackage extends Package {
     }
 
     /**
-     * Constructor. Opens a Zip based Open XML document from a File.
+     * Constructor. Opens a Zip based Open XML document from a file.
      *
      * @param path
      *            The path of the file to open or create.
@@ -94,6 +96,7 @@ public final class ZipPackage extends Package {
      * @throws InvalidFormatException
      *             If the content type part parsing encounters an error.
      */
+    @SuppressWarnings("deprecation")
     ZipPackage(String path, PackageAccess access) {
     	super(access);
 
@@ -110,7 +113,7 @@ public final class ZipPackage extends Package {
     }
 
     /**
-     * Constructor. Opens a Zip based Open XML document.
+     * Constructor. Opens a Zip based Open XML document from a File.
      *
      * @param file
      *            The file to open or create.
@@ -119,6 +122,7 @@ public final class ZipPackage extends Package {
      * @throws InvalidFormatException
      *             If the content type part parsing encounters an error.
      */
+    @SuppressWarnings("deprecation")
     ZipPackage(File file, PackageAccess access) {
     	super(access);
 
@@ -146,7 +150,8 @@ public final class ZipPackage extends Package {
      * @throws InvalidFormatException
      *             If the content type part parsing encounters an error.
      */
-	ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
+    @SuppressWarnings("deprecation")
+    ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
     	super(access);
     	this.zipArchive = zipEntry;
     }
