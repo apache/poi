@@ -47,112 +47,109 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Physical zip package.
- *
- * @author Julien Chable
  */
 public final class ZipPackage extends Package {
+    private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
 
-	private static POILogger logger = POILogFactory.getLogger(ZipPackage.class);
+    /**
+     * Zip archive, as either a file on disk,
+     *  or a stream
+     */
+    private final ZipEntrySource zipArchive;
 
-	/**
-	 * Zip archive, as either a file on disk,
-	 *  or a stream
-	 */
-	private final ZipEntrySource zipArchive;
+    /**
+     * Constructor. Creates a new ZipPackage.
+     */
+    public ZipPackage() {
+    	super(defaultPackageAccess);
+    	this.zipArchive = null;
+    }
 
-	/**
-	 * Constructor. Creates a new ZipPackage.
-	 */
-	public ZipPackage() {
-		super(defaultPackageAccess);
-		this.zipArchive = null;
-	}
+    /**
+     * Constructor. Opens a Zip based Open XML document from
+     *  an InputStream.
+     *
+     * @param in
+     *            Zip input stream to load.
+     * @param access
+     *            The package access mode.
+     * @throws IllegalArgumentException
+     *             If the specified input stream not an instance of
+     *             ZipInputStream.
+     */
+    ZipPackage(InputStream in, PackageAccess access) throws IOException {
+    	super(access);
+    	this.zipArchive = new ZipInputStreamZipEntrySource(
+    			new ZipInputStream(in)
+    			);
+    }
 
-	/**
-	 * Constructor. Opens a Zip based Open XML document from
-	 *  an InputStream.
-	 *
-	 * @param in
-	 *            Zip input stream to load.
-	 * @param access
-    *            The package access mode.
-	 * @throws IllegalArgumentException
-	 *             If the specified input stream not an instance of
-	 *             ZipInputStream.
-	 */
-	ZipPackage(InputStream in, PackageAccess access) throws IOException {
-		super(access);
-		this.zipArchive = new ZipInputStreamZipEntrySource(
-				new ZipInputStream(in)
-		);
-	}
+    /**
+     * Constructor. Opens a Zip based Open XML document from a File.
+     *
+     * @param path
+     *            The path of the file to open or create.
+     * @param access
+     *            The package access mode.
+     * @throws InvalidFormatException
+     *             If the content type part parsing encounters an error.
+     */
+    ZipPackage(String path, PackageAccess access) {
+    	super(access);
 
-   /**
-    * Constructor. Opens a Zip based Open XML document from a File.
-    *
-    * @param path
-    *            The path of the file to open or create.
-    * @param access
-    *            The package access mode.
-    * @throws InvalidFormatException
-    *             If the content type part parsing encounters an error.
-    */
-   ZipPackage(String path, PackageAccess access) {
-      super(access);
+    	ZipFile zipFile = null;
 
-      ZipFile zipFile = null;
+    	try {
+    		zipFile = ZipHelper.openZipFile(path);
+    	} catch (IOException e) {
+    		throw new InvalidOperationException(
+    				"Can't open the specified file: '" + path + "'", e);
+    	}
 
-      try {
-         zipFile = ZipHelper.openZipFile(path);
-      } catch (IOException e) {
-         throw new InvalidOperationException(
-               "Can't open the specified file: '" + path + "'", e);
-      }
+    	this.zipArchive = new ZipFileZipEntrySource(zipFile);
+    }
 
-      this.zipArchive = new ZipFileZipEntrySource(zipFile);
-   }
+    /**
+     * Constructor. Opens a Zip based Open XML document.
+     *
+     * @param file
+     *            The file to open or create.
+     * @param access
+     *            The package access mode.
+     * @throws InvalidFormatException
+     *             If the content type part parsing encounters an error.
+     */
+    ZipPackage(File file, PackageAccess access) {
+    	super(access);
 
-   /**
-    * Constructor. Opens a Zip based Open XML document.
-    *
-    * @param file
-    *            The file to open or create.
-    * @param access
-    *            The package access mode.
-    * @throws InvalidFormatException
-    *             If the content type part parsing encounters an error.
-    */
-   ZipPackage(File file, PackageAccess access) {
-      super(access);
+    	ZipFile zipFile = null;
 
-      ZipFile zipFile = null;
+    	try {
+    		zipFile = ZipHelper.openZipFile(file);
+    	} catch (IOException e) {
+    		throw new InvalidOperationException(
+    				"Can't open the specified file: '" + file + "'", e);
+    	}
 
-      try {
-         zipFile = ZipHelper.openZipFile(file);
-      } catch (IOException e) {
-         throw new InvalidOperationException(
-               "Can't open the specified file: '" + file + "'", e);
-      }
+    	this.zipArchive = new ZipFileZipEntrySource(zipFile);
+    }
 
-      this.zipArchive = new ZipFileZipEntrySource(zipFile);
-   }
-
-   /**
-    * Constructor. Opens a Zip based Open XML document from
-    *  a custom ZipEntrySource, typically an open archive
-    *  from another system
-    *
-    * @param zipEntry
-    *            Zip data to load.
-    * @param access
-    *            The package access mode.
-    * @throws InvalidFormatException
-    *             If the content type part parsing encounters an error.
-    */
-   ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
-	   super(access);
-	   this.zipArchive = zipEntry;
-   }
+    /**
+     * Constructor. Opens a Zip based Open XML document from
+     *  a custom ZipEntrySource, typically an open archive
+     *  from another system
+     *
+     * @param zipEntry
+     *            Zip data to load.
+     * @param access
+     *            The package access mode.
+     * @throws InvalidFormatException
+     *             If the content type part parsing encounters an error.
+     */
+	ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
+    	super(access);
+    	this.zipArchive = zipEntry;
+    }
 
 	/**
 	 * Retrieves the parts from this package. We assume that the package has not
