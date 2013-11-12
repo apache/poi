@@ -18,19 +18,17 @@ package org.apache.poi.poifs.crypt;
 
 import java.io.ByteArrayInputStream;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.codec.binary.Base64;
-
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.NamedNodeMap;
-import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.poi.EncryptedDocumentException;
 
 /**
- *  @author Maxim Valyanskiy
- *  @author Gary King
+ * Used when checking if a key is valid for a document 
  */
 public class EncryptionVerifier {
     private final byte[] salt;
@@ -88,16 +86,21 @@ public class EncryptionVerifier {
                                          .getNodeValue());
 
         String alg = keyData.getNamedItem("cipherAlgorithm").getNodeValue();
+        
+        int keyBits = Integer.parseInt(keyData.getNamedItem("keyBits")
+                .getNodeValue());
 
         if ("AES".equals(alg)) {
-            if (blockSize == 16)
-                algorithm = EncryptionHeader.ALGORITHM_AES_128;
-            else if (blockSize == 24)
-                algorithm = EncryptionHeader.ALGORITHM_AES_192;
-            else if (blockSize == 32)
-                algorithm = EncryptionHeader.ALGORITHM_AES_256;
-            else
-                throw new EncryptedDocumentException("Unsupported block size");
+        	switch (keyBits) {
+              case 128: 
+                  algorithm = EncryptionHeader.ALGORITHM_AES_128; break;
+              case 192: 
+                  algorithm = EncryptionHeader.ALGORITHM_AES_192; break;
+              case 256: 
+                  algorithm = EncryptionHeader.ALGORITHM_AES_256; break;
+              default: 
+                  throw new EncryptedDocumentException("Unsupported key size");
+        	}
         } else {
             throw new EncryptedDocumentException("Unsupported cipher");
         }

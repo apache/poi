@@ -50,7 +50,7 @@ public class TestEncryptionInfo extends TestCase {
         assertEquals(4, info.getVersionMajor());
         assertEquals(4, info.getVersionMinor());
 
-        assertEquals(EncryptionHeader.ALGORITHM_AES_128, info.getHeader().getAlgorithm());
+        assertEquals(EncryptionHeader.ALGORITHM_AES_256, info.getHeader().getAlgorithm());
         assertEquals(EncryptionHeader.HASH_SHA512, info.getHeader().getHashAlgorithm());
         assertEquals(256, info.getHeader().getKeySize());
         assertEquals(64, info.getVerifier().getVerifierHash().length);
