@@ -42,8 +42,8 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Physical zip package.
@@ -69,11 +69,13 @@ public final class ZipPackage extends Package {
 	}
 
 	/**
-	 * Constructor. <b>Operation not supported.</b>
+	 * Constructor. Opens a Zip based Open XML document from
+	 *  an InputStream.
 	 *
 	 * @param in
 	 *            Zip input stream to load.
 	 * @param access
+    *            The package access mode.
 	 * @throws IllegalArgumentException
 	 *             If the specified input stream not an instance of
 	 *             ZipInputStream.
@@ -86,7 +88,7 @@ public final class ZipPackage extends Package {
 	}
 
    /**
-    * Constructor. Opens a Zip based Open XML document.
+    * Constructor. Opens a Zip based Open XML document from a File.
     *
     * @param path
     *            The path of the file to open or create.
@@ -133,6 +135,23 @@ public final class ZipPackage extends Package {
       }
 
       this.zipArchive = new ZipFileZipEntrySource(zipFile);
+   }
+
+   /**
+    * Constructor. Opens a Zip based Open XML document from
+    *  a custom ZipEntrySource, typically an open archive
+    *  from another system
+    *
+    * @param zipEntry
+    *            Zip data to load.
+    * @param access
+    *            The package access mode.
+    * @throws InvalidFormatException
+    *             If the content type part parsing encounters an error.
+    */
+   ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
+	   super(access);
+	   this.zipArchive = zipEntry;
    }
 
 	/**
