@@ -19,6 +19,7 @@ package org.apache.poi.poifs.crypt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.DigestException;
 import java.security.MessageDigest;
 import java.security.GeneralSecurityException;
 import java.security.NoSuchAlgorithmException;
@@ -27,6 +28,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 public abstract class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
@@ -85,15 +87,6 @@ public abstract class Decryptor {
         return getDataStream(fs.getRoot());
     }
 
-    protected static int getBlockSize(int algorithm) {
-        switch (algorithm) {
-        case EncryptionHeader.ALGORITHM_AES_128: return 16;
-        case EncryptionHeader.ALGORITHM_AES_192: return 24;
-        case EncryptionHeader.ALGORITHM_AES_256: return 32;
-        }
-        throw new EncryptedDocumentException("Unknown block size");
-    }
-
     protected byte[] hashPassword(EncryptionInfo info,
                                   String password) throws NoSuchAlgorithmException {
         // If no password was given, use the default
@@ -101,25 +94,32 @@ public abstract class Decryptor {
             password = DEFAULT_PASSWORD;
         }
         
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        byte[] bytes;
+        byte[] pass;
         try {
-            bytes = password.getBytes("UTF-16LE");
+            pass = password.getBytes("UTF-16LE");
         } catch (UnsupportedEncodingException e) {
             throw new EncryptedDocumentException("UTF16 not supported");
         }
 
-        sha1.update(info.getVerifier().getSalt());
-        byte[] hash = sha1.digest(bytes);
-        byte[] iterator = new byte[4];
-
+        byte[] salt = info.getVerifier().getSalt();
+        
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        sha1.update(salt);
+        byte[] hash = sha1.digest(pass);
+        byte[] iterator = new byte[LittleEndianConsts.INT_SIZE];
+        
+        try {
         for (int i = 0; i < info.getVerifier().getSpinCount(); i++) {
+        	LittleEndian.putInt(iterator, 0, i);
             sha1.reset();
-            LittleEndian.putInt(iterator, 0, i);
             sha1.update(iterator);
-            hash = sha1.digest(hash);
+            sha1.update(hash);
+            sha1.digest(hash, 0, hash.length); // don't create hash buffer everytime new
         }
-
+        } catch (DigestException e) {
+        	throw new EncryptedDocumentException("error in password hashing");
+        }
+        
         return hash;
     }
 }

@@ -55,6 +55,7 @@ public class EncryptionHeader {
     private final int algorithm;
     private final int hashAlgorithm;
     private final int keySize;
+    private final int blockSize;
     private final int providerType;
     private final int cipherMode;
     private final byte[] keySalt;
@@ -66,6 +67,7 @@ public class EncryptionHeader {
         algorithm = is.readInt();
         hashAlgorithm = is.readInt();
         keySize = is.readInt();
+        blockSize = keySize;
         providerType = is.readInt();
 
         is.readLong(); // skip reserved
@@ -110,20 +112,22 @@ public class EncryptionHeader {
         sizeExtra = 0;
         cspName = null;
 
-        int blockSize = Integer.parseInt(keyData.getNamedItem("blockSize").
+        blockSize = Integer.parseInt(keyData.getNamedItem("blockSize").
                                          getNodeValue());
         String cipher = keyData.getNamedItem("cipherAlgorithm").getNodeValue();
 
         if ("AES".equals(cipher)) {
             providerType = PROVIDER_AES;
-            if (blockSize == 16)
-                algorithm = ALGORITHM_AES_128;
-            else if (blockSize == 24)
-                algorithm = ALGORITHM_AES_192;
-            else if (blockSize == 32)
-                algorithm = ALGORITHM_AES_256;
-            else
-                throw new EncryptedDocumentException("Unsupported key length " + blockSize);
+            switch (keySize) {
+              case 128: 
+                algorithm = ALGORITHM_AES_128; break;
+            case 192: 
+                algorithm = ALGORITHM_AES_192; break;
+            case 256: 
+                algorithm = ALGORITHM_AES_256; break;
+            default: 
+                throw new EncryptedDocumentException("Unsupported key length " + keySize);
+            }
         } else {
             throw new EncryptedDocumentException("Unsupported cipher " + cipher);
         }
@@ -138,8 +142,8 @@ public class EncryptionHeader {
             throw new EncryptedDocumentException("Unsupported chaining mode " + chaining);
 
         String hashAlg = keyData.getNamedItem("hashAlgorithm").getNodeValue();
-        int hashSize = Integer.parseInt(keyData.getNamedItem("hashSize")
-                                        .getNodeValue());
+        int hashSize = Integer.parseInt(
+        		             keyData.getNamedItem("hashSize").getNodeValue());
 
         if ("SHA1".equals(hashAlg) && hashSize == 20) {
             hashAlgorithm = HASH_SHA1;
@@ -190,6 +194,10 @@ public class EncryptionHeader {
         return keySize;
     }
 
+    public int getBlockSize() {
+    	return blockSize;
+    }
+    
     public byte[] getKeySalt() {
         return keySalt;
     }

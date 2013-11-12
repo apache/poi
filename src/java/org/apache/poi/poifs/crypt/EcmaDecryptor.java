@@ -33,8 +33,6 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
- *  @author Maxim Valyanskiy
- *  @author Gary King
  */
 public class EcmaDecryptor extends Decryptor {
     private final EncryptionInfo info;

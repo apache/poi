@@ -24,8 +24,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import java.io.IOException;
 
 /**
- *  @author Maxim Valyanskiy
- *  @author Gary King
  */
 public class EncryptionInfo {
     private final int versionMajor;

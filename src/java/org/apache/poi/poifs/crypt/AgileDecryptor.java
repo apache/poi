@@ -16,25 +16,25 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.MessageDigest;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.EncryptedDocumentException;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * @author Gary King
+ * 
  */
 public class AgileDecryptor extends Decryptor {
 
@@ -60,35 +60,34 @@ public class AgileDecryptor extends Decryptor {
 
     public boolean verifyPassword(String password) throws GeneralSecurityException {
         EncryptionVerifier verifier = _info.getVerifier();
-        int algorithm = verifier.getAlgorithm();
-        int mode = verifier.getCipherMode();
+        byte[] salt = verifier.getSalt();
 
         byte[] pwHash = hashPassword(_info, password);
-        byte[] iv = generateIv(algorithm, verifier.getSalt(), null);
+        byte[] iv = generateIv(salt, null);
 
         SecretKey skey;
         skey = new SecretKeySpec(generateKey(pwHash, kVerifierInputBlock), "AES");
-        Cipher cipher = getCipher(algorithm, mode, skey, iv);
+        Cipher cipher = getCipher(skey, iv);
         byte[] verifierHashInput = cipher.doFinal(verifier.getVerifier());
 
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        byte[] trimmed = new byte[verifier.getSalt().length];
+        byte[] trimmed = new byte[salt.length];
         System.arraycopy(verifierHashInput, 0, trimmed, 0, trimmed.length);
         byte[] hashedVerifier = sha1.digest(trimmed);
 
         skey = new SecretKeySpec(generateKey(pwHash, kHashedVerifierBlock), "AES");
-        iv = generateIv(algorithm, verifier.getSalt(), null);
-        cipher = getCipher(algorithm, mode, skey, iv);
+        iv = generateIv(salt, null);
+        cipher = getCipher(skey, iv);
         byte[] verifierHash = cipher.doFinal(verifier.getVerifierHash());
         trimmed = new byte[hashedVerifier.length];
         System.arraycopy(verifierHash, 0, trimmed, 0, trimmed.length);
 
         if (Arrays.equals(trimmed, hashedVerifier)) {
             skey = new SecretKeySpec(generateKey(pwHash, kCryptoKeyBlock), "AES");
-            iv = generateIv(algorithm, verifier.getSalt(), null);
-            cipher = getCipher(algorithm, mode, skey, iv);
+            iv = generateIv(salt, null);
+            cipher = getCipher(skey, iv);
             byte[] inter = cipher.doFinal(verifier.getEncryptedKey());
-            byte[] keyspec = new byte[_info.getHeader().getKeySize() / 8];
+            byte[] keyspec = new byte[getKeySizeInBytes()];
             System.arraycopy(inter, 0, keyspec, 0, keyspec.length);
             _secretKey = new SecretKeySpec(keyspec, "AES");
             return true;
@@ -124,9 +123,7 @@ public class AgileDecryptor extends Decryptor {
             throws GeneralSecurityException {
             _size = size;
             _stream = stream;
-            _cipher = getCipher(_info.getHeader().getAlgorithm(),
-                                _info.getHeader().getCipherMode(),
-                                _secretKey, _info.getHeader().getKeySalt());
+            _cipher = getCipher(_secretKey, _info.getHeader().getKeySalt());
         }
 
         public int read() throws IOException {
@@ -183,8 +180,7 @@ public class AgileDecryptor extends Decryptor {
             int index = (int)(_pos >> 12);
             byte[] blockKey = new byte[4];
             LittleEndian.putInt(blockKey, 0, index);
-            byte[] iv = generateIv(_info.getHeader().getAlgorithm(),
-                                   _info.getHeader().getKeySalt(), blockKey);
+            byte[] iv = generateIv(_info.getHeader().getKeySalt(), blockKey);
             _cipher.init(Cipher.DECRYPT_MODE, _secretKey, new IvParameterSpec(iv));
             if (_lastIndex != index)
                 _stream.skip((index - _lastIndex) << 12);
@@ -196,20 +192,33 @@ public class AgileDecryptor extends Decryptor {
         }
     }
 
-    private Cipher getCipher(int algorithm, int mode, SecretKey key, byte[] vec)
+    private Cipher getCipher(SecretKey key, byte[] vec)
         throws GeneralSecurityException {
         String name = null;
         String chain = null;
 
-        if (algorithm == EncryptionHeader.ALGORITHM_AES_128 ||
-            algorithm == EncryptionHeader.ALGORITHM_AES_192 ||
-            algorithm == EncryptionHeader.ALGORITHM_AES_256)
-            name = "AES";
+    	EncryptionVerifier verifier = _info.getVerifier();
+        
+        switch (verifier.getAlgorithm()) {
+          case EncryptionHeader.ALGORITHM_AES_128:
+          case EncryptionHeader.ALGORITHM_AES_192:
+          case EncryptionHeader.ALGORITHM_AES_256:
+             name = "AES";
+             break;
+          default:
+             throw new EncryptedDocumentException("Unsupported algorithm");
+        }
 
-        if (mode == EncryptionHeader.MODE_CBC)
-            chain = "CBC";
-        else if (mode == EncryptionHeader.MODE_CFB)
-            chain = "CFB";
+        switch (verifier.getCipherMode()) {
+          case EncryptionHeader.MODE_CBC: 
+              chain = "CBC"; 
+              break;
+          case EncryptionHeader.MODE_CFB:
+              chain = "CFB";
+              break;
+          default: 
+              throw new EncryptedDocumentException("Unsupported chain mode");
+        }
 
         Cipher cipher = Cipher.getInstance(name + "/" + chain + "/NoPadding");
         IvParameterSpec iv = new IvParameterSpec(vec);
@@ -217,8 +226,8 @@ public class AgileDecryptor extends Decryptor {
         return cipher;
     }
 
-    private byte[] getBlock(int algorithm, byte[] hash) {
-        byte[] result = new byte[getBlockSize(algorithm)];
+    private byte[] getBlock(byte[] hash, int size) {
+        byte[] result = new byte[size];
         Arrays.fill(result, (byte)0x36);
         System.arraycopy(hash, 0, result, 0, Math.min(result.length, hash.length));
         return result;
@@ -227,18 +236,27 @@ public class AgileDecryptor extends Decryptor {
     private byte[] generateKey(byte[] hash, byte[] blockKey) throws NoSuchAlgorithmException {
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         sha1.update(hash);
-        return getBlock(_info.getVerifier().getAlgorithm(), sha1.digest(blockKey));
+        byte[] key = sha1.digest(blockKey);
+        return getBlock(key, getKeySizeInBytes());
     }
 
-    protected byte[] generateIv(int algorithm, byte[] salt, byte[] blockKey)
+    protected byte[] generateIv(byte[] salt, byte[] blockKey)
         throws NoSuchAlgorithmException {
 
 
         if (blockKey == null)
-            return getBlock(algorithm, salt);
+            return getBlock(salt, getBlockSizeInBytes());
 
         MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
         sha1.update(salt);
-        return getBlock(algorithm, sha1.digest(blockKey));
+        return getBlock(sha1.digest(blockKey), getBlockSizeInBytes());
+    }
+    
+    protected int getBlockSizeInBytes() {
+    	return _info.getHeader().getBlockSize();
+    }
+    
+    protected int getKeySizeInBytes() {
+    	return _info.getHeader().getKeySize()/8;
     }
 }
