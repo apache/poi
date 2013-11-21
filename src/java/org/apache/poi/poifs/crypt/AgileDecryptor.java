@@ -194,6 +194,7 @@ public class AgileDecryptor extends Decryptor {
 
     private Cipher getCipher(SecretKey key, byte[] vec)
         throws GeneralSecurityException {
+        
         String name = null;
         String chain = null;
 
@@ -209,6 +210,11 @@ public class AgileDecryptor extends Decryptor {
              throw new EncryptedDocumentException("Unsupported algorithm");
         }
 
+        // Ensure the JCE policies files allow for this sized key
+        if (Cipher.getMaxAllowedKeyLength(name) < _info.getHeader().getKeySize()) {
+            throw new EncryptedDocumentException("Export Restrictions in place - please install JCE Unlimited Strength Jurisdiction Policy files");
+        }
+        
         switch (verifier.getCipherMode()) {
           case EncryptionHeader.MODE_CBC: 
               chain = "CBC"; 
@@ -219,7 +225,7 @@ public class AgileDecryptor extends Decryptor {
           default: 
               throw new EncryptedDocumentException("Unsupported chain mode");
         }
-
+        
         Cipher cipher = Cipher.getInstance(name + "/" + chain + "/NoPadding");
         IvParameterSpec iv = new IvParameterSpec(vec);
         cipher.init(Cipher.DECRYPT_MODE, key, iv);
