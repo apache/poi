@@ -17,9 +17,6 @@
 
 package org.apache.poi.xwpf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.xwpf.extractor.TestXWPFWordExtractor;
 import org.apache.poi.xwpf.model.TestXWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.TestXWPFDocument;
@@ -31,30 +28,28 @@ import org.apache.poi.xwpf.usermodel.TestXWPFPictureData;
 import org.apache.poi.xwpf.usermodel.TestXWPFRun;
 import org.apache.poi.xwpf.usermodel.TestXWPFStyles;
 import org.apache.poi.xwpf.usermodel.TestXWPFTable;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xwpf</tt> and sub-packages.
- *
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestXWPFBugs.class,
+    TestXWPFDocument.class,
+    TestXWPFWordExtractor.class,
+    TestXWPFHeaderFooterPolicy.class,
+    TestXWPFHeader.class,
+    TestXWPFHeadings.class,
+    TestXWPFParagraph.class,
+    TestXWPFRun.class,
+    TestXWPFTable.class,
+    TestXWPFStyles.class,
+    TestXWPFPictureData.class,
+    TestXWPFNumbering.class,
+    TestAllExtendedProperties.class,
+    TestPackageCorePropertiesGetKeywords.class
+})
 public final class AllXWPFTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllXWPFTests.class.getName());
-		result.addTestSuite(TestXWPFBugs.class);
-		result.addTestSuite(TestXWPFDocument.class);
-		result.addTestSuite(TestXWPFWordExtractor.class);
-		result.addTestSuite(TestXWPFHeaderFooterPolicy.class);
-		result.addTestSuite(TestXWPFHeader.class);
-		result.addTestSuite(TestXWPFHeadings.class);
-		result.addTestSuite(TestXWPFParagraph.class);
-		result.addTestSuite(TestXWPFRun.class);
-		result.addTestSuite(TestXWPFTable.class);
-		result.addTestSuite(TestXWPFStyles.class);
-		result.addTestSuite(TestXWPFPictureData.class);
-		result.addTestSuite(TestXWPFNumbering.class);
-		result.addTestSuite(TestAllExtendedProperties.class);
-		result.addTestSuite(TestPackageCorePropertiesGetKeywords.class);
-		return result;
-	}
 }
