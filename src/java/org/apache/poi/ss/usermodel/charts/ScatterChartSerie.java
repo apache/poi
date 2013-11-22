@@ -23,9 +23,10 @@ import org.apache.poi.util.Beta;
  * Represents scatter charts serie.
  *
  * @author Roman Kashitsyn
+ * @author Martin Andersson
  */
 @Beta
-public interface ScatterChartSerie {
+public interface ScatterChartSerie extends ChartSerie {
 
     /**
      * @return data source used for X axis values

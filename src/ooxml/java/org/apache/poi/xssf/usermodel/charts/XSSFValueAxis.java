@@ -23,14 +23,17 @@ import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrossBetween;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrossBetween;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 
@@ -89,6 +92,21 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 		return ctValAx.getCrosses();
 	}
 
+	@Override
+	protected CTBoolean getDelete() {
+		return ctValAx.getDelete();
+	}
+
+	@Override
+	protected CTTickMark getMajorCTTickMark() {
+		return ctValAx.getMajorTickMark();
+	}
+
+	@Override
+	protected CTTickMark getMinorCTTickMark() {
+		return ctValAx.getMinorTickMark();
+	}
+
 	public void crossAxis(ChartAxis axis) {
 		ctValAx.getCrossAx().setVal(axis.getId());
 	}
@@ -102,11 +120,17 @@ public class XSSFValueAxis extends XSSFChartAxis implements ValueAxis {
 		ctValAx.addNewCrosses();
 		ctValAx.addNewCrossAx();
 		ctValAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+		ctValAx.addNewDelete();
+		ctValAx.addNewMajorTickMark();
+		ctValAx.addNewMinorTickMark();
 
 		setPosition(pos);
 		setOrientation(AxisOrientation.MIN_MAX);
 		setCrossBetween(AxisCrossBetween.MIDPOINT_CATEGORY);
 		setCrosses(AxisCrosses.AUTO_ZERO);
+		setVisible(true);
+		setMajorTickMark(AxisTickMark.CROSS);
+		setMinorTickMark(AxisTickMark.NONE);
 	}
 
 	private static STCrossBetween.Enum fromCrossBetween(AxisCrossBetween crossBetween) {

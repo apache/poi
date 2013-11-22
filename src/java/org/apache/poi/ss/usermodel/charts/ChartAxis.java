@@ -26,7 +26,7 @@ import org.apache.poi.util.Beta;
  */
 @Beta
 public interface ChartAxis {
-	
+
 	/**
 	 * @return axis id
 	 */
@@ -123,4 +123,34 @@ public interface ChartAxis {
 	 * @param axis that this axis should cross
 	 */
 	void crossAxis(ChartAxis axis);
+
+    /**
+     * @return visibility of the axis.
+     */
+    boolean isVisible();
+
+    /**
+     * @param value visibility of the axis.
+     */
+    void setVisible(boolean value);
+
+    /**
+     * @return major tick mark.
+     */
+    AxisTickMark getMajorTickMark();
+
+    /**
+     * @param tickMark major tick mark type.
+     */
+    void setMajorTickMark(AxisTickMark tickMark);
+
+    /**
+     * @return minor tick mark.
+     */
+    AxisTickMark getMinorTickMark();
+
+    /**
+     * @param tickMark minor tick mark type.
+     */
+    void setMinorTickMark(AxisTickMark tickMark);
 }

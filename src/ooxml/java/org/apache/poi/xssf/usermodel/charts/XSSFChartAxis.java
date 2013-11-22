@@ -21,17 +21,21 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STOrientation;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STCrosses;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STTickMark;
 
 /**
  * Base class for all axis types.
@@ -158,10 +162,37 @@ public abstract class XSSFChartAxis implements ChartAxis {
 		getCTCrosses().setVal(fromAxisCrosses(crosses));
 	}
 
+	public boolean isVisible() {
+		return !getDelete().getVal();
+	}
+
+	public void setVisible(boolean value) {
+		getDelete().setVal(!value);
+	}
+
+	public AxisTickMark getMajorTickMark() {
+		return toAxisTickMark(getMajorCTTickMark());
+	}
+
+	public void setMajorTickMark(AxisTickMark tickMark) {
+		getMajorCTTickMark().setVal(fromAxisTickMark(tickMark));
+	}
+
+	public AxisTickMark getMinorTickMark() {
+		return toAxisTickMark(getMinorCTTickMark());
+	}
+
+	public void setMinorTickMark(AxisTickMark tickMark) {
+		getMinorCTTickMark().setVal(fromAxisTickMark(tickMark));
+	}
+
 	protected abstract CTAxPos getCTAxPos();
 	protected abstract CTNumFmt getCTNumFmt();
 	protected abstract CTScaling getCTScaling();
 	protected abstract CTCrosses getCTCrosses();
+	protected abstract CTBoolean getDelete();
+	protected abstract CTTickMark getMajorCTTickMark();
+	protected abstract CTTickMark getMinorCTTickMark();
 
 	private static STOrientation.Enum fromAxisOrientation(AxisOrientation orientation) {
 		switch (orientation) {
@@ -219,6 +250,27 @@ public abstract class XSSFChartAxis implements ChartAxis {
 			case STAxPos.INT_R: return AxisPosition.RIGHT;
 			case STAxPos.INT_T: return AxisPosition.TOP;
 			default: return AxisPosition.BOTTOM;
+		}
+	}
+
+	private static STTickMark.Enum fromAxisTickMark(AxisTickMark tickMark) {
+		switch (tickMark) {
+			case NONE: return STTickMark.NONE;
+			case IN: return STTickMark.IN;
+			case OUT: return STTickMark.OUT;
+			case CROSS: return STTickMark.CROSS;
+			default:
+				throw new IllegalArgumentException("Unknown AxisTickMark: " + tickMark);
+		}
+	}
+
+	private static AxisTickMark toAxisTickMark(CTTickMark ctTickMark) {
+		switch (ctTickMark.getVal().intValue()) {
+			case STTickMark.INT_NONE: return AxisTickMark.NONE;
+			case STTickMark.INT_IN: return AxisTickMark.IN;
+			case STTickMark.INT_OUT: return AxisTickMark.OUT;
+			case STTickMark.INT_CROSS: return AxisTickMark.CROSS;
+			default: return AxisTickMark.CROSS;
 		}
 	}
 }

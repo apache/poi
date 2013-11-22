@@ -50,7 +50,7 @@ public class XSSFScatterChartData implements ScatterChartData {
     /**
      * Package private ScatterChartSerie implementation.
      */
-    static class Serie implements ScatterChartSerie {
+    static class Serie extends AbstractXSSFChartSerie implements ScatterChartSerie {
         private int id;
         private int order;
         private ChartDataSource<?> xs;
@@ -92,6 +92,10 @@ public class XSSFScatterChartData implements ScatterChartData {
 
             CTNumDataSource yVal = scatterSer.addNewYVal();
             XSSFChartUtil.buildNumDataSource(yVal, ys);
+
+			if (isTitleSet()) {
+				scatterSer.setTx(getCTSerTx());
+			}
         }
     }
 
