@@ -17,18 +17,10 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.AxisCrosses;
-import org.apache.poi.ss.usermodel.charts.AxisOrientation;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.*;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 
 /**
  * Category axis type.
@@ -73,6 +65,21 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		return ctCatAx.getCrosses();
 	}
 
+	@Override
+	protected CTBoolean getDelete() {
+		return ctCatAx.getDelete();
+	}
+
+	@Override
+	protected CTTickMark getMajorCTTickMark() {
+		return ctCatAx.getMajorTickMark();
+	}
+
+	@Override
+	protected CTTickMark getMinorCTTickMark() {
+		return ctCatAx.getMinorTickMark();
+	}
+
 	public void crossAxis(ChartAxis axis) {
 		ctCatAx.getCrossAx().setVal(axis.getId());
 	}
@@ -85,9 +92,15 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 		ctCatAx.addNewCrosses();
 		ctCatAx.addNewCrossAx();
 		ctCatAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+		ctCatAx.addNewDelete();
+		ctCatAx.addNewMajorTickMark();
+		ctCatAx.addNewMinorTickMark();
 
 		setPosition(pos);
 		setOrientation(AxisOrientation.MIN_MAX);
 		setCrosses(AxisCrosses.AUTO_ZERO);
+		setVisible(true);
+		setMajorTickMark(AxisTickMark.CROSS);
+		setMinorTickMark(AxisTickMark.NONE);
 	}
 }

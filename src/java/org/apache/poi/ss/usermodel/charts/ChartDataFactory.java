@@ -22,14 +22,19 @@ import org.apache.poi.util.Beta;
 /**
  * A factory for different charts data types.
  *
- * @author Roman Kashitsyn
+ * @author Roman Kashitsyn, Martin Andersson
  */
 @Beta
 public interface ChartDataFactory {
-	
+
 	/**
 	 * @return an appropriate ScatterChartData instance
 	 */
 	ScatterChartData createScatterChartData();
+
+	/**
+	 * @return a LineChartData instance
+	 */
+	LineChartData createLineChartData();
 
 }

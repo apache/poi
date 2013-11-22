@@ -76,4 +76,39 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
 	}
 
+	public void testVisibleAccessMethods() {
+		axis.setVisible(true);
+		assertTrue(axis.isVisible());
+
+		axis.setVisible(false);
+		assertFalse(axis.isVisible());
+	}
+
+	public void testMajorTickMarkAccessMethods() {
+		axis.setMajorTickMark(AxisTickMark.NONE);
+		assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
+
+		axis.setMajorTickMark(AxisTickMark.IN);
+		assertEquals(AxisTickMark.IN, axis.getMajorTickMark());
+
+		axis.setMajorTickMark(AxisTickMark.OUT);
+		assertEquals(AxisTickMark.OUT, axis.getMajorTickMark());
+
+		axis.setMajorTickMark(AxisTickMark.CROSS);
+		assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
+	}
+
+	public void testMinorTickMarkAccessMethods() {
+		axis.setMinorTickMark(AxisTickMark.NONE);
+		assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.IN);
+		assertEquals(AxisTickMark.IN, axis.getMinorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.OUT);
+		assertEquals(AxisTickMark.OUT, axis.getMinorTickMark());
+
+		axis.setMinorTickMark(AxisTickMark.CROSS);
+		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
+	}
 }

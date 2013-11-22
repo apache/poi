@@ -40,6 +40,13 @@ public class XSSFChartDataFactory implements ChartDataFactory {
 	}
 
 	/**
+	 * @return new line charts data instance
+	 */
+	public XSSFLineChartData createLineChartData() {
+		return new XSSFLineChartData();
+	}
+
+	/**
 	 * @return factory instance
 	 */
 	public static XSSFChartDataFactory getInstance() {
