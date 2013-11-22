@@ -33,6 +33,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
+import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
 import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
 import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
@@ -43,6 +44,7 @@ import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
@@ -59,6 +61,7 @@ import org.w3c.dom.Text;
  * Represents a SpreadsheetML Chart
  * @author Nick Burch
  * @author Roman Kashitsyn
+ * @author Martin Andersson
  */
 public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartAxisFactory {
 
@@ -212,6 +215,18 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return valueAxis;
 	}
 
+	public XSSFCategoryAxis createCategoryAxis(AxisPosition pos) {
+		long id = axis.size() + 1;
+		XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
+		if (axis.size() == 1) {
+			ChartAxis ax = axis.get(0);
+			ax.crossAxis(categoryAxis);
+			categoryAxis.crossAxis(ax);
+		}
+		axis.add(categoryAxis);
+		return categoryAxis;
+	}
+
 	public List<? extends XSSFChartAxis> getAxis() {
 		if (axis.isEmpty() && hasAxis()) {
 			parseAxis();
@@ -287,7 +302,14 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 
 	private void parseAxis() {
 		// TODO: add other axis types
+		parseCategoryAxis();
 		parseValueAxis();
+	}
+
+	private void parseCategoryAxis() {
+		for (CTCatAx catAx : chart.getPlotArea().getCatAxList()) {
+			axis.add(new XSSFCategoryAxis(this, catAx));
+		}
 	}
 
 	private void parseValueAxis() {
