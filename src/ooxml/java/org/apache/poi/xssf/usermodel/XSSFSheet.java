@@ -147,7 +147,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for(POIXMLDocumentPart p : getRelations()){
             if(p instanceof CommentsTable) {
                sheetComments = (CommentsTable)p;
-               break;
             }
             if(p instanceof XSSFTable) {
                tables.put( p.getPackageRelationship().getId(), (XSSFTable)p );
