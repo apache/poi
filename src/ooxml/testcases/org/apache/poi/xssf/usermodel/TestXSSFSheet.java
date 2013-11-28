@@ -33,18 +33,7 @@ import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
 @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
@@ -1107,4 +1096,22 @@ public final class TestXSSFSheet extends BaseTestSheet {
         sheet = workbook.getSheet("Sheet 1");
         assertEquals(false, sheet.getForceFormulaRecalculation());
 	}
+
+    public static void test55745() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55745.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        List<XSSFTable> tables = sheet.getTables();
+        /*System.out.println(tables.size());
+        
+        for(XSSFTable table : tables) {
+            System.out.println("XPath: " + table.getCommonXpath());
+            System.out.println("Name: " + table.getName());
+            System.out.println("Mapped Cols: " + table.getNumerOfMappedColumns());
+            System.out.println("Rowcount: " + table.getRowCount());
+            System.out.println("End Cell: " + table.getEndCellReference());
+            System.out.println("Start Cell: " + table.getStartCellReference());
+        }*/
+        assertEquals("Sheet should contain 8 tables", 8, tables.size());
+        assertNotNull("Sheet should contain a comments table", sheet.getCommentsTable(false));
+    }
 }
