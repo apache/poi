@@ -2154,6 +2154,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         int level = xRow.getCTRow().getOutlineLevel();
         for (Iterator<Row> it = rowIterator(); it.hasNext();) {
             xRow = (XSSFRow) it.next();
+            
+            // skip rows before the start of this group
+            if(xRow.getRowNum() < rowIndex) {
+                continue;
+            }
+
             if (xRow.getCTRow().getOutlineLevel() >= level) {
                 xRow.getCTRow().setHidden(hidden);
                 rowIndex++;
@@ -2171,8 +2177,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             return;
         XSSFRow row = getRow(rowNumber);
         // If it is already expanded do nothing.
-        if (!row.getCTRow().isSetHidden())
+        if (!row.getCTRow().isSetHidden()) {
             return;
+        }
 
         // Find the start of the group.
         int startIdx = findStartOfRowOutlineGroup(rowNumber);
@@ -2202,7 +2209,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
         }
         // Write collapse field
-        getRow(endIdx).getCTRow().unsetCollapsed();
+        CTRow ctRow = getRow(endIdx).getCTRow();
+        // This avoids an IndexOutOfBounds if multiple nested groups are collapsed/expanded
+        if(ctRow.getCollapsed()) {
+            ctRow.unsetCollapsed();
+        }
     }
 
     /**
