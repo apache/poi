@@ -447,15 +447,23 @@ public class XSSFExportToXml implements Comparator<String>{
     }
 
     private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
-        Node complexTypeNode = null;
-
         String elementNameWithoutNamespace = removeNamespace(elementName);
 
+        String complexTypeName = getComplexTypeNameFromChildren(localComplexTypeRootNode, elementNameWithoutNamespace);
 
+        // Note: we expect that all the complex types are defined at root level
+        Node complexTypeNode = null;
+        if (!"".equals(complexTypeName)) {
+            complexTypeNode = getComplexTypeNodeFromSchemaChildren(xmlSchema, complexTypeNode, complexTypeName);
+        }
+
+        return complexTypeNode;
+    }
+
+    private String getComplexTypeNameFromChildren(Node localComplexTypeRootNode,
+            String elementNameWithoutNamespace) {
         NodeList  list  = localComplexTypeRootNode.getChildNodes();
         String complexTypeName = "";
-
-
 
         for(int i=0; i< list.getLength();i++) {
             Node node = list.item(i);
@@ -472,32 +480,34 @@ public class XSSFExportToXml implements Comparator<String>{
                 }
             }
         }
-        // Note: we expect that all the complex types are defined at root level
-        if (!"".equals(complexTypeName)) {
-            NodeList  complexTypeList  = xmlSchema.getChildNodes();
-            for(int i=0; i< complexTypeList.getLength();i++) {
-                Node node = complexTypeList.item(i);
-                if ( node instanceof Element) {
-                    if (node.getLocalName().equals("complexType")) {
-                        Node nameAttribute  = node.getAttributes().getNamedItem("name");
-                        if (nameAttribute.getNodeValue().equals(complexTypeName)) {
+        return complexTypeName;
+    }
 
-                            NodeList complexTypeChildList  =node.getChildNodes();
-                            for(int j=0; j<complexTypeChildList.getLength();j++) {
-                                Node sequence = complexTypeChildList.item(j);
+    private Node getComplexTypeNodeFromSchemaChildren(Node xmlSchema, Node complexTypeNode,
+            String complexTypeName) {
+        NodeList  complexTypeList  = xmlSchema.getChildNodes();
+        for(int i=0; i< complexTypeList.getLength();i++) {
+            Node node = complexTypeList.item(i);
+            if ( node instanceof Element) {
+                if (node.getLocalName().equals("complexType")) {
+                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    if (nameAttribute.getNodeValue().equals(complexTypeName)) {
 
-                                if ( sequence instanceof Element) {
-                                    if (sequence.getLocalName().equals("sequence")) {
-                                        complexTypeNode = sequence;
-                                        break;
-                                    }
+                        NodeList complexTypeChildList  =node.getChildNodes();
+                        for(int j=0; j<complexTypeChildList.getLength();j++) {
+                            Node sequence = complexTypeChildList.item(j);
+
+                            if ( sequence instanceof Element) {
+                                if (sequence.getLocalName().equals("sequence")) {
+                                    complexTypeNode = sequence;
+                                    break;
                                 }
                             }
-                            if (complexTypeNode!=null) {
-                                break;
-                            }
-
                         }
+                        if (complexTypeNode!=null) {
+                            break;
+                        }
+
                     }
                 }
             }
