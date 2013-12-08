@@ -41,11 +41,11 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
@@ -476,7 +476,7 @@ public class XSSFExportToXml implements Comparator<String>{
         if (!"".equals(complexTypeName)) {
             NodeList  complexTypeList  = xmlSchema.getChildNodes();
             for(int i=0; i< complexTypeList.getLength();i++) {
-                Node node = list.item(i);
+                Node node = complexTypeList.item(i);
                 if ( node instanceof Element) {
                     if (node.getLocalName().equals("complexType")) {
                         Node nameAttribute  = node.getAttributes().getNamedItem("name");

@@ -176,4 +176,42 @@ public final class TestXSSFExportToXML extends TestCase {
 			}
 		}
 	}
+
+    public void test55850ComplexXmlExport() throws Exception {
+
+        XSSFWorkbook wb = XSSFTestDataSamples
+                .openSampleWorkbook("55850.xlsx");
+
+        for (POIXMLDocumentPart p : wb.getRelations()) {
+
+            if (!(p instanceof MapInfo)) {
+                continue;
+            }
+            MapInfo mapInfo = (MapInfo) p;
+
+            XSSFMap map = mapInfo.getXSSFMapById(2);
+
+            assertNotNull("XSSFMap is null", map);
+
+            XSSFExportToXml exporter = new XSSFExportToXml(map);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            exporter.exportToXML(os, true);
+            String xmlData = os.toString("UTF-8");
+
+            assertNotNull(xmlData);
+            assertTrue(!xmlData.equals(""));
+
+            String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
+            String b = a.split("<B>")[1].split("</B>")[0].trim();
+            String c = b.split("<C>")[1].split("</C>")[0].trim();
+            String d = c.split("<D>")[1].split("</Dd>")[0].trim();
+            String e = d.split("<E>")[1].split("</EA>")[0].trim();
+
+            String euro = e.split("<EUR>")[1].split("</EUR>")[0].trim();
+            String chf = e.split("<CHF>")[1].split("</CHF>")[0].trim();
+
+            assertEquals("15", euro);
+            assertEquals("19", chf);
+        }
+    }
 }
