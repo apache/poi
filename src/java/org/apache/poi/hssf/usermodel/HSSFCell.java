@@ -19,7 +19,10 @@ package org.apache.poi.hssf.usermodel;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -35,17 +38,22 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
-import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * High level representation of a cell in a row of a spreadsheet.
@@ -254,7 +262,9 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * set the cells type (numeric, formula or string)
+     * Set the cells type (numeric, formula or string).
+     * If the cell currently contains a value, the value will
+     *  be converted to match the new type, if possible.
      * @see #CELL_TYPE_NUMERIC
      * @see #CELL_TYPE_STRING
      * @see #CELL_TYPE_FORMULA
