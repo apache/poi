@@ -109,9 +109,12 @@ public interface Cell {
      Row getRow();
 
     /**
-     * Set the cells type (numeric, formula or string)
+     * Set the cells type (numeric, formula or string).
+     * If the cell currently contains a value, the value will
+     *  be converted to match the new type, if possible.
      *
      * @throws IllegalArgumentException if the specified cell type is invalid
+     * @throws IllegalStateException if the current value cannot be converted to the new type
      * @see #CELL_TYPE_NUMERIC
      * @see #CELL_TYPE_STRING
      * @see #CELL_TYPE_FORMULA
