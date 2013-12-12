@@ -19,13 +19,13 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.xmlbeans.XmlObject;
-
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlObject;
 
 /**
  * Base super-class class for all shapes in PresentationML
@@ -151,9 +151,10 @@ public abstract class XSLFShape {
 
             // scale to bounding box (bug #53176)
             if (quadrant == 1 || quadrant == 3) {
-                // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation (45°-135° and 225°-315°),
-                // we need to first rotate the shape by a multiple of 90° and then resize the bounding box  
-                // to its original bbox. After that we can rotate the shape to the exact rotation amount.
+                // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation 
+                // (45-135 degrees and 225-315 degrees), we need to first rotate the shape by a multiple 
+                // of 90 degrees and then resize the bounding box to its original bbox. After that we can 
+                // rotate the shape to the exact rotation amount.
                 // It's strange that you'll need to rotate the shape back and forth again, but you can
                 // think of it, as if you paint the shape on a canvas. First you rotate the canvas, which might
                 // be already (differently) scaled, so you can paint the shape in its default orientation
