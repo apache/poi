@@ -24,6 +24,7 @@ import org.apache.poi.POIDataSamples;
 import junit.framework.TestCase;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Arrays;
 
 /**
@@ -386,8 +387,14 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.WMF, pdata.getType());
 	}
 
-	public void testZeroPictureLength() throws Exception {
-		HSLFSlideShow hslf = new HSLFSlideShow(slTests.openResourceAsStream("PictureLengthZero.ppt"));
+    /**
+     * YK: The test is disabled because the owner asked to delete the test file from POI svn.
+     * See "Please remove my file from your svn" on @poi-dev from Dec 12, 2013
+     */
+	public void disabled_testZeroPictureLength() throws Exception {
+        // take the data from www instead of test directory
+        URL url = new URL("http://www.cs.sfu.ca/~anoop/courses/CMPT-882-Fall-2002/chris.ppt");
+		HSLFSlideShow hslf = new HSLFSlideShow(url.openStream());
 
 		// Should still have 2 real pictures
 		assertEquals(2, hslf.getPictures().length);
