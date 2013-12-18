@@ -17,10 +17,9 @@
 
 package org.apache.poi.hpsf;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.rmi.UnexpectedException;
 
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 
@@ -70,7 +69,7 @@ public class PropertySetFactory
         {
             /* This exception will never be throws because we already checked
              * explicitly for this case above. */
-            throw new UnexpectedException(ex.toString());
+            throw new IllegalStateException(ex);
         }
     }
 
