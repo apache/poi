@@ -116,6 +116,7 @@ under the License.
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
+    <property name="ooxml.encryption.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
 
     <!-- Excelant: -->
     <property name="excelant.resource.dir" value="src/excelant/resources"/>
@@ -167,6 +168,11 @@ under the License.
     <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-src-1.1.jar"/>
     <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.1.jar"/>
 
+    <property name="ooxml.encryption.src.dir" location="build/ooxml-encryption-src"/>
+    <property name="ooxml.encryption.src.jar" location="${ooxml.lib}/ooxml-encryption-src-1.1.jar"/>
+    <property name="ooxml.encryption.jar" location="${ooxml.lib}/ooxml-encryption-1.1.jar"/>
+
+
     <property name="maven.ooxml.xsds.version.id" value="1.0"/>
     <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
@@ -210,6 +216,7 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
+        <pathelement location="${ooxml.encryption.jar}"/>
     </path>
 
     <path id="test.classpath">
@@ -436,9 +443,13 @@ under the License.
     <target name="check-compiled-ooxml-xsds" depends="fetch-ooxml-xsds">
         <condition property="ooxml-compiled-xsds.present">
             <or>
-                <and>
-                    <available file="${ooxml.xsds.jar}"/>
-                </and>
+                <available file="${ooxml.xsds.jar}"/>
+                <isset property="disconnected"/>
+            </or>
+        </condition>
+        <condition property="ooxml-compiled-encryption-xsds.present">
+            <or>
+                <available file="${ooxml.encryption.jar}"/>
                 <isset property="disconnected"/>
             </or>
         </condition>
@@ -482,6 +493,40 @@ under the License.
         <jar
                 basedir="${ooxml.xsds.src.dir}"
                 destfile="${ooxml.xsds.src.jar}"
+                />
+    </target>
+
+    <target name="compile-ooxml-encryption-xsds" unless="ooxml-compiled-encryption-xsds.present"
+            depends="check-jars,fetch-jars,check-compiled-ooxml-xsds"
+            description="Compiles the OOXML encryption xsd files into XmlBeans">
+        <taskdef name="xmlbean"
+                 classname="org.apache.xmlbeans.impl.tool.XMLBean"
+                 classpath="${ooxml.xmlbeans.jar}:${ooxml.jsr173.jar}"/>
+
+        <!-- We need a fair amount of memory to compile the xml schema, -->
+        <!--  but limit it in case it goes wrong! -->
+        <!-- Pick the right amount based on 32 vs 64 bit jvm -->
+        <condition property="ooxml.memory" value="768m" else="512m">
+           <equals arg1="${sun.arch.data.model}" arg2="64" />
+        </condition>
+
+        <xmlbean
+                schema="${ooxml.encryption.xsd.dir}"
+                srcgendir="${ooxml.encryption.src.dir}"
+                optimize="yes"
+                destfile="${ooxml.encryption.jar}"
+                javasource="1.5"
+                failonerror="true"
+                fork="true"
+                memoryMaximumSize="${ooxml.memory}"
+                >
+            <classpath refid="ooxml.classpath"/>
+        </xmlbean>
+
+        <!-- Now make a jar of the schema sources -->
+        <jar
+                basedir="${ooxml.encryption.src.dir}"
+                destfile="${ooxml.encryption.src.jar}"
                 />
     </target>
 
@@ -571,7 +616,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
+    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds,compile-ooxml-encryption-xsds">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
@@ -853,12 +898,23 @@ under the License.
     </target>
 
     <target name="compile-ooxml-lite" depends="compile-ooxml">
+        <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
+        <mkdir dir="${ooxml.lite-merged.dir}"/>
+
+    	<jar destfile="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar">
+    		<zipfileset includes="**/*" src="${ooxml.xsds.jar}"/>
+        	<zipfileset includes="**/*" src="${ooxml.encryption.jar}"/>
+        </jar>
+    	
         <java classname="org.apache.poi.util.OOXMLLite" fork="yes">
+        	<classpath>
+        		<pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
+    		</classpath>
             <classpath refid="test.ooxml.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
             <arg value="-ooxml"/>
-            <arg value="${ooxml.xsds.jar}"/>
+            <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
             <arg value="${ooxml.output.test.dir}"/>
             <arg value="-dest"/>
@@ -951,7 +1007,7 @@ under the License.
             description="Generates the API documentation">
         <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
                  windowtitle="POI API Documentation" use="true" version="true" 
-                 maxmemory="256M" additionalparam="-notimestamp">
+                 maxmemory="384M" additionalparam="-notimestamp">
 
             <packageset dir="${main.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>

@@ -21,6 +21,7 @@ package org.apache.poi;
  *
  * @author Yegor Kozlov
  */
+@SuppressWarnings("serial")
 public final class POIXMLException extends RuntimeException{
     /**
      * Create a new <code>POIXMLException</code> with no

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -32,9 +33,12 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
+
+import org.junit.Test;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -103,9 +107,18 @@ public final class OOXMLLite {
 
             String cls = arg.replace(".class", "");
             try {
-                @SuppressWarnings("unchecked")
-				Class<? extends TestCase> test = (Class<? extends TestCase>) Class.forName(cls);
-                suite.addTestSuite(test);
+                Class<?> testclass = Class.forName(cls);
+                boolean isTest = TestCase.class.isAssignableFrom(testclass);
+                if (!isTest) {
+                    for (Method m : testclass.getDeclaredMethods()) {
+                        isTest = m.isAnnotationPresent(Test.class);
+                        if (isTest) break;
+                    }
+                }
+                
+                if (isTest) {
+                    suite.addTest(new JUnit4TestAdapter(testclass));
+                }
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -181,8 +194,12 @@ public final class OOXMLLite {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
             Map<String, Class<?>> map = new HashMap<String, Class<?>>();
             for (Class<?> cls : classes) {
-                String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
-                if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
+                try {
+                    String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
+                    if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
+                } catch (NullPointerException e) {
+                    continue;
+                }
             }
             return map;
         } catch (IllegalAccessException e) {

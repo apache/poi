@@ -16,9 +16,18 @@
 ==================================================================== */
 package org.apache.poi;
 
+@SuppressWarnings("serial")
 public class EncryptedDocumentException extends IllegalStateException
 {
 	public EncryptedDocumentException(String s) {
 		super(s);
 	}
+
+    public EncryptedDocumentException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public EncryptedDocumentException(Throwable cause) {
+        super(cause);
+    }
 }
