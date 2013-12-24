@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import java.nio.charset.Charset;
+import java.io.UnsupportedEncodingException;
 import java.security.DigestException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -215,8 +215,11 @@ public class CryptoFunctions {
     }
     
     public static byte[] getUtf16LeString(String str) {
-        Charset cs = Charset.forName("UTF-16LE");
-        return str.getBytes(cs);
+        try {
+            return str.getBytes("UTF-16LE");
+        } catch (UnsupportedEncodingException e) {
+            throw new EncryptedDocumentException(e);
+        }
     }
     
     public static MessageDigest getMessageDigest(HashAlgorithm hashAlgorithm) {

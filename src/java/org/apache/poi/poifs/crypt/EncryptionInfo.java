@@ -65,7 +65,7 @@ public class EncryptionInfo {
         EncryptionInfoBuilder eib;
         try {
             eib = getBuilder(encryptionMode);
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
             throw new IOException(e);
         }
 
@@ -131,7 +131,7 @@ public class EncryptionInfo {
         EncryptionInfoBuilder eib;
         try {
             eib = getBuilder(encryptionMode);
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
             throw new EncryptedDocumentException(e);
         }
         
@@ -144,7 +144,7 @@ public class EncryptionInfo {
     }
 
     protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
-    throws ReflectiveOperationException {
+    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         EncryptionInfoBuilder eib;
         eib = (EncryptionInfoBuilder)cl.loadClass(encryptionMode.builder).newInstance();
