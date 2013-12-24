@@ -11,9 +11,10 @@ import javax.crypto.Cipher;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.Decryptor;
-import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -33,8 +34,8 @@ public class TestXWPFBugs {
         // Check the encryption details
         EncryptionInfo info = new EncryptionInfo(filesystem);
         assertEquals(128, info.getHeader().getKeySize());
-        assertEquals(EncryptionHeader.ALGORITHM_AES_128, info.getHeader().getAlgorithm());
-        assertEquals(EncryptionHeader.HASH_SHA1, info.getHeader().getHashAlgorithm());
+        assertEquals(CipherAlgorithm.aes128, info.getHeader().getCipherAlgorithm());
+        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
 
         // Check it can be decoded
         Decryptor d = Decryptor.getInstance(info);		
@@ -67,8 +68,8 @@ public class TestXWPFBugs {
         EncryptionInfo info = new EncryptionInfo(filesystem);
         assertEquals(16, info.getHeader().getBlockSize());
         assertEquals(256, info.getHeader().getKeySize());
-        assertEquals(EncryptionHeader.ALGORITHM_AES_256, info.getHeader().getAlgorithm());
-        assertEquals(EncryptionHeader.HASH_SHA1, info.getHeader().getHashAlgorithm());
+        assertEquals(CipherAlgorithm.aes256, info.getHeader().getCipherAlgorithm());
+        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
 
         // Check it can be decoded
         Decryptor d = Decryptor.getInstance(info);		

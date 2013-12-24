@@ -18,21 +18,26 @@ package org.apache.poi.poifs.crypt;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.DigestException;
-import java.security.MessageDigest;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.SecretKey;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 public abstract class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
+    
+    protected final EncryptionInfo info;
+    private SecretKey secretKey;
+    private byte[] verifier, integrityHmacKey, integrityHmacValue;
 
+    protected Decryptor(EncryptionInfo info) {
+        this.info = info;
+    }
+    
     /**
      * Return a stream with decrypted data.
      * <p>
@@ -68,15 +73,11 @@ public abstract class Decryptor {
     public abstract long getLength();
 
     public static Decryptor getInstance(EncryptionInfo info) {
-        int major = info.getVersionMajor();
-        int minor = info.getVersionMinor();
-
-        if (major == 4 && minor == 4)
-            return new AgileDecryptor(info);
-        else if (minor == 2 && (major == 3 || major == 4))
-            return new EcmaDecryptor(info);
-        else
+        Decryptor d = info.getDecryptor();
+        if (d == null) {
             throw new EncryptedDocumentException("Unsupported version");
+        }
+        return d;
     }
 
     public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
@@ -86,40 +87,37 @@ public abstract class Decryptor {
     public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
+    
+    // for tests
+    public byte[] getVerifier() {
+        return verifier;
+    }
 
-    protected byte[] hashPassword(EncryptionInfo info,
-                                  String password) throws NoSuchAlgorithmException {
-        // If no password was given, use the default
-        if (password == null) {
-            password = DEFAULT_PASSWORD;
-        }
-        
-        byte[] pass;
-        try {
-            pass = password.getBytes("UTF-16LE");
-        } catch (UnsupportedEncodingException e) {
-            throw new EncryptedDocumentException("UTF16 not supported");
-        }
+    public SecretKey getSecretKey() {
+        return secretKey;
+    }
+    
+    public byte[] getIntegrityHmacKey() {
+        return integrityHmacKey;
+    }
 
-        byte[] salt = info.getVerifier().getSalt();
-        
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        sha1.update(salt);
-        byte[] hash = sha1.digest(pass);
-        byte[] iterator = new byte[LittleEndianConsts.INT_SIZE];
-        
-        try {
-        for (int i = 0; i < info.getVerifier().getSpinCount(); i++) {
-        	LittleEndian.putInt(iterator, 0, i);
-            sha1.reset();
-            sha1.update(iterator);
-            sha1.update(hash);
-            sha1.digest(hash, 0, hash.length); // don't create hash buffer everytime new
-        }
-        } catch (DigestException e) {
-        	throw new EncryptedDocumentException("error in password hashing");
-        }
-        
-        return hash;
+    public byte[] getIntegrityHmacValue() {
+        return integrityHmacValue;
+    }
+
+    protected void setSecretKey(SecretKey secretKey) {
+        this.secretKey = secretKey;
+    }
+
+    protected void setVerifier(byte[] verifier) {
+        this.verifier = verifier;
+    }
+
+    protected void setIntegrityHmacKey(byte[] integrityHmacKey) {
+        this.integrityHmacKey = integrityHmacKey;
+    }
+
+    protected void setIntegrityHmacValue(byte[] integrityHmacValue) {
+        this.integrityHmacValue = integrityHmacValue;
     }
 }
