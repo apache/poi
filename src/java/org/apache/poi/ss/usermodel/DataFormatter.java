@@ -583,6 +583,7 @@ public class DataFormatter {
                         }
                         // Remove the character too
                         sb.deleteCharAt(i);
+                        i--;
                     }
                 }
             }
@@ -606,6 +607,7 @@ public class DataFormatter {
                     }
                     // Remove the _ too
                     sb.deleteCharAt(i);
+                    i--;
                 }
             }
         }
