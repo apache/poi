@@ -319,7 +319,7 @@ public class AgileEncryptor extends Encryptor {
                 int ciLen = _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
                 out.write(_chunk, 0, ciLen);
             } catch (GeneralSecurityException e) {
-                throw new IOException(e);
+                throw (IOException)new IOException().initCause(e);
             }
         }
         
