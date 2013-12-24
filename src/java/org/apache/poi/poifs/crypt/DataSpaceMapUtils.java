@@ -18,7 +18,7 @@
 package org.apache.poi.poifs.crypt;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
@@ -295,7 +295,6 @@ public class DataSpaceMapUtils {
     }
     
     public static String readUnicodeLPP4(LittleEndianInput is) {
-        Charset cs = Charset.forName("UTF-16LE");
         int length = is.readInt();
         byte data[] = new byte[length];
         is.readFully(data);
@@ -305,16 +304,23 @@ public class DataSpaceMapUtils {
             // 2 bytes long, and each byte MUST be 0x00.            
             is.readShort();
         }
-        return new String(data, 0, data.length, cs);
+        try {
+            return new String(data, 0, data.length, "UTF-16LE");
+        } catch (UnsupportedEncodingException e) {
+            throw new EncryptedDocumentException(e);
+        }
     }
     
     public static void writeUnicodeLPP4(LittleEndianOutput os, String str) {
-        Charset cs = Charset.forName("UTF-16LE");
-        byte buf[] = str.getBytes(cs);
-        os.writeInt(buf.length);
-        os.write(buf);
-        if (buf.length%4==2) {
-            os.writeShort(0);
+        try {
+            byte buf[] = str.getBytes("UTF-16LE");
+            os.writeInt(buf.length);
+            os.write(buf);
+            if (buf.length%4==2) {
+                os.writeShort(0);
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new EncryptedDocumentException(e);
         }
     }
 
@@ -340,8 +346,11 @@ public class DataSpaceMapUtils {
                 is.readByte();
             }
         }
-        Charset cs = Charset.forName("UTF-8");
-        return new String(data, 0, data.length, cs);
+        try {
+            return new String(data, 0, data.length, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new EncryptedDocumentException(e);
+        }
     }
     
     public static void writeUtf8LPP4(LittleEndianOutput os, String str) {
@@ -349,15 +358,18 @@ public class DataSpaceMapUtils {
             os.writeInt(str == null ? 0 : 4);
             os.writeInt(0);
         } else {
-            Charset cs = Charset.forName("UTF-8");
-            byte buf[] = str.getBytes(cs);
-            os.writeInt(buf.length);
-            os.write(buf);
-            int scratchBytes = buf.length%4;
-            if (scratchBytes > 0) {
-                for (int i=0; i<(4-scratchBytes); i++) {
-                    os.writeByte(0);
+            try {
+                byte buf[] = str.getBytes("UTF-8");
+                os.writeInt(buf.length);
+                os.write(buf);
+                int scratchBytes = buf.length%4;
+                if (scratchBytes > 0) {
+                    for (int i=0; i<(4-scratchBytes); i++) {
+                        os.writeByte(0);
+                    }
                 }
+            } catch (UnsupportedEncodingException e) {
+                throw new EncryptedDocumentException(e);
             }
         }        
     }
