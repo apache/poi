@@ -54,10 +54,10 @@ import java.util.Map;
  *       0x26, "#,##0_);[Red](#,##0)"<br/>
  *       0x27, "#,##0.00_);(#,##0.00)"<br/>
  *       0x28, "#,##0.00_);[Red](#,##0.00)"<br/>
- *       0x29, "_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)"<br/>
- *       0x2a, "_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)"<br/>
- *       0x2b, "_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)"<br/>
- *       0x2c, "_($*#,##0.00_);_($*(#,##0.00);_($*\"-\"??_);_(@_)"<br/>
+ *       0x29, "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)"<br/>
+ *       0x2a, "_($* #,##0_);_($* (#,##0);_($* \"-\"_);_(@_)"<br/>
+ *       0x2b, "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"<br/>
+ *       0x2c, "_($* #,##0.00_);_($* (#,##0.00);_($* \"-\"??_);_(@_)"<br/>
  *       0x2d, "mm:ss"<br/>
  *       0x2e, "[h]:mm:ss"<br/>
  *       0x2f, "mm:ss.0"<br/>
@@ -69,6 +69,7 @@ import java.util.Map;
  * @author Yegor Kozlov
  *
  * Modified 6/17/09 by Stanislav Shor - positive formats don't need starting '('
+ * Modified 10/31/13 by Eric Peters - * is a repeating/padding character directive, examples needed a space after the asterix (e.i. Accounting format)
  *
  */
 public final class BuiltinFormats {
@@ -137,8 +138,8 @@ public final class BuiltinFormats {
 		putFormat(m, 0x28, "#,##0.00_);[Red](#,##0.00)");
 		putFormat(m, 0x29, "_(\"$\"* #,##0_);_(\"$\"* (#,##0);_(\"$\"* \"-\"_);_(@_)");
 		putFormat(m, 0x2a, "_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)");
-		putFormat(m, 0x2b, "_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)");
-		putFormat(m, 0x2c, "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)");
+		putFormat(m, 0x2b, "_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)");
+		putFormat(m, 0x2c, "_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)");
 		putFormat(m, 0x2d, "mm:ss");
 		putFormat(m, 0x2e, "[h]:mm:ss");
 		putFormat(m, 0x2f, "mm:ss.0");
