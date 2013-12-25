@@ -649,7 +649,7 @@ if(false) {
       // Check we can get the english text out of that
       String text = rt.getText();
       assertContains(text, "Single byte");
-      // And the chinese - ﾊﾝｶｸ
+      // And the chinese
       assertContains(text, "\uff8a\uff9d\uff76\uff78");
       
       // It isn't bold or italic

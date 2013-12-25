@@ -27,26 +27,27 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.crypt.agile.AgileDecryptor;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+/*
+import org.junit.BeforeClass;
+import java.util.Date;
+import java.math.BigInteger;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
 import sun.security.x509.AlgorithmId;
 import sun.security.x509.CertificateAlgorithmId;
 import sun.security.x509.CertificateIssuerName;
@@ -58,9 +59,10 @@ import sun.security.x509.CertificateX509Key;
 import sun.security.x509.X500Name;
 import sun.security.x509.X509CertImpl;
 import sun.security.x509.X509CertInfo;
+*/
 
 /**
- * {@linkplain http://stackoverflow.com/questions/1615871/creating-an-x509-certificate-in-java-without-bouncycastle}
+ * @see <a href="http://stackoverflow.com/questions/1615871/creating-an-x509-certificate-in-java-without-bouncycastle">creating a self-signed certificate</a> 
  */
 public class TestCertificateEncryption {
     /**
@@ -91,7 +93,7 @@ public class TestCertificateEncryption {
      * The keystore generation / loading is split, because normally the keystore would
      * already exist.
      */ 
-    @BeforeClass
+    /* @BeforeClass
     public static void initKeystore() throws GeneralSecurityException, IOException {
         CertData certData = new CertData();
         
@@ -134,14 +136,16 @@ public class TestCertificateEncryption {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         keystore.store(bos, password.toCharArray());
         pfxFileBytes = bos.toByteArray();
-    }
+    } */
 
     public CertData loadKeystore()
     throws GeneralSecurityException, IOException {
         KeyStore keystore = KeyStore.getInstance("PKCS12");
         
-        InputStream fis = new ByteArrayInputStream(pfxFileBytes);
+        // InputStream fis = new ByteArrayInputStream(pfxFileBytes);
+        InputStream fis = POIDataSamples.getPOIFSInstance().openResourceAsStream("poitest.pfx");
         keystore.load(fis, password.toCharArray());
+        fis.close();
         
         X509Certificate x509 = (X509Certificate)keystore.getCertificate(certAlias);
         PrivateKey privateKey = (PrivateKey)keystore.getKey(certAlias, password.toCharArray());
