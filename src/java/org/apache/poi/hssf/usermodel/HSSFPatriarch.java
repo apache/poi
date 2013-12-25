@@ -45,6 +45,7 @@ import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -218,7 +219,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * 
      * @param anchor       the client anchor describes how this picture is
      *                     attached to the sheet.
-     * @param storageId    the storageId returned by {@link HSSFWorkbook.addOlePackage}
+     * @param storageId    the storageId returned by {@link HSSFWorkbook#addOlePackage(POIFSFileSystem,String,String,String)}
      * @param pictureIndex the index of the picture (used as preview image) in the
      *                     workbook collection of pictures.
      *

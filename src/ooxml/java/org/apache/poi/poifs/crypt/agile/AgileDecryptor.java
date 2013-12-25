@@ -198,11 +198,11 @@ public class AgileDecryptor extends Decryptor {
      * instead of a password, it's also possible to decrypt via certificate.
      * Warning: this code is experimental and hasn't been validated
      * 
-     * {@linkplain http://social.msdn.microsoft.com/Forums/en-US/cc9092bb-0c82-4b5b-ae21-abf643bdb37c/agile-encryption-with-certificates}
+     * @see <a href="http://social.msdn.microsoft.com/Forums/en-US/cc9092bb-0c82-4b5b-ae21-abf643bdb37c/agile-encryption-with-certificates">Agile encryption with certificates</a>
      *
      * @param keyPair
      * @param x509
-     * @return
+     * @return true, when the data can be successfully decrypted with the given private key
      * @throws GeneralSecurityException
      */
     public boolean verifyPassword(KeyPair keyPair, X509Certificate x509) throws GeneralSecurityException {

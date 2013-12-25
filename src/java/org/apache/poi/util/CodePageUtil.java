@@ -263,7 +263,7 @@ public class CodePageUtil
      * @return The character encoding's name, in either Java Lang format 
      *  (eg Cp1251, ISO8859_5) or Java NIO format (eg windows-1252, ISO-8859-9)
      *  
-     * See <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/intl/encoding.doc.html">Encodings supported by Java</a>
+     * @see <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/intl/encoding.doc.html">Supported Encodings</a>
      *
      * @exception UnsupportedEncodingException if the specified codepage is
      * less than zero.
