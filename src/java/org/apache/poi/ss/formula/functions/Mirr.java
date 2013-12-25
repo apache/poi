@@ -41,7 +41,7 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
  *
  * @see <a href="http://en.wikipedia.org/wiki/MIRR">Wikipedia on MIRR</a>
  * @see <a href="http://office.microsoft.com/en-001/excel-help/mirr-HP005209180.aspx">Excel MIRR</a>
- * @see {@link Irr}
+ * @see Irr
  */
 public class Mirr extends MultiOperandNumericFunction {
 

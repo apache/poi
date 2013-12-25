@@ -77,7 +77,6 @@ public final class NPropertyTable extends PropertyTableBase {
      * Builds
      * @param startAt
      * @param filesystem
-     * @return
      * @throws IOException
      */
     private static List<Property> buildProperties(final Iterator<ByteBuffer> dataSource,

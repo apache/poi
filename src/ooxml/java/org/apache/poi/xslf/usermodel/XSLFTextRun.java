@@ -16,6 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Color;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.text.AttributedString;
+
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
@@ -27,16 +33,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-
-import java.awt.Color;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -90,8 +90,6 @@ public class XSLFTextRun {
 
     /**
      * Replace a tab with the effective number of white spaces.
-     *
-     * @return
      */
     private String tab2space(){
         AttributedString string = new AttributedString(" ");

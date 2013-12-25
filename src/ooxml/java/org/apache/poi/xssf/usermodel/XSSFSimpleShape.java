@@ -21,16 +21,36 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.apache.poi.hssf.util.HSSFColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextHorzOverflowType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextVertOverflowType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 
 /**
@@ -244,7 +264,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
      * Returns a string containing an appropriate prefix for an auto-numbering bullet
      * @param scheme the auto-numbering scheme used by the bullet
      * @param value the value of the bullet
-     * @return
+     * @return appropriate prefix for an auto-numbering bullet
      */
     private String getBulletPrefix(ListAutoNumber scheme, int value){
         StringBuilder out = new StringBuilder();

@@ -18,7 +18,11 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implementation for Excel COMPLEX () function.<p/>
@@ -126,10 +130,6 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         return new StringEval(strb.toString());
     }
 
-    /**
-     * @param number
-     * @return
-     */
     private boolean isDoubleAnInt(double number) {
         return (number == Math.floor(number)) && !Double.isInfinite(number);
     }

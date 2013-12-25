@@ -249,7 +249,7 @@ public class XSSFExportToXml implements Comparator<String>{
      * Validate the generated XML against the XML Schema associated with the XSSFMap
      *
      * @param xml the XML to validate
-     * @return
+     * @return true, if document is valid
      */
     private boolean isValid(Document xml) throws SAXException{
         boolean isValid = false;

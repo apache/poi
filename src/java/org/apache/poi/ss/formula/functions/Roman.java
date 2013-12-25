@@ -17,7 +17,11 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Implementation for Excel WeekNum() function.<p/>
@@ -87,7 +91,6 @@ public class Roman extends Fixed2ArgFunction {
      * Classic conversion.
      *
      * @param number
-     * @return
      */
     private String integerToRoman(int number) {
         StringBuilder result = new StringBuilder();
@@ -105,7 +108,6 @@ public class Roman extends Fixed2ArgFunction {
      *
      * @param result
      * @param form
-     * @return
      */
     public String makeConcise(String result, int form) {
         if (form > 0) {

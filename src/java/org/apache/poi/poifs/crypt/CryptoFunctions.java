@@ -65,13 +65,13 @@ public class CryptoFunctions {
      * monotonically on each iteration until PasswordKey.spinCount iterations have been performed.
      * The value of iterator on the last iteration MUST be one less than PasswordKey.spinCount.
      * 
-     * For POI, H_final will be calculated by {@link generateKey()}
+     * For POI, H_final will be calculated by {@link #generateKey(byte[],HashAlgorithm,byte[],int)}
      *
      * @param password
      * @param hashAlgorithm
      * @param salt
      * @param spinCount
-     * @return
+     * @return the hashed password
      */
     public static byte[] hashPassword(String password, HashAlgorithm hashAlgorithm, byte salt[], int spinCount) {
         // If no password was given, use the default
@@ -146,7 +146,7 @@ public class CryptoFunctions {
      * @param hashAlgorithm
      * @param blockKey
      * @param keySize
-     * @return
+     * @return intermediate key
      */
     public static byte[] generateKey(byte[] passwordHash, HashAlgorithm hashAlgorithm, byte[] blockKey, int keySize) {
         MessageDigest hashAlgo = getMessageDigest(hashAlgorithm);
@@ -166,7 +166,7 @@ public class CryptoFunctions {
      * @param chain
      * @param vec
      * @param cipherMode Cipher.DECRYPT_MODE or Cipher.ENCRYPT_MODE
-     * @return
+     * @return the requested cipher
      * @throws GeneralSecurityException
      */
     public static Cipher getCipher(SecretKey key, CipherAlgorithm cipherAlgorithm, ChainingMode chain, byte[] vec, int cipherMode, String padding) {
