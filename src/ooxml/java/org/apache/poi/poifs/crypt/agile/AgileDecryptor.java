@@ -29,12 +29,14 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -383,7 +385,14 @@ public class AgileDecryptor extends Decryptor {
             LittleEndian.putInt(blockKey, 0, index);
             EncryptionHeader header = info.getHeader();
             byte[] iv = generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), blockKey, getBlockSizeInBytes());
-            _cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), new IvParameterSpec(iv));
+            AlgorithmParameterSpec aps;
+            if (header.getCipherAlgorithm() == CipherAlgorithm.rc2) {
+                aps = new RC2ParameterSpec(getSecretKey().getEncoded().length*8, iv);
+            } else {
+                aps = new IvParameterSpec(iv);
+            }
+            
+            _cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), aps);
             if (_lastIndex != index)
                 _stream.skip((index - _lastIndex) << 12);
 

@@ -28,9 +28,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.crypto.Cipher;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,6 +80,9 @@ public class TestAgileEncryptionParameters {
     
     @Test
     public void testAgileEncryptionModes() throws Exception {
+        int maxKeyLen = Cipher.getMaxAllowedKeyLength(ca.jceId);
+        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files", maxKeyLen >= ca.defaultKeySize);
+        
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         POIFSFileSystem fsEnc = new POIFSFileSystem();

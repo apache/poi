@@ -22,12 +22,14 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.RC2ParameterSpec;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.LittleEndian;
@@ -188,8 +190,13 @@ public class CryptoFunctions {
             if (vec == null) {
                 cipher.init(cipherMode, key);
             } else {
-                IvParameterSpec iv = new IvParameterSpec(vec);
-                cipher.init(cipherMode, key, iv);
+                AlgorithmParameterSpec aps;
+                if (cipherAlgorithm == CipherAlgorithm.rc2) {
+                    aps = new RC2ParameterSpec(key.getEncoded().length*8, vec);
+                } else {
+                    aps = new IvParameterSpec(vec);
+                }
+                cipher.init(cipherMode, key, aps);
             }
             return cipher;
         } catch (GeneralSecurityException e) {
