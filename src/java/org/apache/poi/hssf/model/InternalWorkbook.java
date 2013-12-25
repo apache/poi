@@ -808,7 +808,7 @@ public final class InternalWorkbook {
 
 
     /**
-     * creates a new Cell-type Extneded Format Record and adds it to the end of
+     * creates a new Cell-type Extended Format Record and adds it to the end of
      *  ExtendedFormatRecords collection
      *
      * @return ExtendedFormatRecord that was created

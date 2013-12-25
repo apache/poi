@@ -23,7 +23,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 
 import org.apache.poi.EncryptedDocumentException;
-
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;

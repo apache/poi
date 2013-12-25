@@ -18,9 +18,21 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
@@ -206,7 +218,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
      * 
      * @param anchor       the client anchor describes how this picture is
      *                     attached to the sheet.
-     * @param storageId    the storageId returned by {@Link HSSFWorkbook.addOlePackage}
+     * @param storageId    the storageId returned by {@link HSSFWorkbook.addOlePackage}
      * @param pictureIndex the index of the picture (used as preview image) in the
      *                     workbook collection of pictures.
      *
