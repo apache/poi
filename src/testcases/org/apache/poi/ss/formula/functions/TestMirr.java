@@ -19,8 +19,13 @@ package org.apache.poi.ss.formula.functions;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -29,7 +34,7 @@ import org.apache.poi.ss.usermodel.CellValue;
  * Tests for {@link org.apache.poi.ss.formula.functions.Mirr}
  *
  * @author Carlos Delgado (carlos dot del dot est at gmail dot com)
- * @author Cédric Walter (cedric dot walter at gmail dot com)
+ * @author Cedric Walter (cedric dot walter at gmail dot com)
  * @see {@link org.apache.poi.ss.formula.functions.TestIrr}
  */
 public final class TestMirr extends TestCase {

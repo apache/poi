@@ -21,8 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hslf.HSLFSlideShow;
@@ -55,10 +53,6 @@ public final class TestExtractor extends POITestCase {
    protected void setUp() throws Exception {
       ppe = new PowerPointExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
       ppe2 = new PowerPointExtractor(slTests.openResourceAsStream("with_textbox.ppt"));
-   }
-
-   private static void assertContains(String reason, String haystack, String needle) {
-      assertTrue(reason, haystack.contains(needle));
    }
 
     public void testReadSheetText() {
@@ -174,6 +168,7 @@ public final class TestExtractor extends POITestCase {
      /**
       * A powerpoint file with embeded powerpoint files
       */
+     @SuppressWarnings("unused")
      public void testExtractFromOwnEmbeded() throws Exception {
          String path = "ppt_with_embeded.ppt";
          ppe = new PowerPointExtractor(POIDataSamples.getSlideShowInstance().openResourceAsStream(path));
@@ -281,6 +276,7 @@ public final class TestExtractor extends POITestCase {
        assertContains(text, "test phrase");
     }
     
+   @SuppressWarnings("unused")
    public void testSlideMasterText() throws Exception {
       String masterTitleText = "This is the Master Title";
       String masterRandomText = "This text comes from the Master Slide";
@@ -337,10 +333,10 @@ public final class TestExtractor extends POITestCase {
        // Check for the english text in the mixed line
        assertContains(text, "Mix");
        
-       // Check for the chinese text in the mixed line - 表
+       // Check for the chinese text in the mixed line
        assertContains(text, "\u8868");
        
-       // Check for the chinese only text line - ﾊﾝｶｸ
+       // Check for the chinese only text line
        assertContains(text, "\uff8a\uff9d\uff76\uff78");
     }
     
@@ -348,6 +344,7 @@ public final class TestExtractor extends POITestCase {
      * Tests that we can work with both {@link POIFSFileSystem}
      *  and {@link NPOIFSFileSystem}
      */
+    @SuppressWarnings("resource")
     public void testDifferentPOIFS() throws Exception {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
@@ -356,7 +353,7 @@ public final class TestExtractor extends POITestCase {
        
        // Open directly 
        for(DirectoryNode dir : files) {
-          PowerPointExtractor extractor = new PowerPointExtractor(dir, null);
+          PowerPointExtractor extractor = new PowerPointExtractor(dir);
           assertEquals(expectText, extractor.getText());
        }
 
