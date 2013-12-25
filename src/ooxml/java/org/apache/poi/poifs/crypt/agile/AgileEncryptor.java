@@ -41,6 +41,7 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -49,9 +50,11 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
@@ -315,7 +318,14 @@ public class AgileEncryptor extends Encryptor {
             LittleEndian.putInt(blockKey, 0, index);
             byte[] iv = generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), blockKey, blockSize);
             try {
-                _cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), new IvParameterSpec(iv));
+                AlgorithmParameterSpec aps;
+                if (header.getCipherAlgorithm() == CipherAlgorithm.rc2) {
+                    aps = new RC2ParameterSpec(getSecretKey().getEncoded().length*8, iv);
+                } else {
+                    aps = new IvParameterSpec(iv);
+                }
+                
+                _cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), aps);
                 int ciLen = _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
                 out.write(_chunk, 0, ciLen);
             } catch (GeneralSecurityException e) {

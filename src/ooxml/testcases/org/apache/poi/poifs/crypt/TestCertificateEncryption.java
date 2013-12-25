@@ -157,7 +157,7 @@ public class TestCertificateEncryption {
     @Test
     public void testCertificateEncryption() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem();
-        EncryptionInfo info = new EncryptionInfo(fs, EncryptionMode.agile, CipherAlgorithm.aes192, HashAlgorithm.sha1, -1, -1, ChainingMode.cbc);
+        EncryptionInfo info = new EncryptionInfo(fs, EncryptionMode.agile, CipherAlgorithm.aes128, HashAlgorithm.sha1, -1, -1, ChainingMode.cbc);
         AgileEncryptionVerifier aev = (AgileEncryptionVerifier)info.getVerifier();
         CertData certData = loadKeystore();
         aev.addCertificate(certData.x509);

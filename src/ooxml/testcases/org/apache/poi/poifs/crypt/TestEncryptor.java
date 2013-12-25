@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import javax.crypto.Cipher;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -39,11 +41,15 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
+import org.junit.Assume;
 import org.junit.Test;
 
 public class TestEncryptor {
     @Test
     public void testAgileEncryption() throws Exception {
+        int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-pass.docx");
         String pass = "pass";
         NPOIFSFileSystem nfs = new NPOIFSFileSystem(file);
