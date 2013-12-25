@@ -29,7 +29,7 @@ public class SimpleFraction {
      * 
      * @param val double value of fraction
      * @param exactDenom the exact denominator
-     * @return
+     * @return a SimpleFraction with the given values set.
      */
     public static SimpleFraction buildFractionExactDenominator(double val, int exactDenom){
         int num =  (int)Math.round(val*(double)exactDenom);
