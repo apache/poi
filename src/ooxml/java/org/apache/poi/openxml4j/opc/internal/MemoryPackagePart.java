@@ -45,11 +45,6 @@ public final class MemoryPackagePart extends PackagePart {
 	protected byte[] data;
 
 	/**
-	 * Size of data.
-	 */
-	protected int length;
-
-	/**
 	 * Constructor.
 	 * 
 	 * @param pack
@@ -104,12 +99,11 @@ public final class MemoryPackagePart extends PackagePart {
 
 	@Override
 	public long getSize() {
-		return length;
+		return data == null ? 0 : data.length;
 	}
 
 	public void clear() {
 		data = null;
-		length = 0;
 	}
 
 	@Override
@@ -129,7 +123,6 @@ public final class MemoryPackagePart extends PackagePart {
 	   
 	   // Save it
 	   data = baos.toByteArray();
-	   length = data.length;
 	   
 	   // All done
 	   return true;
