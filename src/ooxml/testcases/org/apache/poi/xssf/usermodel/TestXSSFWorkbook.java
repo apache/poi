@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.CRC32;
@@ -31,6 +32,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -40,6 +42,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -574,4 +577,86 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	    Workbook read = XSSFTestDataSamples.writeOutAndReadBack(workbook);
 		assertSheetOrder(read, "Sheet2", "Sheet0", "Sheet1");
 	}
+	
+	public void testBug51158() throws IOException {
+        // create a workbook
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Test Sheet");
+        XSSFRow row = sheet.createRow(2);
+        XSSFCell cell = row.createCell(3);
+        cell.setCellValue("test1");
+
+        //XSSFCreationHelper helper = workbook.getCreationHelper();
+        //cell.setHyperlink(helper.createHyperlink(0));
+
+        XSSFComment comment = sheet.createDrawingPatriarch().createCellComment(new XSSFClientAnchor());
+        assertNotNull(comment);
+        comment.setString("some comment");
+
+//        CellStyle cs = workbook.createCellStyle();
+//        cs.setShrinkToFit(false);
+//        row.createCell(0).setCellStyle(cs);
+
+        // write the first excel file
+        XSSFWorkbook readBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        assertNotNull(readBack);
+        assertEquals("test1", readBack.getSheetAt(0).getRow(2).getCell(3).getStringCellValue());
+        assertNull(readBack.getSheetAt(0).getRow(2).getCell(4));
+
+        // add a new cell to the sheet
+        cell = row.createCell(4);
+        cell.setCellValue("test2");
+
+        // write the second excel file
+        readBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        assertNotNull(readBack);
+        assertEquals("test1", readBack.getSheetAt(0).getRow(2).getCell(3).getStringCellValue());
+        assertEquals("test2", readBack.getSheetAt(0).getRow(2).getCell(4).getStringCellValue());
+	}
+	
+	public void testBug51158a() throws IOException {
+        // create a workbook
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        workbook.createSheet("Test Sheet");
+
+        XSSFSheet sheetBack = workbook.getSheetAt(0);
+
+        // committing twice did add the XML twice without clearing the part in between
+        sheetBack.commit();
+
+        // ensure that a memory based package part does not have lingering data from previous commit() calls
+        if(sheetBack.getPackagePart() instanceof MemoryPackagePart) {
+            ((MemoryPackagePart)sheetBack.getPackagePart()).clear();
+        }
+
+        sheetBack.commit();
+
+        String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()));
+        System.out.println(str);
+        
+        assertEquals(1, countMatches(str, "<worksheet"));
+    }	
+	
+    private static final int INDEX_NOT_FOUND = -1;
+    
+    private static boolean isEmpty(CharSequence cs) {
+        return cs == null || cs.length() == 0;
+    }
+
+    private static int countMatches(CharSequence str, CharSequence sub) {
+        if (isEmpty(str) || isEmpty(sub)) {
+            return 0;
+        }
+        int count = 0;
+        int idx = 0;
+        while ((idx = indexOf(str, sub, idx)) != INDEX_NOT_FOUND) {
+            count++;
+            idx += sub.length();
+        }
+        return count;
+    }
+    
+    private static int indexOf(CharSequence cs, CharSequence searchChar, int start) {
+        return cs.toString().indexOf(searchChar.toString(), start);
+    }
 }

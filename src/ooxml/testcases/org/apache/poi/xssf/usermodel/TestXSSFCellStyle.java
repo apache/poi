@@ -31,16 +31,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 public class TestXSSFCellStyle extends TestCase {
 	private StylesTable stylesTable;
@@ -568,6 +559,8 @@ public class TestXSSFCellStyle extends TestCase {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), style1.getFillBackgroundColor());
         assertNull(style1.getFillBackgroundXSSFColor());
 
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb1));
+
         //compatibility with HSSF
         HSSFWorkbook wb2 = new HSSFWorkbook();
         HSSFCellStyle style2 = wb2.createCellStyle();
@@ -588,7 +581,6 @@ public class TestXSSFCellStyle extends TestCase {
 
 
 	public void testGetFillForegroundColor() {
-
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable styles = wb.getStylesSource();
         assertEquals(1, wb.getNumCellStyles());
@@ -620,6 +612,8 @@ public class TestXSSFCellStyle extends TestCase {
             assertEquals(IndexedColors.BRIGHT_GREEN.getIndex(), style.getFillForegroundColor());
             assertEquals(4, styles.getFills().size());
         }
+
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
 	}
 
 	public void testGetFillPattern() {
@@ -752,7 +746,10 @@ public class TestXSSFCellStyle extends TestCase {
       assertTrue(fnt == clone.getFont());
       assertTrue(18 == clone.getDataFormat());
       assertEquals(2, wb.getNumberOfFonts());
+
+      assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
 	}
+
 	/**
 	 * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
 	 */
@@ -820,6 +817,9 @@ public class TestXSSFCellStyle extends TestCase {
        assertEquals("TestingFont", reload.getFont().getFontName());
        assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
        assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
+
+       assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wbOrig));
+       assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wbClone));
    }
 
     /**
@@ -831,9 +831,10 @@ public class TestXSSFCellStyle extends TestCase {
         StylesTable st = workbook.getStylesSource();
         assertEquals(0, st._getStyleXfsSize());
         
-        
         XSSFCellStyle style = workbook.createCellStyle(); // no exception at this point
         assertNull(style.getStyleXf());
+
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
     }
 
     /**
@@ -848,6 +849,8 @@ public class TestXSSFCellStyle extends TestCase {
         // no exception at this point
         XSSFCellStyle style = workbook.getSheetAt(0).getRow(0).getCell(0).getCellStyle();
         assertNull(style.getStyleXf());
+
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
     }
 
     public void testShrinkToFit() {
@@ -878,5 +881,8 @@ public class TestXSSFCellStyle extends TestCase {
     	r = s.getRow(0);
     	assertEquals(false, r.getCell(0).getCellStyle().getShrinkToFit());
     	assertEquals(true,  r.getCell(1).getCellStyle().getShrinkToFit());
+
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wbOrig));
     }
 }

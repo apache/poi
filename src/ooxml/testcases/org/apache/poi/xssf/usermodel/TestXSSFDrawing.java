@@ -16,11 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,6 +64,7 @@ public class TestXSSFDrawing extends TestCase {
 
         for(XSSFShape sh : shapes) assertNotNull(sh.getAnchor());
 
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     public void testNew() throws Exception {
@@ -94,6 +91,7 @@ public class TestXSSFDrawing extends TestCase {
         c1.setLineStyle(1);
 
         XSSFShapeGroup c2 = drawing.createGroup(new XSSFClientAnchor(0,0,0,0,0,0,5,5));
+        assertNotNull(c2);
 
         XSSFSimpleShape c3 = drawing.createSimpleShape(new XSSFClientAnchor(0,0,0,0,2,2,3,4));
         c3.setText(new XSSFRichTextString("Test String"));
@@ -139,6 +137,8 @@ public class TestXSSFDrawing extends TestCase {
         String xml = ctDrawing.toString();
         assertTrue(xml.contains("xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\""));
         assertTrue(xml.contains("xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""));
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
     public void testMultipleDrawings(){
@@ -146,9 +146,12 @@ public class TestXSSFDrawing extends TestCase {
         for (int i = 0; i < 3; i++) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            assertNotNull(drawing);
         }
         OPCPackage pkg = wb.getPackage();
         assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     public void testClone() throws Exception{
@@ -175,12 +178,14 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(shapes1.size(), shapes2.size());
 
         for(int i = 0; i < shapes1.size(); i++){
-            XSSFShape sh1 = (XSSFShape)shapes1.get(i);
-            XSSFShape sh2 = (XSSFShape)shapes2.get(i);
+            XSSFShape sh1 = shapes1.get(i);
+            XSSFShape sh2 = shapes2.get(i);
 
             assertTrue(sh1.getClass() == sh2.getClass());
             assertEquals(sh1.getShapeProperties().toString(), sh2.getShapeProperties().toString());
         }
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     /**
@@ -216,7 +221,8 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(Arrays.equals(
                 new byte[]{0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal()));
-
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     /**
@@ -229,13 +235,16 @@ public class TestXSSFDrawing extends TestCase {
 
         XSSFClientAnchor anchor1 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4);
         XSSFShape shape1 = drawing.createTextbox(anchor1);
+        assertNotNull(shape1);
 
         XSSFClientAnchor anchor2 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 5);
         XSSFShape shape2 = drawing.createTextbox(anchor2);
+        assertNotNull(shape2);
 
         int pictureIndex= wb.addPicture(new byte[]{}, XSSFWorkbook.PICTURE_TYPE_PNG);
         XSSFClientAnchor anchor3 = new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 6);
         XSSFShape shape3 = drawing.createPicture(anchor3, pictureIndex);
+        assertNotNull(shape3);
 
         wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt(0);
@@ -244,8 +253,8 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(shapes.get(0).getAnchor(), anchor1);
         assertEquals(shapes.get(1).getAnchor(), anchor2);
         assertEquals(shapes.get(2).getAnchor(), anchor3);
-
-
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
     /**
@@ -277,14 +286,14 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(Arrays.equals(
                 new byte[]{0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal()));
-    	
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     /**
      * Test setText single paragraph to ensure backwards compatibility
      */
     public void testSetTextSingleParagraph() {
-    
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -311,13 +320,14 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(Arrays.equals(
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
     /**
      * Test addNewTextParagraph 
      */
     public void testAddNewTextParagraph() {
-    
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -333,13 +343,14 @@ public class TestXSSFDrawing extends TestCase {
         List<XSSFTextRun> runs = para.getTextRuns();
         assertEquals(1, runs.size());
         assertEquals("Line 1", runs.get(0).getText());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     /**
      * Test addNewTextParagraph using RichTextString
      */
     public void testAddNewTextParagraphWithRTS() {
-    
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -402,13 +413,14 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(Arrays.equals(
                 new int[] { 0, 255, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }    
     
     /**
      * Test add multiple paragraphs and retrieve text
      */
     public void testAddMultipleParagraphs() {
-    
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -427,13 +439,14 @@ public class TestXSSFDrawing extends TestCase {
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
         assertEquals(4, paras.size());	// this should be 4 as XSSFSimpleShape creates a default paragraph (no text), and then we added 3 paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());           
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
     /**
      * Test setting the text, then adding multiple paragraphs and retrieve text
      */
     public void testSetAddMultipleParagraphs() {
-    
     	XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -451,6 +464,8 @@ public class TestXSSFDrawing extends TestCase {
         List<XSSFTextParagraph> paras = shape.getTextParagraphs();
         assertEquals(3, paras.size());	// this should be 3 as we overwrote the default paragraph with setText, then added 2 new paragraphs
         assertEquals("Line 1\nLine 2\nLine 3", shape.getText());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
     /**
@@ -480,6 +495,8 @@ public class TestXSSFDrawing extends TestCase {
 
         XSSFSimpleShape textbox = (XSSFSimpleShape) shapes.get(4); 
         assertEquals("Sheet with various pictures\n(jpeg, png, wmf, emf and pict)", textbox.getText());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     
@@ -538,7 +555,10 @@ public class TestXSSFDrawing extends TestCase {
         assertTrue(Arrays.equals(
                 new int[] { 0, 0, 255 } ,
                 new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
+
     /**
      * Test adding and reading back paragraphs as bullet points
      */
@@ -644,6 +664,8 @@ public class TestXSSFDrawing extends TestCase {
         builder.append(paraString10);
         
         assertEquals(builder.toString(), sshape.getText());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }  
     
     /**
@@ -668,5 +690,7 @@ public class TestXSSFDrawing extends TestCase {
         sb.append("\t\n\t\n\t\n\t");
 
         assertEquals(sb.toString(), extracted);
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 }

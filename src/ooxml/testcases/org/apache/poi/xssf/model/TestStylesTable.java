@@ -17,11 +17,11 @@
 
 package org.apache.poi.xssf.model;
 
+import junit.framework.TestCase;
+
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-
-import junit.framework.TestCase;
 
 public final class TestStylesTable extends TestCase {
 	private String testFile = "Formatting.xlsx";
@@ -51,6 +51,8 @@ public final class TestStylesTable extends TestCase {
 		assertEquals(1, st._getXfsSize());
 		assertEquals(1, st._getStyleXfsSize());
 		assertEquals(0, st._getNumberFormatSize());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
 	}
 
 	public void testLoadExisting() {
@@ -60,7 +62,10 @@ public final class TestStylesTable extends TestCase {
 		StylesTable st = workbook.getStylesSource();
 
 		doTestExisting(st);
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
 	}
+
 	public void testLoadSaveLoad() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
 		assertNotNull(workbook.getStylesSource());
@@ -71,6 +76,7 @@ public final class TestStylesTable extends TestCase {
 		st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
 		doTestExisting(st);
 	}
+
 	public void doTestExisting(StylesTable st) {
 		// Check contents
 		assertNotNull(st.getCTStylesheet());
@@ -123,6 +129,8 @@ public final class TestStylesTable extends TestCase {
 		assertEquals("yyyy-mm-dd", st.getNumberFormatAt(nf1));
 		assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
 		assertEquals(nf2, st.putNumberFormat("yyyy-mm-DD"));
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
 	}
 
 	public void testPopulateExisting() {
@@ -147,5 +155,7 @@ public final class TestStylesTable extends TestCase {
 		assertEquals("YYYY-mm-dd", st.getNumberFormatAt(nf1));
 		assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
 		assertEquals(nf2, st.putNumberFormat("YYYY-mm-DD"));
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
 	}
 }

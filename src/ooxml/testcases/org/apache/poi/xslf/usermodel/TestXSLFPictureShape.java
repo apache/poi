@@ -16,14 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
+import static org.junit.Assert.assertArrayEquals;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
 /**
  * @author Yegor Kozlov
@@ -34,6 +36,7 @@ public class TestXSLFPictureShape extends TestCase {
         XMLSlideShow ppt = new XMLSlideShow();
         assertEquals(0, ppt.getAllPictures().size());
         byte[] data1 = new byte[100];
+        for(int i = 0;i < 100;i++) { data1[i] = (byte)i; }
         int idx1 = ppt.addPicture(data1, XSLFPictureData.PICTURE_TYPE_JPEG);
         assertEquals(0, idx1);
         assertEquals(1, ppt.getAllPictures().size());
@@ -41,25 +44,26 @@ public class TestXSLFPictureShape extends TestCase {
         XSLFSlide slide = ppt.createSlide();
         XSLFPictureShape shape1 = slide.createPicture(idx1);
         assertNotNull(shape1.getPictureData());
-        assertTrue(Arrays.equals(data1, shape1.getPictureData().getData()));
+        assertArrayEquals(data1, shape1.getPictureData().getData());
 
         byte[] data2 = new byte[200];
+        for(int i = 0;i < 200;i++) { data2[i] = (byte)i; }
         int idx2 = ppt.addPicture(data2, XSLFPictureData.PICTURE_TYPE_PNG);
         XSLFPictureShape shape2 = slide.createPicture(idx2);
         assertNotNull(shape2.getPictureData());
         assertEquals(1, idx2);
         assertEquals(2, ppt.getAllPictures().size());
-        assertTrue(Arrays.equals(data2, shape2.getPictureData().getData()));
+        assertArrayEquals(data2, shape2.getPictureData().getData());
 
         ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
         List<XSLFPictureData> pics = ppt.getAllPictures();
         assertEquals(2, pics.size());
-        assertTrue(Arrays.equals(data1, pics.get(0).getData()));
-        assertTrue(Arrays.equals(data2, pics.get(1).getData()));
+        assertArrayEquals(data1, pics.get(0).getData());
+        assertArrayEquals(data2, pics.get(1).getData());
 
         XSLFShape[] shapes = ppt.getSlides()[0].getShapes();
-        assertTrue(Arrays.equals(data1, ((XSLFPictureShape) shapes[0]).getPictureData().getData()));
-        assertTrue(Arrays.equals(data2, ((XSLFPictureShape) shapes[1]).getPictureData().getData()));
+        assertArrayEquals(data1, ((XSLFPictureShape) shapes[0]).getPictureData().getData());
+        assertArrayEquals(data2, ((XSLFPictureShape) shapes[1]).getPictureData().getData());
     }
 
     public void testCreateMultiplePictures() {
@@ -79,7 +83,7 @@ public class TestXSLFPictureShape extends TestCase {
             // POI saves images as image1.png, image2.png, etc.
             String fileName = "image" + (elementIndex + 1) + ".png";
             assertEquals(fileName, picture.getPictureData().getFileName());
-            assertTrue(Arrays.equals(data, picture.getPictureData().getData()));
+            assertArrayEquals(data, picture.getPictureData().getData());
         }
 
         // and then add next 20 images to a group
@@ -92,7 +96,7 @@ public class TestXSLFPictureShape extends TestCase {
             assertEquals(pictureIndex, elementIndex);   // added images have indexes 0,1,2....19
             String fileName = "image" + (pictureIndex + 1) + ".png";
             assertEquals(fileName, picture.getPictureData().getFileName());
-            assertTrue(Arrays.equals(data, picture.getPictureData().getData()));
+            assertArrayEquals(data, picture.getPictureData().getData());
         }
 
         // serialize, read back and check that all images are there
@@ -110,7 +114,7 @@ public class TestXSLFPictureShape extends TestCase {
             XSLFPictureData data = pics.get(fileName);
             assertNotNull(data);
             assertEquals(fileName, data.getFileName());
-            assertTrue(Arrays.equals(data1, data.getData()));
+            assertArrayEquals(data1, data.getData());
         }
     }
 
@@ -127,7 +131,9 @@ public class TestXSLFPictureShape extends TestCase {
         assertEquals(1, ppt.addPicture(img2, XSLFPictureData.PICTURE_TYPE_PNG));
 
         XSLFSlide slide1 = ppt.createSlide();
+        assertNotNull(slide1);
         XSLFSlide slide2 = ppt.createSlide();
+        assertNotNull(slide2);
 
     }
 
@@ -146,7 +152,7 @@ public class TestXSLFPictureShape extends TestCase {
         XSLFSlide slide2 = ppt2.createSlide().importContent(slide1);
         XSLFPictureShape shape2 = (XSLFPictureShape)slide2.getShapes()[0];
 
-        assertTrue(Arrays.equals(data1, shape2.getPictureData().getData()));
+        assertArrayEquals(data1, shape2.getPictureData().getData());
 
         CTPicture ctPic2 = (CTPicture)shape2.getXmlObject();
         assertFalse(ctPic2.getNvPicPr().getNvPr().isSetCustDataLst());

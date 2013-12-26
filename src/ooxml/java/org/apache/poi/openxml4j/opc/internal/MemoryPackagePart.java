@@ -102,7 +102,8 @@ public final class MemoryPackagePart extends PackagePart {
 		return data == null ? 0 : data.length;
 	}
 
-	public void clear() {
+    @Override
+    public void clear() {
 		data = null;
 	}
 
