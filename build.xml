@@ -153,8 +153,8 @@ under the License.
     <property name="ooxml.jsr173.url" value="${repository.m2}/maven2/stax/stax-api/1.0.1/stax-api-1.0.1.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.6.3.201306030806.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.6.3.201306030806/jacoco-0.6.3.201306030806.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.6.4.201312101107.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.6.4.201312101107/jacoco-0.6.4.201312101107.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-4.0.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/4.0/asm-all-4.0.jar"/>
 
