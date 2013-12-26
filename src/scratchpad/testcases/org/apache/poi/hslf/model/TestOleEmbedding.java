@@ -17,8 +17,16 @@
 
 package org.apache.poi.hslf.model;
 
+import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
@@ -26,7 +34,8 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 
 public final class TestOleEmbedding extends TestCase {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
@@ -81,5 +90,53 @@ public final class TestOleEmbedding extends TestCase {
 
         }
         assertEquals("Expected 2 OLE shapes", 2, cnt);
+    }
+    
+    public void testEmbedding() throws Exception {
+    	HSLFSlideShow _hslfSlideShow = HSLFSlideShow.create();
+    	SlideShow ppt = new SlideShow(_hslfSlideShow);
+    	
+    	File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");
+    	int pictId = ppt.addPicture(pict, Picture.JPEG);
+    	
+    	InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("Employee.xls");
+    	POIFSFileSystem poiData1 = new POIFSFileSystem(is);
+    	is.close();
+    	
+    	int oleObjectId1 = ppt.addEmbed(poiData1);
+    	
+    	Slide slide1 = ppt.createSlide();
+    	OLEShape oleShape1 = new OLEShape(pictId);
+    	oleShape1.setObjectID(oleObjectId1);
+    	slide1.addShape(oleShape1);
+    	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
+    	
+    	// add second slide with different order in object creation
+    	Slide slide2 = ppt.createSlide();
+    	OLEShape oleShape2 = new OLEShape(pictId);
+
+        is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleWithImages.xls");
+        POIFSFileSystem poiData2 = new POIFSFileSystem(is);
+        is.close();
+    	
+        int oleObjectId2 = ppt.addEmbed(poiData2);
+
+        oleShape2.setObjectID(oleObjectId2);
+        slide2.addShape(oleShape2);
+        oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
+        
+    	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    	ppt.write(bos);
+    	
+    	ppt = new SlideShow(new ByteArrayInputStream(bos.toByteArray()));
+    	OLEShape comp = (OLEShape)ppt.getSlides()[0].getShapes()[0];
+    	byte compData[] = IOUtils.toByteArray(comp.getObjectData().getData());
+    	
+    	bos.reset();
+    	poiData1.writeFilesystem(bos);
+    	byte expData[] = bos.toByteArray();
+    	
+    	assertTrue(Arrays.equals(expData, compData));
+    	
     }
 }
