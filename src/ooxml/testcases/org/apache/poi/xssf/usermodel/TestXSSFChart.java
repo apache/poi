@@ -32,6 +32,8 @@ public final class TestXSSFChart extends TestCase {
         assertEquals(0, s1.getRelations().size());
         assertEquals(1, s2.getRelations().size());
         assertEquals(1, s3.getRelations().size());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
     public void testGetCharts() throws Exception {
@@ -54,6 +56,8 @@ public final class TestXSSFChart extends TestCase {
        
        chart = s3.createDrawingPatriarch().getCharts().get(0);
        assertEquals("Sheet 3 Chart with Title", chart.getTitle().getString());
+       
+       assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
 	public void testAddChartsToNewWorkbook() throws Exception {
@@ -69,6 +73,9 @@ public final class TestXSSFChart extends TestCase {
 
 		XSSFClientAnchor a2 = new XSSFClientAnchor(0, 0, 0, 0, 1, 11, 10, 60);
 		XSSFChart c2 = d1.createChart(a2);
+		assertNotNull(c2);
 		assertEquals(2, d1.getCharts().size());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
 	}
 }

@@ -522,11 +522,11 @@ public abstract class PackagePart implements RelationshipSource {
 			// Create a memory part
 			PackagePart part = _container.createPart(this._partName,
 					this._contentType.toString(), false);
-			part._relationships = this._relationships;
 			if (part == null) {
-				throw new InvalidOperationException(
-						"Can't create a temporary part !");
+			    throw new InvalidOperationException(
+			            "Can't create a temporary part !");
 			}
+			part._relationships = this._relationships;
 			outStream = part.getOutputStreamImpl();
 		} else {
 			outStream = this.getOutputStreamImpl();
@@ -690,4 +690,10 @@ public abstract class PackagePart implements RelationshipSource {
 	 * respective buffer.
 	 */
 	public abstract void flush();
+
+	/**
+	 * Allows sub-classes to clean up before new data is added.
+	 */
+	public void clear() {
+	}
 }

@@ -18,8 +18,14 @@ package org.apache.poi;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -310,12 +316,29 @@ public class POIXMLDocumentPart {
      * @param alreadySaved    context set containing already visited nodes
      */
     protected final void onSave(Set<PackagePart> alreadySaved) throws IOException{
+        // this usually clears out previous content in the part...
+        prepareForCommit();
+
         commit();
         alreadySaved.add(this.getPackagePart());
         for(POIXMLDocumentPart p : relations.values()){
             if (!alreadySaved.contains(p.getPackagePart())) {
                 p.onSave(alreadySaved);
             }
+        }
+    }
+
+    /**
+     * Ensure that a memory based package part does not have lingering data from previous 
+     * commit() calls. 
+     * 
+     * Note: This is overwritten for some objects, as *PictureData seem to store the actual content 
+     * in the part directly without keeping a copy like all others therefore we need to handle them differently.
+     */
+    protected void prepareForCommit() {
+        PackagePart part = this.getPackagePart();
+        if(part != null) {
+            part.clear();
         }
     }
 

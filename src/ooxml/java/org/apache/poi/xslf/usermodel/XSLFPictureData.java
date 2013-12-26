@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
@@ -26,8 +28,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
-
-import java.io.IOException;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
@@ -205,5 +205,14 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
             checksum = IOUtils.calculateChecksum(pictureData);
         }
         return checksum;
+    }
+
+    /**
+     * *PictureData objects store the actual content in the part directly without keeping a 
+     * copy like all others therefore we need to handle them differently.
+     */
+    @Override
+    protected void prepareForCommit() {
+        // do not clear the part here
     }
 }

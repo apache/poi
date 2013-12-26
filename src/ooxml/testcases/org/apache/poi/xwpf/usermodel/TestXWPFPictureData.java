@@ -17,6 +17,8 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,13 @@ public class TestXWPFPictureData extends TestCase {
     public void testPictureInHeader() throws IOException
     {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx");
+        verifyOneHeaderPicture(sampleDoc);
+        
+        XWPFDocument readBack = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
+        verifyOneHeaderPicture(readBack);
+    }
+
+    private void verifyOneHeaderPicture(XWPFDocument sampleDoc) {
         XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
 
         XWPFHeader header = policy.getDefaultHeader();
@@ -70,8 +79,11 @@ public class TestXWPFPictureData extends TestCase {
     {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("EmptyDocumentWithHeaderFooter.docx");
         byte[] jpegData = XWPFTestDataSamples.getImage("nature1.jpg");
+        assertNotNull(jpegData);
         byte[] gifData = XWPFTestDataSamples.getImage("nature1.gif");
+        assertNotNull(gifData);
         byte[] pngData = XWPFTestDataSamples.getImage("nature1.png");
+        assertNotNull(pngData);
 
         List<XWPFPictureData> pictures = doc.getAllPictures();
         assertEquals(0,pictures.size());
@@ -113,20 +125,16 @@ public class TestXWPFPictureData extends TestCase {
         assertEquals("/word/media/image1.jpeg",jpegRel.getTargetURI().getPath());
 
         XWPFPictureData pictureDataByID = doc.getPictureDataByID(jpegRel.getId());
-        byte[] newJPEGData = pictureDataByID.getData();
-        assertEquals(newJPEGData.length,jpegData.length);
-        for (int i = 0 ; i < newJPEGData.length ; i++)
-        {
-            assertEquals(newJPEGData[i],jpegData[i]);
-        }
+        assertArrayEquals(jpegData, pictureDataByID.getData());
 
         // Save an re-load, check it appears
         doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
         assertEquals(1,doc.getAllPictures().size());
         assertEquals(1,doc.getAllPackagePictures().size());
-    }
-    
-    public void testGetChecksum() {
+
+        // verify the picture that we read back in
+        pictureDataByID = doc.getPictureDataByID(jpegRel.getId());
+        assertArrayEquals(jpegData, pictureDataByID.getData());
         
     }
 
@@ -145,10 +153,6 @@ public class TestXWPFPictureData extends TestCase {
                 }
             }
         }
-
-    }
-
-    private void process(XWPFParagraph paragraph){
 
     }
 }

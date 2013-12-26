@@ -16,13 +16,33 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Dimension;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.util.*;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -34,17 +54,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
 import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
-
-import java.awt.Dimension;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * High level representation of a ooxml slideshow.
@@ -163,6 +172,7 @@ public class XMLSlideShow  extends POIXMLDocument {
     /**
      * Get the document's embedded files.
      */
+    @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
         return Collections.unmodifiableList(
                 getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/.*?"))

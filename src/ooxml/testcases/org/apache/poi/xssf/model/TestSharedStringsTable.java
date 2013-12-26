@@ -17,19 +17,21 @@
 
 package org.apache.poi.xssf.model;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.io.*;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -130,6 +132,8 @@ public final class TestSharedStringsTable extends TestCase {
             CTRst st2 = items2.get(i);
             assertEquals(st1.toString(), st2.toString());
         }
+
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     /**
@@ -159,6 +163,8 @@ public final class TestSharedStringsTable extends TestCase {
             String val = s.getRow(i++).getCell(0).getStringCellValue();
             assertEquals(str, val);
         }
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(w));
     }
 
     private List<String> readStrings(String filename) throws IOException {

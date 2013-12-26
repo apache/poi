@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.BaseTestCellComment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -146,6 +147,8 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertEquals(8.5, rPr.getSzArray(0).getVal());
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), rPr.getColorArray(0).getIndexed());
         assertEquals("Tahoma", rPr.getRFontArray(0).getVal());
+        
+        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
     public void testAuthor() {
