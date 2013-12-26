@@ -168,8 +168,8 @@ public final class NPOIFSDocument implements POIFSViewable {
     * @return an Iterator; may not be null, but may have an empty back end
     *		 store
     */
-   public Iterator getViewableIterator() {
-      return Collections.EMPTY_LIST.iterator();
+   public Iterator<Object> getViewableIterator() {
+      return Collections.emptyList().iterator();
    }
 
    /**

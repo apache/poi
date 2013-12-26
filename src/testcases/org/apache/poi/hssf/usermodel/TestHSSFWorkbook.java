@@ -549,22 +549,27 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
        files[0] = (new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"))).getRoot();
-       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"))).getRoot();
-       
-       // Open without preserving nodes 
-       for(DirectoryNode dir : files) {
-          HSSFWorkbook workbook = new HSSFWorkbook(dir, false);
-          HSSFSheet sheet = workbook.getSheetAt(0);
-          HSSFCell cell = sheet.getRow(0).getCell(0);
-          assertEquals("replaceMe", cell .getRichStringCellValue().getString());
-       }
-
-       // Now re-check with preserving
-       for(DirectoryNode dir : files) {
-          HSSFWorkbook workbook = new HSSFWorkbook(dir, true);
-          HSSFSheet sheet = workbook.getSheetAt(0);
-          HSSFCell cell = sheet.getRow(0).getCell(0);
-          assertEquals("replaceMe", cell .getRichStringCellValue().getString());
+       NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"));
+       try {
+           files[1] = npoifsFileSystem.getRoot();
+           
+           // Open without preserving nodes 
+           for(DirectoryNode dir : files) {
+              HSSFWorkbook workbook = new HSSFWorkbook(dir, false);
+              HSSFSheet sheet = workbook.getSheetAt(0);
+              HSSFCell cell = sheet.getRow(0).getCell(0);
+              assertEquals("replaceMe", cell .getRichStringCellValue().getString());
+           }
+    
+           // Now re-check with preserving
+           for(DirectoryNode dir : files) {
+              HSSFWorkbook workbook = new HSSFWorkbook(dir, true);
+              HSSFSheet sheet = workbook.getSheetAt(0);
+              HSSFCell cell = sheet.getRow(0).getCell(0);
+              assertEquals("replaceMe", cell .getRichStringCellValue().getString());
+           }
+       } finally {
+           npoifsFileSystem.close();
        }
     }
     
@@ -572,26 +577,31 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
        files[0] = (new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"))).getRoot();
-       files[1] = (new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"))).getRoot();
-       
-       // Check the embedded parts
-       for(DirectoryNode root : files) {
-          HSSFWorkbook hw = new HSSFWorkbook(root, true);
-          List<HSSFObjectData> objects = hw.getAllEmbeddedObjects();
-          boolean found = false;
-          for (int i = 0; i < objects.size(); i++) {
-             HSSFObjectData embeddedObject = objects.get(i);
-             if (embeddedObject.hasDirectoryEntry()) {
-                DirectoryEntry dir = embeddedObject.getDirectory();
-                if (dir instanceof DirectoryNode) {
-                   DirectoryNode dNode = (DirectoryNode)dir;
-                   if (hasEntry(dNode,"WordDocument")) {
-                      found = true;
-                   }
-                }
-             }
-          }
-          assertTrue(found);
+       NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"));
+       try {
+           files[1] = npoifsFileSystem.getRoot();
+           
+           // Check the embedded parts
+           for(DirectoryNode root : files) {
+              HSSFWorkbook hw = new HSSFWorkbook(root, true);
+              List<HSSFObjectData> objects = hw.getAllEmbeddedObjects();
+              boolean found = false;
+              for (int i = 0; i < objects.size(); i++) {
+                 HSSFObjectData embeddedObject = objects.get(i);
+                 if (embeddedObject.hasDirectoryEntry()) {
+                    DirectoryEntry dir = embeddedObject.getDirectory();
+                    if (dir instanceof DirectoryNode) {
+                       DirectoryNode dNode = (DirectoryNode)dir;
+                       if (hasEntry(dNode,"WordDocument")) {
+                          found = true;
+                       }
+                    }
+                 }
+              }
+              assertTrue(found);
+           }
+       } finally {
+           npoifsFileSystem.close();
        }
     }
 

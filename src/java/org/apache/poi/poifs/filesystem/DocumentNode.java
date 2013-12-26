@@ -19,7 +19,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DocumentProperty;
@@ -85,6 +87,7 @@ public class DocumentNode
      * @return true if the Entry is a DocumentEntry, else false
      */
 
+    @Override
     public boolean isDocumentEntry()
     {
         return true;
@@ -101,6 +104,7 @@ public class DocumentNode
      *         false
      */
 
+    @Override
     protected boolean isDeleteOK()
     {
         return true;
@@ -129,9 +133,9 @@ public class DocumentNode
      * back end store
      */
 
-    public Iterator getViewableIterator()
+    public Iterator<Object> getViewableIterator()
     {
-        List components = new ArrayList();
+        List<Object> components = new ArrayList<Object>();
 
         components.add(getProperty());
         components.add(_document);

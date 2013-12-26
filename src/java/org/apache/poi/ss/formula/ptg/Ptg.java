@@ -245,6 +245,7 @@ public abstract class Ptg {
 	 * This helps get rid of gratuitous diffs when comparing two dumps
 	 * Subclasses may output more relevant information by overriding this method
 	 **/
+	@Override
 	public String toString(){
 		return this.getClass().toString();
 	}

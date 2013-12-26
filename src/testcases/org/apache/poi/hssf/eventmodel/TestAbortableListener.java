@@ -95,6 +95,7 @@ public final class TestAbortableListener extends TestCase {
 			countSeen = 0;
 			lastRecordSeen = null;
 		}
+		@Override
 		public short abortableProcessRecord(Record record) {
 			countSeen++;
 			lastRecordSeen = record;

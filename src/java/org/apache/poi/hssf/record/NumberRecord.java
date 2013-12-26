@@ -81,10 +81,12 @@ public final class NumberRecord extends CellRecord {
     	return 8;
     }
 
+    @Override
     public short getSid() {
         return sid;
     }
 
+    @Override
     public Object clone() {
       NumberRecord rec = new NumberRecord();
       copyBaseFields(rec);

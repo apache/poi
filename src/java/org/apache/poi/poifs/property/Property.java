@@ -19,12 +19,13 @@
 
 package org.apache.poi.poifs.property;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 
 import org.apache.poi.hpsf.ClassID;
-
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.util.ByteField;
@@ -498,9 +499,9 @@ public abstract class Property implements Child, POIFSViewable {
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-    public Iterator getViewableIterator()
+    public Iterator<Object> getViewableIterator()
     {
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.emptyList().iterator();
     }
 
     /**

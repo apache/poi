@@ -376,8 +376,8 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @return an Iterator; may not be null, but may have an empty back end
 	 *		 store
 	 */
-	public Iterator getViewableIterator() {
-		return Collections.EMPTY_LIST.iterator();
+	public Iterator<Object> getViewableIterator() {
+		return Collections.emptyList().iterator();
 	}
 
 	/**
