@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +31,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -38,6 +40,8 @@ import org.apache.poi.hslf.model.Notes;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -723,53 +727,10 @@ public final class SlideShow {
 
 		// Add the core records for this new Slide to the record tree
 		org.apache.poi.hslf.record.Slide slideRecord = slide.getSlideRecord();
-		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord(slideRecord);
-		_records = _hslfSlideShow.getRecords();
-
-		// Add the new Slide into the PersistPtr stuff
-		int offset = 0;
-		int slideOffset = 0;
-		PersistPtrHolder ptr = null;
-		UserEditAtom usr = null;
-		for (int i = 0; i < _records.length; i++) {
-			Record record = _records[i];
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			try {
-				record.writeOut(out);
-			} catch (IOException e) {
-				throw new HSLFException(e);
-			}
-
-			// Grab interesting records as they come past
-			if (_records[i].getRecordType() == RecordTypes.PersistPtrIncrementalBlock.typeID) {
-				ptr = (PersistPtrHolder) _records[i];
-			}
-			if (_records[i].getRecordType() == RecordTypes.UserEditAtom.typeID) {
-				usr = (UserEditAtom) _records[i];
-			}
-
-			if (i == slideRecordPos) {
-				slideOffset = offset;
-			}
-			offset += out.size();
-		}
-
-		// persist ID is UserEditAtom.maxPersistWritten + 1
-		int psrId = usr.getMaxPersistWritten() + 1;
+		int psrId = addPersistentObject(slideRecord);
 		sp.setRefID(psrId);
 		slideRecord.setSheetId(psrId);
-
-		// Last view is now of the slide
-		usr.setLastViewType((short) UserEditAtom.LAST_VIEW_SLIDE_VIEW);
-		usr.setMaxPersistWritten(psrId); // increment the number of persit
-										 // objects
-
-		// Add the new slide into the last PersistPtr
-		// (Also need to tell it where it is)
-		slideRecord.setLastOnDiskOffset(slideOffset);
-		ptr.addSlideLookup(sp.getRefID(), slideOffset);
-		logger.log(POILogger.INFO, "New slide ended up at " + slideOffset);
-
+		
 		slide.setMasterSheet(_masters[0]);
 		// All done and added
 		return slide;
@@ -978,16 +939,6 @@ public final class SlideShow {
 	 * @return 0-based index of the movie
 	 */
 	public int addMovie(String path, int type) {
-		ExObjList lst = (ExObjList) _documentRecord.findFirstOfType(RecordTypes.ExObjList.typeID);
-		if (lst == null) {
-			lst = new ExObjList();
-			_documentRecord.addChildAfter(lst, _documentRecord.getDocumentAtom());
-		}
-
-		ExObjListAtom objAtom = lst.getExObjListAtom();
-		// increment the object ID seed
-		int objectId = (int) objAtom.getObjectIDSeed() + 1;
-		objAtom.setObjectIDSeed(objectId);
 		ExMCIMovie mci;
 		switch (type) {
 			case MovieShape.MOVIE_MPEG:
@@ -1000,11 +951,13 @@ public final class SlideShow {
 				throw new IllegalArgumentException("Unsupported Movie: " + type);
 		}
 
-		lst.appendChildRecord(mci);
 		ExVideoContainer exVideo = mci.getExVideo();
-		exVideo.getExMediaAtom().setObjectId(objectId);
 		exVideo.getExMediaAtom().setMask(0xE80000);
 		exVideo.getPathAtom().setText(path);
+
+		int objectId = addToObjListAtom(mci);
+		exVideo.getExMediaAtom().setObjectId(objectId);
+		
 		return objectId;
 	}
 
@@ -1019,27 +972,18 @@ public final class SlideShow {
 	 * @return 0-based index of the control
 	 */
 	public int addControl(String name, String progId) {
-		ExObjList lst = (ExObjList) _documentRecord.findFirstOfType(RecordTypes.ExObjList.typeID);
-		if (lst == null) {
-			lst = new ExObjList();
-			_documentRecord.addChildAfter(lst, _documentRecord.getDocumentAtom());
-		}
-		ExObjListAtom objAtom = lst.getExObjListAtom();
-		// increment the object ID seed
-		int objectId = (int) objAtom.getObjectIDSeed() + 1;
-		objAtom.setObjectIDSeed(objectId);
 		ExControl ctrl = new ExControl();
-		ExOleObjAtom oleObj = ctrl.getExOleObjAtom();
-		oleObj.setObjID(objectId);
-		oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
-		oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
-		oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
-
 		ctrl.setProgId(progId);
 		ctrl.setMenuName(name);
 		ctrl.setClipboardName(name);
-		lst.addChildAfter(ctrl, objAtom);
-
+		
+		ExOleObjAtom oleObj = ctrl.getExOleObjAtom();
+		oleObj.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+		oleObj.setType(ExOleObjAtom.TYPE_CONTROL);
+		oleObj.setSubType(ExOleObjAtom.SUBTYPE_DEFAULT);
+		
+		int objectId = addToObjListAtom(ctrl);
+		oleObj.setObjID(objectId);
 		return objectId;
 	}
 
@@ -1049,6 +993,94 @@ public final class SlideShow {
 	 * @return 0-based index of the hyperlink
 	 */
 	public int addHyperlink(Hyperlink link) {
+		ExHyperlink ctrl = new ExHyperlink();
+		ExHyperlinkAtom obj = ctrl.getExHyperlinkAtom();
+        if(link.getType() == Hyperlink.LINK_SLIDENUMBER) {
+            ctrl.setLinkURL(link.getAddress(), 0x30);
+        } else {
+            ctrl.setLinkURL(link.getAddress());
+        }
+		ctrl.setLinkTitle(link.getTitle());
+
+		int objectId = addToObjListAtom(ctrl);
+		link.setId(objectId);
+		obj.setNumber(objectId);
+
+		return objectId;
+	}
+
+	/**
+	 * Add a embedded object to this presentation
+	 *
+	 * @return 0-based index of the embedded object
+	 */
+	public int addEmbed(POIFSFileSystem poiData) {
+        DirectoryNode root = poiData.getRoot();
+        
+        // prepare embedded data
+        if (new ClassID().equals(root.getStorageClsid())) {
+        	// need to set class id
+	        Map<String,ClassID> olemap = getOleMap();
+	        ClassID classID = null;
+	    	for (Map.Entry<String,ClassID> entry : olemap.entrySet()) {
+	    		if (root.hasEntry(entry.getKey())) {
+	    			classID = entry.getValue();
+	    			break;
+	    		}
+	    	}
+	    	if (classID == null) {
+	    		throw new IllegalArgumentException("Unsupported embedded document");    		
+	    	}
+	    	
+	    	root.setStorageClsid(classID);
+        }
+        
+		ExEmbed exEmbed = new ExEmbed();
+        // remove unneccessary infos, so we don't need to specify the type
+        // of the ole object multiple times
+        Record children[] = exEmbed.getChildRecords();
+        exEmbed.removeChild(children[2]);
+        exEmbed.removeChild(children[3]);
+        exEmbed.removeChild(children[4]);
+
+        ExEmbedAtom eeEmbed = exEmbed.getExEmbedAtom();
+        eeEmbed.setCantLockServerB(true);
+
+        ExOleObjAtom eeAtom = exEmbed.getExOleObjAtom();
+        eeAtom.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
+        eeAtom.setType(ExOleObjAtom.TYPE_EMBEDDED);
+        // eeAtom.setSubType(ExOleObjAtom.SUBTYPE_EXCEL);
+        // should be ignored?!?, see MS-PPT ExOleObjAtom, but Libre Office sets it ...
+        eeAtom.setOptions(1226240);
+
+        ExOleObjStg exOleObjStg = new ExOleObjStg();
+        try {
+	        final String OLESTREAM_NAME = "\u0001Ole";
+	        if (!root.hasEntry(OLESTREAM_NAME)) {
+	            // the following data was taken from an example libre office document
+	            // beside this "\u0001Ole" record there were several other records, e.g. CompObj,
+	            // OlePresXXX, but it seems, that they aren't neccessary
+	            byte oleBytes[] = { 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	            poiData.createDocument(new ByteArrayInputStream(oleBytes), OLESTREAM_NAME);
+	        }        
+
+	        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	        poiData.writeFilesystem(bos);
+	        exOleObjStg.setData(bos.toByteArray());
+        } catch (IOException e) {
+        	throw new HSLFException(e);
+        }
+        
+        int psrId = addPersistentObject(exOleObjStg);
+        exOleObjStg.setPersistId(psrId);
+        eeAtom.setObjStgDataRef(psrId);
+        
+		int objectId = addToObjListAtom(exEmbed);
+		eeAtom.setObjID(objectId);
+		return objectId;
+	}
+
+	protected int addToObjListAtom(RecordContainer exObj) {
 		ExObjList lst = (ExObjList) _documentRecord.findFirstOfType(RecordTypes.ExObjList.typeID);
 		if (lst == null) {
 			lst = new ExObjList();
@@ -1059,18 +1091,68 @@ public final class SlideShow {
 		int objectId = (int) objAtom.getObjectIDSeed() + 1;
 		objAtom.setObjectIDSeed(objectId);
 
-		ExHyperlink ctrl = new ExHyperlink();
-		ExHyperlinkAtom obj = ctrl.getExHyperlinkAtom();
-		obj.setNumber(objectId);
-        if(link.getType() == Hyperlink.LINK_SLIDENUMBER) {
-            ctrl.setLinkURL(link.getAddress(), 0x30);
-        } else {
-            ctrl.setLinkURL(link.getAddress());
-        }
-		ctrl.setLinkTitle(link.getTitle());
-		lst.addChildAfter(ctrl, objAtom);
-		link.setId(objectId);
-
+		lst.addChildAfter(exObj, objAtom);
+		
 		return objectId;
 	}
+
+    protected static Map<String,ClassID> getOleMap() {
+    	Map<String,ClassID> olemap = new HashMap<String,ClassID>();
+    	olemap.put("PowerPoint Document", ClassID.PPT_SHOW);
+    	olemap.put("Workbook", ClassID.EXCEL97); // as per BIFF8 spec
+    	olemap.put("WORKBOOK", ClassID.EXCEL97); // Typically from third party programs
+    	olemap.put("BOOK", ClassID.EXCEL97); // Typically odd Crystal Reports exports
+    	// ... to be continued
+    	return olemap;
+    }
+
+    protected int addPersistentObject(PositionDependentRecord slideRecord) {
+		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord((Record)slideRecord);
+		_records = _hslfSlideShow.getRecords();
+
+		// Add the new Slide into the PersistPtr stuff
+		int offset = 0;
+		int slideOffset = 0;
+		PersistPtrHolder ptr = null;
+		UserEditAtom usr = null;
+		int i = 0;
+		for (Record record : _records) {
+            // Grab interesting records as they come past
+			int recordType = (int)record.getRecordType();
+            if (recordType == RecordTypes.PersistPtrIncrementalBlock.typeID) {
+                ptr = (PersistPtrHolder)record;
+            }
+            if (recordType == RecordTypes.UserEditAtom.typeID) {
+                usr = (UserEditAtom)record;
+            }
+
+			if (i++ == slideRecordPos) {
+				slideOffset = offset;
+			}
+			
+			try {
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				record.writeOut(out);
+				offset += out.size();
+			} catch (IOException e) {
+				throw new HSLFException(e);
+			}
+		}
+
+		// persist ID is UserEditAtom.maxPersistWritten + 1
+		int psrId = usr.getMaxPersistWritten() + 1;
+
+		// Last view is now of the slide
+		usr.setLastViewType((short) UserEditAtom.LAST_VIEW_SLIDE_VIEW);
+		// increment the number of persistent objects
+		usr.setMaxPersistWritten(psrId);
+
+		// Add the new slide into the last PersistPtr
+		// (Also need to tell it where it is)
+		slideRecord.setLastOnDiskOffset(slideOffset);
+		ptr.addSlideLookup(psrId, slideOffset);
+		logger.log(POILogger.INFO, "New slide/object ended up at " + slideOffset);
+
+		return psrId;
+    }
 }

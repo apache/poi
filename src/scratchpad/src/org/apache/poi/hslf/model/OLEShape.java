@@ -23,6 +23,8 @@ import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.ExEmbed;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
 
@@ -73,6 +75,42 @@ public final class OLEShape extends Picture {
         return getEscherProperty(EscherProperties.BLIP__PICTUREID);
     }
 
+    /**
+     * Set the unique identifier for the OLE object and
+     * register it in the necessary structures
+     * 
+     * @param objectId the unique identifier for the OLE object
+     */
+    public void setObjectID(int objectId){
+    	setEscherProperty(EscherProperties.BLIP__PICTUREID, objectId);
+    	
+    	EscherContainerRecord ecr = getSpContainer();
+    	EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
+        spRecord.setFlags(spRecord.getFlags()|EscherSpRecord.FLAG_OLESHAPE);
+
+        EscherContainerRecord uerCont = ecr.getChildById((short)RecordTypes.EscherClientData);
+        if (uerCont == null) {
+        	uerCont = new EscherContainerRecord();
+        	ecr.addChildRecord(uerCont);
+        }
+        uerCont.setRecordId((short)RecordTypes.EscherClientData);
+        uerCont.setVersion((short)0x000F); // yes, we are still a container ...
+
+        UnknownEscherRecord uer = uerCont.getChildById((short)RecordTypes.ExObjRefAtom.typeID);
+        if (uer == null) {
+        	uer = new UnknownEscherRecord();
+        	uerCont.addChildRecord(uer);
+        }
+        
+        byte uerData[] = new byte[12];
+        LittleEndian.putShort( uerData, 0, (short)0 ); // options = 0
+        LittleEndian.putShort( uerData, 2, (short)RecordTypes.ExObjRefAtom.typeID); // recordId
+        LittleEndian.putInt( uerData, 4, 4 ); // remaining bytes
+        LittleEndian.putInt( uerData, 8, objectId ); // the data
+        uer.fillFields(uerData, 0, null);        
+    }
+    
+    
     /**
      * Returns unique identifier for the OLE object.
      *
