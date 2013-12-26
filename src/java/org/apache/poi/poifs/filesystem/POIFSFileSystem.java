@@ -37,17 +37,7 @@ import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.poi.poifs.storage.BATBlock;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
-import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
-import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.BlockWritable;
-import org.apache.poi.poifs.storage.HeaderBlockConstants;
-import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.RawDataBlockList;
-import org.apache.poi.poifs.storage.SmallBlockTableReader;
-import org.apache.poi.poifs.storage.SmallBlockTableWriter;
+import org.apache.poi.poifs.storage.*;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
@@ -75,7 +65,7 @@ public class POIFSFileSystem
     }
 
     private PropertyTable _property_table;
-    private List          _documents;
+    private List<POIFSViewable>          _documents;
     private DirectoryNode _root;
 
     /**
@@ -92,7 +82,7 @@ public class POIFSFileSystem
     {
         HeaderBlock header_block = new HeaderBlock(bigBlockSize);
         _property_table = new PropertyTable(header_block);
-        _documents      = new ArrayList();
+        _documents      = new ArrayList<POIFSViewable>();
         _root           = null;
     }
 
@@ -310,7 +300,7 @@ public class POIFSFileSystem
 
         // create a list of BATManaged objects: the documents plus the
         // property table and the small block table
-        List bm_objects = new ArrayList();
+        List<Object> bm_objects = new ArrayList<Object>();
 
         bm_objects.addAll(_documents);
         bm_objects.add(_property_table);
@@ -319,7 +309,7 @@ public class POIFSFileSystem
 
         // walk the list, allocating space for each and assigning each
         // a starting block number
-        Iterator iter = bm_objects.iterator();
+        Iterator<Object> iter = bm_objects.iterator();
 
         while (iter.hasNext())
         {
@@ -363,7 +353,7 @@ public class POIFSFileSystem
         // property table, the small block store, the small block
         // allocation table, the block allocation table, and the
         // extended block allocation table blocks)
-        List writers = new ArrayList();
+        List<Object> writers = new ArrayList<Object>();
 
         writers.add(header_block_writer);
         writers.addAll(_documents);
@@ -485,14 +475,14 @@ public class POIFSFileSystem
 
     private void processProperties(final BlockList small_blocks,
                                    final BlockList big_blocks,
-                                   final Iterator properties,
+                                   final Iterator<Property> properties,
                                    final DirectoryNode dir,
                                    final int headerPropertiesStartAt)
         throws IOException
     {
         while (properties.hasNext())
         {
-            Property      property = ( Property ) properties.next();
+            Property      property = properties.next();
             String        name     = property.getName();
             DirectoryNode parent   = (dir == null)
                                      ? (( DirectoryNode ) getRoot())
@@ -561,13 +551,13 @@ public class POIFSFileSystem
      * back end store
      */
 
-    public Iterator getViewableIterator()
+    public Iterator<Object> getViewableIterator()
     {
         if (!preferArray())
         {
             return (( POIFSViewable ) getRoot()).getViewableIterator();
         }
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.emptyList().iterator();
     }
 
     /**

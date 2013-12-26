@@ -124,6 +124,7 @@ public final class ExternalNameRecord extends StandardRecord {
     }
 
 
+	@Override
 	protected int getDataSize(){
 		int result = 2 + 4;  // short and int
         result += StringUtil.getEncodedSize(field_4_name) - 1; //size is byte, not short 
@@ -141,6 +142,7 @@ public final class ExternalNameRecord extends StandardRecord {
 		return result;
 	}
 
+	@Override
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(field_1_option_flag);
 		out.writeShort(field_2_ixals);
@@ -198,10 +200,12 @@ public final class ExternalNameRecord extends StandardRecord {
         }
     }
 
+	@Override
 	public short getSid() {
 		return sid;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("[EXTERNALNAME]\n");

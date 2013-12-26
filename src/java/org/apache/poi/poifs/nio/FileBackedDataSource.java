@@ -34,17 +34,20 @@ import org.apache.poi.util.IOUtils;
  */
 public class FileBackedDataSource extends DataSource {
    private FileChannel channel;
-   
+
+   @SuppressWarnings("resource")
    public FileBackedDataSource(File file) throws FileNotFoundException {
       if(!file.exists()) {
          throw new FileNotFoundException(file.toString());
       }
       this.channel = (new RandomAccessFile(file, "r")).getChannel();
    }
+
    public FileBackedDataSource(FileChannel channel) {
       this.channel = channel;
    }
-   
+
+   @Override
    public ByteBuffer read(int length, long position) throws IOException {
       if(position >= size()) {
          throw new IllegalArgumentException("Position " + position + " past the end of the file");
@@ -54,34 +57,38 @@ public class FileBackedDataSource extends DataSource {
       channel.position(position);
       ByteBuffer dst = ByteBuffer.allocate(length);
       int worked = IOUtils.readFully(channel, dst);
-      
+
       // Check
       if(worked == -1) {
          throw new IllegalArgumentException("Position " + position + " past the end of the file");
       }
-      
+
       // Ready it for reading
       dst.position(0);
-      
+
       // All done
       return dst;
    }
-   
+
+   @Override
    public void write(ByteBuffer src, long position) throws IOException {
       channel.write(src, position);
    }
-   
+
+   @Override
    public void copyTo(OutputStream stream) throws IOException {
       // Wrap the OutputSteam as a channel
       WritableByteChannel out = Channels.newChannel(stream);
       // Now do the transfer
       channel.transferTo(0, channel.size(), out);
    }
-   
+
+   @Override
    public long size() throws IOException {
       return channel.size();
    }
-   
+
+   @Override
    public void close() throws IOException {
       channel.close();
    }

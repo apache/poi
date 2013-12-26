@@ -46,17 +46,15 @@ import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
+import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.poifs.storage.HeaderBlockWriter;
-import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 
 /**
  * This is the main class of the POIFS system; it manages the entire
@@ -67,8 +65,8 @@ import org.apache.poi.util.POILogger;
 public class NPOIFSFileSystem extends BlockStore
     implements POIFSViewable, Closeable
 {
-	private static final POILogger _logger =
-		POILogFactory.getLogger(NPOIFSFileSystem.class);
+//	private static final POILogger _logger =
+//		POILogFactory.getLogger(NPOIFSFileSystem.class);
 
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
@@ -157,6 +155,7 @@ public class NPOIFSFileSystem extends BlockStore
      *
      * @exception IOException on errors reading, or on invalid data
      */
+    @SuppressWarnings("resource")
     public NPOIFSFileSystem(File file, boolean readOnly)
          throws IOException
     {
@@ -420,6 +419,7 @@ public class NPOIFSFileSystem extends BlockStore
     /**
      * Load the block at the given offset.
      */
+    @Override
     protected ByteBuffer getBlockAt(final int offset) throws IOException {
        // The header block doesn't count, so add one
        long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
@@ -430,6 +430,7 @@ public class NPOIFSFileSystem extends BlockStore
      * Load the block at the given offset, 
      *  extending the file if needed
      */
+    @Override
     protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
        try {
           return getBlockAt(offset);
@@ -448,6 +449,7 @@ public class NPOIFSFileSystem extends BlockStore
      * Returns the BATBlock that handles the specified offset,
      *  and the relative index within it
      */
+    @Override
     protected BATBlockAndIndex getBATBlockAndIndex(final int offset) {
        return BATBlock.getBATBlockAndIndex(
              offset, _header, _bat_blocks
@@ -457,6 +459,7 @@ public class NPOIFSFileSystem extends BlockStore
     /**
      * Works out what block follows the specified one.
      */
+    @Override
     protected int getNextBlock(final int offset) {
        BATBlockAndIndex bai = getBATBlockAndIndex(offset);
        return bai.getBlock().getValueAt( bai.getIndex() );
@@ -465,6 +468,7 @@ public class NPOIFSFileSystem extends BlockStore
     /**
      * Changes the record of what block follows the specified one.
      */
+    @Override
     protected void setNextBlock(final int offset, final int nextBlock) {
        BATBlockAndIndex bai = getBATBlockAndIndex(offset);
        bai.getBlock().setValueAt(
@@ -477,6 +481,7 @@ public class NPOIFSFileSystem extends BlockStore
      * This method will extend the file if needed, and if doing
      *  so, allocate new FAT blocks to address the extra space.
      */
+    @Override
     protected int getFreeBlock() throws IOException {
        // First up, do we have any spare ones?
        int offset = 0;
@@ -743,11 +748,21 @@ public class NPOIFSFileSystem extends BlockStore
             System.exit(1);
         }
         FileInputStream  istream = new FileInputStream(args[ 0 ]);
-        FileOutputStream ostream = new FileOutputStream(args[ 1 ]);
-
-        new NPOIFSFileSystem(istream).writeFilesystem(ostream);
-        istream.close();
-        ostream.close();
+        try {
+            FileOutputStream ostream = new FileOutputStream(args[ 1 ]);
+            try {
+                NPOIFSFileSystem fs = new NPOIFSFileSystem(istream);
+                try {
+                    fs.writeFilesystem(ostream);
+                } finally {
+                    fs.close();
+                }
+            } finally {
+                ostream.close();
+            }
+        } finally {
+            istream.close();
+        }
     }
 
     /**
@@ -818,13 +833,13 @@ public class NPOIFSFileSystem extends BlockStore
      * back end store
      */
 
-    public Iterator getViewableIterator()
+    public Iterator<Object> getViewableIterator()
     {
         if (!preferArray())
         {
             return (( POIFSViewable ) getRoot()).getViewableIterator();
         }
-        return Collections.EMPTY_LIST.iterator();
+        return Collections.emptyList().iterator();
     }
 
     /**
@@ -860,12 +875,15 @@ public class NPOIFSFileSystem extends BlockStore
     public int getBigBlockSize() {
       return bigBlockSize.getBigBlockSize();
     }
+
     /**
      * @return The Big Block size, normally 512 bytes, sometimes 4096 bytes
      */
     public POIFSBigBlockSize getBigBlockSizeDetails() {
       return bigBlockSize;
     }
+
+    @Override
     protected int getBlockStoreBlockSize() {
        return getBigBlockSize();
     }

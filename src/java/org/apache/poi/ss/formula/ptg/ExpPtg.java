@@ -42,12 +42,14 @@ public final class ExpPtg extends ControlPtg {
       this.field_2_first_col = firstCol;
     }
 
+    @Override
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
         out.writeShort(field_1_first_row);
         out.writeShort(field_2_first_col);
     }
 
+    @Override
     public int getSize() {
         return SIZE;
     }
@@ -60,10 +62,12 @@ public final class ExpPtg extends ControlPtg {
       return field_2_first_col;
     }
 
+    @Override
     public String toFormulaString() {
         throw new RuntimeException("Coding Error: Expected ExpPtg to be converted from Shared to Non-Shared Formula by ValueRecordsAggregate, but it wasn't");
     }
 
+    @Override
     public String toString() {
         StringBuffer buffer = new StringBuffer("[Array Formula or Shared Formula]\n");
         buffer.append("row = ").append(getRow()).append("\n");

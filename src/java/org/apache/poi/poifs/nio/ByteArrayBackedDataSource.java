@@ -36,6 +36,7 @@ public class ByteArrayBackedDataSource extends DataSource {
       this(data, data.length);
    }
                 
+   @Override
    public ByteBuffer read(int length, long position) {
       if(position >= size) {
          throw new IndexOutOfBoundsException(
@@ -48,6 +49,7 @@ public class ByteArrayBackedDataSource extends DataSource {
       return ByteBuffer.wrap(buffer, (int)position, toRead);
    }
    
+   @Override
    public void write(ByteBuffer src, long position) {
       // Extend if needed
       long endPosition = position + src.capacity(); 
@@ -79,14 +81,17 @@ public class ByteArrayBackedDataSource extends DataSource {
       buffer = nb;
    }
    
+   @Override
    public void copyTo(OutputStream stream) throws IOException {
       stream.write(buffer, 0, (int)size);
    }
    
+   @Override
    public long size() {
       return size;
    }
    
+   @Override
    public void close() {
       buffer = null;
       size = -1;

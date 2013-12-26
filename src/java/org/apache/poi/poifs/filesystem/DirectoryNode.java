@@ -521,10 +521,9 @@ public class DirectoryNode
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Iterator getViewableIterator()
+    public Iterator<Object> getViewableIterator()
     {
-        List components = new ArrayList();
+        List<Object> components = new ArrayList<Object>();
 
         components.add(getProperty());
         Iterator<Entry> iter = _entries.iterator();
