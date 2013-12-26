@@ -19,9 +19,12 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.util.*;
-
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
@@ -41,7 +44,7 @@ public class ReaderWriter
     private DirectoryEntry  root;
 
     // keys are DocumentDescriptors, values are byte[]s
-    private Map             dataMap;
+    private Map<DocumentDescriptor, byte[]>             dataMap;
 
     /**
      * Constructor ReaderWriter
@@ -55,7 +58,7 @@ public class ReaderWriter
     {
         this.filesystem = filesystem;
         root            = this.filesystem.getRoot();
-        dataMap         = new HashMap();
+        dataMap         = new HashMap<DocumentDescriptor, byte[]>();
     }
 
     /**
@@ -120,7 +123,7 @@ public class ReaderWriter
             System.out.println("adding document: " + descriptor + " (" + size
                                + " bytes)");
             dataMap.put(descriptor, data);
-            int            pathLength = path.length();
+            //int            pathLength = path.length();
             DirectoryEntry entry      = root;
 
             for (int k = 0; k < path.length(); k++)
@@ -173,7 +176,7 @@ public class ReaderWriter
 
             System.out.println("looking up document: " + descriptor + " ("
                                + event.getLimit() + " bytes)");
-            event.getStream().write(( byte [] ) dataMap.get(descriptor));
+            event.getStream().write(dataMap.get(descriptor));
         }
         catch (IOException e)
         {
