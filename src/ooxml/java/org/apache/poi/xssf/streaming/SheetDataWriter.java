@@ -43,11 +43,10 @@ public class SheetDataWriter {
     private final File _fd;
     private final Writer _out;
     private int _rownum;
-    private boolean _rowContainedNullCells = false;
-    int _numberOfFlushedRows;
-    int _lowestIndexOfFlushedRows; // meaningful only of _numberOfFlushedRows>0
-    int _numberOfCellsOfLastFlushedRow; // meaningful only of _numberOfFlushedRows>0
-    int _numberLastFlushedRow = -1; // meaningful only of _numberOfFlushedRows>0
+    private int _numberOfFlushedRows;
+    private int _lowestIndexOfFlushedRows; // meaningful only of _numberOfFlushedRows>0
+    private int _numberOfCellsOfLastFlushedRow; // meaningful only of _numberOfFlushedRows>0
+    private int _numberLastFlushedRow = -1; // meaningful only of _numberOfFlushedRows>0
 
     public SheetDataWriter() throws IOException {
         _fd = createTempFile();
@@ -161,7 +160,6 @@ public class SheetDataWriter {
         
         _out.write(">\n");
         this._rownum = rownum;
-        _rowContainedNullCells = false;
     }
 
     void endRow() throws IOException {
@@ -170,7 +168,6 @@ public class SheetDataWriter {
 
     public void writeCell(int columnIndex, Cell cell) throws IOException {
         if (cell == null) {
-            _rowContainedNullCells = true;
             return;
         }
         String ref = new CellReference(_rownum, columnIndex).formatAsString();
