@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +28,9 @@ import java.util.Set;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.model.Background;
 import org.apache.poi.hslf.model.Fill;
@@ -42,7 +45,6 @@ import org.apache.poi.hslf.model.TextBox;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.TextShape;
 import org.apache.poi.hslf.model.TitleMaster;
-import org.apache.poi.POIDataSamples;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -405,5 +407,32 @@ public final class TestBugs extends TestCase {
              run.setRawText(text);
           }
        }
+    }
+
+    /**
+     * Bug 41246: AIOOB with illegal note references
+     */
+    public void test41246a() throws Exception {
+        InputStream fis = _slTests.openResourceAsStream("41246-1.ppt");
+        HSLFSlideShow hslf = new HSLFSlideShow(fis);
+        fis.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        assertTrue("No Exceptions while reading file", true);
+
+        ppt = HSLFTestDataSamples.writeOutAndReadBack(ppt);
+        assertTrue("No Exceptions while rewriting file", true);
+    }
+
+    public void test41246b() throws Exception {
+        InputStream fis = _slTests.openResourceAsStream("41246-2.ppt");
+        HSLFSlideShow hslf = new HSLFSlideShow(fis);
+        fis.close();
+
+        SlideShow ppt = new SlideShow(hslf);
+        assertTrue("No Exceptions while reading file", true);
+
+        ppt = HSLFTestDataSamples.writeOutAndReadBack(ppt);
+        assertTrue("No Exceptions while rewriting file", true);
     }
 }

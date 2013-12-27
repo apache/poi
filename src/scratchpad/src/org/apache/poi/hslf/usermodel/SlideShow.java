@@ -203,32 +203,33 @@ public final class SlideShow {
 			_sheetIdToCoreRecordsLookup.put(allIDs[i], i);
 		}
 
+		Map<Integer,Integer> mostRecentByBytesRev = new HashMap<Integer,Integer>(mostRecentByBytes.size());
+		for (Map.Entry<Integer,Integer> me : mostRecentByBytes.entrySet()) {
+		    mostRecentByBytesRev.put(me.getValue(), me.getKey());
+		}
+		
 		// Now convert the byte offsets back into record offsets
 		for (Record record : _hslfSlideShow.getRecords()) {
-			if (record instanceof PositionDependentRecord) {
-				PositionDependentRecord pdr = (PositionDependentRecord) record;
-				int recordAt = pdr.getLastOnDiskOffset();
+			if (!(record instanceof PositionDependentRecord)) continue;
+			
+			PositionDependentRecord pdr = (PositionDependentRecord) record;
+			int recordAt = pdr.getLastOnDiskOffset();
 
-				// Is it one we care about?
-				for (Integer thisID : allIDs) {
-					int thatRecordAt = mostRecentByBytes.get(thisID);
+			Integer thisID = mostRecentByBytesRev.get(recordAt);
+			
+			if (thisID == null) continue;
+			
+			// Bingo. Now, where do we store it?
+			int storeAt = _sheetIdToCoreRecordsLookup.get(thisID);
 
-					if (thatRecordAt == recordAt) {
-						// Bingo. Now, where do we store it?
-						Integer storeAtI = _sheetIdToCoreRecordsLookup.get(thisID);
-						int storeAt = storeAtI.intValue();
-
-						// Tell it its Sheet ID, if it cares
-						if (pdr instanceof PositionDependentRecordContainer) {
-							PositionDependentRecordContainer pdrc = (PositionDependentRecordContainer) record;
-							pdrc.setSheetId(thisID);
-						}
-
-						// Finally, save the record
-						_mostRecentCoreRecords[storeAt] = record;
-					}
-				}
+			// Tell it its Sheet ID, if it cares
+			if (pdr instanceof PositionDependentRecordContainer) {
+				PositionDependentRecordContainer pdrc = (PositionDependentRecordContainer) record;
+				pdrc.setSheetId(thisID);
 			}
+
+			// Finally, save the record
+			_mostRecentCoreRecords[storeAt] = record;
 		}
 
 		// Now look for the interesting records in there
@@ -265,9 +266,9 @@ public final class SlideShow {
 	 *            the refID
 	 */
 	private Record getCoreRecordForRefID(int refID) {
-		Integer coreRecordId = _sheetIdToCoreRecordsLookup.get(Integer.valueOf(refID));
+		Integer coreRecordId = _sheetIdToCoreRecordsLookup.get(refID);
 		if (coreRecordId != null) {
-			Record r = _mostRecentCoreRecords[coreRecordId.intValue()];
+			Record r = _mostRecentCoreRecords[coreRecordId];
 			return r;
 		}
 		logger.log(POILogger.ERROR,
@@ -361,7 +362,15 @@ public final class SlideShow {
 				Record r = getCoreRecordForSAS(notesSets[i]);
 
 				// Ensure it really is a notes record
-				if (r instanceof org.apache.poi.hslf.record.Notes) {
+				if (r == null || r instanceof org.apache.poi.hslf.record.Notes) {
+				    if (r == null) {
+	                    logger.log(POILogger.WARN, "A Notes SlideAtomSet at " + i
+	                            + " said its record was at refID "
+	                            + notesSets[i].getSlidePersistAtom().getRefID()
+	                            + ", but that record didn't exist - record ignored.");
+				    }
+				    // we need to add also null-records, otherwise the index references to other existing
+				    // don't work anymore
 					org.apache.poi.hslf.record.Notes notesRecord = (org.apache.poi.hslf.record.Notes) r;
 					notesRecordsL.add(notesRecord);
 
@@ -410,8 +419,10 @@ public final class SlideShow {
 		// Notes first
 		_notes = new Notes[notesRecords.length];
 		for (int i = 0; i < _notes.length; i++) {
-			_notes[i] = new Notes(notesRecords[i]);
-			_notes[i].setSlideShow(this);
+		    if (notesRecords[i] != null) {
+    		    _notes[i] = new Notes(notesRecords[i]);
+    			_notes[i].setSlideShow(this);
+		    }
 		}
 		// Then slides
 		_slides = new Slide[slidesRecords.length];
@@ -425,11 +436,12 @@ public final class SlideShow {
 			// 0 if slide has no notes.
 			int noteId = slidesRecords[i].getSlideAtom().getNotesID();
 			if (noteId != 0) {
-				Integer notesPos = (Integer) slideIdToNotes.get(Integer.valueOf(noteId));
-				if (notesPos != null)
-					notes = _notes[notesPos.intValue()];
-				else
+				Integer notesPos = slideIdToNotes.get(noteId);
+				if (notesPos != null) {
+					notes = _notes[notesPos];
+				} else {
 					logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
+				}
 			}
 
 			// Now, build our slide
