@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
@@ -40,12 +41,14 @@ import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PersistRecord;
 import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
@@ -59,6 +62,8 @@ import org.apache.poi.util.POILogger;
  * @author Nick Burch
  */
 public final class HSLFSlideShow extends POIDocument {
+    public static final int UNSET_OFFSET = -1;
+    
     // For logging
     private POILogger logger = POILogFactory.getLogger(this.getClass());
 
@@ -346,6 +351,7 @@ public final class HSLFSlideShow extends POIDocument {
             int offset = pos;
 
             // Image signature
+            @SuppressWarnings("unused")
             int signature = LittleEndian.getUShort(pictstream, pos);
             pos += LittleEndian.SHORT_SIZE;
             // Image type + 0xF018
@@ -392,7 +398,88 @@ public final class HSLFSlideShow extends POIDocument {
         }
 	}
 
+	/**
+     * This is a helper functions, which is needed for adding new position dependent records
+     * or finally write the slideshow to a file.
+	 *
+	 * @param os the stream to write to, if null only the references are updated
+	 * @param interestingRecords a map of interesting records (PersistPtrHolder and UserEditAtom)
+	 *        referenced by their RecordType. Only the very last of each type will be saved to the map.
+	 *        May be null, if not needed. 
+	 * @throws IOException
+	 */
+	public void updateAndWriteDependantRecords(OutputStream os, Map<RecordTypes.Type,PositionDependentRecord> interestingRecords)
+	throws IOException {
+        // For position dependent records, hold where they were and now are
+        // As we go along, update, and hand over, to any Position Dependent
+        //  records we happen across
+        Hashtable<Integer,Integer> oldToNewPositions = new Hashtable<Integer,Integer>();
 
+        // First pass - figure out where all the position dependent
+        //   records are going to end up, in the new scheme
+        // (Annoyingly, some powerpoint files have PersistPtrHolders
+        //  that reference slides after the PersistPtrHolder)
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for (Record record : _records) {
+            if(record instanceof PositionDependentRecord) {
+                PositionDependentRecord pdr = (PositionDependentRecord)record;
+                int oldPos = pdr.getLastOnDiskOffset();
+                int newPos = baos.size();
+                pdr.setLastOnDiskOffset(newPos);
+                if (oldPos != UNSET_OFFSET) {
+                    // new records don't need a mapping, as they aren't in a relation yet
+                    oldToNewPositions.put(Integer.valueOf(oldPos),Integer.valueOf(newPos));
+                }
+            }
+            
+            // Dummy write out, so the position winds on properly
+            record.writeOut(baos);
+        }
+        baos = null;
+        
+        // For now, we're only handling PositionDependentRecord's that
+        // happen at the top level.
+        // In future, we'll need the handle them everywhere, but that's
+        // a bit trickier
+	    UserEditAtom usr = null;
+        for (Record record : _records) {
+            if (record instanceof PositionDependentRecord) {
+                // We've already figured out their new location, and
+                // told them that
+                // Tell them of the positions of the other records though
+                PositionDependentRecord pdr = (PositionDependentRecord)record;
+                pdr.updateOtherRecordReferences(oldToNewPositions);
+    
+                // Grab interesting records as they come past
+                // this will only save the very last record of each type
+                RecordTypes.Type saveme = null;
+                int recordType = (int)record.getRecordType();
+                if (recordType == RecordTypes.PersistPtrIncrementalBlock.typeID) {
+                    saveme = RecordTypes.PersistPtrIncrementalBlock;
+                } else if (recordType == RecordTypes.UserEditAtom.typeID) {
+                    saveme = RecordTypes.UserEditAtom;
+                    usr = (UserEditAtom)pdr;
+                }
+                if (interestingRecords != null && saveme != null) {
+                    interestingRecords.put(saveme,pdr);
+                }
+            }
+            
+            // Whatever happens, write out that record tree
+            if (os != null) {
+                record.writeOut(os);
+            }
+        }
+
+        // Update and write out the Current User atom
+        int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
+        Integer newLastUserEditAtomPos = oldToNewPositions.get(oldLastUserEditAtomPos);
+        if(usr == null || newLastUserEditAtomPos == null || usr.getLastOnDiskOffset() != newLastUserEditAtomPos) {
+            throw new HSLFException("Couldn't find the new location of the last UserEditAtom that used to be at " + oldLastUserEditAtomPos);
+        }
+        currentUser.setCurrentEditOffset(usr.getLastOnDiskOffset());
+	}
+	
     /**
      * Writes out the slideshow file the is represented by an instance
      *  of this class.
@@ -426,49 +513,13 @@ public final class HSLFSlideShow extends POIDocument {
         // Write out the Property Streams
         writeProperties(outFS, writtenEntries);
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
-        //  records we happen across
-        Hashtable<Integer,Integer> oldToNewPositions = new Hashtable<Integer,Integer>();
+        // records we happen across
+        updateAndWriteDependantRecords(baos, null);
 
-        // First pass - figure out where all the position dependent
-        //   records are going to end up, in the new scheme
-        // (Annoyingly, some powerpoing files have PersistPtrHolders
-        //  that reference slides after the PersistPtrHolder)
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        for(int i=0; i<_records.length; i++) {
-            if(_records[i] instanceof PositionDependentRecord) {
-                PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
-                int oldPos = pdr.getLastOnDiskOffset();
-                int newPos = baos.size();
-                pdr.setLastOnDiskOffset(newPos);
-                oldToNewPositions.put(Integer.valueOf(oldPos),Integer.valueOf(newPos));
-                //System.out.println(oldPos + " -> " + newPos);
-            }
-
-            // Dummy write out, so the position winds on properly
-            _records[i].writeOut(baos);
-        }
-
-        // No go back through, actually writing ourselves out
-        baos.reset();
-        for(int i=0; i<_records.length; i++) {
-            // For now, we're only handling PositionDependentRecord's that
-            //  happen at the top level.
-            // In future, we'll need the handle them everywhere, but that's
-            //  a bit trickier
-            if(_records[i] instanceof PositionDependentRecord) {
-                // We've already figured out their new location, and
-                //  told them that
-                // Tell them of the positions of the other records though
-                PositionDependentRecord pdr = (PositionDependentRecord)_records[i];
-                pdr.updateOtherRecordReferences(oldToNewPositions);
-            }
-
-            // Whatever happens, write out that record tree
-            _records[i].writeOut(baos);
-        }
         // Update our cached copy of the bytes that make up the PPT stream
         _docstream = baos.toByteArray();
 
@@ -476,15 +527,6 @@ public final class HSLFSlideShow extends POIDocument {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         outFS.createDocument(bais,"PowerPoint Document");
         writtenEntries.add("PowerPoint Document");
-
-
-        // Update and write out the Current User atom
-        int oldLastUserEditAtomPos = (int)currentUser.getCurrentEditOffset();
-        Integer newLastUserEditAtomPos = (Integer)oldToNewPositions.get(Integer.valueOf(oldLastUserEditAtomPos));
-        if(newLastUserEditAtomPos == null) {
-            throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + oldLastUserEditAtomPos);
-        }
-        currentUser.setCurrentEditOffset(newLastUserEditAtomPos.intValue());
         currentUser.writeToFS(outFS);
         writtenEntries.add("Current User");
 
@@ -506,7 +548,7 @@ public final class HSLFSlideShow extends POIDocument {
 
         // If requested, write out any other streams we spot
         if(preserveNodes) {
-            copyNodes(directory.getFileSystem(), outFS, writtenEntries);
+            EntryUtils.copyNodes(directory.getFileSystem(), outFS, writtenEntries);
         }
 
         // Send the POIFSFileSystem object out to the underlying stream
@@ -612,9 +654,9 @@ public final class HSLFSlideShow extends POIDocument {
     public ObjectData[] getEmbeddedObjects() {
         if (_objects == null) {
             List<ObjectData> objects = new ArrayList<ObjectData>();
-            for (int i = 0; i < _records.length; i++) {
-                if (_records[i] instanceof ExOleObjStg) {
-                    objects.add(new ObjectData((ExOleObjStg) _records[i]));
+            for (Record r : _records) {
+                if (r instanceof ExOleObjStg) {
+                    objects.add(new ObjectData((ExOleObjStg)r));
                 }
             }
             _objects = objects.toArray(new ObjectData[objects.size()]);

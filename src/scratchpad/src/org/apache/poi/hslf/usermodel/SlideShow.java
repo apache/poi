@@ -25,7 +25,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -35,11 +40,43 @@ import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.model.Hyperlink;
+import org.apache.poi.hslf.model.MovieShape;
 import org.apache.poi.hslf.model.Notes;
+import org.apache.poi.hslf.model.PPFont;
+import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.Shape;
 import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.model.SlideMaster;
+import org.apache.poi.hslf.model.TitleMaster;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.DocumentAtom;
+import org.apache.poi.hslf.record.ExAviMovie;
+import org.apache.poi.hslf.record.ExControl;
+import org.apache.poi.hslf.record.ExEmbed;
+import org.apache.poi.hslf.record.ExEmbedAtom;
+import org.apache.poi.hslf.record.ExHyperlink;
+import org.apache.poi.hslf.record.ExHyperlinkAtom;
+import org.apache.poi.hslf.record.ExMCIMovie;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.ExObjListAtom;
+import org.apache.poi.hslf.record.ExOleObjAtom;
+import org.apache.poi.hslf.record.ExOleObjStg;
+import org.apache.poi.hslf.record.ExVideoContainer;
+import org.apache.poi.hslf.record.FontCollection;
+import org.apache.poi.hslf.record.FontEntityAtom;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.PositionDependentRecordContainer;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
@@ -58,15 +95,12 @@ public final class SlideShow {
 	// What we're based on
 	private HSLFSlideShow _hslfSlideShow;
 
-	// Low level contents, as taken from HSLFSlideShow
-	private Record[] _records;
-
 	// Pointers to the most recent versions of the core records
 	// (Document, Notes, Slide etc)
 	private Record[] _mostRecentCoreRecords;
 	// Lookup between the PersitPtr "sheet" IDs, and the position
 	// in the mostRecentCoreRecords array
-	private Hashtable<Integer,Integer> _sheetIdToCoreRecordsLookup;
+	private Map<Integer,Integer> _sheetIdToCoreRecordsLookup;
 
 	// Records that are interesting
 	private Document _documentRecord;
@@ -97,10 +131,9 @@ public final class SlideShow {
 	public SlideShow(HSLFSlideShow hslfSlideShow) {
 	    // Get useful things from our base slideshow
 	    _hslfSlideShow = hslfSlideShow;
-		_records = _hslfSlideShow.getRecords();
 
 		// Handle Parent-aware Records
-		for (Record record : _records) {
+		for (Record record : _hslfSlideShow.getRecords()) {
 			if(record instanceof RecordContainer){
                 RecordContainer.handleParentAwareRecords((RecordContainer)record);
             }
@@ -135,25 +168,23 @@ public final class SlideShow {
 	 */
 	private void findMostRecentCoreRecords() {
 		// To start with, find the most recent in the byte offset domain
-		Hashtable<Integer,Integer> mostRecentByBytes = new Hashtable<Integer,Integer>();
-		for (int i = 0; i < _records.length; i++) {
-			if (_records[i] instanceof PersistPtrHolder) {
-				PersistPtrHolder pph = (PersistPtrHolder) _records[i];
+		Map<Integer,Integer> mostRecentByBytes = new HashMap<Integer,Integer>();
+		for (Record record : _hslfSlideShow.getRecords()) {
+			if (record instanceof PersistPtrHolder) {
+				PersistPtrHolder pph = (PersistPtrHolder) record;
 
 				// If we've already seen any of the "slide" IDs for this
 				// PersistPtr, remove their old positions
 				int[] ids = pph.getKnownSlideIDs();
-				for (int j = 0; j < ids.length; j++) {
-					Integer id = Integer.valueOf(ids[j]);
+				for (int id : ids) {
 					if (mostRecentByBytes.containsKey(id)) {
 						mostRecentByBytes.remove(id);
 					}
 				}
 
 				// Now, update the byte level locations with their latest values
-				Hashtable<Integer,Integer> thisSetOfLocations = pph.getSlideLocationsLookup();
-				for (int j = 0; j < ids.length; j++) {
-					Integer id = Integer.valueOf(ids[j]);
+				Map<Integer,Integer> thisSetOfLocations = pph.getSlideLocationsLookup();
+				for (int id : ids) {
 					mostRecentByBytes.put(id, thisSetOfLocations.get(id));
 				}
 			}
@@ -165,54 +196,48 @@ public final class SlideShow {
 
 		// We'll also want to be able to turn the slide IDs into a position
 		// in this array
-		_sheetIdToCoreRecordsLookup = new Hashtable<Integer,Integer>();
-		int[] allIDs = new int[_mostRecentCoreRecords.length];
-		Enumeration<Integer> ids = mostRecentByBytes.keys();
-		for (int i = 0; i < allIDs.length; i++) {
-			Integer id = ids.nextElement();
-			allIDs[i] = id.intValue();
-		}
+		_sheetIdToCoreRecordsLookup = new HashMap<Integer,Integer>();
+		Integer[] allIDs = mostRecentByBytes.keySet().toArray(new Integer[mostRecentByBytes.size()]); 
 		Arrays.sort(allIDs);
 		for (int i = 0; i < allIDs.length; i++) {
-			_sheetIdToCoreRecordsLookup.put(Integer.valueOf(allIDs[i]), Integer.valueOf(i));
+			_sheetIdToCoreRecordsLookup.put(allIDs[i], i);
 		}
 
 		// Now convert the byte offsets back into record offsets
-		for (int i = 0; i < _records.length; i++) {
-			if (_records[i] instanceof PositionDependentRecord) {
-				PositionDependentRecord pdr = (PositionDependentRecord) _records[i];
-				Integer recordAt = Integer.valueOf(pdr.getLastOnDiskOffset());
+		for (Record record : _hslfSlideShow.getRecords()) {
+			if (record instanceof PositionDependentRecord) {
+				PositionDependentRecord pdr = (PositionDependentRecord) record;
+				int recordAt = pdr.getLastOnDiskOffset();
 
 				// Is it one we care about?
-				for (int j = 0; j < allIDs.length; j++) {
-					Integer thisID = Integer.valueOf(allIDs[j]);
-					Integer thatRecordAt = mostRecentByBytes.get(thisID);
+				for (Integer thisID : allIDs) {
+					int thatRecordAt = mostRecentByBytes.get(thisID);
 
-					if (thatRecordAt.equals(recordAt)) {
+					if (thatRecordAt == recordAt) {
 						// Bingo. Now, where do we store it?
 						Integer storeAtI = _sheetIdToCoreRecordsLookup.get(thisID);
 						int storeAt = storeAtI.intValue();
 
 						// Tell it its Sheet ID, if it cares
 						if (pdr instanceof PositionDependentRecordContainer) {
-							PositionDependentRecordContainer pdrc = (PositionDependentRecordContainer) _records[i];
-							pdrc.setSheetId(thisID.intValue());
+							PositionDependentRecordContainer pdrc = (PositionDependentRecordContainer) record;
+							pdrc.setSheetId(thisID);
 						}
 
 						// Finally, save the record
-						_mostRecentCoreRecords[storeAt] = _records[i];
+						_mostRecentCoreRecords[storeAt] = record;
 					}
 				}
 			}
 		}
 
 		// Now look for the interesting records in there
-		for (int i = 0; i < _mostRecentCoreRecords.length; i++) {
+		for (Record record : _mostRecentCoreRecords) {
 			// Check there really is a record at this number
-			if (_mostRecentCoreRecords[i] != null) {
+			if (record != null) {
 				// Find the Document, and interesting things in it
-				if (_mostRecentCoreRecords[i].getRecordType() == RecordTypes.Document.typeID) {
-					_documentRecord = (Document) _mostRecentCoreRecords[i];
+				if (record.getRecordType() == RecordTypes.Document.typeID) {
+					_documentRecord = (Document) record;
 					_fonts = _documentRecord.getEnvironment().getFontCollection();
 				}
 			} else {
@@ -296,9 +321,8 @@ public final class SlideShow {
 			ArrayList<SlideMaster> mmr = new ArrayList<SlideMaster>();
 			ArrayList<TitleMaster> tmr = new ArrayList<TitleMaster>();
 
-			for (int i = 0; i < masterSets.length; i++) {
-				Record r = getCoreRecordForSAS(masterSets[i]);
-				SlideAtomsSet sas = masterSets[i];
+			for (SlideAtomsSet sas : masterSets) {
+				Record r = getCoreRecordForSAS(sas);
 				int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
 				if (r instanceof org.apache.poi.hslf.record.Slide) {
 					TitleMaster master = new TitleMaster((org.apache.poi.hslf.record.Slide) r,
@@ -313,11 +337,8 @@ public final class SlideShow {
 				}
 			}
 
-			_masters = new SlideMaster[mmr.size()];
-			mmr.toArray(_masters);
-
-			_titleMasters = new TitleMaster[tmr.size()];
-			tmr.toArray(_titleMasters);
+			_masters = mmr.toArray(new SlideMaster[mmr.size()]);
+			_titleMasters = tmr.toArray(new TitleMaster[tmr.size()]);
 		}
 
 		// Having sorted out the masters, that leaves the notes and slides
@@ -326,14 +347,14 @@ public final class SlideShow {
 		// notesSLWT
 		org.apache.poi.hslf.record.Notes[] notesRecords;
 		SlideAtomsSet[] notesSets = new SlideAtomsSet[0];
-		Hashtable<Integer,Integer> slideIdToNotes = new Hashtable<Integer,Integer>();
+		Map<Integer,Integer> slideIdToNotes = new HashMap<Integer,Integer>();
 		if (notesSLWT == null) {
 			// None
 			notesRecords = new org.apache.poi.hslf.record.Notes[0];
 		} else {
 			// Match up the records and the SlideAtomSets
 			notesSets = notesSLWT.getSlideAtomsSets();
-			ArrayList<org.apache.poi.hslf.record.Notes> notesRecordsL = 
+			List<org.apache.poi.hslf.record.Notes> notesRecordsL = 
 			   new ArrayList<org.apache.poi.hslf.record.Notes>();
 			for (int i = 0; i < notesSets.length; i++) {
 				// Get the right core record
@@ -346,8 +367,8 @@ public final class SlideShow {
 
 					// Record the match between slide id and these notes
 					SlidePersistAtom spa = notesSets[i].getSlidePersistAtom();
-					Integer slideId = Integer.valueOf(spa.getSlideIdentifier());
-					slideIdToNotes.put(slideId, Integer.valueOf(i));
+					int slideId = spa.getSlideIdentifier();
+					slideIdToNotes.put(slideId, i);
 				} else {
 					logger.log(POILogger.ERROR, "A Notes SlideAtomSet at " + i
 							+ " said its record was at refID "
@@ -686,9 +707,8 @@ public final class SlideShow {
 		// (Will stay as null if no SlidePersistAtom exists yet in
 		// the slide, or only master slide's ones do)
 		SlidePersistAtom prev = null;
-		SlideAtomsSet[] sas = slist.getSlideAtomsSets();
-		for (int j = 0; j < sas.length; j++) {
-			SlidePersistAtom spa = sas[j].getSlidePersistAtom();
+		for (SlideAtomsSet sas : slist.getSlideAtomsSets()) {
+			SlidePersistAtom spa = sas.getSlidePersistAtom();
 			if (spa.getSlideIdentifier() < 0) {
 				// This is for a master slide
 				// Odd, since we only deal with the Slide SLWT
@@ -850,19 +870,16 @@ public final class SlideShow {
 	 *         found
 	 */
 	public PPFont getFont(int idx) {
-		PPFont font = null;
 		FontCollection fonts = getDocumentRecord().getEnvironment().getFontCollection();
-		Record[] ch = fonts.getChildRecords();
-		for (int i = 0; i < ch.length; i++) {
-			if (ch[i] instanceof FontEntityAtom) {
-				FontEntityAtom atom = (FontEntityAtom) ch[i];
+		for (Record ch : fonts.getChildRecords()) {
+			if (ch instanceof FontEntityAtom) {
+				FontEntityAtom atom = (FontEntityAtom) ch;
 				if (atom.getFontIndex() == idx) {
-					font = new PPFont(atom);
-					break;
+					return new PPFont(atom);
 				}
 			}
 		}
-		return font;
+		return null;
 	}
 
 	/**
@@ -885,11 +902,10 @@ public final class SlideShow {
 		boolean ppt2007 = "___PPT12".equals(tag);
 
 		HeadersFootersContainer hdd = null;
-		Record[] ch = _documentRecord.getChildRecords();
-		for (int i = 0; i < ch.length; i++) {
-			if (ch[i] instanceof HeadersFootersContainer
-					&& ((HeadersFootersContainer) ch[i]).getOptions() == HeadersFootersContainer.SlideHeadersFootersContainer) {
-				hdd = (HeadersFootersContainer) ch[i];
+		for (Record ch : _documentRecord.getChildRecords()) {
+			if (ch instanceof HeadersFootersContainer
+				&& ((HeadersFootersContainer) ch).getOptions() == HeadersFootersContainer.SlideHeadersFootersContainer) {
+				hdd = (HeadersFootersContainer) ch;
 				break;
 			}
 		}
@@ -912,11 +928,10 @@ public final class SlideShow {
 		boolean ppt2007 = "___PPT12".equals(tag);
 
 		HeadersFootersContainer hdd = null;
-		Record[] ch = _documentRecord.getChildRecords();
-		for (int i = 0; i < ch.length; i++) {
-			if (ch[i] instanceof HeadersFootersContainer
-					&& ((HeadersFootersContainer) ch[i]).getOptions() == HeadersFootersContainer.NotesHeadersFootersContainer) {
-				hdd = (HeadersFootersContainer) ch[i];
+		for (Record ch : _documentRecord.getChildRecords()) {
+			if (ch instanceof HeadersFootersContainer
+					&& ((HeadersFootersContainer) ch).getOptions() == HeadersFootersContainer.NotesHeadersFootersContainer) {
+				hdd = (HeadersFootersContainer) ch;
 				break;
 			}
 		}
@@ -1107,37 +1122,23 @@ public final class SlideShow {
     }
 
     protected int addPersistentObject(PositionDependentRecord slideRecord) {
-		int slideRecordPos = _hslfSlideShow.appendRootLevelRecord((Record)slideRecord);
-		_records = _hslfSlideShow.getRecords();
+    	slideRecord.setLastOnDiskOffset(HSLFSlideShow.UNSET_OFFSET);
+		_hslfSlideShow.appendRootLevelRecord((Record)slideRecord);
 
-		// Add the new Slide into the PersistPtr stuff
-		int offset = 0;
-		int slideOffset = 0;
-		PersistPtrHolder ptr = null;
-		UserEditAtom usr = null;
-		int i = 0;
-		for (Record record : _records) {
-            // Grab interesting records as they come past
-			int recordType = (int)record.getRecordType();
-            if (recordType == RecordTypes.PersistPtrIncrementalBlock.typeID) {
-                ptr = (PersistPtrHolder)record;
-            }
-            if (recordType == RecordTypes.UserEditAtom.typeID) {
-                usr = (UserEditAtom)record;
-            }
+        // For position dependent records, hold where they were and now are
+        // As we go along, update, and hand over, to any Position Dependent
+        // records we happen across
+		Map<RecordTypes.Type,PositionDependentRecord> interestingRecords =
+                new HashMap<RecordTypes.Type,PositionDependentRecord>();
 
-			if (i++ == slideRecordPos) {
-				slideOffset = offset;
-			}
-			
-			try {
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				record.writeOut(out);
-				offset += out.size();
-			} catch (IOException e) {
-				throw new HSLFException(e);
-			}
-		}
+		try {
+            _hslfSlideShow.updateAndWriteDependantRecords(null,interestingRecords);
+        } catch (IOException e) {
+            throw new HSLFException(e);
+        }
+		
+		PersistPtrHolder ptr = (PersistPtrHolder)interestingRecords.get(RecordTypes.PersistPtrIncrementalBlock);
+		UserEditAtom usr = (UserEditAtom)interestingRecords.get(RecordTypes.UserEditAtom);
 
 		// persist ID is UserEditAtom.maxPersistWritten + 1
 		int psrId = usr.getMaxPersistWritten() + 1;
@@ -1149,6 +1150,7 @@ public final class SlideShow {
 
 		// Add the new slide into the last PersistPtr
 		// (Also need to tell it where it is)
+		int slideOffset = slideRecord.getLastOnDiskOffset();
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(psrId, slideOffset);
 		logger.log(POILogger.INFO, "New slide/object ended up at " + slideOffset);
