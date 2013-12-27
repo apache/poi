@@ -17,10 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.*;
-import java.util.zip.InflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Hashtable;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.LittleEndian;
@@ -120,7 +124,7 @@ public class ExOleObjStg extends RecordAtom implements PositionDependentRecord, 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         //first four bytes is the length of the raw data
         byte[] b = new byte[4];
-        LittleEndian.putInt(b, data.length);
+        LittleEndian.putInt(b, 0, data.length);
         out.write(b);
 
         DeflaterOutputStream def = new DeflaterOutputStream(out);

@@ -18,15 +18,16 @@
 package org.apache.poi.hslf;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
@@ -160,4 +161,16 @@ public final class TestReWrite extends TestCase {
 			assertEquals(_oData[i], _nData[i]);
 		}
 	}
+    
+    public void test48593() throws Exception {
+		SlideShow slideShow = new SlideShow();
+		slideShow.createSlide();
+		slideShow = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+		slideShow.createSlide();
+		slideShow = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+		slideShow.createSlide();
+		slideShow = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+		slideShow.createSlide();
+		slideShow = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+    }
 }
