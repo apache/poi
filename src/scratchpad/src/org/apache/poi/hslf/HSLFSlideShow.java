@@ -274,11 +274,11 @@ public final class HSLFSlideShow extends POIDocument {
         HashMap<Integer,Integer> offset2id = new HashMap<Integer,Integer>();
         while (usrOffset != 0){
             UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
-            lst.add(Integer.valueOf(usrOffset));
+            lst.add(usrOffset);
             int psrOffset = usr.getPersistPointersOffset();
 
             PersistPtrHolder ptr = (PersistPtrHolder)Record.buildRecordAtOffset(docstream, psrOffset);
-            lst.add(Integer.valueOf(psrOffset));
+            lst.add(psrOffset);
             Hashtable<Integer,Integer> entries = ptr.getSlideLocationsLookup();
             for(Integer id : entries.keySet()) {
                 Integer offset = entries.get(id);
