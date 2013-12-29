@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -202,6 +203,7 @@ public final class TestBugs extends TestCase {
         SlideShow ppt = new SlideShow(hslf);
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
+            @SuppressWarnings("unused")
             Shape[] shape = slide[i].getShapes();
         }
         assertTrue("No Exceptions while reading file", true);
@@ -259,6 +261,7 @@ public final class TestBugs extends TestCase {
                     for (int k = 0; k < comps.length; k++) {
                         Shape comp = comps[k];
                         if (comp instanceof Picture){
+                            @SuppressWarnings("unused")
                             PictureData pict = ((Picture)comp).getPictureData();
                         }
                     }
@@ -435,4 +438,32 @@ public final class TestBugs extends TestCase {
         ppt = HSLFTestDataSamples.writeOutAndReadBack(ppt);
         assertTrue("No Exceptions while rewriting file", true);
     }
+
+    /**
+     * Bug 45776: Fix corrupt file problem using TextRun.setText
+     */
+    public void test45776() throws Exception {
+        InputStream is = _slTests.openResourceAsStream("45776.ppt");
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(is));
+        is.close();
+
+        // get slides
+        for (Slide slide : ppt.getSlides()) {
+            for (Shape shape : slide.getShapes()) {
+                if (!(shape instanceof TextBox)) continue;
+                TextBox tb = (TextBox) shape;
+                // work with TextBox
+                String str = tb.getText();
+
+                if (!str.contains("$$DATE$$")) continue;
+                str = str.replace("$$DATE$$", new Date().toString());
+                tb.setText(str);
+                
+                TextRun tr = tb.getTextRun();
+                assertEquals(str.length()+1,tr.getStyleTextPropAtom().getParagraphStyles().getFirst().getCharactersCovered());
+                assertEquals(str.length()+1,tr.getStyleTextPropAtom().getCharacterStyles().getFirst().getCharactersCovered());
+            }
+        }
+    }
+
 }
