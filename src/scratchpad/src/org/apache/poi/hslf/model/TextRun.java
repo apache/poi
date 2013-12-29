@@ -17,11 +17,20 @@
 
 package org.apache.poi.hslf.model;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Vector;
+import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.record.TextSpecInfoAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.StringUtil;
@@ -54,7 +63,7 @@ public final class TextRun
      * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
      */
     protected Record[] _records;
-	private StyleTextPropAtom styleTextPropAtom;
+	// private StyleTextPropAtom styleTextPropAtom;
 	private StyleTextProp9Atom styleTextProp9Atom;
 
 	/**
@@ -95,8 +104,8 @@ public final class TextRun
 		String runRawText = getText();
 
 		// Figure out the rich text runs
-		LinkedList pStyles = new LinkedList();
-		LinkedList cStyles = new LinkedList();
+		LinkedList<TextPropCollection> pStyles = new LinkedList<TextPropCollection>();
+		LinkedList<TextPropCollection> cStyles = new LinkedList<TextPropCollection>();
 		if(_styleAtom != null) {
 			// Get the style atom to grok itself
 			_styleAtom.setParentTextSize(runRawText.length());
@@ -106,7 +115,7 @@ public final class TextRun
         buildRichTextRuns(pStyles, cStyles, runRawText);
 	}
 
-	public void buildRichTextRuns(LinkedList pStyles, LinkedList cStyles, String runRawText){
+	public void buildRichTextRuns(LinkedList<TextPropCollection> pStyles, LinkedList<TextPropCollection> cStyles, String runRawText){
 
         // Handle case of no current style, with a default
         if(pStyles.size() == 0 || cStyles.size() == 0) {
@@ -115,7 +124,7 @@ public final class TextRun
         } else {
             // Build up Rich Text Runs, one for each
             //  character/paragraph style pair
-            Vector rtrs = new Vector();
+            List<RichTextRun> rtrs = new ArrayList<RichTextRun>();
 
             int pos = 0;
 
@@ -249,8 +258,7 @@ public final class TextRun
             }
 
             // Build the array
-            _rtRuns = new RichTextRun[rtrs.size()];
-            rtrs.copyInto(_rtRuns);
+            _rtRuns = rtrs.toArray(new RichTextRun[rtrs.size()]);
         }
 
     }
@@ -470,13 +478,22 @@ public final class TextRun
 		//  no change, stays with no styling
 		// If there is styling:
 		//  everthing gets the same style that the first block has
+        // Update the lengths +1 for since these will be the only runs
 		if(_styleAtom != null) {
-			LinkedList pStyles = _styleAtom.getParagraphStyles();
+			LinkedList<TextPropCollection> pStyles = _styleAtom.getParagraphStyles();
 			while(pStyles.size() > 1) { pStyles.removeLast(); }
 
-			LinkedList cStyles = _styleAtom.getCharacterStyles();
-			while(cStyles.size() > 1) { cStyles.removeLast(); }
+            if (!pStyles.isEmpty()) {
+                pStyles.getFirst().updateTextSize( s.length()+1 );
+            }
 
+			LinkedList<TextPropCollection> cStyles = _styleAtom.getCharacterStyles();
+			while(cStyles.size() > 1) { cStyles.removeLast(); }
+            
+            if (!cStyles.isEmpty()) {
+                cStyles.getFirst().updateTextSize( s.length()+1 );
+            }
+			
 			_rtRuns[0].setText(s);
 		} else {
 			// Recreate rich text run with no styling
