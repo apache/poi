@@ -21,15 +21,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 /**
  * Tests for org.apache.poi.ddf<br/>
- *
- * @author Josh Micich
  */
 public final class AllPOIDDFTests {
     public static Test suite() {
         TestSuite result = new TestSuite("Tests for org.apache.poi.ddf");
         result.addTestSuite(TestEscherBSERecord.class);
         result.addTestSuite(TestEscherBlipRecord.class);
-        result.addTestSuite(TestEscherBlipWMFRecord.class);
         result.addTestSuite(TestEscherBoolProperty.class);
         result.addTestSuite(TestEscherChildAnchorRecord.class);
         result.addTestSuite(TestEscherClientAnchorRecord.class);
