@@ -22,15 +22,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.TempFile;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.util.TempFile;
 
 /**
  * Test recursive read and write of OPC packages
@@ -43,6 +45,7 @@ public final class TestPOIXMLDocument extends TestCase {
             super(pkg);
         }
 
+        @Override
         public List<PackagePart> getAllEmbedds() {
             throw new RuntimeException("not supported");
         }
@@ -57,10 +60,12 @@ public final class TestPOIXMLDocument extends TestCase {
         public TestFactory() {
             //
         }
+        @Override
         public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
             return new POIXMLDocumentPart(part, rel);
         }
 
+        @Override
         public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
             throw new RuntimeException("not supported");
         }
@@ -73,6 +78,8 @@ public final class TestPOIXMLDocument extends TestCase {
     private static void traverse(POIXMLDocumentPart part, HashMap<String,POIXMLDocumentPart> context) throws IOException{
         context.put(part.getPackageRelationship().getTargetURI().toString(), part);
         for(POIXMLDocumentPart p : part.getRelations()){
+            assertNotNull(p.toString());
+            
             String uri = p.getPackageRelationship().getTargetURI().toString();
             if (!context.containsKey(uri)) {
                 traverse(p, context);
@@ -151,5 +158,20 @@ public final class TestPOIXMLDocument extends TestCase {
             //TODO finish me
         }
 
+    }
+
+    public void testCommitNullPart() throws IOException, InvalidFormatException {
+        POIXMLDocumentPart part = new POIXMLDocumentPart();
+        part.prepareForCommit();
+        part.commit();
+        part.onSave(new HashSet<PackagePart>());
+
+        assertNull(part.getRelationById(null));
+        assertNull(part.getRelationId(null));
+        assertFalse(part.removeRelation(null, true));
+        part.removeRelation(null);
+        assertNull(part.toString());
+        part.onDocumentCreate();
+        //part.getTargetPart(null);
     }
 }

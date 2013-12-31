@@ -16,28 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.ContinueRecord;
-import org.apache.poi.hssf.record.DrawingRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
-import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFTestHelper;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.HexRead;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,6 +26,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordFactory;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFTestHelper;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 
 /**
  * @author Yegor Kozlov
@@ -179,6 +174,9 @@ public class TestDrawingAggregate extends TestCase {
                     }
                 }
         );
+        assertNotNull(
+                "Need to find files in test-data path, had path: " + new File(System.getProperty("POI.testdata.path"), "spreadsheet"), 
+                xls);
         for(File file : xls) {
             HSSFWorkbook wb;
             try {

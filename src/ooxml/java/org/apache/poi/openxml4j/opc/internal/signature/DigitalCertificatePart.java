@@ -41,38 +41,29 @@ public final class DigitalCertificatePart extends PackagePart  {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	protected InputStream getInputStreamImpl() throws IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected OutputStream getOutputStreamImpl() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean load(InputStream ios) throws InvalidFormatException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean save(OutputStream zos) throws OpenXML4JException {
-		// TODO Auto-generated method stub
 		return false;
 	}
-
 }
