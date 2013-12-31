@@ -88,9 +88,8 @@ public final class BiffViewer {
 				temp.add(record);
 
 				if (dumpInterpretedRecords) {
-					String[] headers = recListener.getRecentHeaders();
-					for (int i = 0; i < headers.length; i++) {
-						ps.println(headers[i]);
+					for (String header : recListener.getRecentHeaders()) {
+						ps.println(header);
 					}
 					ps.print(record.toString());
 				}
@@ -436,7 +435,7 @@ public final class BiffViewer {
 
 	private static final class BiffRecordListener implements IBiffRecordListener {
 		private final Writer _hexDumpWriter;
-		private final List<String> _headers;
+		private List<String> _headers;
 		private final boolean _zeroAlignEachRecord;
 		private final boolean _noHeader;
 		public BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
@@ -462,11 +461,10 @@ public final class BiffViewer {
 				}
 			}
 		}
-		public String[] getRecentHeaders() {
-			String[] result = new String[_headers.size()];
-			_headers.toArray(result);
-			_headers.clear();
-			return result;
+		public List<String> getRecentHeaders() {
+		    List<String> result = _headers;
+		    _headers = new ArrayList<String>();
+		    return result;
 		}
 		private static String formatRecordDetails(int globalOffset, int sid, int size, int recordCounter) {
 			StringBuffer sb = new StringBuffer(64);
