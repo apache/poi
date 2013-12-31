@@ -256,7 +256,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     private void checkRange(int value, int minRange, int maxRange, String varName) {
         if (value < minRange || value > maxRange)
-            throw new IllegalArgumentException(varName + " must be between " + minRange + " and " + maxRange);
+            throw new IllegalArgumentException(varName + " must be between " + minRange + " and " + maxRange + ", but was: " + value);
     }
 
     @Override
