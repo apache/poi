@@ -25,8 +25,8 @@ import java.util.TreeMap;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.*;
-import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaShifter;
 
 /**
  *
@@ -237,14 +237,15 @@ public final class RowRecordsAggregate extends RecordAggregate {
 		  rowIterator.next();
 		int result = 0;
 		while(rowIterator.hasNext() && (i++ < endIndex)) {
-		  Record rec = (Record)rowIterator.next();
+		  Record rec = rowIterator.next();
 		  result += rec.getRecordSize();
 		  rv.visitRecord(rec);
 		}
 		return result;
 	}
 
-	public void visitContainedRecords(RecordVisitor rv) {
+    @Override
+    public void visitContainedRecords(RecordVisitor rv) {
 
 		PositionTrackingVisitor stv = new PositionTrackingVisitor(rv, 0);
 		//DBCells are serialized before row records.

@@ -63,6 +63,7 @@ public class TestExcelConverterSuite
             final String name = child.getName();
             suite.addTest( new TestCase( name + " [FO]" )
             {
+                @Override
                 public void runTest() throws Exception
                 {
                     testFo( child );
@@ -70,6 +71,7 @@ public class TestExcelConverterSuite
             } );
             suite.addTest( new TestCase( name + " [HTML]" )
             {
+                @Override
                 public void runTest() throws Exception
                 {
                     testHtml( child );

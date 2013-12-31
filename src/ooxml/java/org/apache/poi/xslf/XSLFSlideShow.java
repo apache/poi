@@ -16,6 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -27,24 +31,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CmLstDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.NotesDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
-import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
-
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * Experimental class to do low level processing of pptx files.
@@ -253,6 +240,7 @@ public class XSLFSlideShow extends POIXMLDocument {
     /**
      * Get the document's embedded files.
      */
+    @Override
     public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
         return embedds;
     }
