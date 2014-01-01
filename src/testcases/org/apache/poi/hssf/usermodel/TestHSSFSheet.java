@@ -35,6 +35,7 @@ import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
@@ -1065,5 +1066,21 @@ public final class TestHSSFSheet extends BaseTestSheet {
         sheet.dumpDrawingRecords(false);
         sheet.dumpDrawingRecords(true);*/
         assertNull(sheet.getDrawingEscherAggregate());
+    }
+
+    public void testBug55723b() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        // stored with a special name
+        assertNull(wb.getWorkbook().getSpecificBuiltinRecord(NameRecord.BUILTIN_FILTER_DB, 1));
+
+        CellRangeAddress range = CellRangeAddress.valueOf("A:B");
+        AutoFilter filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
+        
+        // stored with a special name
+        NameRecord record = wb.getWorkbook().getSpecificBuiltinRecord(NameRecord.BUILTIN_FILTER_DB, 1);
+        assertNotNull(record);
     }
 }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -1227,5 +1228,31 @@ public final class TestXSSFSheet extends BaseTestSheet {
         }*/
         assertEquals("Sheet should contain 8 tables", 8, tables.size());
         assertNotNull("Sheet should contain a comments table", sheet.getCommentsTable(false));
+    }
+
+    public void testBug55723b(){
+        XSSFWorkbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        // stored with a special name
+        assertNull(wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, 0));
+
+        CellRangeAddress range = CellRangeAddress.valueOf("A:B");
+        AutoFilter filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
+        
+        // stored with a special name
+        XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, 0);
+        assertNotNull(name);
+        assertEquals("Sheet0!$A:$B", name.getRefersToFormula());
+        
+        range = CellRangeAddress.valueOf("B:C");
+        filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
+        
+        // stored with a special name
+        name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, 0);
+        assertNotNull(name);
+        assertEquals("Sheet0!$B:$C", name.getRefersToFormula());
     }
 }

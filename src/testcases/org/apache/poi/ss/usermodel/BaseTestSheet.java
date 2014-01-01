@@ -21,6 +21,7 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -799,5 +800,40 @@ public abstract class BaseTestSheet extends TestCase {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         sheet.showInPane(2, 3);
+    }
+
+
+    public void testBug55723(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        CellRangeAddress range = CellRangeAddress.valueOf("A:B");
+        AutoFilter filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
+        // there seems to be currently no generic way to check the setting...
+
+        range = CellRangeAddress.valueOf("B:C");
+        filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
+        // there seems to be currently no generic way to check the setting...
+    }
+
+    public void testBug55723_Rows() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        CellRangeAddress range = CellRangeAddress.valueOf("A4:B55000");
+        AutoFilter filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
+    }
+
+
+    public void testBug55723d_RowsOver65k() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        CellRangeAddress range = CellRangeAddress.valueOf("A4:B75000");
+        AutoFilter filter = sheet.setAutoFilter(range);
+        assertNotNull(filter);
     }
 }
