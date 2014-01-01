@@ -2056,8 +2056,6 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     public HSSFAutoFilter setAutoFilter(CellRangeAddress range) {
-
-
         InternalWorkbook workbook = _workbook.getWorkbook();
         int sheetIndex = _workbook.getSheetIndex(this);
 
@@ -2067,8 +2065,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             name = workbook.createBuiltInName(NameRecord.BUILTIN_FILTER_DB, sheetIndex + 1);
         }
 
+        int firstRow = range.getFirstRow();
+        
+        // if row was not given when constructing the range...
+        if(firstRow == -1) {
+            firstRow = 0;
+        }
+
         // The built-in name must consist of a single Area3d Ptg.
-        Area3DPtg ptg = new Area3DPtg(range.getFirstRow(), range.getLastRow(),
+        Area3DPtg ptg = new Area3DPtg(firstRow, range.getLastRow(),
                 range.getFirstColumn(), range.getLastColumn(),
                 false, false, false, false, sheetIndex);
         name.setNameDefinition(new Ptg[]{ptg});
@@ -2084,7 +2089,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         HSSFPatriarch p = createDrawingPatriarch();
         for (int col = range.getFirstColumn(); col <= range.getLastColumn(); col++) {
             p.createComboBox(new HSSFClientAnchor(0, 0, 0, 0,
-                    (short) col, range.getFirstRow(), (short) (col + 1), range.getFirstRow() + 1));
+                    (short) col, firstRow, (short) (col + 1), firstRow + 1));
         }
 
         return new HSSFAutoFilter(this);

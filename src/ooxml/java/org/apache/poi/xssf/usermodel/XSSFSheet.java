@@ -3194,12 +3194,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         XSSFName name = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
         if (name == null) {
             name = wb.createBuiltInName(XSSFName.BUILTIN_FILTER_DB, sheetIndex);
-            name.getCTName().setHidden(true);
-            CellReference r1 = new CellReference(getSheetName(), range.getFirstRow(), range.getFirstColumn(), true, true);
-            CellReference r2 = new CellReference(null, range.getLastRow(), range.getLastColumn(), true, true);
-            String fmla = r1.formatAsString() + ":" + r2.formatAsString();
-            name.setRefersToFormula(fmla);
         }
+        
+        name.getCTName().setHidden(true);
+        CellReference r1 = new CellReference(getSheetName(), range.getFirstRow(), range.getFirstColumn(), true, true);
+        CellReference r2 = new CellReference(null, range.getLastRow(), range.getLastColumn(), true, true);
+        String fmla = r1.formatAsString() + ":" + r2.formatAsString();
+        name.setRefersToFormula(fmla);
 
         return new XSSFAutoFilter(this);
     }
