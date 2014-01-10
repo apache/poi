@@ -22,10 +22,40 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.poi.hssf.record.chart.*;
-import org.apache.poi.hssf.record.pivottable.*;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.record.chart.BeginRecord;
+import org.apache.poi.hssf.record.chart.CatLabRecord;
+import org.apache.poi.hssf.record.chart.ChartEndBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartEndObjectRecord;
+import org.apache.poi.hssf.record.chart.ChartFRTInfoRecord;
+import org.apache.poi.hssf.record.chart.ChartRecord;
+import org.apache.poi.hssf.record.chart.ChartStartBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartStartObjectRecord;
+import org.apache.poi.hssf.record.chart.ChartTitleFormatRecord;
+import org.apache.poi.hssf.record.chart.DataFormatRecord;
+import org.apache.poi.hssf.record.chart.EndRecord;
+import org.apache.poi.hssf.record.chart.LegendRecord;
+import org.apache.poi.hssf.record.chart.LinkedDataRecord;
+import org.apache.poi.hssf.record.chart.SeriesRecord;
+import org.apache.poi.hssf.record.chart.SeriesTextRecord;
+import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
+import org.apache.poi.hssf.record.chart.ValueRangeRecord;
+import org.apache.poi.hssf.record.pivottable.DataItemRecord;
+import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
+import org.apache.poi.hssf.record.pivottable.PageItemRecord;
+import org.apache.poi.hssf.record.pivottable.StreamIDRecord;
+import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
+import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
+import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 
 /**
  * Title:  Record Factory<P>
@@ -62,7 +92,14 @@ public final class RecordFactory {
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			} catch (InvocationTargetException e) {
-				throw new RecordFormatException("Unable to construct record instance" , e.getTargetException());
+				Throwable t = e.getTargetException();
+				if (t instanceof RecordFormatException) {
+					throw (RecordFormatException)t;
+				} else if (t instanceof EncryptedDocumentException) {
+					throw (EncryptedDocumentException)t;
+				} else {
+				    throw new RecordFormatException("Unable to construct record instance" , t);
+				}
 			}
 		}
 		public Class<? extends Record> getRecordClass() {
