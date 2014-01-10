@@ -17,9 +17,6 @@
 
 package org.apache.poi.xssf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.ss.format.TestCellFormatPart;
 import org.apache.poi.ss.util.TestCellReference;
 import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
@@ -31,27 +28,26 @@ import org.apache.poi.xssf.model.TestStylesTable;
 import org.apache.poi.xssf.usermodel.AllXSSFUsermodelTests;
 import org.apache.poi.xssf.util.TestCTColComparator;
 import org.apache.poi.xssf.util.TestNumericRanges;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 
 /**
  * Collects all tests for <tt>org.apache.poi.xssf</tt> and sub-packages.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    AllXSSFUsermodelTests.class,
+    TestXSSFReader.class,
+    TestXSSFExcelExtractor.class,
+    TestLoadSaveXSSF.class,
+    TestCommentsTable.class,
+    TestSharedStringsTable.class,
+    TestStylesTable.class,
+    TestCellReference.class,
+    TestCTColComparator.class,
+    TestNumericRanges.class,       
+    TestCellFormatPart.class
+})
 public final class AllXSSFTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllXSSFTests.class.getName());
-		result.addTest(AllXSSFUsermodelTests.suite());
-		result.addTestSuite(TestXSSFReader.class);
-		result.addTestSuite(TestXSSFExcelExtractor.class);
-		result.addTestSuite(TestLoadSaveXSSF.class);
-		result.addTestSuite(TestCommentsTable.class);
-		result.addTestSuite(TestSharedStringsTable.class);
-		result.addTestSuite(TestStylesTable.class);
-		result.addTestSuite(TestCellReference.class);
-		result.addTestSuite(TestCTColComparator.class);
-		result.addTestSuite(TestNumericRanges.class);		
-		result.addTestSuite(TestCellFormatPart.class);
-		return result;
-	}
 }

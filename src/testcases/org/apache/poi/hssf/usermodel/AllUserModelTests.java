@@ -17,66 +17,60 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for the <tt>org.apache.poi.hssf.usermodel</tt> package.
- *
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestBug42464.class,
+    TestBugs.class,
+    TestCellStyle.class,
+    TestCloneSheet.class,
+    TestDataValidation.class,
+    TestEscherGraphics.class,
+    TestEscherGraphics2d.class,
+    TestFontDetails.class,
+    TestFormulaEvaluatorBugs.class,
+    TestFormulaEvaluatorDocs.class,
+    TestFormulas.class,
+    TestHSSFCell.class,
+    TestHSSFClientAnchor.class,
+    TestHSSFComment.class,
+    TestHSSFConditionalFormatting.class,
+    TestHSSFDataFormat.class,
+    TestHSSFDataFormatter.class,
+    TestHSSFDateUtil.class,
+    TestHSSFFont.class,
+    TestHSSFFormulaEvaluator.class,
+    TestHSSFHeaderFooter.class,
+    TestHSSFHyperlink.class,
+    TestHSSFName.class,
+    TestHSSFOptimiser.class,
+    TestHSSFPalette.class,
+    TestHSSFPatriarch.class,
+    TestHSSFPicture.class,
+    TestHSSFPictureData.class,
+    TestHSSFRichTextString.class,
+    TestHSSFRow.class,
+    TestHSSFSheet.class,
+    TestHSSFSheetShiftRows.class,
+    TestHSSFSheetUpdateArrayFormulas.class,
+    TestHSSFTextbox.class,
+    TestHSSFWorkbook.class,
+    TestOLE2Embeding.class,
+    TestPOIFSProperties.class,
+    TestReadWriteChart.class,
+    TestRowStyle.class,
+    TestSanityChecker.class,
+    TestSheetHiding.class,
+    /* deliberately avoiding this one
+    TestUnfixedBugs.class,*/
+    TestUnicodeWorkbook.class,
+    TestNonStandardWorkbookStreamNames.class,
+    TestWorkbook.class
+})
 public class AllUserModelTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllUserModelTests.class.getName());
-
-		result.addTestSuite(TestBug42464.class);
-		result.addTestSuite(TestBugs.class);
-		result.addTestSuite(TestCellStyle.class);
-		result.addTestSuite(TestCloneSheet.class);
-		result.addTestSuite(TestDataValidation.class);
-		result.addTestSuite(TestEscherGraphics.class);
-		result.addTestSuite(TestEscherGraphics2d.class);
-		result.addTestSuite(TestFontDetails.class);
-		result.addTestSuite(TestFormulaEvaluatorBugs.class);
-		result.addTestSuite(TestFormulaEvaluatorDocs.class);
-		result.addTestSuite(TestFormulas.class);
-		result.addTestSuite(TestHSSFCell.class);
-		result.addTestSuite(TestHSSFClientAnchor.class);
-		result.addTestSuite(TestHSSFComment.class);
-		result.addTestSuite(TestHSSFConditionalFormatting.class);
-		result.addTestSuite(TestHSSFDataFormat.class);
-		result.addTestSuite(TestHSSFDataFormatter.class);
-		result.addTestSuite(TestHSSFDateUtil.class);
-		result.addTestSuite(TestHSSFFont.class);
-		result.addTestSuite(TestHSSFFormulaEvaluator.class);
-		result.addTestSuite(TestHSSFHeaderFooter.class);
-		result.addTestSuite(TestHSSFHyperlink.class);
-		result.addTestSuite(TestHSSFName.class);
-		result.addTestSuite(TestHSSFOptimiser.class);
-		result.addTestSuite(TestHSSFPalette.class);
-		result.addTestSuite(TestHSSFPatriarch.class);
-		result.addTestSuite(TestHSSFPicture.class);
-		result.addTestSuite(TestHSSFPictureData.class);
-		result.addTestSuite(TestHSSFRichTextString.class);
-		result.addTestSuite(TestHSSFRow.class);
-		result.addTestSuite(TestHSSFSheet.class);
-		result.addTestSuite(TestHSSFSheetShiftRows.class);
-		result.addTestSuite(TestHSSFSheetUpdateArrayFormulas.class);
-		result.addTestSuite(TestHSSFTextbox.class);
-		result.addTestSuite(TestHSSFWorkbook.class);
-		result.addTestSuite(TestOLE2Embeding.class);
-		result.addTestSuite(TestPOIFSProperties.class);
-		result.addTestSuite(TestReadWriteChart.class);
-		result.addTestSuite(TestRowStyle.class);
-		result.addTestSuite(TestSanityChecker.class);
-		result.addTestSuite(TestSheetHiding.class);
-		/* deliberately avoiding this one
-		result.addTestSuite(TestUnfixedBugs.class);*/
-		result.addTestSuite(TestUnicodeWorkbook.class);
-		result.addTestSuite(TestNonStandardWorkbookStreamNames.class);
-		result.addTestSuite(TestWorkbook.class);
-
-		return result;
-	}
 }

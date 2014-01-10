@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -49,7 +50,7 @@ public final class FilePassRecord extends StandardRecord {
 
 		switch (_encryptionType) {
 			case ENCRYPTION_XOR:
-				throw new RecordFormatException("HSSF does not currently support XOR obfuscation");
+				throw new EncryptedDocumentException("HSSF does not currently support XOR obfuscation");
 			case ENCRYPTION_OTHER:
 				// handled below
 				break;
@@ -63,7 +64,7 @@ public final class FilePassRecord extends StandardRecord {
 				break;
 			case ENCRYPTION_OTHER_CAPI_2:
 			case ENCRYPTION_OTHER_CAPI_3:
-				throw new RecordFormatException(
+				throw new EncryptedDocumentException(
 						"HSSF does not currently support CryptoAPI encryption");
 			default:
 				throw new RecordFormatException("Unknown encryption info " + _encryptionInfo);

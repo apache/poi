@@ -17,19 +17,22 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.Test;
 
 /**
  * A base class for bugzilla issues that can be described in terms of common ss interfaces.
  *
  * @author Yegor Kozlov
  */
-public abstract class BaseTestBugzillaIssues extends TestCase {
+public abstract class BaseTestBugzillaIssues {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -43,7 +46,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
      *
      * Also tests bug 15353 (problems with hyperlinks to Google)
      */
-    public final void test23094() {
+    @Test
+    public final void bug23094() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
         Row r = s.createRow(0);
@@ -64,7 +68,7 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
      * open resulting file in Excel to check results!
      * @param  num the number of strings to generate
      */
-    public void baseTest15375(int num) {
+    public final void bug15375(int num) {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         CreationHelper factory = wb.getCreationHelper();
@@ -104,7 +108,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
     /**
      * Merged regions were being removed from the parent in cloned sheets
      */
-    public final void test22720() {
+    @Test
+    public final void bug22720() {
        Workbook workBook = _testDataProvider.createWorkbook();
        workBook.createSheet("TEST");
        Sheet template = workBook.getSheetAt(0);
@@ -131,7 +136,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
 
     }
 
-    public final void test28031() {
+    @Test
+    public final void bug28031() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         wb.setSheetName(0, "Sheet1");
@@ -153,7 +159,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
      * that contains macros and this formula:
      * {=SUM(IF(FREQUENCY(IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""),IF(LEN(V4:V220)>0,MATCH(V4:V220,V4:V220,0),""))>0,1))}
      */
-    public final void test21334() {
+    @Test
+    public final void bug21334() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh = wb.createSheet();
         Cell cell = sh.createRow(0).createCell(0);
@@ -167,7 +174,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
 
     /** another test for the number of unique strings issue
      *test opening the resulting file in Excel*/
-    public final void test22568() {
+    @Test
+    public final void bug22568() {
         int r=2000;int c=3;
 
         Workbook wb = _testDataProvider.createWorkbook();
@@ -216,14 +224,16 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
     /**
      * Bug 42448: Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69
      */
-    public final void test42448(){
+    @Test
+    public final void bug42448(){
         Workbook wb = _testDataProvider.createWorkbook();
         Cell cell = wb.createSheet().createRow(0).createCell(0);
         cell.setCellFormula("SUMPRODUCT(A!C7:A!C67, B8:B68) / B69");
         assertTrue("no errors parsing formula", true);
     }
 
-    public final void test18800() {
+    @Test
+    public final void bug18800() {
        Workbook book = _testDataProvider.createWorkbook();
        book.createSheet("TEST");
        Sheet sheet = book.cloneSheet(0);
@@ -251,7 +261,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         }
     }
 
-    public final void testBug43093() {
+    @Test
+    public final void bug43093() {
         Workbook xlw = _testDataProvider.createWorkbook();
 
         addNewSheetWithCellsA1toD4(xlw, 1);
@@ -270,7 +281,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         assertEquals(d, (311+312+321+322), 0.0000001);
     }
 
-    public final void testMaxFunctionArguments_bug46729(){
+    @Test
+    public final void bug46729_testMaxFunctionArguments(){
         String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
 
         SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
@@ -308,7 +320,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
         return fmla.toString();
     }
 
-    public final void testAutoSize_bug506819() {
+    @Test
+    public final void bug506819_testAutoSize() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
         Row row = sheet.createRow(0);
@@ -331,7 +344,8 @@ public abstract class BaseTestBugzillaIssues extends TestCase {
     /**
      * CreateFreezePane column/row order check
      */
-    public void test49381() throws Exception {
+    @Test
+    public void bug49381() throws Exception {
        Workbook wb = _testDataProvider.createWorkbook();
        int colSplit = 1;
        int rowSplit = 2;
