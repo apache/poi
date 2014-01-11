@@ -30,20 +30,15 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * The File Information Block (FIB). Holds pointers
+ * <p>The File Information Block (FIB). Holds pointers
  *  to various bits of the file, and lots of flags which
- *  specify properties of the document.
- *
- * The {@link FibBase} class, holds the
- *  first 32 bytes.
- * The next part, the fibRgW / FibRgW97, is handled
- *  by {@link FibRgW97}.
- * The next part, the fibRgLw / The FibRgLw97, is
- *  handled by the {@link FibRgLw}.
- * Finally, the rest of the fields are handled by
- *  the {@link FIBFieldHandler}.
- *
- * @author  andy
+ *  specify properties of the document.<p>
+ * <ul>
+ * <li>The {@link FibBase} class, holds the first 32 bytes.</li>
+ * <li>The next part, the fibRgW / FibRgW97, is handled by the {@link FibRgW97}.</li>
+ * <li>The next part, the fibRgLw / FibRgLw97, is handled by the {@link FibRgLw97}.</li>
+ * <li>Finally, the rest of the fields are handled by the {@link FIBFieldHandler}.</li>
+ * </ul>
  */
 @Internal
 public final class FileInformationBlock implements Cloneable

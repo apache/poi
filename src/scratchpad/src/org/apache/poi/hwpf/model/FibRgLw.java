@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
-interface FibRgLw
+public interface FibRgLw
 {
     int getCbMac();
 
