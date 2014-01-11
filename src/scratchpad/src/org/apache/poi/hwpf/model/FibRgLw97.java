@@ -31,7 +31,7 @@ import org.apache.poi.util.Internal;
  *         (.doc) Binary File Format
  */
 @Internal
-class FibRgLw97 extends FibRgLw97AbstractType implements FibRgLw
+public class FibRgLw97 extends FibRgLw97AbstractType implements FibRgLw
 {
 
     public FibRgLw97()
