@@ -158,6 +158,10 @@ under the License.
     <property name="asm.jar" location="${main.lib}/asm-all-4.0.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/4.0/asm-all-4.0.jar"/>
 
+    <!-- license checks -->
+    <property name="rat.jar" location="${main.lib}/apache-rat-0.10.jar"/>
+    <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.10/apache-rat-0.10.jar"/>
+
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml.xsds.ozip" location="${ooxml.lib}/OfficeOpenXML-Part4.zip"/>
@@ -172,7 +176,6 @@ under the License.
     <property name="ooxml.encryption.src.jar" location="${ooxml.lib}/ooxml-encryption-src-1.1.jar"/>
     <property name="ooxml.encryption.jar" location="${ooxml.lib}/ooxml-encryption-1.1.jar"/>
 
-
     <property name="maven.ooxml.xsds.version.id" value="1.0"/>
     <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
@@ -180,6 +183,10 @@ under the License.
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
     <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:"/>
+
+    <!-- Apache RAT license check properties -->
+    <property name="rat.reportdir" value="build/rat"/>
+    <property name="rat.report" value="${rat.reportdir}/report.txt"/>    
 
     <!-- build and distro settings -->
     <property name="jar.name" value="poi"/>
@@ -343,6 +350,7 @@ under the License.
                     <available file="${main.ant.jar}"/>
                     <available file="${asm.jar}"/>
                     <available file="${jacoco.zip}"/>
+                    <available file="${rat.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -389,6 +397,10 @@ under the License.
                 <include name="lib/*.jar"/>
             </patternset>
         </unzip>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${rat.url}"/>
+            <param name="destfile" value="${rat.jar}"/>
+        </antcall>
     </target>
 
     <target name="check-ooxml-jars">
@@ -1345,10 +1357,13 @@ under the License.
     <!--  which are missing the correct license headers -->
     <!-- You need to download rat from http://incubator.apache.org/rat/ -->
     <!--  and place the Rat jar into your ant lib before running -->
-    <target name="rat-check">
+    <target name="rat-check" depends="check-jars,fetch-jars">
+       <mkdir dir="${rat.reportdir}" />
+
        <typedef resource="org/apache/rat/anttasks/antlib.xml"
-             uri="antlib:org.apache.rat.anttasks"/>
-       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks">
+             uri="antlib:org.apache.rat.anttasks"
+             classpath="${main.lib}/apache-rat-0.10.jar" />
+       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
            <fileset dir="src/">
               <exclude name="documentation/content/xdocs/dtd/" />
               <exclude name="documentation/content/xdocs/entity/" />
@@ -1359,6 +1374,12 @@ under the License.
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
            </fileset>
        </rat:report>
+       
+       <loadfile property="rat.reportcontent" srcFile="${rat.report}"/>
+       <echo>${rat.reportcontent}</echo> 
+       
+       <!-- fail the build if at least one note is in the report -->
+       <fail><condition><not><contains string="${rat.reportcontent}" substring="Notes: 0"/></not></condition>
+       </fail>
     </target>
 </project>
-
