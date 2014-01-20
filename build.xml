@@ -1317,7 +1317,7 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble"/>
+    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, rat-check"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
