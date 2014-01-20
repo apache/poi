@@ -1379,7 +1379,6 @@ under the License.
        <echo>${rat.reportcontent}</echo> 
        
        <!-- fail the build if at least one note is in the report -->
-       <fail><condition><not><contains string="${rat.reportcontent}" substring="Notes: 0"/></not></condition>
-       </fail>
+       <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
     </target>
 </project>
