@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public class Countifs implements FreeRefFunction {
     public static final FreeRefFunction instance = new Countifs();
 
-    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         Double result = null;
         if (args.length == 0 || args.length % 2 > 0) {
