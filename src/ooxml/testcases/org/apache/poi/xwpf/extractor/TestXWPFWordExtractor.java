@@ -364,14 +364,14 @@ public class TestXWPFWordExtractor extends TestCase {
         extractor.close();
     }
     
-    public void testCheckboxes() throws IOException  {
+    public void testFetchCheckboxes() throws IOException  {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("checkboxes.docx");
-        System.out.println(doc);
         XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
         
         assertEquals("This is a small test for checkboxes \nunchecked: |_| \n"+
                      "Or checked: |X|\n\n\n\n\n"+
-                     "Test a checkbox within a textbox: |_| -> |X|\n\n\n", extractor.getText());
+                     "Test a checkbox within a textbox: |_| -> |X|\n\n\nIn Table:\n"+
+                     "|_|\t|X|\n\n\nIn Sequence:\n|X||_||X|\n", extractor.getText());
         extractor.close();
     }
 }
