@@ -45,12 +45,16 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFFCheckBox;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFldChar;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
@@ -64,13 +68,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalAlignRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
-import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -803,6 +806,22 @@ public class XWPFRun implements ISDTContents, IRunElement{
                 //  in the normal text output
                 if (!"w:instrText".equals(tagName)) {
                     text.append(((CTText) o).getStringValue());
+                }
+            }
+            
+            // Complex type evaluation (currently only for extraction of check boxes)
+            if(o instanceof CTFldChar) {
+                CTFldChar ctfldChar = ((CTFldChar)o);
+                    if(ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
+                        if(ctfldChar.getFfData() != null) {
+                            for(CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
+                                if(checkBox.getDefault().getVal() == STOnOff.X_1) {
+                                    text.append("|X|");
+                                } else {
+                                    text.append("|_|");
+                                }
+                            }
+                        }
                 }
             }
 
