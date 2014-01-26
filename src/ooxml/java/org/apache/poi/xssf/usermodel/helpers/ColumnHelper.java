@@ -123,15 +123,31 @@ public class ColumnHelper {
             if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
             while (currentIndex <= nextIndex && !currentElements.isEmpty()) {
                 Set<CTCol> currentIndexElements = new HashSet<CTCol>();
-                CTCol currentElem = currentElements.first();
-                long currentElemIndex = currentElem.getMax();
-                currentIndexElements.add(currentElem);
-                while (currentElements.higher(currentElem) != null && currentElements.higher(currentElem).getMax() == currentElemIndex) {
-                    currentElem = currentElements.higher(currentElem);
+                long currentElemIndex;
+                
+                {
+                    // narrow scope of currentElem
+                    CTCol currentElem = currentElements.first();
+                    currentElemIndex = currentElem.getMax();
                     currentIndexElements.add(currentElem);
-                    if (col.getMax() > currentMax) currentMax = col.getMax();
-                    if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
+                    
+                    for (CTCol cc : currentElements.tailSet(currentElem)) {
+                        if (cc == null || cc.getMax() == currentElemIndex) break;
+                        currentIndexElements.add(cc);
+                        if (col.getMax() > currentMax) currentMax = col.getMax();
+                        if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
+                    }
+
+                    // JDK 6 code
+                    // while (currentElements.higher(currentElem) != null && currentElements.higher(currentElem).getMax() == currentElemIndex) {
+                    //     currentElem = currentElements.higher(currentElem);
+                    //     currentIndexElements.add(currentElem);
+                    //     if (col.getMax() > currentMax) currentMax = col.getMax();
+                    //     if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
+                    // }
                 }
+                
+                
                 if (currentElemIndex < nextIndex || !flIter.hasNext()) {
                     insertCol(cols, currentIndex, currentElemIndex, currentElements.toArray(new CTCol[]{}), true, haveOverrideColumn);
                     if (flIter.hasNext()) {
