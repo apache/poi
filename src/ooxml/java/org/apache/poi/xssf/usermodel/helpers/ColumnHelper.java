@@ -25,9 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.util.java7_util.TreeSet7;
 import org.apache.poi.xssf.util.CTColComparator;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
@@ -95,7 +95,7 @@ public class ColumnHelper {
      */
     private void sweepCleanColumns(CTCols cols, CTCol[] flattenedColsArray, CTCol overrideColumn) {
         List<CTCol> flattenedCols = new ArrayList<CTCol>(Arrays.asList(flattenedColsArray));
-        TreeSet7<CTCol> currentElements = new TreeSet7<CTCol>(new CTColByMaxComparator());
+        TreeSet<CTCol> currentElements = new TreeSet<CTCol>(new CTColByMaxComparator());
         ListIterator<CTCol> flIter = flattenedCols.listIterator();
         CTCol haveOverrideColumn = null;
         long lastMaxIndex = 0;
