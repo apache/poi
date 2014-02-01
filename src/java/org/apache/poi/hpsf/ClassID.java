@@ -40,6 +40,7 @@ public class ClassID
     public static final ClassID WORD95       = new ClassID("{00020900-0000-0000-C000-000000000046}");
     public static final ClassID POWERPOINT97 = new ClassID("{64818D10-4F9B-11CF-86EA-00AA00B929E8}");
     public static final ClassID POWERPOINT95 = new ClassID("{EA7BAE70-FB3B-11CD-A903-00AA00510EA3}");
+    public static final ClassID EQUATION30   = new ClassID("{0002CE02-0000-0000-C000-000000000046}");
 	
 	
     /**
