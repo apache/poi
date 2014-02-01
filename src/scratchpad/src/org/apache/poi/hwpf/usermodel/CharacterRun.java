@@ -633,14 +633,14 @@ public final class CharacterRun
   }
   
   /**
-   * Returns the index of the base style which applies to
+   * <p>Returns the index of the base style which applies to
    *  this Run. Details of the style can be looked up
    *  from the {@link StyleSheet}, via
-   *  {@link StyleSheet#getStyleDescription(int)}.
-   * Note that runs typically override some of the style
+   *  {@link StyleSheet#getStyleDescription(int)}.</p>
+   * <p>Note that runs typically override some of the style
    *  properties from the base, so normally style information
    *  should be fetched directly from the {@link CharacterRun}
-   *  itself. 
+   *  itself.</p>
    */
   public short getStyleIndex() {
     return _istd;
