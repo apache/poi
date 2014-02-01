@@ -164,6 +164,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "YIELD", null);
         r(m, "YIELDDISC", null);
         r(m, "YIELDMAT", null);
+        r(m, "COUNTIFS", Countifs.instance);
 
         return m;
     }
