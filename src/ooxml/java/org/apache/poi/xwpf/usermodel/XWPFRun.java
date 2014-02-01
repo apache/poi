@@ -45,6 +45,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
@@ -69,8 +71,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
-import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 
 /**
  * XWPFRun object defines a region of text with a common set of properties
@@ -81,6 +81,16 @@ public class XWPFRun implements ISDTContents, IRunElement{
     private IRunBody parent;
     private List<XWPFPicture> pictures;
 
+    /**
+     * @see <a href="http://msdn.microsoft.com/en-us/library/ff533743(v=office.12).aspx">[MS-OI29500] Run Fonts</a> 
+     */
+    public static enum FontCharRange {
+        ascii /* char 0-127 */,
+        cs /* complex symbol */,
+        eastAsia /* east asia */,
+        hAnsi /* high ansi */
+    };
+    
     /**
      * @param r the CTR bean which holds the run attributes
      * @param p the parent paragraph
@@ -481,29 +491,97 @@ public class XWPFRun implements ISDTContents, IRunElement{
     }
 
     /**
-     * Specifies the fonts which shall be used to display the text contents of
+     * Gets the fonts which shall be used to display the text contents of
      * this run. Specifies a font which shall be used to format all characters
      * in the ASCII range (0 - 127) within the parent run
      *
      * @return a string representing the font family
      */
     public String getFontFamily() {
-        CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetRFonts()) ? pr.getRFonts().getAscii()
-                : null;
+        return getFontFamily(null);
     }
 
     /**
+     * Gets the font family for the specified font char range.
+     * If fcr is null, the font char range "ascii" is used
+     *
+     * @param fcr the font char range, defaults to "ansi"
+     * @return  a string representing the font famil
+     */
+    public String getFontFamily(FontCharRange fcr) {
+        CTRPr pr = run.getRPr();
+        if (pr == null || !pr.isSetRFonts()) return null;
+        
+        CTFonts fonts = pr.getRFonts();
+        switch (fcr == null ? FontCharRange.ascii : fcr) {
+        default:
+        case ascii:
+            return fonts.getAscii();
+        case cs:
+            return fonts.getCs();
+        case eastAsia:
+            return fonts.getEastAsia();
+        case hAnsi:
+            return fonts.getHAnsi();
+        }
+    }
+    
+    
+    /**
      * Specifies the fonts which shall be used to display the text contents of
      * this run. Specifies a font which shall be used to format all characters
-     * in the ASCII range (0 - 127) within the parent run
+     * in the ASCII range (0 - 127) within the parent run.
+     * 
+     * Also sets the other font ranges, if they haven't been set before 
      *
      * @param fontFamily
+     * 
+     * @see FontCharRange
      */
     public void setFontFamily(String fontFamily) {
+        setFontFamily(fontFamily, null);
+    }
+    
+    /**
+     * Specifies the fonts which shall be used to display the text contents of
+     * this run. The default handling for fcr == null is to overwrite the
+     * ascii font char range with the given font family and also set all not
+     * specified font ranges
+     *
+     * @param fontFamily
+     * @param fcr FontCharRange or null for default handling
+     */
+    public void setFontFamily(String fontFamily, FontCharRange fcr) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTFonts fonts = pr.isSetRFonts() ? pr.getRFonts() : pr.addNewRFonts();
-        fonts.setAscii(fontFamily);
+        
+        if (fcr == null) {
+            fonts.setAscii(fontFamily);
+            if (!fonts.isSetHAnsi()) {
+                fonts.setHAnsi(fontFamily);
+            }
+            if (!fonts.isSetCs()) {
+                fonts.setCs(fontFamily);
+            }
+            if (!fonts.isSetEastAsia()) {
+                fonts.setEastAsia(fontFamily);
+            }
+        } else {
+            switch (fcr) {
+            case ascii:
+                fonts.setAscii(fontFamily);
+                break;
+            case cs:
+                fonts.setCs(fontFamily);
+                break;
+            case eastAsia:
+                fonts.setEastAsia(fontFamily);
+                break;
+            case hAnsi:
+                fonts.setHAnsi(fontFamily);
+                break;
+            }
+        }
     }
 
     /**

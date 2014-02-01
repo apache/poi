@@ -37,6 +37,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestXWPFBugs.class,
+    org.apache.poi.xwpf.usermodel.TestXWPFBugs.class,
     TestXWPFDocument.class,
     TestXWPFWordExtractor.class,
     TestXWPFHeaderFooterPolicy.class,
