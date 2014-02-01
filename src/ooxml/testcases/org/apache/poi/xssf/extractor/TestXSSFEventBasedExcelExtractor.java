@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.extractor;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,11 +25,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.usermodel.XSSFShape;
-import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 
 /**
  * Tests for {@link XSSFEventBasedExcelExtractor}
@@ -186,5 +181,32 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
 	    assertTrue(text.indexOf("Line 2") > -1);
 	    assertTrue(text.indexOf("Line 3") > -1);
 
+    }
+
+    /**
+     * Test that we return the same output for unstyled numbers as the
+     * non-event-based XSSFExcelExtractor.
+     */
+    public void testUnstyledNumbersComparedToNonEventBasedExtractor()
+            throws Exception {
+
+        String expectedOutput = "Sheet1\n99.99\n";
+
+        XSSFExcelExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("56011.xlsx"));
+        try {
+            assertEquals(expectedOutput, extractor.getText().replace(",", "."));
+        } finally {
+            extractor.close();
+        }
+
+        XSSFEventBasedExcelExtractor fixture =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("56011.xlsx"));
+        try {
+            assertEquals(expectedOutput, fixture.getText().replace(",", "."));
+        } finally {
+            fixture.close();
+        }
     }
 }

@@ -132,6 +132,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       return false;
    }
    
+   @Override
    public void startElement(String uri, String localName, String name,
                             Attributes attributes) throws SAXException {
 
@@ -207,18 +208,26 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                nextDataType = xssfDataType.SST_STRING;
            else if ("str".equals(cellType))
                nextDataType = xssfDataType.FORMULA;
-           else if (cellStyleStr != null) {
-              // Number, but almost certainly with a special style or format
-               int styleIndex = Integer.parseInt(cellStyleStr);
-               XSSFCellStyle style = stylesTable.getStyleAt(styleIndex);
-               this.formatIndex = style.getDataFormat();
-               this.formatString = style.getDataFormatString();
-               if (this.formatString == null)
-                   this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
+           else {
+               // Number, but almost certainly with a special style or format
+               XSSFCellStyle style = null;
+               if (cellStyleStr != null) {
+                   int styleIndex = Integer.parseInt(cellStyleStr);
+                   style = stylesTable.getStyleAt(styleIndex);
+               } else if (stylesTable.getNumCellStyles() > 0) {
+                   style = stylesTable.getStyleAt(0);
+               }
+               if (style != null) {
+                   this.formatIndex = style.getDataFormat();
+                   this.formatString = style.getDataFormatString();
+                   if (this.formatString == null)
+                       this.formatString = BuiltinFormats.getBuiltinFormat(this.formatIndex);
+               }
            }
        }
    }
 
+   @Override
    public void endElement(String uri, String localName, String name)
            throws SAXException {
        String thisStr = null;
@@ -316,6 +325,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     * Captures characters only if a suitable element is open.
     * Originally was just "v"; extended for inlineStr also.
     */
+   @Override
    public void characters(char[] ch, int start, int length)
            throws SAXException {
        if (vIsOpen) {
