@@ -19,11 +19,16 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.After;
+import org.junit.Test;
 
 
 public class TestSXSSFSheet extends BaseTestSheet {
@@ -33,7 +38,7 @@ public class TestSXSSFSheet extends BaseTestSheet {
     }
 
 
-    @Override
+    @After
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
@@ -43,35 +48,30 @@ public class TestSXSSFSheet extends BaseTestSheet {
      * cloning of sheets is not supported in SXSSF
      */
     @Override
-    public void testCloneSheet() {
-        try {
-            super.testCloneSheet();
-            fail("expected exception");
-        } catch (RuntimeException e){
-            assertEquals("NotImplemented", e.getMessage());
-        }
+    @Test
+    public void cloneSheet() {
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage("NotImplemented");
+        super.cloneSheet();
     }
 
     @Override
-    public void testCloneSheetMultipleTimes() {
-        try {
-            super.testCloneSheetMultipleTimes();
-            fail("expected exception");
-        } catch (RuntimeException e){
-            assertEquals("NotImplemented", e.getMessage());
-        }
+    @Test
+    public void cloneSheetMultipleTimes() {
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage("NotImplemented");
+        super.cloneSheetMultipleTimes();
     }
+    
     /**
      * shifting rows is not supported in SXSSF
      */
     @Override
-    public void testShiftMerged(){
-        try {
-            super.testShiftMerged();
-            fail("expected exception");
-        } catch (RuntimeException e){
-            assertEquals("NotImplemented", e.getMessage());
-        }
+    @Test
+    public void shiftMerged(){
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage("NotImplemented");
+        super.shiftMerged();
     }
 
     /**
@@ -80,21 +80,21 @@ public class TestSXSSFSheet extends BaseTestSheet {
      *  The test is disabled because cloning of sheets is not supported in SXSSF
      */
     @Override
-    public void test35084(){
-        try {
-            super.test35084();
-            fail("expected exception");
-        } catch (RuntimeException e){
-            assertEquals("NotImplemented", e.getMessage());
-        }
+    @Test
+    public void bug35084(){
+        thrown.expect(RuntimeException.class);
+        thrown.expectMessage("NotImplemented");
+        super.bug35084();
     }
 
     @Override
-    public void testDefaultColumnStyle() {
+    @Test
+    public void defaultColumnStyle() {
         //TODO column styles are not yet supported by XSSF
     }
 
-    public void testOverrideFlushedRows() {
+    @Test
+    public void overrideFlushedRows() {
         Workbook wb = new SXSSFWorkbook(3);
         Sheet sheet = wb.createSheet();
 
@@ -102,16 +102,14 @@ public class TestSXSSFSheet extends BaseTestSheet {
         sheet.createRow(2);
         sheet.createRow(3);
         sheet.createRow(4);
-        try {
-            sheet.createRow(1);
-            fail("expected exception");
-        } catch (Throwable e){
-            assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", e.getMessage());
-        }
 
+        thrown.expect(Throwable.class);
+        thrown.expectMessage("Attempting to write a row[1] in the range [0,1] that is already written to disk.");
+        sheet.createRow(1);
     }
 
-    public void testOverrideRowsInTemplate() {
+    @Test
+    public void overrideRowsInTemplate() {
         XSSFWorkbook template = new XSSFWorkbook();
         template.createSheet().createRow(1);
 
