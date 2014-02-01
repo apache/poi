@@ -20,9 +20,11 @@ package org.apache.poi.hwpf.usermodel;
 import java.util.List;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PAPX;
+import org.apache.poi.hwpf.model.StyleSheet;
 
 /**
  * Tests to ensure that our ranges end up with
@@ -145,10 +147,20 @@ public final class TestRangeProperties extends TestCase {
 		
 		// Ensure none of the paragraphs refer to one that isn't there,
 		//  and none of their character runs either
+		// Also check all use the default style
+        StyleSheet ss = a.getStyleSheet();
 		for(int i=0; i<a.getRange().numParagraphs(); i++) {
 		   Paragraph p = a.getRange().getParagraph(i);
-		   assertTrue(p.getStyleIndex() < 15);
+		   int styleIndex = p.getStyleIndex();
+		   assertTrue(styleIndex < 15);
+		   assertEquals("Normal", ss.getStyleDescription(styleIndex).getName());
 		}
+        for(int i=0; i<a.getRange().numCharacterRuns(); i++) {
+            CharacterRun c = a.getRange().getCharacterRun(i);
+            int styleIndex = c.getStyleIndex();
+            assertTrue(styleIndex < 15);
+            assertEquals("Normal", ss.getStyleDescription(styleIndex).getName());
+        }
 	}
 
 	/**
@@ -289,6 +301,7 @@ public final class TestRangeProperties extends TestCase {
 
 		Paragraph p1 = r.getParagraph(0);
 		Paragraph p7 = r.getParagraph(6);
+		StyleSheet ss = r._doc.getStyleSheet();
 
 		// Line ending in its own run each time!
 		assertEquals(2, p1.numCharacterRuns());
@@ -310,6 +323,12 @@ public final class TestRangeProperties extends TestCase {
 
 		assertEquals("Times New Roman", c7b.getFontName());
 		assertEquals(48, c7b.getFontSize());
+		
+		// All use the default base style
+		assertEquals("Normal", ss.getStyleDescription(c1a.getStyleIndex()).getName());
+        assertEquals("Normal", ss.getStyleDescription(c1b.getStyleIndex()).getName());
+        assertEquals("Heading 1", ss.getStyleDescription(c7a.getStyleIndex()).getName());
+        assertEquals("Heading 1", ss.getStyleDescription(c7b.getStyleIndex()).getName());
 
 		// Now check where they crop up
 		assertEquals(
@@ -371,14 +390,22 @@ public final class TestRangeProperties extends TestCase {
 				c7b.getEndOffset()
 		);
       
-      // This document has 15 styles
-      assertEquals(15, a.getStyleSheet().numStyles());
+      // This document also has 22 styles
+      assertEquals(22, ss.numStyles());
       
       // Ensure none of the paragraphs refer to one that isn't there,
       //  and none of their character runs either
-      for(int i=0; i<a.getRange().numParagraphs(); i++) {
-         Paragraph p = a.getRange().getParagraph(i);
-         assertTrue(p.getStyleIndex() < 15);
+      for(int i=0; i<r.numParagraphs(); i++) {
+         Paragraph p = r.getParagraph(i);
+         int styleIndex = p.getStyleIndex();
+         assertTrue(styleIndex < 22);
+         assertNotNull(ss.getStyleDescription(styleIndex).getName());
+      }
+      for(int i=0; i<r.numCharacterRuns(); i++) {
+          CharacterRun c = r.getCharacterRun(i);
+          int styleIndex = c.getStyleIndex();
+          assertTrue(styleIndex < 22);
+          assertNotNull(ss.getStyleDescription(styleIndex).getName());
       }
 	}
 }
