@@ -131,11 +131,11 @@ under the License.
     <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.jar"/>
     <property name="main.commons-logging.url"
               value="${repository.m2}/maven2/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
-    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.5.jar"/>
+    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.9.jar"/>
     <property name="main.commons-codec.url"
-              value="${repository.m2}/maven2/commons-codec/commons-codec/1.5/commons-codec-1.5.jar"/>
-    <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.13.jar"/>
-    <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
+              value="${repository.m2}/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
+    <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.17.jar"/>
+    <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-4.11.jar"/>
     <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/4.11/junit-4.11.jar"/>
     <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
