@@ -25,8 +25,8 @@ package org.apache.poi.openxml4j.opc;
  * @version 1.0
  */
 public enum TargetMode {
-	/** The relationship references a resource that is external to the package. */
+    /** The relationship references a part that is inside the package. */
 	INTERNAL,
-	/** The relationship references a part that is inside the package. */
+    /** The relationship references a resource that is external to the package. */
 	EXTERNAL
 }
