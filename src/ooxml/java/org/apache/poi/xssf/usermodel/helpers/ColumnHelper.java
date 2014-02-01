@@ -91,7 +91,7 @@ public class ColumnHelper {
     }
 
     /**
-     * @see http://en.wikipedia.org/wiki/Sweep_line_algorithm
+     * @see <a href="http://en.wikipedia.org/wiki/Sweep_line_algorithm">Sweep line algorithm</a>
      */
     private void sweepCleanColumns(CTCols cols, CTCol[] flattenedColsArray, CTCol overrideColumn) {
         List<CTCol> flattenedCols = new ArrayList<CTCol>(Arrays.asList(flattenedColsArray));
