@@ -204,9 +204,15 @@ public class Paragraph extends Range implements Cloneable
         _istd = papx.getIstd();
     }
 
-public short getStyleIndex()
+  /**
+   * Returns the index of the style which applies to this
+   *  Paragraph. Details of the style can be looked up
+   *  from the {@link StyleSheet}, via
+   *  {@link StyleSheet#getStyleDescription(int)} 
+   */
+  public short getStyleIndex()
   {
-    return _istd;
+     return _istd;
   }
 
   @Deprecated

@@ -85,8 +85,9 @@ public final class CharacterRun
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
 
-  SprmBuffer _chpx;
-  CharacterProperties _props;
+  protected short _istd;
+  protected SprmBuffer _chpx;
+  protected CharacterProperties _props;
 
   /**
    *
@@ -100,6 +101,7 @@ public final class CharacterRun
     super(Math.max(parent._start, chpx.getStart()), Math.min(parent._end, chpx.getEnd()), parent);
     _props = chpx.getCharacterProperties(ss, istd);
     _chpx = chpx.getSprmBuf();
+    _istd = istd;
   }
 
   /**
@@ -628,6 +630,20 @@ public final class CharacterRun
 
   public int getLanguageCode() {
       return _props.getLidDefault();
+  }
+  
+  /**
+   * Returns the index of the base style which applies to
+   *  this Run. Details of the style can be looked up
+   *  from the {@link StyleSheet}, via
+   *  {@link StyleSheet#getStyleDescription(int)}.
+   * Note that runs typically override some of the style
+   *  properties from the base, so normally style information
+   *  should be fetched directly from the {@link CharacterRun}
+   *  itself. 
+   */
+  public short getStyleIndex() {
+    return _istd;
   }
   
   public String toString() {
