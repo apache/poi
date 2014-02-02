@@ -21,30 +21,30 @@ package org.apache.poi.ss.extractor;
  *  HSSF and XSSF
  */
 public interface ExcelExtractor {
-	/**
-	 * Should sheet names be included? Default is true
-	 */
-	public void setIncludeSheetNames(boolean includeSheetNames);
+    /**
+     * Should sheet names be included? Default is true
+     */
+    public void setIncludeSheetNames(boolean includeSheetNames);
 
-	/**
-	 * Should we return the formula itself, and not
-	 *  the result it produces? Default is false
-	 */
-	public void setFormulasNotResults(boolean formulasNotResults);
+    /**
+     * Should we return the formula itself, and not
+     *  the result it produces? Default is false
+     */
+    public void setFormulasNotResults(boolean formulasNotResults);
 
     /**
      * Should headers and footers be included in the output?
      * Default is true
      */
     public void setIncludeHeadersFooters(boolean includeHeadersFooters);
-    
-	/**
+
+    /**
      * Should cell comments be included? Default is false
      */
     public void setIncludeCellComments(boolean includeCellComments);
 
-	/**
-	 * Retreives the text contents of the file
-	 */
-	public String getText();
+    /**
+     * Retreives the text contents of the file
+     */
+    public String getText();
 }
