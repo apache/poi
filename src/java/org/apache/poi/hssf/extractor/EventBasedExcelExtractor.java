@@ -59,10 +59,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">
  * http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java</link>
  */
-public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
-   private DirectoryNode _dir;
-	boolean _includeSheetNames = true;
-	boolean _formulasNotResults = false;
+public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
+    private DirectoryNode _dir;
+    boolean _includeSheetNames = true;
+    boolean _formulasNotResults = false;
 
     /**
      * @deprecated Use {@link #EventBasedExcelExtractor(DirectoryNode)} instead
@@ -109,7 +109,15 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor {
 		throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
 	}
 
+    /**
+     * Would control the inclusion of cell comments from the document,
+     *  if we supported it
+     */
+    public void setIncludeCellComments(boolean includeComments) {
+        throw new IllegalStateException("Comment extraction not supported in streaming mode, please use ExcelExtractor");
+    }
 
+    
 	/**
 	 * Should sheet names be included? Default is true
 	 */
