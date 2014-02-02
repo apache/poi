@@ -26,10 +26,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.poi.POIXMLProperties;
-import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.POIXMLProperties.CustomProperties;
 import org.apache.poi.POIXMLProperties.ExtendedProperties;
+import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -50,14 +50,15 @@ import org.xml.sax.XMLReader;
  * Implementation of a text extractor from OOXML Excel
  *  files that uses SAX event based parsing.
  */
-public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
-   private OPCPackage container;
-   private POIXMLProperties properties;
-   
-   private Locale locale;
-	private boolean includeSheetNames = true;
-	private boolean formulasNotResults = false;
-	private boolean includeTextBoxes = true;
+public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor 
+       implements org.apache.poi.ss.extractor.ExcelExtractor {
+    private OPCPackage container;
+    private POIXMLProperties properties;
+
+    private Locale locale;
+    private boolean includeSheetNames = true;
+    private boolean formulasNotResults = false;
+    private boolean includeTextBoxes = true;
 
 	public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
 		this(OPCPackage.open(path));
@@ -97,12 +98,19 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor {
 	/**
      * Should text from textboxes be included? Default is true
      */
-
 	public void setIncludeTextBoxes(boolean includeTextBoxes) {
 	    this.includeTextBoxes = includeTextBoxes;
 	}
 	
-	public void setLocale(Locale locale) {
+	/**
+	 * Would control the inclusion of cell comments from the document,
+	 *  if we supported it
+	 */
+	public void setIncludeCellComments(boolean includeCellComments) {
+	    throw new IllegalStateException("Comment extraction not supported in streaming mode, please use XSSFExcelExtractor");
+    }
+	
+    public void setLocale(Locale locale) {
 	   this.locale = locale;
 	}
 	
