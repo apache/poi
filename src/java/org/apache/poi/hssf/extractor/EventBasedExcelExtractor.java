@@ -94,191 +94,191 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
       return _dir.getFileSystem();
    }
 
-	/**
-	 * Would return the document information metadata for the document,
-	 *  if we supported it
-	 */
-	public DocumentSummaryInformation getDocSummaryInformation() {
-		throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
-	}
-	/**
-	 * Would return the summary information metadata for the document,
-	 *  if we supported it
-	 */
-	public SummaryInformation getSummaryInformation() {
-		throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
-	}
-	
-
-    /**
-     * Would control the inclusion of cell comments from the document,
-     *  if we supported it
-     */
-    public void setIncludeCellComments(boolean includeComments) {
-        throw new IllegalStateException("Comment extraction not supported in streaming mode, please use ExcelExtractor");
-    }
-
-    /**
-     * Would control the inclusion of headers and footers from the document,
-     *  if we supported it
-     */
-	public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
-        throw new IllegalStateException("Header/Footer extraction not supported in streaming mode, please use ExcelExtractor");
-    }
-	
-
-    /**
-	 * Should sheet names be included? Default is true
-	 */
-	public void setIncludeSheetNames(boolean includeSheetNames) {
-		_includeSheetNames = includeSheetNames;
-	}
-	/**
-	 * Should we return the formula itself, and not
-	 *  the result it produces? Default is false
-	 */
-	public void setFormulasNotResults(boolean formulasNotResults) {
-		_formulasNotResults = formulasNotResults;
-	}
+   /**
+    * Would return the document information metadata for the document,
+    *  if we supported it
+    */
+   public DocumentSummaryInformation getDocSummaryInformation() {
+       throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
+   }
+   /**
+    * Would return the summary information metadata for the document,
+    *  if we supported it
+    */
+   public SummaryInformation getSummaryInformation() {
+       throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
+   }
 
 
-	/**
-	 * Retreives the text contents of the file
-	 */
-	public String getText() {
-		String text = null;
-		try {
-			TextListener tl = triggerExtraction();
+   /**
+    * Would control the inclusion of cell comments from the document,
+    *  if we supported it
+    */
+   public void setIncludeCellComments(boolean includeComments) {
+       throw new IllegalStateException("Comment extraction not supported in streaming mode, please use ExcelExtractor");
+   }
 
-			text = tl._text.toString();
-			if(! text.endsWith("\n")) {
-				text = text + "\n";
-			}
-		} catch(IOException e) {
-			throw new RuntimeException(e);
-		}
+   /**
+    * Would control the inclusion of headers and footers from the document,
+    *  if we supported it
+    */
+   public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
+       throw new IllegalStateException("Header/Footer extraction not supported in streaming mode, please use ExcelExtractor");
+   }
 
-		return text;
-	}
 
-	private TextListener triggerExtraction() throws IOException {
-		TextListener tl = new TextListener();
-		FormatTrackingHSSFListener ft = new FormatTrackingHSSFListener(tl);
-		tl._ft = ft;
+   /**
+    * Should sheet names be included? Default is true
+    */
+   public void setIncludeSheetNames(boolean includeSheetNames) {
+       _includeSheetNames = includeSheetNames;
+   }
+   /**
+    * Should we return the formula itself, and not
+    *  the result it produces? Default is false
+    */
+   public void setFormulasNotResults(boolean formulasNotResults) {
+       _formulasNotResults = formulasNotResults;
+   }
 
-		// Register and process
-		HSSFEventFactory factory = new HSSFEventFactory();
-		HSSFRequest request = new HSSFRequest();
-		request.addListenerForAllRecords(ft);
 
-		factory.processWorkbookEvents(request, _dir);
+   /**
+    * Retreives the text contents of the file
+    */
+   public String getText() {
+       String text = null;
+       try {
+           TextListener tl = triggerExtraction();
 
-		return tl;
-	}
+           text = tl._text.toString();
+           if(! text.endsWith("\n")) {
+               text = text + "\n";
+           }
+       } catch(IOException e) {
+           throw new RuntimeException(e);
+       }
 
-	private class TextListener implements HSSFListener {
-		FormatTrackingHSSFListener _ft;
-		private SSTRecord sstRecord;
+       return text;
+   }
 
-		private final List<String> sheetNames;
-		final StringBuffer _text = new StringBuffer();
-		private int sheetNum = -1;
-		private int rowNum;
+   private TextListener triggerExtraction() throws IOException {
+       TextListener tl = new TextListener();
+       FormatTrackingHSSFListener ft = new FormatTrackingHSSFListener(tl);
+       tl._ft = ft;
 
-		private boolean outputNextStringValue = false;
-		private int nextRow = -1;
+       // Register and process
+       HSSFEventFactory factory = new HSSFEventFactory();
+       HSSFRequest request = new HSSFRequest();
+       request.addListenerForAllRecords(ft);
 
-		public TextListener() {
-			sheetNames = new ArrayList<String>();
-		}
-		public void processRecord(Record record) {
-			String thisText = null;
-			int thisRow = -1;
+       factory.processWorkbookEvents(request, _dir);
 
-			switch(record.getSid()) {
-			case BoundSheetRecord.sid:
-				BoundSheetRecord sr = (BoundSheetRecord)record;
-				sheetNames.add(sr.getSheetname());
-				break;
-			case BOFRecord.sid:
-				BOFRecord bof = (BOFRecord)record;
-				if(bof.getType() == BOFRecord.TYPE_WORKSHEET) {
-					sheetNum++;
-					rowNum = -1;
+       return tl;
+   }
 
-					if(_includeSheetNames) {
-						if(_text.length() > 0) _text.append("\n");
-						_text.append(sheetNames.get(sheetNum));
-					}
-				}
-				break;
-			case SSTRecord.sid:
-				sstRecord = (SSTRecord)record;
-				break;
+   private class TextListener implements HSSFListener {
+       FormatTrackingHSSFListener _ft;
+       private SSTRecord sstRecord;
 
-			case FormulaRecord.sid:
-				FormulaRecord frec = (FormulaRecord) record;
-				thisRow = frec.getRow();
+       private final List<String> sheetNames;
+       final StringBuffer _text = new StringBuffer();
+       private int sheetNum = -1;
+       private int rowNum;
 
-				if(_formulasNotResults) {
-					thisText = HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, frec.getParsedExpression());
-				} else {
-					if(frec.hasCachedResultString()) {
-						// Formula result is a string
-						// This is stored in the next record
-						outputNextStringValue = true;
-						nextRow = frec.getRow();
-					} else {
-						thisText = _ft.formatNumberDateCell(frec);
-					}
-				}
-				break;
-			case StringRecord.sid:
-				if(outputNextStringValue) {
-					// String for formula
-					StringRecord srec = (StringRecord)record;
-					thisText = srec.getString();
-					thisRow = nextRow;
-					outputNextStringValue = false;
-				}
-				break;
-			case LabelRecord.sid:
-				LabelRecord lrec = (LabelRecord) record;
-				thisRow = lrec.getRow();
-				thisText = lrec.getValue();
-				break;
-			case LabelSSTRecord.sid:
-				LabelSSTRecord lsrec = (LabelSSTRecord) record;
-				thisRow = lsrec.getRow();
-				if(sstRecord == null) {
-					throw new IllegalStateException("No SST record found");
-				}
-				thisText = sstRecord.getString(lsrec.getSSTIndex()).toString();
-				break;
-			case NoteRecord.sid:
-				NoteRecord nrec = (NoteRecord) record;
-				thisRow = nrec.getRow();
-				// TODO: Find object to match nrec.getShapeId()
-				break;
-			case NumberRecord.sid:
-				NumberRecord numrec = (NumberRecord) record;
-				thisRow = numrec.getRow();
-				thisText = _ft.formatNumberDateCell(numrec);
-				break;
-			default:
-				break;
-			}
+       private boolean outputNextStringValue = false;
+       private int nextRow = -1;
 
-			if(thisText != null) {
-				if(thisRow != rowNum) {
-					rowNum = thisRow;
-					if(_text.length() > 0)
-						_text.append("\n");
-				} else {
-					_text.append("\t");
-				}
-				_text.append(thisText);
-			}
-		}
-	}
+       public TextListener() {
+           sheetNames = new ArrayList<String>();
+       }
+       public void processRecord(Record record) {
+           String thisText = null;
+           int thisRow = -1;
+
+           switch(record.getSid()) {
+           case BoundSheetRecord.sid:
+               BoundSheetRecord sr = (BoundSheetRecord)record;
+               sheetNames.add(sr.getSheetname());
+               break;
+           case BOFRecord.sid:
+               BOFRecord bof = (BOFRecord)record;
+               if(bof.getType() == BOFRecord.TYPE_WORKSHEET) {
+                   sheetNum++;
+                   rowNum = -1;
+
+                   if(_includeSheetNames) {
+                       if(_text.length() > 0) _text.append("\n");
+                       _text.append(sheetNames.get(sheetNum));
+                   }
+               }
+               break;
+           case SSTRecord.sid:
+               sstRecord = (SSTRecord)record;
+               break;
+
+           case FormulaRecord.sid:
+               FormulaRecord frec = (FormulaRecord) record;
+               thisRow = frec.getRow();
+
+               if(_formulasNotResults) {
+                   thisText = HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, frec.getParsedExpression());
+               } else {
+                   if(frec.hasCachedResultString()) {
+                       // Formula result is a string
+                       // This is stored in the next record
+                       outputNextStringValue = true;
+                       nextRow = frec.getRow();
+                   } else {
+                       thisText = _ft.formatNumberDateCell(frec);
+                   }
+               }
+               break;
+           case StringRecord.sid:
+               if(outputNextStringValue) {
+                   // String for formula
+                   StringRecord srec = (StringRecord)record;
+                   thisText = srec.getString();
+                   thisRow = nextRow;
+                   outputNextStringValue = false;
+               }
+               break;
+           case LabelRecord.sid:
+               LabelRecord lrec = (LabelRecord) record;
+               thisRow = lrec.getRow();
+               thisText = lrec.getValue();
+               break;
+           case LabelSSTRecord.sid:
+               LabelSSTRecord lsrec = (LabelSSTRecord) record;
+               thisRow = lsrec.getRow();
+               if(sstRecord == null) {
+                   throw new IllegalStateException("No SST record found");
+               }
+               thisText = sstRecord.getString(lsrec.getSSTIndex()).toString();
+               break;
+           case NoteRecord.sid:
+               NoteRecord nrec = (NoteRecord) record;
+               thisRow = nrec.getRow();
+               // TODO: Find object to match nrec.getShapeId()
+               break;
+           case NumberRecord.sid:
+               NumberRecord numrec = (NumberRecord) record;
+               thisRow = numrec.getRow();
+               thisText = _ft.formatNumberDateCell(numrec);
+               break;
+           default:
+               break;
+           }
+
+           if(thisText != null) {
+               if(thisRow != rowNum) {
+                   rowNum = thisRow;
+                   if(_text.length() > 0)
+                       _text.append("\n");
+               } else {
+                   _text.append("\t");
+               }
+               _text.append(thisText);
+           }
+       }
+   }
 }
