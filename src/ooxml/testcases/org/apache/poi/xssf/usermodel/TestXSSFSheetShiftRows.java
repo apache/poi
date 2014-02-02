@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftRows;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -140,5 +141,50 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 		verifyCellContent(readSheet, 6, null);
 		verifyCellContent(readSheet, 7, "6.0");
 		verifyCellContent(readSheet, 8, "8.0");
+	}
+	
+	public void testBug56017() throws IOException {
+	    Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56017.xlsx");
+
+        Sheet sheet = wb.getSheetAt(0);
+
+        Comment comment = sheet.getCellComment(0, 0);
+        assertNotNull(comment);
+        assertEquals("Amdocs", comment.getAuthor());
+        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        
+        sheet.shiftRows(0, 1, 1);
+
+        // comment in row 0 is gone
+        comment = sheet.getCellComment(0, 0);
+        assertNull(comment);
+        
+        // comment is now in row 1
+        comment = sheet.getCellComment(1, 0);
+        assertNotNull(comment);
+        assertEquals("Amdocs", comment.getAuthor());
+        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        
+//        FileOutputStream outputStream = new FileOutputStream("/tmp/56017.xlsx");
+//        try {
+//            wb.write(outputStream);
+//        } finally {
+//            outputStream.close();
+//        }
+        
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+
+        Sheet sheetBack = wbBack.getSheetAt(0);
+
+        // comment in row 0 is gone
+        comment = sheetBack.getCellComment(0, 0);
+        assertNull(comment);
+
+        // comment is now in row 1
+        comment = sheetBack.getCellComment(1, 0);
+        assertNotNull(comment);
+        assertEquals("Amdocs", comment.getAuthor());
+        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
 	}
 }
