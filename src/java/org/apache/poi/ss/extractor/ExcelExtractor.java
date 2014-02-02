@@ -32,6 +32,12 @@ public interface ExcelExtractor {
 	 */
 	public void setFormulasNotResults(boolean formulasNotResults);
 
+    /**
+     * Should headers and footers be included in the output?
+     * Default is true
+     */
+    public void setIncludeHeadersFooters(boolean includeHeadersFooters);
+    
 	/**
      * Should cell comments be included? Default is false
      */
