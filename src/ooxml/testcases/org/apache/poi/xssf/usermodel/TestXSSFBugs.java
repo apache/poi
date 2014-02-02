@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -1414,30 +1413,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  error message when called via WorkbookFactory.
      * (You need to supply a password explicitly for them)
      */
+    @Test(expected=EncryptedDocumentException.class)
+    public void bug55692_stream() throws Exception {
+        // Directly on a Stream
+        WorkbookFactory.create(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+    }
+    
+    @Test(expected=EncryptedDocumentException.class)
+    public void bug55692_poifs() throws Exception {
+        // Via a POIFSFileSystem
+        POIFSFileSystem fsP = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+        WorkbookFactory.create(fsP);
+    }
+    
+    @Test(expected=EncryptedDocumentException.class)
+    public void bug55692_npoifs() throws Exception {
+        // Via a NPOIFSFileSystem
+        NPOIFSFileSystem fsNP = new NPOIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+        WorkbookFactory.create(fsNP);
+    }
+
     @Test
-    public void bug55692() throws Exception {
-    	InputStream inpA = POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx");
-    	InputStream inpB = POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx");
-    	InputStream inpC = POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx");
-
-    	// Directly on a Stream
-    	try {
-    		WorkbookFactory.create(inpA);
-    		fail("Should've raised a EncryptedDocumentException error");
-    	} catch (EncryptedDocumentException e) {}
-    	
-    	// Via a POIFSFileSystem
-    	POIFSFileSystem fsP = new POIFSFileSystem(inpB);
-    	try {
-    		WorkbookFactory.create(fsP);
-    		fail("Should've raised a EncryptedDocumentException error");
-    	} catch (EncryptedDocumentException e) {}
-
-    	// Via a NPOIFSFileSystem
-    	NPOIFSFileSystem fsNP = new NPOIFSFileSystem(inpC);
-    	try {
-    		WorkbookFactory.create(fsNP);
-    		fail("Should've raised a EncryptedDocumentException error");
-    	} catch (EncryptedDocumentException e) {}
+    public void bug53282() {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53282b.xlsx");
+        Cell c = wb.getSheetAt(0).getRow(1).getCell(0);
+        assertEquals("#@_#", c.getStringCellValue()); 
+        assertEquals("http://invalid.uri", c.getHyperlink().getAddress()); 
     }
 }
