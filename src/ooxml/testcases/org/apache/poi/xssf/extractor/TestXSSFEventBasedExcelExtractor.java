@@ -209,4 +209,35 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
             fixture.close();
         }
     }
+
+    /**
+     * Test that we return the same output headers and footers as the
+     * non-event-based XSSFExcelExtractor.
+     */
+    public void testHeadersAndFootersComparedToNonEventBasedExtractor()
+        throws Exception {
+
+        String expectedOutputWithHeadersAndFooters =
+                "Sheet1\n" +
+                "&\"Calibri,Regular\"&K000000top left\t&\"Calibri,Regular\"&K000000top center\t&\"Calibri,Regular\"&K000000top right\n" +
+                "abc\t123\n" +
+                "&\"Calibri,Regular\"&K000000bottom left\t&\"Calibri,Regular\"&K000000bottom center\t&\"Calibri,Regular\"&K000000bottom right\n";
+
+        String expectedOutputWithoutHeadersAndFooters =
+                "Sheet1\n" +
+                "abc\t123\n";
+
+        XSSFExcelExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("headerFooterTest.xlsx"));
+        assertEquals(expectedOutputWithHeadersAndFooters, extractor.getText());
+        extractor.setIncludeHeadersFooters(false);
+        assertEquals(expectedOutputWithoutHeadersAndFooters, extractor.getText());
+
+        XSSFEventBasedExcelExtractor fixture =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("headerFooterTest.xlsx"));
+        assertEquals(expectedOutputWithHeadersAndFooters, fixture.getText());
+        fixture.setIncludeHeadersFooters(false);
+        assertEquals(expectedOutputWithoutHeadersAndFooters, fixture.getText());
+    }
 }
