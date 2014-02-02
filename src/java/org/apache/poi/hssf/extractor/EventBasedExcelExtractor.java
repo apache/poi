@@ -45,7 +45,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * A text extractor for Excel files, that is based
- *  on the hssf eventusermodel api.
+ *  on the HSSF EventUserModel API.
  * It will typically use less memory than
  *  {@link ExcelExtractor}, but may not provide
  *  the same richness of formatting.
@@ -108,6 +108,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
 	public SummaryInformation getSummaryInformation() {
 		throw new IllegalStateException("Metadata extraction not supported in streaming mode, please use ExcelExtractor");
 	}
+	
 
     /**
      * Would control the inclusion of cell comments from the document,
@@ -117,8 +118,16 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
         throw new IllegalStateException("Comment extraction not supported in streaming mode, please use ExcelExtractor");
     }
 
-    
-	/**
+    /**
+     * Would control the inclusion of headers and footers from the document,
+     *  if we supported it
+     */
+	public void setIncludeHeadersFooters(boolean includeHeadersFooters) {
+        throw new IllegalStateException("Header/Footer extraction not supported in streaming mode, please use ExcelExtractor");
+    }
+	
+
+    /**
 	 * Should sheet names be included? Default is true
 	 */
 	public void setIncludeSheetNames(boolean includeSheetNames) {
