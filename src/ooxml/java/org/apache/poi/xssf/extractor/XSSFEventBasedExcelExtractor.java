@@ -60,99 +60,99 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     private boolean formulasNotResults = false;
     private boolean includeTextBoxes = true;
 
-	public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
-		this(OPCPackage.open(path));
-	}
-	public XSSFEventBasedExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
-		super(null);
-		this.container = container;
-		
-		properties = new POIXMLProperties(container);
-	}
+    public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
+        this(OPCPackage.open(path));
+    }
+    public XSSFEventBasedExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
+        super(null);
+        this.container = container;
 
-	public static void main(String[] args) throws Exception {
-		if(args.length < 1) {
-			System.err.println("Use:");
-			System.err.println("  XSSFEventBasedExcelExtractor <filename.xlsx>");
-			System.exit(1);
-		}
-		POIXMLTextExtractor extractor =
-			new XSSFEventBasedExcelExtractor(args[0]);
-		System.out.println(extractor.getText());
-	}
+        properties = new POIXMLProperties(container);
+    }
 
-	/**
-	 * Should sheet names be included? Default is true
-	 */
-	public void setIncludeSheetNames(boolean includeSheetNames) {
-		this.includeSheetNames = includeSheetNames;
-	}
-	/**
-	 * Should we return the formula itself, and not
-	 *  the result it produces? Default is false
-	 */
-	public void setFormulasNotResults(boolean formulasNotResults) {
-		this.formulasNotResults = formulasNotResults;
-	}
+    public static void main(String[] args) throws Exception {
+        if(args.length < 1) {
+            System.err.println("Use:");
+            System.err.println("  XSSFEventBasedExcelExtractor <filename.xlsx>");
+            System.exit(1);
+        }
+        POIXMLTextExtractor extractor =
+            new XSSFEventBasedExcelExtractor(args[0]);
+        System.out.println(extractor.getText());
+    }
 
-	/**
+    /**
+     * Should sheet names be included? Default is true
+     */
+    public void setIncludeSheetNames(boolean includeSheetNames) {
+        this.includeSheetNames = includeSheetNames;
+    }
+    /**
+     * Should we return the formula itself, and not
+     *  the result it produces? Default is false
+     */
+    public void setFormulasNotResults(boolean formulasNotResults) {
+        this.formulasNotResults = formulasNotResults;
+    }
+
+    /**
      * Should text from textboxes be included? Default is true
      */
-	public void setIncludeTextBoxes(boolean includeTextBoxes) {
-	    this.includeTextBoxes = includeTextBoxes;
-	}
-	
-	/**
-	 * Would control the inclusion of cell comments from the document,
-	 *  if we supported it
-	 */
-	public void setIncludeCellComments(boolean includeCellComments) {
-	    throw new IllegalStateException("Comment extraction not supported in streaming mode, please use XSSFExcelExtractor");
+    public void setIncludeTextBoxes(boolean includeTextBoxes) {
+        this.includeTextBoxes = includeTextBoxes;
     }
-	
+
+    /**
+     * Would control the inclusion of cell comments from the document,
+     *  if we supported it
+     */
+    public void setIncludeCellComments(boolean includeCellComments) {
+        throw new IllegalStateException("Comment extraction not supported in streaming mode, please use XSSFExcelExtractor");
+    }
+
     public void setLocale(Locale locale) {
-	   this.locale = locale;
-	}
-	
-	/**
-	 * Returns the opened OPCPackage container.
-	 */
-	@Override
-	public OPCPackage getPackage() {
-	   return container;
-	}
-	
-   /**
-    * Returns the core document properties
-    */
-   @Override
-   public CoreProperties getCoreProperties() {
-       return properties.getCoreProperties();
-   }
-   /**
-    * Returns the extended document properties
-    */
-   @Override
-   public ExtendedProperties getExtendedProperties() {
-      return properties.getExtendedProperties();
-   }
-   /**
-    * Returns the custom document properties
-    */
-   @Override
-   public CustomProperties getCustomProperties() {
-      return properties.getCustomProperties();
-   }
-   
-   /**
-    * Processes the given sheet
-    */
-   public void processSheet(
-           SheetContentsHandler sheetContentsExtractor,
-           StylesTable styles,
-           ReadOnlySharedStringsTable strings,
-           InputStream sheetInputStream)
-           throws IOException, SAXException {
+        this.locale = locale;
+    }
+
+    /**
+     * Returns the opened OPCPackage container.
+     */
+    @Override
+    public OPCPackage getPackage() {
+        return container;
+    }
+
+    /**
+     * Returns the core document properties
+     */
+    @Override
+    public CoreProperties getCoreProperties() {
+        return properties.getCoreProperties();
+    }
+    /**
+     * Returns the extended document properties
+     */
+    @Override
+    public ExtendedProperties getExtendedProperties() {
+        return properties.getExtendedProperties();
+    }
+    /**
+     * Returns the custom document properties
+     */
+    @Override
+    public CustomProperties getCustomProperties() {
+        return properties.getCustomProperties();
+    }
+
+    /**
+     * Processes the given sheet
+     */
+    public void processSheet(
+            SheetContentsHandler sheetContentsExtractor,
+            StylesTable styles,
+            ReadOnlySharedStringsTable strings,
+            InputStream sheetInputStream)
+            throws IOException, SAXException {
 
        DataFormatter formatter;
        if(locale == null) {
