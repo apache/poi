@@ -62,8 +62,8 @@ under the License.
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
     <!-- compiler options options -->
-    <property name="jdk.version.source" value="1.5" description="JDK version of source code"/>
-    <property name="jdk.version.class" value="1.5" description="JDK version of generated class files"/>
+    <property name="jdk.version.source" value="1.6" description="JDK version of source code"/>
+    <property name="jdk.version.class" value="1.6" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
     <!-- 
