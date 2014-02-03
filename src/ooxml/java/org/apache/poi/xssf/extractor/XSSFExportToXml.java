@@ -43,6 +43,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
@@ -283,7 +284,14 @@ public class XSSFExportToXml implements Comparator<String>{
         case XSSFCell.CELL_TYPE_STRING: value = cell.getStringCellValue(); break;
         case XSSFCell.CELL_TYPE_BOOLEAN: value += cell.getBooleanCellValue(); break;
         case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();  break;
-        case XSSFCell.CELL_TYPE_FORMULA: value = cell.getStringCellValue(); break;
+        case XSSFCell.CELL_TYPE_FORMULA:
+           if (cell.getCachedFormulaResultType() == Cell.CELL_TYPE_STRING) {
+               value = cell.getStringCellValue();
+           } else {
+               value += cell.getNumericCellValue();
+           }
+           break;
+        
         case XSSFCell.CELL_TYPE_NUMERIC: 
              if (DateUtil.isCellDateFormatted(cell)) {
                   DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -292,6 +300,7 @@ public class XSSFExportToXml implements Comparator<String>{
                  value += cell.getRawValue();
               }
             break;
+
         default: ;
 
         }

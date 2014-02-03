@@ -241,4 +241,35 @@ public final class TestXSSFExportToXML extends TestCase {
            assertEquals("2012-01-13", date);
        }
    }
+
+   public void testFormulaCells_Bugzilla_55926() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55926.xlsx");
+
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+
+           XSSFMap map = mapInfo.getXSSFMapById(1);
+
+           assertNotNull("XSSFMap is null", map);
+
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, true);
+           String xmlData = os.toString("UTF-8");
+
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+           
+           String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
+           String doubleValue = a.split("<DOUBLE>")[1].split("</DOUBLE>")[0].trim();
+           String stringValue = a.split("<STRING>")[1].split("</STRING>")[0].trim();
+           
+           assertEquals("Hello World", stringValue);
+           assertEquals("5.1", doubleValue);
+       }
+   }
 }
