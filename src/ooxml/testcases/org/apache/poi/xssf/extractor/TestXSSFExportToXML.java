@@ -20,6 +20,7 @@ package org.apache.poi.xssf.extractor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,8 +31,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
@@ -47,6 +52,7 @@ public final class TestXSSFExportToXML extends TestCase {
 
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
 
+        boolean found = false;
 		for (POIXMLDocumentPart p : wb.getRelations()) {
 
 			if (!(p instanceof MapInfo)) {
@@ -82,7 +88,10 @@ public final class TestXSSFExportToXML extends TestCase {
 			assertEquals("aa", crediti);
 			
 			parseXML(xml);
-		}
+	           
+           found = true;
+       }
+       assertTrue(found);
 	}
 
 	public void testExportToXMLInverseOrder() throws Exception {
@@ -92,6 +101,7 @@ public final class TestXSSFExportToXML extends TestCase {
 
 		MapInfo mapInfo = null;
 
+        boolean found = false;
 		for (POIXMLDocumentPart p : wb.getRelations()) {
 
 			if (!(p instanceof MapInfo)) {
@@ -127,7 +137,10 @@ public final class TestXSSFExportToXML extends TestCase {
 			assertEquals("ro", crediti);
 			
 			parseXML(xml);
-		}
+	           
+           found = true;
+       }
+       assertTrue(found);
 	}
 
 	public void testXPathOrdering() {
@@ -137,6 +150,7 @@ public final class TestXSSFExportToXML extends TestCase {
 
 		MapInfo mapInfo = null;
 
+        boolean found = false;
 		for (POIXMLDocumentPart p : wb.getRelations()) {
 
 			if (p instanceof MapInfo) {
@@ -148,7 +162,10 @@ public final class TestXSSFExportToXML extends TestCase {
 				assertEquals(1, exporter.compare("/CORSO/DOCENTE", "/CORSO/NOME"));
 				assertEquals(-1, exporter.compare("/CORSO/NOME", "/CORSO/DOCENTE"));
 			}
-		}
+	           
+           found = true;
+       }
+       assertTrue(found);
 	}
 
 	public void testMultiTable() throws Exception {
@@ -156,6 +173,7 @@ public final class TestXSSFExportToXML extends TestCase {
 		XSSFWorkbook wb = XSSFTestDataSamples
 				.openSampleWorkbook("CustomXMLMappings-complex-type.xlsx");
 
+		boolean found = false;
 		for (POIXMLDocumentPart p : wb.getRelations()) {
 
 			if (p instanceof MapInfo) {
@@ -187,7 +205,10 @@ public final class TestXSSFExportToXML extends TestCase {
 					assertTrue(matcher.find());
 				}
 			}
-		}
+	           
+           found = true;
+       }
+       assertTrue(found);
 	}
 
     public void test55850ComplexXmlExport() throws Exception {
@@ -195,6 +216,7 @@ public final class TestXSSFExportToXML extends TestCase {
         XSSFWorkbook wb = XSSFTestDataSamples
                 .openSampleWorkbook("55850.xlsx");
 
+        boolean found = false;
         for (POIXMLDocumentPart p : wb.getRelations()) {
 
             if (!(p instanceof MapInfo)) {
@@ -227,12 +249,16 @@ public final class TestXSSFExportToXML extends TestCase {
             assertEquals("19", chf);
             
             parseXML(xmlData);
+            
+            found = true;
         }
+        assertTrue(found);
     }
 
    public void testFormulaCells_Bugzilla_55927() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55927.xlsx");
        
+       boolean found = false;
        for (POIXMLDocumentPart p : wb.getRelations()) {
            
            if (!(p instanceof MapInfo)) {
@@ -256,12 +282,16 @@ public final class TestXSSFExportToXML extends TestCase {
            assertEquals("2012-01-13", date);
            
            parseXML(xmlData);
+           
+           found = true;
        }
+       assertTrue(found);
    }
 
    public void testFormulaCells_Bugzilla_55926() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55926.xlsx");
 
+       boolean found = false;
        for (POIXMLDocumentPart p : wb.getRelations()) {
 
            if (!(p instanceof MapInfo)) {
@@ -289,7 +319,10 @@ public final class TestXSSFExportToXML extends TestCase {
            assertEquals("5.1", doubleValue);
            
            parseXML(xmlData);
+           
+           found = true;
        }
+       assertTrue(found);
    }
    
    @Test
@@ -297,6 +330,7 @@ public final class TestXSSFExportToXML extends TestCase {
 
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55924.xlsx");
 
+       boolean found = false;
        for (POIXMLDocumentPart p : wb.getRelations()) {
 
            if (!(p instanceof MapInfo)) {
@@ -321,9 +355,88 @@ public final class TestXSSFExportToXML extends TestCase {
            assertEquals("1",euro);
            
            parseXML(xmlData);
+           
+           found = true;
        }
+       assertTrue(found);
    }
 
+   public void testXmlExportCompare_Bug_55923() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx");
+
+       boolean found = false;
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+
+           XSSFMap map = mapInfo.getXSSFMapById(4);
+
+           assertNotNull("XSSFMap is null", map);
+
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           assertEquals(0, exporter.compare("", ""));
+           assertEquals(0, exporter.compare("/", "/"));
+           assertEquals(0, exporter.compare("//", "//"));
+           assertEquals(0, exporter.compare("/a/", "/b/"));
+           
+           assertEquals(-1, exporter.compare("/ns1:Entry/ns1:A/ns1:B/ns1:C/ns1:E/ns1:EUR",
+                                           "/ns1:Entry/ns1:A/ns1:B/ns1:C/ns1:E/ns1:CHF"));
+           
+           found = true;
+       }
+       assertTrue(found);
+   }
+   
+   public void testXmlExportSchemaOrderingBug_Bugzilla_55923() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx");
+
+       boolean found = false;
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+
+           XSSFMap map = mapInfo.getXSSFMapById(4);
+
+           assertNotNull("XSSFMap is null", map);
+
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, true);
+           String xmlData = os.toString("UTF-8");
+
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+           
+           String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
+           String a_b = a.split("<B>")[1].split("</B>")[0].trim();
+           String a_b_c = a_b.split("<C>")[1].split("</C>")[0].trim();
+           String a_b_c_e = a_b_c.split("<E>")[1].split("</EA>")[0].trim();
+           String a_b_c_e_euro = a_b_c_e.split("<EUR>")[1].split("</EUR>")[0].trim();
+           String a_b_c_e_chf = a_b_c_e.split("<CHF>")[1].split("</CHF>")[0].trim();
+           
+           assertEquals("1",a_b_c_e_euro);
+           assertEquals("2",a_b_c_e_chf);
+           
+           String a_b_d = a_b.split("<D>")[1].split("</Dd>")[0].trim();
+           String a_b_d_e = a_b_d.split("<E>")[1].split("</EA>")[0].trim();
+           
+           String a_b_d_e_euro = a_b_d_e.split("<EUR>")[1].split("</EUR>")[0].trim();
+           String a_b_d_e_chf = a_b_d_e.split("<CHF>")[1].split("</CHF>")[0].trim();
+           
+           assertEquals("3",a_b_d_e_euro);
+           assertEquals("4",a_b_d_e_chf);
+           
+           found = true;
+       }
+       assertTrue(found);
+   }
+   
    private void parseXML(String xmlData) throws IOException, SAXException, ParserConfigurationException {
        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
        docBuilderFactory.setNamespaceAware(true);
@@ -341,5 +454,95 @@ public final class TestXSSFExportToXML extends TestCase {
        {
            return null;
        }
+   }
+   
+   public void testExportDataTypes() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx");
+       
+       Sheet sheet = wb.getSheetAt(0);
+       Row row = sheet.getRow(0);
+       
+       Cell cString = row.createCell(0);
+       cString.setCellValue("somestring");
+       cString.setCellType(XSSFCell.CELL_TYPE_STRING);
+       
+       Cell cBoolean = row.createCell(1);
+       cBoolean.setCellValue(true);
+       cBoolean.setCellType(XSSFCell.CELL_TYPE_BOOLEAN);
+       
+       Cell cError = row.createCell(2);
+       cError.setCellType(XSSFCell.CELL_TYPE_ERROR);
+       
+       Cell cFormulaString = row.createCell(3);
+       cFormulaString.setCellFormula("A1");
+       cFormulaString.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+       
+       Cell cFormulaNumeric = row.createCell(4);
+       cFormulaNumeric.setCellFormula("F1");
+       cFormulaNumeric.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+       
+       Cell cNumeric = row.createCell(5);
+       cNumeric.setCellValue(1.2);
+       cNumeric.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+       
+       Cell cDate = row.createCell(6);
+       cDate.setCellValue(new Date());
+       cDate.setCellType(XSSFCell.CELL_TYPE_NUMERIC);
+       
+       boolean found = false;
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+
+           XSSFMap map = mapInfo.getXSSFMapById(4);
+
+           assertNotNull("XSSFMap is null", map);
+
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, true);
+           String xmlData = os.toString("UTF-8");
+
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+           
+           parseXML(xmlData);
+           
+           found = true;
+       }
+       assertTrue(found);
+   }
+
+   public void testValidateFalse() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx");
+
+       boolean found = false;
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+
+           XSSFMap map = mapInfo.getXSSFMapById(4);
+
+           assertNotNull("XSSFMap is null", map);
+
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, false);
+           String xmlData = os.toString("UTF-8");
+
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+           
+           parseXML(xmlData);
+           
+           found = true;
+       }
+       assertTrue(found);
    }
 }
