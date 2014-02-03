@@ -174,6 +174,11 @@ public class XSSFExportToXml implements Comparator<String>{
                         Node currentNode = getNodeByXPath(xpath,doc.getFirstChild(),doc,false);
                         STXmlDataType.Enum dataType = simpleXmlCell.getXmlDataType();
                         mapCellOnNode(cell,currentNode,dataType);
+                        
+                        //remove nodes which are empty in order to keep the output xml valid
+                        if("".equals(currentNode.getTextContent()) && currentNode.getParentNode() != null) {
+                        	currentNode.getParentNode().removeChild(currentNode);
+                        }
                     }
                 }
 

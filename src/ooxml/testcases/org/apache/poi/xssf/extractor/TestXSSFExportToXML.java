@@ -17,9 +17,15 @@
 
 package org.apache.poi.xssf.extractor;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.TestCase;
 
@@ -28,12 +34,15 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * @author Roberto Manicardi
  */
 public final class TestXSSFExportToXML extends TestCase {
-
 	public void testExportToXML() throws Exception {
 
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
@@ -71,6 +80,8 @@ public final class TestXSSFExportToXML extends TestCase {
 			assertEquals("gvvv", argomento);
 			assertEquals("aaaa", progetto);
 			assertEquals("aa", crediti);
+			
+			parseXML(xml);
 		}
 	}
 
@@ -114,6 +125,8 @@ public final class TestXSSFExportToXML extends TestCase {
 			assertEquals("ds", argomento);
 			assertEquals("ro", progetto);
 			assertEquals("ro", crediti);
+			
+			parseXML(xml);
 		}
 	}
 
@@ -212,6 +225,8 @@ public final class TestXSSFExportToXML extends TestCase {
 
             assertEquals("15", euro);
             assertEquals("19", chf);
+            
+            parseXML(xmlData);
         }
     }
 
@@ -239,6 +254,8 @@ public final class TestXSSFExportToXML extends TestCase {
            
            String date = xmlData.split("<DATE>")[1].split("</DATE>")[0].trim();
            assertEquals("2012-01-13", date);
+           
+           parseXML(xmlData);
        }
    }
 
@@ -270,6 +287,59 @@ public final class TestXSSFExportToXML extends TestCase {
            
            assertEquals("Hello World", stringValue);
            assertEquals("5.1", doubleValue);
+           
+           parseXML(xmlData);
+       }
+   }
+   
+   @Test
+   public void testXmlExportIgnoresEmptyCells_Bugzilla_55924() throws Exception {
+
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55924.xlsx");
+
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+
+           XSSFMap map = mapInfo.getXSSFMapById(1);
+
+           assertNotNull("XSSFMap is null", map);
+
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, true);
+           String xmlData = os.toString("UTF-8");
+
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+
+           String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
+           String euro = a.split("<EUR>")[1].split("</EUR>")[0].trim();
+           assertEquals("1",euro);
+           
+           parseXML(xmlData);
+       }
+   }
+
+   private void parseXML(String xmlData) throws IOException, SAXException, ParserConfigurationException {
+       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+       docBuilderFactory.setNamespaceAware(true);
+       docBuilderFactory.setValidating(false);
+       DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+       docBuilder.setEntityResolver(new DummyEntityResolver());
+
+       docBuilder.parse(new ByteArrayInputStream(xmlData.getBytes("UTF-8")));
+   }
+
+   private static class DummyEntityResolver implements EntityResolver
+   {
+       @Override
+       public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
+       {
+           return null;
        }
    }
 }
