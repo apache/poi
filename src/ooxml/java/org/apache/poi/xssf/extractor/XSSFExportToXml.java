@@ -19,6 +19,8 @@ package org.apache.poi.xssf.extractor;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -281,7 +284,14 @@ public class XSSFExportToXml implements Comparator<String>{
         case XSSFCell.CELL_TYPE_BOOLEAN: value += cell.getBooleanCellValue(); break;
         case XSSFCell.CELL_TYPE_ERROR: value = cell.getErrorCellString();  break;
         case XSSFCell.CELL_TYPE_FORMULA: value = cell.getStringCellValue(); break;
-        case XSSFCell.CELL_TYPE_NUMERIC: value += cell.getRawValue(); break;
+        case XSSFCell.CELL_TYPE_NUMERIC: 
+             if (DateUtil.isCellDateFormatted(cell)) {
+                  DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                  value += sdf.format(cell.getDateCellValue());
+              } else {
+                 value += cell.getRawValue();
+              }
+            break;
         default: ;
 
         }
@@ -383,6 +393,7 @@ public class XSSFExportToXml implements Comparator<String>{
      * Compares two xpaths to define an ordering according to the XML Schema
      *
      */
+    @Override
     public int compare(String leftXpath, String rightXpath) {
 
         int result = 0;
