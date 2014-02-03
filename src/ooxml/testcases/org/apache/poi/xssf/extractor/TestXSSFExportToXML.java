@@ -52,7 +52,7 @@ public final class TestXSSFExportToXML extends TestCase {
 			String xml = os.toString("UTF-8");
 
 			assertNotNull(xml);
-			assertTrue(!xml.equals(""));
+			assertFalse(xml.equals(""));
 
 			String docente = xml.split("<DOCENTE>")[1].split("</DOCENTE>")[0].trim();
 			String nome = xml.split("<NOME>")[1].split("</NOME>")[0].trim();
@@ -95,7 +95,7 @@ public final class TestXSSFExportToXML extends TestCase {
 			String xml = os.toString("UTF-8");
 
 			assertNotNull(xml);
-			assertTrue(!xml.equals(""));
+			assertFalse(xml.equals(""));
 
 			String docente = xml.split("<DOCENTE>")[1].split("</DOCENTE>")[0].trim();
 			String nome = xml.split("<NOME>")[1].split("</NOME>")[0].trim();
@@ -199,7 +199,7 @@ public final class TestXSSFExportToXML extends TestCase {
             String xmlData = os.toString("UTF-8");
 
             assertNotNull(xmlData);
-            assertTrue(!xmlData.equals(""));
+            assertFalse(xmlData.equals(""));
 
             String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
             String b = a.split("<B>")[1].split("</B>")[0].trim();
@@ -214,4 +214,31 @@ public final class TestXSSFExportToXML extends TestCase {
             assertEquals("19", chf);
         }
     }
+
+   public void testFormulaCells_Bugzilla_55927() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55927.xlsx");
+       
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+           
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+           
+           XSSFMap map = mapInfo.getXSSFMapById(1);
+           
+           assertNotNull("XSSFMap is null", map);
+           
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, true);
+           String xmlData = os.toString("UTF-8");
+           
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+           
+           String date = xmlData.split("<DATE>")[1].split("</DATE>")[0].trim();
+           assertEquals("2012-01-13", date);
+       }
+   }
 }
