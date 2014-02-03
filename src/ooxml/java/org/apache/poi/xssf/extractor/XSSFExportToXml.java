@@ -409,10 +409,7 @@ public class XSSFExportToXml implements Comparator<String>{
      */
     @Override
     public int compare(String leftXpath, String rightXpath) {
-
-        int result = 0;
         Node xmlSchema = map.getSchema();
-
 
         String[] leftTokens = leftXpath.split("/");
         String[] rightTokens = rightXpath.split("/");
@@ -421,15 +418,12 @@ public class XSSFExportToXml implements Comparator<String>{
 
         Node localComplexTypeRootNode = xmlSchema;
 
-
         for(int i =1;i <minLenght; i++) {
 
             String leftElementName =leftTokens[i];
             String rightElementName = rightTokens[i];
 
             if (leftElementName.equals(rightElementName)) {
-
-
                 Node complexType = getComplexTypeForElement(leftElementName, xmlSchema,localComplexTypeRootNode);
                 localComplexTypeRootNode = complexType;
             } else {
@@ -437,9 +431,9 @@ public class XSSFExportToXml implements Comparator<String>{
                 int rightIndex = indexOfElementInComplexType(rightElementName,localComplexTypeRootNode);
                 if (leftIndex!=-1 && rightIndex!=-1) {
                     if ( leftIndex < rightIndex) {
-                        result = -1;
+                        return -1;
                     }if ( leftIndex > rightIndex) {
-                        result = 1;
+                        return 1;
                     }
                 } else {
                     // NOTE: the xpath doesn't match correctly in the schema
@@ -447,7 +441,7 @@ public class XSSFExportToXml implements Comparator<String>{
             }
         }
 
-        return result;
+        return 0;
     }
 
     private int indexOfElementInComplexType(String elementName,Node complexType) {
