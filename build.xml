@@ -1317,7 +1317,7 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, rat-check"/>
+    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, findbugs, rat-check"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
@@ -1381,4 +1381,48 @@ under the License.
        <!-- fail the build if at least one note is in the report -->
        <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
     </target>
+	
+	<target name="findbugs"><!-- depends="assemble" -->
+		
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"/>
+            <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
+        </antcall>
+
+		<unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
+		       dest="build/findbugs/lib">
+		    <patternset>
+		        <include name="findbugs-2.0.3/lib/**"/>
+		    </patternset>
+			<mapper type="flatten"/>
+		</unzip>
+		
+		<property name="findbugs.home" value="build/findbugs" />
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+			<classpath>
+				<fileset dir="${findbugs.home}/lib">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</taskdef>
+		<findbugs home="${findbugs.home}" output="html" outputFile="build/findbugs.html">
+			<fileset dir="${dist.dir}">
+				<include name="poi-${version.id}-*.jar"/>
+				<include name="poi-scratchpad-${version.id}-*.jar"/>
+				<include name="poi-ooxml-${version.id}-*.jar"/>
+				<exclude name="poi-*${version.id}-sources-*.jar"/>
+			</fileset>
+			<auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
+			<auxClasspath path="ooxml-lib/ooxml-encryption-1.1.jar" />
+			<auxClasspath path="ooxml-lib/xmlbeans-2.3.0.jar" />
+			<auxClasspath path="ooxml-lib/dom4j-1.6.1.jar" />
+			<auxClasspath path="ooxml-lib/stax-api-1.0.1.jar" />
+			<auxClasspath path="lib/commons-codec-1.9.jar" />
+			<auxClasspath path="lib/commons-logging-1.1.3.jar" />
+			<auxClasspath path="lib/junit-4.11.jar" />
+			<sourcePath path="src/java" />
+			<sourcePath path="src/ooxml/java" />
+			<sourcePath path="src/scratchpad/src" />
+		</findbugs>		
+	</target>
 </project>
