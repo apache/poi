@@ -173,6 +173,12 @@ public final class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
+
+    @Override
     public String toString(){
         return "from : " + cell1.toString()  + "; to: " + cell2.toString();
     }

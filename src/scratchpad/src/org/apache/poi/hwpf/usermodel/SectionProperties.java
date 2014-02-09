@@ -45,7 +45,8 @@ public final class SectionProperties extends SEPAbstractType
 
         return copy;
     }
-
+    
+    @Override
     public boolean equals( Object obj )
     {
         Field[] fields = SectionProperties.class.getSuperclass()
@@ -74,4 +75,9 @@ public final class SectionProperties extends SEPAbstractType
         }
     }
 
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
 }

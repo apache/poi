@@ -23,10 +23,10 @@ import java.util.NoSuchElementException;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.util.Configurator;
 
 /**
@@ -684,6 +684,7 @@ public final class HSSFRow implements Row {
         return -1;
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (!(obj instanceof HSSFRow))
@@ -697,5 +698,11 @@ public final class HSSFRow implements Row {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
     }
 }

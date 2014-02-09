@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record.common;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -28,8 +28,14 @@ import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.common.UnicodeString.ExtRst;
 import org.apache.poi.hssf.record.common.UnicodeString.FormatRun;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.StringUtil;
+import org.junit.Test;
 
 /**
  * Tests that {@link UnicodeString} record size calculates correctly.  The record size
@@ -37,7 +43,7 @@ import org.apache.poi.util.LittleEndianOutputStream;
  *
  * @author Jason Height (jheight at apache.org)
  */
-public final class TestUnicodeString extends TestCase {
+public final class TestUnicodeString {
     private static final int MAX_DATA_SIZE = RecordInputStream.MAX_RECORD_DATA_SIZE;
 
     /** a 4 character string requiring 16 bit encoding */
@@ -65,7 +71,8 @@ public final class TestUnicodeString extends TestCase {
         assertEquals(expectedSize, actualSize);
     }
 
-    public void testSmallStringSize() {
+    @Test
+    public void smallStringSize() {
         //Test a basic string
         UnicodeString s = makeUnicodeString("Test");
         confirmSize(7, s);
@@ -111,7 +118,8 @@ public final class TestUnicodeString extends TestCase {
         confirmSize(21, s);
     }
 
-    public void testPerfectStringSize() {
+    @Test
+    public void perfectStringSize() {
       //Test a basic string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1);
       confirmSize(MAX_DATA_SIZE, s);
@@ -124,7 +132,8 @@ public final class TestUnicodeString extends TestCase {
       confirmSize(MAX_DATA_SIZE-1, s);
     }
 
-    public void testPerfectRichStringSize() {
+    @Test
+    public void perfectRichStringSize() {
       //Test a rich text string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1-8-2);
       s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
@@ -142,14 +151,16 @@ public final class TestUnicodeString extends TestCase {
       confirmSize(MAX_DATA_SIZE-1, s);
     }
 
-    public void testContinuedStringSize() {
+    @Test
+    public void continuedStringSize() {
       //Test a basic string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1+20);
       confirmSize(MAX_DATA_SIZE+4+1+20, s);
     }
 
     /** Tests that a string size calculation that fits neatly in two records, the second being a continue*/
-    public void testPerfectContinuedStringSize() {
+    @Test
+    public void perfectContinuedStringSize() {
       //Test a basic string
       int strSize = MAX_DATA_SIZE*2;
       //String overhead
@@ -162,7 +173,8 @@ public final class TestUnicodeString extends TestCase {
       confirmSize(MAX_DATA_SIZE*2, s);
     }
     
-    public void testFormatRun() throws Exception {
+    @Test
+    public void formatRun() throws Exception {
        FormatRun fr = new FormatRun((short)4, (short)0x15c);
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
@@ -187,7 +199,8 @@ public final class TestUnicodeString extends TestCase {
        assertEquals(0x15c, fr.getFontIndex());
     }
     
-    public void testExtRstFromEmpty() throws Exception {
+    @Test
+    public void extRstFromEmpty() throws Exception {
        ExtRst ext = new ExtRst();
        
        assertEquals(0, ext.getNumberOfRuns());
@@ -253,7 +266,8 @@ public final class TestUnicodeString extends TestCase {
        assertEquals(0, ext.getPhRuns().length);
     }
     
-    public void testExtRstFromData() throws Exception {
+    @Test
+    public void extRstFromData() throws Exception {
        byte[] data = new byte[] {
              01, 00, 0x0C, 00, 
              00, 00, 0x37, 00, 
@@ -276,7 +290,8 @@ public final class TestUnicodeString extends TestCase {
        assertEquals(0, ext.getPhRuns().length);
     }
     
-    public void testCorruptExtRstDetection() throws Exception {
+    @Test
+    public void corruptExtRstDetection() throws Exception {
        byte[] data = new byte[] {
              0x79, 0x79, 0x11, 0x11, 
              0x22, 0x22, 0x33, 0x33, 
@@ -302,6 +317,32 @@ public final class TestUnicodeString extends TestCase {
        assertEquals(0, ext.getPhRuns().length);
     }
 
+    @Test
+    public void extRstEqualsAndHashCode() {
+        byte buf[] = new byte[200];
+        LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(buf, 0);
+        String str = "\u1d02\u1d12\u1d22";
+        bos.writeShort(1);
+        bos.writeShort(5*LittleEndianConsts.SHORT_SIZE+str.length()*2+3*LittleEndianConsts.SHORT_SIZE+2); // data size
+        bos.writeShort(0x4711);
+        bos.writeShort(0x0815);
+        bos.writeShort(1);
+        bos.writeShort(str.length());
+        bos.writeShort(str.length());
+        StringUtil.putUnicodeLE(str, bos);
+        bos.writeShort(1);
+        bos.writeShort(1);
+        bos.writeShort(3);
+        bos.writeShort(42);
+        
+        LittleEndianInput in = new LittleEndianByteArrayInputStream(buf, 0, bos.getWriteIndex());
+        UnicodeString.ExtRst extRst1 = new UnicodeString.ExtRst(in, bos.getWriteIndex());
+        in = new LittleEndianByteArrayInputStream(buf, 0, bos.getWriteIndex());
+        UnicodeString.ExtRst extRst2 = new UnicodeString.ExtRst(in, bos.getWriteIndex());
+        
+        assertEquals(extRst1, extRst2);
+        assertEquals(extRst1.hashCode(), extRst2.hashCode());
+    }
 
     private static UnicodeString makeUnicodeString(String s) {
       UnicodeString st = new UnicodeString(s);

@@ -155,6 +155,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     return props;
   }
 
+  @Override
   public boolean equals(Object o)
   {
     if (super.equals(o))
@@ -162,6 +163,12 @@ public final class PAPX extends BytePropertyNode<PAPX> {
       return _phe.equals(((PAPX)o)._phe);
     }
     return false;
+  }
+
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
   }
 
     public String toString()

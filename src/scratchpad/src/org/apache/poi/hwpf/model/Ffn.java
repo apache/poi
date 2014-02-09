@@ -181,7 +181,8 @@ public final class Ffn
 
   }
 
-    public boolean equals(Object o)
+  @Override
+  public boolean equals(Object o)
     {
     boolean retVal = true;
 
@@ -227,6 +228,11 @@ public final class Ffn
   }
 
 
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
 }
 
 

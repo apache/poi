@@ -517,4 +517,10 @@ public class CellReference {
 			&& _isRowAbs == cr._isColAbs
 			&& _isColAbs == cr._isColAbs;
 	}
+
+	@Override
+	public int hashCode() {
+	    assert false : "hashCode not designed";
+	    return 42; // any arbitrary constant will do
+	}
 }

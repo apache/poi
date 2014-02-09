@@ -150,10 +150,18 @@ public final class SprmBuffer implements Cloneable
         _buf = newBuf;
     }
 }
+
+  @Override
   public boolean equals(Object obj)
   {
     SprmBuffer sprmBuf = (SprmBuffer)obj;
     return (Arrays.equals(_buf, sprmBuf._buf));
+  }
+
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
   }
 
   public SprmOperation findSprm( short opcode )

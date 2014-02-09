@@ -201,6 +201,7 @@ public class TextPiece extends PropertyNode<TextPiece>
 	   return (getEnd() - getStart()) * (_usesUnicode ? 2 : 1);
    }
 
+   @Override
    public boolean equals(Object o)
    {
      if (limitsAreEqual(o))
@@ -210,6 +211,12 @@ public class TextPiece extends PropertyNode<TextPiece>
               tp._usesUnicode == _usesUnicode && _pd.equals(tp._pd);
      }
      return false;
+   }
+
+   @Override
+   public int hashCode() {
+       assert false : "hashCode not designed";
+       return 42; // any arbitrary constant will do
    }
 
 
