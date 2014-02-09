@@ -421,4 +421,170 @@ public class WmfFill {
             return size;
         }
     }
+
+
+    /**
+     * The META_SETDIBTODEV record sets a block of pixels in the playback device context
+     * using deviceindependent color data.
+     * The source of the color data is a DIB
+     */
+    public static class WmfSetDibToDev implements WmfRecord {
+
+        /**
+         * A 16-bit unsigned integer that defines whether the Colors field of the
+         * DIB contains explicit RGB values or indexes into a palette.
+         * This MUST be one of the values in the ColorUsage Enumeration:
+         * DIB_RGB_COLORS = 0x0000,
+         * DIB_PAL_COLORS = 0x0001,
+         * DIB_PAL_INDICES = 0x0002
+         */
+        int colorUsage;  
+        /**
+         * A 16-bit unsigned integer that defines the number of scan lines in the source.
+         */
+        int scanCount;
+        /**
+         * A 16-bit unsigned integer that defines the starting scan line in the source.
+         */
+        int startScan;  
+        /**
+         * A 16-bit unsigned integer that defines the y-coordinate, in logical units, of the
+         * source rectangle.
+         */
+        int yDib;  
+        /**
+         * A 16-bit unsigned integer that defines the x-coordinate, in logical units, of the
+         * source rectangle.
+         */
+        int xDib;  
+        /**
+         * A 16-bit unsigned integer that defines the height, in logical units, of the
+         * source and destination rectangles.
+         */
+        int height;
+        /**
+         * A 16-bit unsigned integer that defines the width, in logical units, of the
+         * source and destination rectangles.
+         */
+        int width;
+        /**
+         * A 16-bit unsigned integer that defines the y-coordinate, in logical units, of the
+         * upper-left corner of the destination rectangle.
+         */
+        int yDest;
+        /**
+         * A 16-bit unsigned integer that defines the x-coordinate, in logical units, of the
+         * upper-left corner of the destination rectangle.
+         */
+        int xDest;
+        /**
+         * A variable-sized DeviceIndependentBitmap Object that is the source of the color data.
+         */
+        WmfBitmapDib dib;        
+        
+        
+        public WmfRecordType getRecordType() {
+            return WmfRecordType.setDibToDev;
+        }
+        
+        public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
+            colorUsage = leis.readUShort();
+            scanCount = leis.readUShort();
+            startScan = leis.readUShort();
+            yDib = leis.readUShort();
+            xDib = leis.readUShort();
+            height = leis.readUShort();
+            width = leis.readUShort();
+            yDest = leis.readUShort();
+            xDest = leis.readUShort();
+            
+            int size = 9*LittleEndianConsts.SHORT_SIZE;
+            dib = new WmfBitmapDib();
+            size += dib.init(leis);
+            
+            return size;
+        }        
+    }
+
+
+    public static class WmfDibBitBlt implements WmfRecord {
+
+        /**
+         * A 32-bit unsigned integer that defines how the source pixels, the current brush
+         * in the playback device context, and the destination pixels are to be combined to form the
+         * new image. This code MUST be one of the values in the Ternary Raster Operation Enumeration.
+         */
+        WmfTernaryRasterOp rasterOperation;  
+        /**
+         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the source rectangle.
+         */
+        int ySrc;
+        /**
+         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the source rectangle.
+         */
+        int xSrc;
+        /**
+         * A 16-bit signed integer that defines the height, in logical units, of the source and 
+         * destination rectangles.
+         */
+        int height;
+        /**
+         * A 16-bit signed integer that defines the width, in logical units, of the source and destination
+         * rectangles.
+         */
+        int width;
+        /**
+         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the upper-left
+         * corner of the destination rectangle.
+         */
+        int yDest;
+        /**
+         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the upper-left 
+         * corner of the destination rectangle.
+         */
+        int xDest;
+        
+        /**
+         * A variable-sized DeviceIndependentBitmap Object that defines image content.
+         * This object MUST be specified, even if the raster operation does not require a source.
+         */
+        WmfBitmapDib target;
+        
+        
+        public WmfRecordType getRecordType() {
+            return WmfRecordType.dibBitBlt;
+        }
+        
+        public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
+            boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
+
+            int size = 0;
+            int rasterOpIndex = leis.readUShort();
+            int rasterOpCode = leis.readUShort();
+            
+            rasterOperation = WmfTernaryRasterOp.fromOpIndex(rasterOpIndex);
+            assert(rasterOpCode == rasterOperation.opCode);
+
+            ySrc = leis.readShort();
+            xSrc = leis.readShort();
+            size = 4*LittleEndianConsts.SHORT_SIZE;
+            if (!hasBitmap) {
+                @SuppressWarnings("unused")
+                int reserved = leis.readShort();
+                size += LittleEndianConsts.SHORT_SIZE;
+            }
+            height = leis.readShort();
+            width = leis.readShort();
+            yDest = leis.readShort();
+            xDest = leis.readShort();
+            
+            size += 4*LittleEndianConsts.SHORT_SIZE;
+            if (hasBitmap) {
+                target = new WmfBitmapDib();
+                size += target.init(leis);
+            }
+            
+            return size;
+        }
+    }
 }
