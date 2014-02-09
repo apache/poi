@@ -111,7 +111,7 @@ public class LittleEndian implements LittleEndianConsts
      * 
      * @param data
      *            the byte array
-     * @return the double (64-bit) value
+     * @return the float (32-bit) value
      */
     public static float getFloat( byte[] data )
     {
@@ -127,7 +127,7 @@ public class LittleEndian implements LittleEndianConsts
      *            the byte array
      * @param offset
      *            a starting offset into the byte array
-     * @return the double (64-bit) value
+     * @return the float (32-bit) value
      */
     public static float getFloat( byte[] data, int offset )
     {
