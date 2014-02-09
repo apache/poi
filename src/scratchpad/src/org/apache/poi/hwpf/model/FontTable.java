@@ -137,6 +137,7 @@ public final class FontTable
 
   }
 
+  @Override
   public boolean equals(Object o)
   {
   	boolean retVal = true;
@@ -162,8 +163,10 @@ public final class FontTable
 	  return retVal;
   }
 
-
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
 
 }
-
-

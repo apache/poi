@@ -64,6 +64,7 @@ public final class SEPX extends PropertyNode<SEPX>
         return sectionProperties;
     }
 
+    @Override
     public boolean equals( Object o )
     {
         SEPX sepx = (SEPX) o;
@@ -72,6 +73,12 @@ public final class SEPX extends PropertyNode<SEPX>
             return sepx._sed.equals( _sed );
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
     }
 
     public String toString()

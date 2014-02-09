@@ -275,6 +275,12 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     }
 
     @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+      }
+
+    @Override
     public int getDx1() {
         return _escherClientAnchor.getDx1();
     }

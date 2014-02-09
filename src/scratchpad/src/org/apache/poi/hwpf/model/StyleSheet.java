@@ -174,6 +174,8 @@ public final class StyleSheet implements HDFType {
       }
     }
   }
+
+  @Override
   public boolean equals(Object o)
   {
     StyleSheet ss = (StyleSheet)o;
@@ -199,6 +201,13 @@ public final class StyleSheet implements HDFType {
     }
     return false;
   }
+
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+
   /**
    * Creates a PartagraphProperties object from a papx stored in the
    * StyleDescription at the index istd in the StyleDescription array. The PAP

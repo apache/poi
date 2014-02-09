@@ -18,14 +18,21 @@
 package org.apache.poi.hssf.record.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Title: Unicode String<p/>
@@ -86,6 +93,12 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
                 return _fontIndex - r._fontIndex;
             }
             return _character - r._character;
+        }
+
+        @Override
+        public int hashCode() {
+            assert false : "hashCode not designed";
+            return 42; // any arbitrary constant will do
         }
 
         public String toString() {
@@ -248,17 +261,33 @@ public class UnicodeString implements Comparable<UnicodeString> { // TODO - make
              if(result != 0) return result;
              result = phRuns[i].realTextFirstCharacterOffset - o.phRuns[i].realTextFirstCharacterOffset;
              if(result != 0) return result;
-             result = phRuns[i].realTextFirstCharacterOffset - o.phRuns[i].realTextLength;
+             result = phRuns[i].realTextLength - o.phRuns[i].realTextLength;
              if(result != 0) return result;
           }
           
-          result = extraData.length - o.extraData.length;
-          if(result != 0) return result;
+          result = Arrays.hashCode(extraData)-Arrays.hashCode(o.extraData);
           
-          // If we get here, it's the same
-          return 0;
+          return result;
        }
-       
+
+       @Override
+       public int hashCode() {
+           int hash = reserved;
+           hash = 31*hash+formattingFontIndex;
+           hash = 31*hash+formattingOptions;
+           hash = 31*hash+numberOfRuns;
+           hash = 31*hash+phoneticText.hashCode();
+
+           if (phRuns != null) {
+               for (PhRun ph : phRuns) {
+                   hash = 31*hash+ph.phoneticTextFirstCharacterOffset;
+                   hash = 31*hash+ph.realTextFirstCharacterOffset;
+                   hash = 31*hash+ph.realTextLength;
+               }
+           }
+           return hash;
+       }
+
        protected ExtRst clone() {
           ExtRst ext = new ExtRst();
           ext.reserved = reserved;

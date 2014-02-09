@@ -72,12 +72,19 @@ public final class DateAndTime
     LittleEndian.putShort(buf, offset + LittleEndian.SHORT_SIZE, _info2);
   }
 
+  @Override
   public boolean equals(Object o)
   {
     DateAndTime dttm = (DateAndTime)o;
     return _info == dttm._info && _info2 == dttm._info2;
   }
 
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
   public Object clone()
     throws CloneNotSupportedException
   {

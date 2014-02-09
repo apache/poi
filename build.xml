@@ -884,7 +884,7 @@ under the License.
                   <classpath refid="@{classpath}"/>
                   <syspropertyset refid="junit.properties"/>
                   <jvmarg value="${poi.test.locale}"/>
-    <!--              <jvmarg value="-ea"/> -->
+                  <jvmarg value="-ea"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">

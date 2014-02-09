@@ -77,12 +77,19 @@ public final class SectionDescriptor
     this.fcSepx = fc;
   }
 
+  @Override
   public boolean equals(Object o)
   {
     SectionDescriptor sed = (SectionDescriptor)o;
     return sed.fn == fn && sed.fnMpr == fnMpr;
   }
 
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
   public byte[] toByteArray()
   {
     int offset = 0;

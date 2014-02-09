@@ -71,6 +71,8 @@ public final class LineSpacingDescriptor
   {
     _dyaLine = dyaLine;
   }
+  
+  @Override
   public boolean equals(Object o)
   {
     LineSpacingDescriptor lspd = (LineSpacingDescriptor)o;
@@ -78,6 +80,12 @@ public final class LineSpacingDescriptor
     return _dyaLine == lspd._dyaLine && _fMultiLinespace == lspd._fMultiLinespace;
   }
 
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
     public boolean isEmpty()
     {
         return _dyaLine == 0 && _fMultiLinespace == 0;

@@ -140,4 +140,10 @@ public final class HSSFChildAnchor extends HSSFAnchor {
         return anchor.getDx1() == getDx1() && anchor.getDx2() == getDx2() && anchor.getDy1() == getDy1()
                 && anchor.getDy2() == getDy2();
     }
+
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
 }

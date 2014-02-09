@@ -164,6 +164,14 @@ public class Region implements Comparable<Region> {
 		return (compareTo(r) == 0);
 	}
 
+
+	@Override
+	public int hashCode() {
+	    assert false : "hashCode not designed";
+	    return 42; // any arbitrary constant will do
+	}
+
+	
 	/**
 	 * Compares that the given region is the same less than or greater than this
 	 * region.  If any regional coordiant passed in is less than this regions

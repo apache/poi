@@ -17,87 +17,80 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.hssf.record.aggregates.AllRecordAggregateTests;
 import org.apache.poi.hssf.record.cf.TestCellRange;
 import org.apache.poi.hssf.record.chart.AllChartRecordTests;
 import org.apache.poi.hssf.record.common.TestUnicodeString;
-import org.apache.poi.ss.formula.constant.TestConstantValueParser;
 import org.apache.poi.hssf.record.crypto.AllHSSFEncryptionTests;
-import org.apache.poi.ss.formula.ptg.AllFormulaTests;
 import org.apache.poi.hssf.record.pivot.AllPivotRecordTests;
+import org.apache.poi.ss.formula.constant.TestConstantValueParser;
+import org.apache.poi.ss.formula.ptg.AllFormulaTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record</tt> and sub-packages.
- *
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    AllChartRecordTests.class,
+    AllHSSFEncryptionTests.class,
+    AllFormulaTests.class,
+    AllPivotRecordTests.class,
+    AllRecordAggregateTests.class,
+    TestArrayRecord.class,
+    TestBOFRecord.class,
+    TestBoolErrRecord.class,
+    TestBoundSheetRecord.class,
+    TestCellRange.class,
+    TestCFHeaderRecord.class,
+    TestCFRuleRecord.class,
+    TestColumnInfoRecord.class,
+    TestCommonObjectDataSubRecord.class,
+    TestConstantValueParser.class,
+    TestDVALRecord.class,
+    TestDrawingGroupRecord.class,
+    TestDrawingRecord.class,
+    TestEmbeddedObjectRefSubRecord.class,
+    TestEndSubRecord.class,
+    TestEscherAggregate.class,
+    TestExtendedFormatRecord.class,
+    TestExternalNameRecord.class,
+    TestFeatRecord.class,
+    TestFontRecord.class,
+    TestFormulaRecord.class,
+    TestHyperlinkRecord.class,
+    TestInterfaceEndRecord.class,
+    TestLabelRecord.class,
+    TestLbsDataSubRecord.class,
+    TestMergeCellsRecord.class,
+    TestNameRecord.class,
+    TestNoteRecord.class,
+    TestNoteStructureSubRecord.class,
+    TestObjRecord.class,
+    TestPaletteRecord.class,
+    TestPaneRecord.class,
+    TestPLVRecord.class,
+    TestRecalcIdRecord.class,
+    TestRecordFactory.class,
+    TestRecordFactoryInputStream.class,
+    TestRecordInputStream.class,
+    TestSCLRecord.class,
+    TestSSTDeserializer.class,
+    TestSSTRecord.class,
+    TestSSTRecordSizeCalculator.class,
+    TestSharedFormulaRecord.class,
+    TestStringRecord.class,
+    TestStyleRecord.class,
+    TestSubRecord.class,
+    TestSupBookRecord.class,
+    TestTableRecord.class,
+    TestTextObjectBaseRecord.class,
+    TestTextObjectRecord.class,
+    TestUnicodeNameRecord.class,
+    TestUnicodeString.class,
+    TestWriteAccessRecord.class,
+    TestDConRefRecord.class
+})
 public final class AllRecordTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllRecordTests.class.getName());
-
-		result.addTest(AllChartRecordTests.suite());
-		result.addTest(AllHSSFEncryptionTests.suite());
-		result.addTest(AllFormulaTests.suite());
-		result.addTest(AllPivotRecordTests.suite());
-		result.addTest(AllRecordAggregateTests.suite());
-
-		result.addTestSuite(TestArrayRecord.class);
-		result.addTestSuite(TestBOFRecord.class);
-		result.addTestSuite(TestBoolErrRecord.class);
-		result.addTestSuite(TestBoundSheetRecord.class);
-		result.addTestSuite(TestCellRange.class);
-		result.addTestSuite(TestCFHeaderRecord.class);
-		result.addTestSuite(TestCFRuleRecord.class);
-		result.addTestSuite(TestColumnInfoRecord.class);
-		result.addTestSuite(TestCommonObjectDataSubRecord.class);
-		result.addTestSuite(TestConstantValueParser.class);
-		result.addTestSuite(TestDVALRecord.class);
-		result.addTestSuite(TestDrawingGroupRecord.class);
-		result.addTestSuite(TestDrawingRecord.class);
-		result.addTestSuite(TestEmbeddedObjectRefSubRecord.class);
-		result.addTestSuite(TestEndSubRecord.class);
-		result.addTestSuite(TestEscherAggregate.class);
-		result.addTestSuite(TestExtendedFormatRecord.class);
-		result.addTestSuite(TestExternalNameRecord.class);
-		result.addTestSuite(TestFeatRecord.class);
-		result.addTestSuite(TestFontRecord.class);
-		result.addTestSuite(TestFormulaRecord.class);
-		result.addTestSuite(TestHyperlinkRecord.class);
-		result.addTestSuite(TestInterfaceEndRecord.class);
-		result.addTestSuite(TestLabelRecord.class);
-		result.addTestSuite(TestLbsDataSubRecord.class);
-		result.addTestSuite(TestMergeCellsRecord.class);
-		result.addTestSuite(TestNameRecord.class);
-		result.addTestSuite(TestNoteRecord.class);
-		result.addTestSuite(TestNoteStructureSubRecord.class);
-		result.addTestSuite(TestObjRecord.class);
-		result.addTestSuite(TestPaletteRecord.class);
-		result.addTestSuite(TestPaneRecord.class);
-		result.addTestSuite(TestPLVRecord.class);
-		result.addTestSuite(TestRecalcIdRecord.class);
-		result.addTestSuite(TestRecordFactory.class);
-		result.addTestSuite(TestRecordFactoryInputStream.class);
-		result.addTestSuite(TestRecordInputStream.class);
-		result.addTestSuite(TestSCLRecord.class);
-		result.addTestSuite(TestSSTDeserializer.class);
-		result.addTestSuite(TestSSTRecord.class);
-		result.addTestSuite(TestSSTRecordSizeCalculator.class);
-		result.addTestSuite(TestSharedFormulaRecord.class);
-		result.addTestSuite(TestStringRecord.class);
-		result.addTestSuite(TestStyleRecord.class);
-		result.addTestSuite(TestSubRecord.class);
-		result.addTestSuite(TestSupBookRecord.class);
-		result.addTestSuite(TestTableRecord.class);
-		result.addTestSuite(TestTextObjectBaseRecord.class);
-		result.addTestSuite(TestTextObjectRecord.class);
-		result.addTestSuite(TestUnicodeNameRecord.class);
-		result.addTestSuite(TestUnicodeString.class);
-		result.addTestSuite(TestWriteAccessRecord.class);
-                result.addTestSuite(TestDConRefRecord.class);
-		return result;
-	}
 }

@@ -101,6 +101,7 @@ public final class ListLevel
         _xst = new Xst(numberText);
     }
 
+    @Override
     public boolean equals( Object obj )
     {
         if ( obj == null )
@@ -112,6 +113,12 @@ public final class ListLevel
                 && Arrays.equals( lvl._grpprlPapx, _grpprlPapx )
                 && lvl._xst.equals( this._xst );
     }
+
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+      }
 
     /**
      * "Alignment (left, right, or centered) of the paragraph number."

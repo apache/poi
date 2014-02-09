@@ -81,4 +81,11 @@ public final class ParagraphHeight
     return infoField == ph.infoField && reserved == ph.reserved &&
            dxaCol == ph.dxaCol && dymLineOrHeight == ph.dymLineOrHeight;
   }
+
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+
 }

@@ -40,10 +40,17 @@ public final class UPX
     return _upx.length;
   }
 
+  @Override
   public boolean equals(Object o)
   {
     UPX upx = (UPX)o;
     return Arrays.equals(_upx, upx._upx);
+  }
+
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
   }
 
     @Override

@@ -90,7 +90,13 @@ public final class HyperlinkRecord extends StandardRecord {
 			    && _d3 == other._d3 && _d4 == other._d4;
 		}
 
-		public int getD1() {
+       @Override
+       public int hashCode() {
+           assert false : "hashCode not designed";
+           return 42; // any arbitrary constant will do
+       }
+
+       public int getD1() {
 			return _d1;
 		}
 

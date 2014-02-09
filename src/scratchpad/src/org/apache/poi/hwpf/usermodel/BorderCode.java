@@ -68,12 +68,19 @@ public final class BorderCode implements Cloneable {
     return _info == 0 && _info2 == 0 || _info == -1;
   }
 
+  @Override
   public boolean equals(Object o)
   {
     BorderCode brc = (BorderCode)o;
     return _info == brc._info && _info2 == brc._info2;
   }
 
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
   public Object clone()
     throws CloneNotSupportedException
   {

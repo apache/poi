@@ -301,6 +301,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
        return _string.compareTo(r._string);
     }
 
+    @Override
     public boolean equals(Object o) {
       if (o instanceof HSSFRichTextString) {
         return _string.equals(((HSSFRichTextString)o)._string);
@@ -309,6 +310,13 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
 
     }
 
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
+
+    
     /**
      * @return  the plain text representation of this string.
      */
