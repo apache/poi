@@ -834,7 +834,7 @@ under the License.
         </uptodate>
     </target>
 
-    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,jacocotask"
+    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,jacocotask,test-scratchpad-download-resources"
             unless="scratchpad.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
         <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-scratchpad.exec">
             <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
@@ -1383,7 +1383,6 @@ under the License.
     </target>
 	
 	<target name="findbugs"><!-- depends="assemble" -->
-		
         <antcall target="downloadfile">
             <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"/>
             <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
@@ -1425,4 +1424,26 @@ under the License.
 			<sourcePath path="src/scratchpad/src" />
 		</findbugs>		
 	</target>
+
+	<target name="test-scratchpad-download-resources">
+		<mkdir dir="build/scratchpad-test-resources"/>
+		
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="http://sourceforge.net/projects/monafont/files/monafont/monafont-2.90/monafont-ttf-2.90.zip/download"/>
+            <param name="destfile" value="build/scratchpad-test-resources/monafont-ttf-2.90.zip"/>
+        </antcall>
+
+		<unzip src="build/scratchpad-test-resources/monafont-ttf-2.90.zip"
+		       dest="build/scratchpad-test-resources">
+		    <patternset>
+		        <include name="mona.ttf"/>
+		    </patternset>
+		</unzip>
+		
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="https://googlefontdirectory.googlecode.com/hg-history/c5955de4df3e40f6ab705bbccbd1f5ad93998287/cabin/Cabin-Regular.ttf"/>
+            <param name="destfile" value="build/scratchpad-test-resources/Cabin-Regular.ttf"/>
+        </antcall>
+	</target>
+	
 </project>

@@ -17,30 +17,27 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests from the package <tt>org.apache.poi.hslf.usermodel</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestAddingSlides.class,
+    TestBugs.class,
+    TestCounts.class,
+    TestMostRecentRecords.class,
+    TestNotesText.class,
+    TestPictures.class,
+    TestReOrderingSlides.class,
+    TestRecordSetup.class,
+    TestRichTextRun.class,
+    TestSheetText.class,
+    TestSlideOrdering.class,
+    TestSoundData.class,
+    TestFontRendering.class
+})
 public class AllHSLFUserModelTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllHSLFUserModelTests.class.getName());
-		result.addTestSuite(TestAddingSlides.class);
-		result.addTestSuite(TestBugs.class);
-		result.addTestSuite(TestCounts.class);
-		result.addTestSuite(TestMostRecentRecords.class);
-		result.addTestSuite(TestNotesText.class);
-		result.addTestSuite(TestPictures.class);
-		result.addTestSuite(TestReOrderingSlides.class);
-		result.addTestSuite(TestRecordSetup.class);
-		result.addTestSuite(TestRichTextRun.class);
-		result.addTestSuite(TestSheetText.class);
-		result.addTestSuite(TestSlideOrdering.class);
-		result.addTestSuite(TestSoundData.class);
-		return result;
-	}
 }
