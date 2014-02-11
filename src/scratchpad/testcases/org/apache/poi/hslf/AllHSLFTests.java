@@ -17,35 +17,30 @@
 
 package org.apache.poi.hslf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.hslf.extractor.TestCruddyExtractor;
 import org.apache.poi.hslf.extractor.TestExtractor;
 import org.apache.poi.hslf.model.AllHSLFModelTests;
 import org.apache.poi.hslf.record.AllHSLFRecordTests;
 import org.apache.poi.hslf.usermodel.AllHSLFUserModelTests;
 import org.apache.poi.hslf.util.TestSystemTimeUtils;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests from the package <tt>org.apache.poi.hslf</tt> and all sub-packages.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestEncryptedFile.class,
+    TestRecordCounts.class,
+    TestReWrite.class,
+    TestReWriteSanity.class,
+    TestCruddyExtractor.class,
+    TestExtractor.class,
+    AllHSLFModelTests.class,
+    AllHSLFRecordTests.class,
+    AllHSLFUserModelTests.class,
+    TestSystemTimeUtils.class
+})
 public class AllHSLFTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllHSLFTests.class.getName());
-		result.addTestSuite(TestEncryptedFile.class);
-		result.addTestSuite(TestRecordCounts.class);
-		result.addTestSuite(TestReWrite.class);
-		result.addTestSuite(TestReWriteSanity.class);
-		result.addTestSuite(TestCruddyExtractor.class);
-		result.addTestSuite(TestExtractor.class);
-		result.addTest(AllHSLFModelTests.suite());
-		result.addTest(AllHSLFRecordTests.suite());
-		result.addTest(AllHSLFUserModelTests.suite());
-		result.addTestSuite(TestSystemTimeUtils.class);
-		return result;
-	}
 }

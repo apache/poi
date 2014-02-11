@@ -20,6 +20,7 @@ package org.apache.poi.hslf.model;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -31,6 +32,7 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hslf.record.TextRulerAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
@@ -43,6 +45,9 @@ import org.apache.poi.util.POILogger;
  * @author Yegor Kozlov
  */
 public final class TextPainter {
+    public static final Key KEY_FONTFALLBACK = new Key(50, "Font fallback map");
+    public static final Key KEY_FONTMAP = new Key(51, "Font map");
+    
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
     /**
@@ -58,10 +63,14 @@ public final class TextPainter {
         _shape = shape;
     }
 
+    public AttributedString getAttributedString(TextRun txrun) {
+        return getAttributedString(txrun, null);
+    }
+    
     /**
      * Convert the underlying set of rich text runs into java.text.AttributedString
      */
-    public AttributedString getAttributedString(TextRun txrun){
+    public AttributedString getAttributedString(TextRun txrun, Graphics2D graphics){
         String text = txrun.getText();
         //TODO: properly process tabs
         text = text.replace('\t', ' ');
@@ -77,7 +86,22 @@ public final class TextPainter {
                 continue;
             }
 
-            at.addAttribute(TextAttribute.FAMILY, rt[i].getFontName(), start, end);
+            String mappedFont = rt[i].getFontName();
+            String fallbackFont = Font.SANS_SERIF;
+            if (graphics != null) {
+                @SuppressWarnings("unchecked")
+                Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(KEY_FONTMAP);
+                if (fontMap != null && fontMap.containsKey(mappedFont)) {
+                    mappedFont = fontMap.get(mappedFont);
+                }
+                @SuppressWarnings("unchecked")
+                Map<String,String> fallbackMap = (Map<String,String>)graphics.getRenderingHint(KEY_FONTFALLBACK);
+                if (fallbackMap != null && fallbackMap.containsKey(mappedFont)) {
+                    fallbackFont = fallbackMap.get(mappedFont);
+                }
+            }
+            
+            at.addAttribute(TextAttribute.FAMILY, mappedFont, start, end);
             at.addAttribute(TextAttribute.SIZE, new Float(rt[i].getFontSize()), start, end);
             at.addAttribute(TextAttribute.FOREGROUND, rt[i].getFontColor(), start, end);
             if(rt[i].isBold()) at.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, start, end);
@@ -89,7 +113,31 @@ public final class TextPainter {
             if(rt[i].isStrikethrough()) at.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, start, end);
             int superScript = rt[i].getSuperscript();
             if(superScript != 0) at.addAttribute(TextAttribute.SUPERSCRIPT, superScript > 0 ? TextAttribute.SUPERSCRIPT_SUPER : TextAttribute.SUPERSCRIPT_SUB, start, end);
-
+            
+            
+            int style = (rt[i].isBold() ? Font.BOLD : 0) | (rt[i].isItalic() ? Font.ITALIC : 0);
+            Font f = new Font(mappedFont, style, rt[i].getFontSize());
+            
+            // check for unsupported characters and add a fallback font for these
+            char textChr[] = text.toCharArray();
+            int nextEnd = f.canDisplayUpTo(textChr, start, end);
+            boolean isNextValid = nextEnd == start;
+            for (int last = start; nextEnd != -1 && nextEnd <= end; ) {
+                if (isNextValid) {
+                    nextEnd = f.canDisplayUpTo(textChr, nextEnd, end);
+                    isNextValid = false;
+                } else {
+                    if (nextEnd >= end || f.canDisplay(Character.codePointAt(textChr, nextEnd, end)) ) {
+                        at.addAttribute(TextAttribute.FAMILY, fallbackFont, last, Math.min(nextEnd,end));
+                        if (nextEnd >= end) break;
+                        last = nextEnd;
+                        isNextValid = true;
+                    } else {
+                        boolean isHS = Character.isHighSurrogate(textChr[nextEnd]);
+                        nextEnd+=(isHS?2:1);
+                    }
+                }
+            }            
         }
         return at;
     }
@@ -98,7 +146,7 @@ public final class TextPainter {
         AffineTransform tx = graphics.getTransform();
 
         Rectangle2D anchor = _shape.getLogicalAnchor2D();
-        TextElement[] elem = getTextElements((float)anchor.getWidth(), graphics.getFontRenderContext());
+        TextElement[] elem = getTextElements((float)anchor.getWidth(), graphics.getFontRenderContext(), graphics);
         if(elem == null) return;
 
         float textHeight = 0;
@@ -183,13 +231,17 @@ public final class TextPainter {
     }
 
     public TextElement[] getTextElements(float textWidth, FontRenderContext frc){
+        return getTextElements(textWidth, frc, null);
+    }
+    
+    public TextElement[] getTextElements(float textWidth, FontRenderContext frc, Graphics2D graphics){
         TextRun run = _shape.getTextRun();
         if (run == null) return null;
 
         String text = run.getText();
         if (text == null || text.equals("")) return null;
 
-        AttributedString at = getAttributedString(run);
+        AttributedString at = getAttributedString(run, graphics);
 
         AttributedCharacterIterator it = at.getIterator();
         int paragraphStart = it.getBeginIndex();
@@ -341,5 +393,26 @@ public final class TextPainter {
         public float ascent, descent;
         public float advance;
         public int textStartIndex, textEndIndex;
+    }
+
+    public static class Key extends RenderingHints.Key {
+      String description;
+
+      public Key(int paramInt, String paramString) {
+        super(paramInt);
+        this.description = paramString;
+      }
+
+      public final int getIndex() {
+        return intKey();
+      }
+
+      public final String toString() {
+        return this.description;
+      }
+
+      public boolean isCompatibleValue(Object paramObject) {
+        return true;
+      }
     }
 }
