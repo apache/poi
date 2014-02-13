@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
  */
 public class VariantSupport extends Variant
 {
-	private static POILogger logger = POILogFactory.getLogger(VariantSupport.class);
+	private static final POILogger logger = POILogFactory.getLogger(VariantSupport.class);
     private static boolean logUnsupportedTypes = false;
 
     /**

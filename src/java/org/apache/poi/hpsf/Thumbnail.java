@@ -32,7 +32,7 @@ public final class Thumbnail {
      * <code>byte[]</code> returned by {@link
      * SummaryInformation#getThumbnail()}</p>
      */
-    public static int OFFSET_CFTAG = 4;
+    public static final int OFFSET_CFTAG = 4;
 
     /**
      * <p>Offset in bytes where the Clipboard Format starts in the
@@ -42,7 +42,7 @@ public final class Thumbnail {
      * <p>This is only valid if the Clipboard Format Tag is {@link
      * #CFTAG_WINDOWS}</p>
      */
-    public static int OFFSET_CF = 8;
+    public static final int OFFSET_CF = 8;
 
     /**
      * <p>Offset in bytes where the Windows Metafile (WMF) image data
@@ -60,7 +60,7 @@ public final class Thumbnail {
      * image. It can be saved to disk with a <code>.wmf</code> file
      * type and read using a WMF-capable image viewer.</p>
      */
-    public static int OFFSET_WMFDATA = 20;
+    public static final int OFFSET_WMFDATA = 20;
 
     /**
      * <p>Clipboard Format Tag - Windows clipboard format</p>
@@ -68,7 +68,7 @@ public final class Thumbnail {
      * <p>A <code>DWORD</code> indicating a built-in Windows clipboard
      * format value</p>
      */
-    public static int CFTAG_WINDOWS = -1;
+    public static final int CFTAG_WINDOWS = -1;
 
     /**
      * <p>Clipboard Format Tag - Macintosh clipboard format</p>
@@ -76,7 +76,7 @@ public final class Thumbnail {
      * <p>A <code>DWORD</code> indicating a Macintosh clipboard format
      * value</p>
      */
-    public static int CFTAG_MACINTOSH = -2;
+    public static final int CFTAG_MACINTOSH = -2;
 
     /**
      * <p>Clipboard Format Tag - Format ID</p>
@@ -84,7 +84,7 @@ public final class Thumbnail {
      * <p>A GUID containing a format identifier (FMTID). This is
      * rarely used.</p>
      */
-    public static int CFTAG_FMTID = -3;
+    public static final int CFTAG_FMTID = -3;
 
     /**
      * <p>Clipboard Format Tag - No Data</p>
@@ -92,7 +92,7 @@ public final class Thumbnail {
      * <p>A <code>DWORD</code> indicating No data. This is rarely
      * used.</p>
      */
-    public static int CFTAG_NODATA = 0;
+    public static final int CFTAG_NODATA = 0;
 
     /**
      * <p>Clipboard Format - Windows metafile format. This is the
@@ -102,17 +102,17 @@ public final class Thumbnail {
      * regular WMF images. The clipboard version of this format has an
      * extra clipboard-specific header.</p>
      */
-    public static int CF_METAFILEPICT = 3;
+    public static final int CF_METAFILEPICT = 3;
 
     /**
      * <p>Clipboard Format - Device Independent Bitmap</p>
      */
-    public static int CF_DIB = 8;
+    public static final int CF_DIB = 8;
 
     /**
      * <p>Clipboard Format - Enhanced Windows metafile format</p>
      */
-    public static int CF_ENHMETAFILE = 14;
+    public static final int CF_ENHMETAFILE = 14;
 
     /**
      * <p>Clipboard Format - Bitmap</p>
@@ -121,7 +121,7 @@ public final class Thumbnail {
      * href="msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp
      * target="_blank">msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp</a>.</p>
      */
-    public static int CF_BITMAP = 2;
+    public static final int CF_BITMAP = 2;
 
     /**
      * <p>A <code>byte[]</code> to hold a thumbnail image in ({@link

@@ -1405,7 +1405,7 @@ under the License.
 			</classpath>
 		</taskdef>
 		<findbugs home="${findbugs.home}" output="html" outputFile="build/findbugs.html"
-			includeFilter="src/resources/devtools/findbugs-filters.xml">
+			excludeFilter="src/resources/devtools/findbugs-filters.xml">
 			<fileset dir="${dist.dir}">
 				<include name="poi-${version.id}-*.jar"/>
 				<include name="poi-scratchpad-${version.id}-*.jar"/>

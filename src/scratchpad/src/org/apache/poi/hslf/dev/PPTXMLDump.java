@@ -17,10 +17,19 @@
 
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.util.LittleEndian;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.poifs.filesystem.*;
-import java.io.*;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Utility class which dumps raw contents of a ppt file into XML format
@@ -33,7 +42,7 @@ public final class PPTXMLDump {
     public static final int PICT_HEADER_SIZE = 25; //size of the picture header
     public final static String PPDOC_ENTRY = "PowerPoint Document";
     public final static String PICTURES_ENTRY = "Pictures";
-    public static String CR = System.getProperty("line.separator");
+    public final static String CR = System.getProperty("line.separator");
 
     protected Writer out;
     protected byte[] docstream;

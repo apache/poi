@@ -18,11 +18,14 @@
 package org.apache.poi.hslf.model;
 
 
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
+
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Paint a shape into java.awt.Graphics2D
@@ -30,7 +33,7 @@ import java.awt.geom.Rectangle2D;
  * @author Yegor Kozlov
  */
 public final class ShapePainter {
-    protected static POILogger logger = POILogFactory.getLogger(ShapePainter.class);
+    protected static final POILogger logger = POILogFactory.getLogger(ShapePainter.class);
 
     public static void paint(SimpleShape shape, Graphics2D graphics){
         Rectangle2D anchor = shape.getLogicalAnchor2D();

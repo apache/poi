@@ -17,13 +17,25 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hslf.record.*;
-
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyFactory;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.InteractiveInfoAtom;
+import org.apache.poi.hslf.record.OEShapeAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Create a <code>Shape</code> object depending on its type
@@ -32,7 +44,7 @@ import java.util.Iterator;
  */
 public final class ShapeFactory {
     // For logging
-    protected static POILogger logger = POILogFactory.getLogger(ShapeFactory.class);
+    protected static final POILogger logger = POILogFactory.getLogger(ShapeFactory.class);
 
     /**
      * Create a new shape from the data provided.

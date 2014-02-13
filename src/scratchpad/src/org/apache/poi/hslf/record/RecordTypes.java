@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.record;
 
-import java.util.HashMap;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 /**
  * List of all known record types in a PowerPoint document, and the
@@ -31,8 +31,8 @@ import java.lang.reflect.Field;
  * @author Nick Burch
  */
 public final class RecordTypes {
-    public static HashMap<Integer,String> typeToName;
-    public static HashMap<Integer,Class<? extends Record>> typeToClass;
+    public static final HashMap<Integer,String> typeToName;
+    public static final HashMap<Integer,Class<? extends Record>> typeToClass;
 
     public static final Type Unknown = new Type(0,null);
     public static final Type Document = new Type(1000,Document.class);

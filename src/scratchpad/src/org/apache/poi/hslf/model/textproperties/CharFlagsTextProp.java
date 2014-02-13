@@ -32,7 +32,7 @@ public class CharFlagsTextProp extends BitMaskTextProp {
 	public static final int ENABLE_NUMBERING_1_IDX = 11;
 	public static final int ENABLE_NUMBERING_2_IDX = 12;
 
-    public static String NAME = "char_flags";
+    public static final String NAME = "char_flags";
 	public CharFlagsTextProp() {
 		super(2,0xffff, NAME, new String[] {
 				"bold",                 // 0x0001  A bit that specifies whether the characters are bold.

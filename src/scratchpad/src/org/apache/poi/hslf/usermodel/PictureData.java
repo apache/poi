@@ -17,18 +17,25 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.blip.*;
-import org.apache.poi.hslf.exceptions.HSLFException;
-
-import java.io.OutputStream;
+import java.awt.Graphics2D;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.awt.*;
+
+import org.apache.poi.hslf.blip.BitmapPainter;
+import org.apache.poi.hslf.blip.DIB;
+import org.apache.poi.hslf.blip.EMF;
+import org.apache.poi.hslf.blip.ImagePainter;
+import org.apache.poi.hslf.blip.JPEG;
+import org.apache.poi.hslf.blip.PICT;
+import org.apache.poi.hslf.blip.PNG;
+import org.apache.poi.hslf.blip.WMF;
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * A class that represents image data contained in a slide show.
@@ -77,7 +84,7 @@ public abstract class PictureData {
      */
     protected abstract int getSignature();
 
-    protected static ImagePainter[] painters = new ImagePainter[8];
+    protected static final ImagePainter[] painters = new ImagePainter[8];
     static {
         PictureData.setImagePainter(Picture.PNG, new BitmapPainter());
         PictureData.setImagePainter(Picture.JPEG, new BitmapPainter());

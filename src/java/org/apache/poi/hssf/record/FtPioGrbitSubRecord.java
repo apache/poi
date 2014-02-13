@@ -33,53 +33,53 @@ public final class FtPioGrbitSubRecord extends SubRecord {
      * A bit that specifies whether the picture's aspect ratio is preserved when rendered in 
      * different views (Normal view, Page Break Preview view, Page Layout view and printing).
      */
-    public static int AUTO_PICT_BIT    = 1 << 0;
+    public static final int AUTO_PICT_BIT    = 1 << 0;
 
     /**
      * A bit that specifies whether the pictFmla field of the Obj record that contains 
      * this FtPioGrbit specifies a DDE reference.
      */
-    public static int DDE_BIT          = 1 << 1;
+    public static final int DDE_BIT          = 1 << 1;
     
     /**
      * A bit that specifies whether this object is expected to be updated on print to
      * reflect the values in the cell associated with the object.
      */
-    public static int PRINT_CALC_BIT   = 1 << 2;
+    public static final int PRINT_CALC_BIT   = 1 << 2;
 
     /**
      * A bit that specifies whether the picture is displayed as an icon.
      */
-    public static int ICON_BIT         = 1 << 3;
+    public static final int ICON_BIT         = 1 << 3;
     
     /**
      * A bit that specifies whether this object is an ActiveX control.
      * It MUST NOT be the case that both fCtl and fDde are equal to 1.
      */
-    public static int CTL_BIT          = 1 << 4;
+    public static final int CTL_BIT          = 1 << 4;
     
     /**
      * A bit that specifies whether the object data are stored in an
      * embedding storage (= 0) or in the controls stream (ctls) (= 1).
      */
-    public static int PRSTM_BIT        = 1 << 5;
+    public static final int PRSTM_BIT        = 1 << 5;
     
     /**
      * A bit that specifies whether this is a camera picture.
      */
-    public static int CAMERA_BIT       = 1 << 7;
+    public static final int CAMERA_BIT       = 1 << 7;
     
     /**
      * A bit that specifies whether this picture's size has been explicitly set.
      * 0 = picture size has been explicitly set, 1 = has not been set
      */
-    public static int DEFAULT_SIZE_BIT = 1 << 8;
+    public static final int DEFAULT_SIZE_BIT = 1 << 8;
     
     /**
      * A bit that specifies whether the OLE server for the object is called
      * to load the object's data automatically when the parent workbook is opened.
      */
-    public static int AUTO_LOAD_BIT    = 1 << 9;
+    public static final int AUTO_LOAD_BIT    = 1 << 9;
 
     
     private short flags = 0;
