@@ -64,42 +64,42 @@ public class SSSlideInfoAtom extends RecordAtom {
      * A bit that specifies whether the presentation slide can be
      * manually advanced by the user during the slide show.
      */
-    public static int MANUAL_ADVANCE_BIT     = 1 << 0;
+    public static final int MANUAL_ADVANCE_BIT     = 1 << 0;
     
     /**
      * A bit that specifies whether the corresponding slide is 
      * hidden and is not displayed during the slide show.
      */
-    public static int HIDDEN_BIT             = 1 << 2;
+    public static final int HIDDEN_BIT             = 1 << 2;
     
     /**
      * A bit that specifies whether to play the sound specified by soundIfRef.
      */
-    public static int SOUND_BIT              = 1 << 4;
+    public static final int SOUND_BIT              = 1 << 4;
     
     /**
      * A bit that specifies whether the sound specified by soundIdRef is
      * looped continuously when playing until the next sound plays.
      */
-    public static int LOOP_SOUND_BIT         = 1 << 6;
+    public static final int LOOP_SOUND_BIT         = 1 << 6;
     
     /**
      * A bit that specifies whether to stop any currently playing 
      * sound when the transition starts.
      */
-    public static int STOP_SOUND_BIT         = 1 << 8;
+    public static final int STOP_SOUND_BIT         = 1 << 8;
     
     /**
      * A bit that specifies whether the slide will automatically
      * advance after slideTime milliseconds during the slide show.
      */
-    public static int AUTO_ADVANCE_BIT       = 1 << 10;
+    public static final int AUTO_ADVANCE_BIT       = 1 << 10;
 
     /**
      * A bit that specifies whether to display the cursor during
      * the slide show. 
      */
-    public static int CURSOR_VISIBLE_BIT     = 1 << 12;
+    public static final int CURSOR_VISIBLE_BIT     = 1 << 12;
     
     // public static int RESERVED1_BIT       = 1 << 1;
     // public static int RESERVED2_BIT       = 1 << 3;
@@ -109,7 +109,7 @@ public class SSSlideInfoAtom extends RecordAtom {
     // public static int RESERVED6_BIT       = 1 << 11;
     // public static int RESERVED7_BIT       = 1 << 13 | 1 << 14 | 1 << 15;
     
-    private static long _type = RecordTypes.SSSlideInfoAtom.typeID;
+    private static final long _type = RecordTypes.SSSlideInfoAtom.typeID;
 
     private byte[] _header;
 

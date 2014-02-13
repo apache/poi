@@ -40,7 +40,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>>  implements Compar
     public static final class EndComparator implements
             Comparator<PropertyNode<?>>
     {
-        public static EndComparator instance = new EndComparator();
+        public static final EndComparator instance = new EndComparator();
 
         public int compare( PropertyNode<?> o1, PropertyNode<?> o2 )
         {
@@ -54,7 +54,7 @@ public abstract class PropertyNode<T extends PropertyNode<T>>  implements Compar
     public static final class StartComparator implements
             Comparator<PropertyNode<?>>
     {
-        public static StartComparator instance = new StartComparator();
+        public static final StartComparator instance = new StartComparator();
 
         public int compare( PropertyNode<?> o1, PropertyNode<?> o2 )
         {

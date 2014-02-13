@@ -118,7 +118,7 @@ public final class StyleTextPropAtom extends RecordAtom
     }
 
     /** All the different kinds of paragraph properties we might handle */
-    public static TextProp[] paragraphTextPropTypes = new TextProp[] {
+    public static final TextProp[] paragraphTextPropTypes = new TextProp[] {
         new TextProp(0, 0x1, "hasBullet"),
         new TextProp(0, 0x2, "hasBulletFont"),
         new TextProp(0, 0x4, "hasBulletColor"),
@@ -141,7 +141,7 @@ public final class StyleTextPropAtom extends RecordAtom
         new TextProp(2, 0x200000, "textDirection")
     };
     /** All the different kinds of character properties we might handle */
-    public static TextProp[] characterTextPropTypes = new TextProp[] {
+    public static final TextProp[] characterTextPropTypes = new TextProp[] {
         new TextProp(0, 0x1, "bold"),
         new TextProp(0, 0x2, "italic"),
         new TextProp(0, 0x4, "underline"),

@@ -32,18 +32,18 @@ public final class FtCfSubRecord extends SubRecord {
     /**
      * Specifies the format of the picture is an enhanced metafile.
      */
-    public static short METAFILE_BIT    = (short)0x0002;
+    public static final short METAFILE_BIT    = (short)0x0002;
 
     /**
      * Specifies the format of the picture is a bitmap.
      */
-    public static short BITMAP_BIT      = (short)0x0009;
+    public static final short BITMAP_BIT      = (short)0x0009;
     
     /**
      * Specifies the picture is in an unspecified format that is
      * neither and enhanced metafile nor a bitmap.
      */
-    public static short UNSPECIFIED_BIT = (short)0xFFFF;
+    public static final short UNSPECIFIED_BIT = (short)0xFFFF;
     
     private short flags = 0;
 

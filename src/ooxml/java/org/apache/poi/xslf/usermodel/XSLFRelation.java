@@ -16,24 +16,24 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Beta
 public class XSLFRelation extends POIXMLRelation {
 
-   private static POILogger log = POILogFactory.getLogger(XSLFRelation.class);
+   private static final POILogger log = POILogFactory.getLogger(XSLFRelation.class);
 
    /**
     * A map to lookup POIXMLRelation by its relation type
     */
-   protected static Map<String, XSLFRelation> _table = new HashMap<String, XSLFRelation>();
+   protected static final Map<String, XSLFRelation> _table = new HashMap<String, XSLFRelation>();
    
    public static final XSLFRelation MAIN = new XSLFRelation(
            "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml",

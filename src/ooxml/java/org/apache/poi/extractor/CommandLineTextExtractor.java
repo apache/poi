@@ -25,7 +25,7 @@ import org.apache.poi.POITextExtractor;
  *  for when debugging.
  */
 public class CommandLineTextExtractor {
-   public static String DIVIDER = "=======================";
+   public static final String DIVIDER = "=======================";
    
    public static void main(String[] args) throws Exception {
       if(args.length < 1) {

@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.hslf.exceptions.HSLFException;
-
-import java.util.HashMap;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
 
 /**
  * Contains all known shape types in PowerPoint
@@ -38,7 +38,7 @@ public final class ShapeTypes implements org.apache.poi.sl.usermodel.ShapeTypes 
         return name;
     }
 
-    public static HashMap types;
+    public static final HashMap types;
     static {
         types = new HashMap();
         try {

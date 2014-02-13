@@ -17,9 +17,15 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.EscherProperties;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
-import java.awt.geom.*;
+import org.apache.poi.ddf.EscherProperties;
 
 /**
  * Stores definition of auto-shapes.
@@ -30,7 +36,7 @@ import java.awt.geom.*;
  * @author Yegor Kozlov
  */
 public final class AutoShapes {
-    protected static ShapeOutline[] shapes;
+	protected static final ShapeOutline[] shapes;
 
 
     /**

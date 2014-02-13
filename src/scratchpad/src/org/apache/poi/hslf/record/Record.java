@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogger;
 public abstract class Record
 {
     // For logging
-	protected static POILogger logger = POILogFactory.getLogger(Record.class);
+	protected static final POILogger logger = POILogFactory.getLogger(Record.class);
 
 	/**
 	 * Is this record type an Atom record (only has data),

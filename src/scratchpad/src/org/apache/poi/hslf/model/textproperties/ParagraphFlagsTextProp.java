@@ -28,7 +28,7 @@ public final class ParagraphFlagsTextProp extends BitMaskTextProp {
 	public static final int BULLET_HARDCOLOR_IDX = 2;
 	public static final int BULLET_HARDSIZE_IDX = 4;
 
-    public static String NAME = "paragraph_flags";
+    public static final String NAME = "paragraph_flags";
 
 	public ParagraphFlagsTextProp() {
 		super(2,  0xF, NAME, new String[] {

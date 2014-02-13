@@ -16,8 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.formula.ptg.*;
-import org.apache.poi.util.*;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 /**
  * This structure specifies the properties of a list or drop-down list embedded object in a sheet.
@@ -298,15 +301,15 @@ public class LbsDataSubRecord extends SubRecord {
         /**
          * Combo dropdown control
          */
-        public static int STYLE_COMBO_DROPDOWN = 0;
+        public static final int STYLE_COMBO_DROPDOWN = 0;
         /**
          * Combo Edit dropdown control
          */
-        public static int STYLE_COMBO_EDIT_DROPDOWN = 1;
+        public static final int STYLE_COMBO_EDIT_DROPDOWN = 1;
         /**
          * Simple dropdown control (just the dropdown button)
          */
-        public static int STYLE_COMBO_SIMPLE_DROPDOWN = 2;
+        public static final int STYLE_COMBO_SIMPLE_DROPDOWN = 2;
 
         /**
          *  An unsigned integer that specifies the style of this dropdown. 

@@ -47,12 +47,12 @@ import org.apache.poi.xssf.model.ThemesTable;
  */
 public final class XSSFRelation extends POIXMLRelation {
 
-    private static POILogger log = POILogFactory.getLogger(XSSFRelation.class);
+    private static final POILogger log = POILogFactory.getLogger(XSSFRelation.class);
 
     /**
      * A map to lookup POIXMLRelation by its relation type
      */
-    protected static Map<String, XSSFRelation> _table = new HashMap<String, XSSFRelation>();
+    protected static final Map<String, XSSFRelation> _table = new HashMap<String, XSSFRelation>();
 
 
     public static final XSSFRelation WORKBOOK = new XSSFRelation(
