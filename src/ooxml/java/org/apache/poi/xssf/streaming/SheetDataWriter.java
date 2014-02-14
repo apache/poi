@@ -32,6 +32,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * Initially copied from BigGridDemo "SpreadsheetWriter".
@@ -48,11 +51,21 @@ public class SheetDataWriter {
     private int _numberOfCellsOfLastFlushedRow; // meaningful only of _numberOfFlushedRows>0
     private int _numberLastFlushedRow = -1; // meaningful only of _numberOfFlushedRows>0
 
+    /**
+     * Table of strings shared across this workbook.
+     * If two cells contain the same string, then the cell value is the same index into SharedStringsTable
+     */
+    private SharedStringsTable _sharedStringSource;
+
     public SheetDataWriter() throws IOException {
         _fd = createTempFile();
         _out = createWriter(_fd);
     }
 
+    public SheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException{
+        this();
+        this._sharedStringSource = sharedStringsTable;
+    }
     /**
      * Create a temp file to write sheet data. 
      * By default, temp files are created in the default temporary-file directory
@@ -196,14 +209,24 @@ public class SheetDataWriter {
                 break;
             }
             case Cell.CELL_TYPE_STRING: {
-                _out.write(" t=\"inlineStr\">");
-                _out.write("<is><t");
-                if(hasLeadingTrailingSpaces(cell.getStringCellValue())) {
-                    _out.write(" xml:space=\"preserve\"");
+                if (_sharedStringSource != null) {
+                    XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
+                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+
+                    _out.write(" t=\"" + STCellType.S.toString() + "\">");
+                    _out.write("<v>");
+                    _out.write(String.valueOf(sRef));
+                    _out.write("</v>");
+                } else {
+                    _out.write(" t=\"inlineStr\">");
+                    _out.write("<is><t");
+                    if (hasLeadingTrailingSpaces(cell.getStringCellValue())) {
+                        _out.write(" xml:space=\"preserve\"");
+                    }
+                    _out.write(">");
+                    outputQuotedString(cell.getStringCellValue());
+                    _out.write("</t></is>");
                 }
-                _out.write(">");
-                outputQuotedString(cell.getStringCellValue());
-                _out.write("</t></is>");
                 break;
             }
             case Cell.CELL_TYPE_NUMERIC: {
@@ -245,7 +268,7 @@ public class SheetDataWriter {
     }
 
     //Taken from jdk1.3/src/javax/swing/text/html/HTMLWriter.java
-    protected void outputQuotedString(String s) throws IOException {
+     protected void outputQuotedString(String s) throws IOException {
         if (s == null || s.length() == 0) {
             return;
         }

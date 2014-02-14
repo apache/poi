@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,6 +33,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public final class TestSXSSFWorkbook extends BaseTestWorkbook {
@@ -88,6 +90,42 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	assertEquals("S1", sheet.getSheetName());
         wb.dispose();
 
+    }
+
+    public void testUseSharedStringsTable() throws Exception {
+        SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
+
+        Field f = SXSSFWorkbook.class.getDeclaredField("_sharedStringSource");
+        f.setAccessible(true);
+        SharedStringsTable sss = (SharedStringsTable)f.get(wb);
+        
+        assertNotNull(sss);
+
+        Row row = wb.createSheet("S1").createRow(0);
+
+        row.createCell(0).setCellValue("A");
+        row.createCell(1).setCellValue("B");
+        row.createCell(2).setCellValue("A");
+
+        XSSFWorkbook xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        sss = (SharedStringsTable)f.get(wb);
+        assertEquals(2, sss.getUniqueCount());
+        wb.dispose();
+
+        Sheet sheet1 = xssfWorkbook.getSheetAt(0);
+        assertEquals("S1", sheet1.getSheetName());
+        assertEquals(1, sheet1.getPhysicalNumberOfRows());
+        row = sheet1.getRow(0);
+        assertNotNull(row);
+        Cell cell = row.getCell(0);
+        assertNotNull(cell);
+        assertEquals("A", cell.getStringCellValue());
+        cell = row.getCell(1);
+        assertNotNull(cell);
+        assertEquals("B", cell.getStringCellValue());
+        cell = row.getCell(2);
+        assertNotNull(cell);
+        assertEquals("A", cell.getStringCellValue());
     }
 
     public void testAddToExistingWorkbook() {
