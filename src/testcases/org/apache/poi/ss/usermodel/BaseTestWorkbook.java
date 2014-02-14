@@ -17,16 +17,23 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
  */
-public abstract class BaseTestWorkbook extends TestCase {
+public abstract class BaseTestWorkbook {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -34,7 +41,8 @@ public abstract class BaseTestWorkbook extends TestCase {
     _testDataProvider = testDataProvider;
     }
 
-    public void testCreateSheet() {
+    @Test
+    public void createSheet() {
         Workbook wb = _testDataProvider.createWorkbook();
         assertEquals(0, wb.getNumberOfSheets());
 
@@ -140,7 +148,8 @@ public abstract class BaseTestWorkbook extends TestCase {
      * avoid funny duplicate sheet name errors, POI enforces uniqueness on only the first 31 chars.
      * but for the purpose of uniqueness long sheet names are silently truncated to 31 chars.
      */
-    public void testCreateSheetWithLongNames() {
+    @Test
+    public void createSheetWithLongNames() {
         Workbook wb = _testDataProvider.createWorkbook();
 
         String sheetName1 = "My very long sheet name which is longer than 31 chars";
@@ -176,7 +185,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(1, wb.getSheetIndex(truncatedSheetName3));
     }
 
-    public void testRemoveSheetAt() {
+    @Test
+    public void removeSheetAt() {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet("sheet1");
         workbook.createSheet("sheet2");
@@ -198,7 +208,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(3, workbook.getNumberOfSheets());
     }
 
-    public void testDefaultValues() {
+    @Test
+    public void defaultValues() {
         Workbook b = _testDataProvider.createWorkbook();
         assertEquals(0, b.getActiveSheetIndex());
         assertEquals(0, b.getFirstVisibleTab());
@@ -206,7 +217,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(0, b.getNumberOfSheets());
     }
 
-    public void testSheetSelection() {
+    @Test
+    public void sheetSelection() {
         Workbook b = _testDataProvider.createWorkbook();
         b.createSheet("Sheet One");
         b.createSheet("Sheet Two");
@@ -217,7 +229,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(1, b.getFirstVisibleTab());
     }
 
-    public void testPrintArea() {
+    @Test
+    public void printArea() {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet1 = workbook.createSheet("Test Print Area");
         String sheetName1 = sheet1.getSheetName();
@@ -236,7 +249,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertNull(workbook.getPrintArea(0));
     }
 
-    public void testGetSetActiveSheet(){
+    @Test
+    public void getSetActiveSheet(){
         Workbook workbook = _testDataProvider.createWorkbook();
         assertEquals(0, workbook.getActiveSheetIndex());
 
@@ -253,7 +267,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals(0, workbook.getActiveSheetIndex());
     }
 
-    public void testSetSheetOrder() {
+    @Test
+    public void setSheetOrder() {
         Workbook wb = _testDataProvider.createWorkbook();
 
         for (int i=0; i < 10; i++) {
@@ -309,7 +324,8 @@ public abstract class BaseTestWorkbook extends TestCase {
         }
     }
 
-    public void testCloneSheet() {
+    @Test
+    public void cloneSheet() {
         Workbook book = _testDataProvider.createWorkbook();
         Sheet sheet = book.createSheet("TEST");
         sheet.createRow(0).createCell(0).setCellValue("Test");
@@ -337,7 +353,8 @@ public abstract class BaseTestWorkbook extends TestCase {
 
     }
 
-    public void testParentReferences(){
+    @Test
+    public void parentReferences(){
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         assertSame(workbook, sheet.getWorkbook());
@@ -370,7 +387,8 @@ public abstract class BaseTestWorkbook extends TestCase {
      * is removed 
      */
     @Deprecated
-    public void testSetRepeatingRowsAnsColumns(){
+    @Test
+    public void setRepeatingRowsAnsColumns(){
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet1 = wb.createSheet();
         wb.setRepeatingRowsAndColumns(wb.getSheetIndex(sheet1), 0, 0, 0, 3);
@@ -387,7 +405,8 @@ public abstract class BaseTestWorkbook extends TestCase {
     /**
      * Tests that all of the unicode capable string fields can be set, written and then read back
      */
-    public void testUnicodeInAll() {
+    @Test
+    public void unicodeInAll() {
         Workbook wb = _testDataProvider.createWorkbook();
         CreationHelper factory = wb.getCreationHelper();
         //Create a unicode dataformat (contains euro symbol)
@@ -501,7 +520,8 @@ public abstract class BaseTestWorkbook extends TestCase {
      *
      * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47100">Bugzilla 47100</a>
      */
-    public void testSetSheetName() throws Exception {
+    @Test
+    public void setSheetName() throws Exception {
 
         Workbook wb = newSetSheetNameTestingWorkbook();
 
@@ -528,9 +548,9 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals("SUM('Testing 47100'!A1:C1,'To be renamed'!A1:A5)", cell1.getCellFormula());
         assertEquals("sale_2+sale_3+'Testing 47100'!C1", cell2.getCellFormula());
 
-        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue());
-        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue());
-        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue(), 0);
+        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue(), 0);
+        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue(), 0);
 
         wb.setSheetName(1, "47100 - First");
         wb.setSheetName(2, "47100 - Second");
@@ -547,9 +567,9 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals("sale_2+sale_3+'47100 - First'!C1", cell2.getCellFormula());
 
         evaluator.clearAllCachedResultValues();
-        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue());
-        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue());
-        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue(), 0);
+        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue(), 0);
+        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue(), 0);
 
         wb = _testDataProvider.writeOutAndReadBack(wb);
 
@@ -575,9 +595,9 @@ public abstract class BaseTestWorkbook extends TestCase {
         assertEquals("sale_2+sale_3+'47100 - First'!C1", cell2.getCellFormula());
 
         evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue());
-        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue());
-        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue());
+        assertEquals(6.0, evaluator.evaluate(cell0).getNumberValue(), 0);
+        assertEquals(21.0, evaluator.evaluate(cell1).getNumberValue(), 0);
+        assertEquals(6.0, evaluator.evaluate(cell2).getNumberValue(), 0);
     }
 
     public void changeSheetNameWithSharedFormulas(String sampleFile){
