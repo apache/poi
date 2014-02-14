@@ -66,6 +66,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	}
 	
 	public InputStream getInputStream(ZipEntry zipEntry) {
+	    assert (zipEntry instanceof FakeZipEntry);
 		FakeZipEntry entry = (FakeZipEntry)zipEntry;
 		return entry.getInputStream();
 	}

@@ -17,9 +17,10 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A Slide Atom (type 1007). Holds information on the parent Slide, what
@@ -173,7 +174,7 @@ public final class SlideAtom extends RecordAtom
 	 *  usual record header. Since it's a fixed size and tied to
 	 *  the SlideAtom, we'll hold it here.)
 	 */
-	public class SSlideLayoutAtom {
+	public static class SSlideLayoutAtom {
 		// The different kinds of geometry
 		public static final int TITLE_SLIDE = 0;
 		public static final int TITLE_BODY_SLIDE = 1;

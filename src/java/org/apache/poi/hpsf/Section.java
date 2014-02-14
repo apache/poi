@@ -294,7 +294,7 @@ public class Section
      * <p>Represents an entry in the property list and holds a property's ID and
      * its offset from the section's beginning.</p>
      */
-    class PropertyListEntry implements Comparable<PropertyListEntry>
+    static class PropertyListEntry implements Comparable<PropertyListEntry>
     {
         int id;
         int offset;
