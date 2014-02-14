@@ -167,7 +167,7 @@ public class POIXMLProperties {
 	/**
 	 * The core document properties
 	 */
-	public class CoreProperties {
+	public static class CoreProperties {
 		private PackagePropertiesPart part;
 		private CoreProperties(PackagePropertiesPart part) {
 			this.part = part;
@@ -273,7 +273,7 @@ public class POIXMLProperties {
 	/**
 	 * Extended document properties
 	 */
-	public class ExtendedProperties {
+	public static class ExtendedProperties {
 		private org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props;
 		private ExtendedProperties(org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props) {
 			this.props = props;
@@ -287,7 +287,7 @@ public class POIXMLProperties {
 	/**
 	 *  Custom document properties
 	 */
-	public class CustomProperties {
+	public static class CustomProperties {
 		/**
 		 *  Each custom property element contains an fmtid attribute
 		 *  with the same GUID value ({D5CDD505-2E9C-101B-9397-08002B2CF9AE}).

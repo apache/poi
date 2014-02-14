@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * These are tricky beasts. They contain the text of potentially
@@ -181,7 +181,7 @@ public final class SlideListWithText extends RecordContainer {
 	 *  includes sets of TextHeaderAtom and TextBytesAtom/TextCharsAtom,
 	 *  along with some others.
 	 */
-	public class SlideAtomsSet {
+	public static class SlideAtomsSet {
 		private SlidePersistAtom slidePersistAtom;
 		private Record[] slideRecords;
 

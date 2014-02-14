@@ -187,7 +187,7 @@ public final class ChunkFactory {
 	 * The definition of a Command, which a chunk may hold.
 	 * The Command holds the value, this describes it.
 	 */
-	public class CommandDefinition {
+	public static class CommandDefinition {
 		private int type;
 		private int offset;
 		private String name;
