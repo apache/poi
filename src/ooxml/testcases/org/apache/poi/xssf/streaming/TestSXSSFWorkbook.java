@@ -19,6 +19,12 @@
 
 package org.apache.poi.xssf.streaming;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +41,9 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.After;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     public static final SXSSFITestDataProvider _testDataProvider = SXSSFITestDataProvider.instance;
@@ -43,7 +52,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 		super(_testDataProvider);
 	}
 
-    @Override
+    @After
     public void tearDown(){
         _testDataProvider.cleanup();
     }
@@ -52,9 +61,10 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
      * cloning of sheets is not supported in SXSSF
      */
     @Override
-    public void testCloneSheet() {
+    @Test
+    public void cloneSheet() {
         try {
-            super.testCloneSheet();
+            super.cloneSheet();
             fail("expected exception");
         } catch (RuntimeException e){
             assertEquals("NotImplemented", e.getMessage());
@@ -65,9 +75,10 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
      * this test involves evaluation of formulas which isn't supported for SXSSF
      */
     @Override
-    public void testSetSheetName() {
+    @Test
+    public void setSheetName() {
         try {
-            super.testSetSheetName();
+            super.setSheetName();
             fail("expected exception");
         } catch (Exception e){
             assertEquals(
@@ -76,7 +87,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    public void testExistingWorkbook() {
+    @Test
+    public void existingWorkbook() {
     	XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
     	xssfWorkbook.createSheet("S1");
     	SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
@@ -92,7 +104,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
     }
 
-    public void testUseSharedStringsTable() throws Exception {
+    @Test
+    public void useSharedStringsTable() throws Exception {
         SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
 
         Field f = SXSSFWorkbook.class.getDeclaredField("_sharedStringSource");
@@ -128,7 +141,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         assertEquals("A", cell.getStringCellValue());
     }
 
-    public void testAddToExistingWorkbook() {
+    @Test
+    public void addToExistingWorkbook() {
     	XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
     	xssfWorkbook.createSheet("S1");
     	Sheet sheet = xssfWorkbook.createSheet("S2");
@@ -195,7 +209,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
     }
 
-    public void testSheetdataWriter(){
+    @Test
+    public void sheetdataWriter(){
         SXSSFWorkbook wb = new SXSSFWorkbook();
         SXSSFSheet sh = (SXSSFSheet)wb.createSheet();
         SheetDataWriter wr = sh.getSheetDataWriter();
@@ -226,7 +241,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
     }
 
-    public void testGZipSheetdataWriter(){
+    @Test
+    public void gzipSheetdataWriter(){
         SXSSFWorkbook wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
         int rowNum = 1000;
@@ -298,7 +314,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
-    public void testWorkbookDispose()
+    @Test
+    public void workbookDispose()
     {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         // the underlying writer is SheetDataWriter
@@ -312,7 +329,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     }
 
     // currently writing the same sheet multiple times is not supported...
-	public void DISABLEDtestBug53515() throws Exception {
+    @Ignore
+	public void bug53515() throws Exception {
 		Workbook wb = new SXSSFWorkbook(10);
 		populateWorkbook(wb);
 		saveTwice(wb);
@@ -323,7 +341,8 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 
 	// Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files
 	// See http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html
-	public void DISABLEDtestBug53515a() throws Exception {
+    @Ignore
+	public void bug53515a() throws Exception {
 		File out = new File("Test.xlsx");
 		out.delete();
 		for (int i = 0; i < 2; i++) {
