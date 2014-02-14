@@ -29,6 +29,8 @@ import java.io.Writer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.poi.xssf.model.SharedStringsTable;
+
 /**
  * Sheet writer that supports gzip compression of the temp files.
  */
@@ -36,6 +38,13 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
 
     public GZIPSheetDataWriter() throws IOException {
         super();
+    }
+	
+	/**
+     * @param sharedStringsTable the shared strings table, or null if inline text is used
+     */
+	public GZIPSheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
+        super(sharedStringsTable);
     }
 
     /**

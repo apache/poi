@@ -43,12 +43,21 @@ import java.util.zip.ZipEntry;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.model.SharedStringsTable;
 
 /**
  * Streaming version of XSSFWorkbook implementing the "BigGridDemo" strategy.
  *
- * @author Alex Geller, Four J's Development Tools
-*/
+ * SXSSFWorkbook defaults to using inline strings instead of a shared strings
+ * table. This is very efficient, since no document content needs to be kept in
+ * memory, but is also known to produce documents that are incompatible with
+ * some clients. With shared strings enabled all unique strings in the document
+ * has to be kept in memory. Depending on your document content this could use
+ * a lot more resources than with shared strings disabled.
+ *
+ * Carefully review your memory budget and compatibility needs before deciding
+ * whether to enable shared strings or not.
+ */
 public class SXSSFWorkbook implements Workbook
 {
     /**
@@ -71,6 +80,11 @@ public class SXSSFWorkbook implements Workbook
      * whetehr temp files should be compressed.
      */
     private boolean _compressTmpFiles = false;
+
+    /**
+     * shared string table - a cache of strings in this workbook
+     */
+    private SharedStringsTable _sharedStringSource = null;
 
     /**
      * Construct a new workbook
@@ -165,15 +179,48 @@ public class SXSSFWorkbook implements Workbook
      * @param compressTmpFiles whether to use gzip compression for temporary files
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles){
+    	this(workbook,rowAccessWindowSize, compressTmpFiles, false);
+    }
+
+    /**
+     * Constructs an workbook from an existing workbook.
+     * <p>
+     * When a new node is created via createRow() and the total number
+     * of unflushed records would exceed the specified value, then the
+     * row with the lowest index value is flushed and cannot be accessed
+     * via getRow() anymore.
+     * </p>
+     * <p>
+     * A value of -1 indicates unlimited access. In this case all
+     * records that have not been flushed by a call to flush() are available
+     * for random access.
+     * <p>
+     * <p></p>
+     * A value of 0 is not allowed because it would flush any newly created row
+     * without having a chance to specify any cells.
+     * </p>
+     *
+     * @param workbook  the template workbook
+     * @param rowAccessWindowSize
+     * @param compressTmpFiles whether to use gzip compression for temporary files
+     * @param useSharedStringsTable whether to use a shared strings table
+     */
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable){
     	setRandomAccessWindowSize(rowAccessWindowSize);
     	setCompressTempFiles(compressTmpFiles);
     	if (workbook == null)
     	{
     		_wb=new XSSFWorkbook();
+                if(useSharedStringsTable){
+                    _sharedStringSource = _wb.getSharedStringSource();
+                }
     	}
     	else
     	{
     		_wb=workbook;
+                if(useSharedStringsTable){
+                    _sharedStringSource = _wb.getSharedStringSource();
+                }
             for ( int i = 0; i < _wb.getNumberOfSheets(); i++ )
             {
                 XSSFSheet sheet = _wb.getSheetAt( i );
@@ -236,9 +283,9 @@ public class SXSSFWorkbook implements Workbook
 
     SheetDataWriter createSheetDataWriter() throws IOException {
         if(_compressTmpFiles) {
-            return new GZIPSheetDataWriter();
+            return new GZIPSheetDataWriter(_sharedStringSource);
         } else {
-            return new SheetDataWriter();
+            return new SheetDataWriter(_sharedStringSource);
         }
     }
 
