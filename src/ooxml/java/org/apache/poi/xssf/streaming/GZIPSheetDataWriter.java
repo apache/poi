@@ -51,9 +51,8 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
      * @return temp file to write sheet data
      */
     @Override
-	public File createTempFile()throws IOException {
-        File fd = File.createTempFile("poi-sxssf-sheet-xml", ".gz");
-        return fd;
+    public File createTempFile()throws IOException {
+        return File.createTempFile("poi-sxssf-sheet-xml", ".gz");
     }
 
     /**

@@ -93,14 +93,14 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	xssfWorkbook.createSheet("S1");
     	SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
     	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-    	wb.dispose();
+    	assertTrue(wb.dispose());
 
         wb = new SXSSFWorkbook(xssfWorkbook);
     	assertEquals(1, wb.getNumberOfSheets());
     	Sheet sheet  = wb.getSheetAt(0);
     	assertNotNull(sheet);
     	assertEquals("S1", sheet.getSheetName());
-        wb.dispose();
+        assertTrue(wb.dispose());
 
     }
 
@@ -151,7 +151,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     	cell.setCellValue("value 2_1_1");
     	SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
     	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        wb.dispose();
+        assertTrue(wb.dispose());
 
         wb = new SXSSFWorkbook(xssfWorkbook);
 
@@ -218,7 +218,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         File tmp = wr.getTempFile();
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet"));
         assertTrue(tmp.getName().endsWith(".xml"));
-        wb.dispose();
+        assertTrue(wb.dispose());
 
         wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
@@ -228,7 +228,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         tmp = wr.getTempFile();
         assertTrue(tmp.getName().startsWith("poi-sxssf-sheet-xml"));
         assertTrue(tmp.getName().endsWith(".gz"));
-        wb.dispose();
+        assertTrue(wb.dispose());
 
         //Test escaping of Unicode control characters
         wb = new SXSSFWorkbook();
@@ -237,7 +237,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         Cell cell = xssfWorkbook.getSheet("S1").getRow(0).getCell(0);
         assertEquals("value?", cell.getStringCellValue());
 
-        wb.dispose();
+        assertTrue(wb.dispose());
 
     }
 
@@ -280,7 +280,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
             }
         }
 
-        wb.dispose();
+        assertTrue(wb.dispose());
 
     }
 
@@ -366,10 +366,10 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 				}
 
 				wb.write(outSteam);
-				// wb.dispose();
+				// assertTrue(wb.dispose());
 				outSteam.close();
 			} finally {
-				wb.dispose();
+				assertTrue(wb.dispose());
 			}
 		}
 		out.delete();
