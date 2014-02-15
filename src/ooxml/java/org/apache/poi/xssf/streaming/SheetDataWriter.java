@@ -75,8 +75,7 @@ public class SheetDataWriter {
      * @return temp file to write sheet data
      */
     public File createTempFile()throws IOException {
-        File fd = File.createTempFile("poi-sxssf-sheet", ".xml");
-        return fd;
+        return File.createTempFile("poi-sxssf-sheet", ".xml");
     }
 
     /**
