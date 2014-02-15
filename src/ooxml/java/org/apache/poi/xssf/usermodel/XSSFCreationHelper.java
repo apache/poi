@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Hyperlink;
 
 public class XSSFCreationHelper implements CreationHelper {
 	private XSSFWorkbook workbook;
@@ -38,6 +39,11 @@ public class XSSFCreationHelper implements CreationHelper {
 		return workbook.createDataFormat();
 	}
 
+    /**
+     * Create a new XSSFHyperlink.
+     *
+     * @param type - the type of hyperlink to create, see {@link Hyperlink}
+     */
 	public XSSFHyperlink createHyperlink(int type) {
 		return new XSSFHyperlink(type);
 	}

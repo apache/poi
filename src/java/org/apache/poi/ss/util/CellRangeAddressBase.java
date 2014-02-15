@@ -113,8 +113,16 @@ public abstract class CellRangeAddressBase {
 		return _lastRow;
 	}
 
+	/**
+	 * Determines if the given coordinates lie within the bounds 
+	 * of this range.
+	 *
+	 * @param rowInd The row, 0-based.
+	 * @param colInd The column, 0-based.
+	 * @return True if the coordinates lie within the bounds, false otherwise.
+	 */
 	public boolean isInRange(int rowInd, int colInd) {
-		return _firstRow <= rowInd  &&  rowInd <= _lastRow &&
+		return _firstRow <= rowInd && rowInd <= _lastRow &&
 				_firstCol <= colInd && colInd <= _lastCol;
 	}
 
