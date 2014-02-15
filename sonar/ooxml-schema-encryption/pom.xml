@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>3.11-SNAPSHOT</version>
+    </parent>
+    <artifactId>poi-ooxml-schema-encryption</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apach POI - Openxmlformats Encryption Schema package</name>
+
+    <build>
+		<sourceDirectory>target/generated-sources/xmlbeans</sourceDirectory>
+		
+		<plugins>
+			<plugin>
+			  <groupId>org.codehaus.mojo</groupId>
+			  <artifactId>xmlbeans-maven-plugin</artifactId>
+			  <version>2.3.3</version>
+			  <executions>
+				 <execution>
+					<phase>generate-sources</phase>
+					<goals>
+					  <goal>xmlbeans</goal>
+					</goals>
+				 </execution>
+			  </executions>
+				<configuration>
+					<schemaDirectory>../../src/ooxml/resources/org/apache/poi/poifs/crypt</schemaDirectory>
+					<javaSource>1.5</javaSource>
+					<optimize>yes</optimize>
+				</configuration>
+   			</plugin>
+   			
+   		<!-- TODO: ugly workaround as XMLBeans in Maven creates slightly different source compared to the Ant XMLBeans task!?!
+			see http://stackoverflow.com/questions/21796000/xmlbeans-creates-different-code-when-running-via-ant-and-maven
+   		-->
+		<plugin>
+           <groupId>com.google.code.maven-replacer-plugin</groupId>
+           <artifactId>replacer</artifactId>
+           <version>1.5.2</version>
+           <executions>
+               <execution>
+                   <phase>generate-sources</phase>
+                   <goals>
+                       <goal>replace</goal>
+                   </goals>                   
+               </execution>
+           </executions>
+           <configuration>
+			   <includes>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/encryption/CTKeyEncryptor.java</include>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/encryption/impl/CTKeyEncryptorImpl.java</include>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/keyEncryptor/password/impl/EncryptedKeyDocumentImpl.java</include>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/keyEncryptor/certificate/EncryptedKeyDocument.java</include>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/keyEncryptor/certificate/impl/EncryptedKeyDocumentImpl.java</include>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/keyEncryptor/password/EncryptedKeyDocument.java</include>
+				   <include>target/generated-sources/xmlbeans/com/microsoft/schemas/office/x2006/keyEncryptor/password/impl/EncryptedKeyDocumentImpl.java</include>
+               </includes>
+               <replacements>
+                   <replacement>
+                       <token>etEncryptedKey2</token>
+                       <value>etEncryptedCertificateKey</value>
+                   </replacement>         
+                   <replacement>
+                       <token>etEncryptedKey</token>
+                       <value>etEncryptedPasswordKey</value>
+                   </replacement>         
+                   <replacement>
+                       <token>ewEncryptedKey2</token>
+                       <value>ewEncryptedCertificateKey</value>
+                   </replacement>         
+                   <replacement>
+                       <token>ewEncryptedKey</token>
+                       <value>ewEncryptedPasswordKey</value>
+                   </replacement>         
+                   <replacement>
+                       <token>encryptedKey2\)</token>
+                       <value>encryptedCertificateKey)</value>
+                   </replacement>         
+                   <replacement>
+                       <token>encryptedKey\)</token>
+                       <value>encryptedPasswordKey)</value>
+                   </replacement>         
+               </replacements>
+           </configuration>
+       </plugin>
+   			
+		</plugins>
+    </build>
+
+    <dependencies>
+		<dependency>
+		  <groupId>org.apache.xmlbeans</groupId>
+		  <artifactId>xmlbeans</artifactId>
+		  <version>2.3.0</version>
+		</dependency>
+    </dependencies>
+</project>
