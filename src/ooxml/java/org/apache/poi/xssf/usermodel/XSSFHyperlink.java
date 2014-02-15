@@ -40,7 +40,7 @@ public class XSSFHyperlink implements Hyperlink {
     /**
      * Create a new XSSFHyperlink. This method is protected to be used only by XSSFCreationHelper
      *
-     * @param type - the type of hyperlink to create
+     * @param type - the type of hyperlink to create, see {@link Hyperlink}
      */
     protected XSSFHyperlink(int type) {
         _type = type;
