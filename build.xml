@@ -548,7 +548,7 @@ under the License.
 
     <target name="compile-all" depends="compile,compile-ooxml-lite"/>
 
-    <target name="compile-main">
+    <target name="compile-main" depends="init">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${main.output.dir}"
