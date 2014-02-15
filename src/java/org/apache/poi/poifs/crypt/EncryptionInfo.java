@@ -66,7 +66,7 @@ public class EncryptionInfo {
         try {
             eib = getBuilder(encryptionMode);
         } catch (Exception e) {
-            throw (IOException)new IOException().initCause(e);
+            throw new IOException(e);
         }
 
         eib.initialize(this, dis);
