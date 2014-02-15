@@ -107,6 +107,9 @@ public class TestFontRendering {
         BufferedImage imgExpected = ImageIO.read(slTests.getFile("bug55902-mixedChars.png"));
         DataBufferByte expectedDB = (DataBufferByte)imgExpected.getRaster().getDataBuffer();
         DataBufferByte actualDB = (DataBufferByte)imgActual.getRaster().getDataBuffer();
-        assertTrue(Arrays.equals(expectedDB.getData(0), actualDB.getData(0)));
+        byte[] expectedData = expectedDB.getData(0);
+        byte[] actualData = actualDB.getData(0);
+        assertTrue("Expected to have matching raster-arrays, but found differences, size " + expectedData.length + " and " + actualData.length, 
+                Arrays.equals(expectedData, actualData));
     }
 }
