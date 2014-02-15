@@ -46,7 +46,7 @@ under the License.
 
     <!-- basic evaluation test -->
     <target name="test-evaluate">
-        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+        <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls">
             <poi:test showSuccessDetails="true">
                 <poi:setDouble cell="'MortgageCalculator'!$B$1" value="240000"/>
                 <poi:setDouble cell="'MortgageCalculator'!$B$2" value ="0.11"/>
@@ -58,7 +58,7 @@ under the License.
       </target>
 
     <target name="test-precision">
-        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+        <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls">
             <poi:precision value="1.0E-4"/>
 
             <poi:test name="global-precision" showFailureDetail="true" showSuccessDetails="true">
@@ -92,7 +92,7 @@ under the License.
         By default ExcelAnt does not terminate execution if an error occurs
      -->
     <target name="test-passonerror">
-        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+        <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls">
 
             <poi:test name="failonerror" showFailureDetail="true" showSuccessDetails="true">
                 <poi:setDouble cell="'MortageCalculatorFunction'!$D$1" value="1"/>
@@ -108,7 +108,7 @@ under the License.
         failOnError="true" forces ExcelAnt tot terminate execution if an error occurs
      -->
     <target name="test-failonerror">
-        <poi:excelant fileName="test-data/spreadsheet/excelant.xls" failOnError="true">
+        <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls" failOnError="true">
 
             <poi:test name="failonerror" showFailureDetail="true" showSuccessDetails="true">
                 <poi:setDouble cell="'MortageCalculatorFunction'!$D$1" value="1"/>
@@ -122,7 +122,7 @@ under the License.
 
     <!-- Evaluation of user-defined functions -->
     <target name="test-udf">
-        <poi:excelant fileName="test-data/spreadsheet/excelant.xls">
+        <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls">
             <poi:udf functionAlias="calculatePayment"
                      className="org.apache.poi.ss.examples.formula.CalculateMortgageFunction"/>
             <poi:test>

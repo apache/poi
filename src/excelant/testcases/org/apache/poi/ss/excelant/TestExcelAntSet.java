@@ -28,10 +28,9 @@ public class TestExcelAntSet extends TestCase {
 	// concrete instance to test the set methods.
 	private ExcelAntSet fixture ;
 	
-	private final String mortgageCalculatorFileName =
-        "test-data/spreadsheet/mortgage-calculation.xls" ;
-
-
+    private static final String mortgageCalculatorFileName =
+        BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
+    
     @Override
 	public void setUp() {
 		fixture = new ExcelAntSetDoubleCell() ;

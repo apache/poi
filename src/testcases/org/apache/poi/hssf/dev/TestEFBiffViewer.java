@@ -30,7 +30,9 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
 		SILENT_EXCLUDED.add("XRefCalc.xls"); 
 		SILENT_EXCLUDED.add("password.xls"); 
 		SILENT_EXCLUDED.add("51832.xls"); 		// password
+		SILENT_EXCLUDED.add("xor-encryption-abc.xls");    // password, ty again later!
 		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
+		SILENT_EXCLUDED.add("46904.xls");     // Exception, too old
 	};
 	
 	@Override

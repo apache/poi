@@ -18,12 +18,18 @@
 
 package org.apache.poi.ss.excelant;
 
-import junit.framework.TestCase;
-import org.apache.tools.ant.*;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
 
 /**
  * A BuildFileTest is a TestCase which executes targets from an Ant buildfile
@@ -70,6 +76,7 @@ public abstract class BuildFileTest extends TestCase {
      * is automatically called, since it's trivial to have a
      * test target depend on it.
      */
+    @Override
     protected void tearDown() throws Exception {
         if (project == null) {
             /*
@@ -300,6 +307,7 @@ public abstract class BuildFileTest extends TestCase {
         fullLogBuffer = new StringBuffer();
         project = new Project();
         project.init();
+        project.setNewProperty("data.dir.name", getDataDir());
         File antFile = new File(System.getProperty("root"), filename);
         project.setUserProperty("ant.file", antFile.getAbsolutePath());
         project.addBuildListener(new AntTestListener(logLevel));
@@ -475,6 +483,11 @@ public abstract class BuildFileTest extends TestCase {
         URL url = getClass().getResource(resource);
         assertNotNull("Could not find resource :" + resource, url);
         return url;
+    }
+    
+    public static String getDataDir() {
+        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
+        return dataDirName == null ? "test-data" : dataDirName;
     }
 
     /**

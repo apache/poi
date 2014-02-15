@@ -25,10 +25,10 @@ public class TestExcelAntSetDoubleCell extends TestCase {
 	
 	private ExcelAntSetDoubleCell fixture ;
 	
-	private final String mortgageCalculatorFileName =
-        "test-data/spreadsheet/mortgage-calculation.xls" ;
-	
 	private ExcelAntWorkbookUtil util ;
+
+    private static final String mortgageCalculatorFileName =
+        BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
     @Override
 	public void setUp() {
