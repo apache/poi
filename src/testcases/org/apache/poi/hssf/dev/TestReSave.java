@@ -23,6 +23,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.POIDataSamples;
 import org.junit.Test;
 
 public class TestReSave extends BaseXLSIteratingTest {
@@ -75,8 +76,13 @@ public class TestReSave extends BaseXLSIteratingTest {
 
 	@Test
 	public void testOneFile() throws Exception {
+        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
+        if(dataDirName == null) {
+            dataDirName = "test-data";
+        }
+
 		List<String> failed = new ArrayList<String>();
-		runOneFile("test-data/spreadsheet", "49219.xls", failed);
+		runOneFile(dataDirName + "/spreadsheet", "49219.xls", failed);
 
 		assertTrue("Expected to have no failed except the ones excluded, but had: " + failed, 
 				failed.isEmpty());

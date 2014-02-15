@@ -18,6 +18,8 @@ package org.apache.poi.ss.excelant.util;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.excelant.BuildFileTest;
+
 
 /**
  * Tests for the ExcelAntWorbookUtilFactory.
@@ -28,8 +30,8 @@ import junit.framework.TestCase;
  */
 public class TestExcelAntWorkbookUtilFactory extends TestCase{
 
-	private final String mortgageCalculatorWorkbookFile = 
-		                                 "test-data/spreadsheet/mortgage-calculation.xls" ;
+    private static final String mortgageCalculatorWorkbookFile =
+        BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 	
 	
 	/**
@@ -52,7 +54,7 @@ public class TestExcelAntWorkbookUtilFactory extends TestCase{
 	 * the same resource, are passed in. 
 	 */
 	public void testVerifyEquivalence() {
-		String sameFileName = "test-data/spreadsheet/mortgage-calculation.xls" ;
+		String sameFileName = BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 		
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
                 mortgageCalculatorWorkbookFile ) ;

@@ -17,6 +17,7 @@
  */
 package org.apache.poi.ss.excelant;
 
+
 /**
  *  JUnit test for the ExcelAnt tasks.
  *  Leverages Ant's test framework.
@@ -26,8 +27,9 @@ package org.apache.poi.ss.excelant;
  */
 public class TestBuildFile extends BuildFileTest {
 
+    @Override
     public void setUp() {
-        configureProject("src/excelant/testcases/org/apache/poi/ss/excelant/tests.xml");
+        configureProject(BuildFileTest.getDataDir() + "/../src/excelant/testcases/org/apache/poi/ss/excelant/tests.xml");
     }
 
     public void testMissingFilename() {
@@ -42,14 +44,14 @@ public class TestBuildFile extends BuildFileTest {
 
     public void testEvaluate() {
         executeTarget("test-evaluate");
-        assertLogContaining("Using input file: test-data/spreadsheet/excelant.xls");
+        assertLogContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
     }
 
     public void testPrecision() {
         executeTarget("test-precision");
 
-        assertLogContaining("Using input file: test-data/spreadsheet/excelant.xls");
+        assertLogContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
                 "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-4");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +

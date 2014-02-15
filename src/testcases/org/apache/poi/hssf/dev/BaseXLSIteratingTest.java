@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 
@@ -42,8 +43,13 @@ public abstract class BaseXLSIteratingTest {
 
 	@Test
 	public void testMain() throws Exception {
-		int count = runWithDir("test-data/spreadsheet");
-		count += runWithDir("test-data/hpsf");
+	    String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
+	    if(dataDirName == null) {
+	        dataDirName = "test-data";
+	    }
+
+	    int count = runWithDir(dataDirName + "/spreadsheet");
+		count += runWithDir(dataDirName + "/hpsf");
 		
 		System.out.println("Had " + count + " files");
 	}
@@ -56,6 +62,8 @@ public abstract class BaseXLSIteratingTest {
 				return arg1.toLowerCase().endsWith(".xls");
 			}
 		});
+		
+		assertNotNull("Did not find any xls files in directory " + dir, files);
 		
 		runWithArrayOfFiles(files, dir, failed);
 
