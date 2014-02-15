@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>3.11-SNAPSHOT</version>
+    </parent>
+    <artifactId>poi-excelant</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apache POI ExcelAnt package</name>
+
+    <build>
+		<sourceDirectory>../../src/excelant/java</sourceDirectory>
+		<testSourceDirectory>../../src/excelant/testcases</testSourceDirectory>
+		<resources>
+		  <resource>
+			<directory>../../src/excelant/resources</directory>
+		  </resource>
+		</resources>
+    </build>
+
+    <dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>poi-main</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>poi-main</artifactId>
+			<version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.8.2</version>
+        </dependency>
+    </dependencies>
+</project>

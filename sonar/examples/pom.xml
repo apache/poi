@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>3.11-SNAPSHOT</version>
+    </parent>
+    <artifactId>poi-examples</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apache POI Examples package</name>
+
+    <build>
+		<sourceDirectory>../../src/examples/src</sourceDirectory>
+    </build>
+
+    <dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>poi-main</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- non-test dependency for UpdateEmbeddedDoc -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+    </dependencies>
+</project>

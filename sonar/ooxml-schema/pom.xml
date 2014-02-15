@@ -1,0 +1,101 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>3.11-SNAPSHOT</version>
+    </parent>
+    <artifactId>poi-ooxml-schema</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apach POI - Openxmlformats Schema package</name>
+
+    <build>
+		<sourceDirectory>target/generated-sources/xmlbeans</sourceDirectory>
+		
+		<plugins>
+			<!-- Download and unpack the OfficeOpenXML Schema and use xmlbeans to create classes from the XSDs -->
+			<plugin>
+				<groupId>com.googlecode.maven-download-plugin</groupId>
+				<artifactId>maven-download-plugin</artifactId>
+				<version>1.1.0</version>
+				<executions>
+					<execution>
+						<id>install-xsds</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip</url>
+							<unpack>true</unpack>
+							<md5>abe6bb6e7799e854934b3c634e8bcf7b</md5>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>unzip-schema</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<target>
+								<echo message="unzip schemas" />
+								<unzip src="target/OfficeOpenXML-XMLSchema.zip" dest="target/schemas/" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+			  <groupId>org.codehaus.mojo</groupId>
+			  <artifactId>xmlbeans-maven-plugin</artifactId>
+			  <version>2.3.3</version>
+			  <executions>
+				 <execution>
+					<phase>generate-sources</phase>
+					<goals>
+					  <goal>xmlbeans</goal>
+					</goals>
+				 </execution>
+			  </executions>
+				<configuration>
+					<schemaDirectory>target/schemas</schemaDirectory>
+					<javaSource>1.5</javaSource>
+					<optimize>yes</optimize>
+				</configuration>
+   			</plugin>
+		</plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+		<dependency>
+		  <groupId>org.apache.xmlbeans</groupId>
+		  <artifactId>xmlbeans</artifactId>
+		  <version>2.3.0</version>
+		</dependency>
+    </dependencies>
+</project>

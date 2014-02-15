@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>3.11-SNAPSHOT</version>
+
+    <name>Apache POI Parent Project</name>
+
+    <description>Maven build of Apache POI for Sonar checks</description>
+    <url>http://poi.apache.org/</url>
+
+  <mailingLists>
+    <mailingList>
+      <name>POI Users List</name>
+      <subscribe>user-subscribe@poi.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
+    </mailingList>
+    <mailingList>
+      <name>POI Developer List</name>
+      <subscribe>dev-subscribe@poi.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@poi.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/poi-dev/</archive>
+    </mailingList>
+  </mailingLists>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org/</url>
+  </organization>
+
+    <modules>
+		<module>main</module>
+		<module>ooxml-schema</module>
+		<module>ooxml-schema-encryption</module>
+		<module>ooxml</module>
+		<module>scratchpad</module>
+		<module>excelant</module>
+        <module>examples</module>
+    </modules>
+
+	<properties>
+		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
+	</properties>
+  
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+		<plugins>
+		  <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.16</version>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.maven.surefire</groupId>
+					<artifactId>surefire-junit47</artifactId>
+					<version>2.16</version>
+				</dependency>
+			</dependencies>
+    			
+			<configuration>
+				<systemPropertyVariables>
+					<POI.testdata.path>../../test-data</POI.testdata.path>
+					<java.awt.headless>true</java.awt.headless>
+					<org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
+				</systemPropertyVariables>
+				<argLine>-Duser.language=en -Duser.country=US</argLine>
+				<excludes>
+					<exclude>**/All*Tests.java</exclude>
+					<exclude>**/TestUnfixedBugs.java</exclude>
+					<exclude>**/TestcaseRecordInputStream.java</exclude>
+					<exclude>**/POITestCase.java</exclude>
+					
+					<!-- TODO: error about no public construct, seems to run with JUnit 3.8... -->
+					<exclude>**/TestWordToConverterSuite*.java</exclude>
+					<exclude>**/TestExcelConverterSuite*.java</exclude>
+				</excludes>
+				<!--test>TestPPTX2PNG</test-->
+				<!--parallel>both</parallel>
+				<threadCount>10</threadCount-->
+			</configuration>
+		  </plugin>		    
+		 </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
