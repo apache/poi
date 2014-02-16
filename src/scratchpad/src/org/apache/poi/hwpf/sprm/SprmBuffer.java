@@ -154,6 +154,7 @@ public final class SprmBuffer implements Cloneable
   @Override
   public boolean equals(Object obj)
   {
+    if (!(obj instanceof SprmBuffer)) return false;
     SprmBuffer sprmBuf = (SprmBuffer)obj;
     return (Arrays.equals(_buf, sprmBuf._buf));
   }

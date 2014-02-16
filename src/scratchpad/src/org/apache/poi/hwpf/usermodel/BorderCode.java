@@ -71,6 +71,7 @@ public final class BorderCode implements Cloneable {
   @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof BorderCode)) return false;
     BorderCode brc = (BorderCode)o;
     return _info == brc._info && _info2 == brc._info2;
   }

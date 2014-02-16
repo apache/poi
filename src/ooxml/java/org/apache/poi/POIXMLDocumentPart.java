@@ -284,7 +284,7 @@ public class POIXMLDocumentPart {
 
     @Override
     public String toString(){
-        return packagePart == null ? null : packagePart.toString();
+        return packagePart == null ? "" : packagePart.toString();
     }
 
     /**

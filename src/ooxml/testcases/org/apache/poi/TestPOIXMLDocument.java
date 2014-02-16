@@ -170,7 +170,7 @@ public final class TestPOIXMLDocument extends TestCase {
         assertNull(part.getRelationId(null));
         assertFalse(part.removeRelation(null, true));
         part.removeRelation(null);
-        assertNull(part.toString());
+        assertEquals("",part.toString());
         part.onDocumentCreate();
         //part.getTargetPart(null);
     }

@@ -138,29 +138,20 @@ public final class FontTable
   }
 
   @Override
-  public boolean equals(Object o)
-  {
-  	boolean retVal = true;
+  public boolean equals(Object other) {
+      if (!(other instanceof FontTable)) return false;
+      FontTable o = (FontTable)other;
 
-    if(((FontTable)o).getStringCount() == _stringCount)
-    {
-      if(((FontTable)o).getExtraDataSz() == _extraDataSz)
-      {
-        Ffn[] fontNamesNew = ((FontTable)o).getFontNames();
-        for(int i = 0;i<_stringCount; i++)
-        {
-          if(!(_fontNames[i].equals(fontNamesNew[i])))
-            retVal = false;
-        }
+      if (o._stringCount != this._stringCount
+          || o._extraDataSz != this._extraDataSz
+          || o._fontNames.length != this._fontNames.length
+      ) return false;
+      
+      for (int i=0; i<o._fontNames.length; i++) {
+          if (!o._fontNames[i].equals(this._fontNames[i])) return false;
       }
-      else
-        retVal = false;
-    }
-    else
-	    retVal = false;
-
-
-	  return retVal;
+      
+      return true;
   }
 
   @Override

@@ -75,6 +75,7 @@ public final class DateAndTime
   @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof DateAndTime)) return false;
     DateAndTime dttm = (DateAndTime)o;
     return _info == dttm._info && _info2 == dttm._info2;
   }

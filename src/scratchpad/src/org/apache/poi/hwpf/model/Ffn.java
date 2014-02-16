@@ -182,49 +182,20 @@ public final class Ffn
   }
 
   @Override
-  public boolean equals(Object o)
-    {
-    boolean retVal = true;
-
-    if (((Ffn)o).get_cbFfnM1() == _cbFfnM1)
-    {
-      if(((Ffn)o)._info == _info)
-      {
-      if(((Ffn)o)._wWeight == _wWeight)
-      {
-        if(((Ffn)o)._chs == _chs)
-        {
-        if(((Ffn)o)._ixchSzAlt == _ixchSzAlt)
-        {
-          if(Arrays.equals(((Ffn)o)._panose,_panose))
-          {
-          if(Arrays.equals(((Ffn)o)._fontSig,_fontSig))
-          {
-                  if(!(Arrays.equals(((Ffn)o)._xszFfn,_xszFfn)))
-                    retVal = false;
-          }
-          else
-            retVal = false;
-          }
-          else
-          retVal = false;
-        }
-        else
-          retVal = false;
-        }
-        else
-        retVal = false;
-      }
-      else
-        retVal = false;
-      }
-      else
-      retVal = false;
-    }
-    else
-      retVal = false;
-
-    return retVal;
+  public boolean equals(Object other) {
+      if (!(other instanceof Ffn)) return false;
+      Ffn o = (Ffn)other;
+      
+      return (
+             o._cbFfnM1 == this._cbFfnM1
+          && o._info == this._info
+          && o._wWeight == _wWeight
+          && o._chs == _chs
+          && o._ixchSzAlt == _ixchSzAlt
+          && Arrays.equals(o._panose,_panose)
+          && Arrays.equals(o._fontSig,_fontSig)
+          && Arrays.equals(o._xszFfn,_xszFfn)
+      );
   }
 
 

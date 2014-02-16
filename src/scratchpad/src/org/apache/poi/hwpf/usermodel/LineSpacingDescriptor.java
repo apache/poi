@@ -75,6 +75,7 @@ public final class LineSpacingDescriptor
   @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof LineSpacingDescriptor)) return false;
     LineSpacingDescriptor lspd = (LineSpacingDescriptor)o;
 
     return _dyaLine == lspd._dyaLine && _fMultiLinespace == lspd._fMultiLinespace;

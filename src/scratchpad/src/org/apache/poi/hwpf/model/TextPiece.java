@@ -204,13 +204,16 @@ public class TextPiece extends PropertyNode<TextPiece>
    @Override
    public boolean equals(Object o)
    {
-     if (limitsAreEqual(o))
-     {
-       TextPiece tp = (TextPiece)o;
-       return getStringBuilder().toString().equals(tp.getStringBuilder().toString()) &&
-              tp._usesUnicode == _usesUnicode && _pd.equals(tp._pd);
-     }
-     return false;
+     if (!(o instanceof TextPiece)) return false;
+     TextPiece tp = (TextPiece)o;
+     assert(_buf != null && tp._buf != null && _pd != null && tp._pd != null);
+     
+     return (
+            limitsAreEqual(o)
+         && tp._usesUnicode == this._usesUnicode
+         && tp._buf.toString().equals(this._buf.toString())
+         && tp._pd.equals(this._pd)
+     );
    }
 
    @Override

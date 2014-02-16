@@ -160,6 +160,7 @@ public class TextPieceTable implements CharIndexTranslator
 
     public boolean equals( Object o )
     {
+        if (!(o instanceof TextPieceTable)) return false;
         TextPieceTable tpt = (TextPieceTable) o;
 
         int size = tpt._textPieces.size();
