@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import org.apache.poi.ss.format.CellFormatPart.PartHandler;
-
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.util.BitSet;
@@ -30,6 +28,8 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
+
+import org.apache.poi.ss.format.CellFormatPart.PartHandler;
 
 /**
  * This class implements printing out a value using a number format.
@@ -658,7 +658,7 @@ public class CellNumberFormatter extends CellFormatter {
                             delEndPos + adjust; // delete end point in current
 
                     if (modPos < modEndPos) {
-                        if (nextChange.toAdd == "")
+                        if ("".equals(nextChange.toAdd))
                             output.delete(modPos, modEndPos);
                         else {
                             char fillCh = nextChange.toAdd.charAt(0);

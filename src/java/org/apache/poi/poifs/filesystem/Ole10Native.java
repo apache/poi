@@ -98,7 +98,8 @@ public class Ole10Native {
        DocumentEntry nativeEntry = 
           (DocumentEntry)directory.getEntry(OLE10_NATIVE);
        byte[] data = new byte[nativeEntry.getSize()];
-       directory.createDocumentInputStream(nativeEntry).read(data);
+       int readBytes = directory.createDocumentInputStream(nativeEntry).read(data);
+       assert(readBytes == data.length);
   
        return new Ole10Native(data, 0);
     }

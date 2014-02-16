@@ -104,8 +104,7 @@ public final class ListLevel
     @Override
     public boolean equals( Object obj )
     {
-        if ( obj == null )
-            return false;
+        if (!(obj instanceof ListLevel)) return false;
 
         ListLevel lvl = (ListLevel) obj;
         return lvl._lvlf.equals( this._lvlf )

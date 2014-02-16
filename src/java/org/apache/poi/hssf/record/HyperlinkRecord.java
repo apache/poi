@@ -83,9 +83,8 @@ public final class HyperlinkRecord extends StandardRecord {
 
 		@Override
 		public boolean equals(Object obj) {
+            if (!(obj instanceof GUID)) return false;
 			GUID other = (GUID) obj;
-            if (obj == null || !(obj instanceof GUID))
-                return false;
 			return _d1 == other._d1 && _d2 == other._d2
 			    && _d3 == other._d3 && _d4 == other._d4;
 		}
