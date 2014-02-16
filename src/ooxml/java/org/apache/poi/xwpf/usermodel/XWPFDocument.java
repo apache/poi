@@ -65,11 +65,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.EndnotesDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
 
@@ -1156,7 +1156,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 throw new POIXMLException(e);
             } finally {
                 try {
-                    out.close();
+                    if (out != null) out.close();
                 } catch (IOException e) {
                     // ignore
                 }

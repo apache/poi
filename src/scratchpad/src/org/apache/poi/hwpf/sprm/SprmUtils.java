@@ -97,7 +97,7 @@ public final class SprmUtils
         break;
       default:
         //should never happen
-        break;
+        throw new RuntimeException("Invalid sprm type"); 
     }
     LittleEndian.putShort(sprm, 0, instruction);
     list.add(sprm);

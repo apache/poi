@@ -30,6 +30,7 @@ public final class PackageDigitalSignature extends PackagePart {
 
 	public PackageDigitalSignature() throws InvalidFormatException {
 		super(null, null, new ContentType(""));
+		// TODO: Review constructor
 	}
 
 	@Override

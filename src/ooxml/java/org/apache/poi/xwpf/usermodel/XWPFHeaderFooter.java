@@ -257,7 +257,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                 throw new POIXMLException(e);
             } finally {
                 try {
-                    out.close();
+                    if (out != null) out.close();
                 } catch (IOException e) {
                     // ignore
                 }

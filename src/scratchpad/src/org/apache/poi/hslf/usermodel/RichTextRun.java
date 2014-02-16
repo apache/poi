@@ -29,8 +29,8 @@ import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 
 /**
@@ -325,6 +325,7 @@ public final class RichTextRun {
 			// paragraphStyle will now be defined
 		}
 
+        assert(paragraphStyle!=null);
 		TextProp tp = fetchOrAddTextProp(paragraphStyle, propName);
 		tp.setValue(val);
 	}
@@ -340,6 +341,7 @@ public final class RichTextRun {
 			// characterStyle will now be defined
 		}
 
+		assert(characterStyle!=null);
 		TextProp tp = fetchOrAddTextProp(characterStyle, propName);
 		tp.setValue(val);
 	}
