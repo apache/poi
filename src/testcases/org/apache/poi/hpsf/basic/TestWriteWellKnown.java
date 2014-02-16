@@ -32,26 +32,13 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hpsf.CustomProperties;
-import org.apache.poi.hpsf.CustomProperty;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.MarkUnsupportedException;
-import org.apache.poi.hpsf.MutableProperty;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.VariantSupport;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -69,6 +56,7 @@ public class TestWriteWellKnown extends TestCase {
     /**
      * @see TestCase#setUp()
      */
+    @Override
     public void setUp()
     {
         VariantSupport.setLogUnsupportedTypes(false);
@@ -92,58 +80,65 @@ public class TestWriteWellKnown extends TestCase {
         final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
+            @Override
             public boolean accept(final File file)
             {
-                return file.isFile() && file.getName().startsWith("Test");
-            }});
+                return file.isFile() && file.getName().startsWith("Test") && TestReadAllFiles.checkExclude(file);
+            }
+        });
+
         for (int i = 0; i < docs.length; i++)
         {
-            final File doc = docs[i];
-
-            /* Read a test document <em>doc</em> into a POI filesystem. */
-            final POIFSFileSystem poifs = new POIFSFileSystem(new FileInputStream(doc));
-            final DirectoryEntry dir = poifs.getRoot();
-            DocumentEntry dsiEntry = null;
-            try
-            {
-                dsiEntry = (DocumentEntry) dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-            }
-            catch (FileNotFoundException ex)
-            {
+            try {
+                final File doc = docs[i];
+    
+                /* Read a test document <em>doc</em> into a POI filesystem. */
+                final POIFSFileSystem poifs = new POIFSFileSystem(new FileInputStream(doc));
+                final DirectoryEntry dir = poifs.getRoot();
+                DocumentEntry dsiEntry = null;
+                try
+                {
+                    dsiEntry = (DocumentEntry) dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+                }
+                catch (FileNotFoundException ex)
+                {
+                    /*
+                     * A missing document summary information stream is not an error
+                     * and therefore silently ignored here.
+                     */
+                }
+    
                 /*
-                 * A missing document summary information stream is not an error
-                 * and therefore silently ignored here.
+                 * If there is a document summry information stream, read it from
+                 * the POI filesystem.
                  */
-            }
-
-            /*
-             * If there is a document summry information stream, read it from
-             * the POI filesystem.
-             */
-            if (dsiEntry != null)
-            {
-                final DocumentInputStream dis = new DocumentInputStream(dsiEntry);
-                final PropertySet ps = new PropertySet(dis);
-                final DocumentSummaryInformation dsi = new DocumentSummaryInformation(ps);
-
-                /* Execute the get... methods. */
-                dsi.getByteCount();
-                dsi.getByteOrder();
-                dsi.getCategory();
-                dsi.getCompany();
-                dsi.getCustomProperties();
-                // FIXME dsi.getDocparts();
-                // FIXME dsi.getHeadingPair();
-                dsi.getHiddenCount();
-                dsi.getLineCount();
-                dsi.getLinksDirty();
-                dsi.getManager();
-                dsi.getMMClipCount();
-                dsi.getNoteCount();
-                dsi.getParCount();
-                dsi.getPresentationFormat();
-                dsi.getScale();
-                dsi.getSlideCount();
+                if (dsiEntry != null)
+                {
+                    final DocumentInputStream dis = new DocumentInputStream(dsiEntry);
+                    final PropertySet ps = new PropertySet(dis);
+                    final DocumentSummaryInformation dsi = new DocumentSummaryInformation(ps);
+    
+                    /* Execute the get... methods. */
+                    dsi.getByteCount();
+                    dsi.getByteOrder();
+                    dsi.getCategory();
+                    dsi.getCompany();
+                    dsi.getCustomProperties();
+                    // FIXME dsi.getDocparts();
+                    // FIXME dsi.getHeadingPair();
+                    dsi.getHiddenCount();
+                    dsi.getLineCount();
+                    dsi.getLinksDirty();
+                    dsi.getManager();
+                    dsi.getMMClipCount();
+                    dsi.getNoteCount();
+                    dsi.getParCount();
+                    dsi.getPresentationFormat();
+                    dsi.getScale();
+                    dsi.getSlideCount();
+                }
+            } catch (Exception e) {
+                throw new IOException("While handling file " + docs[i], e);
             }
         }
     }
@@ -587,6 +582,7 @@ public class TestWriteWellKnown extends TestCase {
     {
         final AllDataFilesTester.TestTask task = new AllDataFilesTester.TestTask()
         {
+            @Override
             public void runTest(final File file) throws FileNotFoundException,
                     IOException, NoPropertySetStreamException,
                     MarkUnsupportedException,
@@ -638,15 +634,20 @@ public class TestWriteWellKnown extends TestCase {
         final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
+            @Override
             public boolean accept(final File file)
             {
-                return file.isFile() && file.getName().startsWith("Test");
+                return file.isFile() && file.getName().startsWith("Test") && TestReadAllFiles.checkExclude(file);
             }
         });
 
         for (int i = 0; i < docs.length; i++)
         {
-            task.runTest(docs[i]);
+            try {
+                task.runTest(docs[i]);
+            } catch (Exception e) {
+                throw new IOException("While handling file " + docs[i], e);
+            }
         }
     }
 
