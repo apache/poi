@@ -36,7 +36,7 @@ public final class DigitalCertificatePart extends PackagePart  {
 
 	public DigitalCertificatePart() throws InvalidFormatException{
 		super(null, null, new ContentType(""));
-		// Review constructor
+		// TODO: Review constructor
 	}
 
 	@Override

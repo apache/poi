@@ -41,7 +41,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRunTrackChange;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSmartTagRun;
@@ -472,8 +471,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
      */
     public void setBorderTop(Borders border) {
         CTPBdr ct = getCTPBrd(true);
+        if (ct == null) {
+            throw new RuntimeException("invalid paragraph state");
+        }
 
-        CTBorder pr = (ct != null && ct.isSetTop()) ? ct.getTop() : ct.addNewTop();
+        CTBorder pr = (ct.isSetTop()) ? ct.getTop() : ct.addNewTop();
         if (border.getValue() == Borders.NONE.getValue())
             ct.unsetTop();
         else

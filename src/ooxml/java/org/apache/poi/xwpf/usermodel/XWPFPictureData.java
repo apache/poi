@@ -160,7 +160,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
                 throw new POIXMLException(e);
             } finally {
                 try {
-                    is.close();
+                    if (is != null) is.close();
                 } catch (IOException e) {
                     throw new POIXMLException(e);
                 }

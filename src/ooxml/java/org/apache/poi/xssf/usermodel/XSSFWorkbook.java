@@ -71,7 +71,21 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -1240,6 +1254,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
         if(sheetname != null && sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
         WorkbookUtil.validateSheetName(sheetname);
+        // findbugs fix - validateSheetName has already checked for null value
+        assert(sheetname != null); 
 
         if (containsSheet(sheetname, sheetIndex ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );

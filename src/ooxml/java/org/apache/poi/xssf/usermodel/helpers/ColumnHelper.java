@@ -55,11 +55,13 @@ public class ColumnHelper {
 
         CTCols aggregateCols = CTCols.Factory.newInstance();
         List<CTCols> colsList = worksheet.getColsList();
-        if (colsList != null) {
-            for (CTCols cols : colsList) {
-                for (CTCol col : cols.getColList()) {
-                    cloneCol(aggregateCols, col);
-                }
+        if (colsList == null || colsList.isEmpty()) {
+            return;
+        }
+        
+        for (CTCols cols : colsList) {
+            for (CTCol col : cols.getColList()) {
+                cloneCol(aggregateCols, col);
             }
         }
         
