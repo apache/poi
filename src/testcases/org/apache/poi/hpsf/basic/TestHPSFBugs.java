@@ -138,4 +138,27 @@ public final class TestHPSFBugs extends TestCase {
        assertEquals("", si.getAuthor());
        assertEquals("Cour de Justice", dsi.getCompany());
    }
+   
+   /**
+    * CodePage Strings can be zero length
+    */
+   public void test56138() throws Exception {
+       DocumentInputStream dis;
+       POIFSFileSystem fs = 
+               new POIFSFileSystem(_samples.openResourceAsStream("TestZeroLengthCodePage.mpp"));
+       
+       dis = fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME);
+       SummaryInformation si = (SummaryInformation)PropertySetFactory.create(dis);
+       
+       dis = fs.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+       DocumentSummaryInformation dsi = (DocumentSummaryInformation)PropertySetFactory.create(dis);
+       
+       // Test
+       assertEquals("MSProject", si.getApplicationName());
+       assertEquals("project1", si.getTitle());
+       assertEquals("Jon Iles", si.getAuthor());
+       
+       assertEquals("", dsi.getCompany());
+       assertEquals(2, dsi.getSectionCount());
+   }
 }
