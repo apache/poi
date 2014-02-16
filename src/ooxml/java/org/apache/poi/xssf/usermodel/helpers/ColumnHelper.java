@@ -55,9 +55,7 @@ public class ColumnHelper {
 
         CTCols aggregateCols = CTCols.Factory.newInstance();
         List<CTCols> colsList = worksheet.getColsList();
-        if (colsList == null || colsList.isEmpty()) {
-            return;
-        }
+        assert(colsList != null);
         
         for (CTCols cols : colsList) {
             for (CTCol col : cols.getColList()) {
