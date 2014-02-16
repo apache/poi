@@ -43,6 +43,7 @@ public final class UPX
   @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof UPX)) return false;
     UPX upx = (UPX)o;
     return Arrays.equals(_upx, upx._upx);
   }

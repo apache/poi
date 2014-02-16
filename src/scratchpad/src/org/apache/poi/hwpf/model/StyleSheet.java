@@ -178,28 +178,22 @@ public final class StyleSheet implements HDFType {
   @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof StyleSheet)) return false;
     StyleSheet ss = (StyleSheet)o;
 
-    if (ss._stshif.equals( this._stshif ) && ss._cbStshi == _cbStshi)
-    {
-      if (ss._styleDescriptions.length == _styleDescriptions.length)
-      {
-        for (int x = 0; x < _styleDescriptions.length; x++)
-        {
-          // check for null
-          if (ss._styleDescriptions[x] != _styleDescriptions[x])
-          {
-            // check for equality
-            if (!ss._styleDescriptions[x].equals(_styleDescriptions[x]))
-            {
-              return false;
-            }
-          }
-        }
-        return true;
-      }
+    if (!ss._stshif.equals( this._stshif )
+        || ss._cbStshi != this._cbStshi
+        || ss._styleDescriptions.length != this._styleDescriptions.length
+    ) return false;
+    
+    for (int i=0; i<_styleDescriptions.length; i++) {
+        StyleDescription tsd = this._styleDescriptions[i];
+        StyleDescription osd = ss._styleDescriptions[i];
+        if (tsd == null && osd == null) continue;
+        if (tsd == null || osd == null || !osd.equals(tsd)) return false;
     }
-    return false;
+
+    return true;
   }
 
   @Override

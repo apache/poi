@@ -163,6 +163,8 @@ public abstract class PropertyNode<T extends PropertyNode<T>>  implements Compar
 
   public boolean equals(Object o)
   {
+    if (!(o instanceof PropertyNode)) return false;
+
     if (limitsAreEqual(o))
     {
       Object testBuf = ((PropertyNode<?>)o)._buf;

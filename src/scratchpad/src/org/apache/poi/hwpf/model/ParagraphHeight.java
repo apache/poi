@@ -76,6 +76,7 @@ public final class ParagraphHeight
 
   public boolean equals(Object o)
   {
+    if (!(o instanceof ParagraphHeight)) return false;
     ParagraphHeight ph = (ParagraphHeight)o;
 
     return infoField == ph.infoField && reserved == ph.reserved &&

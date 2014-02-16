@@ -80,6 +80,7 @@ public final class SectionDescriptor
   @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof SectionDescriptor)) return false;
     SectionDescriptor sed = (SectionDescriptor)o;
     return sed.fn == fn && sed.fnMpr == fnMpr;
   }
