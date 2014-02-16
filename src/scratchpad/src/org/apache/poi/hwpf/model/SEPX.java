@@ -67,6 +67,7 @@ public final class SEPX extends PropertyNode<SEPX>
     @Override
     public boolean equals( Object o )
     {
+        if (!(o instanceof SEPX)) return false;
         SEPX sepx = (SEPX) o;
         if ( super.equals( o ) )
         {
