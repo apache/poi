@@ -8,12 +8,21 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class WmfBitmap16 {
+    final boolean isPartial;
     int type;
     int width;
     int height;
     int widthBytes;
     int planes;
     int bitsPixel;
+    
+    public WmfBitmap16() {
+        this(false);
+    }
+    
+    public WmfBitmap16(boolean isPartial) {
+        this.isPartial = isPartial;
+    }
     
     public int init(LittleEndianInputStream leis) throws IOException {
         // A 16-bit signed integer that defines the bitmap type.
@@ -35,9 +44,19 @@ public class WmfBitmap16 {
         // An 8-bit unsigned integer that defines the number of adjacent color bits on 
         // each plane.
         bitsPixel = leis.readUByte();
+
+        int size = 2*LittleEndianConsts.BYTE_SIZE+4*LittleEndianConsts.SHORT_SIZE;
+        if (isPartial) {
+            // Bits (4 bytes): This field MUST be ignored.
+            long skipSize = leis.skip(LittleEndianConsts.INT_SIZE);
+            assert(skipSize == LittleEndianConsts.INT_SIZE);
+            // Reserved (18 bytes): This field MUST be ignored.
+            skipSize = leis.skip(18);
+            assert(skipSize == 18);
+            size += 18+LittleEndianConsts.INT_SIZE;
+        }
         
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        int size = 2*LittleEndianConsts.BYTE_SIZE+4*LittleEndianConsts.SHORT_SIZE;
         
         int size2 = 0;
         byte buf[] = new byte[widthBytes];

@@ -7,6 +7,33 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 public class WmfDraw {
     /**
+     * The META_MOVETO record sets the output position in the playback device context to a specified
+     * point.
+     */
+    public static class WmfMoveTo implements WmfRecord {
+        
+        /**
+         * A 16-bit signed integer that defines the y-coordinate, in logical units.
+         */
+        int y;
+        
+        /**
+         * A 16-bit signed integer that defines the x-coordinate, in logical units.
+         */
+        int x;
+        
+        public WmfRecordType getRecordType() {
+            return WmfRecordType.moveTo;
+        }
+        
+        public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
+            y = leis.readShort();
+            x = leis.readShort();
+            return 2*LittleEndianConsts.SHORT_SIZE;
+        }
+    }
+    
+    /**
      * The META_LINETO record draws a line from the drawing position that is defined in the playback
      * device context up to, but not including, the specified point.
      */
