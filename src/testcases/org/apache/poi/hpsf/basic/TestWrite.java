@@ -17,43 +17,16 @@
 
 package org.apache.poi.hpsf.basic;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.ClassID;
-import org.apache.poi.hpsf.HPSFRuntimeException;
-import org.apache.poi.hpsf.IllegalPropertySetDataException;
-import org.apache.poi.hpsf.MutableProperty;
-import org.apache.poi.hpsf.MutablePropertySet;
-import org.apache.poi.hpsf.MutableSection;
-import org.apache.poi.hpsf.NoFormatIDException;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.ReadingNotSupportedException;
-import org.apache.poi.hpsf.Section;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.UnsupportedVariantTypeException;
-import org.apache.poi.hpsf.Variant;
-import org.apache.poi.hpsf.VariantSupport;
-import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.*;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
@@ -63,6 +36,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
+import org.junit.Assert;
 
 /**
  * <p>Tests HPSF's writing functionality.</p>
@@ -665,19 +639,26 @@ public class TestWrite extends TestCase
      * the origin file and check whether they are equal.</p></li>
      *
      * </ul>
+     * @throws IOException 
      */
-    public void testRecreate()
+    public void testRecreate() throws IOException
     {
         final File dataDir = _samples.getFile("");
         final File[] fileList = dataDir.listFiles(new FileFilter()
             {
+                @Override
                 public boolean accept(final File f)
                 {
-                    return f.getName().startsWith("Test");
+                    return f.getName().startsWith("Test") && TestReadAllFiles.checkExclude(f);
                 }
             });
-        for (int i = 0; i < fileList.length; i++)
-            testRecreate(fileList[i]);
+        for (int i = 0; i < fileList.length; i++) {
+            try {
+                testRecreate(fileList[i]);
+            } catch (Exception e) {
+                throw new IOException("While handling file " + fileList[i], e);
+            }
+        }
     }
 
 
@@ -687,58 +668,53 @@ public class TestWrite extends TestCase
      * POI filesystem.</p>
      *
      * @param f the POI filesystem to check
+     * @throws IOException 
+     * @throws HPSFException
      */
-    private void testRecreate(final File f)
+    private void testRecreate(final File f) throws IOException, HPSFException
     {
-        try
+        /* Read the POI filesystem's property set streams: */
+        final POIFile[] psf1 = Util.readPropertySets(f);
+
+        /* Create a new POI filesystem containing the origin file's
+         * property set streams: */
+        final File copy = TempFile.createTempFile(f.getName(), "");
+        copy.deleteOnExit();
+        final OutputStream out = new FileOutputStream(copy);
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        for (int i = 0; i < psf1.length; i++)
         {
-            /* Read the POI filesystem's property set streams: */
-            final POIFile[] psf1 = Util.readPropertySets(f);
-
-            /* Create a new POI filesystem containing the origin file's
-             * property set streams: */
-            final File copy = TempFile.createTempFile(f.getName(), "");
-            copy.deleteOnExit();
-            final OutputStream out = new FileOutputStream(copy);
-            final POIFSFileSystem poiFs = new POIFSFileSystem();
-            for (int i = 0; i < psf1.length; i++)
-            {
-                final InputStream in =
-                    new ByteArrayInputStream(psf1[i].getBytes());
-                final PropertySet psIn = PropertySetFactory.create(in);
-                final MutablePropertySet psOut = new MutablePropertySet(psIn);
-                final ByteArrayOutputStream psStream =
-                    new ByteArrayOutputStream();
-                psOut.write(psStream);
-                psStream.close();
-                final byte[] streamData = psStream.toByteArray();
-                poiFs.createDocument(new ByteArrayInputStream(streamData),
-                                     psf1[i].getName());
-                poiFs.writeFilesystem(out);
-            }
-            out.close();
-
-
-            /* Read the property set streams from the POI filesystem just
-             * created. */
-            final POIFile[] psf2 = Util.readPropertySets(copy);
-            for (int i = 0; i < psf2.length; i++)
-            {
-                final byte[] bytes1 = psf1[i].getBytes();
-                final byte[] bytes2 = psf2[i].getBytes();
-                final InputStream in1 = new ByteArrayInputStream(bytes1);
-                final InputStream in2 = new ByteArrayInputStream(bytes2);
-                final PropertySet ps1 = PropertySetFactory.create(in1);
-                final PropertySet ps2 = PropertySetFactory.create(in2);
-
-                /* Compare the property set stream with the corresponding one
-                 * from the origin file and check whether they are equal. */
-                assertEquals("Equality for file " + f.getName(), ps1, ps2);
-            }
+            final InputStream in =
+                new ByteArrayInputStream(psf1[i].getBytes());
+            final PropertySet psIn = PropertySetFactory.create(in);
+            final MutablePropertySet psOut = new MutablePropertySet(psIn);
+            final ByteArrayOutputStream psStream =
+                new ByteArrayOutputStream();
+            psOut.write(psStream);
+            psStream.close();
+            final byte[] streamData = psStream.toByteArray();
+            poiFs.createDocument(new ByteArrayInputStream(streamData),
+                                 psf1[i].getName());
+            poiFs.writeFilesystem(out);
         }
-        catch (Exception ex)
+        out.close();
+
+
+        /* Read the property set streams from the POI filesystem just
+         * created. */
+        final POIFile[] psf2 = Util.readPropertySets(copy);
+        for (int i = 0; i < psf2.length; i++)
         {
-            handle(ex);
+            final byte[] bytes1 = psf1[i].getBytes();
+            final byte[] bytes2 = psf2[i].getBytes();
+            final InputStream in1 = new ByteArrayInputStream(bytes1);
+            final InputStream in2 = new ByteArrayInputStream(bytes2);
+            final PropertySet ps1 = PropertySetFactory.create(in1);
+            final PropertySet ps2 = PropertySetFactory.create(in2);
+
+            /* Compare the property set stream with the corresponding one
+             * from the origin file and check whether they are equal. */
+            assertEquals("Equality for file " + f.getName(), ps1, ps2);
         }
     }
 
@@ -746,51 +722,46 @@ public class TestWrite extends TestCase
 
     /**
      * <p>Tests writing and reading back a proper dictionary.</p>
+     * @throws IOException 
+     * @throws HPSFException 
      */
-    public void testDictionary()
+    public void testDictionary() throws IOException, HPSFException
     {
-        try
-        {
-            final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
-            copy.deleteOnExit();
+        final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
+        copy.deleteOnExit();
 
-            /* Write: */
-            final OutputStream out = new FileOutputStream(copy);
-            final POIFSFileSystem poiFs = new POIFSFileSystem();
-            final MutablePropertySet ps1 = new MutablePropertySet();
-            final MutableSection s = (MutableSection) ps1.getSections().get(0);
-            final Map<Long,String> m = new HashMap<Long,String>(3, 1.0f);
-            m.put(Long.valueOf(1), "String 1");
-            m.put(Long.valueOf(2), "String 2");
-            m.put(Long.valueOf(3), "String 3");
-            s.setDictionary(m);
-            s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
-            int codepage = CodePageUtil.CP_UNICODE;
-            s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
-                          Integer.valueOf(codepage));
-            poiFs.createDocument(ps1.toInputStream(), "Test");
-            poiFs.writeFilesystem(out);
-            out.close();
+        /* Write: */
+        final OutputStream out = new FileOutputStream(copy);
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        final MutablePropertySet ps1 = new MutablePropertySet();
+        final MutableSection s = (MutableSection) ps1.getSections().get(0);
+        final Map<Long,String> m = new HashMap<Long,String>(3, 1.0f);
+        m.put(Long.valueOf(1), "String 1");
+        m.put(Long.valueOf(2), "String 2");
+        m.put(Long.valueOf(3), "String 3");
+        s.setDictionary(m);
+        s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
+        int codepage = CodePageUtil.CP_UNICODE;
+        s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2,
+                      Integer.valueOf(codepage));
+        poiFs.createDocument(ps1.toInputStream(), "Test");
+        poiFs.writeFilesystem(out);
+        out.close();
 
-            /* Read back: */
-            final POIFile[] psf = Util.readPropertySets(copy);
-            Assert.assertEquals(1, psf.length);
-            final byte[] bytes = psf[0].getBytes();
-            final InputStream in = new ByteArrayInputStream(bytes);
-            final PropertySet ps2 = PropertySetFactory.create(in);
+        /* Read back: */
+        final POIFile[] psf = Util.readPropertySets(copy);
+        Assert.assertEquals(1, psf.length);
+        final byte[] bytes = psf[0].getBytes();
+        final InputStream in = new ByteArrayInputStream(bytes);
+        final PropertySet ps2 = PropertySetFactory.create(in);
 
-            /* Check if the result is a DocumentSummaryInformation stream, as
-             * specified. */
-            assertTrue(ps2.isDocumentSummaryInformation());
+        /* Check if the result is a DocumentSummaryInformation stream, as
+         * specified. */
+        assertTrue(ps2.isDocumentSummaryInformation());
 
-            /* Compare the property set stream with the corresponding one
-             * from the origin file and check whether they are equal. */
-            assertEquals(ps1, ps2);
-        }
-        catch (Exception ex)
-        {
-            handle(ex);
-        }
+        /* Compare the property set stream with the corresponding one
+         * from the origin file and check whether they are equal. */
+        assertEquals(ps1, ps2);
     }
 
 
@@ -798,8 +769,10 @@ public class TestWrite extends TestCase
     /**
      * <p>Tests writing and reading back a proper dictionary with an invalid
      * codepage. (HPSF writes Unicode dictionaries only.)</p>
+     * @throws IOException 
+     * @throws HPSFException 
      */
-    public void testDictionaryWithInvalidCodepage()
+    public void testDictionaryWithInvalidCodepage() throws IOException, HPSFException
     {
         try
         {
@@ -829,44 +802,6 @@ public class TestWrite extends TestCase
         {
             assertTrue(true);
         }
-        catch (Exception ex)
-        {
-            handle(ex);
-        }
-    }
-
-
-
-    /**
-     * <p>Handles unexpected exceptions in testcases.</p>
-     *
-     * @param ex The exception that has been thrown.
-     */
-    private void handle(final Exception ex)
-    {
-        final StringWriter sw = new StringWriter();
-        final PrintWriter pw = new PrintWriter(sw);
-        Throwable t = ex;
-        while (t != null)
-        {
-            t.printStackTrace(pw);
-            if (t instanceof HPSFRuntimeException)
-                t = ((HPSFRuntimeException) t).getReason();
-            else
-                t = null;
-            if (t != null)
-                pw.println("Caused by:");
-        }
-        pw.close();
-        try
-        {
-            sw.close();
-        }
-        catch (IOException ex2)
-        {
-            ex.printStackTrace();
-        }
-        fail(sw.toString());
     }
 
 

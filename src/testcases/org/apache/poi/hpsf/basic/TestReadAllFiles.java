@@ -58,13 +58,7 @@ public class TestReadAllFiles extends TestCase {
                 public boolean accept(final File f)
                 {
                     // exclude files that we know will fail
-                    for(String exclude : excludes) {
-                        if(f.getAbsolutePath().endsWith(exclude)) {
-                            return false;
-                        }
-                    }
-
-                    return f.isFile();
+                    return f.isFile() && checkExclude(f);
                 }
             });
 
@@ -85,5 +79,21 @@ public class TestReadAllFiles extends TestCase {
                 }
             }
         }
+    }
+
+    /**
+     * Returns true if the file should be checked, false if it should be excluded.
+     *
+     * @param f
+     * @return
+     */
+    public static boolean checkExclude(File f) {
+        for(String exclude : excludes) {
+            if(f.getAbsolutePath().endsWith(exclude)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }
