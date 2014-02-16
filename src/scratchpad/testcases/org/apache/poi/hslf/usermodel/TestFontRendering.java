@@ -109,6 +109,11 @@ public class TestFontRendering {
         DataBufferByte actualDB = (DataBufferByte)imgActual.getRaster().getDataBuffer();
         byte[] expectedData = expectedDB.getData(0);
         byte[] actualData = actualDB.getData(0);
+        
+        // allow to find out what the actual difference is in CI where this fails currently
+        if(!Arrays.equals(expectedData, actualData)) {
+            ImageIO.write(imgActual, "PNG", File.createTempFile("TestFontRendering", ".png"));
+        }
         assertTrue("Expected to have matching raster-arrays, but found differences, size " + expectedData.length + " and " + actualData.length, 
                 Arrays.equals(expectedData, actualData));
     }
