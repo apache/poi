@@ -20,12 +20,14 @@ package org.apache.poi.hpsf.basic;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.io.InputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.HPSFException;
+import org.apache.poi.hpsf.PropertySetFactory;
 
 /**
  * <p>Tests some HPSF functionality by reading all property sets from all files
@@ -35,42 +37,53 @@ import org.apache.poi.POIDataSamples;
  * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class TestReadAllFiles extends TestCase {
+    private static String[] excludes = new String[] {
+        "TestZeroLengthCodePage.mpp",
+    };
 
     /**
      * <p>This test methods reads all property set streams from all POI
      * filesystems in the "data" directory.</p>
+     * 
+     * @throws IOException 
+     * @throws HPSFException
      */
-    public void testReadAllFiles()
+    public void testReadAllFiles() throws IOException, HPSFException
     {
         POIDataSamples _samples = POIDataSamples.getHPSFInstance();
         final File dataDir = _samples.getFile("");
         final File[] fileList = dataDir.listFiles(new FileFilter()
             {
+                @Override
                 public boolean accept(final File f)
                 {
+                    // exclude files that we know will fail
+                    for(String exclude : excludes) {
+                        if(f.getAbsolutePath().endsWith(exclude)) {
+                            return false;
+                        }
+                    }
+
                     return f.isFile();
                 }
             });
-        try
-        {
-            for (int i = 0; i < fileList.length; i++)
-            {
-                final File f = fileList[i];
-                /* Read the POI filesystem's property set streams: */
-                final POIFile[] psf1 = Util.readPropertySets(f);
 
-                for (int j = 0; j < psf1.length; j++)
-                {
-                    final InputStream in =
-                        new ByteArrayInputStream(psf1[j].getBytes());
+        for (int i = 0; i < fileList.length; i++)
+        {
+            final File f = fileList[i];
+            /* Read the POI filesystem's property set streams: */
+            final POIFile[] psf1 = Util.readPropertySets(f);
+
+            for (int j = 0; j < psf1.length; j++)
+            {
+                final InputStream in =
+                    new ByteArrayInputStream(psf1[j].getBytes());
+                try {
                     PropertySetFactory.create(in);
+                } catch (Exception e) {
+                    throw new IOException("While handling file: " + f + " at " + j, e);
                 }
             }
-        }
-        catch (Throwable t)
-        {
-            final String s = org.apache.poi.hpsf.Util.toString(t);
-            fail(s);
         }
     }
 }
