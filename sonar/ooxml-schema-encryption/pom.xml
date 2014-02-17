@@ -42,7 +42,8 @@
 		<plugin>
            <groupId>com.google.code.maven-replacer-plugin</groupId>
            <artifactId>replacer</artifactId>
-           <version>1.5.2</version>
+		   <!-- Note: There is a bug with version 1.5.2 which caused the replacement to not find any files sometimes! -->
+           <version>1.5.1</version>
            <executions>
                <execution>
                    <phase>generate-sources</phase>
