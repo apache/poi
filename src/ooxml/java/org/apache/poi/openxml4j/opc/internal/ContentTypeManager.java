@@ -23,8 +23,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -33,13 +33,13 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.SAXHelper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.io.SAXReader;
 
 /**
  * Manage package content types ([Content_Types].xml part).
@@ -373,8 +373,7 @@ public abstract class ContentTypeManager {
 	private void parseContentTypesFile(InputStream in)
 			throws InvalidFormatException {
 		try {
-			SAXReader xmlReader = new SAXReader();
-			Document xmlContentTypetDoc = xmlReader.read(in);
+			Document xmlContentTypetDoc = SAXHelper.readSAXDocument(in);
 
 			// Default content types
 			List defaultTypes = xmlContentTypetDoc.getRootElement().elements(
