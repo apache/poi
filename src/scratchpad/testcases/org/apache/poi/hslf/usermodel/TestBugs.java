@@ -17,6 +17,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.HSLFSlideShow;
@@ -46,6 +49,7 @@ import org.apache.poi.hslf.model.TextBox;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.TextShape;
 import org.apache.poi.hslf.model.TitleMaster;
+import org.junit.Test;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -53,13 +57,14 @@ import org.apache.poi.hslf.model.TitleMaster;
  *
  * @author Yegor Kozlov
  */
-public final class TestBugs extends TestCase {
+public final class TestBugs {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Bug 41384: Array index wrong in record creation
      */
-    public void test41384() throws Exception {
+    @Test
+    public void bug41384() throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("41384.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -77,7 +82,8 @@ public final class TestBugs extends TestCase {
      * First fix from Bug 42474: NPE in RichTextRun.isBold()
      * when the RichTextRun comes from a Notes model object
      */
-    public void test42474_1() throws Exception {
+    @Test
+    public void bug42474_1() throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42474-1.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -105,7 +111,8 @@ public final class TestBugs extends TestCase {
     /**
      * Second fix from Bug 42474: Incorrect matching of notes to slides
      */
-    public void test42474_2() throws Exception {
+    @Test
+    public void bug42474_2() throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42474-2.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -135,7 +142,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 42485: All TextBoxes inside ShapeGroups have null TextRuns
      */
-    public void test42485 () throws Exception {
+    @Test
+    public void bug42485 () throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42485.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -157,7 +165,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 42484: NullPointerException from ShapeGroup.getAnchor()
      */
-    public void test42484 () throws Exception {
+    @Test
+    public void bug42484 () throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42485.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -178,7 +187,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 41381: Exception from Slide.getMasterSheet() on a seemingly valid PPT file
      */
-    public void test41381() throws Exception {
+    @Test
+    public void bug41381() throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("alterman_security.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -197,7 +207,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 42486:  Failure parsing a seemingly valid PPT
      */
-    public void test42486 () throws Exception {
+    @Test
+    public void bug42486 () throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42486.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -213,7 +224,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 42524:  NPE in Shape.getShapeType()
      */
-    public void test42524 () throws Exception {
+    @Test
+    public void bug42524 () throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42486.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -240,7 +252,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 42520:  NPE in Picture.getPictureData()
      */
-    public void test42520 () throws Exception {
+    @Test
+    public void bug42520 () throws Exception {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42520.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
@@ -277,7 +290,8 @@ public final class TestBugs extends TestCase {
      * Bug 38256:  RuntimeException: Couldn't instantiate the class for type with id 0.
      * ( also fixed followup: getTextRuns() returns no text )
      */
-    public void test38256 () throws Exception {
+    @Test
+    public void bug38256 () throws Exception {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("38256.ppt"));
 
         assertTrue("No Exceptions while reading file", true);
@@ -304,7 +318,8 @@ public final class TestBugs extends TestCase {
      * Bug 38256:  RuntimeException: Couldn't instantiate the class for type with id 0.
      * ( also fixed followup: getTextRuns() returns no text )
      */
-    public void test43781 () throws Exception {
+    @Test
+    public void bug43781 () throws Exception {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("43781.ppt"));
 
         assertTrue("No Exceptions while reading file", true);
@@ -335,7 +350,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 44296: HSLF Not Extracting Slide Background Image
      */
-    public void test44296  () throws Exception {
+    @Test
+    public void bug44296  () throws Exception {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("44296.ppt"));
 
         Slide slide = ppt.getSlides()[0];
@@ -352,7 +368,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 44770: java.lang.RuntimeException: Couldn't instantiate the class for type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing
      */
-    public void test44770() throws Exception {
+    @Test
+    public void bug44770() throws Exception {
         try {
              new SlideShow(_slTests.openResourceAsStream("44770.ppt"));
         } catch (RuntimeException e) {
@@ -366,7 +383,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 41071: Will not extract text from Powerpoint TextBoxes
      */
-    public void test41071() throws Exception {
+    @Test
+    public void bug41071() throws Exception {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("41071.ppt"));
 
         Slide slide = ppt.getSlides()[0];
@@ -385,23 +403,20 @@ public final class TestBugs extends TestCase {
      * PowerPoint 95 files should throw a more helpful exception
      * @throws Exception
      */
-    public void test41711() throws Exception {
+    @Test(expected=OldPowerPointFormatException.class)
+    public void bug41711() throws Exception {
     	// New file is fine
         new SlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
 
         // PowerPoint 95 gives an old format exception
-        try {
-        	new SlideShow(_slTests.openResourceAsStream("PPT95.ppt"));
-        	fail("OldPowerPointFormatException should've been thrown");
-        } catch(OldPowerPointFormatException e) {
-        	// Good
-        }
+    	new SlideShow(_slTests.openResourceAsStream("PPT95.ppt"));
     }
     
     /**
      * Changing text from Ascii to Unicode
      */
-    public void test49648() throws Exception {
+    @Test
+    public void bug49648() throws Exception {
        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("49648.ppt"));
        for(Slide slide : ppt.getSlides()) {
           for(TextRun run : slide.getTextRuns()) {
@@ -415,7 +430,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 41246: AIOOB with illegal note references
      */
-    public void test41246a() throws Exception {
+    @Test
+    public void bug41246a() throws Exception {
         InputStream fis = _slTests.openResourceAsStream("41246-1.ppt");
         HSLFSlideShow hslf = new HSLFSlideShow(fis);
         fis.close();
@@ -427,7 +443,8 @@ public final class TestBugs extends TestCase {
         assertTrue("No Exceptions while rewriting file", true);
     }
 
-    public void test41246b() throws Exception {
+    @Test
+    public void bug41246b() throws Exception {
         InputStream fis = _slTests.openResourceAsStream("41246-2.ppt");
         HSLFSlideShow hslf = new HSLFSlideShow(fis);
         fis.close();
@@ -442,7 +459,8 @@ public final class TestBugs extends TestCase {
     /**
      * Bug 45776: Fix corrupt file problem using TextRun.setText
      */
-    public void test45776() throws Exception {
+    @Test
+    public void bug45776() throws Exception {
         InputStream is = _slTests.openResourceAsStream("45776.ppt");
         SlideShow ppt = new SlideShow(new HSLFSlideShow(is));
         is.close();
