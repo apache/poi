@@ -72,6 +72,11 @@ public final class ContentType {
      * Media type compiled pattern, with parameters.
      */
     private final static Pattern patternTypeSubTypeParams;
+    /**
+     * Pattern to match on just the parameters part, to work
+     * around the Java Regexp group capture behaviour
+     */
+    private final static Pattern patternParams;
 
 	static {
 		/*
@@ -123,7 +128,8 @@ public final class ContentType {
 		patternTypeSubType       = Pattern.compile("^(" + token + "+)/(" + 
 		                                           token + "+)$");
 		patternTypeSubTypeParams = Pattern.compile("^(" + token + "+)/(" + 
-		                                           token + "+)(;" + parameter + ")+$");
+		                                           token + "+)(;" + parameter + ")*$");
+		patternParams            = Pattern.compile(";" + parameter);
 	}
 
 	/**
@@ -154,37 +160,41 @@ public final class ContentType {
 			
 			// Parameters
 			this.parameters = new Hashtable<String, String>(1);
-//System.out.println(mMediaType.groupCount() + " = " + contentType);
-//for (int j=1; j<mMediaType.groupCount(); j++) { System.out.println("  " + j + " - " + mMediaType.group(j)); }
-			for (int i = 4; i <= mMediaType.groupCount()
-					&& (mMediaType.group(i) != null); i += 2) {
-				this.parameters.put(mMediaType.group(i), mMediaType
-						.group(i + 1));
+			// Java RegExps are unhelpful, and won't do multiple group captures
+			// See http://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#cg
+			if (mMediaType.groupCount() >= 5) {
+			    Matcher mParams = patternParams.matcher(contentType.substring(mMediaType.end(2)));
+			    while (mParams.find()) {
+			        this.parameters.put(mParams.group(1), mParams.group(2));
+			    }
 			}
 		}
 	}
 
+    /**
+     * Returns the content type as a string, including parameters
+     */
 	@Override
 	public final String toString() {
-		StringBuffer retVal = new StringBuffer();
-		retVal.append(this.getType());
-		retVal.append("/");
-		retVal.append(this.getSubType());
-		return retVal.toString();
+	    return toString(true);
 	}
 
-    public final String toStringWithParameters() {
-        StringBuffer retVal = new StringBuffer();
-        retVal.append(toString());
-        
-        for (String key : parameters.keySet()) {
-           retVal.append(";");
-           retVal.append(key);
-           retVal.append("=");
-           retVal.append(parameters.get(key));
-        }
-        return retVal.toString();
-    }
+	public final String toString(boolean withParameters) {
+	    StringBuffer retVal = new StringBuffer();
+	    retVal.append(this.getType());
+	    retVal.append("/");
+	    retVal.append(this.getSubType());
+
+	    if (withParameters) {
+	        for (String key : parameters.keySet()) {
+	            retVal.append(";");
+	            retVal.append(key);
+	            retVal.append("=");
+	            retVal.append(parameters.get(key));
+	        }
+	    }
+	    return retVal.toString();
+	}
 
 	@Override
 	public boolean equals(Object obj) {
