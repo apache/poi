@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.model.Background;
 import org.apache.poi.hslf.model.Fill;
+import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.model.MasterSheet;
 import org.apache.poi.hslf.model.Notes;
 import org.apache.poi.hslf.model.Picture;
@@ -484,4 +486,20 @@ public final class TestBugs {
         }
     }
 
+    @Test
+    public void bug55732() throws Exception {
+        File file = _slTests.getFile("bug55732.ppt");
+        
+        HSLFSlideShow ss = new HSLFSlideShow(file.getAbsolutePath());
+        SlideShow _show = new SlideShow(ss);
+        Slide[] _slides = _show.getSlides();
+
+        /* Iterate over slides and extract text */
+        for( Slide slide : _slides ) {
+            HeadersFooters hf = slide.getHeadersFooters();
+            boolean visible = hf.isHeaderVisible(); // exception happens here
+        }
+        assertTrue("No Exceptions while reading headers", true);
+    }
+    
 }

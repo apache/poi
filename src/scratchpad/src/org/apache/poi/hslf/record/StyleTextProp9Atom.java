@@ -27,11 +27,9 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * The atom record that specifies additional text formatting.
- *
- * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
 public final class StyleTextProp9Atom extends RecordAtom {
-	private final TextPFException9[] autoNumberSchemes;
+    private final TextPFException9[] autoNumberSchemes;
     /** Record header. */
     private byte[] header;
     /** Record data. */
@@ -50,7 +48,7 @@ public final class StyleTextProp9Atom extends RecordAtom {
      */
     protected StyleTextProp9Atom(byte[] source, int start, int len) {
         // Get the header.
-    	final List<TextPFException9> schemes = new LinkedList<TextPFException9>();
+        final List<TextPFException9> schemes = new LinkedList<TextPFException9>();
         header = new byte[8];
         System.arraycopy(source,start, header,0,8);
         this.version  = LittleEndian.getShort(header, 0);
@@ -61,42 +59,51 @@ public final class StyleTextProp9Atom extends RecordAtom {
         data = new byte[len-8];
         System.arraycopy(source, start+8, data, 0, len-8);
         for (int i = 0; i < data.length; ) {
-        	final TextPFException9 item = new TextPFException9(data, i);
-        	schemes.add(item);
-        	i += item.getRecordLength();
-        	//int textCfException9 = LittleEndian.getInt(data, i );
-        	//TODO analyze textCfException when have some test data
-        	i += 4;
-        	int textSiException = LittleEndian.getInt(data, i );
-        	i +=  + 4;//TextCFException9 + SIException
-        	if (0 != (textSiException & 0x40)) { 
-        		i += 2; //skip fBidi 
-        	}
-        	if (i >= data.length) {
-        		break;
-        	}
+            final TextPFException9 item = new TextPFException9(data, i);
+            schemes.add(item);
+            i += item.getRecordLength();
+            
+            if (i >= data.length) {
+                break;
+            }
+            int textCfException9 = LittleEndian.getInt(data, i );
+            i += 4;
+            //TODO analyze textCfException when have some test data
+            
+            if (i >= data.length) {
+                break;
+            }
+            int textSiException = LittleEndian.getInt(data, i );
+            i += 4;//TextCFException9 + SIException
+            
+            if (0 != (textSiException & 0x40)) { 
+                i += 2; //skip fBidi 
+            }
+            if (i >= data.length) {
+                break;
+            }
         }
         this.autoNumberSchemes = (TextPFException9[]) schemes.toArray(new TextPFException9[schemes.size()]);
     }
 
-	/**
+    /**
      * Gets the record type.
      * @return the record type.
      */
     public long getRecordType() { return this.recordId; }
 
     public short getVersion() {
-		return version;
-	}
+        return version;
+    }
 
-	public int getLength() {
-		return length;
-	}
-	public TextPFException9[] getAutoNumberTypes() {
-		return this.autoNumberSchemes;
-	}
+    public int getLength() {
+        return length;
+    }
+    public TextPFException9[] getAutoNumberTypes() {
+        return this.autoNumberSchemes;
+    }
 
-	/**
+    /**
      * Write the contents of the record back, so it can be written
      * to disk
      *
