@@ -572,11 +572,18 @@ public abstract class PackagePart implements RelationshipSource {
 	}
 
 	/**
-	 * @return the contentType
+	 * @return The Content Type of the part
 	 */
 	public String getContentType() {
 		return _contentType.toString();
 	}
+
+    /**
+     * @return The Content Type, including parameters, of the part
+     */
+    public ContentType getContentTypeDetails() {
+        return _contentType;
+    }
 
 	/**
 	 * Set the content type.
