@@ -88,12 +88,15 @@ public final class TestContentType extends TestCase {
     * Invalid parameters are verified as incorrect in 
     *  {@link #testContentTypeParameterFailure()}
     */
-   public void testContentTypeParam() {
-      // TODO Review [01.2], then add tests for valid ones
-      // TODO See bug #55026
-      // String[] contentTypesToTest = new String[] { "mail/toto;titi=tata",
-      //         "text/xml;a=b;c=d" // TODO Maybe more?
-      // };
+   public void testContentTypeParam() throws InvalidFormatException {
+      String[] contentTypesToTest = new String[] { "mail/toto;titi=tata",
+               "text/xml;a=b;c=d", "text/xml;key1=param1;key2=param2",
+               "application/pgp-key;version=\"2\"", 
+               "application/x-resqml+xml;version=2.0;type=obj_global2dCrs"
+      };
+      for (String contentType : contentTypesToTest) {
+          new ContentType(contentType);
+      }
    }
    
 	/**
@@ -103,6 +106,7 @@ public final class TestContentType extends TestCase {
 	public void testContentTypeParameterFailure() {
 		String[] contentTypesToTest = new String[] { 
 		        "mail/toto;\"titi=tata\"", // quotes not allowed like that
+                "mail/toto;titi = tata", // spaces not allowed
                 "text/\u0080" // characters above ASCII are not allowed
         };
 		for (int i = 0; i < contentTypesToTest.length; ++i) {
@@ -146,7 +150,7 @@ public final class TestContentType extends TestCase {
 	 * Check that we can open a file where there are valid
 	 *  parameters on a content type
 	 */
-	public void DISABLEDtestFileWithContentTypeParams() throws Exception {
+	public void testFileWithContentTypeParams() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasParameters.ooxml");
 
         OPCPackage p = OPCPackage.open(is);
@@ -171,27 +175,29 @@ public final class TestContentType extends TestCase {
             }
             // Global Crs types do have params
             else if (part.getPartName().toString().equals("/global1dCrs.xml")) {
-//System.out.println(part.getContentTypeDetails().toStringWithParameters());
-                assertEquals(typeResqml, part.getContentType());
-                assertEquals(typeResqml, part.getContentTypeDetails().toString());
+                assertEquals(typeResqml, part.getContentType().substring(0, typeResqml.length()));
+                assertEquals(typeResqml, part.getContentTypeDetails().toString(false));
                 assertEquals(true, part.getContentTypeDetails().hasParameters());
+                assertEquals(typeResqml+";version=2.0;type=obj_global1dCrs", part.getContentTypeDetails().toString());
                 assertEquals(2, part.getContentTypeDetails().getParameterKeys().length);
                 assertEquals("2.0", part.getContentTypeDetails().getParameter("version"));
                 assertEquals("obj_global1dCrs", part.getContentTypeDetails().getParameter("type"));
             }
             else if (part.getPartName().toString().equals("/global2dCrs.xml")) {
-                assertEquals(typeResqml, part.getContentType());
-                assertEquals(typeResqml, part.getContentTypeDetails().toString());
+                assertEquals(typeResqml, part.getContentType().substring(0, typeResqml.length()));
+                assertEquals(typeResqml, part.getContentTypeDetails().toString(false));
                 assertEquals(true, part.getContentTypeDetails().hasParameters());
+                assertEquals(typeResqml+";version=2.0;type=obj_global2dCrs", part.getContentTypeDetails().toString());
                 assertEquals(2, part.getContentTypeDetails().getParameterKeys().length);
                 assertEquals("2.0", part.getContentTypeDetails().getParameter("version"));
                 assertEquals("obj_global2dCrs", part.getContentTypeDetails().getParameter("type"));
             }
             // Other thingy
             else if (part.getPartName().toString().equals("/myTestingGuid.xml")) {
-                assertEquals(typeResqml, part.getContentType());
-                assertEquals(typeResqml, part.getContentTypeDetails().toString());
+                assertEquals(typeResqml, part.getContentType().substring(0, typeResqml.length()));
+                assertEquals(typeResqml, part.getContentTypeDetails().toString(false));
                 assertEquals(true, part.getContentTypeDetails().hasParameters());
+                assertEquals(typeResqml+";version=2.0;type=obj_tectonicBoundaryFeature", part.getContentTypeDetails().toString());
                 assertEquals(2, part.getContentTypeDetails().getParameterKeys().length);
                 assertEquals("2.0", part.getContentTypeDetails().getParameter("version"));
                 assertEquals("obj_tectonicBoundaryFeature", part.getContentTypeDetails().getParameter("type"));
