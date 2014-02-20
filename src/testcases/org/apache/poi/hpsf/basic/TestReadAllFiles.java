@@ -37,9 +37,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
  * @author Rainer Klute (klute@rainer-klute.de)
  */
 public class TestReadAllFiles extends TestCase {
-    private static String[] excludes = new String[] {
-        "TestZeroLengthCodePage.mpp",
-    };
+    private static String[] excludes = new String[] {};
 
     /**
      * <p>This test methods reads all property set streams from all POI
