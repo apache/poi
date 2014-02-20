@@ -63,14 +63,14 @@ public final class StyleTextProp9Atom extends RecordAtom {
             schemes.add(item);
             i += item.getRecordLength();
             
-            if (i >= data.length) {
+            if (i+4 >= data.length) {
                 break;
             }
             int textCfException9 = LittleEndian.getInt(data, i );
             i += 4;
             //TODO analyze textCfException when have some test data
             
-            if (i >= data.length) {
+            if (i+4 >= data.length) {
                 break;
             }
             int textSiException = LittleEndian.getInt(data, i );
@@ -79,7 +79,7 @@ public final class StyleTextProp9Atom extends RecordAtom {
             if (0 != (textSiException & 0x40)) { 
                 i += 2; //skip fBidi 
             }
-            if (i >= data.length) {
+            if (i+4 >= data.length) {
                 break;
             }
         }
