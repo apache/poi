@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
 /**
  * Tests for content type (ContentType class).
@@ -142,8 +143,29 @@ public final class TestContentType extends TestCase {
 	 * OOXML content types don't need entities, but we shouldn't
 	 * barf if we get one from a third party system that added them
 	 */
-	public void testFileWithContentTypeEntities() {
-	    // TODO
+	public void testFileWithContentTypeEntities() throws Exception {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasEntities.ooxml");
+        OPCPackage p = OPCPackage.open(is);
+        
+        // Check we found the contents of it
+        boolean foundCoreProps = false, foundDocument = false, foundTheme1 = false;
+        for (PackagePart part : p.getParts()) {
+            if (part.getPartName().toString().equals("/docProps/core.xml")) {
+                assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());
+                foundCoreProps = true;
+            }
+            if (part.getPartName().toString().equals("/word/document.xml")) {
+                assertEquals(XWPFRelation.DOCUMENT.getContentType(), part.getContentType());
+                foundDocument = true;
+            }
+            if (part.getPartName().toString().equals("/word/theme/theme1.xml")) {
+                assertEquals(XWPFRelation.THEME.getContentType(), part.getContentType());
+                foundTheme1 = true;
+            }
+        }
+        assertTrue("Core not found in " + p.getParts(), foundCoreProps);
+        assertTrue("Document not found in " + p.getParts(), foundDocument);
+        assertTrue("Theme1 not found in " + p.getParts(), foundTheme1);
 	}
 	
 	/**

@@ -107,6 +107,12 @@ public final class XWPFRelation extends POIXMLRelation {
             "/word/footer#.xml",
             XWPFFooter.class
     );
+    public static final XWPFRelation THEME = new XWPFRelation(
+            "application/vnd.openxmlformats-officedocument.theme+xml",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme",
+            "/word/theme/theme#.xml",
+            null
+    );
     public static final XWPFRelation HYPERLINK = new XWPFRelation(
             null,
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
