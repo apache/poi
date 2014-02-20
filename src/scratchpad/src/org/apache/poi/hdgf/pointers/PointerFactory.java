@@ -42,7 +42,7 @@ public final class PointerFactory {
 
 			return p;
 		} else if(version == 5) {
-			throw new RuntimeException("TODO");
+			throw new RuntimeException("TODO Support v5 Pointers");
 		} else {
 			throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
 		}

@@ -57,7 +57,7 @@ public final class TestPointerFactory extends TestCase {
 			fail();
 		} catch(RuntimeException e) {
 			// Still to do
-			assertEquals("TODO", e.getMessage());
+			assertEquals("TODO Support v5 Pointers", e.getMessage());
 		}
 	}
 
