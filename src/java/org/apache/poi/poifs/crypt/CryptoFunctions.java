@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.DigestException;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -74,6 +74,23 @@ public class CryptoFunctions {
      * @return the hashed password
      */
     public static byte[] hashPassword(String password, HashAlgorithm hashAlgorithm, byte salt[], int spinCount) {
+        return hashPassword(password, hashAlgorithm, salt, spinCount, true);
+    }
+        
+    /**
+     * Generalized method for read and write protection hash generation.
+     * The difference is, read protection uses the order iterator then hash in the hash loop, whereas write protection
+     * uses first the last hash value and then the current iterator value
+     *
+     * @param password
+     * @param hashAlgorithm
+     * @param salt
+     * @param spinCount
+     * @param iteratorFirst if true, the iterator is hashed before the n-1 hash value,
+     *        if false the n-1 hash value is applied first
+     * @return the hashed password
+     */
+    public static byte[] hashPassword(String password, HashAlgorithm hashAlgorithm, byte salt[], int spinCount, boolean iteratorFirst) {
         // If no password was given, use the default
         if (password == null) {
             password = Decryptor.DEFAULT_PASSWORD;
@@ -84,13 +101,16 @@ public class CryptoFunctions {
         hashAlg.update(salt);
         byte[] hash = hashAlg.digest(getUtf16LeString(password));
         byte[] iterator = new byte[LittleEndianConsts.INT_SIZE];
+
+        byte[] first = (iteratorFirst ? iterator : hash);
+        byte[] second = (iteratorFirst ? hash : iterator);
         
         try {
             for (int i = 0; i < spinCount; i++) {
                 LittleEndian.putInt(iterator, 0, i);
                 hashAlg.reset();
-                hashAlg.update(iterator);
-                hashAlg.update(hash);
+                hashAlg.update(first);
+                hashAlg.update(second);
                 hashAlg.digest(hash, 0, hash.length); // don't create hash buffer everytime new
             }
         } catch (DigestException e) {
@@ -222,11 +242,7 @@ public class CryptoFunctions {
     }
     
     public static byte[] getUtf16LeString(String str) {
-        try {
-            return str.getBytes("UTF-16LE");
-        } catch (UnsupportedEncodingException e) {
-            throw new EncryptedDocumentException(e);
-        }
+        return str.getBytes(Charset.forName("UTF-16LE"));
     }
     
     public static MessageDigest getMessageDigest(HashAlgorithm hashAlgorithm) {
@@ -264,5 +280,132 @@ public class CryptoFunctions {
         } catch (Exception e) {
             throw new EncryptedDocumentException("Only the BouncyCastle provider supports your encryption settings - please add it to the classpath.");
         }
+    }
+
+
+    private static final int InitialCodeArray[] = { 
+        0xE1F0, 0x1D0F, 0xCC9C, 0x84C0, 0x110C, 0x0E10, 0xF1CE, 
+        0x313E, 0x1872, 0xE139, 0xD40F, 0x84F9, 0x280C, 0xA96A, 
+        0x4EC3
+    };
+    
+    private static final int EncryptionMatrix[][] = {
+        /* char 1  */ {0xAEFC, 0x4DD9, 0x9BB2, 0x2745, 0x4E8A, 0x9D14, 0x2A09},
+        /* char 2  */ {0x7B61, 0xF6C2, 0xFDA5, 0xEB6B, 0xC6F7, 0x9DCF, 0x2BBF},
+        /* char 3  */ {0x4563, 0x8AC6, 0x05AD, 0x0B5A, 0x16B4, 0x2D68, 0x5AD0},
+        /* char 4  */ {0x0375, 0x06EA, 0x0DD4, 0x1BA8, 0x3750, 0x6EA0, 0xDD40},
+        /* char 5  */ {0xD849, 0xA0B3, 0x5147, 0xA28E, 0x553D, 0xAA7A, 0x44D5},
+        /* char 6  */ {0x6F45, 0xDE8A, 0xAD35, 0x4A4B, 0x9496, 0x390D, 0x721A},
+        /* char 7  */ {0xEB23, 0xC667, 0x9CEF, 0x29FF, 0x53FE, 0xA7FC, 0x5FD9},
+        /* char 8  */ {0x47D3, 0x8FA6, 0x0F6D, 0x1EDA, 0x3DB4, 0x7B68, 0xF6D0},
+        /* char 9  */ {0xB861, 0x60E3, 0xC1C6, 0x93AD, 0x377B, 0x6EF6, 0xDDEC},
+        /* char 10 */ {0x45A0, 0x8B40, 0x06A1, 0x0D42, 0x1A84, 0x3508, 0x6A10},
+        /* char 11 */ {0xAA51, 0x4483, 0x8906, 0x022D, 0x045A, 0x08B4, 0x1168},
+        /* char 12 */ {0x76B4, 0xED68, 0xCAF1, 0x85C3, 0x1BA7, 0x374E, 0x6E9C},
+        /* char 13 */ {0x3730, 0x6E60, 0xDCC0, 0xA9A1, 0x4363, 0x86C6, 0x1DAD},
+        /* char 14 */ {0x3331, 0x6662, 0xCCC4, 0x89A9, 0x0373, 0x06E6, 0x0DCC},
+        /* char 15 */ {0x1021, 0x2042, 0x4084, 0x8108, 0x1231, 0x2462, 0x48C4}
+    };
+
+    /**
+     * This method generates the xored-hashed password for word documents &lt; 2007.
+     * Its output will be used as password input for the newer word generations which
+     * utilize a real hashing algorithm like sha1.
+     * 
+     * Although the code was taken from the "see"-link below, this looks similar
+     * to the method in [MS-OFFCRYPTO] 2.3.7.2 Binary Document XOR Array Initialization Method 1. 
+     *
+     * @param password
+     * @return the hashed password
+     * 
+     * @see <a href="http://blogs.msdn.com/b/vsod/archive/2010/04/05/how-to-set-the-editing-restrictions-in-word-using-open-xml-sdk-2-0.aspx">How to set the editing restrictions in Word using Open XML SDK 2.0</a>
+     * @see <a href="http://www.aspose.com/blogs/aspose-blogs/vladimir-averkin/archive/2007/08/20/funny-how-the-new-powerful-cryptography-implemented-in-word-2007-turns-it-into-a-perfect-tool-for-document-password-removal.html">Funny: How the new powerful cryptography implemented in Word 2007 turns it into a perfect tool for document password removal.</a>
+     */
+    public static int xorHashPasswordAsInt(String password) {
+        //Array to hold Key Values
+        byte[] generatedKey = new byte[4];
+
+        //Maximum length of the password is 15 chars.
+        final int intMaxPasswordLength = 15; 
+        
+        if (!"".equals(password)) {
+            // Truncate the password to 15 characters
+            password = password.substring(0, Math.min(password.length(), intMaxPasswordLength));
+
+            // Construct a new NULL-terminated string consisting of single-byte characters:
+            //  -- > Get the single-byte values by iterating through the Unicode characters of the truncated Password.
+            //   --> For each character, if the low byte is not equal to 0, take it. Otherwise, take the high byte.
+            byte[] arrByteChars = new byte[password.length()];
+            
+            for (int i = 0; i < password.length(); i++) {
+                int intTemp = password.charAt(i);
+                byte lowByte = (byte)(intTemp & 0x00FF);
+                byte highByte = (byte)((intTemp & 0xFF00) >> 8);
+                arrByteChars[i] = (lowByte != 0 ? lowByte : highByte);
+            }
+
+            // Compute the high-order word of the new key:
+
+            // --> Initialize from the initial code array (see below), depending on the passwords length. 
+            int highOrderWord = InitialCodeArray[arrByteChars.length - 1];
+
+            // --> For each character in the password:
+            //      --> For every bit in the character, starting with the least significant and progressing to (but excluding) 
+            //          the most significant, if the bit is set, XOR the keys high-order word with the corresponding word from 
+            //          the Encryption Matrix
+            for (int i = 0; i < arrByteChars.length; i++) {
+                int tmp = intMaxPasswordLength - arrByteChars.length + i;
+                for (int intBit = 0; intBit < 7; intBit++) {
+                    if ((arrByteChars[i] & (0x0001 << intBit)) != 0) {
+                        highOrderWord ^= EncryptionMatrix[tmp][intBit];
+                    }
+                }
+            }
+            
+            // Compute the low-order word of the new key:
+            
+            // Initialize with 0
+            int lowOrderWord = 0;
+
+            // For each character in the password, going backwards
+            for (int i = arrByteChars.length - 1; i >= 0; i--) {
+                // low-order word = (((low-order word SHR 14) AND 0x0001) OR (low-order word SHL 1) AND 0x7FFF)) XOR character
+                lowOrderWord = (((lowOrderWord >> 14) & 0x0001) | ((lowOrderWord << 1) & 0x7FFF)) ^ arrByteChars[i];
+            }
+
+            // Lastly,low-order word = (((low-order word SHR 14) AND 0x0001) OR (low-order word SHL 1) AND 0x7FFF)) XOR password length XOR 0xCE4B.
+            lowOrderWord = (((lowOrderWord >> 14) & 0x0001) | ((lowOrderWord << 1) & 0x7FFF)) ^ arrByteChars.length ^ 0xCE4B;
+
+            // The byte order of the result shall be reversed [password "Example": 0x64CEED7E becomes 7EEDCE64],
+            // and that value shall be hashed as defined by the attribute values.
+            
+            LittleEndian.putShort(generatedKey, 0, (short)lowOrderWord);
+            LittleEndian.putShort(generatedKey, 2, (short)highOrderWord);
+        }
+        
+        return LittleEndian.getInt(generatedKey);
+    }
+
+    /**
+     * This method generates the xored-hashed password for word documents &lt; 2007.
+     */
+    public static String xorHashPassword(String password) {
+        int hashedPassword = xorHashPasswordAsInt(password);
+        return String.format("%1$08X", hashedPassword);
+    }
+    
+    /**
+     * Convenience function which returns the reversed xored-hashed password for further 
+     * processing in word documents 2007 and newer, which utilize a real hashing algorithm like sha1.
+     */
+    public static String xorHashPasswordReversed(String password) {
+        int hashedPassword = xorHashPasswordAsInt(password);
+        
+        return String.format("%1$02X%2$02X%3$02X%4$02X"
+            , ( hashedPassword >>> 0 ) & 0xFF
+            , ( hashedPassword >>> 8 ) & 0xFF
+            , ( hashedPassword >>> 16 ) & 0xFF
+            , ( hashedPassword >>> 24 ) & 0xFF
+        );
     }
 }

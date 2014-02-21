@@ -20,19 +20,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSettings;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTZoom;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STAlgClass;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STAlgType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STCryptProv;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.SettingsDocument;
@@ -140,6 +148,150 @@ public class XWPFSettings extends POIXMLDocumentPart {
     }
 
     /**
+     * Enforces the protection with the option specified by passed editValue and password.<br/>
+     * <br/>
+     * sample snippet from settings.xml
+     * <pre>
+     *   &lt;w:documentProtection w:edit=&quot;[passed editValue]&quot; w:enforcement=&quot;1&quot; 
+     *       w:cryptProviderType=&quot;rsaAES&quot; w:cryptAlgorithmClass=&quot;hash&quot;
+     *       w:cryptAlgorithmType=&quot;typeAny&quot; w:cryptAlgorithmSid=&quot;14&quot;
+     *       w:cryptSpinCount=&quot;100000&quot; w:hash=&quot;...&quot; w:salt=&quot;....&quot;
+     *   /&gt;
+     * </pre>
+     * 
+     * @param editValue the protection type
+     * @param password the plaintext password, if null no password will be applied
+     * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
+     *   if null, it will default default to sha1
+     */
+    public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue,
+            String password, HashAlgorithm hashAlgo) {
+        safeGetDocumentProtection().setEnforcement(STOnOff.X_1);
+        safeGetDocumentProtection().setEdit(editValue);
+        
+        if (password == null) {
+            if (safeGetDocumentProtection().isSetCryptProviderType()) {
+                safeGetDocumentProtection().unsetCryptProviderType();
+            }
+
+            if (safeGetDocumentProtection().isSetCryptAlgorithmClass()) {
+                safeGetDocumentProtection().unsetCryptAlgorithmClass();
+            }
+            
+            if (safeGetDocumentProtection().isSetCryptAlgorithmType()) {
+                safeGetDocumentProtection().unsetCryptAlgorithmType();
+            }
+            
+            if (safeGetDocumentProtection().isSetCryptAlgorithmSid()) {
+                safeGetDocumentProtection().unsetCryptAlgorithmSid();
+            }
+            
+            if (safeGetDocumentProtection().isSetSalt()) {
+                safeGetDocumentProtection().unsetSalt();
+            }
+            
+            if (safeGetDocumentProtection().isSetCryptSpinCount()) {
+                safeGetDocumentProtection().unsetCryptSpinCount();
+            }
+            
+            if (safeGetDocumentProtection().isSetHash()) {
+                safeGetDocumentProtection().unsetHash();
+            }
+        } else {
+            final STCryptProv.Enum providerType;
+            final int sid;
+            switch (hashAlgo) {
+            case md2:
+                providerType = STCryptProv.RSA_FULL;
+                sid = 1;
+                break;
+            // md4 is not supported by JCE
+            case md5:
+                providerType = STCryptProv.RSA_FULL;
+                sid = 3;
+                break;
+            case sha1:
+                providerType = STCryptProv.RSA_FULL;
+                sid = 4;
+                break;
+            case sha256:
+                providerType = STCryptProv.RSA_AES;
+                sid = 12;
+                break;
+            case sha384:
+                providerType = STCryptProv.RSA_AES;
+                sid = 13;
+                break;
+            case sha512:
+                providerType = STCryptProv.RSA_AES;
+                sid = 14;
+                break;
+            default:
+                throw new EncryptedDocumentException
+                ("Hash algorithm '"+hashAlgo+"' is not supported for document write protection.");
+            }
+
+        
+            SecureRandom random = new SecureRandom(); 
+            byte salt[] = random.generateSeed(16);
+    
+            // Iterations specifies the number of times the hashing function shall be iteratively run (using each
+            // iteration's result as the input for the next iteration).
+            int spinCount = 100000;
+    
+            if (hashAlgo == null) hashAlgo = HashAlgorithm.sha1;
+
+            String legacyHash = CryptoFunctions.xorHashPasswordReversed(password);
+            // Implementation Notes List:
+            // --> In this third stage, the reversed byte order legacy hash from the second stage shall
+            //     be converted to Unicode hex string representation
+            byte hash[] = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount, false);
+
+            safeGetDocumentProtection().setSalt(salt);
+            safeGetDocumentProtection().setHash(hash);
+            safeGetDocumentProtection().setCryptSpinCount(BigInteger.valueOf(spinCount));
+            safeGetDocumentProtection().setCryptAlgorithmType(STAlgType.TYPE_ANY);
+            safeGetDocumentProtection().setCryptAlgorithmClass(STAlgClass.HASH);
+            safeGetDocumentProtection().setCryptProviderType(providerType);
+            safeGetDocumentProtection().setCryptAlgorithmSid(BigInteger.valueOf(sid));
+        }        
+    }
+
+    /**
+     * Validates the existing password
+     *
+     * @param password
+     * @return true, only if password was set and equals, false otherwise
+     */
+    public boolean validateProtectionPassword(String password) {
+        BigInteger sid = safeGetDocumentProtection().getCryptAlgorithmSid();
+        byte hash[] = safeGetDocumentProtection().getHash();
+        byte salt[] = safeGetDocumentProtection().getSalt();
+        BigInteger spinCount = safeGetDocumentProtection().getCryptSpinCount();
+        
+        if (sid == null || hash == null || salt == null || spinCount == null) return false;
+        
+        HashAlgorithm hashAlgo;
+        switch (sid.intValue()) {
+        case 1: hashAlgo = HashAlgorithm.md2; break;
+        case 3: hashAlgo = HashAlgorithm.md5; break;
+        case 4: hashAlgo = HashAlgorithm.sha1; break;
+        case 12: hashAlgo = HashAlgorithm.sha256; break;
+        case 13: hashAlgo = HashAlgorithm.sha384; break;
+        case 14: hashAlgo = HashAlgorithm.sha512; break;
+        default: return false;
+        }
+        
+        String legacyHash = CryptoFunctions.xorHashPasswordReversed(password);
+        // Implementation Notes List:
+        // --> In this third stage, the reversed byte order legacy hash from the second stage shall
+        //     be converted to Unicode hex string representation
+        byte hash2[] = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount.intValue(), false);
+        
+        return Arrays.equals(hash, hash2);
+    }
+    
+    /**
      * Removes protection enforcement.<br/>
      * In the documentProtection tag inside settings.xml file <br/>
      * it sets the value of enforcement to "0" (w:enforcement="0") <br/>
@@ -204,5 +356,4 @@ public class XWPFSettings extends POIXMLDocumentPart {
             throw new RuntimeException(e);
         }
     }
-
 }
