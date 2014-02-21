@@ -47,6 +47,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.IdentifierManager;
 import org.apache.poi.util.Internal;
@@ -994,6 +995,26 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
+     * Enforces the readOnly protection with a password.<br/>
+     * <br/>
+     * sample snippet from settings.xml
+     * <pre>
+     *   &lt;w:documentProtection w:edit=&quot;readOnly&quot; w:enforcement=&quot;1&quot; 
+     *       w:cryptProviderType=&quot;rsaAES&quot; w:cryptAlgorithmClass=&quot;hash&quot;
+     *       w:cryptAlgorithmType=&quot;typeAny&quot; w:cryptAlgorithmSid=&quot;14&quot;
+     *       w:cryptSpinCount=&quot;100000&quot; w:hash=&quot;...&quot; w:salt=&quot;....&quot;
+     *   /&gt;
+     * </pre>
+     * 
+     * @param password the plaintext password, if null no password will be applied
+     * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
+     *   if null, it will default default to sha1
+     */
+    public void enforceReadonlyProtection(String password, HashAlgorithm hashAlgo) {
+        settings.setEnforcementEditValue(STDocProtect.READ_ONLY, password, hashAlgo);
+    }
+    
+    /**
      * Enforce the Filling Forms protection.<br/>
      * In the documentProtection tag inside settings.xml file, <br/>
      * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
@@ -1009,6 +1030,26 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         settings.setEnforcementEditValue(STDocProtect.FORMS);
     }
 
+    /**
+     * Enforce the Filling Forms protection.<br/>
+     * <br/>
+     * sample snippet from settings.xml
+     * <pre>
+     *   &lt;w:documentProtection w:edit=&quot;forms&quot; w:enforcement=&quot;1&quot; 
+     *       w:cryptProviderType=&quot;rsaAES&quot; w:cryptAlgorithmClass=&quot;hash&quot;
+     *       w:cryptAlgorithmType=&quot;typeAny&quot; w:cryptAlgorithmSid=&quot;14&quot;
+     *       w:cryptSpinCount=&quot;100000&quot; w:hash=&quot;...&quot; w:salt=&quot;....&quot;
+     *   /&gt;
+     * </pre>
+     * 
+     * @param password the plaintext password, if null no password will be applied
+     * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
+     *   if null, it will default default to sha1
+     */
+    public void enforceFillingFormsProtection(String password, HashAlgorithm hashAlgo) {
+        settings.setEnforcementEditValue(STDocProtect.FORMS, password, hashAlgo);
+    }
+    
     /**
      * Enforce the Comments protection.<br/>
      * In the documentProtection tag inside settings.xml file,<br/>
@@ -1026,6 +1067,26 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
+     * Enforce the Comments protection.<br/>
+     * <br/>
+     * sample snippet from settings.xml
+     * <pre>
+     *   &lt;w:documentProtection w:edit=&quot;comments&quot; w:enforcement=&quot;1&quot; 
+     *       w:cryptProviderType=&quot;rsaAES&quot; w:cryptAlgorithmClass=&quot;hash&quot;
+     *       w:cryptAlgorithmType=&quot;typeAny&quot; w:cryptAlgorithmSid=&quot;14&quot;
+     *       w:cryptSpinCount=&quot;100000&quot; w:hash=&quot;...&quot; w:salt=&quot;....&quot;
+     *   /&gt;
+     * </pre>
+     * 
+     * @param password the plaintext password, if null no password will be applied
+     * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
+     *   if null, it will default default to sha1
+     */
+    public void enforceCommentsProtection(String password, HashAlgorithm hashAlgo) {
+        settings.setEnforcementEditValue(STDocProtect.COMMENTS, password, hashAlgo);
+    }
+    
+    /**
      * Enforce the Tracked Changes protection.<br/>
      * In the documentProtection tag inside settings.xml file, <br/>
      * it sets the value of enforcement to "1" (w:enforcement="1") <br/>
@@ -1041,6 +1102,36 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         settings.setEnforcementEditValue(STDocProtect.TRACKED_CHANGES);
     }
 
+    /**
+     * Enforce the Tracked Changes protection.<br/>
+     * <br/>
+     * sample snippet from settings.xml
+     * <pre>
+     *   &lt;w:documentProtection w:edit=&quot;trackedChanges&quot; w:enforcement=&quot;1&quot; 
+     *       w:cryptProviderType=&quot;rsaAES&quot; w:cryptAlgorithmClass=&quot;hash&quot;
+     *       w:cryptAlgorithmType=&quot;typeAny&quot; w:cryptAlgorithmSid=&quot;14&quot;
+     *       w:cryptSpinCount=&quot;100000&quot; w:hash=&quot;...&quot; w:salt=&quot;....&quot;
+     *   /&gt;
+     * </pre>
+     * 
+     * @param password the plaintext password, if null no password will be applied
+     * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
+     *   if null, it will default default to sha1
+     */
+    public void enforceTrackedChangesProtection(String password, HashAlgorithm hashAlgo) {
+        settings.setEnforcementEditValue(STDocProtect.TRACKED_CHANGES, password, hashAlgo);
+    }
+
+    /**
+     * Validates the existing password
+     *
+     * @param password
+     * @return true, only if password was set and equals, false otherwise
+     */
+    public boolean validateProtectionPassword(String password) {
+        return settings.validateProtectionPassword(password);
+    }
+    
     /**
      * Remove protection enforcement.<br/>
      * In the documentProtection tag inside settings.xml file <br/>

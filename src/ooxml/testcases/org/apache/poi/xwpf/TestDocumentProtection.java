@@ -16,19 +16,25 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.junit.Test;
 
-public class TestDocumentProtection extends TestCase {
+public class TestDocumentProtection {
 
+    @Test
     public void testShouldReadEnforcementProperties() throws Exception {
 
         XWPFDocument documentWithoutDocumentProtectionTag = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
@@ -69,6 +75,7 @@ public class TestDocumentProtection extends TestCase {
 
     }
 
+    @Test
     public void testShouldEnforceForReadOnly() throws Exception {
         //		XWPFDocument document = createDocumentFromSampleFile("test-data/document/documentProtection_no_protection.docx");
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
@@ -79,6 +86,7 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(document.isEnforcedReadonlyProtection());
     }
 
+    @Test
     public void testShouldEnforceForFillingForms() throws Exception {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedFillingFormsProtection());
@@ -88,6 +96,7 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(document.isEnforcedFillingFormsProtection());
     }
 
+    @Test
     public void testShouldEnforceForComments() throws Exception {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedCommentsProtection());
@@ -97,6 +106,7 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(document.isEnforcedCommentsProtection());
     }
 
+    @Test
     public void testShouldEnforceForTrackedChanges() throws Exception {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_no_protection.docx");
         assertFalse(document.isEnforcedTrackedChangesProtection());
@@ -106,6 +116,7 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(document.isEnforcedTrackedChangesProtection());
     }
 
+    @Test
     public void testShouldUnsetEnforcement() throws Exception {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("documentProtection_readonly_no_password.docx");
         assertTrue(document.isEnforcedReadonlyProtection());
@@ -115,6 +126,7 @@ public class TestDocumentProtection extends TestCase {
         assertFalse(document.isEnforcedReadonlyProtection());
     }
 
+    @Test
     public void testIntegration() throws Exception {
         XWPFDocument doc = new XWPFDocument();
 
@@ -137,6 +149,7 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(document.isEnforcedCommentsProtection());
     }
 
+    @Test
     public void testUpdateFields() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         assertFalse(doc.isEnforcedUpdateFields());
@@ -144,4 +157,26 @@ public class TestDocumentProtection extends TestCase {
         assertTrue(doc.isEnforcedUpdateFields());
     }
 
+    @Test
+    public void bug56076_read() throws Exception {
+        // test legacy xored-hashed password
+        assertEquals("64CEED7E", CryptoFunctions.xorHashPassword("Example"));
+        // check leading 0
+        assertEquals("0005CB00", CryptoFunctions.xorHashPassword("34579"));
+
+        // test document write protection with password
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("bug56076.docx");
+        boolean isValid = document.validateProtectionPassword("Example");
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void bug56076_write() throws Exception {
+        // test document write protection with password
+        XWPFDocument document = new XWPFDocument();
+        document.enforceCommentsProtection("Example", HashAlgorithm.sha512);
+        document = XWPFTestDataSamples.writeOutAndReadBack(document);
+        boolean isValid = document.validateProtectionPassword("Example");
+        assertTrue(isValid);
+    }
 }
