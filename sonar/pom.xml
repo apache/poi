@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <version>3.11-SNAPSHOT</version>
 
-    <name>Apache POI Parent Project</name>
+    <name>Apache POI - the Java API for Microsoft Documents</name>
 
     <description>Maven build of Apache POI for Sonar checks</description>
     <url>http://poi.apache.org/</url>

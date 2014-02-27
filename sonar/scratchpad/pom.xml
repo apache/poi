@@ -14,13 +14,76 @@
     <name>Apache POI Scratchpad package</name>
 
     <build>
-		<sourceDirectory>../../src/scratchpad/src</sourceDirectory>
-		<testSourceDirectory>../../src/scratchpad/testcases</testSourceDirectory>
-		<resources>
-		  <resource>
-			<directory>../../src/resources/scratchpad</directory>
-		  </resource>
-		</resources>
+		<plugins>
+			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-sources</id>
+						<!-- here the phase you need -->
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/java</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/scratchpad/src</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/resources/scratchpad</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+					<execution>
+						<id>copy-tests</id>
+						<!-- here the phase you need -->
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/test/java</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/scratchpad/testcases</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+			<!-- clean copied sources afterwards -->
+			<plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>			
+		</plugins>
     </build>
 
     <dependencies>
