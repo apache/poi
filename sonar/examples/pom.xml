@@ -12,9 +12,46 @@
     <packaging>jar</packaging>
 
     <name>Apache POI Examples package</name>
-
+    
     <build>
-		<sourceDirectory>../../src/examples/src</sourceDirectory>
+		<plugins>
+			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.6</version>
+				<executions>
+					<execution>
+						<id>copy-sources</id>
+						<!-- here the phase you need -->
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/java</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/examples/src</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+			<!-- clean copied sources afterwards -->
+			<plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>			
+		</plugins>
     </build>
 
     <dependencies>

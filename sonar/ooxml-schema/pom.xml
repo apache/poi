@@ -14,8 +14,6 @@
     <name>Apach POI - Openxmlformats Schema package</name>
 
     <build>
-		<sourceDirectory>target/generated-sources/xmlbeans</sourceDirectory>
-		
 		<plugins>
 			<!-- Download and unpack the OfficeOpenXML Schema and use xmlbeans to create classes from the XSDs -->
 			<plugin>
