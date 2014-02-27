@@ -18,23 +18,23 @@
 package org.apache.poi.ss.examples;
 
 
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  * Demonstrates <em>one</em> way to convert an Excel spreadsheet into a CSV
@@ -669,6 +669,8 @@ public class ToCSV {
         // for example - then the CSV file generated from one will overwrite
         // that generated from the other.
         ToCSV converter = null;
+        boolean converted = true;
+        long startTime = System.currentTimeMillis();
         try {
             converter = new ToCSV();
             if(args.length == 2) {
@@ -710,6 +712,7 @@ public class ToCSV {
                     "\t\t\t\tthat obeys UNIX formatting conventions. If no\n" +
                     "\t\t\t\tvalue is passed, then the CSV file produced\n" +
                     "\t\t\t\twill obey Excel's formatting conventions.");
+                converted = false;
             }
         }
         // It is not wise to have such a wide catch clause - Exception is very
@@ -723,6 +726,12 @@ public class ToCSV {
             System.out.println("Message: " + ex.getMessage());
             System.out.println("Stacktrace follows:.....");
             ex.printStackTrace(System.out);
+            converted = false;
+        }
+        
+        if (converted) {
+            System.out.println("Conversion took " + 
+                  (int)((System.currentTimeMillis() - startTime)/1000) + " seconds");
         }
     }
 
