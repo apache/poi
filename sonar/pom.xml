@@ -41,6 +41,17 @@
     <url>http://www.apache.org/</url>
   </organization>
 
+ 	<issueManagement>
+		<system>bugzilla</system>
+		<url>https://issues.apache.org/bugzilla/</url>
+	</issueManagement>
+
+ 	<scm>
+		<connection>scm:svn:http://svn.apache.org/repos/asf/poi/trunk</connection>
+		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk</developerConnection>
+		<url>http://svn.apache.org/viewvc/poi</url>
+ 	</scm>
+
     <modules>
 		<module>main</module>
 		<module>ooxml-schema</module>
@@ -53,6 +64,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
+		<sonar.exclusions>**/*generated*</sonar.exclusions>
 	</properties>
   
     <build>
