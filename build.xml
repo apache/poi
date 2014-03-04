@@ -1427,6 +1427,9 @@ under the License.
 	</target>
 
 	<target name="test-scratchpad-download-resources">
+		<!-- disable font downloading until TestFontRendering works on all plattforms -->
+		<!-- ... eventually copy the files into the resource dirs ... -->
+		<!--
 		<mkdir dir="build/scratchpad-test-resources"/>
 		
         <antcall target="downloadfile">
@@ -1445,6 +1448,7 @@ under the License.
             <param name="sourcefile" value="https://googlefontdirectory.googlecode.com/hg-history/c5955de4df3e40f6ab705bbccbd1f5ad93998287/cabin/Cabin-Regular.ttf"/>
             <param name="destfile" value="build/scratchpad-test-resources/Cabin-Regular.ttf"/>
         </antcall>
+        -->
 	</target>
 	
 </project>
