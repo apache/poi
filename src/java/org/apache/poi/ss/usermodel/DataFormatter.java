@@ -894,38 +894,20 @@ public class DataFormatter {
     }
     
     /**
-     * Enables excel style rounding mode (round half up)
-     *  on the Decimal Format if possible.
-     * This will work for Java 1.6, but isn't possible
-     *  on Java 1.5. 
+     * Enables excel style rounding mode (round half up) on the 
+     *  Decimal Format given.
      */
     public static void setExcelStyleRoundingMode(DecimalFormat format) {
         setExcelStyleRoundingMode(format, RoundingMode.HALF_UP);
     }
 
     /**
-     * Enables custom rounding mode
-     *  on the Decimal Format if possible.
-     * This will work for Java 1.6, but isn't possible
-     *  on Java 1.5.
+     * Enables custom rounding mode on the given Decimal Format.
      * @param format DecimalFormat
      * @param roundingMode RoundingMode
      */
     public static void setExcelStyleRoundingMode(DecimalFormat format, RoundingMode roundingMode) {
-       try {
-          Method srm = format.getClass().getMethod("setRoundingMode", RoundingMode.class);
-          srm.invoke(format, roundingMode);
-       } catch(NoSuchMethodException e) {
-          // Java 1.5
-       } catch(IllegalAccessException iae) {
-          // Shouldn't happen
-          throw new RuntimeException("Unable to set rounding mode", iae);
-       } catch(InvocationTargetException ite) {
-          // Shouldn't happen
-          throw new RuntimeException("Unable to set rounding mode", ite);
-       } catch(SecurityException se) {
-          // Not much we can do here
-       }
+       format.setRoundingMode(roundingMode);
     }
 
     /**
