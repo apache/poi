@@ -205,7 +205,10 @@ public class XWPFSettings extends POIXMLDocumentPart {
                 providerType = STCryptProv.RSA_FULL;
                 sid = 1;
                 break;
-            // md4 is not supported by JCE
+            case md4:
+                providerType = STCryptProv.RSA_FULL;
+                sid = 2;
+                break;
             case md5:
                 providerType = STCryptProv.RSA_FULL;
                 sid = 3;
@@ -274,6 +277,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
         HashAlgorithm hashAlgo;
         switch (sid.intValue()) {
         case 1: hashAlgo = HashAlgorithm.md2; break;
+        case 2: hashAlgo = HashAlgorithm.md4; break;
         case 3: hashAlgo = HashAlgorithm.md5; break;
         case 4: hashAlgo = HashAlgorithm.sha1; break;
         case 12: hashAlgo = HashAlgorithm.sha256; break;

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import javax.crypto.Cipher;
@@ -61,7 +60,7 @@ public class StandardDecryptor extends Decryptor {
             byte encryptedVerifier[] = ver.getEncryptedVerifier();
             byte verifier[] = cipher.doFinal(encryptedVerifier);
             setVerifier(verifier);
-            MessageDigest sha1 = MessageDigest.getInstance(ver.getHashAlgorithm().jceId);
+            MessageDigest sha1 = CryptoFunctions.getMessageDigest(ver.getHashAlgorithm());
             byte[] calcVerifierHash = sha1.digest(verifier);
             byte encryptedVerifierHash[] = ver.getEncryptedVerifierHash();
             byte decryptedVerifierHash[] = cipher.doFinal(encryptedVerifierHash);
@@ -108,12 +107,8 @@ public class StandardDecryptor extends Decryptor {
             buff[i] = (byte) (buff[i] ^ hash[i]);
         }
 
-        try {
-            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-            return sha1.digest(buff);
-        } catch (NoSuchAlgorithmException e) {
-            throw new EncryptedDocumentException("hash algo not supported", e);
-        }
+        MessageDigest sha1 = CryptoFunctions.getMessageDigest(HashAlgorithm.sha1);
+        return sha1.digest(buff);
     }
 
     /**

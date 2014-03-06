@@ -29,6 +29,7 @@ public enum HashAlgorithm {
     md5      (      "MD5",     -1,        "MD5", 16,        "HmacMD5", false),
     // although sunjc2 supports md2, hmac-md2 is only supported by bouncycastle
     md2      (      "MD2",     -1,        "MD2", 16,       "Hmac-MD2", true),
+    md4      (      "MD4",     -1,        "MD4", 16,       "Hmac-MD4", true),
     ripemd128("RipeMD128",     -1, "RIPEMD-128", 16, "HMac-RipeMD128", true),
     ripemd160("RipeMD160",     -1, "RIPEMD-160", 20, "HMac-RipeMD160", true),
     whirlpool("Whirlpool",     -1,  "WHIRLPOOL", 64, "HMac-Whirlpool", true),
