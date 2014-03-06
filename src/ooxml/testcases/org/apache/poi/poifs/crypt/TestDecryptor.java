@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,17 +26,17 @@ import java.security.GeneralSecurityException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
 /**
  *  @author Maxim Valyanskiy
  *  @author Gary King
  */
-public class TestDecryptor extends TestCase {
-    public void testPasswordVerification() throws IOException, GeneralSecurityException {
+public class TestDecryptor {
+    @Test
+    public void passwordVerification() throws IOException, GeneralSecurityException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);
@@ -43,7 +46,8 @@ public class TestDecryptor extends TestCase {
         assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
     }
 
-    public void testDecrypt() throws IOException, GeneralSecurityException {
+    @Test
+    public void decrypt() throws IOException, GeneralSecurityException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);
@@ -55,7 +59,8 @@ public class TestDecryptor extends TestCase {
         zipOk(fs, d);
     }
 
-    public void testAgile() throws IOException, GeneralSecurityException {
+    @Test
+    public void agile() throws IOException, GeneralSecurityException {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);
@@ -83,7 +88,9 @@ public class TestDecryptor extends TestCase {
             }
         }
     }
-    public void testDataLength() throws Exception {
+
+    @Test
+    public void dataLength() throws Exception {
         POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx"));
 
         EncryptionInfo info = new EncryptionInfo(fs);

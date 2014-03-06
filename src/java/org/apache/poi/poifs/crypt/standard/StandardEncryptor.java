@@ -85,7 +85,7 @@ public class StandardEncryptor extends Encryptor {
         
         try {
             byte encryptedVerifier[] = cipher.doFinal(verifier); 
-            MessageDigest hashAlgo = MessageDigest.getInstance(ver.getHashAlgorithm().jceId);
+            MessageDigest hashAlgo = CryptoFunctions.getMessageDigest(ver.getHashAlgorithm());
             byte calcVerifierHash[] = hashAlgo.digest(verifier);
             
             // 2.3.3 EncryptionVerifier ...
