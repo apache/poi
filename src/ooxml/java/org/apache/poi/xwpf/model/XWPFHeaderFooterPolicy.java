@@ -150,8 +150,8 @@ public class XWPFHeaderFooterPolicy {
     }
 
     /**
-     * Creates an empty header of the specified type, to
-     * which you can then create paragraphs and set text etc.
+     * Creates an empty header of the specified type, containing a single
+     * empty paragraph, to which you can then set text, add more paragraphs etc.
      */
     public XWPFHeader createHeader(Enum type) throws IOException {
         return createHeader(type, null);
@@ -184,8 +184,8 @@ public class XWPFHeaderFooterPolicy {
     }
 
     /**
-     * Creates an empty footer of the specified type, to
-     * which you can then create paragraphs and set text etc.
+     * Creates an empty footer of the specified type, containing a single
+     * empty paragraph, to which you can then set text, add more paragraphs etc.
      */
     public XWPFFooter createFooter(Enum type) throws IOException {
         return createFooter(type, null);
