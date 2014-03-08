@@ -338,17 +338,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
     }
 
     /**
-     * Appends a new run to this paragraph
-     *
-     * @return a new text run
-     */
-    public XWPFRun createRun() {
-        XWPFRun xwpfRun = new XWPFRun(paragraph.addNewR(), this);
-        runs.add(xwpfRun);
-        return xwpfRun;
-    }
-
-    /**
      * Returns the paragraph alignment which shall be applied to text in this
      * paragraph.
      * <p/>
@@ -1187,6 +1176,48 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
     }
     
     /**
+     * Appends a new run to this paragraph
+     *
+     * @return a new text run
+     */
+    public XWPFRun createRun() {
+        XWPFRun xwpfRun = new XWPFRun(paragraph.addNewR(), this);
+        runs.add(xwpfRun);
+        iruns.add(xwpfRun);
+        return xwpfRun;
+    }
+
+    /**
+     * insert a new Run in RunArray
+     * @param pos
+     * @return  the inserted run
+     */
+    public XWPFRun insertNewRun(int pos){
+        if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
+            CTR ctRun = paragraph.insertNewR(pos);
+            XWPFRun newRun = new XWPFRun(ctRun, this);
+            
+            // To update the iruns, find where we're going
+            // in the normal runs, and go in there
+            int iPos = iruns.size();
+            if (pos < runs.size()) {
+                XWPFRun oldAtPos = runs.get(pos);
+                int oldAt = iruns.indexOf(oldAtPos);
+                if (oldAt != -1) {
+                    iPos = oldAt;
+                }
+            }
+            iruns.add(iPos, newRun);
+            
+            // Runs itself is easy to update
+            runs.add(pos, newRun);
+            
+            return newRun;
+        }
+        return null;
+    }
+
+    /**
      * this methods parse the paragraph and search for the string searched.
      * If it finds the string, it will return true and the position of the String
      * will be saved in the parameter startPos.
@@ -1256,21 +1287,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
         return null;
     }
     
-    /**
-     * insert a new Run in RunArray
-     * @param pos
-     * @return  the inserted run
-     */
-    public XWPFRun insertNewRun(int pos){
-        if (pos >= 0 && pos <= paragraph.sizeOfRArray()) {
-            CTR ctRun = paragraph.insertNewR(pos);
-            XWPFRun newRun = new XWPFRun(ctRun, this);
-            runs.add(pos, newRun);
-            return newRun;
-        }
-        return null;
-    }
-
     /**
      * get a Text
      * @param segment
