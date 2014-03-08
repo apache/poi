@@ -19,16 +19,16 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
-import java.awt.font.GlyphVector;
-import java.awt.font.FontRenderContext;
-import java.util.Map;
 import java.text.AttributedCharacterIterator;
+import java.util.Map;
 
 public class DummyGraphics2d
         extends Graphics2D
@@ -675,6 +675,8 @@ public class DummyGraphics2d
     public void finalize() {
         System.out.println( "finalize():" );
         g2D.finalize();
+
+        super.finalize();
     }
 
     public Shape getClip()
