@@ -149,10 +149,19 @@ public class XWPFHeaderFooterPolicy {
         }
     }
 
+    /**
+     * Creates an empty header of the specified type, to
+     * which you can then create paragraphs and set text etc.
+     */
     public XWPFHeader createHeader(Enum type) throws IOException {
         return createHeader(type, null);
     }
 
+    /**
+     * Creates a new header of the specified type, to which the
+     *  supplied (and previously unattached!) paragraphs are
+     *  added to.
+     */
     public XWPFHeader createHeader(Enum type, XWPFParagraph[] pars) throws IOException {
         XWPFRelation relation = XWPFRelation.HEADER;
         String pStyle = "Header";
@@ -174,10 +183,19 @@ public class XWPFHeaderFooterPolicy {
         return wrapper;
     }
 
+    /**
+     * Creates an empty footer of the specified type, to
+     * which you can then create paragraphs and set text etc.
+     */
     public XWPFFooter createFooter(Enum type) throws IOException {
         return createFooter(type, null);
     }
 
+    /**
+     * Creates a new footer of the specified type, to which the
+     *  supplied (and previously unattached!) paragraphs are
+     *  added to.
+     */
     public XWPFFooter createFooter(Enum type, XWPFParagraph[] pars) throws IOException {
         XWPFRelation relation = XWPFRelation.FOOTER;
         String pStyle = "Footer";
