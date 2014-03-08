@@ -127,6 +127,8 @@ public class SheetDataWriter {
     @Override
     protected void finalize() throws Throwable {
         _fd.delete();
+
+        super.finalize();
     }
 
     /**
