@@ -93,6 +93,7 @@ public class DateFormatConverter  {
 			return result.toArray(new String[0]);
 		}
 		
+		@Override
 		public String toString() {
 			StringBuilder result = new StringBuilder();
 			
@@ -322,6 +323,9 @@ public class DateFormatConverter  {
 		result.put( "ga_ie", "[$-83C]" );
 		result.put( "in", "[$-0421]" );
 		result.put( "iw", "[$-40D]" );
+		
+		// JDK 8 adds an empty locale-string, see also https://issues.apache.org/jira/browse/LANG-941
+		result.put( "", "[$-0409]" );
 		
 		return result;
 	}

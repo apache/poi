@@ -137,5 +137,11 @@ public final class TestDateFormatConverter extends TestCase {
         outputLocaleDataFormats(date, false, true, DateFormat.LONG, "Long" );
         outputLocaleDataFormats(date, false, true, DateFormat.FULL, "Full" );
     }
+    
+    public void testJDK8EmptyLocale() {
+        // JDK 8 seems to add an empty locale-string to the list returned via DateFormat.getAvailableLocales()
+        // therefore we now cater for this special locale as well
+        DateFormatConverter.getPrefixForLocale(new Locale(""));
+    }
 
 }
