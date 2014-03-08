@@ -20,9 +20,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
@@ -31,16 +33,13 @@ import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 
 /**
  * Test that the extractor factory plays nicely
@@ -73,49 +72,61 @@ public class TestExtractorFactory extends TestCase {
    
    private File pub;
 
+   private File getFileAndCheck(POIDataSamples samples, String name) {
+       File file = samples.getFile(name);
+       
+       assertNotNull("Did not get a file for " + name, file);
+       assertTrue("Did not get a type file for " + name, file.isFile());
+       assertTrue("File did not exist: " + name, file.exists());
+       
+       return file;
+   }
+   @Override
    protected void setUp() throws Exception {
       super.setUp();
 
       POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
-      xls = ssTests.getFile("SampleSS.xls");
-      xlsx = ssTests.getFile("SampleSS.xlsx");
-      xltx = ssTests.getFile("test.xltx");
-      xlsEmb = ssTests.getFile("excel_with_embeded.xls");
+      xls = getFileAndCheck(ssTests, "SampleSS.xls");
+      xlsx = getFileAndCheck(ssTests, "SampleSS.xlsx");
+      xltx = getFileAndCheck(ssTests, "test.xltx");
+      xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
 
       POIDataSamples wpTests = POIDataSamples.getDocumentInstance();
-      doc = wpTests.getFile("SampleDoc.doc");
-      doc6 = wpTests.getFile("Word6.doc");
-      doc95 = wpTests.getFile("Word95.doc");
-      docx = wpTests.getFile("SampleDoc.docx");
-      dotx = wpTests.getFile("test.dotx");
-      docEmb = wpTests.getFile("word_with_embeded.doc");
-      docEmbOOXML = wpTests.getFile("word_with_embeded_ooxml.doc");
+      doc = getFileAndCheck(wpTests, "SampleDoc.doc");
+      doc6 = getFileAndCheck(wpTests, "Word6.doc");
+      doc95 = getFileAndCheck(wpTests, "Word95.doc");
+      docx = getFileAndCheck(wpTests, "SampleDoc.docx");
+      dotx = getFileAndCheck(wpTests, "test.dotx");
+      docEmb = getFileAndCheck(wpTests, "word_with_embeded.doc");
+      docEmbOOXML = getFileAndCheck(wpTests, "word_with_embeded_ooxml.doc");
 
       POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-      ppt = slTests.getFile("SampleShow.ppt");
-      pptx = slTests.getFile("SampleShow.pptx");
-      txt = slTests.getFile("SampleShow.txt");
+      ppt = getFileAndCheck(slTests, "SampleShow.ppt");
+      pptx = getFileAndCheck(slTests, "SampleShow.pptx");
+      txt = getFileAndCheck(slTests, "SampleShow.txt");
 
       POIDataSamples dgTests = POIDataSamples.getDiagramInstance();
-      vsd = dgTests.getFile("Test_Visio-Some_Random_Text.vsd");
+      vsd = getFileAndCheck(dgTests, "Test_Visio-Some_Random_Text.vsd");
       
       POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
-      pub = pubTests.getFile("Simple.pub");
+      pub = getFileAndCheck(pubTests, "Simple.pub");
       
       POIDataSamples olTests = POIDataSamples.getHSMFInstance();
-      msg = olTests.getFile("quick.msg");
-      msgEmb = olTests.getFile("attachment_test_msg.msg");
-      msgEmbMsg = olTests.getFile("attachment_msg_pdf.msg");
+      msg = getFileAndCheck(olTests, "quick.msg");
+      msgEmb = getFileAndCheck(olTests, "attachment_test_msg.msg");
+      msgEmbMsg = getFileAndCheck(olTests, "attachment_msg_pdf.msg");
    }
 
    public void testFile() throws Exception {
       // Excel
-      assertTrue(
-            ExtractorFactory.createExtractor(xls)
+      POITextExtractor xlsExtractor = ExtractorFactory.createExtractor(xls);
+      assertNotNull("Had empty extractor for " + xls, xlsExtractor);
+      assertTrue("Expected instanceof ExcelExtractor, but had: " + xlsExtractor.getClass(), 
+            xlsExtractor
             instanceof ExcelExtractor
       );
       assertTrue(
-            ExtractorFactory.createExtractor(xls).getText().length() > 200
+            xlsExtractor.getText().length() > 200
       );
 
       assertTrue(
@@ -452,27 +463,27 @@ public class TestExtractorFactory extends TestCase {
 	}
 	
 	public void testPreferEventBased() throws Exception {
-	   assertEquals(false, ExtractorFactory.getPreferEventExtractor());
-	   assertEquals(false, ExtractorFactory.getThreadPrefersEventExtractors());
-	   assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+	   assertFalse(ExtractorFactory.getPreferEventExtractor());
+	   assertFalse(ExtractorFactory.getThreadPrefersEventExtractors());
+	   assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
 	   
 	   ExtractorFactory.setThreadPrefersEventExtractors(true);
 	   
-      assertEquals(true, ExtractorFactory.getPreferEventExtractor());
-      assertEquals(true, ExtractorFactory.getThreadPrefersEventExtractors());
-      assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      assertTrue(ExtractorFactory.getPreferEventExtractor());
+      assertTrue(ExtractorFactory.getThreadPrefersEventExtractors());
+      assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
       
       ExtractorFactory.setAllThreadsPreferEventExtractors(false);
       
-      assertEquals(false, ExtractorFactory.getPreferEventExtractor());
-      assertEquals(true, ExtractorFactory.getThreadPrefersEventExtractors());
+      assertFalse(ExtractorFactory.getPreferEventExtractor());
+      assertTrue(ExtractorFactory.getThreadPrefersEventExtractors());
       assertEquals(Boolean.FALSE, ExtractorFactory.getAllThreadsPreferEventExtractors());
       
       ExtractorFactory.setAllThreadsPreferEventExtractors(null);
       
-      assertEquals(true, ExtractorFactory.getPreferEventExtractor());
-      assertEquals(true, ExtractorFactory.getThreadPrefersEventExtractors());
-      assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      assertTrue(ExtractorFactory.getPreferEventExtractor());
+      assertTrue(ExtractorFactory.getThreadPrefersEventExtractors());
+      assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
       
       
       // Check we get the right extractors now
@@ -495,9 +506,9 @@ public class TestExtractorFactory extends TestCase {
       
       // Put back to normal
       ExtractorFactory.setThreadPrefersEventExtractors(false);
-      assertEquals(false, ExtractorFactory.getPreferEventExtractor());
-      assertEquals(false, ExtractorFactory.getThreadPrefersEventExtractors());
-      assertEquals(null, ExtractorFactory.getAllThreadsPreferEventExtractors());
+      assertFalse(ExtractorFactory.getPreferEventExtractor());
+      assertFalse(ExtractorFactory.getThreadPrefersEventExtractors());
+      assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
       
       // And back
       assertTrue(
