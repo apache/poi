@@ -19,17 +19,24 @@
 
 package org.apache.poi.ss.util;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.util.TempFile;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.TempFile;
 
 public final class TestDateFormatConverter extends TestCase {
     private void outputLocaleDataFormats( Date date, boolean dates, boolean times, int style, String styleName ) throws Exception {
@@ -57,40 +64,45 @@ public final class TestDateFormatConverter extends TestCase {
 
         int rowNum = 1;
         for( Locale locale : DateFormat.getAvailableLocales() ) {
-            Row row = sheet.createRow(rowNum++);
-
-            row.createCell(0).setCellValue(locale.toString());
-            row.createCell(1).setCellValue(locale.getDisplayName());
-
-            DateFormat dateFormat;
-            if( dates ) {
-                if( times ) {
-                    dateFormat = DateFormat.getDateTimeInstance(style, style, locale);
+            try {
+                Row row = sheet.createRow(rowNum++);
+    
+                row.createCell(0).setCellValue(locale.toString());
+                row.createCell(1).setCellValue(locale.getDisplayName());
+    
+                DateFormat dateFormat;
+                if( dates ) {
+                    if( times ) {
+                        dateFormat = DateFormat.getDateTimeInstance(style, style, locale);
+                    } else {
+                        dateFormat = DateFormat.getDateInstance(style, locale);
+                    }
                 } else {
-                    dateFormat = DateFormat.getDateInstance(style, locale);
+                    dateFormat = DateFormat.getTimeInstance(style, locale);
                 }
-            } else {
-                dateFormat = DateFormat.getTimeInstance(style, locale);
+    
+                Cell cell = row.createCell(2);
+    
+                cell.setCellValue(date);
+                CellStyle cellStyle = row.getSheet().getWorkbook().createCellStyle();
+    
+                String javaDateFormatPattern = ((SimpleDateFormat)dateFormat).toPattern();
+                String excelFormatPattern = DateFormatConverter.convert(locale, javaDateFormatPattern);
+    
+                DataFormat poiFormat = row.getSheet().getWorkbook().createDataFormat();
+                cellStyle.setDataFormat(poiFormat.getFormat(excelFormatPattern));
+                row.createCell(3).setCellValue(dateFormat.format(date));
+    
+                cell.setCellStyle(cellStyle);
+    
+                // the formula returns TRUE is the formatted date in column C equals to the string in column D
+                row.createCell(4).setCellFormula("TEXT(C"+rowNum+",G"+rowNum+")=D" + rowNum);
+                row.createCell(5).setCellValue(javaDateFormatPattern);
+                row.createCell(6).setCellValue(excelFormatPattern);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed for locale: " + locale + ", having locales: " + 
+                        Arrays.toString(DateFormat.getAvailableLocales()), e);
             }
-
-            Cell cell = row.createCell(2);
-
-            cell.setCellValue(date);
-            CellStyle cellStyle = row.getSheet().getWorkbook().createCellStyle();
-
-            String javaDateFormatPattern = ((SimpleDateFormat)dateFormat).toPattern();
-            String excelFormatPattern = DateFormatConverter.convert(locale, javaDateFormatPattern);
-
-            DataFormat poiFormat = row.getSheet().getWorkbook().createDataFormat();
-            cellStyle.setDataFormat(poiFormat.getFormat(excelFormatPattern));
-            row.createCell(3).setCellValue(dateFormat.format(date));
-
-            cell.setCellStyle(cellStyle);
-
-            // the formula returns TRUE is the formatted date in column C equals to the string in column D
-            row.createCell(4).setCellFormula("TEXT(C"+rowNum+",G"+rowNum+")=D" + rowNum);
-            row.createCell(5).setCellValue(javaDateFormatPattern);
-            row.createCell(6).setCellValue(excelFormatPattern);
         }
 
         File outputFile = TempFile.createTempFile("Locale" + sheetName + styleName, ".xlsx");
@@ -100,12 +112,11 @@ public final class TestDateFormatConverter extends TestCase {
         } finally {
             outputStream.close();
         }
-        System.out.println("Open " + outputFile.getAbsolutePath()+" in Excel");
 
+        System.out.println("Open " + outputFile.getAbsolutePath()+" in Excel");
     }
 
     public void testJavaDateFormatsInExcel() throws Exception {
-
         Date date = new Date();
 
         outputLocaleDataFormats(date, true, false, DateFormat.DEFAULT, "Default" );
