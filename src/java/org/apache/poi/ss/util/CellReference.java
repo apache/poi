@@ -499,28 +499,35 @@ public class CellReference {
 		}
 	}
 
-	/**
-	 * Checks whether this cell reference is equal to another object.
-	 * <p>
-	 *  Two cells references are assumed to be equal if their string representations
-	 *  ({@link #formatAsString()}  are equal.
-	 * </p>
-	 */
-	@Override
-	public boolean equals(Object o){
-		if(!(o instanceof CellReference)) {
-			return false;
-		}
-		CellReference cr = (CellReference) o;
-		return _rowIndex == cr._rowIndex
-			&& _colIndex == cr._colIndex
-			&& _isRowAbs == cr._isColAbs
-			&& _isColAbs == cr._isColAbs;
-	}
+   /**
+    * Checks whether this cell reference is equal to another object.
+    * <p>
+    *  Two cells references are assumed to be equal if their string representations
+    *  ({@link #formatAsString()}  are equal.
+    * </p>
+    */
+   @Override
+   public boolean equals(Object o){
+      if (this == o) {
+         return true;
+      }
+      if(!(o instanceof CellReference)) {
+         return false;
+      }
+      CellReference cr = (CellReference) o;
+      return _rowIndex == cr._rowIndex
+              && _colIndex == cr._colIndex
+              && _isRowAbs == cr._isRowAbs
+              && _isColAbs == cr._isColAbs;
+    }
 
-	@Override
-	public int hashCode() {
-	    assert false : "hashCode not designed";
-	    return 42; // any arbitrary constant will do
-	}
+    @Override
+    public int hashCode() {
+      int result = 17;
+      result = 31 * result + _rowIndex;
+      result = 31 * result + _colIndex;
+      result = 31 * result + (_isRowAbs ? 1 : 0);
+      result = 31 * result + (_isColAbs ? 1 : 0);
+      return result;
+   }
 }
