@@ -82,6 +82,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         POIXMLTextExtractor extractor =
             new XSSFEventBasedExcelExtractor(args[0]);
         System.out.println(extractor.getText());
+        extractor.close();
     }
 
     /**
@@ -252,113 +253,113 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 		super.close();
 	}
 
-   protected class SheetTextExtractor implements SheetContentsHandler {
-      private final StringBuffer output;
-      private boolean firstCellOfRow;
-      private final Map<String, String> headerFooterMap;
-      
-      protected SheetTextExtractor() {
-         this.output = new StringBuffer();
-         this.firstCellOfRow = true;
-         this.headerFooterMap = includeHeadersFooters ? new HashMap<String, String>() : null;
-      }
-      
-      public void startRow(int rowNum) {
-         firstCellOfRow = true;
-      }
-      
-      public void endRow() {
-         output.append('\n');
-      }
+    protected class SheetTextExtractor implements SheetContentsHandler {
+        private final StringBuffer output;
+        private boolean firstCellOfRow;
+        private final Map<String, String> headerFooterMap;
 
-      public void cell(String cellRef, String formattedValue) {
-         if(firstCellOfRow) {
-            firstCellOfRow = false;
-         } else {
-            output.append('\t');
-         }
-         output.append(formattedValue);
-      }
-      
-      public void headerFooter(String text, boolean isHeader, String tagName) {
-          if (headerFooterMap != null) {
-              headerFooterMap.put(tagName, text);
-          }
-      }
-      
-      
-      /**
-       * Append the text for the named header or footer if found.
-       */
-      private void appendHeaderFooterText(StringBuffer buffer, String name) {
-          String text = headerFooterMap.get(name);
-          if (text != null && text.length() > 0) {
-              // this is a naive way of handling the left, center, and right
-              // header and footer delimiters, but it seems to be as good as
-              // the method used by XSSFExcelExtractor
-              text = handleHeaderFooterDelimiter(text, "&L");
-              text = handleHeaderFooterDelimiter(text, "&C");
-              text = handleHeaderFooterDelimiter(text, "&R");
-              buffer.append(text).append('\n');
-          }
-      }
-      /**
-       * Remove the delimiter if its found at the beginning of the text,
-       * or replace it with a tab if its in the middle.
-       */
-      private String handleHeaderFooterDelimiter(String text, String delimiter) {
-          int index = text.indexOf(delimiter);
-          if (index == 0) {
-              text = text.substring(2);
-          } else if (index > 0) {
-              text = text.substring(0, index) + "\t" + text.substring(index + 2);
-          }
-          return text;
-      }
+        protected SheetTextExtractor() {
+            this.output = new StringBuffer();
+            this.firstCellOfRow = true;
+            this.headerFooterMap = includeHeadersFooters ? new HashMap<String, String>() : null;
+        }
 
-      
-      /**
-       * Append the text for each header type in the same order
-       * they are appended in XSSFExcelExtractor.
-       * @see XSSFExcelExtractor#getText()
-       * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
-       */
-      private void appendHeaderText(StringBuffer buffer) {
-          appendHeaderFooterText(buffer, "firstHeader");
-          appendHeaderFooterText(buffer, "oddHeader");
-          appendHeaderFooterText(buffer, "evenHeader");
-      }
-      
-      /**
-       * Append the text for each footer type in the same order
-       * they are appended in XSSFExcelExtractor.
-       * @see XSSFExcelExtractor#getText()
-       * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
-       */
-      private void appendFooterText(StringBuffer buffer) {
-          // append the text for each footer type in the same order
-          // they are appended in XSSFExcelExtractor
-          appendHeaderFooterText(buffer, "firstFooter");
-          appendHeaderFooterText(buffer, "oddFooter");
-          appendHeaderFooterText(buffer, "evenFooter");
-      }
+        public void startRow(int rowNum) {
+            firstCellOfRow = true;
+        }
 
-      /**
-       * Append the cell contents we have collected.
-       */
-      private void appendCellText(StringBuffer buffer) {
-          buffer.append(output);
-      }
-      
-      /**
-       * Reset this <code>SheetTextExtractor</code> for the next sheet.
-       */
-      private void reset() {
-          output.setLength(0);
-          firstCellOfRow = true;
-          if (headerFooterMap != null) {
-              headerFooterMap.clear();
-          }
-      }
-   }
+        public void endRow() {
+            output.append('\n');
+        }
+
+        public void cell(String cellRef, String formattedValue) {
+            if(firstCellOfRow) {
+                firstCellOfRow = false;
+            } else {
+                output.append('\t');
+            }
+            output.append(formattedValue);
+        }
+
+        public void headerFooter(String text, boolean isHeader, String tagName) {
+            if (headerFooterMap != null) {
+                headerFooterMap.put(tagName, text);
+            }
+        }
+
+
+        /**
+         * Append the text for the named header or footer if found.
+         */
+        private void appendHeaderFooterText(StringBuffer buffer, String name) {
+            String text = headerFooterMap.get(name);
+            if (text != null && text.length() > 0) {
+                // this is a naive way of handling the left, center, and right
+                // header and footer delimiters, but it seems to be as good as
+                // the method used by XSSFExcelExtractor
+                text = handleHeaderFooterDelimiter(text, "&L");
+                text = handleHeaderFooterDelimiter(text, "&C");
+                text = handleHeaderFooterDelimiter(text, "&R");
+                buffer.append(text).append('\n');
+            }
+        }
+        /**
+         * Remove the delimiter if its found at the beginning of the text,
+         * or replace it with a tab if its in the middle.
+         */
+        private String handleHeaderFooterDelimiter(String text, String delimiter) {
+            int index = text.indexOf(delimiter);
+            if (index == 0) {
+                text = text.substring(2);
+            } else if (index > 0) {
+                text = text.substring(0, index) + "\t" + text.substring(index + 2);
+            }
+            return text;
+        }
+
+
+        /**
+         * Append the text for each header type in the same order
+         * they are appended in XSSFExcelExtractor.
+         * @see XSSFExcelExtractor#getText()
+         * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
+         */
+        private void appendHeaderText(StringBuffer buffer) {
+            appendHeaderFooterText(buffer, "firstHeader");
+            appendHeaderFooterText(buffer, "oddHeader");
+            appendHeaderFooterText(buffer, "evenHeader");
+        }
+
+        /**
+         * Append the text for each footer type in the same order
+         * they are appended in XSSFExcelExtractor.
+         * @see XSSFExcelExtractor#getText()
+         * @see org.apache.poi.hssf.extractor.ExcelExtractor#_extractHeaderFooter(org.apache.poi.ss.usermodel.HeaderFooter)
+         */
+        private void appendFooterText(StringBuffer buffer) {
+            // append the text for each footer type in the same order
+            // they are appended in XSSFExcelExtractor
+            appendHeaderFooterText(buffer, "firstFooter");
+            appendHeaderFooterText(buffer, "oddFooter");
+            appendHeaderFooterText(buffer, "evenFooter");
+        }
+
+        /**
+         * Append the cell contents we have collected.
+         */
+        private void appendCellText(StringBuffer buffer) {
+            buffer.append(output);
+        }
+
+        /**
+         * Reset this <code>SheetTextExtractor</code> for the next sheet.
+         */
+        private void reset() {
+            output.setLength(0);
+            firstCellOfRow = true;
+            if (headerFooterMap != null) {
+                headerFooterMap.clear();
+            }
+        }
+    }
 }
