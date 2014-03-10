@@ -13,6 +13,11 @@
 
     <name>Apach POI - Openxmlformats Encryption Schema package</name>
 
+	<properties>
+		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
+		<sonar.exclusions>target/generated-sources/*</sonar.exclusions>
+	</properties>
+  
     <build>
 		<plugins>
 			<plugin>
