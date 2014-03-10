@@ -64,9 +64,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
-		
-		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
-		<sonar.exclusions>com/microsoft/*,org/openxmlformats/*,schemasMicrosoftCom*</sonar.exclusions>
 	</properties>
   
     <build>
