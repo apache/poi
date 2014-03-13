@@ -1158,6 +1158,24 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
     
     /**
+      * Check if revision tracking is turned on.
+      * 
+      * @return <code>true</code> if revision tracking is turned on
+      */
+     public boolean isTrackRevisions() {
+         return settings.isTrackRevisions();
+     }
+    
+     /**
+      * Enable or disable revision tracking.
+      * 
+      * @param <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
+      */
+     public void setTrackRevisions(boolean enable) {
+         settings.setTrackRevisions(enable);
+     }
+
+    /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      * @param pos
      * @param table

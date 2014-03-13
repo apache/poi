@@ -326,6 +326,32 @@ public class XWPFSettings extends POIXMLDocumentPart {
         return ctSettings.isSetUpdateFields() && ctSettings.getUpdateFields().getVal() == STOnOff.TRUE;
     }
 
+    /**
+     * Check if revision tracking is turned on.
+     * 
+     * @return <code>true</code> if revision tracking is turned on
+     */
+    public boolean isTrackRevisions() {
+        return ctSettings.isSetTrackRevisions();
+    }
+
+    /**
+     * Enable or disable revision tracking.
+     * 
+     * @param <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
+     */
+    public void setTrackRevisions(boolean enable) {
+        if(enable) {
+            if(!ctSettings.isSetTrackRevisions()) {
+                ctSettings.addNewTrackRevisions();
+            }
+        } else {
+            if(ctSettings.isSetTrackRevisions()) {
+                ctSettings.unsetTrackRevisions();
+            }
+        }
+    }
+
     @Override
     protected void commit() throws IOException {
         if (ctSettings == null) {
