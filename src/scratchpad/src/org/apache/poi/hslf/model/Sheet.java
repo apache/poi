@@ -17,16 +17,34 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.awt.*;
+
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hslf.record.CString;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.SheetContainer;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class defines the common format of "Sheets" in a powerpoint
@@ -182,6 +200,7 @@ public abstract class Sheet {
                 
                 // Is there a StyleTextPropAtom after the Text Atom?
                 // TODO Do we need to check for text ones two away as well?
+                // TODO Refactor this to happen later in this for loop
                 if (i < (records.length - 2)) {
                     next = records[i+2];
                     if (next instanceof StyleTextPropAtom) {
@@ -191,6 +210,16 @@ public abstract class Sheet {
 
                 // See what follows the TextHeaderAtom
                 next = records[i+1];
+                
+                // Is it one we ignore and check the one after that?
+                if (i < records.length - 2) {
+                    // TODO MasterTextPropAtom
+                    if (next instanceof TextRulerAtom) {
+                        next = records[i+2];
+                    }
+                }
+                
+                // Is it one we need to record?
                 if (next instanceof TextCharsAtom) {
                     TextCharsAtom tca = (TextCharsAtom)next;
                     trun = new TextRun(tha, tca, stpa);
@@ -199,6 +228,11 @@ public abstract class Sheet {
                     trun = new TextRun(tha, tba, stpa);
                 } else if (next instanceof StyleTextPropAtom) {
                     stpa = (StyleTextPropAtom)next;
+                } else if (next instanceof TextHeaderAtom) {
+                    // Seems to be a mostly, but not completely deleted block of
+                    //  text. Only the header remains, which isn't useful alone 
+                    // Skip on to the next TextHeaderAtom
+                    continue;
                 } else if (next.getRecordType() == (long)RecordTypes.TextSpecInfoAtom.typeID ||
                            next.getRecordType() == (long)RecordTypes.BaseTextPropAtom.typeID) { 
                     // Safe to ignore these ones
