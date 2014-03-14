@@ -22,8 +22,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
@@ -655,6 +657,14 @@ public final class TextRun
      */
     protected void setIndex(int id){
         slwtIndex = id;
+    }
+    
+    /**
+     * Is this Text Run one from a {@link PPDrawing}, or is it
+     *  one from the {@link SlideListWithText}?
+     */
+    public boolean isDrawingBased() {
+        return (slwtIndex == -1);
     }
 
     /**

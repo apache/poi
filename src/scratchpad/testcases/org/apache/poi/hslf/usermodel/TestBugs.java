@@ -51,6 +51,11 @@ import org.apache.poi.hslf.model.TextBox;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.TextShape;
 import org.apache.poi.hslf.model.TitleMaster;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.junit.Test;
 
 /**
@@ -502,4 +507,37 @@ public final class TestBugs {
         assertTrue("No Exceptions while reading headers", true);
     }
     
+    @Test
+    public void bug56260() throws Exception {
+        File file = _slTests.getFile("56260.ppt");
+        
+        HSLFSlideShow ss = new HSLFSlideShow(file.getAbsolutePath());
+        SlideShow _show = new SlideShow(ss);
+        Slide[] _slides = _show.getSlides();
+        assertEquals(13, _slides.length);
+        
+        // Check the number of TextHeaderAtoms on Slide 1
+        Document dr = _show.getDocumentRecord();
+        SlideListWithText slidesSLWT = dr.getSlideSlideListWithText();
+        SlideAtomsSet s1 = slidesSLWT.getSlideAtomsSets()[0];
+
+        int tha = 0;
+        for (Record r : s1.getSlideRecords()) {
+            if (r instanceof TextHeaderAtom) tha++;
+        }
+        assertEquals(2, tha);
+        
+        // Check to see that we have a pair next to each other
+        assertEquals(TextHeaderAtom.class, s1.getSlideRecords()[0].getClass());
+        assertEquals(TextHeaderAtom.class, s1.getSlideRecords()[1].getClass());
+        
+        
+        // Check the number of text runs based on the slide (not textbox)
+        // Will have skipped the empty one
+        int str = 0;
+        for (TextRun tr : _slides[0].getTextRuns()) {
+            if (! tr.isDrawingBased()) str++;
+        }
+        assertEquals(1, str);
+    }
 }
