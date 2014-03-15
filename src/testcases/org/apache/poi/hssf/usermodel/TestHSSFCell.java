@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -31,7 +32,11 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
@@ -156,6 +161,54 @@ public final class TestHSSFCell extends BaseTestCell {
 			3, s.getActiveCellRow());
 	}
 
+	
+	public void testActiveCellBug56114() throws IOException {
+	    Workbook wb = new HSSFWorkbook();
+	    Sheet sh = wb.createSheet();
+
+	    sh.createRow(0);
+	    sh.createRow(1);
+	    sh.createRow(2);
+	    sh.createRow(3);
+
+	    Cell cell = sh.getRow(1).createCell(3);
+	    sh.getRow(3).createCell(3);
+        
+        assertEquals(0, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
+        assertEquals(0, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+
+	    cell.setAsActiveCell();
+        
+        assertEquals(1, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
+        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+
+//	    FileOutputStream fos = new FileOutputStream("/tmp/56114.xls");
+//
+//	    wb.write(fos);
+//
+//	    fos.close();
+	            
+	    wb = _testDataProvider.writeOutAndReadBack(wb);
+	    
+	    assertEquals(1, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
+	    assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+	    
+	    wb.getSheetAt(0).getRow(3).getCell(3).setAsActiveCell();
+        
+        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
+        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+	    
+//	    fos = new FileOutputStream("/tmp/56114a.xls");
+//
+//	    wb.write(fos);
+//
+//	    fos.close();
+	            
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        
+        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
+        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+	}
 	/**
 	 * Test reading hyperlinks
 	 */
@@ -326,5 +379,84 @@ public final class TestHSSFCell extends BaseTestCell {
      */
     public void testReadNaN() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49761.xls");
+        assertNotNull(wb);
+    }
+
+    public void testHSSFCell() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFRow row = sheet.createRow(0);
+        row.createCell(0);
+        HSSFCell cell = new HSSFCell(wb, sheet, 0, (short)0);
+        assertNotNull(cell);  
+    }
+
+    @SuppressWarnings("deprecation")
+    public void testDeprecatedMethods() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+
+        // cover some deprecated methods and other smaller stuff...
+        assertEquals(wb.getWorkbook(), cell.getBoundWorkbook());
+        cell.getCellNum();
+        cell.setCellNum((short)0);
+
+        try {
+            cell.getCachedFormulaResultType();
+            fail("Should catch exception");
+        } catch (IllegalStateException e) {
+        }
+        
+        try {
+            assertNotNull(new HSSFCell(wb, sheet, 0, (short)0, Cell.CELL_TYPE_ERROR+1 ));
+            fail("Should catch exception");
+        } catch (RuntimeException e) {
+        }
+        
+        cell.removeCellComment();
+        cell.removeCellComment();
+    }
+
+    public void testCellType() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+
+        cell.setCellType(Cell.CELL_TYPE_BLANK);
+        assertNull(null, cell.getDateCellValue());
+        assertFalse(cell.getBooleanCellValue());
+        assertEquals("", cell.toString());
+        
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        assertEquals("", cell.toString());
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellValue(1.2);
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        assertEquals("1.2", cell.toString());
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        assertEquals("TRUE", cell.toString());
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        cell.setCellType(Cell.CELL_TYPE_ERROR);
+        assertEquals("#VALUE!", cell.toString());
+        cell.setCellType(Cell.CELL_TYPE_ERROR);
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        assertEquals("FALSE", cell.toString());
+        cell.setCellValue(1.2);
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        assertEquals("1.2", cell.toString());
+        cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellType(Cell.CELL_TYPE_ERROR);
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellValue(1.2);
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        assertEquals("1.2", cell.toString());
+        
+        cell.setCellValue((String)null);
+        cell.setCellValue((RichTextString)null);
     }
 }
