@@ -361,40 +361,6 @@ public final class TestXSSFExportToXML extends TestCase {
        assertTrue(found);
    }
 
-   public void testXmlExportSchemaWithXSAllTag_Bugzilla_56169() throws Exception {
-       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56169.xlsx");
-
-       for (XSSFMap map : wb.getCustomXMLMappings()) {
-           XSSFExportToXml exporter = new XSSFExportToXml(map);
-
-           ByteArrayOutputStream os = new ByteArrayOutputStream();
-           exporter.exportToXML(os, true);
-           String xmlData = os.toString("UTF-8");
-
-           assertNotNull(xmlData);
-           assertTrue(!xmlData.equals(""));
-
-           String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
-           String a_b = a.split("<B>")[1].split("</B>")[0].trim();
-           String a_b_c = a_b.split("<C>")[1].split("</C>")[0].trim();
-           String a_b_c_e = a_b_c.split("<E>")[1].split("</EA>")[0].trim();
-           String a_b_c_e_euro = a_b_c_e.split("<EUR>")[1].split("</EUR>")[0].trim();
-           String a_b_c_e_chf = a_b_c_e.split("<CHF>")[1].split("</CHF>")[0].trim();
-
-           assertEquals("1", a_b_c_e_euro);
-           assertEquals("2", a_b_c_e_chf);
-
-           String a_b_d = a_b.split("<D>")[1].split("</Dd>")[0].trim();
-           String a_b_d_e = a_b_d.split("<E>")[1].split("</EA>")[0].trim();
-
-           String a_b_d_e_euro = a_b_d_e.split("<EUR>")[1].split("</EUR>")[0].trim();
-           String a_b_d_e_chf = a_b_d_e.split("<CHF>")[1].split("</CHF>")[0].trim();
-
-           assertEquals("3", a_b_d_e_euro);
-           assertEquals("4", a_b_d_e_chf);
-       }
-   }
-   
    public void testXmlExportCompare_Bug_55923() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx");
 
