@@ -17,12 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * TxMasterStyleAtom atom (4003).
@@ -41,11 +43,10 @@ import org.apache.poi.hslf.model.textproperties.*;
  *  @author Yegor Kozlov
  */
 public final class TxMasterStyleAtom extends RecordAtom {
-
     /**
-     * Maximum number of indentatio levels allowed in PowerPoint documents
+     * Maximum number of indentation levels allowed in PowerPoint documents
      */
-    private static final int MAX_INDENT = 5;
+    public static final int MAX_INDENT = 5;
 
     private byte[] _header;
     private static long _type = 4003;
