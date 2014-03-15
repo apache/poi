@@ -29,6 +29,7 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.MasterTextPropAtom;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.Record;
@@ -42,6 +43,7 @@ import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.record.TextSpecInfoAtom;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -197,29 +199,35 @@ public abstract class Sheet {
                 StyleTextPropAtom stpa = null;
                 TextRun trun = null;
                 Record next = null;
+                Record subs = null;
                 
-                // Is there a StyleTextPropAtom after the Text Atom?
-                // TODO Do we need to check for text ones two away as well?
-                // TODO Refactor this to happen later in this for loop
-                if (i < (records.length - 2)) {
-                    next = records[i+2];
-                    if (next instanceof StyleTextPropAtom) {
-                        stpa = (StyleTextPropAtom)next;
-                    }
-                }
-
                 // See what follows the TextHeaderAtom
                 next = records[i+1];
-                
-                // Is it one we ignore and check the one after that?
                 if (i < records.length - 2) {
-                    // TODO MasterTextPropAtom
-                    if (next instanceof TextRulerAtom) {
-                        next = records[i+2];
+                    subs = records[i+2];
+                }
+                
+                // Is the next record one we need to skip over?
+                if (subs != null) {
+                    if (next instanceof TextRulerAtom ||
+                        next instanceof MasterTextPropAtom ||
+                        next instanceof TextSpecInfoAtom) {
+                        // Ignore this one, check the one after
+                        next = subs;
+                        if (i < records.length - 3) {
+                            subs = records[i+3];
+                        } else {
+                            subs = null;
+                        }
                     }
                 }
                 
-                // Is it one we need to record?
+                // Is the subsequent record a style one?
+                if (subs != null && subs instanceof StyleTextPropAtom) {
+                    stpa = (StyleTextPropAtom)subs;
+                }
+                
+                // Now, check if the next record is one to record
                 if (next instanceof TextCharsAtom) {
                     TextCharsAtom tca = (TextCharsAtom)next;
                     trun = new TextRun(tha, tca, stpa);
@@ -233,9 +241,6 @@ public abstract class Sheet {
                     //  text. Only the header remains, which isn't useful alone 
                     // Skip on to the next TextHeaderAtom
                     continue;
-                } else if (next.getRecordType() == (long)RecordTypes.TextSpecInfoAtom.typeID ||
-                           next.getRecordType() == (long)RecordTypes.BaseTextPropAtom.typeID) { 
-                    // Safe to ignore these ones
                 } else {
                     logger.log(POILogger.ERROR, "Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + next.getRecordType());
                 }

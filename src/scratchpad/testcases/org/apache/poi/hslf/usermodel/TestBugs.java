@@ -331,9 +331,18 @@ public final class TestBugs {
 
         assertTrue("No Exceptions while reading file", true);
 
+        // Check the first slide
         Slide slide = ppt.getSlides()[0];
-        TextRun[] tr1 = slide.getTextRuns();
+        TextRun[] slTr = slide.getTextRuns();
+        
+        // Has two text runs, one from slide text, one from drawing
+        assertEquals(2, slTr.length);
+        assertEquals(false, slTr[0].isDrawingBased());
+        assertEquals(true, slTr[1].isDrawingBased());
+        assertEquals("First run", slTr[0].getText());
+        assertEquals("Second run", slTr[1].getText());
 
+        // Check the shape based text runs
         List<TextRun> lst = new ArrayList<TextRun>();
         Shape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
@@ -345,13 +354,11 @@ public final class TestBugs {
             }
 
         }
-        TextRun[] tr2 = new TextRun[lst.size()];
-        lst.toArray(tr2);
-
-        assertEquals(tr1.length, tr2.length);
-        for (int i = 0; i < tr1.length; i++) {
-            assertEquals(tr1[i].getText(), tr2[i].getText());
-        }
+        // There should be only one shape based one found
+        assertEquals(1, lst.size());
+        
+        // And it should be the second one
+        assertEquals("Second run", lst.get(0).getText());
     }
 
     /**
