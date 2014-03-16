@@ -18,6 +18,8 @@ package org.apache.poi.xssf.eventusermodel;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -31,7 +33,9 @@ import org.xml.sax.helpers.DefaultHandler;
  *  row and cell events for it.
  */
 public class XSSFSheetXMLHandler extends DefaultHandler {
-   /**
+    private static final POILogger logger = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
+    
+    /**
     * These are the different kinds of cells we support.
     * We keep track of the current one between
     *  the start and end.
@@ -168,7 +172,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                 // TODO Retrieve the shared formula and tweak it to 
                 //  match the current cell
                 if(formulasNotResults) {
-                   System.err.println("Warning - shared formulas not yet supported!");
+                    logger.log(POILogger.WARN, "shared formulas not yet supported!");
                 } else {
                    // It's a shared formula, so we can't get at the formula string yet
                    // However, they don't care about the formula string, so that's ok!
@@ -283,7 +287,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                        thisStr = rtss.toString();
                    }
                    catch (NumberFormatException ex) {
-                       System.err.println("Failed to parse SST index '" + sstIndex + "': " + ex.toString());
+                       logger.log(POILogger.ERROR, "Failed to parse SST index '" + sstIndex, ex);
                    }
                    break;
 
