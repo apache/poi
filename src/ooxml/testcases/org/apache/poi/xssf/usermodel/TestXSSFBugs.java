@@ -1440,4 +1440,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("#@_#", c.getStringCellValue()); 
         assertEquals("http://invalid.uri", c.getHyperlink().getAddress()); 
     }
+    
+    /**
+     * Was giving NullPointerException
+     * at org.apache.poi.xssf.usermodel.XSSFWorkbook.onDocumentRead
+     * due to a lack of Styles Table
+     */
+    @Test
+    public void bug56278() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56278.xlsx");
+        assertEquals(0, wb.getSheetIndex("Market Rates"));
+        
+        // Save and re-check
+        Workbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(0, nwb.getSheetIndex("Market Rates"));
+    }
 }

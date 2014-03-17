@@ -295,10 +295,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
                 }
             }
+            
+            if (stylesSource == null) {
+                // Create Styles if it is missing
+                stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+            }
             stylesSource.setTheme(theme);
 
             if(sharedStringSource == null) {
-                //Create SST if it is missing
+                // Create SST if it is missing
                 sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
             }
 
