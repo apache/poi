@@ -713,6 +713,18 @@ public class XWPFRun implements ISDTContents, IRunElement{
     }
 
     /**
+     * Specifies that a tab shall be placed at the current location in 
+     *  the run content.
+     */
+    public void addTab() {
+        run.addNewTab();
+    }
+
+    public void removeTab() {
+        //TODO
+    }    
+
+    /**
      * Specifies that a carriage return shall be placed at the
      * current location in the run content.
      * A carriage return is used to end the current line of text in
@@ -897,13 +909,13 @@ public class XWPFRun implements ISDTContents, IRunElement{
                 // This bit works around it, and replicates the above
                 //  rules for that case
                 String tagName = o.getDomNode().getNodeName();
-                if ("w:tab".equals(tagName)) {
+                if ("w:tab".equals(tagName) || "tab".equals(tagName)) {
                     text.append("\t");
                 }
-                if ("w:br".equals(tagName)) {
+                if ("w:br".equals(tagName) || "br".equals(tagName)) {
                     text.append("\n");
                 }
-                if ("w:cr".equals(tagName)) {
+                if ("w:cr".equals(tagName) || "cr".equals(tagName)) {
                     text.append("\n");
                 }
             }
