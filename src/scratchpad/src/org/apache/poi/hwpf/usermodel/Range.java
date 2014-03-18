@@ -21,8 +21,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.util.Internal;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.CHPX;
@@ -37,6 +35,7 @@ import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.sprm.CharacterSprmCompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmCompressor;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -1013,6 +1012,8 @@ public class Range { // TODO -instantiable superclass
     private static int binarySearchStart( List<? extends PropertyNode<?>> rpl,
             int start )
     {
+        if ( rpl.size() == 0 )
+            return -1;
         if ( rpl.get( 0 ).getStart() >= start )
             return 0;
 
