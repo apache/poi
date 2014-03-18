@@ -38,7 +38,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun
  * Tests for XWPF Run
  */
 public class TestXWPFRun extends TestCase {
-
     public CTR ctRun;
     public XWPFParagraph p;
 
@@ -47,24 +46,23 @@ public class TestXWPFRun extends TestCase {
         p = doc.createParagraph();
 
         this.ctRun = CTR.Factory.newInstance();
-        
     }
 
     public void testSetGetText() {
-	ctRun.addNewT().setStringValue("TEST STRING");	
-	ctRun.addNewT().setStringValue("TEST2 STRING");	
-	ctRun.addNewT().setStringValue("TEST3 STRING");
-	
-	assertEquals(3,ctRun.sizeOfTArray());
-	XWPFRun run = new XWPFRun(ctRun, p);
-	
-	assertEquals("TEST2 STRING",run.getText(1));
-	
-	run.setText("NEW STRING",0);
-	assertEquals("NEW STRING",run.getText(0));
-	
-	//run.setText("xxx",14);
-	//fail("Position wrong");
+        ctRun.addNewT().setStringValue("TEST STRING");	
+        ctRun.addNewT().setStringValue("TEST2 STRING");	
+        ctRun.addNewT().setStringValue("TEST3 STRING");
+
+        assertEquals(3,ctRun.sizeOfTArray());
+        XWPFRun run = new XWPFRun(ctRun, p);
+
+        assertEquals("TEST2 STRING",run.getText(1));
+
+        run.setText("NEW STRING",0);
+        assertEquals("NEW STRING",run.getText(0));
+
+        //run.setText("xxx",14);
+        //fail("Position wrong");
     }
   
     public void testSetGetBold() {
@@ -169,14 +167,13 @@ public class TestXWPFRun extends TestCase {
     }
 
     public void testAddCarriageReturn() {
-	
-	ctRun.addNewT().setStringValue("TEST STRING");
-	ctRun.addNewCr();
-	ctRun.addNewT().setStringValue("TEST2 STRING");
-	ctRun.addNewCr();
-	ctRun.addNewT().setStringValue("TEST3 STRING");
+        ctRun.addNewT().setStringValue("TEST STRING");
+        ctRun.addNewCr();
+        ctRun.addNewT().setStringValue("TEST2 STRING");
+        ctRun.addNewCr();
+        ctRun.addNewT().setStringValue("TEST3 STRING");
         assertEquals(2, ctRun.sizeOfCrArray());
-        
+
         XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
         run.setText("T1");
         run.addCarriageReturn();
@@ -184,18 +181,17 @@ public class TestXWPFRun extends TestCase {
         run.setText("T2");
         run.addCarriageReturn();
         assertEquals(3, run.getCTR().getCrList().size());
-        
     }
 
     public void testAddPageBreak() {
-	ctRun.addNewT().setStringValue("TEST STRING");
-	ctRun.addNewBr();
-	ctRun.addNewT().setStringValue("TEST2 STRING");
-	CTBr breac=ctRun.addNewBr();
-	breac.setClear(STBrClear.LEFT);
-	ctRun.addNewT().setStringValue("TEST3 STRING");
+        ctRun.addNewT().setStringValue("TEST STRING");
+        ctRun.addNewBr();
+        ctRun.addNewT().setStringValue("TEST2 STRING");
+        CTBr breac=ctRun.addNewBr();
+        breac.setClear(STBrClear.LEFT);
+        ctRun.addNewT().setStringValue("TEST3 STRING");
         assertEquals(2, ctRun.sizeOfBrArray());
-        
+
         XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
         run.setText("TEXT1");
         run.addBreak();
