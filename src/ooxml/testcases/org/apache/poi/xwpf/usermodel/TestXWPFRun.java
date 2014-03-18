@@ -181,6 +181,29 @@ public class TestXWPFRun extends TestCase {
         run.setText("T2");
         run.addCarriageReturn();
         assertEquals(3, run.getCTR().getCrList().size());
+        
+        assertEquals("T1\n\nT2\n", run.toString());
+    }
+    
+    public void testAddTabsAndLineBreaks() {
+        ctRun.addNewT().setStringValue("TEST STRING");
+        ctRun.addNewCr();
+        ctRun.addNewT().setStringValue("TEST2 STRING");
+        ctRun.addNewTab();
+        ctRun.addNewT().setStringValue("TEST3 STRING");
+        assertEquals(1, ctRun.sizeOfCrArray());
+        assertEquals(1, ctRun.sizeOfTabArray());
+
+        XWPFRun run = new XWPFRun(CTR.Factory.newInstance(), p);
+        run.setText("T1");
+        run.addCarriageReturn();
+        run.setText("T2");
+        run.addTab();
+        run.setText("T3");
+        assertEquals(1, run.getCTR().getCrList().size());
+        assertEquals(1, run.getCTR().getTabList().size());
+        
+        assertEquals("T1\nT2\tT3", run.toString());
     }
 
     public void testAddPageBreak() {
