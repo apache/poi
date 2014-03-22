@@ -22,9 +22,10 @@ package org.apache.poi.xssf.streaming;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
@@ -84,7 +85,7 @@ public class SheetDataWriter {
      * @param  fd the file to write to
      */
     public Writer createWriter(File fd)throws IOException {
-        return new BufferedWriter(new FileWriter(fd));
+        return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fd), "UTF-8"));
     }
 
     /**

@@ -60,7 +60,7 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
      */
     @Override
 	public Writer createWriter(File fd)throws IOException {
-        return new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fd)));
+        return new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fd)), "UTF-8");
     }
 
 
