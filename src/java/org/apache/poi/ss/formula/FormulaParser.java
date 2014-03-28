@@ -701,7 +701,7 @@ public final class FormulaParser {
 			} catch (NumberFormatException e) {
 				return null;
 			}
-			if (i<1 || i>65536) {
+			if (i<1 || i>_ssVersion.getMaxRows()) {
 				return null;
 			}
 		} else {
