@@ -287,7 +287,9 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
             case RECORD_ID_WMF:  return HSSFPictureData.MSOBI_WMF;
             case RECORD_ID_PICT: return HSSFPictureData.MSOBI_PICT;
         }
-        log.log(POILogger.WARN, "Unknown metafile: " + getRecordId());
+        if (log.check(POILogger.WARN)) {
+            log.log(POILogger.WARN, "Unknown metafile: " + getRecordId());
+        }
         return 0;
     }
 

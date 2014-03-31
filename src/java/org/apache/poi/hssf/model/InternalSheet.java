@@ -292,7 +292,9 @@ public final class InternalSheet {
                 // Not clear which application wrote these files.
                 rra = new RowRecordsAggregate();
             } else {
-                log.log(POILogger.WARN, "DIMENSION record not found even though row/cells present");
+                if (log.check(POILogger.WARN)) {
+                    log.log(POILogger.WARN, "DIMENSION record not found even though row/cells present");
+                }
                 // Not sure if any tools write files like this, but Excel reads them OK
             }
             dimsloc = findFirstRecordLocBySid(WindowTwoRecord.sid);
