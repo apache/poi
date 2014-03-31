@@ -106,9 +106,11 @@ public class PlfLfo
 
         if ( ( offset - fcPlfLfo ) != lcbPlfLfo )
         {
-            log.log( POILogger.WARN, "Actual size of PlfLfo is "
-                    + ( offset - fcPlfLfo ) + " bytes, but expected "
-                    + lcbPlfLfo );
+            if (log.check(POILogger.WARN)) {
+                log.log(POILogger.WARN, "Actual size of PlfLfo is "
+                        + (offset - fcPlfLfo) + " bytes, but expected "
+                        + lcbPlfLfo);
+            }
         }
     }
 

@@ -49,8 +49,10 @@ public class Xstz
         short term = LittleEndian.getShort( data, offset );
         if ( term != 0 )
         {
-            log.log( POILogger.WARN, "chTerm at the end of Xstz at offset ",
-                    offset, " is not 0" );
+            if (log.check(POILogger.WARN)) {
+                log.log(POILogger.WARN, "chTerm at the end of Xstz at offset ",
+                        offset, " is not 0");
+            }
         }
     }
 
