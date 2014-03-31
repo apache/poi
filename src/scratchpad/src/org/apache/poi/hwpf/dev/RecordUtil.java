@@ -35,7 +35,7 @@ public class RecordUtil
     {
         String type = getBitFieldType( name, bitMask, parentType );
 
-        String retVal = new String();
+        String retVal = "";
         if ( withType.equals( "true" ) )
         {
             retVal = type + " ";
