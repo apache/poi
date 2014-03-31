@@ -144,6 +144,6 @@ public class Xst
     @Override
     public String toString()
     {
-        return new String( "Xst [" + _cch + "; " + _rgtchar + "]" );
+        return "Xst [" + _cch + "; " + _rgtchar + "]";
     }
 }
