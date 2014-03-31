@@ -91,7 +91,7 @@ public final class TestEscherGraphics extends TestCase {
     public void testDrawString() {
         graphics.drawString("This is a test", 10, 10);
         HSSFTextbox t = (HSSFTextbox) escherGroupA.getChildren().get(0);
-        assertEquals("This is a test", t.getString().getString().toString());
+        assertEquals("This is a test", t.getString().getString());
     }
 
     public void testGetDataBackAgain() throws Exception {

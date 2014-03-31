@@ -78,24 +78,24 @@ public class TestNetworkdaysFunction extends TestCase {
     }
 
     public void testFailWhenStartDateAfterEndDate() {
-        assertEquals(NAME_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[]{ new StringEval(END_DATE.toString()),
-                new StringEval(STARTING_DATE.toString()) }, EC));
+        assertEquals(NAME_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[]{ new StringEval(END_DATE),
+                new StringEval(STARTING_DATE) }, EC));
     }
 
     public void testReturnNetworkdays() {
         assertEquals(108, (int) ((NumericValueEval) NetworkdaysFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new StringEval(END_DATE.toString()) }, EC)).getNumberValue());
+                new StringEval(STARTING_DATE), new StringEval(END_DATE) }, EC)).getNumberValue());
     }
 
     public void testReturnNetworkdaysWithAHoliday() {
         assertEquals(107, (int) ((NumericValueEval) NetworkdaysFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new StringEval(END_DATE.toString()), new StringEval(FIRST_HOLIDAY.toString()) },
+                new StringEval(STARTING_DATE), new StringEval(END_DATE), new StringEval(FIRST_HOLIDAY) },
                 EC)).getNumberValue());
     }
 
     public void testReturnNetworkdaysWithManyHolidays() {
         assertEquals(105, (int) ((NumericValueEval) NetworkdaysFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new StringEval(END_DATE.toString()),
+                new StringEval(STARTING_DATE), new StringEval(END_DATE),
                 new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY) }, EC)).getNumberValue());
     }
 

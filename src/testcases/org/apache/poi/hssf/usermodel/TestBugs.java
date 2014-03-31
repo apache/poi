@@ -1622,7 +1622,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     	HSSFSheet s = wb.getSheetAt(0);
         HSSFCell cell1 = s.getRow(0).getCell(0);
-        assertEquals("test ", cell1.getStringCellValue().toString());
+        assertEquals("test ", cell1.getStringCellValue());
 
         HSSFCell cell2 = s.getRow(0).getCell(1);
         assertEquals(1.0, cell2.getNumericCellValue(), 0.0);
