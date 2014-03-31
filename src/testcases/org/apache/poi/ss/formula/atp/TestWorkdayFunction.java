@@ -82,7 +82,7 @@ public class TestWorkdayFunction extends TestCase {
 
     public void testReturnWorkdays() {
         assertEquals(new Date(109, APRIL, 30), DateUtil.getJavaDate(((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new NumberEval(151) }, EC)).getNumberValue()));
+                new StringEval(STARTING_DATE), new NumberEval(151) }, EC)).getNumberValue()));
     }
 
     public void testReturnWorkdaysSpanningAWeekendSubtractingDays() {
@@ -127,18 +127,18 @@ public class TestWorkdayFunction extends TestCase {
 
     public void testReturnWorkdaysWithDaysTruncated() {
         assertEquals(new Date(109, APRIL, 30), DateUtil.getJavaDate(((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new NumberEval(151.99999) }, EC)).getNumberValue()));
+                new StringEval(STARTING_DATE), new NumberEval(151.99999) }, EC)).getNumberValue()));
     }
 
     public void testReturnRetroativeWorkday() {
         assertEquals(new Date(108, SEPTEMBER, 23), DateUtil.getJavaDate(((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new NumberEval(-5), new StringEval(RETROATIVE_HOLIDAY.toString()) }, EC))
+                new StringEval(STARTING_DATE), new NumberEval(-5), new StringEval(RETROATIVE_HOLIDAY) }, EC))
                 .getNumberValue()));
     }
 
     public void testReturnNetworkdaysWithManyHolidays() {
         assertEquals(new Date(109, MAY, 5), DateUtil.getJavaDate(((NumberEval) WorkdayFunction.instance.evaluate(new ValueEval[]{
-                new StringEval(STARTING_DATE.toString()), new NumberEval(151),
+                new StringEval(STARTING_DATE), new NumberEval(151),
                 new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY) }, EC)).getNumberValue()));
     }
 
