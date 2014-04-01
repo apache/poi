@@ -31,8 +31,8 @@ public final class TestEscherGraphics2d extends TestCase {
 	private HSSFShapeGroup escherGroup;
 	private EscherGraphics2d graphics;
 
-	protected void setUp() {
-
+	@Override
+    protected void setUp() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("test");
 		escherGroup = sheet.createDrawingPatriarch().createGroup(new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short) 0,0));
@@ -44,7 +44,7 @@ public final class TestEscherGraphics2d extends TestCase {
 	public void testDrawString() {
 		graphics.drawString("This is a test", 10, 10);
 		HSSFTextbox t = (HSSFTextbox) escherGroup.getChildren().get(0);
-		assertEquals("This is a test", t.getString());
+		assertEquals("This is a test", t.getString().getString());
 
 		// Check that with a valid font, it's still ok
 		Font font = new Font("Forte", Font.PLAIN, 12);
