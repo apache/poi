@@ -299,6 +299,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * returns an Iterator with paragraphs and tables
      * @see org.apache.poi.xwpf.usermodel.IBody#getBodyElements()
      */
+    @Override
     public List<IBodyElement> getBodyElements() {
         return Collections.unmodifiableList(bodyElements);
     }
@@ -310,6 +311,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphs()
      */
+    @Override
     public List<XWPFParagraph> getParagraphs(){
         return Collections.unmodifiableList(paragraphs);
     }
@@ -317,6 +319,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getTables()
      */
+    @Override
     public List<XWPFTable> getTables(){
         return Collections.unmodifiableList(tables);
     }
@@ -324,6 +327,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
+    @Override
     public XWPFTable getTableArray(int pos) {
         if (pos > 0 && pos < tables.size()){
             return tables.get(pos);
@@ -534,6 +538,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the {@link XWPFParagraph} object representing the newly inserted
      *         CTP object
      */
+    @Override
     public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
         if (isCursorInBody(cursor)) {
             String uri = CTP.type.getName().getNamespaceURI();
@@ -601,6 +606,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return null;
     }
 
+    @Override
     public XWPFTable insertNewTbl(XmlCursor cursor) {
         if (isCursorInBody(cursor)) {
             String uri = CTTbl.type.getName().getNamespaceURI();
@@ -1169,7 +1175,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      /**
       * Enable or disable revision tracking.
       * 
-      * @param <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
+      * @param enable <code>true</code> to turn on revision tracking, <code>false</code> to turn off revision tracking
       */
      public void setTrackRevisions(boolean enable) {
          settings.setTrackRevisions(enable);
@@ -1180,6 +1186,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param pos
      * @param table
      */
+    @Override
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i;
@@ -1365,6 +1372,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param p
      * @return the paragraph with the CTP class p
      */
+    @Override
     public XWPFParagraph getParagraph(CTP p) {
         for (int i = 0; i < getParagraphs().size(); i++) {
             if (getParagraphs().get(i).getCTP() == p) {
@@ -1380,6 +1388,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @see org.apache.poi.xwpf.usermodel.IBody#getTable(org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl)
      * @return a table by its CTTbl-Object or null
      */
+    @Override
     public XWPFTable getTable(CTTbl ctTbl) {
         for (int i = 0; i < tables.size(); i++) {
             if (getTables().get(i).getCTTbl() == ctTbl) {
@@ -1401,6 +1410,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Returns the paragraph that of position pos
      * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int)
      */
+    @Override
     public XWPFParagraph getParagraphArray(int pos) {
         if (pos >= 0 && pos < paragraphs.size()) {
             return paragraphs.get(pos);
@@ -1414,6 +1424,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * belongs.
      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
+    @Override
     public POIXMLDocumentPart getPart() {
         return this;
     }
@@ -1425,6 +1436,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
+    @Override
     public BodyType getPartType() {
         return BodyType.DOCUMENT;
     }
@@ -1433,6 +1445,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * get the TableCell which belongs to the TableCell
      * @param cell
      */
+    @Override
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlCursor cursor = cell.newCursor();
         cursor.toParent();
@@ -1459,6 +1472,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return tableRow.getTableCell(cell);
     }
 
+    @Override
     public XWPFDocument getXWPFDocument() {
         return this;
     }
