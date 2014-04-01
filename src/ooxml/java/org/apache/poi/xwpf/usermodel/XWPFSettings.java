@@ -338,7 +338,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Enable or disable revision tracking.
      * 
-     * @param <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
+     * @param enable <code>true</code> to  turn on revision tracking, <code>false</code> to turn off revision tracking
      */
     public void setTrackRevisions(boolean enable) {
         if(enable) {
