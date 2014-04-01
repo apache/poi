@@ -1643,7 +1643,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug47251() {
+        // Firstly, try with one that triggers on InterfaceHdrRecord
         openSample("47251.xls");
+        
+        // Now with one that triggers on NoteRecord
+        // TODO Fix the bug and enable this bit of the test
+        //openSample("47251_1.xls");
     }
     
     /**
