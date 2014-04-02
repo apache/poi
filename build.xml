@@ -1059,65 +1059,6 @@ under the License.
     <target name="site" depends="docs,javadocs"
             description="Generates POI's website's contents"/>
 
-
-    <target name="maven-poms"
-            description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
-
-        <!-- Build the org.apache.poi poms -->
-        <copy file="maven/poi.pom" tofile="${dist.dir}/poi-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-scratchpad.pom" tofile="${dist.dir}/poi-scratchpad-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-ooxml.pom" tofile="${dist.dir}/poi-ooxml-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-examples.pom" tofile="${dist.dir}/poi-examples-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-ooxml-schemas.pom" tofile="${dist.dir}/poi-ooxml-schemas-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/poi-excelant.pom" tofile="${dist.dir}/poi-excelant-${version.id}.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <copy file="maven/mvn-deploy.sh" todir="${dist.dir}">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                    <token key="DSTAMP" value="${DSTAMP}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-        <echo>Maven POMs are located in ${dist.dir}</echo>
-        <echo>Use mvn-deploy.sh to deploy the artifacts in the remote repository</echo>
-    </target>
-
     <!-- TODO to be done with assembly -->
     <target name="assemble" depends="jar,jar-src">
          <!-- jars to include in binary assemblies -->         
