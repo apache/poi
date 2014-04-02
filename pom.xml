@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<!--
+
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>3.11-beta1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Apache POI - the Java API for Microsoft Documents</name>
+
+    <description>Maven build of Apache POI for Sonar checks</description>
+    <url>http://poi.apache.org/</url>
+
+    <properties>
+        <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
+        <project.build.sourceEncoding>ASCII</project.build.sourceEncoding>
+        <!--  Logging is suppressed by default.
+        To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger
+        -->
+        <org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
+
+        <!--
+          JVM system properties for running tests,
+          user.language and user.country are required as we have locale-sensitive formatters
+        -->
+        <testpattern>Test*</testpattern>
+        <poi.test.locale>-Duser.language=en -Duser.country=US</poi.test.locale>
+        <POI.testdata.path>test-data</POI.testdata.path>
+        <java.awt.headless>true</java.awt.headless>
+
+        <jdk.version.source>1.6</jdk.version.source>
+        <jdk.version.class>1.6</jdk.version.class>
+        <compile.debug>true</compile.debug>
+
+    </properties>
+
+    <modules>
+        <module>poi-main</module>
+        <module>ooxml-schemas</module>
+        <module>poi-examples</module>
+        <module>poi-excelant</module>
+        <module>poi-ooxml</module>
+        <module>poi-ooxml-schemas</module>
+        <module>poi-scratchpad</module>
+        <module>ooxml-schema-encryption</module>
+    </modules>
+
+    <mailingLists>
+        <mailingList>
+            <name>POI Users List</name>
+            <subscribe>user-subscribe@poi.apache.org</subscribe>
+            <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
+            <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
+        </mailingList>
+        <mailingList>
+            <name>POI Developer List</name>
+            <subscribe>dev-subscribe@poi.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@poi.apache.org</unsubscribe>
+            <archive>http://mail-archives.apache.org/mod_mbox/poi-dev/</archive>
+        </mailingList>
+    </mailingLists>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Apache Software Foundation</name>
+        <url>http://www.apache.org/</url>
+    </organization>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${jdk.version.source}</source>
+                        <target>${jdk.version.class}</target>
+                        <includes>
+                            <include>**/*.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/*.jpg</exclude>
+                            <exclude>**/*.gif</exclude>
+                            <exclude>**/*.png</exclude>
+                            <exclude>**/*.pdf</exclude>
+                            <exclude>**/*.xls</exclude>
+                            <exclude>**/*.doc</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.10</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>2.16</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <systemPropertyVariables>
+                        <POI.testdata.path>../../test-data</POI.testdata.path>
+                        <java.awt.headless>true</java.awt.headless>
+                        <org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
+                    </systemPropertyVariables>
+                    <argLine>-Duser.language=en -Duser.country=US</argLine>
+                    <excludes>
+                        <exclude>**/All*Tests.java</exclude>
+                        <exclude>**/TestUnfixedBugs.java</exclude>
+                        <exclude>**/TestcaseRecordInputStream.java</exclude>
+                        <exclude>**/POITestCase.java</exclude>
+
+                        <!-- TODO: error about no public construct, seems to run with JUnit 3.8... -->
+                        <exclude>**/TestWordToConverterSuite*.java</exclude>
+                        <exclude>**/TestExcelConverterSuite*.java</exclude>
+                    </excludes>
+                    <!--test>TestPPTX2PNG</test-->
+                    <!--parallel>both</parallel>
+                    <threadCount>10</threadCount-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.3</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <version>4.11</version>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/poi/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk</developerConnection>
+        <url>http://svn.apache.org/viewvc/poi</url>
+    </scm>
+
+</project>

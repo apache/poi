@@ -61,29 +61,7 @@ under the License.
     <property name="ooxml.lib" location="ooxml-lib"/>
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
-    <!-- compiler options options -->
-    <property name="jdk.version.source" value="1.6" description="JDK version of source code"/>
-    <property name="jdk.version.class" value="1.6" description="JDK version of generated class files"/>
-    <property name="compile.debug" value="true"/>
 
-    <!-- 
-        Logging is suppressed by default. 
-        To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger  
-    -->
-    <property name="org.apache.poi.util.POILogger" value="org.apache.poi.util.NullLogger"/>
-
-    <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
-    <property name="java.source.encoding" value="ASCII"/>
-
-    <!--
-      JVM system properties for running tests,
-      user.language and user.country are required as we have locale-sensitive formatters
-    -->
-    <property name="testpattern" value="Test*"/>
-    <property name="poi.test.locale" value="-Duser.language=en -Duser.country=US"/>
-    <property name="POI.testdata.path" value="test-data"/>
-    <property name="java.awt.headless" value="true"/>
-    
     <!-- Main: -->
     <property name="main.resource1.dir" value="src/resources/main"/>
     <property name="main.src" location="src/java"/>
@@ -157,10 +135,6 @@ under the License.
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.6.5.201403032054/jacoco-0.6.5.201403032054.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-4.0.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/4.0/asm-all-4.0.jar"/>
-
-    <!-- license checks -->
-    <property name="rat.jar" location="${main.lib}/apache-rat-0.10.jar"/>
-    <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.10/apache-rat-0.10.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
