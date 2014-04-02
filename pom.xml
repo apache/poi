@@ -117,6 +117,33 @@
                     </configuration>
                 </plugin>
 
+
+                <!-- TODO add  dir="legal/" + chnage default filename build/poi-manifest.mf-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.1</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Built-By>${user.name}</Built-By>
+                                <Specification-Title>Apache POI</Specification-Title>
+                                <Specification-Version>${version.id}</Specification-Version>
+                                <Specification-Vendor>The Apache Software Foundation</Specification-Vendor>
+                                <Implementation-Title>Apache POI</Implementation-Title>
+                                <Implementation-Version>${version.id}</Implementation-Version>
+                                <Implementation-Vendor-Id>org.apache.poi</Implementation-Vendor-Id>
+                                <Implementation-Vendor>The Apache Software Foundation</Implementation-Vendor>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
