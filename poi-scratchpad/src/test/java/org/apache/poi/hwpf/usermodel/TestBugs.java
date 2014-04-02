@@ -75,7 +75,7 @@ public class TestBugs extends TestCase
 
             assertEquals( expParagraph.text(), actParagraph.text() );
             assertEquals( "Diffent isInTable flags for paragraphs #" + p
-                    + " -- " + expParagraph + " -- " + actParagraph + ".",
+                    + " -- " + expParagraph + " -- " + actParagraph + "",
                     expParagraph.isInTable(), actParagraph.isInTable() );
             assertEquals( expParagraph.isTableRowEnd(),
                     actParagraph.isTableRowEnd() );
