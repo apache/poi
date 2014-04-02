@@ -1118,36 +1118,7 @@ under the License.
         <echo>Use mvn-deploy.sh to deploy the artifacts in the remote repository</echo>
     </target>
 
-
-
-    <target name="jar-src" description="Sources for Maven">
-        <jar destfile="${dist.dir}/${jar.name}-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${main.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-scratchpad-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${scratchpad.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-ooxml-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${ooxml.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-examples-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${examples.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-        <jar destfile="${dist.dir}/${jar.name}-excelant-${version.id}-sources-${DSTAMP}.jar"
-             manifest="build/poi-manifest.mf">
-            <fileset dir="${excelant.src}"/>
-            <metainf dir="legal/"/>
-        </jar>
-    </target>
-
+    <!-- TODO to be done with assembly -->
     <target name="assemble" depends="jar,jar-src">
          <!-- jars to include in binary assemblies -->         
          <patternset id="bin.dist.jars">
