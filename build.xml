@@ -1188,19 +1188,6 @@ under the License.
       </sequential>
     </macrodef>  
 
-    <!--
-      Install POI artifacts into the local repository. 
-      Invoking this command is equivalent to 'mvn install' in Maven-driven projects.
-    -->
-    <target name="mvn-install" depends="maven.ant.tasks-check,jar,maven-poms">
-      <m2-install artifactId="poi"/>
-      <m2-install artifactId="poi-scratchpad"/>
-      <m2-install artifactId="poi-ooxml"/>
-      <m2-install artifactId="poi-examples"/>
-      <m2-install artifactId="poi-ooxml-schemas"/>
-      <m2-install artifactId="poi-excelant"/>
-    </target>
-    
     <!-- Runs Apache Rat against the source code, to spot any files -->
     <!--  which are missing the correct license headers -->
     <!-- You need to download rat from http://incubator.apache.org/rat/ -->
