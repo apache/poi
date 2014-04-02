@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xssf.usermodel.examples;
+package poi.xssf.usermodel.examples;
 
 import java.io.FileOutputStream;
 import java.util.Date;
