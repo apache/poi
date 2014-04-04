@@ -24,12 +24,10 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
-        <version>3.11-beta1-SNAPSHOT</version>
+        <version>3.11-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.apache.poi</groupId>
     <artifactId>poi-examples</artifactId>
 
     <name>Apache POI Examples package</name>
@@ -38,12 +36,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -17,15 +17,15 @@
    limitations under the License.
 
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi</artifactId>
-    <version>3.11-beta1-SNAPSHOT</version>
+    <version>3.11-SNAPSHOT</version>
+
+    <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <name>Apache POI - the Java API for Microsoft Documents</name>
 
@@ -57,13 +57,13 @@
 
     <modules>
         <module>poi-main</module>
-        <module>ooxml-schemas</module>
         <module>poi-examples</module>
         <module>poi-excelant</module>
         <module>poi-ooxml</module>
         <module>poi-ooxml-schemas</module>
         <module>poi-scratchpad</module>
         <module>ooxml-schema-encryption</module>
+        <module>ooxml-schemas</module>
     </modules>
 
     <mailingLists>
@@ -94,95 +94,108 @@
     </organization>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
-                    <configuration>
-                        <source>${jdk.version.source}</source>
-                        <target>${jdk.version.class}</target>
-                        <includes>
-                            <include>**/*.java</include>
-                        </includes>
-                        <excludes>
-                            <exclude>**/*.jpg</exclude>
-                            <exclude>**/*.gif</exclude>
-                            <exclude>**/*.png</exclude>
-                            <exclude>**/*.pdf</exclude>
-                            <exclude>**/*.xls</exclude>
-                            <exclude>**/*.doc</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-
-                <!-- TODO add  dir="legal/" + chnage default filename build/poi-manifest.mf-->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.3.1</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            </manifest>
-                            <manifestEntries>
-                                <Built-By>${user.name}</Built-By>
-                                <Specification-Title>Apache POI</Specification-Title>
-                                <Specification-Version>${version.id}</Specification-Version>
-                                <Specification-Vendor>The Apache Software Foundation</Specification-Vendor>
-                                <Implementation-Title>Apache POI</Implementation-Title>
-                                <Implementation-Version>${version.id}</Implementation-Version>
-                                <Implementation-Vendor-Id>org.apache.poi</Implementation-Vendor-Id>
-                                <Implementation-Vendor>The Apache Software Foundation</Implementation-Vendor>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <!-- Attach source code to all artifacts TODO add  dir="legal/" -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.rat</groupId>
-                    <artifactId>apache-rat-plugin</artifactId>
-                    <version>0.10</version>
-                </plugin>
-
-            </plugins>
-        </pluginManagement>
-
         <plugins>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${jdk.version.source}</source>
+                    <target>${jdk.version.class}</target>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.jpg</exclude>
+                        <exclude>**/*.gif</exclude>
+                        <exclude>**/*.png</exclude>
+                        <exclude>**/*.pdf</exclude>
+                        <exclude>**/*.xls</exclude>
+                        <exclude>**/*.doc</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- TODO add  dir="legal/" + chnage default filename build/poi-manifest.mf-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Built-By>${user.name}</Built-By>
+                            <Specification-Title>Apache POI</Specification-Title>
+                            <Specification-Version>${project.version}</Specification-Version>
+                            <Specification-Vendor>The Apache Software Foundation</Specification-Vendor>
+                            <Implementation-Title>Apache POI</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Implementation-Vendor-Id>org.apache.poi</Implementation-Vendor-Id>
+                            <Implementation-Vendor>The Apache Software Foundation</Implementation-Vendor>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Attach source code to all artifacts TODO add  dir="legal/" -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.rat</groupId>-->
+                <!--<artifactId>apache-rat-plugin</artifactId>-->
+                <!--<version>0.10</version>-->
+            <!--</plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorSourceDirectory>etc/assembly</descriptorSourceDirectory>
+                    <ignoreMissingDescriptor>true</ignoreMissingDescriptor>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
+                <version>2.17</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.surefire</groupId>
                         <artifactId>surefire-junit47</artifactId>
-                        <version>2.16</version>
+                        <version>2.17</version>
                     </dependency>
                 </dependencies>
 
                 <configuration>
                     <systemPropertyVariables>
-                        <POI.testdata.path>../../test-data</POI.testdata.path>
+                        <POI.testdata.path>src/test/resources</POI.testdata.path>
                         <java.awt.headless>true</java.awt.headless>
                         <org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
                     </systemPropertyVariables>
@@ -240,6 +253,8 @@
         </dependency>
     </dependencies>
 
+
+    <!-- set dependencies version in here to avoid duplicating version in sub modules -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -288,8 +303,28 @@
                 <artifactId>ant</artifactId>
                 <version>1.8.2</version>
             </dependency>
+            <dependency>
+                <groupId>stax</groupId>
+                <artifactId>stax-api</artifactId>
+                <version>1.0.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                    <!-- Optional directory to put findbugs xdoc xml report -->
+                    <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
 
     <scm>
@@ -297,5 +332,18 @@
         <developerConnection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk</developerConnection>
         <url>http://svn.apache.org/viewvc/poi</url>
     </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>poi-releases</id>
+            <name>Apache POI Releases Repository</name>
+            <url>http://repo1.maven.org</url>
+        </repository>
+        <snapshotRepository>
+            <id>poi-snapshots</id>
+            <name>Apache Snapshots Repository</name>
+            <url>http://repo1.maven.org</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
