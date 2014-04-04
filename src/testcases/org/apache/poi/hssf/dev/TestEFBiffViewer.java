@@ -33,7 +33,8 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
 		SILENT_EXCLUDED.add("xor-encryption-abc.xls");    // password, ty again later!
 		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
 		SILENT_EXCLUDED.add("46904.xls");     // Exception, too old
-	};
+		SILENT_EXCLUDED.add("47251_1.xls");   // Broken test file
+	}
 	
 	@Override
 	void runOneFile(String dir, String file, List<String> failed) throws IOException {
