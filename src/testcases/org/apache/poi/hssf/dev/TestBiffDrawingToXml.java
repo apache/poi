@@ -33,7 +33,7 @@ public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
 //		EXCLUDED.add("XRefCalc.xls"); 
 //		EXCLUDED.add("43493.xls");
 //		EXCLUDED.add("51832.xls"); 
-	};
+	}
 	
 	@Override
 	@Ignore("Not yet done, nearly all files fail with various errors, remove this method when done to use the one from the abstract base class!...")

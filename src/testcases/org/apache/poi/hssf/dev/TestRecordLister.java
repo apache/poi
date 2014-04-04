@@ -29,7 +29,7 @@ public class TestRecordLister extends BaseXLSIteratingTest {
 
 		// these are likely ok to fail
 		SILENT_EXCLUDED.add("46904.xls"); 
-	};
+	}
 	
 	@Override
 	void runOneFile(String dir, String file, List<String> failed) throws IOException {

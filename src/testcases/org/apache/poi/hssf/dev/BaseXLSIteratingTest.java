@@ -58,7 +58,8 @@ public abstract class BaseXLSIteratingTest {
 		List<String> failed = new ArrayList<String>();
 
 		String[] files = new File(dir).list(new FilenameFilter() {
-			public boolean accept(File arg0, String arg1) {
+			@Override
+            public boolean accept(File arg0, String arg1) {
 				return arg1.toLowerCase().endsWith(".xls");
 			}
 		});
