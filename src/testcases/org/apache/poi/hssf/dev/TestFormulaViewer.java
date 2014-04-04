@@ -32,7 +32,7 @@ public class TestFormulaViewer extends BaseXLSIteratingTest {
 //		EXCLUDED.add("BOOK_in_capitals.xls"); 
 //		EXCLUDED.add("46904.xls"); 
 //		EXCLUDED.add("OddStyleRecord.xls");		
-	};
+	}
 	
 	@Override
 	@Ignore("Not yet done, nearly all files fail with various errors, remove this method when done to use the one from the abstract base class!...")

@@ -37,7 +37,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 		SILENT_EXCLUDED.add("password.xls"); 
 		SILENT_EXCLUDED.add("46904.xls");
 		SILENT_EXCLUDED.add("xor-encryption-abc.xls"); // unsupported XOR-encryption
-	};
+	}
 
 	@Override
 	void runOneFile(String dir, String file, List<String> failed) throws IOException {
