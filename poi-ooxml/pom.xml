@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
-        <version>3.11-beta1-SNAPSHOT</version>
+        <version>3.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>poi-ooxml</artifactId>
@@ -34,22 +34,22 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>poi-ooxml-schema</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-schemas</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>poi-ooxml-schema-encryption</artifactId>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>ooxml-schema-encryption</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>

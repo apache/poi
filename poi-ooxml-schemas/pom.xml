@@ -24,7 +24,7 @@ limitations under the License.
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
-        <version>3.11-beta1-SNAPSHOT</version>
+        <version>3.11-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,33 +33,7 @@ limitations under the License.
     <name>Apache POI</name>
     <url>http://poi.apache.org/</url>
     <description>Apache POI - Java API To Access Microsoft Format Files</description>
-
-    <mailingLists>
-        <mailingList>
-            <name>POI Users List</name>
-            <subscribe>user-subscribe@poi.apache.org</subscribe>
-            <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
-        </mailingList>
-        <mailingList>
-            <name>POI Developer List</name>
-            <subscribe>dev-subscribe@poi.apache.org</subscribe>
-            <unsubscribe>dev-unsubscribe@poi.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/poi-dev/</archive>
-        </mailingList>
-    </mailingLists>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
-    <organization>
-        <name>Apache Software Foundation</name>
-        <url>http://www.apache.org/</url>
-    </organization>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

@@ -72,15 +72,6 @@ under the License.
     <property name="main.reports.test" location="build/test-results"/>
     <property name="main.testokfile" location="build/main-testokfile.txt"/>
 
-    <!-- Scratchpad: -->
-    <property name="scratchpad.resource1.dir" value="src/resources/scratchpad"/>
-    <property name="scratchpad.src" location="src/scratchpad/src"/>
-    <property name="scratchpad.src.test" location="src/scratchpad/testcases"/>
-    <property name="scratchpad.reports.test" location="build/scratchpad-test-results"/>
-    <property name="scratchpad.output.dir" location="build/scratchpad-classes"/>
-    <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
-    <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
-
     <!-- Examples: -->
     <property name="examples.src" location="src/examples/src"/>
     <property name="examples.output.dir" location="build/examples-classes"/>
@@ -95,40 +86,6 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
     <property name="ooxml.encryption.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
-
-    <!-- Excelant: -->
-    <property name="excelant.resource.dir" value="src/excelant/resources"/>
-    <property name="excelant.src" location="src/excelant/java"/>
-    <property name="excelant.src.test" location="src/excelant/testcases"/>
-    <property name="excelant.reports.test" location="build/excelant-test-results"/>
-    <property name="excelant.output.dir" location="build/excelant-classes"/>
-    <property name="excelant.output.test.dir" location="build/excelant-test-classes"/>
-    <property name="excelant.testokfile" location="build/excelant-testokfile.txt"/>
-
-    <!-- jars in the /lib directory, see the fetch-jars target-->
-    <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.1.3.jar"/>
-    <property name="main.commons-logging.url"
-              value="${repository.m2}/maven2/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar"/>
-    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.9.jar"/>
-    <property name="main.commons-codec.url"
-              value="${repository.m2}/maven2/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
-    <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.17.jar"/>
-    <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
-    <property name="main.junit.jar" location="${main.lib}/junit-4.11.jar"/>
-    <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/4.11/junit-4.11.jar"/>
-    <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
-    <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
-    <property name="main.ant.jar" location="${main.lib}/ant-1.8.2.jar"/>
-    <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.8.2/ant-1.8.2.jar"/>
-
-    <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
-    <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
-    <property name="ooxml.dom4j.url" value="${repository.m2}/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
-    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
-    <property name="ooxml.xmlbeans.url"
-              value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
-    <property name="ooxml.jsr173.jar" location="${ooxml.lib}/stax-api-1.0.1.jar"/>
-    <property name="ooxml.jsr173.url" value="${repository.m2}/maven2/stax/stax-api/1.0.1/stax-api-1.0.1.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.6.5.201403032054.zip"/>
@@ -184,11 +141,6 @@ under the License.
         <pathelement location="${main.hamcrest.jar}"/>
     </path>
 
-    <path id="scratchpad.classpath">
-        <path refid="main.classpath"/>
-        <pathelement location="${main.output.dir}"/>
-    </path>
-
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
@@ -196,7 +148,6 @@ under the License.
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${ooxml.encryption.jar}"/>
     </path>
 
@@ -204,13 +155,6 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
-    </path>
-
-    <path id="test.scratchpad.classpath">
-        <path refid="scratchpad.classpath"/>
-        <pathelement location="${main.output.test.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
-        <pathelement location="${scratchpad.output.test.dir}"/>
     </path>
 
     <path id="test.ooxml.classpath">
@@ -227,7 +171,6 @@ under the License.
         <pathelement location="build/ooxml-xsds-lite"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
         <path refid="ooxml.classpath"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
@@ -238,20 +181,6 @@ under the License.
     <path id="examples.classpath">
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}"/>
-    </path>
-
-    <path id="excelant.classpath">
-        <path refid="ooxml.classpath"/>
-        <pathelement location="${main.ant.jar}"/>
-        <pathelement location="${ooxml.output.dir}"/>
-    </path>
-    <path id="test.excelant.classpath">
-        <path refid="ooxml.classpath"/>
-        <pathelement location="${ooxml.output.dir}"/>
-        <pathelement location="${excelant.output.dir}"/>
-        <pathelement location="${excelant.output.test.dir}"/>
-        <pathelement location="${main.output.test.dir}"/>
     </path>
 
     <path id="lib.jacoco">
@@ -269,8 +198,8 @@ under the License.
   Timestamp ${DSTAMP}
   The main targets of interest are:
     - clean       Erase all build work products (ie. everything in the build directory)
-    - compile     Compile all files from main, ooxml and scratchpad
-    - test        Run all unit tests from main, ooxml and scratchpad
+    - compile     Compile all files from main, ooxml
+    - test        Run all unit tests from main, ooxml
     - jar         Produce jar files
     - site        Generate all documentation (Requires Apache Forrest)
     - dist        Create a distribution (Requires Apache Forrest)
@@ -286,15 +215,9 @@ under the License.
         <mkdir dir="${main.output.dir}"/>
         <mkdir dir="${main.output.test.dir}"/>
         <mkdir dir="${main.reports.test}"/>
-        <mkdir dir="${scratchpad.output.dir}"/>
-        <mkdir dir="${scratchpad.output.test.dir}"/>
-        <mkdir dir="${scratchpad.reports.test}"/>
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
-        <mkdir dir="${excelant.output.dir}"/>
-        <mkdir dir="${excelant.output.test.dir}"/>
-        <mkdir dir="${excelant.reports.test}"/>
         <mkdir dir="${examples.output.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site}"/>
@@ -517,8 +440,8 @@ under the License.
     </target>
 
     <target name="compile" depends="init, compile-main,
-            compile-scratchpad, compile-examples, compile-excelant"
-            description="Compiles the POI main classes, scratchpad and examples"/>
+            compile-examples"
+            description="Compiles the POI main classes and examples"/>
 
     <target name="compile-all" depends="compile,compile-ooxml-lite"/>
 
@@ -551,58 +474,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-scratchpad" depends="compile-main">
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${scratchpad.output.dir}"
-               srcdir="${scratchpad.src}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath refid="scratchpad.classpath"/>
-        </javac>
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${scratchpad.output.test.dir}"
-               srcdir="${scratchpad.src.test}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath>
-                <path refid="scratchpad.classpath"/>
-                <pathelement location="${scratchpad.output.dir}"/>
-                <pathelement location="${main.output.test.dir}"/>
-            </classpath>
-        </javac>
-        <copy todir="${scratchpad.output.dir}">
-            <fileset dir="${scratchpad.resource1.dir}"/>
-        </copy>
-    </target>
-
-    <target name="compile-examples" depends="compile-main,compile-scratchpad,compile-ooxml">
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${examples.output.dir}"
-               srcdir="${examples.src}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath>
-                <path refid="ooxml.classpath"/>
-                <pathelement path="${ooxml.output.dir}"/>
-            </classpath>
-        </javac>
-        <copy todir="${examples.output.dir}">
-          <fileset dir="${examples.src}">
-            <include name="**/*.css"/>
-          </fileset>
-        </copy>
-    </target>
-
-    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds,compile-ooxml-encryption-xsds">
+    <target name="compile-ooxml" depends="compile-main,compile-ooxml-xsds,compile-ooxml-encryption-xsds">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
@@ -632,35 +504,6 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-excelant" depends="compile-main,compile-ooxml">
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${excelant.output.dir}"
-               srcdir="${excelant.src}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath refid="excelant.classpath"/>
-        </javac>
-        <javac target="${jdk.version.class}"
-               source="${jdk.version.source}"
-               destdir="${excelant.output.test.dir}"
-               srcdir="${excelant.src.test}"
-               debug="${compile.debug}"
-               encoding="${java.source.encoding}"
-               fork="yes"
-               includeantruntime="false">
-            <classpath>
-                <path refid="excelant.classpath"/>
-                <pathelement location="${excelant.output.dir}"/>
-                <pathelement path="${main.output.test.dir}"/>
-            </classpath>
-        </javac>
-        <copy todir="${excelant.output.dir}">
-            <fileset dir="${excelant.resource.dir}"/>
-        </copy>
-    </target>
 
     <target name="compile-version" depends="init"
             description="Compiles the version class">
@@ -693,8 +536,8 @@ under the License.
         </taskdef>
     </target>
 
-    <target name="test" depends="compile,jacocotask,test-main,test-scratchpad,test-ooxml,test-excelant"
-            description="Tests main, scratchpad and ooxml"/>
+    <target name="test" depends="compile,jacocotask,test-main,test-ooxml"
+            description="Tests main and ooxml"/>
     <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"/>
 
     <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
@@ -804,46 +647,6 @@ under the License.
         <echo file="${main.testokfile}" append="false" message="testok"/>
     </target>
 
-    <target name="-test-scratchpad-check">
-        <uptodate property="scratchpad.test.notRequired" targetfile="${scratchpad.testokfile}">
-            <srcfiles dir="${scratchpad.src}"/>
-            <srcfiles dir="${scratchpad.src.test}"/>
-        </uptodate>
-    </target>
-
-    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,jacocotask,test-scratchpad-download-resources"
-            unless="scratchpad.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-scratchpad.exec">
-            <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="scratchpad.test.failed">
-                <classpath refid="test.scratchpad.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <jvmarg value="${poi.test.locale}"/>
-                <jvmarg value="-ea"/>
-                <!-- 
-                  YK: ensure that JUnit has enough memory to run tests. 
-                  Without the line below tests fail on Mac OS X with jdk-1.6.26 
-                  and on Windows with jdk-1.5.22 
-                -->
-                <jvmarg value="-Xmx256M"/>            
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${scratchpad.reports.test}">
-                    <fileset dir="${scratchpad.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                        <exclude name="**/AllTests.java"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
-        <delete file="${scratchpad.testokfile}"/>
-        <antcall target="-test-scratchpad-write-testfile"/>
-    </target>
-
-    <target name="-test-scratchpad-write-testfile" unless="scratchpad.test.failed">
-        <echo file="${scratchpad.testokfile}" append="false" message="testok"/>
-    </target>
-
     <target name="-test-ooxml-check">
         <uptodate property="ooxml.test.notRequired" targetfile="${ooxml.testokfile}">
             <srcfiles dir="${ooxml.src}"/>
@@ -916,40 +719,6 @@ under the License.
         <echo message="Running ooxml tests against 'poi-ooxml-schemas'"/>
         <ooxml-test-runner classpath="ooxml-lite.classpath" type="ooxml-lite"/>
     </target>
-    
-    <target name="-test-excelant-check">
-        <uptodate property="excelant.test.notRequired" targetfile="${excelant.testokfile}">
-            <srcfiles dir="${excelant.src}"/>
-            <srcfiles dir="${excelant.src.test}"/>
-        </uptodate>
-    </target>
-
-    <target name="-test-excelant-write-testfile" unless="excelant.test.failed">
-        <echo file="${excelant.testokfile}" append="false" message="testok"/>
-    </target>
-
-    <target name="test-excelant" depends="compile-excelant,-test-excelant-check,jacocotask"
-            unless="excelant.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-excelant.exec">
-            <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="excelant.test.failed">
-                <classpath refid="test.excelant.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <jvmarg value="${poi.test.locale}"/>
-                <jvmarg value="-ea"/>
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${excelant.reports.test}">
-                    <fileset dir="${excelant.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
-        <delete file="${excelant.testokfile}"/>
-        <antcall target="-test-excelant-write-testfile"/>
-    </target>
-
 
 
     <target name="-check-docs">
@@ -1011,7 +780,6 @@ under the License.
 
             <classpath id="javadoc.classpath">
                 <path refid="main.classpath"/>
-                <path refid="scratchpad.classpath"/>
                 <path refid="ooxml.classpath"/>
                 <path path="${env.CLASSPATH}"/>
             </classpath>
@@ -1064,12 +832,10 @@ under the License.
          <!-- jars to include in binary assemblies -->         
          <patternset id="bin.dist.jars">
             <include name="${jar.name}-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-scratchpad-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-ooxml-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-examples-${version.id}-${DSTAMP}.jar"/>
             <include name="${jar.name}-ooxml-schemas-${version.id}-${DSTAMP}.jar"/>
-            <include name="${jar.name}-excelant-${version.id}-${DSTAMP}.jar"/>
-         </patternset>  
+         </patternset>
 
         <!-- patterns to exclude from source assemblies -->         
         <patternset id="src.dist.patterns"
@@ -1202,7 +968,6 @@ under the License.
            <fileset dir="src/">
               <exclude name="documentation/content/xdocs/dtd/" />
               <exclude name="documentation/content/xdocs/entity/" />
-              <exclude name="scratchpad/testcases/dummy.txt" />
               <exclude name="contrib/testcases/dummy.txt" />
               <exclude name="examples/lib/dummy.txt" />
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/presetShapeDefinitions.xml" />
@@ -1216,74 +981,6 @@ under the License.
        <!-- fail the build if at least one note is in the report -->
        <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
     </target>
-	
-	<target name="findbugs"><!-- depends="assemble" -->
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="http://prdownloads.sourceforge.net/findbugs/findbugs-noUpdateChecks-2.0.3.zip?download"/>
-            <param name="destfile" value="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"/>
-        </antcall>
 
-		<unzip src="${main.lib}/findbugs-noUpdateChecks-2.0.3.zip"
-		       dest="build/findbugs/lib">
-		    <patternset>
-		        <include name="findbugs-2.0.3/lib/**"/>
-		    </patternset>
-			<mapper type="flatten"/>
-		</unzip>
-		
-		<property name="findbugs.home" value="build/findbugs" />
-		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
-			<classpath>
-				<fileset dir="${findbugs.home}/lib">
-					<include name="*.jar" />
-				</fileset>
-			</classpath>
-		</taskdef>
-		<findbugs home="${findbugs.home}" output="html" outputFile="build/findbugs.html"
-			excludeFilter="src/resources/devtools/findbugs-filters.xml">
-			<fileset dir="${dist.dir}">
-				<include name="poi-${version.id}-*.jar"/>
-				<include name="poi-scratchpad-${version.id}-*.jar"/>
-				<include name="poi-ooxml-${version.id}-*.jar"/>
-				<exclude name="poi-*${version.id}-sources-*.jar"/>
-			</fileset>
-			<auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
-			<auxClasspath path="ooxml-lib/ooxml-encryption-1.1.jar" />
-			<auxClasspath path="ooxml-lib/xmlbeans-2.3.0.jar" />
-			<auxClasspath path="ooxml-lib/dom4j-1.6.1.jar" />
-			<auxClasspath path="ooxml-lib/stax-api-1.0.1.jar" />
-			<auxClasspath path="lib/commons-codec-1.9.jar" />
-			<auxClasspath path="lib/commons-logging-1.1.3.jar" />
-			<auxClasspath path="lib/junit-4.11.jar" />
-			<sourcePath path="src/java" />
-			<sourcePath path="src/ooxml/java" />
-			<sourcePath path="src/scratchpad/src" />
-		</findbugs>		
-	</target>
-
-	<target name="test-scratchpad-download-resources">
-		<!-- disable font downloading until TestFontRendering works on all plattforms -->
-		<!-- ... eventually copy the files into the resource dirs ... -->
-		<!--
-		<mkdir dir="build/scratchpad-test-resources"/>
-		
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="http://sourceforge.net/projects/monafont/files/monafont/monafont-2.90/monafont-ttf-2.90.zip/download"/>
-            <param name="destfile" value="build/scratchpad-test-resources/monafont-ttf-2.90.zip"/>
-        </antcall>
-
-		<unzip src="build/scratchpad-test-resources/monafont-ttf-2.90.zip"
-		       dest="build/scratchpad-test-resources">
-		    <patternset>
-		        <include name="mona.ttf"/>
-		    </patternset>
-		</unzip>
-		
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="https://googlefontdirectory.googlecode.com/hg-history/c5955de4df3e40f6ab705bbccbd1f5ad93998287/cabin/Cabin-Regular.ttf"/>
-            <param name="destfile" value="build/scratchpad-test-resources/Cabin-Regular.ttf"/>
-        </antcall>
-        -->
-	</target>
 	
 </project>
