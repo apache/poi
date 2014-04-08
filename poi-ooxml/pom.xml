@@ -28,8 +28,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>poi-ooxml</artifactId>
-    <name>Apache POI OOXML package</name>
-    <description>Apache POI - Java API To Access Microsoft Format Files</description>
+    <name>Apache POI - ooxml package</name>
+    <description>Apache POI - java api to access microsoft format files</description>
     <url>http://poi.apache.org/</url>
 
     <dependencies>
@@ -52,7 +52,7 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
+            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
 

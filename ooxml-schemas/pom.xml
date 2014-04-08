@@ -30,7 +30,7 @@
     <artifactId>ooxml-schemas</artifactId>
     <packaging>jar</packaging>
 
-    <name>Apache POI - Openxmlformats Schema package</name>
+    <name>Apache POI - ooxml schema package</name>
     <description>XmlBeans generated from the Ecma supplied xsds:
         http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%20Part%204%20(DOCX).zip</description>
     <url>http://poi.apache.org/</url>
@@ -99,13 +99,15 @@
                 <configuration>
                     <schemaDirectory>target/schemas</schemaDirectory>
                     <javaSource>1.5</javaSource>
-                    <optimize>yes</optimize>
+                    <!--<optimize>yes</optimize>-->
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
+
+        <!-- TODO to check not required to build
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
@@ -115,7 +117,7 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>

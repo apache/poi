@@ -30,7 +30,7 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
     <artifactId>poi-ooxml-schemas</artifactId>
 
-    <name>Apache POI</name>
+    <name>Apache POI - ooxml schemas</name>
     <url>http://poi.apache.org/</url>
     <description>Apache POI - Java API To Access Microsoft Format Files</description>
     <packaging>jar</packaging>
