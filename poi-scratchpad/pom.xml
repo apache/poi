@@ -29,20 +29,20 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>poi-scratchpad</artifactId>
-    <name>Apache POI Scratchpad package</name>
+    <name>Apache POI - scratchpad package</name>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi-main</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
+            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>
