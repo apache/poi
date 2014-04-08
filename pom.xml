@@ -53,6 +53,8 @@
         <jdk.version.class>1.6</jdk.version.class>
         <compile.debug>true</compile.debug>
 
+        <!-- used in text placed at the bottom of each javadoc see bottom property of javadoc plugin -->
+        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     </properties>
 
     <modules>
@@ -335,6 +337,71 @@
                     <xmlOutput>true</xmlOutput>
                     <!-- Optional directory to put findbugs xdoc xml report -->
                     <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- see http://maven.apache.org/plugins/maven-javadoc-plugin/javadoc-mojo.html -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <!-- Specifies the destination directory where javadoc saves the generated HTML files. Default is ${project.build.directory}/apidocs. -->
+                    <outputDirectory>${project.build.directory}/apidocs</outputDirectory>
+
+                    <!-- Suppresses the timestamp, which is hidden in an HTML comment in the generated HTML near the top of each page.  -->
+                    <notimestamp>true</notimestamp>
+                    <!-- Specifies the maximum Java heap size to be used when launching the Javadoc tool.
+                        JVMs refer to this property as the -Xmx parameter. Example: '512' or '512m'.
+                        The memory unit depends on the JVM used.
+                        The units supported could be: k, kb, m, mb, g, gb, t, tb. If no unit specified, the default unit is m. -->
+                    <maxmemory>384m</maxmemory>
+                    <!-- Specifies whether or not the author text is included in the generated Javadocs. Default is true. -->
+                    <author>true</author>
+                    <!-- Default is false. -->
+                    <verbose>false</verbose>
+                    <!-- Includes one "Use" page for each documented class and package. Default is true. -->
+                    <use>true</use>
+
+                    <sourceFileIncludes>
+                        <include>org/apache/poi/**</include>
+                    </sourceFileIncludes>
+                    <sourceFileExcludes>
+                        <exclude>org/apache/poi/hdf/**</exclude>
+                    </sourceFileExcludes>
+                    <bottom><![CDATA[<i>Copyright ${maven.build.timestamp} The Apache Software Foundation or its licensors, as applicable.</i>]]></bottom>
+                    <groups>
+                        <group>
+                            <title>DDF - Dreadful Drawing Format</title>
+                            <package name="org.apache.poi.ddf*"/>
+                        </group>
+                        <group>
+                            <title>HPSF - Horrible Property Set Format</title>
+                            <package name="org.apache.poi.hpsf*"/>
+                        </group>
+                        <group>
+                            <title>HSSF - Horrible Spreadsheet Format</title>
+                            <package name="org.apache.poi.hssf*"/>
+                        </group>
+                        <group>
+                            <title>HWPF - Horrible Word Processor Format</title>
+                            <package name="org.apache.poi.hwpf*"/>
+                        </group>
+                        <group>
+                            <title>POIFS - POI File System</title>
+                            <package name="org.apache.poi.poifs*"/>
+                        </group>
+                        <group>
+                            <title>Utilities</title>
+                            <package name="org.apache.poi.util*"/>
+                        </group>
+                        <group>
+                            <title>Examples</title>
+                            <package name="org.apache.poi.hpsf.examples*"/>
+                            <package name="org.apache.poi.hssf.usermodel.examples*"/>
+                        </group>
+                    </groups>
+
                 </configuration>
             </plugin>
         </plugins>

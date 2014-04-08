@@ -760,71 +760,9 @@ under the License.
         </touch>
     </target>
 
-    <!-- Generates the API documentation. -->
-    <target name="javadocs"
-            description="Generates the API documentation">
-        <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
-                 windowtitle="POI API Documentation" use="true" version="true" 
-                 maxmemory="384M" additionalparam="-notimestamp">
-
-            <packageset dir="${main.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
-            <packageset dir="${scratchpad.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-                <exclude name="org/apache/poi/hdf/**"/>
-            </packageset>
-            <packageset dir="${ooxml.src}" defaultexcludes="yes">
-                <include name="org/apache/poi/**"/>
-            </packageset>
-
-            <classpath id="javadoc.classpath">
-                <path refid="main.classpath"/>
-                <path refid="ooxml.classpath"/>
-                <path path="${env.CLASSPATH}"/>
-            </classpath>
-
-            <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
-            <bottom>
-                <![CDATA[<i>Copyright ${tstamp.year} The Apache Software Foundation or
-        its licensors, as applicable.</i>]]>
-            </bottom>
-            <group>
-                <title>DDF - Dreadful Drawing Format</title>
-                <package name="org.apache.poi.ddf*"/>
-            </group>
-            <group>
-                <title>HPSF - Horrible Property Set Format</title>
-                <package name="org.apache.poi.hpsf*"/>
-            </group>
-            <group>
-                <title>HSSF - Horrible Spreadsheet Format</title>
-                <package name="org.apache.poi.hssf*"/>
-            </group>
-            <group>
-                <title>HWPF - Horrible Word Processor Format</title>
-                <package name="org.apache.poi.hwpf*"/>
-            </group>
-            <group>
-                <title>POIFS - POI File System</title>
-                <package name="org.apache.poi.poifs*"/>
-            </group>
-            <group>
-                <title>Utilities</title>
-                <package name="org.apache.poi.util*"/>
-            </group>
-            <group>
-                <title>Examples</title>
-                <package name="org.apache.poi.hpsf.examples*"/>
-                <package name="org.apache.poi.hssf.usermodel.examples*"/>
-            </group>
-        </javadoc>
-
-    </target>
-
 
     <!-- Generates documentation and reports -->
-    <target name="site" depends="docs,javadocs"
+    <target name="site" depends="docs"
             description="Generates POI's website's contents"/>
 
     <!-- TODO to be done with assembly -->
@@ -931,7 +869,7 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, findbugs, rat-check"/>
+    <target name="jenkins" depends="compile-all, test-all, jar, assemble, findbugs, rat-check"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
