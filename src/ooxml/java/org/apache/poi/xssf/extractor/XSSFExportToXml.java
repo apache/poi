@@ -45,6 +45,7 @@ import javax.xml.validation.Validator;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -107,7 +108,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
     private Document getEmptyDocument() throws ParserConfigurationException{
 
-        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory dbfac = XMLHelper.getDocumentBuilderFactory();
         DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
 

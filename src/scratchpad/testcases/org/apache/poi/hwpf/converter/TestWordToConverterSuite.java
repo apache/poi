@@ -22,7 +22,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -32,8 +31,10 @@ import javax.xml.transform.stream.StreamResult;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocumentCore;
+import org.apache.poi.util.XMLHelper;
 
 public class TestWordToConverterSuite
 {
@@ -100,8 +101,7 @@ public class TestWordToConverterSuite
         }
 
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
@@ -130,8 +130,7 @@ public class TestWordToConverterSuite
         }
 
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         wordToHtmlConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
@@ -161,8 +160,7 @@ public class TestWordToConverterSuite
         }
 
         WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         wordToTextConverter.processDocument( wordDocument );
 
         StringWriter stringWriter = new StringWriter();

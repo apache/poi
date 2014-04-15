@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.StringWriter;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -30,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.util.XMLHelper;
 
 /**
  * Test cases for {@link WordToFoConverter}
@@ -43,8 +43,7 @@ public class TestWordToFoConverter extends POITestCase
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
 
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();

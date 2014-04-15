@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -48,6 +47,7 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -109,7 +109,7 @@ public class WordToFoConverter extends AbstractWordConverter
     {
         final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile );
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         wordToFoConverter.processDocument( hwpfDocument );
         return wordToFoConverter.getDocument();

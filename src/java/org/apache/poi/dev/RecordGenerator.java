@@ -34,6 +34,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -76,8 +77,7 @@ public class RecordGenerator {
                     )
                     ) {
                 // Get record name and package
-                DocumentBuilderFactory factory =
-                        DocumentBuilderFactory.newInstance();
+                DocumentBuilderFactory factory = XMLHelper.getDocumentBuilderFactory();
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document document = builder.parse(file);
                 Element record = document.getDocumentElement();

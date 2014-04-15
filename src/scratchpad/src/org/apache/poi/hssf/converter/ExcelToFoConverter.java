@@ -21,7 +21,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -45,6 +44,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -122,7 +122,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     {
         final HSSFWorkbook workbook = ExcelToFoUtils.loadXls( xlsFile );
         ExcelToFoConverter excelToHtmlConverter = new ExcelToFoConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
         return excelToHtmlConverter.getDocument();

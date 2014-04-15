@@ -34,6 +34,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -472,7 +473,7 @@ public final class TestXSSFExportToXML extends TestCase {
    }
    
    private void parseXML(String xmlData) throws IOException, SAXException, ParserConfigurationException {
-       DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+       DocumentBuilderFactory docBuilderFactory = XMLHelper.getDocumentBuilderFactory();
        docBuilderFactory.setNamespaceAware(true);
        docBuilderFactory.setValidating(false);
        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();

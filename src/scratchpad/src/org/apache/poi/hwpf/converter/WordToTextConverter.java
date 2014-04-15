@@ -50,6 +50,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -76,8 +77,7 @@ public class WordToTextConverter extends AbstractWordConverter
             throws Exception
     {
         WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         wordToTextConverter.processDocument( wordDocument );
         return wordToTextConverter.getText();
     }
@@ -130,8 +130,7 @@ public class WordToTextConverter extends AbstractWordConverter
         final HWPFDocumentCore wordDocument = AbstractWordUtils
                 .loadDoc( docFile );
         WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         wordToTextConverter.processDocument( wordDocument );
         return wordToTextConverter.getDocument();
     }
