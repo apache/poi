@@ -22,7 +22,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -35,6 +34,7 @@ import junit.framework.TestSuite;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.XMLHelper;
 
 public class TestExcelConverterSuite
 {
@@ -96,8 +96,7 @@ public class TestExcelConverterSuite
         }
 
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
 
         StringWriter stringWriter = new StringWriter();
@@ -126,8 +125,7 @@ public class TestExcelConverterSuite
         }
 
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
 
         StringWriter stringWriter = new StringWriter();

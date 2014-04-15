@@ -33,10 +33,11 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.w3c.dom.Document;
@@ -77,7 +78,7 @@ public class XSSFImportFromXML {
      */
     public void importFromXML(String xmlInputString) throws SAXException, XPathExpressionException, ParserConfigurationException, IOException {
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = XMLHelper.getDocumentBuilderFactory();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
 

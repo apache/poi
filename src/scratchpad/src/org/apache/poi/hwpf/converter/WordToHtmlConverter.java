@@ -16,12 +16,13 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -45,11 +46,10 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-
-import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
 
 /**
  * Converts Word files (95-2007) into HTML files.
@@ -157,7 +157,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     {
         final HWPFDocumentCore wordDocument = WordToHtmlUtils.loadDoc( docFile );
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         wordToHtmlConverter.processDocument( wordDocument );
         return wordToHtmlConverter.getDocument();

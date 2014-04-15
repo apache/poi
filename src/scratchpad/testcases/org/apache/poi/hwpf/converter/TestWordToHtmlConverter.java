@@ -18,19 +18,17 @@ package org.apache.poi.hwpf.converter;
 
 import java.io.StringWriter;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.PictureType;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 
 /**
@@ -50,8 +48,7 @@ public class TestWordToHtmlConverter extends POITestCase
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
 
-        Document newDocument = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder().newDocument();
+        Document newDocument = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument();
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
                 newDocument );
 

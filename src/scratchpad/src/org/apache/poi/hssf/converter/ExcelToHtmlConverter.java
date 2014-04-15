@@ -23,7 +23,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -45,6 +44,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -115,7 +115,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter
     {
         final HSSFWorkbook workbook = ExcelToHtmlUtils.loadXls( xlsFile );
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
         return excelToHtmlConverter.getDocument();
