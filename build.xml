@@ -214,7 +214,6 @@ under the License.
     </path>
 
     <path id="ooxml.classpath">
-        <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
@@ -245,7 +244,6 @@ under the License.
     </path>
 
     <path id="ooxml-lite.classpath">
-        <pathelement location="${ooxml.jsr173.jar}"/>
         <pathelement location="${ooxml.dom4j.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="build/ooxml-xsds-lite"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
@@ -407,7 +405,6 @@ under the License.
                 <and>
                     <available file="${ooxml.dom4j.jar}"/>
                     <available file="${ooxml.xmlbeans.jar}"/>
-                    <available file="${ooxml.jsr173.jar}"/>
                     <available file="${ooxml.xsds.jar}"/>
                 </and>
                 <isset property="disconnected"/>
@@ -423,10 +420,6 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${ooxml.xmlbeans.url}"/>
             <param name="destfile" value="${ooxml.xmlbeans.jar}"/>
-        </antcall>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${ooxml.jsr173.url}"/>
-            <param name="destfile" value="${ooxml.jsr173.jar}"/>
         </antcall>
     </target>
 
@@ -472,7 +465,7 @@ under the License.
 
         <taskdef name="xmlbean"
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans.jar}:${ooxml.jsr173.jar}"/>
+                 classpath="${ooxml.xmlbeans.jar}"/>
 
         <!-- We need a fair amount of memory to compile the xml schema, -->
         <!--  but limit it in case it goes wrong! -->
@@ -511,7 +504,7 @@ under the License.
             description="Compiles the OOXML encryption xsd files into XmlBeans">
         <taskdef name="xmlbean"
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans.jar}:${ooxml.jsr173.jar}"/>
+                 classpath="${ooxml.xmlbeans.jar}"/>
 
         <!-- We need a fair amount of memory to compile the xml schema, -->
         <!--  but limit it in case it goes wrong! -->
