@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.util.NumberToTextConverter;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -53,7 +54,7 @@ final class MathX {
             retval = Double.NaN;
         }
         else {
-            retval = java.math.BigDecimal.valueOf(n).setScale(p, java.math.RoundingMode.HALF_UP).doubleValue();
+            retval = new java.math.BigDecimal(NumberToTextConverter.toText(n)).setScale(p, java.math.RoundingMode.HALF_UP).doubleValue();
         }
 
         return retval;
