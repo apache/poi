@@ -39,6 +39,12 @@ public abstract class BaseTestBugzillaIssues {
     protected BaseTestBugzillaIssues(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
     }
+    
+    public static void assertAlmostEquals(double expected, double actual, double fuzz) {
+        double diff = Math.abs(expected - actual);
+        if (diff > fuzz)
+            fail(actual + " not within " + fuzz + " of " + expected);
+    }
 
     /**
      * Test writing a hyperlink
