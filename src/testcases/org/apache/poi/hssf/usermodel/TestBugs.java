@@ -62,6 +62,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -2485,4 +2486,68 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         openSample("xor-encryption-abc.xls");
     }
 
+    @Test
+    public void stackoverflow23114397() throws Exception {
+        Workbook wb = new HSSFWorkbook();
+        DataFormat format = wb.getCreationHelper().createDataFormat();
+        
+        // How close the sizing should be, given that not all
+        //  systems will have quite the same fonts on them
+        int fontAccuracy = 25;
+        
+        // x%
+        CellStyle iPercent = wb.createCellStyle();
+        iPercent.setDataFormat(format.getFormat("0%"));
+        // x.x%
+        CellStyle d1Percent = wb.createCellStyle();
+        d1Percent.setDataFormat(format.getFormat("0.0%"));
+        // x.xx%
+        CellStyle d2Percent = wb.createCellStyle();
+        d2Percent.setDataFormat(format.getFormat("0.00%"));
+        
+        Sheet s = wb.createSheet();
+        Row r1 = s.createRow(0);
+        
+        for (int i=0; i<3; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(0);
+        }
+        for (int i=3; i<6; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1);
+        }
+        for (int i=6; i<9; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(0.12345);
+        }
+        for (int i=9; i<12; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1.2345);
+        }
+        for (int i=0; i<12; i+=3) {
+            r1.getCell(i+0).setCellStyle(iPercent);
+            r1.getCell(i+1).setCellStyle(d1Percent);
+            r1.getCell(i+2).setCellStyle(d2Percent);
+        }
+        for (int i=0; i<12; i++) {
+            s.autoSizeColumn(i);
+            System.out.println(i + " => " + s.getColumnWidth(i));
+        }
+        
+        // Check the 0(.00)% ones
+        assertAlmostEquals(980, s.getColumnWidth(0), fontAccuracy);
+        assertAlmostEquals(1400, s.getColumnWidth(1), fontAccuracy);
+        assertAlmostEquals(1700, s.getColumnWidth(2), fontAccuracy);
+        
+        // Check the 100(.00)% ones
+        assertAlmostEquals(1500, s.getColumnWidth(3), fontAccuracy);
+        assertAlmostEquals(1950, s.getColumnWidth(4), fontAccuracy);
+        assertAlmostEquals(2225, s.getColumnWidth(5), fontAccuracy);
+        
+        // Check the 12(.34)% ones
+        assertAlmostEquals(1225, s.getColumnWidth(6), fontAccuracy);
+        assertAlmostEquals(1650, s.getColumnWidth(7), fontAccuracy);
+        assertAlmostEquals(1950, s.getColumnWidth(8), fontAccuracy);
+        
+        // Check the 123(.45)% ones
+        assertAlmostEquals(1500, s.getColumnWidth(9), fontAccuracy);
+        assertAlmostEquals(1950, s.getColumnWidth(10), fontAccuracy);
+        assertAlmostEquals(2225, s.getColumnWidth(11), fontAccuracy);
+    }
 }
