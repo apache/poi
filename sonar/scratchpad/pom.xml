@@ -13,6 +13,12 @@
 
     <name>Apache POI Scratchpad package</name>
 
+	<properties>
+		<!-- Exclude some generated code from Sonar analysis -->
+		<sonar.exclusions>src/main/java/org/apache/poi/hwpf/model/types/*,src/main/java/org/apache/poi/hdf/model/hdftypes/definitions/*</sonar.exclusions>
+	</properties>
+ 
+
     <build>
 		<plugins>
 			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
