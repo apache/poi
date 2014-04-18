@@ -2493,7 +2493,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         
         // How close the sizing should be, given that not all
         //  systems will have quite the same fonts on them
-        int fontAccuracy = 25;
+        float fontAccuracy = 0.15f;
         
         // x%
         CellStyle iPercent = wb.createCellStyle();
@@ -2527,7 +2527,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
         for (int i=0; i<12; i++) {
             s.autoSizeColumn(i);
-            System.out.println(i + " => " + s.getColumnWidth(i));
         }
         
         // Check the 0(.00)% ones

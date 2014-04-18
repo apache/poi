@@ -40,8 +40,9 @@ public abstract class BaseTestBugzillaIssues {
         _testDataProvider = testDataProvider;
     }
     
-    public static void assertAlmostEquals(double expected, double actual, double fuzz) {
+    public static void assertAlmostEquals(double expected, double actual, float factor) {
         double diff = Math.abs(expected - actual);
+        double fuzz = expected * factor;
         if (diff > fuzz)
             fail(actual + " not within " + fuzz + " of " + expected);
     }
