@@ -1455,4 +1455,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Workbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(0, nwb.getSheetIndex("Market Rates"));
     }
+
+    @Test
+    public void bug56315() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56315.xlsx");
+        Cell c = wb.getSheetAt(0).getRow(1).getCell(0);
+        CellValue cv = wb.getCreationHelper().createFormulaEvaluator().evaluate(c);
+        double rounded = cv.getNumberValue();
+        assertEquals(0.1, rounded, 0.0);
+    }
 }

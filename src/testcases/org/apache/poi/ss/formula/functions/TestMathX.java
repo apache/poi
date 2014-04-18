@@ -20,6 +20,8 @@
  */
 package org.apache.poi.ss.formula.functions;
 
+import java.lang.reflect.Constructor;
+
 import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
 
 
@@ -249,6 +251,16 @@ public class TestMathX extends AbstractNumericTestCase {
     }
 
     public void testProduct() {
+        assertEquals("Product ", 0, MathX.product(null));
+        assertEquals("Product ", 0, MathX.product(new double[] {}));
+        assertEquals("Product ", 0, MathX.product(new double[] {1, 0}));
+
+        assertEquals("Product ", 1, MathX.product(new double[] { 1 }));
+        assertEquals("Product ", 1, MathX.product(new double[] { 1, 1 }));
+        assertEquals("Product ", 10, MathX.product(new double[] { 10, 1 }));
+        assertEquals("Product ", -2, MathX.product(new double[] { 2, -1 }));
+        assertEquals("Product ", 99988000209999d, MathX.product(new double[] { 99999, 99999, 9999 }));
+        
         double[] d = new double[100];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1; 
         d[4] = 5.1;     d[5] = 6.1;     d[6] = 7.1;     d[7] = 8.1;
@@ -256,8 +268,8 @@ public class TestMathX extends AbstractNumericTestCase {
         d[12] = 13.1;   d[13] = 14.1;   d[14] = 15.1;   d[15] = 16.1;
         d[16] = 17.1;   d[17] = 18.1;   d[18] = 19.1;   d[19] = 20.1; 
         
-        double m = MathX.min(d);
-        assertEquals("Min ", 0, m);
+        double m = MathX.product(d);
+        assertEquals("Product ", 0, m);
         
         d = new double[20];
         d[0] = 1.1;     d[1] = 2.1;     d[2] = 3.1;     d[3] = 4.1; 
@@ -266,20 +278,12 @@ public class TestMathX extends AbstractNumericTestCase {
         d[12] = 13.1;   d[13] = 14.1;   d[14] = 15.1;   d[15] = 16.1;
         d[16] = 17.1;   d[17] = 18.1;   d[18] = 19.1;   d[19] = 20.1; 
         
-        m = MathX.min(d);
-        assertEquals("Min ", 1.1, m);
+        m = MathX.product(d);
+        assertEquals("Product ", 3459946360003355534d, m);
         
         d = new double[1000];
-        m = MathX.min(d);
-        assertEquals("Min ", 0, m);
-        
-        d[0] = -1.1;     d[1] = 2.1;     d[2] = -3.1;     d[3] = 4.1; 
-        d[4] = -5.1;     d[5] = 6.1;     d[6] = -7.1;     d[7] = 8.1;
-        d[8] = -9.1;     d[9] = 10.1;    d[10] = -11.1;   d[11] = 12.1;
-        d[12] = -13.1;   d[13] = 14.1;   d[14] = -15.1;   d[15] = 16.1;
-        d[16] = -17.1;   d[17] = 18.1;   d[18] = -19.1;   d[19] = 20.1; 
-        m = MathX.min(d);
-        assertEquals("Min ", -19.1, m);
+        m = MathX.product(d);
+        assertEquals("Product ", 0, m);
         
         d = new double[20];
         d[0] = -1.1;     d[1] = -2.1;     d[2] = -3.1;     d[3] = -4.1; 
@@ -287,8 +291,8 @@ public class TestMathX extends AbstractNumericTestCase {
         d[8] = -9.1;     d[9] = -10.1;    d[10] = -11.1;   d[11] = -12.1;
         d[12] = -13.1;   d[13] = -14.1;   d[14] = -15.1;   d[15] = -16.1;
         d[16] = -17.1;   d[17] = -18.1;   d[18] = -19.1;   d[19] = -20.1; 
-        m = MathX.min(d);
-        assertEquals("Min ", -20.1, m);
+        m = MathX.product(d);
+        assertEquals("Product ", 3459946360003355534d, m);
     }
 
     public void testMod() {
@@ -299,10 +303,14 @@ public class TestMathX extends AbstractNumericTestCase {
         assertEquals(-1.0, MathX.mod(3, -2));
         assertEquals(-1.0, MathX.mod(-3, -2));
 
+        assertEquals(0.0, MathX.mod(0, 2));
+        assertEquals(Double.NaN, MathX.mod(3, 0));
         assertEquals((double) 1.4, MathX.mod(3.4, 2));
         assertEquals((double) -1.4, MathX.mod(-3.4, -2));
         assertEquals((double) 0.6000000000000001, MathX.mod(-3.4, 2.0));// should actually be 0.6
         assertEquals((double) -0.6000000000000001, MathX.mod(3.4, -2.0));// should actually be -0.6
+        assertEquals(3.0, MathX.mod(3, Double.MAX_VALUE));
+        assertEquals(2.0, MathX.mod(Double.MAX_VALUE, 3));
 
         // Bugzilla 50033
         assertEquals(1.0, MathX.mod(13, 12));
@@ -675,6 +683,27 @@ public class TestMathX extends AbstractNumericTestCase {
 
         d = 2162.615d; p = 2;
         assertEquals("round ", 2162.62d, MathX.round(d, p));
+        
+        d = 0.049999999999999975d; p = 2;
+        assertEquals("round ", 0.05d, MathX.round(d, p));
+
+        d = 0.049999999999999975d; p = 1;
+        assertEquals("round ", 0.1d, MathX.round(d, p));
+        
+        d = Double.NaN; p = 1;
+        assertEquals("round ", Double.NaN, MathX.round(d, p));
+
+        d = Double.POSITIVE_INFINITY; p = 1;
+        assertEquals("round ", Double.NaN, MathX.round(d, p));
+
+        d = Double.NEGATIVE_INFINITY; p = 1;
+        assertEquals("round ", Double.NaN, MathX.round(d, p));
+
+        d = Double.MAX_VALUE; p = 1;
+        assertEquals("round ", Double.MAX_VALUE, MathX.round(d, p));
+
+        d = Double.MIN_VALUE; p = 1;
+        assertEquals("round ", 0.0d, MathX.round(d, p));
     }
 
     public void testRoundDown() {
@@ -722,6 +751,27 @@ public class TestMathX extends AbstractNumericTestCase {
         
         d = 150.0; p = -2;
         assertEquals("roundDown ", 100, MathX.roundDown(d, p));
+        
+        d = 0.049999999999999975d; p = 2;
+        assertEquals("round ", 0.04d, MathX.roundDown(d, p));
+
+        d = 0.049999999999999975d; p = 1;
+        assertEquals("round ", 0.0d, MathX.roundDown(d, p));
+        
+        d = Double.NaN; p = 1;
+        assertEquals("round ", Double.NaN, MathX.roundDown(d, p));
+
+        d = Double.POSITIVE_INFINITY; p = 1;
+        assertEquals("round ", Double.NaN, MathX.roundDown(d, p));
+
+        d = Double.NEGATIVE_INFINITY; p = 1;
+        assertEquals("round ", Double.NaN, MathX.roundDown(d, p));
+
+        d = Double.MAX_VALUE; p = 1;
+        assertEquals("round ", Double.MAX_VALUE, MathX.roundDown(d, p));
+
+        d = Double.MIN_VALUE; p = 1;
+        assertEquals("round ", 0.0d, MathX.roundDown(d, p));
     }
 
     public void testRoundUp() {
@@ -769,6 +819,27 @@ public class TestMathX extends AbstractNumericTestCase {
         
         d = 150.0; p = -2;
         assertEquals("roundUp ", 200, MathX.roundUp(d, p));
+        
+        d = 0.049999999999999975d; p = 2;
+        assertEquals("round ", 0.05d, MathX.roundUp(d, p));
+
+        d = 0.049999999999999975d; p = 1;
+        assertEquals("round ", 0.1d, MathX.roundUp(d, p));
+        
+        d = Double.NaN; p = 1;
+        assertEquals("round ", Double.NaN, MathX.roundUp(d, p));
+
+        d = Double.POSITIVE_INFINITY; p = 1;
+        assertEquals("round ", Double.NaN, MathX.roundUp(d, p));
+
+        d = Double.NEGATIVE_INFINITY; p = 1;
+        assertEquals("round ", Double.NaN, MathX.roundUp(d, p));
+
+        d = Double.MAX_VALUE; p = 1;
+        assertEquals("round ", Double.MAX_VALUE, MathX.roundUp(d, p));
+
+        d = Double.MIN_VALUE; p = 1;
+        assertEquals("round ", 0.1d, MathX.roundUp(d, p));
     }
 
     public void testCeiling() {
@@ -877,4 +948,14 @@ public class TestMathX extends AbstractNumericTestCase {
         assertEquals("floor ", 0, MathX.floor(d, s));
     }
 
+    public void testCoverage() throws Exception {
+        // get the default constructor
+        final Constructor<MathX> c = MathX.class.getDeclaredConstructor(new Class[] {});
+
+        // make it callable from the outside
+        c.setAccessible(true);
+
+        // call it
+        c.newInstance((Object[]) null);
+    }
 }
