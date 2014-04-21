@@ -29,7 +29,6 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.xmlbeans.XmlException;
 
 import com.microsoft.schemas.office.x2006.encryption.CTKeyEncryptor;
 import com.microsoft.schemas.office.x2006.encryption.EncryptionDocument;
@@ -50,15 +49,11 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
     
     private List<AgileCertificateEntry> certList = new ArrayList<AgileCertificateEntry>();
 
-    
     public AgileEncryptionVerifier(String descriptor) {
-        EncryptionDocument ed;
-        try {
-            ed = EncryptionDocument.Factory.parse(descriptor);
-        } catch (XmlException e) {
-            throw new EncryptedDocumentException("Unable to parse encryption descriptor", e);
-        }
-
+        this(AgileEncryptionInfoBuilder.parseDescriptor(descriptor));
+    }
+    
+    protected AgileEncryptionVerifier(EncryptionDocument ed) {
         Iterator<CTKeyEncryptor> encList = ed.getEncryption().getKeyEncryptors().getKeyEncryptorList().iterator();
         CTPasswordKeyEncryptor keyData;
         try {

@@ -195,16 +195,18 @@ public class CryptoFunctions {
         
         try {
             // Ensure the JCE policies files allow for this sized key
-            if (Cipher.getMaxAllowedKeyLength(key.getAlgorithm()) < keySizeInBytes*8) {
+            if (Cipher.getMaxAllowedKeyLength(cipherAlgorithm.jceId) < keySizeInBytes*8) {
                 throw new EncryptedDocumentException("Export Restrictions in place - please install JCE Unlimited Strength Jurisdiction Policy files");
             }
 
             Cipher cipher;
-            if (cipherAlgorithm.needsBouncyCastle) {
+            if (cipherAlgorithm == CipherAlgorithm.rc4) {
+                cipher = Cipher.getInstance(cipherAlgorithm.jceId);
+            } else if (cipherAlgorithm.needsBouncyCastle) {
                 registerBouncyCastle();
-                cipher = Cipher.getInstance(key.getAlgorithm() + "/" + chain.jceId + "/" + padding, "BC");
+                cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding, "BC");
             } else {
-                cipher = Cipher.getInstance(key.getAlgorithm() + "/" + chain.jceId + "/" + padding);
+                cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding);
             }
             
             if (vec == null) {
@@ -281,7 +283,6 @@ public class CryptoFunctions {
             throw new EncryptedDocumentException("Only the BouncyCastle provider supports your encryption settings - please add it to the classpath.");
         }
     }
-
 
     private static final int InitialCodeArray[] = { 
         0xE1F0, 0x1D0F, 0xCC9C, 0x84C0, 0x110C, 0x0E10, 0xF1CE, 
