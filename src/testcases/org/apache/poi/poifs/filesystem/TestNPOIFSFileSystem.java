@@ -17,12 +17,17 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.PropertySet;
@@ -33,14 +38,17 @@ import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.IOUtils;
+import org.junit.Test;
 
 /**
  * Tests for the new NIO POIFSFileSystem implementation
  */
-public final class TestNPOIFSFileSystem extends TestCase {
+public final class TestNPOIFSFileSystem {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
 
-   public void testBasicOpen() throws Exception {
+   @Test
+   public void basicOpen() throws Exception {
       NPOIFSFileSystem fsA, fsB;
       
       // With a simple 512 block file
@@ -58,7 +66,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
       }
    }
 
-   public void testPropertiesAndFatOnRead() throws Exception {
+   @Test
+   public void propertiesAndFatOnRead() throws Exception {
       NPOIFSFileSystem fsA, fsB;
       
       // With a simple 512 block file
@@ -196,7 +205,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Check that for a given block, we can correctly figure
     *  out what the next one is
     */
-   public void testNextBlock() throws Exception {
+   @Test
+   public void nextBlock() throws Exception {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
@@ -253,7 +263,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
    /**
     * Check we get the right data back for each block
     */
-   public void testGetBlock() throws Exception {
+   @Test
+   public void getBlock() throws Exception {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
@@ -322,7 +333,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Ask for free blocks where there are some already
     *  to be had from the FAT
     */
-   public void testGetFreeBlockWithSpare() throws Exception {
+   @Test
+   public void getFreeBlockWithSpare() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       
       // Our first BAT block has spares
@@ -349,7 +361,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Ask for free blocks where no free ones exist, and so the
     *  file needs to be extended and another BAT/XBAT added
     */
-   public void testGetFreeBlockWithNoneSpare() throws Exception {
+   @Test
+   public void getFreeBlockWithNoneSpare() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       int free;
 
@@ -479,7 +492,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Test that we can correctly get the list of directory
     *  entries, and the details on the files in them
     */
-   public void testListEntries() throws Exception {
+   @Test
+   public void listEntries() throws Exception {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
@@ -519,7 +533,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Tests that we can get the correct contents for
     *  a document in the filesystem 
     */
-   public void testGetDocumentEntry() throws Exception {
+   @Test
+   public void getDocumentEntry() throws Exception {
       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
@@ -552,7 +567,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Read a file, write it and read it again.
     * Then, alter+add some streams, write and read
     */
-   public void testReadWriteRead() throws Exception {
+   @Test
+   public void readWriteRead() throws Exception {
       // TODO
       // TODO
    }
@@ -561,7 +577,8 @@ public final class TestNPOIFSFileSystem extends TestCase {
     * Create a new file, write it and read it again
     * Then, add some streams, write and read
     */
-   public void testCreateWriteRead() throws Exception {
+   @Test
+   public void createWriteRead() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem();
       
       // Initially has a BAT but not SBAT
@@ -577,10 +594,11 @@ public final class TestNPOIFSFileSystem extends TestCase {
       fs.writeFilesystem(baos);
       fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
       
-      // Check it's still like that
+      // Property table entries have been added to the blocks 
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(3));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
 
       // Now add a normal stream and a mini stream
@@ -588,6 +606,54 @@ public final class TestNPOIFSFileSystem extends TestCase {
       
       // TODO The rest of the test
    }
+
+   @Test
+   public void writPOIFSWriterListener() throws Exception {
+       File testFile = POIDataSamples.getSpreadSheetInstance().getFile("Simple.xls");
+       NPOIFSFileSystem src = new NPOIFSFileSystem(testFile);
+       byte wbDataExp[] = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));
+       
+       NPOIFSFileSystem nfs = new NPOIFSFileSystem();
+       copy(src.getRoot(), nfs.getRoot());
+       src.close();
+
+       ByteArrayOutputStream bos = new ByteArrayOutputStream();
+       nfs.writeFilesystem(bos);
+       nfs.close();
+       
+       POIFSFileSystem pfs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+       byte wbDataAct[] = IOUtils.toByteArray(pfs.createDocumentInputStream("Workbook"));
+       
+       assertThat(wbDataExp, equalTo(wbDataAct));
+   }
+
+   private static void copy(final DirectoryNode src, final DirectoryNode dest) throws IOException {
+       Iterator<Entry> srcIter = src.getEntries();
+       while(srcIter.hasNext()) {
+           Entry entry = srcIter.next();
+           if (entry.isDirectoryEntry()) {
+               DirectoryNode srcDir = (DirectoryNode)entry;
+               DirectoryNode destDir = (DirectoryNode)dest.createDirectory(srcDir.getName());
+               destDir.setStorageClsid(src.getStorageClsid());
+               copy(srcDir, destDir);
+           } else {
+               final DocumentNode srcDoc = (DocumentNode)entry;
+               // dest.createDocument(srcDoc.getName(), src.createDocumentInputStream(srcDoc));
+               dest.createDocument(srcDoc.getName(), srcDoc.getSize(), new POIFSWriterListener() {
+                   public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+                       try {
+                           DocumentInputStream dis = src.createDocumentInputStream(srcDoc);
+                           IOUtils.copy(dis, event.getStream());
+                       } catch (IOException e) {
+                           throw new RuntimeException(e);
+                       }
+                   }
+               });
+           }
+       }
+       
+   }
+   
    
    // TODO Directory/Document write tests
 }

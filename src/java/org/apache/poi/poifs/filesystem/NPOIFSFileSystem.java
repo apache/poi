@@ -117,12 +117,14 @@ public class NPOIFSFileSystem extends BlockStore
         // Mark us as having a single empty BAT at offset 0
         _header.setBATCount(1);
         _header.setBATArray(new int[] { 0 });
-        _bat_blocks.add(BATBlock.createEmptyBATBlock(bigBlockSize, false));
+        BATBlock bb = BATBlock.createEmptyBATBlock(bigBlockSize, false);
+        bb.setOurBlockIndex(0);
+        _bat_blocks.add(bb);
+
         setNextBlock(0, POIFSConstants.FAT_SECTOR_BLOCK);
-        
-        // Now associate the properties with the empty block
-        _property_table.setStartBlock(1);
         setNextBlock(1, POIFSConstants.END_OF_CHAIN);
+
+        _property_table.setStartBlock(POIFSConstants.END_OF_CHAIN);
     }
 
     /**
@@ -483,13 +485,11 @@ public class NPOIFSFileSystem extends BlockStore
      */
     @Override
     protected int getFreeBlock() throws IOException {
+        int numSectors = bigBlockSize.getBATEntriesPerBlock();
+
        // First up, do we have any spare ones?
        int offset = 0;
-       for(int i=0; i<_bat_blocks.size(); i++) {
-          int numSectors = bigBlockSize.getBATEntriesPerBlock();
-
-          // Check this one
-          BATBlock bat = _bat_blocks.get(i);
+       for (BATBlock bat : _bat_blocks) {
           if(bat.hasFreeSectors()) {
              // Claim one of them and return it
              for(int j=0; j<numSectors; j++) {
@@ -699,8 +699,13 @@ public class NPOIFSFileSystem extends BlockStore
      * Has our in-memory objects write their state
      *  to their backing blocks 
      */
-    private void syncWithDataSource() throws IOException
-    {
+    private void syncWithDataSource() throws IOException {
+        // Properties
+        NPOIFSStream propStream = new NPOIFSStream(this, _header.getPropertyStart());
+        _property_table.preWrite();
+        _property_table.write(propStream);
+        // _header.setPropertyStart has been updated on write ...
+        
        // HeaderBlock
        HeaderBlockWriter hbw = new HeaderBlockWriter(_header);
        hbw.writeBlock( getBlockAt(-1) );
@@ -713,11 +718,6 @@ public class NPOIFSFileSystem extends BlockStore
        
        // SBATs
        _mini_store.syncWithDataSource();
-       
-       // Properties
-       _property_table.write(
-             new NPOIFSStream(this, _header.getPropertyStart())
-       );
     }
     
     /**

@@ -20,6 +20,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -47,6 +48,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
 {
 	private BlockStore blockStore;
 	private int startBlock;
+	private OutputStream outStream;
 	
 	/**
 	 * Constructor for an existing stream. It's up to you
@@ -92,7 +94,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       }
       return new StreamBlockByteBufferIterator(startBlock);
    }
-   
+
    /**
     * Updates the contents of the stream to the new
     *  set of bytes.
@@ -100,62 +102,16 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
     *  need to update the size in the property yourself
     */
    public void updateContents(byte[] contents) throws IOException {
-      // How many blocks are we going to need?
-      int blockSize = blockStore.getBlockStoreBlockSize();
-      int blocks = (int)Math.ceil( ((double)contents.length) / blockSize );
-      
-      // Make sure we don't encounter a loop whilst overwriting
-      //  the existing blocks
-      ChainLoopDetector loopDetector = blockStore.getChainLoopDetector();
-      
-      // Start writing
-      int prevBlock = POIFSConstants.END_OF_CHAIN;
-      int nextBlock = startBlock;
-      for(int i=0; i<blocks; i++) {
-         int thisBlock = nextBlock;
-         
-         // Allocate a block if needed, otherwise figure
-         //  out what the next block will be
-         if(thisBlock == POIFSConstants.END_OF_CHAIN) {
-            thisBlock = blockStore.getFreeBlock();
-            loopDetector.claim(thisBlock);
-            
-            // We're on the end of the chain
-            nextBlock = POIFSConstants.END_OF_CHAIN;
-            
-            // Mark the previous block as carrying on to us if needed
-            if(prevBlock != POIFSConstants.END_OF_CHAIN) {
-               blockStore.setNextBlock(prevBlock, thisBlock);
-            }
-            blockStore.setNextBlock(thisBlock, POIFSConstants.END_OF_CHAIN);
-            
-            // If we've just written the first block on a 
-            //  new stream, save the start block offset
-            if(this.startBlock == POIFSConstants.END_OF_CHAIN) {
-               this.startBlock = thisBlock;
-            }
-         } else {
-            loopDetector.claim(thisBlock);
-            nextBlock = blockStore.getNextBlock(thisBlock);
-         }
-         
-         // Write it
-         ByteBuffer buffer = blockStore.createBlockIfNeeded(thisBlock);
-         int startAt = i*blockSize;
-         int endAt = Math.min(contents.length - startAt, blockSize);
-         buffer.put(contents, startAt, endAt); 
-         
-         // Update pointers
-         prevBlock = thisBlock;
-      }
-      int lastBlock = prevBlock;
-      
-      // If we're overwriting, free any remaining blocks
-      NPOIFSStream toFree = new NPOIFSStream(blockStore, nextBlock);
-      toFree.free(loopDetector);
-      
-      // Mark the end of the stream
-      blockStore.setNextBlock(lastBlock, POIFSConstants.END_OF_CHAIN);
+       OutputStream os = getOutputStream();
+       os.write(contents);
+       os.close();
+   }
+
+   public OutputStream getOutputStream() throws IOException {
+       if (outStream == null) {
+           outStream = new StreamBlockByteBuffer();
+       }
+       return outStream;
    }
    
    // TODO Streaming write support
@@ -221,6 +177,88 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       public void remove() {
          throw new UnsupportedOperationException();
       }
+   }
+   
+   protected class StreamBlockByteBuffer extends OutputStream {
+       byte oneByte[] = new byte[1];
+       ByteBuffer buffer;
+       // Make sure we don't encounter a loop whilst overwriting
+       // the existing blocks
+       ChainLoopDetector loopDetector;
+       int prevBlock, nextBlock;
+
+       protected StreamBlockByteBuffer() throws IOException {
+           loopDetector = blockStore.getChainLoopDetector();
+           prevBlock = POIFSConstants.END_OF_CHAIN;
+           nextBlock = startBlock;
+       }
+
+       protected void createBlockIfNeeded() throws IOException {
+           if (buffer != null && buffer.hasRemaining()) return;
+           
+           int thisBlock = nextBlock;
+           
+           // Allocate a block if needed, otherwise figure
+           //  out what the next block will be
+           if(thisBlock == POIFSConstants.END_OF_CHAIN) {
+              thisBlock = blockStore.getFreeBlock();
+              loopDetector.claim(thisBlock);
+              
+              // We're on the end of the chain
+              nextBlock = POIFSConstants.END_OF_CHAIN;
+              
+              // Mark the previous block as carrying on to us if needed
+              if(prevBlock != POIFSConstants.END_OF_CHAIN) {
+                 blockStore.setNextBlock(prevBlock, thisBlock);
+              }
+              blockStore.setNextBlock(thisBlock, POIFSConstants.END_OF_CHAIN);
+              
+              // If we've just written the first block on a 
+              //  new stream, save the start block offset
+              if(startBlock == POIFSConstants.END_OF_CHAIN) {
+                 startBlock = thisBlock;
+              }
+           } else {
+              loopDetector.claim(thisBlock);
+              nextBlock = blockStore.getNextBlock(thisBlock);
+           }
+
+           buffer = blockStore.createBlockIfNeeded(thisBlock);
+           
+           // Update pointers
+           prevBlock = thisBlock;
+       }
+       
+       public void write(int b) throws IOException {
+            oneByte[0] = (byte)(b & 0xFF);
+            write(oneByte);
+       }
+    
+        public void write(byte[] b, int off, int len) throws IOException {
+            if ((off < 0) || (off > b.length) || (len < 0) ||
+                    ((off + len) > b.length) || ((off + len) < 0)) {
+                throw new IndexOutOfBoundsException();
+            } else if (len == 0) {
+                return;
+            }
+
+            do {
+                createBlockIfNeeded();
+                int writeBytes = Math.min(buffer.remaining(), len);
+                buffer.put(b, off, writeBytes);
+                off += writeBytes;
+                len -= writeBytes;
+            } while (len > 0);
+        }
+    
+        public void close() throws IOException {
+            // If we're overwriting, free any remaining blocks
+            NPOIFSStream toFree = new NPOIFSStream(blockStore, nextBlock);
+            toFree.free(loopDetector);
+            
+            // Mark the end of the stream
+            blockStore.setNextBlock(prevBlock, POIFSConstants.END_OF_CHAIN);
+        }
    }
 }
 

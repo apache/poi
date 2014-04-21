@@ -17,8 +17,8 @@
 
 package org.apache.poi.poifs.property;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -124,17 +124,34 @@ public final class NPropertyTable extends PropertyTableBase {
     }
  
     /**
+     * Prepare to be written
+     */
+    public void preWrite() {
+        List<Property> pList = new ArrayList<Property>();
+        // give each property its index
+        int i=0;
+        for (Property p : _properties) {
+            // only handle non-null properties 
+            if (p == null) continue;
+            p.setIndex(i++);
+            pList.add(p);
+        }
+
+        // prepare each property for writing
+        for (Property p : pList) p.preWrite();
+    }    
+    
+    /**
      * Writes the properties out into the given low-level stream
      */
     public void write(NPOIFSStream stream) throws IOException {
-       // TODO - Use a streaming write
-       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       OutputStream os = stream.getOutputStream();
        for(Property property : _properties) {
           if(property != null) {
-             property.writeData(baos);
+             property.writeData(os);
           }
        }
-       stream.updateContents(baos.toByteArray());
+       os.close();
        
        // Update the start position if needed
        if(getStartBlock() != stream.getStartBlock()) {

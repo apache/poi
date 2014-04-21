@@ -412,7 +412,11 @@ public class DirectoryNode
                                         final POIFSWriterListener writer)
         throws IOException
     {
-        return createDocument(new POIFSDocument(name, size, _path, writer));
+        if(_nfilesystem != null) {
+            return createDocument(new NPOIFSDocument(name, size, _nfilesystem, writer));
+         } else {
+            return createDocument(new POIFSDocument(name, size, _path, writer));
+         }
     }
 
     /**
