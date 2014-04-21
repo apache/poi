@@ -31,7 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,6 +42,8 @@ import java.util.Stack;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -542,12 +543,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	 * Helps identify the source file
 	 */
 	private static String getFileMD5(File f) {
-		MessageDigest m;
-		try {
-			m = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
+	    MessageDigest m = CryptoFunctions.getMessageDigest(HashAlgorithm.md5);
 
 		byte[]buf = new byte[2048];
 		try {

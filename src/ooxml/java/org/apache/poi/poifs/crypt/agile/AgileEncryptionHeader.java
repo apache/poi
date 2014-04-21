@@ -16,14 +16,11 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.agile;
 
-import java.io.IOException;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.xmlbeans.XmlException;
 
 import com.microsoft.schemas.office.x2006.encryption.CTDataIntegrity;
 import com.microsoft.schemas.office.x2006.encryption.CTKeyData;
@@ -33,14 +30,11 @@ import com.microsoft.schemas.office.x2006.encryption.STCipherChaining;
 public class AgileEncryptionHeader extends EncryptionHeader {
     private byte encryptedHmacKey[], encryptedHmacValue[];
     
-    public AgileEncryptionHeader(String descriptor) throws IOException {
-        EncryptionDocument ed;
-        try {
-            ed = EncryptionDocument.Factory.parse(descriptor);
-        } catch (XmlException e) {
-            throw new EncryptedDocumentException("Unable to parse encryption descriptor", e);
-        }
-        
+    public AgileEncryptionHeader(String descriptor) {
+        this(AgileEncryptionInfoBuilder.parseDescriptor(descriptor));
+    }
+    
+    protected AgileEncryptionHeader(EncryptionDocument ed) {
         CTKeyData keyData;
         try {
             keyData = ed.getEncryption().getKeyData();

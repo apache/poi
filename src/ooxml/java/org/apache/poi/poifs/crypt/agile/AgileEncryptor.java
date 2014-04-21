@@ -403,6 +403,11 @@ public class AgileEncryptor extends Encryptor {
     }
 
     protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
+        final CTKeyEncryptor.Uri.Enum passwordUri = 
+            CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_PASSWORD;
+        final CTKeyEncryptor.Uri.Enum certificateUri = 
+                CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_CERTIFICATE;
+        
         AgileEncryptionVerifier ver = builder.getVerifier();
         AgileEncryptionHeader header = builder.getHeader();
         
@@ -412,7 +417,7 @@ public class AgileEncryptor extends Encryptor {
         CTKeyData keyData = edRoot.addNewKeyData();
         CTKeyEncryptors keyEncList = edRoot.addNewKeyEncryptors();
         CTKeyEncryptor keyEnc = keyEncList.addNewKeyEncryptor();
-        keyEnc.setUri(CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_PASSWORD);
+        keyEnc.setUri(passwordUri);
         CTPasswordKeyEncryptor keyPass = keyEnc.addNewEncryptedPasswordKey();
 
         keyPass.setSpinCount(ver.getSpinCount());
@@ -469,7 +474,7 @@ public class AgileEncryptor extends Encryptor {
         
         for (AgileCertificateEntry ace : ver.getCertificates()) {
             keyEnc = keyEncList.addNewKeyEncryptor();
-            keyEnc.setUri(CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_CERTIFICATE);
+            keyEnc.setUri(certificateUri);
             CTCertificateKeyEncryptor certData = keyEnc.addNewEncryptedCertificateKey();
             try {
                 certData.setX509Certificate(ace.x509.getEncoded());
@@ -479,13 +484,13 @@ public class AgileEncryptor extends Encryptor {
             certData.setEncryptedKeyValue(ace.encryptedKey);
             certData.setCertVerifier(ace.certVerifier);
         }
-
+        
         XmlOptions xo = new XmlOptions();
         xo.setCharacterEncoding("UTF-8");
         Map<String,String> nsMap = new HashMap<String,String>();
-        nsMap.put("http://schemas.microsoft.com/office/2006/keyEncryptor/password","p");
-        nsMap.put("http://schemas.microsoft.com/office/2006/keyEncryptor/certificate", "c");
-        nsMap.put("http://schemas.microsoft.com/office/2006/encryption","");
+        nsMap.put(passwordUri.toString(),"p");
+        nsMap.put(certificateUri.toString(), "c");
+        xo.setUseDefaultNamespace();
         xo.setSaveSuggestedPrefixes(nsMap);
         xo.setSaveNamespacesFirst();
         xo.setSaveAggressiveNamespaces();
@@ -505,7 +510,7 @@ public class AgileEncryptor extends Encryptor {
         leos.writeShort(info.getVersionMajor());
         leos.writeShort(info.getVersionMinor());
         // Reserved (4 bytes): A value that MUST be 0x00000040
-        leos.writeInt(0x40);
+        leos.writeInt(info.getEncryptionFlags());
         leos.write(bos.toByteArray());
         
         dir.createDocument("EncryptionInfo", leos.getWriteIndex(), new POIFSWriterListener() {

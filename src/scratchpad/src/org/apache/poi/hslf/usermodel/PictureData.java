@@ -21,7 +21,6 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import org.apache.poi.hslf.blip.BitmapPainter;
 import org.apache.poi.hslf.blip.DIB;
@@ -31,8 +30,9 @@ import org.apache.poi.hslf.blip.JPEG;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
-import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -138,14 +138,9 @@ public abstract class PictureData {
      * Compute 16-byte checksum of this picture using MD5 algorithm.
      */
     public static byte[] getChecksum(byte[] data) {
-        MessageDigest sha;
-        try {
-            sha = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e){
-            throw new HSLFException(e.getMessage());
-        }
-        sha.update(data);
-        return sha.digest();
+        MessageDigest md5 = CryptoFunctions.getMessageDigest(HashAlgorithm.md5);
+        md5.update(data);
+        return md5.digest();
     }
 
     /**

@@ -17,14 +17,19 @@
 package org.apache.poi.poifs.crypt.agile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
+import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.xmlbeans.XmlException;
+
+import com.microsoft.schemas.office.x2006.encryption.EncryptionDocument;
 
 public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
     
@@ -37,15 +42,11 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
     public void initialize(EncryptionInfo info, DocumentInputStream dis) throws IOException {
         this.info = info;
         
-        StringBuilder builder = new StringBuilder();
-        byte[] xmlDescriptor = new byte[dis.available()];
-        dis.read(xmlDescriptor);
-        for (byte b : xmlDescriptor)
-            builder.append((char)b);
-        String descriptor = builder.toString();
-        header = new AgileEncryptionHeader(descriptor);
-        verifier = new AgileEncryptionVerifier(descriptor);
-        if (info.getVersionMajor() == 4 && info.getVersionMinor() == 4) {
+        EncryptionDocument ed = parseDescriptor(dis);
+        header = new AgileEncryptionHeader(ed);
+        verifier = new AgileEncryptionVerifier(ed);
+        if (info.getVersionMajor() == EncryptionMode.agile.versionMajor
+            && info.getVersionMinor() == EncryptionMode.agile.versionMinor) {
             decryptor = new AgileDecryptor(this);
         }
     }
@@ -107,5 +108,19 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
         return info;
     }
     
-    
+    protected static EncryptionDocument parseDescriptor(String descriptor) {
+        try {
+            return EncryptionDocument.Factory.parse(descriptor);
+        } catch (XmlException e) {
+            throw new EncryptedDocumentException("Unable to parse encryption descriptor", e);
+        }
+    }
+
+    protected static EncryptionDocument parseDescriptor(InputStream descriptor) {
+        try {
+            return EncryptionDocument.Factory.parse(descriptor);
+        } catch (Exception e) {
+            throw new EncryptedDocumentException("Unable to parse encryption descriptor", e);
+        }
+    }
 }
