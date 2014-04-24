@@ -17,15 +17,18 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
 
 public class TestRelationships extends TestCase {
@@ -309,6 +312,7 @@ public class TestRelationships extends TestCase {
         URI rel1 = parent.relativize(rId1.getTargetURI());
         URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
         assertEquals("'Another Sheet'!A1", rel1.getFragment());
+        assertEquals("'Another Sheet'!A1", rel11.getFragment());
 
         PackageRelationship rId2 = drawingPart.getRelationship("rId2");
         URI rel2 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId2.getTargetURI());
@@ -390,6 +394,45 @@ public class TestRelationships extends TestCase {
         targetUri = rId1.getTargetURI();
         assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
         assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
+    }
+    
+    public void testEntitiesInRels_56164() throws Exception {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("PackageRelsHasEntities.ooxml");
+        OPCPackage p = OPCPackage.open(is);
+        is.close();
 
+        // Should have 3 root relationships
+        boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
+        for (PackageRelationship pr : p.getRelationships()) {
+            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
+                foundDocRel = true;
+            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
+                foundCorePropRel = true;
+            if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
+                foundExtPropRel = true;
+        }
+        assertTrue("Core/Doc Relationship not found in " + p.getRelationships(), foundDocRel);
+        assertTrue("Core Props Relationship not found in " + p.getRelationships(), foundCorePropRel);
+        assertTrue("Ext Props Relationship not found in " + p.getRelationships(), foundExtPropRel);
+        
+        // Should have normal work parts
+        boolean foundCoreProps = false, foundDocument = false, foundTheme1 = false;
+        for (PackagePart part : p.getParts()) {
+            if (part.getPartName().toString().equals("/docProps/core.xml")) {
+                assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());
+                foundCoreProps = true;
+            }
+            if (part.getPartName().toString().equals("/word/document.xml")) {
+                assertEquals(XWPFRelation.DOCUMENT.getContentType(), part.getContentType());
+                foundDocument = true;
+            }
+            if (part.getPartName().toString().equals("/word/theme/theme1.xml")) {
+                assertEquals(XWPFRelation.THEME.getContentType(), part.getContentType());
+                foundTheme1 = true;
+            }
+        }
+        assertTrue("Core not found in " + p.getParts(), foundCoreProps);
+        assertTrue("Document not found in " + p.getParts(), foundDocument);
+        assertTrue("Theme1 not found in " + p.getParts(), foundTheme1);
     }
 }
