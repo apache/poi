@@ -29,7 +29,6 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
