@@ -403,6 +403,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			revert();
 			return;
 		}
+		if (this.contentTypeManager == null) {
+		    logger.log(POILogger.WARN,
+		            "Unable to call close() on a package that hasn't been fully opened yet");
+		    return;
+		}
 
 		// Save the content
 		ReentrantReadWriteLock l = new ReentrantReadWriteLock();

@@ -64,6 +64,10 @@ public final class ZipPackage extends Package {
     public ZipPackage() {
     	super(defaultPackageAccess);
     	this.zipArchive = null;
+    	
+    	try {
+    	    this.contentTypeManager = new ZipContentTypeManager(null, this);
+    	} catch (InvalidFormatException e) {}
     }
 
     /**
