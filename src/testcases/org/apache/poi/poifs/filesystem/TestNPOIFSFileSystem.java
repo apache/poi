@@ -46,6 +46,18 @@ import org.junit.Test;
  */
 public final class TestNPOIFSFileSystem {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
+   
+   /**
+    * Returns test files with 512 byte and 4k block sizes, loaded
+    *  both from InputStreams and Files
+    */
+   protected NPOIFSFileSystem[] get512and4kFileAndInput() throws Exception {
+       NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+       NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+       NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+       NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+       return new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD};
+   }
 
    protected static void assertBATCount(NPOIFSFileSystem fs, int expectedBAT, int expectedXBAT) throws IOException {
        int foundBAT = 0;
@@ -515,7 +527,14 @@ public final class TestNPOIFSFileSystem {
       // Check that it is seen correctly
       fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
       assertBATCount(fs, 237, 2);
-      // TODO Do some more checks
+
+      assertEquals(false, fs.getBATBlockAndIndex(236*128-1).getBlock().hasFreeSectors());
+      assertEquals(true, fs.getBATBlockAndIndex(237*128-1).getBlock().hasFreeSectors());
+      try {
+         assertEquals(false, fs.getBATBlockAndIndex(237*128).getBlock().hasFreeSectors());
+         fail("Should only be 237 BATs");
+      } catch(IndexOutOfBoundsException e) {}
+
       
       // All done
       fs.close();
@@ -527,11 +546,7 @@ public final class TestNPOIFSFileSystem {
     */
    @Test
    public void listEntries() throws Exception {
-      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
+      for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
          DirectoryEntry root = fs.getRoot();
          assertEquals(5, root.getEntryCount());
          
@@ -568,11 +583,7 @@ public final class TestNPOIFSFileSystem {
     */
    @Test
    public void getDocumentEntry() throws Exception {
-      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
+      for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
          DirectoryEntry root = fs.getRoot();
          Entry si = root.getEntry("\u0005SummaryInformation");
          
@@ -583,6 +594,7 @@ public final class TestNPOIFSFileSystem {
          NDocumentInputStream inp = new NDocumentInputStream(doc);
          byte[] contents = new byte[doc.getSize()];
          assertEquals(doc.getSize(), inp.read(contents));
+         inp.close();
          
          // Now try to build the property set
          inp = new NDocumentInputStream(doc);
@@ -605,8 +617,40 @@ public final class TestNPOIFSFileSystem {
     */
    @Test
    public void readWriteRead() throws Exception {
-      // TODO
-      // TODO
+       for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
+           // Check we can find the entries we expect
+           // TODO Add check
+           
+           // Write out, re-load
+           // TODO Add check
+           
+           // Check they're still there
+           // TODO Add check
+           
+           // Check the first few and last few bytes of a few
+           // TODO Add check
+           
+           // Add a test mini stream
+           // TODO Add check
+           
+           // Write out, re-load
+           // TODO Add check
+           
+           // Check old and new are there
+           // TODO Add check
+           
+           // Add a full stream, delete a full stream
+           // TODO Add check
+           
+           // Write out, re-load
+           // TODO Add check
+           
+           // Check it's all there
+           // TODO Add check
+           
+           // All done
+           fs.close();
+       }
    }
    
    /**
@@ -667,5 +711,5 @@ public final class TestNPOIFSFileSystem {
        assertThat(wbDataExp, equalTo(wbDataAct));
    }
    
-   // TODO Directory/Document write tests
+   // TODO Directory/Document create/write/read/delete/change tests
 }
