@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,8 +34,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 public final class TestPackageCoreProperties extends TestCase {
     private static final POILogger logger = POILogFactory.getLogger(TestPackageCoreProperties.class);
@@ -180,6 +181,9 @@ public final class TestPackageCoreProperties extends TestCase {
         props.setModifiedProperty(strDate);
         assertEquals(strDate, props.getModifiedPropertyString());
         assertEquals(date, props.getModifiedProperty().getValue());
+        
+        // Tidy
+        pkg.close();
     }
 
     public void testGetPropertiesLO() throws Exception {
@@ -197,4 +201,29 @@ public final class TestPackageCoreProperties extends TestCase {
         props2.setTitleProperty("Bug 51444 fixed");
     }
 
+    public void testEntitiesInCoreProps_56164() throws Exception {
+        InputStream is = OpenXML4JTestDataSamples.openSampleStream("CorePropertiesHasEntities.ooxml");
+        OPCPackage p = OPCPackage.open(is);
+        is.close();
+
+        // Should have 3 root relationships
+        boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
+        for (PackageRelationship pr : p.getRelationships()) {
+            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
+                foundDocRel = true;
+            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
+                foundCorePropRel = true;
+            if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
+                foundExtPropRel = true;
+        }
+        assertTrue("Core/Doc Relationship not found in " + p.getRelationships(), foundDocRel);
+        assertTrue("Core Props Relationship not found in " + p.getRelationships(), foundCorePropRel);
+        assertTrue("Ext Props Relationship not found in " + p.getRelationships(), foundExtPropRel);
+
+        // Get the Core Properties
+        PackagePropertiesPart props = (PackagePropertiesPart)p.getPackageProperties();
+        
+        // Check
+        assertEquals("Stefan Kopf", props.getCreatorProperty().getValue());
+    }
 }
