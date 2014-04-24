@@ -271,12 +271,17 @@ public class NPOIFSFileSystem extends BlockStore
            // We need to buffer the whole file into memory when
            //  working with an InputStream.
            // The max possible size is when each BAT block entry is used
-           int maxSize = BATBlock.calculateMaximumSize(_header); 
-           ByteBuffer data = ByteBuffer.allocate(maxSize);
+           long maxSize = BATBlock.calculateMaximumSize(_header); 
+           if (maxSize > Integer.MAX_VALUE) {
+               throw new IllegalArgumentException("Unable read a >2gb file via an InputStream");
+           }
+           ByteBuffer data = ByteBuffer.allocate((int)maxSize);
+           
            // Copy in the header
            headerBuffer.position(0);
            data.put(headerBuffer);
            data.position(headerBuffer.capacity());
+           
            // Now read the rest of the stream
            IOUtils.readFully(channel, data);
            success = true;
@@ -424,7 +429,8 @@ public class NPOIFSFileSystem extends BlockStore
     @Override
     protected ByteBuffer getBlockAt(final int offset) throws IOException {
        // The header block doesn't count, so add one
-       long startAt = (offset+1) * bigBlockSize.getBigBlockSize();
+       long blockWanted = offset + 1;
+       long startAt = blockWanted * bigBlockSize.getBigBlockSize();
        return _data.read(bigBlockSize.getBigBlockSize(), startAt);
     }
     
