@@ -47,6 +47,30 @@ import org.junit.Test;
 public final class TestNPOIFSFileSystem {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
 
+   protected static void assertBATCount(NPOIFSFileSystem fs, int expectedBAT, int expectedXBAT) throws IOException {
+       int foundBAT = 0;
+       int foundXBAT = 0;
+       int sz = (int)(fs.size() / fs.getBigBlockSize());
+       for (int i=0; i<sz; i++) {
+           if(fs.getNextBlock(i) == POIFSConstants.FAT_SECTOR_BLOCK) {
+               foundBAT++;
+           }
+           if(fs.getNextBlock(i) == POIFSConstants.DIFAT_SECTOR_BLOCK) {
+               foundXBAT++;
+           }
+       }
+       assertEquals("Wrong number of BATs", expectedBAT, foundBAT);
+       assertEquals("Wrong number of XBATs with " + expectedBAT + " BATs", expectedXBAT, foundXBAT);
+   }
+   
+   protected static HeaderBlock writeOutAndReadHeader(NPOIFSFileSystem fs) throws IOException {
+       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+       fs.writeFilesystem(baos);
+       
+       HeaderBlock header = new HeaderBlock(new ByteArrayInputStream(baos.toByteArray()));
+       return header;
+   }
+   
    @Test
    public void basicOpen() throws Exception {
       NPOIFSFileSystem fsA, fsB;
@@ -355,6 +379,9 @@ public final class TestNPOIFSFileSystem {
       // Allocate it, then ask again
       fs.setNextBlock(100, POIFSConstants.END_OF_CHAIN);
       assertEquals(101, fs.getFreeBlock());
+      
+      // All done
+      fs.close();
    }
 
    /**
@@ -388,6 +415,8 @@ public final class TestNPOIFSFileSystem {
          assertEquals(false, fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
          fail("Should only be one BAT");
       } catch(IndexOutOfBoundsException e) {}
+      assertBATCount(fs, 1, 0);
+
       
       // Now ask for a free one, will need to extend the file
       assertEquals(129, fs.getFreeBlock());
@@ -396,6 +425,9 @@ public final class TestNPOIFSFileSystem {
       assertEquals(true, fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(128));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(129));
+      
+      // We now have 2 BATs, but no XBATs
+      assertBATCount(fs, 2, 0);
       
       
       // Fill up to hold 109 BAT blocks
@@ -414,6 +446,15 @@ public final class TestNPOIFSFileSystem {
          fail("Should only be 109 BATs");
       } catch(IndexOutOfBoundsException e) {}
       
+      // We now have 109 BATs, but no XBATs
+      assertBATCount(fs, 109, 0);
+      
+      
+      // Ask for it to be written out, and check the header
+      HeaderBlock header = writeOutAndReadHeader(fs);
+      assertEquals(109, header.getBATCount());
+      assertEquals(0, header.getXBATCount());
+      
       
       // Ask for another, will get our first XBAT
       free = fs.getFreeBlock();
@@ -423,6 +464,11 @@ public final class TestNPOIFSFileSystem {
          assertEquals(false, fs.getBATBlockAndIndex(110*128).getBlock().hasFreeSectors());
          fail("Should only be 110 BATs");
       } catch(IndexOutOfBoundsException e) {}
+      assertBATCount(fs, 110, 1);
+      
+      header = writeOutAndReadHeader(fs);
+      assertEquals(110, header.getBATCount());
+      assertEquals(1, header.getXBATCount());
 
       
       // Fill the XBAT, which means filling 127 BATs
@@ -433,6 +479,7 @@ public final class TestNPOIFSFileSystem {
             free = fs.getFreeBlock();
             fs.setNextBlock(free, POIFSConstants.END_OF_CHAIN);
          }
+         assertBATCount(fs, i+1, 1);
       }
       
       // Should now have 109+127 = 236 BATs
@@ -441,6 +488,7 @@ public final class TestNPOIFSFileSystem {
          assertEquals(false, fs.getBATBlockAndIndex(236*128).getBlock().hasFreeSectors());
          fail("Should only be 236 BATs");
       } catch(IndexOutOfBoundsException e) {}
+      assertBATCount(fs, 236, 1);
 
       
       // Ask for another, will get our 2nd XBAT
@@ -453,39 +501,27 @@ public final class TestNPOIFSFileSystem {
       } catch(IndexOutOfBoundsException e) {}
       
       
-      // Check the counts
-      int numBATs = 0;
-      int numXBATs = 0;
-      for(int i=0; i<237*128; i++) {
-         if(fs.getNextBlock(i) == POIFSConstants.FAT_SECTOR_BLOCK) {
-            numBATs++;
-         }
-         if(fs.getNextBlock(i) == POIFSConstants.DIFAT_SECTOR_BLOCK) {
-            numXBATs++;
-         }
-      }
-      if(1==2) {
-      // TODO Fix this
-      assertEquals(237, numBATs);
-      assertEquals(2, numXBATs);
-      }
+      // Check the counts now
+      assertBATCount(fs, 237, 2);
 
+      // Check the header
+      header = writeOutAndReadHeader(fs);
       
-      // Write it out
+      
+      // Now, write it out, and read it back in again fully
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       fs.writeFilesystem(baos);
-      
-      // Check the header is correct
-      HeaderBlock header = new HeaderBlock(new ByteArrayInputStream(baos.toByteArray()));
-      if(1==2) {
-      // TODO Fix this
-      assertEquals(237, header.getBATCount());
-      assertEquals(2, header.getXBATCount());
-      
-      // Now check the filesystem sees it correct too
+
+      // TODO Correct this to work
+if(1==2) {
+      // Check that it is seen correctly
       fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
-      // TODO
-      }
+      assertBATCount(fs, 237, 2);
+      // TODO Do some more checks
+}
+      
+      // All done
+      fs.close();
    }
    
    /**
@@ -560,6 +596,9 @@ public final class TestNPOIFSFileSystem {
          assertEquals(null, inf.getApplicationName());
          assertEquals(null, inf.getAuthor());
          assertEquals(null, inf.getSubject());
+         
+         // Finish
+         inp.close();
       }
    }
    

@@ -530,7 +530,9 @@ public class NPOIFSFileSystem extends BlockStore
           if(xbat == null) {
              // Oh joy, we need a new XBAT too...
              xbat = createBAT(offset+1, false);
+             // Allocate our new BAT as the first block in the XBAT
              xbat.setValueAt(0, offset);
+             // And allocate the XBAT in the BAT
              bat.setValueAt(1, POIFSConstants.DIFAT_SECTOR_BLOCK);
              
              // Will go one place higher as XBAT added in
@@ -546,12 +548,14 @@ public class NPOIFSFileSystem extends BlockStore
              }
              _xbat_blocks.add(xbat);
              _header.setXBATCount(_xbat_blocks.size());
-          }
-          // Allocate us in the XBAT
-          for(int i=0; i<bigBlockSize.getXBATEntriesPerBlock(); i++) {
-             if(xbat.getValueAt(i) == POIFSConstants.UNUSED_BLOCK) {
-                xbat.setValueAt(i, offset);
-             }
+          } else {
+              // Allocate our BAT in the existing XBAT with space
+              for(int i=0; i<bigBlockSize.getXBATEntriesPerBlock(); i++) {
+                 if(xbat.getValueAt(i) == POIFSConstants.UNUSED_BLOCK) {
+                    xbat.setValueAt(i, offset);
+                    break;
+                 }
+              }
           }
        } else {
           // Store us in the header
@@ -564,6 +568,10 @@ public class NPOIFSFileSystem extends BlockStore
        
        // The current offset stores us, but the next one is free
        return offset+1;
+    }
+    
+    protected long size() throws IOException {
+        return _data.size();
     }
     
     @Override
