@@ -681,10 +681,140 @@ public final class TestNPOIFSFileSystem {
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(3));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
 
-      // Now add a normal stream and a mini stream
-      // TODO
       
-      // TODO The rest of the test
+      // Put everything within a new directory
+      DirectoryEntry testDir = fs.createDirectory("Test Directory");
+      
+      // Add a new Normal Stream (Normal Streams minimum 4096 bytes)
+      byte[] main4096 = new byte[4096];
+      main4096[0] = -10;
+      main4096[4095] = -11;
+      testDir.createDocument("Normal4096", new ByteArrayInputStream(main4096));
+
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+      if (fs.getBigBlockSize() == POIFSConstants.SMALLER_BIG_BLOCK_SIZE) {
+          assertEquals(4, fs.getNextBlock(3));
+          assertEquals(5, fs.getNextBlock(4));
+          assertEquals(6, fs.getNextBlock(5));
+          assertEquals(7, fs.getNextBlock(6));
+          assertEquals(8, fs.getNextBlock(7));
+          assertEquals(9, fs.getNextBlock(8));
+          assertEquals(10, fs.getNextBlock(9));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(10));
+          assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(11));
+      } else {
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
+          assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(4));
+      }
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+
+      
+      // Add a bigger Normal Stream
+      byte[] main5124 = new byte[5124];
+      main5124[0] = -22;
+      main5124[5123] = -33;
+      testDir.createDocument("Normal5124", new ByteArrayInputStream(main5124));
+
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+      if (fs.getBigBlockSize() == POIFSConstants.SMALLER_BIG_BLOCK_SIZE) {
+          assertEquals(4, fs.getNextBlock(3));
+          assertEquals(5, fs.getNextBlock(4));
+          assertEquals(6, fs.getNextBlock(5));
+          assertEquals(7, fs.getNextBlock(6));
+          assertEquals(8, fs.getNextBlock(7));
+          assertEquals(9, fs.getNextBlock(8));
+          assertEquals(10, fs.getNextBlock(9));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(10));
+
+          assertEquals(12, fs.getNextBlock(11));
+          assertEquals(13, fs.getNextBlock(12));
+          assertEquals(14, fs.getNextBlock(13));
+          assertEquals(15, fs.getNextBlock(14));
+          assertEquals(16, fs.getNextBlock(15));
+          assertEquals(17, fs.getNextBlock(16));
+          assertEquals(18, fs.getNextBlock(17));
+          assertEquals(19, fs.getNextBlock(18));
+          assertEquals(20, fs.getNextBlock(19));
+          assertEquals(21, fs.getNextBlock(20));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21));
+          assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(22));
+      } else {
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
+          assertEquals(5,                           fs.getNextBlock(4));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(5));
+          assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(6));
+      }
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      
+      
+      // Now Add a mini stream
+      byte[] mini = new byte[] { 0, 1, 2, 3, 4 };
+      testDir.createDocument("Mini", new ByteArrayInputStream(mini));
+      
+      // Mini stream will get one block for fat + one block for data
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+      if (fs.getBigBlockSize() == POIFSConstants.SMALLER_BIG_BLOCK_SIZE) {
+          assertEquals(4, fs.getNextBlock(3));
+          assertEquals(5, fs.getNextBlock(4));
+          assertEquals(6, fs.getNextBlock(5));
+          assertEquals(7, fs.getNextBlock(6));
+          assertEquals(8, fs.getNextBlock(7));
+          assertEquals(9, fs.getNextBlock(8));
+          assertEquals(10, fs.getNextBlock(9));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(10));
+
+          assertEquals(12, fs.getNextBlock(11));
+          assertEquals(13, fs.getNextBlock(12));
+          assertEquals(14, fs.getNextBlock(13));
+          assertEquals(15, fs.getNextBlock(14));
+          assertEquals(16, fs.getNextBlock(15));
+          assertEquals(17, fs.getNextBlock(16));
+          assertEquals(18, fs.getNextBlock(17));
+          assertEquals(19, fs.getNextBlock(18));
+          assertEquals(20, fs.getNextBlock(19));
+          assertEquals(21, fs.getNextBlock(20));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21));
+          assertEquals(23,                          fs.getNextBlock(22));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(23));
+          assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(24));
+      } else {
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
+          assertEquals(5,                           fs.getNextBlock(4));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(5));
+          assertEquals(7,                           fs.getNextBlock(6));
+          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(7));
+          assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(8));
+      }
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      
+      
+      // Write and read back
+      // TODO
+   }
+   
+   @Test
+   public void addBeforeWrite() throws Exception {
+       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+       
+       // Initially has BAT + Properties but nothing else
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+
+       // Add to the mini stream
+       // TODO
+       
+       // Add to the main stream
+       // TODO
+       
+       // Write, read, check
+       // TODO
    }
 
    /**

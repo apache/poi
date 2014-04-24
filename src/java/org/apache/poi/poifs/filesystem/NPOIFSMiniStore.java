@@ -27,9 +27,9 @@ import java.util.List;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.BATBlock;
+import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 
 /**
  * This class handles the MiniStream (small block store)
@@ -86,6 +86,11 @@ public class NPOIFSMiniStore extends BlockStore
      * Load the block, extending the underlying stream if needed
      */
     protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
+       // Ensure we have our first block at this point
+       if (_mini_stream.getStartBlock() == POIFSConstants.END_OF_CHAIN) {
+           getFreeBlock();
+       }
+        
        // Try to get it without extending the stream
        try {
           return getBlockAt(offset);
@@ -186,6 +191,7 @@ public class NPOIFSMiniStore extends BlockStore
        if(_header.getSBATCount() == 0) {
           _header.setSBATStart(batForSBAT);
           _header.setSBATBlockCount(1);
+          _mini_stream = new NPOIFSStream(_filesystem, batForSBAT);
        } else {
           // Find the end of the SBAT stream, and add the sbat in there
           ChainLoopDetector loopDetector = _filesystem.getChainLoopDetector();
