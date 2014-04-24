@@ -646,14 +646,18 @@ if(1==2) {
       // TODO The rest of the test
    }
 
+   /**
+    * Test that we can read a file with NPOIFS, create a new NPOIFS instance,
+    *  write it out, read it with POIFS, and see the original data
+    */
    @Test
-   public void writPOIFSWriterListener() throws Exception {
+   public void NPOIFSReadCopyWritePOIFSRead() throws Exception {
        File testFile = POIDataSamples.getSpreadSheetInstance().getFile("Simple.xls");
        NPOIFSFileSystem src = new NPOIFSFileSystem(testFile);
        byte wbDataExp[] = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));
        
        NPOIFSFileSystem nfs = new NPOIFSFileSystem();
-       copy(src.getRoot(), nfs.getRoot());
+       EntryUtils.copyNodes(src.getRoot(), nfs.getRoot());
        src.close();
 
        ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -665,34 +669,6 @@ if(1==2) {
        
        assertThat(wbDataExp, equalTo(wbDataAct));
    }
-
-   private static void copy(final DirectoryNode src, final DirectoryNode dest) throws IOException {
-       Iterator<Entry> srcIter = src.getEntries();
-       while(srcIter.hasNext()) {
-           Entry entry = srcIter.next();
-           if (entry.isDirectoryEntry()) {
-               DirectoryNode srcDir = (DirectoryNode)entry;
-               DirectoryNode destDir = (DirectoryNode)dest.createDirectory(srcDir.getName());
-               destDir.setStorageClsid(src.getStorageClsid());
-               copy(srcDir, destDir);
-           } else {
-               final DocumentNode srcDoc = (DocumentNode)entry;
-               // dest.createDocument(srcDoc.getName(), src.createDocumentInputStream(srcDoc));
-               dest.createDocument(srcDoc.getName(), srcDoc.getSize(), new POIFSWriterListener() {
-                   public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-                       try {
-                           DocumentInputStream dis = src.createDocumentInputStream(srcDoc);
-                           IOUtils.copy(dis, event.getStream());
-                       } catch (IOException e) {
-                           throw new RuntimeException(e);
-                       }
-                   }
-               });
-           }
-       }
-       
-   }
-   
    
    // TODO Directory/Document write tests
 }
