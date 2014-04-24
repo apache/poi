@@ -512,13 +512,10 @@ public final class TestNPOIFSFileSystem {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       fs.writeFilesystem(baos);
 
-      // TODO Correct this to work
-if(1==2) {
       // Check that it is seen correctly
       fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
       assertBATCount(fs, 237, 2);
       // TODO Do some more checks
-}
       
       // All done
       fs.close();

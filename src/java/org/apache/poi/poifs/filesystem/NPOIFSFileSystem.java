@@ -729,6 +729,11 @@ public class NPOIFSFileSystem extends BlockStore
           ByteBuffer block = getBlockAt(bat.getOurBlockIndex());
           BlockAllocationTableWriter.writeBlock(bat, block);
        }
+       // XBats
+       for(BATBlock bat : _xbat_blocks) {
+           ByteBuffer block = getBlockAt(bat.getOurBlockIndex());
+           BlockAllocationTableWriter.writeBlock(bat, block);
+        }
        
        // SBATs
        _mini_store.syncWithDataSource();
