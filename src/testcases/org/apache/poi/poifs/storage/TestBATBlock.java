@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
  * Class to test BATBlock functionality
@@ -270,6 +270,16 @@ public final class TestBATBlock extends TestCase {
        assertEquals(
              4096 + 112*4096*1024, 
              BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 112)
+       );
+       
+       // Check for >2gb, which we only support via a File
+       assertEquals(
+               512 + 8030l*512*128, 
+               BATBlock.calculateMaximumSize(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, 8030)
+       );
+       assertEquals(
+               4096 + 8030l*4096*1024, 
+               BATBlock.calculateMaximumSize(POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS, 8030)
        );
     }
     

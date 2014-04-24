@@ -242,9 +242,9 @@ public final class BATBlock extends BigBlock {
      *  For 512 byte block sizes, this means we may over-estimate by up to 65kb.
      *  For 4096 byte block sizes, this means we may over-estimate by up to 4mb
      */
-    public static int calculateMaximumSize(final POIFSBigBlockSize bigBlockSize,
+    public static long calculateMaximumSize(final POIFSBigBlockSize bigBlockSize,
           final int numBATs) {
-       int size = 1; // Header isn't FAT addressed
+       long size = 1; // Header isn't FAT addressed
        
        // The header has up to 109 BATs, and extra ones are referenced
        //  from XBATs
@@ -254,7 +254,7 @@ public final class BATBlock extends BigBlock {
        // So far we've been in sector counts, turn into bytes
        return size * bigBlockSize.getBigBlockSize();
     }
-    public static int calculateMaximumSize(final HeaderBlock header)
+    public static long calculateMaximumSize(final HeaderBlock header)
     {
        return calculateMaximumSize(header.getBigBlockSize(), header.getBATCount());
     }
