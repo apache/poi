@@ -2549,4 +2549,20 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertAlmostEquals(1950, s.getColumnWidth(10), fontAccuracy);
         assertAlmostEquals(2225, s.getColumnWidth(11), fontAccuracy);
     }
+    
+    @Test
+    public void bug56450() {
+        HSSFWorkbook wb = openSample("56450.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
+        int comments = 0;
+        for (Row r : sheet) {
+            for (Cell c : r) {
+                if (c.getCellComment() != null) {
+                    assertNotNull(c.getCellComment().getString().getString());
+                    comments++;
+                }
+            }
+        }
+        assertEquals(0, comments);
+    }
 }

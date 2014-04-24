@@ -28,7 +28,20 @@ import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.AutoFilterInfoRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.DrawingRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SCLRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
@@ -2115,7 +2128,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
             if (shape instanceof HSSFComment) {
                 HSSFComment comment = (HSSFComment) shape;
-                if (comment.getColumn() == column && comment.getRow() == row) {
+                if (comment.hasPosition() && comment.getColumn() == column && comment.getRow() == row) {
                     return comment;
                 }
             }

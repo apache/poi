@@ -16,8 +16,18 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NoteStructureSubRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.ss.usermodel.Comment;
 
 /**
@@ -210,6 +220,15 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      */
     protected NoteRecord getNoteRecord() {
         return _note;
+    }
+    
+    /**
+     * Do we know which cell this comment belongs to?
+     */
+    public boolean hasPosition() {
+        if (_note == null) return false;
+        if (getColumn() < 0 || getRow() < 0) return false;
+        return true;
     }
 
     @Override
