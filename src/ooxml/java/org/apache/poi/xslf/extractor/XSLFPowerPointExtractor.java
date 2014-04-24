@@ -71,6 +71,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 			new XSLFPowerPointExtractor(
 					new XSLFSlideShow(args[0]));
 		System.out.println(extractor.getText());
+		extractor.close();
 	}
 
 	/**

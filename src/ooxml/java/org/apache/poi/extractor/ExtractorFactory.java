@@ -200,7 +200,6 @@ public class ExtractorFactory {
      * @deprecated Use {@link #createExtractor(DirectoryNode)} instead
      */
     @Deprecated
-    @SuppressWarnings("unused")
     public static POITextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs)
             throws IOException, InvalidFormatException, OpenXML4JException, XmlException
     {
