@@ -290,13 +290,17 @@ public class DirectoryNode
         if (rval)
         {
             _entries.remove(entry);
-               _byname.remove(entry.getName());
+            _byname.remove(entry.getName());
 
-               if(_ofilesystem != null) {
-               _ofilesystem.remove(entry);
-               } else {
-                  _nfilesystem.remove(entry);
-               }
+            if(_ofilesystem != null) {
+                _ofilesystem.remove(entry);
+            } else {
+                try {
+                    _nfilesystem.remove(entry);
+                } catch (IOException e) {
+                    // TODO Work out how to report this, given we can't change the method signature...
+                }
+            }
         }
         return rval;
     }
