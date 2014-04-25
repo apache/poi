@@ -29,147 +29,147 @@ import org.apache.poi.util.LittleEndian;
  * {@link NPOIFSFileSystem} instance.
  */
 public final class NDocumentInputStream extends DocumentInputStream {
-	/** current offset into the Document */
-	private int _current_offset;
-	/** current block count */
-	private int _current_block_count;
+    /** current offset into the Document */
+    private int _current_offset;
+    /** current block count */
+    private int _current_block_count;
 
-	/** current marked offset into the Document (used by mark and reset) */
-	private int _marked_offset;
-	/** and the block count for it */
-   private int _marked_offset_count;
+    /** current marked offset into the Document (used by mark and reset) */
+    private int _marked_offset;
+    /** and the block count for it */
+    private int _marked_offset_count;
 
-	/** the Document's size */
-	private int _document_size;
+    /** the Document's size */
+    private int _document_size;
 
-	/** have we been closed? */
-	private boolean _closed;
+    /** have we been closed? */
+    private boolean _closed;
 
-	/** the actual Document */
-	private NPOIFSDocument _document;
-	
-	private Iterator<ByteBuffer> _data;
-	private ByteBuffer _buffer;
+    /** the actual Document */
+    private NPOIFSDocument _document;
 
-	/**
-	 * Create an InputStream from the specified DocumentEntry
-	 * 
-	 * @param document the DocumentEntry to be read
-	 * 
-	 * @exception IOException if the DocumentEntry cannot be opened (like, maybe it has
-	 *                been deleted?)
-	 */
-	public NDocumentInputStream(DocumentEntry document) throws IOException {
-		if (!(document instanceof DocumentNode)) {
-			throw new IOException("Cannot open internal document storage, " + document + " not a Document Node");
-		}
-		_current_offset = 0;
-		_current_block_count = 0;
-		_marked_offset = 0;
-		_marked_offset_count = 0;
-		_document_size = document.getSize();
-		_closed = false;
-		
-      DocumentNode doc = (DocumentNode)document;
-		DocumentProperty property = (DocumentProperty)doc.getProperty();
-		_document = new NPOIFSDocument(
-		      property, 
-		      ((DirectoryNode)doc.getParent()).getNFileSystem()
-		);
-		_data = _document.getBlockIterator();
-	}
+    private Iterator<ByteBuffer> _data;
+    private ByteBuffer _buffer;
 
-	/**
-	 * Create an InputStream from the specified Document
-	 * 
-	 * @param document the Document to be read
-	 */
-	public NDocumentInputStream(NPOIFSDocument document) {
-      _current_offset = 0;
-      _current_block_count = 0;
-      _marked_offset = 0;
-      _marked_offset_count = 0;
-		_document_size = document.getSize();
-		_closed = false;
-		_document = document;
-      _data = _document.getBlockIterator();
-	}
+    /**
+     * Create an InputStream from the specified DocumentEntry
+     * 
+     * @param document the DocumentEntry to be read
+     * 
+     * @exception IOException if the DocumentEntry cannot be opened (like, maybe it has
+     *                been deleted?)
+     */
+    public NDocumentInputStream(DocumentEntry document) throws IOException {
+        if (!(document instanceof DocumentNode)) {
+            throw new IOException("Cannot open internal document storage, " + document + " not a Document Node");
+        }
+        _current_offset = 0;
+        _current_block_count = 0;
+        _marked_offset = 0;
+        _marked_offset_count = 0;
+        _document_size = document.getSize();
+        _closed = false;
 
-	@Override
-	public int available() {
-		if (_closed) {
-			throw new IllegalStateException("cannot perform requested operation on a closed stream");
-		}
-		return _document_size - _current_offset;
-	}
+        DocumentNode doc = (DocumentNode)document;
+        DocumentProperty property = (DocumentProperty)doc.getProperty();
+        _document = new NPOIFSDocument(
+                property, 
+                ((DirectoryNode)doc.getParent()).getNFileSystem()
+        );
+        _data = _document.getBlockIterator();
+    }
 
-   @Override
-	public void close() {
-		_closed = true;
-	}
+    /**
+     * Create an InputStream from the specified Document
+     * 
+     * @param document the Document to be read
+     */
+    public NDocumentInputStream(NPOIFSDocument document) {
+        _current_offset = 0;
+        _current_block_count = 0;
+        _marked_offset = 0;
+        _marked_offset_count = 0;
+        _document_size = document.getSize();
+        _closed = false;
+        _document = document;
+        _data = _document.getBlockIterator();
+    }
 
-   @Override
-	public void mark(int ignoredReadlimit) {
-		_marked_offset = _current_offset;
-		_marked_offset_count = Math.max(0, _current_block_count - 1);
-	}
+    @Override
+    public int available() {
+        if (_closed) {
+            throw new IllegalStateException("cannot perform requested operation on a closed stream");
+        }
+        return _document_size - _current_offset;
+    }
 
-   @Override
-	public int read() throws IOException {
-		dieIfClosed();
-		if (atEOD()) {
-			return EOF;
-		}
-		byte[] b = new byte[1];
-		int result = read(b, 0, 1);
-		if(result >= 0) {
-		   if(b[0] < 0) {
-		      return b[0]+256;
-		   }
-		   return b[0];
-		}
-		return result;
-	}
+    @Override
+    public void close() {
+        _closed = true;
+    }
 
-   @Override
-	public int read(byte[] b, int off, int len) throws IOException {
-		dieIfClosed();
-		if (b == null) {
-			throw new IllegalArgumentException("buffer must not be null");
-		}
-		if (off < 0 || len < 0 || b.length < off + len) {
-			throw new IndexOutOfBoundsException("can't read past buffer boundaries");
-		}
-		if (len == 0) {
-			return 0;
-		}
-		if (atEOD()) {
-			return EOF;
-		}
-		int limit = Math.min(available(), len);
-		readFully(b, off, limit);
-		return limit;
-	}
+    @Override
+    public void mark(int ignoredReadlimit) {
+        _marked_offset = _current_offset;
+        _marked_offset_count = Math.max(0, _current_block_count - 1);
+    }
 
-	/**
-	 * Repositions this stream to the position at the time the mark() method was
-	 * last called on this input stream. If mark() has not been called this
-	 * method repositions the stream to its beginning.
-	 */
-   @Override
-	public void reset() {
-	   // Special case for reset to the start
-	   if(_marked_offset == 0 && _marked_offset_count == 0) {
-	      _current_block_count = _marked_offset_count;
-	      _current_offset = _marked_offset;
-	      _data = _document.getBlockIterator();
-	      _buffer = null;
-	      return;
-	   }
-	   
-		// Start again, then wind on to the required block
-		_data = _document.getBlockIterator();
-		_current_offset = 0;
+    @Override
+    public int read() throws IOException {
+        dieIfClosed();
+        if (atEOD()) {
+            return EOF;
+        }
+        byte[] b = new byte[1];
+        int result = read(b, 0, 1);
+        if(result >= 0) {
+            if(b[0] < 0) {
+                return b[0]+256;
+            }
+            return b[0];
+        }
+        return result;
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        dieIfClosed();
+        if (b == null) {
+            throw new IllegalArgumentException("buffer must not be null");
+        }
+        if (off < 0 || len < 0 || b.length < off + len) {
+            throw new IndexOutOfBoundsException("can't read past buffer boundaries");
+        }
+        if (len == 0) {
+            return 0;
+        }
+        if (atEOD()) {
+            return EOF;
+        }
+        int limit = Math.min(available(), len);
+        readFully(b, off, limit);
+        return limit;
+    }
+
+    /**
+     * Repositions this stream to the position at the time the mark() method was
+     * last called on this input stream. If mark() has not been called this
+     * method repositions the stream to its beginning.
+     */
+    @Override
+    public void reset() {
+        // Special case for reset to the start
+        if(_marked_offset == 0 && _marked_offset_count == 0) {
+            _current_block_count = _marked_offset_count;
+            _current_offset = _marked_offset;
+            _data = _document.getBlockIterator();
+            _buffer = null;
+            return;
+        }
+
+        // Start again, then wind on to the required block
+        _data = _document.getBlockIterator();
+        _current_offset = 0;
 		for(int i=0; i<_marked_offset_count; i++) {
 		   _buffer = _data.next();
 		   _current_offset += _buffer.remaining();
