@@ -44,6 +44,7 @@ import org.apache.poi.poifs.nio.ByteArrayBackedDataSource;
 import org.apache.poi.poifs.nio.DataSource;
 import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.poifs.property.DirectoryProperty;
+import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
@@ -431,7 +432,11 @@ public class NPOIFSFileSystem extends BlockStore
        // The header block doesn't count, so add one
        long blockWanted = offset + 1;
        long startAt = blockWanted * bigBlockSize.getBigBlockSize();
-       return _data.read(bigBlockSize.getBigBlockSize(), startAt);
+       try {
+           return _data.read(bigBlockSize.getBigBlockSize(), startAt);
+       } catch (IndexOutOfBoundsException e) {
+           throw new IndexOutOfBoundsException("Block " + offset + " not found - " + e);
+       }
     }
     
     /**
@@ -820,9 +825,15 @@ public class NPOIFSFileSystem extends BlockStore
      *
      * @param entry to be removed
      */
-
-    void remove(EntryNode entry)
+    void remove(EntryNode entry) throws IOException
     {
+        // If it's a document, free the blocks
+        if (entry instanceof DocumentEntry) {
+            NPOIFSDocument doc = new NPOIFSDocument((DocumentProperty)entry.getProperty(), this);
+            doc.free();
+        }
+        
+        // Now zap it from the properties list
         _property_table.removeProperty(entry.getProperty());
     }
     
