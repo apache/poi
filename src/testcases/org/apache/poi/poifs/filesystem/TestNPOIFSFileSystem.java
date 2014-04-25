@@ -862,6 +862,43 @@ public final class TestNPOIFSFileSystem {
            assertContentsMatches(mini3, (DocumentEntry)testDir.getEntry("Mini3"));
            assertContentsMatches(main4096, (DocumentEntry)testDir.getEntry("Normal4096"));
            
+           
+           // Change some existing streams
+           NPOIFSDocument mini2Doc = new NPOIFSDocument((DocumentNode)testDir.getEntry("Mini2"));
+           mini2Doc.replaceContents(new ByteArrayInputStream(mini));
+           
+           byte[] main4106 = new byte[4106];
+           main4106[0] = 41;
+           main4106[4105] = 42;
+           NPOIFSDocument mainDoc = new NPOIFSDocument((DocumentNode)testDir.getEntry("Normal4096"));
+           mainDoc.replaceContents(new ByteArrayInputStream(main4106));
+           
+           
+           // Re-check
+           fs = writeOutAndReadBack(fs);
+           
+           root = fs.getRoot();
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           
+           assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
+           
+           assertEquals(5, testDir.getEntryCount());
+           assertThat(testDir.getEntryNames(), hasItem("Mini2"));
+           assertThat(testDir.getEntryNames(), hasItem("Mini3"));
+           assertThat(testDir.getEntryNames(), hasItem("Normal4096"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
+
+           assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini2"));
+           assertContentsMatches(mini3, (DocumentEntry)testDir.getEntry("Mini3"));
+           assertContentsMatches(main4106, (DocumentEntry)testDir.getEntry("Normal4096"));
+           
+           
            // All done
            fs.close();
        }

@@ -176,7 +176,9 @@ public final class NPOIFSDocument implements POIFSViewable {
    
    public void replaceContents(InputStream stream) throws IOException {
        free();
-       store(stream);
+       int size = store(stream);
+       _property.setStartBlock(_stream.getStartBlock()); 
+       _property.updateSize(size);
    }
 
    /**
