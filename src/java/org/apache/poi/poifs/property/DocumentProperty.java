@@ -120,6 +120,14 @@ public class DocumentProperty
 
         // do nothing
     }
+    
+    /**
+     * Update the size of the property's data
+     */
+    public void updateSize(int size)
+    {
+        setSize(size);
+    }
 
     /* **********  END  extension of Property ********** */
 }   // end public class DocumentProperty
