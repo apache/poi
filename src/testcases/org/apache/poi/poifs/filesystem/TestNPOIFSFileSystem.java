@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -30,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -73,6 +75,15 @@ public final class TestNPOIFSFileSystem {
        }
        assertEquals("Wrong number of BATs", expectedBAT, foundBAT);
        assertEquals("Wrong number of XBATs with " + expectedBAT + " BATs", expectedXBAT, foundXBAT);
+   }
+   protected void assertContentsMatches(byte[] expected, DocumentEntry doc) throws IOException {
+       NDocumentInputStream inp = new NDocumentInputStream(doc);
+       byte[] contents = new byte[doc.getSize()];
+       assertEquals(doc.getSize(), inp.read(contents));
+       inp.close();
+       
+       if (expected != null)
+           assertThat(expected, equalTo(contents));
    }
    
    protected static HeaderBlock writeOutAndReadHeader(NPOIFSFileSystem fs) throws IOException {
@@ -597,13 +608,10 @@ public final class TestNPOIFSFileSystem {
          DocumentNode doc = (DocumentNode)si;
          
          // Check we can read it
-         NDocumentInputStream inp = new NDocumentInputStream(doc);
-         byte[] contents = new byte[doc.getSize()];
-         assertEquals(doc.getSize(), inp.read(contents));
-         inp.close();
+         assertContentsMatches(null, doc);
          
          // Now try to build the property set
-         inp = new NDocumentInputStream(doc);
+         DocumentInputStream inp = new NDocumentInputStream(doc);
          PropertySet ps = PropertySetFactory.create(inp);
          SummaryInformation inf = (SummaryInformation)ps;
          
@@ -611,9 +619,22 @@ public final class TestNPOIFSFileSystem {
          assertEquals(null, inf.getApplicationName());
          assertEquals(null, inf.getAuthor());
          assertEquals(null, inf.getSubject());
+         assertEquals(131333, inf.getOSVersion());
          
-         // Finish
+         // Finish with this one
          inp.close();
+         
+         
+         // Try the other summary information
+         si = root.getEntry("\u0005DocumentSummaryInformation");
+         assertEquals(true, si.isDocumentEntry());
+         doc = (DocumentNode)si;
+         assertContentsMatches(null, doc);
+         
+         inp = new NDocumentInputStream(doc);
+         ps = PropertySetFactory.create(inp);
+         DocumentSummaryInformation dinf = (DocumentSummaryInformation)ps;
+         assertEquals(131333, dinf.getOSVersion());
       }
    }
    
@@ -623,42 +644,74 @@ public final class TestNPOIFSFileSystem {
     */
    @Test
    public void readWriteRead() throws Exception {
+       SummaryInformation sinf = null;
+       DocumentSummaryInformation dinf = null;
+       
        for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
            // Check we can find the entries we expect
            DirectoryNode root = fs.getRoot();
            assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Tags"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
 
-/*
-           assertEquals("Thumbnail", prop.getName());
-           prop = pi.next();
-           assertEquals("\u0005DocumentSummaryInformation", prop.getName());
-           prop = pi.next();
-           assertEquals("\u0005SummaryInformation", prop.getName());
-           prop = pi.next();
-           assertEquals("Image", prop.getName());
-           prop = pi.next();
-           assertEquals("Tags", prop.getName());
-*/
-           
-           // TODO Add check
            
            // Write out, re-load
-           // TODO Add check
+           fs = writeOutAndReadBack(fs);
            
            // Check they're still there
-           // TODO Add check
+           root = fs.getRoot();
+           assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Tags"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
            
-           // Check the first few and last few bytes of a few
-           // TODO Add check
+           
+           // Check the contents of them - parse the summary block and check
+           sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, sinf.getOSVersion());
+           
+           dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, sinf.getOSVersion());
+           
            
            // Add a test mini stream
-           // TODO Add check
+           DirectoryEntry testDir = root.createDirectory("Testing 123");
+           byte[] mini = new byte[] { 42, 0, 1, 2, 3, 4, 42 };
+           testDir.createDocument("Mini", new ByteArrayInputStream(mini));
+           
            
            // Write out, re-load
-           // TODO Add check
+           fs = writeOutAndReadBack(fs);
+           
+           root = fs.getRoot();
+           assertEquals(6, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Tags"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
+
            
            // Check old and new are there
-           // TODO Add check
+           sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, sinf.getOSVersion());
+           
+           dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, sinf.getOSVersion());
+
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
+           
            
            // Add a full stream, delete a full stream
            // TODO Add check
@@ -684,7 +737,6 @@ public final class TestNPOIFSFileSystem {
    @SuppressWarnings("resource")
    public void createWriteRead() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem();
-      NDocumentInputStream inp;
       DocumentEntry miniDoc;
       DocumentEntry normDoc;
       
@@ -859,25 +911,13 @@ public final class TestNPOIFSFileSystem {
       assertEquals(3, testDir.getEntryCount());
 
       miniDoc = (DocumentEntry)testDir.getEntry("Mini");
-      inp = new NDocumentInputStream(miniDoc);
-      byte[] miniRead = new byte[miniDoc.getSize()];
-      assertEquals(miniDoc.getSize(), inp.read(miniRead));
-      assertThat(mini, equalTo(miniRead));
-      inp.close();
+      assertContentsMatches(mini, miniDoc);
       
       normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
-      inp = new NDocumentInputStream(normDoc);
-      byte[] normRead = new byte[normDoc.getSize()];
-      assertEquals(normDoc.getSize(), inp.read(normRead));
-      assertThat(main4096, equalTo(normRead));
-      inp.close();
+      assertContentsMatches(main4096, normDoc);
 
       normDoc = (DocumentEntry)testDir.getEntry("Normal5124");
-      inp = new NDocumentInputStream(normDoc);
-      normRead = new byte[normDoc.getSize()];
-      assertEquals(normDoc.getSize(), inp.read(normRead));
-      assertThat(main5124, equalTo(normRead));
-      inp.close();
+      assertContentsMatches(main5124, normDoc);
       
       // All done
       fs.close();
@@ -886,7 +926,6 @@ public final class TestNPOIFSFileSystem {
    @Test
    public void addBeforeWrite() throws Exception {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-       NDocumentInputStream inp;
        DocumentEntry miniDoc;
        DocumentEntry normDoc;
        HeaderBlock hdr;
@@ -945,18 +984,10 @@ public final class TestNPOIFSFileSystem {
        
        // Check that we can read the right data pre-write
        miniDoc = (DocumentEntry)testDir.getEntry("Mini");
-       inp = new NDocumentInputStream(miniDoc);
-       byte[] miniRead = new byte[miniDoc.getSize()];
-       assertEquals(miniDoc.getSize(), inp.read(miniRead));
-       assertThat(mini, equalTo(miniRead));
-       inp.close();
+       assertContentsMatches(mini, miniDoc);
 
        normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
-       inp = new NDocumentInputStream(normDoc);
-       byte[] normRead = new byte[normDoc.getSize()];
-       assertEquals(normDoc.getSize(), inp.read(normRead));
-       assertThat(main4096, equalTo(normRead));
-       inp.close();
+       assertContentsMatches(main4096, normDoc);
        
        
        // Write, read, check
@@ -1002,18 +1033,10 @@ public final class TestNPOIFSFileSystem {
        assertEquals(2, testDir.getEntryCount());
 
        miniDoc = (DocumentEntry)testDir.getEntry("Mini");
-       inp = new NDocumentInputStream(miniDoc);
-       miniRead = new byte[miniDoc.getSize()];
-       assertEquals(miniDoc.getSize(), inp.read(miniRead));
-       assertThat(mini, equalTo(miniRead));
-       inp.close();
+       assertContentsMatches(mini, miniDoc);
 
        normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
-       inp = new NDocumentInputStream(normDoc);
-       normRead = new byte[normDoc.getSize()];
-       assertEquals(normDoc.getSize(), inp.read(normRead));
-       assertThat(main4096, equalTo(normRead));
-       inp.close();
+       assertContentsMatches(main4096, normDoc);
        
        
        // Add one more stream to each, then save and re-load
@@ -1040,25 +1063,13 @@ public final class TestNPOIFSFileSystem {
        assertEquals(4, testDir.getEntryCount());
 
        miniDoc = (DocumentEntry)testDir.getEntry("Mini");
-       inp = new NDocumentInputStream(miniDoc);
-       miniRead = new byte[miniDoc.getSize()];
-       assertEquals(miniDoc.getSize(), inp.read(miniRead));
-       assertThat(mini, equalTo(miniRead));
-       inp.close();
+       assertContentsMatches(mini, miniDoc);
 
        miniDoc = (DocumentEntry)testDir.getEntry("Mini2");
-       inp = new NDocumentInputStream(miniDoc);
-       miniRead = new byte[miniDoc.getSize()];
-       assertEquals(miniDoc.getSize(), inp.read(miniRead));
-       assertThat(mini2, equalTo(miniRead));
-       inp.close();
+       assertContentsMatches(mini2, miniDoc);
 
        normDoc = (DocumentEntry)testDir.getEntry("Normal4106");
-       inp = new NDocumentInputStream(normDoc);
-       normRead = new byte[normDoc.getSize()];
-       assertEquals(normDoc.getSize(), inp.read(normRead));
-       assertThat(main4106, equalTo(normRead));
-       inp.close();   
+       assertContentsMatches(main4106, normDoc);
    }
 
    /**
