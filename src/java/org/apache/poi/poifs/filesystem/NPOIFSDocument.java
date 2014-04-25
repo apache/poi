@@ -46,6 +46,14 @@ public final class NPOIFSDocument implements POIFSViewable {
    /**
     * Constructor for an existing Document 
     */
+   public NPOIFSDocument(DocumentNode document) throws IOException {
+       this((DocumentProperty)document.getProperty(), 
+            ((DirectoryNode)document.getParent()).getNFileSystem());
+   }
+   
+   /**
+    * Constructor for an existing Document 
+    */
    public NPOIFSDocument(DocumentProperty property, NPOIFSFileSystem filesystem) 
       throws IOException
    {
@@ -72,32 +80,10 @@ public final class NPOIFSDocument implements POIFSViewable {
    {
       this._filesystem = filesystem;
 
-      final int bigBlockSize = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
-      BufferedInputStream bis = new BufferedInputStream(stream, bigBlockSize+1);
-      bis.mark(bigBlockSize);
-
-      // Do we need to store as a mini stream or a full one?
-      if(bis.skip(bigBlockSize) < bigBlockSize) {
-         _stream = new NPOIFSStream(filesystem.getMiniStore());
-         _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
-      } else {
-         _stream = new NPOIFSStream(filesystem);
-         _block_size = _filesystem.getBlockStoreBlockSize();
-      }
-
-      // start from the beginning 
-      bis.reset();
-      
       // Store it
-      OutputStream os = _stream.getOutputStream();
-      byte buf[] = new byte[1024];
-      int length = 0;
-      
-      for (int readBytes; (readBytes = bis.read(buf)) != -1; length += readBytes) {
-          os.write(buf, 0, readBytes);
-      }
+      int length = store(stream);
 
-      // And build the property for it
+      // Build the property for it
       this._property = new DocumentProperty(name, length);
       _property.setStartBlock(_stream.getStartBlock());     
    }
@@ -129,6 +115,38 @@ public final class NPOIFSDocument implements POIFSViewable {
    }
    
    /**
+    * Stores the given data for this Document
+    */
+   private int store(InputStream stream) throws IOException {
+       final int bigBlockSize = POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE;
+       BufferedInputStream bis = new BufferedInputStream(stream, bigBlockSize+1);
+       bis.mark(bigBlockSize);
+
+       // Do we need to store as a mini stream or a full one?
+       if(bis.skip(bigBlockSize) < bigBlockSize) {
+          _stream = new NPOIFSStream(_filesystem.getMiniStore());
+          _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
+       } else {
+          _stream = new NPOIFSStream(_filesystem);
+          _block_size = _filesystem.getBlockStoreBlockSize();
+       }
+
+       // start from the beginning 
+       bis.reset();
+       
+       // Store it
+       OutputStream os = _stream.getOutputStream();
+       byte buf[] = new byte[1024];
+       int length = 0;
+       
+       for (int readBytes; (readBytes = bis.read(buf)) != -1; length += readBytes) {
+           os.write(buf, 0, readBytes);
+       }
+       
+       return length;
+   }
+   
+   /**
     * Frees the underlying stream and property
     */
    void free() throws IOException {
@@ -154,6 +172,11 @@ public final class NPOIFSDocument implements POIFSViewable {
     */
    public int getSize() {
       return _property.getSize();
+   }
+   
+   public void replaceContents(InputStream stream) throws IOException {
+       free();
+       store(stream);
    }
 
    /**
