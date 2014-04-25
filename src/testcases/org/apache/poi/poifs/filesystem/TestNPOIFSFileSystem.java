@@ -625,6 +625,21 @@ public final class TestNPOIFSFileSystem {
    public void readWriteRead() throws Exception {
        for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
            // Check we can find the entries we expect
+           DirectoryNode root = fs.getRoot();
+           assertEquals(5, root.getEntryCount());
+
+/*
+           assertEquals("Thumbnail", prop.getName());
+           prop = pi.next();
+           assertEquals("\u0005DocumentSummaryInformation", prop.getName());
+           prop = pi.next();
+           assertEquals("\u0005SummaryInformation", prop.getName());
+           prop = pi.next();
+           assertEquals("Image", prop.getName());
+           prop = pi.next();
+           assertEquals("Tags", prop.getName());
+*/
+           
            // TODO Add check
            
            // Write out, re-load
@@ -794,12 +809,23 @@ public final class TestNPOIFSFileSystem {
       
       // Write and read back
       fs = writeOutAndReadBack(fs);
+      HeaderBlock header = writeOutAndReadHeader(fs);
       
-      // Check it's all unchanged
+      // Check the header has the right points in it
+      assertEquals(1, header.getBATCount());
+      assertEquals(0, header.getBATArray()[0]);
+      assertEquals(2, header.getPropertyStart());
+      assertEquals(1, header.getSBATCount());
+      assertEquals(22, header.getSBATStart());
+      assertEquals(23, fs._get_property_table().getRoot().getStartBlock());
+      
+      // Block use should be almost the same, except the properties
+      //  stream will have grown out to cover 2 blocks
+      // Check the block use is all unchanged
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
-if(1==0) { // TODO FIX      
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+      assertEquals(24, fs.getNextBlock(2)); // Properties now extends over 2 blocks
+      
       assertEquals(4, fs.getNextBlock(3));
       assertEquals(5, fs.getNextBlock(4));
       assertEquals(6, fs.getNextBlock(5));
@@ -807,7 +833,7 @@ if(1==0) { // TODO FIX
       assertEquals(8, fs.getNextBlock(7));
       assertEquals(9, fs.getNextBlock(8));
       assertEquals(10, fs.getNextBlock(9));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(10));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(10)); // End of normal4096
 
       assertEquals(12, fs.getNextBlock(11));
       assertEquals(13, fs.getNextBlock(12));
@@ -819,13 +845,12 @@ if(1==0) { // TODO FIX
       assertEquals(19, fs.getNextBlock(18));
       assertEquals(20, fs.getNextBlock(19));
       assertEquals(21, fs.getNextBlock(20));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(22));
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(23));
-      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(24));
-}
-
-      assertEquals(23, fs.getRoot().getProperty().getStartBlock());
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(21)); // End of normal5124 
+      
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(22)); // Mini Stream FAT
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(23)); // Mini Stream data
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(24)); // Properties #2
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(25));
 
       
       // Check some data
