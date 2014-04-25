@@ -673,6 +673,9 @@ public final class TestNPOIFSFileSystem {
       
       // Check that the SBAT is empty
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      
+      // Check that no properties table has been written yet
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs._get_property_table().getStartBlock());
 
       // Write and read it
       fs = writeOutAndReadBack(fs);
@@ -683,6 +686,7 @@ public final class TestNPOIFSFileSystem {
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(3));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      assertEquals(2, fs._get_property_table().getStartBlock());
 
       
       // Put everything within a new directory
@@ -794,17 +798,17 @@ public final class TestNPOIFSFileSystem {
           assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(7));
           assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(8));
       }
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
+      // Check the mini stream location was set
+      assertEquals(22, fs.getRoot().getProperty().getStartBlock());
       
       
       // Write and read back
       fs = writeOutAndReadBack(fs);
       
       // Check it's all unchanged
-      // TODO Fix it so that it is....
-if (1==0) {      
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+if (1==0) {
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
       if (fs.getBigBlockSize() == POIFSConstants.SMALLER_BIG_BLOCK_SIZE) {
           assertEquals(4, fs.getNextBlock(3));
@@ -838,8 +842,9 @@ if (1==0) {
           assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(7));
           assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(8));
       }
-      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getRoot().getProperty().getStartBlock());
-}      
+}
+      assertEquals(22, fs.getRoot().getProperty().getStartBlock());
+
       
       // Check some data
       // TODO
@@ -853,18 +858,36 @@ if (1==0) {
    public void addBeforeWrite() throws Exception {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
        NDocumentInputStream inp;
+       DocumentEntry miniDoc;
+       DocumentEntry normDoc;
+       HeaderBlock hdr;
        
        // Initially has BAT + Properties but nothing else
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
        assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
        assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
-
+       
+       hdr = writeOutAndReadHeader(fs);
+       // No mini stream, and no xbats
+       // Will have fat then properties stream
+       assertEquals(1, hdr.getBATCount());
+       assertEquals(0, hdr.getBATArray()[0]);
+       assertEquals(2, hdr.getPropertyStart());
+       assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getSBATStart());
+       assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
+       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*4, fs.size());
+       
+       
+       // Get a clean filesystem to start with
+       fs = new NPOIFSFileSystem();
+       
+       // Put our test files in a non-standard place
        DirectoryEntry parentDir = fs.createDirectory("Parent Directory");
        DirectoryEntry testDir = parentDir.createDirectory("Test Directory");
        
        
        // Add to the mini stream
-       byte[] mini = new byte[] { 0, 1, 2, 3, 4 };
+       byte[] mini = new byte[] { 42, 0, 1, 2, 3, 4, 42 };
        testDir.createDocument("Mini", new ByteArrayInputStream(mini));
        
        // Add to the main stream
@@ -888,14 +911,39 @@ if (1==0) {
        assertEquals(11,                          fs.getNextBlock(10));
        assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(11));
        assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(12));
+       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*13, fs.size());
+       
+       
+       // Check that we can read the right data pre-write
+       miniDoc = (DocumentEntry)testDir.getEntry("Mini");
+       inp = new NDocumentInputStream(miniDoc);
+       byte[] miniRead = new byte[miniDoc.getSize()];
+       assertEquals(miniDoc.getSize(), inp.read(miniRead));
+       assertThat(mini, equalTo(miniRead));
+       inp.close();
+
+       normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
+       inp = new NDocumentInputStream(normDoc);
+       byte[] normRead = new byte[normDoc.getSize()];
+       assertEquals(normDoc.getSize(), inp.read(normRead));
+       assertThat(main4096, equalTo(normRead));
+       inp.close();
        
        
        // Write, read, check
+       hdr = writeOutAndReadHeader(fs);
        fs = writeOutAndReadBack(fs);
        
-       // Check it was unchanged
-       // TODO Fix this
-if (1==0) {       
+       // Check the header details - will have the sbat near the start,
+       //  then the properties at the end
+       assertEquals(1, hdr.getBATCount());
+       assertEquals(0, hdr.getBATArray()[0]);
+       assertEquals(2, hdr.getSBATStart());
+       assertEquals(12, hdr.getPropertyStart());
+       assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
+       
+       // Check the block allocation is unchanged, other than
+       //  the properties stream going in at the end
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
        assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
        assertEquals(3,                           fs.getNextBlock(2));
@@ -908,8 +956,11 @@ if (1==0) {
        assertEquals(10,                          fs.getNextBlock(9));
        assertEquals(11,                          fs.getNextBlock(10));
        assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(11));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(12));
-}
+       assertEquals(13,                          fs.getNextBlock(12));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(13));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(14));
+       assertEquals(POIFSConstants.SMALLER_BIG_BLOCK_SIZE*15, fs.size());
+       
        
        // Check the data
        DirectoryEntry fsRoot = fs.getRoot();
@@ -921,22 +972,28 @@ if (1==0) {
        testDir = (DirectoryEntry)parentDir.getEntry("Test Directory");
        assertEquals(2, testDir.getEntryCount());
 
-       // TODO Fix mini stream reading
-if(1==0){       
-       DocumentEntry miniDoc = (DocumentEntry)testDir.getEntry("Mini");
+       miniDoc = (DocumentEntry)testDir.getEntry("Mini");
        inp = new NDocumentInputStream(miniDoc);
-       byte[] miniRead = new byte[miniDoc.getSize()];
+       miniRead = new byte[miniDoc.getSize()];
        assertEquals(miniDoc.getSize(), inp.read(miniRead));
+       // TODO Fix mini stream write/read corruption
+if(1==0) {       
        assertThat(mini, equalTo(miniRead));
-       inp.close();
 }
+       inp.close();
 
-       DocumentEntry normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
+       normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
        inp = new NDocumentInputStream(normDoc);
-       byte[] normRead = new byte[normDoc.getSize()];
+       normRead = new byte[normDoc.getSize()];
        assertEquals(normDoc.getSize(), inp.read(normRead));
        assertThat(main4096, equalTo(normRead));
        inp.close();
+       
+       
+       // Add one more stream to each, then save and re-load
+       
+       // Recheck
+       // TODO
    }
 
    /**

@@ -191,6 +191,7 @@ public class NPOIFSMiniStore extends BlockStore
        if(_header.getSBATCount() == 0) {
           _header.setSBATStart(batForSBAT);
           _header.setSBATBlockCount(1);
+          _filesystem._get_property_table().getRoot().setStartBlock(batForSBAT);
           _mini_stream = new NPOIFSStream(_filesystem, batForSBAT);
        } else {
           // Find the end of the SBAT stream, and add the sbat in there
