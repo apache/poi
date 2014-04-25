@@ -646,10 +646,11 @@ public final class TestNPOIFSFileSystem {
    public void readWriteRead() throws Exception {
        SummaryInformation sinf = null;
        DocumentSummaryInformation dinf = null;
+       DirectoryEntry root = null, testDir = null;
        
        for(NPOIFSFileSystem fs : get512and4kFileAndInput()) {
            // Check we can find the entries we expect
-           DirectoryNode root = fs.getRoot();
+           root = fs.getRoot();
            assertEquals(5, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
            assertThat(root.getEntryNames(), hasItem("Image"));
@@ -678,11 +679,13 @@ public final class TestNPOIFSFileSystem {
            
            dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
                    (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
-           assertEquals(131333, sinf.getOSVersion());
+           assertEquals(131333, dinf.getOSVersion());
            
            
            // Add a test mini stream
-           DirectoryEntry testDir = root.createDirectory("Testing 123");
+           testDir = root.createDirectory("Testing 123");
+           testDir.createDirectory("Testing 456");
+           testDir.createDirectory("Testing 789");
            byte[] mini = new byte[] { 42, 0, 1, 2, 3, 4, 42 };
            testDir.createDocument("Mini", new ByteArrayInputStream(mini));
            
@@ -707,26 +710,85 @@ public final class TestNPOIFSFileSystem {
            
            dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
                    (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
-           assertEquals(131333, sinf.getOSVersion());
+           assertEquals(131333, dinf.getOSVersion());
 
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
            
            
            // Add a full stream, delete a full stream
-           // TODO Add check
+           byte[] main4096 = new byte[4096];
+           main4096[0] = -10;
+           main4096[4095] = -11;
+           testDir.createDocument("Normal4096", new ByteArrayInputStream(main4096));
+           
+           root.getEntry("Tags").delete();
+           
            
            // Write out, re-load
-           // TODO Add check
-           
+           fs = writeOutAndReadBack(fs);
+       }
+       // TODO Fix from here on down
+/*       
            // Check it's all there
-           // TODO Add check
+           assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
 
-           // TODO Something about directories too
+           
+           // Check old and new are there
+           sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, sinf.getOSVersion());
+           
+           dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, dinf.getOSVersion());
+
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
+           assertContentsMatches(main4096, (DocumentEntry)testDir.getEntry("Normal4096"));
+
+           
+           // Delete a directory, and add one more
+           testDir.getEntry("Testing 456").delete();
+           testDir.createDirectory("Testing ABC");
+           
+           
+           // Save
+           fs = writeOutAndReadBack(fs);
+
+           // Check
+           assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
+           
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           assertEquals(4, testDir.getEntryCount());
+           assertThat(testDir.getEntryNames(), hasItem("Mini"));
+           assertThat(testDir.getEntryNames(), hasItem("Normal4096"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
+           
+           
+           // Another mini stream
+           
+           // Save, load, check
+           
+           // Delete a mini stream, add one more
+           
+           // Save, load, check
            
            // All done
            fs.close();
        }
+*/
    }
    
    /**
