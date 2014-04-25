@@ -261,8 +261,6 @@ public abstract class SpecialPropertySet extends MutablePropertySet
         delegate.write(dir, name);
     }
 
-
-
     /**
      * @see org.apache.poi.hpsf.MutablePropertySet#write(java.io.OutputStream)
      */
@@ -270,8 +268,6 @@ public abstract class SpecialPropertySet extends MutablePropertySet
     {
         delegate.write(out);
     }
-
-
 
     /**
      * @see org.apache.poi.hpsf.PropertySet#equals(java.lang.Object)
@@ -281,8 +277,6 @@ public abstract class SpecialPropertySet extends MutablePropertySet
         return delegate.equals(o);
     }
 
-
-
     /**
      * @see org.apache.poi.hpsf.PropertySet#getProperties()
      */
@@ -290,8 +284,6 @@ public abstract class SpecialPropertySet extends MutablePropertySet
     {
         return delegate.getProperties();
     }
-
-
 
     /**
      * @see org.apache.poi.hpsf.PropertySet#getProperty(int)

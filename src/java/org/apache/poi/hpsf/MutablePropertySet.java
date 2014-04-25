@@ -246,6 +246,9 @@ public class MutablePropertySet extends PropertySet
             final MutableSection s = (MutableSection) i.next();
             offset += s.write(out);
         }
+        
+        /* Indicate that we're done */
+        out.close();
     }
 
 
