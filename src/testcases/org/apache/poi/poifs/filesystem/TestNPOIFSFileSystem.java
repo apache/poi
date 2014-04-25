@@ -694,6 +694,7 @@ public final class TestNPOIFSFileSystem {
            fs = writeOutAndReadBack(fs);
            
            root = fs.getRoot();
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertEquals(6, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
            assertThat(root.getEntryNames(), hasItem("Image"));
@@ -712,7 +713,30 @@ public final class TestNPOIFSFileSystem {
                    (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
            assertEquals(131333, dinf.getOSVersion());
 
+           assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
+           
+           
+           // Write out and read once more, just to be sure
+           fs = writeOutAndReadBack(fs);
+           
+           root = fs.getRoot();
            testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           assertEquals(6, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Tags"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
+
+           sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, sinf.getOSVersion());
+           
+           dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(
+                   (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
+           assertEquals(131333, dinf.getOSVersion());
+
            assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
            
            
@@ -727,10 +751,10 @@ public final class TestNPOIFSFileSystem {
            
            // Write out, re-load
            fs = writeOutAndReadBack(fs);
-       }
-       // TODO Fix from here on down
-/*       
+
            // Check it's all there
+           root = fs.getRoot();
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertEquals(5, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
            assertThat(root.getEntryNames(), hasItem("Image"));
@@ -748,7 +772,6 @@ public final class TestNPOIFSFileSystem {
                    (DocumentEntry)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)));
            assertEquals(131333, dinf.getOSVersion());
 
-           testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
            assertContentsMatches(main4096, (DocumentEntry)testDir.getEntry("Normal4096"));
 
@@ -762,6 +785,9 @@ public final class TestNPOIFSFileSystem {
            fs = writeOutAndReadBack(fs);
 
            // Check
+           root = fs.getRoot();
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           
            assertEquals(5, root.getEntryCount());
            assertThat(root.getEntryNames(), hasItem("Thumbnail"));
            assertThat(root.getEntryNames(), hasItem("Image"));
@@ -769,7 +795,6 @@ public final class TestNPOIFSFileSystem {
            assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
            assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
            
-           testDir = (DirectoryEntry)root.getEntry("Testing 123");
            assertEquals(4, testDir.getEntryCount());
            assertThat(testDir.getEntryNames(), hasItem("Mini"));
            assertThat(testDir.getEntryNames(), hasItem("Normal4096"));
@@ -777,18 +802,69 @@ public final class TestNPOIFSFileSystem {
            assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
            
            
-           // Another mini stream
+           // Add another mini stream
+           byte[] mini2 = new byte[] { -42, 0, -1, -2, -3, -4, -42 };
+           testDir.createDocument("Mini2", new ByteArrayInputStream(mini2));
            
            // Save, load, check
+           fs = writeOutAndReadBack(fs);
+           
+           root = fs.getRoot();
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           
+           assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
+           
+           assertEquals(5, testDir.getEntryCount());
+           assertThat(testDir.getEntryNames(), hasItem("Mini"));
+           assertThat(testDir.getEntryNames(), hasItem("Mini2"));
+           assertThat(testDir.getEntryNames(), hasItem("Normal4096"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
+
+           assertContentsMatches(mini, (DocumentEntry)testDir.getEntry("Mini"));
+           assertContentsMatches(mini2, (DocumentEntry)testDir.getEntry("Mini2"));
+           assertContentsMatches(main4096, (DocumentEntry)testDir.getEntry("Normal4096"));
+
            
            // Delete a mini stream, add one more
+           testDir.getEntry("Mini").delete();
+           
+           byte[] mini3 = new byte[] { 42, 0, 42, 0, 42, 0, 42 };
+           testDir.createDocument("Mini3", new ByteArrayInputStream(mini3));
+
            
            // Save, load, check
+           fs = writeOutAndReadBack(fs);
+           
+           root = fs.getRoot();
+           testDir = (DirectoryEntry)root.getEntry("Testing 123");
+           
+           assertEquals(5, root.getEntryCount());
+           assertThat(root.getEntryNames(), hasItem("Thumbnail"));
+           assertThat(root.getEntryNames(), hasItem("Image"));
+           assertThat(root.getEntryNames(), hasItem("Testing 123"));
+           assertThat(root.getEntryNames(), hasItem("\u0005DocumentSummaryInformation"));
+           assertThat(root.getEntryNames(), hasItem("\u0005SummaryInformation"));
+           
+           assertEquals(5, testDir.getEntryCount());
+           assertThat(testDir.getEntryNames(), hasItem("Mini2"));
+           assertThat(testDir.getEntryNames(), hasItem("Mini3"));
+           assertThat(testDir.getEntryNames(), hasItem("Normal4096"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing 789"));
+           assertThat(testDir.getEntryNames(), hasItem("Testing ABC"));
+
+           assertContentsMatches(mini2, (DocumentEntry)testDir.getEntry("Mini2"));
+           assertContentsMatches(mini3, (DocumentEntry)testDir.getEntry("Mini3"));
+           assertContentsMatches(main4096, (DocumentEntry)testDir.getEntry("Normal4096"));
            
            // All done
            fs.close();
        }
-*/
    }
    
    /**
@@ -980,6 +1056,45 @@ public final class TestNPOIFSFileSystem {
 
       normDoc = (DocumentEntry)testDir.getEntry("Normal5124");
       assertContentsMatches(main5124, normDoc);
+      
+      
+      // Delete a couple of streams
+      miniDoc.delete();
+      normDoc.delete();
+
+      
+      // Check - will have un-used sectors now
+      fs = writeOutAndReadBack(fs);
+      
+      assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2)); // Props back in 1 block
+      
+      assertEquals(4, fs.getNextBlock(3));
+      assertEquals(5, fs.getNextBlock(4));
+      assertEquals(6, fs.getNextBlock(5));
+      assertEquals(7, fs.getNextBlock(6));
+      assertEquals(8, fs.getNextBlock(7));
+      assertEquals(9, fs.getNextBlock(8));
+      assertEquals(10, fs.getNextBlock(9));
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(10)); // End of normal4096
+
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(11));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(12));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(13));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(14));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(15));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(16));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(17));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(18));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(19));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(20));
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(21));
+      
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(22)); // Mini Stream FAT
+      assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(23)); // Mini Stream data
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(24)); // Properties gone
+      assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(25));
       
       // All done
       fs.close();
