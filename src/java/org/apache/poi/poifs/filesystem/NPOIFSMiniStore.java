@@ -86,9 +86,13 @@ public class NPOIFSMiniStore extends BlockStore
      * Load the block, extending the underlying stream if needed
      */
     protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
-       // Ensure we have our first block at this point
+       // If we are the first block to be allocated, initialise the stream
        if (_mini_stream.getStartBlock() == POIFSConstants.END_OF_CHAIN) {
-           getFreeBlock();
+           int firstBigBlock = _filesystem.getFreeBlock();
+           _filesystem.createBlockIfNeeded(firstBigBlock);
+           _filesystem.setNextBlock(firstBigBlock, POIFSConstants.END_OF_CHAIN);
+           _filesystem._get_property_table().getRoot().setStartBlock(firstBigBlock);
+           _mini_stream = new NPOIFSStream(_filesystem, firstBigBlock);
        }
         
        // Try to get it without extending the stream
@@ -189,10 +193,9 @@ public class NPOIFSMiniStore extends BlockStore
        
        // Are we the first SBAT?
        if(_header.getSBATCount() == 0) {
+          // Tell the header that we've got our first SBAT there
           _header.setSBATStart(batForSBAT);
           _header.setSBATBlockCount(1);
-          _filesystem._get_property_table().getRoot().setStartBlock(batForSBAT);
-          _mini_stream = new NPOIFSStream(_filesystem, batForSBAT);
        } else {
           // Find the end of the SBAT stream, and add the sbat in there
           ChainLoopDetector loopDetector = _filesystem.getChainLoopDetector();
