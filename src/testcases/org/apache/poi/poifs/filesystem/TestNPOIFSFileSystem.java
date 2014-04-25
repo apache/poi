@@ -414,6 +414,7 @@ public final class TestNPOIFSFileSystem {
 
       // We have one BAT at block 99
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
+      assertBATCount(fs, 1, 0);
       
       // We've spare ones from 100 to 128
       for(int i=100; i<128; i++) {
@@ -652,6 +653,8 @@ public final class TestNPOIFSFileSystem {
            
            // Check it's all there
            // TODO Add check
+
+           // TODO Something about directories too
            
            // All done
            fs.close();
@@ -663,8 +666,12 @@ public final class TestNPOIFSFileSystem {
     * Then, add some streams, write and read
     */
    @Test
+   @SuppressWarnings("resource")
    public void createWriteRead() throws Exception {
       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+      NDocumentInputStream inp;
+      DocumentEntry miniDoc;
+      DocumentEntry normDoc;
       
       // Initially has a BAT but not SBAT
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
@@ -822,8 +829,30 @@ if(1==0) { // TODO FIX
 
       
       // Check some data
-      // TODO
+      assertEquals(1, fs.getRoot().getEntryCount());
+      testDir = (DirectoryEntry)fs.getRoot().getEntry("Test Directory");
+      assertEquals(3, testDir.getEntryCount());
+
+      miniDoc = (DocumentEntry)testDir.getEntry("Mini");
+      inp = new NDocumentInputStream(miniDoc);
+      byte[] miniRead = new byte[miniDoc.getSize()];
+      assertEquals(miniDoc.getSize(), inp.read(miniRead));
+      assertThat(mini, equalTo(miniRead));
+      inp.close();
       
+      normDoc = (DocumentEntry)testDir.getEntry("Normal4096");
+      inp = new NDocumentInputStream(normDoc);
+      byte[] normRead = new byte[normDoc.getSize()];
+      assertEquals(normDoc.getSize(), inp.read(normRead));
+      assertThat(main4096, equalTo(normRead));
+      inp.close();
+
+      normDoc = (DocumentEntry)testDir.getEntry("Normal5124");
+      inp = new NDocumentInputStream(normDoc);
+      normRead = new byte[normDoc.getSize()];
+      assertEquals(normDoc.getSize(), inp.read(normRead));
+      assertThat(main5124, equalTo(normRead));
+      inp.close();
       
       // All done
       fs.close();
@@ -963,9 +992,48 @@ if(1==0) { // TODO FIX
        
        
        // Add one more stream to each, then save and re-load
+       byte[] mini2 = new byte[] { -42, 0, -1, -2, -3, -4, -42 };
+       testDir.createDocument("Mini2", new ByteArrayInputStream(mini2));
        
-       // Recheck
-       // TODO
+       // Add to the main stream
+       byte[] main4106 = new byte[4106];
+       main4106[0] = 41;
+       main4106[4105] = 42;
+       testDir.createDocument("Normal4106", new ByteArrayInputStream(main4106));
+       
+       
+       // Recheck the data in all 4 streams
+       fs = writeOutAndReadBack(fs);
+       
+       fsRoot = fs.getRoot();
+       assertEquals(1, fsRoot.getEntryCount());
+       
+       parentDir = (DirectoryEntry)fsRoot.getEntry("Parent Directory");
+       assertEquals(1, parentDir.getEntryCount());
+       
+       testDir = (DirectoryEntry)parentDir.getEntry("Test Directory");
+       assertEquals(4, testDir.getEntryCount());
+
+       miniDoc = (DocumentEntry)testDir.getEntry("Mini");
+       inp = new NDocumentInputStream(miniDoc);
+       miniRead = new byte[miniDoc.getSize()];
+       assertEquals(miniDoc.getSize(), inp.read(miniRead));
+       assertThat(mini, equalTo(miniRead));
+       inp.close();
+
+       miniDoc = (DocumentEntry)testDir.getEntry("Mini2");
+       inp = new NDocumentInputStream(miniDoc);
+       miniRead = new byte[miniDoc.getSize()];
+       assertEquals(miniDoc.getSize(), inp.read(miniRead));
+       assertThat(mini2, equalTo(miniRead));
+       inp.close();
+
+       normDoc = (DocumentEntry)testDir.getEntry("Normal4106");
+       inp = new NDocumentInputStream(normDoc);
+       normRead = new byte[normDoc.getSize()];
+       assertEquals(normDoc.getSize(), inp.read(normRead));
+       assertThat(main4106, equalTo(normRead));
+       inp.close();   
    }
 
    /**
@@ -991,6 +1059,4 @@ if(1==0) { // TODO FIX
        
        assertThat(wbDataExp, equalTo(wbDataAct));
    }
-   
-   // TODO Directory/Document create/write/read/delete/change tests
 }

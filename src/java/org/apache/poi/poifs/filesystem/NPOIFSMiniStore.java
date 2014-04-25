@@ -86,44 +86,50 @@ public class NPOIFSMiniStore extends BlockStore
      * Load the block, extending the underlying stream if needed
      */
     protected ByteBuffer createBlockIfNeeded(final int offset) throws IOException {
-       // If we are the first block to be allocated, initialise the stream
+       boolean firstInStore = false;
        if (_mini_stream.getStartBlock() == POIFSConstants.END_OF_CHAIN) {
-           int firstBigBlock = _filesystem.getFreeBlock();
-           _filesystem.createBlockIfNeeded(firstBigBlock);
-           _filesystem.setNextBlock(firstBigBlock, POIFSConstants.END_OF_CHAIN);
-           _filesystem._get_property_table().getRoot().setStartBlock(firstBigBlock);
-           _mini_stream = new NPOIFSStream(_filesystem, firstBigBlock);
+           firstInStore = true;
        }
-        
+       
        // Try to get it without extending the stream
-       try {
-          return getBlockAt(offset);
-       } catch(IndexOutOfBoundsException e) {
-          // Need to extend the stream
-          // TODO Replace this with proper append support
-          // For now, do the extending by hand...
-          
-          // Ask for another block
-          int newBigBlock = _filesystem.getFreeBlock();
-          _filesystem.createBlockIfNeeded(newBigBlock);
-          
-          // Tack it onto the end of our chain
-          ChainLoopDetector loopDetector = _filesystem.getChainLoopDetector();
-          int block = _mini_stream.getStartBlock();
-          while(true) {
-             loopDetector.claim(block);
-             int next = _filesystem.getNextBlock(block);
-             if(next == POIFSConstants.END_OF_CHAIN) {
-                break;
-             }
-             block = next;
-          }
-          _filesystem.setNextBlock(block, newBigBlock);
-          _filesystem.setNextBlock(newBigBlock, POIFSConstants.END_OF_CHAIN);
-
-          // Now try again to get it
-          return createBlockIfNeeded(offset);
+       if (! firstInStore) {
+           try {
+              return getBlockAt(offset);
+           } catch(IndexOutOfBoundsException e) {}
        }
+       
+       // Need to extend the stream
+       // TODO Replace this with proper append support
+       // For now, do the extending by hand...
+
+       // Ask for another block
+       int newBigBlock = _filesystem.getFreeBlock();
+       _filesystem.createBlockIfNeeded(newBigBlock);
+       
+       // If we are the first block to be allocated, initialise the stream
+       if (firstInStore) {
+           _filesystem._get_property_table().getRoot().setStartBlock(newBigBlock);
+           _mini_stream = new NPOIFSStream(_filesystem, newBigBlock);
+       } else {
+           // Tack it onto the end of our chain
+           ChainLoopDetector loopDetector = _filesystem.getChainLoopDetector();
+           int block = _mini_stream.getStartBlock();
+           while(true) {
+              loopDetector.claim(block);
+              int next = _filesystem.getNextBlock(block);
+              if(next == POIFSConstants.END_OF_CHAIN) {
+                 break;
+              }
+              block = next;
+           }
+           _filesystem.setNextBlock(block, newBigBlock);
+       }
+       
+       // This is now the new end
+       _filesystem.setNextBlock(newBigBlock, POIFSConstants.END_OF_CHAIN);
+
+       // Now try again, to get the real small block
+       return createBlockIfNeeded(offset);
     }
     
     /**
