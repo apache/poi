@@ -799,9 +799,8 @@ public class TestWrite extends TestCase
     /**
      * Tests that when using NPOIFS, we can do an in-place write
      *  without needing to stream in + out the whole kitchen sink
-     * TODO Finish implementing the logic for this
      */
-    public void DISBALEDtestInPlaceNPOIFSWrite() throws Exception {
+    public void DISABLEDtestInPlaceNPOIFSWrite() throws Exception {
         NPOIFSFileSystem fs = null;
         DirectoryEntry root = null;
         DocumentNode sinfDoc = null;

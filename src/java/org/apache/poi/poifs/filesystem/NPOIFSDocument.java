@@ -154,6 +154,11 @@ public final class NPOIFSDocument implements POIFSViewable {
        _property.setStartBlock(POIFSConstants.END_OF_CHAIN);
    }
    
+   NPOIFSFileSystem getFileSystem()
+   {
+       return _filesystem;
+   }
+   
    int getDocumentBlockSize() {
       return _block_size;
    }
