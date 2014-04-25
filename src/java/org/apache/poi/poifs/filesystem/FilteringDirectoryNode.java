@@ -114,6 +114,16 @@ public class FilteringDirectoryNode implements DirectoryEntry
       }
       return size;
    }
+   
+   public Set<String> getEntryNames() {
+       Set<String> names = new HashSet<String>();
+       for (String name : directory.getEntryNames()) {
+           if (!excludes.contains(name)) {
+               names.add(name);
+           }
+       }
+       return names;
+   }
 
    public boolean isEmpty() {
       return (getEntryCount() == 0);
