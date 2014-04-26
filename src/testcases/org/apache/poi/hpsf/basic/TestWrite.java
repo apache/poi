@@ -17,6 +17,11 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,8 +36,6 @@ import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassID;
@@ -68,14 +71,14 @@ import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
-import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * <p>Tests HPSF's writing functionality.</p>
- *
- * @author Rainer Klute (klute@rainer-klute.de)
  */
-public class TestWrite extends TestCase
+public class TestWrite
 {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
@@ -98,16 +101,11 @@ public class TestWrite extends TestCase
 
     POIFile[] poiFiles;
 
-
-    /**
-     * @see TestCase#setUp()
-     */
+    @Before
     public void setUp()
     {
         VariantSupport.setLogUnsupportedTypes(false);
     }
-
-
 
     /**
      * <p>Writes an empty property set to a POIFS and reads it back
@@ -115,7 +113,8 @@ public class TestWrite extends TestCase
      *
      * @exception IOException if an I/O exception occurs
      */
-    public void testNoFormatID() throws IOException
+    @Test
+    public void withoutAFormatID() throws IOException
     {
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
@@ -138,11 +137,11 @@ public class TestWrite extends TestCase
                                  SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
             out.close();
-            Assert.fail("Should have thrown a NoFormatIDException.");
+            fail("Should have thrown a NoFormatIDException.");
         }
         catch (Exception ex)
         {
-            Assert.assertTrue(ex instanceof NoFormatIDException);
+            assertTrue(ex instanceof NoFormatIDException);
         }
         finally
         {
@@ -160,7 +159,8 @@ public class TestWrite extends TestCase
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
      */
-    public void testWriteEmptyPropertySet()
+    @Test
+    public void writeEmptyPropertySet()
         throws IOException, UnsupportedVariantTypeException
     {
         final File dataDir = _samples.getFile("");
@@ -200,7 +200,8 @@ public class TestWrite extends TestCase
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
      */
-    public void testWriteSimplePropertySet()
+    @Test
+    public void writeSimplePropertySet()
         throws IOException, UnsupportedVariantTypeException
     {
         final String AUTHOR = "Rainer Klute";
@@ -249,14 +250,14 @@ public class TestWrite extends TestCase
             },
             SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new FileInputStream(filename));
-        Assert.assertNotNull(psa[0]);
-        Assert.assertTrue(psa[0].isSummaryInformation());
+        assertNotNull(psa[0]);
+        assertTrue(psa[0].isSummaryInformation());
 
         final Section s = (Section) (psa[0].getSections().get(0));
         Object p1 = s.getProperty(PropertyIDMap.PID_AUTHOR);
         Object p2 = s.getProperty(PropertyIDMap.PID_TITLE);
-        Assert.assertEquals(AUTHOR, p1);
-        Assert.assertEquals(TITLE, p2);
+        assertEquals(AUTHOR, p1);
+        assertEquals(TITLE, p2);
     }
 
 
@@ -269,7 +270,8 @@ public class TestWrite extends TestCase
      * @exception WritingNotSupportedException if HPSF does not yet support
      * a variant type to be written
      */
-    public void testWriteTwoSections()
+    @Test
+    public void writeTwoSections()
         throws WritingNotSupportedException, IOException
     {
         final String STREAM_NAME = "PropertySetStream";
@@ -326,14 +328,14 @@ public class TestWrite extends TestCase
             },
             STREAM_NAME);
         r.read(new FileInputStream(filename));
-        Assert.assertNotNull(psa[0]);
+        assertNotNull(psa[0]);
         Section s = (Section) (psa[0].getSections().get(0));
         assertEquals(s.getFormatID(), formatID);
         Object p = s.getProperty(2);
-        Assert.assertEquals(SECTION1, p);
+        assertEquals(SECTION1, p);
         s = (Section) (psa[0].getSections().get(1));
         p = s.getProperty(2);
-        Assert.assertEquals(SECTION2, p);
+        assertEquals(SECTION2, p);
     }
 
 
@@ -366,7 +368,8 @@ public class TestWrite extends TestCase
      * <p>Writes and reads back various variant types and checks whether the
      * stuff that has been read back equals the stuff that was written.</p>
      */
-    public void testVariantTypes()
+    @Test
+    public void variantTypes()
     {
         Throwable t = null;
         final int codepage = CODEPAGE_DEFAULT;
@@ -451,7 +454,8 @@ public class TestWrite extends TestCase
      * checks whether the stuff that has been read back equals the stuff that
      * was written.</p>
      */
-    public void testCodepages()
+    @Test
+    public void codepages()
     {
         Throwable thr = null;
         final int[] validCodepages = new int[]
@@ -537,7 +541,8 @@ public class TestWrite extends TestCase
      * <p>Tests whether writing 8-bit characters to a Unicode property
      * succeeds.</p>
      */
-    public void testUnicodeWrite8Bit()
+    @Test
+    public void unicodeWrite8Bit()
     {
         final String TITLE = "This is a sample title";
         final MutablePropertySet mps = new MutablePropertySet();
@@ -673,7 +678,8 @@ public class TestWrite extends TestCase
      * </ul>
      * @throws IOException 
      */
-    public void testRecreate() throws IOException
+    @Test
+    public void recreate() throws IOException
     {
         final File dataDir = _samples.getFile("");
         final File[] fileList = dataDir.listFiles(new FileFilter()
@@ -757,7 +763,8 @@ public class TestWrite extends TestCase
      * @throws IOException 
      * @throws HPSFException 
      */
-    public void testDictionary() throws IOException, HPSFException
+    @Test
+    public void dictionary() throws IOException, HPSFException
     {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
@@ -782,7 +789,7 @@ public class TestWrite extends TestCase
 
         /* Read back: */
         final POIFile[] psf = Util.readPropertySets(copy);
-        Assert.assertEquals(1, psf.length);
+        assertEquals(1, psf.length);
         final byte[] bytes = psf[0].getBytes();
         final InputStream in = new ByteArrayInputStream(bytes);
         final PropertySet ps2 = PropertySetFactory.create(in);
@@ -800,7 +807,9 @@ public class TestWrite extends TestCase
      * Tests that when using NPOIFS, we can do an in-place write
      *  without needing to stream in + out the whole kitchen sink
      */
-    public void DISABLEDtestInPlaceNPOIFSWrite() throws Exception {
+    @Test
+    @Ignore
+    public void inPlaceNPOIFSWrite() throws Exception {
         NPOIFSFileSystem fs = null;
         DirectoryEntry root = null;
         DocumentNode sinfDoc = null;
@@ -808,19 +817,22 @@ public class TestWrite extends TestCase
         SummaryInformation sinf = null;
         DocumentSummaryInformation dinf = null;
         
+        // We need to work on a File for in-place changes, so create a temp one
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
         
-        // Copy a test file over to a temp location
+        // Copy a test file over to our temp location
         InputStream inp = _samples.openResourceAsStream("TestShiftJIS.doc");
         FileOutputStream out = new FileOutputStream(copy);
         IOUtils.copy(inp, out);
         inp.close();
         out.close();
         
+        
         // Open the copy in read/write mode
         fs = new NPOIFSFileSystem(copy);
         root = fs.getRoot();
+        
         
         // Read the properties in there
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
@@ -831,6 +843,7 @@ public class TestWrite extends TestCase
         dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
         assertEquals(131077, dinf.getOSVersion());
         
+        
         // Check they start as we expect
         assertEquals("Reiichiro Hori", sinf.getAuthor());
         assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
@@ -839,7 +852,41 @@ public class TestWrite extends TestCase
         assertEquals("", dinf.getCompany());
         assertEquals(null, dinf.getManager());
         
-        // Alter a few of them
+        
+        // Have them write themselves in-place with no changes
+        sinf.write(new NDocumentOutputStream(sinfDoc));
+        dinf.write(new NDocumentOutputStream(dinfDoc));
+        
+        // And also write to some bytes for checking
+        ByteArrayOutputStream sinfBytes = new ByteArrayOutputStream();
+        sinf.write(sinfBytes);
+        ByteArrayOutputStream dinfBytes = new ByteArrayOutputStream();
+        dinf.write(dinfBytes);
+        
+        
+        // Check that the filesystem can give us back the same bytes
+        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+        // TODO
+
+        
+        // Read back in as-is
+        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        assertEquals(131077, sinf.getOSVersion());
+        
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        assertEquals(131077, dinf.getOSVersion());
+        
+        assertEquals("Reiichiro Hori", sinf.getAuthor());
+        assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
+        assertEquals("\u7b2c1\u7ae0", sinf.getTitle());
+        
+        assertEquals("", dinf.getCompany());
+        assertEquals(null, dinf.getManager());
+        
+
+        // Now alter a few of them
         sinf.setAuthor("Changed Author");
         sinf.setTitle("Le titre \u00e9tait chang\u00e9");
         dinf.setManager("Changed Manager");
@@ -850,7 +897,7 @@ public class TestWrite extends TestCase
         dinf.write(new NDocumentOutputStream(dinfDoc));
         
         
-        // Read as-is
+        // Read them back in again
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
         assertEquals(131077, sinf.getOSVersion());
@@ -867,7 +914,7 @@ public class TestWrite extends TestCase
         assertEquals("Changed Manager", dinf.getManager());
 
         
-        // Close, re-load
+        // Close the whole filesystem, and open it once more
         fs.writeFilesystem();
         fs.close();
         
@@ -903,7 +950,8 @@ public class TestWrite extends TestCase
      * @throws IOException 
      * @throws HPSFException 
      */
-    public void testDictionaryWithInvalidCodepage() throws IOException, HPSFException
+    @Test
+    public void dictionaryWithInvalidCodepage() throws IOException, HPSFException
     {
         try
         {

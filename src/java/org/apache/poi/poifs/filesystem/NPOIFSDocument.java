@@ -143,6 +143,8 @@ public final class NPOIFSDocument implements POIFSViewable {
            os.write(buf, 0, readBytes);
        }
        
+       os.close();
+       
        return length;
    }
    
