@@ -58,9 +58,9 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
 
 /**
- * This is the main class of the POIFS system; it manages the entire
- * life cycle of the filesystem.
- * This is the new NIO version
+ * <p>This is the main class of the POIFS system; it manages the entire
+ * life cycle of the filesystem.</p>
+ * <p>This is the new NIO version, which uses less memory</p>
  */
 
 public class NPOIFSFileSystem extends BlockStore
@@ -129,12 +129,12 @@ public class NPOIFSFileSystem extends BlockStore
     }
 
     /**
-     * Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
-     *  creating from an <tt>InputStream</tt>. The File will be opened read-only
+     * <p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
+     *  creating from an <tt>InputStream</tt>. The File will be opened read-only</p>
      *  
-     * Note that with this constructor, you will need to call {@link #close()}
+     * <p>Note that with this constructor, you will need to call {@link #close()}
      *  when you're done to have the underlying file closed, as the file is
-     *  kept open during normal operation to read the data out. 
+     *  kept open during normal operation to read the data out.</p> 
      *  
      * @param file the File from which to read the data
      *
@@ -147,12 +147,12 @@ public class NPOIFSFileSystem extends BlockStore
     }
     
     /**
-     * Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
-     *  creating from an <tt>InputStream</tt>.
+     * <p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
+     *  creating from an <tt>InputStream</tt>.</p>
      *  
-     * Note that with this constructor, you will need to call {@link #close()}
+     * <p>Note that with this constructor, you will need to call {@link #close()}
      *  when you're done to have the underlying file closed, as the file is
-     *  kept open during normal operation to read the data out. 
+     *  kept open during normal operation to read the data out.</p> 
      *  
      * @param file the File from which to read the data
      *
@@ -169,12 +169,12 @@ public class NPOIFSFileSystem extends BlockStore
     }
     
     /**
-     * Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses 
-     *  less memory than creating from an <tt>InputStream</tt>.
+     * <p>Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses 
+     *  less memory than creating from an <tt>InputStream</tt>.</p>
      *  
-     * Note that with this constructor, you will need to call {@link #close()}
+     * <p>Note that with this constructor, you will need to call {@link #close()}
      *  when you're done to have the underlying Channel closed, as the channel is
-     *  kept open during normal operation to read the data out. 
+     *  kept open during normal operation to read the data out.</p> 
      *  
      * @param channel the FileChannel from which to read the data
      *
