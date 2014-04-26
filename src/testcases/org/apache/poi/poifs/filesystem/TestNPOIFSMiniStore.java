@@ -28,6 +28,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 /**
  * Tests for the Mini Store in the NIO POIFS
  */
+@SuppressWarnings("resource")
 public final class TestNPOIFSMiniStore extends TestCase {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
    
