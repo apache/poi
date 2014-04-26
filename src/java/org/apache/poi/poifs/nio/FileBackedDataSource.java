@@ -31,6 +31,10 @@ import org.apache.poi.util.IOUtils;
 
 /**
  * A POIFS {@link DataSource} backed by a File
+ * 
+ * TODO - Return the ByteBuffers in such a way that in RW mode,
+ *  changes to the buffer end up on the disk (will fix the HPSF TestWrite
+ *  currently failing unit test when done)
  */
 public class FileBackedDataSource extends DataSource {
    private FileChannel channel;

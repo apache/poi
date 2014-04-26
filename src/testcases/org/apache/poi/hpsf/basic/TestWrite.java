@@ -17,8 +17,10 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -65,6 +67,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NDocumentInputStream;
 import org.apache.poi.poifs.filesystem.NDocumentOutputStream;
+import org.apache.poi.poifs.filesystem.NPOIFSDocument;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
@@ -830,16 +833,17 @@ public class TestWrite
         
         
         // Open the copy in read/write mode
-        fs = new NPOIFSFileSystem(copy);
+        fs = new NPOIFSFileSystem(copy, false);
         root = fs.getRoot();
         
         
         // Read the properties in there
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
         sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
         assertEquals(131077, sinf.getOSVersion());
         
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
         assertEquals(131077, dinf.getOSVersion());
         
@@ -853,7 +857,45 @@ public class TestWrite
         assertEquals(null, dinf.getManager());
         
         
-        // Have them write themselves in-place with no changes
+        // Do an in-place replace via an InputStream
+        new NPOIFSDocument(sinfDoc).replaceContents(sinf.toInputStream());
+        new NPOIFSDocument(dinfDoc).replaceContents(dinf.toInputStream());
+        
+        
+        // Check it didn't get changed
+        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        
+        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        assertEquals(131077, sinf.getOSVersion());
+        
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        assertEquals(131077, dinf.getOSVersion());
+
+        
+        // Start again!
+        fs.close();
+        inp = _samples.openResourceAsStream("TestShiftJIS.doc");
+        out = new FileOutputStream(copy);
+        IOUtils.copy(inp, out);
+        inp.close();
+        out.close();
+        
+        fs = new NPOIFSFileSystem(copy, false);
+        root = fs.getRoot();
+        
+        // Read the properties in once more
+        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+        sinf = (SummaryInformation)PropertySetFactory.create(new NDocumentInputStream(sinfDoc));
+        assertEquals(131077, sinf.getOSVersion());
+        
+        dinf = (DocumentSummaryInformation)PropertySetFactory.create(new NDocumentInputStream(dinfDoc));
+        assertEquals(131077, dinf.getOSVersion());
+        
+        
+        // Have them write themselves in-place with no changes, as an OutputStream
         sinf.write(new NDocumentOutputStream(sinfDoc));
         dinf.write(new NDocumentOutputStream(dinfDoc));
         
@@ -868,7 +910,10 @@ public class TestWrite
         sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
         dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-        // TODO
+        byte[] sinfData = IOUtils.toByteArray(new NDocumentInputStream(sinfDoc));
+        byte[] dinfData = IOUtils.toByteArray(new NDocumentInputStream(dinfDoc));
+        assertThat(sinfBytes.toByteArray(), equalTo(sinfData));
+        assertThat(dinfBytes.toByteArray(), equalTo(dinfData));
 
         
         // Read back in as-is
