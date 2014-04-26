@@ -17,6 +17,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.poifs.filesystem.TestNPOIFSFileSystem.writeOutAndReadBack;
+
+import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -29,6 +32,7 @@ import org.apache.poi.poifs.storage.BATBlock;
 /**
  * Tests {@link NPOIFSStream}
  */
+@SuppressWarnings("resource")
 public final class TestNPOIFSStream extends TestCase {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
 
@@ -885,5 +889,195 @@ public final class TestNPOIFSStream extends TestCase {
       }
       
       assertEquals(false, it.hasNext());
+   }
+   
+   /**
+    * Writes a stream, then replaces it
+    */
+   public void testWriteThenReplace() throws Exception {
+       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+
+       // Starts empty
+       BATBlock bat = fs.getBATBlockAndIndex(0).getBlock();
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(2));
+
+       // Write something that uses a main stream
+       byte[] main4106 = new byte[4106];
+       main4106[0] = -10;
+       main4106[4105] = -11;
+       DocumentEntry normal = fs.getRoot().createDocument(
+               "Normal", new ByteArrayInputStream(main4106));
+       
+       // Should have used 9 blocks
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(3,                           bat.getValueAt(2));
+       assertEquals(4,                           bat.getValueAt(3));
+       assertEquals(5,                           bat.getValueAt(4));
+       assertEquals(6,                           bat.getValueAt(5));
+       assertEquals(7,                           bat.getValueAt(6));
+       assertEquals(8,                           bat.getValueAt(7));
+       assertEquals(9,                           bat.getValueAt(8));
+       assertEquals(10,                          bat.getValueAt(9));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
+       
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(4106, normal.getSize());
+       assertEquals(4106, ((DocumentNode)normal).getProperty().getSize());
+
+       
+       // Replace with one still big enough for a main stream, but one block smaller
+       byte[] main4096 = new byte[4096];
+       main4096[0] = -10;
+       main4096[4095] = -11;
+       
+       NDocumentOutputStream nout = new NDocumentOutputStream(normal);
+       nout.write(main4096);
+       nout.close();
+       
+       // Will have dropped to 8
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(3,                           bat.getValueAt(2));
+       assertEquals(4,                           bat.getValueAt(3));
+       assertEquals(5,                           bat.getValueAt(4));
+       assertEquals(6,                           bat.getValueAt(5));
+       assertEquals(7,                           bat.getValueAt(6));
+       assertEquals(8,                           bat.getValueAt(7));
+       assertEquals(9,                           bat.getValueAt(8));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(9));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(10));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
+
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(4096, normal.getSize());
+       assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
+       
+       
+       // Write and check
+       fs = writeOutAndReadBack(fs);
+       bat = fs.getBATBlockAndIndex(0).getBlock();
+       
+       // Will have properties, but otherwise the same
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(3,                           bat.getValueAt(2));
+       assertEquals(4,                           bat.getValueAt(3));
+       assertEquals(5,                           bat.getValueAt(4));
+       assertEquals(6,                           bat.getValueAt(5));
+       assertEquals(7,                           bat.getValueAt(6));
+       assertEquals(8,                           bat.getValueAt(7));
+       assertEquals(9,                           bat.getValueAt(8));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(9)); // End of Normal
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10)); // Props
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
+       
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(4096, normal.getSize());
+       assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
+       
+       
+       // Make longer, take 1 block after the properties too
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       nout = new NDocumentOutputStream(normal);
+       nout.write(main4106);
+       nout.close();
+
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(3,                           bat.getValueAt(2));
+       assertEquals(4,                           bat.getValueAt(3));
+       assertEquals(5,                           bat.getValueAt(4));
+       assertEquals(6,                           bat.getValueAt(5));
+       assertEquals(7,                           bat.getValueAt(6));
+       assertEquals(8,                           bat.getValueAt(7));
+       assertEquals(9,                           bat.getValueAt(8));
+       assertEquals(11,                          bat.getValueAt(9));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10)); // Props
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(11)); // Normal
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
+       
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(4106, normal.getSize());
+       assertEquals(4106, ((DocumentNode)normal).getProperty().getSize());
+
+       
+       // Make it small, will trigger the SBAT stream and free lots up
+       byte[] mini = new byte[] { 42, 0, 1, 2, 3, 4, 42 };
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       nout = new NDocumentOutputStream(normal);
+       nout.write(mini);
+       nout.close();
+       
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2)); // SBAT
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(3)); // Mini Stream
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(4));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(5));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(6));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(7));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(8));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(9));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10)); // Props
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
+       
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(7, normal.getSize());
+       assertEquals(7, ((DocumentNode)normal).getProperty().getSize());
+
+       
+       // Finally back to big again
+       nout = new NDocumentOutputStream(normal);
+       nout.write(main4096);
+       nout.close();
+       
+       // Will keep the mini stream, now empty
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2)); // SBAT
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(3)); // Mini Stream
+       assertEquals(5,                           bat.getValueAt(4));
+       assertEquals(6,                           bat.getValueAt(5));
+       assertEquals(7,                           bat.getValueAt(6));
+       assertEquals(8,                           bat.getValueAt(7));
+       assertEquals(9,                           bat.getValueAt(8));
+       assertEquals(11,                          bat.getValueAt(9));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10)); // Props
+       assertEquals(12,                          bat.getValueAt(11));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(12));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(13));
+       
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(4096, normal.getSize());
+       assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
+       
+       
+       // Save, re-load, re-check
+       fs = writeOutAndReadBack(fs);
+       bat = fs.getBATBlockAndIndex(0).getBlock();
+       
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2)); // SBAT
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(3)); // Mini Stream
+       assertEquals(5,                           bat.getValueAt(4));
+       assertEquals(6,                           bat.getValueAt(5));
+       assertEquals(7,                           bat.getValueAt(6));
+       assertEquals(8,                           bat.getValueAt(7));
+       assertEquals(9,                           bat.getValueAt(8));
+       assertEquals(11,                          bat.getValueAt(9));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10)); // Props
+       assertEquals(12,                          bat.getValueAt(11));
+       assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(12));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(13));
+       
+       normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
+       assertEquals(4096, normal.getSize());
+       assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
    }
 }
