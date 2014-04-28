@@ -21,8 +21,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 /**
  * Test suite for org.apache.poi.hpsf.basic
- * 
- * @author Josh Micich
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

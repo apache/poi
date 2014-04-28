@@ -31,13 +31,10 @@ import org.apache.poi.util.IOUtils;
 
 /**
  * A POIFS {@link DataSource} backed by a File
- * 
- * TODO - Return the ByteBuffers in such a way that in RW mode,
- *  changes to the buffer end up on the disk (will fix the HPSF TestWrite
- *  currently failing unit test when done)
  */
 public class FileBackedDataSource extends DataSource {
    private FileChannel channel;
+   private boolean writable;
 
    @SuppressWarnings("resource")
    public FileBackedDataSource(File file) throws FileNotFoundException {
@@ -45,10 +42,12 @@ public class FileBackedDataSource extends DataSource {
          throw new FileNotFoundException(file.toString());
       }
       this.channel = (new RandomAccessFile(file, "r")).getChannel();
+      this.writable = false;
    }
 
-   public FileBackedDataSource(FileChannel channel) {
+   public FileBackedDataSource(FileChannel channel, boolean readOnly) {
       this.channel = channel;
+      this.writable = !readOnly;
    }
 
    @Override
@@ -56,11 +55,19 @@ public class FileBackedDataSource extends DataSource {
       if(position >= size()) {
          throw new IllegalArgumentException("Position " + position + " past the end of the file");
       }
-
-      // Read
-      channel.position(position);
-      ByteBuffer dst = ByteBuffer.allocate(length);
-      int worked = IOUtils.readFully(channel, dst);
+      
+      // Do we read or map (for read/write?
+      ByteBuffer dst;
+      int worked = -1;
+      if (writable) {
+          dst = channel.map(FileChannel.MapMode.READ_WRITE, position, length);
+          worked = 0;
+      } else {
+          // Read
+          channel.position(position);
+          dst = ByteBuffer.allocate(length);
+          worked = IOUtils.readFully(channel, dst);
+      }
 
       // Check
       if(worked == -1) {
