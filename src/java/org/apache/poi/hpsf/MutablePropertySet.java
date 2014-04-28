@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -89,10 +87,10 @@ public class MutablePropertySet extends PropertySet
         setClassID(ps.getClassID());
         clearSections();
         if (sections == null)
-            sections = new LinkedList();
-        for (final Iterator i = ps.getSections().iterator(); i.hasNext();)
+            sections = new LinkedList<Section>();
+        for (final Section section : ps.getSections())
         {
-            final MutableSection s = new MutableSection((Section) (i.next()));
+            final MutableSection s = new MutableSection(section);
             addSection(s);
         }
     }
@@ -182,7 +180,7 @@ public class MutablePropertySet extends PropertySet
     public void addSection(final Section section)
     {
         if (sections == null)
-            sections = new LinkedList();
+            sections = new LinkedList<Section>();
         sections.add(section);
     }
 
@@ -217,9 +215,9 @@ public class MutablePropertySet extends PropertySet
          * section's offset relative to the beginning of the stream. */
         offset += nrSections * (ClassID.LENGTH + LittleEndian.INT_SIZE);
         final int sectionsBegin = offset;
-        for (final ListIterator i = sections.listIterator(); i.hasNext();)
+        for (final Section section : sections)
         {
-            final MutableSection s = (MutableSection) i.next();
+            final MutableSection s = (MutableSection)section;
             final ClassID formatID = s.getFormatID();
             if (formatID == null)
                 throw new NoFormatIDException();
@@ -241,9 +239,9 @@ public class MutablePropertySet extends PropertySet
 
         /* Write the sections themselves. */
         offset = sectionsBegin;
-        for (final ListIterator i = sections.listIterator(); i.hasNext();)
+        for (final Section section : sections)
         {
-            final MutableSection s = (MutableSection) i.next();
+            final MutableSection s = (MutableSection)section;
             offset += s.write(out);
         }
         
