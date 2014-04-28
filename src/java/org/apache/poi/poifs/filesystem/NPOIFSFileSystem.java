@@ -693,6 +693,12 @@ public class NPOIFSFileSystem extends BlockStore
                 "not be called. Use writeFilesystem(OutputStream) instead"
           );
        }
+       if (! ((FileBackedDataSource)_data).isWriteable()) {
+           throw new IllegalArgumentException(
+                "POIFS opened in read only mode, so writeFilesystem() may " +
+                "not be called. Open the FileSystem in read-write mode first"
+           );
+       }
        syncWithDataSource();
     }
 
