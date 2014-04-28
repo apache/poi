@@ -26,14 +26,11 @@ import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
 import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
@@ -105,17 +102,12 @@ public class ModifyDocumentSummaryInformation {
         SummaryInformation si;
         try
         {
-            DocumentEntry siEntry = (DocumentEntry)
-                dir.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-            DocumentInputStream dis = new DocumentInputStream(siEntry);
-            PropertySet ps = new PropertySet(dis);
-            dis.close();
-            si = new SummaryInformation(ps);
+            si = (SummaryInformation)PropertySetFactory.create(
+                    dir, SummaryInformation.DEFAULT_STREAM_NAME);
         }
         catch (FileNotFoundException ex)
         {
-            /* There is no summary information yet. We have to create a new
-             * one. */
+            // There is no summary information yet. We have to create a new one
             si = PropertySetFactory.newSummaryInformation();
         }
 
@@ -133,12 +125,8 @@ public class ModifyDocumentSummaryInformation {
         DocumentSummaryInformation dsi;
         try
         {
-            DocumentEntry dsiEntry = (DocumentEntry)
-                dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-            DocumentInputStream dis = new DocumentInputStream(dsiEntry);
-            PropertySet ps = new PropertySet(dis);
-            dis.close();
-            dsi = new DocumentSummaryInformation(ps);
+            dsi = (DocumentSummaryInformation)PropertySetFactory.create(
+                    dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         }
         catch (FileNotFoundException ex)
         {
