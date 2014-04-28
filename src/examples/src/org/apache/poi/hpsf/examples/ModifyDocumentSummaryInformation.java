@@ -18,12 +18,8 @@
 package org.apache.poi.hpsf.examples;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.poi.hpsf.CustomProperties;
@@ -38,7 +34,7 @@ import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * <p>This is a sample application showing how to easily modify properties in
@@ -99,12 +95,10 @@ public class ModifyDocumentSummaryInformation {
         /* Read the name of the POI filesystem to modify from the command line.
          * For brevity to boundary check is performed on the command-line
          * arguments. */
-        File poiFilesystem = new File(args[0]);
+        File summaryFile = new File(args[0]);
 
         /* Open the POI filesystem. */
-        InputStream is = new FileInputStream(poiFilesystem);
-        POIFSFileSystem poifs = new POIFSFileSystem(is);
-        is.close();
+        NPOIFSFileSystem poifs = new NPOIFSFileSystem(summaryFile, false);
 
         /* Read the summary information. */
         DirectoryEntry dir = poifs.getRoot();
@@ -174,6 +168,7 @@ public class ModifyDocumentSummaryInformation {
 
         /* Read a custom property. */
         Object value = customProperties.get("Sample Number");
+        System.out.println("Custom Sample Number is now " + value);
 
         /* Write the custom properties back to the document summary
          * information. */
@@ -185,10 +180,9 @@ public class ModifyDocumentSummaryInformation {
         dsi.write(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
         /* Write the POI filesystem back to the original file. Please note that
-         * in production code you should never write directly to the origin
-         * file! In case of a writing error everything would be lost. */
-        OutputStream out = new FileOutputStream(poiFilesystem);
-        poifs.writeFilesystem(out);
-        out.close();
+         * in production code you should take care when write directly to the 
+         * origin, to make sure you don't loose things on error */
+        poifs.writeFilesystem();
+        poifs.close();
     }
 }

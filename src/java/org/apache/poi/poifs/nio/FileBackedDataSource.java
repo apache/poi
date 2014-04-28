@@ -49,6 +49,10 @@ public class FileBackedDataSource extends DataSource {
       this.channel = channel;
       this.writable = !readOnly;
    }
+   
+   public boolean isWriteable() {
+       return this.writable;
+   }
 
    @Override
    public ByteBuffer read(int length, long position) throws IOException {
