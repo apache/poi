@@ -164,6 +164,7 @@ public class NPOIFSFileSystem extends BlockStore
     {
        this(
            (new RandomAccessFile(file, readOnly? "r" : "rw")).getChannel(),
+           readOnly,
            true
        );
     }
@@ -176,17 +177,17 @@ public class NPOIFSFileSystem extends BlockStore
      *  when you're done to have the underlying Channel closed, as the channel is
      *  kept open during normal operation to read the data out.</p> 
      *  
-     * @param channel the FileChannel from which to read the data
+     * @param channel the FileChannel from which to read and write the data
      *
      * @exception IOException on errors reading, or on invalid data
      */
     public NPOIFSFileSystem(FileChannel channel)
          throws IOException
     {
-       this(channel, false);
+       this(channel, false, false);
     }
     
-    private NPOIFSFileSystem(FileChannel channel, boolean closeChannelOnError)
+    private NPOIFSFileSystem(FileChannel channel, boolean readOnly, boolean closeChannelOnError)
          throws IOException
     {
        this(false);
@@ -200,7 +201,7 @@ public class NPOIFSFileSystem extends BlockStore
           _header = new HeaderBlock(headerBuffer);
           
           // Now process the various entries
-          _data = new FileBackedDataSource(channel);
+          _data = new FileBackedDataSource(channel, readOnly);
           readCoreContents();
        } catch(IOException e) {
           if(closeChannelOnError) {

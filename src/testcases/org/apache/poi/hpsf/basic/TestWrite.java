@@ -75,7 +75,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -811,7 +810,6 @@ public class TestWrite
      *  without needing to stream in + out the whole kitchen sink
      */
     @Test
-    @Ignore
     public void inPlaceNPOIFSWrite() throws Exception {
         NPOIFSFileSystem fs = null;
         DirectoryEntry root = null;
