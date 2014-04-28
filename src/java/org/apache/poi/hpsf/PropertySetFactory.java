@@ -17,21 +17,55 @@
 
 package org.apache.poi.hpsf;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
 
 /**
  * <p>Factory class to create instances of {@link SummaryInformation},
  * {@link DocumentSummaryInformation} and {@link PropertySet}.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
 public class PropertySetFactory
 {
+    /**
+     * <p>Creates the most specific {@link PropertySet} from an entry
+     *  in the specified POIFS Directory. This is preferrably a {@link
+     * DocumentSummaryInformation} or a {@link SummaryInformation}. If
+     * the specified entry does not contain a property set stream, an 
+     * exception is thrown. If no entry is found with the given name,
+     * an exception is thrown.</p>
+     *
+     * @param dir The directory to find the PropertySet in
+     * @param name The name of the entry containing the PropertySet
+     * @return The created {@link PropertySet}.
+     * @throws FileNotFoundException if there is no entry with that name
+     * @throws NoPropertySetStreamException if the stream does not
+     * contain a property set.
+     * @throws IOException if some I/O problem occurs.
+     * @exception UnsupportedEncodingException if the specified codepage is not
+     * supported.
+     */
+    public static PropertySet create(final DirectoryEntry dir, final String name)
+        throws FileNotFoundException, NoPropertySetStreamException,
+               IOException, UnsupportedEncodingException
+    {
+        InputStream inp = null;
+        try {
+            DocumentEntry entry = (DocumentEntry)dir.getEntry(name);
+            inp = new DocumentInputStream(entry);
+            try {
+                return create(inp);
+            } catch (MarkUnsupportedException e) { return null; }
+        } finally {
+            if (inp != null) inp.close();
+        }
+    }
 
     /**
      * <p>Creates the most specific {@link PropertySet} from an {@link
@@ -73,8 +107,6 @@ public class PropertySetFactory
         }
     }
 
-
-
     /**
      * <p>Creates a new summary information.</p>
      *
@@ -96,8 +128,6 @@ public class PropertySetFactory
         }
     }
 
-
-
     /**
      * <p>Creates a new document summary information.</p>
      *
@@ -118,5 +148,4 @@ public class PropertySetFactory
             throw new HPSFRuntimeException(ex);
         }
     }
-
 }
