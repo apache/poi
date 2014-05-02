@@ -2565,4 +2565,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
         assertEquals(0, comments);
     }
+    
+    /**
+     * Files initially created with Excel 2010 can have >3 CF rules
+     */
+    @Test
+    public void bug56482() {
+        HSSFWorkbook wb = openSample("56482.xls");
+        assertEquals(1, wb.getNumberOfSheets());
+        
+        HSSFSheet sheet = wb.getSheetAt(0);
+        HSSFSheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
+        
+        assertEquals(5, cf.getNumConditionalFormattings());
+    }
 }
