@@ -24,19 +24,16 @@ import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * CFRecordsAggregate - aggregates Conditional Formatting records CFHeaderRecord 
  * and number of up to three CFRuleRecord records together to simplify
- * access to them.  
- * 
- * @author Dmitriy Kumshayev
- *
+ * access to them.
  */
 public final class CFRecordsAggregate extends RecordAggregate {
 	/** Excel allows up to 3 conditional formating rules */
@@ -45,7 +42,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	private final CFHeaderRecord header;
 
 	/** List of CFRuleRecord objects */
-	private final List rules;
+	private final List<CFRuleRecord> rules;
 
 	private CFRecordsAggregate(CFHeaderRecord pHeader, CFRuleRecord[] pRules) {
 		if(pHeader == null) {
@@ -62,7 +59,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 			throw new RuntimeException("Mismatch number of rules");
 		}
 		header = pHeader;
-		rules = new ArrayList(3);
+		rules = new ArrayList<CFRuleRecord>(3);
 		for (int i = 0; i < pRules.length; i++) {
 			rules.add(pRules[i]);
 		}
@@ -124,7 +121,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	}
 	public CFRuleRecord getRule(int idx) {
 		checkRuleIndex(idx);
-		return (CFRuleRecord) rules.get(idx);
+		return rules.get(idx);
 	}
 	public void setRule(int idx, CFRuleRecord r) {
 		if (r == null) {
@@ -162,7 +159,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 		}
 		for(int i=0; i<rules.size(); i++)
 		{
-			CFRuleRecord cfRule = (CFRuleRecord)rules.get(i);
+			CFRuleRecord cfRule = rules.get(i);
 			buffer.append(cfRule.toString());
 		}
 		buffer.append("[/CF]\n");
@@ -172,7 +169,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	public void visitContainedRecords(RecordVisitor rv) {
 		rv.visitRecord(header);
 		for(int i=0; i<rules.size(); i++) {
-			CFRuleRecord rule = (CFRuleRecord)rules.get(i);
+			CFRuleRecord rule = rules.get(i);
 			rv.visitRecord(rule);
 		}
 	}
@@ -183,7 +180,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	public boolean updateFormulasAfterCellShift(FormulaShifter shifter, int currentExternSheetIx) {
 		CellRangeAddress[] cellRanges = header.getCellRanges();
 		boolean changed = false;
-		List temp = new ArrayList();
+		List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
 		for (int i = 0; i < cellRanges.length; i++) {
 			CellRangeAddress craOld = cellRanges[i];
 			CellRangeAddress craNew = shiftRange(shifter, craOld, currentExternSheetIx);
@@ -208,7 +205,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 		}
 		
 		for(int i=0; i<rules.size(); i++) {
-			CFRuleRecord rule = (CFRuleRecord)rules.get(i);
+			CFRuleRecord rule = rules.get(i);
 			Ptg[] ptgs;
 			ptgs = rule.getParsedExpression1();
 			if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
