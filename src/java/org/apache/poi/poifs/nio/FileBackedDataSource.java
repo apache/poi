@@ -35,16 +35,22 @@ import org.apache.poi.util.IOUtils;
 public class FileBackedDataSource extends DataSource {
    private FileChannel channel;
    private boolean writable;
+   // remember file base, which needs to be closed too
+   private RandomAccessFile srcFile;
 
-   @SuppressWarnings("resource")
    public FileBackedDataSource(File file) throws FileNotFoundException {
-      if(!file.exists()) {
-         throw new FileNotFoundException(file.toString());
-      }
-      this.channel = (new RandomAccessFile(file, "r")).getChannel();
-      this.writable = false;
+       this(newSrcFile(file, "r"), true);
    }
 
+   public FileBackedDataSource(File file, boolean readOnly) throws FileNotFoundException {
+       this(newSrcFile(file, readOnly ? "r" : "rw"), readOnly);
+   }
+
+   public FileBackedDataSource(RandomAccessFile srcFile, boolean readOnly) {
+       this(srcFile.getChannel(), readOnly);
+       this.srcFile = srcFile;
+   }   
+   
    public FileBackedDataSource(FileChannel channel, boolean readOnly) {
       this.channel = channel;
       this.writable = !readOnly;
@@ -52,6 +58,10 @@ public class FileBackedDataSource extends DataSource {
    
    public boolean isWriteable() {
        return this.writable;
+   }
+   
+   public FileChannel getChannel() {
+       return this.channel;
    }
 
    @Override
@@ -105,6 +115,18 @@ public class FileBackedDataSource extends DataSource {
 
    @Override
    public void close() throws IOException {
-      channel.close();
+      if (srcFile != null) {
+          // see http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4796385
+          srcFile.close();
+      } else {
+          channel.close();
+      }
+   }
+
+   private static RandomAccessFile newSrcFile(File file, String mode) throws FileNotFoundException {
+       if(!file.exists()) {
+           throw new FileNotFoundException(file.toString());
+        }
+        return new RandomAccessFile(file, mode);
    }
 }

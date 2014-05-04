@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -162,11 +161,7 @@ public class NPOIFSFileSystem extends BlockStore
     public NPOIFSFileSystem(File file, boolean readOnly)
          throws IOException
     {
-       this(
-           (new RandomAccessFile(file, readOnly? "r" : "rw")).getChannel(),
-           readOnly,
-           true
-       );
+       this(null, file, readOnly, true);
     }
     
     /**
@@ -184,15 +179,24 @@ public class NPOIFSFileSystem extends BlockStore
     public NPOIFSFileSystem(FileChannel channel)
          throws IOException
     {
-       this(channel, false, false);
+       this(channel, null, false, false);
     }
     
-    private NPOIFSFileSystem(FileChannel channel, boolean readOnly, boolean closeChannelOnError)
+    private NPOIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError)
          throws IOException
     {
        this(false);
 
        try {
+          // Initialize the datasource
+          if (srcFile != null) {
+              FileBackedDataSource d = new FileBackedDataSource(srcFile, readOnly);
+              channel = d.getChannel();
+              _data = d;
+          } else {
+              _data = new FileBackedDataSource(channel, readOnly);
+          }
+           
           // Get the header
           ByteBuffer headerBuffer = ByteBuffer.allocate(POIFSConstants.SMALLER_BIG_BLOCK_SIZE);
           IOUtils.readFully(channel, headerBuffer);
@@ -201,7 +205,6 @@ public class NPOIFSFileSystem extends BlockStore
           _header = new HeaderBlock(headerBuffer);
           
           // Now process the various entries
-          _data = new FileBackedDataSource(channel, readOnly);
           readCoreContents();
        } catch(IOException e) {
           if(closeChannelOnError) {
