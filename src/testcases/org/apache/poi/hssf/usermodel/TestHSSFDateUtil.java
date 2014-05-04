@@ -17,15 +17,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.junit.Test;
 
 /**
  * Class TestHSSFDateUtil
@@ -37,7 +40,7 @@ import org.apache.poi.hssf.model.InternalWorkbook;
  * @author Alex Jacoby (ajacoby at gmail.com)
  * @version %I%, %G%
  */
-public final class TestHSSFDateUtil extends TestCase {
+public final class TestHSSFDateUtil {
 
     public static final int CALENDAR_JANUARY = 0;
     public static final int CALENDAR_FEBRUARY = 1;
@@ -49,8 +52,8 @@ public final class TestHSSFDateUtil extends TestCase {
     /**
      * Checks the date conversion functions in the HSSFDateUtil class.
      */
-
-    public void testDateConversion() {
+    @Test
+    public void dateConversion() {
 
         // Iteratating over the hours exposes any rounding issues.
         for (int hour = 0; hour < 23; hour++)
@@ -87,7 +90,8 @@ public final class TestHSSFDateUtil extends TestCase {
      * Checks the conversion of a java.util.date to Excel on a day when
      * Daylight Saving Time starts.
      */
-    public void testExcelConversionOnDSTStart() {
+    @Test
+    public void excelConversionOnDSTStart() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
         Calendar cal = new GregorianCalendar(2004, CALENDAR_MARCH, 28);
@@ -117,7 +121,8 @@ public final class TestHSSFDateUtil extends TestCase {
      * Checks the conversion of an Excel date to a java.util.date on a day when
      * Daylight Saving Time starts.
      */
-    public void testJavaConversionOnDSTStart() {
+    @Test
+    public void javaConversionOnDSTStart() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
         Calendar cal = new GregorianCalendar(2004, CALENDAR_MARCH, 28);
@@ -144,7 +149,8 @@ public final class TestHSSFDateUtil extends TestCase {
      * Checks the conversion of a java.util.Date to Excel on a day when
      * Daylight Saving Time ends.
      */
-    public void testExcelConversionOnDSTEnd() {
+    @Test
+    public void excelConversionOnDSTEnd() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
         Calendar cal = new GregorianCalendar(2004, CALENDAR_OCTOBER, 31);
@@ -167,7 +173,8 @@ public final class TestHSSFDateUtil extends TestCase {
      * Checks the conversion of an Excel date to java.util.Date on a day when
      * Daylight Saving Time ends.
      */
-    public void testJavaConversionOnDSTEnd() {
+    @Test
+    public void javaConversionOnDSTEnd() {
         TimeZone cet = TimeZone.getTimeZone("Europe/Copenhagen");
         TimeZone.setDefault(cet);
         Calendar cal = new GregorianCalendar(2004, CALENDAR_OCTOBER, 31);
@@ -186,7 +193,8 @@ public final class TestHSSFDateUtil extends TestCase {
     /**
      * Tests that we deal with time-zones properly
      */
-    public void testCalendarConversion() {
+    @Test
+    public void calendarConversion() {
         GregorianCalendar date = new GregorianCalendar(2002, 0, 1, 12, 1, 1);
         Date expected = date.getTime();
 
@@ -226,7 +234,8 @@ public final class TestHSSFDateUtil extends TestCase {
     /**
      * Tests that we correctly detect date formats as such
      */
-    public void testIdentifyDateFormats() {
+    @Test
+    public void identifyDateFormats() {
         // First up, try with a few built in date formats
         short[] builtins = new short[] { 0x0e, 0x0f, 0x10, 0x16, 0x2d, 0x2e };
         for(int i=0; i<builtins.length; i++) {
@@ -329,7 +338,8 @@ public final class TestHSSFDateUtil extends TestCase {
      * Test that against a real, test file, we still do everything
      *  correctly
      */
-    public void testOnARealFile() {
+    @Test
+    public void onARealFile() {
 
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
@@ -386,7 +396,8 @@ public final class TestHSSFDateUtil extends TestCase {
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
     }
 
-    public void testDateBug_2Excel() {
+    @Test
+    public void dateBug_2Excel() {
         assertEquals(59.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_FEBRUARY, 28), false), 0.00001);
         assertEquals(61.0, HSSFDateUtil.getExcelDate(createDate(1900, CALENDAR_MARCH, 1), false), 0.00001);
 
@@ -396,7 +407,8 @@ public final class TestHSSFDateUtil extends TestCase {
         assertEquals(38074.00, HSSFDateUtil.getExcelDate(createDate(2004, CALENDAR_MARCH, 28), false), 0.00001);
     }
 
-    public void testDateBug_2Java() {
+    @Test
+    public void dateBug_2Java() {
         assertEquals(createDate(1900, CALENDAR_FEBRUARY, 28), HSSFDateUtil.getJavaDate(59.0, false));
         assertEquals(createDate(1900, CALENDAR_MARCH, 1), HSSFDateUtil.getJavaDate(61.0, false));
 
@@ -406,7 +418,8 @@ public final class TestHSSFDateUtil extends TestCase {
         assertEquals(createDate(2004, CALENDAR_MARCH, 28), HSSFDateUtil.getJavaDate(38074.00, false));
     }
 
-    public void testDate1904() {
+    @Test
+    public void date1904() {
         assertEquals(createDate(1904, CALENDAR_JANUARY, 2), HSSFDateUtil.getJavaDate(1.0, true));
         assertEquals(createDate(1904, CALENDAR_JANUARY, 1), HSSFDateUtil.getJavaDate(0.0, true));
         assertEquals(0.0, HSSFDateUtil.getExcelDate(createDate(1904, CALENDAR_JANUARY, 1), true), 0.00001);
@@ -441,7 +454,8 @@ public final class TestHSSFDateUtil extends TestCase {
     /**
      * Check if HSSFDateUtil.getAbsoluteDay works as advertised.
      */
-    public void testAbsoluteDay() {
+    @Test
+    public void absoluteDay() {
         // 1 Jan 1900 is 1 day after 31 Dec 1899
         GregorianCalendar calendar = new GregorianCalendar(1900, 0, 1);
         assertEquals("Checking absolute day (1 Jan 1900)", 1, HSSFDateUtil.absoluteDay(calendar, false));
@@ -450,7 +464,8 @@ public final class TestHSSFDateUtil extends TestCase {
         assertEquals("Checking absolute day (1 Jan 1901)", 366, HSSFDateUtil.absoluteDay(calendar, false));
     }
 
-    public void testConvertTime() {
+    @Test
+    public void convertTime() {
 
         final double delta = 1E-7; // a couple of digits more accuracy than strictly required
         assertEquals(0.5, HSSFDateUtil.convertTime("12:00"), delta);
@@ -459,7 +474,8 @@ public final class TestHSSFDateUtil extends TestCase {
         assertEquals(0.7330440, HSSFDateUtil.convertTime("17:35:35"), delta);
     }
 
-    public void testParseDate() {
+    @Test
+    public void parseDate() {
         assertEquals(createDate(2008, Calendar.AUGUST, 3), HSSFDateUtil.parseYYYYMMDDDate("2008/08/03"));
         assertEquals(createDate(1994, Calendar.MAY, 1), HSSFDateUtil.parseYYYYMMDDDate("1994/05/01"));
     }
@@ -467,7 +483,8 @@ public final class TestHSSFDateUtil extends TestCase {
     /**
      * Ensure that date values *with* a fractional portion get the right time of day
      */
-    public void testConvertDateTime() {
+    @Test
+    public void convertDateTime() {
     	// Excel day 30000 is date 18-Feb-1982
         // 0.7 corresponds to time 16:48:00
         Date actual = HSSFDateUtil.getJavaDate(30000.7);
@@ -479,7 +496,8 @@ public final class TestHSSFDateUtil extends TestCase {
      * User reported a datetime issue in POI-2.5:
      *  Setting Cell's value to Jan 1, 1900 without a time doesn't return the same value set to
      */
-    public void testBug19172()
+    @Test
+    public void bug19172()
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -503,10 +521,24 @@ public final class TestHSSFDateUtil extends TestCase {
      * DateUtil.isCellFormatted(Cell) should not true for a numeric cell 
      * that's formatted as ".0000"
      */
-    public void testBug54557() throws Exception {
+    @Test
+    public void bug54557() throws Exception {
        final String format = ".0000";
        boolean isDateFormat = HSSFDateUtil.isADateFormat(165, format);
        
        assertEquals(false, isDateFormat);
+    }
+    
+    @Test
+    public void bug56269() throws Exception {
+        double excelFraction = 41642.45833321759d;
+        Calendar calNoRound = HSSFDateUtil.getJavaCalendar(excelFraction, false);
+        assertEquals(10, calNoRound.get(Calendar.HOUR));
+        assertEquals(59, calNoRound.get(Calendar.MINUTE));
+        assertEquals(59, calNoRound.get(Calendar.SECOND));
+        Calendar calRound = HSSFDateUtil.getJavaCalendar(excelFraction, false, null, true);
+        assertEquals(11, calRound.get(Calendar.HOUR));
+        assertEquals(0, calRound.get(Calendar.MINUTE));
+        assertEquals(0, calRound.get(Calendar.SECOND));
     }
 }
