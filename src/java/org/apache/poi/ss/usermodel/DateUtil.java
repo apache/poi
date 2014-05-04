@@ -185,8 +185,29 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz) {
-        return getJavaCalendar(date, use1904windowing, tz).getTime();
+        return getJavaCalendar(date, use1904windowing, tz, false).getTime();
     }
+    
+    /**
+     *  Given an Excel date with either 1900 or 1904 date windowing,
+     *  converts it to a java.util.Date.
+     *  
+     *  Excel Dates and Times are stored without any timezone 
+     *  information. If you know (through other means) that your file 
+     *  uses a different TimeZone to the system default, you can use
+     *  this version of the getJavaDate() method to handle it.
+     *   
+     *  @param date  The Excel date.
+     *  @param tz The TimeZone to evaluate the date in
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @param roundSeconds round to closest second
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz, boolean roundSeconds) {
+        return getJavaCalendar(date, use1904windowing, tz, roundSeconds).getTime();
+    }
+    
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
@@ -207,12 +228,12 @@ public class DateUtil {
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date, boolean use1904windowing) {
-        return getJavaCalendar(date, use1904windowing).getTime();
+        return getJavaCalendar(date, use1904windowing, null, false).getTime();
     }
 
 
     public static void setCalendar(Calendar calendar, int wholeDays,
-            int millisecondsInDay, boolean use1904windowing) {
+            int millisecondsInDay, boolean use1904windowing, boolean roundSeconds) {
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
         if (use1904windowing) {
@@ -225,9 +246,23 @@ public class DateUtil {
             dayAdjust = 0;
         }
         calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
-        calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
+        calendar.set(Calendar.MILLISECOND, millisecondsInDay);
+        if (roundSeconds) {
+            calendar.add(Calendar.MILLISECOND, 500);
+            calendar.clear(Calendar.MILLISECOND);
+        }
     }
 
+
+    /**
+     * Get EXCEL date as Java Calendar (with default time zone).
+     * This is like {@link #getJavaDate(double)} but returns a Calendar object.
+     *  @param date  The Excel date.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date) {
+        return getJavaCalendar(date, false, (TimeZone)null, false);
+    }
 
     /**
      * Get EXCEL date as Java Calendar (with default time zone).
@@ -238,29 +273,45 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendar(double date, boolean use1904windowing) {
-    	return getJavaCalendar(date, use1904windowing, (TimeZone)null);
+        return getJavaCalendar(date, use1904windowing, (TimeZone)null, false);
     }
 
     /**
      * Get EXCEL date as Java Calendar with UTC time zone.
      * This is similar to {@link #getJavaDate(double, boolean)} but returns a
      * Calendar object that has UTC as time zone, so no daylight saving hassle.
-     *  @param date  The Excel date.
-     *  @param use1904windowing  true if date uses 1904 windowing,
-     *   or false if using 1900 date windowing.
-     *  @return Java representation of the date in UTC, or null if date is not a valid Excel date
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @return Java representation of the date in UTC, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendarUTC(double date, boolean use1904windowing) {
-    	return getJavaCalendar(date, use1904windowing, TIMEZONE_UTC);
+    	return getJavaCalendar(date, use1904windowing, TIMEZONE_UTC, false);
     }
 
 
     /**
      * Get EXCEL date as Java Calendar with given time zone.
-     * @see #getJavaDate(double, TimeZone)
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @param timeZone The TimeZone to evaluate the date in
      * @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone) {
+        return getJavaCalendar(date, use1904windowing, timeZone, false);
+    }
+        
+    /**
+     * Get EXCEL date as Java Calendar with given time zone.
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @param timeZone The TimeZone to evaluate the date in
+     * @param roundSeconds round to closest second
+     * @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone, boolean roundSeconds) {
         if (!isValidExcelDate(date)) {
             return null;
         }
@@ -272,7 +323,7 @@ public class DateUtil {
         } else {
             calendar = new GregorianCalendar();     // using default time-zone
         }
-        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing);
+        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
         return calendar;
     }
 
@@ -537,6 +588,7 @@ public class DateUtil {
     }
 
 
+    @SuppressWarnings("serial")
     private static final class FormatException extends Exception {
         public FormatException(String msg) {
             super(msg);

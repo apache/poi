@@ -317,7 +317,7 @@ final class YearFracCalculator {
 
 	private static SimpleDate createDate(int dayCount) {
 		GregorianCalendar calendar = new GregorianCalendar(UTC_TIME_ZONE);
-		DateUtil.setCalendar(calendar, dayCount, 0, false);
+		DateUtil.setCalendar(calendar, dayCount, 0, false, false);
 		return new SimpleDate(calendar);
 	}
 
