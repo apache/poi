@@ -229,7 +229,13 @@ final class Util {
         r.registerListener(pfl);
 
         /* Read the POI filesystem. */
-        r.read(new FileInputStream(poiFs));
+        FileInputStream stream = new FileInputStream(poiFs);
+        try {
+            r.read(stream);
+        } finally {
+            stream.close();
+        }
+
         POIFile[] result = new POIFile[files.size()];
         for (int i = 0; i < result.length; i++)
             result[i] = (POIFile) files.get(i);

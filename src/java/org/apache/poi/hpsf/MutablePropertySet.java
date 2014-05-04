@@ -269,8 +269,11 @@ public class MutablePropertySet extends PropertySet
         throws IOException, WritingNotSupportedException
     {
         final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
-        write(psStream);
-        psStream.close();
+        try {
+            write(psStream);
+        } finally {
+            psStream.close();
+        }
         final byte[] streamData = psStream.toByteArray();
         return new ByteArrayInputStream(streamData);
     }

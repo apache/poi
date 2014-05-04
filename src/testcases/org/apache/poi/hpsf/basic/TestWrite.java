@@ -189,7 +189,12 @@ public class TestWrite
         final POIFSReader r = new POIFSReader();
         r.registerListener(new MyPOIFSReaderListener(),
                            SummaryInformation.DEFAULT_STREAM_NAME);
-        r.read(new FileInputStream(filename));
+        FileInputStream stream = new FileInputStream(filename);
+        try {
+            r.read(stream);
+        } finally {
+            stream.close();
+        }
     }
 
 
@@ -251,7 +256,13 @@ public class TestWrite
 
             },
             SummaryInformation.DEFAULT_STREAM_NAME);
-        r.read(new FileInputStream(filename));
+        
+        InputStream stream = new FileInputStream(filename);
+        try {
+            r.read(stream);
+        } finally {
+            stream.close();
+        }
         assertNotNull(psa[0]);
         assertTrue(psa[0].isSummaryInformation());
 
@@ -329,7 +340,12 @@ public class TestWrite
                 }
             },
             STREAM_NAME);
-        r.read(new FileInputStream(filename));
+        FileInputStream stream = new FileInputStream(filename);
+        try {
+            r.read(stream);
+        } finally {
+            stream.close();
+        }
         assertNotNull(psa[0]);
         Section s = (Section) (psa[0].getSections().get(0));
         assertEquals(s.getFormatID(), formatID);
@@ -996,20 +1012,22 @@ public class TestWrite
     @Test
     public void dictionaryWithInvalidCodepage() throws IOException, HPSFException
     {
+        final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
+        copy.deleteOnExit();
+        
+        /* Write: */
+        final OutputStream out = new FileOutputStream(copy);
+        
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        final MutablePropertySet ps1 = new MutablePropertySet();
+        final MutableSection s = (MutableSection) ps1.getSections().get(0);
+        final Map<Long,String> m = new HashMap<Long, String>(3, 1.0f);
+        m.put(Long.valueOf(1), "String 1");
+        m.put(Long.valueOf(2), "String 2");
+        m.put(Long.valueOf(3), "String 3");
+
         try
         {
-            final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
-            copy.deleteOnExit();
-
-            /* Write: */
-            final OutputStream out = new FileOutputStream(copy);
-            final POIFSFileSystem poiFs = new POIFSFileSystem();
-            final MutablePropertySet ps1 = new MutablePropertySet();
-            final MutableSection s = (MutableSection) ps1.getSections().get(0);
-            final Map<Long,String> m = new HashMap<Long, String>(3, 1.0f);
-            m.put(Long.valueOf(1), "String 1");
-            m.put(Long.valueOf(2), "String 2");
-            m.put(Long.valueOf(3), "String 3");
             s.setDictionary(m);
             s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[0]);
             int codepage = 12345;
@@ -1022,6 +1040,7 @@ public class TestWrite
         }
         catch (IllegalPropertySetDataException ex)
         {
+            out.close();
             assertTrue(true);
         }
     }
