@@ -17,22 +17,18 @@
 
 package org.apache.poi.hssf.record.crypto;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record.crypto</tt>.
  *
  * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestBiff8DecryptingStream.class,
+    TestBiff8EncryptionKey.class
+})
 public final class AllHSSFEncryptionTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllHSSFEncryptionTests.class.getName());
-
-		result.addTestSuite(TestBiff8DecryptingStream.class);
-		result.addTestSuite(TestRC4.class);
-		result.addTestSuite(TestBiff8EncryptionKey.class);
-		return result;
-	}
 }

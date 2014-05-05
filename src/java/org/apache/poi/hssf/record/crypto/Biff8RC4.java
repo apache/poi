@@ -17,23 +17,29 @@
 
 package org.apache.poi.hssf.record.crypto;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import javax.crypto.Cipher;
+import javax.crypto.ShortBufferException;
+
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.FilePassRecord;
 import org.apache.poi.hssf.record.InterfaceHdrRecord;
 
 /**
  * Used for both encrypting and decrypting BIFF8 streams. The internal
- * {@link RC4} instance is renewed (re-keyed) every 1024 bytes.
- *
- * @author Josh Micich
+ * {@link Cipher} instance is renewed (re-keyed) every 1024 bytes.
  */
-final class Biff8RC4 {
+final class Biff8RC4 implements Biff8Cipher {
 
 	private static final int RC4_REKEYING_INTERVAL = 1024;
 
-	private RC4 _rc4;
+	private Cipher _rc4;
+	
 	/**
-	 * This field is used to keep track of when to change the {@link RC4}
+	 * This field is used to keep track of when to change the {@link Cipher}
 	 * instance. The change occurs every 1024 bytes. Every byte passed over is
 	 * counted.
 	 */
@@ -41,42 +47,49 @@ final class Biff8RC4 {
 	private int _nextRC4BlockStart;
 	private int _currentKeyIndex;
 	private boolean _shouldSkipEncryptionOnCurrentRecord;
+    private final Biff8RC4Key _key;
+    private ByteBuffer _buffer = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
 
-	private final Biff8EncryptionKey _key;
-
-	public Biff8RC4(int initialOffset, Biff8EncryptionKey key) {
+	public Biff8RC4(int initialOffset, Biff8RC4Key key) {
 		if (initialOffset >= RC4_REKEYING_INTERVAL) {
 			throw new RuntimeException("initialOffset (" + initialOffset + ")>"
 					+ RC4_REKEYING_INTERVAL + " not supported yet");
 		}
 		_key = key;
+        _rc4 = _key.getCipher();
 		_streamPos = 0;
 		rekeyForNextBlock();
 		_streamPos = initialOffset;
-		for (int i = initialOffset; i > 0; i--) {
-			_rc4.output();
-		}
 		_shouldSkipEncryptionOnCurrentRecord = false;
+		
+	    encryptBytes(new byte[initialOffset], 0, initialOffset);
 	}
+	
 
 	private void rekeyForNextBlock() {
 		_currentKeyIndex = _streamPos / RC4_REKEYING_INTERVAL;
-		_rc4 = _key.createRC4(_currentKeyIndex);
+		_key.initCipherForBlock(_rc4, _currentKeyIndex);
 		_nextRC4BlockStart = (_currentKeyIndex + 1) * RC4_REKEYING_INTERVAL;
 	}
 
-	private int getNextRC4Byte() {
-		if (_streamPos >= _nextRC4BlockStart) {
-			rekeyForNextBlock();
-		}
-		byte mask = _rc4.output();
-		_streamPos++;
-		if (_shouldSkipEncryptionOnCurrentRecord) {
-			return 0;
-		}
-		return mask & 0xFF;
+	private void encryptBytes(byte data[], int offset, final int bytesToRead)  {
+	    if (bytesToRead == 0) return;
+	    
+	    if (_shouldSkipEncryptionOnCurrentRecord) {
+            // even when encryption is skipped, we need to update the cipher
+	        byte dataCpy[] = new byte[bytesToRead];
+	        System.arraycopy(data, offset, dataCpy, 0, bytesToRead);
+	        data = dataCpy;
+	        offset = 0;
+	    }
+	    
+        try {
+            _rc4.update(data, offset, bytesToRead, data, offset);
+        } catch (ShortBufferException e) {
+            throw new EncryptedDocumentException("input buffer too small", e);
+        }
 	}
-
+	
 	public void startRecord(int currentSid) {
 		_shouldSkipEncryptionOnCurrentRecord = isNeverEncryptedRecord(currentSid);
 	}
@@ -110,19 +123,18 @@ final class Biff8RC4 {
 
 	/**
 	 * Used when BIFF header fields (sid, size) are being read. The internal
-	 * {@link RC4} instance must step even when unencrypted bytes are read
+	 * {@link Cipher} instance must step even when unencrypted bytes are read
 	 */
 	public void skipTwoBytes() {
-		getNextRC4Byte();
-		getNextRC4Byte();
+	    xor(_buffer.array(), 0, 2);
 	}
-
+	
 	public void xor(byte[] buf, int pOffset, int pLen) {
 		int nLeftInBlock;
 		nLeftInBlock = _nextRC4BlockStart - _streamPos;
 		if (pLen <= nLeftInBlock) {
-			// simple case - this read does not cross key blocks
-			_rc4.encrypt(buf, pOffset, pLen);
+            // simple case - this read does not cross key blocks
+		    encryptBytes(buf, pOffset, pLen);
 			_streamPos += pLen;
 			return;
 		}
@@ -133,7 +145,7 @@ final class Biff8RC4 {
 		// start by using the rest of the current block
 		if (len > nLeftInBlock) {
 			if (nLeftInBlock > 0) {
-				_rc4.encrypt(buf, offset, nLeftInBlock);
+	            encryptBytes(buf, offset, nLeftInBlock);
 				_streamPos += nLeftInBlock;
 				offset += nLeftInBlock;
 				len -= nLeftInBlock;
@@ -142,56 +154,42 @@ final class Biff8RC4 {
 		}
 		// all full blocks following
 		while (len > RC4_REKEYING_INTERVAL) {
-			_rc4.encrypt(buf, offset, RC4_REKEYING_INTERVAL);
+            encryptBytes(buf, offset, RC4_REKEYING_INTERVAL);
 			_streamPos += RC4_REKEYING_INTERVAL;
 			offset += RC4_REKEYING_INTERVAL;
 			len -= RC4_REKEYING_INTERVAL;
 			rekeyForNextBlock();
 		}
 		// finish with incomplete block
-		_rc4.encrypt(buf, offset, len);
+        encryptBytes(buf, offset, len);
 		_streamPos += len;
 	}
 
 	public int xorByte(int rawVal) {
-		int mask = getNextRC4Byte();
-		return (byte) (rawVal ^ mask);
+	    _buffer.put(0, (byte)rawVal);
+	    xor(_buffer.array(), 0, 1);
+		return _buffer.get(0);
 	}
 
 	public int xorShort(int rawVal) {
-		int b0 = getNextRC4Byte();
-		int b1 = getNextRC4Byte();
-		int mask = (b1 << 8) + (b0 << 0);
-		return rawVal ^ mask;
+	    _buffer.putShort(0, (short)rawVal);
+	    xor(_buffer.array(), 0, 2);
+		return _buffer.getShort(0);
 	}
 
 	public int xorInt(int rawVal) {
-		int b0 = getNextRC4Byte();
-		int b1 = getNextRC4Byte();
-		int b2 = getNextRC4Byte();
-		int b3 = getNextRC4Byte();
-		int mask = (b3 << 24) + (b2 << 16) + (b1 << 8) + (b0 << 0);
-		return rawVal ^ mask;
+	    _buffer.putInt(0, rawVal);
+	    xor(_buffer.array(), 0, 4);
+		return _buffer.getInt(0);
 	}
 
 	public long xorLong(long rawVal) {
-		int b0 = getNextRC4Byte();
-		int b1 = getNextRC4Byte();
-		int b2 = getNextRC4Byte();
-		int b3 = getNextRC4Byte();
-		int b4 = getNextRC4Byte();
-		int b5 = getNextRC4Byte();
-		int b6 = getNextRC4Byte();
-		int b7 = getNextRC4Byte();
-		long mask =
-			  (((long)b7) << 56)
-			+ (((long)b6) << 48)
-			+ (((long)b5) << 40)
-			+ (((long)b4) << 32)
-			+ (((long)b3) << 24)
-			+ (b2 << 16)
-			+ (b1 << 8)
-			+ (b0 << 0);
-		return rawVal ^ mask;
+        _buffer.putLong(0, rawVal);
+        xor(_buffer.array(), 0, 8);
+        return _buffer.getLong(0);
+	}
+	
+	public void setNextRecordSize(int recordSize) {
+	    /* no-op */
 	}
 }

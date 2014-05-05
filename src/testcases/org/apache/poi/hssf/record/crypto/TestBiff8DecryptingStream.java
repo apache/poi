@@ -17,22 +17,25 @@
 
 package org.apache.poi.hssf.record.crypto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.InputStream;
 import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.ComparisonFailure;
-import junit.framework.TestCase;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link Biff8DecryptingStream}
  *
  * @author Josh Micich
  */
-public final class TestBiff8DecryptingStream extends TestCase {
+public final class TestBiff8DecryptingStream {
 
 	/**
 	 * A mock {@link InputStream} that keeps track of position and also produces
@@ -40,15 +43,14 @@ public final class TestBiff8DecryptingStream extends TestCase {
 	 * than the previous.
 	 */
 	private static final class MockStream extends InputStream {
-		private int _val;
+		private final int _initialValue;
 		private int _position;
 
 		public MockStream(int initialValue) {
-			_val = initialValue & 0xFF;
+			_initialValue = initialValue;
 		}
 		public int read() {
-			_position++;
-			return _val++ & 0xFF;
+			return (_initialValue+_position++) & 0xFF;
 		}
 		public int getPosition() {
 			return _position;
@@ -68,7 +70,7 @@ public final class TestBiff8DecryptingStream extends TestCase {
 		public StreamTester(MockStream ms, String keyDigestHex, int expectedFirstInt) {
 			_ms = ms;
 			byte[] keyDigest = HexRead.readFromString(keyDigestHex);
-			_bds = new Biff8DecryptingStream(_ms, 0, new Biff8EncryptionKey(keyDigest));
+			_bds = new Biff8DecryptingStream(_ms, 0, new Biff8RC4Key(keyDigest));
 			assertEquals(expectedFirstInt, _bds.readInt());
 			_errorsOccurred = false;
 		}
@@ -148,7 +150,8 @@ public final class TestBiff8DecryptingStream extends TestCase {
 	/**
 	 * Tests reading of 64,32,16 and 8 bit integers aligned with key changing boundaries
 	 */
-	public void testReadsAlignedWithBoundary() {
+	@Test
+	public void readsAlignedWithBoundary() {
 		StreamTester st = createStreamTester(0x50, "BA AD F0 0D 00", 0x96C66829);
 
 		st.rollForward(0x0004, 0x03FF);
@@ -169,7 +172,8 @@ public final class TestBiff8DecryptingStream extends TestCase {
 	/**
 	 * Tests reading of 64,32 and 16 bit integers <i>across</i> key changing boundaries
 	 */
-	public void testReadsSpanningBoundary() {
+    @Test
+	public void readsSpanningBoundary() {
 		StreamTester st = createStreamTester(0x50, "BA AD F0 0D 00", 0x96C66829);
 
 		st.rollForward(0x0004, 0x03FC);
@@ -185,7 +189,8 @@ public final class TestBiff8DecryptingStream extends TestCase {
 	 * Checks that the BIFF header fields (sid, size) get read without applying decryption,
 	 * and that the RC4 stream stays aligned during these calls
 	 */
-	public void testReadHeaderUShort() {
+    @Test
+	public void readHeaderUShort() {
 		StreamTester st = createStreamTester(0x50, "BA AD F0 0D 00", 0x96C66829);
 
 		st.rollForward(0x0004, 0x03FF);
@@ -213,7 +218,8 @@ public final class TestBiff8DecryptingStream extends TestCase {
 	/**
 	 * Tests reading of byte sequences <i>across</i> and <i>aligned with</i> key changing boundaries
 	 */
-	public void testReadByteArrays() {
+    @Test
+	public void readByteArrays() {
 		StreamTester st = createStreamTester(0x50, "BA AD F0 0D 00", 0x96C66829);
 
 		st.rollForward(0x0004, 0x2FFC);
@@ -223,7 +229,7 @@ public final class TestBiff8DecryptingStream extends TestCase {
 		st.confirmData("01 C2 4E 55");  // first 4 bytes in next block
 		st.assertNoErrors();
 	}
-
+    
 	private static StreamTester createStreamTester(int mockStreamStartVal, String keyDigestHex, int expectedFirstInt) {
 		return new StreamTester(new MockStream(mockStreamStartVal), keyDigestHex, expectedFirstInt);
 	}

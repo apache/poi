@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.crypto;
 
 import java.io.InputStream;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.BiffHeaderInput;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -30,10 +31,16 @@ import org.apache.poi.util.LittleEndianInputStream;
 public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndianInput {
 
 	private final LittleEndianInput _le;
-	private final Biff8RC4 _rc4;
+	private final Biff8Cipher _cipher;
 
 	public Biff8DecryptingStream(InputStream in, int initialOffset, Biff8EncryptionKey key) {
-		_rc4 = new Biff8RC4(initialOffset, key);
+	    if (key instanceof Biff8RC4Key) {
+	        _cipher = new Biff8RC4(initialOffset, (Biff8RC4Key)key);
+	    } else if (key instanceof Biff8XORKey) {
+	        _cipher = new Biff8XOR(initialOffset, (Biff8XORKey)key);
+	    } else {
+	        throw new EncryptedDocumentException("Crypto API not supported yet.");
+	    }
 
 		if (in instanceof LittleEndianInput) {
 			// accessing directly is an optimisation
@@ -53,8 +60,8 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 	 */
 	public int readRecordSID() {
 		int sid = _le.readUShort();
-		_rc4.skipTwoBytes();
-		_rc4.startRecord(sid);
+		_cipher.skipTwoBytes();
+		_cipher.startRecord(sid);
 		return sid;
 	}
 
@@ -63,7 +70,8 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 	 */
 	public int readDataSize() {
 		int dataSize = _le.readUShort();
-		_rc4.skipTwoBytes();
+		_cipher.skipTwoBytes();
+		_cipher.setNextRecordSize(dataSize);
 		return dataSize;
 	}
 
@@ -82,30 +90,30 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
 	public void readFully(byte[] buf, int off, int len) {
 		_le.readFully(buf, off, len);
-		_rc4.xor(buf, off, len);
+		_cipher.xor(buf, off, len);
 	}
 
 
 	public int readUByte() {
-		return _rc4.xorByte(_le.readUByte());
+		return _cipher.xorByte(_le.readUByte());
 	}
 	public byte readByte() {
-		return (byte) _rc4.xorByte(_le.readUByte());
+		return (byte) _cipher.xorByte(_le.readUByte());
 	}
 
 
 	public int readUShort() {
-		return _rc4.xorShort(_le.readUShort());
+		return _cipher.xorShort(_le.readUShort());
 	}
 	public short readShort() {
-		return (short) _rc4.xorShort(_le.readUShort());
+		return (short) _cipher.xorShort(_le.readUShort());
 	}
 
 	public int readInt() {
-		return _rc4.xorInt(_le.readInt());
+		return _cipher.xorInt(_le.readInt());
 	}
 
 	public long readLong() {
-		return _rc4.xorLong(_le.readLong());
+		return _cipher.xorLong(_le.readLong());
 	}
 }
