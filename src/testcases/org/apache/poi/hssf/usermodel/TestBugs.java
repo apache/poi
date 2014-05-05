@@ -54,6 +54,7 @@ import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -2113,6 +2114,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50833() throws Exception {
+       Biff8EncryptionKey.setCurrentUserPassword(null); 
+        
        HSSFWorkbook wb = openSample("50833.xls");
        HSSFSheet s = wb.getSheetAt(0);
        assertEquals("Sheet1", s.getSheetName());
@@ -2350,14 +2353,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Normally encrypted files have BOF then FILEPASS, but
      *  some may squeeze a WRITEPROTECT in the middle
      */
-    @Test
+    @Test(expected=EncryptedDocumentException.class)
     public void bug51832() {
-       try {
-          openSample("51832.xls");
-          fail("Encrypted file");
-       } catch(EncryptedDocumentException e) {
-          // Good
-       }
+        openSample("51832.xls");
     }
 
     @Test
@@ -2480,10 +2478,15 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(rstyle.getBorderBottom(), HSSFCellStyle.BORDER_DOUBLE);
     }
 
-    @Test(expected=EncryptedDocumentException.class)
+    @Test
     public void bug35897() throws Exception {
         // password is abc
-        openSample("xor-encryption-abc.xls");
+        try {
+            Biff8EncryptionKey.setCurrentUserPassword("abc");
+            openSample("xor-encryption-abc.xls");
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 
     @Test

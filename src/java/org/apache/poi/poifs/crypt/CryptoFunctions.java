@@ -289,6 +289,12 @@ public class CryptoFunctions {
         0x313E, 0x1872, 0xE139, 0xD40F, 0x84F9, 0x280C, 0xA96A, 
         0x4EC3
     };
+
+    private static final byte PadArray[] = {
+        (byte)0xBB, (byte)0xFF, (byte)0xFF, (byte)0xBA, (byte)0xFF,
+        (byte)0xFF, (byte)0xB9, (byte)0x80, (byte)0x00, (byte)0xBE,
+        (byte)0x0F, (byte)0x00, (byte)0xBF, (byte)0x0F, (byte)0x00
+    };
     
     private static final int EncryptionMatrix[][] = {
         /* char 1  */ {0xAEFC, 0x4DD9, 0x9BB2, 0x2745, 0x4E8A, 0x9D14, 0x2A09},
@@ -309,20 +315,18 @@ public class CryptoFunctions {
     };
 
     /**
-     * This method generates the xored-hashed password for word documents &lt; 2007.
+     * This method generates the xor verifier for word documents &lt; 2007 (method 2).
      * Its output will be used as password input for the newer word generations which
      * utilize a real hashing algorithm like sha1.
      * 
-     * Although the code was taken from the "see"-link below, this looks similar
-     * to the method in [MS-OFFCRYPTO] 2.3.7.2 Binary Document XOR Array Initialization Method 1. 
-     *
-     * @param password
+     * @param password the password
      * @return the hashed password
      * 
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>
      * @see <a href="http://blogs.msdn.com/b/vsod/archive/2010/04/05/how-to-set-the-editing-restrictions-in-word-using-open-xml-sdk-2-0.aspx">How to set the editing restrictions in Word using Open XML SDK 2.0</a>
      * @see <a href="http://www.aspose.com/blogs/aspose-blogs/vladimir-averkin/archive/2007/08/20/funny-how-the-new-powerful-cryptography-implemented-in-word-2007-turns-it-into-a-perfect-tool-for-document-password-removal.html">Funny: How the new powerful cryptography implemented in Word 2007 turns it into a perfect tool for document password removal.</a>
      */
-    public static int xorHashPasswordAsInt(String password) {
+    public static int createXorVerifier2(String password) {
         //Array to hold Key Values
         byte[] generatedKey = new byte[4];
 
@@ -391,7 +395,7 @@ public class CryptoFunctions {
      * This method generates the xored-hashed password for word documents &lt; 2007.
      */
     public static String xorHashPassword(String password) {
-        int hashedPassword = xorHashPasswordAsInt(password);
+        int hashedPassword = createXorVerifier2(password);
         return String.format("%1$08X", hashedPassword);
     }
     
@@ -400,7 +404,7 @@ public class CryptoFunctions {
      * processing in word documents 2007 and newer, which utilize a real hashing algorithm like sha1.
      */
     public static String xorHashPasswordReversed(String password) {
-        int hashedPassword = xorHashPasswordAsInt(password);
+        int hashedPassword = createXorVerifier2(password);
         
         return String.format("%1$02X%2$02X%3$02X%4$02X"
             , ( hashedPassword >>> 0 ) & 0xFF
@@ -408,5 +412,72 @@ public class CryptoFunctions {
             , ( hashedPassword >>> 16 ) & 0xFF
             , ( hashedPassword >>> 24 ) & 0xFF
         );
+    }
+
+    /**
+     * Create the verifier for xor obfuscation (method 1)
+     *
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd926947.aspx">2.3.7.1 Binary Document Password Verifier Derivation Method 1</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>
+     * 
+     * @param password the password
+     * @return the verifier
+     */
+    public static int createXorVerifier1(String password) {
+        // the verifier for method 1 is part of the verifier for method 2
+        // so we simply chop it from there
+        return createXorVerifier2(password) & 0xFFFF;
+    }
+ 
+    /**
+     * Create the xor key for xor obfuscation, which is used to create the xor array (method 1)
+     *
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd924704.aspx">2.3.7.2 Binary Document XOR Array Initialization Method 1</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>
+     * 
+     * @param password the password
+     * @return the xor key
+     */
+    public static int createXorKey1(String password) {
+        // the xor key for method 1 is part of the verifier for method 2
+        // so we simply chop it from there
+        return createXorVerifier2(password) >>> 16;
+    }
+
+    /**
+     * Creates an byte array for xor obfuscation (method 1) 
+     *
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd924704.aspx">2.3.7.2 Binary Document XOR Array Initialization Method 1</a>
+     * @see <a href="http://docs.libreoffice.org/oox/html/binarycodec_8cxx_source.html">Libre Office implementation</a>
+     *
+     * @param password the password
+     * @return the byte array for xor obfuscation
+     */
+    public static byte[] createXorArray1(String password) {
+        if (password.length() > 15) password = password.substring(0, 15);
+        byte passBytes[] = password.getBytes(Charset.forName("ASCII"));
+        
+        // this code is based on the libre office implementation.
+        // The MS-OFFCRYPTO misses some infos about the various rotation sizes 
+        byte obfuscationArray[] = new byte[16];
+        System.arraycopy(passBytes, 0, obfuscationArray, 0, passBytes.length);
+        System.arraycopy(PadArray, 0, obfuscationArray, passBytes.length, PadArray.length-passBytes.length+1);
+        
+        int xorKey = createXorKey1(password);
+        
+        // rotation of key values is application dependent
+        int nRotateSize = 2; /* Excel = 2; Word = 7 */
+        
+        byte baseKeyLE[] = { (byte)(xorKey & 0xFF), (byte)((xorKey >>> 8) & 0xFF) };
+        for (int i=0; i<obfuscationArray.length; i++) {
+            obfuscationArray[i] ^= baseKeyLE[i&1];
+            obfuscationArray[i] = rotateLeft(obfuscationArray[i], nRotateSize);
+        }
+        
+        return obfuscationArray;
+    }
+
+    private static byte rotateLeft(byte bits, int shift) {
+        return (byte)(((bits & 0xff) << shift) | ((bits & 0xff) >>> (8 - shift)));
     }
 }

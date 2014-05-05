@@ -19,11 +19,11 @@ package org.apache.poi.hssf.record.crypto;
 
 import java.util.Arrays;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.HexRead;
-
 import junit.framework.ComparisonFailure;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests for {@link Biff8EncryptionKey}
@@ -37,7 +37,7 @@ public final class TestBiff8EncryptionKey extends TestCase {
 	}
 	public void testCreateKeyDigest() {
 		byte[] docIdData = fromHex("17 F6 D1 6B 09 B1 5F 7B 4C 9D 03 B4 81 B5 B4 4A");
-		byte[] keyDigest = Biff8EncryptionKey.createKeyDigest("MoneyForNothing", docIdData);
+		byte[] keyDigest = Biff8RC4Key.createKeyDigest("MoneyForNothing", docIdData);
 		byte[] expResult = fromHex("C2 D9 56 B2 6B");
 		if (!Arrays.equals(expResult, keyDigest)) {
 			throw new ComparisonFailure("keyDigest mismatch", HexDump.toHex(expResult), HexDump.toHex(keyDigest));
