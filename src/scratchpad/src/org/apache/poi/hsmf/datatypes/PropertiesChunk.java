@@ -194,35 +194,35 @@ public abstract class PropertiesChunk extends Chunk {
             
             // Skip over any padding
             if (length < 8) {
-               byte[] padding = new byte[8-length];
-               IOUtils.readFully(value, padding);
+                byte[] padding = new byte[8-length];
+                IOUtils.readFully(value, padding);
             }
             
             // Wrap and store
             PropertyValue propVal = null;
             if (isPointer) {
-               // We'll match up the chunk later
-               propVal = new ChunkBasedPropertyValue(prop, flags, data);
+                // We'll match up the chunk later
+                propVal = new ChunkBasedPropertyValue(prop, flags, data);
             }
             else if (type == Types.SHORT) {
                 propVal = new ShortPropertyValue(prop, flags, data);
-             }
+            }
             else if (type == Types.LONG) {
                 propVal = new LongPropertyValue(prop, flags, data);
-             }
+            }
             else if (type == Types.LONG_LONG) {
-               propVal = new LongLongPropertyValue(prop, flags, data);
+                propVal = new LongLongPropertyValue(prop, flags, data);
             }
             else if (type == Types.TIME) {
-               propVal = new TimePropertyValue(prop, flags, data);
+                propVal = new TimePropertyValue(prop, flags, data);
             }
             // TODO Add in the rest of the types
             else {
-               propVal = new PropertyValue(prop, flags, data);
+                propVal = new PropertyValue(prop, flags, data);
             }
             
             if (properties.get(prop) == null) {
-               properties.put(prop, new ArrayList<PropertyValue>());
+                properties.put(prop, new ArrayList<PropertyValue>());
             }
             properties.get(prop).add(propVal);
          } catch (BufferUnderrunException e) {
