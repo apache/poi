@@ -143,6 +143,12 @@ public class StringChunk extends Chunk {
     *  and returns the string that that yields.
     */
    protected static String parseAs7BitData(byte[] data, String encoding) {
+      // Handle any encoding aliases, where outlook describes it differently
+      if ("ansi".equals(encoding)) {
+          encoding = DEFAULT_ENCODING;
+      }
+      
+      // Decode
       try {
          return new String(data, encoding);
       } catch (UnsupportedEncodingException e) {
