@@ -25,8 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hsmf.datatypes.PropertyValue.BooleanPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.CurrencyPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.DoublePropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.FloatPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongLongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
+import org.apache.poi.hsmf.datatypes.PropertyValue.NullPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.ShortPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
@@ -204,6 +209,12 @@ public abstract class PropertiesChunk extends Chunk {
                 // We'll match up the chunk later
                 propVal = new ChunkBasedPropertyValue(prop, flags, data);
             }
+            else if (type == Types.NULL) {
+                propVal = new NullPropertyValue(prop, flags, data);
+            }
+            else if (type == Types.BOOLEAN) {
+                propVal = new BooleanPropertyValue(prop, flags, data);
+            }
             else if (type == Types.SHORT) {
                 propVal = new ShortPropertyValue(prop, flags, data);
             }
@@ -212,6 +223,15 @@ public abstract class PropertiesChunk extends Chunk {
             }
             else if (type == Types.LONG_LONG) {
                 propVal = new LongLongPropertyValue(prop, flags, data);
+            }
+            else if (type == Types.FLOAT) {
+                propVal = new FloatPropertyValue(prop, flags, data);
+            }
+            else if (type == Types.DOUBLE) {
+                propVal = new DoublePropertyValue(prop, flags, data);
+            }
+            else if (type == Types.CURRENCY) {
+                propVal = new CurrencyPropertyValue(prop, flags, data);
             }
             else if (type == Types.TIME) {
                 propVal = new TimePropertyValue(prop, flags, data);
