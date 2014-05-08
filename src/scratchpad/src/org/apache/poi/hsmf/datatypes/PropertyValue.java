@@ -17,6 +17,7 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -72,8 +73,35 @@ public class PropertyValue {
       }
    }
    
-   // TODO classes for the other important value types
+   public static class NullPropertyValue extends PropertyValue {
+       public NullPropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public Void getValue() {
+           return null;
+       }
+   }
    
+   public static class BooleanPropertyValue extends PropertyValue {
+       public BooleanPropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public Boolean getValue() {
+          short val = LittleEndian.getShort(data);
+          return val > 0;
+       }
+       public void setValue(boolean value) {
+          if (data.length != 2) {
+             data = new byte[2];
+          }
+          if (value) {
+              LittleEndian.putShort(data, 0, (short)1);
+          }
+       }
+   }
+    
    public static class ShortPropertyValue extends PropertyValue {
        public ShortPropertyValue(MAPIProperty property, long flags, byte[] data) {
           super(property, flags, data);
@@ -88,7 +116,7 @@ public class PropertyValue {
           }
           LittleEndian.putShort(data, 0, value);
        }
-    }
+   }
     
    public static class LongPropertyValue extends PropertyValue {
        public LongPropertyValue(MAPIProperty property, long flags, byte[] data) {
@@ -122,6 +150,61 @@ public class PropertyValue {
       }
    }
    
+   public static class FloatPropertyValue extends PropertyValue {
+       public FloatPropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public Float getValue() {
+          return LittleEndian.getFloat(data);
+       }
+       public void setValue(float value) {
+          if (data.length != 4) {
+             data = new byte[4];
+          }
+          LittleEndian.putFloat(data, 0, value);
+       }
+   }
+    
+   public static class DoublePropertyValue extends PropertyValue {
+       public DoublePropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public Double getValue() {
+          return LittleEndian.getDouble(data);
+       }
+       public void setValue(double value) {
+          if (data.length != 8) {
+             data = new byte[8];
+          }
+          LittleEndian.putDouble(data, 0, value);
+       }
+   }
+    
+   /**
+    * signed 64-bit integer that represents a base ten decimal, 
+    * with four digits to the right of the decimal point
+    */
+   public static class CurrencyPropertyValue extends PropertyValue {
+       private static final BigInteger SHIFT = BigInteger.valueOf(10000);
+       public CurrencyPropertyValue(MAPIProperty property, long flags, byte[] data) {
+          super(property, flags, data);
+       }
+       
+       public BigInteger getValue() {
+           long unshifted = LittleEndian.getLong(data);
+           return BigInteger.valueOf(unshifted).divide(SHIFT);
+       }
+       public void setValue(BigInteger value) {
+          if (data.length != 8) {
+             data = new byte[8];
+          }
+          long shifted = value.multiply(SHIFT).longValue();
+          LittleEndian.putLong(data, 0, shifted);
+       }
+   }
+    
    /**
     * 64-bit integer specifying the number of 100ns periods since Jan 1, 1601
     */
