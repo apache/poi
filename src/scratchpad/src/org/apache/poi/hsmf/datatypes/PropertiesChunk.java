@@ -20,7 +20,7 @@ package org.apache.poi.hsmf.datatypes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +42,10 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * A Chunk which holds fixed-length properties, and pointer
- *  to the variable length ones (which get their own chunk).
- * There are two kinds of PropertiesChunks, which differ only in 
+ * <p>A Chunk which holds (single) fixed-length properties, and pointer
+ *  to the variable length ones / multi-valued ones (which get their 
+ *  own chunk).
+ * <p>There are two kinds of PropertiesChunks, which differ only in 
  *  their headers.
  */
 public abstract class PropertiesChunk extends Chunk {
@@ -53,16 +54,16 @@ public abstract class PropertiesChunk extends Chunk {
    /** For logging problems we spot with the file */
    private POILogger logger = POILogFactory.getLogger(PropertiesChunk.class);
 
-   
    /**
-    * Holds properties, indexed by type. Properties can be multi-valued
+    * Holds properties, indexed by type. If a property is multi-valued,
+    *  or variable length, it will be held via a {@link ChunkBasedPropertyValue}.
     */
-   private Map<MAPIProperty, List<PropertyValue>> properties = 
-         new HashMap<MAPIProperty, List<PropertyValue>>();
+   private Map<MAPIProperty, PropertyValue> properties = 
+         new HashMap<MAPIProperty, PropertyValue>();
 
    /**
     * The ChunkGroup that these properties apply to. Used when
-    *  matching chunks to variable sized properties
+    *  matching chunks to variable sized and multi-valued properties
     */
    private ChunkGroup parentGroup;
    
@@ -80,29 +81,51 @@ public abstract class PropertiesChunk extends Chunk {
    }
 	
    /**
-    * Returns all the properties in the chunk
+    * Returns all the properties in the chunk, without
+    *  looking up any chunk-based values
     */
-   public Map<MAPIProperty, List<PropertyValue>> getProperties() {
+   public Map<MAPIProperty, PropertyValue> getRawProperties() {
       return properties;
    }
 
    /**
-    * Returns all values for the given property, of null if none exist
+    * <p>Returns all the properties in the chunk, along with their
+    *  values.
+    * <p>Any chunk-based values will be looked up and returned as such
     */
-   public List<PropertyValue> getValues(MAPIProperty property) {
-      return properties.get(property);
+   public Map<MAPIProperty, List<PropertyValue>> getProperties() {
+       Map<MAPIProperty, List<PropertyValue>> props = 
+               new HashMap<MAPIProperty, List<PropertyValue>>(properties.size());
+       for (MAPIProperty prop : properties.keySet()) {
+           props.put(prop, getValues(prop));
+       }
+       return props;
    }
 
    /**
-    * Returns the (first/only) value for the given property, or
-    *  null if none exist
+    * Returns all values for the given property, looking up chunk based
+    *  ones as required, of null if none exist
     */
-   public PropertyValue getValue(MAPIProperty property) {
-      List<PropertyValue> values = properties.get(property);
-      if (values != null && values.size() > 0) {
-         return values.get(0);
-      }
-      return null;
+   public List<PropertyValue> getValues(MAPIProperty property) {
+       PropertyValue val = properties.get(property);
+       if (val == null) {
+           return null;
+       }
+       if (val instanceof ChunkBasedPropertyValue) {
+           ChunkBasedPropertyValue cval = (ChunkBasedPropertyValue)val;
+           // TODO Lookup
+           return Collections.emptyList();
+       } else {
+           return Collections.singletonList(val);
+       }
+   }
+
+   /**
+    * Returns the value / pointer to the value chunk of 
+    *  the property, or null if none exists
+    */
+   public PropertyValue getRawValue(MAPIProperty property) {
+       return properties.get(property);
    }
 	
    /**
@@ -118,23 +141,19 @@ public abstract class PropertiesChunk extends Chunk {
       }
       
       // Loop over our values, looking for chunk based ones
-      for (List<PropertyValue> vals : properties.values()) {
-         if (vals != null) {
-            for (PropertyValue val : vals) {
-               if (val instanceof ChunkBasedPropertyValue) {
-                  ChunkBasedPropertyValue cVal = (ChunkBasedPropertyValue)val;
-                  Chunk chunk = chunks.get(cVal.getProperty().id);
-//System.err.println(cVal + " -> " + HexDump.toHex(cVal.data));                  
+      for (PropertyValue val : properties.values()) {
+           if (val instanceof ChunkBasedPropertyValue) {
+              ChunkBasedPropertyValue cVal = (ChunkBasedPropertyValue)val;
+              Chunk chunk = chunks.get(cVal.getProperty().id);
+//System.err.println(cVal.getProperty() + " = " + cVal + " -> " + HexDump.toHex(cVal.data));                  
                   
-                  // TODO Make sense of the raw offset value
-                  
-                  if (chunk != null) {
-                     cVal.setValue(chunk);
-                  } else {
-                     logger.log(POILogger.WARN, "No chunk found matching Property " + cVal);
-                  }
-               }
-            }
+              // TODO Make sense of the raw offset value
+              
+              if (chunk != null) {
+                 cVal.setValue(chunk);
+              } else {
+                 logger.log(POILogger.WARN, "No chunk found matching Property " + cVal);
+              }
          }
       }
    }
@@ -182,6 +201,10 @@ public abstract class PropertiesChunk extends Chunk {
                    break;
                 }
             }
+            
+            // TODO Detect if it is multi-valued, since if it is
+            //  then even fixed-length strings store their multiple
+            //  values in another chunk (much as variable length ones)
             
             // Work out how long the "data" is
             // This might be the actual data, or just a pointer
@@ -240,11 +263,11 @@ public abstract class PropertiesChunk extends Chunk {
             else {
                 propVal = new PropertyValue(prop, flags, data);
             }
-            
-            if (properties.get(prop) == null) {
-                properties.put(prop, new ArrayList<PropertyValue>());
+
+            if (properties.get(prop) != null) {
+                logger.log(POILogger.WARN, "Duplicate values found for " + prop);
             }
-            properties.get(prop).add(propVal);
+            properties.put(prop, propVal);
          } catch (BufferUnderrunException e) {
             // Invalid property, ended short
             going = false;

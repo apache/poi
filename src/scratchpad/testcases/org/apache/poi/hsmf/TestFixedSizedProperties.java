@@ -31,6 +31,7 @@ import java.util.TimeZone;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.hsmf.datatypes.ChunkBasedPropertyValue;
+import org.apache.poi.hsmf.datatypes.Chunks;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.PropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
@@ -86,13 +87,26 @@ public final class TestFixedSizedProperties extends POITestCase {
     * Check we find properties of a variety of different types
     */
    public void testPropertyValueTypes() throws Exception {
-       Map<MAPIProperty,List<PropertyValue>> props =
-               mapiMessageSucceeds.getMainChunks().getProperties();
-       HashSet<Class<? extends PropertyValue>> seenTypes = new HashSet<Class<? extends PropertyValue>>();
+       Chunks mainChunks = mapiMessageSucceeds.getMainChunks();
+       
+       // Ask to have the values looked up
+       Map<MAPIProperty,List<PropertyValue>> props = mainChunks.getProperties();
+       HashSet<Class<? extends PropertyValue>> seenTypes = 
+               new HashSet<Class<? extends PropertyValue>>();
        for (List<PropertyValue> pvs : props.values()) {
            for (PropertyValue pv : pvs) {
                seenTypes.add(pv.getClass());
            }
+       }
+       assertTrue(seenTypes.toString(), seenTypes.size() > 3);
+       assertTrue(seenTypes.toString(), seenTypes.contains(LongPropertyValue.class));
+       assertTrue(seenTypes.toString(), seenTypes.contains(TimePropertyValue.class));
+       assertFalse(seenTypes.toString(), seenTypes.contains(ChunkBasedPropertyValue.class));
+       
+       // Ask for the raw values
+       seenTypes.clear();
+       for (PropertyValue pv : mainChunks.getRawProperties().values()) {
+           seenTypes.add(pv.getClass());
        }
        assertTrue(seenTypes.toString(), seenTypes.size() > 3);
        assertTrue(seenTypes.toString(), seenTypes.contains(LongPropertyValue.class));
