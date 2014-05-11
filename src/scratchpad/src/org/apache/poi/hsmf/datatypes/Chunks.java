@@ -90,6 +90,13 @@ public final class Chunks implements ChunkGroupWithProperties {
       }
       else return Collections.emptyMap();
    }
+   public Map<MAPIProperty, PropertyValue> getRawProperties() {
+      if (messageProperties != null) {
+         return messageProperties.getRawProperties();
+      }
+      else return Collections.emptyMap();
+   }
+   
    public Map<MAPIProperty,List<Chunk>> getAll() {
       return allChunks;
    }
