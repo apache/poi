@@ -1,0 +1,6 @@
+build/
+lib/
+ooxml-lib/
+
+.idea/
+*.iml
