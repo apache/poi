@@ -133,7 +133,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         b.cloneSheet(0);
         assertEquals(2, b.getNumberOfSheets());
     }
-    
+
     @Test
     public void readWriteWithCharts() {
         HSSFWorkbook b;
@@ -561,7 +561,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         assertTrue(clsid1.equals(clsid2));
     }
-    
+
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
      *  and {@link NPOIFSFileSystem}
@@ -594,7 +594,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
            npoifsFileSystem.close();
        }
     }
-    
+
     @Test
     public void wordDocEmbeddedInXls() throws IOException {
        // Open the two filesystems
@@ -636,21 +636,26 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     public void writeWorkbookFromNPOIFS() throws IOException {
        InputStream is = HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls");
-       NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
-       
-       // Start as NPOIFS
-       HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
-       assertEquals(3, wb.getNumberOfSheets());
-       assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-       
-       // Will switch to POIFS
-       wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-       assertEquals(3, wb.getNumberOfSheets());
-       assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-       
-       fs.close();
+       try {
+           NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+           try {
+               // Start as NPOIFS
+               HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
+               assertEquals(3, wb.getNumberOfSheets());
+               assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+
+               // Will switch to POIFS
+               wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+               assertEquals(3, wb.getNumberOfSheets());
+               assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+           } finally {
+        	   fs.close();
+           }
+       } finally {
+    	   is.close();
+       }
     }
-   
+
     @Test
     public void cellStylesLimit() {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -728,7 +733,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals("'first sheet'!D1", cf.getRule(0).getFormula1());
         assertEquals("'other sheet'!D1", cf.getRule(0).getFormula2());
     }
-    
+
     private boolean hasEntry(DirectoryNode dirNode, String entryName) {
        try {
            dirNode.getEntry(entryName);
@@ -743,7 +748,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
         InternalWorkbook iwb = wb.getWorkbook();
         iwb.findDrawingGroup();
-        
+
         for(int pictureIndex=1; pictureIndex <= 4; pictureIndex++){
             EscherBSERecord bse = iwb.getBSERecord(pictureIndex);
             assertEquals(1, bse.getRef());
@@ -776,7 +781,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             assertTrue(e.getMessage(), e.getMessage().contains("does not contain a BIFF8"));
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void selectedSheetShort() {
@@ -792,7 +797,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         confirmActiveSelected(sheet4, false);
 
         wb.setSelectedTab((short)1);
-        
+
         // see Javadoc, in this case selected means "active"
         assertEquals(wb.getActiveSheetIndex(), wb.getSelectedTab());
 
@@ -810,7 +815,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         confirmActiveSelected(sheet2, true);
         confirmActiveSelected(sheet3, false);
         confirmActiveSelected(sheet4, false);
-        
+
         assertEquals(0, wb.getFirstVisibleTab());
         wb.setDisplayedTab((short)2);
         assertEquals(2, wb.getFirstVisibleTab());
@@ -829,7 +834,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             assertTrue(e.getMessage(), e.getMessage().contains("already contains a sheet of this name"));
         }
     }
-    
+
     @Test
     public void getSheetIndex() {
         HSSFWorkbook wb=new HSSFWorkbook();
@@ -837,12 +842,12 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         HSSFSheet sheet2 = wb.createSheet("Sheet2");
         HSSFSheet sheet3 = wb.createSheet("Sheet3");
         HSSFSheet sheet4 = wb.createSheet("Sheet4");
-        
+
         assertEquals(0, wb.getSheetIndex(sheet1));
         assertEquals(1, wb.getSheetIndex(sheet2));
         assertEquals(2, wb.getSheetIndex(sheet3));
         assertEquals(3, wb.getSheetIndex(sheet4));
-        
+
         // remove sheets
         wb.removeSheetAt(0);
         wb.removeSheetAt(2);
@@ -860,52 +865,52 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         HSSFWorkbook wb=new HSSFWorkbook();
         wb.createSheet("Sheet1");
         wb.createSheet("Sheet2");
-        
+
         assertEquals(0, wb.getExternalSheetIndex(0));
         assertEquals(1, wb.getExternalSheetIndex(1));
-        
+
         assertEquals("Sheet1", wb.findSheetNameFromExternSheet(0));
         assertEquals("Sheet2", wb.findSheetNameFromExternSheet(1));
         //assertEquals(null, wb.findSheetNameFromExternSheet(2));
-        
+
         assertEquals(0, wb.getSheetIndexFromExternSheetIndex(0));
         assertEquals(1, wb.getSheetIndexFromExternSheetIndex(1));
         assertEquals(-1, wb.getSheetIndexFromExternSheetIndex(2));
         assertEquals(-1, wb.getSheetIndexFromExternSheetIndex(100));
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void sstString() {
         HSSFWorkbook wb=new HSSFWorkbook();
-        
+
         int sst = wb.addSSTString("somestring");
         assertEquals("somestring", wb.getSSTString(sst));
         //assertNull(wb.getSSTString(sst+1));
     }
-    
+
     @Test
     public void names() {
         HSSFWorkbook wb=new HSSFWorkbook();
-        
+
         try {
             wb.getNameAt(0);
             fail("Fails without any defined names");
         } catch (IllegalStateException e) {
             assertTrue(e.getMessage(), e.getMessage().contains("no defined names"));
         }
-        
+
         HSSFName name = wb.createName();
         assertNotNull(name);
-        
+
         assertNull(wb.getName("somename"));
 
         name.setNameName("myname");
         assertNotNull(wb.getName("myname"));
-        
+
         assertEquals(0, wb.getNameIndex(name));
         assertEquals(0, wb.getNameIndex("myname"));
-        
+
         try {
             wb.getNameAt(5);
             fail("Fails without any defined names");
@@ -920,7 +925,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             assertTrue(e.getMessage(), e.getMessage().contains("outside the allowable range"));
         }
     }
-    
+
     @Test
     public void testMethods() {
         HSSFWorkbook wb=new HSSFWorkbook();
@@ -928,16 +933,16 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         //wb.dumpDrawingGroupRecords(true);
         //wb.dumpDrawingGroupRecords(false);
     }
-    
+
     @Test
     public void writeProtection() {
         HSSFWorkbook wb=new HSSFWorkbook();
-        
+
         assertFalse(wb.isWriteProtected());
-        
+
         wb.writeProtectWorkbook("mypassword", "myuser");
         assertTrue(wb.isWriteProtected());
-        
+
         wb.unwriteProtectWorkbook();
         assertFalse(wb.isWriteProtected());
     }
@@ -949,7 +954,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
 		HSSFSheet sheet = wb.cloneSheet(0);
-		
+
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
 
 		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
@@ -961,16 +966,16 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
 		wb.removeSheetAt(0);
-		
+
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
 		// check that the overall workbook serializes with its correct size
 		int expected = wb.getWorkbook().getSize();
 		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
-		
+
 		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
 				expected, written);
-		
+
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 	}
@@ -982,7 +987,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
 		HSSFSheet sheet = wb.cloneSheet(0);
-		
+
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received", "Invoice (2)");
 
 		wb.setSheetName(wb.getSheetIndex(sheet), "copy");
@@ -994,24 +999,24 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		assertSheetOrder(wb, "copy", "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
 		wb.removeSheetAt(0);
-		
+
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
 		wb.removeSheetAt(1);
-		
+
 		assertSheetOrder(wb, "Invoice", "Digest", "Deferred", "Received");
-		
+
 		wb.setSheetOrder("Digest", 3);
 
 		assertSheetOrder(wb, "Invoice", "Deferred", "Received", "Digest");
-		
+
 		// check that the overall workbook serializes with its correct size
 		int expected = wb.getWorkbook().getSize();
 		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
-		
+
 		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
 				expected, written);
-		
+
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
 	}

@@ -70,7 +70,8 @@ public class ExtractorFactory {
 
 	/** Should this thread prefer event based over usermodel based extractors? */
 	private static final ThreadLocal<Boolean> threadPreferEventExtractors = new ThreadLocal<Boolean>() {
-      protected Boolean initialValue() { return Boolean.FALSE; }
+		@Override
+		protected Boolean initialValue() { return Boolean.FALSE; }
 	};
 	/** Should all threads prefer event based over usermodel based extractors? */
 	private static Boolean allPreferEventExtractors;
@@ -168,9 +169,9 @@ public class ExtractorFactory {
           if(corePart.getContentType().equals(rel.getContentType())) {
              if(getPreferEventExtractor()) {
                 return new XSSFEventBasedExcelExtractor(pkg);
-             } else {
-                return new XSSFExcelExtractor(pkg);
              }
+
+             return new XSSFExcelExtractor(pkg);
           }
        }
 
@@ -317,10 +318,7 @@ public class ExtractorFactory {
 		}
 
 		// Create the extractors
-		if(
-		      (dirs == null || dirs.size() == 0) &&
-		      (nonPOIFS == null || nonPOIFS.size() == 0)
-		){
+		if(dirs.size() == 0 && nonPOIFS.size() == 0){
 			return new POITextExtractor[0];
 		}
 
