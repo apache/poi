@@ -148,6 +148,9 @@ public class POIXMLProperties {
 			xmlOptions.setSaveSuggestedPrefixes(map);
 
 			OutputStream out = extPart.getOutputStream();
+			if (extPart.getSize() > 0) {
+			    extPart.clear();
+			}
 			ext.props.save(out, xmlOptions);
 			out.close();
 		}

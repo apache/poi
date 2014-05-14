@@ -321,13 +321,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             }
 
             // Process the named ranges
-            namedRanges = new ArrayList<XSSFName>();
-            if(workbook.isSetDefinedNames()) {
-                for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
-                    namedRanges.add(new XSSFName(ctName, this));
-                }
-            }
-
+            reprocessNamedRanges();
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }
@@ -1307,10 +1301,25 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 i++;
             }
             names.setDefinedNameArray(nr);
+            if(workbook.isSetDefinedNames()) {
+                workbook.unsetDefinedNames();
+            }
             workbook.setDefinedNames(names);
+                        
+            // Re-process the named ranges
+            reprocessNamedRanges();
         } else {
             if(workbook.isSetDefinedNames()) {
                 workbook.unsetDefinedNames();
+            }
+        }
+    }
+    
+    private void reprocessNamedRanges() {
+        namedRanges = new ArrayList<XSSFName>();
+        if(workbook.isSetDefinedNames()) {
+            for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameList()) {
+                namedRanges.add(new XSSFName(ctName, this));
             }
         }
     }

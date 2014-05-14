@@ -37,7 +37,6 @@ import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMarshaller;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
@@ -444,9 +443,8 @@ public final class ZipPackage extends Package {
                 this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
 				logger.log(POILogger.DEBUG,"Save core properties part");
 
-				// We have to save the core properties part ...
-				new ZipPackagePropertiesMarshaller().marshall(
-                        this.packageProperties, zos);
+				// Add core properties to part list ...
+				addPackagePart(this.packageProperties);
 				// ... and to add its relationship ...
 				this.relationships.addRelationship(this.packageProperties
 						.getPartName().getURI(), TargetMode.INTERNAL,
