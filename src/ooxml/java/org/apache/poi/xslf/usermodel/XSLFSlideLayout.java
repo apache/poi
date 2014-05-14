@@ -21,12 +21,15 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 
 @Beta
@@ -146,7 +149,23 @@ public class XSLFSlideLayout extends XSLFSheet {
                     case FOOTER:
                         break;
                     default:
-                        slide.getSpTree().addNewSp().set(tsh.getXmlObject().copy());
+                        XmlObject tshXmlObject = tsh.getXmlObject().copy();
+
+                        // remove the anchor parameter (xfrm)
+                        XmlObject[] xmlObjects = tshXmlObject.selectPath("declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//p:spPr");
+                        for (XmlObject xmlObj : xmlObjects) {
+                            XmlCursor xCursor = xmlObj.newCursor();
+                            QName anchorName = new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "xfrm");
+
+                            for (boolean hasNext = xCursor.toFirstChild(); hasNext; hasNext = xCursor.toNextSibling()) {
+                                if (anchorName.equals(xCursor.getName())) {
+                                    xCursor.removeXml();
+                                }
+                            }
+                            xCursor.dispose();
+                        }
+
+                        slide.getSpTree().addNewSp().set(tshXmlObject);
                 }
             }
         }

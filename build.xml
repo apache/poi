@@ -880,10 +880,12 @@ under the License.
                   <jvmarg value="${poi.test.locale}"/>
                   <jvmarg value="-ea"/>
                   <formatter type="plain"/>
+                  <!--<formatter type="plain" usefile="false"/>-->
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
                       <fileset dir="${ooxml.src.test}">
                           <include name="**/${testpattern}.java"/>
+                          <!--<include name="**/TestPowerPoint.java"/>-->
                           <exclude name="**/TestUnfixedBugs.java"/>
                           <exclude name="**/All*Tests.java"/>
                       </fileset>
