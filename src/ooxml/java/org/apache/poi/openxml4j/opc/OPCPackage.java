@@ -599,7 +599,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			throw new IllegalArgumentException("relationshipType");
 		ArrayList<PackagePart> retArr = new ArrayList<PackagePart>();
 		for (PackageRelationship rel : getRelationshipsByType(relationshipType)) {
-			retArr.add(getPart(rel));
+			PackagePart part = getPart(rel);
+			if (part != null) {
+			    retArr.add(part);
+			}
 		}
 		return retArr;
 	}

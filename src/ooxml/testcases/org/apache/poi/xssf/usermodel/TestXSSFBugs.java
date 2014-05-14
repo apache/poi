@@ -17,10 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -60,6 +62,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -1463,5 +1466,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         CellValue cv = wb.getCreationHelper().createFormulaEvaluator().evaluate(c);
         double rounded = cv.getNumberValue();
         assertEquals(0.1, rounded, 0.0);
+    }
+
+    @Test
+    public void bug56468() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
+        XSSFCell cell = row.createCell(0);
+        cell.setCellValue("Hi");
+        sheet.setRepeatingRows(new CellRangeAddress(0, 0, 0, 0));
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(8096);
+        wb.write(bos);
+        byte firstSave[] = bos.toByteArray();
+        bos.reset();
+        wb.write(bos);
+        byte secondSave[] = bos.toByteArray();
+        
+        assertThat(firstSave, equalTo(secondSave));
     }
 }
