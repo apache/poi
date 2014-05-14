@@ -839,6 +839,9 @@ public class XWPFRun implements ISDTContents, IRunElement{
             CTPresetGeometry2D prstGeom = spPr.addNewPrstGeom();
             prstGeom.setPrst(STShapeType.RECT);
             prstGeom.addNewAvLst();
+            
+            XmlObject[] pics = graphicData.selectChildren(new QName(CTPicture.type.getName().getNamespaceURI(), "pic"));
+            pics[0].set(pic);
 
             // Finish up
             XWPFPicture xwpfPicture = new XWPFPicture(pic, this);
