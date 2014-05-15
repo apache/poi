@@ -164,8 +164,32 @@ public class ExternSheetRecord extends StandardRecord {
 		return _list.get(i);
 	}
 	
-	public void adjustIndex(int extRefIndex, int offset) {
-		getRef(extRefIndex).adjustIndex(offset);
+    /**
+     * @deprecated Was prevously used for removing sheets, which we now do differently 
+     */
+    @Deprecated
+    public void adjustIndex(int extRefIndex, int offset) {
+        getRef(extRefIndex).adjustIndex(offset);
+    }
+	
+	public void removeSheet(int sheetIdx) {
+        int nItems = _list.size();
+        int toRemove = -1;
+        for (int i = 0; i < nItems; i++) {
+            RefSubRecord refSubRecord = _list.get(i);
+            if(refSubRecord.getFirstSheetIndex() == sheetIdx && 
+                    refSubRecord.getLastSheetIndex() == sheetIdx) {
+                toRemove = i;
+            } else if (refSubRecord.getFirstSheetIndex() > sheetIdx && 
+                    refSubRecord.getLastSheetIndex() > sheetIdx) {
+                _list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), refSubRecord.getFirstSheetIndex()-1, refSubRecord.getLastSheetIndex()-1));
+            }
+        }
+        
+        // finally remove entries for sheet indexes that we remove
+        if(toRemove != -1) {
+            _list.remove(toRemove);
+        }
 	}
 	
 	/**
