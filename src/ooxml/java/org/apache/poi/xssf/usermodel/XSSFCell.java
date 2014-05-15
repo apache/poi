@@ -806,7 +806,7 @@ public final class XSSFCell implements Cell {
                     DateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
                     return sdf.format(getDateCellValue());
                 }
-                return getNumericCellValue() + "";
+                return Double.toString(getNumericCellValue());
             case CELL_TYPE_STRING:
                 return getRichStringCellValue().toString();
             default:
