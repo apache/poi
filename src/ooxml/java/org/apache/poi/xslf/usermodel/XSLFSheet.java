@@ -360,6 +360,38 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return this;
     }
 
+    /**
+     * Append a shape to this sheet.
+     *
+     * @param newShape the new shape
+     * @return modified <code>this</code>.
+     */
+    public XSLFSheet appendShape(XSLFShape newShape){
+        CTGroupShape spTree = getSpTree();
+
+        XmlObject shapeXmlObject = newShape.getXmlObject();
+
+        if (shapeXmlObject instanceof CTShape) { // simple shape
+            spTree.addNewSp().set(shapeXmlObject);
+        } else if (shapeXmlObject instanceof CTGroupShape) {
+            spTree.addNewGrpSp().set(shapeXmlObject);
+        } else if (shapeXmlObject instanceof CTConnector) {
+            spTree.addNewCxnSp().set(shapeXmlObject);
+        } else if (shapeXmlObject instanceof CTPicture) {
+            spTree.addNewPic().set(shapeXmlObject);
+        } else if (shapeXmlObject instanceof CTGraphicalObjectFrame) {
+            spTree.addNewGraphicFrame().set(shapeXmlObject);
+        }
+
+        _shapes = null;
+        _spTree = null;
+        _drawing = null;
+        _spTree = null;
+        _placeholders = null;
+
+        return this;
+    }
+
    /**
      * @return theme (shared styles) associated with this theme.
      *  By default returns <code>null</code> which means that this sheet is theme-less.
@@ -376,7 +408,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      */
     public abstract XSLFSheet getMasterSheet();
 
-    protected XSLFTextShape getTextShapeByType(Placeholder type){
+    public XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
             if(shape instanceof XSLFTextShape) {
                XSLFTextShape txt = (XSLFTextShape)shape;

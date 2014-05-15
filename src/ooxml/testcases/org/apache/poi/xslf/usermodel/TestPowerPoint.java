@@ -37,6 +37,10 @@ public class TestPowerPoint extends TestCase {
         XSLFShape[] shapes = slide.getShapes();
         assertEquals(2, shapes.length);
 
+        XSLFTextShape slideNumberShape = layout.getTextShapeByType(Placeholder.SLIDE_NUMBER);
+
+        slide.appendShape(slideNumberShape);
+
         ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
 
         File file = new File("text.pptx");
