@@ -414,9 +414,17 @@ final class LinkTable {
 	public int getIndexToInternalSheet(int extRefIndex) {
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
-	
-	public void updateIndexToInternalSheet(int extRefIndex, int offset) {
-		_externSheetRecord.adjustIndex(extRefIndex, offset);
+
+	/**
+	 * @deprecated Was prevously used for removing sheets, which we now do differently 
+	 */
+	@Deprecated
+    public void updateIndexToInternalSheet(int extRefIndex, int offset) {
+        _externSheetRecord.adjustIndex(extRefIndex, offset);
+    }
+
+	public void removeSheet(int sheetIdx) {
+		_externSheetRecord.removeSheet(sheetIdx);
 	}
 
 	public int getSheetIndexFromExternSheetIndex(int extRefIndex) {
@@ -453,8 +461,8 @@ final class LinkTable {
 	 */
 	private int findFirstRecordLocBySid(short sid) {
 		int index = 0;
-		for (Iterator iterator = _workbookRecordList.iterator(); iterator.hasNext(); ) {
-			Record record = ( Record ) iterator.next();
+		for (Iterator<Record> iterator = _workbookRecordList.iterator(); iterator.hasNext(); ) {
+			Record record = iterator.next();
 
 			if (record.getSid() == sid) {
 				return index;

@@ -716,10 +716,14 @@ public final class InternalWorkbook {
                 // Bump down by one, so still points
                 //  at the same sheet
                 nr.setSheetNumber(nr.getSheetNumber()-1);
-                
-                // also update the link-table as otherwise references might point at invalid sheets
-                linkTable.updateIndexToInternalSheet(i, -1);
             }
+        }
+        
+        // also tell the LinkTable about the removed sheet
+        // +1 because we already removed it from the count of sheets!
+        for(int i = sheetIndex+1;i < getNumSheets()+1;i++) {
+            // also update the link-table as otherwise references might point at invalid sheets
+            linkTable.removeSheet(i);
         }
     }
 

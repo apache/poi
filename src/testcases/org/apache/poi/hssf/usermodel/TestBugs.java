@@ -27,9 +27,11 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -2581,5 +2583,33 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFSheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
         
         assertEquals(5, cf.getNumConditionalFormattings());
+    }
+
+    @Test
+    public void bug56325() throws IOException {
+        HSSFWorkbook wb;
+
+        File file = HSSFTestDataSamples.getSampleFile("56325.xls");
+        InputStream stream = new FileInputStream(file);
+        try {
+            POIFSFileSystem fs = new POIFSFileSystem(stream);
+            wb = new HSSFWorkbook(fs);            
+        } finally {
+            stream.close();
+        }
+        
+        assertEquals(3, wb.getNumberOfSheets());
+        wb.removeSheetAt(0);
+        assertEquals(2, wb.getNumberOfSheets());
+
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(2, wb.getNumberOfSheets());
+        wb.removeSheetAt(0);
+        assertEquals(1, wb.getNumberOfSheets());
+        wb.removeSheetAt(0);
+        assertEquals(0, wb.getNumberOfSheets());
+        
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(0, wb.getNumberOfSheets());
     }
 }
