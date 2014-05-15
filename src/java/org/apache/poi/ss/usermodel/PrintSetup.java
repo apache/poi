@@ -18,6 +18,8 @@
 package org.apache.poi.ss.usermodel;
 
 public interface PrintSetup {
+    /** Whatever the printer's default paper size is */
+    public static final short PRINTER_DEFAULT_PAPERSIZE = 0;
     /** US Letter 8 1/2 x 11 in */
     public static final short LETTER_PAPERSIZE = 1;
     /** US Letter Small 8 1/2 x 11 in */
