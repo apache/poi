@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
  * <P>
  * Paper size constants have been added for the ones I have access
  * to.  They follow as:<br>
+ *  public static final short PRINTER_DEFAULT_PAPERSIZE   = 0;<br>
  *  public static final short LETTER_PAPERSIZE 	          = 1;<br>
  *  public static final short LEGAL_PAPERSIZE 		  = 5;<br>
  *  public static final short EXECUTIVE_PAPERSIZE 	  = 7;<br>
