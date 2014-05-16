@@ -25,28 +25,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextHorzOverflowType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextVertOverflowType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShapeNonVisual;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
@@ -81,8 +60,10 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         // initialize any existing paragraphs - this will be the default body paragraph in a new shape, 
         // or existing paragraphs that have been loaded from the file
         CTTextBody body = ctShape.getTxBody();
-        for(int i = 0; i < body.sizeOfPArray(); i++) {
-            _paragraphs.add(new XSSFTextParagraph(body.getPArray(i), ctShape));        	
+        if(body != null) {
+            for(int i = 0; i < body.sizeOfPArray(); i++) {
+                _paragraphs.add(new XSSFTextParagraph(body.getPArray(i), ctShape));        	
+            }
         }
     }
 
