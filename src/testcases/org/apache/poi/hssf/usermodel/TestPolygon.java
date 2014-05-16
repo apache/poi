@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.IOException;
+
 import junit.framework.TestCase;
+
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
@@ -26,9 +31,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
 import org.apache.poi.hssf.model.PolygonShape;
 import org.apache.poi.hssf.record.ObjRecord;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * @author Evgeniy Berlog
@@ -55,19 +57,19 @@ public class TestPolygon extends TestCase{
         byte[] actual = polygon.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = polygonShape.getSpContainer().getChild(2).serialize();
         actual = polygon.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = polygonShape.getSpContainer().getChild(3).serialize();
         actual = polygon.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         ObjRecord obj = polygon.getObjRecord();
         ObjRecord objShape = polygonShape.getObjRecord();
@@ -76,7 +78,7 @@ public class TestPolygon extends TestCase{
         actual = objShape.serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
     }
 
     public void testPolygonPoints(){
@@ -98,8 +100,8 @@ public class TestPolygon extends TestCase{
         assertEquals(verticesProp1.toXml(""), verticesProp2.toXml(""));
         
         polygon.setPoints(new int[]{1,2,3}, new int[] {4,5,6});
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{1, 2, 3}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{4, 5, 6}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{1, 2, 3});
+        assertArrayEquals(polygon.getYPoints(), new int[]{4, 5, 6});
 
         polygonShape = HSSFTestModelHelper.createPolygonShape(0, polygon);
         verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
@@ -119,8 +121,8 @@ public class TestPolygon extends TestCase{
         polygon.setPolygonDrawArea( 102, 101 );
         polygon.setPoints( new int[]{1,2,3}, new int[]{4,5,6} );
 
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{1,2,3}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{4, 5, 6}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{1,2,3});
+        assertArrayEquals(polygon.getYPoints(), new int[]{4, 5, 6});
         assertEquals(polygon.getDrawAreaHeight(), 101);
         assertEquals(polygon.getDrawAreaWidth(), 102);
 
@@ -129,16 +131,16 @@ public class TestPolygon extends TestCase{
         patriarch = sh.getDrawingPatriarch();
 
         polygon = (HSSFPolygon) patriarch.getChildren().get(0);
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{1, 2, 3}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{4, 5, 6}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{1, 2, 3});
+        assertArrayEquals(polygon.getYPoints(), new int[]{4, 5, 6});
         assertEquals(polygon.getDrawAreaHeight(), 101);
         assertEquals(polygon.getDrawAreaWidth(), 102);
 
         polygon.setPolygonDrawArea( 1021, 1011 );
         polygon.setPoints( new int[]{11,21,31}, new int[]{41,51,61} );
 
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{11, 21, 31}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{41, 51, 61}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{11, 21, 31});
+        assertArrayEquals(polygon.getYPoints(), new int[]{41, 51, 61});
         assertEquals(polygon.getDrawAreaHeight(), 1011);
         assertEquals(polygon.getDrawAreaWidth(), 1021);
 
@@ -148,8 +150,8 @@ public class TestPolygon extends TestCase{
 
         polygon = (HSSFPolygon) patriarch.getChildren().get(0);
 
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{11, 21, 31}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{41, 51, 61}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{11, 21, 31});
+        assertArrayEquals(polygon.getYPoints(), new int[]{41, 51, 61});
         assertEquals(polygon.getDrawAreaHeight(), 1011);
         assertEquals(polygon.getDrawAreaWidth(), 1021);
     }
@@ -187,18 +189,18 @@ public class TestPolygon extends TestCase{
         polygon1 = (HSSFPolygon) patriarch.getChildren().get(1);
         polygon2 = (HSSFPolygon) patriarch.getChildren().get(2);
 
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{1, 2, 3}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{4,5,6}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{1, 2, 3});
+        assertArrayEquals(polygon.getYPoints(), new int[]{4,5,6});
         assertEquals(polygon.getDrawAreaHeight(), 101);
         assertEquals(polygon.getDrawAreaWidth(), 102);
 
-        assertTrue(Arrays.equals(polygon1.getXPoints(), new int[]{11,12,13}));
-        assertTrue(Arrays.equals(polygon1.getYPoints(), new int[]{14,15,16}));
+        assertArrayEquals(polygon1.getXPoints(), new int[]{11,12,13});
+        assertArrayEquals(polygon1.getYPoints(), new int[]{14,15,16});
         assertEquals(polygon1.getDrawAreaHeight(), 104);
         assertEquals(polygon1.getDrawAreaWidth(), 103);
 
-        assertTrue(Arrays.equals(polygon2.getXPoints(), new int[]{21,22,23}));
-        assertTrue(Arrays.equals(polygon2.getYPoints(), new int[]{24,25,26}));
+        assertArrayEquals(polygon2.getXPoints(), new int[]{21,22,23});
+        assertArrayEquals(polygon2.getYPoints(), new int[]{24,25,26});
         assertEquals(polygon2.getDrawAreaHeight(), 204);
         assertEquals(polygon2.getDrawAreaWidth(), 203);
     }
@@ -212,8 +214,8 @@ public class TestPolygon extends TestCase{
         HSSFPolygon polygon = (HSSFPolygon) drawing.getChildren().get(0);
         assertEquals(polygon.getDrawAreaHeight(), 2466975);
         assertEquals(polygon.getDrawAreaWidth(), 3686175);
-        assertTrue(Arrays.equals(polygon.getXPoints(), new int[]{0, 0, 31479, 16159, 19676, 20502}));
-        assertTrue(Arrays.equals(polygon.getYPoints(), new int[]{0, 0, 36, 56, 34, 18}));
+        assertArrayEquals(polygon.getXPoints(), new int[]{0, 0, 31479, 16159, 19676, 20502});
+        assertArrayEquals(polygon.getYPoints(), new int[]{0, 0, 36, 56, 34, 18});
     }
 
     public void testPolygonType(){

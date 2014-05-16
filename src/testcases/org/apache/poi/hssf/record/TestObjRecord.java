@@ -17,7 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -76,7 +77,7 @@ public final class TestObjRecord extends TestCase {
         assertEquals(26, recordBytes.length - 4);
         byte[] subData = new byte[recdata.length];
         System.arraycopy(recordBytes, 4, subData, 0, subData.length);
-        assertTrue(Arrays.equals(recdata, subData));
+        assertArrayEquals(recdata, subData);
     }
 
     public void testConstruct() {

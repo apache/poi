@@ -17,10 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
-import java.util.Arrays;
 
 import org.apache.poi.util.HexRead;
 
@@ -84,7 +83,7 @@ public final class TestNoteRecord extends TestCase {
         //finally check that the serialized data is the same
         byte[] src = record.serialize();
         byte[] cln = cloned.serialize();
-        assertTrue(Arrays.equals(src, cln));
+        assertArrayEquals(src, cln);
     }
     
     public void testUnicodeAuthor() {

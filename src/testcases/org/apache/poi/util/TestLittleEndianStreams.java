@@ -17,9 +17,10 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -73,7 +74,7 @@ public final class TestLittleEndianStreams extends TestCase {
 		}
 
 		byte[] expBuf = HexRead.readFromString("77 66 55 44");
-		assertTrue(Arrays.equals(actBuf, expBuf));
+		assertArrayEquals(actBuf, expBuf);
 		assertEquals(0x33, lei.readUByte());
 		assertEquals(0, lei.available());
 	}

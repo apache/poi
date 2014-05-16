@@ -18,9 +18,11 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that {@link org.apache.poi.hslf.record.ExControl} works properly
@@ -93,7 +95,7 @@ public final class TestExControl extends TestCase {
 		record.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
-		assertTrue(Arrays.equals(data, b));
+		assertArrayEquals(data, b);
 	}
 
 	public void testNewRecord() throws Exception {
@@ -118,6 +120,6 @@ public final class TestExControl extends TestCase {
 		byte[] b = baos.toByteArray();
 
 		assertEquals(data.length, b.length);
-		assertTrue(Arrays.equals(data, b));
+		assertArrayEquals(data, b);
 	}
 }

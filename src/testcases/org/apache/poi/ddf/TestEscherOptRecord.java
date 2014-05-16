@@ -17,11 +17,11 @@
 
 package org.apache.poi.ddf;
 
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
 
-import java.util.Arrays;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 
 public final class TestEscherOptRecord extends TestCase {
 
@@ -299,7 +299,7 @@ public final class TestEscherOptRecord extends TestCase {
         opt2.fillFields( data1, new DefaultEscherRecordFactory() );
 
         byte[] data2 = opt2.serialize();
-        assertTrue(Arrays.equals(data1, data2));
+        assertArrayEquals(data1, data2);
     }
 
     /**
@@ -319,6 +319,6 @@ public final class TestEscherOptRecord extends TestCase {
         assertEquals(0, p.getNumberOfElementsInArray());
 
         byte[] data2 = opt2.serialize();
-        assertTrue(Arrays.equals(data1, data2));
+        assertArrayEquals(data1, data2);
     }
 }

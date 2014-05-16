@@ -17,15 +17,25 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.blip.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.POIDataSamples;
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
+
 import junit.framework.TestCase;
 
-import java.io.*;
-import java.net.URL;
-import java.util.Arrays;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.blip.DIB;
+import org.apache.poi.hslf.blip.EMF;
+import org.apache.poi.hslf.blip.JPEG;
+import org.apache.poi.hslf.blip.PICT;
+import org.apache.poi.hslf.blip.PNG;
+import org.apache.poi.hslf.blip.WMF;
+import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.Slide;
 
 /**
  * Test adding/reading pictures
@@ -79,7 +89,7 @@ public final class TestPictures extends TestCase{
         System.arraycopy(src_bytes, 512, b1, 0, b1.length);
         byte[] b2 = new byte[ppt_bytes.length-512];
         System.arraycopy(ppt_bytes, 512, b2, 0, b2.length);
-        assertTrue(Arrays.equals(b1, b2));
+        assertArrayEquals(b1, b2);
     }
 
     /**
@@ -124,7 +134,7 @@ public final class TestPictures extends TestCase{
         System.arraycopy(src_bytes, 22, b1, 0, b1.length);
         byte[] b2 = new byte[ppt_bytes.length-22];
         System.arraycopy(ppt_bytes, 22, b2, 0, b2.length);
-        assertTrue(Arrays.equals(b1, b2));
+        assertArrayEquals(b1, b2);
     }
 
     /**
@@ -164,7 +174,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pictures[0] instanceof EMF);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
     }
 
     /**
@@ -203,7 +213,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pictures[0] instanceof PNG);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
     }
 
     /**
@@ -243,7 +253,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pictures[0] instanceof JPEG);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
     }
 
     /**
@@ -282,7 +292,7 @@ public final class TestPictures extends TestCase{
         assertTrue(pictures[0] instanceof DIB);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pictures[0].getData();
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
     }
 
     /**
@@ -305,7 +315,7 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.JPEG, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("clock.jpg");
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
 
         pict = (Picture)slides[1].getShapes()[0]; //the second slide contains PNG
         pdata = pict.getPictureData();
@@ -313,7 +323,7 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.PNG, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("tomcat.png");
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
 
         pict = (Picture)slides[2].getShapes()[0]; //the third slide contains WMF
         pdata = pict.getPictureData();
@@ -327,7 +337,7 @@ public final class TestPictures extends TestCase{
         System.arraycopy(src_bytes, 22, b1, 0, b1.length);
         b2 = new byte[ppt_bytes.length-22];
         System.arraycopy(ppt_bytes, 22, b2, 0, b2.length);
-        assertTrue(Arrays.equals(b1, b2));
+        assertArrayEquals(b1, b2);
 
         pict = (Picture)slides[3].getShapes()[0]; //the forth slide contains PICT
         pdata = pict.getPictureData();
@@ -341,7 +351,7 @@ public final class TestPictures extends TestCase{
         System.arraycopy(src_bytes, 512, b1, 0, b1.length);
         b2 = new byte[ppt_bytes.length-512];
         System.arraycopy(ppt_bytes, 512, b2, 0, b2.length);
-        assertTrue(Arrays.equals(b1, b2));
+        assertArrayEquals(b1, b2);
 
         pict = (Picture)slides[4].getShapes()[0]; //the fifth slide contains EMF
         pdata = pict.getPictureData();
@@ -349,7 +359,7 @@ public final class TestPictures extends TestCase{
         assertEquals(Picture.EMF, pdata.getType());
         src_bytes = pdata.getData();
         ppt_bytes = slTests.readFile("wrench.emf");
-        assertTrue(Arrays.equals(src_bytes, ppt_bytes));
+        assertArrayEquals(src_bytes, ppt_bytes);
 
     }
 

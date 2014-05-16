@@ -17,10 +17,11 @@
 
 package org.apache.poi.hslf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Tests <code>FontCollection</code> and <code>FontEntityAtom</code> records
@@ -76,6 +77,6 @@ public final class TestFontCollection extends TestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         fonts.writeOut(out);
         byte[] recdata = out.toByteArray();
-        assertTrue(Arrays.equals(recdata, data));
+        assertArrayEquals(recdata, data);
     }
 }

@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
@@ -45,6 +44,6 @@ public final class TestAttrPtg extends AbstractPtgTestCase {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			throw new AssertionFailedError("incorrect re-serialization of tAttrChoose");
 		}
-		assertTrue(Arrays.equals(data, data2));
+		assertArrayEquals(data, data2);
 	}
 }

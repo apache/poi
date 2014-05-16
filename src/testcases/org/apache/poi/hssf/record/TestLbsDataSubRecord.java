@@ -18,9 +18,11 @@
 package org.apache.poi.hssf.record;
 
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -143,10 +145,10 @@ public final class TestLbsDataSubRecord extends TestCase {
         RecordInputStream in2 = TestcaseRecordInputStream.create(ser);
         ObjRecord record2 = new ObjRecord(in2);
         byte[] ser2 = record2.serialize();
-        assertTrue(Arrays.equals(ser, ser2));
+        assertArrayEquals(ser, ser2);
     }
 
-    public void test_LbsDropData(){
+    public void test_LbsDropData() throws IOException{
         byte[] data = HexRead.readFromString(
                                  //LbsDropData
                                  "0A, 00, " + //flags
@@ -157,12 +159,20 @@ public final class TestLbsDataSubRecord extends TestCase {
                                  "00");        //padding byte
 
         LittleEndianInputStream in = new LittleEndianInputStream(new ByteArrayInputStream(data));
-
-        LbsDataSubRecord.LbsDropData lbs = new LbsDataSubRecord.LbsDropData(in);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        lbs.serialize(new LittleEndianOutputStream(baos));
-
-        assertTrue(Arrays.equals(data, baos.toByteArray()));
+        try {
+            LbsDataSubRecord.LbsDropData lbs = new LbsDataSubRecord.LbsDropData(in);
+    
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
+            try {
+                lbs.serialize(out);
+        
+                assertArrayEquals(data, baos.toByteArray());
+            } finally {
+                out.close();
+            }
+        } finally {
+            in.close();
+        }
     }
 }

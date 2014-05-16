@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -96,7 +98,7 @@ public final class TestSSTRecord extends TestCase {
         assertEquals( 688, record.getNumUniqueStrings() );
         assertEquals( 688, record.countStrings() );
         ser_output = record.serialize();
-        assertTrue(Arrays.equals(origData, ser_output));
+        assertArrayEquals(origData, ser_output);
 
         // testing based on new bug report
         origData = concatHexDumps("BigSSTRecord2", "BigSSTRecord2CR1", "BigSSTRecord2CR2", "BigSSTRecord2CR3",
@@ -120,7 +122,7 @@ public final class TestSSTRecord extends TestCase {
             // TODO - trivial differences in ContinueRecord break locations
             // Sample data should be checked against what most recent Excel version produces.
             // maybe tweaks are required in ContinuableRecordOutput
-            assertTrue(Arrays.equals(origData, ser_output));
+            assertArrayEquals(origData, ser_output);
         }
     }
 

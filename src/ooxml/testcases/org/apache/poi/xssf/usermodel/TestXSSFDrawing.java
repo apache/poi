@@ -16,9 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.awt.Color;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -223,9 +224,9 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(true, rPr.getB());
         assertEquals(true, rPr.getI());
         assertEquals(STTextUnderlineType.SNG, rPr.getU());
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new byte[]{0, (byte)128, (byte)128} ,
-                rPr.getSolidFill().getSrgbClr().getVal()));
+                rPr.getSolidFill().getSrgbClr().getVal());
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
@@ -288,9 +289,9 @@ public class TestXSSFDrawing extends TestCase {
 
         CTTextCharacterProperties rPr = pr.getRArray(0).getRPr();
         assertEquals("Arial", rPr.getLatin().getTypeface());
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new byte[]{0, (byte)128, (byte)128} ,
-                rPr.getSolidFill().getSrgbClr().getVal()));
+                rPr.getSolidFill().getSrgbClr().getVal());
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
@@ -322,9 +323,9 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals("Arial", runs.get(0).getFontFamily());
         
         Color clr = runs.get(0).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 0, 255, 255 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
@@ -398,26 +399,26 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals("Arial", runs.get(0).getFontFamily());
 
         Color clr = runs.get(0).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 0, 255, 255 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
 
         // second run properties        
         assertEquals("Rich Text", runs.get(1).getText());
         assertEquals(XSSFFont.DEFAULT_FONT_NAME, runs.get(1).getFontFamily());
 
         clr = runs.get(1).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 0, 255, 0 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));        
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });        
         
         // third run properties
         assertEquals(" String", runs.get(2).getText());
         assertEquals("Arial", runs.get(2).getFontFamily());
         clr = runs.get(2).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 0, 255, 255 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }    
@@ -547,19 +548,19 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(TextAlign.RIGHT, paras.get(2).getTextAlign());
         
         Color clr = paras.get(0).getTextRuns().get(0).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 255, 0, 0 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
         clr = paras.get(1).getTextRuns().get(0).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 0, 255, 0 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
         clr = paras.get(2).getTextRuns().get(0).getFontColor(); 
-        assertTrue(Arrays.equals(
+        assertArrayEquals(
                 new int[] { 0, 0, 255 } ,
-                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() }));
+                new int[] { clr.getRed(), clr.getGreen(), clr.getBlue() });
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }

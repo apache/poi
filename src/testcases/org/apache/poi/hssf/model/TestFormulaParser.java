@@ -17,49 +17,13 @@
 
 package org.apache.poi.hssf.model;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.constant.ErrorConstant;
-import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
-import org.apache.poi.ss.formula.ptg.AddPtg;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtgBase;
-import org.apache.poi.ss.formula.ptg.ArrayPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.BoolPtg;
-import org.apache.poi.ss.formula.ptg.ConcatPtg;
-import org.apache.poi.ss.formula.ptg.DividePtg;
-import org.apache.poi.ss.formula.ptg.EqualPtg;
-import org.apache.poi.ss.formula.ptg.ErrPtg;
-import org.apache.poi.ss.formula.ptg.FuncPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.MissingArgPtg;
-import org.apache.poi.ss.formula.ptg.MultiplyPtg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NumberPtg;
-import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
-import org.apache.poi.ss.formula.ptg.PercentPtg;
-import org.apache.poi.ss.formula.ptg.PowerPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RangePtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.formula.ptg.StringPtg;
-import org.apache.poi.ss.formula.ptg.SubtractPtg;
-import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
-import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
@@ -72,6 +36,8 @@ import org.apache.poi.hssf.usermodel.TestHSSFName;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.constant.ErrorConstant;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.util.HexRead;
@@ -909,7 +875,7 @@ public final class TestFormulaParser extends TestCase {
 				+ "00 00 00 "      // Array data: 1 col, 1 row
 				+ "02 01 00 00 35" // elem (type=string, len=1, "5")
 		);
-		assertTrue(Arrays.equals(expData, data));
+		assertArrayEquals(expData, data);
 		int initSize = Ptg.getEncodedSizeWithoutArrayData(ptgs);
 		Ptg[] ptgs2 = Ptg.readTokens(initSize, new LittleEndianByteArrayInputStream(data));
 		confirmTokenClasses(ptgs2, ArrayPtg.class, IntPtg.class, FuncVarPtg.class);

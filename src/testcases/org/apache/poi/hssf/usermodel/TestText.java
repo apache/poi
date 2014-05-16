@@ -17,14 +17,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.TestCase;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
 import org.apache.poi.hssf.model.TextboxShape;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
-
-import java.util.Arrays;
 
 /**
  * @author Evgeniy Berlog
@@ -47,25 +47,25 @@ public class TestText extends TestCase {
         byte[] actual = textbox.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = textboxShape.getSpContainer().getChild(2).serialize();
         actual = textbox.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = textboxShape.getSpContainer().getChild(3).serialize();
         actual = textbox.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = textboxShape.getSpContainer().getChild(4).serialize();
         actual = textbox.getEscherContainer().getChild(4).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         ObjRecord obj = textbox.getObjRecord();
         ObjRecord objShape = textboxShape.getObjRecord();
@@ -80,7 +80,7 @@ public class TestText extends TestCase {
         actual = torShape.serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
     }
 
     public void testAddTextToExistingFile() {

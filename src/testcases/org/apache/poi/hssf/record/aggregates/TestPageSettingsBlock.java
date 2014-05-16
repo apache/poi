@@ -17,14 +17,16 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -299,7 +301,7 @@ public final class TestPageSettingsBlock extends TestCase {
 		Record[] outRecs = rc.getRecords();
 
 		// records were assembled in standard order, so this simple check is OK
-		assertTrue(Arrays.equals(recs, outRecs));
+		assertArrayEquals(recs, outRecs);
 	}
 
     public void testDuplicateHeaderFooter_bug48026() {
@@ -368,14 +370,14 @@ public final class TestPageSettingsBlock extends TestCase {
         }
         HeaderFooterRecord hd1 = (HeaderFooterRecord)expectedRecs[4];
         //GUID is zero
-        assertTrue(Arrays.equals(new byte[16], hd1.getGuid()));
+        assertArrayEquals(new byte[16], hd1.getGuid());
         assertTrue(hd1.isCurrentSheet());
 
         UserSViewBegin svb = (UserSViewBegin)expectedRecs[7];
         HeaderFooterRecord hd2 = (HeaderFooterRecord)expectedRecs[9];
         assertFalse(hd2.isCurrentSheet());
         //GUIDs of HeaderFooterRecord and UserSViewBegin must be the same
-        assertTrue(Arrays.equals(svb.getGuid(), hd2.getGuid()));
+        assertArrayEquals(svb.getGuid(), hd2.getGuid());
     }
 
 }

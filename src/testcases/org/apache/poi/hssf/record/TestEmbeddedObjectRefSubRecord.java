@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -57,7 +56,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
 
 		byte[] ser2 = record1.serialize();
-		assertTrue(Arrays.equals(ser, ser2));
+		assertArrayEquals(ser, ser2);
 	}
 
 	/**
@@ -85,7 +84,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		assertEquals(record1.getStreamId(), record2.getStreamId());
 
 		byte[] ser2 = record1.serialize();
-		assertTrue(Arrays.equals(ser, ser2));
+		assertArrayEquals(ser, ser2);
 	}
 
 	public void testCameraTool_bug45912() {

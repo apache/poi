@@ -18,9 +18,8 @@
 package org.apache.poi.hssf.record;
 
 
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.TestCase;
-
-import java.util.Arrays;
 
 /**
  * Tests the serialization and deserialization of the NoteRecord
@@ -63,6 +62,6 @@ public final class TestNoteStructureSubRecord extends TestCase {
         byte[] cln = cloned.serialize();
 
         assertEquals(record.getDataSize(), cloned.getDataSize());
-        assertTrue(Arrays.equals(src, cln));
+        assertArrayEquals(src, cln);
     }
 }

@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -101,7 +100,7 @@ public final class TestReferencePtg extends TestCase {
         if (outData[0] == 0x24) {
             throw new AssertionFailedError("Identified bug 45091");
         }
-        assertTrue(Arrays.equals(tRefN_data, outData));
+        assertArrayEquals(tRefN_data, outData);
     }
 
     /**

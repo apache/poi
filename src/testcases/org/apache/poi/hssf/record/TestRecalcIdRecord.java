@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -67,6 +66,6 @@ public final class TestRecalcIdRecord extends TestCase {
 			throw e;
 		}
 		assertEquals(0, in.remaining());
-		assertTrue(Arrays.equals(r.serialize(), goodData));
+		assertArrayEquals(r.serialize(), goodData);
 	}
 }

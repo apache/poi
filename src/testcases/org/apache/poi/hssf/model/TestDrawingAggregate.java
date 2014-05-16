@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.model;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -169,6 +171,7 @@ public class TestDrawingAggregate extends TestCase {
     public void testAllTestSamples(){
         File[] xls = new File(System.getProperty("POI.testdata.path"), "spreadsheet").listFiles(
                 new FilenameFilter() {
+                    @Override
                     public boolean accept(File dir, String name) {
                         return name.endsWith(".xls");
                     }
@@ -471,7 +474,7 @@ public class TestDrawingAggregate extends TestCase {
             assertEquals(r1.getRecordSize(), r2.getRecordSize());
             if (r1 instanceof Record) {
                 assertEquals(((Record) r1).getSid(), ((Record) r2).getSid());
-                assertTrue(Arrays.equals(((Record) r1).serialize(), ((Record) r2).serialize()));
+                assertArrayEquals(((Record) r1).serialize(), ((Record) r2).serialize());
             }
         }
     }

@@ -17,11 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -200,7 +201,7 @@ public final class TestRecordFactory extends TestCase {
 
 		byte[] ser = out.toByteArray();
 		assertEquals(data.length, ser.length);
-		assertTrue(Arrays.equals(data, ser));
+		assertArrayEquals(data, ser);
 	}
 
 	public void testNonZeroPadding_bug46987() {
