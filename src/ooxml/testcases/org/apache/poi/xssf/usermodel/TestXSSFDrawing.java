@@ -17,6 +17,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class TestXSSFDrawing extends TestCase {
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
     
-    public void testMultipleDrawings(){
+    public void testMultipleDrawings() throws IOException{
         XSSFWorkbook wb = new XSSFWorkbook();
         for (int i = 0; i < 3; i++) {
             XSSFSheet sheet = wb.createSheet();
@@ -149,9 +150,13 @@ public class TestXSSFDrawing extends TestCase {
             assertNotNull(drawing);
         }
         OPCPackage pkg = wb.getPackage();
-        assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
+        try {
+            assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
         
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        } finally {
+            pkg.close();
+        }
     }
 
     public void testClone() throws Exception{
@@ -692,5 +697,25 @@ public class TestXSSFDrawing extends TestCase {
         assertEquals(sb.toString(), extracted);
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+    }
+
+    public void testXSSFSimpleShapeCausesNPE56514() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56514.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        List<XSSFShape> shapes = drawing.getShapes();
+        assertEquals(4, shapes.size());
+        
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        
+        shapes = drawing.getShapes();
+        assertEquals(4, shapes.size());
+        
+/*        OutputStream stream = new FileOutputStream(new File("C:\\temp\\56514.xlsx"));
+        try {
+            wb.write(stream);
+        } finally {
+            stream.close();
+        }*/
     }
 }
