@@ -17,8 +17,9 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -51,10 +52,10 @@ public final class TestTextRulerAtom extends TestCase {
 		assertNull(tabStops);
 
 		int[] textOffsets = ruler.getTextOffsets();
-		assertTrue(Arrays.equals(new int[]{226, 451, 903, 1129, 1526}, textOffsets));
+		assertArrayEquals(new int[]{226, 451, 903, 1129, 1526}, textOffsets);
 
 		int[] bulletOffsets = ruler.getBulletOffsets();
-		assertTrue(Arrays.equals(new int[]{117, 345, 794, 1016, 1526}, bulletOffsets));
+		assertArrayEquals(new int[]{117, 345, 794, 1016, 1526}, bulletOffsets);
 
 	}
 
@@ -64,7 +65,7 @@ public final class TestTextRulerAtom extends TestCase {
 		ruler.writeOut(out);
 
 		byte[] result = out.toByteArray();
-		assertTrue(Arrays.equals(result, data_1));
+		assertArrayEquals(result, data_1);
 	}
 
 	public void testRead2() throws Exception {
@@ -74,6 +75,6 @@ public final class TestTextRulerAtom extends TestCase {
 		ruler.writeOut(out);
 
 		byte[] result = out.toByteArray();
-		assertTrue(Arrays.equals(result, data_2));
+		assertArrayEquals(result, data_2);
 	}
 }

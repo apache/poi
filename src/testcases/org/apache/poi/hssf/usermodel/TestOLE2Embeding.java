@@ -17,12 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -119,17 +120,17 @@ public final class TestOLE2Embeding extends TestCase {
         Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
         bos.reset();
         pptPoifs.writeFilesystem(bos);
-        assertTrue(Arrays.equals(ole10.getDataBuffer(), bos.toByteArray()));
+        assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
 
         od = wb.getAllEmbeddedObjects().get(1);
         ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
         bos.reset();
         xlsPoifs.writeFilesystem(bos);
-        assertTrue(Arrays.equals(ole10.getDataBuffer(), bos.toByteArray()));
+        assertArrayEquals(ole10.getDataBuffer(), bos.toByteArray());
 
         od = wb.getAllEmbeddedObjects().get(2);
         ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
-        assertTrue(Arrays.equals(ole10.getDataBuffer(), getSampleTXT()));
+        assertArrayEquals(ole10.getDataBuffer(), getSampleTXT());
     
     }
     

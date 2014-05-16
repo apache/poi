@@ -16,8 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -345,7 +344,7 @@ public final class TestHyperlinkRecord extends TestCase {
         link = new HyperlinkRecord(is);
         byte[] bytes2 = link.serialize();
         assertEquals(bytes1.length, bytes2.length);
-        assertTrue(Arrays.equals(bytes1, bytes2));
+        assertArrayEquals(bytes1, bytes2);
     }
 
     public void testSerialize(){
@@ -367,7 +366,7 @@ public final class TestHyperlinkRecord extends TestCase {
         byte[] ser = new byte[tmp.length-4];
         System.arraycopy(tmp, 4, ser, 0, ser.length);
         assertEquals(data1.length, ser.length);
-        assertTrue(Arrays.equals(data1, ser));
+        assertArrayEquals(data1, ser);
     }
 
     public void testCreateFileRecord() {
@@ -382,7 +381,7 @@ public final class TestHyperlinkRecord extends TestCase {
         byte[] ser = new byte[tmp.length-4];
         System.arraycopy(tmp, 4, ser, 0, ser.length);
         assertEquals(data2.length, ser.length);
-        assertTrue(Arrays.equals(data2, ser));
+        assertArrayEquals(data2, ser);
     }
 
     public void testCreateDocumentRecord() {
@@ -397,7 +396,7 @@ public final class TestHyperlinkRecord extends TestCase {
         byte[] ser = new byte[tmp.length-4];
         System.arraycopy(tmp, 4, ser, 0, ser.length);
         assertEquals(data4.length, ser.length);
-        assertTrue(Arrays.equals(data4, ser));
+        assertArrayEquals(data4, ser);
     }
 
     public void testCreateEmailtRecord() {
@@ -412,7 +411,7 @@ public final class TestHyperlinkRecord extends TestCase {
         byte[] ser = new byte[tmp.length-4];
         System.arraycopy(tmp, 4, ser, 0, ser.length);
         assertEquals(data3.length, ser.length);
-        assertTrue(Arrays.equals(data3, ser));
+        assertArrayEquals(data3, ser);
     }
 
     public void testClone() {
@@ -421,7 +420,7 @@ public final class TestHyperlinkRecord extends TestCase {
             RecordInputStream is = TestcaseRecordInputStream.create(HyperlinkRecord.sid, data[i]);
             HyperlinkRecord link = new HyperlinkRecord(is);
             HyperlinkRecord clone = (HyperlinkRecord)link.clone();
-            assertTrue(Arrays.equals(link.serialize(), clone.serialize()));
+            assertArrayEquals(link.serialize(), clone.serialize());
         }
 
     }

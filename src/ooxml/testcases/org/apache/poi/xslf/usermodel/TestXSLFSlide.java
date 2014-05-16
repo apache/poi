@@ -16,11 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.xslf.XSLFTestDataSamples;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.awt.Color;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
+
+import org.apache.poi.xslf.XSLFTestDataSamples;
 
 /**
  * @author Yegor Kozlov
@@ -157,7 +159,7 @@ public class TestXSLFSlide extends TestCase {
 
         XSLFPictureShape sh4 = (XSLFPictureShape)shapes2[1];
         XSLFPictureShape srcPic = (XSLFPictureShape)src.getSlides()[4].getShapes()[1];
-        assertTrue(Arrays.equals(sh4.getPictureData().getData(), srcPic.getPictureData().getData()));
+        assertArrayEquals(sh4.getPictureData().getData(), srcPic.getPictureData().getData());
     }
 
     public void testMergeSlides(){

@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -185,7 +186,7 @@ public final class TestValueRecordsAggregate extends TestCase {
 		valueRecord.visitCellsForRow(1, sv);
 		valueRecord.visitCellsForRow(2, sv);
 		assertEquals(actualArray.length, sv.getWriteIndex());
-		assertTrue(Arrays.equals(expectedArray, actualArray));
+		assertArrayEquals(expectedArray, actualArray);
 	}
 
 	private static BlankRecord newBlankRecord() {

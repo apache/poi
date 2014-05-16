@@ -18,9 +18,11 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
@@ -65,7 +67,7 @@ public final class TestAnimationInfoAtom extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 
     public void testNewRecord() throws Exception {
@@ -80,6 +82,6 @@ public final class TestAnimationInfoAtom extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 }

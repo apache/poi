@@ -17,12 +17,13 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -136,7 +137,7 @@ public final class TestOleEmbedding extends TestCase {
     	poiData1.writeFilesystem(bos);
     	byte expData[] = bos.toByteArray();
     	
-    	assertTrue(Arrays.equals(expData, compData));
+    	assertArrayEquals(expData, compData);
     	
     }
 }

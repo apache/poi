@@ -20,7 +20,6 @@ package org.apache.poi.xwpf.usermodel;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -54,7 +53,7 @@ public class TestXWPFPictureData extends TestCase {
         assertEquals(num + 1,pictures.size());
         XWPFPictureData pict = (XWPFPictureData) sampleDoc.getRelationById(relationId);
         assertEquals("jpeg",pict.suggestFileExtension());
-        assertTrue(Arrays.equals(pictureData,pict.getData()));
+        assertArrayEquals(pictureData,pict.getData());
     }
 
     public void testPictureInHeader() throws IOException
@@ -103,7 +102,7 @@ public class TestXWPFPictureData extends TestCase {
         assertEquals(1,pictures.size());
         XWPFPictureData jpgPicData = (XWPFPictureData) doc.getRelationById(relationId);
         assertEquals("jpeg",jpgPicData.suggestFileExtension());
-        assertTrue(Arrays.equals(jpegData,jpgPicData.getData()));
+        assertArrayEquals(jpegData,jpgPicData.getData());
 
         // Ensure it now has one
         assertEquals(14,doc.getPackagePart().getRelationships().size());
@@ -120,6 +119,7 @@ public class TestXWPFPictureData extends TestCase {
         assertNotNull("JPEG Relationship not found",jpegRel);
 
         // Check the details
+        assertNotNull(jpegRel);
         assertEquals(XWPFRelation.IMAGE_JPEG.getRelation(),jpegRel.getRelationshipType());
         assertEquals("/word/document.xml",jpegRel.getSource().getPartName().toString());
         assertEquals("/word/media/image1.jpeg",jpegRel.getTargetURI().getPath());

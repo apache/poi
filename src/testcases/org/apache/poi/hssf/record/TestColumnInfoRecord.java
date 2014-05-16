@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -45,7 +44,7 @@ public final class TestColumnInfoRecord extends TestCase {
 		assertEquals(true, cir.getHidden());
 		assertEquals(3, cir.getOutlineLevel());
 		assertEquals(true, cir.getCollapsed());
-		assertTrue(Arrays.equals(data, cir.serialize()));
+		assertArrayEquals(data, cir.serialize());
 	}
 
 	/**
@@ -69,7 +68,7 @@ public final class TestColumnInfoRecord extends TestCase {
 			throw e;
 		}
 		assertEquals(0, in.remaining());
-		assertTrue(Arrays.equals(outData, cir.serialize()));
+		assertArrayEquals(outData, cir.serialize());
 	}
 
 	/**
@@ -83,6 +82,6 @@ public final class TestColumnInfoRecord extends TestCase {
 		RecordInputStream in = TestcaseRecordInputStream.create(inpData);
 		ColumnInfoRecord cir = new ColumnInfoRecord(in);
 		assertEquals(0, in.remaining());
-		assertTrue(Arrays.equals(outData, cir.serialize()));
+		assertArrayEquals(outData, cir.serialize());
 	}
 }

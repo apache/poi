@@ -17,11 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
@@ -152,7 +151,7 @@ public final class TestRecordFactoryInputStream {
 	private void confirmReadInitialRecords(RecordFactoryInputStream rfis) {
 		assertEquals(BOFRecord.class, rfis.nextRecord().getClass());
 		WindowOneRecord rec1 = (WindowOneRecord) rfis.nextRecord();
-		assertTrue(Arrays.equals(HexRead.readFromString(SAMPLE_WINDOW1),rec1.serialize()));
+		assertArrayEquals(HexRead.readFromString(SAMPLE_WINDOW1),rec1.serialize());
 	}
 
 	private static RecordFactoryInputStream createRFIS(byte[] data) {

@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -77,7 +76,7 @@ public final class TestArrayPtg extends TestCase {
 		if(outBuf[0] == 4) {
 			throw new AssertionFailedError("Identified bug 42564b");
 		}
-		assertTrue(Arrays.equals(ENCODED_CONSTANT_DATA, outBuf));
+		assertArrayEquals(ENCODED_CONSTANT_DATA, outBuf);
 	}
 
 

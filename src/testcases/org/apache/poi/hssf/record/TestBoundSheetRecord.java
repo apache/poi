@@ -17,14 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import static org.junit.Assert.assertArrayEquals;
 
-import org.apache.poi.util.HexRead;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests BoundSheetRecord.
@@ -76,7 +77,7 @@ public final class TestBoundSheetRecord extends TestCase {
 		assertEquals("\u0421\u0442\u0440\u0430\u043D\u0438\u0447\u043A\u0430", bsr.getSheetname());
 
 		byte[] data2 = bsr.serialize();
-		assertTrue(Arrays.equals(data, data2));
+		assertArrayEquals(data, data2);
 	}
 
 	public void testOrdering() {

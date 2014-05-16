@@ -19,8 +19,7 @@
 package org.apache.poi.hssf.record;
 
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -81,7 +80,7 @@ public final class TestSubRecord extends TestCase {
 			throw new AssertionFailedError("Identified bug 45778");
 		}
 		assertEquals(74, data2.length);
-		assertTrue(Arrays.equals(dataAutoFilter, data2));
+		assertArrayEquals(dataAutoFilter, data2);
 	}
 	
 	public void testReadManualComboWithFormula() {
@@ -108,7 +107,7 @@ public final class TestSubRecord extends TestCase {
 				throw new AssertionFailedError("Encoded data differs at index " + i);
 			}
 		}
-		assertTrue(Arrays.equals(data, data2));
+		assertArrayEquals(data, data2);
 	}
 
 	/**

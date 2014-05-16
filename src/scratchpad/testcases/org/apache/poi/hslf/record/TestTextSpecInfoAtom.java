@@ -17,8 +17,9 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
@@ -58,7 +59,7 @@ public final class TestTextSpecInfoAtom extends TestCase {
         spec.writeOut(out);
 
         byte[] result = out.toByteArray();
-        assertTrue(Arrays.equals(result, data_1));
+        assertArrayEquals(result, data_1);
 	}
 
     public void testReset() throws Exception {

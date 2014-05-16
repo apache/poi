@@ -17,9 +17,9 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -42,6 +42,6 @@ public final class TestSoundData extends TestCase{
         SoundData[] sound = ppt.getSoundData();
         assertEquals("Expected 1 sound", 1, sound.length);
 
-        assertTrue(Arrays.equals(ref_data, sound[0].getData()));
+        assertArrayEquals(ref_data, sound[0].getData());
     }
 }

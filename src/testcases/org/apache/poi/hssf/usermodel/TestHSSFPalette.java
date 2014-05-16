@@ -17,7 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -141,46 +142,34 @@ public final class TestHSSFPalette extends TestCase {
         HSSFPalette p = book.getCustomPalette();
         
         /* first test the defaults */
-        assertTrue(
-        		Arrays.equals(
+        assertArrayEquals(
         				new short[] {(short) 255, (short) 255, (short) 0}, // not [204, 255, 255]
         				p.findSimilarColor((byte) 204, (byte) 255, (byte) 0).getTriplet()
-        		)
         );
 
-        assertTrue(
-        		Arrays.equals(
+        assertArrayEquals(
         				new short[] {(short) 153, (short) 204, (short) 0}, // not [128, 0, 0]
         				p.findSimilarColor((byte) 128, (byte) 255, (byte) 0).getTriplet()
-        		)
         );
 
-        assertTrue(
-        		Arrays.equals(
+        assertArrayEquals(
         				new short[] {(short) 0, (short) 255, (short) 0}, // not [0, 51, 102]
         				p.findSimilarColor((byte) 0, (byte) 255, (byte) 102).getTriplet()
-        		)
         );
 
-        assertTrue(
-        		Arrays.equals(
+        assertArrayEquals(
         				new short[] {(short) 0, (short) 102, (short) 204}, // not [255, 102, 0]
         				p.findSimilarColor((byte) 0, (byte) 102, (byte) 255).getTriplet()
-        		)
         );
 
-        assertTrue(
-        		Arrays.equals(
+        assertArrayEquals(
         				new short[] {(short) 255, (short) 0, (short) 255}, // not [128, 0, 0]
         				p.findSimilarColor((byte) 128, (byte) 0, (byte) 255).getTriplet()
-        		)
         );
 
-        assertTrue(
-        		Arrays.equals(
+        assertArrayEquals(
         				new short[] {(short) 255, (short) 0, (short) 255}, // not [255, 255, 153]
         				p.findSimilarColor((byte) 255, (byte) 0, (byte) 153).getTriplet()
-        		)
         );
 
 
@@ -238,6 +227,7 @@ public final class TestHSSFPalette extends TestCase {
      */
     public void testGnumericStrings() {
         compareToDefaults(new ColorComparator() {
+            @Override
             public void compare(HSSFColor expected, HSSFColor palette)
             {
                 assertEquals(expected.getHexString(), palette.getHexString());
@@ -256,6 +246,7 @@ public final class TestHSSFPalette extends TestCase {
 
         //should still match defaults;
         compareToDefaults(new ColorComparator() {
+            @Override
             public void compare(HSSFColor expected, HSSFColor palette)
             {
                 short[] s1 = expected.getTriplet();

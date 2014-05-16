@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.ITestDataProvider;
@@ -179,7 +178,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas extends TestCase {
         // remove the formula cells in C4:C6
         CellRange<?> dcells = sheet.removeArrayFormula(cr.getTopLeftCell());
         // removeArrayFormula should return the same cells as setArrayFormula
-        assertTrue(Arrays.equals(cr.getFlattenedCells(), dcells.getFlattenedCells()));
+        assertArrayEquals(cr.getFlattenedCells(), dcells.getFlattenedCells());
 
         for(Cell acell : cr){
             assertFalse(acell.isPartOfArrayFormulaGroup());

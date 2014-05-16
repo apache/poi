@@ -18,14 +18,16 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
+
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tests that {@link ExOleObjStg} works properly
@@ -105,7 +107,7 @@ public final class TestExOleObjStg extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 
     public void testNewRecord() throws Exception {
@@ -123,7 +125,7 @@ public final class TestExOleObjStg extends TestCase {
         byte[] b = out.toByteArray();
 
         assertEquals(data.length, b.length);
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 
     private byte[] readAll(InputStream is) throws IOException {

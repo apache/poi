@@ -17,14 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 /**
  * Tests for {@link ChartFormatRecord} Test data taken directly from a real
@@ -56,6 +55,6 @@ public final class TestChartFormatRecord extends TestCase {
 		assertEquals(24, record.getRecordSize());
 
 		byte[] data2 = record.serialize();
-		assertTrue(Arrays.equals(data, data2));
+		assertArrayEquals(data, data2);
 	}
 }

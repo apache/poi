@@ -17,13 +17,12 @@
 
 package org.apache.poi.hslf.record;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.SlideShow;
 
 /**
  * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
@@ -70,6 +69,6 @@ public final class TestSound extends TestCase {
 		assertNotNull(sound.getSoundData());
 
 		byte[] ref_data = slTests.readFile("ringin.wav");
-		assertTrue(Arrays.equals(ref_data, sound.getSoundData()));
+		assertArrayEquals(ref_data, sound.getSoundData());
 	}
 }

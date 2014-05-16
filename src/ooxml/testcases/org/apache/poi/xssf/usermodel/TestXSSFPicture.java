@@ -17,15 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.ClientAnchor;
+import static org.junit.Assert.assertArrayEquals;
+
+import java.util.List;
+
 import org.apache.poi.ss.usermodel.BaseTestPicture;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
-
-import java.util.List;
-import java.util.Arrays;
 
 /**
  * @author Yegor Kozlov
@@ -54,7 +55,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
         int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
         assertEquals(1, pictures.size());
         assertEquals("jpeg", pictures.get(jpegIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(jpegData, pictures.get(jpegIdx).getData()));
+        assertArrayEquals(jpegData, pictures.get(jpegIdx).getData());
 
         XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
         assertEquals(ClientAnchor.MOVE_AND_RESIZE, anchor.getAnchorType());
@@ -64,7 +65,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
         XSSFPicture shape = drawing.createPicture(anchor, jpegIdx);
         assertTrue(anchor.equals(shape.getAnchor()));
         assertNotNull(shape.getPictureData());
-        assertTrue(Arrays.equals(jpegData, shape.getPictureData().getData()));
+        assertArrayEquals(jpegData, shape.getPictureData().getData());
 
         CTTwoCellAnchor ctShapeHolder = drawing.getCTDrawing().getTwoCellAnchorArray(0);
         // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
@@ -128,16 +129,16 @@ public final class TestXSSFPicture extends BaseTestPicture {
         sheet1 = wb.getSheetAt(0);
         drawing1 = sheet1.createDrawingPatriarch();
         XSSFPicture shape11 = (XSSFPicture)drawing1.getShapes().get(0);
-        assertTrue(Arrays.equals(shape1.getPictureData().getData(), shape11.getPictureData().getData()));
+        assertArrayEquals(shape1.getPictureData().getData(), shape11.getPictureData().getData());
         XSSFPicture shape22 = (XSSFPicture)drawing1.getShapes().get(1);
-        assertTrue(Arrays.equals(shape2.getPictureData().getData(), shape22.getPictureData().getData()));
+        assertArrayEquals(shape2.getPictureData().getData(), shape22.getPictureData().getData());
 
         sheet2 = wb.getSheetAt(1);
         drawing2 = sheet2.createDrawingPatriarch();
         XSSFPicture shape33 = (XSSFPicture)drawing2.getShapes().get(0);
-        assertTrue(Arrays.equals(shape3.getPictureData().getData(), shape33.getPictureData().getData()));
+        assertArrayEquals(shape3.getPictureData().getData(), shape33.getPictureData().getData());
         XSSFPicture shape44 = (XSSFPicture)drawing2.getShapes().get(1);
-        assertTrue(Arrays.equals(shape4.getPictureData().getData(), shape44.getPictureData().getData()));
+        assertArrayEquals(shape4.getPictureData().getData(), shape44.getPictureData().getData());
 
     }
 

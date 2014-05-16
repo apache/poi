@@ -17,8 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -80,6 +79,6 @@ public final class TestBoolErrRecord extends TestCase {
 				"00 00 00 00 0F 00 " +
 				"01 00 " // normal number of data bytes
 				);
-		assertTrue(Arrays.equals(expData, outData));
+		assertArrayEquals(expData, outData);
 	}
 }

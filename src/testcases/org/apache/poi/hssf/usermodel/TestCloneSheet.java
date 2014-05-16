@@ -17,15 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.ss.util.CellRangeAddress;
-
-import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Test the ability to clone a sheet.
@@ -104,7 +106,7 @@ public final class TestCloneSheet extends TestCase {
 
         assertEquals(agg1.serialize().length, agg2.serialize().length);
         assertEquals(agg1.toXml(""), agg2.toXml(""));
-        assertTrue(Arrays.equals(agg1.serialize(), agg2.serialize()));
+        assertArrayEquals(agg1.serialize(), agg2.serialize());
     }
     
     public void testCloneComment() throws IOException {
@@ -120,15 +122,15 @@ public final class TestCloneSheet extends TestCase {
         HSSFPatriarch p2 = sh2.getDrawingPatriarch();
         HSSFComment c2 = (HSSFComment) p2.getChildren().get(0);
         
-        assertTrue(Arrays.equals(c2.getTextObjectRecord().serialize(), c.getTextObjectRecord().serialize()));
-        assertTrue(Arrays.equals(c2.getObjRecord().serialize(), c.getObjRecord().serialize()));
-        assertTrue(Arrays.equals(c2.getNoteRecord().serialize(), c.getNoteRecord().serialize()));
+        assertArrayEquals(c2.getTextObjectRecord().serialize(), c.getTextObjectRecord().serialize());
+        assertArrayEquals(c2.getObjRecord().serialize(), c.getObjRecord().serialize());
+        assertArrayEquals(c2.getNoteRecord().serialize(), c.getNoteRecord().serialize());
 
 
         //everything except spRecord.shapeId must be the same
         assertFalse(Arrays.equals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize()));
         EscherSpRecord sp = (EscherSpRecord) c2.getEscherContainer().getChild(0);
         sp.setShapeId(1025);
-        assertTrue(Arrays.equals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize()));
+        assertArrayEquals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize());
     }
 }
