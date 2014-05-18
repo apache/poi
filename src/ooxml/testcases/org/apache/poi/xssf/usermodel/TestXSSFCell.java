@@ -17,14 +17,21 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-
-import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**
  * @author Yegor Kozlov
@@ -276,5 +283,93 @@ public final class TestXSSFCell extends BaseTestCell {
             }
         }
     }
+    
+    public void test56170() throws IOException {
+        final Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56170.xlsx");
+        final XSSFSheet sheet = (XSSFSheet) wb.getSheetAt(0);
 
+        Workbook wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Cell cell;
+        
+        // add some contents to table so that the table will need expansion
+        Row row = sheet.getRow(0);
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        cell = row.createCell(0);
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        cell.setCellValue("demo1");
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        cell = row.createCell(1);
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        cell.setCellValue("demo2");
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        cell = row.createCell(2);
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        cell.setCellValue("demo3");
+
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        
+        row = sheet.getRow(1);
+        cell = row.createCell(0);
+        cell.setCellValue("demo1");
+        cell = row.createCell(1);
+        cell.setCellValue("demo2");
+        cell = row.createCell(2);
+        cell.setCellValue("demo3");
+
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        
+        // expand table
+        XSSFTable table = sheet.getTables().get(0);
+        final CellReference startRef = table.getStartCellReference();
+        final CellReference endRef = table.getEndCellReference();
+        table.getCTTable().setRef(new CellRangeAddress(startRef.getRow(), 1, startRef.getCol(), endRef.getCol()).formatAsString());
+
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbRead);
+
+        /*FileOutputStream stream = new FileOutputStream("c:\\temp\\output.xlsx");
+        workbook.write(stream);
+        stream.close();*/
+    }
+    
+    public void test56170Reproduce() throws IOException {
+        final Workbook wb = new XSSFWorkbook();
+        final Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        
+        // by creating Cells out of order we trigger the handling in onDocumentWrite()
+        Cell cell1 = row.createCell(1);
+        Cell cell2 = row.createCell(0);
+
+        validateRow(row);
+        
+        validateRow(row);
+
+        // once again with removing one cell
+        row.removeCell(cell1);
+
+        validateRow(row);
+
+        // once again with removing one cell
+        row.removeCell(cell1);
+
+        // now check again
+        validateRow(row);
+
+        // once again with removing one cell
+        row.removeCell(cell2);
+
+        // now check again
+        validateRow(row);
+    }
+
+    private void validateRow(Row row) {
+        // trigger bug with CArray handling
+        ((XSSFRow)row).onDocumentWrite();
+        
+        for(Cell cell : row) {
+            cell.toString();
+        }
+    }    
+    
 }

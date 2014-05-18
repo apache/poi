@@ -18,13 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,24 +37,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -601,47 +578,77 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Various ways of removing a cell formula should all zap
-     *  the calcChain entry.
+     * Various ways of removing a cell formula should all zap the calcChain
+     * entry.
      */
     @Test
     public void bug49966() throws Exception {
-       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("shared_formulas.xlsx");
-       XSSFSheet sheet = wb.getSheetAt(0);
-       
-       // CalcChain has lots of entries
-       CalculationChain cc = wb.getCalculationChain();
-       assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
-       assertEquals("A3", cc.getCTCalcChain().getCArray(1).getR());
-       assertEquals("A4", cc.getCTCalcChain().getCArray(2).getR());
-       assertEquals("A5", cc.getCTCalcChain().getCArray(3).getR());
-       assertEquals("A6", cc.getCTCalcChain().getCArray(4).getR());
-       assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
-       assertEquals("A8", cc.getCTCalcChain().getCArray(6).getR());
-       assertEquals(40, cc.getCTCalcChain().sizeOfCArray());
+        XSSFWorkbook wb = XSSFTestDataSamples
+                .openSampleWorkbook("shared_formulas.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
 
-       // Try various ways of changing the formulas
-       // If it stays a formula, chain entry should remain
-       // Otherwise should go
-       sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
-       sheet.getRow(2).getCell(0).setCellFormula(null);  // go
-       sheet.getRow(3).getCell(0).setCellType(Cell.CELL_TYPE_FORMULA); // stay
-       sheet.getRow(4).getCell(0).setCellType(Cell.CELL_TYPE_STRING);  // go
-       sheet.getRow(5).removeCell(
-             sheet.getRow(5).getCell(0)  // go
-       );
-        sheet.getRow(6).getCell(0).setCellType(Cell.CELL_TYPE_BLANK);  // go
-        sheet.getRow(7).getCell(0).setCellValue((String)null);  // go
+        Workbook wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
 
-       // Save and check
-       wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-       assertEquals(35, cc.getCTCalcChain().sizeOfCArray());
+        // CalcChain has lots of entries
+        CalculationChain cc = wb.getCalculationChain();
+        assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
+        assertEquals("A3", cc.getCTCalcChain().getCArray(1).getR());
+        assertEquals("A4", cc.getCTCalcChain().getCArray(2).getR());
+        assertEquals("A5", cc.getCTCalcChain().getCArray(3).getR());
+        assertEquals("A6", cc.getCTCalcChain().getCArray(4).getR());
+        assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
+        assertEquals("A8", cc.getCTCalcChain().getCArray(6).getR());
+        assertEquals(40, cc.getCTCalcChain().sizeOfCArray());
 
-       cc = wb.getCalculationChain();
-       assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
-       assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
-       assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
 
+        // Try various ways of changing the formulas
+        // If it stays a formula, chain entry should remain
+        // Otherwise should go
+        sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
+        sheet.getRow(2).getCell(0).setCellFormula(null); // go
+        sheet.getRow(3).getCell(0).setCellType(Cell.CELL_TYPE_FORMULA); // stay
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet.getRow(4).getCell(0).setCellType(Cell.CELL_TYPE_STRING); // go
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+        validateCells(sheet);
+        sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
+        validateCells(sheet);
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        
+        sheet.getRow(6).getCell(0).setCellType(Cell.CELL_TYPE_BLANK); // go
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        sheet.getRow(7).getCell(0).setCellValue((String) null); // go
+
+        wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+        // Save and check
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(35, cc.getCTCalcChain().sizeOfCArray());
+
+        cc = wb.getCalculationChain();
+        assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
+        assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
+        assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
+    }
+
+    @Test
+    public void bug49966Row() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples
+                .openSampleWorkbook("shared_formulas.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        validateCells(sheet);
+        sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
+        validateCells(sheet);
+    }
+
+    private void validateCells(XSSFSheet sheet) {
+        for(Row row : sheet) {
+            // trigger handling
+            ((XSSFRow)row).onDocumentWrite();
+        }
     }
 
     @Test

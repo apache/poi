@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -441,8 +442,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     protected void onDocumentWrite(){
         // check if cells in the CTRow are ordered
         boolean isOrdered = true;
-        if(_row.sizeOfCArray() != _cells.size()) isOrdered = false;
-        else {
+        if(_row.sizeOfCArray() != _cells.size()) {
+            isOrdered = false;
+        } else {
             int i = 0;
             for (XSSFCell cell : _cells.values()) {
                 CTCell c1 = cell.getCTCell();
@@ -460,9 +462,18 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if(!isOrdered){
             CTCell[] cArray = new CTCell[_cells.size()];
             int i = 0;
-            for (XSSFCell c : _cells.values()) {
-                cArray[i++] = c.getCTCell();
+            for (Map.Entry<Integer, XSSFCell> entry : _cells.entrySet()) {
+                cArray[i] = (CTCell) entry.getValue().getCTCell().copy();
+                
+                // we have to copy and re-create the XSSFCell here because the 
+                // elements as otherwise setCArray below invalidates all the columns!
+                // see Bug 56170, XMLBeans seems to always release previous objects
+                // in the CArray, so we need to provide completely new ones here!
+                //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
+                entry.getValue().setCTCell(cArray[i]);
+                i++;
             }
+
             _row.setCArray(cArray);
         }
     }
