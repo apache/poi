@@ -70,7 +70,7 @@ public final class XSSFCell implements Cell {
      * the xml bean containing information about the cell's location, value,
      * data type, formatting, and formula
      */
-    private final CTCell _cell;
+    private CTCell _cell;
 
     /**
      * the XSSFRow this cell belongs to
@@ -939,6 +939,16 @@ public final class XSSFCell implements Cell {
     @Internal
     public CTCell getCTCell(){
         return _cell;
+    }
+    
+    /**
+     * Set a new internal xml bean. This is only for internal use, do not call this from outside!
+     * 
+     * This is necessary in some rare cases to work around XMLBeans specialties.
+     */
+    @Internal
+    public void setCTCell(CTCell cell) {
+        _cell = cell;
     }
 
     /**
