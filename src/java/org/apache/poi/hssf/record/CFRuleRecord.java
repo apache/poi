@@ -17,14 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Arrays;
+
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
@@ -460,12 +462,13 @@ public final class CFRuleRecord extends StandardRecord {
 	}
 
 	protected int getDataSize() {
-		return 12 +
+		int i = 12 +
 					(containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
 					(containsBorderFormattingBlock()?8:0)+
 					(containsPatternFormattingBlock()?4:0)+
 					getFormulaSize(field_17_formula1)+
-					getFormulaSize(field_18_formula2)
+					getFormulaSize(field_18_formula2);
+        return i
 					;
 	}
 
@@ -473,20 +476,20 @@ public final class CFRuleRecord extends StandardRecord {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("[CFRULE]\n");
-        buffer.append("    .condition_type   ="+field_1_condition_type);
-		buffer.append("    OPTION FLAGS=0x"+Integer.toHexString(getOptions()));
-		if (false) {
-			if (containsFontFormattingBlock()) {
-				buffer.append(_fontFormatting.toString());
-			}
-			if (containsBorderFormattingBlock()) {
-				buffer.append(_borderFormatting.toString());
-			}
-			if (containsPatternFormattingBlock()) {
-				buffer.append(_patternFormatting.toString());
-			}
-			buffer.append("[/CFRULE]\n");
+        buffer.append("    .condition_type   =").append(field_1_condition_type).append("\n");
+		buffer.append("    OPTION FLAGS=0x").append(Integer.toHexString(getOptions())).append("\n");
+		if (containsFontFormattingBlock()) {
+			buffer.append(_fontFormatting.toString()).append("\n");
 		}
+		if (containsBorderFormattingBlock()) {
+			buffer.append(_borderFormatting.toString()).append("\n");
+		}
+		if (containsPatternFormattingBlock()) {
+			buffer.append(_patternFormatting.toString()).append("\n");
+		}
+		buffer.append("    Formula 1 =").append(Arrays.toString(field_17_formula1.getTokens())).append("\n");
+		buffer.append("    Formula 2 =").append(Arrays.toString(field_18_formula2.getTokens())).append("\n");
+		buffer.append("[/CFRULE]\n");
 		return buffer.toString();
 	}
 
@@ -504,7 +507,7 @@ public final class CFRuleRecord extends StandardRecord {
 			rec._patternFormatting = (PatternFormatting) _patternFormatting.clone();
 		}
 		rec.field_17_formula1 = field_17_formula1.copy();
-		rec.field_18_formula2 = field_17_formula1.copy();
+		rec.field_18_formula2 = field_18_formula2.copy();
 
 		return rec;
 	}

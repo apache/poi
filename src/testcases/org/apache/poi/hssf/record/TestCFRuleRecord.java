@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -24,12 +25,12 @@ import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RefNPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefNPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -350,5 +351,18 @@ public final class TestCFRuleRecord extends TestCase {
 
         byte[] data = rr.serialize();
         TestcaseRecordInputStream.confirmRecordEncoding(CFRuleRecord.sid, DATA_REFN, data);
+    }
+    
+    public void testBug53691() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+
+        CFRuleRecord record = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
+        
+        CFRuleRecord clone = (CFRuleRecord) record.clone();
+        
+        byte [] serializedRecord = record.serialize();
+        byte [] serializedClone = clone.serialize();
+        assertArrayEquals(serializedRecord, serializedClone);
     }
 }
