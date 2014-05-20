@@ -18,8 +18,14 @@
 package org.apache.poi.hssf.usermodel;
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  *
@@ -32,5 +38,71 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
 
     public void testRead(){
         testRead("WithConditionalFormatting.xls");
+    }
+
+    public void test53691() throws IOException {
+        SheetConditionalFormatting cf;
+        final Workbook wb;
+        wb = HSSFITestDataProvider.instance.openSampleWorkbook("53691.xls");
+        /*
+        FileInputStream s = new FileInputStream("C:\\temp\\53691bbadfixed.xls");
+        try {
+            wb = new HSSFWorkbook(s);
+        } finally {
+            s.close();
+        }
+
+        wb.removeSheetAt(1);*/
+        
+        // initially it is good
+        writeTemp53691(wb, "agood");
+        
+        // clone sheet corrupts it
+        Sheet sheet = wb.cloneSheet(0);
+        writeTemp53691(wb, "bbad");
+
+        // removing the sheet makes it good again
+        wb.removeSheetAt(wb.getSheetIndex(sheet));
+        writeTemp53691(wb, "cgood");
+        
+        // cloning again and removing the conditional formatting makes it good again
+        sheet = wb.cloneSheet(0);
+        removeConditionalFormatting(sheet);        
+        writeTemp53691(wb, "dgood");
+        
+        // cloning the conditional formatting manually makes it bad again
+        cf = sheet.getSheetConditionalFormatting();
+        SheetConditionalFormatting scf = wb.getSheetAt(0).getSheetConditionalFormatting();
+        for (int j = 0; j < scf.getNumConditionalFormattings(); j++) {
+            cf.addConditionalFormatting(scf.getConditionalFormattingAt(j));
+        }        
+        writeTemp53691(wb, "ebad");
+
+        // remove all conditional formatting for comparing BIFF output
+        removeConditionalFormatting(sheet);        
+        removeConditionalFormatting(wb.getSheetAt(0));        
+        writeTemp53691(wb, "fgood");
+    }
+    
+    private void removeConditionalFormatting(Sheet sheet) {
+        SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
+        for (int j = 0; j < cf.getNumConditionalFormattings(); j++) {
+            cf.removeConditionalFormatting(j);
+        }
+    }
+
+    private void writeTemp53691(Workbook wb, String suffix) throws FileNotFoundException,
+            IOException {
+        // assert that we can write/read it in memory
+        Workbook wbBack = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        
+        /* Just necessary for local testing... */
+        /*OutputStream out = new FileOutputStream("C:\\temp\\53691" + suffix + ".xls");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
     }
 }
