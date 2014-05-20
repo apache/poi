@@ -22,11 +22,16 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -41,14 +46,17 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
@@ -1492,5 +1500,108 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         byte secondSave[] = bos.toByteArray();
         
         assertThat(firstSave, equalTo(secondSave));
+    }
+
+
+    @Test
+    public void testBug53798XLSX() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx");
+        File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
+        bug53798Work(wb, xlsOutput);
+    }
+
+    @Ignore("Shifting rows is not yet implemented in XSSFSheet")
+    @Test
+    public void testBug53798XLSXStream() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx");
+        File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
+        bug53798Work(new SXSSFWorkbook(wb), xlsOutput);
+    }
+
+    @Test
+    public void testBug53798XLS() throws IOException {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xls");
+        File xlsOutput = TempFile.createTempFile("testBug53798", ".xls");
+        bug53798Work(wb, xlsOutput);
+    }
+
+    private void bug53798Work(Workbook wb, File xlsOutput) throws IOException {
+        Sheet testSheet = wb.getSheetAt(0);
+
+        testSheet.shiftRows(2, 2, 1);
+
+        saveAndReloadReport(wb, xlsOutput);
+
+        // 1) corrupted xlsx (unreadable data in the first row of a shifted group) already comes about
+        // when shifted by less than -1 negative amount (try -2)
+        testSheet.shiftRows(3, 3, -1);
+
+        saveAndReloadReport(wb, xlsOutput);
+
+        testSheet.shiftRows(2, 2, 1);
+
+        saveAndReloadReport(wb, xlsOutput);
+
+        Row newRow = null;
+        Cell newCell = null;
+        // 2) attempt to create a new row IN PLACE of a removed row by a negative shift causes corrupted
+        // xlsx file with  unreadable data in the negative shifted row.
+        // NOTE it's ok to create any other row.
+        newRow = testSheet.createRow(3);
+
+        saveAndReloadReport(wb, xlsOutput);
+
+        newCell = newRow.createCell(0);
+
+        saveAndReloadReport(wb, xlsOutput);
+
+        newCell.setCellValue("new Cell in row "+newRow.getRowNum());
+
+        saveAndReloadReport(wb, xlsOutput);
+
+        // 3) once a negative shift has been made any attempt to shift another group of rows
+        // (note: outside of previously negative shifted rows) by a POSITIVE amount causes POI exception:
+        // org.apache.xmlbeans.impl.values.XmlValueDisconnectedException.
+        // NOTE: another negative shift on another group of rows is successful, provided no new rows in
+        // place of previously shifted rows were attempted to be created as explained above.
+        testSheet.shiftRows(6, 7, 1);   // -- CHANGE the shift to positive once the behaviour of
+                                        // the above has been tested
+
+        saveAndReloadReport(wb, xlsOutput);
+    }
+
+    private void saveAndReloadReport(Workbook wb, File outFile) throws IOException {
+        // run some method on the font to verify if it is "disconnected" already
+        //for(short i = 0;i < 256;i++)
+        {
+            Font font = wb.getFontAt((short)0);
+            if(font instanceof XSSFFont) {
+                XSSFFont xfont = (XSSFFont) wb.getFontAt((short)0);
+                CTFontImpl ctFont = (CTFontImpl) xfont.getCTFont();
+                assertEquals(0, ctFont.sizeOfBArray());
+            }
+        }
+
+        FileOutputStream fileOutStream = new FileOutputStream(outFile);
+        wb.write(fileOutStream);
+        fileOutStream.close();
+        //System.out.println("File \""+outFile.getName()+"\" has been saved successfully");
+
+        FileInputStream is = new FileInputStream(outFile);
+        try {
+            final Workbook newWB;
+            if(wb instanceof XSSFWorkbook) {
+                newWB = new XSSFWorkbook(is);
+            } else if(wb instanceof HSSFWorkbook) {
+                newWB = new HSSFWorkbook(is);
+            } else if(wb instanceof SXSSFWorkbook) {
+                newWB = new SXSSFWorkbook(new XSSFWorkbook(is));
+            } else {
+                throw new IllegalStateException("Unknown workbook: " + wb);
+            }
+            assertNotNull(newWB.getSheet("test"));
+        } finally {
+            is.close();
+        }
     }
 }
