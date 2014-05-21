@@ -294,13 +294,15 @@ public class XSSFTable extends POIXMLDocumentPart {
         int firstHeaderColumn = ref.getCol();
         XSSFRow row = sheet.getRow(headerRow);
 
-        if(row != null) for(CTTableColumn col : getCTTable().getTableColumns().getTableColumnList()){
-            int colIdx = (int)col.getId() - 1 + firstHeaderColumn;
-            XSSFCell cell = row.getCell(colIdx);
-            if(cell != null) {
-                col.setName(cell.getStringCellValue());
+        if (row != null && row.getCTRow().validate()) {
+            int cellnum = firstHeaderColumn;
+            for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnList()) {
+                XSSFCell cell = row.getCell(cellnum);
+                if (cell != null) {
+                    col.setName(cell.getStringCellValue());
+                }
+                cellnum++;
             }
         }
-
     }
 }
