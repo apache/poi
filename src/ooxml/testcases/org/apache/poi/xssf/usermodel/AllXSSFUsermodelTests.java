@@ -50,6 +50,7 @@ import org.junit.runners.Suite;
     TestXSSFRow.class,
     TestXSSFSheet.class,
     TestXSSFSheetUpdateArrayFormulas.class,
+    TestXSSFTable.class,
     TestXSSFWorkbook.class,
     TestXSSFBorder.class,
     TestXSSFCellFill.class,
