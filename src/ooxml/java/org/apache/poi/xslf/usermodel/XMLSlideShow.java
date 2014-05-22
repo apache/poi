@@ -32,10 +32,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -221,11 +218,12 @@ public class XMLSlideShow  extends POIXMLDocument {
         slideId.setId2(slide.getPackageRelationship().getId());
 
         layout.copyLayout(slide);
-        slide.addRelation(layout.getPackageRelationship().getId(), layout);
 
         PackagePartName ppName = layout.getPackagePart().getPartName();
-        slide.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
+        PackageRelationship rel = slide.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
                 layout.getPackageRelationship().getRelationshipType());
+
+        slide.addRelation(rel.getId(), layout);
 
         _slides.add(slide);
         return slide;
