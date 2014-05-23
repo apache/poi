@@ -20,8 +20,6 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.RoundingMode;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
@@ -424,6 +422,7 @@ public class DataFormatter {
         formatStr = formatStr.replaceAll(";@", "");
         formatStr = formatStr.replaceAll("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
         formatStr = formatStr.replace("\"\"", "'");	// replace Excel quoting with Java style quoting
+        formatStr = formatStr.replaceAll("\\\\T","'T'"); // Quote the T is iso8601 style dates
 
 
         boolean hasAmPm = false;
