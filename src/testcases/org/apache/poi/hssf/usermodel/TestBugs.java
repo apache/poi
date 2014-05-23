@@ -1651,8 +1651,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         openSample("47251.xls");
         
         // Now with one that triggers on NoteRecord
-        // TODO Fix the bug and enable this bit of the test
-        //openSample("47251_1.xls");
+        openSample("47251_1.xls");
     }
     
     /**
