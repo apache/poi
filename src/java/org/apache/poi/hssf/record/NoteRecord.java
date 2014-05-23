@@ -90,7 +90,11 @@ public final class NoteRecord extends StandardRecord {
 		}
  		if (in.available() == 1) {
 			field_7_padding = Byte.valueOf(in.readByte());
-		}
+		} else if (in.available() == 2 && length == 0) {
+		    // If there's no author, may be double padded
+            field_7_padding = Byte.valueOf(in.readByte());
+            in.readByte();
+ 		}
 	}
 
 	public void serialize(LittleEndianOutput out) {
