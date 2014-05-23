@@ -56,7 +56,7 @@ public class DateUtil {
     private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
-    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-/,. :\"\\\\]+0*[ampAMP/]*$");
+    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/,. :\"\\\\]+0*[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
 
@@ -445,7 +445,7 @@ public class DateUtil {
         }
         
         // If we get here, check it's only made up, in any case, of:
-        //  y m d h s - \ / , . : [ ]
+        //  y m d h s - \ / , . : [ ] T
         // optionally followed by AM/PM
 
         boolean result = date_ptrn3b.matcher(fs).matches();
