@@ -101,30 +101,36 @@ public final class HSSFCellStyle implements CellStyle {
         return _format.getFormatIndex();
     }
 
+    // we keep the cached data in ThreadLocal members in order to
+    // avoid multi-threading issues when different workbooks are accessed in 
+    // multiple threads at the same time
+    private static ThreadLocal<Short> lastDateFormat = new ThreadLocal<Short>() {
+        protected Short initialValue() {
+            return Short.MIN_VALUE;
+        }
+    };
+    private static ThreadLocal<List<FormatRecord>> lastFormats = new ThreadLocal<List<FormatRecord>>();
+    private static ThreadLocal<String> getDataFormatStringCache = new ThreadLocal<String>();
+
     /**
      * Get the contents of the format string, by looking up
      *  the DataFormat against the bound workbook
      * @see org.apache.poi.hssf.usermodel.HSSFDataFormat
      * @return the format string or "General" if not found
      */
-     
-    private static short lastDateFormat = Short.MIN_VALUE;
-    private static List<FormatRecord> lastFormats = null;
-    private static String getDataFormatStringCache = null;
-    
     public String getDataFormatString() {
-        if (getDataFormatStringCache != null) {
-            if (lastDateFormat == getDataFormat() && _workbook.getFormats().equals(lastFormats)) {
-                return getDataFormatStringCache;
+        if (getDataFormatStringCache.get() != null) {
+            if (lastDateFormat.get() == getDataFormat() && _workbook.getFormats().equals(lastFormats.get())) {
+                return getDataFormatStringCache.get();
             }
         }
 
-        lastFormats = _workbook.getFormats();
-        lastDateFormat = getDataFormat();
+        lastFormats.set(_workbook.getFormats());
+        lastDateFormat.set(getDataFormat());
 
-        getDataFormatStringCache = getDataFormatString(_workbook);
+        getDataFormatStringCache.set(getDataFormatString(_workbook));
 
-        return getDataFormatStringCache;
+        return getDataFormatStringCache.get();
     }
 
     /**
@@ -862,9 +868,9 @@ public final class HSSFCellStyle implements CellStyle {
     	// Handle matching things if we cross workbooks
     	if(_workbook != source._workbook) {
 
-            lastDateFormat = Short.MIN_VALUE;
-            lastFormats = null;
-            getDataFormatStringCache = null;
+            lastDateFormat.set(Short.MIN_VALUE);
+            lastFormats.set(null);
+            getDataFormatStringCache.set(null);
     	   
 			// Then we need to clone the format string,
 			//  and update the format record for this
