@@ -26,7 +26,11 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -404,5 +408,63 @@ public final class TestCellStyle extends TestCase {
     	r = s.getRow(0);
     	assertEquals(false, r.getCell(0).getCellStyle().getShrinkToFit());
     	assertEquals(true,  r.getCell(1).getCellStyle().getShrinkToFit());
+    }
+    
+    
+    
+    private static class CellFormatBugExample extends Thread {
+        private String fileName;
+        private Throwable exception = null;
+
+        public CellFormatBugExample(String fileName) {
+            this.fileName = fileName;
+        }
+
+        @Override
+        public void run() {
+            try {
+                for(int i = 0;i< 10;i++) {
+                    Workbook wb = HSSFTestDataSamples.openSampleWorkbook(fileName);
+                    Sheet sheet = wb.getSheetAt(0);
+        
+                    for (Row row : sheet) {
+                        for (Integer idxCell = 0; idxCell < row.getLastCellNum(); idxCell++) {
+        
+                            Cell cell = row.getCell(idxCell);
+                            cell.getCellStyle().getDataFormatString();
+                            if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+                                boolean isDate = HSSFDateUtil.isCellDateFormatted(cell);
+                                if (idxCell > 0 && isDate) {
+                                    fail("cell " + idxCell + " is not a date: " + idxCell.toString());
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Throwable e) {
+                exception = e;
+            }
+        }
+
+        public Throwable getException() {
+            return exception;
+        }
+    };
+    
+    public void test56563() throws Throwable {
+        CellFormatBugExample threadA = new CellFormatBugExample("56563a.xls");
+        threadA.start();
+        CellFormatBugExample threadB = new CellFormatBugExample("56563b.xls");
+        threadB.start();
+        
+        threadA.join();
+        threadB.join();
+        
+        if(threadA.getException() != null) {
+            throw threadA.getException();
+        }
+        if(threadB.getException() != null) {
+            throw threadB.getException();
+        }
     }
 }
