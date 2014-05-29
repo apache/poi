@@ -899,7 +899,13 @@ public class HSSFCell implements Cell {
         setCellStyle( (HSSFCellStyle)style );
     }
     public void setCellStyle(HSSFCellStyle style) {
-        // Verify it really does belong to our workbook
+        // A style of null means resetting back to the default style
+        if (style == null) {
+            _record.setXFIndex((short)0xf);
+            return;
+        }
+
+        // Verify the style really does belong to our workbook
         style.verifyBelongsToWorkbook(_book);
 
         short styleIndex;
