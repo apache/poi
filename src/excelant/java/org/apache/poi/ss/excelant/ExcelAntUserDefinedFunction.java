@@ -46,6 +46,13 @@ public class ExcelAntUserDefinedFunction extends Typedef {
 	}
 
 	protected String getClassName() {
+	    // workaround for IBM JDK assigning the classname to the lowercase instance provided by Definer!?!
+	    // I could not find out why that happens, the wrong assignment seems to be done somewhere deep inside Ant itself
+	    // or even in IBM JDK as Oracle JDK does not have this problem.
+	    if(className == null) {
+	        return getClassname();
+	    }
+
 		return className;
 	}
 
