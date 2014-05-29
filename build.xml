@@ -140,8 +140,10 @@ under the License.
     <property name="main.junit.url" value="${repository.m2}/maven2/junit/junit/4.11/junit-4.11.jar"/>
     <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
-    <property name="main.ant.jar" location="${main.lib}/ant-1.8.2.jar"/>
-    <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.8.2/ant-1.8.2.jar"/>
+    <property name="main.ant.jar" location="${main.lib}/ant-1.9.4.jar"/>
+    <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.9.4/ant-1.9.4.jar"/>
+    <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
+    <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
 
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
@@ -344,6 +346,7 @@ under the License.
                     <available file="${main.junit.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
                     <available file="${main.ant.jar}"/>
+                    <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
@@ -379,6 +382,10 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${main.ant.url}"/>
             <param name="destfile" value="${main.ant.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${main.antlauncher.url}"/>
+            <param name="destfile" value="${main.antlauncher.jar}"/>
         </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${asm.url}"/>

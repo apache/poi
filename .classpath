@@ -14,7 +14,8 @@
 	<classpathentry kind="src" path="src/excelant/java"/>
 	<classpathentry kind="src" path="src/excelant/testcases"/>
 	<classpathentry kind="src" path="src/excelant/resources"/>
-	<classpathentry kind="lib" path="lib/ant-1.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/ant-1.9.4.jar" sourcepath="/home/dstadler/.m2/repository/org/apache/ant/ant/1.8.3/ant-1.8.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ant-launcher-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
