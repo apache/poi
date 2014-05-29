@@ -105,7 +105,7 @@ public class ExcelAntTask extends Task {
 					            Project.MSG_ERR ) ;
 			return ;
 		}
-		if( tests != null && tests.size() > 0 ) {
+		if( tests.size() > 0 ) {
 			
 			Iterator<ExcelAntTest> testsIt = tests.iterator() ;
 			while( testsIt.hasNext() ) {
@@ -115,15 +115,13 @@ public class ExcelAntTask extends Task {
 		
 				workbookUtil = ExcelAntWorkbookUtilFactory.getInstance( excelFileName ) ;
 				
-				if( functions != null ) {
-					Iterator<ExcelAntUserDefinedFunction> functionsIt = functions.iterator() ;
-					while( functionsIt.hasNext() ) {
-						ExcelAntUserDefinedFunction eaUdf = functionsIt.next() ;
-						try {
-							workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName() ) ;
-						} catch ( Exception e) {
-							throw new BuildException( e.getMessage(), e ); 
- 						}
+				Iterator<ExcelAntUserDefinedFunction> functionsIt = functions.iterator() ;
+				while( functionsIt.hasNext() ) {
+					ExcelAntUserDefinedFunction eaUdf = functionsIt.next() ;
+					try {
+						workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName() ) ;
+					} catch ( Exception e) {
+						throw new BuildException( e.getMessage(), e ); 
 					}
 				}
 				test.setWorkbookUtil( workbookUtil ) ;
@@ -158,16 +156,14 @@ public class ExcelAntTask extends Task {
                                      getLocation());
         }
 
-		Workbook workbook;
 		File workbookFile = new File( excelFileName ) ;
         try {
             FileInputStream fis = new FileInputStream( workbookFile ) ;
-            workbook = WorkbookFactory.create( fis ) ;
+            return WorkbookFactory.create( fis ) ;
         } catch (Exception e) {
             throw new BuildException("Cannot load file " + excelFileName
                     + ". Make sure the path and file permissions are correct.", e, getLocation());
         }
-		return workbook ;
 	}
 
 

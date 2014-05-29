@@ -135,4 +135,14 @@ under the License.
          </poi:excelant>
       </target>
 
+    <!-- basic evaluation test -->
+    <target name="test-settext">
+        <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls">
+            <poi:test showSuccessDetails="true">
+                <poi:setString cell="'MortgageCalculator'!$B$1" value="sometext"/>
+            	<!-- How can we evaluate text? -->
+            </poi:test>
+         </poi:excelant>
+      </target>
+
 </project>

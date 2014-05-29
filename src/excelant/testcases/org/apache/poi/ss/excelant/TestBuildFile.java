@@ -73,4 +73,9 @@ public class TestBuildFile extends BuildFileTest {
         executeTarget("test-udf");
         assertLogContaining("1/1 tests passed");
     }
+    
+    public void testSetText() {
+        executeTarget("test-settext");
+        assertLogContaining("1/1 tests passed");
+    }
 }
