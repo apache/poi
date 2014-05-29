@@ -459,4 +459,40 @@ public final class TestHSSFCell extends BaseTestCell {
         cell.setCellValue((String)null);
         cell.setCellValue((RichTextString)null);
     }
+    
+    public void testSetRemoveStyle() throws Exception {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+        
+        HSSFCellStyle defaultStyle = wb.getCellStyleAt((short)15);
+        
+        // Starts out with the default style
+        assertEquals(defaultStyle, cell.getCellStyle());
+        
+        // Create some styles, no change
+        HSSFCellStyle style1 = wb.createCellStyle();
+        HSSFCellStyle style2 = wb.createCellStyle();
+        style1.setDataFormat((short)2);
+        style2.setDataFormat((short)3);
+        
+        assertEquals(defaultStyle, cell.getCellStyle());
+        
+        // Apply one, changes
+        cell.setCellStyle(style1);
+        assertEquals(style1, cell.getCellStyle());
+        
+        // Apply the other, changes
+        cell.setCellStyle(style2);
+        assertEquals(style2, cell.getCellStyle());
+        
+        // Remove, goes back to default
+        cell.setCellStyle(null);
+        assertEquals(defaultStyle, cell.getCellStyle());
+        
+        // Add back, returns
+        cell.setCellStyle(style2);
+        assertEquals(style2, cell.getCellStyle());
+    }
 }
