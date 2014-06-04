@@ -84,6 +84,8 @@ public class WorkbookFactory {
     /**
      * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
      *  the given File, which must exist and be readable.
+     * <p>Note that for Workbooks opened this way, it is not possible
+     *  to explicitly close the underlying File resource.
      */
     public static Workbook create(File file) throws IOException, InvalidFormatException {
         if (! file.exists()) {
