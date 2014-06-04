@@ -199,8 +199,15 @@ public class ColumnHelper {
      */
     public CTCol getColumn1Based(long index1, boolean splitColumns) {
         CTCols colsArray = worksheet.getColsArray(0);
-        for (int i = 0; i < colsArray.sizeOfColArray(); i++) {
-            CTCol colArray = colsArray.getColArray(i);
+        
+        // Fetching the array is quicker than working on the new style
+        //  list, assuming we need to read many of them (which we often do),
+        //  and assuming we're not making many changes (which we're not)
+        @SuppressWarnings("deprecation")
+        CTCol[] cols = colsArray.getColArray();
+        
+        for (int i = 0; i < cols.length; i++) {
+            CTCol colArray = cols[i];
             if (colArray.getMin() <= index1 && colArray.getMax() >= index1) {
                 if (splitColumns) {
                     if (colArray.getMin() < index1) {
