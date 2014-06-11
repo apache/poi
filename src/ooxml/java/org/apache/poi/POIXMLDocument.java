@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
@@ -158,6 +159,21 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
         }
         onDocumentRead();
         context.clear();
+    }
+    
+    /**
+     * Closes the underlying {@link OPCPackage} from which this
+     *  document was read, if there is one
+     */
+    protected void close() throws IOException {
+        if (pkg != null) {
+            if (pkg.getPackageAccess() == PackageAccess.READ) {
+                pkg.revert();
+            } else {
+                pkg.close();
+            }
+            pkg = null;
+        }
     }
 
     /**

@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
  */
-public interface Workbook {
+public interface Workbook extends Closeable {
 
     /** Extended windows meta file */
     public static final int PICTURE_TYPE_EMF = 2;
@@ -350,6 +351,14 @@ public interface Workbook {
      */
     void write(OutputStream stream) throws IOException;
 
+    /**
+     * Close the underlying input resource (File or Stream),
+     *  from which the Workbook was read. After closing, the
+     *  Workbook should no longer be used.
+     * <p>This will have no effect newly created Workbooks.
+     */
+    void close() throws IOException;
+    
     /**
      * @return the total number of defined names in this workbook
      */
