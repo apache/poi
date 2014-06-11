@@ -208,27 +208,27 @@ public class SXSSFWorkbook implements Workbook
      * @param useSharedStringsTable whether to use a shared strings table
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable){
-    	setRandomAccessWindowSize(rowAccessWindowSize);
-    	setCompressTempFiles(compressTmpFiles);
-    	if (workbook == null)
-    	{
-    		_wb=new XSSFWorkbook();
-                if(useSharedStringsTable){
-                    _sharedStringSource = _wb.getSharedStringSource();
-                }
-    	}
-    	else
-    	{
-    		_wb=workbook;
-                if(useSharedStringsTable){
-                    _sharedStringSource = _wb.getSharedStringSource();
-                }
+        setRandomAccessWindowSize(rowAccessWindowSize);
+        setCompressTempFiles(compressTmpFiles);
+        if (workbook == null)
+        {
+            _wb=new XSSFWorkbook();
+            if(useSharedStringsTable){
+                _sharedStringSource = _wb.getSharedStringSource();
+            }
+        }
+        else
+        {
+            _wb=workbook;
+            if(useSharedStringsTable){
+                _sharedStringSource = _wb.getSharedStringSource();
+            }
             for ( int i = 0; i < _wb.getNumberOfSheets(); i++ )
             {
                 XSSFSheet sheet = _wb.getSheetAt( i );
                 createAndRegisterSXSSFSheet( sheet );
             }
-    	}
+        }
     }
     /**
      * Construct an empty workbook and specify the window for row access.
