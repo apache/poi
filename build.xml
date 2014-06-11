@@ -148,9 +148,9 @@ under the License.
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
     <property name="ooxml.dom4j.url" value="${repository.m2}/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
-    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
+    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
     <property name="ooxml.xmlbeans.url"
-              value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
+              value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.6.5.201403032054.zip"/>
@@ -1413,7 +1413,7 @@ under the License.
 			</fileset>
 			<auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
 			<auxClasspath path="ooxml-lib/ooxml-encryption-1.1.jar" />
-			<auxClasspath path="ooxml-lib/xmlbeans-2.3.0.jar" />
+			<auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
 			<auxClasspath path="ooxml-lib/dom4j-1.6.1.jar" />
 			<auxClasspath path="lib/commons-codec-1.9.jar" />
 			<auxClasspath path="lib/commons-logging-1.1.3.jar" />
