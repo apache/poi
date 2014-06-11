@@ -28,7 +28,6 @@ import org.apache.poi.poifs.common.POIFSConstants;
 /**
  * Tests for the Mini Store in the NIO POIFS
  */
-@SuppressWarnings("resource")
 public final class TestNPOIFSMiniStore extends TestCase {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
    
@@ -103,6 +102,8 @@ public final class TestNPOIFSMiniStore extends TestCase {
          for(int i=181; i<fs.getBigBlockSizeDetails().getBATEntriesPerBlock(); i++) {
             assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(i));
          }
+         
+         fs.close();
       }
    }
 
@@ -168,6 +169,8 @@ public final class TestNPOIFSMiniStore extends TestCase {
             assertEquals((byte)0, b.get());
             assertEquals((byte)0, b.get());
          }
+         
+         fs.close();
       }
    }
    
@@ -198,6 +201,8 @@ public final class TestNPOIFSMiniStore extends TestCase {
       // Allocate it, then ask again
       ministore.setNextBlock(181, POIFSConstants.END_OF_CHAIN);
       assertEquals(182, ministore.getFreeBlock());
+      
+      fs.close();
    }
 
    /**
@@ -240,6 +245,8 @@ public final class TestNPOIFSMiniStore extends TestCase {
       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(255)); // 2nd SBAT
       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(256)); // 3rd SBAT
       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(257)); // 3rd SBAT
+      
+      fs.close();
    }
    
    /**
@@ -322,5 +329,7 @@ public final class TestNPOIFSMiniStore extends TestCase {
       for(int i=193; i<256; i++) {
          assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(i));
       }
+      
+      fs.close();
    }
 }

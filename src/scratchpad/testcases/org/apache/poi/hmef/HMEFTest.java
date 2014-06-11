@@ -18,6 +18,7 @@
 package org.apache.poi.hmef;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
@@ -34,13 +35,16 @@ public abstract class HMEFTest extends TestCase {
    }
    protected void assertContents(String filename, byte[] actual) 
          throws IOException {
-      byte[] expected = IOUtils.toByteArray(
-            _samples.openResourceAsStream("quick-contents/" + filename)
-      );
-      
-      assertEquals(expected.length, actual.length);
-      for(int i=0; i<expected.length; i++) {
-         assertEquals("Byte " + i + " wrong", expected[i], actual[i]);
+      InputStream stream = _samples.openResourceAsStream("quick-contents/" + filename);
+      try {
+          byte[] expected = IOUtils.toByteArray(stream);
+          
+          assertEquals(expected.length, actual.length);
+          for(int i=0; i<expected.length; i++) {
+              assertEquals("Byte " + i + " wrong", expected[i], actual[i]);
+          }
+      } finally {
+          stream.close();
       }
    }
 }

@@ -27,162 +27,162 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 
-
+@SuppressWarnings("deprecation")
 public final class TestTextPieceTable extends TestCase {
-  private HWPFDocFixture _hWPFDocFixture;
-  //private String dirname;
+    private HWPFDocFixture _hWPFDocFixture;
 
-  public void testReadWrite()
-    throws Exception
-  {
-    FileInformationBlock fib = _hWPFDocFixture._fib;
-    byte[] mainStream = _hWPFDocFixture._mainStream;
-    byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFibBase().getFcMin();
+    // private String dirname;
 
-    ComplexFileTable cft = new ComplexFileTable(mainStream, tableStream, fib.getFcClx(), fcMin);
+    public void testReadWrite() throws Exception {
+        FileInformationBlock fib = _hWPFDocFixture._fib;
+        byte[] mainStream = _hWPFDocFixture._mainStream;
+        byte[] tableStream = _hWPFDocFixture._tableStream;
+        int fcMin = fib.getFibBase().getFcMin();
 
+        ComplexFileTable cft = new ComplexFileTable(mainStream, tableStream,
+                fib.getFcClx(), fcMin);
 
-    HWPFFileSystem fileSys = new HWPFFileSystem();
+        HWPFFileSystem fileSys = new HWPFFileSystem();
 
-    cft.writeTo(fileSys);
-    ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
-    ByteArrayOutputStream mainOut =  fileSys.getStream("WordDocument");
+        cft.writeTo(fileSys);
+        ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
+        ByteArrayOutputStream mainOut = fileSys.getStream("WordDocument");
 
-    byte[] newTableStream = tableOut.toByteArray();
-    byte[] newMainStream = mainOut.toByteArray();
+        byte[] newTableStream = tableOut.toByteArray();
+        byte[] newMainStream = mainOut.toByteArray();
 
-    ComplexFileTable newCft = new ComplexFileTable(newMainStream, newTableStream, 0,0);
+        ComplexFileTable newCft = new ComplexFileTable(newMainStream,
+                newTableStream, 0, 0);
 
-    TextPieceTable oldTextPieceTable = cft.getTextPieceTable();
-    TextPieceTable newTextPieceTable = newCft.getTextPieceTable();
+        TextPieceTable oldTextPieceTable = cft.getTextPieceTable();
+        TextPieceTable newTextPieceTable = newCft.getTextPieceTable();
 
-    assertEquals(oldTextPieceTable, newTextPieceTable);
-  }
+        assertEquals(oldTextPieceTable, newTextPieceTable);
+    }
 
-	/**
-	 * Check that we do the positions correctly when
-	 *  working with pure-ascii
-	 */
-	public void testAsciiParts() throws Exception {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
-		TextPieceTable tbl = doc.getTextTable();
+    /**
+     * Check that we do the positions correctly when working with pure-ascii
+     */
+    public void testAsciiParts() throws Exception {
+        HWPFDocument doc = HWPFTestDataSamples
+                .openSampleFile("ThreeColHeadFoot.doc");
+        TextPieceTable tbl = doc.getTextTable();
 
-		// All ascii, so stored in one big lump
-		assertEquals(1, tbl.getTextPieces().size());
-		TextPiece tp = tbl.getTextPieces().get(0);
+        // All ascii, so stored in one big lump
+        assertEquals(1, tbl.getTextPieces().size());
+        TextPiece tp = tbl.getTextPieces().get(0);
 
-		assertEquals(0, tp.getStart());
-		assertEquals(339, tp.getEnd());
-		assertEquals(339, tp.characterLength());
-		assertEquals(339, tp.bytesLength());
-		assertTrue(tp.getStringBuilder().toString().startsWith("This is a sample word document"));
+        assertEquals(0, tp.getStart());
+        assertEquals(339, tp.getEnd());
+        assertEquals(339, tp.characterLength());
+        assertEquals(339, tp.bytesLength());
+        assertTrue(tp.getStringBuilder().toString()
+                .startsWith("This is a sample word document"));
 
+        // Save and re-load
+        HWPFDocument docB = saveAndReload(doc);
+        tbl = docB.getTextTable();
 
-		// Save and re-load
-		HWPFDocument docB = saveAndReload(doc);
-		tbl = docB.getTextTable();
+        assertEquals(1, tbl.getTextPieces().size());
+        tp = tbl.getTextPieces().get(0);
 
-		assertEquals(1, tbl.getTextPieces().size());
-		tp = tbl.getTextPieces().get(0);
+        assertEquals(0, tp.getStart());
+        assertEquals(339, tp.getEnd());
+        assertEquals(339, tp.characterLength());
+        assertEquals(339, tp.bytesLength());
+        assertTrue(tp.getStringBuilder().toString()
+                .startsWith("This is a sample word document"));
+    }
 
-		assertEquals(0, tp.getStart());
-		assertEquals(339, tp.getEnd());
-		assertEquals(339, tp.characterLength());
-		assertEquals(339, tp.bytesLength());
-		assertTrue(tp.getStringBuilder().toString().startsWith("This is a sample word document"));
-	}
+    /**
+     * Check that we do the positions correctly when working with a mix ascii,
+     * unicode file
+     */
+    public void testUnicodeParts() throws Exception {
+        HWPFDocument doc = HWPFTestDataSamples
+                .openSampleFile("HeaderFooterUnicode.doc");
+        TextPieceTable tbl = doc.getTextTable();
 
-	/**
-	 * Check that we do the positions correctly when
-	 *  working with a mix ascii, unicode file
-	 */
-	public void testUnicodeParts() throws Exception {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
-		TextPieceTable tbl = doc.getTextTable();
+        // In three bits, split every 512 bytes
+        assertEquals(3, tbl.getTextPieces().size());
+        TextPiece tpA = tbl.getTextPieces().get(0);
+        TextPiece tpB = tbl.getTextPieces().get(1);
+        TextPiece tpC = tbl.getTextPieces().get(2);
 
-		// In three bits, split every 512 bytes
-		assertEquals(3, tbl.getTextPieces().size());
-		TextPiece tpA = (TextPiece)tbl.getTextPieces().get(0);
-		TextPiece tpB = (TextPiece)tbl.getTextPieces().get(1);
-		TextPiece tpC = (TextPiece)tbl.getTextPieces().get(2);
+        assertTrue(tpA.isUnicode());
+        assertTrue(tpB.isUnicode());
+        assertTrue(tpC.isUnicode());
 
-		assertTrue(tpA.isUnicode());
-		assertTrue(tpB.isUnicode());
-		assertTrue(tpC.isUnicode());
+        assertEquals(256, tpA.characterLength());
+        assertEquals(256, tpB.characterLength());
+        assertEquals(19, tpC.characterLength());
 
-		assertEquals(256, tpA.characterLength());
-		assertEquals(256, tpB.characterLength());
-		assertEquals(19, tpC.characterLength());
+        assertEquals(512, tpA.bytesLength());
+        assertEquals(512, tpB.bytesLength());
+        assertEquals(38, tpC.bytesLength());
 
-		assertEquals(512, tpA.bytesLength());
-		assertEquals(512, tpB.bytesLength());
-		assertEquals(38, tpC.bytesLength());
+        assertEquals(0, tpA.getStart());
+        assertEquals(256, tpA.getEnd());
+        assertEquals(256, tpB.getStart());
+        assertEquals(512, tpB.getEnd());
+        assertEquals(512, tpC.getStart());
+        assertEquals(531, tpC.getEnd());
 
-		assertEquals(0, tpA.getStart());
-		assertEquals(256, tpA.getEnd());
-		assertEquals(256, tpB.getStart());
-		assertEquals(512, tpB.getEnd());
-		assertEquals(512, tpC.getStart());
-		assertEquals(531, tpC.getEnd());
+        // Save and re-load
+        HWPFDocument docB = saveAndReload(doc);
+        tbl = docB.getTextTable();
 
+        assertEquals(3, tbl.getTextPieces().size());
+        tpA = tbl.getTextPieces().get(0);
+        tpB = tbl.getTextPieces().get(1);
+        tpC = tbl.getTextPieces().get(2);
 
-		// Save and re-load
-		HWPFDocument docB = saveAndReload(doc);
-		tbl = docB.getTextTable();
+        assertTrue(tpA.isUnicode());
+        assertTrue(tpB.isUnicode());
+        assertTrue(tpC.isUnicode());
 
-		assertEquals(3, tbl.getTextPieces().size());
-		tpA = (TextPiece)tbl.getTextPieces().get(0);
-		tpB = (TextPiece)tbl.getTextPieces().get(1);
-		tpC = (TextPiece)tbl.getTextPieces().get(2);
+        assertEquals(256, tpA.characterLength());
+        assertEquals(256, tpB.characterLength());
+        assertEquals(19, tpC.characterLength());
 
-		assertTrue(tpA.isUnicode());
-		assertTrue(tpB.isUnicode());
-		assertTrue(tpC.isUnicode());
+        assertEquals(512, tpA.bytesLength());
+        assertEquals(512, tpB.bytesLength());
+        assertEquals(38, tpC.bytesLength());
 
-		assertEquals(256, tpA.characterLength());
-		assertEquals(256, tpB.characterLength());
-		assertEquals(19, tpC.characterLength());
+        assertEquals(0, tpA.getStart());
+        assertEquals(256, tpA.getEnd());
+        assertEquals(256, tpB.getStart());
+        assertEquals(512, tpB.getEnd());
+        assertEquals(512, tpC.getStart());
+        assertEquals(531, tpC.getEnd());
+    }
 
-		assertEquals(512, tpA.bytesLength());
-		assertEquals(512, tpB.bytesLength());
-		assertEquals(38, tpC.bytesLength());
+    protected HWPFDocument saveAndReload(HWPFDocument doc) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doc.write(baos);
 
-		assertEquals(0, tpA.getStart());
-		assertEquals(256, tpA.getEnd());
-		assertEquals(256, tpB.getStart());
-		assertEquals(512, tpB.getEnd());
-		assertEquals(512, tpC.getStart());
-		assertEquals(531, tpC.getEnd());
-	}
+        return new HWPFDocument(new ByteArrayInputStream(baos.toByteArray()));
+    }
 
-	protected HWPFDocument saveAndReload(HWPFDocument doc) throws Exception {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		doc.write(baos);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        System.setProperty("org.apache.poi.hwpf.preserveTextTable",
+                Boolean.TRUE.toString());
 
-		return new HWPFDocument(
-				new ByteArrayInputStream(baos.toByteArray())
-		);
-	}
+        _hWPFDocFixture = new HWPFDocFixture(this,
+                HWPFDocFixture.DEFAULT_TEST_FILE);
+        _hWPFDocFixture.setUp();
+    }
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    System.setProperty( "org.apache.poi.hwpf.preserveTextTable", Boolean.TRUE.toString() );
+    @Override
+    protected void tearDown() throws Exception {
+        _hWPFDocFixture.tearDown();
+        _hWPFDocFixture = null;
 
-    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
-    _hWPFDocFixture.setUp();
-  }
-
-  protected void tearDown()
-    throws Exception
-  {
-    _hWPFDocFixture.tearDown();
-    _hWPFDocFixture = null;
-
-    System.setProperty( "org.apache.poi.hwpf.preserveTextTable", Boolean.FALSE.toString() );
-    super.tearDown();
-  }
+        System.setProperty("org.apache.poi.hwpf.preserveTextTable",
+                Boolean.FALSE.toString());
+        super.tearDown();
+    }
 
 }

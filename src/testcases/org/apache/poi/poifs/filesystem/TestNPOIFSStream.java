@@ -62,6 +62,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x00, b.get());
       assertEquals((byte)0x00, b.get());
       assertEquals((byte)0x00, b.get());
+      
+      fs.close();
    }
 
    /**
@@ -103,6 +105,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x00, b98.get());
       assertEquals((byte)0x00, b98.get());
       assertEquals((byte)0x00, b98.get());
+      
+      fs.close();
    }
    
    /**
@@ -157,6 +161,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x01, b22.get());
       assertEquals((byte)0x02, b22.get());
       assertEquals((byte)0x00, b22.get());
+      
+      fs.close();
    }
 
    /**
@@ -211,6 +217,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x00, b2.get());
       assertEquals((byte)0x46, b2.get());
       assertEquals((byte)0x00, b2.get());
+      
+      fs.close();
    }
    
    /**
@@ -249,6 +257,8 @@ public final class TestNPOIFSStream extends TestCase {
          // Good, it was detected
       }
       assertEquals(true, i.hasNext());
+      
+      fs.close();
    }
 
    /**
@@ -304,6 +314,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x00, b180.get());
       assertEquals((byte)0x00, b180.get());
       assertEquals((byte)0x80, b180.get());
+      
+      fs.close();
    }
 
    /**
@@ -334,6 +346,8 @@ public final class TestNPOIFSStream extends TestCase {
          byte exp = (byte)(i%256);
          assertEquals(exp, data[i]);
       }
+      
+      fs.close();
    }
    
    /**
@@ -373,6 +387,8 @@ public final class TestNPOIFSStream extends TestCase {
          byte exp = (byte)(i%256);
          assertEquals(exp, data[i]);
       }
+      
+      fs.close();
    }
    
    /**
@@ -417,6 +433,8 @@ public final class TestNPOIFSStream extends TestCase {
          count++;
       }
       assertEquals(3, count);
+      
+      fs.close();
    }
    
    /**
@@ -507,6 +525,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
+      
+      fs.close();
    }
    
    /**
@@ -547,6 +567,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals(130,                         fs.getNextBlock(129));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(130));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(131));
+      
+      fs.close();
    }
    
    /**
@@ -600,6 +622,8 @@ public final class TestNPOIFSStream extends TestCase {
          count++;
       }
       assertEquals(5, count);
+      
+      fs.close();
    }
    
    /**
@@ -790,6 +814,8 @@ public final class TestNPOIFSStream extends TestCase {
       assertEquals((byte)0x42, b183.get(1));
       assertEquals((byte)0x81, b184.get(0));
       assertEquals((byte)0x82, b184.get(1));
+      
+      fs.close();
    }
 
    /**
@@ -823,6 +849,8 @@ public final class TestNPOIFSStream extends TestCase {
          stream.updateContents(data);
          fail("Loop should have been detected but wasn't!");
       } catch(IllegalStateException e) {}
+      
+      fs.close();
    }
    
    /**
@@ -889,6 +917,8 @@ public final class TestNPOIFSStream extends TestCase {
       }
       
       assertEquals(false, it.hasNext());
+      
+      fs.close();
    }
    
    /**
@@ -1079,5 +1109,7 @@ public final class TestNPOIFSStream extends TestCase {
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(4096, normal.getSize());
        assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
+       
+       fs.close();
    }
 }

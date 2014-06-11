@@ -114,6 +114,7 @@ public class CustomProperty extends MutableProperty
     /**
      * @see java.util.AbstractSet#hashCode()
      */
+    @Override
     public int hashCode()
     {
         return (int) this.getID();

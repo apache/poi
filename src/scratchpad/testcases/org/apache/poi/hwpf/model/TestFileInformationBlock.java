@@ -21,53 +21,51 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hwpf.HWPFDocFixture;
 
-public final class TestFileInformationBlock
-  extends TestCase
-{
-  private FileInformationBlock _fileInformationBlock = null;
-  private HWPFDocFixture _hWPFDocFixture;
+public final class TestFileInformationBlock extends TestCase {
+    private FileInformationBlock _fileInformationBlock = null;
+    private HWPFDocFixture _hWPFDocFixture;
 
-  public void testReadWrite()
-    throws Exception
-  {
-    int size = _fileInformationBlock.getSize();
-    byte[] buf = new byte[size];
+    public void testReadWrite() throws Exception {
+        int size = _fileInformationBlock.getSize();
+        byte[] buf = new byte[size];
 
-    _fileInformationBlock.getFibBase().serialize(buf, 0);
+        _fileInformationBlock.getFibBase().serialize(buf, 0);
 
-    FileInformationBlock newFileInformationBlock =
-      new FileInformationBlock(buf);
+        FileInformationBlock newFileInformationBlock = new FileInformationBlock(
+                buf);
 
-    Field[] fields = FileInformationBlock.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
+        Field[] fields = FileInformationBlock.class.getSuperclass()
+                .getDeclaredFields();
+        AccessibleObject.setAccessible(fields, true);
 
-    for (int x = 0; x < fields.length; x++)
-    {
-      assertEquals(fields[x].get(_fileInformationBlock), fields[x].get(newFileInformationBlock));
+        for (int x = 0; x < fields.length; x++) {
+            assertEquals(fields[x].get(_fileInformationBlock),
+                    fields[x].get(newFileInformationBlock));
+        }
+        
+        assertNotNull(_fileInformationBlock.toString());
     }
-  }
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
-    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        /** @todo verify the constructors */
+        _hWPFDocFixture = new HWPFDocFixture(this,
+                HWPFDocFixture.DEFAULT_TEST_FILE);
 
-    _hWPFDocFixture.setUp();
-    _fileInformationBlock = _hWPFDocFixture._fib;
-  }
+        _hWPFDocFixture.setUp();
+        _fileInformationBlock = _hWPFDocFixture._fib;
+    }
 
-  protected void tearDown()
-    throws Exception
-  {
-    _fileInformationBlock = null;
-    _hWPFDocFixture.tearDown();
+    @Override
+    protected void tearDown() throws Exception {
+        _fileInformationBlock = null;
+        _hWPFDocFixture.tearDown();
 
-    _hWPFDocFixture = null;
-    super.tearDown();
-  }
-
+        _hWPFDocFixture = null;
+        super.tearDown();
+    }
 }

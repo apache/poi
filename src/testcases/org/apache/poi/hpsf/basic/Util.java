@@ -131,7 +131,7 @@ final class Util {
                                          final String[] poiFiles)
         throws FileNotFoundException, IOException
     {
-        final List files = new ArrayList();
+        final List<POIFile> files = new ArrayList<POIFile>();
         POIFSReader r = new POIFSReader();
         POIFSReaderListener pfl = new POIFSReaderListener()
         {
@@ -170,7 +170,7 @@ final class Util {
         r.read(new FileInputStream(poiFs));
         POIFile[] result = new POIFile[files.size()];
         for (int i = 0; i < result.length; i++)
-            result[i] = (POIFile) files.get(i);
+            result[i] = files.get(i);
         return result;
     }
 
@@ -195,7 +195,7 @@ final class Util {
     public static POIFile[] readPropertySets(final File poiFs)
         throws FileNotFoundException, IOException
     {
-        final List files = new ArrayList(7);
+        final List<POIFile> files = new ArrayList<POIFile>(7);
         final POIFSReader r = new POIFSReader();
         POIFSReaderListener pfl = new POIFSReaderListener()
         {

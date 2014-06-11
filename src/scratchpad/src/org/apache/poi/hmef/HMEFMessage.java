@@ -47,20 +47,24 @@ public final class HMEFMessage {
    private List<Attachment> attachments = new ArrayList<Attachment>();
    
    public HMEFMessage(InputStream inp) throws IOException {
-      // Check the signature matches
-      int sig = LittleEndian.readInt(inp);
-      if(sig != HEADER_SIGNATURE) {
-         throw new IllegalArgumentException(
-               "TNEF signature not detected in file, " +
-               "expected " + HEADER_SIGNATURE + " but got " + sig
-         );
+       try {
+          // Check the signature matches
+          int sig = LittleEndian.readInt(inp);
+          if(sig != HEADER_SIGNATURE) {
+             throw new IllegalArgumentException(
+                   "TNEF signature not detected in file, " +
+                   "expected " + HEADER_SIGNATURE + " but got " + sig
+             );
+          }
+          
+          // Read the File ID
+          fileId = LittleEndian.readUShort(inp);
+          
+          // Now begin processing the contents
+          process(inp);
+      } finally {
+          inp.close();
       }
-      
-      // Read the File ID
-      fileId = LittleEndian.readUShort(inp);
-      
-      // Now begin processing the contents
-      process(inp);
    }
    
    private void process(InputStream inp) throws IOException {

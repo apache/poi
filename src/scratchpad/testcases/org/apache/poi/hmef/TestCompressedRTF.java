@@ -18,6 +18,7 @@
 package org.apache.poi.hmef;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
@@ -157,34 +158,37 @@ public final class TestCompressedRTF extends TestCase {
        assertNotNull(attr);
        MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute)attr;
        
-       byte[] expected = IOUtils.toByteArray(
-             _samples.openResourceAsStream("quick-contents/message.rtf")
-       );
-       
-       CompressedRTF comp = new CompressedRTF();
-       byte[] data = rtfAttr.getRawData();
-       byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
-       
-       // Check the length was as expected
-       assertEquals(data.length, comp.getCompressedSize() + 16);
-       assertEquals(expected.length, comp.getDeCompressedSize()); 
-       
-       // Will have been padded though
-       assertEquals(expected.length+2, decomp.length);
-       byte[] tmp = new byte[expected.length];
-       System.arraycopy(decomp, 0, tmp, 0, tmp.length);
-       decomp = tmp;
-       
-       // By byte
-       assertEquals(expected.length, decomp.length);
-       for(int i=0; i<expected.length; i++) {
-          assertEquals(expected[i], decomp[i]);
+       InputStream stream = _samples.openResourceAsStream("quick-contents/message.rtf");
+       try {
+           byte[] expected = IOUtils.toByteArray(stream);
+           
+           CompressedRTF comp = new CompressedRTF();
+           byte[] data = rtfAttr.getRawData();
+           byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
+           
+           // Check the length was as expected
+           assertEquals(data.length, comp.getCompressedSize() + 16);
+           assertEquals(expected.length, comp.getDeCompressedSize()); 
+           
+           // Will have been padded though
+           assertEquals(expected.length+2, decomp.length);
+           byte[] tmp = new byte[expected.length];
+           System.arraycopy(decomp, 0, tmp, 0, tmp.length);
+           decomp = tmp;
+           
+           // By byte
+           assertEquals(expected.length, decomp.length);
+           for(int i=0; i<expected.length; i++) {
+               assertEquals(expected[i], decomp[i]);
+           }
+           
+           // By String
+           String expString = new String(expected, "ASCII");
+           String decompStr = rtfAttr.getDataString();
+           assertEquals(expString.length(), decompStr.length());
+           assertEquals(expString, decompStr);
+       } finally {
+           stream.close();
        }
-       
-       // By String
-       String expString = new String(expected, "ASCII");
-       String decompStr = rtfAttr.getDataString();
-       assertEquals(expString.length(), decompStr.length());
-       assertEquals(expString, decompStr);
     }
 }

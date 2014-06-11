@@ -342,7 +342,8 @@ public final class TestWordExtractor extends TestCase {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
        files[0] = (new POIFSFileSystem(docTests.openResourceAsStream("test2.doc"))).getRoot();
-       files[1] = (new NPOIFSFileSystem(docTests.getFile("test2.doc"))).getRoot();
+       NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(docTests.getFile("test2.doc"));
+       files[1] = npoifsFileSystem.getRoot();
        
        // Open directly 
        for(DirectoryNode dir : files) {
@@ -356,6 +357,8 @@ public final class TestWordExtractor extends TestCase {
           WordExtractor extractor = new WordExtractor(doc);
           assertEquals(p_text1_block, extractor.getText());
        }
+       
+       npoifsFileSystem.close();
     }
 
     /**
