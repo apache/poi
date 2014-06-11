@@ -28,6 +28,7 @@ under the License.
         Rainer Klute        klute@rainer-klute.de
         Bruno Girin         brunogirin@gmail.com
         Yegor Kozlov        yegor at apache.org
+        Dominik Stadler     centic at apache.org
 
     This build was tested with ant 1.6.2 although it will probably work with
     other versions.  The following jar files should be available on the 
@@ -40,7 +41,7 @@ under the License.
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.  Forrest 0.5.1 required.
 
-    You currently need JDK 1.6 or newer to build POI. 
+    Since POI 3.11 you will need JDK 1.6 or newer to build POI. 
 
     Some people may find the tests hang when run through Ant. If this
     happens to you, try giving Ant some more memory when you run it, eg:

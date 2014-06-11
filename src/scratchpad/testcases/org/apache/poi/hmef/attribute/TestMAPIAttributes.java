@@ -18,6 +18,7 @@
 package org.apache.poi.hmef.attribute;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -32,17 +33,25 @@ import org.apache.poi.util.LittleEndian;
 public final class TestMAPIAttributes extends TestCase {
    private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
    private HMEFMessage quick;
+   private InputStream stream;
    
    @Override
    protected void setUp() throws Exception {
       super.setUp();
       
-      quick = new HMEFMessage(
-            _samples.openResourceAsStream("quick-winmail.dat")
-      );
+      stream = _samples.openResourceAsStream("quick-winmail.dat");
+      quick = new HMEFMessage(stream);
    }
-   
-   /** 
+
+
+   protected void tearDown() throws Exception {
+       stream.close();
+
+       super.tearDown();
+   }
+
+
+/** 
     * Test counts
     */
    public void testCounts() throws Exception {

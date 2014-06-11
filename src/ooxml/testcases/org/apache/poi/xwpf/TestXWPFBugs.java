@@ -66,6 +66,8 @@ public class TestXWPFBugs {
         assertNotNull(text);
         assertEquals("This is password protected Word document.", text.trim());
         ex.close();
+        
+        filesystem.close();
     }
 
     /**
@@ -101,5 +103,7 @@ public class TestXWPFBugs {
         // I know ... a stupid typo, maybe next time ...
         assertEquals("The is a password protected document.", text.trim());
         ex.close();
+        
+        filesystem.close();
     }
 }

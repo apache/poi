@@ -396,11 +396,15 @@ public class TestBugs extends TestCase
         // document as text file using encoding UTF-8)
         InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream( "Bug47742-text.txt" );
-        byte[] expectedBytes = IOUtils.toByteArray( is );
-        String expectedText = new String( expectedBytes, "utf-8" )
-                .substring( 1 ); // strip-off the unicode marker
-
-        assertEquals( expectedText, foundText );
+        try {
+            byte[] expectedBytes = IOUtils.toByteArray( is );
+            String expectedText = new String( expectedBytes, "utf-8" )
+                    .substring( 1 ); // strip-off the unicode marker
+    
+            assertEquals( expectedText, foundText );
+        } finally {
+            is.close();
+        }
     }
 
     /**

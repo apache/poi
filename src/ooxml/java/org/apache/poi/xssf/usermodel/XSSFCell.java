@@ -133,6 +133,7 @@ public final class XSSFCell implements Cell {
      *
      * @return the sheet this cell belongs to
      */
+    @Override
     public XSSFSheet getSheet() {
         return getRow().getSheet();
     }
@@ -142,6 +143,7 @@ public final class XSSFCell implements Cell {
      *
      * @return the row this cell belongs to
      */
+    @Override
     public XSSFRow getRow() {
         return _row;
     }
@@ -155,6 +157,7 @@ public final class XSSFCell implements Cell {
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()}
      *   is not CELL_TYPE_BOOLEAN, CELL_TYPE_BLANK or CELL_TYPE_FORMULA
      */
+    @Override
     public boolean getBooleanCellValue() {
         int cellType = getCellType();
         switch(cellType) {
@@ -177,6 +180,7 @@ public final class XSSFCell implements Cell {
      *        precalculated value, for booleans we'll set its value. For other types we
      *        will change the cell to a boolean cell and set its value.
      */
+    @Override
     public void setCellValue(boolean value) {
         _cell.setT(STCellType.B);
         _cell.setV(value ? TRUE_AS_STRING : FALSE_AS_STRING);
@@ -193,6 +197,7 @@ public final class XSSFCell implements Cell {
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
+    @Override
     public double getNumericCellValue() {
         int cellType = getCellType();
         switch(cellType) {
@@ -222,6 +227,7 @@ public final class XSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
+    @Override
     public void setCellValue(double value) {
         if(Double.isInfinite(value)) {
             // Excel does not support positive/negative infinities,
@@ -247,6 +253,7 @@ public final class XSSFCell implements Cell {
      * </p>
      * @return the value of the cell as a string
      */
+    @Override
     public String getStringCellValue() {
         XSSFRichTextString str = getRichStringCellValue();
         return str == null ? null : str.getString();
@@ -260,6 +267,7 @@ public final class XSSFCell implements Cell {
      * </p>
      * @return the value of the cell as a XSSFRichTextString
      */
+    @Override
     public XSSFRichTextString getRichStringCellValue() {
         int cellType = getCellType();
         XSSFRichTextString rt;
@@ -316,6 +324,7 @@ public final class XSSFCell implements Cell {
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
+    @Override
     public void setCellValue(String str) {
         setCellValue(str == null ? null : new XSSFRichTextString(str));
     }
@@ -328,6 +337,7 @@ public final class XSSFCell implements Cell {
      * change the cell to a string cell and set its value.
      * If value is null then we will change the cell to a Blank cell.
      */
+    @Override
     public void setCellValue(RichTextString str) {
         if(str == null || str.getString() == null){
             setCellType(Cell.CELL_TYPE_BLANK);
@@ -360,6 +370,7 @@ public final class XSSFCell implements Cell {
      * @return a formula for the cell
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not CELL_TYPE_FORMULA
      */
+    @Override
     public String getCellFormula() {
         int cellType = getCellType();
         if(cellType != CELL_TYPE_FORMULA) throw typeMismatch(CELL_TYPE_FORMULA, cellType, false);
@@ -417,6 +428,7 @@ public final class XSSFCell implements Cell {
      * @throws IllegalStateException if the operation is not allowed, for example,
      *  when the cell is a part of a multi-cell array formula
      */
+    @Override
     public void setCellFormula(String formula) {
         if(isPartOfArrayFormulaGroup()){
             notifyArrayFormulaChanging();
@@ -454,6 +466,7 @@ public final class XSSFCell implements Cell {
      *
      * @return zero-based column index of a column in a sheet.
      */
+    @Override
     public int getColumnIndex() {
         return this._cellNum;
     }
@@ -463,6 +476,7 @@ public final class XSSFCell implements Cell {
      *
      * @return zero-based row index of a row in the sheet that contains this cell
      */
+    @Override
     public int getRowIndex() {
         return _row.getRowNum();
     }
@@ -485,6 +499,7 @@ public final class XSSFCell implements Cell {
      *
      * @return the cell's style.</code>
      */
+    @Override
     public XSSFCellStyle getCellStyle() {
         XSSFCellStyle style = null;
         if(_stylesSource.getNumCellStyles() > 0){
@@ -501,6 +516,7 @@ public final class XSSFCell implements Cell {
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
      */
+    @Override
     public void setCellStyle(CellStyle style) {
         if(style == null) {
             if(_cell.isSetS()) _cell.unsetS();
@@ -524,6 +540,7 @@ public final class XSSFCell implements Cell {
      * @see Cell#CELL_TYPE_BOOLEAN
      * @see Cell#CELL_TYPE_ERROR
      */
+    @Override
     public int getCellType() {
 
         if (_cell.getF() != null || getSheet().isCellInArrayFormulaContext(this)) {
@@ -539,6 +556,7 @@ public final class XSSFCell implements Cell {
      *     {@link #CELL_TYPE_BOOLEAN}, {@link #CELL_TYPE_ERROR}) depending
      * on the cached value of the formula
      */
+    @Override
     public int getCachedFormulaResultType() {
         if (_cell.getF() == null) {
             throw new IllegalStateException("Only formula cells have cached results");
@@ -585,6 +603,7 @@ public final class XSSFCell implements Cell {
      * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
+    @Override
     public Date getDateCellValue() {
         int cellType = getCellType();
         if (cellType == CELL_TYPE_BLANK) {
@@ -604,6 +623,7 @@ public final class XSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */
+    @Override
     public void setCellValue(Date value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
@@ -625,6 +645,7 @@ public final class XSSFCell implements Cell {
      *        precalculated value, for numerics we'll set its value. For othertypes we
      *        will change the cell to a numeric cell and set its value.
      */
+    @Override
     public void setCellValue(Calendar value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
@@ -654,6 +675,7 @@ public final class XSSFCell implements Cell {
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} isn't CELL_TYPE_ERROR
      * @see FormulaError
      */
+    @Override
     public byte getErrorCellValue() {
         String code = getErrorCellString();
         if (code == null) {
@@ -672,6 +694,7 @@ public final class XSSFCell implements Cell {
      *        cell and set its value.
      * @see FormulaError
      */
+    @Override
     public void setCellErrorValue(byte errorCode) {
         FormulaError error = FormulaError.forInt(errorCode);
         setCellErrorValue(error);
@@ -693,6 +716,7 @@ public final class XSSFCell implements Cell {
     /**
      * Sets this cell as the active cell for the worksheet.
      */
+    @Override
     public void setAsActiveCell() {
         getSheet().setActiveCell(getReference());
     }
@@ -731,16 +755,17 @@ public final class XSSFCell implements Cell {
      * @see #CELL_TYPE_BOOLEAN
      * @see #CELL_TYPE_ERROR
      */
+    @Override
     public void setCellType(int cellType) {
         int prevType = getCellType();
-       
+
         if(isPartOfArrayFormulaGroup()){
             notifyArrayFormulaChanging();
         }
         if(prevType == CELL_TYPE_FORMULA && cellType != CELL_TYPE_FORMULA) {
             getSheet().getWorkbook().onDeleteFormula(this);
         }
-        
+
         switch (cellType) {
             case CELL_TYPE_BLANK:
                 setBlank();
@@ -873,6 +898,7 @@ public final class XSSFCell implements Cell {
      *
      * @return the cell comment associated with this cell or <code>null</code>
      */
+    @Override
     public XSSFComment getCellComment() {
         return getSheet().getCellComment(_row.getRowNum(), getColumnIndex());
     }
@@ -883,6 +909,7 @@ public final class XSSFCell implements Cell {
      *
      * @param comment the XSSFComment associated with this cell
      */
+    @Override
     public void setCellComment(Comment comment) {
         if(comment == null) {
             removeCellComment();
@@ -896,6 +923,7 @@ public final class XSSFCell implements Cell {
     /**
      * Removes the comment for this cell, if there is one.
     */
+    @Override
     public void removeCellComment() {
         XSSFComment comment = getCellComment();
         if(comment != null){
@@ -911,6 +939,7 @@ public final class XSSFCell implements Cell {
      *
      * @return hyperlink associated with this cell or <code>null</code> if not found
      */
+    @Override
     public XSSFHyperlink getHyperlink() {
         return getSheet().getHyperlink(_row.getRowNum(), _cellNum);
     }
@@ -920,6 +949,7 @@ public final class XSSFCell implements Cell {
      *
      * @param hyperlink the hyperlink to associate with this cell
      */
+    @Override
     public void setHyperlink(Hyperlink hyperlink) {
         XSSFHyperlink link = (XSSFHyperlink)hyperlink;
 
@@ -1026,6 +1056,7 @@ public final class XSSFCell implements Cell {
         throw new IllegalStateException("Unexpected formula result type (" + cellType + ")");
     }
 
+    @Override
     public CellRangeAddress getArrayFormulaRange() {
         XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
         if (cell == null) {
@@ -1036,6 +1067,7 @@ public final class XSSFCell implements Cell {
         return CellRangeAddress.valueOf(formulaRef);
     }
 
+    @Override
     public boolean isPartOfArrayFormulaGroup() {
         return getSheet().isCellInArrayFormulaContext(this);
     }

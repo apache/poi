@@ -111,6 +111,8 @@ public final class TestNPOIFSFileSystem {
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
          assertEquals(512, fs.getBigBlockSize());
       }
+      fsA.close();
+      fsB.close();
       
       // Now with a simple 4096 block file
       fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
@@ -118,6 +120,8 @@ public final class TestNPOIFSFileSystem {
       for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB}) {
          assertEquals(4096, fs.getBigBlockSize());
       }
+      fsA.close();
+      fsB.close();
    }
 
    @Test
@@ -186,6 +190,8 @@ public final class TestNPOIFSFileSystem {
             assertEquals(i+1, ministore.getNextBlock(i));
          }
          assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(50));
+         
+         fs.close();
       }
       
       // Now with a simple 4096 block file
@@ -252,6 +258,8 @@ public final class TestNPOIFSFileSystem {
             assertEquals(i+1, ministore.getNextBlock(i));
          }
          assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(50));
+         
+         fs.close();
       }
    }
    
@@ -295,6 +303,8 @@ public final class TestNPOIFSFileSystem {
          for(int i=100; i<fs.getBigBlockSizeDetails().getBATEntriesPerBlock(); i++) {
             assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(i));
          }
+         
+         fs.close();
       }
       
       // Quick check on 4096 byte blocks too
@@ -311,6 +321,8 @@ public final class TestNPOIFSFileSystem {
             assertEquals(i+1, fs.getNextBlock(i));
          }
          assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(11));
+         
+         fs.close();
       }
    }
 
@@ -348,6 +360,8 @@ public final class TestNPOIFSFileSystem {
          assertEquals((byte)0x00, b.get());
          assertEquals((byte)0x00, b.get());
          assertEquals((byte)0x00, b.get());
+         
+         fs.close();
       }
       
       // Quick check on 4096 byte blocks too
@@ -380,6 +394,8 @@ public final class TestNPOIFSFileSystem {
          assertEquals((byte)0x00, b.get());
          assertEquals((byte)0x00, b.get());
          assertEquals((byte)0x00, b.get());
+         
+         fs.close();
       }
    }
    
@@ -591,6 +607,8 @@ public final class TestNPOIFSFileSystem {
          // Look inside another
          DirectoryEntry imageD = (DirectoryEntry)image;
          assertEquals(7, imageD.getEntryCount());
+         
+         fs.close();
       }
    }
    
@@ -635,6 +653,8 @@ public final class TestNPOIFSFileSystem {
          ps = PropertySetFactory.create(inp);
          DocumentSummaryInformation dinf = (DocumentSummaryInformation)ps;
          assertEquals(131333, dinf.getOSVersion());
+         
+         fs.close();
       }
    }
    

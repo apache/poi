@@ -227,11 +227,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *       // work with the wb object
      *       ......
      *       pkg.close(); // gracefully closes the underlying zip file
-     *   </code></pre>     
+     *   </code></pre>
      */
     public XSSFWorkbook(InputStream is) throws IOException {
         super(PackageHelper.open(is));
-        
+
         //build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
     }
@@ -253,7 +253,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *     then pass the data to ZipInputStream.
      *     </li>
      * <ol>
-     * <p>    
+     * <p>
      *     It should be noted, that (2) uses quite a bit more memory than (1), which
      *      doesn't need to hold the whole zip file in memory, and can take advantage
      *      of native methods.
@@ -267,9 +267,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *       // work with the wb object
      *       ......
      *       pkg.close(); // gracefully closes the underlying zip file
-     *   </code></pre>     
+     *   </code></pre>
      * </p>
-     * 
+     *
      * @param      path   the file name.
      * @deprecated
      */
@@ -399,6 +399,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @see Workbook#PICTURE_TYPE_DIB
      * @see #getAllPictures()
      */
+    @Override
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
         XSSFPictureData img = (XSSFPictureData)createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true);
@@ -446,6 +447,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @throws IllegalArgumentException if the sheet index in invalid
      * @throws POIXMLException if there were errors when cloning
      */
+    @Override
     public XSSFSheet cloneSheet(int sheetNum) {
         validateSheetIndex(sheetNum);
 
@@ -557,6 +559,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return the new XSSFCellStyle object
      */
+    @Override
     public XSSFCellStyle createCellStyle() {
         return stylesSource.createCellStyle();
     }
@@ -567,6 +570,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return the XSSFDataFormat object
      * @see org.apache.poi.ss.usermodel.DataFormat
      */
+    @Override
     public XSSFDataFormat createDataFormat() {
         if (formatter == null)
             formatter = new XSSFDataFormat(stylesSource);
@@ -578,12 +582,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return new font object
      */
+    @Override
     public XSSFFont createFont() {
         XSSFFont font = new XSSFFont();
         font.registerTo(stylesSource);
         return font;
     }
 
+    @Override
     public XSSFName createName() {
         CTDefinedName ctName = CTDefinedName.Factory.newInstance();
         ctName.setName("");
@@ -598,6 +604,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return XSSFSheet representing the new sheet.
      */
+    @Override
     public XSSFSheet createSheet() {
         String sheetname = "Sheet" + (sheets.size());
         int idx = 0;
@@ -655,6 +662,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  or workbook already contains a sheet with this name
      * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
+    @Override
     public XSSFSheet createSheet(String sheetname) {
         if (sheetname == null) {
             throw new IllegalArgumentException("sheetName must not be null");
@@ -695,6 +703,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * Finds a font that matches the one with the supplied attributes
      */
+    @Override
     public XSSFFont findFont(short boldWeight, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
         return stylesSource.findFont(boldWeight, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
@@ -704,6 +713,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
+    @Override
     public int getActiveSheetIndex() {
         //activeTab (Active Sheet Index) Specifies an unsignedInt
         //that contains the index to the active sheet in this book view.
@@ -716,6 +726,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return the list of pictures (a list of {@link XSSFPictureData} objects.)
      * @see #addPicture(byte[], int)
      */
+    @Override
     public List<XSSFPictureData> getAllPictures() {
         if(pictures == null){
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
@@ -733,6 +744,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param idx  index within the set of styles
      * @return XSSFCellStyle object at the index
      */
+    @Override
     public XSSFCellStyle getCellStyleAt(short idx) {
         return stylesSource.getStyleAt(idx);
     }
@@ -743,10 +755,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param idx  index number
      * @return XSSFFont at the index
      */
+    @Override
     public XSSFFont getFontAt(short idx) {
         return stylesSource.getFontAt(idx);
     }
 
+    @Override
     public XSSFName getName(String name) {
         int nameIndex = getNameIndex(name);
         if (nameIndex < 0) {
@@ -755,6 +769,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return namedRanges.get(nameIndex);
     }
 
+    @Override
     public XSSFName getNameAt(int nameIndex) {
         int nNames = namedRanges.size();
         if (nNames < 1) {
@@ -775,6 +790,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param name named range name
      * @return named range index
      */
+    @Override
     public int getNameIndex(String name) {
         int i = 0;
         for(XSSFName nr : namedRanges) {
@@ -791,6 +807,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return count of cell styles
      */
+    @Override
     public short getNumCellStyles() {
         return (short) (stylesSource).getNumCellStyles();
     }
@@ -800,6 +817,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return number of fonts
      */
+    @Override
     public short getNumberOfFonts() {
         return (short)stylesSource.getFonts().size();
     }
@@ -809,6 +827,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return number of named ranges
      */
+    @Override
     public int getNumberOfNames() {
         return namedRanges.size();
     }
@@ -818,6 +837,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return number of worksheets
      */
+    @Override
     public int getNumberOfSheets() {
         return sheets.size();
     }
@@ -827,6 +847,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
      * @return String Null if no print area has been defined
      */
+    @Override
     public String getPrintArea(int sheetIndex) {
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) return null;
@@ -841,6 +862,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param name of the sheet
      * @return XSSFSheet with the name provided or <code>null</code> if it does not exist
      */
+    @Override
     public XSSFSheet getSheet(String name) {
         for (XSSFSheet sheet : sheets) {
             if (name.equalsIgnoreCase(sheet.getSheetName())) {
@@ -858,6 +880,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @throws IllegalArgumentException if the index is out of range (index
      *            &lt; 0 || index &gt;= getNumberOfSheets()).
      */
+    @Override
     public XSSFSheet getSheetAt(int index) {
         validateSheetIndex(index);
         return sheets.get(index);
@@ -869,6 +892,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param name the sheet name
      * @return index of the sheet (0 based) or <tt>-1</tt if not found
      */
+    @Override
     public int getSheetIndex(String name) {
         for (int i = 0 ; i < sheets.size() ; ++i) {
             XSSFSheet sheet = sheets.get(i);
@@ -885,6 +909,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheet the sheet to look up
      * @return index of the sheet (0 based). <tt>-1</tt> if not found
      */
+    @Override
     public int getSheetIndex(Sheet sheet) {
         int idx = 0;
         for(XSSFSheet sh : sheets){
@@ -900,6 +925,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIx Number
      * @return Sheet name
      */
+    @Override
     public String getSheetName(int sheetIx) {
         validateSheetIndex(sheetIx);
         return sheets.get(sheetIx).getSheetName();
@@ -914,6 +940,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * }
      * </code></pre>
      */
+    @Override
     public Iterator<XSSFSheet> iterator() {
         return sheets.iterator();
     }
@@ -925,10 +952,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return getPackagePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
     }
 
+    @Override
     public void removeName(int nameIndex) {
         namedRanges.remove(nameIndex);
     }
 
+    @Override
     public void removeName(String name) {
         for (int i = 0; i < namedRanges.size(); i++) {
             XSSFName nm = namedRanges.get(i);
@@ -942,9 +971,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
 
     /**
-     * As {@link #removeName(String)} is not necessarily unique 
+     * As {@link #removeName(String)} is not necessarily unique
      * (name + sheet index is unique), this method is more accurate.
-     * 
+     *
      * @param name the name to remove.
      */
     void removeName(XSSFName name) {
@@ -959,6 +988,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param sheetIndex 0-based sheet index (0 = First Sheet)
      */
+    @Override
     public void removePrintArea(int sheetIndex) {
         int cont = 0;
         for (XSSFName name : namedRanges) {
@@ -984,6 +1014,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param index of the sheet  (0-based)
      */
+    @Override
     public void removeSheetAt(int index) {
         validateSheetIndex(index);
 
@@ -1029,6 +1060,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * The default is to return blank and null cells.
      *  {@link MissingCellPolicy}
      */
+    @Override
     public MissingCellPolicy getMissingCellPolicy() {
         return _missingCellPolicy;
     }
@@ -1039,6 +1071,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *  {@link Row#getCell(int)}}. See
      *  {@link MissingCellPolicy}
      */
+    @Override
     public void setMissingCellPolicy(MissingCellPolicy missingCellPolicy) {
         _missingCellPolicy = missingCellPolicy;
     }
@@ -1048,6 +1081,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * which is currently displayed when the workbook is viewed in Excel.
      * 'Selected' sheet(s) is a distinct concept.
      */
+    @Override
     @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void setActiveSheet(int index) {
 
@@ -1082,6 +1116,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @return integer that contains the index to the active sheet in this book view.
      */
+    @Override
     public int getFirstVisibleTab() {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView = bookViews.getWorkbookViewArray(0);
@@ -1093,6 +1128,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param index integer that contains the index to the active sheet in this book view.
      */
+    @Override
     public void setFirstVisibleTab(int index) {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView= bookViews.getWorkbookViewArray(0);
@@ -1106,6 +1142,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIndex Zero-based sheet index (0 Represents the first sheet to keep consistent with java)
      * @param reference Valid name Reference for the Print Area
      */
+    @Override
     public void setPrintArea(int sheetIndex, String reference) {
         XSSFName name = getBuiltInName(XSSFName.BUILTIN_PRINT_AREA, sheetIndex);
         if (name == null) {
@@ -1135,6 +1172,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param startRow Row to begin the printarea
      * @param endRow Row to end the printarea
      */
+    @Override
     public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
         String reference=getReferencePrintArea(getSheetName(sheetIndex), startColumn, endColumn, startRow, endRow);
         setPrintArea(sheetIndex, reference);
@@ -1162,18 +1200,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param endColumn   0 based end of repeating columns.
      * @param startRow    0 based start of repeating rows.
      * @param endRow      0 based end of repeating rows.
-     * 
+     *
      * @deprecated use {@link XSSFSheet#setRepeatingRows(CellRangeAddress)}
      *        or {@link XSSFSheet#setRepeatingColumns(CellRangeAddress)}
      */
+    @Deprecated
+    @Override
     public void setRepeatingRowsAndColumns(int sheetIndex,
                                            int startColumn, int endColumn,
                                            int startRow, int endRow) {
       XSSFSheet sheet = getSheetAt(sheetIndex);
-      
+
       CellRangeAddress rows = null;
       CellRangeAddress cols = null;
-      
+
       if (startRow != -1) {
         rows = new CellRangeAddress(startRow, endRow, -1, -1);
       }
@@ -1231,6 +1271,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * We only set one sheet as selected for compatibility with HSSF.
      */
+    @Override
     public void setSelectedTab(int index) {
         for (int i = 0 ; i < sheets.size() ; ++i) {
             XSSFSheet sheet = sheets.get(i);
@@ -1248,6 +1289,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @see #createSheet(String)
      * @see org.apache.poi.ss.util.WorkbookUtil#createSafeSheetName(String nameProposal)
      */
+    @Override
     public void setSheetName(int sheetIndex, String sheetname) {
         validateSheetIndex(sheetIndex);
 
@@ -1272,6 +1314,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetname the name of the sheet to reorder
      * @param pos the position that we want to insert the sheet into (0 based)
      */
+    @Override
     public void setSheetOrder(String sheetname, int pos) {
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
@@ -1391,6 +1434,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Returns an object that handles instantiating concrete
      *  classes of the various instances for XSSF.
      */
+    @Override
     public XSSFCreationHelper getCreationHelper() {
         if(_creationHelper == null) _creationHelper = new XSSFCreationHelper(this);
         return _creationHelper;
@@ -1457,10 +1501,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return embedds;
     }
 
+    @Override
     public boolean isHidden() {
         throw new RuntimeException("Not implemented yet");
     }
 
+    @Override
     public void setHidden(boolean hiddenFlag) {
         throw new RuntimeException("Not implemented yet");
     }
@@ -1474,6 +1520,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIx Number
      * @return <code>true</code> if sheet is hidden
      */
+    @Override
     public boolean isSheetHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
@@ -1489,6 +1536,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param sheetIx sheet index to check
      * @return <code>true</code> if sheet is very hidden
      */
+    @Override
     public boolean isSheetVeryHidden(int sheetIx) {
         validateSheetIndex(sheetIx);
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
@@ -1509,6 +1557,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param hidden whether this sheet is hidden
      * @see #setSheetHidden(int, int)
      */
+    @Override
     public void setSheetHidden(int sheetIx, boolean hidden) {
         setSheetHidden(sheetIx, hidden ? SHEET_STATE_HIDDEN : SHEET_STATE_VISIBLE);
     }
@@ -1528,6 +1577,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *        <code>Workbook.SHEET_STATE_VERY_HIDDEN</code>.
      * @throws IllegalArgumentException if the supplied sheet index or state is invalid
      */
+    @Override
     public void setSheetHidden(int sheetIx, int state) {
         validateSheetIndex(sheetIx);
         WorkbookUtil.validateSheetState(state);
@@ -1584,7 +1634,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 	 * A value true indicates the structure of the workbook is locked. Worksheets in the workbook can't be moved,
 	 * deleted, hidden, unhidden, or renamed, and new worksheets can't be inserted.<br/>
 	 * A value of false indicates the structure of the workbook is not locked.<br/>
-	 * 
+	 *
 	 * @return true if structure of workbook is locked
 	 */
 	public boolean isStructureLocked() {
@@ -1596,7 +1646,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 	 * A value of true indicates the workbook windows are locked. Windows are the same size and position each time the
 	 * workbook is opened.<br/>
 	 * A value of false indicates the workbook windows are not locked.
-	 * 
+	 *
 	 * @return true if windows that comprise the workbook are locked
 	 */
 	public boolean isWindowsLocked() {
@@ -1605,13 +1655,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
 	/**
 	 * Specifies a boolean value that indicates whether the workbook is locked for revisions.
-	 * 
+	 *
 	 * @return true if the workbook is locked for revisions.
 	 */
 	public boolean isRevisionLocked() {
 		return workbookProtectionPresent() && workbook.getWorkbookProtection().getLockRevision();
 	}
-	
+
 	/**
 	 * Locks the structure of workbook.
 	 */
@@ -1619,7 +1669,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 		createProtectionFieldIfNotPresent();
 		workbook.getWorkbookProtection().setLockStructure(true);
 	}
-	
+
 	/**
 	 * Unlocks the structure of workbook.
 	 */
@@ -1629,21 +1679,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 	}
 
 	/**
-	 * Locks the windows that comprise the workbook. 
+	 * Locks the windows that comprise the workbook.
 	 */
 	public void lockWindows() {
 		createProtectionFieldIfNotPresent();
 		workbook.getWorkbookProtection().setLockWindows(true);
 	}
-	
+
 	/**
-	 * Unlocks the windows that comprise the workbook. 
+	 * Unlocks the windows that comprise the workbook.
 	 */
 	public void unLockWindows() {
 		createProtectionFieldIfNotPresent();
 		workbook.getWorkbookProtection().setLockWindows(false);
 	}
-	
+
 	/**
 	 * Locks the workbook for revisions.
 	 */
@@ -1659,7 +1709,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 		createProtectionFieldIfNotPresent();
 		workbook.getWorkbookProtection().setLockRevision(false);
 	}
-	
+
 	private boolean workbookProtectionPresent() {
 		return workbook.getWorkbookProtection() != null;
 	}
@@ -1691,6 +1741,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @param toopack the toolpack to register
      */
+    @Override
     public void addToolPack(UDFFinder toopack){
         _udfFinder.add(toopack);
     }
@@ -1712,7 +1763,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * workbook values when the workbook is opened
      * @since 3.8
      */
-   public void setForceFormulaRecalculation(boolean value){
+    @Override
+    public void setForceFormulaRecalculation(boolean value){
         CTWorkbook ctWorkbook = getCTWorkbook();
         CTCalcPr calcPr = ctWorkbook.isSetCalcPr() ? ctWorkbook.getCalcPr() : ctWorkbook.addNewCalcPr();
         // when set to 0, will tell Excel that it needs to recalculate all formulas
@@ -1729,6 +1781,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      *
      * @since 3.8
      */
+    @Override
     public boolean getForceFormulaRecalculation(){
         CTWorkbook ctWorkbook = getCTWorkbook();
         CTCalcPr calcPr = ctWorkbook.getCalcPr();

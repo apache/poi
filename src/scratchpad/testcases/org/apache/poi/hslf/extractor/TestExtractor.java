@@ -349,7 +349,8 @@ public final class TestExtractor extends POITestCase {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
        files[0] = (new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"))).getRoot();
-       files[1] = (new NPOIFSFileSystem(slTests.getFile("basic_test_ppt_file.ppt"))).getRoot();
+       NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(slTests.getFile("basic_test_ppt_file.ppt"));
+       files[1] = npoifsFileSystem.getRoot();
        
        // Open directly 
        for(DirectoryNode dir : files) {
@@ -363,6 +364,8 @@ public final class TestExtractor extends POITestCase {
           PowerPointExtractor extractor = new PowerPointExtractor(slideshow);
           assertEquals(expectText, extractor.getText());
        }
+       
+       npoifsFileSystem.close();
     }
 
     public void testTable() throws Exception{

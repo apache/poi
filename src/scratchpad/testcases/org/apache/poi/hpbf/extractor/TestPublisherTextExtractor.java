@@ -91,8 +91,9 @@ public final class TestPublisherTextExtractor extends TestCase {
       assertEquals( SAMPLE_TEXT, ext.getText() );
 
       // And with NPOIFS
-      HPBFDocument docNPOIFS = new HPBFDocument(
-            new NPOIFSFileSystem(sample)
+      NPOIFSFileSystem fs = new NPOIFSFileSystem(sample);
+    HPBFDocument docNPOIFS = new HPBFDocument(
+            fs
       );
 		ext = new PublisherTextExtractor(docNPOIFS);
 		assertEquals( SAMPLE_TEXT, ext.getText() );
@@ -103,6 +104,7 @@ public final class TestPublisherTextExtractor extends TestCase {
 		      new FileInputStream(simple)
 		);
       assertEquals( SIMPLE_TEXT, ext.getText() );
+      fs.close();
 	}
 
 	/**

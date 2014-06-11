@@ -268,7 +268,7 @@ public class TestWrite
         assertNotNull(psa[0]);
         assertTrue(psa[0].isSummaryInformation());
 
-        final Section s = (Section) (psa[0].getSections().get(0));
+        final Section s = (psa[0].getSections().get(0));
         Object p1 = s.getProperty(PropertyIDMap.PID_AUTHOR);
         Object p2 = s.getProperty(PropertyIDMap.PID_TITLE);
         assertEquals(AUTHOR, p1);
@@ -349,11 +349,11 @@ public class TestWrite
             stream.close();
         }
         assertNotNull(psa[0]);
-        Section s = (Section) (psa[0].getSections().get(0));
+        Section s = (psa[0].getSections().get(0));
         assertEquals(s.getFormatID(), formatID);
         Object p = s.getProperty(2);
         assertEquals(SECTION1, p);
-        s = (Section) (psa[0].getSections().get(1));
+        s = (psa[0].getSections().get(1));
         p = s.getProperty(2);
         assertEquals(SECTION2, p);
     }
@@ -584,7 +584,7 @@ public class TestWrite
 
             PropertySet psr = new PropertySet(bytes);
             assertTrue(psr.isSummaryInformation());
-            Section sr = (Section) psr.getSections().get(0);
+            Section sr = psr.getSections().get(0);
             String title = (String) sr.getProperty(PropertyIDMap.PID_TITLE);
             assertEquals(TITLE, title);
         }
