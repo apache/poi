@@ -199,10 +199,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
      *  see <a href="http://poi.apache.org/oxml4j/">http://poi.apache.org/oxml4j/</a>.
      * 
-     * Once you have finished working with the Workbook, you should close the package
-     * by calling pkg.close, to avoid leaving file handles open.
+     * <p>Once you have finished working with the Workbook, you should close the package
+     * by calling either {@link #close()} or {@link OPCPackage#close()}, to avoid 
+     * leaving file handles open.
      * 
-     * Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
+     * <p>Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
      *  footprint than an InputStream backed one.
      *
      * @param pkg the OpenXML4J <code>OPC Package</code> object.
@@ -218,7 +219,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Constructs a XSSFWorkbook object, by buffering the whole stream into memory
      *  and then opening an {@link OPCPackage} object for it.
      * 
-     * Using an {@link InputStream} requires more memory than using a File, so
+     * <p>Using an {@link InputStream} requires more memory than using a File, so
      *  if a {@link File} is available then you should instead do something like
      *   <pre><code>
      *       OPCPackage pkg = OPCPackage.open(path);
@@ -1349,6 +1350,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         OutputStream out = part.getOutputStream();
         workbook.save(out, xmlOptions);
         out.close();
+    }
+    
+    /**
+     * Closes the underlying {@link OPCPackage} from which
+     *  the Workbook was read, if any. Has no effect on newly 
+     *  created Workbooks.
+     */
+    @Override
+    public void close() throws IOException {
+        super.close();
     }
 
     /**

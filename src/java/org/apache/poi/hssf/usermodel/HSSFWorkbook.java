@@ -48,7 +48,19 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.DrawingGroupRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.CellReference;
@@ -56,6 +68,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -1178,6 +1191,22 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         return style;
     }
+    
+    /**
+     * Closes the underlying {@link NPOIFSFileSystem} from which
+     *  the Workbook was read, if any. Has no effect on Workbooks
+     *  opened from an InputStream, or newly created ones.
+     */
+    @Override
+    public void close() throws IOException
+    {
+        if (directory != null) {
+            if (directory.getNFileSystem() != null) {
+                directory.getNFileSystem().close();
+                directory = null;
+            }
+        }
+    }
 
     /**
      * Method write - write out this workbook to an Outputstream.  Constructs
@@ -1189,7 +1218,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @exception IOException if anything can't be written.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
      */
-
     @Override
 	public void write(OutputStream stream)
             throws IOException
