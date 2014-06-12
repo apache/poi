@@ -24,10 +24,8 @@ import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
-import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -53,6 +51,98 @@ public class XSLFSlideLayout extends XSLFSheet {
 
     public String getName() {
         return _layout.getCSld().getName();
+    }
+
+    public void setName(String name) {
+        _layout.getCSld().setName(name);
+    }
+
+    static public CTShape insertPlaceholder(CTGroupShape spTree, Placeholder placeholder, long placeholderIndex) {
+        STPlaceholderType.Enum placeholderType = Placeholder.convertToSTPlaceholderTypeEnum(placeholder);
+
+        String placeholderName = placeholderType.toString().toLowerCase();
+
+        long nextDrawingElementId = getNextDrawingElementId(spTree);
+
+        CTShape sp = spTree.addNewSp();
+        {
+            CTShapeNonVisual nvSpPr = sp.addNewNvSpPr();
+            {
+                CTNonVisualDrawingProps cNvPr = nvSpPr.addNewCNvPr();
+
+                cNvPr.setId(nextDrawingElementId);
+                String capitalizedName = Character.toUpperCase(placeholderName.charAt(0)) + placeholderName.substring(1);
+                cNvPr.setName(capitalizedName + " " + nextDrawingElementId);
+            }
+            nvSpPr.addNewCNvSpPr().addNewSpLocks().setNoGrp(true);
+            CTPlaceholder ctPlaceholder = nvSpPr.addNewNvPr().addNewPh();
+            ctPlaceholder.setType(placeholderType);
+            ctPlaceholder.setIdx(placeholderIndex);
+        }
+        sp.addNewSpPr();
+        CTTextBody ctTextBody = sp.addNewTxBody();
+
+        ctTextBody.addNewBodyPr();
+        ctTextBody.addNewLstStyle();
+        CTTextParagraph ctTextParagraph = ctTextBody.addNewP();
+        CTRegularTextRun ctRegularTextRun = ctTextParagraph.addNewR();
+        CTTextCharacterProperties ctTextCharacterProperties = ctRegularTextRun.addNewRPr();
+        ctTextCharacterProperties.setLang("en-US");
+        ctTextCharacterProperties.setSmtClean(false);
+        ctRegularTextRun.setT("Click to edit Master " + placeholderName + " style");
+
+        ctTextParagraph.addNewEndParaRPr().setLang("en-US");
+
+        return sp;
+    }
+
+    public XSLFAutoShape insertPlaceholder(Placeholder placeholder) {
+        return insertPlaceholder(placeholder, null);
+    }
+
+    public XSLFAutoShape insertPlaceholder(Placeholder placeholder, Long maybeMasterPlaceholderIndex) {
+        CTGroupShape spTree = _layout.getCSld().getSpTree();
+
+        long placeholderIndex;
+        if(maybeMasterPlaceholderIndex == null) {
+
+            XSLFSlideMaster slideMaster = getSlideMaster();
+
+            XSLFTextShape placeholderInMaster = slideMaster.getTextShapeByType(placeholder);
+            if (placeholderInMaster != null) {
+                placeholderIndex = placeholderInMaster.getCTPlaceholder().getIdx();
+            } else {
+                // get new placeholder index
+                long masterPlaceholderIndex = getNewPlaceholderIndex(slideMaster.getSpTree());
+                long layoutPlaceholderIndex = getNewPlaceholderIndex(spTree);
+                placeholderIndex = Math.max(masterPlaceholderIndex, layoutPlaceholderIndex);
+            }
+        } else {
+            placeholderIndex = maybeMasterPlaceholderIndex;
+        }
+
+        CTShape shape = insertPlaceholder(spTree, placeholder, placeholderIndex);
+        return new XSLFAutoShape(shape, this);
+    }
+
+    static public long getNextDrawingElementId(CTGroupShape spTree) {
+        Long highestId = 1L; // "1" is already assigned by default to /p:cSld/p:spTree/p:nvGrpSpPr/p:cNvPr
+        for (CTShape ctShape : spTree.getSpList()) {
+            Long shapeId = ctShape.getNvSpPr().getCNvPr().getId();
+            highestId = Math.max(shapeId, highestId);
+        }
+        return highestId + 1;
+    }
+
+    static public long getNewPlaceholderIndex(CTGroupShape spTree) {
+        // http://www.officeopenxml.com/prSlide.php
+        // http://www.schemacentral.com/sc/ooxml/e-p_ph-1.html
+        Long highestIndex = -1L; // default is "0" (-1 + 1 = 0 )
+        for (CTShape ctShape : spTree.getSpList()) {
+            Long shapeId = ctShape.getNvSpPr().getNvPr().getPh().getIdx();
+            highestIndex = Math.max(shapeId, highestIndex);
+        }
+        return highestIndex + 1;
     }
 
     /**
