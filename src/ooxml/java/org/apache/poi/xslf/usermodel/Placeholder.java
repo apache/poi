@@ -18,6 +18,8 @@
  */
 package org.apache.poi.xslf.usermodel;
 
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
+
 /**
  * @author Yegor Kozlov
  */
@@ -37,5 +39,10 @@ public enum Placeholder {
     DGM,
     MEDIA,
     SLIDE_IMAGE,
-    PICTURE
+    PICTURE;
+
+    static public STPlaceholderType.Enum convertToSTPlaceholderTypeEnum(Placeholder placeholder) {
+        int val = placeholder.ordinal();
+        return STPlaceholderType.Enum.forInt(val + 1); // "1" based array
+    }
 }
