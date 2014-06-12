@@ -46,11 +46,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
-import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * High level representation of a ooxml slideshow.
@@ -69,6 +65,11 @@ public class XMLSlideShow  extends POIXMLDocument {
     private XSLFTableStyles _tableStyles;
     private XSLFNotesMaster _notesMaster;
     private XSLFCommentAuthors _commentAuthors;
+
+    // @see http://webapp.docx4java.org/OnlineDemo/ecma376/PresentationML/ST_SlideMasterId.html
+    // @see http://webapp.docx4java.org/OnlineDemo/ecma376/PresentationML/ST_SlideLayoutId.html
+    // id used for slideMasterId and slideLayoutId
+    private Long presentationGlobalId;
 
     public XMLSlideShow() {
         this(empty());
@@ -176,6 +177,25 @@ public class XMLSlideShow  extends POIXMLDocument {
         );
     }
 
+    public Long getNextPresentationGlobalId() {
+        if (presentationGlobalId == null) {
+            // init
+            presentationGlobalId = 2147483648L;
+            for (CTSlideMasterIdListEntry slideMasterIdListEntry : getCTPresentation().getSldMasterIdLst().getSldMasterIdList()) {
+                presentationGlobalId = Math.max(slideMasterIdListEntry.getId() + 1, presentationGlobalId);
+            }
+            for (XSLFSlideMaster slideMaster : getSlideMasters()) {
+                for (CTSlideLayoutIdListEntry ctSlideLayoutIdListEntry : slideMaster.getXmlObject().getSldLayoutIdLst().getSldLayoutIdList()) {
+                    presentationGlobalId = Math.max(ctSlideLayoutIdListEntry.getId() + 1, presentationGlobalId);
+                }
+            }
+        }
+
+        Long id = presentationGlobalId;
+        presentationGlobalId = presentationGlobalId + 1;
+        return id;
+    }
+
     /**
      * Returns all Pictures, which are referenced from the document itself.
      * @return a {@link List} of {@link PackagePart}.
@@ -254,13 +274,49 @@ public class XMLSlideShow  extends POIXMLDocument {
         return _masters.values().toArray(new XSLFSlideMaster[_masters.size()]);
     }
 
+    public XSLFSlideMaster createSlideMaster(String name) {
+        int slideMasterIndex;
+
+        CTSlideMasterIdList slideMasterIdList;
+        if (!_presentation.isSetSldMasterIdLst()) {
+            slideMasterIdList = _presentation.addNewSldMasterIdLst();
+            slideMasterIndex = 1;
+        } else {
+            slideMasterIdList = _presentation.getSldMasterIdLst();
+            slideMasterIndex = slideMasterIdList.sizeOfSldMasterIdArray() + 1;
+        }
+
+        XSLFSlideMaster slideMaster = (XSLFSlideMaster) createRelationship(
+                XSLFRelation.SLIDE_MASTER, XSLFFactory.getInstance(), slideMasterIndex);
+
+        CTSlideMasterIdListEntry slideMasterId = slideMasterIdList.addNewSldMasterId();
+        slideMasterId.setId(getNextPresentationGlobalId());
+        slideMasterId.setId2(slideMaster.getPackageRelationship().getId());
+
+        _masters.put(slideMaster.getPackageRelationship().getId(), slideMaster);
+
+        XSLFTheme theme = (XSLFTheme) createRelationship(
+                XSLFRelation.THEME, XSLFFactory.getInstance(), slideMasterIndex);
+
+        theme.setName(name);
+
+        PackagePartName ppName = theme.getPackagePart().getPartName();
+        PackageRelationship rel = slideMaster.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
+                theme.getPackageRelationship().getRelationshipType());
+
+
+        slideMaster.addRelation(rel.getId(), theme);
+
+        return slideMaster;
+    }
+
     /**
      * Return all the slides in the slideshow
      */
     public XSLFSlide[] getSlides() {
         return _slides.toArray(new XSLFSlide[_slides.size()]);
     }
-    
+
     /**
      * Returns the list of comment authors, if there is one.
      * Will only be present if at least one slide has comments on it.

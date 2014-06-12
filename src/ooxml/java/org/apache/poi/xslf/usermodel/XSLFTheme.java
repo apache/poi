@@ -24,13 +24,7 @@ import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBaseStyles;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -50,7 +44,301 @@ public class XSLFTheme extends POIXMLDocumentPart {
     
     XSLFTheme() {
         super();
-        _theme = CTOfficeStyleSheet.Factory.newInstance();
+        _theme = prototype();
+    }
+
+    private static CTOfficeStyleSheet prototype(){
+        CTOfficeStyleSheet ctOfficeStyleSheet = CTOfficeStyleSheet.Factory.newInstance();
+
+        ctOfficeStyleSheet.setName("Office Theme");
+
+        CTBaseStyles ctBaseStyles = ctOfficeStyleSheet.addNewThemeElements();
+
+        CTColorScheme ctColorScheme = ctBaseStyles.addNewClrScheme();
+
+        ctColorScheme.setName("Office");
+        CTSystemColor ctSystemColor = ctColorScheme.addNewDk1().addNewSysClr();
+        ctSystemColor.setLastClr(new byte[]{0, 0, 0});// 000000
+        ctSystemColor.setVal(STSystemColorVal.WINDOW_TEXT);
+
+        CTSystemColor ctSystemColor1 = ctColorScheme.addNewLt1().addNewSysClr();
+
+        ctSystemColor1.setLastClr(new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF});// FFFFFF
+        ctSystemColor1.setVal(STSystemColorVal.WINDOW);
+
+        ctColorScheme.addNewDk2().addNewSrgbClr().setVal(new byte[]{(byte) 0x1F, (byte) 0x49, (byte) 0x7D});// 1F497D
+        ctColorScheme.addNewLt2().addNewSrgbClr().setVal(new byte[]{(byte) 0xEE, (byte) 0xEC, (byte) 0xE1});// EEECE1
+        ctColorScheme.addNewAccent1().addNewSrgbClr().setVal(new byte[]{(byte) 0x4F, (byte) 0x81, (byte) 0xBD});// 4F81BD
+        ctColorScheme.addNewAccent2().addNewSrgbClr().setVal(new byte[]{(byte) 0xC0, (byte) 0x50, (byte) 0x4D});// C0504D
+        ctColorScheme.addNewAccent3().addNewSrgbClr().setVal(new byte[]{(byte) 0x9B, (byte) 0xBB, (byte) 0x59});// 9BBB59
+        ctColorScheme.addNewAccent4().addNewSrgbClr().setVal(new byte[]{(byte) 0x80, (byte) 0x64, (byte) 0xA2});// 8064A2
+        ctColorScheme.addNewAccent5().addNewSrgbClr().setVal(new byte[]{(byte) 0x4B, (byte) 0xAC, (byte) 0xC6});// 4BACC6
+        ctColorScheme.addNewAccent6().addNewSrgbClr().setVal(new byte[]{(byte) 0xF7, (byte) 0x96, (byte) 0x46});// F79646
+
+        ctColorScheme.addNewHlink().addNewSrgbClr().setVal(new byte[]{(byte) 0x00, (byte) 0x00, (byte) 0x46});// 0000FF
+        ctColorScheme.addNewFolHlink().addNewSrgbClr().setVal(new byte[]{(byte) 0x80, (byte) 0x00, (byte) 0x80});// 800080
+
+
+        CTFontScheme ctFontScheme = ctBaseStyles.addNewFontScheme();
+        ctFontScheme.setName("Office");
+
+        CTFontCollection majorFontCollection = ctFontScheme.addNewMajorFont();
+        majorFontCollection.addNewLatin().setTypeface("Calibri");
+        majorFontCollection.addNewEa().setTypeface("");
+        majorFontCollection.addNewCs().setTypeface("");
+
+        CTFontCollection minorFontCollection = ctFontScheme.addNewMinorFont();
+        minorFontCollection.addNewLatin().setTypeface("Calibri");
+        minorFontCollection.addNewEa().setTypeface("");
+        minorFontCollection.addNewCs().setTypeface("");
+
+        CTStyleMatrix ctStyleMatrix = ctBaseStyles.addNewFmtScheme();
+        ctStyleMatrix.setName("Office");
+
+
+        CTFillStyleList ctFillStyleList = ctStyleMatrix.addNewFillStyleLst();
+
+        ctFillStyleList.addNewSolidFill().addNewSchemeClr().setVal(STSchemeColorVal.PH_CLR);
+
+        {
+            CTGradientFillProperties ctGradientFillProperties = ctFillStyleList.addNewGradFill();
+            ctGradientFillProperties.setRotWithShape(true);
+            CTGradientStopList ctGradientStopList = ctGradientFillProperties.addNewGsLst();
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(0);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(50000);
+                ctSchemeColor.addNewSatMod().setVal(300000);
+            }
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(35000);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(37000);
+                ctSchemeColor.addNewSatMod().setVal(300000);
+            }
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(100000);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(15000);
+                ctSchemeColor.addNewSatMod().setVal(350000);
+            }
+
+            CTLinearShadeProperties ctLinearShadeProperties = ctGradientFillProperties.addNewLin();
+            ctLinearShadeProperties.setAng(16200000);
+            ctLinearShadeProperties.setScaled(true);
+        }
+
+        {
+            CTGradientFillProperties ctGradientFillProperties = ctFillStyleList.addNewGradFill();
+            ctGradientFillProperties.setRotWithShape(true);
+            CTGradientStopList ctGradientStopList = ctGradientFillProperties.addNewGsLst();
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(0);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(100000);
+                ctSchemeColor.addNewShade().setVal(100000);
+                ctSchemeColor.addNewSatMod().setVal(130000);
+            }
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(100000);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(50000);
+                ctSchemeColor.addNewShade().setVal(100000);
+                ctSchemeColor.addNewSatMod().setVal(350000);
+            }
+
+            CTLinearShadeProperties ctLinearShadeProperties = ctGradientFillProperties.addNewLin();
+            ctLinearShadeProperties.setAng(16200000);
+            ctLinearShadeProperties.setScaled(false);
+        }
+
+        CTLineStyleList ctLineStyleList = ctStyleMatrix.addNewLnStyleLst();
+        {
+            CTLineProperties ctLineProperties = ctLineStyleList.addNewLn();
+            ctLineProperties.setAlgn(STPenAlignment.CTR);
+            ctLineProperties.setCap(STLineCap.FLAT);
+            ctLineProperties.setCmpd(STCompoundLine.SNG);
+            ctLineProperties.setW(9525);
+            CTSchemeColor ctSchemeColor = ctLineProperties.addNewSolidFill().addNewSchemeClr();
+            ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+            ctSchemeColor.addNewShade().setVal(95000);
+            ctSchemeColor.addNewSatMod().setVal(105000);
+            ctLineProperties.addNewPrstDash().setVal(STPresetLineDashVal.SOLID);
+        }
+        {
+            CTLineProperties ctLineProperties = ctLineStyleList.addNewLn();
+            ctLineProperties.setAlgn(STPenAlignment.CTR);
+            ctLineProperties.setCap(STLineCap.FLAT);
+            ctLineProperties.setCmpd(STCompoundLine.SNG);
+            ctLineProperties.setW(25400);
+            CTSchemeColor ctSchemeColor = ctLineProperties.addNewSolidFill().addNewSchemeClr();
+            ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+            ctLineProperties.addNewPrstDash().setVal(STPresetLineDashVal.SOLID);
+        }
+        {
+            CTLineProperties ctLineProperties = ctLineStyleList.addNewLn();
+            ctLineProperties.setAlgn(STPenAlignment.CTR);
+            ctLineProperties.setCap(STLineCap.FLAT);
+            ctLineProperties.setCmpd(STCompoundLine.SNG);
+            ctLineProperties.setW(38100);
+            CTSchemeColor ctSchemeColor = ctLineProperties.addNewSolidFill().addNewSchemeClr();
+            ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+            ctLineProperties.addNewPrstDash().setVal(STPresetLineDashVal.SOLID);
+        }
+
+        CTEffectStyleList ctEffectStyleList = ctStyleMatrix.addNewEffectStyleLst();
+        {
+            CTEffectList ctEffectList = ctEffectStyleList.addNewEffectStyle().addNewEffectLst();
+            CTOuterShadowEffect ctOuterShadowEffect = ctEffectList.addNewOuterShdw();
+            ctOuterShadowEffect.setBlurRad(40000);
+            ctOuterShadowEffect.setDir(5400000);
+            ctOuterShadowEffect.setDist(20000);
+            ctOuterShadowEffect.setRotWithShape(false);
+            CTSRgbColor ctsRgbColor = ctOuterShadowEffect.addNewSrgbClr();
+            ctsRgbColor.setVal(new byte[]{0, 0, 0});// 000000
+            ctsRgbColor.addNewAlpha().setVal(38000);
+        }
+
+        {
+            CTEffectList ctEffectList = ctEffectStyleList.addNewEffectStyle().addNewEffectLst();
+            CTOuterShadowEffect ctOuterShadowEffect = ctEffectList.addNewOuterShdw();
+            ctOuterShadowEffect.setBlurRad(40000);
+            ctOuterShadowEffect.setDir(5400000);
+            ctOuterShadowEffect.setDist(23000);
+            ctOuterShadowEffect.setRotWithShape(false);
+            CTSRgbColor ctsRgbColor = ctOuterShadowEffect.addNewSrgbClr();
+            ctsRgbColor.setVal(new byte[]{0, 0, 0});// 000000
+            ctsRgbColor.addNewAlpha().setVal(35000);
+        }
+
+        {
+            CTEffectStyleItem ctEffectStyleItem = ctEffectStyleList.addNewEffectStyle();
+            {
+                CTEffectList ctEffectList = ctEffectStyleItem.addNewEffectLst();
+                CTOuterShadowEffect ctOuterShadowEffect = ctEffectList.addNewOuterShdw();
+                ctOuterShadowEffect.setBlurRad(40000);
+                ctOuterShadowEffect.setDir(5400000);
+                ctOuterShadowEffect.setDist(23000);
+                ctOuterShadowEffect.setRotWithShape(false);
+                CTSRgbColor ctsRgbColor = ctOuterShadowEffect.addNewSrgbClr();
+                ctsRgbColor.setVal(new byte[]{0, 0, 0});// 000000
+                ctsRgbColor.addNewAlpha().setVal(35000);
+            }
+            {
+                CTScene3D ctScene3D = ctEffectStyleItem.addNewScene3D();
+                CTCamera ctCamera = ctScene3D.addNewCamera();
+                ctCamera.setPrst(STPresetCameraType.ORTHOGRAPHIC_FRONT);
+                CTSphereCoords ctSphereCoords = ctCamera.addNewRot();
+                ctSphereCoords.setLat(0);
+                ctSphereCoords.setLon(0);
+                ctSphereCoords.setRev(0);
+
+                CTLightRig ctLightRig = ctScene3D.addNewLightRig();
+                ctLightRig.setDir(STLightRigDirection.T);
+                ctLightRig.setRig(STLightRigType.THREE_PT);
+                CTSphereCoords ctSphereCoords1 = ctLightRig.addNewRot();
+                ctSphereCoords1.setLat(0);
+                ctSphereCoords1.setLon(0);
+                ctSphereCoords1.setRev(1200000);
+            }
+            {
+                CTBevel ctBevel = ctEffectStyleItem.addNewSp3D().addNewBevelT();
+                ctBevel.setH(25400);
+                ctBevel.setW(63500);
+            }
+        }
+
+        CTBackgroundFillStyleList bgFillStyleLst = ctStyleMatrix.addNewBgFillStyleLst();
+        bgFillStyleLst.addNewSolidFill().addNewSchemeClr().setVal(STSchemeColorVal.PH_CLR);
+
+        {
+            CTGradientFillProperties ctGradientFillProperties = bgFillStyleLst.addNewGradFill();
+            ctGradientFillProperties.setRotWithShape(true);
+            CTGradientStopList ctGradientStopList = ctGradientFillProperties.addNewGsLst();
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(0);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(40000);
+                ctSchemeColor.addNewSatMod().setVal(350000);
+            }
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(40000);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(45000);
+                ctSchemeColor.addNewShade().setVal(99000);
+                ctSchemeColor.addNewSatMod().setVal(350000);
+            }
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(100000);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewShade().setVal(20000);
+                ctSchemeColor.addNewSatMod().setVal(255000);
+            }
+            CTPathShadeProperties ctPathShadeProperties = ctGradientFillProperties.addNewPath();
+            ctPathShadeProperties.setPath(STPathShadeType.CIRCLE);
+            CTRelativeRect ctRelativeRect = ctPathShadeProperties.addNewFillToRect();
+            ctRelativeRect.setB(180000);
+            ctRelativeRect.setL(50000);
+            ctRelativeRect.setR(50000);
+            ctRelativeRect.setT(-80000);
+        }
+
+        {
+            CTGradientFillProperties ctGradientFillProperties = bgFillStyleLst.addNewGradFill();
+            ctGradientFillProperties.setRotWithShape(true);
+            CTGradientStopList ctGradientStopList = ctGradientFillProperties.addNewGsLst();
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(0);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewTint().setVal(80000);
+                ctSchemeColor.addNewSatMod().setVal(300000);
+            }
+
+            {
+                CTGradientStop ctGradientStop = ctGradientStopList.addNewGs();
+                ctGradientStop.setPos(100000);
+                CTSchemeColor ctSchemeColor = ctGradientStop.addNewSchemeClr();
+                ctSchemeColor.setVal(STSchemeColorVal.PH_CLR);
+                ctSchemeColor.addNewShade().setVal(30000);
+                ctSchemeColor.addNewSatMod().setVal(200000);
+            }
+            CTPathShadeProperties ctPathShadeProperties = ctGradientFillProperties.addNewPath();
+            ctPathShadeProperties.setPath(STPathShadeType.CIRCLE);
+            CTRelativeRect ctRelativeRect = ctPathShadeProperties.addNewFillToRect();
+            ctRelativeRect.setB(50000);
+            ctRelativeRect.setL(50000);
+            ctRelativeRect.setR(50000);
+            ctRelativeRect.setT(50000);
+        }
+
+        return ctOfficeStyleSheet;
     }
 
     public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {

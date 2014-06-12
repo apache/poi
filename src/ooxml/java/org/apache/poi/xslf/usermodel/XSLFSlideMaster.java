@@ -18,16 +18,13 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterTextStyles;
-import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -57,10 +54,59 @@ import java.util.Map;
 	private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
     private XSLFTheme _theme;
+    private XMLSlideShow _slideShow;
 
     XSLFSlideMaster() {
         super();
-        _slide = CTSlideMaster.Factory.newInstance();
+        _slide = prototype();
+    }
+
+    private static CTSlideMaster prototype(){
+        CTSlideMaster ctSlideMaster = CTSlideMaster.Factory.newInstance();
+        CTCommonSlideData cSld = ctSlideMaster.addNewCSld();
+        CTGroupShape spTree = cSld.addNewSpTree();
+
+        CTGroupShapeNonVisual nvGrpSpPr = spTree.addNewNvGrpSpPr();
+        CTNonVisualDrawingProps cnvPr = nvGrpSpPr.addNewCNvPr();
+        cnvPr.setId(1);
+        cnvPr.setName("");
+        nvGrpSpPr.addNewCNvGrpSpPr();
+        nvGrpSpPr.addNewNvPr();
+
+        CTGroupShapeProperties grpSpr = spTree.addNewGrpSpPr();
+        CTGroupTransform2D xfrm = grpSpr.addNewXfrm();
+        CTPoint2D off = xfrm.addNewOff();
+        off.setX(0);
+        off.setY(0);
+        CTPositiveSize2D ext = xfrm.addNewExt();
+        ext.setCx(0);
+        ext.setCy(0);
+        CTPoint2D choff = xfrm.addNewChOff();
+        choff.setX(0);
+        choff.setY(0);
+        CTPositiveSize2D chExt = xfrm.addNewChExt();
+        chExt.setCx(0);
+        chExt.setCy(0);
+
+        CTStyleMatrixReference ctStyleMatrixReference = cSld.addNewBg().addNewBgRef();
+        ctStyleMatrixReference.setIdx(1001);
+        ctStyleMatrixReference.addNewSchemeClr().setVal(STSchemeColorVal.BG_1);
+
+        CTColorMapping ctColorMapping = ctSlideMaster.addNewClrMap();
+        ctColorMapping.setBg1(STColorSchemeIndex.LT_1);
+        ctColorMapping.setBg2(STColorSchemeIndex.LT_2);
+        ctColorMapping.setFolHlink(STColorSchemeIndex.FOL_HLINK);
+        ctColorMapping.setHlink(STColorSchemeIndex.HLINK);
+        ctColorMapping.setTx1(STColorSchemeIndex.DK_1);
+        ctColorMapping.setTx2(STColorSchemeIndex.DK_2);
+        ctColorMapping.setAccent1(STColorSchemeIndex.ACCENT_1);
+        ctColorMapping.setAccent2(STColorSchemeIndex.ACCENT_2);
+        ctColorMapping.setAccent3(STColorSchemeIndex.ACCENT_3);
+        ctColorMapping.setAccent4(STColorSchemeIndex.ACCENT_4);
+        ctColorMapping.setAccent5(STColorSchemeIndex.ACCENT_5);
+        ctColorMapping.setAccent6(STColorSchemeIndex.ACCENT_6);
+
+        return ctSlideMaster;
     }
 
     protected XSLFSlideMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
@@ -114,6 +160,57 @@ import java.util.Map;
             }
         }
         return null;
+    }
+
+    public XSLFSlideLayout createLayout(String name) {
+        int slideLayoutIndex = 1;
+
+        for (XSLFSlideMaster slideMaster : getSlideShow().getSlideMasters()) {
+            slideLayoutIndex += slideMaster.getLayouts().size();
+        }
+
+        XSLFSlideLayout slideLayout = (XSLFSlideLayout)createRelationship(
+                XSLFRelation.SLIDE_LAYOUT, XSLFFactory.getInstance(), slideLayoutIndex);
+
+        slideLayout.setName(name);
+
+        CTSlideLayout xmlObject = slideLayout.getXmlObject();
+        xmlObject.setUserDrawn(true);
+        xmlObject.setPreserve(true);
+
+        _layouts = null; // reset cache
+
+        PackagePartName ppName = getPackagePart().getPartName();
+        PackageRelationship rel = slideLayout.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
+                getPackageRelationship().getRelationshipType());
+        slideLayout.addRelation(rel.getId(), this);
+
+        CTSlideMaster ctSlideMaster = this.getXmlObject();
+
+        CTSlideLayoutIdList sldLayoutIdLst = ctSlideMaster.getSldLayoutIdLst();
+
+        if (sldLayoutIdLst == null) {
+            sldLayoutIdLst = ctSlideMaster.addNewSldLayoutIdLst();
+        }
+
+        CTSlideLayoutIdListEntry ctSlideLayoutIdListEntry = sldLayoutIdLst.addNewSldLayoutId();
+        ctSlideLayoutIdListEntry.setId(getSlideShow().getNextPresentationGlobalId());
+        ctSlideLayoutIdListEntry.setId2(slideLayout.getPackageRelationship().getId());
+
+        return slideLayout;
+    }
+
+    /**
+     * Slide master object associated with this layout.
+     *
+     * @return slide master. Never null.
+     * @throws IllegalStateException if slide master was not found
+     */
+    public XMLSlideShow getSlideShow() {
+        if (_slideShow == null) {
+            _slideShow = (XMLSlideShow) getParent();
+        }
+        return _slideShow;
     }
 
     @Override

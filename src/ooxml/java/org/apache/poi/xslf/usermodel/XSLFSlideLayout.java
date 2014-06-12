@@ -37,7 +37,38 @@ public class XSLFSlideLayout extends XSLFSheet {
 
     XSLFSlideLayout() {
         super();
-        _layout = CTSlideLayout.Factory.newInstance();
+        _layout = prototype();
+    }
+
+    private static CTSlideLayout prototype(){
+        CTSlideLayout ctSlideLayout = CTSlideLayout.Factory.newInstance();
+        CTCommonSlideData cSld = ctSlideLayout.addNewCSld();
+        CTGroupShape spTree = cSld.addNewSpTree();
+
+        CTGroupShapeNonVisual nvGrpSpPr = spTree.addNewNvGrpSpPr();
+        CTNonVisualDrawingProps cnvPr = nvGrpSpPr.addNewCNvPr();
+        cnvPr.setId(1);
+        cnvPr.setName("");
+        nvGrpSpPr.addNewCNvGrpSpPr();
+        nvGrpSpPr.addNewNvPr();
+
+        CTGroupShapeProperties grpSpr = spTree.addNewGrpSpPr();
+        CTGroupTransform2D xfrm = grpSpr.addNewXfrm();
+        CTPoint2D off = xfrm.addNewOff();
+        off.setX(0);
+        off.setY(0);
+        CTPositiveSize2D ext = xfrm.addNewExt();
+        ext.setCx(0);
+        ext.setCy(0);
+        CTPoint2D choff = xfrm.addNewChOff();
+        choff.setX(0);
+        choff.setY(0);
+        CTPositiveSize2D chExt = xfrm.addNewChExt();
+        chExt.setCx(0);
+        chExt.setCy(0);
+
+        ctSlideLayout.addNewClrMapOvr().addNewMasterClrMapping();
+        return ctSlideLayout;
     }
 
     public XSLFSlideLayout(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
