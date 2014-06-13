@@ -200,19 +200,6 @@ import java.util.Map;
         return slideLayout;
     }
 
-    /**
-     * Slide master object associated with this layout.
-     *
-     * @return slide master. Never null.
-     * @throws IllegalStateException if slide master was not found
-     */
-    public XMLSlideShow getSlideShow() {
-        if (_slideShow == null) {
-            _slideShow = (XMLSlideShow) getParent();
-        }
-        return _slideShow;
-    }
-
     @Override
     public XSLFTheme getTheme(){
         if(_theme == null){
