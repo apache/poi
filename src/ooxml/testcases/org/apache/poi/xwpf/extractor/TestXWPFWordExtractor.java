@@ -18,6 +18,8 @@
 package org.apache.poi.xwpf.extractor;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -327,12 +329,14 @@ public class TestXWPFWordExtractor extends TestCase {
         String[] targs = new String[]{
                 "header_rich_text",
                 "rich_text",
-                "rich_text_pre_table\nrich_text_cell1\t\t\t\n\nrich_text_post_table",
+                "rich_text_pre_table\nrich_text_cell1\t\t\t\n\t\t\t\n\t\t\t\n\nrich_text_post_table",
                 "plain_text_no_newlines",
                 "plain_text_with_newlines1\nplain_text_with_newlines2\n",
                 "watermelon\n",
                 "dirt\n",
                 "4/16/2013\n",
+                "rich_text_in_cell",
+                "abc",
                 "rich_text_in_paragraph_in_cell",
                 "footer_rich_text",
                 "footnote_sdt",
@@ -351,6 +355,36 @@ public class TestXWPFWordExtractor extends TestCase {
             assertEquals("controlled content loading-"+targ, true, hit);
         }
         assertEquals("controlled content loading hit count", targs.length, hits);
+        ex.close();
+        
+        
+        doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
+        targs = new String[]{
+                "bb",
+                "test subtitle\n",
+                "test user\n",
+        };
+        ex = new XWPFWordExtractor(doc);
+        s = ex.getText().toLowerCase();
+        
+        //At one point in development there were three copies of the text.
+        //This ensures that there is only one copy.
+        for (String targ : targs){
+            Matcher m = Pattern.compile(targ).matcher(s);
+            int hit = 0;
+            while (m.find()) {
+                hit++;
+            }
+            assertEquals("controlled content loading-"+targ, 1, hit);
+        }
+        //"test\n" appears twice: once as the "title" and once in the text.
+        //This also happens when you save this document as text from MSWord.
+        Matcher m = Pattern.compile("test\n").matcher(s);
+        int hit = 0;
+        while (m.find()){
+            hit++;
+        }
+        assertEquals("test<N>", 2, hit);
         ex.close();
     }
 

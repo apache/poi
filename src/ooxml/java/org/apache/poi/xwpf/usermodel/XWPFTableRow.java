@@ -21,9 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
@@ -119,6 +122,29 @@ public class XWPFTableRow {
 
     public XWPFTable getTable(){
 	return table;
+    }
+
+    /**
+     * create and return a list of all XWPFTableCell
+     * who belongs to this row
+     * @return a list of {@link XWPFTableCell} 
+     */
+    public List<ICell> getTableICells(){
+    
+        List<ICell> cells = new ArrayList<ICell>();
+        //Can't use ctRow.getTcList because that only gets table cells
+        //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
+        XmlCursor cursor = ctRow.newCursor();
+        cursor.selectPath("./*");
+        while (cursor.toNextSelection()) {
+            XmlObject o = cursor.getObject();
+            if (o instanceof CTTc){
+                cells.add(new XWPFTableCell((CTTc)o, this, table.getBody()));
+            } else if (o instanceof CTSdtCell) {
+                cells.add(new XWPFSDTCell((CTSdtCell)o, this, table.getBody()));
+            }
+        }
+        return cells;
     }
 
     /**

@@ -39,7 +39,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
  * WARNING - APIs expected to change rapidly
  * 
  */
-public class XWPFSDTContent  {
+public class XWPFSDTContent implements ISDTContent {
 
     // private final IBody part;
     // private final XWPFDocument document;
@@ -87,10 +87,10 @@ public class XWPFSDTContent  {
         for (int i = 0; i < bodyElements.size(); i++){
             Object o = bodyElements.get(i);
             if (o instanceof XWPFParagraph){
-                text.append(((XWPFParagraph)o).getText());
+                appendParagraph((XWPFParagraph)o, text);
                 addNewLine = true;
             } else if (o instanceof XWPFTable){
-                text.append(((XWPFTable)o).getText());
+                appendTable((XWPFTable)o, text);
                 addNewLine = true;
             } else if (o instanceof XWPFSDT){
                 text.append(((XWPFSDT)o).getContent().getText());
@@ -106,6 +106,31 @@ public class XWPFSDTContent  {
         return text.toString();
     }
 
+    private void appendTable(XWPFTable table, StringBuilder text) {
+        //this works recursively to pull embedded tables from within cells
+        for (XWPFTableRow row : table.getRows()) {
+            List<ICell> cells = row.getTableICells();
+            for (int i = 0; i < cells.size(); i++) {
+                ICell cell = cells.get(i);
+                if (cell instanceof XWPFTableCell) {
+                    text.append(((XWPFTableCell)cell).getTextRecursively());
+                } else if (cell instanceof XWPFSDTCell) {
+                    text.append(((XWPFSDTCell)cell).getContent().getText());
+                }
+                if (i < cells.size()-1) {
+                    text.append("\t");
+                }
+            }
+            text.append('\n');
+        }
+    }
+    
+    private void appendParagraph(XWPFParagraph paragraph, StringBuilder text) {
+        for(IRunElement run : paragraph.getRuns()) {
+            text.append(run.toString());
+        }
+    }
+    
     public String toString(){
         return getText();
     }
