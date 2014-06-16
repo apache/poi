@@ -42,7 +42,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
  * Represents a Cell within a {@link XWPFTable}. The
  *  Cell is the thing that holds the actual content (paragraphs etc)
  */
-public class XWPFTableCell implements IBody {
+public class XWPFTableCell implements IBody, ICell {
     private final CTTc ctTc;
     protected List<XWPFParagraph> paragraphs = null;
     protected List<XWPFTable> tables = null;

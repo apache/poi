@@ -16,10 +16,29 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
+
 /**
- * Interface for anything that can be within an SDT:
- *  {@link XWPFRun}, {@link XWPFTable}, {@link XWPFParagraph},
- *  {@link XWPFSDT} etc
+ * Experimental class to offer rudimentary read-only processing of 
+ *  of StructuredDocumentTags/ContentControl that can appear
+ *  in a table row as if a table cell.
+ *  <p>
+ *  These can contain one or more cells or other SDTs within them.
+ *
+ * WARNING - APIs expected to change rapidly
+ * 
  */
-public interface ISDTContents {
+public class XWPFSDTCell extends AbstractXWPFSDT implements ICell {
+   private final XWPFSDTContentCell cellContent;
+
+   public XWPFSDTCell(CTSdtCell sdtCell, XWPFTableRow xwpfTableRow, IBody part){
+       super(sdtCell.getSdtPr(), part);
+       cellContent = new XWPFSDTContentCell(sdtCell.getSdtContent(), xwpfTableRow, part);
+   }
+
+   @Override
+   public ISDTContent getContent(){
+      return cellContent;
+   }
+   
 }

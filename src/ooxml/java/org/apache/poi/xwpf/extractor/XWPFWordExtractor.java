@@ -27,6 +27,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
+import org.apache.poi.xwpf.usermodel.ICell;
 import org.apache.poi.xwpf.usermodel.IRunElement;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlink;
@@ -34,6 +35,7 @@ import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFSDT;
+import org.apache.poi.xwpf.usermodel.XWPFSDTCell;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
@@ -161,14 +163,18 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
      
    }
 
-   private void appendTableText(StringBuffer text, XWPFTable table){
+   private void appendTableText(StringBuffer text, XWPFTable table) {
       //this works recursively to pull embedded tables from tables
-      for (XWPFTableRow row : table.getRows()){
-          List<XWPFTableCell> cells = row.getTableCells();
-          for (int i = 0; i < cells.size(); i++){
-              XWPFTableCell cell = cells.get(i);
-              text.append(cell.getTextRecursively());
-              if (i < cells.size()-1){
+      for (XWPFTableRow row : table.getRows()) {
+          List<ICell> cells = row.getTableICells();
+          for (int i = 0; i < cells.size(); i++) {
+              ICell cell = cells.get(i);
+              if (cell instanceof XWPFTableCell) {
+                  text.append(((XWPFTableCell)cell).getTextRecursively());
+              } else if (cell instanceof XWPFSDTCell) {
+                  text.append(((XWPFSDTCell)cell).getContent().getText());
+              }
+              if (i < cells.size()-1) {
                   text.append("\t");
               }
           }

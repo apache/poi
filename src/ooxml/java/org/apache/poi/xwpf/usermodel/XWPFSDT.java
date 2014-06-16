@@ -16,95 +16,32 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.List;
-
-import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 
 /**
  * Experimental class to offer rudimentary read-only processing of 
  *  of StructuredDocumentTags/ContentControl
- *  
- *
  *
  * WARNING - APIs expected to change rapidly
  * 
  */
-public class XWPFSDT implements IBodyElement, IRunBody, ISDTContents, IRunElement {
-   private final String title;
-   private final String tag;
-   private final XWPFSDTContent content;
-   private final IBody part;
+public class XWPFSDT extends AbstractXWPFSDT
+    implements IBodyElement, IRunBody, ISDTContents, IRunElement {
+   private final ISDTContent content;
 
    public XWPFSDT(CTSdtRun sdtRun, IBody part){
-       this.part = part;
+       super(sdtRun.getSdtPr(), part);
        this.content = new XWPFSDTContent(sdtRun.getSdtContent(), part, this);
-       CTSdtPr pr = sdtRun.getSdtPr();
-       List<CTString> aliases = pr.getAliasList();
-       if (aliases != null && aliases.size() > 0){
-          title = aliases.get(0).getVal();
-       } else {
-          title = "";
-       }
-       @SuppressWarnings("deprecation")
-       CTString[] array = pr.getTagArray();
-       if (array != null && array.length > 0){
-          tag = array[0].getVal();
-       } else {
-          tag = "";
-       }
-  
    }
+   
    public XWPFSDT(CTSdtBlock block, IBody part){
-      this.part = part;
+      super(block.getSdtPr(), part);
       this.content = new XWPFSDTContent( block.getSdtContent(), part, this);
-      CTSdtPr pr = block.getSdtPr();
-      List<CTString> aliases = pr.getAliasList();
-      if (aliases != null && aliases.size() > 0){
-         title = aliases.get(0).getVal();
-      } else {
-         title = "";
-      }
-      @SuppressWarnings("deprecation")
-      CTString[] array = pr.getTagArray();
-      if (array != null && array.length > 0){
-         tag = array[0].getVal();
-      } else {
-         tag = "";
-      }
- 
    }
-   public String getTitle(){
-      return title;
-   }
-   public String getTag(){
-      return tag;
-   }
-   public XWPFSDTContent getContent(){
+
+   public ISDTContent getContent(){
       return content;
    }
 
-   public IBody getBody() {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   public POIXMLDocumentPart getPart() {
-      return part.getPart();
-   }
-
-   public BodyType getPartType() {
-      return BodyType.CONTENTCONTROL;
-   }
-
-   public BodyElementType getElementType() {
-      return BodyElementType.CONTENTCONTROL;
-   }
-
-   public XWPFDocument getDocument() {
-      return part.getXWPFDocument();
-   }
 }
