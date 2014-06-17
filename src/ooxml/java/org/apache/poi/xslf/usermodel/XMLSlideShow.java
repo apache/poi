@@ -305,6 +305,25 @@ public class XMLSlideShow  extends POIXMLDocument {
         return slideMaster;
     }
 
+    public void removeSlideMaster(XSLFSlideMaster slideMaster) {
+        for (XSLFSlideLayout slideLayout : slideMaster.getSlideLayouts()) {
+            slideMaster.removeLayout(slideLayout);
+        }
+        removeRelation(slideMaster);
+
+        String id = slideMaster.getPackageRelationship().getId();
+        Iterator<CTSlideMasterIdListEntry> iterator = _presentation.getSldMasterIdLst().getSldMasterIdList().iterator();
+        while (iterator.hasNext()) {
+            CTSlideMasterIdListEntry slideLayoutIdListEntry = iterator.next();
+            if(slideLayoutIdListEntry.getId2().equals(id)){
+                iterator.remove();
+                break;
+            }
+        }
+
+        _masters.remove(slideMaster.getPackageRelationship().getId());
+    }
+
     /**
      * Return all the slides in the slideshow
      */
