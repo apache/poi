@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -28,6 +29,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -185,6 +187,14 @@ import java.util.Map;
                 getPackageRelationship().getRelationshipType());
         slideLayout.addRelation(rel.getId(), this);
 
+        CTSlideLayoutIdListEntry ctSlideLayoutIdListEntry = getSlideLayoutIdList().addNewSldLayoutId();
+        ctSlideLayoutIdListEntry.setId(getSlideShow().getNextPresentationGlobalId());
+        ctSlideLayoutIdListEntry.setId2(slideLayout.getPackageRelationship().getId());
+
+        return slideLayout;
+    }
+
+    private CTSlideLayoutIdList getSlideLayoutIdList() {
         CTSlideMaster ctSlideMaster = this.getXmlObject();
 
         CTSlideLayoutIdList sldLayoutIdLst = ctSlideMaster.getSldLayoutIdLst();
@@ -192,12 +202,28 @@ import java.util.Map;
         if (sldLayoutIdLst == null) {
             sldLayoutIdLst = ctSlideMaster.addNewSldLayoutIdLst();
         }
+        return sldLayoutIdLst;
+    }
 
-        CTSlideLayoutIdListEntry ctSlideLayoutIdListEntry = sldLayoutIdLst.addNewSldLayoutId();
-        ctSlideLayoutIdListEntry.setId(getSlideShow().getNextPresentationGlobalId());
-        ctSlideLayoutIdListEntry.setId2(slideLayout.getPackageRelationship().getId());
+    public void removeLayout(XSLFSlideLayout layout) {
+        for (XSLFSlide slide : getSlideShow().getSlides()) {
+            if (slide.getSlideLayout() == layout) {
+                throw new POIXMLException("Can't remove layout \"" + layout.getName() + "\", used by slide: " + slide);
+            }
+        }
+        removeRelation(layout);
 
-        return slideLayout;
+        String id = layout.getPackageRelationship().getId();
+        Iterator<CTSlideLayoutIdListEntry> iterator = getSlideLayoutIdList().getSldLayoutIdList().iterator();
+        while (iterator.hasNext()) {
+            CTSlideLayoutIdListEntry slideLayoutIdListEntry = iterator.next();
+            if(slideLayoutIdListEntry.getId2().equals(id)){
+                iterator.remove();
+                break;
+            }
+        }
+
+        _layouts = null; // reset cache
     }
 
     @Override
