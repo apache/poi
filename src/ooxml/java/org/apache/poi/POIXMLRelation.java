@@ -104,11 +104,19 @@ public abstract class POIXMLRelation {
      *  e.g. /xl/comments4.xml
      */
     public String getFileName(int index) {
-        if(_defaultName.indexOf("#") == -1) {
+        if(!_defaultName.contains("#")) {
             // Generic filename in all cases
             return getDefaultFileName();
         }
         return _defaultName.replace("#", Integer.toString(index));
+    }
+
+    public int getIndex(String fileName) {
+        int indexPosition = _defaultName.indexOf("#");
+        int stopPosition = fileName.length() - (_defaultName.length() - indexPosition) + 1;
+        String indexString = fileName.substring(indexPosition, stopPosition );
+
+        return Integer.parseInt(indexString);
     }
 
     /**

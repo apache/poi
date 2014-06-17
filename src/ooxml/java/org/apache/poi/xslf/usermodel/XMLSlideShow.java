@@ -20,11 +20,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.poi.POIXMLDocument;
@@ -219,19 +215,18 @@ public class XMLSlideShow  extends POIXMLDocument {
      * @return created slide
      */
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
-        int slideNumber = 256, cnt = 1;
+        int slideNumber = 256;
         CTSlideIdList slideList;
         if (!_presentation.isSetSldIdLst()) slideList = _presentation.addNewSldIdLst();
         else {
             slideList = _presentation.getSldIdLst();
             for(CTSlideIdListEntry slideId : slideList.getSldIdList()){
                 slideNumber = (int)Math.max(slideId.getId() + 1, slideNumber);
-                cnt++;
             }
         }
 
         XSLFSlide slide = (XSLFSlide)createRelationship(
-                XSLFRelation.SLIDE, XSLFFactory.getInstance(), cnt);
+                XSLFRelation.SLIDE, XSLFFactory.getInstance());
 
         CTSlideIdListEntry slideId = slideList.addNewSldId();
         slideId.setId(slideNumber);

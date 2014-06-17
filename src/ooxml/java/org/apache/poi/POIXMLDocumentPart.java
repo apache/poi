@@ -368,6 +368,15 @@ public class POIXMLDocumentPart {
      */
     protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {
+            OPCPackage opcPackage = packagePart.getPackage();
+            if (idx < 0) {
+                int nextIndex = 0;
+                for (PackagePart part : opcPackage.getPartsByContentType(descriptor.getContentType())) {
+                    int index = descriptor.getIndex(part.getPartName().getName());
+                    nextIndex = Math.max(index, nextIndex);
+                }
+                idx = nextIndex + 1;
+            }
             PackagePartName ppName = PackagingURIHelper.createPartName(descriptor.getFileName(idx));
             PackageRelationship rel = null;
             PackagePart part = packagePart.getPackage().createPart(ppName, descriptor.getContentType());
