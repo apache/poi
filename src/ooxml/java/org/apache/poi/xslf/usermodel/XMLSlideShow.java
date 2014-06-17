@@ -63,7 +63,7 @@ public class XMLSlideShow  extends POIXMLDocument {
     private XSLFCommentAuthors _commentAuthors;
 
     // @see http://webapp.docx4java.org/OnlineDemo/ecma376/PresentationML/ST_SlideMasterId.html
-    // @see http://webapp.docx4java.org/OnlineDemo/ecma376/PresentationML/ST_SlideLayoutId.html
+    // and @see http://webapp.docx4java.org/OnlineDemo/ecma376/PresentationML/ST_SlideLayoutId.html
     // id used for slideMasterId and slideLayoutId
     private Long presentationGlobalId;
 
@@ -175,7 +175,7 @@ public class XMLSlideShow  extends POIXMLDocument {
 
     public Long getNextPresentationGlobalId() {
         if (presentationGlobalId == null) {
-            // init
+            // initial value is 2147483648L (@see http://webapp.docx4java.org/OnlineDemo/ecma376/PresentationML/ST_SlideMasterId.html )
             presentationGlobalId = 2147483648L;
             for (CTSlideMasterIdListEntry slideMasterIdListEntry : getCTPresentation().getSldMasterIdLst().getSldMasterIdList()) {
                 presentationGlobalId = Math.max(slideMasterIdListEntry.getId() + 1, presentationGlobalId);
