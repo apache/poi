@@ -56,7 +56,6 @@ import java.util.Map;
 	private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
     private XSLFTheme _theme;
-    private XMLSlideShow _slideShow;
 
     XSLFSlideMaster() {
         super();
@@ -212,6 +211,7 @@ import java.util.Map;
             }
         }
         removeRelation(layout);
+        layout.removeRelation(this);
 
         String id = layout.getPackageRelationship().getId();
         Iterator<CTSlideLayoutIdListEntry> iterator = getSlideLayoutIdList().getSldLayoutIdList().iterator();
@@ -241,6 +241,18 @@ import java.util.Map;
             }
         }
         return _theme;
+    }
+
+    protected void removeTheme() {
+        removeRelation(getTheme());
+    }
+
+    protected void setTheme(XSLFTheme theme) {
+        PackagePartName ppName = theme.getPackagePart().getPartName();
+        PackageRelationship rel = getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
+                theme.getPackageRelationship().getRelationshipType());
+
+        addRelation(rel.getId(), theme);
     }
 
     protected CTTextListStyle getTextProperties(Placeholder textType) {

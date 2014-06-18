@@ -232,7 +232,7 @@ public class POIXMLDocumentPart {
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed.
      */
-    protected final void removeRelation(POIXMLDocumentPart part){
+    public final void removeRelation(POIXMLDocumentPart part){
         removeRelation(part,true);
     }
 
@@ -267,7 +267,7 @@ public class POIXMLDocumentPart {
                 } catch (IOException e) {
                     throw new POIXMLException(e);
                 }
-                getPackagePart().getPackage().removePart(part.getPackagePart());
+                getPackagePart().getPackage().deletePart(part.getPackagePart().getPartName());
             }
         }
         return true;

@@ -295,12 +295,7 @@ public class XMLSlideShow  extends POIXMLDocument {
 
         theme.setName(name);
 
-        PackagePartName ppName = theme.getPackagePart().getPartName();
-        PackageRelationship rel = slideMaster.getPackagePart().addRelationship(ppName, TargetMode.INTERNAL,
-                theme.getPackageRelationship().getRelationshipType());
-
-
-        slideMaster.addRelation(rel.getId(), theme);
+        slideMaster.setTheme(theme);
 
         return slideMaster;
     }
@@ -309,7 +304,6 @@ public class XMLSlideShow  extends POIXMLDocument {
         for (XSLFSlideLayout slideLayout : slideMaster.getSlideLayouts()) {
             slideMaster.removeLayout(slideLayout);
         }
-        removeRelation(slideMaster);
 
         String id = slideMaster.getPackageRelationship().getId();
         Iterator<CTSlideMasterIdListEntry> iterator = _presentation.getSldMasterIdLst().getSldMasterIdList().iterator();
@@ -320,6 +314,12 @@ public class XMLSlideShow  extends POIXMLDocument {
                 break;
             }
         }
+
+        removeRelation(slideMaster.getTheme());
+
+        slideMaster.removeTheme();
+
+        removeRelation(slideMaster);
 
         _masters.remove(slideMaster.getPackageRelationship().getId());
     }

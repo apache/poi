@@ -45,6 +45,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     XSLFTheme() {
         super();
         _theme = prototype();
+        initialize();
     }
 
     private static CTOfficeStyleSheet prototype(){

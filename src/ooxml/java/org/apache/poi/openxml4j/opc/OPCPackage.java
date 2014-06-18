@@ -1007,7 +1007,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		// Remove the part
 		this.removePart(partName);
 		// Remove the relationships part
-		this.removePart(PackagingURIHelper.getRelationshipPartName(partName));
+        PackagePartName relationshipPartName = PackagingURIHelper.getRelationshipPartName(partName);
+        if(containPart(relationshipPartName)) {
+            this.removePart(relationshipPartName);
+        }
 	}
 
 	/**
