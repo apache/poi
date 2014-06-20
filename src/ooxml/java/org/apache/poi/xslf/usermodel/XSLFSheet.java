@@ -296,11 +296,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * @return modified 'this'
      */
     public XSLFSheet importContent(XSLFSheet src){
-        _shapes = null;
-        _spTree = null;
-        _drawing = null;
-        _spTree = null;
-        _placeholders = null;
+        resetMemoization();
 
         // first copy the source xml
         getSpTree().set(src.getSpTree());
@@ -342,11 +338,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
             }
         }
 
-        _shapes = null;
-        _spTree = null;
-        _drawing = null;
-        _spTree = null;
-        _placeholders = null;
+        resetMemoization();
 
         // recursively update each shape
         List<XSLFShape> tgtShapes = getShapeList();
@@ -383,13 +375,17 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
             spTree.addNewGraphicFrame().set(shapeXmlObject);
         }
 
+        resetMemoization();
+
+        return this;
+    }
+
+    protected void resetMemoization(){
         _shapes = null;
         _spTree = null;
         _drawing = null;
         _spTree = null;
         _placeholders = null;
-
-        return this;
     }
 
    /**

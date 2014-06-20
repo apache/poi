@@ -153,6 +153,7 @@ public class XSLFSlideLayout extends XSLFSheet {
         }
 
         CTShape shape = insertPlaceholder(spTree, placeholder, placeholderIndex);
+        resetMemoization();
         return new XSLFAutoShape(shape, this);
     }
 
@@ -170,8 +171,11 @@ public class XSLFSlideLayout extends XSLFSheet {
         // http://www.schemacentral.com/sc/ooxml/e-p_ph-1.html
         Long highestIndex = -1L; // default is "0" (-1 + 1 = 0 )
         for (CTShape ctShape : spTree.getSpList()) {
-            Long shapeId = ctShape.getNvSpPr().getNvPr().getPh().getIdx();
-            highestIndex = Math.max(shapeId, highestIndex);
+            CTApplicationNonVisualDrawingProps nvPr = ctShape.getNvSpPr().getNvPr();
+            if (nvPr.isSetPh()) {
+                Long shapeId = nvPr.getPh().getIdx();
+                highestIndex = Math.max(shapeId, highestIndex);
+            }
         }
         return highestIndex + 1;
     }
