@@ -21,6 +21,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 
 import java.awt.Dimension;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -103,5 +104,48 @@ public class TestXSLFSlideShow extends TestCase {
         assertNotNull(layout);
 
         assertSame(masters[0], layout.getSlideMaster());
+    }
+
+    public void testCreateRemoveSlideMasters() {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlideMaster[] masters = ppt.getSlideMasters();
+        assertEquals(1, masters.length);
+        XSLFSlideMaster baseSlideMaster = masters[0];
+
+        XSLFSlideMaster newSlideMaster = ppt.createSlideMaster("new slide master");
+        XSLFSlideMaster[] masters2 = ppt.getSlideMasters();
+        assertEquals(2, masters2.length);
+        assertEquals(baseSlideMaster, masters2[0]);
+        assertEquals(newSlideMaster, masters2[1]);
+
+        ppt.removeSlideMaster(baseSlideMaster);
+        XSLFSlideMaster[] masters3 = ppt.getSlideMasters();
+        assertEquals(1, masters3.length);
+        assertEquals(newSlideMaster, masters3[0]);
+    }
+
+    public void testCreateRemoveSlideLayout() {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlideMaster[] masters = ppt.getSlideMasters();
+        XSLFSlideMaster master = masters[0];
+
+        XSLFSlideLayout[] slideLayouts = master.getSlideLayouts();
+        assertEquals(11, slideLayouts.length);
+
+        XSLFSlideLayout newLayout = master.createLayout("new Layout");
+        XSLFSlideLayout[] slideLayouts2 = master.getSlideLayouts();
+        assertEquals(12, slideLayouts2.length);
+
+        assertFalse(Arrays.asList(slideLayouts).contains(newLayout));
+        assertTrue(Arrays.asList(slideLayouts2).contains(newLayout));
+
+        master.removeLayout(slideLayouts[0]);
+        XSLFSlideLayout[] slideLayouts3 = master.getSlideLayouts();
+        assertEquals(11, slideLayouts3.length);
+
+        assertTrue(Arrays.asList(slideLayouts).contains(slideLayouts[0]));
+        assertTrue(Arrays.asList(slideLayouts2).contains(slideLayouts[0]));
+        assertFalse(Arrays.asList(slideLayouts3).contains(slideLayouts[0]));
+        assertTrue(Arrays.asList(slideLayouts3).contains(newLayout));
     }
 }
