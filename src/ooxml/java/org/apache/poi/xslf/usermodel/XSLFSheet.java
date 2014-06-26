@@ -28,14 +28,9 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 import javax.xml.namespace.QName;
 import java.awt.Graphics2D;
@@ -388,7 +383,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _placeholders = null;
     }
 
-   /**
+    /**
      * @return theme (shared styles) associated with this theme.
      *  By default returns <code>null</code> which means that this sheet is theme-less.
      *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
@@ -479,6 +474,69 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         initPlaceholders();
         return _placeholders.toArray(new XSLFTextShape[_placeholders.size()]);
     }
+
+    static public CTShape insertPlaceholder(CTGroupShape spTree, Placeholder placeholder, long placeholderIndex) {
+        STPlaceholderType.Enum placeholderType = Placeholder.convertToSTPlaceholderTypeEnum(placeholder);
+        String placeholderName = placeholderType.toString().toLowerCase();
+        long nextDrawingElementId = getNextDrawingElementId(spTree);
+        CTShape sp = spTree.addNewSp();
+        {
+            CTShapeNonVisual nvSpPr = sp.addNewNvSpPr();
+            {
+                CTNonVisualDrawingProps cNvPr = nvSpPr.addNewCNvPr();
+                cNvPr.setId(nextDrawingElementId);
+                String capitalizedName = Character.toUpperCase(placeholderName.charAt(0)) + placeholderName.substring(1);
+                cNvPr.setName(capitalizedName + " " + nextDrawingElementId);
+            }
+            nvSpPr.addNewCNvSpPr().addNewSpLocks().setNoGrp(true);
+            CTPlaceholder ctPlaceholder = nvSpPr.addNewNvPr().addNewPh();
+            ctPlaceholder.setType(placeholderType);
+            ctPlaceholder.setIdx(placeholderIndex);
+        }
+        sp.addNewSpPr();
+        CTTextBody ctTextBody = sp.addNewTxBody();
+        ctTextBody.addNewBodyPr();
+        ctTextBody.addNewLstStyle();
+        CTTextParagraph ctTextParagraph = ctTextBody.addNewP();
+        CTRegularTextRun ctRegularTextRun = ctTextParagraph.addNewR();
+        CTTextCharacterProperties ctTextCharacterProperties = ctRegularTextRun.addNewRPr();
+        ctTextCharacterProperties.setLang("en-US");
+        ctTextCharacterProperties.setSmtClean(false);
+        ctRegularTextRun.setT("Click to edit Master " + placeholderName + " style");
+        ctTextParagraph.addNewEndParaRPr().setLang("en-US");
+        return sp;
+    }
+
+    public XSLFAutoShape insertPlaceholder(Placeholder placeholder, long placeholderIndex) {
+        CTGroupShape spTree = getSpTree();
+        CTShape shape = insertPlaceholder(spTree, placeholder, placeholderIndex);
+        resetMemoization();
+        return new XSLFAutoShape(shape, this);
+    }
+
+    static public long getNextDrawingElementId(CTGroupShape spTree) {
+        Long highestId = 1L; // "1" is already assigned by default to /p:cSld/p:spTree/p:nvGrpSpPr/p:cNvPr
+        for (CTShape ctShape : spTree.getSpList()) {
+            Long shapeId = ctShape.getNvSpPr().getCNvPr().getId();
+            highestId = Math.max(shapeId, highestId);
+        }
+        return highestId + 1;
+    }
+
+    static public long getNewPlaceholderIndex(CTGroupShape spTree) {
+        // http://www.officeopenxml.com/prSlide.php
+        // http://www.schemacentral.com/sc/ooxml/e-p_ph-1.html
+        Long highestIndex = -1L; // default is "0" (-1 + 1 = 0 )
+        for (CTShape ctShape : spTree.getSpList()) {
+            CTApplicationNonVisualDrawingProps nvPr = ctShape.getNvSpPr().getNvPr();
+            if (nvPr.isSetPh()) {
+                Long shapeId = nvPr.getPh().getIdx();
+                highestIndex = Math.max(shapeId, highestIndex);
+            }
+        }
+        return highestIndex + 1;
+    }
+
 
     /**
      * Checks if this <code>sheet</code> displays the specified shape.

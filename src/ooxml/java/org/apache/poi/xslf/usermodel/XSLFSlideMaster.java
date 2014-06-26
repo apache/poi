@@ -133,6 +133,18 @@ import java.util.Map;
         return null;
     }
 
+    public XSLFAutoShape insertPlaceholder(Placeholder placeholder) {
+        long placeholderIndex;
+        XSLFTextShape placeholderInMaster = getTextShapeByType(placeholder);
+        if (placeholderInMaster != null) {
+            placeholderIndex = placeholderInMaster.getCTPlaceholder().getIdx();
+        } else {
+            // get new placeholder index
+            placeholderIndex = getNewPlaceholderIndex(getSpTree());
+        }
+        return super.insertPlaceholder(placeholder, placeholderIndex);
+    }
+
     private Map<String, XSLFSlideLayout> getLayouts(){
         if(_layouts == null){
             _layouts = new HashMap<String, XSLFSlideLayout>();
