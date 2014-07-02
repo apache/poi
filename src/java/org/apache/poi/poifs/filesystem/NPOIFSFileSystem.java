@@ -157,7 +157,6 @@ public class NPOIFSFileSystem extends BlockStore
      *
      * @exception IOException on errors reading, or on invalid data
      */
-    @SuppressWarnings("resource")
     public NPOIFSFileSystem(File file, boolean readOnly)
          throws IOException
     {

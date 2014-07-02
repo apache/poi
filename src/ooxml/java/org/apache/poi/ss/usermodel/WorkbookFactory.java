@@ -39,6 +39,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class WorkbookFactory {
     /**
      * Creates a HSSFWorkbook from the given POIFSFileSystem
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
      */
     public static Workbook create(POIFSFileSystem fs) throws IOException {
         return new HSSFWorkbook(fs);
@@ -46,6 +48,8 @@ public class WorkbookFactory {
     
     /**
      * Creates a HSSFWorkbook from the given NPOIFSFileSystem
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
      */
     public static Workbook create(NPOIFSFileSystem fs) throws IOException {
         return new HSSFWorkbook(fs.getRoot(), true);
@@ -53,6 +57,8 @@ public class WorkbookFactory {
     
     /**
      * Creates a XSSFWorkbook from the given OOXML Package
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
      */
     public static Workbook create(OPCPackage pkg) throws IOException {
         return new XSSFWorkbook(pkg);
@@ -65,6 +71,8 @@ public class WorkbookFactory {
      *  be wrapped as a {@link PushbackInputStream}! Note that 
      *  using an {@link InputStream} has a higher memory footprint 
      *  than using a {@link File}.</p> 
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
      */
     public static Workbook create(InputStream inp) throws IOException, InvalidFormatException {
         // If clearly doesn't do mark/reset, wrap up
@@ -84,8 +92,8 @@ public class WorkbookFactory {
     /**
      * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
      *  the given File, which must exist and be readable.
-     * <p>Note that for Workbooks opened this way, it is not possible
-     *  to explicitly close the underlying File resource.
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
      */
     public static Workbook create(File file) throws IOException, InvalidFormatException {
         if (! file.exists()) {
@@ -93,6 +101,7 @@ public class WorkbookFactory {
         }
 
         try {
+            @SuppressWarnings("resource")
             NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
             return new HSSFWorkbook(fs.getRoot(), true);
         } catch(OfficeXmlFileException e) {
