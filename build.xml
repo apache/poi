@@ -154,8 +154,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.6.5.201403032054.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.6.5.201403032054/jacoco-0.6.5.201403032054.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.1.201405082137.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.1.201405082137/jacoco-0.7.1.201405082137.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-4.0.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/4.0/asm-all-4.0.jar"/>
 
