@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -128,10 +129,14 @@ public class CheckFunctionsSupported {
                 try {
                     evaluator.evaluate(c);
                 } catch (Exception e) {
-                    if (e instanceof NotImplementedException) {
-                        NotImplementedException nie = (NotImplementedException)e;
-                        // TODO
-                        System.err.println("TODO - Not Implemented: " + nie);
+                    if (e instanceof NotImplementedException && e.getCause() != null) {
+                        // Has been wrapped with cell details, but we know those
+                        e = (Exception)e.getCause();
+                    }
+                    
+                    if (e instanceof NotImplementedFunctionException) {
+                        NotImplementedFunctionException nie = (NotImplementedFunctionException)e;
+                        unsupportedFunctions.add(nie.getFunctionName());
                     }
                     unevaluatableCells.put(new CellReference(c), e);
                 }
