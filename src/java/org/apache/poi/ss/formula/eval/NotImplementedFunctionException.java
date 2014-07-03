@@ -15,31 +15,30 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.functions;
+package org.apache.poi.ss.formula.eval;
 
-import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
 /**
- * This is the default implementation of a Function class.
- * The default behaviour is to raise a POI internal error
- * ({@link NotImplementedFunctionException}). This error should alert
- * the user that the formula contained a function that is not
- * yet implemented.
+ * An exception thrown by implementors of {@link FormulaEvaluator} when 
+ *  attempting to evaluate a formula which requires a function that POI 
+ *  does not (yet) support.
  */
-public final class NotImplementedFunction implements Function {
-	private final String _functionName;
-	protected NotImplementedFunction() {
-		_functionName = getClass().getName();
+public final class NotImplementedFunctionException extends NotImplementedException {
+    private static final long serialVersionUID = 1208119411557559057L;
+    
+    private String functionName;
+    
+	public NotImplementedFunctionException(String functionName) {
+		super(functionName);
+		this.functionName = functionName;
 	}
-	public NotImplementedFunction(String name) {
-		_functionName = name;
+	public NotImplementedFunctionException(String functionName, NotImplementedException cause) {
+		super(functionName, cause);
+        this.functionName = functionName;
 	}
-
-	public ValueEval evaluate(ValueEval[] operands, int srcRow, int srcCol) {
-		throw new NotImplementedFunctionException(_functionName);
-	}
+	
 	public String getFunctionName() {
-		return _functionName;
+	    return functionName;
 	}
 }
