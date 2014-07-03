@@ -38,6 +38,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -237,43 +238,34 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
+     * Constructs a XSSFWorkbook object from a given file.
+     * 
+     * <p>Once you have finished working with the Workbook, you should close 
+     * the package by calling  {@link #close()}, to avoid leaving file 
+     * handles open.
+     * 
+     * <p>Opening a XSSFWorkbook from a file has a lower memory footprint 
+     *  than opening from an InputStream
+     *  
+     * @param file   the file to open
+     */
+    public XSSFWorkbook(File file) throws IOException, InvalidFormatException {
+        this(OPCPackage.open(file));
+    }
+    
+    /**
      * Constructs a XSSFWorkbook object given a file name.
      *
-     * <p>
-     *  This constructor is deprecated since POI-3.8 because it does not close
-     *  the underlying .zip file stream. In short, there are two ways to open a OPC package:
-     * </p>
-     * <ol>
-     *     <li>
-     *      from file which leads to invoking java.util.zip.ZipFile(File file)
-     *      deep in POI internals.
-     *     </li>
-     *     <li>
-     *     from input stream in which case we first read everything into memory and
-     *     then pass the data to ZipInputStream.
-     *     </li>
-     * <ol>
-     * <p>
-     *     It should be noted, that (2) uses quite a bit more memory than (1), which
-     *      doesn't need to hold the whole zip file in memory, and can take advantage
-     *      of native methods.
-     * </p>
-     * <p>
-     *   To construct a workbook from file use the
-     *   {@link #XSSFWorkbook(org.apache.poi.openxml4j.opc.OPCPackage)}  constructor:
-     *   <pre><code>
-     *       OPCPackage pkg = OPCPackage.open(path);
-     *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
-     *       // work with the wb object
-     *       ......
-     *       pkg.close(); // gracefully closes the underlying zip file
-     *   </code></pre>
-     * </p>
+     * 
+     * <p>Once you have finished working with the Workbook, you should close 
+     * the package by calling  {@link #close()}, to avoid leaving file 
+     * handles open.
+     * 
+     * <p>Opening a XSSFWorkbook from a file has a lower memory footprint 
+     *  than opening from an InputStream
      *
-     * @param      path   the file name.
-     * @deprecated
+     * @param path   the file name.
      */
-    @Deprecated
     public XSSFWorkbook(String path) throws IOException {
         this(openPackage(path));
     }
