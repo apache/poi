@@ -1199,7 +1199,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * Repeatedly writing a file.
      * Something with the SharedStringsTable currently breaks...
      */
-    @Ignore
+    @Test
     public void bug46662() throws Exception {
        // New file
        XSSFWorkbook wb = new XSSFWorkbook();
