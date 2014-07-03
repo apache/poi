@@ -17,12 +17,14 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.formula.functions.AggregateFunction.subtotalInstance;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
-import static org.apache.poi.ss.formula.functions.AggregateFunction.subtotalInstance;
 
 /**
  * Implementation for the Excel function SUBTOTAL<p>
@@ -68,10 +70,10 @@ public class Subtotal implements Function {
 			case 5: return subtotalInstance(AggregateFunction.MIN);
 			case 6: return subtotalInstance(AggregateFunction.PRODUCT);
 			case 7: return subtotalInstance(AggregateFunction.STDEV);
-			case 8: throw new NotImplementedException("STDEVP");
+			case 8: throw new NotImplementedFunctionException("STDEVP");
 			case 9: return subtotalInstance(AggregateFunction.SUM);
-			case 10: throw new NotImplementedException("VAR");
-			case 11: throw new NotImplementedException("VARP");
+			case 10: throw new NotImplementedFunctionException("VAR");
+			case 11: throw new NotImplementedFunctionException("VARP");
 		}
 		if (functionCode > 100 && functionCode < 112) {
 			throw new NotImplementedException("SUBTOTAL - with 'exclude hidden values' option");

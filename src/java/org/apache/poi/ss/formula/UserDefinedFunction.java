@@ -19,9 +19,9 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.formula.eval.NameEval;
 import org.apache.poi.ss.formula.eval.NameXEval;
+import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 /**
  *
  * Common entry point for all user-defined (non-built-in) functions (where
@@ -56,7 +56,7 @@ final class UserDefinedFunction implements FreeRefFunction {
 		}
 		FreeRefFunction targetFunc = ec.findUserDefinedFunction(functionName);
 		if (targetFunc == null) {
-			throw new NotImplementedException(functionName);
+			throw new NotImplementedFunctionException(functionName);
 		}
 		int nOutGoingArgs = nIncomingArgs -1;
 		ValueEval[] outGoingArgs = new ValueEval[nOutGoingArgs];
