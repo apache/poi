@@ -1565,6 +1565,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         File xlsOutput = TempFile.createTempFile("testBug53798", ".xls");
         bug53798Work(wb, xlsOutput);
     }
+    
+    /**
+     * SUMIF was throwing a NPE on some formulas
+     */
+    @Test
+    @Ignore("This bug is still to be fixed")
+    public void testBug56420SumIfNPE() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56420.xlsx");
+        
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+        Sheet sheet = wb.getSheetAt(0);
+        Row r = sheet.getRow(2);
+        Cell c = r.getCell(2);
+        assertEquals("SUMIF($A$1:$A$4,A3,$B$1:$B$4)", c.getCellFormula());
+        evaluator.evaluateInCell(c);
+    }
 
     private void bug53798Work(Workbook wb, File xlsOutput) throws IOException {
         Sheet testSheet = wb.getSheetAt(0);
