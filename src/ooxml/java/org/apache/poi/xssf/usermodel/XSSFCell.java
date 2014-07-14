@@ -206,8 +206,10 @@ public final class XSSFCell implements Cell {
             case CELL_TYPE_FORMULA:
             case CELL_TYPE_NUMERIC:
                 if(_cell.isSetV()) {
+                   String v = _cell.getV();
+                   if (v.isEmpty()) return 0.0;
                    try {
-                      return Double.parseDouble(_cell.getV());
+                      return Double.parseDouble(v);
                    } catch(NumberFormatException e) {
                       throw typeMismatch(CELL_TYPE_NUMERIC, CELL_TYPE_STRING, false);
                    }
