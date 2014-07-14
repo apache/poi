@@ -1628,6 +1628,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         saveAndReloadReport(wb, xlsOutput);
     }
 
+    /**
+     * XSSFCell.typeMismatch on certain blank cells when formatting
+     *  with DataFormatter
+     */
+    @Test
+    public void bug56702() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56702.xlsx");
+        
+        Sheet sheet = wb.getSheetAt(0);
+
+        // Get wrong cell by row 8 & column 7
+        Cell cell = sheet.getRow(8).getCell(7);
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCellType());
+        
+        // Check the value - will be zero as it is <c><v/></c>
+        assertEquals(0.0, cell.getNumericCellValue(), 0.001);
+        
+        // Try to format
+        DataFormatter formatter = new DataFormatter();
+        formatter.formatCellValue(cell);
+        
+        // Check the formatting
+        assertEquals("0", formatter.formatCellValue(cell));
+    }
+    
     private void saveAndReloadReport(Workbook wb, File outFile) throws IOException {
         // run some method on the font to verify if it is "disconnected" already
         //for(short i = 0;i < 256;i++)
