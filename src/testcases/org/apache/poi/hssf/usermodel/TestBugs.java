@@ -67,6 +67,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -2610,5 +2611,43 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(0, wb.getNumberOfSheets());
+    }
+    
+    /**
+     * Formulas which reference named ranges, either in other
+     *  sheets, or workbook scoped but in other workbooks.
+     * Currently failing with 
+     * java.lang.RuntimeException: Unexpected eval class (org.apache.poi.ss.formula.eval.NameXEval)
+     */
+    @Ignore
+    @Test
+    public void bug56737() throws IOException {
+        Workbook wb = openSample("56737.xls");
+        
+        // Check the named range definitions
+        Name nSheetScope = wb.getName("NR_To_A1");
+        Name nWBScope = wb.getName("NR_Global_B2");
+
+        assertNotNull(nSheetScope);
+        assertNotNull(nWBScope);
+        
+        assertEquals("Defines!$A$1", nSheetScope.getRefersToFormula());
+        assertEquals("Defines!$B$2", nWBScope.getRefersToFormula());
+        
+        // Check the different kinds of formulas
+        Sheet s = wb.getSheetAt(0);
+        Cell cRefSName = s.getRow(1).getCell(3);
+        Cell cRefWName = s.getRow(2).getCell(3);
+        
+        assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
+        assertEquals("'56737.xls'!NR_Global_B2", cRefWName.getCellFormula());
+        
+        // Try to evaluate them
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals("Test A1", eval.evaluate(cRefSName).getStringValue());
+        assertEquals(142, (int)eval.evaluate(cRefWName).getNumberValue());
+        
+        // Try to evaluate everything
+        eval.evaluateAll();
     }
 }
