@@ -1653,6 +1653,45 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("0", formatter.formatCellValue(cell));
     }
     
+    /**
+     * Formulas which reference named ranges, either in other
+     *  sheets, or workbook scoped but in other workbooks.
+     * Currently failing with errors like
+     * org.apache.poi.ss.formula.FormulaParseException: Cell reference expected after sheet name at index 9
+     * org.apache.poi.ss.formula.FormulaParseException: Parse error near char 0 '[' in specified formula '[0]!NR_Global_B2'. Expected number, string, or defined name 
+     */
+    @Ignore
+    @Test
+    public void bug56737() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
+        
+        // Check the named range definitions
+        Name nSheetScope = wb.getName("NR_To_A1");
+        Name nWBScope = wb.getName("NR_Global_B2");
+
+        assertNotNull(nSheetScope);
+        assertNotNull(nWBScope);
+        
+        assertEquals("Defines!$A$1", nSheetScope.getRefersToFormula());
+        assertEquals("Defines!$B$2", nWBScope.getRefersToFormula());
+        
+        // Check the different kinds of formulas
+        Sheet s = wb.getSheetAt(0);
+        Cell cRefSName = s.getRow(1).getCell(3);
+        Cell cRefWName = s.getRow(2).getCell(3);
+        
+        assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
+        assertEquals("[0]!NR_Global_B2", cRefWName.getCellFormula());
+        
+        // Try to evaluate them
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals("Test A1", eval.evaluate(cRefSName).getStringValue());
+        assertEquals(142, (int)eval.evaluate(cRefWName).getNumberValue());
+        
+        // Try to evaluate everything
+        eval.evaluateAll();
+    }
+
     private void saveAndReloadReport(Workbook wb, File outFile) throws IOException {
         // run some method on the font to verify if it is "disconnected" already
         //for(short i = 0;i < 256;i++)
