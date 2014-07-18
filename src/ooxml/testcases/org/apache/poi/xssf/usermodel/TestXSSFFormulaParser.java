@@ -19,13 +19,14 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 public final class TestXSSFFormulaParser extends TestCase {
 
@@ -87,5 +88,27 @@ public final class TestXSSFFormulaParser extends TestCase {
         assertEquals(2, ptgs.length);
         assertTrue("", ptgs[0] instanceof IntPtg);
         assertTrue("", ptgs[1] instanceof FuncPtg);
+    }
+    
+    public void DISABLEDtestFormulaReferencesOtherWorkbook() {
+        // Use a test file with the external linked table in place
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        // Reference to a single cell in a different workbook
+        ptgs = parse(fpb, "[1]Uses!$A$1");
+        assertEquals(1, ptgs.length);
+        // TODO assert
+        
+        // Reference to a sheet-scoped named range in a different workbook
+        ptgs = parse(fpb, "[1]Defines!NR_To_A1");
+        assertEquals(1, ptgs.length);
+        // TODO assert
+        
+        // Reference to a global named range in a different workbook
+        ptgs = parse(fpb, "[1]!NR_Global_B2");
+        assertEquals(1, ptgs.length);
+        // TODO assert
     }
 }
