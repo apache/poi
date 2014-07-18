@@ -17,11 +17,32 @@
 
 package org.apache.poi.ss.formula;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Stack;
+import java.util.TreeSet;
 
+import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.FunctionEval;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
+import org.apache.poi.ss.formula.eval.NameEval;
+import org.apache.poi.ss.formula.eval.NameXEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.Choose;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Function;
+import org.apache.poi.ss.formula.functions.IfFunc;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -49,14 +70,10 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.formula.ptg.UnknownPtg;
-import org.apache.poi.ss.formula.functions.Choose;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.IfFunc;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -613,20 +630,23 @@ public final class WorkbookEvaluator {
 		//  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
 		if (ptg instanceof NamePtg) {
-			// named ranges, macro functions
+			// Named ranges, macro functions
 			NamePtg namePtg = (NamePtg) ptg;
 			EvaluationName nameRecord = _workbook.getName(namePtg);
-			if (nameRecord.isFunctionName()) {
-				return new NameEval(nameRecord.getNameText());
-			}
-			if (nameRecord.hasFormula()) {
-				return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
-			}
-
-			throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
+			return getEvalForNameRecord(nameRecord, ec);
 		}
 		if (ptg instanceof NameXPtg) {
-		   return ec.getNameXEval(((NameXPtg) ptg));
+		    // Externally defined named ranges or macro functions
+		    NameXPtg nameXPtg = (NameXPtg)ptg;
+		    ValueEval eval = ec.getNameXEval(nameXPtg);
+		    
+		    if (eval instanceof NameXEval) {
+		        // Could not be directly evaluated, so process as a name
+		        return getEvalForNameX(nameXPtg, ec);
+		    } else {
+		        // Use the evaluated version
+		        return eval;
+		    }
 		}
 
 		if (ptg instanceof IntPtg) {
@@ -682,6 +702,42 @@ public final class WorkbookEvaluator {
 
 		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
 	}
+	
+    private ValueEval getEvalForNameRecord(EvaluationName nameRecord, OperationEvaluationContext ec) {
+        if (nameRecord.isFunctionName()) {
+            return new NameEval(nameRecord.getNameText());
+        }
+        if (nameRecord.hasFormula()) {
+            return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
+        }
+
+        throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
+    }
+    private ValueEval getEvalForNameX(NameXPtg nameXPtg, OperationEvaluationContext ec) {
+        String name = _workbook.resolveNameXText(nameXPtg);
+        
+        // Try to parse it as a name
+        int sheetNameAt = name.indexOf('!'); 
+        EvaluationName nameRecord = null;
+        if (sheetNameAt > -1) {
+            // Sheet based name
+            String sheetName = name.substring(0, sheetNameAt);
+            String nameName = name.substring(sheetNameAt+1);
+            nameRecord = _workbook.getName(nameName, _workbook.getSheetIndex(sheetName));
+        } else {
+            // Workbook based name
+            nameRecord = _workbook.getName(name, -1);
+        }
+        
+        if (nameRecord != null) {
+            // Process it as a name
+            return getEvalForNameRecord(nameRecord, ec);
+        } else {
+            // Must be an external function
+            return new NameEval(name);
+        }
+    }
+    
     /**
      * YK: Used by OperationEvaluationContext to resolve indirect names.
      */

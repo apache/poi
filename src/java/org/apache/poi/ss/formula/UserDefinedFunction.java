@@ -18,7 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.formula.eval.NameEval;
-import org.apache.poi.ss.formula.eval.NameXEval;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
@@ -48,8 +47,6 @@ final class UserDefinedFunction implements FreeRefFunction {
 		String functionName;
 		if (nameArg instanceof NameEval) {
 			functionName = ((NameEval) nameArg).getFunctionName();
-		} else if (nameArg instanceof NameXEval) {
-			functionName = ec.getWorkbook().resolveNameXText(((NameXEval) nameArg).getPtg());
 		} else {
 			throw new RuntimeException("First argument should be a NameEval, but got ("
 					+ nameArg.getClass().getName() + ")");
