@@ -103,16 +103,39 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 
 	public NameXPtg getNameXPtg(String name, int sheetRefIndex) {
+	    // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
         FreeRefFunction func = udfFinder.findFunction(name);
-		if(func == null) return null;
-        else return new NameXPtg(0, udfFinder.getFunctionIndex(name));
+        if (func != null) {
+            return new NameXPtg(0, udfFinder.getFunctionIndex(name));
+        }
+        
+        // Otherwise, try it as a named range
+        XSSFName xname = _uBook.getName(name);
+        if (xname != null) {
+            int nameAt = _uBook.getNameIndex(name);
+            return new NameXPtg(xname.getSheetIndex(), nameAt);
+        } else {
+            return null;
+        }
 	}
 
     public String resolveNameXText(NameXPtg n) {
         int idx = n.getNameIndex();
+        String name = null;
+        
+        // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
-        return udfFinder.getFunctionName(idx);
+        name = udfFinder.getFunctionName(idx);
+        if (name != null) return name;
+        
+        // Otherwise, try it as a named range
+        XSSFName xname = _uBook.getNameAt(idx);
+        if (xname != null) {
+            name = xname.getNameName();
+        }
+        
+        return name;
     }
 
 	public EvaluationSheet getSheet(int sheetIndex) {
