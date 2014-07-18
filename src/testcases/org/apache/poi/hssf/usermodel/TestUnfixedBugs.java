@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -50,6 +49,10 @@ public final class TestUnfixedBugs extends TestCase {
 		}
 	}
 
+	/**
+	 * Note - some parts of this bug have been fixed, and have been
+	 * transfered over to {@link TestBugs#bug49612_part()}
+	 */
     public void test49612() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49612.xls");
         HSSFSheet sh = wb.getSheetAt(0);
@@ -60,21 +63,15 @@ public final class TestUnfixedBugs extends TestCase {
 
         assertEquals("SUM(BOB+JIM)", c1.getCellFormula());
 
-        // Problem 1: java.lang.ArrayIndexOutOfBoundsException in org.apache.poi.hssf.model.LinkTable$ExternalBookBlock.getNameText
+        // Problem 1: Filename missing, see bug #56742
         assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", d1.getCellFormula());
 
-        //Problem 2
+        //Problem 2: Filename missing, see bug #56742
         //junit.framework.ComparisonFailure:
         //Expected :SUM('49612.xls'!BOB+'49612.xls'!JIM)
         //Actual   :SUM(BOB+JIM)
         assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", e1.getCellFormula());
-
-        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
-        assertEquals("evaluating c1", 30., eval.evaluate(c1).getNumberValue());
-
-        //Problem 3:  java.lang.RuntimeException: Unexpected arg eval type (org.apache.poi.hssf.record.formula.eval.NameXEval)
-        assertEquals("evaluating d1", 30., eval.evaluate(d1).getNumberValue());
-
-        assertEquals("evaluating e1", 30., eval.evaluate(e1).getNumberValue());
+        
+        // Problem 3 - fixed and transfered
     }
 }
