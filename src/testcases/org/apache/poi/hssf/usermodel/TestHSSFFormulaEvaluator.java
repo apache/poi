@@ -197,9 +197,8 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
       assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
-      // WARNING - this is wrong!
-      // The file name should be showing, but bug #45970 is fixed
-      //  we seem to loose it
+      // TODO Correct this!
+      // The file name should be shown too, see bug #56742
       assertEquals("Cost*Markup_Cost", cell.getCellFormula());
       
       

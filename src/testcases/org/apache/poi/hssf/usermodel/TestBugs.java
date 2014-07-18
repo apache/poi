@@ -2383,6 +2383,31 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         writeOutAndReadBack(workbook);
     }
     
+    /**
+     * Note - part of this test is still failing, see
+     * {@link TestUnfixedBugs#test49612()}
+     */
+    @Test
+    public void bug49612_part() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49612.xls");
+        HSSFSheet sh = wb.getSheetAt(0);
+        HSSFRow row = sh.getRow(0);
+        HSSFCell c1 = row.getCell(2);
+        HSSFCell d1 = row.getCell(3);
+        HSSFCell e1 = row.getCell(2);
+
+        assertEquals("SUM(BOB+JIM)", c1.getCellFormula());
+
+        // Problem 1: See TestUnfixedBugs#test49612()
+        // Problem 2: TestUnfixedBugs#test49612()
+
+        // Problem 3: These used to fail, now pass
+        HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
+        assertEquals("evaluating c1", 30.0, eval.evaluate(c1).getNumberValue(), 0.001);
+        assertEquals("evaluating d1", 30.0, eval.evaluate(d1).getNumberValue(), 0.001);
+        assertEquals("evaluating e1", 30.0, eval.evaluate(e1).getNumberValue(), 0.001);
+    }
+    
     @Test
     public void bug51675(){
         final List<Short> list = new ArrayList<Short>();
@@ -2640,7 +2665,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         
         assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
         
-        // TODO How does Excel know to prefix this with the filename?
+        // TODO Correct this, so that the filename is shown too, see bug #56742
         // This is what Excel itself shows
         //assertEquals("'56737.xls'!NR_Global_B2", cRefWName.getCellFormula());
         // TODO This isn't right, but it's what we currently generate....

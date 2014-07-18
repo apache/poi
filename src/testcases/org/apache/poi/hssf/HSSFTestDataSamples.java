@@ -58,7 +58,6 @@ public final class HSSFTestDataSamples {
 	 * Useful for verifying that the serialisation round trip
 	 */
 	public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
 			original.write(baos);
