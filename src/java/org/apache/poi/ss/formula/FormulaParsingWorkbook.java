@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
 
 /**
  * Abstracts a workbook for the purpose of formula parsing.<br/>
@@ -33,7 +33,7 @@ public interface FormulaParsingWorkbook {
 	 */
 	EvaluationName getName(String name, int sheetIndex);
 
-	NameXPtg getNameXPtg(String name);
+	NameXPtg getNameXPtg(String name, int sheetRefIndex);
 
 	/**
 	 * gets the externSheet index for a sheet from this workbook

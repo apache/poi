@@ -21,9 +21,6 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
@@ -33,6 +30,9 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -65,8 +65,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return _iBook.getExternalSheetIndex(workbookName, sheetName);
 	}
 
-	public NameXPtg getNameXPtg(String name) {
-        return _iBook.getNameXPtg(name, _uBook.getUDFFinder());
+	public NameXPtg getNameXPtg(String name, int sheetRefIndex) {
+        return _iBook.getNameXPtg(name, sheetRefIndex, _uBook.getUDFFinder());
 	}
 
 	/**
