@@ -481,7 +481,8 @@ final class LinkTable {
 		}
 		
 		// Does it exist via the external book block?
-		if (_externalBookBlocks.length > extBookIndex) {
+		ExternalBookBlock externalBook = _externalBookBlocks[extBookIndex];
+		if (externalBook._externalNameRecords.length > definedNameIndex) {
             return _externalBookBlocks[extBookIndex].getNameText(definedNameIndex);
 		} else if (firstTabIndex == -2) {
 		    // Workbook scoped name, not actually external after all
