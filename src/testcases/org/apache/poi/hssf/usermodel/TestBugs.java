@@ -2619,7 +2619,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Currently failing with 
      * java.lang.RuntimeException: Unexpected eval class (org.apache.poi.ss.formula.eval.NameXEval)
      */
-    @Ignore
     @Test
     public void bug56737() throws IOException {
         Workbook wb = openSample("56737.xls");

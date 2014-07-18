@@ -200,9 +200,13 @@ public class ExternSheetRecord extends StandardRecord {
 		return sid;
 	}
 
-	public int getExtbookIndexFromRefIndex(int refIndex) {
-		return getRef(refIndex).getExtBookIndex();
-	}
+    /**
+     * Returns the index of the SupBookRecord for this index
+     */
+    public int getExtbookIndexFromRefIndex(int refIndex) {
+        RefSubRecord refRec = getRef(refIndex);
+        return refRec.getExtBookIndex();
+    }
 
 	/**
 	 * @return -1 if not found
@@ -217,6 +221,11 @@ public class ExternSheetRecord extends StandardRecord {
 		return -1;
 	}
 
+    /**
+     * Returns the first sheet that the reference applies to, or
+     *  -1 if the referenced sheet can't be found, or -2 if the
+     *  reference is workbook scoped.
+     */
 	public int getFirstSheetIndexFromRefIndex(int extRefIndex) {
 		return getRef(extRefIndex).getFirstSheetIndex();
 	}
