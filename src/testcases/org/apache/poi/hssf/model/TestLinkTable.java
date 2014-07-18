@@ -27,7 +27,16 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.ExternalNameRecord;
+import org.apache.poi.hssf.record.NameCommentRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
@@ -230,7 +239,7 @@ public final class TestLinkTable extends TestCase {
 
         //check that
         assertEquals(0, tbl.resolveNameXIx(namex1.getSheetRefIndex(), namex1.getNameIndex()));
-        assertEquals("ISODD", tbl.resolveNameXText(namex1.getSheetRefIndex(), namex1.getNameIndex()));
+        assertEquals("ISODD", tbl.resolveNameXText(namex1.getSheetRefIndex(), namex1.getNameIndex(), null));
 
         assertNull(tbl.getNameXPtg("ISEVEN"));
         NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new rercords
@@ -256,7 +265,7 @@ public final class TestLinkTable extends TestCase {
         assertTrue(wrl.get(7) instanceof EOFRecord);
 
         assertEquals(0, tbl.resolveNameXIx(namex2.getSheetRefIndex(), namex2.getNameIndex()));
-        assertEquals("ISEVEN", tbl.resolveNameXText(namex2.getSheetRefIndex(), namex2.getNameIndex()));
+        assertEquals("ISEVEN", tbl.resolveNameXText(namex2.getSheetRefIndex(), namex2.getNameIndex(), null));
 
     }
 }

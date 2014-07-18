@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.ErrPtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
@@ -206,7 +207,7 @@ final class LinkTable {
 		// collect zero or more DEFINEDNAMEs id=0x18,
 		//  with their comments if present
 		while(true) {
-		  Class nextClass = rs.peekNextClass();
+		  Class<? extends Record> nextClass = rs.peekNextClass();
 		  if (nextClass == NameRecord.class) {
 		    NameRecord nr = (NameRecord)rs.getNext();
 		    _definedNames.add(nr);
@@ -280,10 +281,9 @@ final class LinkTable {
 	 * @param sheetNumber 1-based sheet number
 	 */
 	public NameRecord getSpecificBuiltinRecord(byte builtInCode, int sheetNumber) {
-
-		Iterator iterator = _definedNames.iterator();
+		Iterator<NameRecord> iterator = _definedNames.iterator();
 		while (iterator.hasNext()) {
-			NameRecord record = ( NameRecord ) iterator.next();
+			NameRecord record = iterator.next();
 
 			//print areas are one based
 			if (record.getBuiltInName() == builtInCode && record.getSheetNumber() == sheetNumber) {
@@ -471,10 +471,37 @@ final class LinkTable {
 		}
 		return -1;
 	}
-
-	public String resolveNameXText(int refIndex, int definedNameIndex) {
-		int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
-		return _externalBookBlocks[extBookIndex].getNameText(definedNameIndex);
+	
+	public String resolveNameXText(int refIndex, int definedNameIndex, InternalWorkbook workbook) {
+        int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
+        int firstTabIndex = _externSheetRecord.getFirstSheetIndexFromRefIndex(refIndex);
+		if (firstTabIndex == -1) {
+		    // The referenced sheet could not be found
+            throw new RuntimeException("Referenced sheet could not be found");
+		}
+		
+		// Does it exist via the external book block?
+		if (_externalBookBlocks.length > extBookIndex) {
+            return _externalBookBlocks[extBookIndex].getNameText(definedNameIndex);
+		} else if (firstTabIndex == -2) {
+		    // Workbook scoped name, not actually external after all
+		    NameRecord nr = getNameRecord(definedNameIndex);
+		    int sheetNumber = nr.getSheetNumber();
+		    
+		    StringBuffer text = new StringBuffer();
+		    if (sheetNumber > 0) {
+		        String sheetName = workbook.getSheetName(sheetNumber-1);
+		        SheetNameFormatter.appendFormat(text, sheetName);
+		        text.append("!");
+		    }
+		    text.append(nr.getNameText());
+		    return text.toString();
+		} else {
+		    throw new ArrayIndexOutOfBoundsException(
+		            "Ext Book Index relative but beyond the supported length, was " +
+		            extBookIndex + " but maximum is " + _externalBookBlocks.length
+		    );
+		}
 	}
 	public int resolveNameXIx(int refIndex, int definedNameIndex) {
       int extBookIndex = _externSheetRecord.getExtbookIndexFromRefIndex(refIndex);
