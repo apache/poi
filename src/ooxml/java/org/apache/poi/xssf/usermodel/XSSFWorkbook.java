@@ -63,6 +63,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -154,6 +155,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * TODO
      */
     private CalculationChain calcChain;
+    
+    /**
+     * External Links, for referencing names or cells in other workbooks
+     */
+    private ExternalLinksTable externalLinks;
 
     /**
      * A collection of custom XML mappings
@@ -283,6 +289,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
                 else if(p instanceof ThemesTable) theme = (ThemesTable)p;
                 else if(p instanceof CalculationChain) calcChain = (CalculationChain)p;
+                else if(p instanceof ExternalLinksTable) externalLinks = (ExternalLinksTable)p;
                 else if(p instanceof MapInfo) mapInfo = (MapInfo)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
@@ -1591,7 +1598,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
-     * Return the CalculationChain object for this workbook
+     * Return the {@link CalculationChain} object for this workbook
      * <p>
      *   The calculation chain object specifies the order in which the cells in a workbook were last calculated
      * </p>
@@ -1599,8 +1606,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @return the <code>CalculationChain</code> object or <code>null</code> if not defined
      */
     @Internal
-    public CalculationChain getCalculationChain(){
+    public CalculationChain getCalculationChain() {
         return calcChain;
+    }
+    
+    /**
+     * Returns the {@link ExternalLinksTable} object for this workbook.
+     * 
+     * <p>The external links table specifies details of named ranges etc
+     *  that are referenced from other workbooks, along with the last seen
+     *  values of what they point to.</p>
+     *
+     * @return the <code>ExternalLinksTable</code> object or <code>null</code> if not defined
+     */
+    @Internal
+    public ExternalLinksTable getExternalLinksTable() {
+        return externalLinks;
     }
 
     /**
