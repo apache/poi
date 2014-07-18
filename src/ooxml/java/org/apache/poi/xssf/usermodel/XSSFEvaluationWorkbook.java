@@ -102,7 +102,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	   throw new RuntimeException("Not implemented yet");
 	}
 
-	public NameXPtg getNameXPtg(String name) {
+	public NameXPtg getNameXPtg(String name, int sheetRefIndex) {
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
         FreeRefFunction func = udfFinder.findFunction(name);
 		if(func == null) return null;

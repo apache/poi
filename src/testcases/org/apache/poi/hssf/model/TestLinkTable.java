@@ -211,13 +211,19 @@ public final class TestLinkTable extends TestCase {
         ExternSheetRecord extSheet = (ExternSheetRecord)wrl.get(3);
         assertEquals(0, extSheet.getNumOfRefs());
 
-        assertNull(tbl.getNameXPtg("ISODD"));
+        assertNull(tbl.getNameXPtg("ISODD", -1));
         assertEquals(5, wrl.getRecords().size()); //still have five records
 
         NameXPtg namex1 = tbl.addNameXPtg("ISODD");  // adds two new rercords
         assertEquals(0, namex1.getSheetRefIndex());
         assertEquals(0, namex1.getNameIndex());
-        assertEquals(namex1.toString(), tbl.getNameXPtg("ISODD").toString());
+        assertEquals(namex1.toString(), tbl.getNameXPtg("ISODD", -1).toString());
+        
+        // Can only find on the right sheet ref, if restricting
+        assertEquals(namex1.toString(), tbl.getNameXPtg("ISODD", 0).toString());
+        assertNull(tbl.getNameXPtg("ISODD", 1));
+        assertNull(tbl.getNameXPtg("ISODD", 2));
+        
         // assure they are in place:
         //    [BOFRecord]
         //    [CountryRecord]
@@ -241,11 +247,11 @@ public final class TestLinkTable extends TestCase {
         assertEquals(0, tbl.resolveNameXIx(namex1.getSheetRefIndex(), namex1.getNameIndex()));
         assertEquals("ISODD", tbl.resolveNameXText(namex1.getSheetRefIndex(), namex1.getNameIndex(), null));
 
-        assertNull(tbl.getNameXPtg("ISEVEN"));
+        assertNull(tbl.getNameXPtg("ISEVEN", -1));
         NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new rercords
         assertEquals(0, namex2.getSheetRefIndex());
         assertEquals(1, namex2.getNameIndex());  // name index increased by one
-        assertEquals(namex2.toString(), tbl.getNameXPtg("ISEVEN").toString());
+        assertEquals(namex2.toString(), tbl.getNameXPtg("ISEVEN", -1).toString());
         assertEquals(8, wrl.getRecords().size());
         // assure they are in place:
         //    [BOFRecord]

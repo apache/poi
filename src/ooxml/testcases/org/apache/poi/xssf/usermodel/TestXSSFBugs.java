@@ -1551,7 +1551,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         bug53798Work(wb, xlsOutput);
     }
 
-    @Ignore("Shifting rows is not yet implemented in XSSFSheet")
+    @Ignore("Shifting rows is not yet implemented in SXSSFSheet")
     @Test
     public void testBug53798XLSXStream() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx");
@@ -1660,8 +1660,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * org.apache.poi.ss.formula.FormulaParseException: Cell reference expected after sheet name at index 9
      * org.apache.poi.ss.formula.FormulaParseException: Parse error near char 0 '[' in specified formula '[0]!NR_Global_B2'. Expected number, string, or defined name 
      */
-    @Ignore
     @Test
+    @Ignore
     public void bug56737() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         
@@ -1681,6 +1681,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Cell cRefWName = s.getRow(2).getCell(3);
         
         assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
+        // TODO Why aren't we showing the real filename as Excel does?
         assertEquals("[0]!NR_Global_B2", cRefWName.getCellFormula());
         
         // Try to evaluate them

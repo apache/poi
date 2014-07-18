@@ -2358,12 +2358,13 @@ public final class InternalWorkbook {
     /**
      *
      * @param name the  name of an external function, typically a name of a UDF
+     * @param sheetRefIndex the sheet ref index, or -1 if not known
      * @param udf  locator of user-defiend functions to resolve names of VBA and Add-In functions
      * @return the external name or null
      */
-    public NameXPtg getNameXPtg(String name, UDFFinder udf) {
+    public NameXPtg getNameXPtg(String name, int sheetRefIndex, UDFFinder udf) {
         LinkTable lnk = getOrCreateLinkTable();
-        NameXPtg xptg = lnk.getNameXPtg(name);
+        NameXPtg xptg = lnk.getNameXPtg(name, sheetRefIndex);
 
         if(xptg == null && udf.findFunction(name) != null) {
             // the name was not found in the list of external names
@@ -2371,6 +2372,9 @@ public final class InternalWorkbook {
             xptg = lnk.addNameXPtg(name);
         }
         return xptg;
+    }
+    public NameXPtg getNameXPtg(String name, UDFFinder udf) {
+        return getNameXPtg(name, -1, udf);
     }
 
     /**

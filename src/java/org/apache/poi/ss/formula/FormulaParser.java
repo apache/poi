@@ -21,12 +21,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.constant.ErrorConstant;
-import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
+import org.apache.poi.ss.formula.ptg.AddPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.ArrayPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.BoolPtg;
+import org.apache.poi.ss.formula.ptg.ConcatPtg;
+import org.apache.poi.ss.formula.ptg.DividePtg;
+import org.apache.poi.ss.formula.ptg.EqualPtg;
+import org.apache.poi.ss.formula.ptg.ErrPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.GreaterEqualPtg;
+import org.apache.poi.ss.formula.ptg.GreaterThanPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.LessEqualPtg;
+import org.apache.poi.ss.formula.ptg.LessThanPtg;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.MissingArgPtg;
+import org.apache.poi.ss.formula.ptg.MultiplyPtg;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NotEqualPtg;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
+import org.apache.poi.ss.formula.ptg.OperandPtg;
+import org.apache.poi.ss.formula.ptg.OperationPtg;
+import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
+import org.apache.poi.ss.formula.ptg.PercentPtg;
+import org.apache.poi.ss.formula.ptg.PowerPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RangePtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.ptg.StringPtg;
+import org.apache.poi.ss.formula.ptg.SubtractPtg;
+import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
+import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
+import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
 import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
@@ -97,18 +137,26 @@ public final class FormulaParser {
 		public Identifier getSheetIdentifier() {
 			return _sheetIdentifier;
 		}
+		private void asFormulaString(StringBuffer sb) {
+            if (_bookName != null) {
+                sb.append(" [").append(_sheetIdentifier.getName()).append("]");
+            }
+            if (_sheetIdentifier.isQuoted()) {
+                sb.append("'").append(_sheetIdentifier.getName()).append("'");
+            } else {
+                sb.append(_sheetIdentifier.getName());
+            }
+		}
+		public String asFormulaString() {
+		    StringBuffer sb = new StringBuffer(32);
+		    asFormulaString(sb);
+		    return sb.toString();
+		}
 		public String toString() {
 			StringBuffer sb = new StringBuffer(64);
 			sb.append(getClass().getName());
 			sb.append(" [");
-			if (_bookName != null) {
-				sb.append(" [").append(_sheetIdentifier.getName()).append("]");
-			}
-			if (_sheetIdentifier.isQuoted()) {
-				sb.append("'").append(_sheetIdentifier.getName()).append("'");
-			} else {
-				sb.append(_sheetIdentifier.getName());
-			}
+			asFormulaString(sb);
 			sb.append("]");
 			return sb.toString();
 		}
@@ -398,6 +446,8 @@ public final class FormulaParser {
 	 *   'my sheet'!A1
 	 *   .my.sheet!A1
 	 *   my.named..range.
+	 *   'my sheet'!my.named.range
+	 *   .my.sheet!my.named.range
 	 *   foo.bar(123.456, "abc")
 	 *   123.456
 	 *   "abc"
@@ -420,10 +470,21 @@ public final class FormulaParser {
 		if (part1 == null) {
 			if (sheetIden != null) {
                 if(look == '#'){  // error ref like MySheet!#REF!
-                    return new ParseNode(ErrPtg.valueOf(parseErrorLiteral()));    
+                    return new ParseNode(ErrPtg.valueOf(parseErrorLiteral()));  
                 } else {
-                    throw new FormulaParseException("Cell reference expected after sheet name at index "
-                            + _pointer + ".");
+                    // Is it a named range?
+                    String name = parseAsName();
+                    if (name.length() == 0) {
+                        throw new FormulaParseException("Cell reference or Named Range "
+                                + "expected after sheet name at index " + _pointer + ".");
+                    }
+                    int extIx = getSheetExtIx(sheetIden);
+                    NameXPtg nameXPtg = _book.getNameXPtg(name, extIx);
+                    if (nameXPtg == null) {
+                        throw new FormulaParseException("Specified name '" + name +
+                                "' for sheet " + sheetIden.asFormulaString() + " not found");
+                    }
+                    return new ParseNode(nameXPtg);
                 }
 			}
 			return parseNonRange(savePointer);
@@ -540,20 +601,11 @@ public final class FormulaParser {
 		if (look == '"') {
 			return new ParseNode(new StringPtg(parseStringLiteral()));
 		}
+		
 		// from now on we can only be dealing with non-quoted identifiers
 		// which will either be named ranges or functions
-		StringBuilder sb = new StringBuilder();
+		String name = parseAsName();
 
-		// defined names may begin with a letter or underscore
-		if (!Character.isLetter(look) && look != '_') {
-			throw expected("number, string, or defined name");
-		}
-		while (isValidDefinedNameChar(look)) {
-			sb.append(look);
-			GetChar();
-		}
-		SkipWhite();
-		String name = sb.toString();
 		if (look == '(') {
 			return function(name);
 		}
@@ -576,6 +628,22 @@ public final class FormulaParser {
 		throw new FormulaParseException("Specified name '"
 				+ name + "' is not a range as expected.");
 	}
+	
+	private String parseAsName() {
+        StringBuilder sb = new StringBuilder();
+
+        // defined names may begin with a letter or underscore
+        if (!Character.isLetter(look) && look != '_') {
+            throw expected("number, string, or defined name");
+        }
+        while (isValidDefinedNameChar(look)) {
+            sb.append(look);
+            GetChar();
+        }
+        SkipWhite();
+        
+        return sb.toString();
+	}
 
 	/**
 	 *
@@ -594,6 +662,21 @@ public final class FormulaParser {
 		}
 		return false;
 	}
+	
+	private int getSheetExtIx(SheetIdentifier sheetIden) {
+        int extIx;
+        if (sheetIden == null) {
+            extIx = Integer.MIN_VALUE;
+        } else {
+            String sName = sheetIden.getSheetIdentifier().getName();
+            if (sheetIden.getBookName() == null) {
+                extIx = _book.getExternalSheetIndex(sName);
+            } else {
+                extIx = _book.getExternalSheetIndex(sheetIden.getBookName(), sName);
+            }
+        }
+        return extIx;
+	}
 
 	/**
 	 *
@@ -603,18 +686,8 @@ public final class FormulaParser {
 	 */
 	private ParseNode createAreaRefParseNode(SheetIdentifier sheetIden, SimpleRangePart part1,
 			SimpleRangePart part2) throws FormulaParseException {
+		int extIx = getSheetExtIx(sheetIden);
 
-		int extIx;
-		if (sheetIden == null) {
-			extIx = Integer.MIN_VALUE;
-		} else {
-			String sName = sheetIden.getSheetIdentifier().getName();
-			if (sheetIden.getBookName() == null) {
-				extIx = _book.getExternalSheetIndex(sName);
-			} else {
-				extIx = _book.getExternalSheetIndex(sheetIden.getBookName(), sName);
-			}
-		}
 		Ptg ptg;
 		if (part2 == null) {
 			CellReference cr = part1.getCellReference();
@@ -914,8 +987,7 @@ public final class FormulaParser {
 			}
 			EvaluationName hName = _book.getName(name, _sheetIndex);
 			if (hName == null) {
-
-				nameToken = _book.getNameXPtg(name);
+				nameToken = _book.getNameXPtg(name, -1);
 				if (nameToken == null) {
 					throw new FormulaParseException("Name '" + name
 							+ "' is completely unknown in the current workbook");
