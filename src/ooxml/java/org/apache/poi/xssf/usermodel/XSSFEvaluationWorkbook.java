@@ -26,12 +26,17 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -77,6 +82,19 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		int sheetIndex = _uBook.getSheetIndex(sheetName);
 		return convertToExternalSheetIndex(sheetIndex);
 	}
+	
+	private int resolveBookIndex(String bookName) {
+	    // Is it already in numeric form?
+	    if (bookName.startsWith("[") && bookName.endsWith("]")) {
+	        bookName = bookName.substring(1, bookName.length()-2);
+	        try {
+	            return Integer.parseInt(bookName);
+	        } catch (NumberFormatException e) {}
+	    }
+	    
+	    // Look up an External Link Table for this name
+        throw new RuntimeException("Not implemented yet"); // TODO
+	}
 
 	public EvaluationName getName(String name, int sheetIndex) {
 		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
@@ -102,7 +120,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	   throw new RuntimeException("Not implemented yet");
 	}
 
-	public NameXPtg getNameXPtg(String name, int sheetRefIndex) {
+	public NameXPtg getNameXPtg(String name, SheetIdentifier sheet) {
 	    // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
         FreeRefFunction func = udfFinder.findFunction(name);
@@ -119,6 +137,20 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             return null;
         }
 	}
+    public Ptg get3DReferencePtg(CellReference cell, SheetIdentifier sheet) {
+        String sheetName = sheet._sheetIdentifier.getName();
+        
+        if (sheet._bookName != null) {
+            int bookIndex = resolveBookIndex(sheet._bookName);
+            return new Ref3DPxg(bookIndex, sheetName, cell);
+        } else {
+            return new Ref3DPxg(sheetName, cell);
+        }
+    }
+    public Ptg get3DReferencePtg(AreaReference area, SheetIdentifier sheet) {
+        // TODO Implement properly
+        return new Area3DPtg(area, getExternalSheetIndex(sheet._sheetIdentifier.getName()));
+    }
 
     public String resolveNameXText(NameXPtg n) {
         int idx = n.getNameIndex();

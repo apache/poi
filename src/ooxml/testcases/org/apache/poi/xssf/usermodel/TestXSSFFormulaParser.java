@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Ignore;
@@ -106,9 +106,9 @@ public final class TestXSSFFormulaParser {
         // Reference to a single cell in a different sheet
         ptgs = parse(fpb, "Uses!A1");
         assertEquals(1, ptgs.length);
-        assertEquals(Ref3DPtg.class, ptgs[0].getClass());
-        assertEquals("A1", ((Ref3DPtg)ptgs[0]).format2DRefAsString());
-        assertEquals("Uses!A1", ((Ref3DPtg)ptgs[0]).toFormulaString(fpb));
+        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
+        assertEquals("Uses!A1", ((Ref3DPxg)ptgs[0]).toFormulaString());
         
         // Reference to a sheet scoped named range from another sheet
         ptgs = parse(fpb, "Defines!NR_To_A1");

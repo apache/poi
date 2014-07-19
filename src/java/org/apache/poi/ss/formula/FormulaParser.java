@@ -27,7 +27,6 @@ import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.AddPtg;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.ArrayPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -58,7 +57,6 @@ import org.apache.poi.ss.formula.ptg.PercentPtg;
 import org.apache.poi.ss.formula.ptg.PowerPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RangePtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.ss.formula.ptg.SubtractPtg;
@@ -83,85 +81,8 @@ import org.apache.poi.ss.util.CellReference.NameType;
  * <p/>
  * For POI internal use only
  * <p/>
- *
- *
- *  @author Avik Sengupta <avik at apache dot org>
- *  @author Andrew C. oliver (acoliver at apache dot org)
- *  @author Eric Ladner (eladner at goldinc dot com)
- *  @author Cameron Riley (criley at ekmail.com)
- *  @author Peter M. Murray (pete at quantrix dot com)
- *  @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
- *  @author Josh Micich
- *  @author David Lewis (DLewis400 at gmail dot com)
  */
 public final class FormulaParser {
-	private static final class Identifier {
-		private final String _name;
-		private final boolean _isQuoted;
-
-		public Identifier(String name, boolean isQuoted) {
-			_name = name;
-			_isQuoted = isQuoted;
-		}
-		public String getName() {
-			return _name;
-		}
-		public boolean isQuoted() {
-			return _isQuoted;
-		}
-		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName());
-			sb.append(" [");
-			if (_isQuoted) {
-				sb.append("'").append(_name).append("'");
-			} else {
-				sb.append(_name);
-			}
-			sb.append("]");
-			return sb.toString();
-		}
-	}
-	private static final class SheetIdentifier {
-
-
-		private final String _bookName;
-		private final Identifier _sheetIdentifier;
-		public SheetIdentifier(String bookName, Identifier sheetIdentifier) {
-			_bookName = bookName;
-			_sheetIdentifier = sheetIdentifier;
-		}
-		public String getBookName() {
-			return _bookName;
-		}
-		public Identifier getSheetIdentifier() {
-			return _sheetIdentifier;
-		}
-		private void asFormulaString(StringBuffer sb) {
-            if (_bookName != null) {
-                sb.append(" [").append(_sheetIdentifier.getName()).append("]");
-            }
-            if (_sheetIdentifier.isQuoted()) {
-                sb.append("'").append(_sheetIdentifier.getName()).append("'");
-            } else {
-                sb.append(_sheetIdentifier.getName());
-            }
-		}
-		public String asFormulaString() {
-		    StringBuffer sb = new StringBuffer(32);
-		    asFormulaString(sb);
-		    return sb.toString();
-		}
-		public String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName());
-			sb.append(" [");
-			asFormulaString(sb);
-			sb.append("]");
-			return sb.toString();
-		}
-	}
-
 	private final String _formulaString;
 	private final int _formulaLength;
 	/** points at the next character to be read (after the {@link #look} char) */
@@ -478,8 +399,7 @@ public final class FormulaParser {
                         throw new FormulaParseException("Cell reference or Named Range "
                                 + "expected after sheet name at index " + _pointer + ".");
                     }
-                    int extIx = getSheetExtIx(sheetIden);
-                    NameXPtg nameXPtg = _book.getNameXPtg(name, extIx);
+                    NameXPtg nameXPtg = _book.getNameXPtg(name, sheetIden);
                     if (nameXPtg == null) {
                         throw new FormulaParseException("Specified name '" + name +
                                 "' for sheet " + sheetIden.asFormulaString() + " not found");
@@ -663,21 +583,6 @@ public final class FormulaParser {
 		return false;
 	}
 	
-	private int getSheetExtIx(SheetIdentifier sheetIden) {
-        int extIx;
-        if (sheetIden == null) {
-            extIx = Integer.MIN_VALUE;
-        } else {
-            String sName = sheetIden.getSheetIdentifier().getName();
-            if (sheetIden.getBookName() == null) {
-                extIx = _book.getExternalSheetIndex(sName);
-            } else {
-                extIx = _book.getExternalSheetIndex(sheetIden.getBookName(), sName);
-            }
-        }
-        return extIx;
-	}
-
 	/**
 	 *
 	 * @param sheetIden may be <code>null</code>
@@ -686,15 +591,13 @@ public final class FormulaParser {
 	 */
 	private ParseNode createAreaRefParseNode(SheetIdentifier sheetIden, SimpleRangePart part1,
 			SimpleRangePart part2) throws FormulaParseException {
-		int extIx = getSheetExtIx(sheetIden);
-
 		Ptg ptg;
 		if (part2 == null) {
 			CellReference cr = part1.getCellReference();
 			if (sheetIden == null) {
 				ptg = new RefPtg(cr);
 			} else {
-				ptg = new Ref3DPtg(cr, extIx);
+				ptg = _book.get3DReferencePtg(cr, sheetIden);
 			}
 		} else {
 			AreaReference areaRef = createAreaRef(part1, part2);
@@ -702,7 +605,7 @@ public final class FormulaParser {
 			if (sheetIden == null) {
 				ptg = new AreaPtg(areaRef);
 			} else {
-				ptg = new Area3DPtg(areaRef, extIx);
+				ptg = _book.get3DReferencePtg(areaRef, sheetIden);
 			}
 		}
 		return new ParseNode(ptg);
@@ -895,7 +798,7 @@ public final class FormulaParser {
 				}
 			}
 
-			Identifier iden = new Identifier(sb.toString(), true);
+			NameIdentifier iden = new NameIdentifier(sb.toString(), true);
 			// quoted identifier - can't concatenate anything more
 			SkipWhite();
 			if (look == '!') {
@@ -916,7 +819,7 @@ public final class FormulaParser {
 			SkipWhite();
 			if (look == '!') {
 				GetChar();
-				return new SheetIdentifier(bookName, new Identifier(sb.toString(), false));
+				return new SheetIdentifier(bookName, new NameIdentifier(sb.toString(), false));
 			}
 			return null;
 		}
@@ -987,7 +890,7 @@ public final class FormulaParser {
 			}
 			EvaluationName hName = _book.getName(name, _sheetIndex);
 			if (hName == null) {
-				nameToken = _book.getNameXPtg(name, -1);
+				nameToken = _book.getNameXPtg(name, null);
 				if (nameToken == null) {
 					throw new FormulaParseException("Name '" + name
 							+ "' is completely unknown in the current workbook");
