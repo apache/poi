@@ -20,13 +20,13 @@ package org.apache.poi.ss.formula.eval.forked;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -90,8 +90,11 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 		return _masterBook.getExternalSheet(externSheetIndex);
 	}
+	public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
+        return _masterBook.getExternalSheet(sheetName, externalWorkbookNumber);
+    }
 
-	public Ptg[] getFormulaTokens(EvaluationCell cell) {
+    public Ptg[] getFormulaTokens(EvaluationCell cell) {
 		if (cell instanceof ForkedEvaluationCell) {
 			// doesn't happen yet because formulas cannot be modified from the master workbook
 			throw new RuntimeException("Updated formulas not supported yet");

@@ -44,10 +44,21 @@ public interface EvaluationWorkbook {
 	EvaluationSheet getSheet(int sheetIndex);
 
 	/**
-	 * @return <code>null</code> if externSheetIndex refers to a sheet inside the current workbook
+	 * HSSF Only - fetch the external-style sheet details
+	 * <p>Return will have no workbook set if it's actually in our own workbook</p>
 	 */
 	ExternalSheet getExternalSheet(int externSheetIndex);
+	/**
+	 * XSSF Only - fetch the external-style sheet details
+     * <p>Return will have no workbook set if it's actually in our own workbook</p>
+	 */
+	ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber);
+	/**
+	 * HSSF Only - convert an external sheet index to an internal sheet index,
+	 *  for an external-style reference to one of this workbook's own sheets 
+	 */
 	int convertFromExternSheetIndex(int externSheetIndex);
+	
 	ExternalName getExternalName(int externSheetIndex, int externNameIndex);
 	EvaluationName getName(NamePtg namePtg);
     EvaluationName getName(String name, int sheetIndex);

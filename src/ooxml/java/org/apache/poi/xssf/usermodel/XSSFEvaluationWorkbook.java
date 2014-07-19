@@ -37,6 +37,7 @@ import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
@@ -63,7 +64,8 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return externSheetIndex;
 	}
 	/**
-	 * @return the sheet index of the sheet with the given external index.
+	 * XSSF doesn't use external sheet indexes, so when asked treat
+	 * it just as a local index
 	 */
 	public int convertFromExternSheetIndex(int externSheetIndex) {
 		return externSheetIndex;
@@ -175,10 +177,21 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
-		// TODO Auto-generated method stub
-		return null;
+	    throw new IllegalStateException("HSSF-style external references are not supported for XSSF");
 	}
-	public int getExternalSheetIndex(String workbookName, String sheetName) {
+	public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
+	    if (externalWorkbookNumber > 0) {
+	        // External reference - reference is 1 based, link table is 0 based
+	        int linkNumber = externalWorkbookNumber - 1;
+	        ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+	        return new ExternalSheet(linkTable.getLinkedFileName(), sheetName);
+	    } else {
+	        // Internal reference
+	        return new ExternalSheet(null, sheetName);
+	    }
+    }
+
+    public int getExternalSheetIndex(String workbookName, String sheetName) {
 		throw new RuntimeException("not implemented yet");
 	}
 	public int getSheetIndex(String sheetName) {

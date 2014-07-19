@@ -17,16 +17,21 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NameXEval;
+import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
 
@@ -70,13 +75,20 @@ public final class OperationEvaluationContext {
 	SheetRefEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
 		return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
 	}
+    SheetRefEvaluator createExternSheetRefEvaluator(String sheetName, int externalWorkbookNumber) {
+        ExternalSheet externalSheet = _workbook.getExternalSheet(sheetName, externalWorkbookNumber);
+        return createExternSheetRefEvaluator(externalSheet);
+    }
 	SheetRefEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
 		ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
+        return createExternSheetRefEvaluator(externalSheet);
+	}
+    SheetRefEvaluator createExternSheetRefEvaluator(ExternalSheet externalSheet) {
 		WorkbookEvaluator targetEvaluator;
 		int otherSheetIndex;
-		if (externalSheet == null) {
+		if (externalSheet == null || externalSheet.getWorkbookName() == null) {
 			// sheet is in same workbook
-			otherSheetIndex = _workbook.convertFromExternSheetIndex(externSheetIndex);
+			otherSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
 			targetEvaluator = _bookEvaluator;
 		} else {
 			// look up sheet by name from external workbook
@@ -259,10 +271,14 @@ public final class OperationEvaluationContext {
 		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();
 		return new LazyRefEval(rowIndex, columnIndex, sre);
 	}
-	public ValueEval getRef3DEval(int rowIndex, int columnIndex, int extSheetIndex) {
-		SheetRefEvaluator sre = createExternSheetRefEvaluator(extSheetIndex);
-		return new LazyRefEval(rowIndex, columnIndex, sre);
+	public ValueEval getRef3DEval(Ref3DPtg rptg) {
+		SheetRefEvaluator sre = createExternSheetRefEvaluator(rptg.getExternSheetIndex());
+		return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
 	}
+    public ValueEval getRef3DEval(Ref3DPxg rptg) {
+        SheetRefEvaluator sre = createExternSheetRefEvaluator(rptg.getSheetName(), rptg.getExternalWorkbookNumber());
+        return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
+    }
 	public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
 			int lastRowIndex, int lastColumnIndex) {
 		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();

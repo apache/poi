@@ -673,12 +673,10 @@ public final class WorkbookEvaluator {
 				return ErrorEval.REF_INVALID;
 		}
 		if (ptg instanceof Ref3DPtg) {
-			Ref3DPtg rptg = (Ref3DPtg) ptg;
-			return ec.getRef3DEval(rptg.getRow(), rptg.getColumn(), rptg.getExternSheetIndex());
+			return ec.getRef3DEval((Ref3DPtg)ptg);
 		}
 		if (ptg instanceof Ref3DPxg) {
-            Ref3DPtg rptg = (Ref3DPtg) ptg;
-            // TODO Return the right eval, should be easy as we already know the sheet details
+            return ec.getRef3DEval((Ref3DPxg)ptg);
 		}
 		if (ptg instanceof Area3DPtg) {
 			Area3DPtg aptg = (Area3DPtg) ptg;
