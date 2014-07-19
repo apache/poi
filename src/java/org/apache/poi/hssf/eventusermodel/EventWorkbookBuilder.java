@@ -138,7 +138,14 @@ public class EventWorkbookBuilder {
 		}
 
 		public HSSFWorkbook getStubHSSFWorkbook() {
-			return HSSFWorkbook.create(getStubWorkbook());
+		    // Create a base workbook
+		    HSSFWorkbook wb = HSSFWorkbook.create(getStubWorkbook());
+		    // Stub the sheets, so sheet name lookups work
+		    for (BoundSheetRecord bsr : boundSheetRecords) {
+		        wb.createSheet(bsr.getSheetname());
+		    }
+		    // Ready for Formula use!
+		    return wb;
 		}
 		public InternalWorkbook getStubWorkbook() {
 			return createStubWorkbook(

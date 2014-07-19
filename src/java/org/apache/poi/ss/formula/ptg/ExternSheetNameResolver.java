@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 
 /**
@@ -36,8 +36,13 @@ final class ExternSheetNameResolver {
 		if (externalSheet != null) {
 			String wbName = externalSheet.getWorkbookName();
 			String sheetName = externalSheet.getSheetName();
-			sb = new StringBuffer(wbName.length() + sheetName.length() + cellRefText.length() + 4);
-			SheetNameFormatter.appendFormat(sb, wbName, sheetName);
+			if (wbName != null) {
+    			sb = new StringBuffer(wbName.length() + sheetName.length() + cellRefText.length() + 4);
+    			SheetNameFormatter.appendFormat(sb, wbName, sheetName);
+			} else {
+                sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
+                SheetNameFormatter.appendFormat(sb, sheetName);
+			}
 		} else {
 			String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
 			sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);

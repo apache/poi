@@ -97,8 +97,11 @@ public final class TestEventWorkbookBuilder extends TestCase {
 
 		// Check these stubs have the right stuff on them
 		assertEquals("Sheet1", stubWB.getSheetName(0));
-		assertEquals("S2", stubWB.getSheetName(1));
-		assertEquals("Sh3", stubWB.getSheetName(2));
+        assertEquals("Sheet1", stubHSSF.getSheetName(0));
+		assertEquals("S2",     stubWB.getSheetName(1));
+        assertEquals("S2",     stubHSSF.getSheetName(1));
+		assertEquals("Sh3",    stubWB.getSheetName(2));
+        assertEquals("Sh3",    stubHSSF.getSheetName(2));
 
 		// Check we can get the formula without breaking
 		for(int i=0; i<fRecs.length; i++) {
