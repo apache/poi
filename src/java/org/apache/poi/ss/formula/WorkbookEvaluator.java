@@ -62,6 +62,7 @@ import org.apache.poi.ss.formula.ptg.MemFuncPtg;
 import org.apache.poi.ss.formula.ptg.MissingArgPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.OperationPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -649,6 +650,25 @@ public final class WorkbookEvaluator {
                // Use the evaluated version
                return eval;
            }
+       }
+       if (ptg instanceof NameXPxg) {
+           // TODO This is a temporary hack....
+           NameXPxg pxg = (NameXPxg)ptg;
+           int sIdx = -1;
+           if (pxg.getSheetName() != null) {
+               sIdx = _workbook.getSheetIndex(pxg.getSheetName());
+           }
+           EvaluationName evalName = _workbook.getName(pxg.getNameName(), sIdx);
+           if (evalName == null) {
+               // We don't know about that name, sorry
+               // TODO What about UDFs?
+               logInfo("Unknown Name referenced: " + pxg.getNameName());
+               return ErrorEval.NAME_INVALID;
+           }
+           
+           int nIdx = evalName.createPtg().getIndex();
+           NameXPtg nptg = new NameXPtg(sIdx, nIdx);
+           return getEvalForPtg(nptg, ec);
        }
 
        if (ptg instanceof IntPtg) {

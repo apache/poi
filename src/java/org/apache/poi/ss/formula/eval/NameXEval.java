@@ -20,10 +20,9 @@ package org.apache.poi.ss.formula.eval;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 
 /**
- * @author Josh Micich
+ * Evaluation of a Name defined in a Sheet or Workbook scope
  */
 public final class NameXEval implements ValueEval {
-
 	private final NameXPtg _ptg;
 
 	public NameXEval(NameXPtg ptg) {
