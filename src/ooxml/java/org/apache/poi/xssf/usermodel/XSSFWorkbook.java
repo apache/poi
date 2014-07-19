@@ -79,6 +79,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -157,9 +158,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private CalculationChain calcChain;
     
     /**
-     * External Links, for referencing names or cells in other workbooks
+     * External Links, for referencing names or cells in other workbooks.
      */
-    private ExternalLinksTable externalLinks;
+    private List<ExternalLinksTable> externalLinks;
 
     /**
      * A collection of custom XML mappings
@@ -284,15 +285,18 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             this.workbook = doc.getWorkbook();
 
             Map<String, XSSFSheet> shIdMap = new HashMap<String, XSSFSheet>();
+            Map<String, ExternalLinksTable> elIdMap = new HashMap<String, ExternalLinksTable>();
             for(POIXMLDocumentPart p : getRelations()){
                 if(p instanceof SharedStringsTable) sharedStringSource = (SharedStringsTable)p;
                 else if(p instanceof StylesTable) stylesSource = (StylesTable)p;
                 else if(p instanceof ThemesTable) theme = (ThemesTable)p;
                 else if(p instanceof CalculationChain) calcChain = (CalculationChain)p;
-                else if(p instanceof ExternalLinksTable) externalLinks = (ExternalLinksTable)p;
                 else if(p instanceof MapInfo) mapInfo = (MapInfo)p;
                 else if (p instanceof XSSFSheet) {
                     shIdMap.put(p.getPackageRelationship().getId(), (XSSFSheet)p);
+                }
+                else if (p instanceof ExternalLinksTable) {
+                    elIdMap.put(p.getPackageRelationship().getId(), (ExternalLinksTable)p);
                 }
             }
             
@@ -307,7 +311,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
             }
 
-            // Load individual sheets. The order of sheets is defined by the order of CTSheet elements in the workbook
+            // Load individual sheets. The order of sheets is defined by the order
+            //  of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 XSSFSheet sh = shIdMap.get(ctSheet.getId());
@@ -318,6 +323,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                 sh.sheet = ctSheet;
                 sh.onDocumentRead();
                 sheets.add(sh);
+            }
+            
+            // Load the external links tables. Their order is defined by the order 
+            //  of CTExternalReference elements in the workbook
+            externalLinks = new ArrayList<ExternalLinksTable>(elIdMap.size());
+            if (this.workbook.isSetExternalReferences()) {
+                for (CTExternalReference er : this.workbook.getExternalReferences().getExternalReferenceArray()) {
+                    ExternalLinksTable el = elIdMap.get(er.getId());
+                    if(el == null) {
+                        logger.log(POILogger.WARN, "ExternalLinksTable with r:id " + er.getId()+ " was defined, but didn't exist in package, skipping");
+                        continue;
+                    }
+                    externalLinks.add(el);
+                }
             }
 
             // Process the named ranges
@@ -1611,16 +1630,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
     
     /**
-     * Returns the {@link ExternalLinksTable} object for this workbook.
+     * Returns the list of {@link ExternalLinksTable} object for this workbook
      * 
      * <p>The external links table specifies details of named ranges etc
      *  that are referenced from other workbooks, along with the last seen
      *  values of what they point to.</p>
      *
-     * @return the <code>ExternalLinksTable</code> object or <code>null</code> if not defined
+     * <p>Note that Excel uses index 0 for the current workbook, so the first
+     *  External Links in a formula would be '[1]Foo' which corresponds to
+     *  entry 0 in this list.</p>
+
+     * @return the <code>ExternalLinksTable</code> list, which may be empty
      */
     @Internal
-    public ExternalLinksTable getExternalLinksTable() {
+    public List<ExternalLinksTable> getExternalLinksTable() {
         return externalLinks;
     }
 
