@@ -30,75 +30,75 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
  * @author Josh Micich
  */
 public interface EvaluationWorkbook {
-	String getSheetName(int sheetIndex);
-	/**
-	 * @return -1 if the specified sheet is from a different book
-	 */
-	int getSheetIndex(EvaluationSheet sheet);
-	/**
-	 * Finds a sheet index by case insensitive name.
-	 * @return the index of the sheet matching the specified name.  -1 if not found
-	 */
-	int getSheetIndex(String sheetName);
+    String getSheetName(int sheetIndex);
+    /**
+     * @return -1 if the specified sheet is from a different book
+     */
+    int getSheetIndex(EvaluationSheet sheet);
+    /**
+     * Finds a sheet index by case insensitive name.
+     * @return the index of the sheet matching the specified name.  -1 if not found
+     */
+    int getSheetIndex(String sheetName);
 
-	EvaluationSheet getSheet(int sheetIndex);
+    EvaluationSheet getSheet(int sheetIndex);
 
-	/**
-	 * HSSF Only - fetch the external-style sheet details
-	 * <p>Return will have no workbook set if it's actually in our own workbook</p>
-	 */
-	ExternalSheet getExternalSheet(int externSheetIndex);
-	/**
-	 * XSSF Only - fetch the external-style sheet details
+    /**
+     * HSSF Only - fetch the external-style sheet details
      * <p>Return will have no workbook set if it's actually in our own workbook</p>
-	 */
-	ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber);
-	/**
-	 * HSSF Only - convert an external sheet index to an internal sheet index,
-	 *  for an external-style reference to one of this workbook's own sheets 
-	 */
-	int convertFromExternSheetIndex(int externSheetIndex);
-	
-	ExternalName getExternalName(int externSheetIndex, int externNameIndex);
-	EvaluationName getName(NamePtg namePtg);
+     */
+    ExternalSheet getExternalSheet(int externSheetIndex);
+    /**
+     * XSSF Only - fetch the external-style sheet details
+     * <p>Return will have no workbook set if it's actually in our own workbook</p>
+     */
+    ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber);
+    /**
+     * HSSF Only - convert an external sheet index to an internal sheet index,
+     *  for an external-style reference to one of this workbook's own sheets 
+     */
+    int convertFromExternSheetIndex(int externSheetIndex);
+
+    ExternalName getExternalName(int externSheetIndex, int externNameIndex);
+    EvaluationName getName(NamePtg namePtg);
     EvaluationName getName(String name, int sheetIndex);
-	String resolveNameXText(NameXPtg ptg);
-	Ptg[] getFormulaTokens(EvaluationCell cell);
+    String resolveNameXText(NameXPtg ptg);
+    Ptg[] getFormulaTokens(EvaluationCell cell);
     UDFFinder getUDFFinder();
 
-	class ExternalSheet {
-		private final String _workbookName;
-		private final String _sheetName;
+    class ExternalSheet {
+        private final String _workbookName;
+        private final String _sheetName;
 
-		public ExternalSheet(String workbookName, String sheetName) {
-			_workbookName = workbookName;
-			_sheetName = sheetName;
-		}
-		public String getWorkbookName() {
-			return _workbookName;
-		}
-		public String getSheetName() {
-			return _sheetName;
-		}
-	}
-	class ExternalName {
-		private final String _nameName;
-		private final int _nameNumber;
-		private final int _ix;
+        public ExternalSheet(String workbookName, String sheetName) {
+            _workbookName = workbookName;
+            _sheetName = sheetName;
+        }
+        public String getWorkbookName() {
+            return _workbookName;
+        }
+        public String getSheetName() {
+            return _sheetName;
+        }
+    }
+    class ExternalName {
+        private final String _nameName;
+        private final int _nameNumber;
+        private final int _ix;
 
-		public ExternalName(String nameName, int nameNumber, int ix) {
-			_nameName = nameName;
-			_nameNumber = nameNumber;
-			_ix = ix;
-		}
-		public String getName() {
-			return _nameName;
-		}
-		public int getNumber() {
-			return _nameNumber;
-		}
-		public int getIx() {
-			return _ix;
-		}
-	}
+        public ExternalName(String nameName, int nameNumber, int ix) {
+            _nameName = nameName;
+            _nameNumber = nameNumber;
+            _ix = ix;
+        }
+        public String getName() {
+            return _nameName;
+        }
+        public int getNumber() {
+            return _nameNumber;
+        }
+        public int getIx() {
+            return _ix;
+        }
+    }
 }
