@@ -120,10 +120,29 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
-		return _iBook.getExternalSheet(externSheetIndex);
+	    ExternalSheet sheet = _iBook.getExternalSheet(externSheetIndex);
+	    if (sheet == null) {
+	        // Try to treat it as a local sheet
+	        int localSheetIndex = convertFromExternSheetIndex(externSheetIndex);
+            if (localSheetIndex == -1) {
+                // The sheet referenced can't be found, sorry
+                return null;
+            }
+	        if (localSheetIndex == -2) {
+	            // Not actually sheet based at all - is workbook scoped
+	            return null;
+	        }
+	        // Look up the local sheet
+	        String sheetName = getSheetName(localSheetIndex);
+	        sheet = new ExternalSheet(null, sheetName);
+	    }
+	    return sheet;
 	}
-	
-	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
+	public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
+	    throw new IllegalStateException("XSSF-style external references are not supported for HSSF");
+    }
+
+    public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
 		return _iBook.getExternalName(externSheetIndex, externNameIndex);
 	}
 
@@ -141,7 +160,9 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		int ix = namePtg.getIndex();
 		return new Name(_iBook.getNameRecord(ix), ix);
 	}
-	public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
+	
+	@SuppressWarnings("unused")
+    public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
 		HSSFCell cell = ((HSSFEvaluationCell)evalCell).getHSSFCell();
 		if (false) {
 			// re-parsing the formula text also works, but is a waste of time
@@ -159,6 +180,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
 		return fra.getFormulaTokens();
 	}
+	
     public UDFFinder getUDFFinder(){
         return _uBook.getUDFFinder();
     }

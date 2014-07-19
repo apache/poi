@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.Cell;
  * @author Josh Micich
  */
 final class SheetRefEvaluator {
-
 	private final WorkbookEvaluator _bookEvaluator;
 	private final EvaluationTracker _tracker;
 	private final int _sheetIndex;
