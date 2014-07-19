@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
@@ -279,17 +280,25 @@ public final class OperationEvaluationContext {
         SheetRefEvaluator sre = createExternSheetRefEvaluator(rptg.getSheetName(), rptg.getExternalWorkbookNumber());
         return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
     }
+    
 	public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
 			int lastRowIndex, int lastColumnIndex) {
 		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();
 		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
 	}
-	public ValueEval getArea3DEval(int firstRowIndex, int firstColumnIndex,
-			int lastRowIndex, int lastColumnIndex, int extSheetIndex) {
-		SheetRefEvaluator sre = createExternSheetRefEvaluator(extSheetIndex);
-		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
-	}
+    public ValueEval getArea3DEval(Area3DPtg aptg) {
+        SheetRefEvaluator sre = createExternSheetRefEvaluator(aptg.getExternSheetIndex());
+        return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
+                aptg.getLastRow(), aptg.getLastColumn(), sre);
+    }
+    public ValueEval getArea3DEval(Area3DPxg aptg) {
+        SheetRefEvaluator sre = createExternSheetRefEvaluator(aptg.getSheetName(), aptg.getExternalWorkbookNumber());
+        return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
+                aptg.getLastRow(), aptg.getLastColumn(), sre);
+    }
+    
 	public ValueEval getNameXEval(NameXPtg nameXPtg) {
+	    // TODO Need HSSF and XSSF versions of these
       ExternalSheet externSheet = _workbook.getExternalSheet(nameXPtg.getSheetRefIndex());
       if(externSheet == null)
          return new NameXEval(nameXPtg);

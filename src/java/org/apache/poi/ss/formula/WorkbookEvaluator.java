@@ -44,6 +44,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.IfFunc;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.AreaErrPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -679,8 +680,10 @@ public final class WorkbookEvaluator {
            return ec.getRef3DEval((Ref3DPxg)ptg);
        }
        if (ptg instanceof Area3DPtg) {
-           Area3DPtg aptg = (Area3DPtg) ptg;
-           return ec.getArea3DEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn(), aptg.getExternSheetIndex());
+           return ec.getArea3DEval((Area3DPtg)ptg);
+       }
+       if (ptg instanceof Area3DPxg) {
+           return ec.getArea3DEval((Area3DPxg)ptg);
        }
        if (ptg instanceof RefPtg) {
            RefPtg rptg = (RefPtg) ptg;

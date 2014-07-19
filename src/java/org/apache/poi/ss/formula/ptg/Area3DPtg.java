@@ -25,12 +25,13 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Area 3D Ptg - 3D reference (Sheet + Area)<P>
- * Description:  Defined a area in Extern Sheet. <P>
- * REFERENCE:  <P>
- * @author Libin Roman (Vista Portal LDT. Developer)
- * @author avik
- * @author Jason Height (jheight at chariot dot net dot au)
+ * <p>Title:        Area 3D Ptg - 3D reference (Sheet + Area)</p>
+ * <p>Description:  Defined an area in Extern Sheet. </p>
+ * <p>REFERENCE:  </p>
+ * 
+ * <p>This is HSSF only, as it matches the HSSF file format way of
+ *  referring to the sheet by an extern index. The XSSF equivalent
+ *  is {@link Area3DPxg}
  */
 public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
 	public final static byte sid = 0x3b;

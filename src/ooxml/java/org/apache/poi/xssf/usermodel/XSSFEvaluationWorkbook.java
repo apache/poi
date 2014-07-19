@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -150,8 +150,14 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
     }
     public Ptg get3DReferencePtg(AreaReference area, SheetIdentifier sheet) {
-        // TODO Implement properly
-        return new Area3DPtg(area, getExternalSheetIndex(sheet._sheetIdentifier.getName()));
+        String sheetName = sheet._sheetIdentifier.getName();
+        
+        if (sheet._bookName != null) {
+            int bookIndex = resolveBookIndex(sheet._bookName);
+            return new Area3DPxg(bookIndex, sheetName, area);
+        } else {
+            return new Area3DPxg(sheetName, area);
+        }
     }
 
     public String resolveNameXText(NameXPtg n) {
