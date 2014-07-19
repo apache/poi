@@ -78,23 +78,25 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return sheetIndex;
 	}
 
-	public int getExternalSheetIndex(String sheetName) {
-		int sheetIndex = _uBook.getSheetIndex(sheetName);
-		return convertToExternalSheetIndex(sheetIndex);
-	}
-	
-	private int resolveBookIndex(String bookName) {
-	    // Is it already in numeric form?
-	    if (bookName.startsWith("[") && bookName.endsWith("]")) {
-	        bookName = bookName.substring(1, bookName.length()-2);
-	        try {
-	            return Integer.parseInt(bookName);
-	        } catch (NumberFormatException e) {}
-	    }
-	    
-	    // Look up an External Link Table for this name
-        throw new RuntimeException("Not implemented yet"); // TODO
-	}
+    public int getExternalSheetIndex(String sheetName) {
+        int sheetIndex = _uBook.getSheetIndex(sheetName);
+        return convertToExternalSheetIndex(sheetIndex);
+    }
+
+    private int resolveBookIndex(String bookName) {
+        // Strip the [] wrapper, if still present
+        if (bookName.startsWith("[") && bookName.endsWith("]")) {
+            bookName = bookName.substring(1, bookName.length()-2);
+        }
+
+        // Is it already in numeric form?
+        try {
+            return Integer.parseInt(bookName);
+        } catch (NumberFormatException e) {}
+
+        // Look up an External Link Table for this name
+        throw new RuntimeException("Not implemented yet for book " + bookName); // TODO
+    }
 
 	public EvaluationName getName(String name, int sheetIndex) {
 		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
@@ -129,6 +131,13 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
         
         // Otherwise, try it as a named range
+        if (sheet._sheetIdentifier == null) {
+            // Workbook + Named Range only
+            int bookIndex = resolveBookIndex(sheet._bookName);
+            return new NameXPxg(bookIndex, null, name);
+        }
+
+        // Use the sheetname and process
         String sheetName = sheet._sheetIdentifier.getName();
         
         if (sheet._bookName != null) {
