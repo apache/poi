@@ -81,4 +81,11 @@ public final class TestExternalLinksTable {
         assertEquals("Defines", name.getSheetName());
         assertEquals("$A$1", name.getRefersToFormula());
     }
+    
+    @Test
+    public void readWithReferencesToTwoExternalBooks() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref2-56737.xlsx");
+        
+        // TODO Fix so we can see both of them...
+    }
 }
