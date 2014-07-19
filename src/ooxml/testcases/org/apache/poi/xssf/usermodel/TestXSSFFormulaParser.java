@@ -26,12 +26,12 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestXSSFFormulaParser {
@@ -109,16 +109,16 @@ public final class TestXSSFFormulaParser {
         ptgs = parse(fpb, "[0]!NR_Global_B2");
         assertEquals(1, ptgs.length);
         assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertEquals(0,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[0]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
     }
    
 	@Test
-    @Ignore("Work in progress, see bug #56737")
     public void formulaReferencesOtherSheets() {
         // Use a test file with the named ranges in place
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
 
@@ -126,6 +126,7 @@ public final class TestXSSFFormulaParser {
         ptgs = parse(fpb, "Uses!A1");
         assertEquals(1, ptgs.length);
         assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertEquals(-1,   ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
         assertEquals("Uses!A1", ((Ref3DPxg)ptgs[0]).toFormulaString());
         
@@ -133,6 +134,7 @@ public final class TestXSSFFormulaParser {
         ptgs = parse(fpb, "Defines!NR_To_A1");
         assertEquals(1, ptgs.length);
         assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertEquals(-1,        ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
         assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("Defines!NR_To_A1",((NameXPxg)ptgs[0]).toFormulaString());
@@ -140,11 +142,11 @@ public final class TestXSSFFormulaParser {
         // Reference to a workbook scoped named range
         ptgs = parse(fpb, "NR_Global_B2");
         assertEquals(1, ptgs.length);
-        // TODO assert
+        assertEquals(NamePtg.class, ptgs[0].getClass());
+        assertEquals("NR_Global_B2",((NamePtg)ptgs[0]).toFormulaString(fpb));
     }
     
     @Test
-    @Ignore("Work in progress, see bug #56737")
     public void formulaReferencesOtherWorkbook() {
         // Use a test file with the external linked table in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
@@ -154,16 +156,28 @@ public final class TestXSSFFormulaParser {
         // Reference to a single cell in a different workbook
         ptgs = parse(fpb, "[1]Uses!$A$1");
         assertEquals(1, ptgs.length);
-        // TODO assert
+        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertEquals(1,     ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
+        assertEquals("Uses",((Ref3DPxg)ptgs[0]).getSheetName());
+        assertEquals("$A$1",((Ref3DPxg)ptgs[0]).format2DRefAsString());
+        assertEquals("[1]Uses!$A$1",((Ref3DPxg)ptgs[0]).toFormulaString());
         
         // Reference to a sheet-scoped named range in a different workbook
         ptgs = parse(fpb, "[1]Defines!NR_To_A1");
         assertEquals(1, ptgs.length);
-        // TODO assert
+        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertEquals(1,         ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
+        assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
+        assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
+        assertEquals("[1]Defines!NR_To_A1",((NameXPxg)ptgs[0]).toFormulaString());
         
         // Reference to a global named range in a different workbook
         ptgs = parse(fpb, "[1]!NR_Global_B2");
         assertEquals(1, ptgs.length);
-        // TODO assert
+        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertEquals(1,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
+        assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
+        assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
+        assertEquals("[1]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
     }
 }
