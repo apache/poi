@@ -373,6 +373,9 @@ public final class FormulaParser {
 	 *   123.456
 	 *   "abc"
 	 *   true
+     *   [Foo.xls]!$A$1
+	 *   [Foo.xls]'my sheet'!$A$1
+	 *   [Foo.xls]!my.named.range
 	 * </pre>
 	 *
 	 */
@@ -768,7 +771,6 @@ public final class FormulaParser {
 	 * @return The sheet name as an identifier <code>null</code> if '!' is not found in the right place
 	 */
 	private SheetIdentifier parseSheetName() {
-
 		String bookName;
 		if (look == '[') {
 			StringBuilder sb = new StringBuilder();
@@ -822,6 +824,11 @@ public final class FormulaParser {
 				return new SheetIdentifier(bookName, new NameIdentifier(sb.toString(), false));
 			}
 			return null;
+		}
+		if (look == '!' && bookName != null) {
+		    // Raw book reference, wihtout a sheet
+            GetChar();
+		    return new SheetIdentifier(bookName, null);
 		}
 		return null;
 	}

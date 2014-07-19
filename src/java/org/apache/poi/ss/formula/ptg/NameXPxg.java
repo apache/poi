@@ -74,7 +74,9 @@ public final class NameXPxg extends OperandPtg {
             sb.append(externalWorkbookNumber);
             sb.append(']');
         }
-        sb.append(sheetName);
+        if (sheetName != null) {
+            sb.append(sheetName);
+        }
         sb.append('!');
         sb.append(nameName);
         return sb.toString();

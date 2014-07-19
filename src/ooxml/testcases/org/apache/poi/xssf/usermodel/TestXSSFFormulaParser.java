@@ -26,6 +26,7 @@ import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
@@ -95,8 +96,26 @@ public final class TestXSSFFormulaParser {
         assertTrue("", ptgs[1] instanceof FuncPtg);
     }
     
+    @Test
+    public void formaulReferncesSameWorkbook() {
+        // Use a test file with "other workbook" style references
+        //  to itself
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        // Reference to a named range in our own workbook, as if it
+        // were defined in a different workbook
+        ptgs = parse(fpb, "[0]!NR_Global_B2");
+        assertEquals(1, ptgs.length);
+        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
+        assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
+        assertEquals("[0]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+    }
+   
 	@Test
-	@Ignore("Work in progress, see bug #56737")
+    @Ignore("Work in progress, see bug #56737")
     public void formulaReferencesOtherSheets() {
         // Use a test file with the named ranges in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
@@ -113,26 +132,13 @@ public final class TestXSSFFormulaParser {
         // Reference to a sheet scoped named range from another sheet
         ptgs = parse(fpb, "Defines!NR_To_A1");
         assertEquals(1, ptgs.length);
-        // TODO assert
+        assertEquals(NameXPxg.class, ptgs[0].getClass());
+        assertEquals("Defines", ((NameXPxg)ptgs[0]).getSheetName());
+        assertEquals("NR_To_A1",((NameXPxg)ptgs[0]).getNameName());
+        assertEquals("Defines!NR_To_A1",((NameXPxg)ptgs[0]).toFormulaString());
         
         // Reference to a workbook scoped named range
         ptgs = parse(fpb, "NR_Global_B2");
-        assertEquals(1, ptgs.length);
-        // TODO assert
-    }
-    
-    @Test
-    @Ignore("Work in progress, see bug #56737")
-    public void fFormaulReferncesSameWorkbook() {
-        // Use a test file with "other workbook" style references
-        //  to itself
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
-        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        Ptg[] ptgs;
-        
-        // Reference to a named range in our own workbook, as if it
-        // were defined in a different workbook
-        ptgs = parse(fpb, "[0]!NR_Global_B2");
         assertEquals(1, ptgs.length);
         // TODO assert
     }
