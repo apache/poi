@@ -46,33 +46,33 @@ import org.apache.poi.util.POILogger;
  * Internal POI use only
  */
 public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
-	private static POILogger logger = POILogFactory.getLogger(HSSFEvaluationWorkbook.class);
-	private final HSSFWorkbook _uBook;
-	private final InternalWorkbook _iBook;
+    private static POILogger logger = POILogFactory.getLogger(HSSFEvaluationWorkbook.class);
+    private final HSSFWorkbook _uBook;
+    private final InternalWorkbook _iBook;
 
-	public static HSSFEvaluationWorkbook create(HSSFWorkbook book) {
-		if (book == null) {
-			return null;
-		}
-		return new HSSFEvaluationWorkbook(book);
-	}
+    public static HSSFEvaluationWorkbook create(HSSFWorkbook book) {
+        if (book == null) {
+            return null;
+        }
+        return new HSSFEvaluationWorkbook(book);
+    }
 
-	private HSSFEvaluationWorkbook(HSSFWorkbook book) {
-		_uBook = book;
-		_iBook = book.getWorkbook();
-	}
+    private HSSFEvaluationWorkbook(HSSFWorkbook book) {
+        _uBook = book;
+        _iBook = book.getWorkbook();
+    }
 
-	public int getExternalSheetIndex(String sheetName) {
-		int sheetIndex = _uBook.getSheetIndex(sheetName);
-		return _iBook.checkExternSheet(sheetIndex);
-	}
-	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		return _iBook.getExternalSheetIndex(workbookName, sheetName);
-	}
-	
-	public Ptg get3DReferencePtg(CellReference cr, SheetIdentifier sheet) {
+    public int getExternalSheetIndex(String sheetName) {
+        int sheetIndex = _uBook.getSheetIndex(sheetName);
+        return _iBook.checkExternSheet(sheetIndex);
+    }
+    public int getExternalSheetIndex(String workbookName, String sheetName) {
+        return _iBook.getExternalSheetIndex(workbookName, sheetName);
+    }
+
+    public Ptg get3DReferencePtg(CellReference cr, SheetIdentifier sheet) {
         int extIx = getSheetExtIx(sheet);
-	    return new Ref3DPtg(cr, extIx);
+        return new Ref3DPtg(cr, extIx);
     }
     public Ptg get3DReferencePtg(AreaReference areaRef, SheetIdentifier sheet) {
         int extIx = getSheetExtIx(sheet);
@@ -81,138 +81,137 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     public NameXPtg getNameXPtg(String name, SheetIdentifier sheet) {
         int sheetRefIndex = getSheetExtIx(sheet);
         return _iBook.getNameXPtg(name, sheetRefIndex, _uBook.getUDFFinder());
-	}
+    }
 
-	/**
-	 * Lookup a named range by its name.
-	 *
-	 * @param name the name to search
-	 * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
-	 * The sheet index is required to resolve sheet-level names. <code>-1</code> means workbook-global names
-	  */
-	public EvaluationName getName(String name, int sheetIndex) {
-		for(int i=0; i < _iBook.getNumNames(); i++) {
-			NameRecord nr = _iBook.getNameRecord(i);
-			if (nr.getSheetNumber() == sheetIndex+1 && name.equalsIgnoreCase(nr.getNameText())) {
-				return new Name(nr, i);
-			}
-		}
-		return sheetIndex == -1 ? null : getName(name, -1);
-	}
+    /**
+     * Lookup a named range by its name.
+     *
+     * @param name the name to search
+     * @param sheetIndex  the 0-based index of the sheet this formula belongs to.
+     * The sheet index is required to resolve sheet-level names. <code>-1</code> means workbook-global names
+     */
+    public EvaluationName getName(String name, int sheetIndex) {
+        for(int i=0; i < _iBook.getNumNames(); i++) {
+            NameRecord nr = _iBook.getNameRecord(i);
+            if (nr.getSheetNumber() == sheetIndex+1 && name.equalsIgnoreCase(nr.getNameText())) {
+                return new Name(nr, i);
+            }
+        }
+        return sheetIndex == -1 ? null : getName(name, -1);
+    }
 
-	public int getSheetIndex(EvaluationSheet evalSheet) {
-		HSSFSheet sheet = ((HSSFEvaluationSheet)evalSheet).getHSSFSheet();
-		return _uBook.getSheetIndex(sheet);
-	}
-	public int getSheetIndex(String sheetName) {
-		return _uBook.getSheetIndex(sheetName);
-	}
+    public int getSheetIndex(EvaluationSheet evalSheet) {
+        HSSFSheet sheet = ((HSSFEvaluationSheet)evalSheet).getHSSFSheet();
+        return _uBook.getSheetIndex(sheet);
+    }
+    public int getSheetIndex(String sheetName) {
+        return _uBook.getSheetIndex(sheetName);
+    }
 
-	public String getSheetName(int sheetIndex) {
-		return _uBook.getSheetName(sheetIndex);
-	}
+    public String getSheetName(int sheetIndex) {
+        return _uBook.getSheetName(sheetIndex);
+    }
 
-	public EvaluationSheet getSheet(int sheetIndex) {
-		return new HSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
-	}
-	public int convertFromExternSheetIndex(int externSheetIndex) {
-		return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
-	}
+    public EvaluationSheet getSheet(int sheetIndex) {
+        return new HSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
+    }
+    public int convertFromExternSheetIndex(int externSheetIndex) {
+        return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
+    }
 
-	public ExternalSheet getExternalSheet(int externSheetIndex) {
-	    ExternalSheet sheet = _iBook.getExternalSheet(externSheetIndex);
-	    if (sheet == null) {
-	        // Try to treat it as a local sheet
-	        int localSheetIndex = convertFromExternSheetIndex(externSheetIndex);
+    public ExternalSheet getExternalSheet(int externSheetIndex) {
+        ExternalSheet sheet = _iBook.getExternalSheet(externSheetIndex);
+        if (sheet == null) {
+            // Try to treat it as a local sheet
+            int localSheetIndex = convertFromExternSheetIndex(externSheetIndex);
             if (localSheetIndex == -1) {
                 // The sheet referenced can't be found, sorry
                 return null;
             }
-	        if (localSheetIndex == -2) {
-	            // Not actually sheet based at all - is workbook scoped
-	            return null;
-	        }
-	        // Look up the local sheet
-	        String sheetName = getSheetName(localSheetIndex);
-	        sheet = new ExternalSheet(null, sheetName);
-	    }
-	    return sheet;
-	}
-	public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
-	    throw new IllegalStateException("XSSF-style external references are not supported for HSSF");
+            if (localSheetIndex == -2) {
+                // Not actually sheet based at all - is workbook scoped
+                return null;
+            }
+            // Look up the local sheet
+            String sheetName = getSheetName(localSheetIndex);
+            sheet = new ExternalSheet(null, sheetName);
+        }
+        return sheet;
+    }
+    public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
+        throw new IllegalStateException("XSSF-style external references are not supported for HSSF");
     }
 
     public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
-		return _iBook.getExternalName(externSheetIndex, externNameIndex);
-	}
+        return _iBook.getExternalName(externSheetIndex, externNameIndex);
+    }
 
-	public String resolveNameXText(NameXPtg n) {
-		return _iBook.resolveNameXText(n.getSheetRefIndex(), n.getNameIndex());
-	}
+    public String resolveNameXText(NameXPtg n) {
+        return _iBook.resolveNameXText(n.getSheetRefIndex(), n.getNameIndex());
+    }
 
-	public String getSheetNameByExternSheet(int externSheetIndex) {
-		return _iBook.findSheetNameFromExternSheet(externSheetIndex);
-	}
-	public String getNameText(NamePtg namePtg) {
-		return _iBook.getNameRecord(namePtg.getIndex()).getNameText();
-	}
-	public EvaluationName getName(NamePtg namePtg) {
-		int ix = namePtg.getIndex();
-		return new Name(_iBook.getNameRecord(ix), ix);
-	}
-	
-	@SuppressWarnings("unused")
+    public String getSheetNameByExternSheet(int externSheetIndex) {
+        return _iBook.findSheetNameFromExternSheet(externSheetIndex);
+    }
+    public String getNameText(NamePtg namePtg) {
+        return _iBook.getNameRecord(namePtg.getIndex()).getNameText();
+    }
+    public EvaluationName getName(NamePtg namePtg) {
+        int ix = namePtg.getIndex();
+        return new Name(_iBook.getNameRecord(ix), ix);
+    }
+
+    @SuppressWarnings("unused")
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
-		HSSFCell cell = ((HSSFEvaluationCell)evalCell).getHSSFCell();
-		if (false) {
-			// re-parsing the formula text also works, but is a waste of time
-			// It is useful from time to time to run all unit tests with this code
-			// to make sure that all formulas POI can evaluate can also be parsed.
-			try {
-				return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
-			} catch (FormulaParseException e) {
-				// Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
-				// IntesectionPtg.  However it is still not capable of parsing it.
-				// So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
-				logger.log( POILogger.ERROR, e.getMessage());
-			}
-		}
-		FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
-		return fra.getFormulaTokens();
-	}
-	
+        HSSFCell cell = ((HSSFEvaluationCell)evalCell).getHSSFCell();
+        if (false) {
+            // re-parsing the formula text also works, but is a waste of time
+            // It is useful from time to time to run all unit tests with this code
+            // to make sure that all formulas POI can evaluate can also be parsed.
+            try {
+                return HSSFFormulaParser.parse(cell.getCellFormula(), _uBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
+            } catch (FormulaParseException e) {
+                // Note - as of Bugzilla 48036 (svn r828244, r828247) POI is capable of evaluating
+                // IntesectionPtg.  However it is still not capable of parsing it.
+                // So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
+                logger.log( POILogger.ERROR, e.getMessage());
+            }
+        }
+        FormulaRecordAggregate fra = (FormulaRecordAggregate) cell.getCellValueRecord();
+        return fra.getFormulaTokens();
+    }
+
     public UDFFinder getUDFFinder(){
         return _uBook.getUDFFinder();
     }
 
-	private static final class Name implements EvaluationName {
+    private static final class Name implements EvaluationName {
+        private final NameRecord _nameRecord;
+        private final int _index;
 
-		private final NameRecord _nameRecord;
-		private final int _index;
-
-		public Name(NameRecord nameRecord, int index) {
-			_nameRecord = nameRecord;
-			_index = index;
-		}
-		public Ptg[] getNameDefinition() {
-			return _nameRecord.getNameDefinition();
-		}
-		public String getNameText() {
-			return _nameRecord.getNameText();
-		}
-		public boolean hasFormula() {
-			return _nameRecord.hasFormula();
-		}
-		public boolean isFunctionName() {
-			return _nameRecord.isFunctionName();
-		}
-		public boolean isRange() {
-			return _nameRecord.hasFormula(); // TODO - is this right?
-		}
-		public NamePtg createPtg() {
-			return new NamePtg(_index);
-		}
-	}
+        public Name(NameRecord nameRecord, int index) {
+            _nameRecord = nameRecord;
+            _index = index;
+        }
+        public Ptg[] getNameDefinition() {
+            return _nameRecord.getNameDefinition();
+        }
+        public String getNameText() {
+            return _nameRecord.getNameText();
+        }
+        public boolean hasFormula() {
+            return _nameRecord.hasFormula();
+        }
+        public boolean isFunctionName() {
+            return _nameRecord.isFunctionName();
+        }
+        public boolean isRange() {
+            return _nameRecord.hasFormula(); // TODO - is this right?
+        }
+        public NamePtg createPtg() {
+            return new NamePtg(_index);
+        }
+    }
 
     private int getSheetExtIx(SheetIdentifier sheetIden) {
         int extIx;
@@ -228,8 +227,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
         return extIx;
     }
-    
-	public SpreadsheetVersion getSpreadsheetVersion(){
-		return SpreadsheetVersion.EXCEL97;
-	}
+
+    public SpreadsheetVersion getSpreadsheetVersion(){
+        return SpreadsheetVersion.EXCEL97;
+    }
 }

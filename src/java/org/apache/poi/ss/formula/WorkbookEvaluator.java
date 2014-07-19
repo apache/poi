@@ -621,90 +621,90 @@ public final class WorkbookEvaluator {
 	}
 
 
-	/**
-	 * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
-	 * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
-	 * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
-	 * passed here!
-	 */
-	private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {
-		//  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
+   /**
+    * returns an appropriate Eval impl instance for the Ptg. The Ptg must be
+    * one of: Area3DPtg, AreaPtg, ReferencePtg, Ref3DPtg, IntPtg, NumberPtg,
+    * StringPtg, BoolPtg <br/>special Note: OperationPtg subtypes cannot be
+    * passed here!
+    */
+   private ValueEval getEvalForPtg(Ptg ptg, OperationEvaluationContext ec) {
+       //  consider converting all these (ptg instanceof XxxPtg) expressions to (ptg.getClass() == XxxPtg.class)
 
-		if (ptg instanceof NamePtg) {
-			// Named ranges, macro functions
-			NamePtg namePtg = (NamePtg) ptg;
-			EvaluationName nameRecord = _workbook.getName(namePtg);
-			return getEvalForNameRecord(nameRecord, ec);
-		}
-		if (ptg instanceof NameXPtg) {
-		    // Externally defined named ranges or macro functions
-		    NameXPtg nameXPtg = (NameXPtg)ptg;
-		    ValueEval eval = ec.getNameXEval(nameXPtg);
-		    
-		    if (eval instanceof NameXEval) {
-		        // Could not be directly evaluated, so process as a name
-		        return getEvalForNameX(nameXPtg, ec);
-		    } else {
-		        // Use the evaluated version
-		        return eval;
-		    }
-		}
+       if (ptg instanceof NamePtg) {
+           // Named ranges, macro functions
+           NamePtg namePtg = (NamePtg) ptg;
+           EvaluationName nameRecord = _workbook.getName(namePtg);
+           return getEvalForNameRecord(nameRecord, ec);
+       }
+       if (ptg instanceof NameXPtg) {
+           // Externally defined named ranges or macro functions
+           NameXPtg nameXPtg = (NameXPtg)ptg;
+           ValueEval eval = ec.getNameXEval(nameXPtg);
 
-		if (ptg instanceof IntPtg) {
-			return new NumberEval(((IntPtg)ptg).getValue());
-		}
-		if (ptg instanceof NumberPtg) {
-			return new NumberEval(((NumberPtg)ptg).getValue());
-		}
-		if (ptg instanceof StringPtg) {
-			return new StringEval(((StringPtg) ptg).getValue());
-		}
-		if (ptg instanceof BoolPtg) {
-			return BoolEval.valueOf(((BoolPtg) ptg).getValue());
-		}
-		if (ptg instanceof ErrPtg) {
-			return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
-		}
-		if (ptg instanceof MissingArgPtg) {
-			return MissingArgEval.instance;
-		}
-		if (ptg instanceof AreaErrPtg ||ptg instanceof RefErrorPtg
-				|| ptg instanceof DeletedArea3DPtg || ptg instanceof DeletedRef3DPtg) {
-				return ErrorEval.REF_INVALID;
-		}
-		if (ptg instanceof Ref3DPtg) {
-			return ec.getRef3DEval((Ref3DPtg)ptg);
-		}
-		if (ptg instanceof Ref3DPxg) {
-            return ec.getRef3DEval((Ref3DPxg)ptg);
-		}
-		if (ptg instanceof Area3DPtg) {
-			Area3DPtg aptg = (Area3DPtg) ptg;
-			return ec.getArea3DEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn(), aptg.getExternSheetIndex());
-		}
-		if (ptg instanceof RefPtg) {
-			RefPtg rptg = (RefPtg) ptg;
-			return ec.getRefEval(rptg.getRow(), rptg.getColumn());
-		}
-		if (ptg instanceof AreaPtg) {
-			AreaPtg aptg = (AreaPtg) ptg;
-			return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
-		}
+           if (eval instanceof NameXEval) {
+               // Could not be directly evaluated, so process as a name
+               return getEvalForNameX(nameXPtg, ec);
+           } else {
+               // Use the evaluated version
+               return eval;
+           }
+       }
 
-		if (ptg instanceof UnknownPtg) {
-			// POI uses UnknownPtg when the encoded Ptg array seems to be corrupted.
-			// This seems to occur in very rare cases (e.g. unused name formulas in bug 44774, attachment 21790)
-			// In any case, formulas are re-parsed before execution, so UnknownPtg should not get here
-			throw new RuntimeException("UnknownPtg not allowed");
-		}
-		if (ptg instanceof ExpPtg) {
-			// ExpPtg is used for array formulas and shared formulas.
-			// it is currently unsupported, and may not even get implemented here
-			throw new RuntimeException("ExpPtg currently not supported");
-		}
+       if (ptg instanceof IntPtg) {
+           return new NumberEval(((IntPtg)ptg).getValue());
+       }
+       if (ptg instanceof NumberPtg) {
+           return new NumberEval(((NumberPtg)ptg).getValue());
+       }
+       if (ptg instanceof StringPtg) {
+           return new StringEval(((StringPtg) ptg).getValue());
+       }
+       if (ptg instanceof BoolPtg) {
+           return BoolEval.valueOf(((BoolPtg) ptg).getValue());
+       }
+       if (ptg instanceof ErrPtg) {
+           return ErrorEval.valueOf(((ErrPtg) ptg).getErrorCode());
+       }
+       if (ptg instanceof MissingArgPtg) {
+           return MissingArgEval.instance;
+       }
+       if (ptg instanceof AreaErrPtg ||ptg instanceof RefErrorPtg
+               || ptg instanceof DeletedArea3DPtg || ptg instanceof DeletedRef3DPtg) {
+           return ErrorEval.REF_INVALID;
+       }
+       if (ptg instanceof Ref3DPtg) {
+           return ec.getRef3DEval((Ref3DPtg)ptg);
+       }
+       if (ptg instanceof Ref3DPxg) {
+           return ec.getRef3DEval((Ref3DPxg)ptg);
+       }
+       if (ptg instanceof Area3DPtg) {
+           Area3DPtg aptg = (Area3DPtg) ptg;
+           return ec.getArea3DEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn(), aptg.getExternSheetIndex());
+       }
+       if (ptg instanceof RefPtg) {
+           RefPtg rptg = (RefPtg) ptg;
+           return ec.getRefEval(rptg.getRow(), rptg.getColumn());
+       }
+       if (ptg instanceof AreaPtg) {
+           AreaPtg aptg = (AreaPtg) ptg;
+           return ec.getAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(), aptg.getLastRow(), aptg.getLastColumn());
+       }
 
-		throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
-	}
+       if (ptg instanceof UnknownPtg) {
+           // POI uses UnknownPtg when the encoded Ptg array seems to be corrupted.
+           // This seems to occur in very rare cases (e.g. unused name formulas in bug 44774, attachment 21790)
+           // In any case, formulas are re-parsed before execution, so UnknownPtg should not get here
+           throw new RuntimeException("UnknownPtg not allowed");
+       }
+       if (ptg instanceof ExpPtg) {
+           // ExpPtg is used for array formulas and shared formulas.
+           // it is currently unsupported, and may not even get implemented here
+           throw new RuntimeException("ExpPtg currently not supported");
+       }
+
+       throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
+    }
 	
     private ValueEval getEvalForNameRecord(EvaluationName nameRecord, OperationEvaluationContext ec) {
         if (nameRecord.isFunctionName()) {
