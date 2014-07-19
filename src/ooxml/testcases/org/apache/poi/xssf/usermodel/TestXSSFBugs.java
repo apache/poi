@@ -266,6 +266,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void bug48539() throws Exception {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48539.xlsx");
        assertEquals(3, wb.getNumberOfSheets());
+       assertEquals(0, wb.getNumberOfNames());
        
        // Try each cell individually
        XSSFFormulaEvaluator eval = new XSSFFormulaEvaluator(wb);
@@ -274,7 +275,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
           for(Row r : s) {
              for(Cell c : r) {
                 if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                    CellValue cv = eval.evaluate(c);
+                    String formula = c.getCellFormula();
+                    CellValue cv;
+                    try {
+                        cv = eval.evaluate(c);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Can't evaluate formula: " + formula, e);
+                    }
+                    
                     if(cv.getCellType() == Cell.CELL_TYPE_NUMERIC) {
                         // assert that the calculated value agrees with
                         // the cached formula result calculated by Excel
@@ -1661,7 +1669,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * org.apache.poi.ss.formula.FormulaParseException: Parse error near char 0 '[' in specified formula '[0]!NR_Global_B2'. Expected number, string, or defined name 
      */
     @Test
-    @Ignore
+    @Ignore("Bug 56737 remains outstanding to fix")
     public void bug56737() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         
