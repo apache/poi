@@ -637,7 +637,7 @@ public final class WorkbookEvaluator {
            EvaluationName nameRecord = _workbook.getName(namePtg);
            return getEvalForNameRecord(nameRecord, ec);
        }
-       if (ptg instanceof NameXPtg) {
+       if (ptg instanceof NameXPtg) { // TODO Generalise for NameXPxg
            // Externally defined named ranges or macro functions
            NameXPtg nameXPtg = (NameXPtg)ptg;
            ValueEval eval = ec.getNameXEval(nameXPtg);
