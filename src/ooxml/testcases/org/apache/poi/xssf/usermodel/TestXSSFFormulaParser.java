@@ -17,7 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
@@ -25,17 +27,19 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public final class TestXSSFFormulaParser extends TestCase {
-
+public final class TestXSSFFormulaParser {
 	private static Ptg[] parse(XSSFEvaluationWorkbook fpb, String fmla) {
 		return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
 	}
 
-
-    public void testParse() {
+	@Test
+    public void basicParsing() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -75,7 +79,8 @@ public final class TestXSSFFormulaParser extends TestCase {
         }
     }
 
-    public void testBuiltInFormulas() {
+	@Test
+    public void builtInFormulas() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs;
@@ -90,7 +95,51 @@ public final class TestXSSFFormulaParser extends TestCase {
         assertTrue("", ptgs[1] instanceof FuncPtg);
     }
     
-    public void DISABLEDtestFormulaReferencesOtherWorkbook() {
+	@Test
+	@Ignore("Work in progress, see bug #56737")
+    public void formulaReferencesOtherSheets() {
+        // Use a test file with the named ranges in place
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+
+        // Reference to a single cell in a different sheet
+        ptgs = parse(fpb, "Uses!A1");
+        assertEquals(1, ptgs.length);
+        assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+        assertEquals("A1", ((Ref3DPtg)ptgs[0]).format2DRefAsString());
+        assertEquals("Uses!A1", ((Ref3DPtg)ptgs[0]).toFormulaString(fpb));
+        
+        // Reference to a sheet scoped named range from another sheet
+        ptgs = parse(fpb, "Defines!NR_To_A1");
+        assertEquals(1, ptgs.length);
+        // TODO assert
+        
+        // Reference to a workbook scoped named range
+        ptgs = parse(fpb, "NR_Global_B2");
+        assertEquals(1, ptgs.length);
+        // TODO assert
+    }
+    
+    @Test
+    @Ignore("Work in progress, see bug #56737")
+    public void fFormaulReferncesSameWorkbook() {
+        // Use a test file with "other workbook" style references
+        //  to itself
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
+        XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
+        Ptg[] ptgs;
+        
+        // Reference to a named range in our own workbook, as if it
+        // were defined in a different workbook
+        ptgs = parse(fpb, "[0]!NR_Global_B2");
+        assertEquals(1, ptgs.length);
+        // TODO assert
+    }
+    
+    @Test
+    @Ignore("Work in progress, see bug #56737")
+    public void formulaReferencesOtherWorkbook() {
         // Use a test file with the external linked table in place
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
