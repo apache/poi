@@ -399,7 +399,7 @@ public final class FormulaParser {
                         throw new FormulaParseException("Cell reference or Named Range "
                                 + "expected after sheet name at index " + _pointer + ".");
                     }
-                    NameXPtg nameXPtg = _book.getNameXPtg(name, sheetIden);
+                    Ptg nameXPtg = _book.getNameXPtg(name, sheetIden);
                     if (nameXPtg == null) {
                         throw new FormulaParseException("Specified name '" + name +
                                 "' for sheet " + sheetIden.asFormulaString() + " not found");

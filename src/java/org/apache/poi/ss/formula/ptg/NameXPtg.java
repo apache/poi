@@ -23,8 +23,12 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * 
- * @author aviks
+ * A Name, be that a Named Range or a Function / User Defined
+ *  Function, addressed in the HSSF External Sheet style.
+ *  
+ * <p>This is HSSF only, as it matches the HSSF file format way of
+ *  referring to the sheet by an extern index. The XSSF equivalent
+ *  is {@link NameXPxg}
  */
 public final class NameXPtg extends OperandPtg implements WorkbookDependentFormula {
 	public final static short sid = 0x39;

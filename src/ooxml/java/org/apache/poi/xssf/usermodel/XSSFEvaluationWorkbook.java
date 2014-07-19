@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
@@ -42,11 +43,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 
 /**
  * Internal POI use only
- *
- * @author Josh Micich
  */
 public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
-
 	private final XSSFWorkbook _uBook;
 
 	public static XSSFEvaluationWorkbook create(XSSFWorkbook book) {
@@ -122,21 +120,22 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	   throw new RuntimeException("Not implemented yet");
 	}
 
-	public NameXPtg getNameXPtg(String name, SheetIdentifier sheet) {
+	public NameXPxg getNameXPtg(String name, SheetIdentifier sheet) {
 	    // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
         FreeRefFunction func = udfFinder.findFunction(name);
         if (func != null) {
-            return new NameXPtg(0, udfFinder.getFunctionIndex(name));
+            return new NameXPxg(null, name);
         }
         
         // Otherwise, try it as a named range
-        XSSFName xname = _uBook.getName(name);
-        if (xname != null) {
-            int nameAt = _uBook.getNameIndex(name);
-            return new NameXPtg(xname.getSheetIndex(), nameAt);
+        String sheetName = sheet._sheetIdentifier.getName();
+        
+        if (sheet._bookName != null) {
+            int bookIndex = resolveBookIndex(sheet._bookName);
+            return new NameXPxg(bookIndex, sheetName, name);
         } else {
-            return null;
+            return new NameXPxg(sheetName, name);
         }
 	}
     public Ptg get3DReferencePtg(CellReference cell, SheetIdentifier sheet) {

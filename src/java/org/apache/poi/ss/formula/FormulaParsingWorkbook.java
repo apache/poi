@@ -18,7 +18,6 @@
 package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -36,7 +35,7 @@ public interface FormulaParsingWorkbook {
 	 */
 	EvaluationName getName(String name, int sheetIndex);
 
-	NameXPtg getNameXPtg(String name, SheetIdentifier sheet);
+	Ptg getNameXPtg(String name, SheetIdentifier sheet);
 	
 	/**
 	 * Produce the appropriate Ptg for a 3d cell reference
