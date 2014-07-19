@@ -65,6 +65,7 @@ import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.OperationPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefErrorPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
@@ -674,6 +675,10 @@ public final class WorkbookEvaluator {
 		if (ptg instanceof Ref3DPtg) {
 			Ref3DPtg rptg = (Ref3DPtg) ptg;
 			return ec.getRef3DEval(rptg.getRow(), rptg.getColumn(), rptg.getExternSheetIndex());
+		}
+		if (ptg instanceof Ref3DPxg) {
+            Ref3DPtg rptg = (Ref3DPtg) ptg;
+            // TODO Return the right eval, should be easy as we already know the sheet details
 		}
 		if (ptg instanceof Area3DPtg) {
 			Area3DPtg aptg = (Area3DPtg) ptg;

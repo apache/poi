@@ -17,19 +17,21 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Reference 3D Ptg <P>
- * Description:  Defined a cell in extern sheet. <P>
- * REFERENCE:  <P>
- * @author Libin Roman (Vista Portal LDT. Developer)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * <p>Title:        Reference 3D Ptg</p>
+ * <p>Description:  Defined a cell in extern sheet.</p>
+ * <p>REFERENCE: </p>
+ * 
+ * <p>This is HSSF only, as it matches the HSSF file format way of
+ *  referring to the sheet by an extern index. The XSSF equivalent
+ *  is {@link Ref3DPxg} 
  */
 public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
     public final static byte sid  = 0x3a;

@@ -30,10 +30,15 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.SheetIdentifier;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -64,8 +69,17 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
 		return _iBook.getExternalSheetIndex(workbookName, sheetName);
 	}
-
-	public NameXPtg getNameXPtg(String name, int sheetRefIndex) {
+	
+	public Ptg get3DReferencePtg(CellReference cr, SheetIdentifier sheet) {
+        int extIx = getSheetExtIx(sheet);
+	    return new Ref3DPtg(cr, extIx);
+    }
+    public Ptg get3DReferencePtg(AreaReference areaRef, SheetIdentifier sheet) {
+        int extIx = getSheetExtIx(sheet);
+        return new Area3DPtg(areaRef, extIx);
+    }
+    public NameXPtg getNameXPtg(String name, SheetIdentifier sheet) {
+        int sheetRefIndex = getSheetExtIx(sheet);
         return _iBook.getNameXPtg(name, sheetRefIndex, _uBook.getUDFFinder());
 	}
 
@@ -178,6 +192,21 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		}
 	}
 
+    private int getSheetExtIx(SheetIdentifier sheetIden) {
+        int extIx;
+        if (sheetIden == null) {
+            extIx = -1;
+        } else {
+            String sName = sheetIden.getSheetIdentifier().getName();
+            if (sheetIden.getBookName() == null) {
+                extIx = getExternalSheetIndex(sName);
+            } else {
+                extIx = getExternalSheetIndex(sheetIden.getBookName(), sName);
+            }
+        }
+        return extIx;
+    }
+    
 	public SpreadsheetVersion getSpreadsheetVersion(){
 		return SpreadsheetVersion.EXCEL97;
 	}
