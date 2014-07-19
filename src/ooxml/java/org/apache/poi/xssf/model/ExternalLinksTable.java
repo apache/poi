@@ -25,6 +25,8 @@ import java.util.List;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalDefinedName;
@@ -77,6 +79,38 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
      */
     public CTExternalLink getCTExternalLink(){
         return link;
+    }
+    
+    /**
+     * Returns the last recorded name of the file that this
+     *  is linked to
+     */
+    public String getLinkedFileName() {
+        String rId = link.getExternalBook().getId();
+        PackageRelationship rel = getPackagePart().getRelationship(rId);
+        if (rel != null && rel.getTargetMode() == TargetMode.EXTERNAL) {
+            return rel.getTargetURI().toString();
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Updates the last recorded name for the file that this links to
+     */
+    public void setLinkedFileName(String target) {
+        String rId = link.getExternalBook().getId();
+        
+        if (rId == null || rId.isEmpty()) {
+            // We're a new External Link Table, so nothing to remove
+        } else {
+            // Relationships can't be changed, so remove the old one
+            getPackagePart().removeRelationship(rId);
+        }
+        
+        // Have a new one added
+        PackageRelationship newRel = getPackagePart().addExternalRelationship(
+                                target, PackageRelationshipTypes.EXTERNAL_LINK_PATH);
+        link.getExternalBook().setId(newRel.getId());
     }
 
     @SuppressWarnings("deprecation")
