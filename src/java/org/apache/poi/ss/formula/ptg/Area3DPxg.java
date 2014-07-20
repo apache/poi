@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -87,7 +88,7 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg {
             sb.append(externalWorkbookNumber);
             sb.append(']');
         }
-        sb.append(sheetName);
+        SheetNameFormatter.appendFormat(sb, sheetName);
         sb.append('!');
         sb.append(formatReferenceAsString());
         return sb.toString();

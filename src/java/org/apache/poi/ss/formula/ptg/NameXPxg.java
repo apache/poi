@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -79,7 +80,7 @@ public final class NameXPxg extends OperandPtg implements Pxg {
             sb.append(']');
         }
         if (sheetName != null) {
-            sb.append(sheetName);
+            SheetNameFormatter.appendFormat(sb, sheetName);
         }
         sb.append('!');
         sb.append(nameName);
