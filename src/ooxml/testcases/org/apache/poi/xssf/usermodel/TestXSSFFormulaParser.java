@@ -130,6 +130,15 @@ public final class TestXSSFFormulaParser {
         assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
         assertEquals("Uses!A1", ((Ref3DPxg)ptgs[0]).toFormulaString());
         
+        // Reference to a single cell in a different sheet, which needs quoting
+        ptgs = parse(fpb, "'Testing 47100'!A1");
+        assertEquals(1, ptgs.length);
+        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertEquals(-1,   ((Ref3DPxg)ptgs[0]).getExternalWorkbookNumber());
+        assertEquals("Testing 47100", ((Ref3DPxg)ptgs[0]).getSheetName());
+        assertEquals("A1", ((Ref3DPxg)ptgs[0]).format2DRefAsString());
+        assertEquals("'Testing 47100'!A1", ((Ref3DPxg)ptgs[0]).toFormulaString());
+        
         // Reference to a sheet scoped named range from another sheet
         ptgs = parse(fpb, "Defines!NR_To_A1");
         assertEquals(1, ptgs.length);
