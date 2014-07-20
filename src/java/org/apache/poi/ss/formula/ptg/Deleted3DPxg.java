@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * An XSSF only representation of a reference to a deleted area
  */
-public final class Deleted3DPxg extends OperandPtg {
+public final class Deleted3DPxg extends OperandPtg implements Pxg {
     private int externalWorkbookNumber = -1;
     private String sheetName;
 
@@ -57,6 +57,10 @@ public final class Deleted3DPxg extends OperandPtg {
     }
     public String getSheetName() {
         return sheetName;
+    }
+    
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
     }
 
     public String toFormulaString() {

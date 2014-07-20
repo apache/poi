@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * <p>This is XSSF only, as it stores the sheet / book references
  *  in String form. The HSSF equivalent using indexes is {@link NameXPtg}</p>
  */
-public final class NameXPxg extends OperandPtg {
+public final class NameXPxg extends OperandPtg implements Pxg {
     private int externalWorkbookNumber = -1;
     private String sheetName;
     private String nameName;
@@ -65,6 +65,10 @@ public final class NameXPxg extends OperandPtg {
     }
     public String getNameName() {
         return nameName;
+    }
+    
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
     }
 
     public String toFormulaString() {
