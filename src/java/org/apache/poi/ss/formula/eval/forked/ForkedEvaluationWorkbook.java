@@ -117,8 +117,11 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
 	   return _masterBook.getExternalName(externSheetIndex, externNameIndex);
 	}
+	public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
+	       return _masterBook.getExternalName(nameName, sheetName, externalWorkbookNumber);
+    }
 
-	public int getSheetIndex(EvaluationSheet sheet) {
+    public int getSheetIndex(EvaluationSheet sheet) {
 		if (sheet instanceof ForkedEvaluationSheet) {
 			ForkedEvaluationSheet mes = (ForkedEvaluationSheet) sheet;
 			return mes.getSheetIndex(_masterBook);

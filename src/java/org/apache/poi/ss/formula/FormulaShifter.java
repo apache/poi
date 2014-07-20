@@ -17,11 +17,25 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.*;
+import org.apache.poi.ss.formula.ptg.Area2DPtgBase;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
+import org.apache.poi.ss.formula.ptg.AreaErrPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtgBase;
+import org.apache.poi.ss.formula.ptg.Deleted3DPxg;
+import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
+import org.apache.poi.ss.formula.ptg.DeletedRef3DPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
+import org.apache.poi.ss.formula.ptg.RefErrorPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.ptg.RefPtgBase;
 
 
 /**
- * @author Josh Micich
+ * Updates Formulas as rows or sheets are shifted
  */
 public final class FormulaShifter {
 
@@ -31,9 +45,16 @@ public final class FormulaShifter {
     }
 
 	/**
-	 * Extern sheet index of sheet where moving is occurring
+	 * Extern sheet index of sheet where moving is occurring,
+	 *  used for updating HSSF style 3D references
 	 */
 	private final int _externSheetIndex;
+	/**
+	 * Sheet name of the sheet where moving is occurring, 
+	 *  used for updating XSSF style 3D references on row shifts.
+	 */
+	private final String _sheetName;
+	
 	private final int _firstMovedIndex;
 	private final int _lastMovedIndex;
 	private final int _amountToMove;
@@ -48,7 +69,7 @@ public final class FormulaShifter {
      *
      * For example, this will be called on {@link org.apache.poi.hssf.usermodel.HSSFSheet#shiftRows(int, int, int)} }
      */
-	private FormulaShifter(int externSheetIndex, int firstMovedIndex, int lastMovedIndex, int amountToMove) {
+	private FormulaShifter(int externSheetIndex, String sheetName, int firstMovedIndex, int lastMovedIndex, int amountToMove) {
 		if (amountToMove == 0) {
 			throw new IllegalArgumentException("amountToMove must not be zero");
 		}
@@ -56,6 +77,7 @@ public final class FormulaShifter {
 			throw new IllegalArgumentException("firstMovedIndex, lastMovedIndex out of order");
 		}
 		_externSheetIndex = externSheetIndex;
+		_sheetName = sheetName;
 		_firstMovedIndex = firstMovedIndex;
 		_lastMovedIndex = lastMovedIndex;
 		_amountToMove = amountToMove;
@@ -71,14 +93,15 @@ public final class FormulaShifter {
      */
     private FormulaShifter(int srcSheetIndex, int dstSheetIndex) {
         _externSheetIndex = _firstMovedIndex = _lastMovedIndex = _amountToMove = -1;
+        _sheetName = null;
 
         _srcSheetIndex = srcSheetIndex;
         _dstSheetIndex = dstSheetIndex;
         _mode = ShiftMode.Sheet;
     }
 
-	public static FormulaShifter createForRowShift(int externSheetIndex, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove) {
-		return new FormulaShifter(externSheetIndex, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove);
+	public static FormulaShifter createForRowShift(int externSheetIndex, String sheetName, int firstMovedRowIndex, int lastMovedRowIndex, int numberOfRowsToMove) {
+		return new FormulaShifter(externSheetIndex, sheetName, firstMovedRowIndex, lastMovedRowIndex, numberOfRowsToMove);
 	}
 
     public static FormulaShifter createForSheetShift(int srcSheetIndex, int dstSheetIndex) {
@@ -145,6 +168,14 @@ public final class FormulaShifter {
 			}
 			return rowMoveRefPtg(rptg);
 		}
+		if(ptg instanceof Ref3DPxg) {
+		    Ref3DPxg rpxg = (Ref3DPxg)ptg;
+		    if (rpxg.getExternalWorkbookNumber() > 0 ||
+		           ! _sheetName.equals(rpxg.getSheetName())) {
+                // only move 3D refs that refer to the sheet with cells being moved
+		    }
+            return rowMoveRefPtg(rpxg);
+		}
 		if(ptg instanceof Area2DPtgBase) {
 			if (currentExternSheetIx != _externSheetIndex) {
 				// local refs on other sheets are unaffected
@@ -161,6 +192,15 @@ public final class FormulaShifter {
 			}
 			return rowMoveAreaPtg(aptg);
 		}
+        if(ptg instanceof Area3DPxg) {
+            Area3DPxg apxg = (Area3DPxg)ptg;
+            if (apxg.getExternalWorkbookNumber() > 0 ||
+                    ! _sheetName.equals(apxg.getSheetName())) {
+                // only move 3D refs that refer to the sheet with cells being moved
+                return null;
+            }
+            return rowMoveAreaPtg(apxg);
+        }
 		return null;
 	}
 
@@ -348,6 +388,14 @@ public final class FormulaShifter {
 			Area3DPtg area3DPtg = (Area3DPtg) ptg;
 			return new DeletedArea3DPtg(area3DPtg.getExternSheetIndex());
 		}
+        if (ptg instanceof Ref3DPxg) {
+            Ref3DPxg pxg = (Ref3DPxg)ptg;
+            return new Deleted3DPxg(pxg.getExternalWorkbookNumber(), pxg.getSheetName());
+        }
+        if (ptg instanceof Area3DPxg) {
+            Area3DPxg pxg = (Area3DPxg)ptg;
+            return new Deleted3DPxg(pxg.getExternalWorkbookNumber(), pxg.getSheetName());
+        }
 
 		throw new IllegalArgumentException("Unexpected ref ptg class (" + ptg.getClass().getName() + ")");
 	}

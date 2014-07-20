@@ -146,6 +146,10 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return _iBook.getExternalName(externSheetIndex, externNameIndex);
     }
 
+    public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
+        throw new IllegalStateException("XSSF-style external names are not supported for HSSF");
+    }
+
     public String resolveNameXText(NameXPtg n) {
         return _iBook.resolveNameXText(n.getSheetRefIndex(), n.getNameIndex());
     }

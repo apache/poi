@@ -17,11 +17,39 @@
 
 package org.apache.poi.hssf.model;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.DrawingRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.GutsRecord;
+import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.MergeCellsRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.hssf.record.UncalcedRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
@@ -34,11 +62,6 @@ import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Unit test for the {@link InternalSheet} class.
@@ -632,7 +655,7 @@ public final class TestSheet extends TestCase {
 		List<RecordBase> sheetRecs = sheet.getRecords();
 		assertEquals(23, sheetRecs.size());
 
-		FormulaShifter shifter = FormulaShifter.createForRowShift(0, 0, 0, 1);
+		FormulaShifter shifter = FormulaShifter.createForRowShift(0, "", 0, 0, 1);
 		sheet.updateFormulasAfterCellShift(shifter, 0);
 		if (sheetRecs.size() == 24 && sheetRecs.get(22) instanceof ConditionalFormattingTable) {
 			throw new AssertionFailedError("Identified bug 46547a");

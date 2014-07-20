@@ -59,7 +59,15 @@ public interface EvaluationWorkbook {
      */
     int convertFromExternSheetIndex(int externSheetIndex);
 
+    /**
+     * HSSF Only - fetch the external-style name details
+     */
     ExternalName getExternalName(int externSheetIndex, int externNameIndex);
+    /**
+     * XSSF Only - fetch the external-style name details
+     */
+    ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber);
+    
     EvaluationName getName(NamePtg namePtg);
     EvaluationName getName(String name, int sheetIndex);
     String resolveNameXText(NameXPtg ptg);

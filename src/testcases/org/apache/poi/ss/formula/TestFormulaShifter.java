@@ -97,7 +97,7 @@ public final class TestFormulaShifter extends TestCase {
 			int firstRowMoved, int lastRowMoved, int numberRowsMoved,
 			int expectedAreaFirstRow, int expectedAreaLastRow) {
 
-		FormulaShifter fs = FormulaShifter.createForRowShift(0, firstRowMoved, lastRowMoved, numberRowsMoved);
+		FormulaShifter fs = FormulaShifter.createForRowShift(0, "", firstRowMoved, lastRowMoved, numberRowsMoved);
 		boolean expectedChanged = aptg.getFirstRow() != expectedAreaFirstRow || aptg.getLastRow() != expectedAreaLastRow;
 
 		AreaPtg copyPtg = (AreaPtg) aptg.copy(); // clone so we can re-use aptg in calling method
