@@ -119,10 +119,24 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	}
 	
 	public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
-	   throw new RuntimeException("Not implemented yet");
+        throw new IllegalStateException("HSSF-style external references are not supported for XSSF");
 	}
 
-	public NameXPxg getNameXPtg(String name, SheetIdentifier sheet) {
+	public ExternalName getExternalName(String nameName, String sheetName, int externalWorkbookNumber) {
+        if (externalWorkbookNumber > 0) {
+            // External reference - reference is 1 based, link table is 0 based
+            int linkNumber = externalWorkbookNumber - 1;
+            ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
+            return new ExternalName(nameName, -1, -1); // TODO Finish this
+        } else {
+            // Internal reference
+            int nameIdx = _uBook.getNameIndex(nameName);
+            return new ExternalName(nameName, nameIdx, -1);  // TODO Is this right?
+        }
+	    
+    }
+
+    public NameXPxg getNameXPtg(String name, SheetIdentifier sheet) {
 	    // First, try to find it as a User Defined Function
         IndexedUDFFinder udfFinder = (IndexedUDFFinder)getUDFFinder();
         FreeRefFunction func = udfFinder.findFunction(name);
@@ -131,6 +145,12 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
         
         // Otherwise, try it as a named range
+        if (sheet == null) {
+            if (_uBook.getNameIndex(name) > -1) {
+                return new NameXPxg(null, name);
+            }
+            return null;
+        }
         if (sheet._sheetIdentifier == null) {
             // Workbook + Named Range only
             int bookIndex = resolveBookIndex(sheet._bookName);
@@ -229,7 +249,7 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
 		return FormulaParser.parse(cell.getCellFormula(), frBook, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
 	}
-
+	
     public UDFFinder getUDFFinder(){
         return _uBook.getUDFFinder();
     }

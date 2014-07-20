@@ -30,10 +30,10 @@ import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.ExternalNameEval;
 import org.apache.poi.ss.formula.eval.FunctionEval;
+import org.apache.poi.ss.formula.eval.FunctionNameEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.NameEval;
-import org.apache.poi.ss.formula.eval.NameXEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
@@ -638,37 +638,13 @@ public final class WorkbookEvaluator {
            EvaluationName nameRecord = _workbook.getName(namePtg);
            return getEvalForNameRecord(nameRecord, ec);
        }
-       if (ptg instanceof NameXPtg) { // TODO Generalise for NameXPxg
+       if (ptg instanceof NameXPtg) {
            // Externally defined named ranges or macro functions
-           NameXPtg nameXPtg = (NameXPtg)ptg;
-           ValueEval eval = ec.getNameXEval(nameXPtg);
-
-           if (eval instanceof NameXEval) {
-               // Could not be directly evaluated, so process as a name
-               return getEvalForNameX(nameXPtg, ec);
-           } else {
-               // Use the evaluated version
-               return eval;
-           }
+           return processNameEval(ec.getNameXEval((NameXPtg)ptg), ec);
        }
        if (ptg instanceof NameXPxg) {
-           // TODO This is a temporary hack....
-           NameXPxg pxg = (NameXPxg)ptg;
-           int sIdx = -1;
-           if (pxg.getSheetName() != null) {
-               sIdx = _workbook.getSheetIndex(pxg.getSheetName());
-           }
-           EvaluationName evalName = _workbook.getName(pxg.getNameName(), sIdx);
-           if (evalName == null) {
-               // We don't know about that name, sorry
-               // TODO What about UDFs?
-               logInfo("Unknown Name referenced: " + pxg.getNameName());
-               return ErrorEval.NAME_INVALID;
-           }
-           
-           int nIdx = evalName.createPtg().getIndex();
-           NameXPtg nptg = new NameXPtg(sIdx, nIdx);
-           return getEvalForPtg(nptg, ec);
+           // Externally defined named ranges or macro functions
+           return processNameEval(ec.getNameXEval((NameXPxg)ptg), ec);
        }
 
        if (ptg instanceof IntPtg) {
@@ -728,40 +704,24 @@ public final class WorkbookEvaluator {
 
        throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
+   
+   private ValueEval processNameEval(ValueEval eval, OperationEvaluationContext ec) {
+       if (eval instanceof ExternalNameEval) {
+           EvaluationName name = ((ExternalNameEval)eval).getName();
+           return getEvalForNameRecord(name, ec);
+       }
+       return eval;
+   }
 	
     private ValueEval getEvalForNameRecord(EvaluationName nameRecord, OperationEvaluationContext ec) {
         if (nameRecord.isFunctionName()) {
-            return new NameEval(nameRecord.getNameText());
+            return new FunctionNameEval(nameRecord.getNameText());
         }
         if (nameRecord.hasFormula()) {
             return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
         }
 
         throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
-    }
-    private ValueEval getEvalForNameX(NameXPtg nameXPtg, OperationEvaluationContext ec) {
-        String name = _workbook.resolveNameXText(nameXPtg);
-        
-        // Try to parse it as a name
-        int sheetNameAt = name.indexOf('!'); 
-        EvaluationName nameRecord = null;
-        if (sheetNameAt > -1) {
-            // Sheet based name
-            String sheetName = name.substring(0, sheetNameAt);
-            String nameName = name.substring(sheetNameAt+1);
-            nameRecord = _workbook.getName(nameName, _workbook.getSheetIndex(sheetName));
-        } else {
-            // Workbook based name
-            nameRecord = _workbook.getName(name, -1);
-        }
-        
-        if (nameRecord != null) {
-            // Process it as a name
-            return getEvalForNameRecord(nameRecord, ec);
-        } else {
-            // Must be an external function
-            return new NameEval(name);
-        }
     }
     
     /**

@@ -23,7 +23,8 @@ import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NameXEval;
+import org.apache.poi.ss.formula.eval.ExternalNameEval;
+import org.apache.poi.ss.formula.eval.FunctionNameEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
@@ -299,32 +300,82 @@ public final class OperationEvaluationContext {
     }
     
     public ValueEval getNameXEval(NameXPtg nameXPtg) {
+        // Is the name actually on our workbook?
         ExternalSheet externSheet = _workbook.getExternalSheet(nameXPtg.getSheetRefIndex());
         if(externSheet == null || externSheet.getWorkbookName() == null) {
             // External reference to our own workbook's name
-            return new NameXEval(nameXPtg);
+            return getLocalNameXEval(nameXPtg);
         }
         
+        // Look it up for the external workbook
         String workbookName = externSheet.getWorkbookName();
         ExternalName externName = _workbook.getExternalName(
               nameXPtg.getSheetRefIndex(), 
               nameXPtg.getNameIndex()
         );
-        return getNameXEval(externName, workbookName);
+        return getExternalNameXEval(externName, workbookName);
     }
 	public ValueEval getNameXEval(NameXPxg nameXPxg) {
 	    ExternalSheet externSheet = _workbook.getExternalSheet(nameXPxg.getSheetName(), nameXPxg.getExternalWorkbookNumber());
         if(externSheet == null || externSheet.getWorkbookName() == null) {
             // External reference to our own workbook's name
-            // TODO How to do this?
-            return new NameXEval(null);
+            return getLocalNameXEval(nameXPxg);
         }
   
-        // TODO
-        return null;
-//        return getNameXEval(nameXPxg.getNameName(), externSheet.getWorkbookName());
+        // Look it up for the external workbook
+        String workbookName = externSheet.getWorkbookName();
+        ExternalName externName = _workbook.getExternalName(
+              nameXPxg.getNameName(),
+              nameXPxg.getSheetName(),
+              nameXPxg.getExternalWorkbookNumber()
+        );
+        return getExternalNameXEval(externName, workbookName);
 	}
-    private ValueEval getNameXEval(ExternalName externName, String workbookName) {
+	
+    private ValueEval getLocalNameXEval(NameXPxg nameXPxg) {
+        // Look up the sheet, if present
+        int sIdx = -1;
+        if (nameXPxg.getSheetName() != null) {
+            sIdx = _workbook.getSheetIndex(nameXPxg.getSheetName());
+        }
+        
+        // Is it a name or a function?
+        String name = nameXPxg.getNameName();
+        EvaluationName evalName = _workbook.getName(name, sIdx);
+        if (evalName != null) {
+            // Process it as a name
+            return new ExternalNameEval(evalName);
+        } else {
+            // Must be an external function
+            return new FunctionNameEval(name);
+        }
+    }
+	private ValueEval getLocalNameXEval(NameXPtg nameXPtg) {
+        String name = _workbook.resolveNameXText(nameXPtg);
+        
+        // Try to parse it as a name
+        int sheetNameAt = name.indexOf('!'); 
+        EvaluationName evalName = null;
+        if (sheetNameAt > -1) {
+            // Sheet based name
+            String sheetName = name.substring(0, sheetNameAt);
+            String nameName = name.substring(sheetNameAt+1);
+            evalName = _workbook.getName(nameName, _workbook.getSheetIndex(sheetName));
+        } else {
+            // Workbook based name
+            evalName = _workbook.getName(name, -1);
+        }
+        
+        if (evalName != null) {
+            // Process it as a name
+            return new ExternalNameEval(evalName);
+        } else {
+            // Must be an external function
+            return new FunctionNameEval(name);
+        }
+	}
+	
+    private ValueEval getExternalNameXEval(ExternalName externName, String workbookName) {
         try {
             WorkbookEvaluator refWorkbookEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
             EvaluationName evaluationName = refWorkbookEvaluator.getName(externName.getName(),externName.getIx()-1);
