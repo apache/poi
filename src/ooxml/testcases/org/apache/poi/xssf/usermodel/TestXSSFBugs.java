@@ -1669,7 +1669,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * org.apache.poi.ss.formula.FormulaParseException: Parse error near char 0 '[' in specified formula '[0]!NR_Global_B2'. Expected number, string, or defined name 
      */
     @Test
-    @Ignore("Bug 56737 remains outstanding to fix")
     public void bug56737() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
         
@@ -1689,7 +1688,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Cell cRefWName = s.getRow(2).getCell(3);
         
         assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
-        // TODO Why aren't we showing the real filename as Excel does?
+        // Note the formula, as stored in the file, has the external name index not filename
+        // TODO Provide a way to get the one with the filename
         assertEquals("[0]!NR_Global_B2", cRefWName.getCellFormula());
         
         // Try to evaluate them
