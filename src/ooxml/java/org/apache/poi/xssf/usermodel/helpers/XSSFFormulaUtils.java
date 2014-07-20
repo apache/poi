@@ -19,14 +19,11 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Pxg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -56,47 +53,20 @@ public final class XSSFFormulaUtils {
      * <p/>
      * <p>
      * The idea is to parse every formula and render it back to string
-     * with the updated sheet name. The FormulaParsingWorkbook passed to the formula parser
-     * is constructed from the old workbook (sheet name is not yet updated) and
-     * the FormulaRenderingWorkbook passed to FormulaRenderer#toFormulaString is a custom implementation that
-     * returns the new sheet name.
+     * with the updated sheet name. This is done by parsing into Ptgs,
+     * looking for ones with sheet references in them, and changing those
      * </p>
      *
      * @param sheetIndex the 0-based index of the sheet being changed
-     * @param name       the new sheet name
+     * @param oldName    the old sheet name
+     * @param newName    the new sheet name
      */
-    public void updateSheetName(final int sheetIndex, final String name) {
-
-        /**
-         * An instance of FormulaRenderingWorkbook that returns
-         */
-        FormulaRenderingWorkbook frwb = new FormulaRenderingWorkbook() {
-
-            public ExternalSheet getExternalSheet(int externSheetIndex) {
-                return _fpwb.getExternalSheet(externSheetIndex);
-            }
-
-            public String getSheetNameByExternSheet(int externSheetIndex) {
-                if (externSheetIndex == sheetIndex)
-                	return name;
-
-                return _fpwb.getSheetNameByExternSheet(externSheetIndex);
-            }
-
-            public String resolveNameXText(NameXPtg nameXPtg) {
-                return _fpwb.resolveNameXText(nameXPtg);
-            }
-
-            public String getNameText(NamePtg namePtg) {
-                return _fpwb.getNameText(namePtg);
-            }
-        };
-
+    public void updateSheetName(final int sheetIndex, final String oldName, final String newName) {
         // update named ranges
         for (int i = 0; i < _wb.getNumberOfNames(); i++) {
             XSSFName nm = _wb.getNameAt(i);
             if (nm.getSheetIndex() == -1 || nm.getSheetIndex() == sheetIndex) {
-                updateName(nm, frwb);
+                updateName(nm, oldName, newName);
             }
         }
 
@@ -105,7 +75,7 @@ public final class XSSFFormulaUtils {
             for (Row row : sh) {
                 for (Cell cell : row) {
                     if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                        updateFormula((XSSFCell) cell, frwb);
+                        updateFormula((XSSFCell) cell, oldName, newName);
                     }
                 }
             }
@@ -113,37 +83,52 @@ public final class XSSFFormulaUtils {
     }
 
     /**
-     * Parse cell formula and re-assemble it back using the specified FormulaRenderingWorkbook.
+     * Parse cell formula and re-assemble it back using the new sheet name
      *
      * @param cell the cell to update
-     * @param frwb the formula rendering workbbok that returns new sheet name
      */
-    private void updateFormula(XSSFCell cell, FormulaRenderingWorkbook frwb) {
+    private void updateFormula(XSSFCell cell, String oldName, String newName) {
         CTCellFormula f = cell.getCTCell().getF();
         if (f != null) {
             String formula = f.getStringValue();
             if (formula != null && formula.length() > 0) {
                 int sheetIndex = _wb.getSheetIndex(cell.getSheet());
                 Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.CELL, sheetIndex);
-                String updatedFormula = FormulaRenderer.toFormulaString(frwb, ptgs);
+                for (Ptg ptg : ptgs) {
+                    updatePtg(ptg, oldName, newName);
+                }
+                String updatedFormula = FormulaRenderer.toFormulaString(_fpwb, ptgs);
                 if (!formula.equals(updatedFormula)) f.setStringValue(updatedFormula);
             }
         }
     }
 
     /**
-     * Parse formula in the named range and re-assemble it  back using the specified FormulaRenderingWorkbook.
+     * Parse formula in the named range and re-assemble it back using the new sheet name.
      *
      * @param name the name to update
-     * @param frwb the formula rendering workbbok that returns new sheet name
      */
-    private void updateName(XSSFName name, FormulaRenderingWorkbook frwb) {
+    private void updateName(XSSFName name, String oldName, String newName) {
         String formula = name.getRefersToFormula();
         if (formula != null) {
             int sheetIndex = name.getSheetIndex();
             Ptg[] ptgs = FormulaParser.parse(formula, _fpwb, FormulaType.NAMEDRANGE, sheetIndex);
-            String updatedFormula = FormulaRenderer.toFormulaString(frwb, ptgs);
+            for (Ptg ptg : ptgs) {
+                updatePtg(ptg, oldName, newName);
+            }
+            String updatedFormula = FormulaRenderer.toFormulaString(_fpwb, ptgs);
             if (!formula.equals(updatedFormula)) name.setRefersToFormula(updatedFormula);
+        }
+    }
+    
+    private void updatePtg(Ptg ptg, String oldName, String newName) {
+        if (ptg instanceof Pxg) {
+            Pxg pxg = (Pxg)ptg;
+            if (pxg.getExternalWorkbookNumber() < 1) {
+                if (pxg.getSheetName().equals(oldName)) {
+                    pxg.setSheetName(newName);
+                }
+            }
         }
     }
 }

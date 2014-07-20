@@ -173,6 +173,7 @@ public final class FormulaShifter {
 		    if (rpxg.getExternalWorkbookNumber() > 0 ||
 		           ! _sheetName.equals(rpxg.getSheetName())) {
                 // only move 3D refs that refer to the sheet with cells being moved
+		        return null;
 		    }
             return rowMoveRefPtg(rpxg);
 		}

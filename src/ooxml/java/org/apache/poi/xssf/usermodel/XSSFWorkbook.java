@@ -1310,6 +1310,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     @Override
     public void setSheetName(int sheetIndex, String sheetname) {
         validateSheetIndex(sheetIndex);
+        String oldSheetName = getSheetName(sheetIndex);
 
         // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
         if(sheetname != null && sheetname.length() > 31) sheetname = sheetname.substring(0, 31);
@@ -1317,11 +1318,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         // findbugs fix - validateSheetName has already checked for null value
         assert(sheetname != null); 
 
+        // Do nothing if no change
+        if (sheetname.equals(oldSheetName)) return;
+        
+        // Check it isn't already taken
         if (containsSheet(sheetname, sheetIndex ))
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
 
+        // Update references to the name
         XSSFFormulaUtils utils = new XSSFFormulaUtils(this);
-        utils.updateSheetName(sheetIndex, sheetname);
+        utils.updateSheetName(sheetIndex, oldSheetName, sheetname);
 
         workbook.getSheets().getSheetArray(sheetIndex).setName(sheetname);
     }
