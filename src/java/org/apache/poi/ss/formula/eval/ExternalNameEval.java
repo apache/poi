@@ -17,26 +17,26 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.apache.poi.ss.formula.EvaluationName;
 
 /**
  * Evaluation of a Name defined in a Sheet or Workbook scope
  */
-public final class NameXEval implements ValueEval {
-	private final NameXPtg _ptg;
+public final class ExternalNameEval implements ValueEval {
+	private final EvaluationName _name;
 
-	public NameXEval(NameXPtg ptg) {
-		_ptg = ptg;
+	public ExternalNameEval(EvaluationName name) {
+		_name = name;
 	}
 
-	public NameXPtg getPtg() {
-		return _ptg;
+	public EvaluationName getName() {
+		return _name;
 	}
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer(64);
 		sb.append(getClass().getName()).append(" [");
-		sb.append(_ptg.getSheetRefIndex()).append(", ").append(_ptg.getNameIndex());
+		sb.append(_name.getNameText());
 		sb.append("]");
 		return sb.toString();
 	}
