@@ -17,7 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
@@ -84,6 +88,56 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals("Wrong evaluation result in " + ref_formula.formatAsString(),
                     cv_noformula.getNumberValue(), cv_formula.getNumberValue());
         }
-
+    }
+    
+    /**
+     * Related to bugs #56737 and #56752 - XSSF workbooks which have
+     *  formulas that refer to cells and named ranges in multiple other
+     *  workbooks, both HSSF and XSSF ones
+     */
+    public void testReferencesToOtherWorkbooks() throws Exception {
+        XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("ref2-56737.xlsx");
+        XSSFFormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        XSSFSheet s = wb.getSheetAt(0);
+        
+        // References to a .xlsx file
+        Row rXSLX = s.getRow(2);
+        Cell cXSLX_cell = rXSLX.getCell(4);
+        Cell cXSLX_sNR  = rXSLX.getCell(6);
+        Cell cXSLX_gNR  = rXSLX.getCell(8);
+        assertEquals("[1]Uses!$A$1",        cXSLX_cell.getCellFormula());
+        assertEquals("[1]Defines!NR_To_A1", cXSLX_sNR.getCellFormula());
+        assertEquals("[1]!NR_Global_B2",    cXSLX_gNR.getCellFormula());
+        
+        assertEquals("Hello!", cXSLX_cell.getStringCellValue());
+        assertEquals("Test A1", cXSLX_sNR.getStringCellValue());
+        assertEquals(142.0, cXSLX_gNR.getNumericCellValue());
+        
+        // References to a .xls file
+        Row rXSL = s.getRow(4);
+        Cell cXSL_cell = rXSL.getCell(4);
+        Cell cXSL_sNR  = rXSL.getCell(6);
+        Cell cXSL_gNR  = rXSL.getCell(8);
+        assertEquals("[2]Uses!$C$1",        cXSL_cell.getCellFormula());
+        assertEquals("[2]Defines!NR_To_A1", cXSL_sNR.getCellFormula());
+        assertEquals("[2]!NR_Global_B2",    cXSL_gNR.getCellFormula());
+        
+        assertEquals("Hello!", cXSL_cell.getStringCellValue());
+        assertEquals("Test A1", cXSL_sNR.getStringCellValue());
+        assertEquals(142.0, cXSL_gNR.getNumericCellValue());
+        
+        // Try evaluating
+        // TODO
+    }
+    
+    /**
+     * If a formula references cells or named ranges in another workbook,
+     *  but that isn't available at evaluation time, the cached values
+     *  should be used instead
+     * TODO Add the support then add a unit test
+     * See bug #56752
+     */
+    public void TODOtestCachedReferencesToOtherWorkbooks() throws Exception {
+        // TODO
     }
 }
