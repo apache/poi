@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.List;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationName;
@@ -95,7 +97,13 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         } catch (NumberFormatException e) {}
 
         // Look up an External Link Table for this name
-        throw new RuntimeException("Not implemented yet for book " + bookName); // TODO
+        List<ExternalLinksTable> tables = _uBook.getExternalLinksTable();
+        for (int i=0; i<tables.size(); i++) {
+            if (tables.get(i).getLinkedFileName().equals(bookName)) {
+                return i;
+            }
+        }
+        throw new RuntimeException("Book not linked for filename " + bookName);
     }
 
 	public EvaluationName getName(String name, int sheetIndex) {
@@ -127,7 +135,10 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
             ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
-            return new ExternalName(nameName, -1, -1); // TODO Finish this
+            // TODO Return a more specialised form of this, see bug #56752
+            // Should include the cached values, for in case that book isn't available
+            // Should support XSSF stuff lookups
+            return new ExternalName(nameName, -1, -1);
         } else {
             // Internal reference
             int nameIdx = _uBook.getNameIndex(nameName);
