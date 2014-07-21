@@ -24,19 +24,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.util.Internal;
 
 /**
- * Manages a collection of {@link WorkbookEvaluator}s, in order to support evaluation of formulas
- * across spreadsheets.<p/>
+ * Manages a collection of {@link WorkbookEvaluator}s, in order to support 
+ * evaluation of formulas across spreadsheets.
  *
- * For POI internal use only
- *
- * @author Josh Micich
+ * <p>For POI internal use only - use</p> 
  */
+@Internal
 public final class CollaboratingWorkbooksEnvironment {
 
 	public static final class WorkbookNotFoundException extends Exception {
-		WorkbookNotFoundException(String msg) {
+        private static final long serialVersionUID = 8787784539811167941L;
+
+        WorkbookNotFoundException(String msg) {
 			super(msg);
 		}
 	}
@@ -51,6 +53,7 @@ public final class CollaboratingWorkbooksEnvironment {
 		_evaluatorsByName = Collections.emptyMap();
 		_evaluators = new WorkbookEvaluator[0];
 	}
+	
 	public static void setup(String[] workbookNames, WorkbookEvaluator[] evaluators) {
 		int nItems = workbookNames.length;
 		if (evaluators.length != nItems) {
@@ -62,30 +65,47 @@ public final class CollaboratingWorkbooksEnvironment {
 		}
 		new CollaboratingWorkbooksEnvironment(workbookNames, evaluators, nItems);
 	}
+    public static void setup(Map<String,WorkbookEvaluator> evaluatorsByName) {
+        if (evaluatorsByName.size() < 1) {
+            throw new IllegalArgumentException("Must provide at least one collaborating worbook");
+        }
+        WorkbookEvaluator[] evaluators = 
+                evaluatorsByName.values().toArray(new WorkbookEvaluator[evaluatorsByName.size()]); 
+        new CollaboratingWorkbooksEnvironment(evaluatorsByName, evaluators);
+    }
 
 	private CollaboratingWorkbooksEnvironment(String[] workbookNames, WorkbookEvaluator[] evaluators, int nItems) {
-		Map<String, WorkbookEvaluator> m = new HashMap<String, WorkbookEvaluator>(nItems * 3 / 2);
-		IdentityHashMap<WorkbookEvaluator, String> uniqueEvals = new IdentityHashMap<WorkbookEvaluator, String>(nItems * 3 / 2);
+	    this(toUniqueMap(workbookNames, evaluators, nItems), evaluators);
+	}
+	private static Map<String, WorkbookEvaluator> toUniqueMap(String[] workbookNames, WorkbookEvaluator[] evaluators, int nItems) {
+		Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<String, WorkbookEvaluator>(nItems * 3 / 2);
 		for(int i=0; i<nItems; i++) {
 			String wbName = workbookNames[i];
 			WorkbookEvaluator wbEval = evaluators[i];
-			if (m.containsKey(wbName)) {
+			if (evaluatorsByName.containsKey(wbName)) {
 				throw new IllegalArgumentException("Duplicate workbook name '" + wbName + "'");
 			}
-			if (uniqueEvals.containsKey(wbEval)) {
-				String msg = "Attempted to register same workbook under names '"
-					+ uniqueEvals.get(wbEval) + "' and '" + wbName + "'";
-				throw new IllegalArgumentException(msg);
-			}
-			uniqueEvals.put(wbEval, wbName);
-			m.put(wbName, wbEval);
+			evaluatorsByName.put(wbName, wbEval);
 		}
-		unhookOldEnvironments(evaluators);
-		hookNewEnvironment(evaluators, this);
-		_unhooked = false;
-		_evaluators = evaluators;
-		_evaluatorsByName = m;
+		return evaluatorsByName;
 	}
+    private CollaboratingWorkbooksEnvironment(Map<String, WorkbookEvaluator> evaluatorsByName, WorkbookEvaluator[] evaluators) {
+        IdentityHashMap<WorkbookEvaluator, String> uniqueEvals = new IdentityHashMap<WorkbookEvaluator, String>(evaluators.length);
+        for (String wbName : evaluatorsByName.keySet()) {
+            WorkbookEvaluator wbEval = evaluatorsByName.get(wbName);
+            if (uniqueEvals.containsKey(wbEval)) {
+                String msg = "Attempted to register same workbook under names '"
+                    + uniqueEvals.get(wbEval) + "' and '" + wbName + "'";
+                throw new IllegalArgumentException(msg);
+            }
+            uniqueEvals.put(wbEval, wbName);
+        }
+        unhookOldEnvironments(evaluators);
+        hookNewEnvironment(evaluators, this);
+        _unhooked = false;
+        _evaluators = evaluators;
+        _evaluatorsByName = evaluatorsByName;
+    }
 
 	private static void hookNewEnvironment(WorkbookEvaluator[] evaluators, CollaboratingWorkbooksEnvironment env) {
 
