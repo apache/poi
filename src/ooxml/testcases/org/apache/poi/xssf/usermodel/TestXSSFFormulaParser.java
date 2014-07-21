@@ -24,7 +24,11 @@ import static org.junit.Assert.fail;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPxg;
@@ -78,6 +82,40 @@ public final class TestXSSFFormulaParser {
         } catch (FormulaParseException e){
             assertEquals("Specified named range 'XFD1048577' does not exist in the current workbook.", e.getMessage());
         }
+        
+        // Formula referencing one cell
+        ptgs = parse(fpb, "ISEVEN(A1)");
+        assertEquals(3, ptgs.length);
+        assertEquals(NameXPxg.class,   ptgs[0].getClass());
+        assertEquals(RefPtg.class,     ptgs[1].getClass());
+        assertEquals(FuncVarPtg.class, ptgs[2].getClass());
+        assertEquals("ISEVEN", ptgs[0].toFormulaString());
+        assertEquals("A1",     ptgs[1].toFormulaString());
+        assertEquals("#external#", ptgs[2].toFormulaString());
+        
+        // Formula referencing an area
+        ptgs = parse(fpb, "SUM(A1:B3)");
+        assertEquals(2, ptgs.length);
+        assertEquals(AreaPtg.class, ptgs[0].getClass());
+        assertEquals(AttrPtg.class, ptgs[1].getClass());
+        assertEquals("A1:B3", ptgs[0].toFormulaString());
+        assertEquals("SUM",   ptgs[1].toFormulaString());
+        
+        // Formula referencing one cell in a different sheet
+        ptgs = parse(fpb, "SUM(Sheet1!A1)");
+        assertEquals(2, ptgs.length);
+        assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        assertEquals(AttrPtg.class,  ptgs[1].getClass());
+        assertEquals("Sheet1!A1", ptgs[0].toFormulaString());
+        assertEquals("SUM",       ptgs[1].toFormulaString());
+        
+        // Formula referencing an area in a different sheet
+        ptgs = parse(fpb, "SUM(Sheet1!A1:B3)");
+        assertEquals(2, ptgs.length);
+        assertEquals(Area3DPxg.class,ptgs[0].getClass());
+        assertEquals(AttrPtg.class,  ptgs[1].getClass());
+        assertEquals("Sheet1!A1:B3", ptgs[0].toFormulaString());
+        assertEquals("SUM",          ptgs[1].toFormulaString());
     }
 
 	@Test
