@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Map;
+
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
@@ -40,7 +43,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * cell values.  Be sure to call {@link #clearAllCachedResultValues()} if any workbook cells are changed between
  * calls to evaluate~ methods on this class.
  */
-public class HSSFFormulaEvaluator implements FormulaEvaluator  {
+public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
 
 	private WorkbookEvaluator _bookEvaluator;
 	private HSSFWorkbook _book;
@@ -101,7 +104,15 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator  {
 		CollaboratingWorkbooksEnvironment.setup(workbookNames, wbEvals);
 	}
 
-	/**
+	public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> evaluators) {
+        CollaboratingWorkbooksEnvironment.setupFormulaEvaluator(evaluators);
+    }
+	
+    public WorkbookEvaluator _getWorkbookEvaluator() {
+        return _bookEvaluator;
+    }
+    
+    /**
 	 * Does nothing
 	 * @deprecated (Aug 2008) - not needed, since the current row can be derived from the cell
 	 */

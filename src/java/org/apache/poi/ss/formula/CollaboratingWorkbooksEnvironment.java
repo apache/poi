@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.util.Internal;
 
 /**
@@ -72,6 +73,19 @@ public final class CollaboratingWorkbooksEnvironment {
         WorkbookEvaluator[] evaluators = 
                 evaluatorsByName.values().toArray(new WorkbookEvaluator[evaluatorsByName.size()]); 
         new CollaboratingWorkbooksEnvironment(evaluatorsByName, evaluators);
+    }
+    public static void setupFormulaEvaluator(Map<String,FormulaEvaluator> evaluators) {
+        Map<String, WorkbookEvaluator> evaluatorsByName = new HashMap<String, WorkbookEvaluator>(evaluators.size());
+        for (String wbName : evaluators.keySet()) {
+            FormulaEvaluator eval = evaluators.get(wbName);
+            if (eval instanceof WorkbookEvaluatorProvider) {
+                evaluatorsByName.put(wbName, ((WorkbookEvaluatorProvider)eval)._getWorkbookEvaluator());
+            } else {
+                throw new IllegalArgumentException("Formula Evaluator " + eval + 
+                                                   " provides no WorkbookEvaluator access");
+            }
+        }
+        setup(evaluatorsByName);
     }
 
     private CollaboratingWorkbooksEnvironment(String[] workbookNames, WorkbookEvaluator[] evaluators, int nItems) {

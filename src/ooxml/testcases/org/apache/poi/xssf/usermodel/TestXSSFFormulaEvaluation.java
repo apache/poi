@@ -17,6 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -126,8 +130,32 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("Test A1", cXSL_sNR.getStringCellValue());
         assertEquals(142.0, cXSL_gNR.getNumericCellValue());
         
-        // Try evaluating
-        // TODO
+        // Try to evaluate without references, won't work
+        // (At least, not unit we fix bug #56752 that is)
+        try {
+            evaluator.evaluate(cXSL_cell);
+            fail("Without a fix for #56752, shouldn't be able to evaluate a " +
+                 "reference to a non-provided linked workbook");
+        } catch(Exception e) {}
+        
+        // Setup the environment
+        Map<String,FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
+        evaluators.put("ref2-56737.xlsx", evaluator);
+        evaluators.put("56737.xlsx", 
+                _testDataProvider.openSampleWorkbook("56737.xlsx").getCreationHelper().createFormulaEvaluator());
+        evaluators.put("56737.xls", 
+                HSSFTestDataSamples.openSampleWorkbook("56737.xls").getCreationHelper().createFormulaEvaluator());
+        evaluator.setupReferencedWorkbooks(evaluators);
+        
+        // Try evaluating all of them, ensure we don't blow up
+        for(Row r : s) {
+            for (Cell c : r) {
+                // TODO Fix and enable
+ //               evaluator.evaluate(c);
+            }
+        }
+        
+        // Evaluate and check results
     }
     
     /**
