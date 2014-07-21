@@ -17,9 +17,13 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.Map;
+
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -41,7 +45,7 @@ import org.apache.poi.ss.usermodel.Workbook;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * @author Josh Micich
  */
-public class XSSFFormulaEvaluator implements FormulaEvaluator {
+public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluatorProvider {
 
 	private WorkbookEvaluator _bookEvaluator;
 	private XSSFWorkbook _book;
@@ -280,6 +284,14 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator {
 		throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
 	}
 	
+    public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> evaluators) {
+        CollaboratingWorkbooksEnvironment.setupFormulaEvaluator(evaluators);
+    }
+    
+    public WorkbookEvaluator _getWorkbookEvaluator() {
+        return _bookEvaluator;
+    }
+
     /** {@inheritDoc} */
     public void setDebugEvaluationOutputForNextEval(boolean value){
         _bookEvaluator.setDebugEvaluationOutputForNextEval(value);

@@ -17,13 +17,23 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.usermodel.*;
-
-import java.text.AttributedString;
-import java.awt.font.TextLayout;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.text.AttributedString;
+import java.util.Map;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 
 /**
@@ -61,6 +71,7 @@ public class SheetUtil {
         public void notifyUpdateCell(Cell cell) {}
         public CellValue evaluate(Cell cell) {return null;  }
         public Cell evaluateInCell(Cell cell) { return null; }
+        public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> workbooks) {}
         public void setDebugEvaluationOutputForNextEval(boolean value) {}
 
         public void evaluateAll() {}

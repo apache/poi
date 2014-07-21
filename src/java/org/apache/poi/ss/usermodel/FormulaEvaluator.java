@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.Map;
+
 /**
  * Evaluates formula cells.<p/>
  * 
@@ -114,6 +116,16 @@ public interface FormulaEvaluator {
      * @param cell
      */
     Cell evaluateInCell(Cell cell);
+    
+    /**
+     * Sets up the Formula Evaluator to be able to reference and resolve
+     *  links to other workbooks, eg [Test.xls]Sheet1!A1.
+     * <p>For a workbook referenced as [Test.xls]Sheet1!A1, you should
+     *  supply a map containing the key Test.xls (no square brackets),
+     *  and an open FormulaEvaluator onto that Workbook.
+     * @param otherWorkbooks Map of workbook names (no square brackets) to an evaluator on that workbook
+     */
+    void setupReferencedWorkbooks(Map<String,FormulaEvaluator> workbooks);
 
     /**
      * Perform detailed output of formula evaluation for next evaluation only?
@@ -124,5 +136,4 @@ public interface FormulaEvaluator {
      * @param value whether to perform detailed output
      */
     void setDebugEvaluationOutputForNextEval(boolean value);
-	
 }
