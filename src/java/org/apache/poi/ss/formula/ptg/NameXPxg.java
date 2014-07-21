@@ -74,15 +74,20 @@ public final class NameXPxg extends OperandPtg implements Pxg {
 
     public String toFormulaString() {
         StringBuffer sb = new StringBuffer();
+        boolean needsExclamation = false;
         if (externalWorkbookNumber >= 0) {
             sb.append('[');
             sb.append(externalWorkbookNumber);
             sb.append(']');
+            needsExclamation = true;
         }
         if (sheetName != null) {
             SheetNameFormatter.appendFormat(sb, sheetName);
+            needsExclamation = true;
         }
-        sb.append('!');
+        if (needsExclamation) {
+            sb.append('!');
+        }
         sb.append(nameName);
         return sb.toString();
     }
