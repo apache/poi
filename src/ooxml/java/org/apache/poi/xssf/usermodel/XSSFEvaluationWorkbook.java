@@ -135,14 +135,21 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             // External reference - reference is 1 based, link table is 0 based
             int linkNumber = externalWorkbookNumber - 1;
             ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
-            // TODO Return a more specialised form of this, see bug #56752
-            // Should include the cached values, for in case that book isn't available
-            // Should support XSSF stuff lookups
-            return new ExternalName(nameName, -1, -1);
+            
+            for (org.apache.poi.ss.usermodel.Name name : linkTable.getDefinedNames()) {
+                if (name.getNameName().equals(nameName)) {
+                    // TODO Return a more specialised form of this, see bug #56752
+                    // Should include the cached values, for in case that book isn't available
+                    // Should support XSSF stuff lookups
+                    return new ExternalName(nameName, -1, name.getSheetIndex());
+                }
+            }
+            throw new IllegalArgumentException("Name '"+nameName+"' not found in " +
+                                               "reference to " + linkTable.getLinkedFileName());
         } else {
             // Internal reference
             int nameIdx = _uBook.getNameIndex(nameName);
-            return new ExternalName(nameName, nameIdx, -1);  // TODO Is this right?
+            return new ExternalName(nameName, nameIdx, 0);  // TODO Is this right?
         }
 	    
     }
