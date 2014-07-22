@@ -17,8 +17,14 @@
 
 package org.apache.poi.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Constructor;
 
 import junit.framework.TestCase;
 
@@ -259,10 +265,27 @@ public final class TestHexDump extends TestCase {
 
     public void testToHex() {
         assertEquals("000A", HexDump.toHex((short)0xA));
+        
+        assertEquals("[]", HexDump.toHex(new short[] { }));
+        assertEquals("[000A]", HexDump.toHex(new short[] { 0xA }));
+        assertEquals("[000A, 000B]", HexDump.toHex(new short[] { 0xA, 0xB }));
+        
         assertEquals("0A", HexDump.toHex((byte)0xA));
         assertEquals("0000000A", HexDump.toHex(0xA));
 
+        assertEquals("[]", HexDump.toHex(new byte[] { }));
+        assertEquals("[0A]", HexDump.toHex(new byte[] { 0xA }));
+        assertEquals("[0A, 0B]", HexDump.toHex(new byte[] { 0xA, 0xB }));
+
+        assertEquals(": 0", HexDump.toHex(new byte[] { }, 10));
+        assertEquals("0: 0A", HexDump.toHex(new byte[] { 0xA }, 10));
+        assertEquals("0: 0A, 0B", HexDump.toHex(new byte[] { 0xA, 0xB }, 10));
+        assertEquals("0: 0A, 0B\n2: 0C, 0D", HexDump.toHex(new byte[] { 0xA, 0xB, 0xC, 0xD }, 2));
+        assertEquals("0: 0A, 0B\n2: 0C, 0D\n4: 0E, 0F", HexDump.toHex(new byte[] { 0xA, 0xB, 0xC, 0xD, 0xE, 0xF }, 2));
+
         assertEquals("FFFF", HexDump.toHex((short)0xFFFF));
+        
+        assertEquals("00000000000004D2", HexDump.toHex(1234l));
         
         confirmStr("0xFE", HexDump.byteToHex(-2));
         confirmStr("0x25", HexDump.byteToHex(37));
@@ -285,5 +308,150 @@ public final class TestHexDump extends TestCase {
             rval = ( char ) c;
         }
         return rval;
+    }
+    
+    public void testDumpToString() throws Exception {
+        byte[] testArray = new byte[ 256 ];
+
+        for (int j = 0; j < 256; j++)
+        {
+            testArray[ j ] = ( byte ) j;
+        }
+        String dump = HexDump.dump(testArray, 0, 0);
+        //System.out.println("Hex: \n" + dump);
+        assertTrue("Had: \n" + dump, 
+                dump.contains("0123456789:;<=>?"));
+
+        dump = HexDump.dump(testArray, 2, 1);
+        //System.out.println("Hex: \n" + dump);
+        assertTrue("Had: \n" + dump, 
+                dump.contains("123456789:;<=>?@"));
+    }
+
+    public void testDumpToStringOutOfIndex() throws Exception {
+        byte[] testArray = new byte[ 0 ];
+
+        try {
+            HexDump.dump(testArray, 0, -1);
+            fail("Should throw an exception with invalid input");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // expected
+        }
+
+        try {
+            HexDump.dump(testArray, 0, 1);
+            fail("Should throw an exception with invalid input");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // expected
+        }
+    }
+    
+    public void testDumpToPrintStream() throws IOException {
+        byte[] testArray = new byte[ 256 ];
+
+        for (int j = 0; j < 256; j++)
+        {
+            testArray[ j ] = ( byte ) j;
+        }
+
+        InputStream in = new ByteArrayInputStream(testArray);
+        try {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(byteOut);
+            try {
+                HexDump.dump(in, out, 0, 256);
+            } finally {
+                out.close();
+            }
+            
+            String str = new String(byteOut.toByteArray());
+            assertTrue("Had: \n" + str, 
+                    str.contains("0123456789:;<=>?"));
+        } finally {
+            in.close();
+        }
+        
+        in = new ByteArrayInputStream(testArray);
+        try {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(byteOut);
+            try {
+                // test with more than we have
+                HexDump.dump(in, out, 0, 1000);
+            } finally {
+                out.close();
+            }
+            
+            String str = new String(byteOut.toByteArray());
+            assertTrue("Had: \n" + str, 
+                    str.contains("0123456789:;<=>?"));
+        } finally {
+            in.close();
+        }        
+
+        in = new ByteArrayInputStream(testArray);
+        try {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(byteOut);
+            try {
+                // test with -1
+                HexDump.dump(in, out, 0, -1);
+            } finally {
+                out.close();
+            }
+            
+            String str = new String(byteOut.toByteArray());
+            assertTrue("Had: \n" + str, 
+                    str.contains("0123456789:;<=>?"));
+        } finally {
+            in.close();
+        }
+        
+        in = new ByteArrayInputStream(testArray);
+        try {
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            PrintStream out = new PrintStream(byteOut);
+            try {
+                HexDump.dump(in, out, 1, 235);
+            } finally {
+                out.close();
+            }
+            
+            String str = new String(byteOut.toByteArray());
+            assertTrue("Line contents should be moved by one now, but Had: \n" + str, 
+                    str.contains("123456789:;<=>?@"));
+        } finally {
+            in.close();
+        }
+    }
+    
+    public void testConstruct() throws Exception {
+        // to cover private constructor
+        // get the default constructor
+        final Constructor<HexDump> c = HexDump.class.getDeclaredConstructor(new Class[] {});
+
+        // make it callable from the outside
+        c.setAccessible(true);
+
+        // call it
+        assertNotNull(c.newInstance((Object[]) null));        
+    }
+    
+    public void testMain() throws Exception {
+        File file = TempFile.createTempFile("HexDump", ".dat");
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            try {
+                IOUtils.copy(new ByteArrayInputStream("teststring".getBytes()), out);
+            } finally {
+                out.close();
+            }
+            assertTrue(file.exists());
+            assertTrue(file.length() > 0);
+            
+            HexDump.main(new String[] { file.getAbsolutePath() });
+        } finally {
+            assertTrue(file.exists() && file.delete());
+        }
     }
 }
