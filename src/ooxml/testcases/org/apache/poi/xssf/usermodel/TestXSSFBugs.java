@@ -18,13 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,25 +42,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -589,6 +565,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        r = s.getRow(0);
        c = r.getCell(0);
        assertEquals("hello world", c.getRichStringCellValue().toString());
+       wb.close();
     }
     
     /**
@@ -639,7 +616,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
         assertEquals("A8", cc.getCTCalcChain().getCArray(6).getR());
         assertEquals(40, cc.getCTCalcChain().sizeOfCArray());
-
+        wbRead.close();
+        
         wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
 
         // Try various ways of changing the formulas
@@ -648,18 +626,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
         sheet.getRow(2).getCell(0).setCellFormula(null); // go
         sheet.getRow(3).getCell(0).setCellType(Cell.CELL_TYPE_FORMULA); // stay
+        wbRead.close();
         wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet.getRow(4).getCell(0).setCellType(Cell.CELL_TYPE_STRING); // go
+        wbRead.close();
         wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
 
         validateCells(sheet);
         sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
         validateCells(sheet);
+        wbRead.close();
         wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
         
         sheet.getRow(6).getCell(0).setCellType(Cell.CELL_TYPE_BLANK); // go
+        wbRead.close();
         wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
         sheet.getRow(7).getCell(0).setCellValue((String) null); // go
+        wbRead.close();
 
         wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
 
@@ -671,6 +654,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
         assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
         assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
+        wbRead.close();
     }
 
     @Test
@@ -954,14 +938,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        
        String r3 = cell.getRichStringCellValue().getCTRst().getRList().get(2).getT();
        assertEquals("line.\n", r3.substring(r3.length()-6));
-       
+
        // Save and re-check
        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
        sheet = wb.getSheetAt(0);
        row = sheet.getRow(2);
        cell = row.getCell(2);
        assertEquals(text, cell.getStringCellValue());
-       
+       wb.close();
+
 //       FileOutputStream out = new FileOutputStream("/tmp/test48877.xlsx");
 //       wb.write(out);
 //       out.close();
@@ -1125,6 +1110,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
        assertEquals(true, ps2.getValidSettings());
        assertEquals(false, ps2.getLandscape());
+       
+       wb1.close();
+       wb2.close();
     }
 
     /**
@@ -1201,6 +1189,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(pinkStyle, s.getColumnStyle(0));
        assertEquals(defaultStyle, s.getColumnStyle(2));
        assertEquals(blueStyle, s.getColumnStyle(3));
+       wb.close();
     }
     
     /**
@@ -1532,6 +1521,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         byte secondSave[] = bos.toByteArray();
         
         assertThat(firstSave, equalTo(secondSave));
+        
+        wb.close();
     }
     
     /**
@@ -1720,19 +1711,63 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         FileInputStream is = new FileInputStream(outFile);
         try {
-            final Workbook newWB;
-            if(wb instanceof XSSFWorkbook) {
-                newWB = new XSSFWorkbook(is);
-            } else if(wb instanceof HSSFWorkbook) {
-                newWB = new HSSFWorkbook(is);
-            } else if(wb instanceof SXSSFWorkbook) {
-                newWB = new SXSSFWorkbook(new XSSFWorkbook(is));
-            } else {
-                throw new IllegalStateException("Unknown workbook: " + wb);
+            Workbook newWB = null;
+            try {
+                if(wb instanceof XSSFWorkbook) {
+                    newWB = new XSSFWorkbook(is);
+                } else if(wb instanceof HSSFWorkbook) {
+                    newWB = new HSSFWorkbook(is);
+                } else if(wb instanceof SXSSFWorkbook) {
+                    newWB = new SXSSFWorkbook(new XSSFWorkbook(is));
+                } else {
+                    throw new IllegalStateException("Unknown workbook: " + wb);
+                }
+                assertNotNull(newWB.getSheet("test"));
+            } finally {
+                newWB.close();
             }
-            assertNotNull(newWB.getSheet("test"));
         } finally {
             is.close();
         }
+    }
+    
+    @Test
+    public void testBug56688_1() {
+        XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_1.xlsx");
+        checkValue(excel, "-1.0");  /* Not 0.0 because POI sees date "0" minus one month as invalid date, which is -1! */
+    }
+    
+    @Test
+    public void testBug56688_2() {
+        XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_2.xlsx");
+        checkValue(excel, "#VALUE!");
+    }
+    
+    @Test
+    public void testBug56688_3() {
+        XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_3.xlsx");
+        checkValue(excel, "#VALUE!");
+    }
+    
+    @Test
+    public void testBug56688_4() {
+        XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_4.xlsx");
+        
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.MONTH, 2);
+//        double excelDate = DateUtil.getExcelDate(calendar.getTime());
+//        NumberEval eval = new NumberEval(Math.floor(excelDate));
+//        checkValue(excel, eval.getStringValue() + ".0");
+        checkValue(excel, "41904.0");
+    }
+
+    private void checkValue(XSSFWorkbook excel, String expect) {
+        XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(excel);
+        evaluator.evaluateAll();
+        
+        XSSFCell cell = excel.getSheetAt(0).getRow(1).getCell(1);
+        CellValue value = evaluator.evaluate(cell);
+        
+        assertEquals(expect, value.formatAsString());
     }
 }

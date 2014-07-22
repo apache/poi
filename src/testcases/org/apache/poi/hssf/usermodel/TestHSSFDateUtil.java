@@ -21,6 +21,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -28,6 +31,7 @@ import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.Test;
 
 /**
@@ -337,9 +341,10 @@ public final class TestHSSFDateUtil {
     /**
      * Test that against a real, test file, we still do everything
      *  correctly
+     * @throws IOException 
      */
     @Test
-    public void onARealFile() {
+    public void onARealFile() throws IOException {
 
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
@@ -394,6 +399,18 @@ public final class TestHSSFDateUtil {
         assertFalse(HSSFDateUtil.isInternalDateFormat(cell.getCellStyle().getDataFormat()));
         assertTrue(HSSFDateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString()));
         assertTrue(HSSFDateUtil.isCellDateFormatted(cell));
+        
+        workbook.close();
+    }
+
+    @Test
+    public void excelDateBorderCases() throws ParseException {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        
+        assertEquals(1.0, DateUtil.getExcelDate(df.parse("1900-01-01")), 0.00001);
+        assertEquals(31.0, DateUtil.getExcelDate(df.parse("1900-01-31")), 0.00001);
+        assertEquals(32.0, DateUtil.getExcelDate(df.parse("1900-02-01")), 0.00001);
+        assertEquals(/* BAD_DATE! */ -1.0, DateUtil.getExcelDate(df.parse("1899-12-31")), 0.00001);
     }
 
     @Test
@@ -495,9 +512,10 @@ public final class TestHSSFDateUtil {
     /**
      * User reported a datetime issue in POI-2.5:
      *  Setting Cell's value to Jan 1, 1900 without a time doesn't return the same value set to
+     * @throws IOException 
      */
     @Test
-    public void bug19172()
+    public void bug19172() throws IOException
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -505,7 +523,7 @@ public final class TestHSSFDateUtil {
 
         Calendar cal = Calendar.getInstance();
 
-        // A pseduo special Excel dates
+        // A pseudo special Excel dates
         cal.set(1900, 0, 1);
 
         Date valueToTest = cal.getTime();
@@ -515,6 +533,8 @@ public final class TestHSSFDateUtil {
         Date returnedValue = cell.getDateCellValue();
 
         assertEquals(valueToTest.getTime(), returnedValue.getTime());
+        
+        workbook.close();
     }
 
     /**

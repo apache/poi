@@ -36,8 +36,7 @@ public class EDate implements FreeRefFunction {
         }
         try {
             double startDateAsNumber = getValue(args[0]);
-            NumberEval offsetInYearsValue = (NumberEval) args[1];
-            int offsetInMonthAsNumber = (int) offsetInYearsValue.getNumberValue();
+            int offsetInMonthAsNumber = (int) getValue(args[1]);
 
             Date startDate = DateUtil.getJavaDate(startDateAsNumber);
             Calendar calendar = Calendar.getInstance();
@@ -53,10 +52,18 @@ public class EDate implements FreeRefFunction {
         if (arg instanceof NumberEval) {
             return ((NumberEval) arg).getNumberValue();
         }
+        if(arg instanceof BlankEval) {
+            return 0;
+        }
         if (arg instanceof RefEval) {
             ValueEval innerValueEval = ((RefEval) arg).getInnerValueEval();
-            return ((NumberEval) innerValueEval).getNumberValue();
+            if(innerValueEval instanceof NumberEval) {
+                return ((NumberEval) innerValueEval).getNumberValue();
+            }
+            if(innerValueEval instanceof BlankEval) {
+                return 0;
+            }
         }
-        throw new EvaluationException(ErrorEval.REF_INVALID);
+        throw new EvaluationException(ErrorEval.VALUE_INVALID);
     }
 }
