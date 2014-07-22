@@ -17,24 +17,67 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import junit.framework.TestCase;
+
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 
-import java.util.Calendar;
-import java.util.Date;
-
 public class TestEDate extends TestCase{
 
-    public void testEDateProperValues() {
-        EDate eDate = new EDate();
-        NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000), new NumberEval(0)}, null);
-        assertEquals(1000d, result.getNumberValue());
+    private final class RefEvalImplementation implements RefEval {
+        private final ValueEval value;
+        
+        public RefEvalImplementation(ValueEval value) {
+            super();
+            this.value = value;
+        }
+
+        public AreaEval offset(int relFirstRowIx, int relLastRowIx,
+                int relFirstColIx, int relLastColIx) {
+            throw new UnsupportedOperationException();
+        }
+
+        public int getRow() {
+            throw new UnsupportedOperationException();
+        }
+
+        public ValueEval getInnerValueEval() {
+            return value;
+        }
+
+        public int getColumn() {
+            throw new UnsupportedOperationException();
+        }
     }
 
+    public void testEDateProperValues() {
+        // verify some border-case combinations of startDate and month-increase
+        checkValue(1000, 0, 1000d);
+        checkValue(1, 0, 1d);
+        checkValue(0, 1, 31d);
+        checkValue(1, 1, 32d);
+        checkValue(0, 0, /* BAD_DATE! */ -1.0d);
+        checkValue(0, -2, /* BAD_DATE! */ -1.0d);
+        checkValue(0, -3, /* BAD_DATE! */ -1.0d);
+        checkValue(49104, 0, 49104d);
+        checkValue(49104, 1, 49134d);
+    }
+
+    private void checkValue(int startDate, int monthInc, double expectedResult) {
+        EDate eDate = new EDate();
+        NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(startDate), new NumberEval(monthInc)}, null);
+        assertEquals(expectedResult, result.getNumberValue());
+    }
+    
     public void testEDateInvalidValues() {
         EDate eDate = new EDate();
         ErrorEval result = (ErrorEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000)}, null);
@@ -64,5 +107,39 @@ public class TestEDate extends TestCase{
         instance.setTime(startDate);
         instance.add(Calendar.MONTH, offset);
         assertEquals(resultDate, instance.getTime());
+    }
+    
+    public void testBug56688() {        
+        EDate eDate = new EDate();
+        NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000), new RefEvalImplementation(new NumberEval(0))}, null);
+        assertEquals(1000d, result.getNumberValue());
+    }
+
+    public void testRefEvalStartDate() {
+        EDate eDate = new EDate();
+        NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new RefEvalImplementation(new NumberEval(1000)), new NumberEval(0)}, null);
+        assertEquals(1000d, result.getNumberValue());
+    }
+
+    public void testEDateInvalidValueEval() {
+        ValueEval evaluate = new EDate().evaluate(new ValueEval[]{new ValueEval() {}, new NumberEval(0)}, null);
+        assertTrue(evaluate instanceof ErrorEval);
+        assertEquals(ErrorEval.VALUE_INVALID, evaluate);
+    }
+
+    public void testEDateBlankValueEval() {
+        NumberEval evaluate = (NumberEval) new EDate().evaluate(new ValueEval[]{BlankEval.instance, new NumberEval(0)}, null);
+        assertEquals(-1.0d, evaluate.getNumberValue());
+    }
+
+    public void testEDateBlankRefValueEval() {
+        EDate eDate = new EDate();
+        NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new RefEvalImplementation(BlankEval.instance), new NumberEval(0)}, null);
+        assertEquals("0 startDate triggers BAD_DATE currently, thus -1.0!", 
+                -1.0d, result.getNumberValue());
+
+        result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1), new RefEvalImplementation(BlankEval.instance)}, null);
+        assertEquals("Blank is handled as 0 otherwise", 
+                1.0d, result.getNumberValue());
     }
 }
