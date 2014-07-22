@@ -70,7 +70,7 @@ public class HexDump {
     {
         if (data.length == 0)
         {
-            stream.write( ("No Data" + System.getProperty( "line.separator")).getBytes() );
+            stream.write( ("No Data" + EOL).getBytes() );
             stream.flush();
             return;
         }
@@ -276,8 +276,10 @@ public class HexDump {
         retVal.append('[');
         for(int x = 0; x < value.length; x++)
         {
+            if (x>0) {
+                retVal.append(", ");
+            }
             retVal.append(toHex(value[x]));
-            retVal.append(", ");
         }
         retVal.append(']');
         return retVal.toString();
@@ -311,9 +313,10 @@ public class HexDump {
                 retVal.append('\n');
                 retVal.append(format.format(x));
                 i = 0;
+            } else if (x>0) {
+                retVal.append(", ");
             }
             retVal.append(toHex(value[x]));
-            retVal.append(", ");
         }
         return retVal.toString();
     }
