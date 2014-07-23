@@ -156,8 +156,8 @@ under the License.
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.1.201405082137.zip"/>
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.1.201405082137/jacoco-0.7.1.201405082137.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-all-4.0.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/4.0/asm-all-4.0.jar"/>
+    <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 
     <!-- license checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.10.jar"/>
@@ -282,7 +282,7 @@ under the License.
     <path id="lib.jacoco">
         <fileset dir="lib">
             <include name="org.jacoco*.jar" />
-            <include name="asm-all-4*.jar" />
+            <include name="asm-all-*.jar" />
         </fileset>
     </path>
 
