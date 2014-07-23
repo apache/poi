@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -40,6 +41,7 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.usermodel.*;
@@ -1753,12 +1755,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void testBug56688_4() {
         XSSFWorkbook excel = XSSFTestDataSamples.openSampleWorkbook("56688_4.xlsx");
         
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.MONTH, 2);
-//        double excelDate = DateUtil.getExcelDate(calendar.getTime());
-//        NumberEval eval = new NumberEval(Math.floor(excelDate));
-//        checkValue(excel, eval.getStringValue() + ".0");
-        checkValue(excel, "41904.0");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 2);
+        double excelDate = DateUtil.getExcelDate(calendar.getTime());
+        NumberEval eval = new NumberEval(Math.floor(excelDate));
+        checkValue(excel, eval.getStringValue() + ".0");
     }
 
     private void checkValue(XSSFWorkbook excel, String expect) {
