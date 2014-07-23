@@ -110,7 +110,9 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		for (int i = 0; i < _uBook.getNumberOfNames(); i++) {
 			XSSFName nm = _uBook.getNameAt(i);
 			String nameText = nm.getNameName();
-			if (name.equalsIgnoreCase(nameText) && nm.getSheetIndex() == sheetIndex) {
+			int nameSheetindex = nm.getSheetIndex();
+			if (name.equalsIgnoreCase(nameText) && 
+			       (nameSheetindex == -1 || nameSheetindex == sheetIndex)) {
 				return new Name(_uBook.getNameAt(i), i, this);
 			}
 		}
@@ -138,10 +140,14 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
             
             for (org.apache.poi.ss.usermodel.Name name : linkTable.getDefinedNames()) {
                 if (name.getNameName().equals(nameName)) {
+                    // HSSF returns one sheet higher than normal, and various bits
+                    //  of the code assume that. So, make us match that behaviour!
+                    int nameSheetIndex = name.getSheetIndex() + 1;
+                    
                     // TODO Return a more specialised form of this, see bug #56752
                     // Should include the cached values, for in case that book isn't available
                     // Should support XSSF stuff lookups
-                    return new ExternalName(nameName, -1, name.getSheetIndex());
+                    return new ExternalName(nameName, -1, nameSheetIndex);
                 }
             }
             throw new IllegalArgumentException("Name '"+nameName+"' not found in " +
