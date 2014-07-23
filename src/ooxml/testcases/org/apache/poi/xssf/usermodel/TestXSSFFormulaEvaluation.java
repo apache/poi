@@ -150,12 +150,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         // Try evaluating all of them, ensure we don't blow up
         for(Row r : s) {
             for (Cell c : r) {
-                // TODO Fix and enable
- //               evaluator.evaluate(c);
+                evaluator.evaluate(c);
             }
         }
         
         // Evaluate and check results
+        assertEquals("\"Hello!\"",  evaluator.evaluate(cXSLX_cell).formatAsString());
+        // TODO Fix XSSF reference evaluations to work
+//        assertEquals("\"Test A1\"", evaluator.evaluate(cXSLX_sNR).formatAsString());
+//        assertEquals("142.0",   evaluator.evaluate(cXSLX_gNR).formatAsString());
+
+        assertEquals("\"Hello!\"",  evaluator.evaluate(cXSL_cell).formatAsString());
+        assertEquals("\"Test A1\"", evaluator.evaluate(cXSL_sNR).formatAsString());
+        assertEquals("142.0",   evaluator.evaluate(cXSL_gNR).formatAsString());
     }
     
     /**
