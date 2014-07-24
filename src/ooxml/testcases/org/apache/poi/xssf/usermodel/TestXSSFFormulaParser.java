@@ -18,11 +18,16 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
@@ -35,11 +40,15 @@ import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestXSSFFormulaParser {
-	private static Ptg[] parse(XSSFEvaluationWorkbook fpb, String fmla) {
+	private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
 		return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
 	}
 
@@ -226,5 +235,72 @@ public final class TestXSSFFormulaParser {
         assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[1]!NR_Global_B2",((NameXPxg)ptgs[0]).toFormulaString());
+    }
+    
+    /**
+     * A handful of functions (such as SUM, COUNTA, MIN) support
+     *  multi-sheet references (eg Sheet1:Sheet3!A1 = Cell A1 from
+     *  Sheets 1 through Sheet 3).
+     * This test, based on common test files for HSSF and XSSF, checks
+     *  that we can read and parse these kinds of references 
+     * (but not evaluate - that's elsewhere in the test suite)
+     * 
+     * DISABLED pending support, see bug #55906
+     */
+    @Test
+    @Ignore
+    public void multiSheetReferencesHSSFandXSSF() throws Exception {
+        Workbook[] wbs = new Workbook[] {
+                HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
+                XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
+        };
+        for (Workbook wb : wbs) {
+            Sheet s1 = wb.getSheetAt(0);
+            Ptg[] ptgs;
+            
+            // Check the contents
+            Cell sumF = s1.getRow(2).getCell(0);
+            assertNotNull(sumF);
+            assertEquals("SUM(Sheet1:Sheet3!A1)", sumF.getCellFormula());
+            
+            Cell avgF = s1.getRow(2).getCell(1);
+            assertNotNull(avgF);
+            assertEquals("AVERAGE(Sheet1:Sheet3!A1)", avgF.getCellFormula());
+            
+            Cell countAF = s1.getRow(2).getCell(2);
+            assertNotNull(countAF);
+            assertEquals("COUNTA(Sheet1:Sheet3!C1)", countAF.getCellFormula());
+            
+            Cell maxF = s1.getRow(4).getCell(1);
+            assertNotNull(maxF);
+            assertEquals("MAX(Sheet1:Sheet3!A$1)", maxF.getCellFormula());
+            
+            // Create a formula parser
+            FormulaParsingWorkbook fpb = null;
+            if (wb instanceof HSSFWorkbook)
+                fpb = HSSFEvaluationWorkbook.create((HSSFWorkbook)wb);
+            else
+                fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook)wb);
+            
+            // Check things parse as expected:
+            
+            // SUM to one cell over 3 workbooks, relative reference
+            ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1");
+            // TODO
+//            assertEquals(1, ptgs.length);
+//            assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+            
+            // MAX to one cell over 3 workbooks, absolute row reference
+            ptgs = parse(fpb, "MAX(Sheet1:Sheet3!A$1");
+            // TODO
+//          assertEquals(1, ptgs.length);
+//          assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+            
+            // MIN to one cell over 3 workbooks, absolute reference
+            ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1");
+            // TODO
+//          assertEquals(1, ptgs.length);
+//          assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+        }
     }
 }
