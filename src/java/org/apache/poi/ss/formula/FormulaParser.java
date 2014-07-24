@@ -366,6 +366,8 @@ public final class FormulaParser {
 	 *   a..b!A1
 	 *   'my sheet'!A1
 	 *   .my.sheet!A1
+	 *   'my sheet':'my alt sheet'!A1
+	 *   .my.sheet1:.my.sheet2!$B$2
 	 *   my.named..range.
 	 *   'my sheet'!my.named.range
 	 *   .my.sheet!my.named.range
@@ -383,6 +385,7 @@ public final class FormulaParser {
 		SkipWhite();
 		int savePointer = _pointer;
 		SheetIdentifier sheetIden = parseSheetName();
+		
 		if (sheetIden == null) {
 			resetPointer(savePointer);
 		} else {
@@ -807,6 +810,10 @@ public final class FormulaParser {
 				GetChar();
 				return new SheetIdentifier(bookName, iden);
 			}
+			// See if it's a multi-sheet range, eg Sheet1:Sheet3!A1
+            if (look == ':') {
+                return parseSheetRange(bookName, iden);
+            }
 			return null;
 		}
 
@@ -818,19 +825,37 @@ public final class FormulaParser {
 				sb.append(look);
 				GetChar();
 			}
+            NameIdentifier iden = new NameIdentifier(sb.toString(), false);
 			SkipWhite();
 			if (look == '!') {
 				GetChar();
-				return new SheetIdentifier(bookName, new NameIdentifier(sb.toString(), false));
+				return new SheetIdentifier(bookName, iden);
 			}
+            // See if it's a multi-sheet range, eg Sheet1:Sheet3!A1
+            if (look == ':') {
+                return parseSheetRange(bookName, iden);
+            }
 			return null;
 		}
 		if (look == '!' && bookName != null) {
-		    // Raw book reference, wihtout a sheet
+		    // Raw book reference, without a sheet
             GetChar();
 		    return new SheetIdentifier(bookName, null);
 		}
 		return null;
+	}
+	
+	/**
+	 * If we have something that looks like [book]Sheet1: or 
+	 *  Sheet1, see if it's actually a range eg Sheet1:Sheet2!
+	 */
+	private SheetIdentifier parseSheetRange(String bookname, NameIdentifier sheet1Name) {
+        GetChar();
+        SheetIdentifier sheet2 = parseSheetName();
+        if (sheet2 != null) {
+           return new SheetRangeIdentifier(bookname, sheet1Name, sheet2.getSheetIdentifier());
+        }
+        return null;
 	}
 
 	/**

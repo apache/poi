@@ -17,41 +17,26 @@
 
 package org.apache.poi.ss.formula;
 
-public class SheetIdentifier {
-    public String _bookName;
-    public NameIdentifier _sheetIdentifier;
+public class SheetRangeIdentifier extends SheetIdentifier {
+    public NameIdentifier _lastSheetIdentifier;
 
-    public SheetIdentifier(String bookName, NameIdentifier sheetIdentifier) {
-        _bookName = bookName;
-        _sheetIdentifier = sheetIdentifier;
+    public SheetRangeIdentifier(String bookName, NameIdentifier firstSheetIdentifier, NameIdentifier lastSheetIdentifier) {
+        super(bookName, firstSheetIdentifier);
+        _lastSheetIdentifier = lastSheetIdentifier;
     }
-    public String getBookName() {
-        return _bookName;
+    public NameIdentifier getFirstSheetIdentifier() {
+        return super.getSheetIdentifier();
     }
-    public NameIdentifier getSheetIdentifier() {
-        return _sheetIdentifier;
+    public NameIdentifier getLastSheetIdentifier() {
+        return _lastSheetIdentifier;
     }
     protected void asFormulaString(StringBuffer sb) {
-        if (_bookName != null) {
-            sb.append(" [").append(_sheetIdentifier.getName()).append("]");
-        }
-        if (_sheetIdentifier.isQuoted()) {
-            sb.append("'").append(_sheetIdentifier.getName()).append("'");
+        super.asFormulaString(sb);
+        sb.append(':');
+        if (_lastSheetIdentifier.isQuoted()) {
+            sb.append("'").append(_lastSheetIdentifier.getName()).append("'");
         } else {
-            sb.append(_sheetIdentifier.getName());
+            sb.append(_lastSheetIdentifier.getName());
         }
-    }
-    public String asFormulaString() {
-        StringBuffer sb = new StringBuffer(32);
-        asFormulaString(sb);
-        return sb.toString();
-    }
-    public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append(getClass().getName());
-        sb.append(" [");
-        asFormulaString(sb);
-        sb.append("]");
-        return sb.toString();
     }
 }
