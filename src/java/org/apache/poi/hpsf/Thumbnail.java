@@ -202,7 +202,7 @@ public final class Thumbnail {
      */
     public long getClipboardFormatTag()
     {
-        long clipboardFormatTag = LittleEndian.getUInt(getThumbnail(),
+        long clipboardFormatTag = LittleEndian.getInt(getThumbnail(),
                                                        OFFSET_CFTAG);
         return clipboardFormatTag;
     }
@@ -234,7 +234,7 @@ public final class Thumbnail {
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
                                     "be CFTAG_WINDOWS.");
 
-        return LittleEndian.getUInt(getThumbnail(), OFFSET_CF);
+        return LittleEndian.getInt(getThumbnail(), OFFSET_CF);
     }
 
 
