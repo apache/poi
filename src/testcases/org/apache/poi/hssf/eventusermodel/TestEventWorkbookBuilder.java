@@ -78,9 +78,9 @@ public final class TestEventWorkbookBuilder extends TestCase {
         assertEquals(3, listener.getStubWorkbook().getNumSheets());
 
         InternalWorkbook ref = listener.getStubWorkbook();
-        assertEquals("Sh3", ref.findSheetNameFromExternSheet(0));
-        assertEquals("Sheet1", ref.findSheetNameFromExternSheet(1));
-        assertEquals("S2", ref.findSheetNameFromExternSheet(2));
+        assertEquals("Sh3", ref.findSheetFirstNameFromExternSheet(0));
+        assertEquals("Sheet1", ref.findSheetFirstNameFromExternSheet(1));
+        assertEquals("S2", ref.findSheetFirstNameFromExternSheet(2));
     }
 
     public void testFormulas() {
