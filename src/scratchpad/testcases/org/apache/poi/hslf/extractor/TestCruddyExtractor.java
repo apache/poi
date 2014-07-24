@@ -18,8 +18,9 @@
 package org.apache.poi.hslf.extractor;
 
 
+import java.util.List;
+
 import junit.framework.TestCase;
-import java.util.Vector;
 
 import org.apache.poi.POIDataSamples;
 
@@ -64,7 +65,7 @@ public final class TestCruddyExtractor extends TestCase {
 
     public void testReadAsVector() {
 		// Extract the text from the file as a vector
-		Vector foundTextV = te.getTextAsVector();
+		List<String> foundTextV = te.getTextAsVector();
 
 		// Ensure they match
 		assertEquals(allTheText.length,foundTextV.size());

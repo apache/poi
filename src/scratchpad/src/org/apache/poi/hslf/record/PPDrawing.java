@@ -17,18 +17,29 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.model.ShapeTypes;
-
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
+
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRGBProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.ddf.UnknownEscherRecord;
+import org.apache.poi.hslf.model.ShapeTypes;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * These are actually wrappers onto Escher drawings. Make use of
@@ -38,8 +49,6 @@ import java.util.Iterator;
  *  (msofbtClientTextbox) records.
  * Also provides easy access to the EscherTextboxRecords, so that their
  *  text may be extracted and used in Sheets
- *
- * @author Nick Burch
  */
 
 // For now, pretending to be an atom. Might not always be, but that
@@ -84,7 +93,7 @@ public final class PPDrawing extends RecordAtom {
 
 		// Build up a tree of Escher records contained within
 		final DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
-		final Vector<EscherRecord> escherChildren = new Vector<EscherRecord>();
+		final List<EscherRecord> escherChildren = new ArrayList<EscherRecord>();
 		findEscherChildren(erf, contents, 8, len-8, escherChildren);
 		this.childRecords = (EscherRecord[]) escherChildren.toArray(new EscherRecord[escherChildren.size()]);
 
@@ -92,7 +101,7 @@ public final class PPDrawing extends RecordAtom {
 			this.textboxWrappers = findInDgContainer((EscherContainerRecord) this.childRecords[0]);
 		} else {
 			// Find and EscherTextboxRecord's, and wrap them up
-			final Vector<EscherTextboxWrapper> textboxes = new Vector<EscherTextboxWrapper>();
+			final List<EscherTextboxWrapper> textboxes = new ArrayList<EscherTextboxWrapper>();
 			findEscherTextboxRecord(childRecords, textboxes);
 			this.textboxWrappers = (EscherTextboxWrapper[]) textboxes.toArray(new EscherTextboxWrapper[textboxes.size()]);
 		}
@@ -159,7 +168,7 @@ public final class PPDrawing extends RecordAtom {
 	/**
 	 * Tree walking way of finding Escher Child Records
 	 */
-	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, Vector<EscherRecord> found) {
+	private void findEscherChildren(DefaultEscherRecordFactory erf, byte[] source, int startPos, int lenToGo, List<EscherRecord> found) {
 
 		int escherBytes = LittleEndian.getInt( source, startPos + 4 ) + 8;
 
@@ -196,7 +205,7 @@ public final class PPDrawing extends RecordAtom {
 	/**
 	 * Look for EscherTextboxRecords
 	 */
-	private void findEscherTextboxRecord(EscherRecord[] toSearch, Vector<EscherTextboxWrapper> found) {
+	private void findEscherTextboxRecord(EscherRecord[] toSearch, List<EscherTextboxWrapper> found) {
 		for(int i=0; i<toSearch.length; i++) {
 			if(toSearch[i] instanceof EscherTextboxRecord) {
 				EscherTextboxRecord tbr = (EscherTextboxRecord)toSearch[i];
