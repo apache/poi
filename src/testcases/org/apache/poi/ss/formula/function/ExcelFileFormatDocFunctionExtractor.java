@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.function;
 
+import org.apache.poi.util.TempFile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,8 +59,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * the file 'functionMetadata.txt'.   There are more than 300 built-in functions in Excel and the
  * intention of this class is to make it easier to maintain the metadata, by extracting it from
  * a reliable source.
- *
- * @author Josh Micich
  */
 public final class ExcelFileFormatDocFunctionExtractor {
 
@@ -577,7 +577,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			URLConnection conn = url.openConnection();
 			InputStream is = conn.getInputStream();
 			System.out.println("downloading " + url.toExternalForm());
-			result = File.createTempFile("excelfileformat", ".odt");
+			result = TempFile.createTempFile("excelfileformat", ".odt");
 			OutputStream os = new FileOutputStream(result);
 			while(true) {
 				int bytesRead = is.read(buf);

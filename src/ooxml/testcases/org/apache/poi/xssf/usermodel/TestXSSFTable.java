@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.util.TempFile;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
@@ -52,7 +53,7 @@ public final class TestXSSFTable {
         }
 
         // save the worksheet as-is using SXSSF
-        File outputFile = File.createTempFile("poi-56274", ".xlsx");
+        File outputFile = TempFile.createTempFile("poi-56274", ".xlsx");
         SXSSFWorkbook outputWorkbook = new org.apache.poi.xssf.streaming.SXSSFWorkbook(inputWorkbook);
         outputWorkbook.write(new FileOutputStream(outputFile));
 

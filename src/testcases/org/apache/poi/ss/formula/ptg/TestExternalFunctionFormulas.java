@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.util.TempFile;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,9 +34,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
 /**
  * Tests for functions from external workbooks (e.g. YEARFRAC).
- * 
- * 
- * @author Josh Micich
  */
 public final class TestExternalFunctionFormulas extends TestCase {
 
@@ -60,7 +59,7 @@ public final class TestExternalFunctionFormulas extends TestCase {
 		if (false) {
 			// In case you fancy checking in excel
 			try {
-				File tempFile = File.createTempFile("testExtFunc", ".xls");
+				File tempFile = TempFile.createTempFile("testExtFunc", ".xls");
 				FileOutputStream fout = new FileOutputStream(tempFile);
 				wb.write(fout);
 				fout.close();

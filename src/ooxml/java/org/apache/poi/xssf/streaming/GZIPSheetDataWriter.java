@@ -29,6 +29,7 @@ import java.io.Writer;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 
 /**
@@ -51,8 +52,8 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
      * @return temp file to write sheet data
      */
     @Override
-    public File createTempFile()throws IOException {
-        return File.createTempFile("poi-sxssf-sheet-xml", ".gz");
+    public File createTempFile() throws IOException {
+        return TempFile.createTempFile("poi-sxssf-sheet-xml", ".gz");
     }
 
     /**

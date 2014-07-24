@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
@@ -75,8 +76,8 @@ public class SheetDataWriter {
      * 
      * @return temp file to write sheet data
      */
-    public File createTempFile()throws IOException {
-        return File.createTempFile("poi-sxssf-sheet", ".xml");
+    public File createTempFile() throws IOException {
+        return TempFile.createTempFile("poi-sxssf-sheet", ".xml");
     }
 
     /**

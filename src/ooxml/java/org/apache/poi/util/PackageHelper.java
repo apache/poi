@@ -29,8 +29,6 @@ import java.net.URI;
 
 /**
  * Provides handy methods to work with OOXML packages
- *
- * @author Yegor Kozlov
  */
 public final class PackageHelper {
 
@@ -78,18 +76,6 @@ public final class PackageHelper {
         //the temp file will be deleted when JVM terminates
         new File(path).deleteOnExit();
         return OPCPackage.open(path);
-    }
-
-    /**
-     * Creates an empty file in the default temporary-file directory,
-     */
-    public static File createTempFile() {
-        File file = TempFile.createTempFile("poi-ooxml-", ".tmp");
-        //there is no way to pass an existing file to Package.create(file),
-        //delete first, the file will be re-created in Packe.create(file)
-        file.delete();
-        return file;
-
     }
 
     /**

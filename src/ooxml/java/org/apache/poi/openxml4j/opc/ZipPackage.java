@@ -43,6 +43,7 @@ import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.TempFile;
 
 /**
  * Physical zip package.
@@ -343,7 +344,7 @@ public final class ZipPackage extends Package {
 			if (targetFile.exists()) {
 				// Case of a package previously open
 
-				File tempFile = File.createTempFile(
+				File tempFile = TempFile.createTempFile(
 						generateTempFileName(FileHelper
 								.getDirectory(targetFile)), ".tmp");
 
