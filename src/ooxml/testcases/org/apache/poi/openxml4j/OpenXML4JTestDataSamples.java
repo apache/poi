@@ -22,11 +22,10 @@ import org.apache.poi.util.TempFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * Centralises logic for finding/opening sample files for ooxml4j unit tests 
- * 
- * @author jmicich
  */
 public final class OpenXML4JTestDataSamples {
     private static final POIDataSamples _samples = POIDataSamples.getOpenXML4JInstance();
@@ -46,7 +45,7 @@ public final class OpenXML4JTestDataSamples {
 		return _samples.getFile(sampleFileName);
 	}
 	
-	public static File getOutputFile(String outputFileName) {
+	public static File getOutputFile(String outputFileName) throws IOException {
         String suffix = outputFileName.substring(outputFileName.lastIndexOf('.'));
         return TempFile.createTempFile(outputFileName, suffix);
 	}

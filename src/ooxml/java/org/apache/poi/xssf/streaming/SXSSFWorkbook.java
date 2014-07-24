@@ -43,6 +43,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -820,7 +821,7 @@ public class SXSSFWorkbook implements Workbook
     	}
     	
         //Save the template
-        File tmplFile = File.createTempFile("poi-sxssf-template", ".xlsx");
+        File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
         try
         {
             FileOutputStream os = new FileOutputStream(tmplFile);

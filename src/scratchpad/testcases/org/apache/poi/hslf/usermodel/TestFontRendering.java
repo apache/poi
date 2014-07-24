@@ -41,6 +41,7 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextPainter;
+import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -114,7 +115,7 @@ public class TestFontRendering {
         
         // allow to find out what the actual difference is in CI where this fails currently
         if(!Arrays.equals(expectedData, actualData)) {
-            ImageIO.write(imgActual, "PNG", File.createTempFile("TestFontRendering", ".png"));
+            ImageIO.write(imgActual, "PNG", TempFile.createTempFile("TestFontRendering", ".png"));
         }
         assertTrue("Expected to have matching raster-arrays, but found differences, size " + expectedData.length + " and " + actualData.length, 
                 Arrays.equals(expectedData, actualData));

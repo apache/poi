@@ -454,7 +454,7 @@ public final class TestPackage extends TestCase {
 	 *  write changes to it.
 	 */
 	public void testOpenFileThenOverwrite() throws Exception {
-        File tempFile = File.createTempFile("poiTesting","tmp");
+        File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
         
@@ -491,8 +491,8 @@ public final class TestPackage extends TestCase {
      *  to another file, then delete both
      */
     public void testOpenFileThenSaveDelete() throws Exception {
-        File tempFile = File.createTempFile("poiTesting","tmp");
-        File tempFile2 = File.createTempFile("poiTesting","tmp");
+        File tempFile = TempFile.createTempFile("poiTesting","tmp");
+        File tempFile2 = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
         

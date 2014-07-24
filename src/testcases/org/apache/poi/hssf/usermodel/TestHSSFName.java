@@ -30,14 +30,10 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.util.TempFile;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
- *
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author ROMANL
- * @author Danny Mui (danny at muibros.com)
- * @author Amol S. Deshmukh &lt; amol at ap ache dot org &gt;
  */
 public final class TestHSSFName extends BaseTestNamedRange {
 
@@ -115,7 +111,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
              // In case you fancy checking in excel, to ensure it
              //  won't complain about the file now
              try {
-                 File tempFile = File.createTempFile("POI-45126-", ".xls");
+                 File tempFile = TempFile.createTempFile("POI-45126-", ".xls");
                  FileOutputStream fout = new FileOutputStream(tempFile);
                  nwb.write(fout);
                  fout.close();
