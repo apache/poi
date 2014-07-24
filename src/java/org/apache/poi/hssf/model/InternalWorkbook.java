@@ -1851,13 +1851,24 @@ public final class InternalWorkbook {
     }
 
     /**
-     * Finds the sheet index for a particular external sheet number.
+     * Finds the (first) sheet index for a particular external sheet number.
      * @param externSheetNumber     The external sheet number to convert
      * @return  The index to the sheet found.
      */
-    public int getSheetIndexFromExternSheetIndex(int externSheetNumber)
+    public int getFirstSheetIndexFromExternSheetIndex(int externSheetNumber)
     {
-        return linkTable.getSheetIndexFromExternSheetIndex(externSheetNumber);
+        return linkTable.getFirstInternalSheetIndexForExtIndex(externSheetNumber);
+    }
+
+    /**
+     * Finds the last sheet index for a particular external sheet number,
+     *  which may be the same as the first (except for multi-sheet references)
+     * @param externSheetNumber     The external sheet number to convert
+     * @return  The index to the sheet found.
+     */
+    public int getLastSheetIndexFromExternSheetIndex(int externSheetNumber)
+    {
+        return linkTable.getLastInternalSheetIndexForExtIndex(externSheetNumber);
     }
 
     /** returns the extern sheet number for specific sheet number ,

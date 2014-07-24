@@ -845,8 +845,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return _sheets.size();
     }
 
+    /**
+     * @deprecated for POI internal use only (formula parsing).  This method is likely to
+     * be removed in future versions of POI.
+     */
+    @Deprecated
     public int getSheetIndexFromExternSheetIndex(int externSheetNumber) {
-        return workbook.getSheetIndexFromExternSheetIndex(externSheetNumber);
+        // TODO - don't expose internal ugliness like externSheet indexes to the user model API
+        return workbook.getFirstSheetIndexFromExternSheetIndex(externSheetNumber);
     }
 
     private HSSFSheet[] getSheets() {
