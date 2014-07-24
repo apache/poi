@@ -163,122 +163,121 @@ public class HSSFOptimiser {
 		}
 	}
 	
-	/**
-	 * Goes through the Wokrbook, optimising the cell styles
-	 *  by removing duplicate ones, and ones that aren't used.
-	 * For best results, optimise the fonts via a call to
-	 *  {@link #optimiseFonts(HSSFWorkbook)} first.
-	 * @param workbook The workbook in which to optimise the cell styles
-	 */
-	public static void optimiseCellStyles(HSSFWorkbook workbook) {
-		// Where each style has ended up, and if we need to
-		//  delete the record for it. Start off with no change
-		short[] newPos = 
-			new short[workbook.getWorkbook().getNumExFormats()];
-		boolean[] isUsed = new boolean[newPos.length];
-		boolean[] zapRecords = new boolean[newPos.length];
-		for(int i=0; i<newPos.length; i++) {
-         isUsed[i] = false;
-			newPos[i] = (short)i;
-			zapRecords[i] = false;
-		}
-		
-		// Get each style record, so we can do deletes
-		//  without getting confused
-		ExtendedFormatRecord[] xfrs = new ExtendedFormatRecord[newPos.length]; 
-		for(int i=0; i<newPos.length; i++) {
-			xfrs[i] = workbook.getWorkbook().getExFormatAt(i);
-		}
-		
-		// Loop over each style, seeing if it is the same
-		//  as an earlier one. If it is, point users of the
-		//  later duplicate copy to the earlier one, and 
-		//  mark the later one as needing deleting
-		// Only work on user added ones, which come after 20
-		for(int i=21; i<newPos.length; i++) {
-			// Check this one for being a duplicate
-			//  of an earlier one
-			int earlierDuplicate = -1;
-			for(int j=0; j<i && earlierDuplicate == -1; j++) {
-				ExtendedFormatRecord xfCheck = workbook.getWorkbook().getExFormatAt(j);
-				if(xfCheck.equals(xfrs[i])) {
-					earlierDuplicate = j;
-				}
-			}
-			
-			// If we got a duplicate, mark it as such
-			if(earlierDuplicate != -1) {
-				newPos[i] = (short)earlierDuplicate;
-				zapRecords[i] = true;
-			}
-		}
-		
-		// Loop over all the cells in the file, and identify any user defined
-		//  styles aren't actually being used (don't touch built-in ones)
-      for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
-         HSSFSheet s = workbook.getSheetAt(sheetNum);
-         for (Row row : s) {
-            for (Cell cellI : row) {
-               HSSFCell cell = (HSSFCell)cellI;
-               short oldXf = cell.getCellValueRecord().getXFIndex();
-               isUsed[oldXf] = true;
-            }
-         }
-      }
-      // Mark any that aren't used as needing zapping
-      for (int i=21; i<isUsed.length; i++) {
-         if (! isUsed[i]) {
-            // Un-used style, can be removed
-            zapRecords[i] = true;
-            newPos[i] = 0;
-         }
-      }
-		
-		// Update the new positions based on
-		//  deletes that have occurred between
-		//  the start and them
-		// Only work on user added ones, which come after 20
-		for(int i=21; i<newPos.length; i++) {
-			// Find the number deleted to that
-			//  point, and adjust
-			short preDeletePos = newPos[i];
-			short newPosition = preDeletePos;
-			for(int j=0; j<preDeletePos; j++) {
-				if(zapRecords[j]) newPosition--;
-			}
-			
-			// Update the new position
-			newPos[i] = newPosition;
-		}
-		
-		// Zap the un-needed user style records
-        // removing by index, because removing by object may delete
-        // styles we did not intend to (the ones that _were_ duplicated and not the duplicates)
-        int max = newPos.length;
-        int removed = 0; // to adjust index after deletion
-        for(int i=21; i<max; i++) {
-            if(zapRecords[i + removed]) {
-                workbook.getWorkbook().removeExFormatRecord(i);
-                i--;
-                max--;
-                removed++;
-            }
-        }
-		
-		// Finally, update the cells to point at their new extended format records
-		for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
-			HSSFSheet s = workbook.getSheetAt(sheetNum);
-			for (Row row : s) {
-			   for (Cell cellI : row) {
-					HSSFCell cell = (HSSFCell)cellI;
-					short oldXf = cell.getCellValueRecord().getXFIndex();
-					
-					HSSFCellStyle newStyle = workbook.getCellStyleAt(
-							newPos[oldXf]
-					);
-					cell.setCellStyle(newStyle);
-				}
-			}
-		}
-	}
+   /**
+    * Goes through the Wokrbook, optimising the cell styles
+    *  by removing duplicate ones, and ones that aren't used.
+    * For best results, optimise the fonts via a call to
+    *  {@link #optimiseFonts(HSSFWorkbook)} first.
+    * @param workbook The workbook in which to optimise the cell styles
+    */
+   public static void optimiseCellStyles(HSSFWorkbook workbook) {
+       // Where each style has ended up, and if we need to
+       //  delete the record for it. Start off with no change
+       short[] newPos = new short[workbook.getWorkbook().getNumExFormats()];
+       boolean[] isUsed = new boolean[newPos.length];
+       boolean[] zapRecords = new boolean[newPos.length];
+       for(int i=0; i<newPos.length; i++) {
+           isUsed[i] = false;
+           newPos[i] = (short)i;
+           zapRecords[i] = false;
+       }
+
+       // Get each style record, so we can do deletes
+       //  without getting confused
+       ExtendedFormatRecord[] xfrs = new ExtendedFormatRecord[newPos.length]; 
+       for(int i=0; i<newPos.length; i++) {
+           xfrs[i] = workbook.getWorkbook().getExFormatAt(i);
+       }
+
+       // Loop over each style, seeing if it is the same
+       //  as an earlier one. If it is, point users of the
+       //  later duplicate copy to the earlier one, and 
+       //  mark the later one as needing deleting
+       // Only work on user added ones, which come after 20
+       for(int i=21; i<newPos.length; i++) {
+           // Check this one for being a duplicate
+           //  of an earlier one
+           int earlierDuplicate = -1;
+           for(int j=0; j<i && earlierDuplicate == -1; j++) {
+               ExtendedFormatRecord xfCheck = workbook.getWorkbook().getExFormatAt(j);
+               if(xfCheck.equals(xfrs[i])) {
+                   earlierDuplicate = j;
+               }
+           }
+
+           // If we got a duplicate, mark it as such
+           if(earlierDuplicate != -1) {
+               newPos[i] = (short)earlierDuplicate;
+               zapRecords[i] = true;
+           }
+       }
+
+       // Loop over all the cells in the file, and identify any user defined
+       //  styles aren't actually being used (don't touch built-in ones)
+       for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
+           HSSFSheet s = workbook.getSheetAt(sheetNum);
+           for (Row row : s) {
+               for (Cell cellI : row) {
+                   HSSFCell cell = (HSSFCell)cellI;
+                   short oldXf = cell.getCellValueRecord().getXFIndex();
+                   isUsed[oldXf] = true;
+               }
+           }
+       }
+       // Mark any that aren't used as needing zapping
+       for (int i=21; i<isUsed.length; i++) {
+           if (! isUsed[i]) {
+               // Un-used style, can be removed
+               zapRecords[i] = true;
+               newPos[i] = 0;
+           }
+       }
+
+       // Update the new positions based on
+       //  deletes that have occurred between
+       //  the start and them
+       // Only work on user added ones, which come after 20
+       for(int i=21; i<newPos.length; i++) {
+           // Find the number deleted to that
+           //  point, and adjust
+           short preDeletePos = newPos[i];
+           short newPosition = preDeletePos;
+           for(int j=0; j<preDeletePos; j++) {
+               if(zapRecords[j]) newPosition--;
+           }
+
+           // Update the new position
+           newPos[i] = newPosition;
+       }
+
+       // Zap the un-needed user style records
+       // removing by index, because removing by object may delete
+       // styles we did not intend to (the ones that _were_ duplicated and not the duplicates)
+       int max = newPos.length;
+       int removed = 0; // to adjust index after deletion
+       for(int i=21; i<max; i++) {
+           if(zapRecords[i + removed]) {
+               workbook.getWorkbook().removeExFormatRecord(i);
+               i--;
+               max--;
+               removed++;
+           }
+       }
+
+       // Finally, update the cells to point at their new extended format records
+       for(int sheetNum=0; sheetNum<workbook.getNumberOfSheets(); sheetNum++) {
+           HSSFSheet s = workbook.getSheetAt(sheetNum);
+           for (Row row : s) {
+               for (Cell cellI : row) {
+                   HSSFCell cell = (HSSFCell)cellI;
+                   short oldXf = cell.getCellValueRecord().getXFIndex();
+
+                   HSSFCellStyle newStyle = workbook.getCellStyleAt(
+                           newPos[oldXf]
+                           );
+                   cell.setCellStyle(newStyle);
+               }
+           }
+       }
+   }
 }
