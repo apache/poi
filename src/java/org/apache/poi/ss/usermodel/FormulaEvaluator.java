@@ -123,7 +123,7 @@ public interface FormulaEvaluator {
      * <p>For a workbook referenced as [Test.xls]Sheet1!A1, you should
      *  supply a map containing the key Test.xls (no square brackets),
      *  and an open FormulaEvaluator onto that Workbook.
-     * @param otherWorkbooks Map of workbook names (no square brackets) to an evaluator on that workbook
+     * @param workbooks Map of workbook names (no square brackets) to an evaluator on that workbook
      */
     void setupReferencedWorkbooks(Map<String,FormulaEvaluator> workbooks);
 
