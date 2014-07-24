@@ -359,15 +359,28 @@ final class LinkTable {
 			return null;
 		}
 		// Sheet name only applies if not a global reference
-		int shIx = _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
-		String usSheetName = null;
-		if(shIx >= 0) {
-		   usSheetName = ebr.getSheetNames()[shIx];
+		int shIx1 = _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
+        int shIx2 = _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
+		String firstSheetName = null;
+        String lastSheetName = null;
+		if(shIx1 >= 0) {
+		    firstSheetName = ebr.getSheetNames()[shIx1];
 		}
-		return new String[] {
-				ebr.getURL(),
-				usSheetName,
-		};
+		if (shIx2 >= 0) {
+		    lastSheetName = ebr.getSheetNames()[shIx2];
+		}
+		if (shIx1 == shIx2) {
+    		return new String[] {
+    				ebr.getURL(),
+    				firstSheetName
+    		};
+		} else {
+            return new String[] {
+                    ebr.getURL(),
+                    firstSheetName,
+                    lastSheetName
+            };
+		}
 	}
 
 	public int getExternalSheetIndex(String workbookName, String sheetName) {
@@ -411,9 +424,16 @@ final class LinkTable {
 	 * @param extRefIndex as from a {@link Ref3DPtg} or {@link Area3DPtg}
 	 * @return -1 if the reference is to an external book
 	 */
-	public int getIndexToInternalSheet(int extRefIndex) {
+	public int getFirstInternalSheetIndexForExtIndex(int extRefIndex) {
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
+    /**
+     * @param extRefIndex as from a {@link Ref3DPtg} or {@link Area3DPtg}
+     * @return -1 if the reference is to an external book
+     */
+    public int getLastInternalSheetIndexForExtIndex(int extRefIndex) {
+        return _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
+    }
 
 	/**
 	 * @deprecated Was prevously used for removing sheets, which we now do differently 

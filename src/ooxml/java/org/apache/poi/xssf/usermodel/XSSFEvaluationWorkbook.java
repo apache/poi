@@ -256,10 +256,14 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 		return _uBook.getSheetIndex(sheetName);
 	}
 
-	public String getSheetNameByExternSheet(int externSheetIndex) {
+	public String getSheetFirstNameByExternSheet(int externSheetIndex) {
 		int sheetIndex = convertFromExternalSheetIndex(externSheetIndex);
 		return _uBook.getSheetName(sheetIndex);
 	}
+    public String getSheetLastNameByExternSheet(int externSheetIndex) {
+        // XSSF does multi-sheet references differently, so this is the same as the first
+        return getSheetFirstNameByExternSheet(externSheetIndex);
+    }
 
 	public String getNameText(NamePtg namePtg) {
 		return _uBook.getNameAt(namePtg.getIndex()).getNameName();

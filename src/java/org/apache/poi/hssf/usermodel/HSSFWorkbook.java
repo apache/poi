@@ -675,7 +675,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Deprecated
 	public String findSheetNameFromExternSheet(int externSheetIndex){
         // TODO - don't expose internal ugliness like externSheet indexes to the user model API
-        return workbook.findSheetNameFromExternSheet(externSheetIndex);
+        return workbook.findSheetFirstNameFromExternSheet(externSheetIndex);
     }
     /**
      * @deprecated for POI internal use only (formula rendering).  This method is likely to

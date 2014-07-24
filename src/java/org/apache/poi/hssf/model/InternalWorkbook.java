@@ -85,6 +85,7 @@ import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
@@ -1803,30 +1804,42 @@ public final class InternalWorkbook {
         return linkTable;
     }
 
-    /** finds the sheet name by his extern sheet index
+    /** 
+     * Finds the first sheet name by his extern sheet index
      * @param externSheetIndex extern sheet index
-     * @return sheet name.
+     * @return first sheet name.
      */
-    public String findSheetNameFromExternSheet(int externSheetIndex){
-
-        int indexToSheet = linkTable.getIndexToInternalSheet(externSheetIndex);
-        if (indexToSheet < 0) {
+    public String findSheetFirstNameFromExternSheet(int externSheetIndex){
+        int indexToSheet = linkTable.getFirstInternalSheetIndexForExtIndex(externSheetIndex);
+        return findSheetNameFromIndex(indexToSheet);
+    }
+    public String findSheetLastNameFromExternSheet(int externSheetIndex){
+        int indexToSheet = linkTable.getLastInternalSheetIndexForExtIndex(externSheetIndex);
+        return findSheetNameFromIndex(indexToSheet);
+    }
+    private String findSheetNameFromIndex(int internalSheetIndex) {
+        if (internalSheetIndex < 0) {
             // TODO - what does '-1' mean here?
             //error check, bail out gracefully!
             return "";
         }
-        if (indexToSheet >= boundsheets.size()) {
+        if (internalSheetIndex >= boundsheets.size()) {
             // Not sure if this can ever happen (See bug 45798)
             return ""; // Seems to be what excel would do in this case
         }
-        return getSheetName(indexToSheet);
+        return getSheetName(internalSheetIndex);
     }
+    
     public ExternalSheet getExternalSheet(int externSheetIndex) {
         String[] extNames = linkTable.getExternalBookAndSheetName(externSheetIndex);
         if (extNames == null) {
             return null;
         }
-        return new ExternalSheet(extNames[0], extNames[1]);
+        if (extNames.length == 2) {
+            return new ExternalSheet(extNames[0], extNames[1]);
+        } else {
+            return new ExternalSheetRange(extNames[0], extNames[1], extNames[2]);
+        }
     }
     public ExternalName getExternalName(int externSheetIndex, int externNameIndex) {
        String nameName = linkTable.resolveNameXText(externSheetIndex, externNameIndex, this);

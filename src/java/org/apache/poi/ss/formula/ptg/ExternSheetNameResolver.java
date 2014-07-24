@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.ptg;
 
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 
@@ -42,14 +43,26 @@ final class ExternSheetNameResolver {
                 sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
                 SheetNameFormatter.appendFormat(sb, sheetName);
             }
+            if (externalSheet instanceof ExternalSheetRange) {
+                ExternalSheetRange r = (ExternalSheetRange)externalSheet;
+                if (! r.getFirstSheetName().equals(r.getLastSheetName())) {
+                    sb.append(':');
+                    SheetNameFormatter.appendFormat(sb, r.getLastSheetName());
+                }
+            }
         } else {
-            String sheetName = book.getSheetNameByExternSheet(field_1_index_extern_sheet);
-            sb = new StringBuffer(sheetName.length() + cellRefText.length() + 4);
-            if (sheetName.length() < 1) {
+            String firstSheetName = book.getSheetFirstNameByExternSheet(field_1_index_extern_sheet);
+            String lastSheetName = book.getSheetLastNameByExternSheet(field_1_index_extern_sheet);
+            sb = new StringBuffer(firstSheetName.length() + cellRefText.length() + 4);
+            if (firstSheetName.length() < 1) {
                 // What excel does if sheet has been deleted
                 sb.append("#REF"); // note - '!' added just once below
             } else {
-                SheetNameFormatter.appendFormat(sb, sheetName);
+                SheetNameFormatter.appendFormat(sb, firstSheetName);
+                if (! firstSheetName.equals(lastSheetName)) {
+                    sb.append(':');
+                    sb.append(lastSheetName);
+                }
             }
         }
         sb.append('!');

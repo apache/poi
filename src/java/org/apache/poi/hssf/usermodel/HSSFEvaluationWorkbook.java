@@ -132,6 +132,10 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
                 // Not actually sheet based at all - is workbook scoped
                 return null;
             }
+            
+            // Is it a single local sheet, or a range?
+            // TODO
+            
             // Look up the local sheet
             String sheetName = getSheetName(localSheetIndex);
             sheet = new ExternalSheet(null, sheetName);
@@ -154,8 +158,11 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return _iBook.resolveNameXText(n.getSheetRefIndex(), n.getNameIndex());
     }
 
-    public String getSheetNameByExternSheet(int externSheetIndex) {
-        return _iBook.findSheetNameFromExternSheet(externSheetIndex);
+    public String getSheetFirstNameByExternSheet(int externSheetIndex) {
+        return _iBook.findSheetFirstNameFromExternSheet(externSheetIndex);
+    }
+    public String getSheetLastNameByExternSheet(int externSheetIndex) {
+        return _iBook.findSheetLastNameFromExternSheet(externSheetIndex);
     }
     public String getNameText(NamePtg namePtg) {
         return _iBook.getNameRecord(namePtg.getIndex()).getNameText();

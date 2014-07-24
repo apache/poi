@@ -21,8 +21,8 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Name;
 
 /**
@@ -66,7 +66,7 @@ public final class HSSFName implements Name {
     public String getSheetName() {
         int indexToExternSheet = _definedNameRec.getExternSheetNumber();
 
-        return _book.getWorkbook().findSheetNameFromExternSheet(indexToExternSheet);
+        return _book.getWorkbook().findSheetFirstNameFromExternSheet(indexToExternSheet);
     }
 
     /**

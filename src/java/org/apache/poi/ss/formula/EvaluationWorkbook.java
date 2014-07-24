@@ -89,6 +89,20 @@ public interface EvaluationWorkbook {
             return _sheetName;
         }
     }
+    class ExternalSheetRange extends ExternalSheet {
+        private final String _lastSheetName;
+        public ExternalSheetRange(String workbookName, String firstSheetName, String lastSheetName) {
+            super(workbookName, firstSheetName);
+            this._lastSheetName = lastSheetName;
+        }
+        
+        public String getFirstSheetName() {
+            return getSheetName();
+        }
+        public String getLastSheetName() {
+            return _lastSheetName;
+        }
+    }
     class ExternalName {
         private final String _nameName;
         private final int _nameNumber;
