@@ -60,6 +60,7 @@ public class POIXMLDocumentPart {
         DEFAULT_XML_OPTIONS.setSaveOuter();
         DEFAULT_XML_OPTIONS.setUseDefaultNamespace();
         DEFAULT_XML_OPTIONS.setSaveAggressiveNamespaces();
+        DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
     }
 
 
