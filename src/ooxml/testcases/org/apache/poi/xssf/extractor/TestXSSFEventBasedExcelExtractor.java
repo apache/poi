@@ -20,12 +20,12 @@ package org.apache.poi.xssf.extractor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link XSSFEventBasedExcelExtractor}
@@ -239,5 +239,69 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
         assertEquals(expectedOutputWithHeadersAndFooters, fixture.getText());
         fixture.setIncludeHeadersFooters(false);
         assertEquals(expectedOutputWithoutHeadersAndFooters, fixture.getText());
+    }
+
+    /**
+      * Test that XSSFEventBasedExcelExtractor outputs comments when specified.
+      * The output will contain two improvements over the output from
+     *  XSSFExcelExtractor in that (1) comments from empty cells will be
+      * outputted, and (2) the author will not be outputted twice.
+      * <p>
+      * This test will need to be modified if these improvements are ported to
+      * XSSFExcelExtractor.
+      */
+    public void testCommentsComparedToNonEventBasedExtractor()
+        throws Exception {
+
+        String expectedOutputWithoutComments =
+                "Sheet1\n" +
+                "\n" +
+                "abc\n" +
+                "\n" +
+                "123\n" +
+                "\n" +
+                "\n" +
+                "\n";
+
+        String nonEventBasedExtractorOutputWithComments =
+                "Sheet1\n" +
+                "\n" +
+                "abc Comment by Shaun Kalley: Shaun Kalley: Comment A2\n" +
+                "\n" +
+                "123 Comment by Shaun Kalley: Shaun Kalley: Comment B4\n" +
+                "\n" +
+                "\n" +
+                "\n";
+
+        String eventBasedExtractorOutputWithComments =
+                "Sheet1\n" +
+                "Comment by Shaun Kalley: Comment A1\tComment by Shaun Kalley: Comment B1\n" +
+                "abc Comment by Shaun Kalley: Comment A2\tComment by Shaun Kalley: Comment B2\n" +
+                "Comment by Shaun Kalley: Comment A3\tComment by Shaun Kalley: Comment B3\n" +
+                "Comment by Shaun Kalley: Comment A4\t123 Comment by Shaun Kalley: Comment B4\n" +
+                "Comment by Shaun Kalley: Comment A5\tComment by Shaun Kalley: Comment B5\n" +
+                "Comment by Shaun Kalley: Comment A7\tComment by Shaun Kalley: Comment B7\n" +
+                "Comment by Shaun Kalley: Comment A8\tComment by Shaun Kalley: Comment B8\n";
+
+        XSSFExcelExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("commentTest.xlsx"));
+        try {
+            assertEquals(expectedOutputWithoutComments, extractor.getText());
+            extractor.setIncludeCellComments(true);
+            assertEquals(nonEventBasedExtractorOutputWithComments, extractor.getText());
+        } finally {
+            extractor.close();
+        }
+
+        XSSFEventBasedExcelExtractor fixture =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("commentTest.xlsx"));
+        try {
+            assertEquals(expectedOutputWithoutComments, fixture.getText());
+            fixture.setIncludeCellComments(true);
+            assertEquals(eventBasedExtractorOutputWithComments, fixture.getText());
+        } finally {
+            fixture.close();
+        }
     }
 }

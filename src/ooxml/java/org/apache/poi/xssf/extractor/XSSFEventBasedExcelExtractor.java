@@ -39,7 +39,9 @@ import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.xmlbeans.XmlException;
@@ -60,6 +62,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     private Locale locale;
     private boolean includeTextBoxes = true;
     private boolean includeSheetNames = true;
+    private boolean includeCellComments = false;
     private boolean includeHeadersFooters = true;
     private boolean formulasNotResults = false;
 
@@ -112,11 +115,10 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     }
 
     /**
-     * Would control the inclusion of cell comments from the document,
-     *  if we supported it
+     * Should cell comments be included? Default is false
      */
     public void setIncludeCellComments(boolean includeCellComments) {
-        throw new IllegalStateException("Comment extraction not supported in streaming mode, please use XSSFExcelExtractor");
+        this.includeCellComments = includeCellComments;
     }
 
     public void setLocale(Locale locale) {
@@ -159,6 +161,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public void processSheet(
             SheetContentsHandler sheetContentsExtractor,
             StylesTable styles,
+            CommentsTable comments,
             ReadOnlySharedStringsTable strings,
             InputStream sheetInputStream)
             throws IOException, SAXException {
@@ -176,7 +179,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
           SAXParser saxParser = saxFactory.newSAXParser();
           XMLReader sheetParser = saxParser.getXMLReader();
           ContentHandler handler = new XSSFSheetXMLHandler(
-                styles, strings, sheetContentsExtractor, formatter, formulasNotResults);
+                styles, comments, strings, sheetContentsExtractor, formatter, formulasNotResults);
           sheetParser.setContentHandler(handler);
           sheetParser.parse(sheetSource);
        } catch(ParserConfigurationException e) {
@@ -203,7 +206,8 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
                  text.append(iter.getSheetName());
                  text.append('\n');
               }
-              processSheet(sheetExtractor, styles, strings, stream);
+              CommentsTable comments = includeCellComments ? iter.getSheetComments() : null;
+              processSheet(sheetExtractor, styles, comments, strings, stream);
               if (includeHeadersFooters) {
                   sheetExtractor.appendHeaderText(text);
               }
@@ -268,17 +272,32 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
             firstCellOfRow = true;
         }
 
-        public void endRow() {
+        public void endRow(int rowNum) {
             output.append('\n');
         }
 
-        public void cell(String cellRef, String formattedValue) {
+        public void cell(String cellRef, String formattedValue, XSSFComment comment) {
             if(firstCellOfRow) {
                 firstCellOfRow = false;
             } else {
                 output.append('\t');
             }
-            output.append(formattedValue);
+            if (formattedValue != null) {
+                output.append(formattedValue);
+            }
+            if (includeCellComments && comment != null) {
+                String commentText = comment.getString().getString().replace('\n', ' ');
+                output.append(formattedValue != null ? " Comment by " : "Comment by ");
+                if (commentText.startsWith(comment.getAuthor() + ": ")) {
+                    output.append(commentText);
+                } else {
+                    output.append(comment.getAuthor()).append(": ").append(commentText);
+                }
+            }
+        }
+
+        public void emptyCellComment(String cellRef, XSSFComment comment) {
+            cell(cellRef, null, comment);
         }
 
         public void headerFooter(String text, boolean isHeader, String tagName) {
@@ -286,7 +305,6 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
                 headerFooterMap.put(tagName, text);
             }
         }
-
 
         /**
          * Append the text for the named header or footer if found.
