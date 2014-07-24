@@ -454,6 +454,34 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("A1:A2", formula);
 	}
 
+	public void testMultiSheetReference() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        wb.createSheet("Cash_Flow");
+        wb.createSheet("Test Sheet");
+	    
+        HSSFSheet sheet = wb.createSheet("Test");
+        HSSFRow row = sheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+        String formula = null;
+
+        // One sheet
+        cell.setCellFormula("Cash_Flow!A1");
+        formula = cell.getCellFormula();
+        assertEquals("Cash_Flow!A1", formula);
+        
+        // Then the other
+        cell.setCellFormula("\'Test Sheet\'!A1");
+        formula = cell.getCellFormula();
+        assertEquals("\'Test Sheet\'!A1", formula);
+        
+        // Now both
+        // TODO Implement remaining logic for #55906
+        cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1");
+        formula = cell.getCellFormula();
+//        assertEquals("Cash_Flow:\'Test Sheet\'!A1", formula);
+	}
+	
 	/**
 	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br/>
 	 * a formula consisting of a single no-arg function got rendered without the function braces

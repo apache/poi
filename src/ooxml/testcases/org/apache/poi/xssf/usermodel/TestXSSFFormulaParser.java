@@ -28,7 +28,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -38,13 +40,13 @@ import org.apache.poi.ss.formula.ptg.IntPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestXSSFFormulaParser {
@@ -244,11 +246,8 @@ public final class TestXSSFFormulaParser {
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can read and parse these kinds of references 
      * (but not evaluate - that's elsewhere in the test suite)
-     * 
-     * DISABLED pending support, see bug #55906
      */
     @Test
-    @Ignore
     public void multiSheetReferencesHSSFandXSSF() throws Exception {
         Workbook[] wbs = new Workbook[] {
                 HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
@@ -282,25 +281,58 @@ public final class TestXSSFFormulaParser {
             else
                 fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook)wb);
             
+            
             // Check things parse as expected:
+            // Note - Ptgs will only show one sheet, the formula
+            //  parser stuff looks up the second later
+            
             
             // SUM to one cell over 3 workbooks, relative reference
-            ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1");
-            // TODO
-//            assertEquals(1, ptgs.length);
-//            assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+            ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1)");
+            assertEquals(2, ptgs.length);
+            if (wb instanceof HSSFWorkbook) {
+                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+                assertEquals("Sheet1!A1",    toFormulaString(ptgs[0], fpb));
+            } else {
+                assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+                assertEquals("Sheet1!A1",    toFormulaString(ptgs[0], fpb));
+            }
+            assertEquals(AttrPtg.class, ptgs[1].getClass());
+            assertEquals("SUM",         toFormulaString(ptgs[1], fpb));
+            
             
             // MAX to one cell over 3 workbooks, absolute row reference
-            ptgs = parse(fpb, "MAX(Sheet1:Sheet3!A$1");
-            // TODO
-//          assertEquals(1, ptgs.length);
-//          assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+            ptgs = parse(fpb, "MAX(Sheet1:Sheet3!A$1)");
+            assertEquals(2, ptgs.length);
+            if (wb instanceof HSSFWorkbook) {
+                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+                assertEquals("Sheet1!A$1",   toFormulaString(ptgs[0], fpb));
+            } else {
+                assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+                assertEquals("Sheet1!A$1",   toFormulaString(ptgs[0], fpb));
+            }
+            assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+            assertEquals("MAX",            toFormulaString(ptgs[1], fpb));
+            
             
             // MIN to one cell over 3 workbooks, absolute reference
-            ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1");
-            // TODO
-//          assertEquals(1, ptgs.length);
-//          assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+            ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1)");
+            assertEquals(2, ptgs.length);
+            if (wb instanceof HSSFWorkbook) {
+                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
+                assertEquals("Sheet1!$A$1",  toFormulaString(ptgs[0], fpb));
+            } else {
+                assertEquals(Ref3DPxg.class, ptgs[0].getClass());
+                assertEquals("Sheet1!$A$1",  toFormulaString(ptgs[0], fpb));
+            }
+            assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+            assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
         }
+    }
+    private static String toFormulaString(Ptg ptg, FormulaParsingWorkbook wb) {
+        if (ptg instanceof WorkbookDependentFormula) {
+            return ((WorkbookDependentFormula)ptg).toFormulaString((FormulaRenderingWorkbook)wb);
+        }
+        return ptg.toFormulaString();
     }
 }
