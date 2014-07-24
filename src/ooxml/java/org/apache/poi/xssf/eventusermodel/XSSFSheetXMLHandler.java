@@ -16,13 +16,22 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -54,6 +63,15 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     */
    private StylesTable stylesTable;
 
+   /**
+    * Table with cell comments
+    */
+   private CommentsTable commentsTable;
+
+   /**
+    * Read only access to the shared strings table, for looking
+    *  up (most) string cell's contents
+    */
    private ReadOnlySharedStringsTable sharedStringsTable;
 
    /**
@@ -78,6 +96,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private short formatIndex;
    private String formatString;
    private final DataFormatter formatter;
+   private int rowNum;
    private String cellRef;
    private boolean formulasNotResults;
 
@@ -86,6 +105,31 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private StringBuffer formula = new StringBuffer();
    private StringBuffer headerFooter = new StringBuffer();
 
+   private Queue<CellReference> commentCellRefs;
+
+   /**
+    * Accepts objects needed while parsing.
+    *
+    * @param styles  Table of styles
+    * @param strings Table of shared strings
+    */
+   public XSSFSheetXMLHandler(
+           StylesTable styles,
+           CommentsTable comments,
+           ReadOnlySharedStringsTable strings,
+           SheetContentsHandler sheetContentsHandler,
+           DataFormatter dataFormatter,
+           boolean formulasNotResults) {
+       this.stylesTable = styles;
+       this.commentsTable = comments;
+       this.sharedStringsTable = strings;
+       this.output = sheetContentsHandler;
+       this.formulasNotResults = formulasNotResults;
+       this.nextDataType = xssfDataType.NUMBER;
+       this.formatter = dataFormatter;
+       init();
+   }
+   
    /**
     * Accepts objects needed while parsing.
     *
@@ -98,13 +142,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            SheetContentsHandler sheetContentsHandler,
            DataFormatter dataFormatter,
            boolean formulasNotResults) {
-       this.stylesTable = styles;
-       this.sharedStringsTable = strings;
-       this.output = sheetContentsHandler;
-       this.formulasNotResults = formulasNotResults;
-       this.nextDataType = xssfDataType.NUMBER;
-       this.formatter = dataFormatter;
+       this(styles, null, strings, sheetContentsHandler, dataFormatter, formulasNotResults);
    }
+   
    /**
     * Accepts objects needed while parsing.
     *
@@ -117,6 +157,16 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            SheetContentsHandler sheetContentsHandler,
            boolean formulasNotResults) {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
+   }
+   
+   private void init() {
+       if (commentsTable != null) {
+           commentCellRefs = new LinkedList<CellReference>();
+           List<CTComment> commentList = commentsTable.getCTComments().getCommentList().getCommentList();
+           for (CTComment comment : commentList) {
+               commentCellRefs.add(new CellReference(comment.getRef()));
+           }
+       }   
    }
 
    private boolean isTextTag(String name) {
@@ -190,7 +240,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           headerFooter.setLength(0);
        }
        else if("row".equals(name)) {
-           int rowNum = Integer.parseInt(attributes.getValue("r")) - 1;
+           rowNum = Integer.parseInt(attributes.getValue("r")) - 1;
            output.startRow(rowNum);
        }
        // c => cell
@@ -304,14 +354,25 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    break;
            }
            
+           // Do we have a comment for this cell?
+           checkForEmptyCellComments(EmptyCellCommentsCheckType.CELL);
+           XSSFComment comment = commentsTable != null ? commentsTable.findCellComment(cellRef) : null;
+           
            // Output
-           output.cell(cellRef, thisStr);
+           output.cell(cellRef, thisStr, comment);
        } else if ("f".equals(name)) {
           fIsOpen = false;
        } else if ("is".equals(name)) {
           isIsOpen = false;
        } else if ("row".equals(name)) {
-          output.endRow();
+          // Handle any "missing" cells which had comments attached
+          checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_ROW);
+          
+          // Finish up the row
+          output.endRow(rowNum);
+       } else if ("sheetData".equals(name)) {
+           // Handle any "missing" cells which had comments attached
+           checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_SHEET_DATA);
        }
        else if("oddHeader".equals(name) || "evenHeader".equals(name) ||
              "firstHeader".equals(name)) {
@@ -342,6 +403,90 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           headerFooter.append(ch, start, length);
        }
    }
+   
+   /**
+    * Do a check for, and output, comments in otherwise empty cells.
+    */
+   private void checkForEmptyCellComments(EmptyCellCommentsCheckType type) {
+       if (commentCellRefs != null && !commentCellRefs.isEmpty()) {
+           // If we've reached the end of the sheet data, output any
+           //  comments we haven't yet already handled
+           if (type == EmptyCellCommentsCheckType.END_OF_SHEET_DATA) {
+               while (!commentCellRefs.isEmpty()) {
+                   outputEmptyCellComment(commentCellRefs.remove());
+               }
+               return;
+           }
+
+           // At the end of a row, handle any comments for "missing" rows before us
+           if (this.cellRef == null) {
+               if (type == EmptyCellCommentsCheckType.END_OF_ROW) {
+                   while (!commentCellRefs.isEmpty()) {
+                       if (commentCellRefs.peek().getRow() == rowNum) {
+                           outputEmptyCellComment(commentCellRefs.remove());
+                       } else {
+                           return;
+                       }
+                   }
+                   return;
+               } else {
+                   throw new IllegalStateException("Cell ref should be null only if there are only empty cells in the row; rowNum: " + rowNum);
+               }
+           }
+
+           CellReference nextCommentCellRef;
+           do {
+               CellReference cellRef = new CellReference(this.cellRef);
+               CellReference peekCellRef = commentCellRefs.peek();
+               if (type == EmptyCellCommentsCheckType.CELL && cellRef.equals(peekCellRef)) {
+                   // remove the comment cell ref from the list if we're about to handle it alongside the cell content
+                   commentCellRefs.remove();
+                   return;
+               } else {
+                   // fill in any gaps if there are empty cells with comment mixed in with non-empty cells
+                   int comparison = cellRefComparator.compare(peekCellRef, cellRef);
+                   if (comparison > 0 && type == EmptyCellCommentsCheckType.END_OF_ROW && peekCellRef.getRow() <= rowNum) {
+                       nextCommentCellRef = commentCellRefs.remove();
+                       outputEmptyCellComment(nextCommentCellRef);
+                   } else if (comparison < 0 && type == EmptyCellCommentsCheckType.CELL && peekCellRef.getRow() <= rowNum) {
+                       nextCommentCellRef = commentCellRefs.remove();
+                       outputEmptyCellComment(nextCommentCellRef);
+                   } else {
+                       nextCommentCellRef = null;
+                   }
+               }
+           } while (nextCommentCellRef != null && !commentCellRefs.isEmpty());
+       }
+   }
+
+
+   /**
+    * Output an empty-cell comment.
+    */
+   private void outputEmptyCellComment(CellReference cellRef) {
+       String cellRefString = cellRef.formatAsString();
+       XSSFComment comment = commentsTable.findCellComment(cellRefString);
+       output.emptyCellComment(cellRefString, comment);
+   }
+   
+   private enum EmptyCellCommentsCheckType {
+       CELL,
+       END_OF_ROW,
+       END_OF_SHEET_DATA
+   }
+   private static final Comparator<CellReference> cellRefComparator = new Comparator<CellReference>() {
+       @Override
+       public int compare(CellReference o1, CellReference o2) {
+           int result = compare(o1.getRow(), o2.getRow());
+           if (result == 0) {
+               result = compare(o1.getCol(), o2.getCol());
+           }
+           return result;
+       }
+       public int compare(int x, int y) {
+           return (x < y) ? -1 : ((x == y) ? 0 : 1);
+       }
+   };
 
    /**
     * You need to implement this to handle the results
@@ -351,9 +496,11 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       /** A row with the (zero based) row number has started */
       public void startRow(int rowNum);
       /** A row with the (zero based) row number has ended */
-      public void endRow();
-      /** A cell, with the given formatted value, was encountered */
-      public void cell(String cellReference, String formattedValue);
+      public void endRow(int rowNum);
+      /** A cell, with the given formatted value, and possibly a comment, was encountered */
+      public void cell(String cellReference, String formattedValue, XSSFComment comment);
+      /** A comment for an otherwise-empty cell was encountered */
+      public void emptyCellComment(String cellReference, XSSFComment comment);
       /** A header or footer has been encountered */
       public void headerFooter(String text, boolean isHeader, String tagName);
    }
