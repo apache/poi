@@ -230,6 +230,17 @@ public class ExternSheetRecord extends StandardRecord {
 		return getRef(extRefIndex).getFirstSheetIndex();
 	}
 
+    /**
+     * Returns the last sheet that the reference applies to, or
+     *  -1 if the referenced sheet can't be found, or -2 if the
+     *  reference is workbook scoped.
+     * For a single sheet reference, the first and last should be
+     *  the same.
+     */
+    public int getLastSheetIndexFromRefIndex(int extRefIndex) {
+        return getRef(extRefIndex).getLastSheetIndex();
+    }
+
 	/**
      * Add a zero-based reference to a {@link org.apache.poi.hssf.record.SupBookRecord}.
      * <p>
