@@ -151,13 +151,8 @@ public final class WorkbookEvaluator {
 	}
 
 	/* package */ EvaluationName getName(String name, int sheetIndex) {
-        NamePtg namePtg = _workbook.getName(name, sheetIndex).createPtg();
-
-		if(namePtg == null) {
-			return null;
-		} else {
-			return _workbook.getName(namePtg);
-		}
+	    EvaluationName evalName = _workbook.getName(name, sheetIndex);
+	    return evalName;
 	}
 
 	private static boolean isDebugLogEnabled() {
