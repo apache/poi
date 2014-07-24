@@ -20,9 +20,9 @@ package org.apache.poi.xssf.usermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -176,9 +176,9 @@ public class XSSFTable extends POIXMLDocumentPart {
 	public List<XSSFXmlColumnPr> getXmlColumnPrs() {
 		
 		if(xmlColumnPr==null){
-			xmlColumnPr = new Vector<XSSFXmlColumnPr>();
-			for(CTTableColumn column:ctTable.getTableColumns().getTableColumnList()){
-				if(column.getXmlColumnPr()!=null){
+			xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
+			for (CTTableColumn column:ctTable.getTableColumns().getTableColumnList()){
+				if (column.getXmlColumnPr()!=null){
 					XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
 					xmlColumnPr.add(columnPr);
 				}

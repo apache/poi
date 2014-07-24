@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -41,11 +41,8 @@ import org.w3c.dom.Node;
 
 
 public class XSSFMap {
-
     private CTMap ctMap;
-
     private MapInfo mapInfo;
-
 
     public XSSFMap(CTMap ctMap, MapInfo mapInfo) {
         this.ctMap = ctMap;
@@ -57,7 +54,6 @@ public class XSSFMap {
     public CTMap getCtMap() {
         return ctMap;
     }
-
 
     @Internal
     public CTSchema getCTSchema() {
@@ -78,7 +74,7 @@ public class XSSFMap {
      * @return the list of Single Xml Cells that provide a map rule to this mapping.
      */
     public List<XSSFSingleXmlCell> getRelatedSingleXMLCell() {
-        List<XSSFSingleXmlCell> relatedSimpleXmlCells = new Vector<XSSFSingleXmlCell>();
+        List<XSSFSingleXmlCell> relatedSimpleXmlCells = new ArrayList<XSSFSingleXmlCell>();
 
         int sheetNumber = mapInfo.getWorkbook().getNumberOfSheets();
         for (int i = 0; i < sheetNumber; i++) {
@@ -102,7 +98,7 @@ public class XSSFMap {
      */
     public List<XSSFTable> getRelatedTables() {
 
-        List<XSSFTable> tables = new Vector<XSSFTable>();
+        List<XSSFTable> tables = new ArrayList<XSSFTable>();
         int sheetNumber = mapInfo.getWorkbook().getNumberOfSheets();
 
         for (int i = 0; i < sheetNumber; i++) {
