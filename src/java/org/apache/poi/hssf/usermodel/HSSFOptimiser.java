@@ -210,6 +210,10 @@ public class HSSFOptimiser {
                newPos[i] = (short)earlierDuplicate;
                zapRecords[i] = true;
            }
+           // If we got a duplicate, mark the one we're keeping as used
+           if(earlierDuplicate != -1) {
+               isUsed[earlierDuplicate] = true;
+           }
        }
 
        // Loop over all the cells in the file, and identify any user defined

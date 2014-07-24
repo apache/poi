@@ -2679,4 +2679,27 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Try to evaluate everything
         eval.evaluateAll();
     }
+    
+    /**
+     * ClassCastException in HSSFOptimiser - StyleRecord cannot be cast to 
+     * ExtendedFormatRecord when removing un-used styles
+     */
+    @Test
+    public void bug54443() throws Exception {
+        HSSFWorkbook workbook = new HSSFWorkbook( );
+        HSSFCellStyle style = workbook.createCellStyle();
+        HSSFCellStyle newStyle = workbook.createCellStyle();
+                    
+        HSSFSheet mySheet = workbook.createSheet();
+        HSSFRow row = mySheet.createRow(0);
+        HSSFCell cell = row.createCell(0);
+        
+        // Use style
+        cell.setCellStyle(style);
+        // Switch to newStyle, style is now un-used
+        cell.setCellStyle(newStyle);
+        
+        // Optimise
+        HSSFOptimiser.optimiseCellStyles(workbook);
+    }
 }
