@@ -425,6 +425,9 @@ final class LinkTable {
 	 * @return -1 if the reference is to an external book
 	 */
 	public int getFirstInternalSheetIndexForExtIndex(int extRefIndex) {
+        if (extRefIndex >= _externSheetRecord.getNumOfRefs() || extRefIndex < 0) {
+            return -1;
+        }
 		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
     /**
@@ -432,6 +435,9 @@ final class LinkTable {
      * @return -1 if the reference is to an external book
      */
     public int getLastInternalSheetIndexForExtIndex(int extRefIndex) {
+        if (extRefIndex >= _externSheetRecord.getNumOfRefs() || extRefIndex < 0) {
+            return -1;
+        }
         return _externSheetRecord.getLastSheetIndexFromRefIndex(extRefIndex);
     }
 
@@ -445,13 +451,6 @@ final class LinkTable {
 
 	public void removeSheet(int sheetIdx) {
 		_externSheetRecord.removeSheet(sheetIdx);
-	}
-
-	public int getSheetIndexFromExternSheetIndex(int extRefIndex) {
-		if (extRefIndex >= _externSheetRecord.getNumOfRefs() || extRefIndex < 0) {
-			return -1;
-		}
-		return _externSheetRecord.getFirstSheetIndexFromRefIndex(extRefIndex);
 	}
 
 	public int checkExternSheet(int sheetIndex) {

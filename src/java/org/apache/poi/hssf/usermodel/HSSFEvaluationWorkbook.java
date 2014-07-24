@@ -116,7 +116,8 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         return new HSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
     }
     public int convertFromExternSheetIndex(int externSheetIndex) {
-        return _iBook.getSheetIndexFromExternSheetIndex(externSheetIndex);
+        // TODO Update this to expose first and last sheet indexes
+        return _iBook.getFirstSheetIndexFromExternSheetIndex(externSheetIndex);
     }
 
     public ExternalSheet getExternalSheet(int externSheetIndex) {
@@ -133,12 +134,17 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
                 return null;
             }
             
-            // Is it a single local sheet, or a range?
-            // TODO
-            
             // Look up the local sheet
             String sheetName = getSheetName(localSheetIndex);
-            sheet = new ExternalSheet(null, sheetName);
+            
+            // Is it a single local sheet, or a range?
+            int lastLocalSheetIndex = _iBook.getLastSheetIndexFromExternSheetIndex(externSheetIndex);
+            if (lastLocalSheetIndex == localSheetIndex) {
+                sheet = new ExternalSheet(null, sheetName);
+            } else {
+                String lastSheetName = getSheetName(lastLocalSheetIndex);
+                sheet = new ExternalSheetRange(null, sheetName, lastSheetName);
+            }
         }
         return sheet;
     }
