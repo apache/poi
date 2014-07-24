@@ -22,6 +22,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.Thumbnail;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -120,4 +121,14 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
 		assertTrue(txt.indexOf("PID_REVNUMBER") != -1);
 		assertTrue(txt.indexOf("PID_THUMBNAIL") != -1);
 	}
+	
+    public void testThumbnail() throws Exception {
+        POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestThumbnail.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(fs);
+        Thumbnail thumbnail = new Thumbnail(wb.getSummaryInformation().getThumbnail());
+        assertEquals(-1, thumbnail.getClipboardFormatTag());
+        assertEquals(3, thumbnail.getClipboardFormat());
+        assertNotNull(thumbnail.getThumbnailAsWMF());
+        wb.close();
+    }
 }
