@@ -377,25 +377,31 @@ public final class OperationEvaluationContext {
 	
     private ValueEval getExternalNameXEval(ExternalName externName, String workbookName) {
         try {
+            // Fetch the workbook this refers to, and the name as defined with that
             WorkbookEvaluator refWorkbookEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
             EvaluationName evaluationName = refWorkbookEvaluator.getName(externName.getName(),externName.getIx()-1);
             if (evaluationName != null && evaluationName.hasFormula()){
                 if (evaluationName.getNameDefinition().length > 1) {
                     throw new RuntimeException("Complex name formulas not supported yet");
                 }
+                
+                // Need to evaluate the reference in the context of the other book
+                OperationEvaluationContext refWorkbookContext = new OperationEvaluationContext(
+                        refWorkbookEvaluator, refWorkbookEvaluator.getWorkbook(), -1, -1, -1, _tracker);
+                
                 Ptg ptg = evaluationName.getNameDefinition()[0];
                 if (ptg instanceof Ref3DPtg){
                     Ref3DPtg ref3D = (Ref3DPtg)ptg;
-                    int sheetIndex = refWorkbookEvaluator.getSheetIndexByExternIndex(ref3D.getExternSheetIndex());
-                    String sheetName = refWorkbookEvaluator.getSheetName(sheetIndex);
-                    SheetRefEvaluator sre = createExternSheetRefEvaluator(workbookName, sheetName);
-                    return new LazyRefEval(ref3D.getRow(), ref3D.getColumn(), sre);
+                    return refWorkbookContext.getRef3DEval(ref3D);
+                } else if (ptg instanceof Ref3DPxg){
+                    Ref3DPxg ref3D = (Ref3DPxg)ptg;
+                    return refWorkbookContext.getRef3DEval(ref3D);
                 } else if(ptg instanceof Area3DPtg){
                     Area3DPtg area3D = (Area3DPtg)ptg;
-                    int sheetIndex = refWorkbookEvaluator.getSheetIndexByExternIndex(area3D.getExternSheetIndex());
-                    String sheetName = refWorkbookEvaluator.getSheetName(sheetIndex);
-                    SheetRefEvaluator sre = createExternSheetRefEvaluator(workbookName, sheetName);
-                    return new LazyAreaEval(area3D.getFirstRow(), area3D.getFirstColumn(), area3D.getLastRow(), area3D.getLastColumn(), sre);
+                    return refWorkbookContext.getArea3DEval(area3D);
+                } else if(ptg instanceof Area3DPxg){
+                    Area3DPxg area3D = (Area3DPxg)ptg;
+                    return refWorkbookContext.getArea3DEval(area3D);
                 }
             }
             return ErrorEval.REF_INVALID;
