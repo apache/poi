@@ -17,28 +17,28 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- *
- * @author Josh Micich
+ * Provides Lazy Evaluation to a 3D Ranges
+ * 
+ * TODO Provide access to multiple sheets where present
  */
 final class LazyAreaEval extends AreaEvalBase {
+	private final SheetRangeEvaluator _evaluator;
 
-	private final SheetRefEvaluator _evaluator;
-
-	LazyAreaEval(AreaI ptg, SheetRefEvaluator evaluator) {
+	LazyAreaEval(AreaI ptg, SheetRangeEvaluator evaluator) {
 		super(ptg);
 		_evaluator = evaluator;
 	}
 
 	public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
-			int lastColumnIndex, SheetRefEvaluator evaluator) {
+			int lastColumnIndex, SheetRangeEvaluator evaluator) {
 		super(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
 		_evaluator = evaluator;
 	}
@@ -48,7 +48,7 @@ final class LazyAreaEval extends AreaEvalBase {
 		int rowIx = (relativeRowIndex + getFirstRow() ) ;
 		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
-		return _evaluator.getEvalForCell(rowIx, colIx);
+		return _evaluator.getEvalForCell(_evaluator.getFirstSheetIndex(), rowIx, colIx);
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
@@ -79,7 +79,7 @@ final class LazyAreaEval extends AreaEvalBase {
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
-		sb.append(_evaluator.getSheetName());
+		sb.append(_evaluator.getSheetNameRange());
 		sb.append('!');
 		sb.append(crA.formatAsString());
 		sb.append(':');
@@ -93,6 +93,7 @@ final class LazyAreaEval extends AreaEvalBase {
     */
     public boolean isSubTotal(int rowIndex, int columnIndex){
         // delegate the query to the sheet evaluator which has access to internal ptgs
-        return _evaluator.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
+        SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
+        return _sre.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
     }
 }

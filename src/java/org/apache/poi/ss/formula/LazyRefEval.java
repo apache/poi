@@ -17,22 +17,22 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.RefEvalBase;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.util.CellReference;
 
 /**
-*
-* @author Josh Micich
-*/
+ * Provides Lazy Evaluation to a 3D Reference
+ * 
+ * TODO Provide access to multiple sheets where present
+ */
 final class LazyRefEval extends RefEvalBase {
+	private final SheetRangeEvaluator _evaluator;
 
-	private final SheetRefEvaluator _evaluator;
-
-	public LazyRefEval(int rowIndex, int columnIndex, SheetRefEvaluator sre) {
+	public LazyRefEval(int rowIndex, int columnIndex, SheetRangeEvaluator sre) {
 		super(rowIndex, columnIndex);
 		if (sre == null) {
 			throw new IllegalArgumentException("sre must not be null");
@@ -41,7 +41,7 @@ final class LazyRefEval extends RefEvalBase {
 	}
 
 	public ValueEval getInnerValueEval() {
-		return _evaluator.getEvalForCell(getRow(), getColumn());
+		return _evaluator.getEvalForCell(_evaluator.getFirstSheetIndex(), getRow(), getColumn());
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
@@ -56,7 +56,7 @@ final class LazyRefEval extends RefEvalBase {
 		CellReference cr = new CellReference(getRow(), getColumn());
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append("[");
-		sb.append(_evaluator.getSheetName());
+		sb.append(_evaluator.getSheetNameRange());
 		sb.append('!');
 		sb.append(cr.formatAsString());
 		sb.append("]");

@@ -427,7 +427,7 @@ public final class WorkbookEvaluator {
 			dbgIndentStr = "                                                                                                    ";
 			dbgIndentStr = dbgIndentStr.substring(0, Math.min(dbgIndentStr.length(), dbgEvaluationOutputIndent*2));
 			EVAL_LOG.log(POILogger.WARN, dbgIndentStr
-			                   + "- evaluateFormula('" + ec.getRefEvaluatorForCurrentSheet().getSheetName()
+			                   + "- evaluateFormula('" + ec.getRefEvaluatorForCurrentSheet().getSheetNameRange()
 			                   + "'/" + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
 			                   + "): " + Arrays.toString(ptgs).replaceAll("\\Qorg.apache.poi.ss.formula.ptg.\\E", ""));
 			dbgEvaluationOutputIndent++;
