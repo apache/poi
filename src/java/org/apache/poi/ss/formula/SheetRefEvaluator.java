@@ -23,9 +23,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- *
- *
- * @author Josh Micich
+ * Evaluator for cells within a specific Sheet
  */
 final class SheetRefEvaluator {
 	private final WorkbookEvaluator _bookEvaluator;

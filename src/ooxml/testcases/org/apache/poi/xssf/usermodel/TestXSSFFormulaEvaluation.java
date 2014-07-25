@@ -212,7 +212,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             
             Cell minF = s1.getRow(3).getCell(1);
             assertNotNull(minF);
-            assertEquals("MIX(Sheet1:Sheet3!A$1)", minF.getCellFormula());
+            assertEquals("MIN(Sheet1:Sheet3!A$1)", minF.getCellFormula());
             assertEquals("11.0", evaluator.evaluate(minF).formatAsString());
             
             Cell maxF = s1.getRow(4).getCell(1);
@@ -241,6 +241,35 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertNotNull(countA_3F);
             assertEquals("COUNTA(Sheet1:Sheet3!E1)", countA_3F.getCellFormula());
             assertEquals("3.0", evaluator.evaluate(countA_3F).formatAsString());
+            
+            
+            // SUM over a range
+            Cell sumFA = s1.getRow(2).getCell(7);
+            assertNotNull(sumFA);
+            assertEquals("SUM(Sheet1:Sheet3!A1:B2)", sumFA.getCellFormula());
+            assertEquals("110.0", evaluator.evaluate(sumFA).formatAsString());
+
+            
+            // Various Stats formulas on ranges of numbers
+            Cell avgFA = s1.getRow(2).getCell(7);
+            assertNotNull(avgFA);
+            assertEquals("AVERAGE(Sheet1:Sheet3!A1:B2)", avgFA.getCellFormula());
+            assertEquals("27.5", evaluator.evaluate(avgFA).formatAsString());
+            
+            Cell minFA = s1.getRow(3).getCell(8);
+            assertNotNull(minFA);
+            assertEquals("MIN(Sheet1:Sheet3!A$1:B$2)", minFA.getCellFormula());
+            assertEquals("11.0", evaluator.evaluate(minFA).formatAsString());
+            
+            Cell maxFA = s1.getRow(4).getCell(8);
+            assertNotNull(maxFA);
+            assertEquals("MAX(Sheet1:Sheet3!A$1:B$2)", maxFA.getCellFormula());
+            assertEquals("44.0", evaluator.evaluate(maxFA).formatAsString());
+            
+            Cell countFA = s1.getRow(5).getCell(8);
+            assertNotNull(countFA);
+            assertEquals("COUNT(Sheet1:Sheet3!$A$1:$B$2)", countFA.getCellFormula());
+            assertEquals("4.0", evaluator.evaluate(countFA).formatAsString());
         }
     }
 }
