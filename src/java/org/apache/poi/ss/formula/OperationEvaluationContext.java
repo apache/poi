@@ -79,8 +79,8 @@ public final class OperationEvaluationContext {
 	SheetRangeEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
 		return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
 	}
-	SheetRangeEvaluator createExternSheetRefEvaluator(String sheetName, int externalWorkbookNumber) {
-        ExternalSheet externalSheet = _workbook.getExternalSheet(sheetName, null, externalWorkbookNumber);
+	SheetRangeEvaluator createExternSheetRefEvaluator(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
+        ExternalSheet externalSheet = _workbook.getExternalSheet(firstSheetName, lastSheetName, externalWorkbookNumber);
         return createExternSheetRefEvaluator(externalSheet);
     }
 	SheetRangeEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
@@ -306,7 +306,8 @@ public final class OperationEvaluationContext {
 		return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
 	}
     public ValueEval getRef3DEval(Ref3DPxg rptg) {
-        SheetRangeEvaluator sre = createExternSheetRefEvaluator(rptg.getSheetName(), rptg.getExternalWorkbookNumber());
+        SheetRangeEvaluator sre = createExternSheetRefEvaluator(
+                rptg.getSheetName(), rptg.getLastSheetName(), rptg.getExternalWorkbookNumber());
         return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
     }
     
@@ -321,7 +322,8 @@ public final class OperationEvaluationContext {
                 aptg.getLastRow(), aptg.getLastColumn(), sre);
     }
     public ValueEval getArea3DEval(Area3DPxg aptg) {
-        SheetRangeEvaluator sre = createExternSheetRefEvaluator(aptg.getSheetName(), aptg.getExternalWorkbookNumber());
+        SheetRangeEvaluator sre = createExternSheetRefEvaluator(
+                aptg.getSheetName(), aptg.getLastSheetName(), aptg.getExternalWorkbookNumber());
         return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
                 aptg.getLastRow(), aptg.getLastColumn(), sre);
     }
