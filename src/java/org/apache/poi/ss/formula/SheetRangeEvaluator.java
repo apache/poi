@@ -38,6 +38,9 @@ final class SheetRangeEvaluator {
         _lastSheetIndex = lastSheetIndex;
         _sheetEvaluators = sheetEvaluators;
 	}
+    public SheetRangeEvaluator(int onlySheetIndex, SheetRefEvaluator sheetEvaluator) {
+        this(onlySheetIndex, onlySheetIndex, new SheetRefEvaluator[] {sheetEvaluator});
+    }
 	
 	public SheetRefEvaluator getSheetEvaluator(int sheetIndex) {
 	    if (sheetIndex < _firstSheetIndex || sheetIndex > _lastSheetIndex) {
@@ -46,9 +49,25 @@ final class SheetRangeEvaluator {
 	    }
 	    return _sheetEvaluators[sheetIndex-_firstSheetIndex];
 	}
+	
+	public int getFirstSheetIndex() {
+	    return _firstSheetIndex;
+	}
+    public int getLastSheetIndex() {
+        return _lastSheetIndex;
+    }
 
 	public String getSheetName(int sheetIndex) {
 	    return getSheetEvaluator(sheetIndex).getSheetName();
+	}
+	public String getSheetNameRange() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append(getSheetName(_firstSheetIndex));
+	    if (_firstSheetIndex != _lastSheetIndex) {
+	        sb.append(':');
+	        sb.append(getSheetName(_lastSheetIndex));
+	    }
+	    return sb.toString();
 	}
 
 	public ValueEval getEvalForCell(int sheetIndex, int rowIndex, int columnIndex) {

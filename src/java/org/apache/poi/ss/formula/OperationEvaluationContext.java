@@ -21,6 +21,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFoundException;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalName;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheetRange;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ExternalNameEval;
@@ -75,24 +76,30 @@ public final class OperationEvaluationContext {
 		return _columnIndex;
 	}
 
-	SheetRefEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
+	SheetRangeEvaluator createExternSheetRefEvaluator(ExternSheetReferenceToken ptg) {
 		return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
 	}
-    SheetRefEvaluator createExternSheetRefEvaluator(String sheetName, int externalWorkbookNumber) {
+	SheetRangeEvaluator createExternSheetRefEvaluator(String sheetName, int externalWorkbookNumber) {
         ExternalSheet externalSheet = _workbook.getExternalSheet(sheetName, null, externalWorkbookNumber);
         return createExternSheetRefEvaluator(externalSheet);
     }
-	SheetRefEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
+	SheetRangeEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
 		ExternalSheet externalSheet = _workbook.getExternalSheet(externSheetIndex);
         return createExternSheetRefEvaluator(externalSheet);
 	}
-    SheetRefEvaluator createExternSheetRefEvaluator(ExternalSheet externalSheet) {
+	SheetRangeEvaluator createExternSheetRefEvaluator(ExternalSheet externalSheet) {
 		WorkbookEvaluator targetEvaluator;
-		int otherSheetIndex;
+		int otherFirstSheetIndex;
+		int otherLastSheetIndex = -1;
 		if (externalSheet == null || externalSheet.getWorkbookName() == null) {
 			// sheet is in same workbook
-			otherSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
 			targetEvaluator = _bookEvaluator;
+			otherFirstSheetIndex = _workbook.getSheetIndex(externalSheet.getSheetName());
+			
+			if (externalSheet instanceof ExternalSheetRange) {
+			    String lastSheetName = ((ExternalSheetRange)externalSheet).getLastSheetName();
+			    otherLastSheetIndex = _workbook.getSheetIndex(lastSheetName);
+			}
 		} else {
 			// look up sheet by name from external workbook
 			String workbookName = externalSheet.getWorkbookName();
@@ -101,13 +108,30 @@ public final class OperationEvaluationContext {
 			} catch (WorkbookNotFoundException e) {
 				throw new RuntimeException(e.getMessage(), e);
 			}
-			otherSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
-			if (otherSheetIndex < 0) {
+			
+			otherFirstSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
+            if (externalSheet instanceof ExternalSheetRange) {
+                String lastSheetName = ((ExternalSheetRange)externalSheet).getLastSheetName();
+                otherLastSheetIndex = targetEvaluator.getSheetIndex(lastSheetName);
+            }
+			
+			if (otherFirstSheetIndex < 0) {
 				throw new RuntimeException("Invalid sheet name '" + externalSheet.getSheetName()
 						+ "' in bool '" + workbookName + "'.");
 			}
 		}
-		return new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex);
+		
+		if (otherLastSheetIndex == -1) {
+		    // Reference to just one sheet
+		    otherLastSheetIndex = otherFirstSheetIndex;
+		}
+		
+		SheetRefEvaluator[] evals = new SheetRefEvaluator[otherLastSheetIndex-otherFirstSheetIndex+1];
+		for (int i=0; i<evals.length; i++) {
+		    int otherSheetIndex = i+otherFirstSheetIndex;
+		    evals[i] = new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex); 
+		}
+		return new SheetRangeEvaluator(otherFirstSheetIndex, otherLastSheetIndex, evals);
 	}
 
 	/**
@@ -134,8 +158,9 @@ public final class OperationEvaluationContext {
 		return new SheetRefEvaluator(targetEvaluator, _tracker, otherSheetIndex);
 	}
 
-	public SheetRefEvaluator getRefEvaluatorForCurrentSheet() {
-		return new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
+	public SheetRangeEvaluator getRefEvaluatorForCurrentSheet() {
+		SheetRefEvaluator sre = new SheetRefEvaluator(_bookEvaluator, _tracker, _sheetIndex);
+		return new SheetRangeEvaluator(_sheetIndex, sre);
 	}
 
 
@@ -162,10 +187,12 @@ public final class OperationEvaluationContext {
 		if (!isA1Style) {
 			throw new RuntimeException("R1C1 style not supported yet");
 		}
-		SheetRefEvaluator sre = createExternSheetRefEvaluator(workbookName, sheetName);
-		if (sre == null) {
+		SheetRefEvaluator se = createExternSheetRefEvaluator(workbookName, sheetName);
+		if (se == null) {
 			return ErrorEval.REF_INVALID;
 		}
+		SheetRangeEvaluator sre = new SheetRangeEvaluator(_sheetIndex, se);
+		
 		// ugly typecast - TODO - make spreadsheet version more easily accessible
 		SpreadsheetVersion ssVersion = ((FormulaParsingWorkbook)_workbook).getSpreadsheetVersion();
 
@@ -271,30 +298,30 @@ public final class OperationEvaluationContext {
 	}
 
 	public ValueEval getRefEval(int rowIndex, int columnIndex) {
-		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();
+	    SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
 		return new LazyRefEval(rowIndex, columnIndex, sre);
 	}
 	public ValueEval getRef3DEval(Ref3DPtg rptg) {
-		SheetRefEvaluator sre = createExternSheetRefEvaluator(rptg.getExternSheetIndex());
+	    SheetRangeEvaluator sre = createExternSheetRefEvaluator(rptg.getExternSheetIndex());
 		return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
 	}
     public ValueEval getRef3DEval(Ref3DPxg rptg) {
-        SheetRefEvaluator sre = createExternSheetRefEvaluator(rptg.getSheetName(), rptg.getExternalWorkbookNumber());
+        SheetRangeEvaluator sre = createExternSheetRefEvaluator(rptg.getSheetName(), rptg.getExternalWorkbookNumber());
         return new LazyRefEval(rptg.getRow(), rptg.getColumn(), sre);
     }
     
 	public ValueEval getAreaEval(int firstRowIndex, int firstColumnIndex,
 			int lastRowIndex, int lastColumnIndex) {
-		SheetRefEvaluator sre = getRefEvaluatorForCurrentSheet();
+	    SheetRangeEvaluator sre = getRefEvaluatorForCurrentSheet();
 		return new LazyAreaEval(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex, sre);
 	}
     public ValueEval getArea3DEval(Area3DPtg aptg) {
-        SheetRefEvaluator sre = createExternSheetRefEvaluator(aptg.getExternSheetIndex());
+        SheetRangeEvaluator sre = createExternSheetRefEvaluator(aptg.getExternSheetIndex());
         return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
                 aptg.getLastRow(), aptg.getLastColumn(), sre);
     }
     public ValueEval getArea3DEval(Area3DPxg aptg) {
-        SheetRefEvaluator sre = createExternSheetRefEvaluator(aptg.getSheetName(), aptg.getExternalWorkbookNumber());
+        SheetRangeEvaluator sre = createExternSheetRefEvaluator(aptg.getSheetName(), aptg.getExternalWorkbookNumber());
         return new LazyAreaEval(aptg.getFirstRow(), aptg.getFirstColumn(),
                 aptg.getLastRow(), aptg.getLastColumn(), sre);
     }
