@@ -233,15 +233,22 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 	    throw new IllegalStateException("HSSF-style external references are not supported for XSSF");
 	}
-	public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
+	public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
+	    String workbookName;
 	    if (externalWorkbookNumber > 0) {
 	        // External reference - reference is 1 based, link table is 0 based
 	        int linkNumber = externalWorkbookNumber - 1;
 	        ExternalLinksTable linkTable = _uBook.getExternalLinksTable().get(linkNumber);
-	        return new ExternalSheet(linkTable.getLinkedFileName(), sheetName);
+	        workbookName = linkTable.getLinkedFileName();
 	    } else {
 	        // Internal reference
-	        return new ExternalSheet(null, sheetName);
+	        workbookName = null;
+	    }
+	    
+	    if (lastSheetName == null || firstSheetName.equals(lastSheetName)) {
+	        return new ExternalSheet(workbookName, firstSheetName);
+	    } else {
+	        return new ExternalSheetRange(workbookName, firstSheetName, lastSheetName);
 	    }
     }
 

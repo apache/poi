@@ -90,8 +90,8 @@ final class ForkedEvaluationWorkbook implements EvaluationWorkbook {
 	public ExternalSheet getExternalSheet(int externSheetIndex) {
 		return _masterBook.getExternalSheet(externSheetIndex);
 	}
-	public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
-        return _masterBook.getExternalSheet(sheetName, externalWorkbookNumber);
+	public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
+        return _masterBook.getExternalSheet(firstSheetName, lastSheetName, externalWorkbookNumber);
     }
 
     public Ptg[] getFormulaTokens(EvaluationCell cell) {
