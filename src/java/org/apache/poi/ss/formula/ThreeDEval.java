@@ -21,48 +21,16 @@ import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Common interface of {@link AreaEval} and {@link org.apache.poi.ss.formula.eval.AreaEvalBase},
- * for 2D (row+column) evaluations
+ * Optional Extension to the likes of {@link AreaEval} and 
+ *  {@link org.apache.poi.ss.formula.eval.AreaEvalBase},
+ *  which allows for looking up 3D (sheet+row+column) evaluations
  */
-public interface TwoDEval extends ValueEval {
-
+public interface ThreeDEval extends TwoDEval, SheetRange {
 	/**
+	 * @param sheetIndex sheet index (zero based)
 	 * @param rowIndex relative row index (zero based)
 	 * @param columnIndex relative column index (zero based)
 	 * @return element at the specified row and column position
 	 */
-	ValueEval getValue(int rowIndex, int columnIndex);
-
-	int getWidth();
-	int getHeight();
-
-	/**
-	 * @return <code>true</code> if the area has just a single row, this also includes
-	 * the trivial case when the area has just a single cell.
-	 */
-	boolean isRow();
-
-	/**
-	 * @return <code>true</code> if the area has just a single column, this also includes
-	 * the trivial case when the area has just a single cell.
-	 */
-	boolean isColumn();
-
-	/**
-	 * @param rowIndex relative row index (zero based)
-	 * @return a single row {@link TwoDEval}
-	 */
-	TwoDEval getRow(int rowIndex);
-	/**
-	 * @param columnIndex relative column index (zero based)
-	 * @return a single column {@link TwoDEval}
-	 */
-	TwoDEval getColumn(int columnIndex);
-
-
-    /**
-     * @return true if the  cell at row and col is a subtotal
-     */
-    boolean isSubTotal(int rowIndex, int columnIndex);
-
+	ValueEval getValue(int sheetIndex, int rowIndex, int columnIndex);
 }

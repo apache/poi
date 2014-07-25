@@ -25,30 +25,30 @@ import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- * Provides Lazy Evaluation to a 3D Ranges
- * 
- * TODO Provide access to multiple sheets where present
+ * Provides Lazy Evaluation to 3D Ranges
  */
 final class LazyAreaEval extends AreaEvalBase {
 	private final SheetRangeEvaluator _evaluator;
 
 	LazyAreaEval(AreaI ptg, SheetRangeEvaluator evaluator) {
-		super(ptg);
+		super(ptg, evaluator);
 		_evaluator = evaluator;
 	}
 
 	public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
 			int lastColumnIndex, SheetRangeEvaluator evaluator) {
-		super(firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
+		super(evaluator, firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
 		_evaluator = evaluator;
 	}
 
-	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
-
+    public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+        return getRelativeValue(getFirstSheetIndex(), relativeRowIndex, relativeColumnIndex);
+    }
+    public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
 		int rowIx = (relativeRowIndex + getFirstRow() ) ;
 		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
 
-		return _evaluator.getEvalForCell(_evaluator.getFirstSheetIndex(), rowIx, colIx);
+		return _evaluator.getEvalForCell(sheetIndex, rowIx, colIx);
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {

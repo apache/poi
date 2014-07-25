@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.SheetRange;
 import org.apache.poi.ss.formula.ptg.AreaI;
 
 /**
@@ -24,14 +25,16 @@ import org.apache.poi.ss.formula.ptg.AreaI;
  */
 public abstract class AreaEvalBase implements AreaEval {
 
+    private final int _firstSheet;
 	private final int _firstColumn;
 	private final int _firstRow;
+    private final int _lastSheet;
 	private final int _lastColumn;
 	private final int _lastRow;
 	private final int _nColumns;
 	private final int _nRows;
 
-	protected AreaEvalBase(int firstRow, int firstColumn, int lastRow, int lastColumn) {
+	protected AreaEvalBase(SheetRange sheets, int firstRow, int firstColumn, int lastRow, int lastColumn) {
 		_firstColumn = firstColumn;
 		_firstRow = firstRow;
 		_lastColumn = lastColumn;
@@ -39,16 +42,24 @@ public abstract class AreaEvalBase implements AreaEval {
 
 		_nColumns = _lastColumn - _firstColumn + 1;
 		_nRows = _lastRow - _firstRow + 1;
+		
+		if (sheets != null) {
+		    _firstSheet = sheets.getFirstSheetIndex();
+		    _lastSheet = sheets.getLastSheetIndex();
+		} else {
+		    _firstSheet = -1;
+		    _lastSheet = -1;
+		}
 	}
+    protected AreaEvalBase(int firstRow, int firstColumn, int lastRow, int lastColumn) {
+        this(null, firstRow, firstColumn, lastRow, lastColumn);
+    }
 
 	protected AreaEvalBase(AreaI ptg) {
-		_firstRow = ptg.getFirstRow();
-		_firstColumn = ptg.getFirstColumn();
-		_lastRow = ptg.getLastRow();
-		_lastColumn = ptg.getLastColumn();
-
-		_nColumns = _lastColumn - _firstColumn + 1;
-		_nRows = _lastRow - _firstRow + 1;
+	    this(ptg, null);
+	}
+    protected AreaEvalBase(AreaI ptg, SheetRange sheets) {
+	    this(sheets, ptg.getFirstRow(), ptg.getFirstColumn(), ptg.getLastRow(), ptg.getLastColumn());
 	}
 
 	public final int getFirstColumn() {
@@ -66,7 +77,15 @@ public abstract class AreaEvalBase implements AreaEval {
 	public final int getLastRow() {
 		return _lastRow;
 	}
-	public final ValueEval getAbsoluteValue(int row, int col) {
+	
+	public int getFirstSheetIndex() {
+	    return _firstSheet;
+    }
+    public int getLastSheetIndex() {
+        return _lastSheet;
+    }
+    
+    public final ValueEval getAbsoluteValue(int row, int col) {
 		int rowOffsetIx = row - _firstRow;
 		int colOffsetIx = col - _firstColumn;
 
@@ -108,8 +127,12 @@ public abstract class AreaEvalBase implements AreaEval {
 	public final ValueEval getValue(int row, int col) {
 		return getRelativeValue(row, col);
 	}
+    public final ValueEval getValue(int sheetIndex, int row, int col) {
+        return getRelativeValue(sheetIndex, row, col);
+    }
 
 	public abstract ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex);
+    public abstract ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex);
 
 	public int getWidth() {
 		return _lastColumn-_firstColumn+1;
