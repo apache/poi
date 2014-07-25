@@ -1871,17 +1871,31 @@ public final class InternalWorkbook {
         return linkTable.getLastInternalSheetIndexForExtIndex(externSheetNumber);
     }
 
-    /** returns the extern sheet number for specific sheet number ,
-     *  if this sheet doesn't exist in extern sheet , add it
-     * @param sheetNumber sheet number
+    /** 
+     * Returns the extern sheet number for specific sheet number.
+     * If this sheet doesn't exist in extern sheet, add it
+     * @param sheetNumber local sheet number
      * @return index to extern sheet
      */
     public short checkExternSheet(int sheetNumber){
         return (short)getOrCreateLinkTable().checkExternSheet(sheetNumber);
     }
+    /** 
+     * Returns the extern sheet number for specific range of sheets.
+     * If this sheet range doesn't exist in extern sheet, add it
+     * @param firstSheetNumber first local sheet number
+     * @param lastSheetNumber last local sheet number
+     * @return index to extern sheet
+     */
+    public short checkExternSheet(int firstSheetNumber, int lastSheetNumber){
+        return (short)getOrCreateLinkTable().checkExternSheet(firstSheetNumber, lastSheetNumber);
+    }
 
     public int getExternalSheetIndex(String workbookName, String sheetName) {
-        return getOrCreateLinkTable().getExternalSheetIndex(workbookName, sheetName);
+        return getOrCreateLinkTable().getExternalSheetIndex(workbookName, sheetName, sheetName);
+    }
+    public int getExternalSheetIndex(String workbookName, String firstSheetName, String lastSheetName) {
+        return getOrCreateLinkTable().getExternalSheetIndex(workbookName, firstSheetName, lastSheetName);
     }
 
 

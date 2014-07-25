@@ -30,7 +30,9 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.NameIdentifier;
 import org.apache.poi.ss.formula.SheetIdentifier;
+import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
@@ -69,7 +71,25 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
     public int getExternalSheetIndex(String workbookName, String sheetName) {
         return _iBook.getExternalSheetIndex(workbookName, sheetName);
     }
-
+    public int getExternalSheetIndex(String workbookName, String firstSheetName, String lastSheetName) {
+        return _iBook.getExternalSheetIndex(workbookName, firstSheetName, lastSheetName);
+    }
+    
+    public int getExternalSheetIndex(String workbookName, NameIdentifier sheetName) {
+        return getExternalSheetIndex(workbookName, sheetName.getName());
+    }
+    public int getExternalSheetIndex(String workbookName, NameIdentifier firstSheetName, NameIdentifier lastSheetName) {
+        return getExternalSheetIndex(workbookName, firstSheetName.getName(), lastSheetName.getName());
+    }
+    public int getExternalSheetIndex(NameIdentifier sheetName) {
+        return getExternalSheetIndex(sheetName.getName());
+    }
+    public int getExternalSheetIndex(NameIdentifier firstSheetName, NameIdentifier lastSheetName) {
+        int firstSheetIndex = _uBook.getSheetIndex(firstSheetName.getName());
+        int lastSheetIndex = _uBook.getSheetIndex(lastSheetName.getName());
+        return _iBook.checkExternSheet(firstSheetIndex, lastSheetIndex);
+    }
+    
     public Ptg get3DReferencePtg(CellReference cr, SheetIdentifier sheet) {
         int extIx = getSheetExtIx(sheet);
         return new Ref3DPtg(cr, extIx);
@@ -235,11 +255,25 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         if (sheetIden == null) {
             extIx = -1;
         } else {
-            String sName = sheetIden.getSheetIdentifier().getName();
+            NameIdentifier sheetName = sheetIden.getSheetIdentifier();
+            NameIdentifier lastSheetName = null;
+            
+            if (sheetIden instanceof SheetRangeIdentifier) {
+                lastSheetName = ((SheetRangeIdentifier)sheetIden).getLastSheetIdentifier();
+            }
+            
             if (sheetIden.getBookName() == null) {
-                extIx = getExternalSheetIndex(sName);
+                if (lastSheetName == null) {
+                    extIx = getExternalSheetIndex(sheetName);
+                } else {
+                    extIx = getExternalSheetIndex(sheetName, lastSheetName);
+                }
             } else {
-                extIx = getExternalSheetIndex(sheetIden.getBookName(), sName);
+                if (lastSheetName == null) {
+                    extIx = getExternalSheetIndex(sheetIden.getBookName(), sheetName);
+                } else {
+                    extIx = getExternalSheetIndex(sheetIden.getBookName(), sheetName, lastSheetName);
+                }
             }
         }
         return extIx;

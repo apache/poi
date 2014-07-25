@@ -276,14 +276,15 @@ public class ExternSheetRecord extends StandardRecord {
 		return _list.size() - 1;
 	}
 
-	public int getRefIxForSheet(int externalBookIndex, int sheetIndex) {
+	public int getRefIxForSheet(int externalBookIndex, int firstSheetIndex, int lastSheetIndex) {
 		int nItems = _list.size();
 		for (int i = 0; i < nItems; i++) {
 			RefSubRecord ref = getRef(i);
 			if (ref.getExtBookIndex() != externalBookIndex) {
 				continue;
 			}
-			if (ref.getFirstSheetIndex() == sheetIndex && ref.getLastSheetIndex() == sheetIndex) {
+			if (ref.getFirstSheetIndex() == firstSheetIndex && 
+			        ref.getLastSheetIndex() == lastSheetIndex) {
 				return i;
 			}
 		}

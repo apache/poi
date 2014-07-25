@@ -383,7 +383,7 @@ final class LinkTable {
 		}
 	}
 
-	public int getExternalSheetIndex(String workbookName, String sheetName) {
+	public int getExternalSheetIndex(String workbookName, String firstSheetName, String lastSheetName) {
 		SupBookRecord ebrTarget = null;
 		int externalBookIndex = -1;
 		for (int i=0; i<_externalBookBlocks.length; i++) {
@@ -400,12 +400,13 @@ final class LinkTable {
 		if (ebrTarget == null) {
 			throw new RuntimeException("No external workbook with name '" + workbookName + "'");
 		}
-		int sheetIndex = getSheetIndex(ebrTarget.getSheetNames(), sheetName);
+		int firstSheetIndex = getSheetIndex(ebrTarget.getSheetNames(), firstSheetName);
+        int lastSheetIndex = getSheetIndex(ebrTarget.getSheetNames(), lastSheetName);
 
-		int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, sheetIndex);
+		int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, firstSheetIndex, lastSheetIndex);
 		if (result < 0) {
 			throw new RuntimeException("ExternSheetRecord does not contain combination ("
-					+ externalBookIndex + ", " + sheetIndex + ")");
+					+ externalBookIndex + ", " + firstSheetIndex + ", " + lastSheetIndex + ")");
 		}
 		return result;
 	}
@@ -454,6 +455,9 @@ final class LinkTable {
 	}
 
 	public int checkExternSheet(int sheetIndex) {
+	    return checkExternSheet(sheetIndex, sheetIndex);
+	}
+    public int checkExternSheet(int firstSheetIndex, int lastSheetIndex) {
 		int thisWbIndex = -1; // this is probably always zero
 		for (int i=0; i<_externalBookBlocks.length; i++) {
 			SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
@@ -467,12 +471,12 @@ final class LinkTable {
 		}
 
 		//Trying to find reference to this sheet
-		int i = _externSheetRecord.getRefIxForSheet(thisWbIndex, sheetIndex);
+		int i = _externSheetRecord.getRefIxForSheet(thisWbIndex, firstSheetIndex, lastSheetIndex);
 		if (i>=0) {
 			return i;
 		}
 		//We haven't found reference to this sheet
-		return _externSheetRecord.addRef(thisWbIndex, sheetIndex, sheetIndex);
+		return _externSheetRecord.addRef(thisWbIndex, firstSheetIndex, lastSheetIndex);
 	}
 
 	/**
@@ -612,7 +616,8 @@ final class LinkTable {
         int numberOfNames = extBlock.getNumberOfNames();
         // a new name is inserted in the end of the SupBookRecord, after the last name
         _workbookRecordList.add(supLinkIndex + numberOfNames, extNameRecord);
-        int ix = _externSheetRecord.getRefIxForSheet(extBlockIndex, -2 /* the scope is workbook*/);
+        int fakeSheetIdx = -2; /* the scope is workbook*/
+        int ix = _externSheetRecord.getRefIxForSheet(extBlockIndex, fakeSheetIdx, fakeSheetIdx);
         return new NameXPtg(ix, nameIndex);
     }
 
