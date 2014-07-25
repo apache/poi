@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.regex.Pattern;
 
-import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -445,8 +445,8 @@ public final class Countif extends Fixed2ArgFunction {
 
 		if (rangeArg instanceof RefEval) {
 			return CountUtils.countMatchingCellsInRef((RefEval) rangeArg, criteriaPredicate);
-		} else if (rangeArg instanceof TwoDEval) {
-			return CountUtils.countMatchingCellsInArea((TwoDEval) rangeArg, criteriaPredicate);
+		} else if (rangeArg instanceof ThreeDEval) {
+			return CountUtils.countMatchingCellsInArea((ThreeDEval) rangeArg, criteriaPredicate);
 		} else {
 			throw new IllegalArgumentException("Bad range arg type (" + rangeArg.getClass().getName() + ")");
 		}

@@ -159,8 +159,12 @@ public class TestWorkdayFunction extends TestCase {
         }
 
         @Override
-        public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+        public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
             return this.holidays.get(relativeColumnIndex);
+        }
+        @Override
+        public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+            return getRelativeValue(-1, relativeRowIndex, relativeColumnIndex);
         }
 
         public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {

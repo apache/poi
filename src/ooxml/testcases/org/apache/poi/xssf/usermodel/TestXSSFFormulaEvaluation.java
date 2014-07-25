@@ -247,10 +247,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      *  from Sheets 1 through Sheet 3).
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can correctly evaluate these
-     * 
-     * DISABLED pending support, see bug #55906
      */
-    public void DISABLEDtestMultiSheetAreasHSSFandXSSF() throws Exception {
+    public void testMultiSheetAreasHSSFandXSSF() throws Exception {
         Workbook[] wbs = new Workbook[] {
                 HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
                 XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
@@ -264,11 +262,11 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             Cell sumFA = s1.getRow(2).getCell(7);
             assertNotNull(sumFA);
             assertEquals("SUM(Sheet1:Sheet3!A1:B2)", sumFA.getCellFormula());
-            assertEquals("110.0", evaluator.evaluate(sumFA).formatAsString());
+            assertEquals("Failed for " + wb.getClass(), "110.0", evaluator.evaluate(sumFA).formatAsString());
 
             
             // Various Stats formulas on ranges of numbers
-            Cell avgFA = s1.getRow(2).getCell(7);
+            Cell avgFA = s1.getRow(2).getCell(8);
             assertNotNull(avgFA);
             assertEquals("AVERAGE(Sheet1:Sheet3!A1:B2)", avgFA.getCellFormula());
             assertEquals("27.5", evaluator.evaluate(avgFA).formatAsString());

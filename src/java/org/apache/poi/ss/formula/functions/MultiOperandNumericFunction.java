@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -30,7 +31,6 @@ import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  * This is the super class for all excel function evaluator
  * classes that take variable number of operands, and
  * where the order of operands does not matter
@@ -141,7 +141,21 @@ public abstract class MultiOperandNumericFunction implements Function {
 	 * Collects values from a single argument
 	 */
 	private void collectValues(ValueEval operand, DoubleList temp) throws EvaluationException {
-
+        if (operand instanceof ThreeDEval) {
+            ThreeDEval ae = (ThreeDEval) operand;
+            for (int sIx=ae.getFirstSheetIndex(); sIx <= ae.getLastSheetIndex(); sIx++) {
+                int width = ae.getWidth();
+                int height = ae.getHeight();
+                for (int rrIx=0; rrIx<height; rrIx++) {
+                    for (int rcIx=0; rcIx<width; rcIx++) {
+                        ValueEval ve = ae.getValue(sIx, rrIx, rcIx);
+                        if(!isSubtotalCounted() && ae.isSubTotal(rrIx, rcIx)) continue;
+                        collectValue(ve, true, temp);
+                    }
+                }
+            }
+            return;
+        }
 		if (operand instanceof TwoDEval) {
 			TwoDEval ae = (TwoDEval) operand;
 			int width = ae.getWidth();
