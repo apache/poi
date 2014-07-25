@@ -476,10 +476,9 @@ public final class TestFormulaParser extends TestCase {
         assertEquals("\'Test Sheet\'!A1", formula);
         
         // Now both
-        // TODO Implement remaining logic for #55906
         cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1");
         formula = cell.getCellFormula();
-//        assertEquals("Cash_Flow:\'Test Sheet\'!A1", formula);
+        assertEquals("Cash_Flow:\'Test Sheet\'!A1", formula);
 	}
 	
 	/**

@@ -283,16 +283,15 @@ public final class TestXSSFFormulaParser {
             
             
             // Check things parse as expected:
-            // Note - Ptgs will only show one sheet, the formula
-            //  parser stuff looks up the second later
+            // TODO Fix it so that the Pxgs get the second sheet too!
             
             
             // SUM to one cell over 3 workbooks, relative reference
             ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
-                assertEquals("Sheet1!A1",    toFormulaString(ptgs[0], fpb));
+                assertEquals(Ref3DPtg.class,     ptgs[0].getClass());
+                assertEquals("Sheet1:Sheet3!A1", toFormulaString(ptgs[0], fpb));
             } else {
                 assertEquals(Ref3DPxg.class, ptgs[0].getClass());
                 assertEquals("Sheet1!A1",    toFormulaString(ptgs[0], fpb));
@@ -305,8 +304,8 @@ public final class TestXSSFFormulaParser {
             ptgs = parse(fpb, "MAX(Sheet1:Sheet3!A$1)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
-                assertEquals("Sheet1!A$1",   toFormulaString(ptgs[0], fpb));
+                assertEquals(Ref3DPtg.class,      ptgs[0].getClass());
+                assertEquals("Sheet1:Sheet3!A$1", toFormulaString(ptgs[0], fpb));
             } else {
                 assertEquals(Ref3DPxg.class, ptgs[0].getClass());
                 assertEquals("Sheet1!A$1",   toFormulaString(ptgs[0], fpb));
@@ -319,14 +318,20 @@ public final class TestXSSFFormulaParser {
             ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1)");
             assertEquals(2, ptgs.length);
             if (wb instanceof HSSFWorkbook) {
-                assertEquals(Ref3DPtg.class, ptgs[0].getClass());
-                assertEquals("Sheet1!$A$1",  toFormulaString(ptgs[0], fpb));
+                assertEquals(Ref3DPtg.class,       ptgs[0].getClass());
+                assertEquals("Sheet1:Sheet3!$A$1", toFormulaString(ptgs[0], fpb));
             } else {
                 assertEquals(Ref3DPxg.class, ptgs[0].getClass());
                 assertEquals("Sheet1!$A$1",  toFormulaString(ptgs[0], fpb));
             }
             assertEquals(FuncVarPtg.class, ptgs[1].getClass());
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
+            
+            
+            // Check we can round-trip - try to set a new one to a new cell
+            Cell newF = s1.getRow(0).createCell(10, Cell.CELL_TYPE_FORMULA);
+            newF.setCellFormula("SUM(Sheet2:Sheet3!A1)");
+            assertEquals("SUM(Sheet2:Sheet3!A1)", newF.getCellFormula());
         }
     }
     private static String toFormulaString(Ptg ptg, FormulaParsingWorkbook wb) {
