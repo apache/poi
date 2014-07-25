@@ -52,7 +52,7 @@ public interface EvaluationWorkbook {
      * XSSF Only - fetch the external-style sheet details
      * <p>Return will have no workbook set if it's actually in our own workbook</p>
      */
-    ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber);
+    ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber);
     /**
      * HSSF Only - convert an external sheet index to an internal sheet index,
      *  for an external-style reference to one of this workbook's own sheets 

@@ -79,7 +79,7 @@ public final class OperationEvaluationContext {
 		return createExternSheetRefEvaluator(ptg.getExternSheetIndex());
 	}
     SheetRefEvaluator createExternSheetRefEvaluator(String sheetName, int externalWorkbookNumber) {
-        ExternalSheet externalSheet = _workbook.getExternalSheet(sheetName, externalWorkbookNumber);
+        ExternalSheet externalSheet = _workbook.getExternalSheet(sheetName, null, externalWorkbookNumber);
         return createExternSheetRefEvaluator(externalSheet);
     }
 	SheetRefEvaluator createExternSheetRefEvaluator(int externSheetIndex) {
@@ -316,7 +316,7 @@ public final class OperationEvaluationContext {
         return getExternalNameXEval(externName, workbookName);
     }
 	public ValueEval getNameXEval(NameXPxg nameXPxg) {
-	    ExternalSheet externSheet = _workbook.getExternalSheet(nameXPxg.getSheetName(), nameXPxg.getExternalWorkbookNumber());
+	    ExternalSheet externSheet = _workbook.getExternalSheet(nameXPxg.getSheetName(), null, nameXPxg.getExternalWorkbookNumber());
         if(externSheet == null || externSheet.getWorkbookName() == null) {
             // External reference to our own workbook's name
             return getLocalNameXEval(nameXPxg);

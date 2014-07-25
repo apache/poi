@@ -149,7 +149,7 @@ public final class HSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
         return sheet;
     }
-    public ExternalSheet getExternalSheet(String sheetName, int externalWorkbookNumber) {
+    public ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber) {
         throw new IllegalStateException("XSSF-style external references are not supported for HSSF");
     }
 
