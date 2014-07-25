@@ -17,12 +17,12 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.TwoDEval;
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
+ * Evaluation of 2D (Row+Column) and 3D (Sheet+Row+Column) areas
  */
-public interface AreaEval extends TwoDEval {
+public interface AreaEval extends TwoDEval, ThreeDEval {
 
     /**
      * returns the 0-based index of the first row in
