@@ -184,8 +184,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      *  Sheets 1 through Sheet 3).
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can correctly evaluate these
-     * 
-     * DISABLED pending support, see bug #55906
+     *  
+     * TODO Fix this to pass for XSSF too, currently only passes for HSSF...
      */
     public void DISABLEDtestMultiSheetReferencesHSSFandXSSF() throws Exception {
         Workbook[] wbs = new Workbook[] {
@@ -201,7 +201,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             Cell sumF = s1.getRow(2).getCell(0);
             assertNotNull(sumF);
             assertEquals("SUM(Sheet1:Sheet3!A1)", sumF.getCellFormula());
-            assertEquals("66.0", evaluator.evaluate(sumF).formatAsString());
+            assertEquals("Failed for " + wb.getClass(), "66.0", evaluator.evaluate(sumF).formatAsString());
             
             
             // Various Stats formulas on numbers
@@ -241,7 +241,26 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertNotNull(countA_3F);
             assertEquals("COUNTA(Sheet1:Sheet3!E1)", countA_3F.getCellFormula());
             assertEquals("3.0", evaluator.evaluate(countA_3F).formatAsString());
-            
+        }
+    }
+    /**
+     * A handful of functions (such as SUM, COUNTA, MIN) support
+     *  multi-sheet areas (eg Sheet1:Sheet3!A1:B2 = Cell A1 to Cell B2,
+     *  from Sheets 1 through Sheet 3).
+     * This test, based on common test files for HSSF and XSSF, checks
+     *  that we can correctly evaluate these
+     * 
+     * DISABLED pending support, see bug #55906
+     */
+    public void DISABLEDtestMultiSheetAreasHSSFandXSSF() throws Exception {
+        Workbook[] wbs = new Workbook[] {
+                HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
+                XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
+        };
+        for (Workbook wb : wbs) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Sheet s1 = wb.getSheetAt(0);
+
             
             // SUM over a range
             Cell sumFA = s1.getRow(2).getCell(7);
