@@ -59,7 +59,7 @@ public final class OperandResolver {
 			throws EvaluationException {
 		ValueEval result;
 		if (arg instanceof RefEval) {
-			result = ((RefEval) arg).getInnerValueEval();
+			result = chooseSingleElementFromRef((RefEval) arg);
 		} else if (arg instanceof AreaEval) {
 			result = chooseSingleElementFromArea((AreaEval) arg, srcCellRow, srcCellCol);
 		} else {
@@ -173,6 +173,10 @@ public final class OperandResolver {
 			throw EvaluationException.invalidValue();
 		}
 		return ae.getAbsoluteValue(ae.getFirstRow(), srcCellCol);
+	}
+	
+	private static ValueEval chooseSingleElementFromRef(RefEval ref) {
+	    return ref.getInnerValueEval( ref.getFirstSheetIndex() );
 	}
 
 	/**

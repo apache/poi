@@ -46,14 +46,23 @@ public class TestEDate extends TestCase{
             throw new UnsupportedOperationException();
         }
 
+        public ValueEval getInnerValueEval(int sheetIndex) {
+            return value;
+        }
+        
+        public int getNumberOfSheets() {
+            return 1;
+        }
+        public int getFirstSheetIndex() {
+            return 0;
+        }
+        public int getLastSheetIndex() {
+            return 0;
+        }        
+        
         public int getRow() {
             throw new UnsupportedOperationException();
         }
-
-        public ValueEval getInnerValueEval() {
-            return value;
-        }
-
         public int getColumn() {
             throw new UnsupportedOperationException();
         }

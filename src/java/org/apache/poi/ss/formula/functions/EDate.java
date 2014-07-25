@@ -17,12 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.DateUtil;
-
 import java.util.Calendar;
 import java.util.Date;
+
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation for Excel EDATE () function.
@@ -56,7 +61,13 @@ public class EDate implements FreeRefFunction {
             return 0;
         }
         if (arg instanceof RefEval) {
-            ValueEval innerValueEval = ((RefEval) arg).getInnerValueEval();
+            RefEval refEval = (RefEval)arg;
+            if (refEval.getNumberOfSheets() > 1) {
+                // Multi-Sheet references are not supported
+                throw new EvaluationException(ErrorEval.VALUE_INVALID);
+            }
+            
+            ValueEval innerValueEval = refEval.getInnerValueEval(refEval.getFirstSheetIndex());
             if(innerValueEval instanceof NumberEval) {
                 return ((NumberEval) innerValueEval).getNumberValue();
             }

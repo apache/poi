@@ -35,7 +35,9 @@ public final class T extends Fixed1ArgFunction {
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
         ValueEval arg = arg0;
         if (arg instanceof RefEval) {
-            arg = ((RefEval) arg).getInnerValueEval();
+            // always use the first sheet
+            RefEval re = (RefEval)arg;
+            arg = re.getInnerValueEval(re.getFirstSheetIndex());
         } else if (arg instanceof AreaEval) {
             // when the arg is an area, choose the top left cell
             arg = ((AreaEval) arg).getRelativeValue(0, 0);

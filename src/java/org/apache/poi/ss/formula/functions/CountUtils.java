@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Common logic for COUNT, COUNTA and COUNTIF
@@ -67,13 +67,18 @@ final class CountUtils {
 		return result;
 	}
 	/**
-	 * @return 1 if the evaluated cell matches the specified criteria
+     * @return the number of evaluated cells in the range that match the specified criteria
 	 */
-	public static int countMatchingCell(RefEval refEval, I_MatchPredicate criteriaPredicate) {
-		if(criteriaPredicate.matches(refEval.getInnerValueEval())) {
-			return 1;
-		}
-		return 0;
+	public static int countMatchingCellsInRef(RefEval refEval, I_MatchPredicate criteriaPredicate) {
+	    int result = 0;
+	    
+	    for (int sIx = refEval.getFirstSheetIndex(); sIx <= refEval.getLastSheetIndex(); sIx++) {
+	        ValueEval ve = refEval.getInnerValueEval(sIx);
+            if(criteriaPredicate.matches(ve)) {
+                result++;
+            }
+	    }
+		return result;
 	}
 	public static int countArg(ValueEval eval, I_MatchPredicate criteriaPredicate) {
 		if (eval == null) {
@@ -83,7 +88,7 @@ final class CountUtils {
 			return countMatchingCellsInArea((TwoDEval) eval, criteriaPredicate);
 		}
 		if (eval instanceof RefEval) {
-			return CountUtils.countMatchingCell((RefEval) eval, criteriaPredicate);
+			return CountUtils.countMatchingCellsInRef((RefEval) eval, criteriaPredicate);
 		}
 		return criteriaPredicate.matches(eval) ? 1 : 0;
 	}

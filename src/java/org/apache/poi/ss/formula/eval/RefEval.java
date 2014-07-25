@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.SheetRange;
+
 /**
- * @author Amol S Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
  * RefEval is the super interface for Ref2D and Ref3DEval. Basically a RefEval
  * impl should contain reference to the original ReferencePtg or Ref3DPtg as
  * well as the final "value" resulting from the evaluation of the cell
@@ -27,12 +27,11 @@ package org.apache.poi.ss.formula.eval;
  * value object should be of type NumberEval; if cell type is CELL_TYPE_STRING,
  * contained value object should be of type StringEval
  */
-public interface RefEval extends ValueEval {
-
+public interface RefEval extends ValueEval, SheetRange {
     /**
-     * @return the evaluated value of the cell referred to by this RefEval.
+     * @return the evaluated value of the cell referred to by this RefEval on the given sheet
      */
-    ValueEval getInnerValueEval();
+    ValueEval getInnerValueEval(int sheetIndex);
 
     /**
      * returns the zero based column index.
@@ -43,6 +42,22 @@ public interface RefEval extends ValueEval {
      * returns the zero based row index.
      */
     int getRow();
+    
+    /**
+     * returns the first sheet index this applies to
+     */
+    int getFirstSheetIndex();
+
+    /**
+     * returns the last sheet index this applies to, which
+     *  will be the same as the first for a 2D and many 3D references
+     */
+    int getLastSheetIndex();
+    
+    /**
+     * returns the number of sheets this applies to
+     */
+    int getNumberOfSheets();
 
     /**
      * Creates an {@link AreaEval} offset by a relative amount from this RefEval

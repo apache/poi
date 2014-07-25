@@ -76,13 +76,16 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 
 	private static final class RefValueArray extends ValueArray {
 		private final RefEval _ref;
+		private final int _width;
 		public RefValueArray(RefEval ref) {
-			super(1);
+			super(ref.getNumberOfSheets());
 			_ref = ref;
+			_width = ref.getNumberOfSheets();
 		}
 
 		protected ValueEval getItemInternal(int index) {
-			return _ref.getInnerValueEval();
+		    int sIx = (index % _width) + _ref.getFirstSheetIndex(); 
+			return _ref.getInnerValueEval(sIx);
 		}
 	}
 

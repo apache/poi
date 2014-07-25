@@ -17,6 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -27,10 +31,6 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Common functionality used by VLOOKUP, HLOOKUP, LOOKUP and MATCH
@@ -104,6 +104,28 @@ final class LookupUtils {
 		}
 	}
 
+    private static final class SheetVector implements ValueVector {
+        private final RefEval _re;
+        private final int _size;
+
+        public SheetVector(RefEval re) {
+            _size = re.getNumberOfSheets();
+            _re = re;
+        }
+
+        public ValueEval getItem(int index) {
+            if(index >= _size) {
+                throw new ArrayIndexOutOfBoundsException("Specified index (" + index
+                        + ") is outside the allowed range (0.." + (_size-1) + ")");
+            }
+            int sheetIndex = _re.getFirstSheetIndex() + index;
+            return _re.getInnerValueEval(sheetIndex);
+        }
+        public int getSize() {
+            return _size;
+        }
+    }
+
 	public static ValueVector createRowVector(TwoDEval tableArray, int relativeRowIndex) {
 		return new RowVector(tableArray, relativeRowIndex);
 	}
@@ -121,6 +143,10 @@ final class LookupUtils {
 			return createRowVector(ae, 0);
 		}
 		return null;
+	}
+	
+	public static ValueVector createVector(RefEval re) {
+	    return new SheetVector(re);
 	}
 
 	/**

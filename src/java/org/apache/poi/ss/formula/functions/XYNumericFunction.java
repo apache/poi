@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -61,12 +61,16 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
 
 	private static final class RefValueArray extends ValueArray {
 		private final RefEval _ref;
+        private final int _width;
+        
 		public RefValueArray(RefEval ref) {
-			super(1);
+			super(ref.getNumberOfSheets());
 			_ref = ref;
+			_width = ref.getNumberOfSheets();
 		}
 		protected ValueEval getItemInternal(int index) {
-			return _ref.getInnerValueEval();
+		    int sIx = (index % _width) + _ref.getFirstSheetIndex(); 
+			return _ref.getInnerValueEval(sIx);
 		}
 	}
 

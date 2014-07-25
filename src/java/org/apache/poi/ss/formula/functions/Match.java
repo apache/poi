@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -28,7 +29,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.LookupUtils.CompareResult;
 import org.apache.poi.ss.formula.functions.LookupUtils.LookupValueComparer;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation for the MATCH() Excel function.<p/>
@@ -125,7 +125,11 @@ public final class Match extends Var2or3ArgFunction {
 	private static ValueVector evaluateLookupRange(ValueEval eval) throws EvaluationException {
 		if (eval instanceof RefEval) {
 			RefEval re = (RefEval) eval;
-			return new SingleValueVector(re.getInnerValueEval());
+			if (re.getNumberOfSheets() == 1) {
+			    return new SingleValueVector(re.getInnerValueEval(re.getFirstSheetIndex()));
+			} else {
+			    return LookupUtils.createVector(re);
+			}
 		}
 		if (eval instanceof TwoDEval) {
 			ValueVector result = LookupUtils.createVector((TwoDEval)eval);

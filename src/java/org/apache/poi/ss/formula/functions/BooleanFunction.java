@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -24,7 +25,6 @@ import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Here are the general rules concerning Boolean functions:
@@ -61,6 +61,7 @@ public abstract class BooleanFunction implements Function {
 		 * Note: no short-circuit boolean loop exit because any ErrorEvals will override the result
 		 */
 		for (int i=0, iSize=args.length; i<iSize; i++) {
+            Boolean tempVe;
 			ValueEval arg = args[i];
 			if (arg instanceof TwoDEval) {
 				TwoDEval ae = (TwoDEval) arg;
@@ -69,7 +70,7 @@ public abstract class BooleanFunction implements Function {
 				for (int rrIx=0; rrIx<height; rrIx++) {
 					for (int rcIx=0; rcIx<width; rcIx++) {
 						ValueEval ve = ae.getValue(rrIx, rcIx);
-						Boolean tempVe = OperandResolver.coerceValueToBoolean(ve, true);
+						tempVe = OperandResolver.coerceValueToBoolean(ve, true);
 						if (tempVe != null) {
 							result = partialEvaluate(result, tempVe.booleanValue());
 							atleastOneNonBlank = true;
@@ -78,16 +79,24 @@ public abstract class BooleanFunction implements Function {
 				}
 				continue;
 			}
-			Boolean tempVe;
-			if (arg instanceof RefEval) {
-				ValueEval ve = ((RefEval) arg).getInnerValueEval();
-				tempVe = OperandResolver.coerceValueToBoolean(ve, true);
-			} else if (arg == MissingArgEval.instance) {
+            if (arg instanceof RefEval) {
+                RefEval re = (RefEval) arg;
+                for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
+                    ValueEval ve = re.getInnerValueEval(sIx);
+                    tempVe = OperandResolver.coerceValueToBoolean(ve, true);
+                    if (tempVe != null) {
+                        result = partialEvaluate(result, tempVe.booleanValue());
+                        atleastOneNonBlank = true;
+                    }
+                }
+                continue;
+            }
+			
+			if (arg == MissingArgEval.instance) {
 				tempVe = null;		// you can leave out parameters, they are simply ignored
 			} else {
 				tempVe = OperandResolver.coerceValueToBoolean(arg, false);
 			}
-
 
 			if (tempVe != null) {
 				result = partialEvaluate(result, tempVe.booleanValue());

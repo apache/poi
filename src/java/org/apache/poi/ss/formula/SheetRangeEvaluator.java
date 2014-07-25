@@ -22,7 +22,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 /**
  * Evaluator for returning cells or sheets for a range of sheets
  */
-final class SheetRangeEvaluator {
+final class SheetRangeEvaluator implements SheetRange {
 	private final int _firstSheetIndex;
     private final int _lastSheetIndex;
 	private SheetRefEvaluator[] _sheetEvaluators;
