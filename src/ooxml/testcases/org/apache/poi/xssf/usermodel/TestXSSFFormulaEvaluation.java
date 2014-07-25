@@ -184,10 +184,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      *  Sheets 1 through Sheet 3).
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can correctly evaluate these
-     *  
-     * TODO Fix this to pass for XSSF too, currently only passes for HSSF...
      */
-    public void DISABLEDtestMultiSheetReferencesHSSFandXSSF() throws Exception {
+    public void testMultiSheetReferencesHSSFandXSSF() throws Exception {
         Workbook[] wbs = new Workbook[] {
                 HSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xls"),
                 XSSFTestDataSamples.openSampleWorkbook("55906-MultiSheetRefs.xlsx")
