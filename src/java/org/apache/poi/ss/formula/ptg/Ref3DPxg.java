@@ -17,7 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -31,21 +33,28 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class Ref3DPxg extends RefPtgBase implements Pxg {
     private int externalWorkbookNumber = -1;
-    private String sheetName;
+    private String firstSheetName;
+    private String lastSheetName;
 
-    public Ref3DPxg(int externalWorkbookNumber, String sheetName, String cellref) {
+    public Ref3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, String cellref) {
         this(externalWorkbookNumber, sheetName, new CellReference(cellref));
     }
-    public Ref3DPxg(int externalWorkbookNumber, String sheetName, CellReference c) {
+    public Ref3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, CellReference c) {
         super(c);
         this.externalWorkbookNumber = externalWorkbookNumber;
-        this.sheetName = sheetName;
+        
+        this.firstSheetName = sheetName.getSheetIdentifier().getName();
+        if (sheetName instanceof SheetRangeIdentifier) {
+            this.lastSheetName = ((SheetRangeIdentifier)sheetName).getLastSheetIdentifier().getName();
+        } else {
+            this.lastSheetName = null;
+        }
     }
     
-    public Ref3DPxg(String sheetName, String cellref) {
+    public Ref3DPxg(SheetIdentifier sheetName, String cellref) {
         this(sheetName, new CellReference(cellref));
     }
-    public Ref3DPxg(String sheetName, CellReference c) {
+    public Ref3DPxg(SheetIdentifier sheetName, CellReference c) {
         this(-1, sheetName, c);
     }
 
@@ -58,7 +67,11 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg {
             sb.append("workbook=").append(getExternalWorkbookNumber());
             sb.append("] ");
         }
-        sb.append("sheet=").append(getSheetName());
+        sb.append("sheet=").append(firstSheetName);
+        if (lastSheetName != null) {
+            sb.append(" : ");
+            sb.append("sheet=").append(lastSheetName);
+        }
         sb.append(" ! ");
         sb.append(formatReferenceAsString());
         sb.append("]");
@@ -68,12 +81,18 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg {
     public int getExternalWorkbookNumber() {
         return externalWorkbookNumber;
     }
-    public String getSheetName() {
-        return sheetName;
+    public String getSheetName() { // TODO Rename to getFirstSheetName
+        return firstSheetName;
+    }
+    public String getLastSheetName() {
+        return lastSheetName;
     }
     
-    public void setSheetName(String sheetName) {
-        this.sheetName = sheetName;
+    public void setSheetName(String sheetName) { // TODO Rename to setFirstSheetName
+        this.firstSheetName = sheetName;
+    }
+    public void setLastSheetName(String sheetName) {
+        this.lastSheetName = sheetName;
     }
     
     public String format2DRefAsString() {
@@ -87,8 +106,12 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg {
             sb.append(externalWorkbookNumber);
             sb.append(']');
         }
-        if (sheetName != null) {
-            SheetNameFormatter.appendFormat(sb, sheetName);
+        if (firstSheetName != null) {
+            SheetNameFormatter.appendFormat(sb, firstSheetName);
+        }
+        if (lastSheetName != null) {
+            sb.append(':');
+            SheetNameFormatter.appendFormat(sb, lastSheetName);
         }
         sb.append('!');
         sb.append(formatReferenceAsString());

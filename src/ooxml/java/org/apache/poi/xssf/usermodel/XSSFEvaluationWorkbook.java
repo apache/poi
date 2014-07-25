@@ -192,13 +192,11 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
         }
 	}
     public Ptg get3DReferencePtg(CellReference cell, SheetIdentifier sheet) {
-        String sheetName = sheet._sheetIdentifier.getName();
-        
         if (sheet._bookName != null) {
             int bookIndex = resolveBookIndex(sheet._bookName);
-            return new Ref3DPxg(bookIndex, sheetName, cell);
+            return new Ref3DPxg(bookIndex, sheet, cell);
         } else {
-            return new Ref3DPxg(sheetName, cell);
+            return new Ref3DPxg(sheet, cell);
         }
     }
     public Ptg get3DReferencePtg(AreaReference area, SheetIdentifier sheet) {
