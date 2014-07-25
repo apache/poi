@@ -17,17 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.RefEvalBase;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 
 /**
  * Test helper class for creating mock <code>Eval</code> objects
@@ -157,14 +157,14 @@ public final class EvalFactory {
 	private static final class MockRefEval extends RefEvalBase {
 		private final ValueEval _value;
 		public MockRefEval(RefPtg ptg, ValueEval value) {
-			super(ptg.getRow(), ptg.getColumn());
+			super(-1, -1, ptg.getRow(), ptg.getColumn());
 			_value = value;
 		}
 		public MockRefEval(Ref3DPtg ptg, ValueEval value) {
-			super(ptg.getRow(), ptg.getColumn());
+			super(-1, -1, ptg.getRow(), ptg.getColumn());
 			_value = value;
 		}
-		public ValueEval getInnerValueEval() {
+		public ValueEval getInnerValueEval(int sheetIndex) {
 			return _value;
 		}
 		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {

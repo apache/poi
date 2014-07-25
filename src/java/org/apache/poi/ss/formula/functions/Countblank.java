@@ -17,12 +17,12 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * Implementation for the function COUNTBLANK
@@ -41,7 +41,7 @@ public final class Countblank extends Fixed1ArgFunction {
 
 		double result;
 		if (arg0 instanceof RefEval) {
-			result = CountUtils.countMatchingCell((RefEval) arg0, predicate);
+			result = CountUtils.countMatchingCellsInRef((RefEval) arg0, predicate);
 		} else if (arg0 instanceof TwoDEval) {
 			result = CountUtils.countMatchingCellsInArea((TwoDEval) arg0, predicate);
 		} else {

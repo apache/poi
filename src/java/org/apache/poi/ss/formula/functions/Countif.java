@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.functions;
 
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -29,7 +30,6 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
-import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 
 /**
@@ -444,7 +444,7 @@ public final class Countif extends Fixed2ArgFunction {
 	private double countMatchingCellsInArea(ValueEval rangeArg, I_MatchPredicate criteriaPredicate) {
 
 		if (rangeArg instanceof RefEval) {
-			return CountUtils.countMatchingCell((RefEval) rangeArg, criteriaPredicate);
+			return CountUtils.countMatchingCellsInRef((RefEval) rangeArg, criteriaPredicate);
 		} else if (rangeArg instanceof TwoDEval) {
 			return CountUtils.countMatchingCellsInArea((TwoDEval) rangeArg, criteriaPredicate);
 		} else {

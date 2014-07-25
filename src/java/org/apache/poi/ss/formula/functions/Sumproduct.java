@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -26,7 +27,6 @@ import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
 
 
 /**
@@ -99,7 +99,10 @@ public final class Sumproduct implements Function {
 		ValueEval eval;
 		if (arg instanceof RefEval) {
 			RefEval re = (RefEval) arg;
-			eval = re.getInnerValueEval();
+			if (re.getNumberOfSheets() > 1) {
+                throw new EvaluationException(ErrorEval.VALUE_INVALID);
+			}
+			eval = re.getInnerValueEval(re.getFirstSheetIndex());
 		} else {
 			eval = arg;
 		}

@@ -26,22 +26,21 @@ import org.apache.poi.ss.util.CellReference;
 
 /**
  * Provides Lazy Evaluation to a 3D Reference
- * 
- * TODO Provide access to multiple sheets where present
  */
 final class LazyRefEval extends RefEvalBase {
 	private final SheetRangeEvaluator _evaluator;
 
 	public LazyRefEval(int rowIndex, int columnIndex, SheetRangeEvaluator sre) {
-		super(rowIndex, columnIndex);
-		if (sre == null) {
-			throw new IllegalArgumentException("sre must not be null");
-		}
+		super(sre, rowIndex, columnIndex);
 		_evaluator = sre;
 	}
 
-	public ValueEval getInnerValueEval() {
-		return _evaluator.getEvalForCell(_evaluator.getFirstSheetIndex(), getRow(), getColumn());
+	@Deprecated
+    public ValueEval getInnerValueEval() {
+        return getInnerValueEval(_evaluator.getFirstSheetIndex());
+    }
+	public ValueEval getInnerValueEval(int sheetIndex) {
+		return _evaluator.getEvalForCell(sheetIndex, getRow(), getColumn());
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {

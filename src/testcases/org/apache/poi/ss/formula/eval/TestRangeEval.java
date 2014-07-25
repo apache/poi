@@ -20,8 +20,6 @@ package org.apache.poi.ss.formula.eval;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -29,6 +27,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.AreaReference;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.usermodel.CellValue;
 
 /**
@@ -71,11 +71,10 @@ public final class TestRangeEval extends TestCase {
 	}
 
 	private static final class MockRefEval extends RefEvalBase {
-
 		public MockRefEval(int rowIndex, int columnIndex) {
-			super(rowIndex, columnIndex);
+			super(-1, -1, rowIndex, columnIndex);
 		}
-		public ValueEval getInnerValueEval() {
+		public ValueEval getInnerValueEval(int sheetIndex) {
 			throw new RuntimeException("not expected to be called during this test");
 		}
 		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx,

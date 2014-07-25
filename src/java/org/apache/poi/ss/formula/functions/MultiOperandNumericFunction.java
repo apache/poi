@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -27,7 +28,6 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.TwoDEval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -157,7 +157,9 @@ public abstract class MultiOperandNumericFunction implements Function {
 		}
 		if (operand instanceof RefEval) {
 			RefEval re = (RefEval) operand;
-			collectValue(re.getInnerValueEval(), true, temp);
+			for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
+			    collectValue(re.getInnerValueEval(sIx), true, temp);
+			}
 			return;
 		}
 		collectValue(operand, false, temp);
