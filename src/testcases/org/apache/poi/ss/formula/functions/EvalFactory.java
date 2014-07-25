@@ -89,6 +89,9 @@ public final class EvalFactory {
 			_values = values;
 		}
 		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+		    return getRelativeValue(-1, relativeRowIndex, relativeColumnIndex);
+		}
+        public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
 			if (relativeRowIndex < 0 || relativeRowIndex >=getHeight()) {
 				throw new IllegalArgumentException("row index out of range");
 			}

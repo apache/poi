@@ -96,6 +96,9 @@ public final class TestRangeEval extends TestCase {
 		public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
 			throw new RuntimeException("not expected to be called during this test");
 		}
+        public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
+            throw new RuntimeException("not expected to be called during this test");
+        }
 		public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx,
 				int relLastColIx) {
 			AreaI area = new OffsetArea(getFirstRow(), getFirstColumn(),

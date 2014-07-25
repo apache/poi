@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
@@ -42,8 +42,8 @@ public final class Countblank extends Fixed1ArgFunction {
 		double result;
 		if (arg0 instanceof RefEval) {
 			result = CountUtils.countMatchingCellsInRef((RefEval) arg0, predicate);
-		} else if (arg0 instanceof TwoDEval) {
-			result = CountUtils.countMatchingCellsInArea((TwoDEval) arg0, predicate);
+		} else if (arg0 instanceof ThreeDEval) {
+			result = CountUtils.countMatchingCellsInArea((ThreeDEval) arg0, predicate);
 		} else {
 			throw new IllegalArgumentException("Bad range arg type (" + arg0.getClass().getName() + ")");
 		}
