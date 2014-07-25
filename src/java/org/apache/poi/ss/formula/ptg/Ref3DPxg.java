@@ -81,14 +81,14 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg {
     public int getExternalWorkbookNumber() {
         return externalWorkbookNumber;
     }
-    public String getSheetName() { // TODO Rename to getFirstSheetName
+    public String getSheetName() {
         return firstSheetName;
     }
     public String getLastSheetName() {
         return lastSheetName;
     }
     
-    public void setSheetName(String sheetName) { // TODO Rename to setFirstSheetName
+    public void setSheetName(String sheetName) {
         this.firstSheetName = sheetName;
     }
     public void setLastSheetName(String sheetName) {

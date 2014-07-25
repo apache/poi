@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -242,7 +243,9 @@ public final class TestXSSFFormulaParser {
     /**
      * A handful of functions (such as SUM, COUNTA, MIN) support
      *  multi-sheet references (eg Sheet1:Sheet3!A1 = Cell A1 from
-     *  Sheets 1 through Sheet 3).
+     *  Sheets 1 through Sheet 3) and multi-sheet area references 
+     *  (eg Sheet1:Sheet3!A1:B2 = Cells A1 through B2 from Sheets
+     *   1 through Sheet 3).
      * This test, based on common test files for HSSF and XSSF, checks
      *  that we can read and parse these kinds of references 
      * (but not evaluate - that's elsewhere in the test suite)
@@ -273,6 +276,24 @@ public final class TestXSSFFormulaParser {
             Cell maxF = s1.getRow(4).getCell(1);
             assertNotNull(maxF);
             assertEquals("MAX(Sheet1:Sheet3!A$1)", maxF.getCellFormula());
+            
+            
+            Cell sumFA = s1.getRow(2).getCell(7);
+            assertNotNull(sumFA);
+            assertEquals("SUM(Sheet1:Sheet3!A1:B2)", sumFA.getCellFormula());
+            
+            Cell avgFA = s1.getRow(2).getCell(8);
+            assertNotNull(avgFA);
+            assertEquals("AVERAGE(Sheet1:Sheet3!A1:B2)", avgFA.getCellFormula());
+            
+            Cell maxFA = s1.getRow(4).getCell(8);
+            assertNotNull(maxFA);
+            assertEquals("MAX(Sheet1:Sheet3!A$1:B$2)", maxFA.getCellFormula());
+            
+            Cell countFA = s1.getRow(5).getCell(8);
+            assertNotNull(countFA);
+            assertEquals("COUNT(Sheet1:Sheet3!$A$1:$B$2)", countFA.getCellFormula());
+            
             
             // Create a formula parser
             FormulaParsingWorkbook fpb = null;
@@ -324,10 +345,41 @@ public final class TestXSSFFormulaParser {
             assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
             
             
-            // Check we can round-trip - try to set a new one to a new cell
+            // SUM to a range of cells over 3 workbooks
+            ptgs = parse(fpb, "SUM(Sheet1:Sheet3!A1:B2)");
+            assertEquals(2, ptgs.length);
+            if (wb instanceof HSSFWorkbook) {
+                assertEquals(Area3DPtg.class, ptgs[0].getClass());
+            } else {
+                assertEquals(Area3DPxg.class, ptgs[0].getClass());
+            }
+            assertEquals("Sheet1:Sheet3!A1:B2", toFormulaString(ptgs[0], fpb));
+            assertEquals(AttrPtg.class, ptgs[1].getClass());
+            assertEquals("SUM",         toFormulaString(ptgs[1], fpb));
+            
+            
+            // MIN to a range of cells over 3 workbooks, absolute reference
+            ptgs = parse(fpb, "MIN(Sheet1:Sheet3!$A$1:$B$2)");
+            assertEquals(2, ptgs.length);
+            if (wb instanceof HSSFWorkbook) {
+                assertEquals(Area3DPtg.class, ptgs[0].getClass());
+            } else {
+                assertEquals(Area3DPxg.class, ptgs[0].getClass());
+            }
+            assertEquals("Sheet1:Sheet3!$A$1:$B$2", toFormulaString(ptgs[0], fpb));
+            assertEquals(FuncVarPtg.class, ptgs[1].getClass());
+            assertEquals("MIN",            toFormulaString(ptgs[1], fpb));
+            
+            
+            // Check we can round-trip - try to set a new one to a new single cell
             Cell newF = s1.getRow(0).createCell(10, Cell.CELL_TYPE_FORMULA);
             newF.setCellFormula("SUM(Sheet2:Sheet3!A1)");
             assertEquals("SUM(Sheet2:Sheet3!A1)", newF.getCellFormula());
+            
+            // Check we can round-trip - try to set a new one to a cell range
+            newF = s1.getRow(0).createCell(11, Cell.CELL_TYPE_FORMULA);
+            newF.setCellFormula("MIN(Sheet1:Sheet2!A1:B2)");
+            assertEquals("MIN(Sheet1:Sheet2!A1:B2)", newF.getCellFormula());
         }
     }
     private static String toFormulaString(Ptg ptg, FormulaParsingWorkbook wb) {

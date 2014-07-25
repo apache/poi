@@ -17,7 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -31,21 +33,27 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class Area3DPxg extends AreaPtgBase implements Pxg {
     private int externalWorkbookNumber = -1;
-    private String sheetName;
+    private String firstSheetName;
+    private String lastSheetName;
 
-	public Area3DPxg(int externalWorkbookNumber, String sheetName, String arearef) {
+	public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, String arearef) {
 		this(externalWorkbookNumber, sheetName, new AreaReference(arearef));
 	}
-    public Area3DPxg(int externalWorkbookNumber, String sheetName, AreaReference arearef) {
+    public Area3DPxg(int externalWorkbookNumber, SheetIdentifier sheetName, AreaReference arearef) {
         super(arearef);
         this.externalWorkbookNumber = externalWorkbookNumber;
-        this.sheetName = sheetName;
+        this.firstSheetName = sheetName.getSheetIdentifier().getName();
+        if (sheetName instanceof SheetRangeIdentifier) {
+            this.lastSheetName = ((SheetRangeIdentifier)sheetName).getLastSheetIdentifier().getName();
+        } else {
+            this.lastSheetName = null;
+        }
     }
 
-    public Area3DPxg(String sheetName, String arearef) {
+    public Area3DPxg(SheetIdentifier sheetName, String arearef) {
         this(sheetName, new AreaReference(arearef));
     }
-    public Area3DPxg(String sheetName, AreaReference arearef) {
+    public Area3DPxg(SheetIdentifier sheetName, AreaReference arearef) {
         this(-1, sheetName, arearef);
     }
 
@@ -60,6 +68,10 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg {
             sb.append("] ");
         }
         sb.append("sheet=").append(getSheetName());
+        if (lastSheetName != null) {
+            sb.append(" : ");
+            sb.append("sheet=").append(lastSheetName);
+        }
         sb.append(" ! ");
         sb.append(formatReferenceAsString());
         sb.append("]");
@@ -70,11 +82,17 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg {
         return externalWorkbookNumber;
     }
     public String getSheetName() {
-        return sheetName;
+        return firstSheetName;
+    }
+    public String getLastSheetName() {
+        return lastSheetName;
     }
     
     public void setSheetName(String sheetName) {
-        this.sheetName = sheetName;
+        this.firstSheetName = sheetName;
+    }
+    public void setLastSheetName(String sheetName) {
+        this.lastSheetName = sheetName;
     }
 
     public String format2DRefAsString() {
@@ -88,7 +106,11 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg {
             sb.append(externalWorkbookNumber);
             sb.append(']');
         }
-        SheetNameFormatter.appendFormat(sb, sheetName);
+        SheetNameFormatter.appendFormat(sb, firstSheetName);
+        if (lastSheetName != null) {
+            sb.append(':');
+            SheetNameFormatter.appendFormat(sb, lastSheetName);
+        }
         sb.append('!');
         sb.append(formatReferenceAsString());
         return sb.toString();
