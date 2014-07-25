@@ -465,6 +465,9 @@ public final class TestFormulaParser extends TestCase {
         HSSFCell cell = row.createCell(0);
         String formula = null;
 
+        
+        // References to a single cell:
+        
         // One sheet
         cell.setCellFormula("Cash_Flow!A1");
         formula = cell.getCellFormula();
@@ -479,6 +482,24 @@ public final class TestFormulaParser extends TestCase {
         cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1");
         formula = cell.getCellFormula();
         assertEquals("Cash_Flow:\'Test Sheet\'!A1", formula);
+
+        
+        // References to a range (area) of cells:
+        
+        // One sheet
+        cell.setCellFormula("Cash_Flow!A1:B2");
+        formula = cell.getCellFormula();
+        assertEquals("Cash_Flow!A1:B2", formula);
+        
+        // Then the other
+        cell.setCellFormula("\'Test Sheet\'!A1:B2");
+        formula = cell.getCellFormula();
+        assertEquals("\'Test Sheet\'!A1:B2", formula);
+        
+        // Now both
+        cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1:B2");
+        formula = cell.getCellFormula();
+        assertEquals("Cash_Flow:\'Test Sheet\'!A1:B2", formula);
 	}
 	
 	/**
