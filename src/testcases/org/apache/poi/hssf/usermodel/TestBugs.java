@@ -2702,4 +2702,24 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Optimise
         HSSFOptimiser.optimiseCellStyles(workbook);
     }
+    
+    /**
+     * Intersection formula ranges, eg =(C2:D3 D3:E4)
+     */
+    @Test
+    public void bug52111() throws Exception {
+        Workbook wb = openSample("Intersection-52111.xls");
+        Sheet s = wb.getSheetAt(0);
+
+        // Check we can read it correctly
+        Cell intF = s.getRow(2).getCell(0);
+        assertEquals(Cell.CELL_TYPE_FORMULA, intF.getCellType());
+        assertEquals(Cell.CELL_TYPE_NUMERIC, intF.getCachedFormulaResultType());
+        
+        assertEquals("(C2:D3 D3:E4)", intF.getCellFormula());
+        
+        // Check we can evaluate it correctly
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals("4.0", eval.evaluate(intF).formatAsString());
+    }
 }
