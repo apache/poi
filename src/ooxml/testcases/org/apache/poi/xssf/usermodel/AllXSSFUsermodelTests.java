@@ -31,6 +31,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestFormulaEvaluatorOnXSSF.class,
+    TestMultiSheetFormulaEvaluatorOnXSSF.class,
     TestSheetHiding.class,
     TestXSSFBugs.class,
     TestXSSFDataFormat.class,
