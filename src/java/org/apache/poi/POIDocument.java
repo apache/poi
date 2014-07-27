@@ -60,10 +60,15 @@ public abstract class POIDocument {
     /* Have the property streams been read yet? (Only done on-demand) */
     private boolean initialized = false;
     
-
+    /**
+     * Constructs a POIDocument with the given directory node.
+     *
+     * @param dir The {@link DirectoryNode} where information is read from.
+     */
     protected POIDocument(DirectoryNode dir) {
     	this.directory = dir;
     }
+
     /**
      * @deprecated use {@link POIDocument#POIDocument(DirectoryNode)} instead 
      */
@@ -71,15 +76,20 @@ public abstract class POIDocument {
     protected POIDocument(DirectoryNode dir, POIFSFileSystem fs) {
        this.directory = dir;
     }
+
     protected POIDocument(POIFSFileSystem fs) {
        this(fs.getRoot());
     }
+    
     protected POIDocument(NPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
 
     /**
      * Fetch the Document Summary Information of the document
+     * 
+     * @return The Document Summary Information or null 
+     *      if it could not be read for this document.
      */
     public DocumentSummaryInformation getDocumentSummaryInformation() {
         if(!initialized) readProperties();
@@ -88,6 +98,9 @@ public abstract class POIDocument {
 
     /** 
      * Fetch the Summary Information of the document
+     * 
+     * @return The Summary information for the document or null
+     *      if it could not be read for this document.
      */
     public SummaryInformation getSummaryInformation() {
         if(!initialized) readProperties();
@@ -115,7 +128,7 @@ public abstract class POIDocument {
 
     /**
      * Find, and create objects for, the standard
-     *  Documment Information Properties (HPSF).
+     *  Document Information Properties (HPSF).
      * If a given property set is missing or corrupt,
      *  it will remain null;
      */
@@ -145,6 +158,9 @@ public abstract class POIDocument {
     /** 
      * For a given named property entry, either return it or null if
      *  if it wasn't found
+     *  
+     *  @param setName The property to read
+     *  @return The value of the given property or null if it wasn't found.
      */
     protected PropertySet getPropertySet(String setName) {
         //directory can be null when creating new documents
@@ -178,6 +194,9 @@ public abstract class POIDocument {
     /**
      * Writes out the standard Documment Information Properties (HPSF)
      * @param outFS the POIFSFileSystem to write the properties into
+     * 
+     * @throws IOException if an error when writing to the 
+     *      {@link POIFSFileSystem} occurs
      */
     protected void writeProperties(POIFSFileSystem outFS) throws IOException {
         writeProperties(outFS, null);
@@ -186,6 +205,9 @@ public abstract class POIDocument {
      * Writes out the standard Documment Information Properties (HPSF)
      * @param outFS the POIFSFileSystem to write the properties into
      * @param writtenEntries a list of POIFS entries to add the property names too
+     * 
+     * @throws IOException if an error when writing to the 
+     *      {@link POIFSFileSystem} occurs
      */
     protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         SummaryInformation si = getSummaryInformation();
@@ -209,6 +231,9 @@ public abstract class POIDocument {
      * @param name the (POIFS Level) name of the property to write
      * @param set the PropertySet to write out 
      * @param outFS the POIFSFileSystem to write the property into
+     * 
+     * @throws IOException if an error when writing to the 
+     *      {@link POIFSFileSystem} occurs
      */
     protected void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
         try {
@@ -227,7 +252,12 @@ public abstract class POIDocument {
     }
 
     /**
-     * Writes the document out to the specified output stream
+     * Writes the document out to the specified output stream. The
+     * stream is not closed as part of this operation.
+     * 
+     * @param out The stream to write to.
+     * 
+     * @throws IOException thrown on errors writing to the stream
      */
     public abstract void write(OutputStream out) throws IOException;
 
@@ -236,6 +266,9 @@ public abstract class POIDocument {
      * @param source is the source POIFS to copy from
      * @param target is the target POIFS to copy to
      * @param excepts is a list of Strings specifying what nodes NOT to copy
+     * 
+     * @throws IOException thrown on errors writing to the target file system.
+     * 
      * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List)} instead
      */
     @Deprecated
@@ -249,6 +282,9 @@ public abstract class POIDocument {
     * @param sourceRoot is the source POIFS to copy from
     * @param targetRoot is the target POIFS to copy to
     * @param excepts is a list of Strings specifying what nodes NOT to copy
+     * 
+     * @throws IOException thrown on errors writing to the target directory node.
+     * 
     * @deprecated Use {@link EntryUtils#copyNodes(DirectoryEntry, DirectoryEntry, List)} instead
     */
     @Deprecated
@@ -260,6 +296,12 @@ public abstract class POIDocument {
 
     /**
      * Copies an Entry into a target POIFS directory, recursively
+     * 
+     * @param entry the entry to copy from
+     * @param target the entry to write to
+     * 
+     * @throws IOException thrown on errors writing to the target directory entry.
+     * 
      * @deprecated Use {@link EntryUtils#copyNodeRecursively(Entry, DirectoryEntry)} instead
      */
     @Internal

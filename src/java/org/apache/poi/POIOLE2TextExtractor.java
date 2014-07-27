@@ -36,6 +36,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	/**
 	 * Creates a new text extractor for the given document
+	 * 
+	 * @param The POIDocument to use in this extractor.
 	 */
 	public POIOLE2TextExtractor(POIDocument document) {
 		super(document);
@@ -43,12 +45,18 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 
 	/**
 	 * Returns the document information metadata for the document
+	 * 
+     * @return The Document Summary Information or null 
+     *      if it could not be read for this document.
 	 */
 	public DocumentSummaryInformation getDocSummaryInformation() {
 		return document.getDocumentSummaryInformation();
 	}
 	/**
-	 * Returns the summary information metadata for the document
+	 * Returns the summary information metadata for the document.
+	 * 
+     * @return The Summary information for the document or null
+     *      if it could not be read for this document.
 	 */
 	public SummaryInformation getSummaryInformation() {
 		return document.getSummaryInformation();
@@ -57,11 +65,18 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	/**
 	 * Returns an HPSF powered text extractor for the
 	 *  document properties metadata, such as title and author.
+	 *  
+	 * @return an instance of POIExtractor that can extract meta-data.
 	 */
 	public POITextExtractor getMetadataTextExtractor() {
 		return new HPSFPropertiesExtractor(this);
 	}
 
+	/**
+	 * Return the underlying DirectoryEntry of this document.
+	 *
+	 * @return the DirectoryEntry that is associated with the POIDocument of this extractor.
+	 */
     public DirectoryEntry getRoot()
     {
         return document.directory;
@@ -69,6 +84,8 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 
     /**
      * Return the underlying POIFS FileSystem of this document.
+     * 
+     * @return the POIFSFileSystem that is associated with the POIDocument of this extractor. 
      *
      * @deprecated Use {@link #getRoot()} instead
      */
