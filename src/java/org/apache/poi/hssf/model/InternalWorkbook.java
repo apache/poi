@@ -568,7 +568,7 @@ public final class InternalWorkbook {
 
     /**
      * sets the name for a given sheet.  If the boundsheet record doesn't exist and
-     * its only one more than we have, go ahead and create it.  If it's > 1 more than
+     * its only one more than we have, go ahead and create it.  If it's &gt; 1 more than
      * we have, except
      *
      * @param sheetnum the sheet number (0 based)
