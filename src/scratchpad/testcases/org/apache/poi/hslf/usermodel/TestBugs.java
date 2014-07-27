@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -509,7 +511,7 @@ public final class TestBugs {
         /* Iterate over slides and extract text */
         for( Slide slide : _slides ) {
             HeadersFooters hf = slide.getHeadersFooters();
-            boolean visible = hf.isHeaderVisible(); // exception happens here
+            /*boolean visible =*/ hf.isHeaderVisible(); // exception happens here
         }
         assertTrue("No Exceptions while reading headers", true);
     }
@@ -546,5 +548,20 @@ public final class TestBugs {
             if (! tr.isDrawingBased()) str++;
         }
         assertEquals(1, str);
+    }
+    
+    @Test
+    public void bug37625() throws IOException {
+        InputStream inputStream = new FileInputStream(_slTests.getFile("37625.ppt"));
+        try {
+            SlideShow slideShow = new SlideShow(inputStream);
+            assertEquals(29, slideShow.getSlides().length);
+            
+            SlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+            assertNotNull(slideBack);
+            assertEquals(29, slideBack.getSlides().length);
+        } finally {
+            inputStream.close();
+        }
     }
 }
