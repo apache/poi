@@ -2722,4 +2722,13 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals("4.0", eval.evaluate(intF).formatAsString());
     }
+
+    @Test
+    public void bug42016() {
+        Workbook wb = openSample("42016.xls");
+        Sheet s = wb.getSheetAt(0);
+        for(int row = 0;row < 7;row++) {
+            assertEquals("A$1+B$1", s.getRow(row).getCell(2).getCellFormula());
+        }        
+    }
 }
