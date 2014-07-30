@@ -98,12 +98,45 @@ public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, E
 
         // Look up an External Link Table for this name
         List<ExternalLinksTable> tables = _uBook.getExternalLinksTable();
+        int index = findExternalLinkIndex(bookName, tables);
+        if (index != -1) return index;
+        
+        // Is it an absolute file reference?
+        if (bookName.startsWith("'file:///") && bookName.endsWith("'")) {
+            String relBookName = bookName.substring(bookName.lastIndexOf('/')+1);
+            relBookName = relBookName.substring(0, relBookName.length()-1); // Trailing '
+            
+            // Try with this name
+            index = findExternalLinkIndex(relBookName, tables);
+            if (index != -1) return index;
+            
+            // If we get here, it's got no associated proper links yet
+            // So, add the missing reference and return
+            // Note - this is really rather nasty...
+            ExternalLinksTable fakeLinkTable = new FakeExternalLinksTable(relBookName);
+            tables.add(fakeLinkTable);
+            return tables.size(); // 1 based results, 0 = current workbook
+        }
+        
+        // Not properly referenced
+        throw new RuntimeException("Book not linked for filename " + bookName);
+    }
+    private int findExternalLinkIndex(String bookName, List<ExternalLinksTable> tables) {
         for (int i=0; i<tables.size(); i++) {
             if (tables.get(i).getLinkedFileName().equals(bookName)) {
-                return i;
+                return i+1; // 1 based results, 0 = current workbook
             }
         }
-        throw new RuntimeException("Book not linked for filename " + bookName);
+        return -1;
+    }
+    private static class FakeExternalLinksTable extends ExternalLinksTable {
+        private final String fileName;
+        private FakeExternalLinksTable(String fileName) {
+            this.fileName = fileName;
+        }
+        public String getLinkedFileName() {
+            return fileName;
+        }
     }
 
 	public EvaluationName getName(String name, int sheetIndex) {
