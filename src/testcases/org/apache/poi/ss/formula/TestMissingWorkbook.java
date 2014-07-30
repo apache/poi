@@ -19,21 +19,26 @@
 
 package org.apache.poi.ss.formula;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-
-import java.io.IOException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 public class TestMissingWorkbook extends TestCase {
 	private static final String MAIN_WORKBOOK_FILENAME = "52575_main.xls";
 	private static final String SOURCE_DUMMY_WORKBOOK_FILENAME = "source_dummy.xls";
 	private static final String SOURCE_WORKBOOK_FILENAME = "52575_source.xls";
 	
-	private HSSFWorkbook mainWorkbook;
-	private HSSFWorkbook sourceWorkbook;
+	private Workbook mainWorkbook;
+	private Workbook sourceWorkbook;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -47,9 +52,9 @@ public class TestMissingWorkbook extends TestCase {
 	public void testMissingWorkbookMissing() throws IOException {
 		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
 		
-		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
-		HSSFRow lARow = lSheet.getRow(0);
-		HSSFCell lA1Cell = lARow.getCell(0);
+		Sheet lSheet = mainWorkbook.getSheetAt(0);
+		Row lARow = lSheet.getRow(0);
+		Cell lA1Cell = lARow.getCell(0);
 		
 		assertEquals(Cell.CELL_TYPE_FORMULA, lA1Cell.getCellType());
 		try {
@@ -61,16 +66,16 @@ public class TestMissingWorkbook extends TestCase {
 	}
 	
 	public void testMissingWorkbookMissingOverride() throws IOException {
-		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
-		HSSFCell lA1Cell = lSheet.getRow(0).getCell(0);
-		HSSFCell lB1Cell = lSheet.getRow(1).getCell(0);
-		HSSFCell lC1Cell = lSheet.getRow(2).getCell(0);
+		Sheet lSheet = mainWorkbook.getSheetAt(0);
+		Cell lA1Cell = lSheet.getRow(0).getCell(0);
+		Cell lB1Cell = lSheet.getRow(1).getCell(0);
+		Cell lC1Cell = lSheet.getRow(2).getCell(0);
 		
 		assertEquals(Cell.CELL_TYPE_FORMULA, lA1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lB1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lC1Cell.getCellType());
 		
-		HSSFFormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
+		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
         evaluator.setIgnoreMissingWorkbooks(true);
 
 		assertEquals(Cell.CELL_TYPE_NUMERIC, evaluator.evaluateFormulaCell(lA1Cell));
@@ -84,20 +89,21 @@ public class TestMissingWorkbook extends TestCase {
 	
 
 	public void testExistingWorkbook() throws IOException {
-		HSSFSheet lSheet = mainWorkbook.getSheetAt(0);
-		HSSFCell lA1Cell = lSheet.getRow(0).getCell(0);
-		HSSFCell lB1Cell = lSheet.getRow(1).getCell(0);
-		HSSFCell lC1Cell = lSheet.getRow(2).getCell(0);
+		Sheet lSheet = mainWorkbook.getSheetAt(0);
+		Cell lA1Cell = lSheet.getRow(0).getCell(0);
+		Cell lB1Cell = lSheet.getRow(1).getCell(0);
+		Cell lC1Cell = lSheet.getRow(2).getCell(0);
 		
 		assertEquals(Cell.CELL_TYPE_FORMULA, lA1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lB1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lC1Cell.getCellType());
 
-		HSSFFormulaEvaluator lMainWorkbookEvaluator = new HSSFFormulaEvaluator(mainWorkbook);
-		HSSFFormulaEvaluator lSourceEvaluator = new HSSFFormulaEvaluator(sourceWorkbook);
-		HSSFFormulaEvaluator.setupEnvironment(
-				new String[]{MAIN_WORKBOOK_FILENAME, SOURCE_DUMMY_WORKBOOK_FILENAME}, 
-				new HSSFFormulaEvaluator[] {lMainWorkbookEvaluator, lSourceEvaluator});
+		FormulaEvaluator lMainWorkbookEvaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
+		FormulaEvaluator lSourceEvaluator = sourceWorkbook.getCreationHelper().createFormulaEvaluator();
+		Map<String,FormulaEvaluator> workbooks = new HashMap<String, FormulaEvaluator>();
+		workbooks.put(MAIN_WORKBOOK_FILENAME, lMainWorkbookEvaluator);
+		workbooks.put(SOURCE_DUMMY_WORKBOOK_FILENAME, lSourceEvaluator);
+		lMainWorkbookEvaluator.setupReferencedWorkbooks(workbooks);
 		
 		assertEquals(Cell.CELL_TYPE_NUMERIC, lMainWorkbookEvaluator.evaluateFormulaCell(lA1Cell));
 		assertEquals(Cell.CELL_TYPE_STRING, lMainWorkbookEvaluator.evaluateFormulaCell(lB1Cell));
@@ -107,5 +113,4 @@ public class TestMissingWorkbook extends TestCase {
 		assertEquals("Apache rocks!", lB1Cell.getStringCellValue());
 		assertEquals(false, lC1Cell.getBooleanCellValue());
 	}
-
 }
