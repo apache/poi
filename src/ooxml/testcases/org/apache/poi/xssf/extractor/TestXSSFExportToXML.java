@@ -279,8 +279,8 @@ public final class TestXSSFExportToXML extends TestCase {
            assertNotNull(xmlData);
            assertFalse(xmlData.equals(""));
            
-           String date = xmlData.split("<DATE>")[1].split("</DATE>")[0].trim();
-           assertEquals("2012-01-13", date);
+           assertEquals("2012-01-13", xmlData.split("<DATE>")[1].split("</DATE>")[0].trim());
+           assertEquals("2012-02-16", xmlData.split("<FORMULA_DATE>")[1].split("</FORMULA_DATE>")[0].trim());
            
            parseXML(xmlData);
            

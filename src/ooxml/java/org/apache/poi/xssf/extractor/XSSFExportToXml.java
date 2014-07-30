@@ -293,14 +293,17 @@ public class XSSFExportToXml implements Comparator<String>{
            if (cell.getCachedFormulaResultType() == Cell.CELL_TYPE_STRING) {
                value = cell.getStringCellValue();
            } else {
-               value += cell.getNumericCellValue();
+               if (DateUtil.isCellDateFormatted(cell)) {
+                  value = getFormattedDate(cell);
+               } else {
+                  value += cell.getNumericCellValue();
+               }
            }
            break;
         
         case XSSFCell.CELL_TYPE_NUMERIC: 
              if (DateUtil.isCellDateFormatted(cell)) {
-                  DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                  value += sdf.format(cell.getDateCellValue());
+                  value = getFormattedDate(cell);
               } else {
                  value += cell.getRawValue();
               }
@@ -321,7 +324,10 @@ public class XSSFExportToXml implements Comparator<String>{
         return elementName.matches(".*:.*")?elementName.split(":")[1]:elementName;
     }
 
-
+    private String getFormattedDate(XSSFCell cell) {
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(cell.getDateCellValue());
+    }
 
     private Node getNodeByXPath(String xpath,Node rootNode,Document doc,boolean createMultipleInstances) {
         String[] xpathTokens = xpath.split("/");
