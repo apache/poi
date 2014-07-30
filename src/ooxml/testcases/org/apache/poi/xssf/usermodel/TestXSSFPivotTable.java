@@ -67,18 +67,28 @@ public class TestXSSFPivotTable extends TestCase {
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
     }
 
-    /*
+    /**
      * Verify that when creating a row label it's  created on the correct row
      * and the count is increased by one.
      */
     public void testAddRowLabelToPivotTable() {
         int columnIndex = 0;
 
+        assertEquals(0, pivotTable.getRowLabelColumns().size());
+        
         pivotTable.addRowLabel(columnIndex);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
         assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
         assertEquals(defintion.getRowFields().getCount(), 1);
+        assertEquals(1, pivotTable.getRowLabelColumns().size());
+        
+        columnIndex = 1;
+        pivotTable.addRowLabel(columnIndex);
+        assertEquals(2, pivotTable.getRowLabelColumns().size());
+        
+        assertEquals(0, (int)pivotTable.getRowLabelColumns().get(0));
+        assertEquals(1, (int)pivotTable.getRowLabelColumns().get(1));
     }
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
@@ -94,7 +104,7 @@ public class TestXSSFPivotTable extends TestCase {
         fail();
     }
 
-     /*
+    /**
      * Verify that when creating one column label, no col fields are being created.
      */
     public void testAddOneColumnLabelToPivotTableDoesNotCreateColField() {
@@ -106,7 +116,7 @@ public class TestXSSFPivotTable extends TestCase {
         assertEquals(defintion.getColFields(), null);
     }
 
-     /*
+    /**
      * Verify that when creating two column labels, a col field is being created and X is set to -2.
      */
     public void testAddTwoColumnLabelsToPivotTable() {
@@ -120,7 +130,7 @@ public class TestXSSFPivotTable extends TestCase {
         assertEquals(defintion.getColFields().getFieldArray(0).getX(), -2);
     }
 
-     /*
+    /**
      * Verify that a data field is created when creating a data column
      */
     public void testColumnLabelCreatesDataField() {

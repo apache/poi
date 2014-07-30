@@ -1388,8 +1388,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         XSSFPivotTable pivotTable = sheet2.createPivotTable
                 (new AreaReference("A1:B2"), new CellReference("H5"), sheet1);
-
-        // TODO Test the pivot table was setup correctly
+        assertEquals(0, pivotTable.getRowLabelColumns().size());
         
         assertEquals(1, wb.getPivotTables().size());
         assertEquals(1, sheet1.getPivotTables().size());
@@ -1403,6 +1402,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
 
         XSSFPivotTable pivotTable = sheet2.createPivotTable
                 (new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"));
+        assertEquals(0, pivotTable.getRowLabelColumns().size());
     }
 
     public void testCreatePivotTableWithConflictingDataSheets(){

@@ -19,6 +19,8 @@ package org.apache.poi.xssf.usermodel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -39,6 +41,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
@@ -216,14 +219,19 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         style.setShowRowHeaders(true);
     }
 
+    protected AreaReference getPivotArea() {
+        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
+                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        return pivotArea;
+    }
+
     /**
      * Add a row label using data from the given column.
      * @param columnIndex, the index of the column to be used as row label.
      */
     @Beta
     public void addRowLabel(int columnIndex) {
-        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
-                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        AreaReference pivotArea = getPivotArea();
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
 
@@ -256,6 +264,20 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         rowFields.addNewField().setX(columnIndex);
         rowFields.setCount(rowFields.getFieldList().size());
     }
+    
+    @Beta
+    @SuppressWarnings("deprecation")
+    public List<Integer> getRowLabelColumns() {
+        if (pivotTableDefinition.getRowFields() != null) {
+            List<Integer> columnIndexes = new ArrayList<Integer>();
+            for (CTField f : pivotTableDefinition.getRowFields().getFieldArray()) {
+                columnIndexes.add(f.getX());
+            }
+            return columnIndexes;
+        } else {
+            return Collections.emptyList();
+        }
+    }
 
     /**
      * Add a column label using data from the given column and specified function
@@ -266,8 +288,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     public void addColumnLabel(DataConsolidateFunction function, int columnIndex) {
-        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
-                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        AreaReference pivotArea = getPivotArea();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
 
         if(columnIndex > lastColIndex && columnIndex < 0) {
@@ -299,8 +320,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     private void addDataField(DataConsolidateFunction function, int columnIndex) {
-        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
-                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        AreaReference pivotArea = getPivotArea();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
 
         if(columnIndex > lastColIndex && columnIndex < 0) {
@@ -328,8 +348,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     public void addDataColumn(int columnIndex, boolean isDataField) {
-        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
-                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        AreaReference pivotArea = getPivotArea();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
         if(columnIndex > lastColIndex && columnIndex < 0) {
             throw new IndexOutOfBoundsException();
@@ -350,8 +369,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
      */
     @Beta
     public void addReportFilter(int columnIndex) {
-        AreaReference pivotArea = new AreaReference(getPivotCacheDefinition().
-                getCTPivotCacheDefinition().getCacheSource().getWorksheetSource().getRef());
+        AreaReference pivotArea = getPivotArea();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
         int lastRowIndex = pivotArea.getLastCell().getRow() - pivotArea.getFirstCell().getRow();
 
@@ -432,9 +450,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         } else {
             pivotFields = pivotTableDefinition.addNewPivotFields();
         }
-        String source = pivotCacheDefinition.getCTPivotCacheDefinition().
-                getCacheSource().getWorksheetSource().getRef();
-        AreaReference sourceArea = new AreaReference(source);
+        AreaReference sourceArea = getPivotArea();
         int firstColumn = sourceArea.getFirstCell().getCol();
         int lastColumn = sourceArea.getLastCell().getCol();
         CTPivotField pivotField;
