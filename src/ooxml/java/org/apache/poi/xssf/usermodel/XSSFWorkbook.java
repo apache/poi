@@ -57,6 +57,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -80,6 +81,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalReference;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCaches;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -196,6 +199,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     private XSSFCreationHelper _creationHelper;
 
     /**
+     * List of all pivot tables in workbook
+     */
+    private List<XSSFPivotTable> pivotTables;
+    private List<CTPivotCache> pivotCaches;
+
+
+    /**
      * Create a new SpreadsheetML workbook.
      */
     public XSSFWorkbook() {
@@ -306,11 +316,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             }
             stylesSource.setTheme(theme);
 
-            if(sharedStringSource == null) {
+            if (sharedStringSource == null) {
                 // Create SST if it is missing
                 sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
             }
-
+            
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<XSSFSheet>(shIdMap.size());
@@ -338,7 +348,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                     externalLinks.add(el);
                 }
             }
-
+            
             // Process the named ranges
             reprocessNamedRanges();
         } catch (XmlException e) {
@@ -369,6 +379,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
         namedRanges = new ArrayList<XSSFName>();
         sheets = new ArrayList<XSSFSheet>();
+        pivotTables = new ArrayList<XSSFPivotTable>();
     }
 
     /**
@@ -1830,4 +1841,45 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         return calcPr != null && calcPr.getCalcId() != 0;
     }
 
+
+
+    /**
+     * Add pivotCache to the workbook
+     */
+    @Beta
+    protected CTPivotCache addPivotCache(String rId) {
+        CTWorkbook ctWorkbook = getCTWorkbook();
+        CTPivotCaches caches;
+        if (ctWorkbook.isSetPivotCaches()) {
+            caches = ctWorkbook.getPivotCaches();
+        } else {
+            caches = ctWorkbook.addNewPivotCaches();
+        }
+        CTPivotCache cache = caches.addNewPivotCache();
+
+        int tableId = getPivotTables().size()+1;
+        cache.setCacheId(tableId);
+        cache.setId(rId);
+        if(pivotCaches == null) {
+            pivotCaches = new ArrayList<CTPivotCache>();
+        }
+        pivotCaches.add(cache);
+        return cache;
+    }
+
+    @Beta
+    public List<XSSFPivotTable> getPivotTables() {
+        // Lazy create the list. It gets populated with existing ones on sheet setup
+        if (pivotTables == null) {
+            pivotTables = new ArrayList<XSSFPivotTable>();
+            pivotCaches = new ArrayList<CTPivotCache>();
+        }
+
+        return pivotTables;
+    }
+
+    @Beta
+    protected void setPivotTables(List<XSSFPivotTable> pivotTables) {
+        this.pivotTables = pivotTables;
+    }
 }

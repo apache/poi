@@ -39,6 +39,7 @@ import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
@@ -52,11 +53,13 @@ import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -193,7 +196,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         initRows(worksheet);
         columnHelper = new ColumnHelper(worksheet);
-
         // Look for bits we're interested in
         for(POIXMLDocumentPart p : getRelations()){
             if(p instanceof CommentsTable) {
@@ -201,6 +203,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             }
             if(p instanceof XSSFTable) {
                tables.put( p.getPackageRelationship().getId(), (XSSFTable)p );
+            }
+            if(p instanceof XSSFPivotTable) {
+                getWorkbook().getPivotTables().add((XSSFPivotTable) p);
             }
         }
 
@@ -3583,4 +3588,102 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
       return null;
     }
 
+    /**
+     * Creates an empty XSSFPivotTable and sets up all its relationships
+     * including: pivotCacheDefinition, pivotCacheRecords
+     * @return returns a pivotTable
+     */
+    @Beta
+    private XSSFPivotTable createPivotTable() {
+        XSSFWorkbook wb = getWorkbook();
+        List<XSSFPivotTable> pivotTables = wb.getPivotTables();
+        int tableId = getWorkbook().getPivotTables().size()+1;
+        //Create relationship between pivotTable and the worksheet
+        XSSFPivotTable pivotTable = (XSSFPivotTable) createRelationship(XSSFRelation.PIVOT_TABLE,
+                XSSFFactory.getInstance(), tableId);
+        pivotTable.setParentSheet(this);
+        pivotTables.add(pivotTable);
+        XSSFWorkbook workbook = getWorkbook();
+
+        //Create relationship between the pivot cache defintion and the workbook
+        XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
+                createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, XSSFFactory.getInstance(), tableId);
+        String rId = workbook.getRelationId(pivotCacheDefinition);
+        //Create relationship between pivotTable and pivotCacheDefinition without creating a new instance
+        PackagePart pivotPackagePart = pivotTable.getPackagePart();
+        pivotPackagePart.addRelationship(pivotCacheDefinition.getPackagePart().getPartName(),
+                TargetMode.INTERNAL, XSSFRelation.PIVOT_CACHE_DEFINITION.getRelation());
+
+        pivotTable.setPivotCacheDefinition(pivotCacheDefinition);
+
+        //Create pivotCache and sets up it's relationship with the workbook
+        pivotTable.setPivotCache(new XSSFPivotCache(workbook.addPivotCache(rId)));
+
+        //Create relationship between pivotcacherecord and pivotcachedefinition
+        XSSFPivotCacheRecords pivotCacheRecords = (XSSFPivotCacheRecords) pivotCacheDefinition.
+                createRelationship(XSSFRelation.PIVOT_CACHE_RECORDS, XSSFFactory.getInstance(), tableId);
+
+        //Set relationships id for pivotCacheDefinition to pivotCacheRecords
+        pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().setId(pivotCacheDefinition.getRelationId(pivotCacheRecords));
+
+        wb.setPivotTables(pivotTables);
+
+        return pivotTable;
+    }
+
+    /**
+     * Create a pivot table and set area of source, source sheet and a position for pivot table
+     * @param source Area from where data will be collected
+     * @param position A reference to the cell where the table will start
+     * @param sourceSheet The sheet where source will be collected from
+     * @return The pivot table
+     */
+    @Beta
+    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position, Sheet sourceSheet){
+
+        if(source.getFirstCell().getSheetName() != null && !source.getFirstCell().getSheetName().equals(sourceSheet.getSheetName())) {
+            throw new IllegalArgumentException("The area is referenced in another sheet than the "
+                    + "defined source sheet " + sourceSheet.getSheetName() + ".");
+        }
+        XSSFPivotTable pivotTable = createPivotTable();
+        //Creates default settings for the pivot table
+        pivotTable.setDefaultPivotTableDefinition();
+
+        //Set sources and references
+        pivotTable.createSourceReferences(source, position, sourceSheet);
+
+        //Create cachefield/s and empty SharedItems
+        pivotTable.getPivotCacheDefinition().createCacheFields(sourceSheet);
+        pivotTable.createDefaultDataColumns();
+
+        return pivotTable;
+    }
+
+    /**
+     * Create a pivot table and set area of source and a position for pivot table
+     * @param source Area from where data will be collected
+     * @param position A reference to the cell where the table will start
+     * @return The pivot table
+     */
+    @Beta
+    public XSSFPivotTable createPivotTable(AreaReference source, CellReference position){
+        if(source.getFirstCell().getSheetName() != null && !source.getFirstCell().getSheetName().equals(this.getSheetName())) {
+            return createPivotTable(source, position, getWorkbook().getSheet(source.getFirstCell().getSheetName()));
+        }
+        return createPivotTable(source, position, this);
+    }
+    
+    /**
+     * Returns all the pivot tables for this Sheet
+     */
+    @Beta
+    public List<XSSFPivotTable> getPivotTables() {
+        List<XSSFPivotTable> tables = new ArrayList<XSSFPivotTable>();
+        for (XSSFPivotTable table : getWorkbook().getPivotTables()) {
+            if (table.getParent() == this) {
+                tables.add(table);
+            }
+        }
+        return tables;
+    }
 }
