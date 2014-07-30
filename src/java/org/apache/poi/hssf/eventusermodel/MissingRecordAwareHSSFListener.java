@@ -20,7 +20,16 @@ package org.apache.poi.hssf.eventusermodel;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.MulRKRecord;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.StringRecord;
 
 /**
  * <p>A HSSFListener which tracks rows and columns, and will
