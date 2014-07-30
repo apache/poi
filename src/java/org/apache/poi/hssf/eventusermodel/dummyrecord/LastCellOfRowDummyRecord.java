@@ -44,4 +44,8 @@ public final class LastCellOfRowDummyRecord extends DummyRecordBase {
 	 *  for the row.
 	 */
 	public int getLastColumnNumber() { return lastColumnNumber; }
+	
+	public String toString() {
+	    return "End-of-Row for Row=" + row + " at Column=" + lastColumnNumber;
+	}
 }
