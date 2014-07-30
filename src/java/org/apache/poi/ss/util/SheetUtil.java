@@ -73,13 +73,12 @@ public class SheetUtil {
         public Cell evaluateInCell(Cell cell) { return null; }
         public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> workbooks) {}
         public void setDebugEvaluationOutputForNextEval(boolean value) {}
-
+        public void setIgnoreMissingWorkbooks(boolean ignore) {}
+        
         public void evaluateAll() {}
-
         public int evaluateFormulaCell(Cell cell) {
             return cell.getCachedFormulaResultType();
         }
-
     };
 
     /**
