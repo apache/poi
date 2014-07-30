@@ -42,7 +42,9 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -50,6 +52,9 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -57,6 +62,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
@@ -690,5 +696,76 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     
     private static int indexOf(CharSequence cs, CharSequence searchChar, int start) {
         return cs.toString().indexOf(searchChar.toString(), start);
+    }
+
+    public void testAddPivotCache() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        CTWorkbook ctWb = wb.getCTWorkbook();
+        CTPivotCache pivotCache = wb.addPivotCache("0");
+        //Ensures that pivotCaches is initiated
+        assertTrue(ctWb.isSetPivotCaches());
+        assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheList().get(0));
+        assertEquals("0", pivotCache.getId());
+    }
+
+    public void setPivotData(XSSFWorkbook wb){
+        XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+
+        Row row1 = sheet.createRow(0);
+        // Create a cell and put a value in it.
+        Cell cell = row1.createCell(0);
+        cell.setCellValue("Names");
+        Cell cell2 = row1.createCell(1);
+        cell2.setCellValue("#");
+        Cell cell7 = row1.createCell(2);
+        cell7.setCellValue("Data");
+
+        Row row2 = sheet.createRow(1);
+        Cell cell3 = row2.createCell(0);
+        cell3.setCellValue("Jan");
+        Cell cell4 = row2.createCell(1);
+        cell4.setCellValue(10);
+        Cell cell8 = row2.createCell(2);
+        cell8.setCellValue("Apa");
+
+        Row row3 = sheet.createRow(2);
+        Cell cell5 = row3.createCell(0);
+        cell5.setCellValue("Ben");
+        Cell cell6 = row3.createCell(1);
+        cell6.setCellValue(9);
+        Cell cell9 = row3.createCell(2);
+        cell9.setCellValue("Bepa");
+
+        AreaReference source = new AreaReference("A1:B2");
+        sheet.createPivotTable(source, new CellReference("H5"));
+    }
+
+    public void testLoadWorkbookWithPivotTable() throws Exception {
+        String fileName = "ooxml-pivottable.xlsx";
+
+        XSSFWorkbook wb = new XSSFWorkbook();
+        setPivotData(wb);
+
+        FileOutputStream fileOut = new FileOutputStream(fileName);
+        wb.write(fileOut);
+        fileOut.close();
+
+        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(new File(fileName));
+        assertTrue(wb2.getPivotTables().size() == 1);
+    }
+
+    public void testAddPivotTableToWorkbookWithLoadedPivotTable() throws Exception {
+        String fileName = "ooxml-pivottable.xlsx";
+
+        XSSFWorkbook wb = new XSSFWorkbook();
+        setPivotData(wb);
+
+        FileOutputStream fileOut = new FileOutputStream(fileName);
+        wb.write(fileOut);
+        fileOut.close();
+
+        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(new File(fileName));
+        setPivotData(wb2);
+        assertTrue(wb2.getPivotTables().size() == 2);
     }
 }

@@ -17,13 +17,13 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -35,9 +35,12 @@ import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -1311,4 +1314,108 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFTestDataSamples.openSampleWorkbook("51585.xlsx");
     }
 
+    private XSSFWorkbook setupSheet(){
+        //set up workbook
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+
+        Row row1 = sheet.createRow((short) 0);
+        Cell cell = row1.createCell((short) 0);
+        cell.setCellValue("Names");
+        Cell cell2 = row1.createCell((short) 1);
+        cell2.setCellValue("#");
+
+        Row row2 = sheet.createRow((short) 1);
+        Cell cell3 = row2.createCell((short) 0);
+        cell3.setCellValue("Jane");
+        Cell cell4 = row2.createCell((short) 1);
+        cell4.setCellValue(3);
+
+        Row row3 = sheet.createRow((short) 2);
+        Cell cell5 = row3.createCell((short) 0);
+        cell5.setCellValue("John");
+        Cell cell6 = row3.createCell((short) 1);
+        cell6.setCellValue(3);
+
+        return wb;
+    }
+
+    public void testCreateTwoPivotTablesInOneSheet(){
+        XSSFWorkbook wb = setupSheet();
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        assertNotNull(wb);
+        assertNotNull(sheet);
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        assertNotNull(pivotTable);
+        assertTrue(wb.getPivotTables().size() > 0);
+        XSSFPivotTable pivotTable2 = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("L5"), sheet);
+        assertNotNull(pivotTable2);
+        assertTrue(wb.getPivotTables().size() > 1);
+    }
+
+    public void testCreateTwoPivotTablesInTwoSheets(){
+        XSSFWorkbook wb = setupSheet();
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        assertNotNull(wb);
+        assertNotNull(sheet);
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        assertNotNull(pivotTable);
+        assertTrue(wb.getPivotTables().size() > 0);
+        assertNotNull(wb);
+        XSSFSheet sheet2 = wb.createSheet();
+        XSSFPivotTable pivotTable2 = sheet2.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"), sheet);
+        assertNotNull(pivotTable2);
+        assertTrue(wb.getPivotTables().size() > 1);
+    }
+
+    public void testCreatePivotTable(){
+        XSSFWorkbook wb = setupSheet();
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        assertNotNull(wb);
+        assertNotNull(sheet);
+        XSSFPivotTable pivotTable = sheet.createPivotTable(new AreaReference("A1:B2"), new CellReference("H5"));
+        assertNotNull(pivotTable);
+        assertTrue(wb.getPivotTables().size() > 0);
+    }
+
+    public void testCreatePivotTableInOtherSheetThanDataSheet(){
+        XSSFWorkbook wb = setupSheet();
+        XSSFSheet sheet1 = wb.getSheetAt(0);
+        XSSFSheet sheet2 = wb.createSheet();
+
+        XSSFPivotTable pivotTable = sheet2.createPivotTable
+                (new AreaReference("A1:B2"), new CellReference("H5"), sheet1);
+
+        // TODO Test the pivot table was setup correctly
+        
+        assertEquals(1, wb.getPivotTables().size());
+        assertEquals(1, sheet1.getPivotTables().size());
+        assertEquals(1, sheet2.getPivotTables().size());
+    }
+
+    public void testCreatePivotTableInOtherSheetThanDataSheetUsingAreaReference(){
+        XSSFWorkbook wb = setupSheet();
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFSheet sheet2 = wb.createSheet();
+
+        XSSFPivotTable pivotTable = sheet2.createPivotTable
+                (new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"));
+    }
+
+    public void testCreatePivotTableWithConflictingDataSheets(){
+        XSSFWorkbook wb = setupSheet();
+        XSSFSheet sheet = wb.getSheetAt(0);
+        XSSFSheet sheet2 = wb.createSheet();
+
+        try {
+            XSSFPivotTable pivotTable = sheet2.createPivotTable
+                (new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"), sheet2);
+        } catch(IllegalArgumentException e) {
+            return;
+        }
+        fail();
+    }
 }
