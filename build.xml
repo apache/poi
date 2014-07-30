@@ -53,6 +53,7 @@ under the License.
     <description>The Apache POI project Ant build.</description>
 
     <property name="version.id" value="3.11-beta1"/>
+    <property name="version.rel" value="REL_3_11_BETA1"/>
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
@@ -1214,6 +1215,16 @@ under the License.
         </jar>
     </target>
 
+    <target name="release-notes" depends="init">
+        <copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/">
+            <filterset>
+                <filter token="VERSION" value="${version.id}"/>
+                <filter token="DSTAMP"  value="${DSTAMP}"/>
+                <filter token="RELEASE_TAG" value="${version.rel}"/>
+            </filterset>
+        </copy>
+    </target>
+
     <target name="assemble" depends="jar,jar-src">
          <!-- jars to include in binary assemblies -->         
          <patternset id="bin.dist.jars">
@@ -1312,7 +1323,7 @@ under the License.
         <echo>Use ${dist.dir}/multisign.sh to create md5 checksums and GPG signatures</echo>
     </target>
 
-    <target name="dist" depends="clean, compile-all, test-all, site, jar, assemble"
+    <target name="dist" depends="clean, compile-all, test-all, site, jar, release-notes, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
