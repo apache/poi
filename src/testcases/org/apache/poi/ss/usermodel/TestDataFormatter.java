@@ -510,6 +510,32 @@ public class TestDataFormatter extends TestCase {
     }
 
     /**
+     * While we don't currently support using a locale code at
+     *  the start of a format string to format it differently, we
+     *  should at least handle it as it if wasn't there
+     */
+    public void testDatesWithLocales() {
+        DataFormatter dfUS = new DataFormatter(Locale.US, true);
+        
+        String dateFormatEnglish = "[$-409]mmmm dd yyyy  h:mm AM/PM";
+        String dateFormatChinese = "[$-804]mmmm dd yyyy  h:mm AM/PM";
+        
+        // Check we format the English one correctly
+        double date = 26995.477777777778;
+        assertEquals(
+                "November 27 1973  11:28 AM",
+                dfUS.formatRawCellContents(date, -1, dateFormatEnglish)
+        );
+        
+        // Check that, in the absence of locale support, we handle
+        //  the Chinese one the same as the English one
+        assertEquals(
+                "November 27 1973  11:28 AM",
+                dfUS.formatRawCellContents(date, -1, dateFormatChinese)
+        );
+    }
+
+    /**
      * TODO Fix these so that they work
      */
     public void DISABLEDtestCustomFormats() {
