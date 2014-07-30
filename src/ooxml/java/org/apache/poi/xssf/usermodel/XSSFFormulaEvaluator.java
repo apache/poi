@@ -293,8 +293,12 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
     }
 
     /** {@inheritDoc} */
+    public void setIgnoreMissingWorkbooks(boolean ignore){
+        _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
+    }
+
+    /** {@inheritDoc} */
     public void setDebugEvaluationOutputForNextEval(boolean value){
         _bookEvaluator.setDebugEvaluationOutputForNextEval(value);
     }
-
 }

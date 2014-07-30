@@ -44,6 +44,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
     public ExternalLinksTable() {
         super();
         link = CTExternalLink.Factory.newInstance();
+        link.addNewExternalBook();
     }
 
     public ExternalLinksTable(PackagePart part, PackageRelationship rel) throws IOException {

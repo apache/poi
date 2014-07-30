@@ -33,12 +33,22 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 public class TestMissingWorkbook extends TestCase {
-	private static final String MAIN_WORKBOOK_FILENAME = "52575_main.xls";
-	private static final String SOURCE_DUMMY_WORKBOOK_FILENAME = "source_dummy.xls";
-	private static final String SOURCE_WORKBOOK_FILENAME = "52575_source.xls";
-	
-	private Workbook mainWorkbook;
-	private Workbook sourceWorkbook;
+    protected Workbook mainWorkbook;
+    protected Workbook sourceWorkbook;
+    
+    protected final String MAIN_WORKBOOK_FILENAME;
+    protected final String SOURCE_DUMMY_WORKBOOK_FILENAME;
+    protected final String SOURCE_WORKBOOK_FILENAME;
+    
+    public TestMissingWorkbook() {
+        this("52575_main.xls", "source_dummy.xls", "52575_source.xls");
+    }
+    protected TestMissingWorkbook(String MAIN_WORKBOOK_FILENAME, 
+            String SOURCE_DUMMY_WORKBOOK_FILENAME, String SOURCE_WORKBOOK_FILENAME) {
+        this.MAIN_WORKBOOK_FILENAME = MAIN_WORKBOOK_FILENAME; 
+        this.SOURCE_DUMMY_WORKBOOK_FILENAME = SOURCE_DUMMY_WORKBOOK_FILENAME;
+        this.SOURCE_WORKBOOK_FILENAME = SOURCE_WORKBOOK_FILENAME;
+    }
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -74,12 +84,18 @@ public class TestMissingWorkbook extends TestCase {
 		assertEquals(Cell.CELL_TYPE_FORMULA, lA1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lB1Cell.getCellType());
 		assertEquals(Cell.CELL_TYPE_FORMULA, lC1Cell.getCellType());
+
+		// Check cached values
+        assertEquals(10.0d, lA1Cell.getNumericCellValue(), 0.00001d);
+        assertEquals("POI rocks!", lB1Cell.getStringCellValue());
+        assertEquals(true, lC1Cell.getBooleanCellValue());
 		
+        // Evaluate
 		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
         evaluator.setIgnoreMissingWorkbooks(true);
 
 		assertEquals(Cell.CELL_TYPE_NUMERIC, evaluator.evaluateFormulaCell(lA1Cell));
-		assertEquals(Cell.CELL_TYPE_STRING, evaluator.evaluateFormulaCell(lB1Cell));
+		assertEquals(Cell.CELL_TYPE_STRING,  evaluator.evaluateFormulaCell(lB1Cell));
 		assertEquals(Cell.CELL_TYPE_BOOLEAN, evaluator.evaluateFormulaCell(lC1Cell));
 
 		assertEquals(10.0d, lA1Cell.getNumericCellValue(), 0.00001d);
