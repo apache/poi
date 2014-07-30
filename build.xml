@@ -1376,6 +1376,7 @@ under the License.
              classpath="${main.lib}/apache-rat-0.10.jar" />
        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
            <fileset dir="src/">
+              <exclude name="documentation/*.txt" />
               <exclude name="documentation/content/xdocs/dtd/" />
               <exclude name="documentation/content/xdocs/entity/" />
               <exclude name="scratchpad/testcases/dummy.txt" />
