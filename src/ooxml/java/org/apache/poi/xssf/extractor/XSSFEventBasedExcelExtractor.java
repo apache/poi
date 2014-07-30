@@ -268,14 +268,17 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
             this.headerFooterMap = includeHeadersFooters ? new HashMap<String, String>() : null;
         }
 
+        @Override
         public void startRow(int rowNum) {
             firstCellOfRow = true;
         }
 
+        @Override
         public void endRow(int rowNum) {
             output.append('\n');
         }
 
+        @Override
         public void cell(String cellRef, String formattedValue, XSSFComment comment) {
             if(firstCellOfRow) {
                 firstCellOfRow = false;
@@ -296,10 +299,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
             }
         }
 
-        public void emptyCellComment(String cellRef, XSSFComment comment) {
-            cell(cellRef, null, comment);
-        }
-
+        @Override
         public void headerFooter(String text, boolean isHeader, String tagName) {
             if (headerFooterMap != null) {
                 headerFooterMap.put(tagName, text);

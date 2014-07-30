@@ -466,7 +466,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private void outputEmptyCellComment(CellReference cellRef) {
        String cellRefString = cellRef.formatAsString();
        XSSFComment comment = commentsTable.findCellComment(cellRefString);
-       output.emptyCellComment(cellRefString, comment);
+       output.cell(cellRefString, null, comment);
    }
    
    private enum EmptyCellCommentsCheckType {
@@ -497,10 +497,10 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
       public void startRow(int rowNum);
       /** A row with the (zero based) row number has ended */
       public void endRow(int rowNum);
-      /** A cell, with the given formatted value, and possibly a comment, was encountered */
+      /** 
+       * A cell, with the given formatted value (may be null), 
+       *  and possibly a comment (may be null), was encountered */
       public void cell(String cellReference, String formattedValue, XSSFComment comment);
-      /** A comment for an otherwise-empty cell was encountered */
-      public void emptyCellComment(String cellReference, XSSFComment comment);
       /** A header or footer has been encountered */
       public void headerFooter(String text, boolean isHeader, String tagName);
    }
