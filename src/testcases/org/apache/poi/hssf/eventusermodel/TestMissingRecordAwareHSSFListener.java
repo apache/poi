@@ -567,7 +567,18 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
         // Now onto the cells
         
         // Because the 3 first rows are missing, should have last-of-row records first
-        // TODO Fix!
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(0, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(1, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(2, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
         
         
         // Onto row 4 (=3)

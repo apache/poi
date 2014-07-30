@@ -86,7 +86,8 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 				// the workbook
 				case BOFRecord.sid:
 					BOFRecord bof = (BOFRecord) record;
-					if (bof.getType() == bof.TYPE_WORKBOOK || bof.getType() == bof.TYPE_WORKSHEET) {
+					if (bof.getType() == BOFRecord.TYPE_WORKBOOK || 
+					        bof.getType() == BOFRecord.TYPE_WORKSHEET) {
 						// Reset the row and column counts - new workbook / worksheet
 						resetCounts();
 					}
@@ -106,6 +107,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 
 					// Record this as the last row we saw
 					lastRowRow = rowrec.getRowNumber();
+					lastCellColumn = -1;
 					break;
 
 				case SharedFormulaRecord.sid:
@@ -144,7 +146,8 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 		// If we're on cells, and this cell isn't in the same
 		//  row as the last one, then fire the
 		//  dummy end-of-row records
-		if(thisRow != lastCellRow && lastCellRow > -1) {
+		if(thisRow != lastCellRow && thisRow > 0) {
+		    if (lastCellRow == -1) lastCellRow = 0;
 			for(int i=lastCellRow; i<thisRow; i++) {
 				int cols = -1;
 				if(i == lastCellRow) {
