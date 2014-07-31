@@ -71,7 +71,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 	protected AreaPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn,
 			boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
 
-		if (lastRow > firstRow) {
+		if (lastRow >= firstRow) {
 			setFirstRow(firstRow);
 			setLastRow(lastRow);
 			setFirstRowRelative(firstRowRelative);
@@ -83,7 +83,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 			setLastRowRelative(firstRowRelative);
 		}
 
-		if (lastColumn > firstColumn) {
+		if (lastColumn >= firstColumn) {
 			setFirstColumn(firstColumn);
 			setLastColumn(lastColumn);
 			setFirstColRelative(firstColRelative);
