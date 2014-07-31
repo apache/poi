@@ -892,7 +892,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         TOC toc = new TOC(block);
         for (XWPFParagraph par : paragraphs) {
             String parStyle = par.getStyle();
-            if (parStyle != null && parStyle.substring(0, 7).equals("Heading")) {
+            if (parStyle != null && parStyle.startsWith("Heading")) {
                 try {
                     int level = Integer.valueOf(parStyle.substring("Heading".length())).intValue();
                     toc.addRow(level, par.getText(), 1, "112723803");
