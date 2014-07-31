@@ -71,6 +71,35 @@ public final class TestAreaPtg extends TestCase {
 		assertEquals(lc , aptg.getLastColumn() );
 	}
 	
+    public void testAbsoluteRelativeRefs() {
+        AreaPtg sca1 = new AreaPtg(4, 5, 6, 7, true, false, true, false);
+        AreaPtg sca2 = new AreaPtg(4, 5, 6, 7, false, true, false, true);
+        AreaPtg sca3 = new AreaPtg(5, 5, 7, 7, true, false, true, false);
+        AreaPtg sca4 = new AreaPtg(5, 5, 7, 7, false, true, false, true);
+
+        assertEquals("first rel., last abs.", "G5:$H$6", sca1.toFormulaString());
+        assertEquals("first abs., last rel.", "$G$5:H6", sca2.toFormulaString());
+        assertEquals("first rel., last abs.", "H6:$H$6", sca3.toFormulaString());
+        assertEquals("first abs., last rel.", "$H$6:H6", sca4.toFormulaString());
+
+        AreaPtg cla1 = cloneArea(sca1);
+        AreaPtg cla2 = cloneArea(sca2);
+        AreaPtg cla3 = cloneArea(sca3);
+        AreaPtg cla4 = cloneArea(sca4);
+
+        assertEquals("first rel., last abs.", "G5:$H$6", cla1.toFormulaString());
+        assertEquals("first abs., last rel.", "$G$5:H6", cla2.toFormulaString());
+        assertEquals("first rel., last abs.", "H6:$H$6", cla3.toFormulaString());
+        assertEquals("first abs., last rel.", "$H$6:H6", cla4.toFormulaString());
+    }
+    private AreaPtg cloneArea(AreaPtg a)
+    {
+        return new AreaPtg(
+                a.getFirstRow(), a.getLastRow(), a.getFirstColumn(), a.getLastColumn(),
+                a.isFirstRowRelative(), a.isLastRowRelative(), a.isFirstColRelative(), a.isLastColRelative()
+        );
+    }
+	
 	public void testFormulaParser()
 	{
 		String formula1="SUM($E$5:$E$6)";
