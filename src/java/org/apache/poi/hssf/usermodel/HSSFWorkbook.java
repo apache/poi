@@ -46,6 +46,7 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.model.InternalSheet.UnsupportedBOFType;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
@@ -321,8 +322,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         convertLabelRecords(records, recOffset);
         RecordStream rs = new RecordStream(records, recOffset);
         while (rs.hasNext()) {
-            InternalSheet sheet = InternalSheet.createSheet(rs);
-            _sheets.add(new HSSFSheet(this, sheet));
+            try {
+                InternalSheet sheet = InternalSheet.createSheet(rs);
+                _sheets.add(new HSSFSheet(this, sheet));
+            } catch (UnsupportedBOFType eb) {
+                // Hopefully there's a supported one after this!
+                log.log(POILogger.WARN, "Unsupported BOF found of type " + eb.getType());
+            }
         }
 
         for (int i = 0 ; i < workbook.getNumNames() ; ++i){

@@ -2731,4 +2731,15 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             assertEquals("A$1+B$1", s.getRow(row).getCell(2).getCellFormula());
         }        
     }
+
+    /**
+     * Unexpected record type (org.apache.poi.hssf.record.ColumnInfoRecord)
+     */
+    @Test
+    public void bug53984() {
+        Workbook wb = openSample("53984.xls");
+        Sheet s = wb.getSheetAt(0);
+        assertEquals("International Communication Services SA", s.getRow(2).getCell(0).getStringCellValue());
+        assertEquals("Saudi Arabia-Riyadh", s.getRow(210).getCell(0).getStringCellValue());
+    }
 }
