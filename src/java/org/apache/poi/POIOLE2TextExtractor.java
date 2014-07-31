@@ -37,7 +37,7 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	/**
 	 * Creates a new text extractor for the given document
 	 * 
-	 * @param The POIDocument to use in this extractor.
+	 * @param document The POIDocument to use in this extractor.
 	 */
 	public POIOLE2TextExtractor(POIDocument document) {
 		super(document);
