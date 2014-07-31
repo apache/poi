@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
-
 /**
  * XSSF Implementation of a Hyperlink.
  * Note - unlike with HSSF, many kinds of hyperlink
@@ -223,9 +222,16 @@ public class XSSFHyperlink implements Hyperlink {
     protected void setCellReference(String ref) {
         _ctHyperlink.setRef(ref);
     }
+    protected void setCellReference(CellReference ref) {
+        setCellReference(ref.formatAsString());
+    }
 
     private CellReference buildCellReference() {
-        return new CellReference(_ctHyperlink.getRef());
+        String ref = _ctHyperlink.getRef();
+        if (ref == null) {
+            ref = "A1";
+        }
+        return new CellReference(ref);
     }
 
 
@@ -273,15 +279,12 @@ public class XSSFHyperlink implements Hyperlink {
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
     public void setFirstColumn(int col) {
-        _ctHyperlink.setRef(
-                new CellReference(
-                        getFirstRow(), col
-                ).formatAsString()
-        );
+        setCellReference(new CellReference( getFirstRow(), col ));
     }
 
     /**
-     * Set the column of the last cell that contains the hyperlink
+     * Set the column of the last cell that contains the hyperlink.
+     * For XSSF, a Hyperlink may only reference one cell
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
@@ -295,15 +298,12 @@ public class XSSFHyperlink implements Hyperlink {
      * @param row the 0-based row of the first cell that contains the hyperlink
      */
     public void setFirstRow(int row) {
-        _ctHyperlink.setRef(
-                new CellReference(
-                        row, getFirstColumn()
-                ).formatAsString()
-        );
+        setCellReference(new CellReference( row, getFirstColumn() ));
     }
 
     /**
-     * Set the row of the last cell that contains the hyperlink
+     * Set the row of the last cell that contains the hyperlink.
+     * For XSSF, a Hyperlink may only reference one cell
      *
      * @param row the 0-based row of the last cell that contains the hyperlink
      */

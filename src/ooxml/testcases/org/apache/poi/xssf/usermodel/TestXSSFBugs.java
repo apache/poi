@@ -18,7 +18,13 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +50,26 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -1760,6 +1785,36 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         double excelDate = DateUtil.getExcelDate(calendar.getTime());
         NumberEval eval = new NumberEval(Math.floor(excelDate));
         checkValue(excel, eval.getStringValue() + ".0");
+    }
+    
+    @Test
+    public void testBug56527() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFCreationHelper creationHelper = wb.getCreationHelper();
+        XSSFHyperlink hyperlink;
+        
+        // Try with a cell reference
+        hyperlink = creationHelper.createHyperlink(Hyperlink.LINK_URL);
+        sheet.addHyperlink(hyperlink);
+        hyperlink.setAddress("http://myurl");
+        hyperlink.setCellReference("B4");
+        assertEquals(3, hyperlink.getFirstRow());
+        assertEquals(1, hyperlink.getFirstColumn());
+        assertEquals(3, hyperlink.getLastRow());
+        assertEquals(1, hyperlink.getLastColumn());
+        
+        // Try with explicit rows / columns
+        hyperlink = creationHelper.createHyperlink(Hyperlink.LINK_URL);
+        sheet.addHyperlink(hyperlink);
+        hyperlink.setAddress("http://myurl");
+        hyperlink.setFirstRow(5);
+        hyperlink.setFirstColumn(3);
+        
+        assertEquals(5, hyperlink.getFirstRow());
+        assertEquals(3, hyperlink.getFirstColumn());
+        assertEquals(5, hyperlink.getLastRow());
+        assertEquals(3, hyperlink.getLastColumn());
     }
 
     private void checkValue(XSSFWorkbook excel, String expect) {
