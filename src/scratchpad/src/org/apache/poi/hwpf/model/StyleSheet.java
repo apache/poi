@@ -278,14 +278,15 @@ public final class StyleSheet implements HDFType {
           CharacterProperties parentCHP = new CharacterProperties();
           if(baseIndex != NIL_STYLE)
           {
-
               parentCHP = _styleDescriptions[baseIndex].getCHP();
               if(parentCHP == null)
               {
                   createChp(baseIndex);
                   parentCHP = _styleDescriptions[baseIndex].getCHP();
               }
-
+              if(parentCHP == null) {
+                  parentCHP = new CharacterProperties();
+              }
           }
 
           chp = CharacterSprmUncompressor.uncompressCHP(parentCHP, chpx, 0);
