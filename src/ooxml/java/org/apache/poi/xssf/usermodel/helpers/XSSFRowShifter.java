@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel.helpers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -30,6 +31,8 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFName;
@@ -43,9 +46,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatti
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
- * @author Yegor Kozlov
+ * Helper for shifting rows up or down
  */
 public final class XSSFRowShifter {
+    private static POILogger logger = POILogFactory.getLogger(XSSFRowShifter.class);
     private final XSSFSheet sheet;
 
     public XSSFRowShifter(XSSFSheet sh) {
@@ -194,12 +198,19 @@ public final class XSSFRowShifter {
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
-        String shiftedFmla = null;
-        if (shifter.adjustFormula(ptgs, sheetIndex)) {
-            shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+        
+        try {
+            Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
+            String shiftedFmla = null;
+            if (shifter.adjustFormula(ptgs, sheetIndex)) {
+                shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
+            }
+            return shiftedFmla;
+        } catch (FormulaParseException fpe) {
+            // Log, but don't change, rather than breaking
+            logger.log(POILogger.WARN, "Error shifting formula on row ", row.getRowNum(), fpe);
+            return formula;
         }
-        return shiftedFmla;
     }
 
     public void updateConditionalFormatting(FormulaShifter shifter) {
