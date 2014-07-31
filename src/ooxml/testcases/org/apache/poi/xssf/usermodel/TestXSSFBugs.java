@@ -1787,6 +1787,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         checkValue(excel, eval.getStringValue() + ".0");
     }
     
+    /**
+     * New hyperlink with no initial cell reference, still need
+     *  to be able to change it
+     */
     @Test
     public void testBug56527() {
         XSSFWorkbook wb = new XSSFWorkbook();
@@ -1815,6 +1819,30 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(3, hyperlink.getFirstColumn());
         assertEquals(5, hyperlink.getLastRow());
         assertEquals(3, hyperlink.getLastColumn());
+    }
+    
+    /**
+     * Shifting rows with a formula that references a 
+     * function in another file
+     */
+    @Test
+    public void bug56502() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56502.xlsx");
+        Sheet sheet = wb.getSheetAt(0);
+       
+        Cell cFunc = sheet.getRow(3).getCell(0);
+        assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
+        Cell cRef = sheet.getRow(3).createCell(1);
+        cRef.setCellFormula("A3");
+        
+        // Shift it down one row
+        sheet.shiftRows(1, sheet.getLastRowNum(), 1);
+        
+        // Check the new formulas: Function won't change, Reference will
+        cFunc = sheet.getRow(4).getCell(0);
+        assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
+        cRef = sheet.getRow(4).getCell(1);
+        assertEquals("A4", cRef.getCellFormula());
     }
 
     private void checkValue(XSSFWorkbook excel, String expect) {
