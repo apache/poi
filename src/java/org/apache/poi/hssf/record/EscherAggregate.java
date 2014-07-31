@@ -19,7 +19,12 @@ package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherClientDataRecord;
@@ -754,8 +759,15 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      * @param loc - location of the record which sid must be returned
      * @return sid of the record with selected location
      */
-    private static short sid(List <RecordBase>records, int loc) {
-        return ((Record) records.get(loc)).getSid();
+    private static short sid(List<RecordBase> records, int loc) {
+        RecordBase record = records.get(loc);
+        if (record instanceof Record) {
+            return ((Record)record).getSid();
+        } else {
+            // Aggregates don't have a sid
+            // We could step into them, but for these needs we don't care
+            return -1;
+        }
     }
 
     /**
