@@ -227,7 +227,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Add a row label using data from the given column.
-     * @param columnIndex, the index of the column to be used as row label.
+     * @param columnIndex the index of the column to be used as row label.
      */
     @Beta
     public void addRowLabel(int columnIndex) {
@@ -281,8 +281,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Add a column label using data from the given column and specified function
-     * @param columnIndex, the index of the column to be used as column label.
-     * @param function, the function to be used on the data
+     * @param columnIndex the index of the column to be used as column label.
+     * @param function the function to be used on the data
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
      */
@@ -313,8 +313,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Add data field with data from the given column and specified function.
-     * @param function, the function to be used on the data
-     * @param index, the index of the column to be used as column label.
+     * @param function the function to be used on the data
+     * @param index the index of the column to be used as column label.
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
      */
@@ -343,8 +343,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Add column containing data from the referenced area.
-     * @param columnIndex, the index of the column containing the data
-     * @param isDataField, true if the data should be displayed in the pivot table.
+     * @param columnIndex the index of the column containing the data
+     * @param isDataField true if the data should be displayed in the pivot table.
      */
     @Beta
     public void addDataColumn(int columnIndex, boolean isDataField) {
@@ -365,7 +365,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     /**
      * Add filter for the column with the corresponding index and cell value
-     * @param columnIndex, index of column to filter on
+     * @param columnIndex index of column to filter on
      */
     @Beta
     public void addReportFilter(int columnIndex) {
