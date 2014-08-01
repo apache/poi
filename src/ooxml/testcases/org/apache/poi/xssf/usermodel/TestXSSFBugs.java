@@ -74,6 +74,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1843,6 +1844,41 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
         cRef = sheet.getRow(4).getCell(1);
         assertEquals("A4", cRef.getCellFormula());
+    }
+    
+    /**
+     * .xlsb files are not supported, but we should generate a helpful
+     *  error message if given one
+     */
+    @Test
+    public void bug56800_xlsb() throws Exception {
+        // Can be opened at the OPC level
+        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("Simple.xlsb");
+        
+        // XSSF Workbook gives helpful error
+        try {
+            new XSSFWorkbook(pkg);
+            fail(".xlsb files not supported");
+        } catch (XLSBUnsupportedException e) {
+            // Good, detected and warned
+        }
+        
+        // Workbook Factory gives helpful error on package
+        try {
+            WorkbookFactory.create(pkg);
+            fail(".xlsb files not supported");
+        } catch (XLSBUnsupportedException e) {
+            // Good, detected and warned
+        }
+        
+        // Workbook Factory gives helpful error on file
+        File xlsbFile = HSSFTestDataSamples.getSampleFile("Simple.xlsb");
+        try {
+            WorkbookFactory.create(xlsbFile);
+            fail(".xlsb files not supported");
+        } catch (XLSBUnsupportedException e) {
+            // Good, detected and warned
+        }
     }
 
     private void checkValue(XSSFWorkbook excel, String expect) {

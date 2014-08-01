@@ -81,13 +81,19 @@ public final class XSSFRelation extends POIXMLRelation {
         "/xl/workbook.xml",
         null
     );
-
     public static final XSSFRelation MACRO_ADDIN_WORKBOOK = new XSSFRelation(
         "application/vnd.ms-excel.addin.macroEnabled.main+xml",
         PackageRelationshipTypes.CORE_DOCUMENT,
         "/xl/workbook.xml",
         null
     );
+
+    public static final XSSFRelation XLSB_BINARY_WORKBOOK = new XSSFRelation(
+            "application/vnd.ms-excel.sheet.binary.macroEnabled.main",
+            PackageRelationshipTypes.CORE_DOCUMENT,
+            "/xl/workbook.bin",
+            null
+        );
 
     public static final XSSFRelation WORKSHEET = new XSSFRelation(
         "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",

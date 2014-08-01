@@ -18,12 +18,12 @@ package org.apache.poi;
 
 /**
  * Base class of all the exceptions that POI throws in the event
- * that it's given a file that's older than currently supported.
+ * that it's given a file that isn't supported
  */
-public abstract class OldFileFormatException extends UnsupportedFileFormatException {
-    private static final long serialVersionUID = 7849681804154571175L;
+public abstract class UnsupportedFileFormatException extends IllegalArgumentException {
+    private static final long serialVersionUID = -8281969197282030046L;
 
-    public OldFileFormatException(String s) {
+    public UnsupportedFileFormatException(String s) {
 		super(s);
 	}
 }

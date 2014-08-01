@@ -63,6 +63,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.PackageHelper;
+import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 import org.apache.poi.xssf.model.MapInfo;
@@ -228,8 +229,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
         super(pkg);
-
-        //build a tree of POIXMLDocumentParts, this workbook being the root
+        
+        beforeDocumentRead();
+        
+        // Build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
     }
 
@@ -250,7 +253,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public XSSFWorkbook(InputStream is) throws IOException {
         super(PackageHelper.open(is));
 
-        //build a tree of POIXMLDocumentParts, this workbook being the root
+        beforeDocumentRead();
+        
+        // Build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
     }
 
@@ -285,6 +290,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     public XSSFWorkbook(String path) throws IOException {
         this(openPackage(path));
+    }
+    
+    protected void beforeDocumentRead() {
+        // Ensure it isn't a XLSB file, which we don't support
+        if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
+            throw new XLSBUnsupportedException();
+        }
+
+        // Create arrays for parts attached to the workbook itself
+        pivotTables = new ArrayList<XSSFPivotTable>();
+        pivotCaches = new ArrayList<CTPivotCache>();
     }
 
     @Override
@@ -1869,12 +1885,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
     @Beta
     public List<XSSFPivotTable> getPivotTables() {
-        // Lazy create the list. It gets populated with existing ones on sheet setup
-        if (pivotTables == null) {
-            pivotTables = new ArrayList<XSSFPivotTable>();
-            pivotCaches = new ArrayList<CTPivotCache>();
-        }
-
         return pivotTables;
     }
 

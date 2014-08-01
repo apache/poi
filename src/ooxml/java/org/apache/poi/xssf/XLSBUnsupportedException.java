@@ -14,16 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi;
+package org.apache.poi.xssf;
+
+import org.apache.poi.UnsupportedFileFormatException;
 
 /**
- * Base class of all the exceptions that POI throws in the event
- * that it's given a file that's older than currently supported.
+ * We don't support .xlsb files, sorry
  */
-public abstract class OldFileFormatException extends UnsupportedFileFormatException {
+public class XLSBUnsupportedException extends UnsupportedFileFormatException {
     private static final long serialVersionUID = 7849681804154571175L;
+    public static final String MESSAGE = ".XLSB Binary Workbooks are not supported"; 
 
-    public OldFileFormatException(String s) {
-		super(s);
+    public XLSBUnsupportedException() {
+		super(MESSAGE);
 	}
 }
