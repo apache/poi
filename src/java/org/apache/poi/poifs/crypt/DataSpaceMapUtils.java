@@ -69,7 +69,13 @@ public class DataSpaceMapUtils {
         LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(buf, 0);
         out.write(bos);
         
-        return dir.createDocument(parts[parts.length-1], bos.getWriteIndex(), new POIFSWriterListener(){
+        String fileName = parts[parts.length-1];
+        
+        if (dir.hasEntry(fileName)) {
+            dir.getEntry(fileName).delete();
+        }
+        
+        return dir.createDocument(fileName, bos.getWriteIndex(), new POIFSWriterListener(){
             public void processPOIFSWriterEvent(POIFSWriterEvent event) {
                 try {
                     event.getStream().write(buf, 0, event.getLimit());
