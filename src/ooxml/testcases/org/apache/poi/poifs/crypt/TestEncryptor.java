@@ -41,7 +41,10 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestEncryptor {
@@ -225,6 +228,38 @@ public class TestEncryptor {
         byte payloadActual[] = bos.toByteArray();        
         
         assertThat(payloadExpected, equalTo(payloadActual));
+    }
+    
+    @Test
+    @Ignore
+    public void testInPlaceRewrite() throws Exception {
+        File f = TempFile.createTempFile("protected_agile", ".docx");
+        // File f = new File("protected_agile.docx");
+        FileOutputStream fos = new FileOutputStream(f);
+        InputStream fis = POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx");
+        IOUtils.copy(fis, fos);
+        fis.close();
+        fos.close();
+        
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(f, false);
+
+        // decrypt the protected file - in this case it was encrypted with the default password
+        EncryptionInfo encInfo = new EncryptionInfo(fs);
+        Decryptor d = encInfo.getDecryptor();
+        boolean b = d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
+        assertTrue(b);
+
+        // do some strange things with it ;)
+        XWPFDocument docx = new XWPFDocument(d.getDataStream(fs));
+        docx.getParagraphArray(0).insertNewRun(0).setText("POI was here! All your base are belong to us!");
+        docx.getParagraphArray(0).insertNewRun(1).addBreak();
+
+        // and encrypt it again
+        Encryptor e = encInfo.getEncryptor();
+        e.confirmPassword("AYBABTU");
+        docx.write(e.getDataStream(fs));
+        
+        fs.close();
     }
     
     

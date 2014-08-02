@@ -48,6 +48,7 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
         if (info.getVersionMajor() == EncryptionMode.agile.versionMajor
             && info.getVersionMinor() == EncryptionMode.agile.versionMinor) {
             decryptor = new AgileDecryptor(this);
+            encryptor = new AgileEncryptor(this);
         }
     }
 
