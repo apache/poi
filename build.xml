@@ -339,7 +339,21 @@ under the License.
     </target>
 
     <target name="check-jars">
-        <condition property="jars.present">
+    	<!-- remove previous versions of third-party jars to prevent them from lingering around, 
+    		we often had hard-to-find build/CI-problems because of these! -->
+		<delete verbose="true">
+			<fileset dir="${main.lib}">
+	    		<include name="ant-1.8*"/>
+				<include name="asm-all-4*"/>
+				<include name="commons-codec-1.5*"/>
+				<include name="commons-logging-1.1.jar"/>
+				<include name="jacoco-0.6*"/>
+				<include name="log4j-1.2.13*"/>
+				<include name="org.jacoco.*-0.6.*"/>
+			</fileset>
+		</delete>
+
+		<condition property="jars.present">
             <or>
                 <and>
                     <available file="${main.commons-logging.jar}"/>
@@ -1328,8 +1342,8 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, findbugs, rat-check"/>
-
+    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check"/>
+	
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
       <fail unless="maven.ant.tasks.present">
