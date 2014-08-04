@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 
 import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
@@ -99,10 +100,27 @@ public class XSLFPictureShape extends XSLFSimpleShape {
             setAnchor(new java.awt.Rectangle(50, 50, 200, 200));
         }
     }
+    
+    /**
+     * Is this an internal picture (image data included within
+     *  the PowerPoint file), or an external linked picture
+     *  (image lives outside)?
+     */
+    public boolean isExternalLinkedPicture() {
+        if (getBlipId() == null && getBlipLink() != null) {
+            return true;
+        }
+        return false;
+    }
 
+    /**
+     * Return the data on the (internal) picture.
+     * For an external linked picture, will return null
+     */
     public XSLFPictureData getPictureData() {
         if(_data == null){
             String blipId = getBlipId();
+            if (blipId == null) return null;
 
             PackagePart p = getSheet().getPackagePart();
             PackageRelationship rel = p.getRelationship(blipId);
@@ -118,10 +136,45 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         }
         return _data;
     }
+    
+    /**
+     * For an external linked picture, return the last-seen
+     *  path to the picture.
+     * For an internal picture, returns null.
+     */
+    public URI getPictureLink() {
+        if (getBlipId() != null) {
+            // Internal picture, nothing to return
+            return null;
+        }
+        
+        String rId = getBlipLink();
+        if (rId == null) {
+            // No link recorded, nothing we can do
+            return null;
+        }
+        
+        PackagePart p = getSheet().getPackagePart();
+        PackageRelationship rel = p.getRelationship(rId);
+        if (rel != null) {
+            return rel.getTargetURI();
+        }
+        return null;
+    }
 
-    private String getBlipId(){
+    private CTBlip getBlip(){
         CTPicture ct = (CTPicture)getXmlObject();
-        return ct.getBlipFill().getBlip().getEmbed();
+        return ct.getBlipFill().getBlip();
+    }
+    private String getBlipLink(){
+        String link = getBlip().getLink();
+        if (link.isEmpty()) return null;
+        return link;
+    }
+    private String getBlipId(){
+        String id = getBlip().getEmbed();
+        if (id.isEmpty()) return null;
+        return id;
     }
 
     @Override
