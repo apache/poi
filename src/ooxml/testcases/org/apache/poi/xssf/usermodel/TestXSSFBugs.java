@@ -1860,9 +1860,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         // Now check the spreadsheet itself
         // TODO Fix then enable
-//        XSSFWorkbook wb = new XSSFWorkbook(pkg);
-//        XSSFSheet s = wb.getSheetAt(0);
-        // TODO Check
+/*        
+        try {
+            new XSSFWorkbook(pkg);
+            fail("Should fail as too much expansion occurs");
+        } catch(POIXMLException e) {
+            // Expected
+        } */
+        
+        // Try with one with the entities in the Content Types
+        try {
+            XSSFTestDataSamples.openSamplePackage("54764-2.xlsx");
+            fail("Should fail as too much expansion occurs");
+        } catch(Exception e) {
+            // Expected
+        }
     }
     
     /**
