@@ -144,24 +144,34 @@ public class TestXSLFBugs extends POITestCase {
      * there is no data available and XSLFPictureShape.getPictureData()
      * gives a NPE, see bug #56812
      */
-    public void DISABLEDtest56812() throws Exception {
+    public void test56812() throws Exception {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("56812.pptx");
         
-        int pictures = 0;
+        int internalPictures = 0;
+        int externalPictures = 0;
         for (XSLFSlide slide : ppt.getSlides()){
             for (XSLFShape shape : slide.getShapes()){
                 assertNotNull(shape);
                 
                 if (shape instanceof XSLFPictureShape) {
-                    XSLFPictureData data = ((XSLFPictureShape) shape).getPictureData();
-                    assertNotNull(data);
-                    assertNotNull(data.getFileName());
-                    pictures++;
+                    XSLFPictureShape picture = (XSLFPictureShape)shape;
+                    if (picture.isExternalLinkedPicture()) {
+                        externalPictures++;
+                        
+                        assertNotNull(picture.getPictureLink());
+                    } else {
+                        internalPictures++;
+                        
+                        XSLFPictureData data = picture.getPictureData();
+                        assertNotNull(data);
+                        assertNotNull(data.getFileName());
+                    }
                 }
             }
         }
         
-        assertEquals(3, pictures);
+        assertEquals(2, internalPictures);
+        assertEquals(1, externalPictures);
     }
     
     protected String getSlideText(XSLFSlide slide) {
