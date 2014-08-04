@@ -19,28 +19,34 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+
+import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtension;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtensionList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 
-import javax.imageio.ImageIO;
-import javax.xml.namespace.QName;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-
 /**
  * Represents a picture shape
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFPictureShape extends XSLFSimpleShape {

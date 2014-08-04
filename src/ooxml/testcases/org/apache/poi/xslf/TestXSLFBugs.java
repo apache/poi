@@ -25,7 +25,10 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
 import org.apache.poi.xslf.usermodel.DrawingTextBody;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFPictureData;
+import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
 
@@ -134,6 +137,31 @@ public class TestXSLFBugs extends POITestCase {
         
         slide = ss.getSlides()[3];
         assertContains("POI can read this", getSlideText(slide));
+    }
+    
+    /**
+     * When the picture is not embedded but inserted only as a "link to file", 
+     * there is no data available and XSLFPictureShape.getPictureData()
+     * gives a NPE, see bug #56812
+     */
+    public void DISABLEDtest56812() throws Exception {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("56812.pptx");
+        
+        int pictures = 0;
+        for (XSLFSlide slide : ppt.getSlides()){
+            for (XSLFShape shape : slide.getShapes()){
+                assertNotNull(shape);
+                
+                if (shape instanceof XSLFPictureShape) {
+                    XSLFPictureData data = ((XSLFPictureShape) shape).getPictureData();
+                    assertNotNull(data);
+                    assertNotNull(data.getFileName());
+                    pictures++;
+                }
+            }
+        }
+        
+        assertEquals(3, pictures);
     }
     
     protected String getSlideText(XSLFSlide slide) {
