@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -1844,6 +1845,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
         cRef = sheet.getRow(4).getCell(1);
         assertEquals("A4", cRef.getCellFormula());
+    }
+    
+    @Test
+    public void bug54764() throws Exception {
+        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("54764.xlsx");
+        
+        // Check the core properties - will be found but empty, due
+        //  to the expansion being too much to be considered valid
+        POIXMLProperties props = new POIXMLProperties(pkg);
+        assertEquals(null, props.getCoreProperties().getTitle());
+        assertEquals(null, props.getCoreProperties().getSubject());
+        assertEquals(null, props.getCoreProperties().getDescription());
+        
+        // Now check the spreadsheet itself
+        // TODO Fix then enable
+//        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+//        XSSFSheet s = wb.getSheetAt(0);
+        // TODO Check
     }
     
     /**
