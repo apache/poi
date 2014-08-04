@@ -150,9 +150,12 @@ under the License.
     <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.dom4j.jar" location="${ooxml.lib}/dom4j-1.6.1.jar"/>
     <property name="ooxml.dom4j.url" value="${repository.m2}/maven2/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
-    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
-    <property name="ooxml.xmlbeans.url"
+    <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
+    <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
+    <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
+    <property name="ooxml.xmlbeans26.url"
+              value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.3.0.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.1.201405082137.zip"/>
@@ -219,7 +222,7 @@ under the License.
 
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.dom4j.jar}"/>
-        <pathelement location="${ooxml.xmlbeans.jar}"/>
+        <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -249,7 +252,7 @@ under the License.
 
     <path id="ooxml-lite.classpath">
         <pathelement location="${ooxml.dom4j.jar}"/>
-        <pathelement location="${ooxml.xmlbeans.jar}"/>
+        <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="build/ooxml-xsds-lite"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -427,7 +430,8 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.dom4j.jar}"/>
-                    <available file="${ooxml.xmlbeans.jar}"/>
+                    <available file="${ooxml.xmlbeans23.jar}"/>
+                    <available file="${ooxml.xmlbeans26.jar}"/>
                     <available file="${ooxml.xsds.jar}"/>
                 </and>
                 <isset property="disconnected"/>
@@ -441,8 +445,12 @@ under the License.
             <param name="destfile" value="${ooxml.dom4j.jar}"/>
         </antcall>
         <antcall target="downloadfile">
-            <param name="sourcefile" value="${ooxml.xmlbeans.url}"/>
-            <param name="destfile" value="${ooxml.xmlbeans.jar}"/>
+            <param name="sourcefile" value="${ooxml.xmlbeans23.url}"/>
+            <param name="destfile" value="${ooxml.xmlbeans23.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${ooxml.xmlbeans26.url}"/>
+            <param name="destfile" value="${ooxml.xmlbeans26.jar}"/>
         </antcall>
     </target>
 
@@ -488,7 +496,7 @@ under the License.
 
         <taskdef name="xmlbean"
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans.jar}"/>
+                 classpath="${ooxml.xmlbeans23.jar}"/>
 
         <!-- We need a fair amount of memory to compile the xml schema, -->
         <!--  but limit it in case it goes wrong! -->
@@ -527,7 +535,7 @@ under the License.
             description="Compiles the OOXML encryption xsd files into XmlBeans">
         <taskdef name="xmlbean"
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans.jar}"/>
+                 classpath="${ooxml.xmlbeans23.jar}"/>
 
         <!-- We need a fair amount of memory to compile the xml schema, -->
         <!--  but limit it in case it goes wrong! -->
@@ -1281,7 +1289,7 @@ under the License.
             </zipfileset>
             <zipfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
-              <include name="xmlbeans-*.jar"/>
+              <include name="xmlbeans-2.6*.jar"/>
             </zipfileset>
             <zipfileset dir="${dist.dir}" prefix="${zipdir}">
                 <patternset refid="bin.dist.jars"/>
@@ -1309,7 +1317,7 @@ under the License.
             </zipfileset>
             <tarfileset dir="${ooxml.lib}" prefix="${zipdir}/ooxml-lib">
               <include name="dom4j-*.jar"/>
-              <include name="xmlbeans-*.jar"/>
+              <include name="xmlbeans-2.6*.jar"/>
             </tarfileset>
             <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <tarfileset dir="${dist.dir}" prefix="${zipdir}">
@@ -1440,7 +1448,7 @@ under the License.
 			</fileset>
 			<auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
 			<auxClasspath path="ooxml-lib/ooxml-encryption-1.1.jar" />
-			<auxClasspath path="ooxml-lib/xmlbeans-2.3.0.jar" />
+			<auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
 			<auxClasspath path="ooxml-lib/dom4j-1.6.1.jar" />
 			<auxClasspath path="lib/commons-codec-1.9.jar" />
 			<auxClasspath path="lib/commons-logging-1.1.3.jar" />
