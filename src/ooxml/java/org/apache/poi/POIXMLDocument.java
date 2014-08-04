@@ -35,6 +35,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
+import org.apache.xmlbeans.impl.common.SystemCache;
 
 public abstract class POIXMLDocument extends POIXMLDocumentPart{
     public static final String DOCUMENT_CREATOR = "Apache POI";
@@ -56,6 +57,11 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
     protected POIXMLDocument(OPCPackage pkg) {
         super(pkg);
         this.pkg = pkg;
+        
+        // Workaround for XMLBEANS-512 - ensure that when we parse
+        //  the file, we start with a fresh XML Parser each time,
+        //  and avoid the risk of getting a SaxHandler that's in error
+        SystemCache.get().setSaxLoader(null);
     }
 
     /**

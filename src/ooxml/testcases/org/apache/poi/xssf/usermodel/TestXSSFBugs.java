@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -1859,14 +1860,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(null, props.getCoreProperties().getDescription());
         
         // Now check the spreadsheet itself
-        // TODO Fix then enable
-/*        
         try {
             new XSSFWorkbook(pkg);
             fail("Should fail as too much expansion occurs");
         } catch(POIXMLException e) {
             // Expected
-        } */
+        }
         
         // Try with one with the entities in the Content Types
         try {
@@ -1875,6 +1874,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         } catch(Exception e) {
             // Expected
         }
+        
+        // Check we can still parse valid files after all that
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+        assertEquals(3, wb.getNumberOfSheets());
     }
     
     /**
