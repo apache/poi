@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 
+import org.apache.poi.util.SAXHelper;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.util.POILogger;
@@ -298,21 +298,19 @@ public final class PackageRelationshipCollection implements
 		return relationshipsByID.values().size();
 	}
 
-	/**
-	 * Parse the relationship part and add all relationship in this collection.
-	 *
-	 * @param relPart
-	 *            The package part to parse.
-	 * @throws InvalidFormatException
-	 *             Throws if the relationship part is invalid.
-	 */
-	private void parseRelationshipsPart(PackagePart relPart)
-			throws InvalidFormatException {
-		try {
-			SAXReader reader = new SAXReader();
-			logger.log(POILogger.DEBUG, "Parsing relationship: " + relPart.getPartName());
-			Document xmlRelationshipsDoc = reader
-					.read(relPart.getInputStream());
+    /**
+     * Parse the relationship part and add all relationship in this collection.
+     *
+     * @param relPart
+     *            The package part to parse.
+     * @throws InvalidFormatException
+     *             Throws if the relationship part is invalid.
+     */
+    private void parseRelationshipsPart(PackagePart relPart)
+            throws InvalidFormatException {
+        try {
+            logger.log(POILogger.DEBUG, "Parsing relationship: " + relPart.getPartName());
+            Document xmlRelationshipsDoc = SAXHelper.readSAXDocument(relPart.getInputStream());
 
 			// Browse default types
 			Element root = xmlRelationshipsDoc.getRootElement();
