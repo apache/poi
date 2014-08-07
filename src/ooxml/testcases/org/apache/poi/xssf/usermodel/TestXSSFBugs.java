@@ -32,6 +32,8 @@ import java.util.List;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -1440,4 +1442,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     		fail("Should've raised a EncryptedDocumentException error");
     	} catch (EncryptedDocumentException e) {}
     }
+
+    @Test
+    public void bug54764() throws Exception {
+        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("54764.xlsx");
+        
+        // Check the core properties - will be found but empty, due
+        //  to the expansion being too much to be considered valid
+        POIXMLProperties props = new POIXMLProperties(pkg);
+        assertEquals(null, props.getCoreProperties().getTitle());
+        assertEquals(null, props.getCoreProperties().getSubject());
+        assertEquals(null, props.getCoreProperties().getDescription());
+        
+        // Now check the spreadsheet itself
+        try {
+            new XSSFWorkbook(pkg);
+            fail("Should fail as too much expansion occurs");
+        } catch(POIXMLException e) {
+            // Expected
+        }
+        
+        // Try with one with the entities in the Content Types
+        try {
+            XSSFTestDataSamples.openSamplePackage("54764-2.xlsx");
+            fail("Should fail as too much expansion occurs");
+        } catch(Exception e) {
+            // Expected
+        }
+        
+        // Check we can still parse valid files after all that
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
+        assertEquals(3, wb.getNumberOfSheets());
+    }
+    
 }

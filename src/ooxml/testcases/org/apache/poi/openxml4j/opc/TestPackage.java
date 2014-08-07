@@ -17,10 +17,19 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
@@ -31,15 +40,15 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.util.TempFile;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SAXHelper;
+import org.apache.poi.util.TempFile;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
 import org.dom4j.QName;
-import org.dom4j.io.SAXReader;
 
 public final class TestPackage extends TestCase {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
@@ -211,9 +220,8 @@ public final class TestPackage extends TestCase {
     private void assertMSCompatibility(OPCPackage pkg) throws Exception {
         PackagePartName relName = PackagingURIHelper.createPartName(PackageRelationship.getContainerPartRelationship());
         PackagePart relPart = pkg.getPart(relName);
-        SAXReader reader = new SAXReader();
-        Document xmlRelationshipsDoc = reader
-                .read(relPart.getInputStream());
+
+        Document xmlRelationshipsDoc = SAXHelper.readSAXDocument(relPart.getInputStream());
 
         Element root = xmlRelationshipsDoc.getRootElement();
         for (Iterator i = root
