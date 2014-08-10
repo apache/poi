@@ -280,7 +280,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
-        ctSigV1.setManifestHashAlgorithm("http://www.w3.org/2000/09/xmldsig#sha1");
+        ctSigV1.setManifestHashAlgorithm(hashAlgo.xmlSignUri);
         Node n = ctSigV1.getDomNode();
         ((Element)n).setAttributeNS(Constants.NamespaceSpecNS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
         

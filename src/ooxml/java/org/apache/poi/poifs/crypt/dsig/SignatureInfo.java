@@ -133,7 +133,7 @@ public class SignatureInfo {
         byte[] signatureValue;
         try {
             ByteArrayOutputStream digestInfoValueBuf = new ByteArrayOutputStream();
-            digestInfoValueBuf.write(SHA1_DIGEST_INFO_PREFIX);
+            digestInfoValueBuf.write(getHashMagic(hashAlgo));
             digestInfoValueBuf.write(digestInfo.digestValue);
             byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
             signatureValue = cipher.doFinal(digestInfoValue);
@@ -256,6 +256,20 @@ public class SignatureInfo {
                 Element el = (Element)cur.getDomNode();
                 if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
             }
+        }
+    }
+    
+    protected static byte[] getHashMagic(HashAlgorithm hashAlgo) {
+        switch (hashAlgo) {
+        case sha1: return SHA1_DIGEST_INFO_PREFIX;
+        // sha224: return SHA224_DIGEST_INFO_PREFIX;
+        case sha256: return SHA256_DIGEST_INFO_PREFIX;
+        case sha384: return SHA384_DIGEST_INFO_PREFIX;
+        case sha512: return SHA512_DIGEST_INFO_PREFIX;
+        case ripemd128: return RIPEMD128_DIGEST_INFO_PREFIX;
+        case ripemd160: return RIPEMD160_DIGEST_INFO_PREFIX;
+        // case ripemd256: return RIPEMD256_DIGEST_INFO_PREFIX;
+        default: throw new EncryptedDocumentException("Hash algorithm "+hashAlgo+" not supported for signing.");
         }
     }
     
