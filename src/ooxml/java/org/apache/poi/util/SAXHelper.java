@@ -22,8 +22,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 
-import javax.xml.XMLConstants;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
@@ -37,6 +35,9 @@ import org.xml.sax.SAXException;
  */
 public final class SAXHelper {
     private static POILogger logger = POILogFactory.getLogger(SAXHelper.class);
+    
+    // remove this constant once on Java 6 and stax-api.jar was removed (which is missing this constant):
+    private static final String FEATURE_SECURE_PROCESSING = "http://javax.xml.XMLConstants/feature/secure-processing";
             
     /**
      * Creates a new SAX Reader, with sensible defaults
@@ -50,7 +51,7 @@ public final class SAXHelper {
                 return new InputSource(new StringReader(""));
             }
         });
-        trySetSAXFeature(xmlReader, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetSAXFeature(xmlReader, FEATURE_SECURE_PROCESSING, true);
         trySetXercesSecurityManager(xmlReader);
         return xmlReader;
     }
