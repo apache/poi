@@ -181,7 +181,9 @@ under the License.
 	<property name="ooxml.xsds.dc.1" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dc.xsd"/>
 	<property name="ooxml.xsds.dc.2" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd"/>
 	<property name="ooxml.xsds.dc.3" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd"/>
-	<property name="ooxml.xsds.dsig" value="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+	<property name="ooxml.xsds.dsig.1" value="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+	<property name="ooxml.xsds.dsig.2" value="http://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
+	<property name="ooxml.xsds.dsig.3" value="http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
     <property name="ooxml.xsds.ozip.2" value="OfficeOpenXML-Part2.zip"/>
     <property name="ooxml.xsds.izip.2" value="OpenPackagingConventions-XMLSchema.zip"/>
     <property name="ooxml.xsds.url.2"
@@ -483,7 +485,9 @@ under the License.
         	<url url="${ooxml.xsds.dc.1}"/>
         	<url url="${ooxml.xsds.dc.2}"/>
         	<url url="${ooxml.xsds.dc.3}"/>
-        	<url url="${ooxml.xsds.dsig}"/>
+        	<url url="${ooxml.xsds.dsig.1}"/>
+        	<url url="${ooxml.xsds.dsig.2}"/>
+        	<url url="${ooxml.xsds.dsig.3}"/>
         	<chainedmapper>
         		<flattenmapper/>
 	        	<firstmatchmapper>
@@ -550,7 +554,7 @@ under the License.
         <unzip src="${ooxml.lib}/${ooxml.xsds.izip.2}" dest="${ooxml.enc.xsds.tmp.dir}"/>
     	
     	<copy todir="${ooxml.enc.xsds.tmp.dir}">
-    		<fileset dir="${ooxml.lib}" includes="dc*.xsd,xmldsig*.xsd"/>
+    		<fileset dir="${ooxml.lib}" includes="dc*.xsd,xmldsig*.xsd,XAdES*.xsd"/>
     		<fileset dir="${ooxml.encryption.xsd.dir}"/>
     	</copy>
 
