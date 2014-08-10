@@ -306,7 +306,7 @@ public final class PackageRelationshipCollection implements
      * @throws InvalidFormatException
      *             Throws if the relationship part is invalid.
      */
-    private void parseRelationshipsPart(PackagePart relPart)
+    public void parseRelationshipsPart(PackagePart relPart)
             throws InvalidFormatException {
         try {
             logger.log(POILogger.DEBUG, "Parsing relationship: " + relPart.getPartName());

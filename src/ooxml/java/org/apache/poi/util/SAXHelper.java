@@ -23,6 +23,9 @@ import java.io.StringReader;
 import java.lang.reflect.Method;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -88,5 +91,73 @@ public final class SAXHelper {
      */
     public static Document readSAXDocument(InputStream inp) throws DocumentException {
         return getSAXReader().read(inp);
+    }
+    
+    private static final EntityResolver IGNORING_ENTITY_RESOLVER = new EntityResolver() {
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
+        }
+    };
+
+    private static void trySetSAXFeature(DocumentBuilderFactory documentBuilderFactory, String feature, boolean enabled) {
+        try {
+            documentBuilderFactory.setFeature(feature, enabled);
+        } catch (Exception e) {
+            logger.log(POILogger.INFO, "SAX Feature unsupported", feature, e);
+        }
+    }
+    private static void trySetXercesSecurityManager(DocumentBuilderFactory documentBuilderFactory) {
+        // Try built-in JVM one first, standalone if not
+        for (String securityManagerClassName : new String[] {
+                "com.sun.org.apache.xerces.internal.util.SecurityManager",
+                "org.apache.xerces.util.SecurityManager"
+        }) {
+            try {
+                Object mgr = Class.forName(securityManagerClassName).newInstance();
+                Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
+                setLimit.invoke(mgr, 4096);
+                documentBuilderFactory.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
+                // Stop once one can be setup without error
+                return;
+            } catch (Exception e) {
+                logger.log(POILogger.INFO, "SAX Security Manager could not be setup", e);
+            }
+        }
+    }
+    
+    private static final ThreadLocal<DocumentBuilder> documentBuilder = new ThreadLocal<DocumentBuilder>() {
+        @Override
+        protected DocumentBuilder initialValue() {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setValidating(false);
+            trySetSAXFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            trySetXercesSecurityManager(factory);
+            try {
+                return factory.newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                throw new IllegalStateException("cannot create a DocumentBuilder", e);
+            }
+        }
+
+        @Override
+        public DocumentBuilder get() {
+            DocumentBuilder documentBuilder = super.get();
+            documentBuilder.reset();
+            documentBuilder.setEntityResolver(IGNORING_ENTITY_RESOLVER);
+            return documentBuilder;
+        }
+    };
+    
+    /**
+     * Parses the given stream via the default (sensible)
+     * SAX Reader
+     * @param inp Stream to read the XML data from
+     * @return the SAX processed Document 
+     */
+    public static org.w3c.dom.Document readSAXDocumentW3C(InputStream inp) throws IOException, SAXException {
+        return documentBuilder.get().parse(inp);
     }
 }
