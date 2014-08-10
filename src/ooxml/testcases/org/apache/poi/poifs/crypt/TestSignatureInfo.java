@@ -52,9 +52,9 @@ import javax.crypto.Cipher;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.poifs.crypt.dsig.HorribleProxies.KeyUsageIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.KeyUsageIf;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.IOUtils;
@@ -164,6 +164,7 @@ public class TestSignatureInfo {
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
         SignatureInfo si = new SignatureInfo(pkg);
         initKeyPair("Test", "CN=Test");
+        // hash > sha1 doesn't work in excel viewer ...
         si.confirmSignature(keyPair.getPrivate(), x509, HashAlgorithm.sha1);
         List<X509Certificate> signer = si.getSigners();
         assertEquals(1, signer.size());
