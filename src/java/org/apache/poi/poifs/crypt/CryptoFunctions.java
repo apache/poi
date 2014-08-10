@@ -19,6 +19,7 @@ package org.apache.poi.poifs.crypt;
 import java.nio.charset.Charset;
 import java.security.DigestException;
 import java.security.GeneralSecurityException;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
@@ -189,7 +190,7 @@ public class CryptoFunctions {
      * @return the requested cipher
      * @throws GeneralSecurityException
      */
-    public static Cipher getCipher(SecretKey key, CipherAlgorithm cipherAlgorithm, ChainingMode chain, byte[] vec, int cipherMode, String padding) {
+    public static Cipher getCipher(Key key, CipherAlgorithm cipherAlgorithm, ChainingMode chain, byte[] vec, int cipherMode, String padding) {
         int keySizeInBytes = key.getEncoded().length;
         if (padding == null) padding = "NoPadding";
         
@@ -274,7 +275,7 @@ public class CryptoFunctions {
     }
 
     @SuppressWarnings("unchecked")
-    private static void registerBouncyCastle() {
+    public static void registerBouncyCastle() {
         if (Security.getProvider("BC") != null) return;
         try {
             Class<Provider> clazz = (Class<Provider>)Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");

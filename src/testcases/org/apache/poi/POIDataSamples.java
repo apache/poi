@@ -44,6 +44,7 @@ public final class POIDataSamples {
     private static POIDataSamples _instHPSF;
     private static POIDataSamples _instHPBF;
     private static POIDataSamples _instHSMF;
+    private static POIDataSamples _instXmlDSign;
 
     private File _resolvedDataDir;
     /** <code>true</code> if standard system propery is not set,
@@ -114,6 +115,12 @@ public final class POIDataSamples {
         if(_instHSMF == null) _instHSMF = new POIDataSamples("hsmf");
         return _instHSMF;
     }
+
+    public static POIDataSamples getXmlDSignInstance(){
+        if(_instXmlDSign == null) _instXmlDSign = new POIDataSamples("xmldsign");
+        return _instXmlDSign;
+    }
+    
     /**
      * Opens a sample file from the test data directory
      *
