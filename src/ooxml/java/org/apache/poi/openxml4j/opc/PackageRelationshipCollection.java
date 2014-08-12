@@ -27,9 +27,10 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SAXHelper;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.Element;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Represents a collection of PackageRelationship elements that are owned by a
@@ -313,22 +314,19 @@ public final class PackageRelationshipCollection implements
             Document xmlRelationshipsDoc = SAXHelper.readSAXDocument(relPart.getInputStream());
 
             // Browse default types
-            Element root = xmlRelationshipsDoc.getRootElement();
+            Element root = xmlRelationshipsDoc.getDocumentElement();
 
             // Check OPC compliance M4.1 rule
             boolean fCorePropertiesRelationship = false;
 
-            @SuppressWarnings("unchecked")
-            Iterator<Element> iter = (Iterator<Element>)
-                root.elementIterator(PackageRelationship.RELATIONSHIP_TAG_NAME);
-            while (iter.hasNext()) {
-                Element element = iter.next();
+            NodeList nodeList = root.getElementsByTagName(PackageRelationship.RELATIONSHIP_TAG_NAME);
+            int nodeCount = nodeList.getLength();
+            for (int i = 0; i < nodeCount; i++) {
+                Element element = (Element)nodeList.item(i);
                 // Relationship ID
-                String id = element.attribute(
-                        PackageRelationship.ID_ATTRIBUTE_NAME).getValue();
+                String id = element.getAttribute(PackageRelationship.ID_ATTRIBUTE_NAME);
                 // Relationship type
-                String type = element.attribute(
-                        PackageRelationship.TYPE_ATTRIBUTE_NAME).getValue();
+                String type = element.getAttribute(PackageRelationship.TYPE_ATTRIBUTE_NAME);
 
                 /* Check OPC Compliance */
                 // Check Rule M4.1
@@ -342,8 +340,7 @@ public final class PackageRelationshipCollection implements
                 /* End OPC Compliance */
 
                 // TargetMode (default value "Internal")
-                Attribute targetModeAttr = element
-                        .attribute(PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME);
+                Attr targetModeAttr = element.getAttributeNode(PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME);
                 TargetMode targetMode = TargetMode.INTERNAL;
                 if (targetModeAttr != null) {
                     targetMode = targetModeAttr.getValue().toLowerCase()
@@ -353,9 +350,7 @@ public final class PackageRelationshipCollection implements
 
                 // Target converted in URI
                 URI target = PackagingURIHelper.toURI("http://invalid.uri"); // dummy url
-                String value = element.attribute(
-                        PackageRelationship.TARGET_ATTRIBUTE_NAME)
-                        .getValue();
+                String value = element.getAttribute(PackageRelationship.TARGET_ATTRIBUTE_NAME);
                 try {
                     // when parsing of the given uri fails, we can either
                     // ignore this relationship, which leads to IllegalStateException

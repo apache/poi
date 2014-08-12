@@ -21,7 +21,7 @@ import java.io.File;
 
 /**
  * Storage class for configuration storage parameters.
- * TODO xml syntax checking is no longer done with DOM4j parser -> remove the schema or do it ?
+ * TODO xml syntax checking is not done with JAXP by default -> remove the schema or do it ?
  *
  * @author CDubettier, Julen Chable
  * @version 1.0
