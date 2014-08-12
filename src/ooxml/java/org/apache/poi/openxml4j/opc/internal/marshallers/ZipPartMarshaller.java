@@ -24,11 +24,6 @@ import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -40,8 +35,11 @@ import org.apache.poi.openxml4j.opc.StreamHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Zip part marshaller. This marshaller is use to save any part in a zip stream.
@@ -122,9 +120,8 @@ public final class ZipPartMarshaller implements PartMarshaller {
 		Document xmlOutDoc = DocumentHelper.createDocument();
 		// make something like <Relationships
 		// xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-		Namespace dfNs = Namespace.get("", PackageNamespaces.RELATIONSHIPS);
-		Element root = xmlOutDoc.addElement(new QName(
-				PackageRelationship.RELATIONSHIPS_TAG_NAME, dfNs));
+		Element root = xmlOutDoc.createElementNS(PackageNamespaces.RELATIONSHIPS, PackageRelationship.RELATIONSHIPS_TAG_NAME);
+        xmlOutDoc.appendChild(root);
 
 		// <Relationship
 		// TargetMode="External"
@@ -137,16 +134,14 @@ public final class ZipPartMarshaller implements PartMarshaller {
 
 		for (PackageRelationship rel : rels) {
 			// the relationship element
-			Element relElem = root
-					.addElement(PackageRelationship.RELATIONSHIP_TAG_NAME);
+            Element relElem = xmlOutDoc.createElement(PackageRelationship.RELATIONSHIP_TAG_NAME);
+            root.appendChild(relElem);
 
 			// the relationship ID
-			relElem.addAttribute(PackageRelationship.ID_ATTRIBUTE_NAME, rel
-					.getId());
+			relElem.setAttribute(PackageRelationship.ID_ATTRIBUTE_NAME, rel.getId());
 
 			// the relationship Type
-			relElem.addAttribute(PackageRelationship.TYPE_ATTRIBUTE_NAME, rel
-					.getRelationshipType());
+			relElem.setAttribute(PackageRelationship.TYPE_ATTRIBUTE_NAME, rel.getRelationshipType());
 
 			// the relationship Target
 			String targetValue;
@@ -157,16 +152,13 @@ public final class ZipPartMarshaller implements PartMarshaller {
 				targetValue = uri.toString();
 
 				// add TargetMode attribute (as it is external link external)
-				relElem.addAttribute(
-						PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME,
-						"External");
+				relElem.setAttribute(PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME, "External");
 			} else {
                 URI targetURI = rel.getTargetURI();
                 targetValue = PackagingURIHelper.relativizeURI(
 						sourcePartURI, targetURI, true).toString();
 			}
-			relElem.addAttribute(PackageRelationship.TARGET_ATTRIBUTE_NAME,
-					targetValue);
+			relElem.setAttribute(PackageRelationship.TARGET_ATTRIBUTE_NAME, targetValue);
 		}
 
 		xmlOutDoc.normalize();

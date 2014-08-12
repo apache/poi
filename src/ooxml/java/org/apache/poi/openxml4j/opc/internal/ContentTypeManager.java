@@ -17,12 +17,11 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -33,13 +32,12 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.SAXHelper;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Manage package content types ([Content_Types].xml part).
@@ -376,38 +374,33 @@ public abstract class ContentTypeManager {
 			Document xmlContentTypetDoc = SAXHelper.readSAXDocument(in);
 
 			// Default content types
-			List defaultTypes = xmlContentTypetDoc.getRootElement().elements(
-					DEFAULT_TAG_NAME);
-			Iterator elementIteratorDefault = defaultTypes.iterator();
-			while (elementIteratorDefault.hasNext()) {
-				Element element = (Element) elementIteratorDefault.next();
-				String extension = element.attribute(EXTENSION_ATTRIBUTE_NAME)
-						.getValue();
-				String contentType = element.attribute(
-						CONTENT_TYPE_ATTRIBUTE_NAME).getValue();
+			NodeList defaultTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagName(DEFAULT_TAG_NAME);
+			int defaultTypeCount = defaultTypes.getLength();
+			for (int i = 0; i < defaultTypeCount; i++) {
+                Element element = (Element) defaultTypes.item(i);
+				String extension = element.getAttribute(EXTENSION_ATTRIBUTE_NAME);
+				String contentType = element.getAttribute(CONTENT_TYPE_ATTRIBUTE_NAME);
 				addDefaultContentType(extension, contentType);
 			}
 
 			// Overriden content types
-			List overrideTypes = xmlContentTypetDoc.getRootElement().elements(
-					OVERRIDE_TAG_NAME);
-			Iterator elementIteratorOverride = overrideTypes.iterator();
-			while (elementIteratorOverride.hasNext()) {
-				Element element = (Element) elementIteratorOverride.next();
-				URI uri = new URI(element.attribute(PART_NAME_ATTRIBUTE_NAME)
-						.getValue());
-				PackagePartName partName = PackagingURIHelper
-						.createPartName(uri);
-				String contentType = element.attribute(
-						CONTENT_TYPE_ATTRIBUTE_NAME).getValue();
+            NodeList overrideTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagName(OVERRIDE_TAG_NAME);
+            int overrideTypeCount = overrideTypes.getLength();
+            for (int i = 0; i < overrideTypeCount; i++) {
+				Element element = (Element) overrideTypes.item(i);
+				URI uri = new URI(element.getAttribute(PART_NAME_ATTRIBUTE_NAME));
+				PackagePartName partName = PackagingURIHelper.createPartName(uri);
+				String contentType = element.getAttribute(CONTENT_TYPE_ATTRIBUTE_NAME);
 				addOverrideContentType(partName, contentType);
 			}
 		} catch (URISyntaxException urie) {
 			throw new InvalidFormatException(urie.getMessage());
-		} catch (DocumentException e) {
-			throw new InvalidFormatException(e.getMessage());
-		}
-	}
+        } catch (SAXException e) {
+            throw new InvalidFormatException(e.getMessage());
+        } catch (IOException e) {
+            throw new InvalidFormatException(e.getMessage());
+        }
+    }
 
 	/**
 	 * Save the contents type part.
@@ -421,9 +414,8 @@ public abstract class ContentTypeManager {
 		Document xmlOutDoc = DocumentHelper.createDocument();
 
 		// Building namespace
-		Namespace dfNs = Namespace.get("", TYPES_NAMESPACE_URI);
-		Element typesElem = xmlOutDoc
-				.addElement(new QName(TYPES_TAG_NAME, dfNs));
+		Element typesElem = xmlOutDoc.createElementNS(TYPES_NAMESPACE_URI, TYPES_TAG_NAME);
+        xmlOutDoc.appendChild(typesElem);
 
 		// Adding default types
 		for (Entry<String, String> entry : defaultContentType.entrySet()) {
@@ -454,10 +446,10 @@ public abstract class ContentTypeManager {
 	 */
 	private void appendSpecificTypes(Element root,
 			Entry<PackagePartName, String> entry) {
-		root.addElement(OVERRIDE_TAG_NAME).addAttribute(
-				PART_NAME_ATTRIBUTE_NAME,
-				entry.getKey().getName()).addAttribute(
-				CONTENT_TYPE_ATTRIBUTE_NAME, entry.getValue());
+        Element specificType = root.getOwnerDocument().createElement(OVERRIDE_TAG_NAME);
+        specificType.setAttribute(PART_NAME_ATTRIBUTE_NAME, entry.getKey().getName());
+        specificType.setAttribute(CONTENT_TYPE_ATTRIBUTE_NAME, entry.getValue());
+        root.appendChild(specificType);
 	}
 
 	/**
@@ -470,11 +462,10 @@ public abstract class ContentTypeManager {
 	 * @see #save(java.io.OutputStream)
 	 */
 	private void appendDefaultType(Element root, Entry<String, String> entry) {
-		root.addElement(DEFAULT_TAG_NAME).addAttribute(
-				EXTENSION_ATTRIBUTE_NAME, entry.getKey())
-				.addAttribute(CONTENT_TYPE_ATTRIBUTE_NAME,
-						entry.getValue());
-
+        Element defaultType = root.getOwnerDocument().createElement(DEFAULT_TAG_NAME);
+        defaultType.setAttribute(EXTENSION_ATTRIBUTE_NAME, entry.getKey());
+        defaultType.setAttribute(CONTENT_TYPE_ATTRIBUTE_NAME, entry.getValue());
+        root.appendChild(defaultType);
 	}
 
 	/**
