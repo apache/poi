@@ -174,8 +174,10 @@ public class XmlSignatureService implements SignatureService {
      * 
      * @param signatureFacet
      */
-    protected void addSignatureFacet(SignatureFacet signatureFacet) {
-        this.signatureFacets.add(signatureFacet);
+    public void addSignatureFacet(SignatureFacet... signatureFacets) {
+        for (SignatureFacet sf : signatureFacets) {
+            this.signatureFacets.add(sf);
+        }
     }
 
     /**

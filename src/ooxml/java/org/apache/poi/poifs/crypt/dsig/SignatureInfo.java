@@ -171,7 +171,7 @@ public class SignatureInfo {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
 
             try {
-                Document doc = SAXHelper.readSAXDocumentW3C(signaturePart.getInputStream());
+                Document doc = SAXHelper.readSAXDocument(signaturePart.getInputStream());
                 // dummy call to createSignatureService to tweak document afterwards
                 createSignatureService(HashAlgorithm.sha1, pkg).registerIds(doc);
                 

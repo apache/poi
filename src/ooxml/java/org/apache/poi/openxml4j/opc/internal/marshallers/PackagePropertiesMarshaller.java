@@ -19,15 +19,18 @@ package org.apache.poi.openxml4j.opc.internal.marshallers;
 
 import java.io.OutputStream;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.events.Namespace;
+
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
+import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.DocumentHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Package properties marshaller.
@@ -36,17 +39,15 @@ import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
  */
 public class PackagePropertiesMarshaller implements PartMarshaller {
 
-	private final static Namespace namespaceDC = new Namespace("dc",
-			PackagePropertiesPart.NAMESPACE_DC_URI);
-
-	private final static Namespace namespaceCoreProperties = new Namespace("",
-			PackagePropertiesPart.NAMESPACE_CP_URI);
-
-	private final static Namespace namespaceDcTerms = new Namespace("dcterms",
-			PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
-
-	private final static Namespace namespaceXSI = new Namespace("xsi",
-			PackagePropertiesPart.NAMESPACE_XSI_URI);
+    
+    private final static Namespace namespaceDC, namespaceCoreProperties, namespaceDcTerms, namespaceXSI;
+	static {
+	    final XMLEventFactory f = XMLEventFactory.newFactory();
+	    namespaceDC = f.createNamespace("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
+	    namespaceCoreProperties = f.createNamespace("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
+	    namespaceDcTerms = f.createNamespace("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
+	    namespaceXSI = f.createNamespace("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
+	}
 
 	protected static final String KEYWORD_CATEGORY = "category";
 
@@ -98,13 +99,13 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 
 		// Configure the document
 		xmlDoc = DocumentHelper.createDocument();
-		Element rootElem = xmlDoc.addElement(new QName("coreProperties",
-				namespaceCoreProperties));
-		rootElem.addNamespace("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
-		rootElem.addNamespace("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
-		rootElem.addNamespace("dcterms",
-				PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
-		rootElem.addNamespace("xsi", PackagePropertiesPart.NAMESPACE_XSI_URI);
+        Element rootElem = xmlDoc.createElementNS(namespaceCoreProperties.getNamespaceURI(),
+                getQName("coreProperties", namespaceCoreProperties));
+        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceCoreProperties);
+        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceDC);
+        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceDcTerms);
+        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceXSI);
+        xmlDoc.appendChild(rootElem);
 
 		addCategory();
 		addContentStatus();
@@ -125,197 +126,110 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 		return true;
 	}
 
-	/**
+    /**
+     * Sets the given element's text content, creating it if necessary.
+     */
+    private Element setElementTextContent(String localName, Namespace namespace, Nullable<String> property) {
+        return setElementTextContent(localName, namespace, property, property.getValue());
+    }
+    
+    private String getQName(String localName, Namespace namespace) {
+        return namespace.getPrefix().isEmpty() ? localName : namespace.getPrefix() + ':' + localName;
+    }
+
+    private Element setElementTextContent(String localName, Namespace namespace, Nullable<?> property, String propertyValue) {
+        if (!property.hasValue())
+            return null;
+
+        Element root = xmlDoc.getDocumentElement();
+        Element elem = (Element) root.getElementsByTagNameNS(namespace.getNamespaceURI(), localName).item(0);
+        if (elem == null) {
+            // missing, we add it
+            elem = xmlDoc.createElementNS(namespace.getNamespaceURI(), getQName(localName, namespace));
+            root.appendChild(elem);
+        }
+        elem.setTextContent(propertyValue);
+        return elem;
+    }
+
+    private Element setElementTextContent(String localName, Namespace namespace, Nullable<?> property, String propertyValue, String xsiType) {
+        Element element = setElementTextContent(localName, namespace, property, propertyValue);
+        if (element != null) {
+            element.setAttributeNS(namespaceXSI.getNamespaceURI(), getQName("type", namespaceXSI), xsiType);
+        }
+        return element;
+    }
+
+
+    /**
 	 * Add category property element if needed.
 	 */
 	private void addCategory() {
-		if (!propsPart.getCategoryProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CATEGORY, namespaceCoreProperties));
-		if (elem == null) {
-			// Missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_CATEGORY, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getCategoryProperty().getValue());
+        setElementTextContent(KEYWORD_CATEGORY, namespaceCoreProperties, propsPart.getCategoryProperty());
 	}
 
 	/**
 	 * Add content status property element if needed.
 	 */
 	private void addContentStatus() {
-		if (!propsPart.getContentStatusProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CONTENT_STATUS, namespaceCoreProperties));
-		if (elem == null) {
-			// Missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_CONTENT_STATUS, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getContentStatusProperty().getValue());
+        setElementTextContent(KEYWORD_CONTENT_STATUS, namespaceCoreProperties, propsPart.getContentStatusProperty());
 	}
 
 	/**
 	 * Add content type property element if needed.
 	 */
 	private void addContentType() {
-		if (!propsPart.getContentTypeProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CONTENT_TYPE, namespaceCoreProperties));
-		if (elem == null) {
-			// Missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_CONTENT_TYPE, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getContentTypeProperty().getValue());
+        setElementTextContent(KEYWORD_CONTENT_TYPE, namespaceCoreProperties, propsPart.getContentTypeProperty());
 	}
 
 	/**
 	 * Add created property element if needed.
 	 */
 	private void addCreated() {
-		if (!propsPart.getCreatedProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CREATED, namespaceDcTerms));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_CREATED, namespaceDcTerms));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addAttribute(new QName("type", namespaceXSI), "dcterms:W3CDTF");
-		elem.addText(propsPart.getCreatedPropertyString());
+        setElementTextContent(KEYWORD_CREATED, namespaceDcTerms, propsPart.getCreatedProperty(),
+                propsPart.getCreatedPropertyString(), "dcterms:W3CDTF");
 	}
 
 	/**
 	 * Add creator property element if needed.
 	 */
 	private void addCreator() {
-		if (!propsPart.getCreatorProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CREATOR, namespaceDC));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_CREATOR, namespaceDC));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getCreatorProperty().getValue());
+        setElementTextContent(KEYWORD_CREATOR, namespaceDC, propsPart.getCreatorProperty());
 	}
 
 	/**
 	 * Add description property element if needed.
 	 */
 	private void addDescription() {
-		if (!propsPart.getDescriptionProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_DESCRIPTION, namespaceDC));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_DESCRIPTION, namespaceDC));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getDescriptionProperty().getValue());
+        setElementTextContent(KEYWORD_DESCRIPTION, namespaceDC, propsPart.getDescriptionProperty());
 	}
 
 	/**
 	 * Add identifier property element if needed.
 	 */
 	private void addIdentifier() {
-		if (!propsPart.getIdentifierProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_IDENTIFIER, namespaceDC));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_IDENTIFIER, namespaceDC));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getIdentifierProperty().getValue());
+        setElementTextContent(KEYWORD_IDENTIFIER, namespaceDC, propsPart.getIdentifierProperty());
 	}
 
-	/**
+    /**
 	 * Add keywords property element if needed.
 	 */
 	private void addKeywords() {
-		if (!propsPart.getKeywordsProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_KEYWORDS, namespaceCoreProperties));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_KEYWORDS, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getKeywordsProperty().getValue());
+        setElementTextContent(KEYWORD_KEYWORDS, namespaceCoreProperties, propsPart.getKeywordsProperty());
 	}
 
 	/**
 	 * Add language property element if needed.
 	 */
 	private void addLanguage() {
-		if (!propsPart.getLanguageProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_LANGUAGE, namespaceDC));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_LANGUAGE, namespaceDC));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getLanguageProperty().getValue());
+        setElementTextContent(KEYWORD_LANGUAGE, namespaceDC, propsPart.getLanguageProperty());
 	}
 
 	/**
 	 * Add 'last modified by' property if needed.
 	 */
 	private void addLastModifiedBy() {
-		if (!propsPart.getLastModifiedByProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_LAST_MODIFIED_BY, namespaceCoreProperties));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement()
-					.addElement(
-							new QName(KEYWORD_LAST_MODIFIED_BY,
-									namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getLastModifiedByProperty().getValue());
+        setElementTextContent(KEYWORD_LAST_MODIFIED_BY, namespaceCoreProperties, propsPart.getLastModifiedByProperty());
 	}
 
 	/**
@@ -323,111 +237,39 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 	 *
 	 */
 	private void addLastPrinted() {
-		if (!propsPart.getLastPrintedProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_LAST_PRINTED, namespaceCoreProperties));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_LAST_PRINTED, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getLastPrintedPropertyString());
+        setElementTextContent(KEYWORD_LAST_PRINTED, namespaceCoreProperties, propsPart.getLastPrintedProperty(), propsPart.getLastPrintedPropertyString());
 	}
 
 	/**
 	 * Add modified property element if needed.
 	 */
 	private void addModified() {
-		if (!propsPart.getModifiedProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_MODIFIED, namespaceDcTerms));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_MODIFIED, namespaceDcTerms));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addAttribute(new QName("type", namespaceXSI), "dcterms:W3CDTF");
-		elem.addText(propsPart.getModifiedPropertyString());
-	}
+        setElementTextContent(KEYWORD_MODIFIED, namespaceDcTerms, propsPart.getModifiedProperty(),
+                propsPart.getModifiedPropertyString(), "dcterms:W3CDTF");
+    }
 
 	/**
 	 * Add revision property if needed.
 	 */
 	private void addRevision() {
-		if (!propsPart.getRevisionProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_REVISION, namespaceCoreProperties));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_REVISION, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getRevisionProperty().getValue());
+        setElementTextContent(KEYWORD_REVISION, namespaceCoreProperties, propsPart.getRevisionProperty());
 	}
 
 	/**
 	 * Add subject property if needed.
 	 */
 	private void addSubject() {
-		if (!propsPart.getSubjectProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_SUBJECT, namespaceDC));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_SUBJECT, namespaceDC));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getSubjectProperty().getValue());
+        setElementTextContent(KEYWORD_SUBJECT, namespaceDC, propsPart.getSubjectProperty());
 	}
 
 	/**
 	 * Add title property if needed.
 	 */
 	private void addTitle() {
-		if (!propsPart.getTitleProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_TITLE, namespaceDC));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_TITLE, namespaceDC));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getTitleProperty().getValue());
+        setElementTextContent(KEYWORD_TITLE, namespaceDC, propsPart.getTitleProperty());
 	}
 
 	private void addVersion() {
-		if (!propsPart.getVersionProperty().hasValue())
-			return;
-
-		Element elem = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_VERSION, namespaceCoreProperties));
-		if (elem == null) {
-			// missing, we add it
-			elem = xmlDoc.getRootElement().addElement(
-					new QName(KEYWORD_VERSION, namespaceCoreProperties));
-		} else {
-			elem.clearContent();// clear the old value
-		}
-		elem.addText(propsPart.getVersionProperty().getValue());
+        setElementTextContent(KEYWORD_VERSION, namespaceCoreProperties, propsPart.getVersionProperty());
 	}
 }

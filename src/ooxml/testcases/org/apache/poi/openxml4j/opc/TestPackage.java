@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -40,15 +39,14 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SAXHelper;
 import org.apache.poi.util.TempFile;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public final class TestPackage extends TestCase {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
@@ -127,18 +125,17 @@ public final class TestPackage extends TestCase {
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml");
 
         Document doc = DocumentHelper.createDocument();
-        Namespace nsWordprocessinML = new Namespace("w",
-                "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-        Element elDocument = doc.addElement(new QName("document",
-                nsWordprocessinML));
-        Element elBody = elDocument.addElement(new QName("body",
-                nsWordprocessinML));
-        Element elParagraph = elBody.addElement(new QName("p",
-                nsWordprocessinML));
-        Element elRun = elParagraph
-                .addElement(new QName("r", nsWordprocessinML));
-        Element elText = elRun.addElement(new QName("t", nsWordprocessinML));
-        elText.setText("Hello Open XML !");
+        Element elDocument = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:document");
+        doc.appendChild(elDocument);
+        Element elBody = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:body");
+        elDocument.appendChild(elBody);
+        Element elParagraph = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:p");
+        elBody.appendChild(elParagraph);
+        Element elRun = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:r");
+        elParagraph.appendChild(elRun);
+        Element elText = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:t");
+        elRun.appendChild(elText);
+        elText.setTextContent("Hello Open XML !");
 
         StreamHelper.saveXmlInStream(doc, corePart.getOutputStream());
         pkg.close();
@@ -223,15 +220,13 @@ public final class TestPackage extends TestCase {
 
         Document xmlRelationshipsDoc = SAXHelper.readSAXDocument(relPart.getInputStream());
 
-        Element root = xmlRelationshipsDoc.getRootElement();
-        for (Iterator i = root
-                .elementIterator(PackageRelationship.RELATIONSHIP_TAG_NAME); i
-                .hasNext();) {
-            Element element = (Element) i.next();
-            String value = element.attribute(
-                    PackageRelationship.TARGET_ATTRIBUTE_NAME)
-                    .getValue();
-            assertTrue("Root target must not start with a leadng slash ('/'): " + value, value.charAt(0) != '/');
+        Element root = xmlRelationshipsDoc.getDocumentElement();
+        NodeList nodeList = root.getElementsByTagName(PackageRelationship.RELATIONSHIP_TAG_NAME);
+        int nodeCount = nodeList.getLength();
+        for (int i = 0; i < nodeCount; i++) {
+            Element element = (Element) nodeList.item(i);
+            String value = element.getAttribute(PackageRelationship.TARGET_ATTRIBUTE_NAME);
+            assertTrue("Root target must not start with a leading slash ('/'): " + value, value.charAt(0) != '/');
         }
 
     }
@@ -268,18 +263,17 @@ public final class TestPackage extends TestCase {
 
 		// Create a content
 		Document doc = DocumentHelper.createDocument();
-		Namespace nsWordprocessinML = new Namespace("w",
-				"http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-		Element elDocument = doc.addElement(new QName("document",
-				nsWordprocessinML));
-		Element elBody = elDocument.addElement(new QName("body",
-				nsWordprocessinML));
-		Element elParagraph = elBody.addElement(new QName("p",
-				nsWordprocessinML));
-		Element elRun = elParagraph
-				.addElement(new QName("r", nsWordprocessinML));
-		Element elText = elRun.addElement(new QName("t", nsWordprocessinML));
-		elText.setText("Hello Open XML !");
+        Element elDocument = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:document");
+        doc.appendChild(elDocument);
+        Element elBody = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:body");
+        elDocument.appendChild(elBody);
+        Element elParagraph = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:p");
+        elBody.appendChild(elParagraph);
+        Element elRun = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:r");
+        elParagraph.appendChild(elRun);
+        Element elText = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:t");
+        elRun.appendChild(elText);
+        elText.setTextContent("Hello Open XML !");
 
 		StreamHelper.saveXmlInStream(doc, corePart.getOutputStream());
 

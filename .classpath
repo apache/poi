@@ -19,12 +19,12 @@
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.3.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="ooxml-lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/ooxml-schemas-1.1.jar" sourcepath="ooxml-lib/ooxml-schemas-src-1.1.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/ooxml-encryption-1.2.jar" sourcepath="ooxml-lib/ooxml-encryption-src-1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/mockito-core-1.9.5.jar" sourcepath="E:/tmp/mavenRepo/org/mockito/mockito-core/1.9.5/mockito-core-1.9.5-sources.jar"/>
 	<classpathentry kind="output" path="build/eclipse"/>
 </classpath>

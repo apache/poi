@@ -19,9 +19,9 @@ package org.apache.poi.openxml4j.opc.internal.unmarshallers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
 import java.util.zip.ZipEntry;
+
+import javax.xml.XMLConstants;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
@@ -32,12 +32,12 @@ import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.SAXHelper;
-import org.dom4j.Attribute;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.Namespace;
-import org.dom4j.QName;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Package properties unmarshaller.
@@ -45,21 +45,6 @@ import org.dom4j.QName;
  * @author Julien Chable
  */
 public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
-
-	private final static Namespace namespaceDC = new Namespace("dc",
-			PackageProperties.NAMESPACE_DC);
-
-	private final static Namespace namespaceCP = new Namespace("cp",
-			PackageNamespaces.CORE_PROPERTIES);
-
-	private final static Namespace namespaceDcTerms = new Namespace("dcterms",
-			PackageProperties.NAMESPACE_DCTERMS);
-
-	private final static Namespace namespaceXML = new Namespace("xml",
-			"http://www.w3.org/XML/1998/namespace");
-
-	private final static Namespace namespaceXSI = new Namespace("xsi",
-			"http://www.w3.org/2001/XMLSchema-instance");
 
 	protected static final String KEYWORD_CATEGORY = "category";
 
@@ -125,15 +110,15 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 			/* Check OPC compliance */
 
 			// Rule M4.2, M4.3, M4.4 and M4.5/
-			checkElementForOPCCompliance(xmlDoc.getRootElement());
+			checkElementForOPCCompliance(xmlDoc.getDocumentElement());
 
 			/* End OPC compliance */
 
-		} catch (DocumentException e) {
-			throw new IOException(e.getMessage());
-		}
+        } catch (SAXException e) {
+            throw new IOException(e.getMessage());
+        }
 
-		coreProps.setCategoryProperty(loadCategory(xmlDoc));
+        coreProps.setCategoryProperty(loadCategory(xmlDoc));
 		coreProps.setContentStatusProperty(loadContentStatus(xmlDoc));
 		coreProps.setContentTypeProperty(loadContentType(xmlDoc));
 		coreProps.setCreatedProperty(loadCreated(xmlDoc));
@@ -153,148 +138,76 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 		return coreProps;
 	}
 
+    private String readElement(Document xmlDoc, String localName, String namespaceURI) {
+        Element el = (Element)xmlDoc.getDocumentElement().getElementsByTagNameNS(namespaceURI, localName).item(0);
+        if (el == null) {
+            return null;
+        }
+        return el.getTextContent();
+    }
+
 	private String loadCategory(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CATEGORY, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_CATEGORY, PackageNamespaces.CORE_PROPERTIES);
 	}
 
-	private String loadContentStatus(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CONTENT_STATUS, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+    private String loadContentStatus(Document xmlDoc) {
+        return readElement(xmlDoc, KEYWORD_CONTENT_STATUS, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	private String loadContentType(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CONTENT_TYPE, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_CONTENT_TYPE, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	private String loadCreated(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CREATED, namespaceDcTerms));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_CREATED, PackageProperties.NAMESPACE_DCTERMS);
 	}
 
 	private String loadCreator(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_CREATOR, namespaceDC));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_CREATOR, PackageProperties.NAMESPACE_DC);
 	}
 
 	private String loadDescription(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_DESCRIPTION, namespaceDC));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_DESCRIPTION, PackageProperties.NAMESPACE_DC);
 	}
 
 	private String loadIdentifier(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_IDENTIFIER, namespaceDC));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_IDENTIFIER, PackageProperties.NAMESPACE_DC);
 	}
 
 	private String loadKeywords(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_KEYWORDS, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_KEYWORDS, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	private String loadLanguage(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_LANGUAGE, namespaceDC));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_LANGUAGE, PackageProperties.NAMESPACE_DC);
 	}
 
 	private String loadLastModifiedBy(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_LAST_MODIFIED_BY, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_LAST_MODIFIED_BY, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	private String loadLastPrinted(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_LAST_PRINTED, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_LAST_PRINTED, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	private String loadModified(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_MODIFIED, namespaceDcTerms));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_MODIFIED, PackageProperties.NAMESPACE_DCTERMS);
 	}
 
 	private String loadRevision(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_REVISION, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_REVISION, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	private String loadSubject(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_SUBJECT, namespaceDC));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_SUBJECT, PackageProperties.NAMESPACE_DC);
 	}
 
 	private String loadTitle(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_TITLE, namespaceDC));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_TITLE, PackageProperties.NAMESPACE_DC);
 	}
 
 	private String loadVersion(Document xmlDoc) {
-		Element el = xmlDoc.getRootElement().element(
-				new QName(KEYWORD_VERSION, namespaceCP));
-		if (el == null) {
-			return null;
-		}
-		return el.getStringValue();
+        return readElement(xmlDoc, KEYWORD_VERSION, PackageNamespaces.CORE_PROPERTIES);
 	}
 
 	/* OPC Compliance methods */
@@ -325,60 +238,56 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 	public void checkElementForOPCCompliance(Element el)
 			throws InvalidFormatException {
 		// Check the current element
-		@SuppressWarnings("unchecked")
-		List<Namespace> declaredNamespaces = el.declaredNamespaces();
-		Iterator<Namespace> itNS = declaredNamespaces.iterator();
-		while (itNS.hasNext()) {
-			Namespace ns = itNS.next();
+        NamedNodeMap namedNodeMap = el.getAttributes();
+        int namedNodeCount = namedNodeMap.getLength();
+        for (int i = 0; i < namedNodeCount; i++) {
+            Attr attr = (Attr)namedNodeMap.item(0);
 
-			// Rule M4.2
-			if (ns.getURI().equals(PackageNamespaces.MARKUP_COMPATIBILITY))
-				throw new InvalidFormatException(
-						"OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.");
-		}
+            if (attr.getNamespaceURI().equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
+                // Rule M4.2
+                if (attr.getValue().equals(PackageNamespaces.MARKUP_COMPATIBILITY))
+                    throw new InvalidFormatException(
+                            "OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.");
+
+            }
+        }
 
 		// Rule M4.3
-		if (el.getNamespace().getURI().equals(
-				PackageProperties.NAMESPACE_DCTERMS)
-				&& !(el.getName().equals(KEYWORD_CREATED) || el.getName()
-						.equals(KEYWORD_MODIFIED)))
-			throw new InvalidFormatException(
-					"OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.");
+        String elName = el.getLocalName();
+        if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS))
+            if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
+                throw new InvalidFormatException(
+                        "OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.");
 
 		// Rule M4.4
-		if (el.attribute(new QName("lang", namespaceXML)) != null)
+		if (el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null)
 			throw new InvalidFormatException(
 					"OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.");
 
 		// Rule M4.5
-		if (el.getNamespace().getURI().equals(
-				PackageProperties.NAMESPACE_DCTERMS)) {
+		if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS)) {
 			// DCTerms namespace only use with 'created' and 'modified' elements
-			String elName = el.getName();
-			if (!(elName.equals(KEYWORD_CREATED) || elName
-					.equals(KEYWORD_MODIFIED)))
+			if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
 				throw new InvalidFormatException("Namespace error : " + elName
 						+ " shouldn't have the following naemspace -> "
 						+ PackageProperties.NAMESPACE_DCTERMS);
 
 			// Check for the 'xsi:type' attribute
-			Attribute typeAtt = el.attribute(new QName("type", namespaceXSI));
+			Attr typeAtt = el.getAttributeNodeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
 			if (typeAtt == null)
 				throw new InvalidFormatException("The element '" + elName
-						+ "' must have the '" + namespaceXSI.getPrefix()
-						+ ":type' attribute present !");
+						+ "' must have the 'xsi:type' attribute present !");
 
 			// Check for the attribute value => 'dcterms:W3CDTF'
 			if (!typeAtt.getValue().equals("dcterms:W3CDTF"))
 				throw new InvalidFormatException("The element '" + elName
-						+ "' must have the '" + namespaceXSI.getPrefix()
-						+ ":type' attribute with the value 'dcterms:W3CDTF' !");
+						+ "' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF' !");
 		}
 
 		// Check its children
-		@SuppressWarnings("unchecked")
-		Iterator<Element> itChildren = el.elementIterator();
-		while (itChildren.hasNext())
-			checkElementForOPCCompliance(itChildren.next());
+        NodeList childElements = el.getElementsByTagName("*");
+        int childElementCount = childElements.getLength();
+        for (int i = 0; i < childElementCount; i++)
+            checkElementForOPCCompliance((Element)childElements.item(i));
 	}
 }

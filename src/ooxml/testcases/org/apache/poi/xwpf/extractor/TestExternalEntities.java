@@ -15,29 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.openxml4j.opc;
+package org.apache.poi.xwpf.extractor;
 
-import java.io.File;
+import java.io.IOException;
 
-/**
- * Storage class for configuration storage parameters.
- * TODO xml syntax checking is not done with JAXP by default -> remove the schema or do it ?
- *
- * @author CDubettier, Julen Chable
- * @version 1.0
- */
-public final class Configuration {
-	// TODO configuration by default. should be clearly stated that it should be
-	// changed to match installation path
-	// as schemas dir is needed in runtime
-	static private String pathForXmlSchema = System.getProperty("user.dir")
-			+ File.separator + "src" + File.separator + "schemas";
+import junit.framework.TestCase;
 
-	public static String getPathForXmlSchema() {
-		return pathForXmlSchema;
-	}
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
-	public static void setPathForXmlSchema(String pathForXmlSchema) {
-		Configuration.pathForXmlSchema = pathForXmlSchema;
-	}
+public class TestExternalEntities extends TestCase {
+
+    /**
+     * Get text out of the simple file
+     * @throws IOException 
+     */
+    public void testFile() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+
+        String text = extractor.getText();
+        
+        assertTrue(text.length() > 0);
+
+        // Check contents, they should not contain the text from POI web site after colon!
+        assertEquals("Here should not be the POI web site: \"\"", text.trim());
+        
+        extractor.close();
+    }
+
 }

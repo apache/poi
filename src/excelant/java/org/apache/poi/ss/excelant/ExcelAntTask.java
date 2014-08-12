@@ -179,7 +179,7 @@ public class ExcelAntTask extends Task {
             throw new BuildException(
                     "The <classpath> for <excelant> must include poi.jar and poi-ooxml.jar " +
                     "if not in Ant's own classpath. Processing .xlsx spreadsheets requires " +
-                    "additional poi-ooxml-schemas.jar, xmlbeans.jar and dom4j.jar" ,
+                    "additional poi-ooxml-schemas.jar, xmlbeans.jar" ,
                     e, getLocation());
         }
 

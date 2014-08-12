@@ -26,6 +26,10 @@ package org.apache.poi.poifs.crypt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,7 +44,9 @@ import java.security.KeyPair;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -53,8 +59,17 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.KeyUsageIf;
+import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPRespIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
+import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.SignaturePolicyService;
+import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
+import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
+import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.IOUtils;
@@ -62,6 +77,8 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class TestSignatureInfo {
     private static final POILogger LOG = POILogFactory.getLogger(TestSignatureInfo.class);
@@ -171,6 +188,64 @@ public class TestSignatureInfo {
         pkg.close();
     }
 
+    @Test
+    public void testSignEnvelopingDocument() throws Exception {
+        String testFile = "hello-world-unsigned.xlsx";
+        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
+
+        // setup
+        EnvelopedSignatureFacet envelopedSignatureFacet = new EnvelopedSignatureFacet();
+        KeyInfoSignatureFacet keyInfoSignatureFacet = new KeyInfoSignatureFacet(true, false, false);
+        SignaturePolicyService signaturePolicyService = null;
+        XAdESSignatureFacet xadesSignatureFacet = new XAdESSignatureFacet(null, null, signaturePolicyService);
+
+        
+        TimeStampService mockTimeStampService = mock(TimeStampService.class);
+        RevocationDataService mockRevocationDataService = mock(RevocationDataService.class);
+
+        XAdESXLSignatureFacet xadesXLSignatureFacet = new XAdESXLSignatureFacet(
+                mockTimeStampService, mockRevocationDataService);
+        XmlSignatureService testedInstance = new XmlSignatureService(HashAlgorithm.sha1, pkg);
+        testedInstance.addSignatureFacet(envelopedSignatureFacet, keyInfoSignatureFacet,
+                xadesSignatureFacet, xadesXLSignatureFacet);
+        
+        initKeyPair("Test", "CN=Test");
+        List<X509Certificate> certificateChain = new ArrayList<X509Certificate>();
+        /*
+         * We need at least 2 certificates for the XAdES-C complete certificate
+         * refs construction.
+         */
+        certificateChain.add(x509);
+        certificateChain.add(x509);
+        
+        RevocationData revocationData = new RevocationData();
+        final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
+        revocationData.addCRL(crl);
+        OCSPRespIf ocspResp = PkiTestUtils.createOcspResp(x509, false,
+                x509, x509, keyPair.getPrivate(), "SHA1withRSA");
+        revocationData.addOCSP(ocspResp.getEncoded());
+        
+        when(mockTimeStampService.timeStamp(any(byte[].class), any(RevocationData.class)))
+        .thenAnswer(new Answer<byte[]>(){
+            public byte[] answer(InvocationOnMock invocation) throws Throwable {
+                Object[] arguments = invocation.getArguments();
+                RevocationData revocationData = (RevocationData) arguments[1];
+                revocationData.addCRL(crl);
+                return "time-stamp-token".getBytes();
+            }            
+        });
+        
+        when(mockRevocationDataService.getRevocationData(eq(certificateChain)))
+        .thenReturn(revocationData);
+        
+        // operate
+        DigestInfo digestInfo = testedInstance.preSign(null, certificateChain, null, null, null);
+
+        // verify
+        assertNotNull(digestInfo);
+        assertEquals("SHA-1", digestInfo.hashAlgo);
+        assertNotNull(digestInfo.digestValue);
+    }
     
     private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
         /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 

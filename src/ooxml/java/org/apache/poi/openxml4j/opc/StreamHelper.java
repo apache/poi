@@ -17,21 +17,36 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import java.io.FilterOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.dom4j.Document;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
 
 public final class StreamHelper {
 
 	private StreamHelper() {
 		// Do nothing
 	}
+  
+  private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+  
+  private static synchronized Transformer getIdentityTransformer() throws TransformerException {
+    return transformerFactory.newTransformer();
+  }
 
 	/**
-	 * Turning the DOM4j object in the specified output stream.
+	 * Save the document object in the specified output stream.
 	 *
 	 * @param xmlContent
 	 *            The XML document.
@@ -40,18 +55,34 @@ public final class StreamHelper {
 	 * @return <b>true</b> if the xml is successfully written in the stream,
 	 *         else <b>false</b>.
 	 */
-	public static boolean saveXmlInStream(Document xmlContent,
-			OutputStream outStream) {
-		try {
-			OutputFormat outformat = OutputFormat.createPrettyPrint();
-			outformat.setEncoding("UTF-8");
-			XMLWriter writer = new XMLWriter(outStream, outformat);
-			writer.write(xmlContent);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
+    public static boolean saveXmlInStream(Document xmlContent,
+            OutputStream outStream) {
+        try {
+            Transformer trans = getIdentityTransformer();
+            Source xmlSource = new DOMSource(xmlContent);
+            // prevent close of stream by transformer:
+            Result outputTarget = new StreamResult(new FilterOutputStream(
+                    outStream) {
+                @Override
+                public void write(byte b[], int off, int len)
+                        throws IOException {
+                    out.write(b, off, len);
+                }
+
+                @Override
+                public void close() throws IOException {
+                    out.flush(); // only flush, don't close!
+                }
+            });
+            trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            trans.setOutputProperty(OutputKeys.INDENT, "yes");
+            trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            trans.transform(xmlSource, outputTarget);
+        } catch (TransformerException e) {
+            return false;
+        }
+        return true;
+    }
 
 	/**
 	 * Copy the input stream into the output stream.

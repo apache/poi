@@ -176,6 +176,7 @@ public interface HorribleProxies {
     public interface OCSPRespIf extends ProxyIf {
         String delegateClass = "org.bouncycastle.cert.ocsp.OCSPResp";
         BasicOCSPRespIf getResponseObject();
+        byte[] getEncoded() throws IOException;
     }
     
     public interface PKIFailureInfoIf extends ProxyIf {
