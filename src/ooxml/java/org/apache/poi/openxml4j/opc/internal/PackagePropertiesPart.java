@@ -48,8 +48,6 @@ public final class PackagePropertiesPart extends PackagePart implements
 
 	public final static String NAMESPACE_DCTERMS_URI = "http://purl.org/dc/terms/";
 
-	public final static String NAMESPACE_XSI_URI = "http://www.w3.org/2001/XMLSchema-instance";
-
 	/**
 	 * Constructor.
 	 *
