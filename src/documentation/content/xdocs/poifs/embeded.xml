@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+<document>
+  <header>
+    <title>Apache POI - POIFS - Documents embeded in other documents</title>
+    <subtitle>Overview</subtitle>
+    <authors>
+      <person name="Nick Burch" email="nick@apache.org"/>     
+      <person name="Yegor Kozlov" email="yegor@apache.org"/>     
+    </authors>
+  </header>
+  <body>
+    <section><title>Overview</title>
+      <p>It is possible for one OLE 2 based document to have other
+         OLE 2 documents embeded in it. For example, and Excel file
+         may have a word document and a powerpoint slideshow 
+         embeded as part of it.</p>
+      <p>Normally, these other documents are stored in subdirectories
+         of the OLE 2 (POIFS) filesystem. The exact location of the
+         embeded documents will vary depending on the type of the
+         master document, and the exact directory names will differ
+         each time. To figure out exactly which directory to look
+         in, you will either need to process the appropriate OLE 2
+         linking entry in the master document, or simple iterate
+         over all the directories in the filesystem.</p>
+      <p>As a general rule, you will find the same OLE 2 entries
+         in the subdirectories, as you would've found at the root
+         of the filesystem were a document to not be embeded.</p>
+
+       <section><title>Files embeded in Excel</title>
+         <p>Excel normally stores embeded files in subdirectories
+         of the filesystem root. Typically these subdirectories
+         are named starting with MBD, with 8 hex characters following.</p>
+       </section>
+
+       <section><title>Files embeded in Word</title>
+         <p>Word normally stores embeded files in subdirectories
+         of the ObjectPool directory, itself a subdirectory of the
+         filesystem root. Typically these subdirectories and named
+         starting with an underscore, followed by 10 numbers.</p>
+       </section>
+
+       <section><title>Files embeded in PowerPoint</title>
+         <p>PowerPoint does not normally store embeded files
+         in the OLE2 layer. Instead, they are held within records
+         of the main PowerPoint file. 
+         <br/>See the <link href="./../slideshow/how-to-shapes.html#OLE">HSLF Tutorial</link> 
+         for how to retrieve embedded OLE objects from a presentation</p>
+       </section>
+    </section>
+
+    <section><title>Listing POIFS contents</title>
+      <p>POIFS provides a simple tool for listing the contents of
+         OLE2 files. This can allow you to see what your POIFS file
+         contents, and hence if it has any embeded documents in it,
+         and where.</p>
+      <p>The tool to use is <em>org.apache.poi.poifs.dev.POIFSLister</em>.
+         This tool may be run from the command line, and takes a filename
+         as its parameter. It will print out all the directories and 
+         files contained within the POIFS file.</p>
+    </section>
+
+    <section><title>Opening embeded files</title>
+      <p>All of the POIDocument classes (HSSFWorkbook, HSLFSlideShow,
+         HWPFDocument and HDGFDiagram) can either be opened from
+         a POIFSFileSystem, or from a specific directory within a
+         POIFSFileSystem. So, to open embeded files, simply locate the
+         appropriate DirectoryNode that represents the subdirectory
+         of interest, and pass this + the overall POIFSFileSystem to
+         the constructor.</p>
+      <p>I you want to extract the textual contents of the embeded file,
+         then open the appropriate POIDocument, and then pass this to
+         the extractor class, instead of simply passing the POIFSFilesystem
+         to the extractor.</p>
+    </section>
+  </body>
+</document>

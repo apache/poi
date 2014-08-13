@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Descripción General</title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>¿Qué es?</title>
+      <p>El proyecto POI es el proyecto principal para el desarrollo de adaptaciones (ports)
+        en Java puro de los formatos de fichero basados en el Formato de Documento Compuesto OLE 2
+	de Microsoft. El Formato de Documento Compuesto OLE 2 lo utilizan los Documentos Office de
+	Microsoft, así como por los programas que utilizan conjuntos de propiedades MFC para serializar
+	sus objetos de tipo documento.
+      </p>
+    </section>
+    <section><title>Sub-Proyectos</title>
+      <p>
+        Los siguientes son adaptaciones, paquetes o componentes contenidos en el proyecto POI.
+      </p>
+      <section><title>POIFS</title>
+        <p>
+          <link href="../../poifs/index.html">POIFS [EN]</link> es el conjunto de APIs (Interfaces de Aplicación)
+	  para la lectura y escritura del Formato de Documento Compuesto OLE 2 utilizando (únicamente) Java.
+        </p>
+      </section>
+
+      <section><title>HSSF</title>
+        <p>
+          <link href="../../spreadsheet/index.html">HSSF [EN]</link> es el conjunto de APIs para la lectura y
+	  escritura de hojas de cálculo de Microsoft Excel 97(-XP) utilizando (únicamente) Java.
+        </p>
+      </section>
+
+      <section><title>HWPF</title>
+        <p>
+          <link href="../../hwpf/index.html">HWPF [EN]</link> es el conjunto de APIs para la lectura y
+	  escritura de documentos Word 97(-XP) de Microsoft utilizando (únicamente) Java.
+        </p>
+      </section>
+
+      <section><title>HPSF</title>
+        <p>
+          <link href="../../hpsf/index.html">HPSF [EN]</link> es el conjunto de APIs para la lectura
+	  de conjuntos de propiedades utilizando (únicamente) Java.
+        </p>
+      </section>
+
+      <section><title>Utilidades-POI (POI-Utils)</title>
+        <p>
+          <link href="../../utils/index.html">POI-Utils [EN]</link> son artefactos de propósito
+	  general surgidos en el desarrollo de POI que no han sido implementados en ningún otro sitio.
+	  Siempre buscamos donarlos y mantenerlos como parte de una biblioteca general utilizada en
+	  algún otro proyecto. Estas son cosas que necesitamos para completar nuestra misión pero que
+	  generalmente estan fuera de ella.
+        </p>
+      </section>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The POI Project All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

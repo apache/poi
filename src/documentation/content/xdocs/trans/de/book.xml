@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE book PUBLIC "-//APACHE//DTD Cocoon Documentation Book V1.0//EN" "../../dtd/book-cocoon-v10.dtd">
+
+<book software="POI"
+      title="Dokumentation des POI-Projekts"
+      copyright="@year@ POI Project"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <menu label="Marketing">
+    <menu-item label="Fallstudien" href="../../casestudies.html"/>
+  </menu>
+
+  <menu label="Projekt">
+    <menu-item label="Überblick" href="../../overview.html"/>
+    <menu-item label="POIFS" href="../../poifs/index.html"/>
+    <menu-item label="HSSF" href="../../spreadsheet/index.html"/>
+    <menu-item label="HWPF" href="../../hwpf/index.html"/>
+    <menu-item label="HPSF" href="../../hpsf/index.html"/>
+    <menu-item label="POI-Utils" href="../../utils/index.html"/>
+    <menu-item label="Download" href="http://jakarta.apache.org/builds/jakarta-poi/"/>
+  </menu>
+
+  <menu label="Gemeinschaft">
+    <menu-item label="Neuigkeiten" href="../../news.html"/>
+    <menu-item label="Änderungen" href="../../changes.html"/>
+    <menu-item label="Aufgaben" href="../../todo.html"/>
+    <menu-item label="Mitmachen" href="../../guidelines.html"/>
+    <menu-item label="Unsere Vision" href="../../plan/POI20Vision.html"/>
+    <menu-item label="Vergangenheit und Zukunft" href="../../historyandfuture.html"/>
+    <menu-item label="Wer wir sind" href="../../who.html"/>
+    <menu-item label="Beschlüsse" href="../../resolutions/index.html"/>
+  </menu>
+
+  <menu label="Dokumentation">
+    <menu-item label="Javadocs" href="http://jakarta.apache.org/poi/javadocs/"/>
+    <menu-item label="FAQ" href="../../faq.html"/>
+    <menu-item label="Referenzen" href="../../references/index.html"/>
+  </menu>
+
+  <menu label="Code">
+    <menu-item label="Quellcode" href="http://jakarta.apache.org/poi/javadocs/javasrc/"/>
+    <menu-item label="CVS" href="http://jakarta.apache.org/site/cvsindex.html"/>
+    <menu-item label="Die wichtigsten Fehler" href="http://issues.apache.org/bugzilla/buglist.cgi?votes=1&amp;product=POI&amp;order=bugs.votes"/>
+    <menu-item label="Fehlerdatenbank" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI"/>
+    <menu-item label="Liste der Patches" href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI&amp;short_desc=%5BPATCH%5D&amp;short_desc_type=allwordssubstr"/>
+
+    <menu-item label="Ergebnis der JUnit-Funktionstests" href="http://jakarta.apache.org/poi/tests/junit/"/>
+    <menu-item label="Ergebnis des Abhängigkeitstests" href="http://jakarta.apache.org/poi/metrics/jdepend/"/>
+    <menu-item label="Ergebnis des Stiltests" href="http://jakarta.apache.org/poi/metrics/checkstyle/"/>
+  </menu>
+
+</book>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

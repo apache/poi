@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+<document>
+    <header>
+        <title>Apache POI - Case Studies</title>
+        <authors>
+            <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+            <person id="CR" name="Cameron Riley" email="crileyNO@SPAMekmail.com"/>
+            <person id="DF" name="David Fisher" email="dfisher@jmlafferty.com"/>
+            <person id="DS" name="Dominik Stadler" email="centic@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section>
+            <title>Introduction</title>
+            <p>
+                A number of people are using POI for a variety of purposes.  As with
+                any new API or technology, the first question people generally ask
+                is not "how can I" but rather "Who else is doing what I'm about to
+                do?"  This is understandable with the abysmal success rate in the
+                software business.  These case statements are meant to help create
+                confidence and understanding.
+            </p>
+        </section>
+        <section>
+            <title>Submitting a Case Study</title>
+            <p>
+                We are actively seeking case studies for this page (after all it
+                just started). To submit a case study, either
+                <link href="guidelines.html">
+                    submit a patch for this page</link> or email it to the
+                <link href="mailinglists.html">mailing list
+                </link> (with [PATCH] prefixed subject, please).
+            </p>
+        </section>
+        <section>
+            <title>Case Studies</title>
+              <section><title>REWOO Scope</title>
+              <p>
+              <link href="http://www.rewoo.de/">REWOO Scope</link> is a modern and easy to use web-based enterprise content management system. It supports knowledge workers and managers in making the right decisions based upon all relevant information.
+              </p>
+              <p>
+              The system uses Apache POI to extract information stored within excel files and use it transparently within REWOO Scope. Thus, POI allows our customers to work in their standard office environment while also having all important information in the REWO Scope system.
+              </p>
+              </section>
+
+              <section><title>QuestionPro</title>
+              <p>
+              <link href="http://www.questionpro.com">QuestionPro</link> is an online service allowing businesses and individuals to create, deploy and do in-depth analysis of Online Surveys. The technology is build on open-source frameworks like Struts, Velocity, POI, Lucene ... the List goes on.  The application deployment is on a Linux Application Cluster farm with a Mysql database.
+              </p>
+              <p>
+              There are quite a few competitors delivering similar solutions using Microsoft Technologies like asp and .net. One of the distinct advantages our competitors had over us was the ability to generate Excel Spreadsheets, Access Databases (MDB) etc. on the fly using the Component Object Model (COM) - since their servers were running IIS and they had access to the COM registry and such.
+              </p>
+              <p>
+              QuestionPro's initial solution was to generate CSV files. This was easy however it was a cumbersome process for our clients to download the CSV files and then import them into Excel. Moreover, formatting information could not be preserved or captured using the CSV format.  This is where POI came to our rescue. With a POI based solution, we could generate a full report with multiple sheets and all the analytical reports. To keep the solution scalable, we had a dedicated cluster for generating out the reports.
+              </p>
+              <p>
+
+              The Apache-POI project has helped QuestionPro compete with the other players in the marketplace with proprietary technology. It leveled the playing field with respect to reporting and data analysis solutions. It helped in opening doors into closed solutions like Microsoft's CDF. Today about 100 excel reports are generated daily, each with about 10-30 sheets in them.
+              </p>
+
+              <p>
+              Vivek Bhaskaran
+              </p>
+              <p>
+              <link href="http://www.questionpro.com">QuestionPro, Inc</link>
+              </p>
+
+              <p>
+              POI In Action - <link href="http://www.questionpro.com/marketing/SurveyReport-289.xls">http://www.questionpro.com/marketing/SurveyReport-289.xls</link>
+              </p>
+
+              </section>
+
+              <section><title>Sunshine Systems</title>
+               <p>
+           <link href="http://www.sunshinesys.com/">Sunshine Systems</link> deveveloped a
+            POI based reporting solution for a price optimization software package which
+            is used by major retail chains.
+         </p>
+         <p>The solution allowed the retailer's merchandise planners and managers to request a
+           markdown decision support reports and price change reports using a standard browser
+           The users could specify report type, report options, as well as company,
+division,
+           and department filter criteria. Report generation took place in the
+multi-threaded
+           application server and was capable of supporting many simultaneous report requests.
+         </p>
+         <p>The reporting application collected business information from the price
+optimization
+           application's Oracle database. The data was aggregated and summarized
+ based upon the
+           specific report type and filter criteria requested by the user. The
+final report was
+           rendered as a Microsoft Excel spreadsheet using the POI HSSF API and
+ was stored on
+           the report database server for that specific user as a BLOB. Reports
+ could be
+           seamlessly and easily viewed using the same browser.
+         </p>
+         <p>The retailers liked the solution because they had instantaneous access
+ to critical
+           business data through an extremely easy to use browser interface. They
+ did not need
+           to train the broader user community on all the complexities of the optimization
+           application. Furthermore, the reports were generated in an Excel spreadsheet
+format,
+           which everyone was familiar with and which also allowed further data
+ analysis using
+           standard Excel features.
+         </p>
+         <p>Rob Stevenson (rstevenson at sunshinesys dot com)
+         </p>
+       </section>
+            <section>
+                <title>Bank of Lithuania</title>
+                <p>
+                    The
+                    <link href="http://www.lbank.lt/">Bank of Lithuania</link>
+                    reports financial statistical data to Excel format using the
+                    <link href="http://poi.apache.org/">Apache POI</link>
+                    project's
+                    <link href="spreadsheet/">
+                        HSSF</link> API.  The system is based on Oracle JServer and
+                    utilizes a Java stored procedure that outputs to XLS format
+                    using the HSSF API.  - Arian Lashkov (alaskov at lbank.lt)
+                </p>
+            </section>
+<!--            <section>-->
+<!--                <title>Bit Tracker by Tracker Inc., and ThinkVirtual</title>-->
+<!--                <p>-->
+<!--                    Bit Tracker (http://www.bittracker.com/) is the world's first and only web-based drill bit tracking system to manage your company's critical bit information and use that data to its full potential. It manages all bit related data, including their usage, locations, how they were used, and results such as rate of penetration and dull grade after use.  This data needs to be available in Excel format for backwards compatibility and other uses in the industry.  After using CSV and HTML formats, we needed something better for creating the spreadsheets and POI is the answer.  It works great and was easy to implement.  Kudos to the POI team.-->
+<!--                </p>-->
+<!--                <p>-->
+<!--                    Travis Reeder (travis at thinkvirtual dot com)-->
+<!--                </p>-->
+<!--            </section>-->
+            <section>
+                <title>Edwards And Kelcey Technology</title>
+                <p>
+                    Edwards and Kelcey Technology (http://www.ekcorp.com/) developed a
+                    Facility
+                    Managament and Maintenance System for the Telecommunications industry
+                    based
+                    on Turbine and Velocity. Originally the invoicing was done with a simple
+                    CSV
+                    sheet which was then marked up by accounts and customized for each client.
+                    As growth has been consistent with the application, the requirement for
+                    invoices that need not be touched by hand increased. POI provided the
+                    solution to this issue, integrating easily and transparently into the
+                    system. POI HSSF was used to create the invoices directly from the server
+                    in
+                    Excel 97 format and now services over 150 unique invoices per month.
+                </p>
+                <p>
+                    Cameron Riley (crileyNO@ SPAMekmail.com)
+                </p>
+            </section>
+            <section>
+                <title>ClickFind</title>
+                <p>
+                    <link href="http://www.clickfind.com/">ClickFind Inc.</link> used the POI
+                    projects HSSF API to provide their medical
+                    research clients with an Excel export from their electronic data
+                    collection web service Data Collector 3.0.  The POI team's assistance
+                    allowed ClickFind to give their clients a data format that requires less
+                    technical expertise than the XML format used by the Data Collector
+                    application.  This was important to ClickFind as many of their current
+                    and potential clients are already using Excel in their day-to-day
+                    operations and in established procedures for handling their generated
+                    clinical data.  - Jared Walker (jared.walker at clickfind.com)
+                </p>
+            </section>
+            <section>
+                <title>IKAN Software NV</title>
+                    <p>In addition to Change Management and Database Modelling, IKAN Software NV
+                        (http://www.ikan.be/) develops and supports its own ETL
+                        (Extract/Transform/Load) tools.</p>
+
+                    <p>IKAN's latest product is this domain is called ETL4ALL
+                        (http://www.ikan.be/etl4all/). ETL4ALL is an open source tool
+                        allowing data transfer from and to virtually any data source.  Users can
+                        combine and examine data stored in relational databases, XML databases, PDF
+                        files, EDI, CSV files, etc.
+                    </p>
+
+                    <p>It is obvious that Microsoft Excel files are also supported.
+                        POI has been used to successfully implement this support in ETL4ALL.</p>
+            </section>
+	    <section>
+	        <title>JM Lafferty Associates, Inc.</title>
+		<p>
+		   On its <link href="http://www.forecastworks.com/public/">ForecastWorks</link> website
+		   <link href="http://www.jmlafferty.com/">JM Lafferty Associates, Inc.</link> produces dynamic on demand
+		   financial analyses of companies and institutional funds. The pages produced are selected and exported
+		   in several file formats including PPT and XLS.
+		</p>
+		<ul>
+		  <li>The PPT files produced are of high quality which is on a par with similar PDF files.</li>
+		  <li>The XLS files produced contain a complex forecasting model built from a template with a VBA Macro.</li>
+		</ul>
+                <p>
+                    David Fisher (dfisher@jmlafferty.com)
+                </p>
+	    </section>
+
+	    <section>
+	        <title>iDATA Development Ltd (IDD)</title>
+		  <p>
+        <link href="http://www.iexlsoftware.com/">IDD</link> have developed the iEXL product to 
+        generate Excel spreadsheets directly on the Iseries/AS400 IBM I on Power platform. 
+      </p>
+      <p>
+      Professional spreadsheets created via a menu system. Some basic programming is required for more complex options.
+      When programming is required it can be carried out using RPG, SQL, QUERY, JAVA, COBOL etc. 
+      In other words your existing staffs knowledge
+      </p>
+      <p>
+      Design spreadsheets with: 
+      </p>
+      <ul>
+        <li>Fonts down to cell level</li> 
+        <li>Colours (Background and text) down to cell level</li> 
+        <li>Shading down to cell level</li> 
+        <li>Cell patterns down to cell level</li> 
+        <li>Cell initialization</li> 
+        <li>Freeze Panes</li> 
+        <li>Passwords</li> 
+        <li>Images/Pictures both static and dynamic</li> 
+        <li>Headings</li> 
+        <li>Page breaks</li> 
+        <li>Sheet breaks</li> 
+        <li>Text insertion and much more</li>  
+        <li>Functions/Formula</li>
+        <li>Merge cells</li>
+        <li>Row Height</li>
+        <li>Cell text alignment</li>
+        <li>Text Rotation </li>
+        <li>50 Database files per workbook.</li>
+        <li>E-mail the spreadsheet</li> 
+      </ul>
+      <p>
+        The product name is 'iEXL' and has been live on both European and North American systems for over four years. 
+        It is being used in preference to more established commercial products which our clients have already purchased. 
+        This is due to cost and ease of use. 
+      </p>  
+      <p>
+        All spreadsheets can be archived if required so that historical spreadsheets can be retrieved. 
+      </p>
+      <p>
+        The system has benefits for all departments within an organisation. 
+        Examples of this are accounts department for things such as aged trial balance, 
+        distribution department for ASN’s, warehousing for stock figures, IS for security reporting etc.   
+      </p>
+      <p>
+        Clients have at this point (June 2012) created over 300 spreadsheets which in turn have generated over 
+        500,000  E-mails. iEXL has a menu driven email system.  
+      </p>
+      <p>
+        Due to the Apache-POI project IDD have been able to create the IEXL product. 
+        This is a well priced product which allows companies of all sizes access to a product that opens up their reporting capabilities
+      </p>
+      <p>
+        Within the <link href="http://www.iexlsoftware.com/">iEXLSOFTWARE.COM</link> website you will find a full user manual, 
+        installation instructions, a call log (Ticket) system and a downloadable 45 day trial version.       
+  		</p>
+      <p>
+          <em>Author: Mark.D.Golden</em>
+      </p>
+	    </section>
+      <section>
+          <title>Ugly Duckling</title>
+          <p>
+            <link href="http://uglyduckling.nl/">Ugly Duckling</link> focus on Software, Management and Finance. 
+            We have recently been using Apache POI to create tools for the mortgage group of 
+            <link href="https://www.abnamro.nl/en/personal/index.html">ABN AMRO</link> in the Netherlands. 
+            During this project we created a number of what we call 'Robots' using the HSSF API.
+          </p>
+          <p>
+            These <link href="http://uglyduckling.nl/work/robots/">robots</link> run as services on the network and 
+            help automate the processing of large amounts of data. Our Robots can be used to spot problems that 
+            a human might not, and also to automate repetitive tasks.
+          </p>
+          <p>
+            We found Apache POI to be extremely useful. We took the base API, wrapped it in a builder pattern and 
+            thus created a DSL with a fluid interface. Throughout the project we enjoyed very much working with 
+            Apache POI and found it to be very reliable.
+          </p>
+      </section>
+  
+        </section>
+    </body>
+    <footer>
+        <legal>
+            Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+            <br />
+            Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+            POI project logo are trademarks of The Apache Software Foundation.
+        </legal>
+    </footer>
+</document>

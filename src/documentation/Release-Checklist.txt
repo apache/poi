@@ -1,0 +1,74 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+             ================================
+                   POI Release Checklist
+             ================================
+
+Note - this file should be read in conjunction with the 
+ POI Release Guide. They should probably be merged in future...
+
+- ensure the changelog is up to date
+- tag SVN
+- build distributions as if it was the final release
+- update any filename dates from today's date, to the date that the
+   vote will end (typically 7 days time)
+- copy the -redirect pom to a subdirectory of redirect/, and remove
+   -redirect from its name
+- sign and checksum distributions as per
+    http://www.apache.org/dev/mirror-step-by-step.html
+- upload the files to the POI dev dist area under /<version>-RC-<x>/
+    eg https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/ for
+    3.8 Release Candidate 2 
+- add a README.txt to the directory that states the files are a
+   release candidate pending a vote, despite their name being -FINAL
+- include the URL of this in the release vote (goes to dev, not user)
+   (eg https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/)
+
+- wait for release vote to pass
+- send notification of vote passing to private@
+
+- move the regular distributions from the dev area of the dist svn to the 
+  release area of svn
+- remove the old distribition from the release area of svn
+- ensure that the artificats show up on www.apache.org/dist/poi/ (they
+  should appear within a minute)
+
+- copy the maven distribution from a checkout of the dev area of the dist
+   svn, to the distribution directories on 
+   people.apache.org/repo/m1-ibiblio-rsync-repository/org.apache.poi/
+- copy the maven redirection pom from a checkout of the dev area of the
+   dist svn, to people.apache.org/repo/m1-ibiblio-rsync-repository/poi/poms/
+
+- wait for the distributions to appear on your favourite mirror
+
+- generate announcements
+- generate www pages and upload
+- bump release ID in build.xml
+- send announcements to user and dev lists
+- send announcements to announcement@apache.org, announcements@jakarta.apache.org
+- news to newsgroups: comp.lang.java.softwaretools
+- post stories on
+  *) jakarta news page
+  *) theserverside.com
+  *) freshmeat.net
+  *) www.javaworld.com
+  *) www.javalobby.com
+  *) www.jguru.com
+  *) www.slashdot.org
+  (and follow them up)

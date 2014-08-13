@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Jakarta POI - En las Noticias del mundo</title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="TK" name="Tetsuya Kitahata" email="tetsuya@apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>POI en los medios de comunicación</title>
+        <p>
+                Estos son artículos/etc. sobre POI publicados en la red. Si ves
+		alguna noticia sobre POI o algún sitio en el que se le menciona
+		de manera notable (no en tu propia página en la que pones la palabra
+		POI para que enlacemos contigo y en la que casualmente hay una foto
+		de tu mujer e hijos) entonces envía un parche a la lista. En general
+		dedicaremos el mismo tiempo así que no tengáis reparos en enviar
+		difamaciones coléricas así como comentarios favorables, técnicos y
+		objetivos. No mencionaremos mensajes realmente estúpidos (lo sentimos).
+        </p>
+    </section>
+    <section><title>Inglés</title>
+        <ul>
+                <li>
+                      <link href="http://archive.midrange.com/web400/200204/msg00023.html">Discusión sobre el uso de POI en AS/400s</link>
+                </li>
+                <li>
+                      <link href="http://www.somelist.com/mails/23819.html">Discusión de cuando casi tuvimos POI como el filtro para KOffice si asuntos de política y licencias no lo hubieran condenado al fracaso</link>
+                </li>
+                <li>
+                       <link href="http://www.oreillynet.com/pub/wlg/1552?page=last&amp;x-showcontent=text">Discusión Java en O'Reilly Network incluyendo discusión sobre POI</link> - O'Reilly.net
+                </li>
+                <li>
+                       <link href="http://www.rollerweblogger.org/page/roller/20020715">Poor Obfuscation Implementation (Implementación Pobre de Ofuscación).</link> - Blog de David M. Johnson
+                </li>
+		<li>
+                       <link href="http://www.jsurfer.org/article.php?sid=322">
+                        Descarga POI 1.5-dev-rc2 </link> - JSurfer
+                </li>
+
+                <li>
+                       <link href="http://directory.google.com/Top/Computers/Programming/Languages/Java/Class_Libraries/Data_Formats/Microsoft_Formats/"> Google dice que somos los más importantes en nuestra categoría </link>
+                </li>
+                <li>
+                       <link href="http://www.javaworld.com/javaworld/javaqa/2002-05/01-qa-0503-excel3.html">It's POI-fect</link> - Tony Sintes, Javaworld
+                </li>
+                <li>
+                       <link href="http://www.need-a-cake.com/categories/cocoonWeblog/2002/03/07.html">
+			Nicola anuncia código de serialización POI
+                       </link> - Matthew Langham's Radio Weblog
+                </li>
+                <li>
+                        <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?folderId=20&amp;discussionContextId=11523">
+                        Descarga Jakarta POI 1.4583</link> - JavaLobby
+                </li>
+                <li>
+                        <link href="http://javalobby.org/discussionContext/showThreaded/frm/javalobby?discussionContextId=11442&amp;folderId=20">
+                        El proyecto POI se mueve a Jakarta (OLE 2 CDF/Excel/Word en
+                        java puro)</link> - JavaLobby
+                </li>
+                <li>
+                        <link
+                        href="http://www.geocities.com/marcoschmidt.geo/java-image-coding.html">
+                        Listado de bibliotecas Java para leer y escribir ficheros de imágenes y documentos
+                        </link> - Página de Marco Schmidt (normalmente no anunciaríamos
+			la página personal de nadie, pero es un listado extensivo de información
+			que incluye "alternativas a POI" (para aquellos que son muy ricos). ¡Pero, qué
+			l3ch3s, creo que voy a marcar esta página para mí puesto que tiene enlaces a
+			direcciones que en conjunto contienen o enlazan con todo el conocimiento de la humanidad!)
+                </li>
+                <li>
+                        <link href="http://radio.weblogs.com/0101350/">
+			Experiencias de un Operador (Måns af Klercker)
+                        </link> - radio.weblogs.com
+                </li>
+                <li>
+                        <link href="http://dataconv.org/apps_office.html">
+                        DATACONV - Herramientas de Conversión de Datos: Office
+                        </link> DATACONV
+                </li>
+                <li>
+                        <link href="http://chicago.sourceforge.net/devel/">
+                        Página del Desarrollador de Chicago
+                        </link>
+                </li>
+                <li>
+                        <link href="http://www.onjava.com/pub/d/1157">
+                        POI/Proyecto de Serialización de POI
+                        </link> - Tío, sabes que estás en lo alto cuando le gustas a
+                        O'Reilly.  ;-)
+                </li>
+                <li>
+                        <link
+                        href="http://www.javaworld.com/netnews/index.shtml">
+                        Noticias en la Red
+                        </link> - Java World
+                </li>
+
+        </ul>
+    </section>
+    <section><title>Nederlandstalige (Holandés)</title>
+        <ul>
+                <li>
+                        <link
+                        href="http://www.ster.be/java/java9.html">
+                        Een Excel-werkboek maken vanuit Java - Lieven Smits
+                        </link>
+                </li>
+        </ul>
+    </section>
+    <section><title>Deutsch (Alemán)</title>
+        <ul>
+                <li> <link
+                      href="http://www.entwickler.com/itr/news/show.php3?id=6132&amp;nodeid=82 ">Apache POI verffentlicht</link> - entwicker.com
+                </li>
+                <li>
+                       <link
+                       href="http://www.jsp-develop.de/newsletter/10/">
+                       Apache Jakarta-Projekt bringt Word und Excel in die Java-Welt </link> - jsp-develop.de  (for the misguided who use JSP ;-) )
+                </li>
+                <li>
+                        <link
+                        href="http://www.entwickler.com/news/2002/02/5718/news.shtml">
+                        Neues Apache-Projekt bringt Word- und Excel nach Java
+                        </link> - entwickler.com
+                </li>
+        </ul>
+    </section>
+    <section><title>Español (Spanish)</title>
+        <ul>
+                <li>
+                        <link href="http://www.javahispano.com/noticias/todas.jsp">
+                        OLE2 desde Java nativo
+                        </link> - javaHispano
+                </li>
+                <li>
+                      <link href="http://p2p.wrox.com/archive/java_espanol/2002-08/3.asp">Discusión sobre Excel y Java incluyendo POI de los foros de Wrox</link>
+                </li>
+        </ul>
+    </section>
+    <section><title>Francais (Francés)</title>
+        <ul>
+		<li>
+			<link href="http://linuxfr.org/section/D%E9veloppeur,0,1,8,0.html">
+			Excel/OLE accessibles
+                        </link> - Da Linux French Page
+                </li>
+                <li>
+                        <link href="http://www.sogid.com/javalist/f2002/traiter_word_java.html">Discusión sobre POI en francés</link>
+                </li>
+        </ul>
+    </section>
+    <section><title>Nihongo (Japonés)</title>
+        <ul>
+                <li>
+                        <link href="http://drpanda.freezope.org/Memo/docs/jakarta/poi/poi_sample">100% PureJava...</link> - Dr. Panda Portal
+                </li>
+                <li>
+                        <link
+                        href="http://www.gimlay.org/~andoh/java/javanew.html">
+                        What's new with java?
+                        </link> - gimlay.org
+                </li>
+                <li><link href="http://taka-2.com/jclass/POI/">Java?Excel?????</link> - appears to show how to use Japanese with POI</li>
+                <li><link href="http://www.tech-arts.co.jp/macosx/webobjects-jp/htdocs/3200/3218.html">Various discussion in Japanese including on POI</link></li>
+                <li><link href="http://muimi.com/j/jakarta/">Japanese resources on Jakarta projects including POI</link></li>
+                <li><link href="http://www.fk.urban.ne.jp/home/kishida/">Kishida's site</link> -- Weekly Forte Lectures -- includes a snip about POI and Japanese.</li>
+        </ul>
+    </section>
+    <section><title>Russkii Yazyk (Ruso)</title>
+        <ul>
+          <li>
+             <link href="http://www.nestor.minsk.by/kg/kg02/21/kg22108.html">
+             Probably a translation of the Javalobby announcement of 1.5-final
+             </link> -- Computer News (What's New)
+          </li>
+        </ul>
+    </section>
+    <section><title>Hangul (Coreano)</title>
+        <ul>
+           <li>
+             <link href="http://www.javabrain.co.kr/AnswerView?questionId=1189&amp;categoryId=8">Various discussion in Korean about Excel output/APIs including POI</link>
+           </li>
+        </ul>
+    </section>
+    <section><title>Ni idea</title>
+        <p>
+                ¡Si entiendes alguno de estos idiomas, envía un correo a la lista
+		diciéndonos en qué idioma está escrito y lo pondremos donde corresponda!
+        </p>
+	<ul>
+                <li>
+                       <link
+                       href="http://www.javacentrix.com/index.htm">
+                       Si tuviera que adivinar, diría que es Tailandés, pero a lo mejor
+		       alguno de vosotros lo sabe con seguridad.</link> - javacentrix.com
+                </li>
+        </ul>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

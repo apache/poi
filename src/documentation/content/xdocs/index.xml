@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+<document>
+  <header>
+    <title>Apache POI - the Java API for Microsoft Documents</title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="GJS" name="Glen Stampoultzis" email="user@poi.apache.org"/>
+      <person id="AS" name="Avik Sengupta" email="user@poi.apache.org"/>
+      <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
+      <person id="DF" name="David Fisher" email="dfisher@jmlafferty.com"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>Project News</title>
+      <section><title>19 September 2013 - POI 3.10 Beta 2 available</title>
+       <p>The Apache POI team is pleased to announce the release of 3.10 Beta 2. This primarily
+        includes a large number of bug fixes, and some enhancements (especially in the number of
+        Formula Functions supported).
+       </p>
+       <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+        People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
+       <p>See the <link href="download.html">downloads</link> page for more details.</p>
+      </section>
+      <section><title>3 December 2012 - POI 3.9 available</title>
+       <p>The Apache POI team is pleased to announce the release of 3.9. This includes a large number of bug fixes, and some
+        enhancements (especially text extraction). See the
+        <link href="http://www.apache.org/dist/poi/release/RELEASE-NOTES.txt">release notes</link> for more details.
+       </p>
+       <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+        People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
+       <p>See the <link href="download.html">downloads</link> page for more details.</p>
+      </section>
+      <section><title>28 August 2011 - The Apache POI project is celebrating its 10th anniversary</title>
+       <p>
+        The Apache POI project is celebrating its 10th anniversary. On the 28th of August 2001, the first 0.1 alpha version of POI was released. 
+        <link href="https://blogs.apache.org/foundation/entry/the_apache_software_foundation_announces14">Read more...</link></p>
+      </section>
+    </section>
+
+    <section><title>Mission Statement</title>
+      <p>
+      The Apache POI Project's mission is to create and maintain Java APIs for manipulating various file formats
+      based upon the Office Open XML standards (OOXML) and Microsoft's OLE 2 Compound Document format (OLE2).
+      In short, you can read and write MS Excel files using Java.
+      In addition, you can read and write MS Word and MS PowerPoint files using Java.  Apache POI is your Java Excel
+      solution (for Excel 97-2008). We have a complete API for porting other OOXML and OLE2 formats and welcome others to participate.
+      </p>
+      <p>
+      OLE2 files include most Microsoft Office files such as XLS, DOC, and PPT as well as MFC serialization API based file formats.
+      The project provides APIs for the <link href="poifs/index.html">OLE2 Filesystem (POIFS)</link> and
+      <link href="hpsf/index.html">OLE2 Document Properties (HPSF)</link>.
+      </p>
+      <p>
+      Office OpenXML Format is the new standards based XML file format found in Microsoft Office 2007 and 2008.
+      This includes XLSX, DOCX and PPTX. The project provides a low level API to support the Open Packaging Conventions
+      using <link href="oxml4j/index.html">openxml4j</link>.
+      </p>
+      <p>
+	For each MS Office application there exists a component module that attempts to provide a common high level Java api to both OLE2 and OOXML
+	document formats. This is most developed for <link href="spreadsheet/index.html">Excel workbooks (SS=HSSF+XSSF)</link>.
+	Work is progressing for <link href="hwpf/index.html">Word documents (HWPF+XWPF)</link> and
+	<link href="slideshow/index.html">PowerPoint presentations (HSLF+XSLF)</link>.
+      </p>
+      <p>
+	The project has recently added support for <link href="hsmf/index.html">Outlook (HSMF)</link>. Microsoft opened the specifications
+	to this format in October 2007. We would welcome contributions.
+      </p>
+      <p>
+        There are also projects for 
+        <link href="hdgf/index.html">Visio (HDGF)</link>,
+        <link href="hmef/index.html">TNEF (HMEF)</link>,
+        and <link href="hpbf/index.html">Publisher (HPBF)</link>.
+      </p>
+      <p>
+         As a general policy we collaborate as much as possible with other projects to
+         provide this functionality.  Examples include: <link href="http://xml.apache.org/cocoon">Cocoon</link> for
+         which there are serializers for HSSF;
+         <link href="http://www.openoffice.org">Open Office.org</link> with whom we collaborate in documenting the
+         XLS format; and <link href="http://tika.apache.org/">Tika</link> / 
+         <link href="http://lucene.apache.org/">Lucene</link>,
+         for which we provide format interpretors.  When practical, we donate
+         components directly to those projects for POI-enabling them. 
+      </p>
+      <section><title>Why should I use Apache POI?</title>
+      <p>
+	A major use of the Apache POI api is for <link href="text-extraction.html">Text Extraction</link> applications
+	such as web spiders, index builders, and content management systems.
+      </p>
+        <p>
+		So why should you use POIFS, HSSF or XSSF?
+        </p>
+        <p>
+		You'd use POIFS if you had a document written in OLE 2 Compound Document Format, probably written using
+		MFC, that you needed to read in Java. Alternatively, you'd use POIFS to write OLE 2 Compound Document Format
+		if you needed to inter-operate with software running on the Windows platform. We are not just bragging when
+		we say that POIFS is the most complete and correct implementation of this file format to date!
+        </p>
+        <p>
+		You'd use HSSF if you needed to read or write an Excel file using Java (XLS). You'd use
+        XSSF if you need to read or write an OOXML Excel file using Java (XLSX). The combined
+        SS interface allows you to easily read and write all kinds of Excel files (XLS and XLSX)
+        using Java.
+        </p>
+      </section>
+      <section><title>Components</title>
+	<p>
+	  The Apache POI Project provides several component modules some of which may not be of interest to you.
+	  Use the information on our <link href="overview.html#components">Components</link> page to determine which
+	  jar files to include in your classpath.
+	</p>
+      </section>
+    </section>
+
+    <section><title>Contributing </title>
+        <p>
+		So you'd like to contribute to the project? Great! We need enthusiastic, hard-working, talented folks to help
+		us on the project. So if you're motivated, ready, and have the time time download the source from the
+		<link href="subversion.html">Subversion Repository</link>, <link href="howtobuild.html">build the code</link>,
+		join the <link href="mailinglists.html">mailing lists</link> and we'll be happy to help you get started on the project!
+        </p>
+      <p>
+	Please read our <link href="guidelines.html">Contribution Guidelines</link>. When your contribution is ready
+	submit a patch to our <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</link>.
+      </p>
+
+
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

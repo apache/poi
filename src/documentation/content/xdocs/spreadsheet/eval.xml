@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Formula Evaluation</title>
+  </header>
+  <body>
+    <section><title>Introduction</title>
+      <p>The POI formula evaluation code enables you to calculate the result of 
+         formulas in Excels sheets read-in, or created in POI. This document explains
+         how to use the API to evaluate your formulas. 
+      </p>
+    </section>
+
+    <anchor id="WhyEvaluate"/>
+    <section><title>Why do I need to evaluate formulas?</title>
+      <p>The Excel file format (both .xls and .xlsx) stores a "cached" result for
+         every formula along with the formula itself. This means that when the file
+         is opened, it can be quickly displayed, without needing to spend a long
+         time calculating all of the formula results. It also means that when reading
+         a file through Apache POI, the result is quickly available to you too!
+      </p>
+      <p>After making changes with Apache POI to either Formula Cells themselves,
+         or those that they depend on, you should normally perform a Formula
+         Evaluation to have these "cached" results updated. This is normally done
+         after all changes have been performed, but before you write the file out.
+         If you don't do this, there's a good chance that when you open the file in
+         Excel, until you go to the cell and hit enter or F9, you will either see 
+         the old value or '#VALUE!' for the cell. (Sometimes Excel will notice
+         itself, and trigger a recalculation on load, but unless you know you are
+         using volatile functions it's generally best to trigger a Recalulation
+         through POI)
+      </p>
+    </section>
+
+    <anchor id="Status"/>
+    <section><title>Status</title>
+			<p>The code currently provides implementations for all the arithmatic operators.
+				It also provides implementations for approx. 140 built in
+				functions in Excel. The framework however makes it easy to add 
+			 	implementation of new functions. See the <link href="eval-devguide.html"> Formula
+        evaluation development guide</link>  and <link href="../apidocs/org/apache/poi/hssf/record/formula/functions/package-summary.html">javadocs</link> 
+        for details. </p>
+            <p> Both HSSFWorkbook and XSSFWorkbook are supported, so you can 
+                evaluate formulas on both .xls and .xlsx files.</p>
+			<p> Note that user-defined functions are not supported, and is not likely to done
+				any time soon... at least, not till there is a VB implementation in Java!
+			</p>
+		</section>
+		<section><title>User API How-TO</title>
+			<p>The following code demonstrates how to use the FormulaEvaluator 
+				in the context of other POI excel reading code.
+			</p>
+			<p>There are several ways in which you can use the FormulaEvalutator API.</p>
+
+			<anchor id="Evaluate"/>
+			<section><title>Using FormulaEvaluator.<strong>evaluate</strong>(Cell cell)</title>
+				<p>This evaluates a given cell, and returns the new value,
+				without affecting the cell</p>
+				<source>
+FileInputStream fis = new FileInputStream("c:/temp/test.xls");
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("c:/temp/test.xls")
+Sheet sheet = wb.getSheetAt(0);
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+// suppose your formula is in B3
+CellReference cellReference = new CellReference("B3"); 
+Row row = sheet.getRow(cellReference.getRow());
+Cell cell = row.getCell(cellReference.getCol()); 
+
+CellValue cellValue = evaluator.evaluate(cell);
+
+switch (cellValue.getCellType()) {
+    case Cell.CELL_TYPE_BOOLEAN:
+        System.out.println(cellValue.getBooleanValue());
+        break;
+    case Cell.CELL_TYPE_NUMERIC:
+        System.out.println(cellValue.getNumberValue());
+        break;
+    case Cell.CELL_TYPE_STRING:
+        System.out.println(cellValue.getStringValue());
+        break;
+    case Cell.CELL_TYPE_BLANK:
+        break;
+    case Cell.CELL_TYPE_ERROR:
+        break;
+
+    // CELL_TYPE_FORMULA will never happen
+    case Cell.CELL_TYPE_FORMULA: 
+        break;
+}				
+        </source>
+				<p>Thus using the retrieved value (of type 
+					FormulaEvaluator.CellValue - a nested class) returned 
+					by FormulaEvaluator is similar to using a Cell object 
+					containing the value of the formula evaluation. CellValue is 
+					a simple value object and does not maintain reference 
+					to the original cell.
+				</p>
+			</section>
+
+			<anchor id="EvaluateFormulaCell"/>
+			<section><title>Using FormulaEvaluator.<strong>evaluateFormulaCell</strong>(Cell cell)</title>
+				<p><strong>evaluateFormulaCell</strong>(Cell cell) 
+				will check to see if the supplied cell is a formula cell. 
+				If it isn't, then no changes will be made to it. If it is, 
+				then the formula is evaluated. The value for the formula
+				is saved alongside it, to be displayed in excel. The
+				formula remains in the cell, just with a new value</p>
+				<p>The return of the function is the type of the
+				formula result, such as Cell.CELL_TYPE_BOOLEAN</p>
+        <source>
+FileInputStream fis = new FileInputStream("/somepath/test.xls");
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
+Sheet sheet = wb.getSheetAt(0);
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+// suppose your formula is in B3
+CellReference cellReference = new CellReference("B3"); 
+Row row = sheet.getRow(cellReference.getRow());
+Cell cell = row.getCell(cellReference.getCol()); 
+
+if (cell!=null) {
+    switch (evaluator.evaluateFormulaCell(cell)) {
+        case Cell.CELL_TYPE_BOOLEAN:
+            System.out.println(cell.getBooleanCellValue());
+            break;
+        case Cell.CELL_TYPE_NUMERIC:
+            System.out.println(cell.getNumericCellValue());
+            break;
+        case Cell.CELL_TYPE_STRING:
+            System.out.println(cell.getStringCellValue());
+            break;
+        case Cell.CELL_TYPE_BLANK:
+            break;
+        case Cell.CELL_TYPE_ERROR:
+            System.out.println(cell.getErrorCellValue());
+            break;
+
+        // CELL_TYPE_FORMULA will never occur
+        case Cell.CELL_TYPE_FORMULA: 
+            break;
+    }
+}
+				</source>
+			</section>
+
+			<anchor id="EvaluateInCell"/>
+			<section><title>Using FormulaEvaluator.<strong>evaluateInCell</strong>(Cell cell)</title>
+				<p><strong>evaluateInCell</strong>(Cell cell) will check to
+				see if the supplied cell is a formula cell. If it isn't,
+				then no changes will be made to it. If it is, then the
+				formula is evaluated, and the new value saved into the cell,
+				in place of the old formula.</p>
+				<source>
+FileInputStream fis = new FileInputStream("/somepath/test.xls");
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
+Sheet sheet = wb.getSheetAt(0);
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+// suppose your formula is in B3
+CellReference cellReference = new CellReference("B3");
+Row row = sheet.getRow(cellReference.getRow());
+Cell cell = row.getCell(cellReference.getCol()); 
+
+if (cell!=null) {
+    switch (evaluator.<strong>evaluateInCell</strong>(cell).getCellType()) {
+        case Cell.CELL_TYPE_BOOLEAN:
+            System.out.println(cell.getBooleanCellValue());
+            break;
+        case Cell.CELL_TYPE_NUMERIC:
+            System.out.println(cell.getNumericCellValue());
+            break;
+        case Cell.CELL_TYPE_STRING:
+            System.out.println(cell.getStringCellValue());
+            break;
+        case Cell.CELL_TYPE_BLANK:
+            break;
+        case Cell.CELL_TYPE_ERROR:
+            System.out.println(cell.getErrorCellValue());
+            break;
+
+        // CELL_TYPE_FORMULA will never occur
+        case Cell.CELL_TYPE_FORMULA:
+            break;
+    }
+}
+
+        </source>
+			</section>
+
+			<anchor id="EvaluateAll"/>
+			<section><title>Re-calculating all formulas in a Workbook</title>
+				<source>
+FileInputStream fis = new FileInputStream("/somepath/test.xls");
+Workbook wb = new HSSFWorkbook(fis); //or new XSSFWorkbook("/somepath/test.xls")
+FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+for(int sheetNum = 0; sheetNum &lt; wb.getNumberOfSheets(); sheetNum++) {
+    Sheet sheet = wb.getSheetAt(sheetNum);
+    for(Row r : sheet) {
+        for(Cell c : r) {
+            if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                evaluator.evaluateFormulaCell(c);
+            }
+        }
+    }
+}
+        </source>
+
+           <p>Alternately, if you know which of HSSF or XSSF you're working
+            with, then you can call the static 
+            <strong>evaluateAllFormulaCells</strong> method on the appropriate
+            HSSFFormulaEvaluator or XSSFFormulaEvaluator class.</p>
+			</section>
+		</section>
+		
+		<anchor id="recalculation"/>
+		<section><title>Recalculation of Formulas</title>
+      <p>
+        In certain cases  you may want to force Excel to re-calculate formulas when the workbook is opened.
+        Consider the following example:
+      </p>  
+      <p>
+        Open Excel and create a new workbook. On the first sheet set A1=1, B1=1, C1=A1+B1. 
+        Excel automatically calculates formulas and the value in C1 is 2. So far so good.
+      </p>  
+      <p>
+        Now modify the workbook with POI:
+      </p>
+      <source>
+  Workbook wb = WorkbookFactory.create(new FileInputStream("workbook.xls"));
+
+  Sheet sh = wb.getSheetAt(0);
+  sh.getRow(0).getCell(0).setCellValue(2);  // set A1=2
+
+  FileOutputStream out = new FileOutputStream("workbook2.xls");
+  wb.write(out);
+  out.close();
+      </source>      
+      <p>
+        Now open workbook2.xls in Excel and the value in C1 is still 2 while you expected 3. Wrong? No!
+        The point is that Excel caches previously calculated results and you need to trigger recalculation to updated them. 
+        It is not an issue when you are creating new workbooks from scratch, but important to remember when you are modifing 
+        existing workbooks with formulas. This can be done in two ways:  
+      </p>   
+      <p>
+        1. Re-evaluate  formulas with POI's FormulaEvaluator:
+      </p>   
+        <source>
+  Workbook wb = WorkbookFactory.create(new FileInputStream("workbook.xls"));
+
+  Sheet sh = wb.getSheetAt(0);
+  sh.getRow(0).getCell(0).setCellValue(2);  // set A1=2
+
+  wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        </source>        
+      <p>
+        2. Delegate re-calculation to Excel. The application will perform a full recalculation when the workbook is opened:
+      </p>           
+        <source>
+  Workbook wb = WorkbookFactory.create(new FileInputStream("workbook.xls"));
+
+  Sheet sh = wb.getSheetAt(0);
+  sh.getRow(0).getCell(0).setCellValue(2);  // set A1=2
+
+  wb.setForceFormulaRecalculation(true);
+        </source>        
+		</section>
+
+    <anchor id="Performance"/>
+    <section><title>Performance Notes</title>
+      <ul>
+        <li>Generally you should have to create only one FormulaEvaluator 
+          instance per Workbook. The FormulaEvaluator will cache 
+          evaluations of dependent cells, so if you have multiple
+          formulas all depending on a cell then subsequent evaluations
+          will be faster.
+        </li>
+        <li>You should normally perform all of your updates to cells,
+          before triggering the evaluation, rather than doing one
+          cell at a time. By waiting until all the updates/sets are
+          performed, you'll be able to take best advantage of the caching
+          for complex formulas.
+        </li>
+        <li>If you do end up making changes to cells part way through
+          evaluation, you should call <em>notifySetFormula</em> or
+          <em>notifyUpdateCell</em> to trigger suitable cache clearance.
+          Alternately, you could instantiate a new FormulaEvaluator,
+          which will start with empty caches.
+        </li>
+        <li>Also note that FormulaEvaluator maintains a reference to 
+          the sheet and workbook, so ensure that the evaluator instance 
+          is available for garbage collection when you are done with it 
+          (in other words don't maintain long lived reference to 
+          FormulaEvaluator if you don't really need to - unless 
+          all references to the sheet and workbook are removed, these 
+          don't get garbage collected and continue to occupy potentially 
+          large amounts of memory). 
+        </li>	
+        <li>CellValue instances however do not maintain reference to the 
+          Cell or the sheet or workbook, so these can be long-lived 
+          objects without any adverse effect on performance.
+        </li>
+      </ul>
+    </section>
+    <section><title>Formula Evaluation Debugging</title>
+		<p>POI is not perfect and you may stumble across formula evaluation problems (Java exceptions
+		or just different results) in your special use case. To support an easy detailed analysis, a special
+		logging of the full evaluation is provided.</p>
+		<p>The output of this logging may be very large (depends on your EXCEL), so this logging has to be explicitly enabled
+		for each single formula evaluation. Should not be used in production - only for specific development use.</p>
+		<p>Example use:</p>
+		<source>
+	// activate logging to console
+	System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+	System.setProperty("poi.log.level", POILogger.INFO + "");
+
+	// open your file
+	Workbook wb = new HSSFWorkbook(new FileInputStream("foobar.xls"));
+    FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+	// get your cell
+	Cell cell = wb.getSheet(0).getRow(0).getCell(0);		// just a dummy example
+
+	// perform debug output for the next evaluate-call only
+    evaluator.setDebugEvaluationOutputForNextEval(true);
+	evaluator.evaluateFormulaCell(cell);
+	evaluator.evaluateFormulaCell(cell);		// no logging performed for this next evaluate-call
+		</source>
+		<p>The special Logger called "POI.FormulaEval" is used (useful if you use the CommonsLogger and a detailed logging configuration).
+		The used log levels are WARN and INFO (for detailed parameter info and results) - the level are so high to allow this
+		special logging without beeing disturbed by the bunch of DEBUG log entries from other classes.</p>
+	</section>
+  </body>
+</document>

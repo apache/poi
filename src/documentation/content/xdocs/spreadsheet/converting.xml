@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Upgrading to POI 3.5, including converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
+        <authors>
+            <person email="nick@apache.org" name="Nick Burch" id="NB"/>
+        </authors>
+    </header>
+  <body>
+<section><title>Things that have to be changed when upgrading to POI 3.5</title>
+	<p>Wherever possible, we have tried to ensure that you can use your
+     existing POI code with POI 3.5 without requiring any changes. However,
+     Java doesn't always make that easy, and unfortunately there are a 
+     few changes that may be required for some users.</p>
+    <section><title>org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue</title>
+       <p>Annoyingly, java will not let you access a static inner class via
+        a child of the parent one. So, all references to
+        <em>org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator.CellValue</em>
+        will need to be changed to
+        <em>org.apache.poi.ss.usermodel.FormulaEvaluator.CellValue</em>
+       </p>
+    </section>
+    <section><title>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</title>
+       <p>Annoyingly, java will not let you access a static inner class via
+        a child of the parent one. So, all references to
+        <em>org.apache.poi.hssf.usermodel.HSSFRow.MissingCellPolicy</em>
+        will need to be changed to
+        <em>org.apache.poi.ss.usermodel.Row.MissingCellPolicy</em>
+       </p>
+    </section>
+    <section><title>DDF and org.apache.poi.hssf.record.RecordFormatException</title>
+       <p>Previously, record level errors within DDF would throw an
+        exception from the hssf class heirachy. Now, record level errors
+        within DDF will throw a more general RecordFormatException,
+        <em>org.apache.poi.util.RecordFormatException</em></p>
+       <p>In addition, org.apache.poi.hssf.record.RecordFormatException
+        has been changed to inherit from the new	
+        <em>org.apache.poi.util.RecordFormatException</em>, so you may
+        wish to change catches of the hssf version to the new util version.
+       </p>
+    </section>
+  </section>
+  <section><title>Converting existing HSSF Usermodel code to SS Usermodel (for XSSF and HSSF)</title>
+
+        <section><title>Why change?</title>
+            <p>If you have existing HSSF usermodel code that works just
+            fine, and you don't want to use the new OOXML XSSF support,
+            then you probably don't need to. Your existing HSSF only code
+            will continue to work just fine.</p>
+            <p>However, if you want to be able to work with both HSSF for
+            your .xls files, and also XSSF for .xslx files, then you will
+            need to make some slight tweaks to your code.</p>
+        </section>
+        <section><title>org.apache.poi.ss.usermodel</title>
+           <p>The new SS usermodel (org.apache.poi.ss.usermodel) is very
+           heavily based on the old HSSF usermodel 
+           (org.apache.poi.hssf.usermodel). The main difference is that
+           the package name and class names have been tweaked to remove
+           HSSF from them. Otherwise, the new SS Usermodel interfaces 
+           should provide the same functionality.</p>
+        </section>
+        <section><title>Constructors</title>
+           <p>Calling the empty HSSFWorkbook remains as the way to 
+           create a new, empty Workbook object. To open an existing
+           Worbook, you should now call WorkbookFactory.create(inp).</p>
+           <p>For all other cases when you would have called a
+           Usermodel constructor, such as 'new HSSFRichTextString()' or
+           'new HSSFDataFormat', you should instead use a CreationHelper.
+           There's a method on the Workbook to get a CreationHelper, and
+           the CreationHelper will then handle constructing new objects
+           for you.</p>
+		</section>
+		<section><title>Other Code</title>
+           <p>For all other code, generally change a reference from
+            org.apache.poi.hssf.usermodel.HSSFFoo to a reference to
+            org.apache.poi.ss.usermodel.Foo. Method signatures should
+            otherwise remain the same, and it should all then work for
+            both XSSF and HSSF.</p>
+        </section>
+  </section>
+  <section><title>Worked Examples</title>
+      <section><title>Old HSSF Code</title>
+<source><![CDATA[
+// import org.apache.poi.hssf.usermodel.*;
+
+HSSFWorkbook wb = new HSSFWorkbook();
+// create a new sheet
+HSSFSheet s = wb.createSheet();
+// declare a row object reference
+HSSFRow r = null;
+// declare a cell object reference
+HSSFCell c = null;
+// create 2 cell styles
+HSSFCellStyle cs = wb.createCellStyle();
+HSSFCellStyle cs2 = wb.createCellStyle();
+HSSFDataFormat df = wb.createDataFormat();
+
+// create 2 fonts objects
+HSSFFont f = wb.createFont();
+HSSFFont f2 = wb.createFont();
+
+// Set font 1 to 12 point type, blue and bold
+f.setFontHeightInPoints((short) 12);
+f.setColor( HSSFColor.RED.index );
+f.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+// Set font 2 to 10 point type, red and bold
+f2.setFontHeightInPoints((short) 10);
+f2.setColor( HSSFFont.RED.index );
+f2.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+
+// Set cell style and formatting
+cs.setFont(f);
+cs.setDataFormat(df.getFormat("#,##0.0"));
+
+// Set the other cell style and formatting
+cs2.setBorderBottom(cs2.BORDER_THIN);
+cs2.setDataFormat(HSSFDataFormat.getBuiltinFormat("text"));
+cs2.setFont(f2);
+
+
+// Define a few rows
+for(short rownum = (short)0; rownum < 30; rownum++) {
+	HSSFRow r = s.createRow(rownum);
+	for(short cellnum = (short)0; cellnum < 10; cellnum += 2) {
+		HSSFCell c = r.createCell(cellnum);
+		HSSFCell c2 = r.createCell(cellnum+1);
+
+		c.setCellValue((double)rownum + (cellnum/10));
+		c2.setCellValue(new HSSFRichTextString("Hello! " + cellnum);
+	}
+}
+
+// Save
+FileOutputStream out = new FileOutputStream("workbook.xls");
+wb.write(out);
+out.close();
+        ]]></source>
+	</section>
+	<section><title>New, generic SS Usermodel Code</title>
+<source><![CDATA[
+// import org.apache.poi.ss.usermodel.*;
+
+Workbook[] wbs = new Workbook[] { new HSSFWorkbook(), new XSSFWorkbook() };
+for(int i=0; i<wbs.length; i++) {
+   Workbook wb = wbs[i];
+   CreationHelper createHelper = wb.getCreationHelper();
+
+   // create a new sheet
+   Sheet s = wb.createSheet();
+   // declare a row object reference
+   Row r = null;
+   // declare a cell object reference
+   Cell c = null;
+   // create 2 cell styles
+   CellStyle cs = wb.createCellStyle();
+   CellStyle cs2 = wb.createCellStyle();
+   DataFormat df = wb.createDataFormat();
+
+   // create 2 fonts objects
+   Font f = wb.createFont();
+   Font f2 = wb.createFont();
+
+   // Set font 1 to 12 point type, blue and bold
+   f.setFontHeightInPoints((short) 12);
+   f.setColor( IndexedColors.RED.getIndex() );
+   f.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+   // Set font 2 to 10 point type, red and bold
+   f2.setFontHeightInPoints((short) 10);
+   f2.setColor( IndexedColors.RED.getIndex() );
+   f2.setBoldweight(Font.BOLDWEIGHT_BOLD);
+
+   // Set cell style and formatting
+   cs.setFont(f);
+   cs.setDataFormat(df.getFormat("#,##0.0"));
+
+   // Set the other cell style and formatting
+   cs2.setBorderBottom(cs2.BORDER_THIN);
+   cs2.setDataFormat(df.getFormat("text"));
+   cs2.setFont(f2);
+
+
+   // Define a few rows
+   for(int rownum = 0; rownum < 30; rownum++) {
+	   Row r = s.createRow(rownum);
+	   for(int cellnum = 0; cellnum < 10; cellnum += 2) {
+		   Cell c = r.createCell(cellnum);
+		   Cell c2 = r.createCell(cellnum+1);
+   
+		   c.setCellValue((double)rownum + (cellnum/10));
+		   c2.setCellValue(
+		         createHelper.createRichTextString("Hello! " + cellnum)
+		   );
+	   }
+   }
+   
+   // Save
+   String filename = "workbook.xls";
+   if(wb instanceof XSSFWorkbook) {
+     filename = filename + "x";
+   }
+ 
+   FileOutputStream out = new FileOutputStream(filename);
+   wb.write(out);
+   out.close();
+}
+        ]]></source>
+	</section>
+</section>
+</body>
+</document>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Jakarta POI - Formula Support</title>
+        <authors>
+            <person email="avik@apache.org" name="Avik Sengupta" id="AS"/>
+        </authors>
+    </header>
+    <body>
+        <section><title>Introduction</title>
+            <p>
+                This document describes the current state of formula support in POI. 
+                The information in this document applies to the 2.0-dev version of POI (i.e. CVS HEAD). 
+                Since this area is a work in progress, this document will be updated with new features as and 
+                when they are added. 
+            </p>
+           
+        </section>
+        <section><title>The basics</title>
+              <p>
+                In org.apache.poi.hssf.usermodel.HSSFCell
+                    <strong> setCellFormula(&quot;formulaString&quot;) </strong> is used to add a formula to sheet and 
+                    <strong> getCellFormula() </strong> is used to retrieve the string representation of a formula. 
+                </p>
+            <p>
+                We aim to support the complete excel grammer for formulas. Thus, the string that you pass in 
+                to the <em> setCellFormula </em> call should be what you expect to type into excel. Also, note
+                that you should NOT add a "=" to the front of the string.  
+            </p>
+        </section>
+        <section><title>Supported Features</title>
+        <ul>
+             <li>Cell References</li>
+             <li>String, integer and floating point literals</li>
+              <li>Area references</li>
+              <li>Relative or absolute references</li>
+              <li>Arithmetic Operators</li>
+              <li>Sheet Functions</li>
+        </ul>
+        </section>
+        <section><title>Partially supported</title>
+            <ul>
+                <li>
+                   The formula parser now has the ability to parse formulas containing strings. However
+                   formulas that return a string value are not yet supported. 
+                   </li>
+                <li>Formula tokens in Excel are stored in one of three possible <em> classes </em>:
+                    Reference, Value and Array. Based on the location of a token, its class can change
+                    in complicated and undocumented ways. While we have support for most cases, we
+                    are not sure if we have covered all bases (since there is no documentation for this area.)
+                    We would therefore like you to report any
+                    occurence of #VALUE! in a cell upon opening a POI generated workbook in excel. (Check that
+                    typing the formula into Excel directly gives a valid result.)
+            </li>
+                    
+            </ul>
+        </section>
+        <section><title>Not yet supported</title>
+            <ul>
+                <li>Array formulas</li>
+                <li>Formulas with logical operations (IF) </li>
+                    <li>Sheet References in formulas</li>
+                    <li>Everything else :) </li>
+            </ul>
+        </section>
+
+        <section><title>Internals</title>
+            <p>
+                Formulas in Excel are stored as  sequences of tokens in Reverse Polish Notation order. The 
+                <link href="http://sc.openoffice.org/excelfileformat.pdf">open office XLS spec</link> is the best
+                documentation you will find for the format.
+            </p>
+
+            <p>
+                The tokens used by excel are modelled as individual *Ptg classes in the <strong>
+                org.apache.poi.hssf.record.formula</strong> package. 
+            </p>
+            <p>
+                The task of parsing a formula string into an array of RPN ordered tokens is done by the <strong>
+                org.apache.poi.hssf.record.formula.FormulaParser</strong> class. This class implements a hand 
+                written recursive descent parser. 
+            </p>
+            <p>Check out the <link href="http://jakarta.apache.org/poi/javadocs/">javadocs </link> for details. 
+            </p>
+        </section>
+       
+    </body>
+</document>

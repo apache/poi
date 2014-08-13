@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>Release Plan 2.0</title>
+  <subtitle>Planning Documentation</subtitle>
+  <authors>
+   <person name="David Crossley" email="crossley@apache.org"/>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>   
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Preparation for release of Poi</title>
+   <p>Todo</p>
+<!-- NKB todo
+  <p>The 2.0 final release is scheduled for the end of November 2001.
+  </p>
+
+  <p>
+   The following is extracted from the thread
+   [C2]: Release Candidate 2 ... 2001-10-29
+  </p>
+
+<source><![CDATA[
+> The question is now, what has to be done until then?
+>
+> 1) We have many open bugs in bugzilla. These must be reviewed
+>    and then solved (or declared invalid etc).
+>
+> 2) Documentation updates (this area lacks most)
+>    We could move this to the final release.
+Documentation must be happening all the time, and not left
+until last.
+
+> 3) Decide what to backport from the 2.1 head.
+>    I'm +1 on removing the CodeFactories completly in 2.0, too.
+>    This would avoid any backcompatibility problems.
+>
+> 4) Layout the distribution
+>    This is a point we haven't discussed yet. Currently our
+>    distribution is a mixture of a source and a binary one.
+>    We deliver the source and a compiled version, but in order
+>    to run Cocoon, the user has to build a war file.
+>    I propose to split this: one source distribution which is
+>    similar to the current one but without the precompiled
+>    cocoon jar and a binary distribution containing only the
+>    war file. This war file should work in most servlet engines,
+>    perhaps not in all.
+>
+> So anything missing here?
+
+5) Ensure that licensing requirements have been met.
+  update jars.xml, ensure proper banner in *.java header,
+  verify the current LICENSE* files, ensure that external
+  components have suitable licensing requirements.
+]]></source>
+-->
+ </section>
+
+ </body>
+</document>

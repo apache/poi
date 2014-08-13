@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HSSF and POI-XSSF - Java API To Access Microsoft Excel Format Files</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Andrew C. Oliver" email="acoliver@apache.org"/>
+            <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+        </authors>
+    </header>
+
+    <body>
+        <section>
+            <title>Overview</title>
+
+            <p>HSSF is the POI Project's pure Java implementation of the 
+            Excel '97(-2007) file format. XSSF is the POI Project's pure 
+            Java implementation of the Excel 2007 OOXML (.xlsx) file 
+            format.</p>
+            <p>HSSF and XSSF provides ways to read spreadsheets create, 
+            modify, read and write XLS spreadsheets. They provide:
+            </p>
+            <ul>
+                <li>low level structures for those with special needs</li>
+                <li>an eventmodel api for efficient read-only access</li>
+                <li>a full usermodel api for creating, reading and modifying XLS files</li>
+            </ul>
+            <p>For people converting from pure HSSF usermodel, who wish
+              to use the joint SS Usermodel for HSSF and XSSF support, then
+              see the <link href="converting.html">ss usermodel converting
+              guide</link>.
+            </p>
+            <p>
+        An alternate way of generating a spreadsheet is via the <link href="http://cocoon.apache.org">Cocoon</link> serializer (yet you'll still be using HSSF indirectly). 
+         With Cocoon you can serialize any XML datasource (which might be a ESQL page outputting in SQL for instance) by simply 
+        applying the stylesheet and designating the serializer.
+            </p>
+            <p>
+        If you're merely reading spreadsheet data, then use the 
+        eventmodel api in either the org.apache.poi.hssf.eventusermodel 
+        package, or the org.apache.poi.xssf.eventusermodel package, depending
+        on your file format.
+            </p>
+            <p>
+        If you're modifying spreadsheet data then use the usermodel api.  You
+        can also generate spreadsheets this way.
+            </p>
+            <p>
+        Note that the usermodel system has a higher memory footprint than
+        the low level eventusermodel, but have the major advantage of being 
+        much simpler to work with. Also please be aware that as the new
+        XSSF supported Excel 2007 OOXML (.xlsx) files are XML based, 
+        the memory footprint for processing them is higher than for the 
+        older HSSF supported (.xls) binary files.
+            </p>
+
+
+                
+        </section>
+
+<section>
+<title>SXSSF (Since POI 3.8 beta3)</title>
+<p>Since 3.8-beta3, POI provides a low-memory footprint SXSSF API built on top of XSSF.</p> 
+<p>
+SXSSF is an API-compatible streaming extension of XSSF to be used when
+very large spreadsheets have to be produced, and heap space is limited.
+SXSSF achieves its low memory footprint by limiting access to the rows that
+are within a sliding window, while XSSF gives access to all rows in the
+document. Older rows that are no longer in the window become inaccessible,
+as they are written to the disk.
+</p>
+<p>
+In auto-flush mode the size of the access window can be specified, to hold a certain number of rows in memory. 
+When that value is reached, the creation of an additional row causes the row with the lowest index to to be 
+removed from the access window and written to disk. Or, the window size can be set to grow dynamically; 
+it can be trimmed periodically by an explicit call to flushRows(int keepRows) as needed.
+</p>
+<p>
+Due to the streaming nature of the implementation, there are the following
+limitations when compared to XSSF:
+</p>
+ <ul>
+  <li>Only a limited number of rows are accessible at a point in time.</li>
+  <li>Sheet.clone() is not supported.</li>
+  <li>Formula evaluation is not supported</li>
+ </ul>
+
+ <p> See more details at <link href="how-to.html#sxssf">SXSSF How-To</link></p>
+
+<p>The table below synopsizes the comparative features of POI's Spreadsheet API:</p> 
+            <p><em>Spreadsheet API Feature Summary</em></p>
+
+            <p>
+              <img src="../resources/images/ss-features.png" alt="Spreadsheet API Feature Summary"/>
+            </p>
+</section>
+    
+        </body>
+</document>

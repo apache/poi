@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>XSLF Cookbook</title>
+        <authors>
+            <person email="yegor@apache.org" name="Yegor Kozlov" id="YK"/>
+        </authors>
+    </header>
+    <body>
+        <section><title>XSLF Cookbook</title>
+            <p>
+              This page offers a short introduction into the XSLF API. More examples can be found in the
+                <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/xslf/usermodel/"> XSLF Examples</link>
+               in the POI SVN repository. 
+            </p>
+            <note>
+            Please note that XSLF is still in early development and is a subject to incompatible changes in a future release. 
+            </note>
+             <section><title>Index of Features</title>
+                <ul>
+                    <li><link href="#NewPresentation">Create a new presentation</link></li>
+                    <li><link href="#ReadPresentation">Read an existing presentation</link></li>
+                    <li><link href="#SlideLayout">Create a slide with a predefined layout</link></li>
+                    <li><link href="#DeleteSlide">Delete slide</link></li>
+                    <li><link href="#MoveSlide">Re-order slides</link></li>
+                    <li><link href="#SlideSize">Change slide size</link></li>
+                    <li><link href="#GetShapes">Read shapes</link></li>
+                    <li><link href="#AddImage">Add image</link></li>
+                    <li><link href="#ReadImages">Read images contained in a presentation</link></li>
+                    <li><link href="#Text">Format text</link></li>
+                    <li><link href="#Hyperlinks">Hyperlinks</link></li>
+                    <li><link href="#PPTX2PNG">Convert .pptx slides into images</link></li>
+                    <li><link href="#Merge">Merge multiple presentations together</link></li>
+                </ul>
+            </section>
+            <section><title>Cookbok</title>
+                <anchor id="NewPresentation"/>
+                <section><title>New Presentation</title>
+                <p>
+                The following code creates a new .pptx slide show and adds a blank slide to it:
+                </p>
+                  <source>
+    //create a new empty slide show
+    XMLSlideShow ppt = new XMLSlideShow();
+
+    //add first slide
+    XSLFSlide blankSlide = ppt.createSlide();
+                 </source>
+                </section>
+                <anchor id="ReadPresentation"/>
+                <section><title>Read an existing presentation and append a slide to it</title>
+                  <source>
+    XMLSlideShow ppt = new XMLSlideShow(new FileInputStream("slideshow.pptx"));
+
+    //append a new slide to the end
+    XSLFSlide blankSlide = ppt.createSlide();
+                 </source>
+                </section>
+
+                <anchor id="SlideLayout"/>
+                <section><title>Create a new slide from a predefined slide layout</title>
+                  <source>
+    XMLSlideShow ppt = new XMLSlideShow(new FileInputStream("slideshow.pptx"));
+
+    // first see what slide layouts are available :
+    System.out.println("Available slide layouts:");
+    for(XSLFSlideMaster master : ppt.getSlideMasters()){
+        for(XSLFSlideLayout layout : master.getSlideLayouts()){
+            System.out.println(layout.getType());
+        }
+    }
+
+    // blank slide
+    XSLFSlide blankSlide = ppt.createSlide();
+
+    // there can be multiple masters each referencing a number of layouts
+    // for demonstration purposes we use the first (default) slide master
+    XSLFSlideMaster defaultMaster = ppt.getSlideMasters()[0];
+
+    // title slide
+    XSLFSlideLayout titleLayout = defaultMaster.getLayout(SlideLayout.TITLE);
+    // fill the placeholders
+    XSLFSlide slide1 = ppt.createSlide(titleLayout);
+    XSLFTextShape title1 = slide1.getPlaceholder(0);
+    title1.setText("First Title");
+
+    // title and content
+    XSLFSlideLayout titleBodyLayout = defaultMaster.getLayout(SlideLayout.TITLE_AND_CONTENT);
+    XSLFSlide slide2 = ppt.createSlide(titleBodyLayout);
+
+    XSLFTextShape title2 = slide2.getPlaceholder(0);
+    title2.setText("Second Title");
+
+    XSLFTextShape body2 = slide2.getPlaceholder(1);
+    body2.clearText(); // unset any existing text
+    body2.addNewTextParagraph().addNewTextRun().setText("First paragraph");
+    body2.addNewTextParagraph().addNewTextRun().setText("Second paragraph");
+    body2.addNewTextParagraph().addNewTextRun().setText("Third paragraph");
+                </source>
+                </section>
+
+                <anchor id="DeleteSlide"/>
+                <section><title>Delete slide</title>
+                  <source>
+    XMLSlideShow ppt = new XMLSlideShow(new FileInputStream("slideshow.pptx"));
+
+    ppt.removeSlide(0); // 0-based index of a slide to be removed
+                </source>
+                </section>
+
+                <anchor id="MoveSlide"/>
+                <section><title>Re-order slides</title>
+                  <source>
+    XMLSlideShow ppt = new XMLSlideShow(new FileInputStream("slideshow.pptx"));
+    XSLFSlide[] slides = ppt.getSlides();
+
+    XSLFSlide thirdSlide = slides[2];
+    ppt.setSlideOrder(thirdSlide, 0); // move the third slide to the beginning
+                </source>
+                </section>
+
+                <anchor id="SlideSize"/>
+                <section><title>How to retrieve or change slide size</title>
+                    <source>
+    XMLSlideShow ppt = new XMLSlideShow();
+    //retrieve page size. Coordinates are expressed in points (72 dpi)
+    java.awt.Dimension pgsize = ppt.getPageSize();
+    int pgx = pgsize.width; //slide width in points
+    int pgy = pgsize.height; //slide height in points
+
+    //set new page size
+    ppt.setPageSize(new java.awt.Dimension(1024, 768));
+                  </source>
+                </section>
+                <anchor id="GetShapes"/>
+                <section><title>How to read shapes contained in a particular slide</title>
+                  <p>
+                    The following code demonstrates how to iterate over shapes for each slide.
+                  </p>
+                    <source>
+  XMLSlideShow ppt = new XMLSlideShow(new FileInputStream("slideshow.pptx"));
+  //get slides 
+  XSLFSlide[] slide = ppt.getSlides();
+  for (int i = 0; i &lt; slide.length; i++){
+    XSLFShape[] sh = slide[i].getShapes();
+    for (int j = 0; j &lt; sh.length; j++){
+      //name of the shape
+      String name = sh[j].getShapeName();
+
+      //shapes's anchor which defines the position of this shape in the slide
+      java.awt.geom.Rectangle2D anchor = sh[j].getAnchor();
+
+      if (sh[j] instanceof XSLFConnectorShape){
+        XSLFConnectorShape line = (XSLFConnectorShape)sh[j];
+        //work with Line
+      } else if (sh[j] instanceof XSLFTextShape){
+        XSLFTextShape shape = (XSLFTextShape)sh[j];
+        //work with a shape that can hold text
+      } else if (sh[j] instanceof XSLFPictureShape){
+        XSLFPictureShape shape = (XSLFPictureShape)sh[j];
+        //work with Picture
+      }
+    }
+  }
+                  </source>
+                </section>
+                <anchor id="AddImage"/>
+                <section><title>Add Image to Slide</title>
+                    <source>
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        
+        byte[] pictureData = IOUtils.toByteArray(new FileInputStream("image.png"));
+
+        int idx = ppt.addPicture(pictureData, XSLFPictureData.PICTURE_TYPE_PNG);
+        XSLFPictureShape pic = slide.createPicture(idx);
+                    </source>
+                </section>
+
+                <anchor id="ReadImages"/>
+                <section><title>Read Images contained within a presentation</title>
+                    <source>
+        XMLSlideShow ppt = new XMLSlideShow(new FileInputStream("slideshow.pptx"));
+        for(XSLFPictureData data : ppt.getAllPictures()){
+            byte[] bytes = data.getData();
+            String fileName = data.getFileName();
+            
+        }
+                    </source>
+                </section>
+
+         <anchor id="Text"/>
+                <section><title>Basic text formatting</title>
+                    <source>
+    XMLSlideShow ppt = new XMLSlideShow();
+    XSLFSlide slide = ppt.createSlide();
+
+    XSLFTextBox shape = slide.createTextBox();
+    XSLFTextParagraph p = shape.addNewTextParagraph();
+
+    XSLFTextRun r1 = p.addNewTextRun();
+    r1.setText("The");
+    r1.setFontColor(Color.blue);
+    r1.setFontSize(24);
+
+    XSLFTextRun r2 = p.addNewTextRun();
+    r2.setText(" quick");
+    r2.setFontColor(Color.red);
+    r2.setBold(true);
+
+    XSLFTextRun r3 = p.addNewTextRun();
+    r3.setText(" brown");
+    r3.setFontSize(12);
+    r3.setItalic(true);
+    r3.setStrikethrough(true);
+    
+    XSLFTextRun r4 = p.addNewTextRun();
+    r4.setText(" fox");
+    r4.setUnderline(true);
+            </source>
+                </section>
+                <anchor id="Hyperlinks"/>
+                <section><title>How to read hyperlinks from a slide show</title>
+                    <source>
+    XMLSlideShow ppt = new XMLSlideShow();
+    XSLFSlide slide = ppt.createSlide();
+
+    // assign a hyperlink to a text run
+    XSLFTextBox shape = slide.createTextBox();
+    XSLFTextRun r = shape.addNewTextParagraph().addNewTextRun();
+    r.setText("Apache POI");
+    XSLFHyperlink link = r.createHyperlink();
+    link.setAddress("http://poi.apache.org");
+                </source>
+                </section>
+                <anchor id="PPTX2PNG"/>
+                <section><title>PPTX2PNG is an application that converts each slide of a .pptx slideshow into a PNG image</title>
+                <source>
+Usage: PPTX2PNG [options] &lt;pptx file&gt;
+Options:
+    -scale &lt;float&gt;   scale factor (default is 1.0)
+    -slide &lt;integer&gt; 1-based index of a slide to render. Default is to render all slides.
+                </source>
+                <p>How it works:</p>
+                <p>
+                    The XSLFSlide object implements a draw(Graphics2D graphics) method that recursively paints all shapes
+                    in the slide into the supplied graphics canvas:
+                </p>
+                <source>
+            slide.draw(graphics);
+                </source>
+                <p>
+                where graphics is a class implementing java.awt.Graphics2D. In PPTX2PNG the graphic canvas is derived from
+                java.awt.image.BufferedImage, i.e. the destination is an image in memory, but in general case you can pass
+                any compliant implementation of  java.awt.Graphics2D. The 
+                <link href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/xslf/usermodel/PPTX2SVG.txt">PPTX2SVG</link>
+                example demonstrates how to use Apache Batik to convert .pptx slides into SVG format. 
+                </p>
+                </section>
+                <anchor id="Merge"/>
+                <section>
+                    <title>Merge multiple presentations together</title>
+                    <source>
+    XMLSlideShow ppt = new XMLSlideShow();
+    String[] inputs = {"presentations1.pptx", "presentation2.pptx"};
+    for(String arg : inputs){
+        FileInputStream is = new FileInputStream(arg);
+        XMLSlideShow src = new XMLSlideShow(is);
+        is.close();
+
+        for(XSLFSlide srcSlide : src.getSlides()){
+            ppt.createSlide().importContent(srcSlide);
+        }
+    }
+
+    FileOutputStream out = new FileOutputStream("merged.pptx");
+    ppt.write(out);
+    out.close();
+                    </source>
+                </section>
+
+            </section>
+        </section>
+    </body>
+</document>

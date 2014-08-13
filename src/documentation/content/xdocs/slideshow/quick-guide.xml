@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HSLF - A Quick Guide</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at torchbox dot com"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>Basic Text Extraction</title>
+        <p>For basic text extraction, make use of 
+<code>org.apache.poi.hslf.extractor.PowerPointExtractor</code>. It accepts a file or an input
+stream. The <code>getText()</code> method can be used to get the text from the slides, and the <code>getNotes()</code> method can be used to get the text
+from the notes. Finally, <code>getText(true,true)</code> will get the text
+from both.
+		</p>
+		</section>
+		
+		<section><title>Specific Text Extraction</title>
+		<p>To get specific bits of text, first create a <code>org.apache.poi.hslf.usermodel.SlideShow</code>
+(from a <code>org.apache.poi.hslf.HSLFSlideShow</code>, which accepts a file or an input
+stream). Use <code>getSlides()</code> and <code>getNotes()</code> to get the slides and notes.
+These can be queried to get their page ID (though they should be returned
+in the right order).</p>
+		<p>You can then call <code>getTextRuns()</code> on these, to get 
+their blocks of text. (One TextRun normally holds all the text in a 
+given area of the page, eg in the title bar, or in a box).
+From the <code>TextRun</code>, you can extract the text, and check
+what type of text it is (eg Body, Title). You can allso call
+<code>getRichTextRuns()</code>, which will return the 
+<code>RichTextRun</code>s that make up the <code>TextRun</code>. A 
+<code>RichTextRun</code> is made up of a sequence of text, all having the
+same character and paragraph formatting.
+		</p>
+		</section>
+		
+        <section><title>Poor Quality Text Extraction</title>
+        <p>If speed is the most important thing for you, you don't care
+		about getting duplicate blocks of text, you don't care about 
+		getting text from master sheets, and you don't care about getting
+		old text, then 
+		<code>org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor</code>
+		might be of use.</p>
+		<p>QuickButCruddyTextExtractor doesn't use the normal record 
+		parsing code, instead it uses a tree structure blind search 
+		method to get all text holding records. You will get all the text,
+		including lots of text you normally wouldn't ever want. However,
+		you will get it back very very fast!</p>
+		<p>There are two ways of getting the text back. 
+		<code>getTextAsString()</code> will return a single string with all
+		the text in it. <code>getTextAsVector()</code> will return a 
+		vector of strings, one for each text record found in the file.
+		</p>
+		</section>
+
+		<section><title>Changing Text</title>
+		<p>It is possible to change the text via 
+		<code>TextRun.setText(String)</code> or
+		<code>RichTextRun.setText(String)</code>. It is not yet possible
+		to add additional TextRuns or RichTextRuns.</p>
+		<p>When calling <code>TextRun.setText(String)</code>, all
+		the text will end up with the same formatting. When calling
+		<code>RichTextRun.setText(String)</code>, the text will retain
+		the old formatting of that <code>RichTextRun</code>.
+		</p>
+		</section>
+
+		<section><title>Adding Slides</title>
+		<p>You may add new slides by calling
+		<code>SlideShow.createSlide()</code>, which will add a new slide
+		to the end of the SlideShow. It is not currently possible to
+		re-order slides, nor to add new text to slides (currently only
+		adding Escher objects to new slides is supported).
+		</p>
+		</section>
+		
+		<section><title>Guide to key classes</title>
+		<ul>
+		<li><code>org.apache.poi.hslf.HSLFSlideShow</code>
+		Handles reading in and writing out files. Calls 
+		<code>org.apache.poi.hslf.record.record</code> to build a tree
+		of all the records in the file, which it allows access to.
+  		</li>
+		<li><code>org.apache.poi.hslf.record.record</code>
+		Base class of all records. Also provides the main record generation
+		code, which will build up a tree of records for a file.
+  		</li>
+  		<li><code>org.apache.poi.hslf.usermodel.SlideShow</code>
+  Builds up model entries from the records, and presents a user facing
+  view of the file
+  		</li>
+  		<li><code>org.apache.poi.hslf.model.Slide</code>
+  A user facing view of a Slide in a slidesow. Allows you to get at the 
+  Text of the slide, and at any drawing objects on it.
+  		</li>
+  		<li><code>org.apache.poi.hslf.model.TextRun</code>
+  Holds all the Text in a given area of the Slide, and will
+  contain one or more <code>RichTextRun</code>s.
+  		</li>
+  		<li><code>org.apache.poi.hslf.usermodel.RichTextRun</code>
+  Holds a run of text, all having the same character and
+  paragraph stylings. It is possible to modify text, and/or text stylings.
+  		</li>
+  		<li><code>org.apache.poi.hslf.extractor.PowerPointExtractor</code>
+  Uses the model code to allow extraction of text from files
+		</li>
+		<li><code>org.apache.poi.hslf.extractor.QuickButCruddyTextExtractor</code>
+  Uses the record code to extract all the text from files very fast, 
+  but including deleted text (and other bits of Crud).
+		</li>
+		</ul>
+		</section>
+	</body>
+</document>
