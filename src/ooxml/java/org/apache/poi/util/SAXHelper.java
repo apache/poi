@@ -18,19 +18,17 @@
 package org.apache.poi.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 
-import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 /**
@@ -39,43 +37,43 @@ import org.xml.sax.SAXException;
 public final class SAXHelper {
     private static POILogger logger = POILogFactory.getLogger(SAXHelper.class);
 
-    private static final EntityResolver IGNORING_ENTITY_RESOLVER = new EntityResolver() {
+    private SAXHelper() {}
+
+    /**
+     * Creates a new SAX XMLReader, with sensible defaults
+     */
+    public static synchronized XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
+        XMLReader xmlReader = saxFactory.newSAXParser().getXMLReader();
+        xmlReader.setEntityResolver(IGNORING_ENTITY_RESOLVER);
+        trySetSAXFeature(xmlReader, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetXercesSecurityManager(xmlReader);
+        return xmlReader;
+    }
+    
+    static final EntityResolver IGNORING_ENTITY_RESOLVER = new EntityResolver() {
         @Override
         public InputSource resolveEntity(String publicId, String systemId)
                 throws SAXException, IOException {
             return new InputSource(new StringReader(""));
         }
     };
-
-    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    
+    private static final SAXParserFactory saxFactory;
     static {
-        documentBuilderFactory.setNamespaceAware(true);
-        documentBuilderFactory.setValidating(false);
-        trySetSAXFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        trySetXercesSecurityManager(documentBuilderFactory);
+        saxFactory = SAXParserFactory.newInstance();
+        saxFactory.setValidating(false);
+        saxFactory.setNamespaceAware(true);
     }
-
-    /**
-     * Creates a new document builder, with sensible defaults
-     */
-    public static synchronized DocumentBuilder getDocumentBuilder() {
+            
+    private static void trySetSAXFeature(XMLReader xmlReader, String feature, boolean enabled) {
         try {
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            documentBuilder.setEntityResolver(IGNORING_ENTITY_RESOLVER);
-            return documentBuilder;
-        } catch (ParserConfigurationException e) {
-            throw new IllegalStateException("cannot create a DocumentBuilder", e);
-        }
-    }
-
-    private static void trySetSAXFeature(DocumentBuilderFactory documentBuilderFactory, String feature, boolean enabled) {
-        try {
-            documentBuilderFactory.setFeature(feature, enabled);
+            xmlReader.setFeature(feature, enabled);
         } catch (Exception e) {
             logger.log(POILogger.INFO, "SAX Feature unsupported", feature, e);
         }
     }
-    private static void trySetXercesSecurityManager(DocumentBuilderFactory documentBuilderFactory) {
+    
+    private static void trySetXercesSecurityManager(XMLReader xmlReader) {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : new String[] {
                 "com.sun.org.apache.xerces.internal.util.SecurityManager",
@@ -85,22 +83,12 @@ public final class SAXHelper {
                 Object mgr = Class.forName(securityManagerClassName).newInstance();
                 Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
                 setLimit.invoke(mgr, 4096);
-                documentBuilderFactory.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
+                xmlReader.setProperty("http://apache.org/xml/properties/security-manager", mgr);
                 // Stop once one can be setup without error
                 return;
             } catch (Exception e) {
                 logger.log(POILogger.INFO, "SAX Security Manager could not be setup", e);
             }
         }
-    }
-
-    /**
-     * Parses the given stream via the default (sensible)
-     * SAX Reader
-     * @param inp Stream to read the XML data from
-     * @return the SAX processed Document 
-     */
-    public static Document readSAXDocument(InputStream inp) throws IOException, SAXException {
-        return getDocumentBuilder().parse(inp);
     }
 }
