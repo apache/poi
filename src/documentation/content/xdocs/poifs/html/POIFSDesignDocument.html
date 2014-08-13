@@ -1,0 +1,1297 @@
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<HTML>
+    <HEAD>
+        <TITLE>POIFS Design Document</TITLE>
+    </HEAD>
+    <BODY>
+        <FONT SIZE="+3"><B>POIFS Design Document</B></FONT>
+        <P>
+            This document describes the design of the POIFS system. It is
+	    organized as follows:
+        </P>
+        <UL>
+            <LI>
+                <A HREF="#Scope">Scope</A> A description of the limitations of
+		this document.
+            </LI>
+            <LI>
+                <A HREF="#Assumptions">Assumptions</A> The assumptions on
+		which this design is based.
+            </LI>
+            <LI>
+                <A HREF="#Considerations">Design Considerations</A> The
+		constraints and goals applied to the design.
+            </LI>
+            <LI>
+                <A HREF="#Design">Design</A> The design of the POIFS system.
+            </LI>
+        </UL>
+        <P></P>
+        <OL TYPE="I">
+            <LI>
+                <A NAME="Scope"><FONT
+                SIZE="+2"><B>Scope</B></FONT></A>
+                <P>
+                    This document is written as part of an iterative process.
+		    As that process is not yet complete, neither is this
+		    document.
+                </P>
+            </LI>
+            <LI>
+                <A NAME="Assumptions"><FONT
+                SIZE="+2"><B>Assumptions</B></FONT></A>
+                <P>
+                    The design of POIFS is not dependent on the code written
+		    for the proof-of-concept prototype POIFS package.
+                </P>
+            </LI>
+            <LI>
+                <A NAME="Considerations"><FONT SIZE="+2"><B>Design
+                Considerations</B></FONT></A>
+                <P>
+                    As usual, the primary considerations in the design of the
+		    POIFS assumption involve the classic space-time tradeoff.
+		    In this case, the main consideration has to involve
+		    minimizing the memory footprint of POIFS. POIFS may be
+		    called upon to create relatively large documents, and in
+		    web application server, it may be called upon to create
+		    several documents simultaneously, and it will likely
+		    co-exist with other Serializer systems, competing with
+		    those other systems for space on the server.
+                </P>
+                <P>
+                    We've addressed the risk of being too slow through a
+		    proof-of-concept prototype. This prototype for POIFS
+		    involved reading an existing file, decomposing it into its
+		    constituent documents, composing a new POIFS from the
+		    constituent documents, and writing the POIFS file back to
+		    disk and verifying that the output file, while not
+		    necessarily a byte-for-byte image of the input file, could
+		    be read by the application that generated the input file.
+		    This prototype proved to be quite fast, reading,
+		    decomposing, and re-generating a large (300K) file in 2 to
+		    2.5 seconds.
+                </P>
+                <P>
+                    While the POIFS format allows great flexibility in laying
+		    out the documents and the other internal data structures,
+		    the layout of the filesystem will be kept as simple as
+		    possible.
+                </P>
+            </LI>
+            <LI>
+                <A NAME="Design"><FONT
+                SIZE="+2"><B>Design</B></FONT></A>
+                <P>
+                    The design of the POIFS is broken down into two parts:
+		    <A HREF="#Classes">discussion of the classes and
+		    interfaces</A>, and <A HREF="#Scenarios">discussion of how
+		    these classes and interfaces will be used to convert an
+                    appropriate Java InputStream (such as an XML stream) to a
+		    POIFS output stream containing an HSSF document</A>.
+                </P>
+                <A NAME="Classes"><FONT SIZE="+1"><B>Classes and Interfaces</B></FONT></A>
+                <P>
+                    The classes and interfaces used in the POIFS are broken
+		    down as follows:
+                </P>
+                <TABLE BORDER="1">
+                    <TR>
+                        <TH><B>Package</B></TH>
+                        <TH><B>Contents</B></TH>
+                    </TR>
+                    <TR>
+                        <TD><A
+                        HREF="#BlockClasses">net.sourceforge.poi.poifs.storage</A></TD>
+                        <TD>Block classes and interfaces</TD>
+                    </TR>
+                    <TR>
+                        <TD><A
+                        HREF="#PropertyClasses">net.sourceforge.poi.poifs.property</A></TD>
+                        <TD>Property classes and interfaces</TD>
+                    </TR>
+                    <TR>
+                        <TD><A
+                        HREF="#FilesystemClasses">net.sourceforge.poi.poifs.filesystem</A></TD>
+                        <TD>Filesystem classes and interfaces</TD>
+                    </TR>
+                    <TR>
+                        <TD><A
+                        HREF="#UtilityClasses">net.sourceforge.poi.util</A></TD>
+                        <TD>Utility classes and interfaces</TD>
+                    </TR>
+                </TABLE>
+                <OL>
+                    <LI>
+                        <A NAME="BlockClasses"><B>Block Classes and
+                        Interfaces</B></A>
+                        <P>
+                            The block classes and interfaces are shown
+                            in the following class diagram.
+                        </P>
+                        <P>
+                            <IMG SRC="BlockClassDiagram.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Class/Interface</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="BATBlock"><B>BATBlock</B></A></TD>
+                                <TD>The <B>BATBlock</B> class
+                                represents a single big block
+                                containing 128 <A
+                                HREF="POIFSFormat.html#BAT">BAT
+                                entries</A>.<BR>Its
+                                <CODE><I>_fields</I></CODE> array is
+                                used to read and write the BAT entries
+                                into the <CODE><I>_data</I></CODE>
+                                array.<BR>Its
+                                <CODE><I>createBATBlocks</I></CODE>
+                                method is used to create an array of
+                                BATBlock instances from an array of
+                                int BAT entries.<BR>Its
+                                <CODE><I>calculateStorageRequirements</I></CODE>
+                                method calculates the number of BAT
+                                blocks necessary to hold the specified
+                                number of BAT entries.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="BigBlock"><B>BigBlock</B></A></TD>
+                                <TD>The <B>BigBlock</B> class is an
+                                abstract class representing the common
+                                big block of 512 bytes. It implements
+                                <A
+                                HREF="#BlockWritable">BlockWritable</A>,
+                                trivially delegating the
+                                <CODE><I>writeBlocks</I></CODE> method
+                                of BlockWritable to its own abstract
+                                <CODE><I>writeData</I></CODE>
+                                method.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="BlockWritable"><B>BlockWritable</B></A></TD>
+                                <TD>The <B>BlockWritable</B> interface
+                                defines a single method,
+                                <CODE><I>writeBlocks</I></CODE>, that
+                                is used to write an implementation's
+                                block data to an
+                                <CODE>OutputStream</CODE>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="DocumentBlock"><B>DocumentBlock</B></A></TD>
+                                <TD>The <B>DocumentBlock</B> class is
+                                used by a <A
+                                HREF="#Document">Document</A> to holds
+                                its raw data. It also retains the
+                                number of bytes read, as this is used
+                                by the Document class to determine the
+                                total size of the data, and is also
+                                used internally to determine whether
+                                the block was filled by the
+                                <CODE>InputStream</CODE> or
+                                not.<BR>The
+                                <CODE><I>DocumentBlock</I></CODE>
+                                constructor is passed an
+                                <CODE>InputStream</CODE> from which to
+                                fill its <CODE><I>_data</I></CODE>
+                                array.<BR>The <CODE><I>size</I></CODE>
+                                method returns the number of bytes
+                                read (<CODE><I>_bytes_read</I></CODE>
+                                when the instance was
+                                constructed.<BR>The
+                                <CODE><I>partiallyRead</I></CODE>
+                                method returns true if the
+                                <CODE><I>_data</I></CODE> array was
+                                not completely filled, which may be
+                                interpreted by the Document as having
+                                reached the end of file
+                                point.<BR>Typical use of the
+                                DocumentBlock class is like
+                                this:<BR><CODE>while
+                                (true)<BR>{<BR>&nbsp;&nbsp;&nbsp;&nbsp;DocumentBlock
+                                block = new
+                                DocumentBlock(stream);<BR>&nbsp;&nbsp;&nbsp;&nbsp;blocks.add(block);<BR>&nbsp;&nbsp;&nbsp;&nbsp;size
+                                +=
+                                block.size();<BR>&nbsp;&nbsp;&nbsp;&nbsp;if
+                                (block.partiallyRead())<BR>&nbsp;&nbsp;&nbsp;&nbsp;{<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<BR>&nbsp;&nbsp;&nbsp;&nbsp;}<BR>}</CODE></TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="HeaderBlock"><B>HeaderBlock</B></A></TD>
+                                <TD>The <B>HeaderBlock</B> class is
+                                used to contain the data found in a
+                                POIFS header.<BR>Its <A
+                                HREF="#IntegerField">IntegerField</A>
+                                members are used to read and write the
+                                appropriate entries into the
+                                <CODE><I>_data</I></CODE>
+                                array.<BR>Its
+                                <CODE><I>setBATBlocks</I></CODE>,
+                                <CODE><I>setPropertyStart</I></CODE>,
+                                and <CODE><I>setXBATStart</I></CODE>
+                                methods are used to set the
+                                appropriate fields in the
+                                <CODE><I>_data</I></CODE>
+                                array.<BR>The
+                                <CODE><I>calculateXBATStorageRequirements</I></CODE>
+                                method is used to determine how many
+                                XBAT blocks are necessary to
+                                accommodate the specified number of
+                                BAT blocks.
+                                </TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="PropertyBlock"><B>PropertyBlock</B></A></TD>
+                                <TD>The <B>PropertyBlock</B> class is
+                                used to contain <A
+                                HREF="#Property">Property</A>
+                                instances for the <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                class.<BR>It contains an array,
+                                <CODE><I>_properties</I></CODE> of 4
+                                Property instances, which together
+                                comprise the 512 bytes of a <A
+                                HREF="#BigBlock">BigBlock</A>.<BR>The
+                                <CODE><I>createPropertyBlockArray</I></CODE>
+                                method is used to convert a
+                                <CODE>List</CODE> of Property
+                                instances into an array of
+                                PropertyBlock instances. The number of
+                                Property instances is rounded up to a
+                                multiple of 4 by creating empty
+                                anonymous inner class extensions of
+                                Property.</TD>
+                            </TR>
+                        </TABLE>
+                    </LI>
+                    <LI>
+                        <A NAME="PropertyClasses"><B>Property Classes
+                        and Interfaces</B></A>
+                        <P>
+                            The property classes and interfaces are
+                            shown in the following class diagram.
+                        </P>
+                        <P>
+                            <IMG SRC="PropertyTableClassDiagram.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Class/Interface</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="Directory"><B>Directory</B></A></TD>
+                                <TD>The <B>Directory</B> interface is
+                                implemented by the <A
+                                HREF="#RootProperty">RootProperty</A>
+                                class. It is not strictly necessary
+                                for the initial POIFS implementation,
+                                but when the POIFS supports <A
+                                HREF="POIFSFormat.html#directoryEntry">directory
+                                elements</A>, this interface will be
+                                more widely implemented, and so is
+                                included in the design at this point
+                                to ease the eventual support of
+                                directory elements.<BR>Its methods are
+                                a getter/setter pair,
+                                <CODE><I>getChildren</I></CODE>,
+                                returning an <CODE>Iterator</CODE> of
+                                <A HREF="#Property">Property</A>
+                                instances; and
+                                <CODE><I>addChild</I></CODE>, which
+                                will allow the caller to add another
+                                Property instance to the Directory's
+                                children.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="DocumentProperty"><B>DocumentProperty</B></A></TD>
+                                <TD>The <B>DocumentProperty</B> class
+                                is a trivial extension of <A
+                                HREF="#Property">Property</A> and is
+                                used by <A
+                                HREF="#Document">Document</A> to keep
+                                track of its associated entry in the
+                                <A
+                                HREF="#PropertyTable">PropertyTable</A>.<BR>Its
+                                constructor takes a name and the
+                                document size, on the assumption that
+                                the Document will not create a
+                                DocumentProperty until after it has
+                                created the storage for the document
+                                data and therefore knows how much data
+                                there is.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="File"><B>File</B></A></TD>
+                                <TD>The <B>File</B> interface
+                                specifies the behavior of reading and
+                                writing the next and previous child
+                                fields of a <A
+                                HREF="#Property">Property</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="Property"><B>Property</B></A></TD>
+                                <TD>The <B>Property</B> class is an
+                                abstract class that defines the basic
+                                data structure of an element of the <A
+                                HREF="POIFSFormat.html#PropertyTable">Property
+                                Table</A>.<BR>Its <A
+                                HREF="#ByteField">ByteField</A>, <A
+                                HREF="#ShortField">ShortField</A>, and
+                                <A
+                                HREF="#IntegerField">IntegerField</A>
+                                members are used to read and write
+                                data into the appropriate locations in
+                                the <CODE><I>_raw_data</I></CODE>
+                                array.<BR>The
+                                <CODE><I>_index</I></CODE> member is
+                                used to hold a Propery instance's
+                                index in the <CODE>List</CODE> of
+                                Property instances maintained by <A
+                                HREF="#PropertyTable">PropertyTable</A>,
+                                which is used to populate the child
+                                property of parent <A
+                                HREF="#Directory">Directory</A>
+                                properties and the next property and
+                                previous property of sibling <A
+                                HREF="#File">File</A>
+                                properties.<BR>The
+                                <CODE><I>_name</I></CODE>,
+                                <CODE><I>_next_file</I></CODE>, and
+                                <CODE><I>_previous_file</I></CODE>
+                                members are used to help fill the
+                                appropriate fields of the _raw_data
+                                array.<BR>Setters are provided for
+                                some of the fields (name, property
+                                type, node color, child property,
+                                size, index, start block), as well as
+                                a few getters (index, child
+                                property).<BR>The
+                                <CODE><I>preWrite</I></CODE> method is
+                                abstract and is used by the owning
+                                PropertyTable to iterate through its
+                                Property instances and prepare each
+                                for writing.<BR>The
+                                <CODE><I>shouldUseSmallBlocks</I></CODE>
+                                method returns true if the Property's
+                                size is sufficiently small - how small
+                                is none of the caller's business.
+                                </TD>
+                            </TR>
+                            <TR>
+                                <TD><B>PropertyBlock</B></TD>
+                                <TD>See the description in <A
+                                HREF="#PropertyBlock">PropertyBlock</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="PropertyTable"><B>PropertyTable</B></A></TD>
+                                <TD>The <B>PropertyTable</B> class
+                                holds all of the <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                instances and the <A
+                                HREF="#RootProperty">RootProperty</A>
+                                instance for a <A
+                                HREF="#Filesystem">Filesystem</A>
+                                instance.<BR>It maintains a
+                                <CODE>List</CODE> of its <A
+                                HREF="#Property">Property</A>
+                                instances
+                                (<CODE><I>_properties</I></CODE>), and
+                                when prepared to write its data by a
+                                call to <CODE><I>preWrite</I></CODE>,
+                                it gets and holds an array of <A
+                                HREF="#PropertyBlock">PropertyBlock</A>
+                                instances
+                                (<CODE><I>_blocks</I></CODE>.<BR>It
+                                also maintains its start block in its
+                                <CODE><I>_start_block</I></CODE>
+                                member.<BR>It has a method,
+                                <CODE><I>getRoot</I></CODE>, to get
+                                the RootProperty, returning it as an
+                                implementation of <A
+                                HREF="#Directory">Directory</A>, and a
+                                method to add a Property,
+                                <CODE><I>addProperty</I></CODE>, and a
+                                method to get its start block,
+                                <CODE><I>getStartBlock</I></CODE>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="RootProperty"><B>RootProperty</B></A></TD>
+                                <TD>The <B>RootProperty</B> class acts
+                                as the <A
+                                HREF="#Directory">Directory</A> for
+                                all of the <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                instance. As such, it is more of a
+                                pure <A
+                                HREF="POIFSFormat.html#directoryEntry">directory
+                                entry</A> than a proper <A
+                                HREF="POIFSFormat.html#RootEntry">root
+                                entry</A> in the <A
+                                HREF="POIFSFormat.html#PropertyTable">Property
+                                Table</A>, but the initial POIFS
+                                implementation does not warrant the
+                                additional complexity of a full-blown
+                                root entry, and so it is not modeled
+                                in this design.<BR>It maintains a
+                                <CODE>List</CODE> of its children,
+                                <CODE><I>_children</I></CODE>, in
+                                order to perform its
+                                directory-oriented duties.</TD>
+                            </TR>
+                        </TABLE>
+                    </LI>
+                    <LI>
+                        <A NAME="FilesystemClasses"><B>Filesystem
+                        Classes and Interfaces</B></A>
+                        <P>
+                            The property classes and interfaces are
+                            shown in the following class diagram.
+                        </P>
+                        <P>
+                            <IMG SRC="POIFSClassDiagram.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Class/Interface</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="Filesystem"><B>Filesystem</B></A></TD>
+                                <TD>The <B>Filesystem</B> class is the
+                                top-level class that manages the
+                                creation of a POIFS document.<BR>It
+                                maintains a <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                instance in its
+                                <CODE><I>_property_table</I></CODE>
+                                member, a <A
+                                HREF="#HeaderBlock">HeaderBlock</A>
+                                instance in its
+                                <CODE><I>_header_block</I></CODE>
+                                member, and a <CODE>List</CODE> of its
+                                <A HREF="#Document">Document</A>
+                                instances in its
+                                <CODE><I>_documents</I></CODE>
+                                member.<BR>It provides methods for a
+                                client to create a document
+                                (<CODE><I>createDocument</I></CODE>),
+                                and a method to write the Filesystem
+                                to an <CODE>OutputStream</CODE>
+                                (<CODE><I>writeFilesystem</I></CODE>).</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>BATBlock</B></TD>
+                                <TD>See the description in <A
+                                HREF="#BATBlock">BATBlock</A></TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="BATManaged"><B>BATManaged</B></A></TD>
+                                <TD>The <B>BATManaged</B> interface
+                                defines common behavior for objects
+                                whose location in the written file is
+                                managed by the <A
+                                HREF="POIFSFormat.html#BAT">Block
+                                Allocation Table</A>.<BR>It defines
+                                methods to get a count of the
+                                implementation's <A
+                                HREF="#BigBlock">BigBlock</A>
+                                instances
+                                (<CODE><I>countBlocks</I></CODE>), and
+                                to set an implementation's start block
+                                (<CODE><I>setStartBlock</I></CODE>).</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="BlockAllocationTable"><B>BlockAllocationTable</B></A></TD>
+                                <TD>The <B>BlockAllocationTable</B> is
+                                an implementation of the POIFS <A
+                                HREF="POIFSFormat.html#BAT">Block
+                                Allocation Table</A>. It is only
+                                created when the <A
+                                HREF="#Filesystem">Filesystem</A> is
+                                about to be written to an
+                                <CODE>OutputStream</CODE>.<BR>It
+                                contains an <A
+                                HREF="#IntList">IntList</A> of block
+                                numbers for all of the <A
+                                HREF="#BATManaged">BATManaged</A>
+                                implementations owned by the
+                                Filesystem,
+                                <CODE><I>_entries</I></CODE>, which is
+                                filled by calls to
+                                <CODE><I>allocateSpace</I></CODE>.<BR>It
+                                fills its array,
+                                <CODE><I>_blocks</I></CODE>, of <A
+                                HREF="#BATBlock">BATBlock</A>
+                                instances when its
+                                <CODE><I>createBATBlocks</I></CODE>
+                                method is called. This method has to
+                                take into account its own storage
+                                requirements, as well as those of the
+                                XBAT blocks, and so calls
+                                <CODE><I>BATBlock.calculateStorageRequirements</I></CODE>
+                                and
+                                <CODE><I>HeaderBlock.calculateXBATStorageRequirements</I></CODE>
+                                repeatedly until the counts returned
+                                by those methods stabilize.<BR>The
+                                <CODE><I>countBlocks</I></CODE> method
+                                returns the number of BATBlock
+                                instances created by the preceding
+                                call to createBlocks.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>BlockWritable</B></TD>
+                                <TD>See the description in <A
+                                HREF="#BlockWritable">BlockWritable</A></TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="Document"><B>Document</B></A></TD>
+                                <TD>The <B>Document</B> class is used
+                                to contain a document, such as an HSSF
+                                workbook.<BR>It has its own <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                (<CODE><I>_property</I></CODE>) and
+                                stores its data in a collection of <A
+                                HREF="#DocumentBlock">DocumentBlock</A>
+                                instances
+                                (<CODE><I>_blocks</I></CODE>).<BR>It
+                                has a method,
+                                <CODE><I>getDocumentProperty</I></CODE>,
+                                to get its DocumentProperty.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>DocumentBlock</B></TD>
+                                <TD>See the description in <A
+                                HREF="#DocumentBlock">DocumentBlock</A></TD>
+                            </TR>
+                            <TR>
+                                <TD><B>DocumentProperty</B></TD>
+                                <TD>See the description in <A
+                                HREF="#DocumentProperty">DocumentProperty</A></TD>
+                            </TR>
+                            <TR>
+                                <TD><B>HeaderBlock</B></TD>
+                                <TD>See the description in <A
+                                HREF="#HeaderBlock">HeaderBlock</A></TD>
+                            </TR>
+                            <TR>
+                                <TD><B>PropertyTable</B></TD>
+                                <TD>See the description in <A
+                                HREF="#PropertyTable">PropertyTable</A></TD>
+                            </TR>
+                        </TABLE>
+                    </LI>
+                    <LI>
+                        <A NAME="UtilityClasses"><B>Utility Classes
+                        and Interfaces</B></A>
+                        <P>
+                            The utility classes and interfaces are
+                            shown in the following class diagram.
+                        </P>
+                        <P>
+                            <IMG SRC="utilClasses.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Class/Interface</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="BitField"><B>BitField</B></A></TD>
+                                <TD>The <B>BitField</B> class is used
+                                primarily by HSSF code to manage
+                                bit-mapped fields of HSSF records. It
+                                is not likely to be used in the POIFS
+                                code itself and is only included here
+                                for the sake of complete documentation
+                                of the POI utility classes.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="ByteField"><B>ByteField</B></A></TD>
+                                <TD>The <B>ByteField</B> class is an
+                                implementation of <A
+                                HREF="#FixedField">FixedField</A> for
+                                the purpose of managing reading and
+                                writing to a byte-wide field in an
+                                array of <CODE>bytes</CODE>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="FixedField"><B>FixedField</B></A></TD>
+                                <TD>The <B>FixedField</B> interface
+                                defines a set of methods for reading a
+                                field from an array of
+                                <CODE>bytes</CODE> or from an
+                                <CODE>InputStream</CODE>, and for
+                                writing a field to an array of
+                                <CODE>bytes</CODE>. Implementations
+                                typically require an offset in their
+                                constructors that, for the purposes of
+                                reading and writing to an array of
+                                <CODE>bytes</CODE>, makes sure that
+                                the correct <CODE>bytes</CODE> in the
+                                array are read or written.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="HexDump"><B>HexDump</B></A></TD>
+                                <TD>The <B>HexDump</B> class is a
+                                debugging class that can be used to
+                                dump an array of <CODE>bytes</CODE> to
+                                an <CODE>OutputStream</CODE>. The
+                                static method <CODE><I>dump</I></CODE>
+                                takes an array of <CODE>bytes</CODE>,
+                                a <CODE>long</CODE> offset that is
+                                used to label the output, an open
+                                <CODE>OutputStream</CODE>, and an
+                                <CODE>int</CODE> index that specifies
+                                the starting index within the array of
+                                <CODE>bytes</CODE>.<BR>The data is
+                                displayed 16 bytes per line, with each
+                                byte displayed in hexadecimal format
+                                and again in printable form, if
+                                possible (a byte is considered
+                                printable if its value is in the range
+                                of 32 ... 126).<BR>Here is an example
+                                of a small array of <CODE>bytes</CODE>
+                                with an offset of
+                                0x110:<BR><CODE>00000110&nbsp;C8&nbsp;00&nbsp;00&nbsp;00&nbsp;FF&nbsp;7F&nbsp;90&nbsp;01&nbsp;00&nbsp;00&nbsp;00&nbsp;00&nbsp;00&nbsp;00&nbsp;05&nbsp;01&nbsp;................<BR>00000120&nbsp;41&nbsp;00&nbsp;72&nbsp;00&nbsp;69&nbsp;00&nbsp;61&nbsp;00&nbsp;6C&nbsp;00&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A.r.i.a.l.</CODE></TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="IntegerField"><B>IntegerField</B></A></TD>
+                                <TD>The <B>IntegerField</B> class is
+                                an implementation of <A
+                                HREF="#FixedField">FixedField</A> for
+                                the purpose of managing reading and
+                                writing to an integer-wide field in an
+                                array of <CODE>bytes</CODE>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="IntList"><B>IntList</B></A></TD>
+                                <TD>The <B>IntList</B> class is a
+                                work-around for functionality missing
+                                in Java (see <A
+                                HREF="http://developer.java.sun.com/developer/bugParade/bugs/4487555.html">http://developer.java.sun.com/developer/bugParade/bugs/4487555.html</A>
+                                for details); it is a simple growable
+                                array of <CODE>ints</CODE> that gets
+                                around the requirement of wrapping and
+                                unwrapping <CODE>ints</CODE> in
+                                <CODE>Integer</CODE> instances in
+                                order to use the
+                                <CODE>java.util.List</CODE>
+                                interface.<BR><B>IntList</B> mimics
+                                the functionality of the
+                                <CODE>java.util.List</CODE> interface
+                                as much as possible.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="LittleEndian"><B>LittleEndian</B></A></TD>
+                                <TD>The <B>LittleEndian</B> class
+                                provides a set of static methods for
+                                reading and writing
+                                <CODE>shorts</CODE>,
+                                <CODE>ints</CODE>, <CODE>longs</CODE>,
+                                and <CODE>doubles</CODE> in and out of
+                                <CODE>byte</CODE> arrays, and out of
+                                <CODE>InputStreams</CODE>, preserving
+                                the Intel byte ordering and encoding
+                                of these values.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="LittleEndianConsts"><B>LittleEndianConsts</B></A></TD>
+                                <TD>The <B>LittleEndianConsts</B>
+                                interface defines the width of a
+                                <CODE>short</CODE>, <CODE>int</CODE>,
+                                <CODE>long</CODE>, and
+                                <CODE>double</CODE> as stored by Intel
+                                processors.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="LongField"><B>LongField</B></A></TD>
+                                <TD>The <B>LongField</B> class is an
+                                implementation of <A
+                                HREF="#FixedField">FixedField</A> for
+                                the purpose of managing reading and
+                                writing to a long-wide field in an
+                                array of <CODE>bytes</CODE>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="ShortField"><B>ShortField</B></A></TD>
+                                <TD>The <B>ShortField</B> class is an
+                                implementation of <A
+                                HREF="#FixedField">FixedField</A> for
+                                the purpose of managing reading and
+                                writing to a short-wide field in an
+                                array of <CODE>bytes</CODE>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="ShortList"><B>ShortList</B></A></TD>
+                                <TD>The <B>ShortList</B> class is a
+                                work-around for functionality missing
+                                in Java (see <A
+                                HREF="http://developer.java.sun.com/developer/bugParade/bugs/4487555.html">http://developer.java.sun.com/developer/bugParade/bugs/4487555.html</A>
+                                for details); it is a simple growable
+                                array of <CODE>shorts</CODE> that gets
+                                around the requirement of wrapping and
+                                unwrapping <CODE>shorts</CODE> in
+                                <CODE>Short</CODE> instances in order
+                                to use the <CODE>java.util.List</CODE>
+                                interface.<BR> <B>ShortList</B> mimics
+                                the functionality of the
+                                <CODE>java.util.List</CODE> interface
+                                as much as possible.</TD>
+                            </TR>
+                            <TR>
+                                <TD><A
+                                NAME="StringUtil"><B>StringUtil</B></A></TD>
+                                <TD>The <B>StringUtil</B> class
+                                manages the processing of Unicode
+                                strings.</TD>
+                            </TR>
+                        </TABLE>
+                    </LI>
+                </OL>
+                <A NAME="Scenarios"><FONT
+                SIZE="+1"><B>Scenarios</B></FONT></A>
+                <P>
+                    This section describes the scenarios of how the
+                    POIFS classes and interfaces will be used to
+                    convert an appropriate XML stream to a POIFS
+                    output stream containing an HSSF document.
+                </P>
+		<P>
+		    It is broken down as suggested by the following
+		    scenario diagram:
+		</P>
+		<P>
+		    <IMG SRC="POIFSLifeCycle.gif">
+		</P>
+		<TABLE BORDER="1">
+		    <TR>
+		        <TH><B>Step</B></TH>
+			<TH><B>Description</B></TH>
+		    </TR>
+		    <TR>
+		        <TD><B>1</B></TD>
+			<TD><A HREF="Initialization">The Filesystem is
+			created by the client application.</A></TD>
+		    </TR>
+		    <TR>
+		        <TD><B>2</B></TD>
+			<TD><A HREF="CreateDocument">The client
+			application tells the Filesystem to create a
+			document</A>, providing an
+			<CODE>InputStream</CODE> and the name of the
+			document. This may be repeated several
+			times.</TD>
+		    </TR>
+		    <TR>
+		        <TD><B>3</B></TD>
+			<TD><A HREF="Initialization">The client
+			application asks the Filesystem to write its
+			data to an <CODE>OutputStream</CODE>.</A></TD>
+		    </TR>
+		</TABLE>
+                <OL>
+                    <LI>
+                        <P>
+                            <A
+                            NAME="Initialization">Initialization</A>
+                        </P>
+                        <P>
+                            Initialization of the POIFS system is
+                            shown in the following scenario diagram:
+                        </P>
+                        <P>
+                            <IMG SRC="POIFSInitialization.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Step</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><B>1</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                object, which is created for each
+                                request to convert an appropriate XML
+                                stream to a POIFS output stream
+                                containing an HSSF document, creates
+                                its <A
+                                HREF="#PropertyTable">PropertyTable</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>2</B></TD>
+                                <TD>The <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                creates its <A
+                                HREF="#RootProperty">RootProperty</A>
+                                instance, making the RootProperty the
+                                first <A HREF="#Property">Property</A>
+                                in its <CODE>List</CODE> of Property
+                                instances.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>3</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                creates its <A
+                                HREF="#HeaderBlock">HeaderBlock</A>
+                                instance. It should be noted that the
+                                decision to create the HeaderBlock at
+                                Filesystem initialization is
+                                arbitrary; creation of the HeaderBlock
+                                could easily and harmlessly be
+                                postponed to the appropriate moment in
+                                <A HREF="#WriteFilesystem">writing the
+                                filesystem</A>.</TD>
+                            </TR>
+                        </TABLE>
+                    </LI>
+                    <LI>
+                        <P>
+                            <A NAME="CreateDocument">Creating a
+                            Document</A>
+                        </P>
+                        <P>
+                            Creating and adding a document to a POIFS
+                            system is shown in the following scenario
+                            diagram:
+                        </P>
+                        <P>
+                            <IMG SRC="POIFSAddDocument.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Step</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><B>1</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                instance creates a new <A
+                                HREF="#Document">Document</A>
+                                instance. It will store the newly
+                                created Document in a
+                                <CODE>List</CODE> of <A
+                                HREF="#BATManaged">BATManaged</A>
+                                instances.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>2</B></TD>
+                                <TD>The <A
+                                HREF="#Document">Document</A> reads
+                                data from the provided
+                                <CODE>InputStream</CODE>, storing the
+                                data in <A
+                                HREF="#DocumentBlock">DocumentBlock</A>
+                                instances. It keeps track of the byte
+                                count as it reads the data.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>3</B></TD>
+                                <TD>The <A
+                                HREF="#Document">Document</A> creates
+                                a <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                to keep track of its property
+                                data. The byte count is stored in the
+                                newly created DocumentProperty
+                                instance.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>4</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                requests the newly created <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                from the newly created <A
+                                HREF="#Document">Document</A>
+                                instance.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>5</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                sends the newly created <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                to the Filesystem's <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                so that the PropertyTable can add the
+                                DocumentProperty to its
+                                <CODE>List</CODE> of <A
+                                HREF="#Property">Property</A>
+                                instances.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>6</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A> gets
+                                the <A
+                                HREF="#RootProperty">RootProperty</A>
+                                from its <A
+                                HREF="#PropertyTable">PropertyTable</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>7</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A> adds
+                                the newly created <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                to the <A
+                                HREF="#RootProperty">RootProperty</A>.</TD>
+                            </TR>
+                        </TABLE>
+                        <P>
+                            Although typical deployment of the POIFS
+                            system will only entail adding a single <A
+                            HREF="#Document">Document</A> (the
+                            workbook) to the <A
+                            HREF="#Filesystem">Filesystem</A>, there
+                            is nothing in the design to prevent
+                            multiple Documents from being added to the
+                            Filesystem. This flexibility can be
+                            employed to write summary information
+                            document(s) in addition to the workbook.
+                        </P>
+                    </LI>
+                    <LI>
+                        <P>
+                            <A NAME="WriteFilesystem">Writing the
+                            Filesystem</A>
+                        </P>
+                        <P>
+                            Writing the filesystem is shown in the
+                            following scenario diagram:
+                        </P>
+                        <P>
+                            <IMG SRC="POIFSWriteFilesystem.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Step</B></TH>
+                                <TH COLSPAN="2"><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><B>1</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#Filesystem">Filesystem</A> adds
+                                the <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                to its <CODE>List</CODE> of <A
+                                HREF="#BATManaged">BATManaged</A>
+                                instances and calls the
+                                PropertyTable's
+                                <CODE><I>preWrite</I></CODE>
+                                method. The action taken by the
+                                PropertyTable is shown in the <A
+                                HREF="#PropertyTablePreWrite">PropertyTable
+                                preWrite scenario diagram</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>2</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                creates the <A
+                                HREF="#BlockAllocationTable">BlockAllocationTable</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>3</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A> gets
+                                the block count from the <A
+                                HREF="#BATManaged">BATManaged</A>
+                                instance.</TD> <TD
+                                ROWSPAN="3"><B>These three steps are
+                                repeated for each <A
+                                HREF="#BATManaged">BATManaged</A>
+                                instance in the <A
+                                HREF="#Filesystem">Filesystem</A>'s
+                                <CODE>List</CODE> of BATManaged
+                                instances (i.e., the <A
+                                HREF="#Document">Documents</A>, in
+                                order of their addition to the
+                                Filesystem, followed by the <A
+                                HREF="#PropertyTable">PropertyTable</A>).</B></TD>
+                            </TR>
+                            <TR>
+                                <TD><B>4</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                sends the block count to the <A
+                                HREF="#BlockAllocationTable">BlockAllocationTable</A>,
+                                which adds the appropriate entries to
+                                is <A HREF="#IntList">IntList</A> of
+                                entries, returning the starting block
+                                for the newly added entries.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>5</B></TD>
+                                <TD>The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                gives the start block number to the <A
+                                HREF="#BATManaged">BATManaged</A>
+                                instance. If the BATManaged instance
+                                is a <A HREF="#Document">Document</A>,
+                                it sets the start block field in its
+                                <A
+                                HREF="#DocumentProperty">DocumentProperty</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>6</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                tells the <A
+                                HREF="#BlockAllocationTable">BlockAllocationTable</A>
+                                to create its <A
+                                HREF="#BATBlock">BatBlocks</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>7</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                gives the BAT information to the <A
+                                HREF="#HeaderBlock">HeaderBlock</A> so
+                                that it can set its BAT fields and, if
+                                necessary, create XBAT blocks.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>8</B></TD>
+                                <TD COLSPAN="2">If the filesystem is
+                                unusually large (over <B>7MB</B>), the
+                                <A HREF="#HeaderBlock">HeaderBlock</A>
+                                will create XBAT blocks to contain the
+                                BAT data that it cannot hold
+                                directly. In this case, the <A
+                                HREF="#Filesystem">Filesystem</A>
+                                tells the HeaderBlock where those
+                                additional blocks will be stored.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>9</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                gives the <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                start block to the <A
+                                HREF="#HeaderBlock">HeaderBlock</A>.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>10</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#Filesystem">Filesystem</A>
+                                tells the <A
+                                HREF="#BlockWritable">BlockWritable</A>
+                                instance to write its blocks to the
+                                provided
+                                <CODE>OutputStream</CODE>.<BR>This
+                                step is repeated for each
+                                BlockWritable instance, in this
+                                order:<BR>
+                                <OL>
+                                    <LI>
+                                        The <A
+                                        HREF="#HeaderBlock">HeaderBlock</A>.
+                                    </LI>
+                                    <LI>
+                                        Each <A
+                                        HREF="#Document">Document</A>,
+                                        in the order in which it was
+                                        added to the <A
+                                        HREF="#Filesystem">Filesystem</A>.
+                                    </LI>
+                                    <LI>
+                                        The <A
+                                        HREF="#PropertyTable">PropertyTable</A>.
+                                    </LI>
+                                    <LI>
+                                        The <A
+                                        HREF="#BlockAllocationTable">BlockAllocationTable</A>
+                                    </LI>
+                                    <LI>
+                                        The XBAT blocks created by the
+                                        <A
+                                        HREF="#HeaderBlock">HeaderBlock</A>,
+                                        if any.
+                                    </LI>
+                                </OL></TD>
+                            </TR>
+                        </TABLE>
+                        <P>
+                            <A
+                            NAME="PropertyTablePreWrite"><B>PropertyTable
+                            preWrite scenario diagram</B></A>
+                        </P>
+                        <P>
+                            <IMG SRC="POIFSPropertyTablePreWrite.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Step</B></TH>
+                                <TH><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><B>1</B></TD>
+                                <TD>The <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                calls <CODE><I>setIndex</I></CODE> for
+                                each of its <A
+                                HREF="#Property">Property</A>
+                                instances, so that each Property now
+                                knows its index within the
+                                PropertyTable's <CODE>List</CODE> of
+                                Property instances.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>2</B></TD> <TD>The <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                requests the <A
+                                HREF="#PropertyBlock">PropertyBlock</A>
+                                class to create an array of <A
+                                HREF="#PropertyBlock">PropertyBlock</A>
+                                instances.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>3</B></TD>
+
+                                <TD>The <A
+                                HREF="#PropertyBlock">PropertyBlock</A>
+                                calculates the number of empty <A
+                                HREF="#Property">Property</A>
+                                instances it needs to create and
+                                creates them. The algorithm for the
+                                number to create is:<BR>
+                                <CODE>block_count = (properties.size()
+                                + 3) / 4;<BR> emptyPropertiesNeeded =
+                                (block_count * 4) -
+                                properties.size();</CODE></TD>
+                            </TR>
+                            <TR>
+                                <TD><B>4</B></TD> <TD>The <A
+                                HREF="#PropertyBlock">PropertyBlock</A>
+                                creates the required number of <A
+                                HREF="#PropertyBlock">PropertyBlock</A>
+                                instances from the <CODE>List</CODE>
+                                of <A HREF="#Property">Property</A>
+                                instances, including the newly created
+                                empty <A HREF="#Property">Property</A>
+                                instances.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>5</B></TD>
+                                <TD>The <A
+                                HREF="#PropertyTable">PropertyTable</A>
+                                calls <CODE><I>preWrite</I></CODE> on
+                                each of its <A
+                                HREF="#Property">Property</A>
+                                instances. For <A
+                                HREF="#DocumentProperty">DocumentProperty</A>
+                                instances, this call is a no-op. For
+                                the <A
+                                HREF="#RootProperty">RootProperty</A>,
+                                the action taken is shown in the <A
+                                HREF="#RootPropertyPreWrite">RootProperty
+                                preWrite scenario diagram</A>.</TD>
+                            </TR>
+                        </TABLE>
+                        <P>
+                            <A
+                            NAME="RootPropertyPreWrite"><B>RootProperty
+                            preWrite scenario diagram</B></A>
+                        </P>
+                        <P>
+                            <IMG SRC="POIFSRootPropertyPreWrite.gif">
+                        </P>
+                        <TABLE BORDER="1">
+                            <TR>
+                                <TH><B>Step</B></TH>
+                                <TH COLSPAN="2"><B>Description</B></TH>
+                            </TR>
+                            <TR>
+                                <TD><B>1</B></TD>
+                                <TD COLSPAN="2">The <A
+                                HREF="#RootProperty">RootProperty</A>
+                                sets its child property with the index
+                                of the child <A
+                                HREF="#Property">Property</A> that is
+                                first in its <CODE>List</CODE> of
+                                children.</TD>
+                            </TR>
+                            <TR>
+                                <TD><B>2</B></TD>
+                                <TD>The <A
+                                HREF="#RootProperty">RootProperty</A>
+                                sets its child's next property field
+                                with the index of the child's next
+                                sibling in the RootProperty's
+                                <CODE>List</CODE> of children. If the
+                                child is the last in the
+                                <CODE>List</CODE>, its next property
+                                field is set to <CODE>-1</CODE>.</TD>
+                                <TD ROWSPAN="2"><B>These two steps are
+                                repeated for each <A
+                                HREF="#File">File</A> in the <A
+                                HREF="#RootProperty">RootProperty</A>'s
+                                <CODE>List</CODE> of
+                                children.</B></TD>
+                            </TR>
+                            <TR>
+                                <TD><B>3</B></TD>
+                                <TD>The <A
+                                HREF="#RootProperty">RootProperty</A>
+                                sets its child's previous property
+                                field with a value of
+                                <CODE>-1</CODE>.</TD>
+                            </TR>
+                        </TABLE>
+                    </LI>
+                </OL>
+            </LI>
+        </OL>
+    </BODY>
+</HTML>

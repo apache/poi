@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-OpenXML4J - Java API To Access Office Open XML documents</title>
+        <subtitle>Overview</subtitle>
+    </header>
+
+    <body>
+        <section>
+          <title>Overview</title>
+          <p>OpenXML4J is the POI Project's pure Java implementation of the Open Packaging Conventions (OPC) defined in 
+            <link href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">ECMA-376</link>.</p>
+          <p>Every OpenXML file comprises a collection of byte streams called parts, combined into a container called a package. 
+            POI OpenXML4J provides a physical implementation of the OPC that uses the Zip file format.</p>
+        </section>
+        <section>
+          <title>History</title>
+          <p>OpenXML4J was originally developed by <link href="http://openxml4j.org/">http://openxml4j.org/</link> and contributed to POI in 2008. 
+            Thanks to the support and guidance of Julien Chable</p>
+        </section>
+    </body>
+</document>

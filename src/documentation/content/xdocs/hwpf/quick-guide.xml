@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>POI-HWPF - A Quick Guide</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at torchbox dot com"/>
+        </authors>
+    </header>
+
+    <body>
+		<p>HWPF is still in early development. It is in the <link
+     	href="http://svn.apache.org/viewcvs.cgi/poi/trunk/src/scratchpad/">
+		scratchpad section of the SVN.</link> You will need to ensure you
+		either have a recent SVN checkout, or a recent SVN nightly build
+		(including the scratchpad jar!)</p>
+
+        <section><title>Basic Text Extraction</title>
+        <p>For basic text extraction, make use of 
+<code>org.apache.poi.hwpf.extractor.WordExtractor</code>. It accepts an input
+stream or a <code>HWPFDocument</code>. The <code>getText()</code> 
+method can be used to 
+get the text from all the paragraphs, or <code>getParagraphText()</code>
+can be used to fetch the text from each paragraph in turn. The other
+option is <code>getTextFromPieces()</code>, which is very fast, but
+tends to return things that aren't text from the page. YMMV.
+		</p>
+		</section>
+		
+		<section><title>Specific Text Extraction</title>
+		<p>To get specific bits of text, first create a 
+<code>org.apache.poi.hwpf.HWPFDocument</code>. Fetch the range 
+with <code>getRange()</code>, then get paragraphs from that. You
+can then get text and other properties.
+		</p>
+		</section>
+		
+		<section><title>Headers and Footers</title>
+		<p>To get at the headers and footers of a word document, first create a
+<code>org.apache.poi.hwpf.HWPFDocument</code>. Next, you need to create a
+<code>org.apache.poi.hwpf.usermodel.HeaderStores</code>, passing it your
+HWPFDocument. Finally, the HeaderStores gives you access to the headers and
+footers, including first / even / odd page ones if defined in your
+document. Additionally, HeaderStores provides a method for removing
+any macros in the text, which is helpful as many headers and footers
+do end up with macros in them.</p>
+		</section>
+		
+		<section><title>Changing Text</title>
+		<p>It is possible to change the text via 
+		<code>insertBefore()</code> and <code>insertAfter()</code>
+		on a <code>Range</code> object (either a <code>Range</code>,
+		<code>Paragraph</code> or <code>CharacterRun</code>).
+		It is also possible to delete a <code>Range</code>.
+		This code will work in many, but not all cases, and patches to
+        improve it are gratefully received!
+		</p>
+		</section>
+
+		<section><title>Further Examples</title>
+		<p>For now, the best source of additional examples is in the unit 
+		tests. <link
+     	href="http://svn.apache.org/viewvc/poi/trunk/src/scratchpad/testcases/org/apache/poi/hwpf/">
+		Browse the HWPF unit tests.</link>
+		</p>
+		</section>
+	</body>
+</document>

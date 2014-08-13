@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+    <header>
+        <title>Developing Formula Evaluation</title>
+        <authors>
+			<person email="amoweb@yahoo.com" name="Amol Deshmukh" id="AD"/>
+            <person email="yegor@apache.org" name="Yegor Kozlov" id="YK"/>
+        </authors>
+    </header>
+    <body>
+	<section><title>Introduction</title>
+		<p>This document is for developers wishing to contribute to the 
+			FormulaEvaluator API functionality.</p>
+        <p>When evaluating workbooks you may encounter a org.apache.poi.ss.formula.eval.NotImplementedException
+            which indicates that a function is not (yet) supported by POI. Is there a workaround?
+            Yes, the POI framework  makes it easy to add implementation of new functions. Prior to POI-3.8
+            you had to checkout the source code from svn and make a custom build with your function implementation.
+            Since POI-3.8 you can register new functions in run-time.
+        </p>
+		<p>Currently, contribution is desired for implementing the standard MS
+			excel functions. Place holder classes for these have been created, 
+			contributors only need to insert implementation for the 
+			individual "evaluate()" methods that do the actual evaluation.</p>
+	</section>
+
+	<section><title>Overview of FormulaEvaluator </title>
+		<p>Briefly, a formula string (along with the sheet and workbook that 
+			form the context in which the formula is evaluated) is first parsed 
+			into RPN tokens using the FormulaParser class .
+			(If you dont know what RPN tokens are, now is a good time to 
+			read <link href="http://www-stone.ch.cam.ac.uk/documentation/rrf/rpn.html">
+			this</link>.)
+		</p>
+		<section><title> The big picture</title>
+			<p>RPN tokens are mapped to Eval classes. (Class hierarchy for the Evals 
+				is best understood if you view the class diagram in a class diagram 
+				viewer.) Depending on the type of RPN token (also called as Ptgs 
+				henceforth since that is what the FormulaParser calls the classes) a 
+				specific type of Eval wrapper is constructed to wrap the RPN token and 
+				is pushed on the stack.... UNLESS the Ptg is an OperationPtg. If it is an 
+				OperationPtg, an OperationEval instance is created for the specific 
+				type of OperationPtg. And depending on how many operands it takes, 
+				that many Evals are popped of the stack and passed in an array to 
+				the OperationEval instance's evaluate method which returns an Eval 
+				of subtype ValueEval.Thus an operation in the formula is evaluated. </p>
+				<note> An Eval is of subinterface ValueEval or OperationEval. 
+				Operands are always ValueEvals, Operations are always OperationEvals.</note> 
+				<p><code>OperationEval.evaluate(Eval[])</code> returns an Eval which is supposed 
+				to be of type ValueEval (actually since ValueEval is an interface, 
+				the return value is instance of one of the implementations of 
+				ValueEval). The valueEval resulting from evaluate() is pushed on the 
+				stack and the next RPN token is evaluated.... this continues till 
+				eventually there are no more RPN tokens at which point, if the formula 
+				string was correctly parsed, there should be just one Eval on the 
+				stack - which contains the result of evaluating the formula.</p>
+			<p>Of course I glossed over the details of how AreaPtg and ReferencePtg
+				are handled a little differently, but the code should be self 
+				explanatory for that. Very briefly, the cells included in AreaPtg and 
+				RefPtg are examined and their values are populated in individual 
+				ValueEval objects which are set into the AreaEval and RefEval (ok, 
+				since AreaEval and RefEval are interfaces, the implementations of 
+				AreaEval and RefEval - but you'll figure all that out from the code)</p>
+			<p>OperationEvals for the standard operators have been implemented and tested.</p>
+		</section>
+	</section>
+
+        <section><title>What functions are supported?</title>
+            <p>
+                As of Feb 2012, POI supports about 140 built-in functions,
+                see <link href="#appendixA">Appendix A</link> for the full list.
+                You can programmatically list supported / unsuported functions using the following helper methods:
+            </p>
+            <source>
+    // list of functions that POI can evaluate
+    Collection&lt;String&gt; supportedFuncs = WorkbookEvaluator.getSupportedFunctionNames();
+
+    // list of functions that are not supported by POI
+    Collection&lt;String&gt; unsupportedFuncs = WorkbookEvaluator.getNotSupportedFunctionNames();
+
+            </source>
+        </section>
+
+        <section><title>Two base interfaces to start your implementation</title>
+            <p>
+                All Excel formula function classes implement either
+                org.apache.poi.hssf.record.formula.functions.Function or
+                org.apache.poi.hssf.record.formula.functions.FreeRefFunction interface.
+
+                Function is a commonn interface for the functions defined in the binary Excel format (BIFF8): these are "classic" Excel functions like SUM, COUNT, LOOKUP, etc.
+                FreeRefFunction is a common interface for the functions from the Excel Analysis Toolpack and for User-Defined Functions.
+                In the future these two interfaces are expected be unified into one, but for now you have to start your implementation from two slightly different roots.
+
+            </p>
+        </section>
+
+        <section><title>Which interface to start from?</title>
+            <p>
+                You are about to implement a function XXX and don't know which interface to start from: Function or FreeRefFunction.
+                Use the following code to check whether your function is from the excel Analysis Toolpack:
+            </p>
+            <source>
+    if(AnalysisToolPack.isATPFunction(functionName)){
+        // the function implements org.apache.poi.hssf.record.formula.functions.Function
+    } else {
+        // the function implements org.apache.poi.hssf.record.formula.functions.FreeRefFunction
+    }
+            </source>
+        </section>
+
+
+        <section><title>Walkthrough of an "evaluate()" implementation.</title>
+            <p>Here is the fun part: lets walk through the implementation of the excel function  <strong>SQRT()</strong>
+            </p>
+            <p>
+                AnalysisToolPack.isATPFunction("SQRTPI") returns false so the base interface is Function.
+
+                There are sub-interfaces that make life easier when implementing numeric functions or functions
+                with fixed number of arguments, 1-arg, 2-arg and 3-arg function:
+            </p>
+            <ul>
+                <li>org.apache.poi.hssf.record.formula.functions.NumericFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed3ArgFunction</li>
+                <li>org.apache.poi.hssf.record.formula.functions.Fixed4ArgFunction</li>
+            </ul>
+            <p>
+                Since SQRTPI takes exactly one argument we start our implementation from org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction:
+            </p>
+
+            <source>
+    Function SQRTPI = new Fixed1ArgFunction() {
+        public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+            try {
+                // Retrieves a single value from a variety of different argument types according to standard
+                // Excel rules.  Does not perform any type conversion.
+                ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+
+                // Applies some conversion rules if the supplied value is not already a number.
+                // Throws EvaluationException(#VALUE!) if the supplied parameter is not a number
+                double arg = OperandResolver.coerceValueToDouble(ve);
+
+                // this where all the heavy-lifting happens
+                double result = Math.sqrt(arg*Math.PI);
+
+                // Excel uses the error code #NUM! instead of IEEE <em>NaN</em> and <em>Infinity</em>,
+                // so when a numeric function evaluates to Double.NaN or Double.Infinity,
+                // be sure to translate the result to the appropriate error code
+                if (Double.isNaN(result) || Double.isInfinite(result)) {
+                    throw new EvaluationException(ErrorEval.NUM_ERROR);
+                }
+
+                return new NumberEval(result);
+            } catch (EvaluationException e){
+                return e.getErrorEval();
+            }
+        }
+    }
+            </source>
+
+            <p>Now when the implementation is ready we need to register it in the formula evaluator:</p>
+            <source>
+    WorkbookEvaluator.registerFunction("SQRTPI", SQRTPI);
+            </source>
+
+            <p>Voila! The formula evaluator now recognizes SQRTPI! </p>
+
+        </section>
+
+        <section><title>Floating-point Arithmetic in Excel</title>
+            <p>Excel uses the IEEE Standard for Double Precision Floating Point numbers
+                except two cases where it does not adhere to IEEE 754:
+            </p>
+            <ol>
+                <li>Positive/Negative Infinities: Infinities occur when you divide by 0.
+                    Excel does not support infinities, rather, it gives a #DIV/0! error in these cases.
+                </li>
+                <li>Not-a-Number (NaN): NaN is used to represent invalid operations
+                    (such as infinity/infinity, infinity-infinity, or the square root of -1).
+                    NaNs allow a program to continue past an invalid operation.
+                    Excel instead immediately generates an error such as #NUM! or #DIV/0!.
+                </li>
+            </ol>
+            <p>Be aware of these two cases when saving results of your scientific calculations in Excel:
+                “where are my Infinities and NaNs? They are gone!”
+            </p>
+        </section>
+
+	<section><title>Testing Framework</title>
+	<p>Automated testing of the implemented Function is easy.
+	The source code for this is in the file: o.a.p.h.record.formula.GenericFormulaTestCase.java
+	This class has a reference to the test xls file (not /a/ test xls, /the/ test xls :)
+	which may need to be changed for your environment. Once you do that, in the test xls,
+	locate the entry for the function that you have implemented and enter different tests 
+	in a cell in the FORMULA row. Then copy the "value of" the formula that you entered in the
+	cell just below it (this is easily done in excel as: 
+	[copy the formula cell] > [go to cell below] > Edit > Paste Special > Values > "ok").
+	You can enter multiple such formulas and paste their values in the cell below and the
+	test framework will automatically test if the formula evaluation matches the expected
+	value (Again, hard to put in words, so if you will, please take time to quickly look
+	at the code and the currently entered tests in the patch attachment "FormulaEvalTestData.xls" 
+	file).
+	</p>	
+	</section>
+
+        <anchor id="appendixA"/>
+        <section>
+           <title>Appendix A</title>
+            <p>Functions supported by POI ( as of Feb 2012)</p>
+            <source>
+    ABS
+    ACOS
+    ACOSH
+    ADDRESS
+    AND
+    ASIN
+    ASINH
+    ATAN
+    ATAN2
+    ATANH
+    AVEDEV
+    AVERAGE
+    CEILING
+    CHAR
+    CHOOSE
+    CLEAN
+    COLUMN
+    COLUMNS
+    COMBIN
+    CONCATENATE
+    COS
+    COSH
+    COUNT
+    COUNTA
+    COUNTBLANK
+    COUNTIF
+    DATE
+    DAY
+    DAYS360
+    DEGREES
+    DEVSQ
+    DOLLAR
+    ERROR.TYPE
+    EVEN
+    EXACT
+    EXP
+    FACT
+    FALSE
+    FIND
+    FLOOR
+    FV
+    HLOOKUP
+    HOUR
+    HYPERLINK
+    IF
+    INDEX
+    INDIRECT
+    INT
+    IRR
+    ISBLANK
+    ISERROR
+    ISEVEN
+    ISLOGICAL
+    ISNA
+    ISNONTEXT
+    ISNUMBER
+    ISODD
+    ISREF
+    ISTEXT
+    LARGE
+    LEFT
+    LEN
+    LN
+    LOG
+    LOG10
+    LOOKUP
+    LOWER
+    MATCH
+    MAX
+    MAXA
+    MEDIAN
+    MID
+    MIN
+    MINA
+    MINUTE
+    MOD
+    MODE
+    MONTH
+    MROUND
+    NA
+    NETWORKDAYS
+    NOT
+    NOW
+    NPER
+    NPV
+    ODD
+    OFFSET
+    OR
+    PI
+    PMT
+    POISSON
+    POWER
+    PRODUCT
+    PV
+    RADIANS
+    RAND
+    RANDBETWEEN
+    RANK
+    RATE
+    REPLACE
+    RIGHT
+    ROUND
+    ROUNDDOWN
+    ROUNDUP
+    ROW
+    ROWS
+    SEARCH
+    SECOND
+    SIGN
+    SIN
+    SINH
+    SMALL
+    SQRT
+    STDEV
+    SUBSTITUTE
+    SUBTOTAL
+    SUM
+    SUMIF
+    SUMIFS
+    SUMPRODUCT
+    SUMSQ
+    SUMX2MY2
+    SUMX2PY2
+    SUMXMY2
+    T
+    TAN
+    TANH
+    TEXT
+    TIME
+    TODAY
+    TRIM
+    TRUE
+    TRUNC
+    UPPER
+    VALUE
+    VAR
+    VARP
+    VLOOKUP
+    WEEKDAY
+    WORKDAY
+    YEAR
+    YEARFRAC
+            </source>
+        </section>
+	</body>
+</document>

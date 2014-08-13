@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+<document>
+ <header>
+  <title>Third Party Contributions</title>
+  <authors>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+  </authors>
+ </header>
+
+ <body>
+
+ <section><title>How to Contribute</title>
+  <p>
+   See <link href="contrib.xml">How to contribute to Poi</link>.
+  </p>
+
+ </section>
+
+ <section><title>Contributed Components</title>
+  <p>
+   These are not necessarily deemed to be high enough quality to be included in the
+   core distribution, but they have been tested under <link href="contrib.xml">
+   several key environments</link>, they are provided under the same license
+   as Poi, and they are included in the POI distribution under the
+   <code>contrib/</code> directory.
+  </p>
+
+  <p>
+   <strong>None as yet!</strong> - although you can expect that some of the links
+   listed below will eventually migrate to the "contributed components" level, and
+   then maybe even into the main distribution.
+  </p>
+ </section>
+
+ <section><title>Patch Queue</title>
+  <p><link href="patches.html">Submissions of modifications</link>
+   to POI which are awaiting review. Anyone can
+   comment on them on the dev mailing list - code reviewers are needed!
+   <strong>Use these at your own risk</strong> - although POI has no guarantee
+   either, these patches have not been reviewed, let alone accepted.
+  </p>
+ </section>
+
+ <section><title>Other Extensions</title>
+  <p>The other extensions listed here are <strong>not endorsed</strong> by the POI
+   project either - they are provided as a convenience only. They may or may not work,
+   they may or may not be open source, etc.
+  </p>
+
+  <p>To have a link added to this table, see <link href="contrib.xml">How to contribute
+   to POI</link>.</p>
+
+  <table>
+   <tr>
+    <th>Name and Link</th>
+    <th>Type</th>
+    <th>Description</th>
+    <th>Status</th>
+    <th>Licensing</th>
+    <th>Contact</th>
+   </tr>
+  </table>
+
+ </section>
+</body>
+</document>

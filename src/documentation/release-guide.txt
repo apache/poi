@@ -1,0 +1,238 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+             ==============================
+                   POI Release Guide
+             ==============================
+
+
+(I) Prerequisites
+
+   1. You should read the <a href="http://apache.org/dev/release.html">Apache Release FAQ</a>
+   2a. You must have shell access to people.apache.org; and you should 
+       have key-based authentication set up 
+       (e.g. <a href="http://www.linuxproblem.org/art_9.html">how to</a>.
+   2b. You must be a member of the committee group
+   3. Release manager must have his public key appended to the KEYS file checked in to SVN and the key published on one of the public key servers.
+      More info can be found here: <a href="http://www.apache.org/dev/release-signing.html">http://www.apache.org/dev/release-signing.html</a>
+   4. You must have <a href="java.sun.com">JDK 1.5</a>
+   5. You must have the following utilities installed on your local machine and available in your path:
+          * <a href="www.openssh.com">ssh</a>
+          * <a href="www.gnupg.org">gnupg</a>
+          * <a href="www.openssl.org">openssl</a>
+      For Windows users, install Cygwin and make sure you have the above utilities
+   6a. The POI build system requires two components to perform a build
+          * <a href="ant.apache.org">Ant</a>  
+          * <a href="http://forrest.apache.org/">Forrest</a>. 
+      POI 3.0.2 and 3.1 were built using Ant 1.6.2 and Forrest 0.5
+      Currently, Forrest needs to be 0.5.1, Ant 1.7+ should be fine
+
+   6b. To deploy with Maven, you should have the latest stable Maven 2.x.
+        POI 3.10-beta2 was deployed with Maven 2.2.1.
+
+   7. Before building, you should run the "rat-check" build task, which
+      uses <a href="http://incubator.apache.org/rat/">Apache Rat</a>
+      to check the source tree for files lacking license headers. Files
+      without headers should be either fixed, or added to the exlude list
+
+   8. Check file permissions are correct in SVN.
+      There can be  files in the SVN tree marked executable (have the
+      svn:executable property set), but which should not be. Checking them 
+      out will cause the executable bit to be set for them on filesystems 
+      which support it. The flag can be removed in batch using
+ 
+$ svn pd 'svn:executable' $(find -name .svn -prune -or -type f ! -name \*.sh \
+ -print0 | xargs -0 svn pg 'svn:executable' | cut -d ' ' -f 1)
+
+
+(II) Making release artefacts
+  1. Update version id in build.xml
+{code:xml}
+  <property name="version.id" value="3.1-beta1"/>
+{code}
+
+  2. Update the date in src/documentation/content/xdocs/status.xml with
+     the expected release date, and create a commented out entry for the 
+     next release. (Must be commented out, as there are no actions
+     for it yet)
+
+  3. Pin the documentation explicitly to the current version, rather
+     than trunk. Run "svn up" to get the current version number, then
+     edit the svn:externals property on src and add to the definition, eg
+
+     documentation -r1496657 https://svn.apache.org/repos/asf/poi/site/src/documentation
+
+  4. Tag current version. Include the current revision number in the comment
+
+{code}
+$ TAG=REL_3_8_FINAL
+$ TAG=REL_3_12_ALPHA5
+$ svn cp https://svn.apache.org/repos/asf/poi/trunk \
+https://svn.apache.org/repos/asf/poi/tags/$TAG \
+-m "tag r649911 as 3.1-beta1"
+{code}
+
+where $TAG is the release tag, for example, REL_3_1_BETA1
+
+  5. On trunk, update "version.id" to be the next version in status.xml, 
+     and remove the version pinning on the documentation external definition.
+
+  6. Checkout the tagged version
+{code}
+cd tags
+svn checkout https://svn.apache.org/repos/asf/poi/tags/$TAG
+{code}
+
+  7. Merge (if required)
+
+{code}
+cd $TAG
+$ svn merge https://svn.apache.org/repos/asf/poi/tags/$TAG \
+https://svn.apache.org/repos/asf/poi/trunk
+{code}
+
+     Note that if there's set to be lots of merging, you may be best
+     to create a branch for the release, then create tags from there
+     rather than trunk
+
+  8. Build as if the vote had passed. The build date must be +7 days from current.
+{code}
+# eg ant -DDSTAMP=20100924 dist
+ant -DDSTAMP=YYYYMMDD dist
+{code}
+
+where $TAG is the release tag specified in build.xml in the version.id property, $DATE is the release date (typically +7 days from the actual build date). 
+
+  9. Signing the release artifacts:
+{code}
+cd build/dist
+./multisign.sh
+{code}
+
+ 10. Upload to the dev svn dist repo, 
+     https://dist.apache.org/repos/dist/dev/poi/ eg
+     https://dist.apache.org/repos/dist/dev/poi/3.8-RC3/
+
+How to upload:
+
+{code}
+svn co https://dist.apache.org/repos/dist/dev/poi
+mkdir 3.8-RC3/
+svn add 3.8-RC3
+{code}
+
+may need --force as in:
+{code}
+svn add 3.8-RC3 --force
+{code}
+
+then add .gz and .zip  packages along with checksums. 
+
+ binaries should be in ./bin, sources in ./src sub-directories
+
+8c. commit
+After commit the files should be accessible at https://dist.apache.org/repos/dist/dev/poi/3.8-RC2/
+
+
+ (III) After the vote:
+
+In the release area of the dist repo:
+    https://dist.apache.org/repos/dist/release/poi/release/   (FINAL)
+    https://dist.apache.org/repos/dist/release/poi/dev/       (Alpha/Beta)
+Remove the previous release
+
+Next, svn move the files from the /dist/dev/ area to the appropriate
+/dist/release/ area
+
+example:
+$ svn rm -m "remove the previous release" \ 
+    https://dist.apache.org/repos/dist/release/poi/dev/src
+    https://dist.apache.org/repos/dist/release/poi/dev/bin
+
+$ svn mv -m "move staging files to the release area" \
+    https://dist.apache.org/repos/dist/dev/poi/bin \
+    https://dist.apache.org/repos/dist/dev/poi/src/  \
+    https://dist.apache.org/repos/dist/release/poi/dev/
+
+
+deploy Maven artifacts
+{code}
+cd build/dist
+./mvn-deploy.sh
+{code}
+
+2. Wait for the distributions to appear on your favourite mirror
+
+3. Edit the website homepage and list the new release there. If a full release,
+   remove older full releases and all beta releases. If a beta release, keep
+   the last full release, and replace any other beta releases
+
+4. Edit the website download page, and list the new release there. This should
+   reference the checksums, so take care when updating
+
+5. Build site using a recent version of Java 1.6 or 1.7 (must be after the fix
+   for TA13-169A).
+   Commit the site changes to svn, and publish live
+
+6. test maven
+create a simple project and make sure the release artifacts are accessible by maven:
+
+{code}
+$ mvn archetype:create -DgroupId=org.apache.poi.scratchpad -DartifactId=maven-test
+cd maven-test
+{code}
+edit pom.xml and add the release artefacts to the project dependencies: 
+
+{code:xml}
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>3.1-beta1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-scratchpad</artifactId>
+      <version>3.1-beta1</version>
+    </dependency>
+{code}
+
+{code}
+mvn compile 
+{code}
+
+You should see [INFO] BUILD SUCCESSFUL in the end.
+
+Before the package is fully replicated, you may get a BUILD SUCCESSFUL, but you'll also receive a 
+warning that the .jar can't be downloaded.  Wait until you get BUILD SUCCESSFUL and no warnings.
+
+7. Don't forget to upload the latest version of the site and javadocs
+
+8. Send announcements:
+ - to poi-user and poi-dev lists
+ - to announcements@apache.org, announcements@jakarta.apache.org
+
+Note, announcements should be sent from your @apache.org e-mail address.
+
+9. Add a new project version in Bugzilla
+
+10. Delete directory that held RC.
+
+e.g.
+{code}
+svn delete -m "delete empty RC directory for 3.10-beta2" https://dist.apache.org/repos/dist/dev/poi/3.10-beta2-RC1
+{code}

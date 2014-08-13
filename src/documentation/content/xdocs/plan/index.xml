@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>Planning Documentation</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="David Crossley" email="crossley@apache.org"/>
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Overview</title>
+
+  <p>This is a collection of notes to assist with long-term planning and
+   development.
+  </p>
+
+  <p>There is much discussion of issues and research topics (RT) threads on
+   the <code>dev</code> mailing list (and elsewhere). However, details
+   get lost in the sheer volume. This is the place to document the summary of
+   discussions on some key topics. Some new and complex capabilities will take
+   lots of design and specification before they can be implemented.
+  </p>
+
+  <p>Another use for this collection of notes is as a place to quickly store
+   a snippet from an email discussion or even a link to a discussion thread.
+   The concepts can then be fleshed-out over time.
+  </p>
+
+  <p>Anyone can participate in this process. Please get involved in discussion
+   on <code>dev</code> and contribute patches for these summary planning
+   documents via the normal <link href="../guidelines.html">contribution</link>
+   process.
+  </p>
+
+  <p>These planning documents are intended to be concise notes only. They are
+   also ever-evolving, because as issues are addressed these notes will be
+   revised.
+  </p>
+ </section>
+
+ <section><title>Topics and Issues</title>
+
+  <ul>
+   <li><link href="POI20Vision.html">POI Version 2.0 Vision</link>
+    </li>
+   <li><link href="POI10Vision.html">POI Version 1.0 Vision</link>
+    </li>
+   <li>See the general <link href="../todo.html">To Do</link> list 
+    and the <code>dev</code> email archives for other issues</li>
+  </ul>
+ </section>
+
+ </body>
+</document>

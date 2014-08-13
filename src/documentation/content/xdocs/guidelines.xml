@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "./dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>Apache POI - Contribution Guidelines</title>
+  <authors>
+   <person name="Nick Burch" email="dev@poi.apache.org"/> 
+   <person name="David Fisher" email="dev@poi.apache.org"/> 
+   </authors>
+ </header>
+
+ <body>
+
+ <section><title>Index of Contribution Guidelines</title>
+   <ul>
+     <li><link href="#Introduction">Introduction</link></li>
+     <li><link href="#GetInvolved">I just want to get involved, but don't know where to start?</link></li>
+     <li><link href="#SubmittingPatches">Submitting Patches</link></li>
+     <li><link href="#CodeStyle">Code Style</link></li>
+     <li><link href="#Mentoring">Mentoring and Committership</link></li>
+   </ul>
+ </section>
+
+ <anchor id="Introduction"/>
+ <section><title>Introduction</title>
+
+  <section><title>Disclaimer</title>
+   <p>
+     Any information in here that might be perceived as legal information is 
+     informational only.  We're not lawyers, so consult a legal professional
+     if needed. 
+   </p>
+  </section>
+
+  <section><title>The Licensing</title>
+   <p>
+     The POI project is <link href="http://www.opensource.org">OpenSource</link>
+     and developed/distributed under the <link 
+     href="http://www.apache.org/foundation/license-faq.html">
+     Apache Software License</link>.  Unlike other licenses this license allows
+     free open source development; however, it does not require you to release
+     your source or use any particular license for your source.  If you wish
+     to contribute to POI (which you're very welcome and encouraged to do so)
+     then you must agree to release the rights of your source to us under this
+     license.
+   </p>
+  </section>
+  <section><title>Publicly Available Information on the file formats</title>
+  <p>
+   In early 2008, Microsoft made a fairly complete set of documentation
+   on the binary file formats freely and publicly available. These were 
+   released under the <link href="http://www.microsoft.com/interop/osp">Open
+   Specification Promise</link>, which does allow us to use them for
+   building open source software under the <link 
+     href="http://www.apache.org/foundation/license-FAQ.html">
+   Apache Software License</link>.
+  </p>
+  <p>
+   You can download the documentation on Excel, Word, PowerPoint and
+   Escher (drawing) from 
+   <link href="http://msdn.microsoft.com/en-us/library/cc313118.aspx">http://msdn.microsoft.com/en-us/library/cc313118.aspx</link>.
+   Documentation on a few of the supporting technologies used in these
+   file formats can be downloaded from
+   <link href="http://msdn.microsoft.com/en-us/library/jj633110.aspx">http://msdn.microsoft.com/en-us/library/jj633110.aspx</link>.
+  </p>
+  <p>
+   Previously, Microsoft published a book on the Excel 97 file format.
+   It can still be of plenty of use, and is handy dead tree form. Pick up
+   a copy of "Excel 97 Developer's Kit" from your favourite second hand
+   book store.
+  </p>
+  <p>
+   The newer Office Open XML (ooxml) file formats are documented as part
+   of the ECMA / ISO standardisation effort for the formats. This 
+   documentation is quite large, but you can normally find the bit you
+   need without too much effort! This can be downloaded from
+   <link href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">http://www.ecma-international.org/publications/standards/Ecma-376.htm</link>,
+   and is also under the <link href="http://www.microsoft.com/interop/osp">OSP</link>.
+  </p>
+  <p>
+   It is also worth checking the documentation and code of the other
+   open source implementations of the file formats.
+  </p>
+  </section>
+  <section><title>I just signed an NDA to get a spec from Microsoft and I'd like to contribute</title>
+   <p>
+     In short, stay away, stay far far away.  Implementing these file formats
+     in POI is done strictly by using public information. Most of this Public
+     Information currently comes from the documentation that Microsoft
+     makes freely available (see above). The rest of the public information
+     includes sources from other open source projects, books that state the 
+     purpose intended is for allowing implementation of the file format and 
+     do not require any non-disclosure agreement and just hard work. 
+     We are intent on keeping it legal, by contributing patches you agree to 
+     do the same.
+   </p>
+   <p> 
+     If you've ever received information regarding the OLE 2 Compound Document
+     Format under any type of exclusionary agreement from Microsoft, or  
+     received such information from a person bound by such an agreement, you 
+     cannot participate in this project. Sorry. Well, unless you can persuade 
+     Microsoft to release you from the terms of the NDA on the grounds that
+     most of the information is now publically available. However, if you have
+     been party to a Microsoft NDA, you will need to get clearance from Microsoft
+     before contributing.
+   </p>
+   <p>
+     Those submitting patches that show insight into the file format may be 
+     asked to state explicitly that they have only ever read the publicly
+     available file format information, and not any received under an NDA
+     or similar, and have only made us of the public documentation.
+   </p>
+  </section>
+ </section>
+
+ <anchor id="GetInvolved"/>
+ <section><title>I just want to get involved, but don't know where to start?</title>
+   <ul>
+     <li>Read the rest of the website, understand what POI is and what it does,
+         the project vision, etc.</li>
+     <li>Use POI a bit, look for gaps in the documentation and examples.</li>
+     <li>Join the <link href="mailinglists.html">mailing lists</link> and share your knowledge with others.</li>
+     <li>Get <link href="subversion.html">Subversion</link> and check out the POI source tree</li>
+     <li>Documentation is always the best place to start contributing, maybe you found that if the documentation just told you how to do X then it would make more sense, modify the documentation.</li>
+     <li>Contribute examples - if there's something people are often asking about on the <link href="mailinglists.html">user list</link> which isn't covered in the documentation or current examples, try writing an example of this and uploading it as a patch.</li>
+     <li>Get used to building POI, you'll be doing it a lot, be one with the build, know its targets, etc.</li>
+     <li>Write Unit Tests.  Great way to understand POI.  Look for classes that aren't tested, or aren't tested on a public/protected method level, start there.</li>
+     <li>Download the file format documentation from Microsoft -
+      <link href="http://www.microsoft.com/interop/docs/OfficeBinaryFormats.mspx">OLE2 Binary File Formats</link> or
+      <link href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">OOXML XML File Formats</link></li>
+     <li>Submit patches (see below) of your contributions, modifications.</li>
+     <li>Check the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link> for simple problem reports, and write a patch to fix the problem</li>
+     <li>Review existing patches in the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">bug database</link>, and report if they still apply, if they need unit tests atc.</li>
+     <li>Take a look at all the <link href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI;bug_status=NEW;bug_status=NEEDINFO">unresolved issues in the bug database</link>, and see if you can help with testing or patches for them</li>
+     <li>Add in new features, see <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug database</link> for suggestions.</li>
+   </ul>
+
+   <p>The Apache <link href="http://www.apache.org/dev/contributors.html">Contributors Tech Guide</link> gives a good overview how to start contributing patches.</p> 
+
+   <p>The Nutch project also have a very useful guide on becoming a 
+    new developer in their project. While it is written for their project,
+    a large part of it will apply to POI too. You can read it at
+    <link href="http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer">http://wiki.apache.org/nutch/Becoming_A_Nutch_Developer</link>. The
+    <link href="http://community.apache.org/">Apache Community Development
+    Project</link> also provides guidance and mentoring for new contributors.</p>
+  </section>
+
+  <anchor id="SubmittingPatches"/>
+  <section><title>Submitting Patches</title>
+   <p> 
+     Patches are submitted via the <link href="http://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</link>.  
+     Create a new bug, set the subject to [PATCH] followed by a brief description.  Explain you patch and any special instructions and submit/save it.  
+     Next, go back to the bug, and create attachements for the patch files you
+     created.  Be sure to describe not only the files purpose, but its format. 
+     (Is that ZIP or a tgz or a bz2 or what?).
+   </p>
+   <p>
+     Ideally, patches should be submitted early and often. This is for
+     two key reasons. Firstly, it's much easier to review smaller patches
+     than large ones. This means that smaller patches are much more likely
+     to be applied to SVN in a timely fashion. Secondly, by sending in your
+     patches earlier rather than later, it's much easier to get feedback
+     on your coding and direction. If you've missed an easier way to do something,
+     or are duplicating some (probably hidden) existing code, or taking things
+     in an unusual direction, it's best to get the feedback sooner rather than
+     later! As such, when submitting patches to POI, as with other Apache
+     Software Foundation projects, do please try to submit early and often, rather
+     than "throwing a large patch over the wall" at the end.
+   </p>
+   <p>
+     A number of Apache projects provide far more comprehensive guides to producing
+     and submitting patches than we do, you may wish to review some of their
+     information if you're unsure. The 
+     <link href="http://commons.apache.org/patches.html">Apache Commons</link> one
+     is fairly similar as a starting point.
+   </p>
+  <p>You may create your patch file using either of the following approaches (the committers recommend the first):</p>
+  <section><title>Approach 1 - use Ant</title>
+  <p>Use Ant to generate a patch file to POI: </p>
+   <source>
+    ant -f patch.xml
+   </source>
+  <p>
+    This will create a file named patch.tar.gz that will contain a unified diff of files that have been modified 
+    and also include files that have been added. Review the file for completeness and correctness. This approach 
+    is recommended because it standardizes the way in which patch files are constructed. It also eliminates the 
+    chance of you missing to submit new files that constitute part of the patch. 
+  </p>
+  </section>
+    <section><title>Approach 2 - the manual way</title>
+    <p>
+      Patches to existing files should be generated with svn diff filename and save the output to a file. 
+      if you want to get the changes made to multiple files in a directory , just use svn diff. 
+      then, tar and gzip the patch file as well as any new files that you have added. 
+    </p>
+     <p>If you use a unix shell, you may find the following following
+      sequence of commands useful for building the files to attach.</p>
+     <source>
+  # run this in the root of the checkout, i.e. the directory holding
+  #  build.xml and poi.pom
+
+  # build the directory to hold new files
+  mkdir /tmp/poi-patch/
+  mkdir /tmp/poi-patch/new-files/
+
+  # get changes to existing files
+  svn diff > /tmp/poi-patch/diff.txt
+
+  # capture any new files, as svn diff won't include them
+  # preserve the path
+  svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
+
+  # tar up the new files
+  cd /tmp/poi-patch/new-files/
+  tar jcvf ../new-files.tar.bz2
+  cd ..
+
+  # upload these to bugzilla
+  echo "please upload to bugzilla:"
+  echo "   /tmp/poi-patch/diff.txt"
+  echo "   /tmp/poi-patch/new-files.tar.bz2"
+     </source>
+    </section>
+    <section><title>checklist before submitting a patch</title>
+      <ul>
+        <li>added code complies with <link href="#CodeStyle">coding standards</link></li>
+        <li>added code compiles and runs on java 1.5</li>
+        <li>new java files begin with the <link href="http://www.apache.org/foundation/license-faq.html">
+             apache software license</link> statement.</li> 
+        <li>the code does not depend on gpl or lgpl code.</li> 
+        <li>the code doesn't include @author tags</li>
+        <li>existing test cases succeed.</li>
+        <li>new test cases written and succeed.</li>
+        <li>documentation page extended as appropriate.</li>
+        <li>diff files generated using svn diff</li>
+        <li>the bugzilla subject dev contains [patch], task name and patch reason in subject.</li>
+        <li>the bugzilla description contains a rationale for the patch.</li>
+        <li>attachment to the bugzilla entry contains the patch file(s).</li>
+      </ul> 
+    </section>
+  </section>
+
+  <anchor id="CodeStyle"/>
+  <section><title>Code Style</title>
+    <p>The long standing 
+      <link href="http://poi.apache.org/resolutions/res001.html">Minimal 
+      Coding Standards</link> from 2002 still largely apply to the project.</p>
+    <p>When making changes to an existing file, please try to follow the
+      same style that that file already uses. This will keep things
+      looking similar, and will prevent patches becoming largely about
+      whitespace. Whitespace fixing changes, if needed, should normally be 
+      in their own commit, so that they don't crowd out coding changes 
+      in review.</p>
+    <p>Normally, tabs should not be used to indent code. Instead, spaces
+      should be used. If starting on a fresh file, please use 4 spaces to
+      indent your code. If working on an existing file, please use 
+      whichever of 3 or 4 spaces that file already follows.</p>
+    <p>Normally, braces should open on the same line as the decision
+      statement. Braces should normally close on their own line. Brackets
+      should normally have a space before them when they are the first.</p>
+    <p>Lines normally shouldn't be too long. There's no hard and fast rule,
+      but if you line is getting above about 90 characters think about
+      splitting it, and you should rarely create something over about 100
+      characters without a very good reason!</p>
+  </section>
+
+  <anchor id="Mentoring"/>
+  <section><title>Mentoring and Committership</title>
+   <p>The POI project will generally offer committership to contributors who send
+    in consistently good patches over a period of several months.</p>
+   <p>The requirement for "good patches" generally means patches which can be applied
+    to SVN with little or no changes. These patches should include unit test, and
+    appropriate documentation. Whilst your first patch to POI may require quite a 
+    bit of work before it can be committed by an existing committer, with any luck
+    your later patches will be applied with no / minor tweaks. Please do take note
+    of any changes required by your earlier patches, to learn for later ones! If
+    in doubt, ask on the <link href="mailinglists.html">dev mailing list</link>.</p>
+   <p>The requirement for patches over several months is to ensure that committers
+    remain with the project. It's very easy for a good developer to fire off half
+    a dozen good patches in the couple of weeks that they're working on a POI
+    powered project. However, if that developer then moves away, and stops 
+    contributing to POI after that spurt, then they're not a good candidate for
+    committership. As such, we generally require people to stay around for a while,
+    submitting patches and helping on the mailing list before considering them
+    for committership.</p>
+   <p>Where possible, patches should be submitted early and often. For more details
+    on this, please see the "Submitting Patches" section above.</p>
+
+   <p>Where possible, the existing developers will try to help and mentor new
+    contributors. However, everyone involved in POI is a volunteer, and it may
+    happen that your first few patches come in at a time when all the committers
+    are very busy. Do please have patience, and remember to use the 
+    <link href="mailinglists.html">dev mailing list</link> so that other
+    contributors can assist you!</p>
+   <p>For more information on getting started at Apache, mentoring, and local
+    Apache Committers near you who can offer advice, please see the
+    <link href="http://community.apache.org/">Apache Community Development
+    Project</link> website.</p>
+  </section>
+
+</body>
+<footer>
+   <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+   </legal>
+</footer>
+</document>

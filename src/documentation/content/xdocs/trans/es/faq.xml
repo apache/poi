@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.1//EN" "../../dtd/faq-v11.dtd">
+
+<faqs title="Preguntas M Frecuentes (FAQ)">
+    <faq>
+        <question>
+          or qula lectura de una hoja de cculo simple lleva tanto tiempo?
+        </question>
+        <answer>
+          <p>
+          Probablemente hayas habilitado el registro (logging). Dicho registro es
+          una herramienta il para la bqueda de errores (debug). Tenerlo habilitado
+          reducirel rendimiento en un factor de al menos 100. El registro es il para
+          comprender por quPOI no puede leer alg fichero o para el propio desarrollo
+          de POI.
+          Los errores importantes se lanzan como excepciones, lo cual significa que
+          probablemente no necesites el registro (log).
+          </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+          ues el "eventmodel" (modelo de evento) de HSSF?
+        </question>
+        <answer>
+              <p> El paquete "eventmodel" de HSSF es un nuevo API para la lectura m eficiente de ficheros
+              XML. Requiere mayor conocimiento por parte del usuario, pero reduce el consumo de memoria a
+              una dima parte. Estbasado en el modelo de eventos AWT en combinaci con SAX. Si necesita
+              acceso de so-lectura a un fichero XML determinado, esta es la mejor manera de hacerlo.</p>
+        </answer>
+
+    </faq>
+    <faq>
+        <question>
+          or quno puedo leer el documento que creutilizando Star Office 5.1?
+        </question>
+        <answer>
+              <p>Star Office 5.1 escribe algunos registros utilizando el viejo estdar BIFF.
+              Esto provoca algunos problemas con POI que so soporta BIFF8.</p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            or qurecibo una excepci cada vez que intento leer mi hoja de cculo?
+        </question>
+        <answer>
+            <p>Es posible que su hoja de cculo contenga alguna caractertica que no est
+            soportada actualmente por HSSF. Por ejemplo - hojas de cculo que contengan
+            celdas con formato RTF (rich text) no est soportadas actualmente.</p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            oporta HSSF hojas de cculo protegidas?
+        </question>
+        <answer>
+            <p>Al proteger una hoja de cculo, ta se cifra. No tocaremos el cifrado, porque no
+            tenemos el suficiente conocimiento legal y no estamos seguros de las implicaciones que
+            conllevar el intentar implementar esto. Si desea intentarlo, es libre de hacerlo y
+            de adirlo como un mulo enchufable (plugin). Sin embargo, no lo guardaremos aqu</p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            o se sabe si un campo contiene una fecha con HSSF?
+        </question>
+        <answer>
+            <p>Excel almacena las fechas como neros. Asla ica manera para determinar
+            si una celda estrealmente almacenada como una fecha consiste en mirar su formato.
+            Hay un modo de ayuda (helper) en HSSFDateUtil (desde la distribuci 1.7.0-dev)
+            que lo comprueba. Gracias a Jason Hoffman por proporcionar la soluci.</p>
+            <source>
+
+case HSSFCell.CELL_TYPE_NUMERIC:
+                  double d = cell.getNumericCellValue();
+                  // test if a date!
+                             if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                    // format in form of M/D/YY
+                    cal.setTime(HSSFDateUtil.getJavaDate(d));
+                    cellText =
+                      (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
+                    cellText = cal.get(Calendar.MONTH)+1 + "/" +
+                               cal.get(Calendar.DAY_OF_MONTH) + "/" +
+                               cellText;
+                  }
+
+            </source>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Estoy intentando ver un fichero XLS enviado como flujo (stream) desde un servlet y tengo
+            complicaciones. u es el problema?
+        </question>
+        <answer>
+            <p>
+            El problema normalmente se manifiesta como un mont de caracteres basura
+            en la pantalla. El problema persiste incluso aunque hayas configurado el tipo mime
+            correcto.
+            </p>
+            <p>
+            La respuesta breve es: no dependas de IE para mostrar un fichero binario. 
+            Escribe un documento adjunto como es debido si lo envs a trav de un servlet. 
+            Toda versi de IE tiene diferentes fallos (bugs) en este sentido.
+            </p>
+            <p>
+            El problema en la mayor de las versiones de IE reside en que no utiliza el tipo mime
+            de la respuesta HTTP para determinar el tipo de fichero; en su lugar utiliza la extensi
+            del fichero en la petici. Aspodr adir un <strong>.xls</strong> a su cadena de petici.
+            Por ejemplo: <em>http://yourserver.com/myServelet.xls?param1=xx</em>. Esto se consigue
+            filmente a trav del mapeo de URL en cualquier contenedor servlet. A veces una
+            petici como
+                <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> 
+            tambi funciona.
+            </p>
+            <p>
+            Para garantizar la correcta apertura del fichero en Excel desde IE, escribe
+            tu fichero a un fichero temporal bajo su raiz web desde tu servlet. Env entonces
+            una respuesta http al navegador para que haga una redirecci en el lado del cliente
+            a tu fichero temporal. (Si haces una redirecci en el lado del servidor utilizando
+            RequestDispatcher, tendr que adir .xls a la petici como se ha mendionado m
+            arriba)
+            </p>
+            <p>
+            Date cuenta de que cuando pides un documento que se abre con un manejador externo,
+            IE a veces realiza dos peticiones al servidor web. Asque si tu proceso generador
+            es pesado, tiene sentido escribir a un fichero temporal, para que peticiones
+            mtiples utilicen el fichero estico.
+            </p>
+            <p>
+            Nada de esto pertenece a Excel. El mismo problema ocurre cuando intentas general
+            cualquier fichero binario dinicamente a un cliente IE. Por ejemplo, si generas
+            ficheros pdf utilizando
+                <link href="http://xml.apache.org/fop">FOP</link>,
+                te encontrar con los mismos problemas.
+            </p>
+            <!-- Gracias a Avik por la respuesta -->
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Quiero dar formato a una celda (Data format of a cell) de una hoja excel como
+            ###,###,###.#### o ###,###,###.0000. s posible hacer esto con POI?
+        </question>
+        <answer>
+            <p>
+                HSSF no soporta todav formatos de datos personalizados, sin embargo,
+                deber ser una facilidad razonablemente sencilla de adir y aceptaremos
+                gustosos contribuciones en este ea.
+            </p>
+            <p>
+                Estos son los formatos incluidos que soporta:
+            </p>
+            <p>
+            <link href="http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat">http://jakarta.apache.org/poi/javadocs/javasrc/org/apache/poi/hssf/usermodel/HSSFDataFormat_java.html#HSSFDataFormat</link>
+            </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            o ado un borde alrededor de una celda unida (merged)?
+        </question>
+        <answer>
+            <p>
+            Ade celdas vacs alrededor de donde las celdas hubieran estado normalmente y
+            configura los bordes individualmente para cada celda.
+            Probablemente mejoraremos HSSF en el futuro para facilitar este proceso.
+            </p>
+        </answer>
+    </faq>
+    <faq>
+        <question>
+            Intentescribir valores en celdas ascomo cambiar el nombre de la hoja Excel
+            en mi lengua nativa, pero no pude hacerlo. :(
+        </question>
+        <answer>
+            <p>
+            Por defecto HSSF utiliza valores de celdas y nombres de hoja en unicode comprimido,
+            asi que para soportar la localizaci debers utilizar Unicode.
+            Para hacerlo debers configurarlo manualmente:
+            </p>
+            <source>
+
+                //
+                // para el nombre de la hoja
+                //
+                HSSFWorkbook wb = new HSSFWorkbook();
+                HSSFSheet s = wb.createSheet();
+                wb.setSheetName( 0, "SomeUnicodeName", HSSFWorkbook.ENCODING_UTF_16 );
+
+
+                //
+                // para el valor de la celda
+                //
+                HSSFRow r = s.createRow( 0 );
+                HSSFCell c = r.createCell( (short)0 );
+                c.setCellType( HSSFCell.CELL_TYPE_STRING );
+                c.setEncoding( HSSFCell.ENCODING_UTF_16 );
+                c.setCellValue( "\u0422\u0435\u0441\u0442\u043E\u0432\u0430\u044F" );
+
+            </source>
+            <p>
+            Asegate de que haces la llamada a setEncoding() antes de llamar a setCellValue(),
+            si no, lo que le pases no serinterpretado correctamente.
+            </p>
+        </answer>
+    </faq>
+</faqs>

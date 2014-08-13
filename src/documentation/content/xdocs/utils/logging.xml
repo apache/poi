@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>POI Utils</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Nicola Ken Barozzi" email="nicolaken@apache.org"/>     
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Logging</title>
+
+  <p>
+    Logging in POI is used only as a debugging mechanism, not a normal runtime
+    logging system.  Logging is ONLY for autopsie type debugging, and should 
+    NEVER be enabled on a production system.  Enabling logging will reduce 
+    performance by at least a factor of 100.  If you are not developing 
+    POI or trying to debug why POI isn't reading a file correctly, then DO 
+    NOT enable logging.  You've been warned. 
+  </p>
+
+  <p>
+    Hence, we need to be able to easily disable it entirely and make POI not dependent
+    on any logging package.
+  </p>
+  
+  <warning>
+    POI is not dependent on commons-logging for running, but not for compiling.
+  </warning>
+    
+   <section><title>Logging Overview</title>
+     <p>
+       Every class uses a <code>POILogger</code> to log, and gets it using a static method 
+       of the <code>POILogFactory</code> .
+     </p>
+     <p>
+       The <code>POILogFactory</code> uses the <code>NullLogger</code> by default;
+       it can be instructed to use any other <code>POILogger</code> implementation
+       by setting the system property <code>org.apache.poi.util.POILogger</code>.
+     </p>
+     <note> java -Dorg.apache.poi.util.POILogger=the.package.of.MyPoiLoggerImpl ProgramThatUsesPoi
+     </note>    
+     <fixme author="nicolaken"> Still needs testing.
+     </fixme>  
+   </section>
+   
+   <section><title>POILogFactory</title>
+     <p>   
+       Each class in POI can get its <code>POILogger</code> by calling a static method 
+       of the <code>POILogFactory</code> .
+     </p>
+   </section>
+   
+   <section><title>POILogger</title>
+     <p>   
+     Each class in POI can log using a <code>POILogger</code>, which is an abstract class.
+     We decided to make our own logging facade because:</p>
+     <ol>
+      <li>we need to log many values and we put many methods in this class to facilitate the 
+          programmer, without having him write string concatenations;</li>
+      <li>we need to be able to use POI without any logger package present.</li>
+     </ol>
+     <p>There are three implementations available, and you can roll out your own, just
+     extend <code>org.apache.poi.util.POILogger</code>.
+     </p>
+   <section><title>NullLogger</title>
+     <p>Discards every logging request.</p>     
+   </section>
+   <section><title>SystemOutLogger</title>
+     <p>Sends every logging request to System.out.</p>     
+   </section>
+   <section><title>CommonsLogger</title>
+     <p>Sends every logging request to the Commons Logging package. This can use JDK1.4 logging,
+     log4j, logkit, and is an actively maintained Jakarta Project.</p>     
+   </section>   
+   
+  </section>
+  </section>
+ </body>
+</document>

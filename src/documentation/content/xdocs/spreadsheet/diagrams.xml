@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../dtd/document-v11.dtd">
+
+<document>
+ <header>
+  <title>HSSF</title>
+  <subtitle>Overview</subtitle>
+  <authors>
+   <person name="Andrew C. Oliver" email="acoliver@apache.org"/>     
+   <person name="Nicola Ken Barozzi" email="barozzi@nicolaken.com"/>     
+  </authors>
+ </header>
+
+ <body>
+ <section><title>Overview</title>
+        <p>
+                This section is intended for diagrams (UML/etc) that help
+                explain HSSF. 
+        </p>
+        <ul>
+               <li>
+                      <link href="diagram1.html">HSSF usermodel class diagram</link> -                
+                      by Matthew Young (myoung at westernasset dot com)
+               </li>
+        </ul>
+        <p>
+                Have more?  Add a new &quot;bug&quot; to the bug database with [DOCUMENTATION]
+                prefacing the description and a link to the file on an http server 
+                somewhere.  If you don't have your own webserver, then you can email it
+                to (acoliver at apache dot org) provided its &lt; 5MB.  Diagrams should be 
+                in some format that can be read at least on Linux and Windows.  Diagrams
+                that can be edited are preferrable, but lets face it, there aren't too 
+                many good affordable UML tools yet!  And no they don't HAVE to be UML...
+                just useful.
+        </p>
+  </section>
+ </body>
+</document>

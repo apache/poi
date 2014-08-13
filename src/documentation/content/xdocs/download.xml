@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.3//EN" "./dtd/document-v13.dtd">
+
+<document>
+  <header>
+    <title>Apache POI - Download Release Artifacts</title>
+  </header>
+
+  <body>
+    <section><title>Available Downloads</title>
+      <p>
+       This page provides instructions on how to download and verify the
+       Apache POI release artifacts. Apache POI is a pure Java library for
+       manipulating Microsoft Documents, for more information please see
+       <link href="index.html">the project homepage</link>.
+      </p>
+      <ul>
+          <li><link href="download.html#POI-3.10-FINAL">The latest stable release is Apache POI 3.10-FINAL</link></li>
+          <li><link href="download.html#archive">Archives of all prior releases</link></li>
+      </ul>
+      <p>
+        Apache POI releases are available under the <link href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0.</link> 
+        See the NOTICE file contained in each release artifact for applicable copyright attribution notices. 
+      </p>
+      <p>
+        To insure that you have downloaded the true release you should <link href="download.html#verify">verify the integrity</link> 
+        of the files using the signatures and checksums available from this page.
+      </p>
+    </section>
+
+    <section id="POI-3.10-FINAL"><title>23 January 2013 - POI 3.10-FINAL available</title>
+      <p>The Apache POI team is pleased to announce the release of 3.10-FINAL. 
+         This includes a large number of bug fixes and enhancements. 
+      </p>
+      <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
+        People interested should also follow the <link href="mailinglists.html">dev list</link> to track progress.</p>
+      <p>
+        The POI source release as well as the pre-built binary deployment packages are listed below. 
+        Pre-built versions of all <link href="index.html#components">POI components</link> are available in the central Maven repository
+        under Group ID "org.apache.poi" and Version "3.10-FINAL".
+      </p>
+      <section><title>Binary Distribution</title>
+      <ul>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.10-FINAL-20140208.tar.gz">poi-bin-3.10-FINAL-20140208.tar.gz</link> (
+          16MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.10-FINAL-20140208.tar.gz.asc">signed</link>)
+          <br/>
+          MD5 checksum: <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.10-FINAL-20140208.tar.gz.md5">
+          818d1e99a2efe539ba49f622b554950c</link> 
+          <br/>
+          SHA1 checksum: <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.10-FINAL-20140208.tar.gz.sha1">
+          38b61905d780e09604fb8053fd46ab1b8b18392f</link> 
+        </li>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/bin/poi-bin-3.10-FINAL-20140208.zip">poi-bin-3.10-FINAL-20140208.zip</link> (
+          23MB, <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.10-FINAL-20140208.zip.asc">signed</link>)
+          <br/>
+          MD5 checksum: <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.10-FINAL-20140208.zip.md5">
+          e304be0a3169697d31e029f63458a963</link> 
+          <br/>
+          SHA1 checksum: <link href="http://www.apache.org/dist/poi/release/bin/poi-bin-3.10-FINAL-20140208.zip.sha1">
+          704f103bca893e3d4df5c2cc95d275b0cd5d0b33</link> 
+        </li>
+      </ul>
+      </section>
+      <section><title>Source Distribution</title>
+      <ul>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-bin-3.10-FINAL-20140208.tar.gz">poi-src-3.10-FINAL-20140208.tar.gz</link> (
+          48MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.10-FINAL-20140208.tar.gz.asc">signed</link>)
+          <br/>
+          MD5 checksum: <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.10-FINAL-20140208.tar.gz.md5">
+          438157bfee9fe74869abd898820c7dae</link> 
+          <br/>
+          SHA1 checksum: <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.10-FINAL-20140208.tar.gz.sha1">
+          d0d5f596a649d1a852916fbadec4bdd9bdf70b9e</link> 
+        </li>
+        <li><link href="http://www.apache.org/dyn/closer.cgi/poi/release/src/poi-src-3.10-FINAL-20140208.zip">poi-src-3.10-FINAL-20140208.zip</link> (
+          58MB, <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.10-FINAL-20140208.zip.asc">signed</link>)
+          <br/>
+          MD5 checksum: <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.10-FINAL-20140208.zip.md5">
+          95536ea16e0e97a3f02f0294a1835b74</link> 
+          <br/>
+          SHA1 checksum: <link href="http://www.apache.org/dist/poi/release/src/poi-src-3.10-FINAL-20140208.zip.sha1">
+          8cc6ad470852295a8af7f08848a8ad9c84f177d1</link> 
+        </li>
+      </ul>
+      </section>
+    </section>
+
+    <section><title>Nightly Builds</title>
+     <p>The POI nightly builds are run on <link href="https://builds.apache.org/job/POI/">Jenkins</link>  continuous integration server.
+     Note that these are no official builds and they are not endorsed or even supported by the POI team.
+     <br/>
+     <strong>These builds should not be used in production</strong>: they are only intended for use by developers 
+     to help with resolving bugs and evaluating new features.
+     </p>
+     <ul>
+      <li><link href="https://builds.apache.org/job/POI/lastSuccessfulBuild/artifact/build/dist/">
+        Last Successful Jenkins build for POI-trunk</link></li> 
+     </ul>
+    </section>
+
+    <section id="verify"><title>Verify</title>
+      <p>
+        It is essential that you verify the integrity of the downloaded files using the PGP or MD5 signatures. 
+        Please read <link href="http://httpd.apache.org/dev/verification.html">Verifying Apache HTTP Server Releases</link>
+	for more information on why you should verify our releases. This page provides detailed instructions which you can use for POI artifacts.
+      </p>
+      <p>
+        The PGP signatures can be verified using PGP or GPG. First download the KEYS file as well as the .asc signature files 
+        for the relevant release packages. Make sure you get these files from the main distribution directory, 
+        rather than from a mirror. Then verify the signatures using
+      </p>
+      <source>
+% pgpk -a KEYS
+% pgpv poi-X.Y.Z.jar.asc        
+      </source>  
+      <p>or</p>
+      <source>
+% pgp -ka KEYS
+% pgp poi-X.Y.Z.jar.asc
+      </source>
+      <p>or</p>
+      <source>
+% gpg --import KEYS
+% gpg --verify poi-X.Y.Z.jar.asc
+      </source>
+      <p>Sample verification of poi-bin-3.5-FINAL-20090928.tar.gz</p>
+      <source>
+% gpg --import KEYS
+gpg: key 12DAE9BE: "Glen Stampoultzis &lt;glens at apache dot org&gt;" not changed
+gpg: key 4CEED75F: "Nick Burch &lt;nick at gagravarr dot org&gt;" not changed
+gpg: key 84B5A42E: "Rainer Klute &lt;rainer.klute at gmx dot de&gt;" not changed
+gpg: key F5BB52CD: "Yegor Kozlov &lt;yegor.kozlov at gmail dot com&gt;" not changed
+gpg: Total number processed: 4
+gpg:              unchanged: 4
+% gpg --verify poi-bin-3.5-FINAL-20090928.tar.gz.asc
+gpg: Signature made Mon Sep 28 10:28:25 2009 PDT using DSA key ID F5BB52CD
+gpg: Good signature from "Yegor Kozlov &lt;yegor.kozlov at gmail dot com&gt;"
+gpg:                 aka "Yegor Kozlov &lt;yegor at dinom dot ru&gt;"
+gpg:                 aka "Yegor Kozlov &lt;yegor at apache dot org&gt;"
+Primary key fingerprint: 7D77 0C77 6CE7 754E E6AF  23AA 6934 0A02 F5BB 52CD
+% gpg --fingerprint F5BB52CD
+pub   1024D/F5BB52CD 2007-06-18 [expires: 2012-06-16]
+       Key fingerprint = 7D77 0C77 6CE7 754E E6AF  23AA 6934 0A02 F5BB 52CD
+uid                  Yegor Kozlov &lt;yegor.kozlov at gmail dot com&gt;
+uid                  Yegor Kozlov &lt;yegor at dinom dot ru&gt;
+uid                  Yegor Kozlov &lt;yegor at apache dot org&gt;
+sub   4096g/7B45A98A 2007-06-18 [expires: 2012-06-16]
+      </source>
+    </section>
+    <section id="archive"><title>Release Archives</title>
+      <p>
+	Apache POI became a top level project in June 2007 and POI 3.0 aritfacts were re-released.
+	Prior to that date POI was a sub-project of <link href="http://jakarta.apache.org/">Apache Jakarta.</link>
+      </p>
+      <ul>
+          <li><link href="http://archive.apache.org/dist/poi/release/bin/">Binary Artifacts</link></li>
+          <li><link href="http://archive.apache.org/dist/poi/release/src/">Source Artifacts</link></li>
+          <li><link href="http://archive.apache.org/dist/poi/">Keys</link></li>
+          <li><link href="http://archive.apache.org/dist/jakarta/poi/release/">Artifacts from prior to 3.0</link></li>
+      </ul>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

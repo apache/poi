@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.1//EN" "../../dtd/document-v11.dtd">
+
+<document>
+  <header>
+    <title>Historia del Proyecto</title>
+    <authors>
+      <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+      <person id="AMB" name="Agustín Martín Barbero" email="-"/>
+    </authors>
+  </header>
+
+  <body>
+
+
+    <section><title>Breve Historia del Proyecto</title>
+
+        <p>
+        El proyecto POI se gesttiempo atr, cerca de abril de 2001,
+        cuando Andrew Oliver obtuvo un contrato de corta duraci para realizar
+        informes Excel basados en Java. Ya hab realizado este proyecto unas
+        cuantas veces antes, y sab exactamente dde buscar las herramientas
+        que necesitar.
+        Iricamente, el API que sol utilizar se hab disparado en precio
+        desde unos $300 ($US) hasta unos $10K ($US). Calculque a dos personas
+        les llevar unos seis meses el portar Excel asque le recomendal
+        cliente que pagase los $10K.
+        </p>
+
+        <p>
+        Cerca de junio de 2001, Andrew empeza pensar lo genial que ser
+        tener una herramienta Java de cigo abierto para hacer esto y,
+        mientras tuvo algo de tiempo libre, comenzel proyecto y aprendis
+        cosas sobre el Formato de Documento Compuesto OLE2. Tras chocarse
+        con varios obstulos insalvables, se dio cuenta de que necesitar ayuda.
+        Publicun mensaje en su Grupo de Usuarios Java local (JUG) y
+        preguntsi alguien estaba interesado. Tuvo mucha suerte y el
+        programador Java de mayor talento que hab conocido nunca,
+        Marc Johnson, se unial proyecto. A Marc le llevunas pocas
+        iteraciones el obtener algo con lo que estaban contentos.
+        </p>
+
+        <p>
+        Mientras Marc trabajaba en eso, Andrew portXLS a Java, basdose
+        en la biblioteca de Marc. Varios usuarios escribieron peticiones
+        para poder leer XLS (no so escribirlo como hab sido planeado
+        originalmente) y un usuario ten peticiones especiales para
+        un uso diferente de POIFS. Antes de que pasara mucho tiempo,
+        el alcance del proyecto se hab triplicado. POI 1.0 se distribuys
+        un mes m tarde de lo planeado, pero con muchas m caracterticas.
+        Marc escribiridamente el marco del serializador y el
+        Serializador HSSF en tiempo rord y Andrew generm documentaci
+        y trabajen hacer que la gente conociera este proyecto.
+        </p>
+
+        <p>
+          Poco antes de la distribuci, POI tuvo la fortuna de entrar
+          en contacto con Nicola -Ken- Barrozzi quien proporcionejemplos
+          para el Serializador HSSF y ayuda descrubir sus desafortunados
+          fallos (que fueron arreglados de inmediato). Recientemente, Ken
+          portla mayor de la documentaci del proyecto POI a XML
+          partiendo de los documentos HTML cutres que Andrew hab escrito
+          con Star Office.
+        </p>
+
+        <p>
+        M o menos al mismo tiempo de la primera distribuci, Glen Stampoultzis
+        se unial proyecto. A Glen le molestaba la actitud impertinente de Andrew
+        en lo que adir capacidades gricas a HSSF se refer. Glen se molests
+        tanto que decidicoger un martillo y hacerlo  mismo. Glen ya se ha
+        convertido en parte integral de la comunidad de desarrollo de POI; sus
+        contribuciones a HSSF ya han comenzado a producir olas.
+        </p>
+
+        <p>
+         En algíì momento decidimos finalmente remitir el proyecto a
+         <link href="http://cocoon.apache.org/">El Proyecto Cocoon
+         de Apache</link>, so para descubrir que el proyecto hab
+         crecido encajando perfectamente con Cocoon hac tiempo.
+         Lo que es m, Andrew comenza ojear otros proyectos a los que
+         le gustar que se adiera la funcionalidad de POI. Asque
+         se decididonar los Serializadores y Generadores a Cocoon, otros
+         componentes de integraci con POI a otros proyectos, y los APIs
+         de POI pasarn a formar parte de Jakarta. Fue un camino con
+         baches, ¡ðero parece que todo salibien puesto que ahora est
+         leyendo esto!
+        </p>
+
+    </section>
+
+    <section><title>¿Èacia dde va POI?</title>
+        <p>
+        Primero abordaremos esto desde el punto de vista del proyecto:
+        Bueno, les hicimos la oferta a Microsoft y Actuate (de co
+        ... en su mayor parte) de que dejarmos el proyecto y nos
+        retirarmos si simplemente nos firmaban a cada uno un cheque
+        con muchos ceros. Todav estoy esperando una llamada o correo
+        electrico, asque de momento asumo que no nos van a pagar
+        para quitarnos de en medio.
+        </p>
+        <p>
+         Despu, tenemos algo de trabajo que hacer aquen Jakarta
+         para terminar de integrar POI en la comunidad. Lo que es m,
+         todav estamos realizando la transici del Serializador a
+         Cocoon.
+        </p>
+        <p>
+          HSSF, durante el ciclo 2.0, sufrirvarias optimizaciones.
+          Tambi adiremos nuevas caracterticas como una implementaci
+          completa de Fmulas y formatos de texto personalizados. Esperamos
+          ser capaces de generar ficheros m peques adiendo soporte de
+          escritura para registros RK, MulRK y MulBlank. A d de hoy, la
+          lectura en HSSF no es muy eficiente. Esto se debe sobre todo a que
+          para escribir o modificar, uno necesita ser capaz de actualizar
+          punteros del flujo de subida (upstream pointers) a datos del flujo
+          de bajada. Para hacer esto hay que tener todo lo que haya en
+          medio en memoria. En vez de eso, un Generador permitir que se
+          procesaran eventos SAX. (Esto se basaren las estructuras de
+          bajo nivel). Una de las mejores cosas sobre esto es que asno so
+          tendremos una manera m eficiente de leer el fichero, tambi
+          tendremos una magnica forma de utilizar hojas de cculo como
+          fuentes de datos XML.
+        </p>
+        <p>
+          El Serializador HSSF, se separarm aíì en un marco genico
+          para la creaci de serializadores para otras plataformas y
+          en la implementaci especica del serializador HSSF. (Esto ya
+          es cierto en gran medida). Tambi adiremos soporte para
+          caracterticas ya soportadas por HSSF (estilos, fuentes, formatos
+          de texto). Esperamos adir soporte para fmulas durante este ciclo.
+        </p>
+        <p>
+          Estamos empezando a expandir nuestro alcance de nuevo. Si pudimos
+          hacer todo esto para ficheros XLS, ¿ñuhay de ficheros Doc o PPT?
+          Pensamos que nuestro siguiente componente (HWPF)
+          deber seguir el mismo patr. Esperamos
+          que se nos una sangre nueva al equipo y que nos permita abordar
+          esto con mayor celeridad (en parte porque POIFS ya estterminado).
+          ¡Ðero a lo mejor lo que m necesitamos es a ti!
+        </p>
+      </section>
+
+    </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+
+
+</document>
