@@ -31,11 +31,14 @@
         <person id="POI-DEVELOPERS" name="POI Developers" email="dev@poi.apache.org"/>
         <person id="RK" name="Rainer Klute" email="klute@apache.org"/>
         <person id="UC" name="Ugo Cei" email="ugo@apache.org"/>
+        <person id="US" name="Uwe Schindler" email="uschindler@apache.org"/>
         <person id="YK" name="Yegor Kozlov" email="yegor@apache.org"/>
     </developers>
 
     <changes>
-        <release version="3.11-beta1" date="2014-??-??">
+        <release version="3.10.1" date="2014-08-20">
+          <action dev="poi-developers" type="fix">54764 - On supported XML parser versions (Xerces or JVM built-in, XMLBeans 2.6), enforce sensible limits on entity expansion in OOXML files, and ensure that subsequent normal files still pass fine</action>
+          <action dev="poi-developers" type="fix">56164 - Tidy up the OPC SAX setup code with a new common Helper, preventing external entity expansion</action>
         </release>
         <release version="3.10-FINAL" date="2014-02-08">
           <action dev="poi-developers" type="fix">51585 - WorkbookFactory.create() hangs when creating a workbook</action>
