@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.xml.sax.Attributes;
@@ -135,10 +134,8 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      */
     public void readFrom(InputStream is) throws IOException, SAXException {
         InputSource sheetSource = new InputSource(is);
-        SAXParserFactory saxFactory = SAXParserFactory.newInstance();
         try {
-           SAXParser saxParser = saxFactory.newSAXParser();
-           XMLReader sheetParser = saxParser.getXMLReader();
+           XMLReader sheetParser = SAXHelper.newXMLReader();
            sheetParser.setContentHandler(this);
            sheetParser.parse(sheetSource);
         } catch(ParserConfigurationException e) {

@@ -24,13 +24,13 @@ import java.util.List;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFTable;
@@ -75,11 +75,9 @@ public class XSSFImportFromXML {
      * @throws ParserConfigurationException if there are problems with XML parser configuration
      * @throws IOException  if there are problems reading the input string
      */
-    public void importFromXML(String xmlInputString) throws SAXException, XPathExpressionException, ParserConfigurationException, IOException {
+    public void importFromXML(String xmlInputString) throws SAXException, XPathExpressionException, IOException {
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        DocumentBuilder builder = DocumentHelper.newDocumentBuilder();
 
         Document doc = builder.parse(new InputSource(new StringReader(xmlInputString.trim())));
 
