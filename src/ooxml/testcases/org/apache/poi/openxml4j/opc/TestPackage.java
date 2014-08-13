@@ -42,7 +42,6 @@ import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SAXHelper;
 import org.apache.poi.util.TempFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -218,7 +217,7 @@ public final class TestPackage extends TestCase {
         PackagePartName relName = PackagingURIHelper.createPartName(PackageRelationship.getContainerPartRelationship());
         PackagePart relPart = pkg.getPart(relName);
 
-        Document xmlRelationshipsDoc = SAXHelper.readSAXDocument(relPart.getInputStream());
+        Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
 
         Element root = xmlRelationshipsDoc.getDocumentElement();
         NodeList nodeList = root.getElementsByTagName(PackageRelationship.RELATIONSHIP_TAG_NAME);

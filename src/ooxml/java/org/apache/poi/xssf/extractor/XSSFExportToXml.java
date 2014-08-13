@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -45,7 +43,7 @@ import javax.xml.validation.Validator;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.XMLHelper;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -106,15 +104,6 @@ public class XSSFExportToXml implements Comparator<String>{
         exportToXML(os, "UTF-8", validate);
     }
 
-    private Document getEmptyDocument() throws ParserConfigurationException{
-
-        DocumentBuilderFactory dbfac = XMLHelper.getDocumentBuilderFactory();
-        DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-        Document doc = docBuilder.newDocument();
-
-        return doc;
-    }
-
     /**
      * Exports the data in an XML stream
      *
@@ -132,7 +121,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
         String rootElement = map.getCtMap().getRootElement();
 
-        Document doc = getEmptyDocument();
+        Document doc = DocumentHelper.createDocument();
 
         Element root = null;
 

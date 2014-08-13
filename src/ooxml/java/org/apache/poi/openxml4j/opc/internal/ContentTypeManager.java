@@ -33,7 +33,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.DocumentHelper;
-import org.apache.poi.util.SAXHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -371,7 +370,7 @@ public abstract class ContentTypeManager {
 	private void parseContentTypesFile(InputStream in)
 			throws InvalidFormatException {
 		try {
-			Document xmlContentTypetDoc = SAXHelper.readSAXDocument(in);
+			Document xmlContentTypetDoc = DocumentHelper.readDocument(in);
 
 			// Default content types
 			NodeList defaultTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagName(DEFAULT_TAG_NAME);
