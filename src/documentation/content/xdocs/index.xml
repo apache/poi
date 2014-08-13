@@ -33,11 +33,10 @@
 
   <body>
     <section><title>Project News</title>
-      <section><title>19 September 2013 - POI 3.10 Beta 2 available</title>
-       <p>The Apache POI team is pleased to announce the release of 3.10 Beta 2. This primarily
-        includes a large number of bug fixes, and some enhancements (especially in the number of
-        Formula Functions supported).
-       </p>
+      <section><title>8 February 2014 - POI 3.10-FINAL available</title>
+       <p>The Apache POI team is pleased to announce the release of 3.10-FINAL.
+       Featured are significant performance improvements and numerous bug fixes.
+       See the release notes for more details.</p>
        <p>A full list of changes is available in the <link href="changes.html">change log</link>. 
         People interested should also follow the <link href="mailinglists.html">dev mailing list</link> to track further progress.</p>
        <p>See the <link href="download.html">downloads</link> page for more details.</p>
