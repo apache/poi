@@ -247,9 +247,7 @@
       <p>
         This table maps artifacts into the jar file name. "version-yyyymmdd" is 
         the POI version stamp. For the latest stable release it is
-        3.9-20121203
-        . For the latest beta release it is
-        3.10-beta2-20130904
+        3.10.1
         .
       </p>
       <table>
@@ -302,6 +300,13 @@
         The OOXML jars require a stax implementation. The "stax-api-1.0.1" jar
         should normally be used (it is recommended for compatibility with other
         Apache projects), though any compliant implementation should work fine though.
+      </p>
+      <p>
+        The ooxml schemas jars are compiled with Apache XMLBeans 2.3, and so
+        can be used at runtime with any version of XMLBeans from 2.3 or newer.
+        Wherever possible though, we recommend that you use XMLBeans 2.6.0
+        with Apache POI, and that is the version now shipped in the binary
+        release packages.
       </p>
     </section>
     <section><title>Examples</title>
