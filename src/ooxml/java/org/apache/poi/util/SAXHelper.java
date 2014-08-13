@@ -25,9 +25,13 @@ import java.lang.reflect.Method;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 /**
@@ -35,34 +39,47 @@ import org.xml.sax.SAXException;
  */
 public final class SAXHelper {
     private static POILogger logger = POILogFactory.getLogger(SAXHelper.class);
-    
-    // remove this constant once on Java 6 and stax-api.jar was removed (which is missing this constant):
-    private static final String FEATURE_SECURE_PROCESSING = "http://javax.xml.XMLConstants/feature/secure-processing";
-            
+
+    private SAXHelper() {}
+
     /**
-     * Creates a new SAX Reader, with sensible defaults
+     * Creates a new SAX XMLReader, with sensible defaults
      */
-    public static SAXReader getSAXReader() {
-        SAXReader xmlReader = new SAXReader();
-        xmlReader.setValidation(false);
-        xmlReader.setEntityResolver(new EntityResolver() {
-            public InputSource resolveEntity(String publicId, String systemId)
-                    throws SAXException, IOException {
-                return new InputSource(new StringReader(""));
-            }
-        });
+    public static synchronized XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
+        XMLReader xmlReader = saxFactory.newSAXParser().getXMLReader();
+        xmlReader.setEntityResolver(IGNORING_ENTITY_RESOLVER);
         trySetSAXFeature(xmlReader, FEATURE_SECURE_PROCESSING, true);
         trySetXercesSecurityManager(xmlReader);
         return xmlReader;
     }
-    private static void trySetSAXFeature(SAXReader xmlReader, String feature, boolean enabled) {
+    
+    static final EntityResolver IGNORING_ENTITY_RESOLVER = new EntityResolver() {
+        // not in Java 5: @Override
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+            return new InputSource(new StringReader(""));
+        }
+    };
+    
+    private static final SAXParserFactory saxFactory;
+    static {
+        saxFactory = SAXParserFactory.newInstance();
+        saxFactory.setValidating(false);
+        saxFactory.setNamespaceAware(true);
+    }
+            
+    // remove this constant once on Java 6 and stax-api.jar was removed (which is missing this constant):
+    static final String FEATURE_SECURE_PROCESSING = "http://javax.xml.XMLConstants/feature/secure-processing";
+            
+    private static void trySetSAXFeature(XMLReader xmlReader, String feature, boolean enabled) {
         try {
             xmlReader.setFeature(feature, enabled);
         } catch (Exception e) {
             logger.log(POILogger.INFO, "SAX Feature unsupported", feature, e);
         }
     }
-    private static void trySetXercesSecurityManager(SAXReader xmlReader) {
+    
+    private static void trySetXercesSecurityManager(XMLReader xmlReader) {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : new String[] {
                 "com.sun.org.apache.xerces.internal.util.SecurityManager",
@@ -81,6 +98,21 @@ public final class SAXHelper {
         }
     }
 
+    /**
+     * Creates a new DOM4J SAXReader, with sensible defaults
+     */
+    public static SAXReader getSAXReader() throws DocumentException {
+        try {
+            SAXReader reader = new SAXReader(newXMLReader(), false);
+            reader.setEntityResolver(IGNORING_ENTITY_RESOLVER);
+            return reader;
+        } catch (SAXException saxe) {
+            throw new DocumentException(saxe);
+        } catch (ParserConfigurationException pce) {
+            throw new DocumentException(pce);
+        }
+    }
+    
     /**
      * Parses the given stream via the default (sensible)
      * SAX Reader
