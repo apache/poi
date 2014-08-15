@@ -62,7 +62,7 @@ public interface HorribleProxies {
     }
     
     public interface BasicOCSPRespIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.BasicOCSPResp";
+        String delegateClass = "org.bouncycastle.ocsp.BasicOCSPResp";
         Date getProducedAt();
         RespIDIf getResponderId();
     }
@@ -174,7 +174,7 @@ public interface HorribleProxies {
     }
     
     public interface OCSPRespIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.OCSPResp";
+        String delegateClass = "org.bouncycastle.ocsp.OCSPResp";
         BasicOCSPRespIf getResponseObject();
         byte[] getEncoded() throws IOException;
     }
@@ -185,7 +185,7 @@ public interface HorribleProxies {
     }
 
     public interface RespIDIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.RespID";
+        String delegateClass = "org.bouncycastle.ocsp.RespID";
         ResponderIDIf toASN1Object();
     }
     
@@ -291,7 +291,7 @@ public interface HorribleProxies {
     }
 
     public interface OCSPReqIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.OCSPReq";
+        String delegateClass = "org.bouncycastle.ocsp.OCSPReq";
 
         ReqIf[] getRequestList();
     }
@@ -312,7 +312,7 @@ public interface HorribleProxies {
     }
     
     public interface CertificateIDIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.CertificateID";
+        String delegateClass = "org.bouncycastle.ocsp.CertificateID";
         
         String HASH_SHA1();
     }
@@ -336,7 +336,7 @@ public interface HorribleProxies {
     }
     
     public interface X509V2CRLGeneratorIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.asn1.x509.X509V2CRLGenerator";
+        String delegateClass = "org.bouncycastle.x509.X509V2CRLGenerator";
         
         void setIssuerDN(X500Principal issuerDN);
         void setThisUpdate(Date date);
@@ -348,19 +348,19 @@ public interface HorribleProxies {
     }
     
     public interface ReqIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.Req";
+        String delegateClass = "org.bouncycastle.ocsp.Req";
         
         CertificateIDIf getCertID();
     }
     
     public interface CertificateStatusIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.CertificateStatus";
+        String delegateClass = "org.bouncycastle.ocsp.CertificateStatus";
         
         CertificateStatusIf GOOD();
     }
     
     public interface RevokedStatusIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.cert.ocsp.RevokedStatus";
+        String delegateClass = "org.bouncycastle.ocsp.RevokedStatus";
     }
     
     public interface CRLReasonIf extends ProxyIf {

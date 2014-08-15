@@ -278,7 +278,9 @@ public class CryptoFunctions {
     public static void registerBouncyCastle() {
         if (Security.getProvider("BC") != null) return;
         try {
-            Class<Provider> clazz = (Class<Provider>)Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            String bcProviderName = "org.bouncycastle.jce.provider.BouncyCastleProvider";
+            Class<Provider> clazz = (Class<Provider>)cl.loadClass(bcProviderName);
             Security.addProvider(clazz.newInstance());
         } catch (Exception e) {
             throw new EncryptedDocumentException("Only the BouncyCastle provider supports your encryption settings - please add it to the classpath.");
