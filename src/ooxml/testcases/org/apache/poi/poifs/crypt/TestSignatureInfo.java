@@ -33,7 +33,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -55,7 +54,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.crypto.Cipher;
 import javax.xml.crypto.KeySelector;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
@@ -300,6 +298,8 @@ public class TestSignatureInfo {
         QualifyingPropertiesType qualProp = (QualifyingPropertiesType)xoList[0];
         boolean qualPropXsdOk = qualProp.validate();
         assertTrue(qualPropXsdOk);
+        
+        pkg.close();
     }
     
     private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
@@ -326,15 +326,8 @@ public class TestSignatureInfo {
         assertNotNull(digestInfo.digestValue);
 
         // setup: key material, signature value
-
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, keyPair.getPrivate());
-        ByteArrayOutputStream digestInfoValueBuf = new ByteArrayOutputStream();
-        digestInfoValueBuf.write(SignatureInfo.SHA1_DIGEST_INFO_PREFIX);
-        digestInfoValueBuf.write(digestInfo.digestValue);
-        byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
-        byte[] signatureValue = cipher.doFinal(digestInfoValue);
-
+        byte[] signatureValue = SignatureInfo.signDigest(keyPair.getPrivate(), HashAlgorithm.sha1, digestInfo.digestValue);
+        
         // operate: postSign
         signatureService.postSign(signatureValue, Collections.singletonList(x509));
 

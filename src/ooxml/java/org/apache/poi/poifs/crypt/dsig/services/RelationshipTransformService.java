@@ -55,6 +55,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTRelationshipReference;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.RelationshipReferenceDocument;
 import org.openxmlformats.schemas.xpackage.x2006.relationships.CTRelationship;
 import org.openxmlformats.schemas.xpackage.x2006.relationships.CTRelationships;
@@ -146,9 +147,7 @@ public class RelationshipTransformService extends TransformService {
                 LOG.log(POILogger.WARN, "no RelationshipReference/@SourceId parameters present");
             }
             for (XmlObject xo : xoList) {
-                RelationshipReferenceDocument refDoc =
-                    RelationshipReferenceDocument.Factory.parse(xo.getDomNode());
-                String sourceId = refDoc.getRelationshipReference().getSourceId();
+                String sourceId = ((CTRelationshipReference)xo).getSourceId();
                 LOG.log(POILogger.DEBUG, "sourceId: ", sourceId);
                 this.sourceIds.add(sourceId);
             }

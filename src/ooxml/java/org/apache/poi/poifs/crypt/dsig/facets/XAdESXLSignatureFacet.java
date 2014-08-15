@@ -46,7 +46,6 @@ import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.namespace.QName;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
@@ -67,7 +66,6 @@ import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.etsi.uri.x01903.v13.CRLIdentifierType;
 import org.etsi.uri.x01903.v13.CRLRefType;
@@ -92,7 +90,6 @@ import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
 import org.etsi.uri.x01903.v13.XAdESTimeStampType;
 import org.etsi.uri.x01903.v14.ValidationDataType;
 import org.w3.x2000.x09.xmldsig.CanonicalizationMethodType;
-import org.w3.x2000.x09.xmldsig.ObjectType;
 import org.w3.x2000.x09.xmldsig.SignatureType;
 import org.w3.x2000.x09.xmldsig.SignatureValueType;
 import org.w3c.dom.Node;
@@ -189,18 +186,13 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
 
         QualifyingPropertiesType qualProps = null;
-        
-        try {
-            // check for XAdES-BES
-            for (ObjectType ot : signatureElement.getObjectList()) {
-                XmlObject xo[] = ot.selectChildren(new QName(XADES_NAMESPACE, "QualifyingProperties"));
-                if (xo != null && xo.length > 0) {
-                    qualProps = QualifyingPropertiesType.Factory.parse(xo[0].getDomNode());
-                    break;
-                }
-            }
-        } catch (XmlException e) {
-            throw new RuntimeException("signature decoding error", e);
+        String qualPropXQuery =
+                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
+              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
+              + "$this/ds:Object/xades:QualifyingProperties";
+        XmlObject xoList[] = signatureElement.selectPath(qualPropXQuery);
+        if (xoList.length == 1) {
+            qualProps = (QualifyingPropertiesType)xoList[0];
         }
         
         if (qualProps == null) {
