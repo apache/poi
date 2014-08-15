@@ -146,6 +146,7 @@ public class HorribleProxy implements InvocationHandler {
 		    try {
 		        Field f = delegateClass.getDeclaredField(methodName);
 		        ret = f.get(delegateRef);
+                if (ret == null) return null;
 		        isStaticField = true;
 		    } catch (NoSuchFieldException e) {
 		        LOG.log(POILogger.DEBUG, "No static field '"+methodName+"' in class '"+delegateClass.getCanonicalName()+"' - trying method now.");

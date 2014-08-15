@@ -95,6 +95,7 @@ public class TestSignatureInfo {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URLClassLoader ucl = new URLClassLoader(new URL[]{bcJar.toURI().toURL()}, cl);
         Thread.currentThread().setContextClassLoader(ucl);
+        CryptoFunctions.registerBouncyCastle();
     }
     
     @Test

@@ -50,7 +50,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.AuthorityInformationAccessIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.AuthorityKeyIdentifierIf;
@@ -81,6 +80,7 @@ import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509ObjectIdentifiersIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509PrincipalIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509V2CRLGeneratorIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509V3CertificateGeneratorIf;
+import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -282,7 +282,8 @@ public class PkiTestUtils {
         // request
         OCSPReqGeneratorIf ocspReqGenerator = HorribleProxy.newProxy(OCSPReqGeneratorIf.class);
         CertificateIDIf certId = HorribleProxy.newProxy(CertificateIDIf.class);
-        certId = HorribleProxy.newProxy(CertificateIDIf.class, certId.HASH_SHA1(),
+        String hashSha1 = certId.HASH_SHA1();
+        certId = HorribleProxy.newProxy(CertificateIDIf.class, hashSha1,
                 issuerCertificate, certificate.getSerialNumber());
         ocspReqGenerator.addRequest(certId);
         OCSPReqIf ocspReq = ocspReqGenerator.generate();
