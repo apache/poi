@@ -24,8 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet.XADES_NAMESPACE;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -35,14 +33,11 @@ import java.util.Map;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.namespace.QName;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
 import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
-import org.w3.x2000.x09.xmldsig.ObjectType;
 import org.w3.x2000.x09.xmldsig.SignatureType;
 
 /**
@@ -67,18 +62,15 @@ public class Office2010SignatureFacet implements SignatureFacet {
     public void postSign(SignatureType signatureElement, List<X509Certificate> signingCertificateChain) {
         QualifyingPropertiesType qualProps = null;
         
-        try {
-            // check for XAdES-BES
-            for (ObjectType ot : signatureElement.getObjectList()) {
-                XmlObject xo[] = ot.selectChildren(new QName(XADES_NAMESPACE, "QualifyingProperties"));
-                if (xo != null && xo.length > 0) {
-                    qualProps = QualifyingPropertiesType.Factory.parse(xo[0].getDomNode());
-                    break;
-                }
-            }
-        } catch (XmlException e) {
-            throw new RuntimeException("signature decoding error", e);
-        }        
+        // check for XAdES-BES
+        String qualPropXQuery =
+                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
+              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
+              + "$this/ds:Object/xades:QualifyingProperties";
+        XmlObject xoList[] = signatureElement.selectPath(qualPropXQuery);
+        if (xoList.length == 1) {
+            qualProps = (QualifyingPropertiesType)xoList[0];
+        }
         
         if (qualProps == null) {
             throw new IllegalArgumentException("no XAdES-BES extension present");
