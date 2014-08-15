@@ -112,7 +112,7 @@ public class XmlSignatureService implements SignatureService {
     protected final List<SignatureFacet> signatureFacets;
 
     private String signatureNamespacePrefix;
-    private String signatureId;
+    private String signatureId = "idPackageSignature";
     private final HashAlgorithm hashAlgo;
     private final OPCPackage opcPackage;
     private SignatureDocument sigDoc;
@@ -124,7 +124,6 @@ public class XmlSignatureService implements SignatureService {
     public XmlSignatureService(HashAlgorithm digestAlgo, OPCPackage opcPackage) {
         this.signatureFacets = new LinkedList<SignatureFacet>();
         this.signatureNamespacePrefix = null;
-        this.signatureId = null;
         this.hashAlgo = digestAlgo;
         this.opcPackage = opcPackage;
         this.sigDoc = null;
@@ -142,7 +141,6 @@ public class XmlSignatureService implements SignatureService {
          * Work-around for Office 2010.
          */
         this.xadesSignatureFacet.setIssuerNameNoReverseOrder(true);
-        setSignatureId("idPackageSignature");
         addSignatureFacet(this.xadesSignatureFacet);
         addSignatureFacet(new Office2010SignatureFacet());
     }
@@ -398,8 +396,9 @@ public class XmlSignatureService implements SignatureService {
 
         registerIds(doc);
         Element el = doc.getElementById("idPackageObject");
-        assert (el != null);
-        el.setAttributeNS(Constants.NamespaceSpecNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+        if (el != null) {
+            el.setAttributeNS(Constants.NamespaceSpecNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+        }
 
         
         /*
@@ -548,6 +547,10 @@ public class XmlSignatureService implements SignatureService {
 
     public String getFilesDigestAlgorithm() {
         return null;
+    }
+    
+    public SignatureDocument getSignatureDocument() {
+        return sigDoc;
     }
 
     protected String getCanonicalizationMethod() {
