@@ -29,6 +29,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
@@ -54,6 +56,10 @@ import java.util.List;
 import java.util.TimeZone;
 
 import javax.crypto.Cipher;
+import javax.xml.crypto.KeySelector;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -75,10 +81,14 @@ import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.xmlbeans.XmlObject;
+import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
+import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.w3.x2000.x09.xmldsig.SignatureDocument;
 
 public class TestSignatureInfo {
     private static final POILogger LOG = POILogFactory.getLogger(TestSignatureInfo.class);
@@ -244,8 +254,52 @@ public class TestSignatureInfo {
 
         // verify
         assertNotNull(digestInfo);
-        assertEquals("SHA-1", digestInfo.hashAlgo);
+        assertEquals(HashAlgorithm.sha1, digestInfo.hashAlgo);
         assertNotNull(digestInfo.digestValue);
+        
+        SignatureDocument sigDoc = testedInstance.getSignatureDocument();
+        String certDigestXQuery =
+                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
+              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
+              + "$this/ds:Signature/ds:Object/xades:QualifyingProperties/xades:SignedProperties/xades:SignedSignatureProperties/xades:SigningCertificate/xades:Cert/xades:CertDigest";
+        XmlObject xoList[] = sigDoc.selectPath(certDigestXQuery);
+        assertEquals(xoList.length, 1);
+        DigestAlgAndValueType certDigest = (DigestAlgAndValueType)xoList[0];
+        assertNotNull(certDigest.getDigestValue());
+
+        // Sign the received XML signature digest value.
+        byte[] signatureValue = SignatureInfo.signDigest(keyPair.getPrivate(), HashAlgorithm.sha1, digestInfo.digestValue);
+
+        // Operate: postSign
+        testedInstance.postSign(signatureValue, certificateChain);
+        
+        // verify
+        verify(mockTimeStampService, times(2)).timeStamp(any(byte[].class), any(RevocationData.class));
+        verify(mockRevocationDataService).getRevocationData(certificateChain);
+        
+        DOMValidateContext domValidateContext = new DOMValidateContext(
+                KeySelector.singletonKeySelector(keyPair.getPublic()),
+                testedInstance.getSignatureDocument().getDomNode());
+        XMLSignatureFactory xmlSignatureFactory = SignatureInfo.getSignatureFactory();
+        XMLSignature xmlSignature = xmlSignatureFactory
+                .unmarshalXMLSignature(domValidateContext);
+        boolean validity = xmlSignature.validate(domValidateContext);
+        assertTrue(validity);
+
+        xoList = sigDoc.selectPath(certDigestXQuery);
+        assertEquals(xoList.length, 1);
+        certDigest = (DigestAlgAndValueType)xoList[0];
+        assertNotNull(certDigest.getDigestValue());
+        
+        String qualPropXQuery =
+                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
+              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
+              + "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
+        xoList = sigDoc.selectPath(qualPropXQuery);
+        assertEquals(xoList.length, 1);
+        QualifyingPropertiesType qualProp = (QualifyingPropertiesType)xoList[0];
+        boolean qualPropXsdOk = qualProp.validate();
+        assertTrue(qualPropXsdOk);
     }
     
     private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {

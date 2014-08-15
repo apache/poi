@@ -145,8 +145,12 @@ under the License.
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.9.4/ant-1.9.4.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
+	<property name="main.mockito.jar" location="${main.lib}/mockito-core-1.9.5.jar"/>
+	<property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/1.9.5/mockito-core-1.9.5.jar"/>
+	<property name="main.objenesis.jar" location="${main.lib}/com.springsource.org.objenesis-1.0.0.jar"/>
+	<property name="main.objenesis.url" value="http://repository.springsource.com/ivy/bundles/external/org.objenesis/com.springsource.org.objenesis/1.0.0/com.springsource.org.objenesis-1.0.0.jar"/>
 
-    <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
+	<!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
@@ -159,7 +163,7 @@ under the License.
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.1.201405082137/jacoco-0.7.1.201405082137.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
-
+	
     <!-- license checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.10.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.10/apache-rat-0.10.jar"/>
@@ -430,6 +434,14 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${rat.url}"/>
             <param name="destfile" value="${rat.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${main.mockito.url}"/>
+            <param name="destfile" value="${main.mockito.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${main.objenesis.url}"/>
+            <param name="destfile" value="${main.objenesis.jar}"/>
         </antcall>
     </target>
 

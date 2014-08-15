@@ -126,26 +126,28 @@ public class SignatureInfo {
         DigestInfo digestInfo = signatureService.preSign(null, x509Chain, null, null, null);
 
         // setup: key material, signature value
-
-        Cipher cipher = CryptoFunctions.getCipher(key, CipherAlgorithm.rsa
-            , ChainingMode.ecb, null, Cipher.ENCRYPT_MODE, "PKCS1Padding");
-        
-        byte[] signatureValue;
-        try {
-            ByteArrayOutputStream digestInfoValueBuf = new ByteArrayOutputStream();
-            digestInfoValueBuf.write(getHashMagic(hashAlgo));
-            digestInfoValueBuf.write(digestInfo.digestValue);
-            byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
-            signatureValue = cipher.doFinal(digestInfoValue);
-        } catch (Exception e) {
-            throw new EncryptedDocumentException(e);
-        }
-
+        byte[] signatureValue = signDigest(key, hashAlgo, digestInfo.digestValue);
         
         // operate: postSign
         signatureService.postSign(signatureValue, Collections.singletonList(x509));
     }
 
+    public static byte[] signDigest(Key key, HashAlgorithm hashAlgo, byte digest[]) {
+        Cipher cipher = CryptoFunctions.getCipher(key, CipherAlgorithm.rsa
+            , ChainingMode.ecb, null, Cipher.ENCRYPT_MODE, "PKCS1Padding");
+            
+        try {
+            ByteArrayOutputStream digestInfoValueBuf = new ByteArrayOutputStream();
+            digestInfoValueBuf.write(getHashMagic(hashAlgo));
+            digestInfoValueBuf.write(digest);
+            byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
+            byte[] signatureValue = cipher.doFinal(digestInfoValue);
+            return signatureValue;
+        } catch (Exception e) {
+            throw new EncryptedDocumentException(e);
+        }
+    }
+    
     public XmlSignatureService createSignatureService(HashAlgorithm hashAlgo, OPCPackage pkg) {
         XmlSignatureService signatureService = new XmlSignatureService(hashAlgo, pkg);
         signatureService.initFacets(new Date());

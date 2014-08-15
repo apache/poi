@@ -49,8 +49,6 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1OctetStringIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BasicOCSPRespIf;
@@ -62,6 +60,8 @@ import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPRespIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.RespIDIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ResponderIDIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509NameIf;
+import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
@@ -373,25 +373,22 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     public static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
-        byte[] c14nValue = null;
+        ByteArrayOutputStream c14nValue = new ByteArrayOutputStream();
         try {
             for (Node node : nodeList) {
                 /*
                  * Re-initialize the c14n else the namespaces will get cached
                  * and will be missing from the c14n resulting nodes.
                  */
-                CanonicalizerIf c14n = HorribleProxy.createProxy(CanonicalizerIf.class, "newInstance", c14nAlgoId);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bos.write(c14nValue);
-                bos.write(c14n.canonicalizeSubtree(node));
-                c14nValue = bos.toByteArray();
+                CanonicalizerIf c14n = HorribleProxy.createProxy(CanonicalizerIf.class, "getInstance", c14nAlgoId);
+                c14nValue.write(c14n.canonicalizeSubtree(node));
             }
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException("c14n error: " + e.getMessage(), e);
         }
-        return c14nValue;
+        return c14nValue.toByteArray();
     }
 
     public void preSign(XMLSignatureFactory signatureFactory,
