@@ -30,13 +30,21 @@ public interface HorribleProxies {
         
         ASN1OctetStringIf readObject$ASNString() throws IOException;
         DEROctetStringIf readObject$DERString() throws IOException;
-        DERIntegerIf readObject$Integer() throws IOException;
+        ASN1IntegerIf readObject$Integer() throws IOException;
         ASN1SequenceIf readObject$Sequence() throws IOException;
         Object readObject$Object() throws IOException;
     }
 
+    public interface ASN1IntegerIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.asn1.ASN1Integer";
+        
+        BigInteger getPositiveValue();
+    }
+    
     public interface ASN1ObjectIdentifierIf extends ProxyIf {
         String delegateClass = "org.bouncycastle.asn1.ASN1ObjectIdentifier";
+        
+        String getId();
     }
     
     public interface ASN1OctetStringIf extends ProxyIf {
@@ -62,7 +70,7 @@ public interface HorribleProxies {
     }
     
     public interface BasicOCSPRespIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.BasicOCSPResp";
+        String delegateClass = "org.bouncycastle.cert.ocsp.BasicOCSPResp";
         Date getProducedAt();
         RespIDIf getResponderId();
     }
@@ -99,11 +107,6 @@ public interface HorribleProxies {
     
     public interface DERIA5StringIf extends ProxyIf {
         String delegateClass = "org.bouncycastle.asn1.DERIA5String";
-    }
-    
-    public interface DERIntegerIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.asn1.DERInteger";
-        BigInteger getPositiveValue();
     }
     
     public interface DEROctetStringIf extends ProxyIf {
@@ -152,6 +155,15 @@ public interface HorribleProxies {
         void marshal(Node node, String prefix, DOMCryptoContext context) throws MarshalException;
     }
     
+    public interface ExtensionsIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.asn1.x509.Extensions";
+    }
+    
+    public interface ExtensionIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.asn1.x509.Extension";
+    }
+    
+
     public interface GeneralNameIf extends ProxyIf {
         String delegateClass = "org.bouncycastle.asn1.x509.GeneralName";
         
@@ -168,13 +180,48 @@ public interface HorribleProxies {
         void init();
     }
 
+    public interface JcaDigestCalculatorProviderBuilderIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder";
+        JcaDigestCalculatorProviderBuilderIf setProvider(String provider);
+        DigestCalculatorProviderIf build();
+    }
+
+    public interface JcaContentSignerBuilderIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.operator.jcajce.JcaContentSignerBuilder";
+        
+        JcaContentSignerBuilderIf setProvider(String provider);
+        ContentSignerIf build(PrivateKey paramPrivateKey);
+    }
+    
+    public interface ContentSignerIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.operator.ContentSigner";
+    }
+    
+    public interface DigestCalculatorProviderIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.operator.DigestCalculatorProvider";
+        DigestCalculatorIf get(AlgorithmIdentifierIf paramAlgorithmIdentifier);
+    }
+    
+    public interface DigestCalculatorIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.operator.DigestCalculator";
+    }
+    
+    public interface AlgorithmIdentifierIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.asn1.x509.AlgorithmIdentifier";
+    }
+    
     public interface KeyUsageIf extends ProxyIf {
         String delegateClass = "org.bouncycastle.asn1.x509.KeyUsage";
         int digitalSignature();
     }
     
+    public interface OCSPObjectIdentifiersIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers";
+        ASN1ObjectIdentifierIf id_pkix_ocsp_nonce();
+    }
+    
     public interface OCSPRespIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.OCSPResp";
+        String delegateClass = "org.bouncycastle.cert.ocsp.OCSPResp";
         BasicOCSPRespIf getResponseObject();
         byte[] getEncoded() throws IOException;
     }
@@ -185,7 +232,7 @@ public interface HorribleProxies {
     }
 
     public interface RespIDIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.RespID";
+        String delegateClass = "org.bouncycastle.cert.ocsp.RespID";
         ResponderIDIf toASN1Object();
     }
     
@@ -291,30 +338,39 @@ public interface HorribleProxies {
     }
 
     public interface OCSPReqIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.OCSPReq";
+        String delegateClass = "org.bouncycastle.cert.ocsp.OCSPReq";
 
         ReqIf[] getRequestList();
     }
     
-    public interface OCSPReqGeneratorIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.OCSPReqGenerator";
-        
-        void addRequest(CertificateIDIf certId);
-        OCSPReqIf generate();
+    public interface OCSPReqBuilderIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.cert.ocsp.OCSPReqBuilder";
+
+        OCSPReqBuilderIf addRequest(CertificateIDIf certId);
+        OCSPReqBuilderIf setRequestExtensions(ExtensionsIf paramExtensions);
+        OCSPReqIf build();
     }
 
-    public interface BasicOCSPRespGeneratorIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.BasicOCSPRespGenerator";
+    public interface OCSPRespBuilderIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.cert.ocsp.OCSPRespBuilder";
+     
+        OCSPRespIf build(int status, BasicOCSPRespIf basicOcspResp);
+        int SUCCESSFUL();
+    }
+    
+    
+    public interface BasicOCSPRespBuilderIf extends ProxyIf {
+        String delegateClass = "org.bouncycastle.cert.ocsp.BasicOCSPRespBuilder";
 
-        void addResponse(CertificateIDIf certificateID, CertificateStatusIf certificateStatus);
-        BasicOCSPRespIf generate(String signatureAlgorithm, PrivateKey ocspResponderPrivateKey,
-                X509Certificate chain[], Date date, String provider);
+        BasicOCSPRespBuilderIf addResponse(CertificateIDIf certificateID, CertificateStatusIf certificateStatus);
+        BasicOCSPRespBuilderIf setResponseExtensions(ExtensionsIf paramExtensions);
+        BasicOCSPRespIf build(ContentSignerIf paramContentSigner, X509CertificateHolderIf[] paramArrayOfX509CertificateHolder, Date paramDate);
     }
     
     public interface CertificateIDIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.CertificateID";
+        String delegateClass = "org.bouncycastle.cert.ocsp.CertificateID";
         
-        String HASH_SHA1();
+        AlgorithmIdentifierIf HASH_SHA1();
     }
     
     public interface X509ExtensionsIf extends ProxyIf {
@@ -348,13 +404,13 @@ public interface HorribleProxies {
     }
     
     public interface ReqIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.Req";
+        String delegateClass = "org.bouncycastle.cert.ocsp.Req";
         
         CertificateIDIf getCertID();
     }
     
     public interface CertificateStatusIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.CertificateStatus";
+        String delegateClass = "org.bouncycastle.cert.ocsp.CertificateStatus";
         
         CertificateStatusIf GOOD();
     }
@@ -366,11 +422,6 @@ public interface HorribleProxies {
     public interface CRLReasonIf extends ProxyIf {
         String delegateClass = "org.bouncycastle.asn1.x509.CRLReason";
         int unspecified();
-    }
-
-    public interface OCSPRespGeneratorIf extends ProxyIf {
-        String delegateClass = "org.bouncycastle.ocsp.OCSPRespGenerator";
-        int SUCCESSFUL();
-        OCSPRespIf generate(int status, BasicOCSPRespIf basicOCSPResp);
+        int privilegeWithdrawn();
     }
 }

@@ -24,6 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.newProxy;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
@@ -49,15 +51,16 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
+import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1IntegerIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1OctetStringIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BasicOCSPRespIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.CanonicalizerIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DERIntegerIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DERTaggedObjectIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.InitIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPRespIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.RespIDIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ResponderIDIf;
+import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509ExtensionsIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509NameIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
@@ -392,16 +395,18 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     private BigInteger getCrlNumber(X509CRL crl) {
-        byte[] crlNumberExtensionValue = crl.getExtensionValue("2.5.29.20" /*CRLNumber*/);
-        if (null == crlNumberExtensionValue) {
-            return null;
-        }
         try {
+            X509ExtensionsIf x509ext = newProxy(X509ExtensionsIf.class);
+            byte[] crlNumberExtensionValue = crl.getExtensionValue(x509ext.CRLNumber().getId());
+            if (null == crlNumberExtensionValue) {
+                return null;
+            }
+
             ASN1InputStreamIf asn1InputStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, crlNumberExtensionValue);
             ASN1OctetStringIf octetString = asn1InputStream.readObject$ASNString();
             byte[] octets = octetString.getOctets();
             asn1InputStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, octets);
-            DERIntegerIf integer =  asn1InputStream.readObject$Integer();
+            ASN1IntegerIf integer =  asn1InputStream.readObject$Integer();
             BigInteger crlNumber = integer.getPositiveValue();
             return crlNumber;
         } catch (Exception e) {

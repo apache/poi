@@ -145,10 +145,16 @@ under the License.
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.9.4/ant-1.9.4.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
-	<property name="main.mockito.jar" location="${main.lib}/mockito-core-1.9.5.jar"/>
-	<property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/1.9.5/mockito-core-1.9.5.jar"/>
-	<property name="main.objenesis.jar" location="${main.lib}/com.springsource.org.objenesis-1.0.0.jar"/>
-	<property name="main.objenesis.url" value="http://repository.springsource.com/ivy/bundles/external/org.objenesis/com.springsource.org.objenesis/1.0.0/com.springsource.org.objenesis-1.0.0.jar"/>
+
+	<!-- test libs -->
+	<property name="test.bouncycastle-prov.jar" location="${main.lib}/bcprov-ext-jdk15on-1.51.jar"/>
+	<property name="test.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
+	<property name="test.bouncycastle-pkix.jar" location="${main.lib}/bcpkix-jdk15on-151.jar"/>
+	<property name="test.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-151.jar"/>
+	<property name="test.mockito.jar" location="${main.lib}/mockito-core-1.9.5.jar"/>
+	<property name="test.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/1.9.5/mockito-core-1.9.5.jar"/>
+	<property name="test.objenesis.jar" location="${main.lib}/com.springsource.org.objenesis-1.0.0.jar"/>
+	<property name="test.objenesis.url" value="http://repository.springsource.com/ivy/bundles/external/org.objenesis/com.springsource.org.objenesis/1.0.0/com.springsource.org.objenesis-1.0.0.jar"/>
 
 	<!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
@@ -261,6 +267,8 @@ under the License.
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
+    	<pathelement location="${test.mockito.jar}"/>
+    	<pathelement location="${test.objenesis.jar}"/>
     </path>
 
     <path id="ooxml-lite.classpath">
@@ -436,12 +444,16 @@ under the License.
             <param name="destfile" value="${rat.jar}"/>
         </antcall>
         <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.mockito.url}"/>
-            <param name="destfile" value="${main.mockito.jar}"/>
+            <param name="sourcefile" value="${test.mockito.url}"/>
+            <param name="destfile" value="${test.mockito.jar}"/>
         </antcall>
         <antcall target="downloadfile">
-            <param name="sourcefile" value="${main.objenesis.url}"/>
-            <param name="destfile" value="${main.objenesis.jar}"/>
+            <param name="sourcefile" value="${test.objenesis.url}"/>
+            <param name="destfile" value="${test.objenesis.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${test.bouncycastle-prov.url}"/>
+            <param name="destfile" value="${test.bouncycastle-prov.jar}"/>
         </antcall>
     </target>
 
@@ -692,6 +704,7 @@ under the License.
                includeantruntime="false">
             <classpath>
                 <path refid="ooxml.classpath"/>
+            	<path refid="test.ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
                 <pathelement path="${main.output.test.dir}"/>
             </classpath>

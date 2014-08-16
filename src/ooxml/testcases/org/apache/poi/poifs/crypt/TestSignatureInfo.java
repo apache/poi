@@ -92,6 +92,7 @@ public class TestSignatureInfo {
     private static final POILogger LOG = POILogFactory.getLogger(TestSignatureInfo.class);
     private static final POIDataSamples testdata = POIDataSamples.getXmlDSignInstance();
 
+    private static Calendar cal;
     private KeyPair keyPair = null;
     private X509Certificate x509 = null;
     
@@ -99,11 +100,18 @@ public class TestSignatureInfo {
     
     @BeforeClass
     public static void initBouncy() throws MalformedURLException {
-        File bcJar = testdata.getFile("bcprov-ext-jdk15on-1.49.jar");
+        File bcProvJar = new File("lib/bcprov-ext-jdk15on-1.51.jar");
+        File bcPkixJar = new File("lib/bcpkix-jdk15on-151.jar");
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URLClassLoader ucl = new URLClassLoader(new URL[]{bcJar.toURI().toURL()}, cl);
+        URLClassLoader ucl = new URLClassLoader(new URL[]{bcProvJar.toURI().toURL(),bcPkixJar.toURI().toURL()}, cl);
         Thread.currentThread().setContextClassLoader(ucl);
         CryptoFunctions.registerBouncyCastle();
+
+        /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
+        cal = Calendar.getInstance();
+        cal.clear();
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cal.set(2014, 7, 6, 21, 42, 12);
     }
     
     @Test
@@ -231,7 +239,7 @@ public class TestSignatureInfo {
         final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
         revocationData.addCRL(crl);
         OCSPRespIf ocspResp = PkiTestUtils.createOcspResp(x509, false,
-                x509, x509, keyPair.getPrivate(), "SHA1withRSA");
+                x509, x509, keyPair.getPrivate(), "SHA1withRSA", cal.getTimeInMillis());
         revocationData.addOCSP(ocspResp.getEncoded());
         
         when(mockTimeStampService.timeStamp(any(byte[].class), any(RevocationData.class)))
@@ -303,12 +311,6 @@ public class TestSignatureInfo {
     }
     
     private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
-        /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
-        Calendar cal = Calendar.getInstance();
-        cal.clear();
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.set(2014, 7, 6, 21, 42, 12);
-        
         XmlSignatureService signatureService = new XmlSignatureService(HashAlgorithm.sha1, pkgCopy);
         signatureService.initFacets(cal.getTime());
         initKeyPair(alias, signerDn);

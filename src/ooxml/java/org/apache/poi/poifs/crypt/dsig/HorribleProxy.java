@@ -30,6 +30,7 @@ public class HorribleProxy implements InvocationHandler {
         this.delegateClass = delegateClass;
 	    // delegateRef can be null, then we have to deal with deferred initialisation
 	    this.delegateRef = delegateRef;
+	    initDeferred = (delegateRef == null);
 	}
 	
 	/**
@@ -211,7 +212,20 @@ public class HorribleProxy implements InvocationHandler {
                 types[i] = args[i].getClass();
             }
             
-            if (ProxyIf.class.isAssignableFrom(types[i])) {
+            if (types[i].isArray()) {
+                // TODO: check for null arguments ...
+                if (ProxyIf.class.isAssignableFrom(types[i].getComponentType())) {
+                    ProxyIf pifs[] = (ProxyIf[])args[i];
+                    Class<?> dc = getDelegateClass((Class<? extends ProxyIf>)types[i].getComponentType());
+                    int dcArrSize = (pifs==null ? 0 : pifs.length);
+                    Object[] dcArr = (Object[])Array.newInstance(dc, dcArrSize);
+                    for (int j=0;j<dcArrSize;j++) {
+                        dcArr[j] = pifs[j].getDelegate(); 
+                    }
+                    args[i] = dcArr;
+                    types[i] = dcArr.getClass();
+                }
+            } else if (ProxyIf.class.isAssignableFrom(types[i])) {
                 types[i] = getDelegateClass((Class<? extends ProxyIf>)types[i]);
                 if (args[i] != null) {
                     args[i] = ((ProxyIf)args[i]).getDelegate();
