@@ -24,6 +24,9 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
+import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.createProxy;
+import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.newProxy;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -48,6 +51,7 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1OctetStringIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.AuthorityKeyIdentifierIf;
@@ -64,7 +68,6 @@ import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampRequestIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampResponseIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampTokenIf;
 import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509CertificateHolderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -83,7 +86,7 @@ public class TSPTimeStampService implements TimeStampService {
         CryptoFunctions.registerBouncyCastle();
     }
 
-    public static final String DEFAULT_USER_AGENT = "eID Applet Service TSP Client";
+    public static final String DEFAULT_USER_AGENT = "POI XmlSign Service TSP Client";
 
     private final String tspServiceUrl;
 
@@ -101,7 +104,7 @@ public class TSPTimeStampService implements TimeStampService {
 
     private int proxyPort;
 
-    private String digestAlgo;
+    private HashAlgorithm digestAlgo;
 
     private String digestAlgoOid;
 
@@ -143,9 +146,8 @@ public class TSPTimeStampService implements TimeStampService {
         } else {
             this.userAgent = DEFAULT_USER_AGENT;
         }
-
-        this.digestAlgo = "SHA-1";
-        this.digestAlgoOid = "1.3.14.3.2.26";
+        
+        setDigestAlgo(HashAlgorithm.sha1);
     }
 
     /**
@@ -183,16 +185,21 @@ public class TSPTimeStampService implements TimeStampService {
      * 
      * @param digestAlgo
      */
-    public void setDigestAlgo(String digestAlgo) {
-        if ("SHA-1".equals(digestAlgo)) {
-            this.digestAlgoOid = "1.3.14.3.2.26";
-        } else if ("SHA-256".equals(digestAlgo)) {
-            this.digestAlgoOid = "2.16.840.1.101.3.4.2.1";
-        } else if ("SHA-384".equals(digestAlgo)) {
-            this.digestAlgoOid = "2.16.840.1.101.3.4.2.2";
-        } else if ("SHA-512".equals(digestAlgo)) {
-            this.digestAlgoOid = "2.16.840.1.101.3.4.2.3";
-        } else {
+    public void setDigestAlgo(HashAlgorithm digestAlgo) {
+        switch (digestAlgo) {
+        case sha1:
+            digestAlgoOid = "1.3.14.3.2.26";
+            break;
+        case sha256:
+            digestAlgoOid = "2.16.840.1.101.3.4.2.1";
+            break;
+        case sha384:
+            digestAlgoOid = "2.16.840.1.101.3.4.2.2";
+            break;
+        case sha512:
+            digestAlgoOid = "2.16.840.1.101.3.4.2.3";
+            break;
+        default:
             throw new IllegalArgumentException("unsupported digest algo: " + digestAlgo);
         }
 
@@ -222,13 +229,12 @@ public class TSPTimeStampService implements TimeStampService {
     public byte[] timeStamp(byte[] data, RevocationData revocationData)
             throws Exception {
         // digest the message
-        MessageDigest messageDigest = MessageDigest
-                .getInstance(this.digestAlgo);
+        MessageDigest messageDigest = CryptoFunctions.getMessageDigest(this.digestAlgo);
         byte[] digest = messageDigest.digest(data);
 
         // generate the TSP request
         BigInteger nonce = new BigInteger(128, new SecureRandom());
-        TimeStampRequestGeneratorIf requestGenerator = HorribleProxy.newProxy(TimeStampRequestGeneratorIf.class);
+        TimeStampRequestGeneratorIf requestGenerator = newProxy(TimeStampRequestGeneratorIf.class);
         requestGenerator.setCertReq(true);
         if (null != this.requestPolicy) {
             requestGenerator.setReqPolicy(this.requestPolicy);
@@ -250,7 +256,8 @@ public class TSPTimeStampService implements TimeStampService {
 
         huc.setDoOutput(true); // also sets method to POST.
         huc.setRequestProperty("User-Agent", this.userAgent);
-        huc.setRequestProperty("Content-Type", "application/timestamp-query;charset=ISO-8859-1");
+        // "application/timestamp-query;charset=ISO-8859-1"
+        huc.setRequestProperty("Content-Type", "application/timestamp-request");
         
         OutputStream hucOut = huc.getOutputStream();
         hucOut.write(encodedRequest);
@@ -274,7 +281,8 @@ public class TSPTimeStampService implements TimeStampService {
         IOUtils.copy(huc.getInputStream(), bos);
         LOG.log(POILogger.DEBUG, "response content: ", bos.toString());
         
-        if (!contentType.startsWith("application/timestamp-reply")) {
+        // "application/timestamp-reply"
+        if (!contentType.startsWith("application/timestamp-response")) {
             throw new RuntimeException("invalid Content-Type: " + contentType);
         }
         
@@ -283,7 +291,7 @@ public class TSPTimeStampService implements TimeStampService {
         }
 
         // TSP response parsing and validation
-        TimeStampResponseIf timeStampResponse = HorribleProxy.newProxy(TimeStampResponseIf.class, bos.toByteArray());
+        TimeStampResponseIf timeStampResponse = newProxy(TimeStampResponseIf.class, bos.toByteArray());
         timeStampResponse.validate(request);
 
         if (0 != timeStampResponse.getStatus()) {
@@ -346,10 +354,10 @@ public class TSPTimeStampService implements TimeStampService {
         } while (null != certificate);
 
         // verify TSP signer signature
-        X509CertificateHolderIf holder = HorribleProxy.newProxy(X509CertificateHolderIf.class, tspCertificateChain.get(0).getEncoded());
-        DefaultDigestAlgorithmIdentifierFinderIf finder = HorribleProxy.newProxy(DefaultDigestAlgorithmIdentifierFinderIf.class);
-        BcDigestCalculatorProviderIf calculator = HorribleProxy.newProxy(BcDigestCalculatorProviderIf.class);
-        BcRSASignerInfoVerifierBuilderIf verifierBuilder = HorribleProxy.newProxy(BcRSASignerInfoVerifierBuilderIf.class, finder, calculator);
+        X509CertificateHolderIf holder = newProxy(X509CertificateHolderIf.class, tspCertificateChain.get(0).getEncoded());
+        DefaultDigestAlgorithmIdentifierFinderIf finder = newProxy(DefaultDigestAlgorithmIdentifierFinderIf.class);
+        BcDigestCalculatorProviderIf calculator = newProxy(BcDigestCalculatorProviderIf.class);
+        BcRSASignerInfoVerifierBuilderIf verifierBuilder = newProxy(BcRSASignerInfoVerifierBuilderIf.class, finder, calculator);
         SignerInformationVerifierIf verifier = verifierBuilder.build(holder);
         
         timeStampToken.validate(verifier);
@@ -369,10 +377,10 @@ public class TSPTimeStampService implements TimeStampService {
         byte[] extvalue = cert.getExtensionValue("2.5.29.14");
         if (extvalue == null) return null;
 
-        ASN1InputStreamIf keyCntStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(extvalue));
-        ASN1OctetStringIf cntStr = HorribleProxy.createProxy(ASN1OctetStringIf.class, "getInstance", keyCntStream.readObject$Object());
-        ASN1InputStreamIf keyIdStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(cntStr.getOctets()));
-        SubjectKeyIdentifierIf keyId = HorribleProxy.createProxy(SubjectKeyIdentifierIf.class, "getInstance", keyIdStream.readObject$Object());
+        ASN1InputStreamIf keyCntStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(extvalue));
+        ASN1OctetStringIf cntStr = createProxy(ASN1OctetStringIf.class, "getInstance", keyCntStream.readObject$Object());
+        ASN1InputStreamIf keyIdStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(cntStr.getOctets()));
+        SubjectKeyIdentifierIf keyId = createProxy(SubjectKeyIdentifierIf.class, "getInstance", keyIdStream.readObject$Object());
 
         return keyId.getKeyIdentifier();
     }
@@ -382,10 +390,10 @@ public class TSPTimeStampService implements TimeStampService {
         byte[] extvalue = cert.getExtensionValue("2.5.29.35");
         if (extvalue == null) return null;
 
-        ASN1InputStreamIf keyCntStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(extvalue));
+        ASN1InputStreamIf keyCntStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(extvalue));
         DEROctetStringIf cntStr = keyCntStream.readObject$DERString();
-        ASN1InputStreamIf keyIdStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(cntStr.getOctets()));
-        AuthorityKeyIdentifierIf keyId = HorribleProxy.newProxy(AuthorityKeyIdentifierIf.class, keyIdStream.readObject$Sequence());
+        ASN1InputStreamIf keyIdStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(cntStr.getOctets()));
+        AuthorityKeyIdentifierIf keyId = newProxy(AuthorityKeyIdentifierIf.class, keyIdStream.readObject$Sequence());
         
         return keyId.getKeyIdentifier();
     }
