@@ -26,12 +26,6 @@ package org.apache.poi.poifs.crypt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,7 +67,9 @@ import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
+import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
+import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.IOUtils;
@@ -84,8 +80,6 @@ import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 
 public class TestSignatureInfo {
@@ -210,23 +204,38 @@ public class TestSignatureInfo {
         String testFile = "hello-world-unsigned.xlsx";
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
 
+        initKeyPair("Test", "CN=Test");
+        
         // setup
         EnvelopedSignatureFacet envelopedSignatureFacet = new EnvelopedSignatureFacet();
         KeyInfoSignatureFacet keyInfoSignatureFacet = new KeyInfoSignatureFacet(true, false, false);
         SignaturePolicyService signaturePolicyService = null;
         XAdESSignatureFacet xadesSignatureFacet = new XAdESSignatureFacet(null, null, signaturePolicyService);
+        final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
 
-        
-        TimeStampService mockTimeStampService = mock(TimeStampService.class);
-        RevocationDataService mockRevocationDataService = mock(RevocationDataService.class);
+//        TimeStampService timeStampService = new TimeStampService(){
+//            public byte[] timeStamp(byte[] data, RevocationData revocationData) throws Exception {
+//                revocationData.addCRL(crl);
+//                return "time-stamp-token".getBytes();                
+//            }
+//        };
 
-        XAdESXLSignatureFacet xadesXLSignatureFacet = new XAdESXLSignatureFacet(
-                mockTimeStampService, mockRevocationDataService);
-        XmlSignatureService testedInstance = new XmlSignatureService(HashAlgorithm.sha1, pkg);
-        testedInstance.addSignatureFacet(envelopedSignatureFacet, keyInfoSignatureFacet,
-                xadesSignatureFacet, xadesXLSignatureFacet);
+        // http://timestamping.edelweb.fr/service/tsp
+        // http://tsa.belgium.be/connect
+        String tspServiceUrl = "http://timestamping.edelweb.fr/service/tsp";
+        TimeStampServiceValidator tspValidator = new TimeStampServiceValidator() {
+            @Override
+            public void validate(List<X509Certificate> certificateChain,
+            RevocationData revocationData) throws Exception {
+                for (X509Certificate certificate : certificateChain) {
+                    LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
+                    LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
+                }
+            }
+        };
         
-        initKeyPair("Test", "CN=Test");
+        TimeStampService timeStampService = new TSPTimeStampService(tspServiceUrl, tspValidator);
+        
         List<X509Certificate> certificateChain = new ArrayList<X509Certificate>();
         /*
          * We need at least 2 certificates for the XAdES-C complete certificate
@@ -235,25 +244,25 @@ public class TestSignatureInfo {
         certificateChain.add(x509);
         certificateChain.add(x509);
         
-        RevocationData revocationData = new RevocationData();
-        final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
+        final RevocationData revocationData = new RevocationData();
         revocationData.addCRL(crl);
         OCSPRespIf ocspResp = PkiTestUtils.createOcspResp(x509, false,
                 x509, x509, keyPair.getPrivate(), "SHA1withRSA", cal.getTimeInMillis());
         revocationData.addOCSP(ocspResp.getEncoded());
+
+        RevocationDataService revocationDataService = new RevocationDataService(){
+            public RevocationData getRevocationData(List<X509Certificate> certificateChain) {
+                return revocationData;
+            }
+        };
+
+        XAdESXLSignatureFacet xadesXLSignatureFacet = new XAdESXLSignatureFacet(
+                timeStampService, revocationDataService);
+        XmlSignatureService testedInstance = new XmlSignatureService(HashAlgorithm.sha1, pkg);
+        testedInstance.addSignatureFacet(envelopedSignatureFacet, keyInfoSignatureFacet,
+                xadesSignatureFacet, xadesXLSignatureFacet);
         
-        when(mockTimeStampService.timeStamp(any(byte[].class), any(RevocationData.class)))
-        .thenAnswer(new Answer<byte[]>(){
-            public byte[] answer(InvocationOnMock invocation) throws Throwable {
-                Object[] arguments = invocation.getArguments();
-                RevocationData revocationData = (RevocationData) arguments[1];
-                revocationData.addCRL(crl);
-                return "time-stamp-token".getBytes();
-            }            
-        });
         
-        when(mockRevocationDataService.getRevocationData(eq(certificateChain)))
-        .thenReturn(revocationData);
         
         // operate
         DigestInfo digestInfo = testedInstance.preSign(null, certificateChain, null, null, null);
@@ -278,10 +287,6 @@ public class TestSignatureInfo {
 
         // Operate: postSign
         testedInstance.postSign(signatureValue, certificateChain);
-        
-        // verify
-        verify(mockTimeStampService, times(2)).timeStamp(any(byte[].class), any(RevocationData.class));
-        verify(mockRevocationDataService).getRevocationData(certificateChain);
         
         DOMValidateContext domValidateContext = new DOMValidateContext(
                 KeySelector.singletonKeySelector(keyPair.getPublic()),
@@ -389,4 +394,5 @@ public class TestSignatureInfo {
         fos.close();
         return tmpFile;
     }
+
 }
