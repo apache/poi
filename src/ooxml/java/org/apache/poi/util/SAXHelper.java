@@ -69,7 +69,9 @@ public final class SAXHelper {
         try {
             xmlReader.setFeature(feature, enabled);
         } catch (Exception e) {
-            logger.log(POILogger.INFO, "SAX Feature unsupported", feature, e);
+            logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
+        } catch (AbstractMethodError ame) {
+            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", feature, ame);
         }
     }
     
@@ -87,7 +89,7 @@ public final class SAXHelper {
                 // Stop once one can be setup without error
                 return;
             } catch (Exception e) {
-                logger.log(POILogger.INFO, "SAX Security Manager could not be setup", e);
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
             }
         }
     }
