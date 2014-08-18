@@ -61,9 +61,12 @@ public final class DocumentHelper {
         try {
             documentBuilderFactory.setFeature(feature, enabled);
         } catch (Exception e) {
-            logger.log(POILogger.INFO, "SAX Feature unsupported", feature, e);
+            logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
+        } catch (AbstractMethodError ame) {
+            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", feature, ame);
         }
     }
+    
     private static void trySetXercesSecurityManager(DocumentBuilderFactory documentBuilderFactory) {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : new String[] {
@@ -78,7 +81,7 @@ public final class DocumentHelper {
                 // Stop once one can be setup without error
                 return;
             } catch (Exception e) {
-                logger.log(POILogger.INFO, "SAX Security Manager could not be setup", e);
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
             }
         }
     }
