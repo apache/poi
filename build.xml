@@ -154,12 +154,16 @@ under the License.
     <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
     <property name="ooxml.xmlbeans26.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
-
+	
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.1.201405082137.zip"/>
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.1.201405082137/jacoco-0.7.1.201405082137.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
+
+	<!-- for testing with older Xerces implementation -->
+    <property name="xerces.jar" location="${main.lib}/xercesImpl-2.6.1.jar"/>
+    <property name="xerces.url" value="${repository.m2}/maven2/xerces/xercesImpl/2.6.1//xercesImpl-2.6.1.jar"/>
 
     <!-- license checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.10.jar"/>
@@ -231,6 +235,7 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
+    	<pathelement location="${additionaljar}"/>
     </path>
 
     <path id="test.scratchpad.classpath">
@@ -238,6 +243,7 @@ under the License.
         <pathelement location="${main.output.test.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${scratchpad.output.test.dir}"/>
+    	<pathelement location="${additionaljar}"/>
     </path>
 
     <path id="test.ooxml.classpath">
@@ -245,6 +251,7 @@ under the License.
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
+    	<pathelement location="${additionaljar}"/>
     </path>
 
     <path id="ooxml-lite.classpath">
@@ -277,6 +284,7 @@ under the License.
         <pathelement location="${excelant.output.dir}"/>
         <pathelement location="${excelant.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
+    	<pathelement location="${additionaljar}"/>
     </path>
 
     <path id="lib.jacoco">
@@ -349,6 +357,7 @@ under the License.
 				<include name="jacoco-0.6*"/>
 				<include name="log4j-1.2.13*"/>
 				<include name="org.jacoco.*-0.6.*"/>
+				<include name="dom4j*"/>
 			</fileset>
 		</delete>
 
@@ -365,6 +374,7 @@ under the License.
                     <available file="${asm.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
+                    <available file="${xerces.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -415,6 +425,10 @@ under the License.
                 <include name="lib/*.jar"/>
             </patternset>
         </unzip>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${xerces.url}"/>
+            <param name="destfile" value="${xerces.jar}"/>
+        </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${rat.url}"/>
             <param name="destfile" value="${rat.jar}"/>
