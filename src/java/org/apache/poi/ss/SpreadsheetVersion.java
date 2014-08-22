@@ -36,10 +36,11 @@ public enum SpreadsheetVersion {
 	 * <li>The total number of available rows is 64k (2^16)</li>
 	 * <li>The maximum number of arguments to a function is 30</li>
 	 * <li>Number of conditional format conditions on a cell is 3</li>
+     * <li>Number of cell styles is 4000</li>
      * <li>Length of text cell contents is 32767</li>
 	 * </ul>
 	 */
-	EXCEL97(0x10000, 0x0100, 30, 3, 32767),
+	EXCEL97(0x10000, 0x0100, 30, 3, 4000, 32767),
 
 	/**
 	 * Excel2007
@@ -50,22 +51,25 @@ public enum SpreadsheetVersion {
 	 * <li>The maximum number of arguments to a function is 255</li>
 	 * <li>Number of conditional format conditions on a cell is unlimited
 	 * (actually limited by available memory in Excel)</li>
+     * <li>Number of cell styles is 64000</li>
      * <li>Length of text cell contents is 32767</li>
 	 * <ul>
 	 */
-	EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE, 32767);
+	EXCEL2007(0x100000, 0x4000, 255, Integer.MAX_VALUE, 64000, 32767);
 
 	private final int _maxRows;
 	private final int _maxColumns;
 	private final int _maxFunctionArgs;
 	private final int _maxCondFormats;
+    private final int _maxCellStyles;
     private final int _maxTextLength;
 
-	private SpreadsheetVersion(int maxRows, int maxColumns, int maxFunctionArgs, int maxCondFormats, int maxText) {
+	private SpreadsheetVersion(int maxRows, int maxColumns, int maxFunctionArgs, int maxCondFormats, int maxCellStyles, int maxText) {
 		_maxRows = maxRows;
 		_maxColumns = maxColumns;
 		_maxFunctionArgs = maxFunctionArgs;
 		_maxCondFormats = maxCondFormats;
+		_maxCellStyles = maxCellStyles;
         _maxTextLength = maxText;
     }
 
@@ -105,12 +109,18 @@ public enum SpreadsheetVersion {
 	}
 
 	/**
-	 *
 	 * @return the maximum number of conditional format conditions on a cell
 	 */
 	public int getMaxConditionalFormats() {
 		return _maxCondFormats;
 	}
+
+    /**
+    * @return the maximum number of cell styles per spreadsheet
+    */
+   public int getMaxCellStyles() {
+       return _maxCellStyles;
+   }
 
 	/**
 	 *
@@ -127,5 +137,4 @@ public enum SpreadsheetVersion {
     public int getMaxTextLength() {
         return _maxTextLength;
     }
-
 }
