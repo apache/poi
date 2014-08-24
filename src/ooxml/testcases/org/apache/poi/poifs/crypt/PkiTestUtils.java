@@ -16,25 +16,18 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.newProxy;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.SignatureException;
 import java.security.cert.CRLException;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.security.spec.RSAKeyGenParameterSpec;
@@ -52,45 +45,49 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.AuthorityInformationAccessIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.AuthorityKeyIdentifierIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BasicConstraintsIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BasicOCSPRespBuilderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BasicOCSPRespIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.CRLNumberIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.CRLReasonIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.CertificateIDIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.CertificateStatusIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ContentSignerIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DERIA5StringIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DEROctetStringIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DERSequenceIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DigestCalculatorIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DistributionPointIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DistributionPointNameIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ExtensionIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ExtensionsIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.GeneralNameIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.GeneralNamesIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.JcaContentSignerBuilderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.JcaDigestCalculatorProviderBuilderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.KeyUsageIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPObjectIdentifiersIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPReqBuilderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPReqIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPRespBuilderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPRespIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ReqIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.RevokedStatusIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.SubjectKeyIdentifierIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.SubjectPublicKeyInfoIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509CertificateHolderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509ExtensionsIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509ObjectIdentifiersIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509PrincipalIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509V2CRLGeneratorIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509V3CertificateGeneratorIf;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.AuthorityInformationAccess;
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
+import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.CRLNumber;
+import org.bouncycastle.asn1.x509.CRLReason;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
+import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v2CRLBuilder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.BasicOCSPRespBuilder;
+import org.bouncycastle.cert.ocsp.CertificateID;
+import org.bouncycastle.cert.ocsp.CertificateStatus;
+import org.bouncycastle.cert.ocsp.OCSPReq;
+import org.bouncycastle.cert.ocsp.OCSPReqBuilder;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
+import org.bouncycastle.cert.ocsp.Req;
+import org.bouncycastle.cert.ocsp.RevokedStatus;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.DigestCalculator;
+import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -111,27 +108,21 @@ public class PkiTestUtils {
         return keyPair;
     }
 
-    private static SubjectKeyIdentifierIf createSubjectKeyId(PublicKey publicKey)
-    throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException
-        , IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(publicKey.getEncoded());
-        ASN1InputStreamIf asnObj = newProxy(ASN1InputStreamIf.class, bais);
-        SubjectPublicKeyInfoIf info =
-            newProxy(SubjectPublicKeyInfoIf.class, asnObj.readObject$Sequence());
-        SubjectKeyIdentifierIf keyId =  newProxy(SubjectKeyIdentifierIf.class, info);
+    @SuppressWarnings("resource")
+    private static SubjectKeyIdentifier createSubjectKeyId(PublicKey publicKey)
+    throws IOException {
+        ASN1InputStream asnObj = new ASN1InputStream(publicKey.getEncoded());
+        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(asnObj.readObject());
+        SubjectKeyIdentifier keyId = SubjectKeyIdentifier.getInstance(info.getEncoded());
         return keyId;
     }
 
-    private static AuthorityKeyIdentifierIf createAuthorityKeyId(PublicKey publicKey)
-    throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException
-        , IllegalAccessException, InvocationTargetException, NoSuchFieldException {
-
-        ByteArrayInputStream bais = new ByteArrayInputStream(publicKey.getEncoded());
-        ASN1InputStreamIf asnObj = newProxy(ASN1InputStreamIf.class, bais);
-        SubjectPublicKeyInfoIf info =
-            newProxy(SubjectPublicKeyInfoIf.class, asnObj.readObject$Sequence());
-        AuthorityKeyIdentifierIf keyId = newProxy(AuthorityKeyIdentifierIf.class, info);
-
+    @SuppressWarnings("resource")
+    private static AuthorityKeyIdentifier createAuthorityKeyId(PublicKey publicKey)
+    throws IOException {
+        ASN1InputStream asnObj = new ASN1InputStream(publicKey.getEncoded());
+        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(asnObj.readObject());
+        AuthorityKeyIdentifier keyId = AuthorityKeyIdentifier.getInstance(info);
         return keyId;
     }
 
@@ -139,88 +130,76 @@ public class PkiTestUtils {
             String subjectDn, Date notBefore, Date notAfter,
             X509Certificate issuerCertificate, PrivateKey issuerPrivateKey,
             boolean caFlag, int pathLength, String crlUri, String ocspUri,
-            KeyUsageIf keyUsage)
-    throws IOException, InvalidKeyException, IllegalStateException, NoSuchAlgorithmException
-        , SignatureException, CertificateException, InvocationTargetException, IllegalAccessException
-        , InstantiationException, NoSuchMethodException, ClassNotFoundException, NoSuchFieldException
+            KeyUsage keyUsage)
+    throws IOException, OperatorCreationException, CertificateException
     {
         String signatureAlgorithm = "SHA1withRSA";
-        X509V3CertificateGeneratorIf certificateGenerator = newProxy(X509V3CertificateGeneratorIf.class);
-        certificateGenerator.reset();
-        certificateGenerator.setPublicKey(subjectPublicKey);
-        certificateGenerator.setSignatureAlgorithm(signatureAlgorithm);
-        certificateGenerator.setNotBefore(notBefore);
-        certificateGenerator.setNotAfter(notAfter);
-        X509PrincipalIf subjectDN = newProxy(X509PrincipalIf.class, subjectDn);
-        X509PrincipalIf issuerDN;
-        if (null != issuerCertificate) {
-            issuerDN = newProxy(X509PrincipalIf.class, issuerCertificate
-                    .getSubjectX500Principal().toString());
+        X500Name issuerName;
+        if (issuerCertificate != null) {
+            issuerName = new X509CertificateHolder(issuerCertificate.getEncoded()).getIssuer();
         } else {
-            issuerDN = subjectDN;
+            issuerName = new X500Name(subjectDn);
         }
-        certificateGenerator.setIssuerDN(issuerDN);
-        certificateGenerator.setSubjectDN(subjectDN);
-        certificateGenerator.setSerialNumber(new BigInteger(128,
-                new SecureRandom()));
 
-        X509ExtensionsIf X509Extensions = newProxy(X509ExtensionsIf.class);
+        SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(
+            ASN1Sequence.getInstance(subjectPublicKey.getEncoded()));
         
-        certificateGenerator.addExtension(X509Extensions.SubjectKeyIdentifier(),
-                false, createSubjectKeyId(subjectPublicKey));
-        PublicKey issuerPublicKey;
-        issuerPublicKey = subjectPublicKey;
-        certificateGenerator.addExtension(
-                X509Extensions.AuthorityKeyIdentifier(), false,
-                createAuthorityKeyId(issuerPublicKey));
+        X509v3CertificateBuilder certificateGenerator = new X509v3CertificateBuilder(
+              issuerName
+            , new BigInteger(128, new SecureRandom())
+            , notBefore
+            , notAfter
+            , new X500Name(subjectDn)
+            , subjectPublicKeyInfo
+        );
+
+        certificateGenerator.addExtension(Extension.subjectKeyIdentifier, false, createSubjectKeyId(subjectPublicKey));
+        certificateGenerator.addExtension(Extension.authorityKeyIdentifier, false, createAuthorityKeyId(subjectPublicKey));
 
         if (caFlag) {
-            BasicConstraintsIf bc;
+            BasicConstraints bc;
             
             if (-1 == pathLength) {
-                bc = newProxy(BasicConstraintsIf.class, true);
+                bc = new BasicConstraints(true);
             } else {
-                bc = newProxy(BasicConstraintsIf.class, pathLength);
+                bc = new BasicConstraints(pathLength);
             }
-            certificateGenerator.addExtension(X509Extensions.BasicConstraints(), false, bc);
+            certificateGenerator.addExtension(Extension.basicConstraints, false, bc);
         }
 
         if (null != crlUri) {
-            GeneralNameIf gn = newProxy(GeneralNameIf.class);
-            int uri = gn.uniformResourceIdentifier();
-            DERIA5StringIf crlUriDer = newProxy(DERIA5StringIf.class, crlUri);
-            gn = newProxy(GeneralNameIf.class, uri, crlUriDer);
+            int uri = GeneralName.uniformResourceIdentifier;
+            DERIA5String crlUriDer = new DERIA5String(crlUri);
+            GeneralName gn = new GeneralName(uri, crlUriDer);
 
-            DERSequenceIf gnDer = newProxy(DERSequenceIf.class, gn);
-            GeneralNamesIf gns = newProxy(GeneralNamesIf.class, gnDer);
+            DERSequence gnDer = new DERSequence(gn);
+            GeneralNames gns = GeneralNames.getInstance(gnDer);
             
-            DistributionPointNameIf dpn = newProxy(DistributionPointNameIf.class, 0, gns);
-            DistributionPointIf distp = newProxy(DistributionPointIf.class, dpn, null, null);
-            DERSequenceIf distpDer = newProxy(DERSequenceIf.class, distp);
-            certificateGenerator.addExtension(X509Extensions.CRLDistributionPoints(), false, distpDer);
+            DistributionPointName dpn = new DistributionPointName(0, gns);
+            DistributionPoint distp = new DistributionPoint(dpn, null, null);
+            DERSequence distpDer = new DERSequence(distp);
+            certificateGenerator.addExtension(Extension.cRLDistributionPoints, false, distpDer);
         }
 
         if (null != ocspUri) {
-            GeneralNameIf ocspName = newProxy(GeneralNameIf.class);
-            int uri = ocspName.uniformResourceIdentifier();
-            ocspName = newProxy(GeneralNameIf.class, uri, ocspUri);
+            int uri = GeneralName.uniformResourceIdentifier;
+            GeneralName ocspName = new GeneralName(uri, ocspUri);
             
-            X509ObjectIdentifiersIf X509ObjectIdentifiers = newProxy(X509ObjectIdentifiersIf.class);
-            AuthorityInformationAccessIf authorityInformationAccess =
-                newProxy(AuthorityInformationAccessIf.class
-                    , X509ObjectIdentifiers.ocspAccessMethod(), ocspName);
+            AuthorityInformationAccess authorityInformationAccess =
+                new AuthorityInformationAccess(X509ObjectIdentifiers.ocspAccessMethod, ocspName);
             
-            certificateGenerator.addExtension(
-                    X509Extensions.AuthorityInfoAccess(), false,
-                    authorityInformationAccess);
+            certificateGenerator.addExtension(Extension.authorityInfoAccess, false, authorityInformationAccess);
         }
 
         if (null != keyUsage) {
-            certificateGenerator.addExtension(X509Extensions.KeyUsage(), true, keyUsage);
+            certificateGenerator.addExtension(Extension.keyUsage, true, keyUsage);
         }
 
-        X509Certificate certificate;
-        certificate = certificateGenerator.generate(issuerPrivateKey);
+        JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder(signatureAlgorithm);
+        signerBuilder.setProvider("BC");
+        
+        X509CertificateHolder certHolder =
+            certificateGenerator.build(signerBuilder.build(issuerPrivateKey));
 
         /*
          * Next certificate factory trick is needed to make sure that the
@@ -228,12 +207,11 @@ public class PkiTestUtils {
          * security provider instead of BouncyCastle. If we don't do this trick
          * we might run into trouble when trying to use the CertPath validator.
          */
-        CertificateFactory certificateFactory = CertificateFactory
-                .getInstance("X.509");
-        certificate = (X509Certificate) certificateFactory
-                .generateCertificate(new ByteArrayInputStream(certificate
-                        .getEncoded()));
-        return certificate;
+//        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+//        certificate = (X509Certificate) certificateFactory
+//                .generateCertificate(new ByteArrayInputStream(certificate
+//                        .getEncoded()));
+        return new JcaX509CertificateConverter().getCertificate(certHolder);
     }
 
     static Document loadDocument(InputStream documentInputStream)
@@ -264,93 +242,79 @@ public class PkiTestUtils {
         return stringWriter.getBuffer().toString();
     }
 
-    public static X509CRL generateCrl(X509Certificate issuer,
-            PrivateKey issuerPrivateKey) throws InvalidKeyException,
-            CRLException, IllegalStateException, NoSuchAlgorithmException,
-            SignatureException, InvocationTargetException, IllegalAccessException,
-            InstantiationException, NoSuchMethodException, ClassNotFoundException, NoSuchFieldException {
-        X509V2CRLGeneratorIf crlGenerator = newProxy(X509V2CRLGeneratorIf.class);
-        crlGenerator.setIssuerDN(issuer.getSubjectX500Principal());
-        Date now = new Date();
-        crlGenerator.setThisUpdate(now);
-        crlGenerator.setNextUpdate(new Date(now.getTime() + 100000));
-        crlGenerator.setSignatureAlgorithm("SHA1withRSA");
-
-        X509ExtensionsIf X509Extensions = newProxy(X509ExtensionsIf.class);
-        CRLNumberIf crlNumber = newProxy(CRLNumberIf.class, new BigInteger("1234"));
+    public static X509CRL generateCrl(X509Certificate issuer, PrivateKey issuerPrivateKey)
+    throws CertificateEncodingException, IOException, CRLException, OperatorCreationException {
         
-        crlGenerator.addExtension(X509Extensions.CRLNumber(), false, crlNumber);
-        X509CRL x509Crl = crlGenerator.generate(issuerPrivateKey);
-        return x509Crl;
+        X509CertificateHolder holder = new X509CertificateHolder(issuer.getEncoded());
+        X509v2CRLBuilder crlBuilder = new X509v2CRLBuilder(holder.getIssuer(), new Date());
+        crlBuilder.setNextUpdate(new Date(new Date().getTime() + 100000));
+        JcaContentSignerBuilder contentBuilder = new JcaContentSignerBuilder("SHA1withRSA").setProvider("BC");
+
+        CRLNumber crlNumber = new CRLNumber(new BigInteger("1234"));
+        
+        crlBuilder.addExtension(Extension.cRLNumber, false, crlNumber);
+        X509CRLHolder x509Crl = crlBuilder.build(contentBuilder.build(issuerPrivateKey));
+        return new JcaX509CRLConverter().setProvider("BC").getCRL(x509Crl);
     }
 
-    public static OCSPRespIf createOcspResp(X509Certificate certificate,
+    public static OCSPResp createOcspResp(X509Certificate certificate,
             boolean revoked, X509Certificate issuerCertificate,
             X509Certificate ocspResponderCertificate,
             PrivateKey ocspResponderPrivateKey, String signatureAlgorithm,
             long nonceTimeinMillis)
             throws Exception {
-        CertificateIDIf certId = newProxy(CertificateIDIf.class);
-        DigestCalculatorIf digestCalc =
-            newProxy(JcaDigestCalculatorProviderBuilderIf.class)
-            .setProvider("BC").build().get(certId.HASH_SHA1());
-        X509CertificateHolderIf issuerHolder = newProxy(X509CertificateHolderIf.class, issuerCertificate.getEncoded());
-        certId = newProxy(CertificateIDIf.class, digestCalc, issuerHolder, certificate.getSerialNumber());
+        DigestCalculator digestCalc = new JcaDigestCalculatorProviderBuilder()
+            .setProvider("BC").build().get(CertificateID.HASH_SHA1);
+        X509CertificateHolder issuerHolder = new X509CertificateHolder(issuerCertificate.getEncoded());
+        CertificateID certId = new CertificateID(digestCalc, issuerHolder, certificate.getSerialNumber());
         
         // request
         //create a nonce to avoid replay attack
         BigInteger nonce = BigInteger.valueOf(nonceTimeinMillis);
-        OCSPObjectIdentifiersIf oidIf = newProxy(OCSPObjectIdentifiersIf.class);
-        DEROctetStringIf nonceDer = newProxy(DEROctetStringIf.class, nonce.toByteArray());
-        ExtensionIf ext = newProxy(ExtensionIf.class, oidIf.id_pkix_ocsp_nonce(), true, nonceDer);
-        ExtensionsIf exts = newProxy(ExtensionsIf.class, ext);
+        DEROctetString nonceDer = new DEROctetString(nonce.toByteArray());
+        Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, true, nonceDer);
+        Extensions exts = new Extensions(ext);
         
-        OCSPReqBuilderIf ocspReqBuilder = newProxy(OCSPReqBuilderIf.class);
+        OCSPReqBuilder ocspReqBuilder = new OCSPReqBuilder();
         ocspReqBuilder.addRequest(certId);
         ocspReqBuilder.setRequestExtensions(exts);
-        OCSPReqIf ocspReq = ocspReqBuilder.build();
+        OCSPReq ocspReq = ocspReqBuilder.build();
 
         
-        SubjectPublicKeyInfoIf keyInfo = newProxy(SubjectPublicKeyInfoIf.class
-            , certId.HASH_SHA1(), ocspResponderCertificate.getPublicKey().getEncoded());
+        SubjectPublicKeyInfo keyInfo = new SubjectPublicKeyInfo
+            (CertificateID.HASH_SHA1, ocspResponderCertificate.getPublicKey().getEncoded());
         
-        BasicOCSPRespBuilderIf basicOCSPRespBuilder = 
-            newProxy(BasicOCSPRespBuilderIf.class, keyInfo, digestCalc);
+        BasicOCSPRespBuilder basicOCSPRespBuilder = new BasicOCSPRespBuilder(keyInfo, digestCalc);
         basicOCSPRespBuilder.setResponseExtensions(exts);
 
         // request processing
-        ReqIf[] requestList = ocspReq.getRequestList();
-        for (ReqIf ocspRequest : requestList) {
-            CertificateIDIf certificateID = ocspRequest.getCertID();
-            CertificateStatusIf certificateStatus;
+        Req[] requestList = ocspReq.getRequestList();
+        for (Req ocspRequest : requestList) {
+            CertificateID certificateID = ocspRequest.getCertID();
+            CertificateStatus certificateStatus = CertificateStatus.GOOD;
             if (revoked) {
-                CRLReasonIf crlr = newProxy(CRLReasonIf.class);
-                RevokedStatusIf rs = newProxy(RevokedStatusIf.class, new Date(), crlr.privilegeWithdrawn());
-                certificateStatus = newProxy(CertificateStatusIf.class, rs.getDelegate());
-            } else {
-                CertificateStatusIf cs = newProxy(CertificateStatusIf.class);
-                certificateStatus = cs.GOOD();
+                certificateStatus = new RevokedStatus(new Date(), CRLReason.privilegeWithdrawn);
             }
             basicOCSPRespBuilder.addResponse(certificateID, certificateStatus);
         }
 
         // basic response generation
-        X509CertificateHolderIf[] chain = null;
+        X509CertificateHolder[] chain = null;
         if (!ocspResponderCertificate.equals(issuerCertificate)) {
             // TODO: HorribleProxy can't convert array input params yet
-            chain = new X509CertificateHolderIf[] {
-                newProxy(X509CertificateHolderIf.class, ocspResponderCertificate),
+            chain = new X509CertificateHolder[] {
+                new X509CertificateHolder(ocspResponderCertificate.getEncoded()),
                 issuerHolder
             };
         }
         
-        ContentSignerIf contentSigner = newProxy(JcaContentSignerBuilderIf.class, "SHA1withRSA")
+        ContentSigner contentSigner = new JcaContentSignerBuilder("SHA1withRSA")
             .setProvider("BC").build(ocspResponderPrivateKey);
-        BasicOCSPRespIf basicOCSPResp = basicOCSPRespBuilder.build(contentSigner, chain, new Date(nonceTimeinMillis));
+        BasicOCSPResp basicOCSPResp = basicOCSPRespBuilder.build(contentSigner, chain, new Date(nonceTimeinMillis));
 
         
-        OCSPRespBuilderIf ocspRespBuilder = newProxy(OCSPRespBuilderIf.class);
-        OCSPRespIf ocspResp = ocspRespBuilder.build(ocspRespBuilder.SUCCESSFUL(), basicOCSPResp);
+        OCSPRespBuilder ocspRespBuilder = new OCSPRespBuilder();
+        OCSPResp ocspResp = ocspRespBuilder.build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
 
         return ocspResp;
     }
