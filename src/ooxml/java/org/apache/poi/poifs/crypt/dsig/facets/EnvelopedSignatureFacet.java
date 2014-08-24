@@ -3,7 +3,7 @@ package org.apache.poi.poifs.crypt.dsig.facets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.w3.x2000.x09.xmldsig.SignatureType;
+import org.w3c.dom.Document;
 
 /**
  * Signature Facet implementation to create enveloped signatures.
@@ -47,13 +47,13 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(SignatureType signatureElement
-        , List<X509Certificate> signingCertificateChain) {
+    public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
         // empty
     }
 
     @Override
-    public void preSign(XMLSignatureFactory signatureFactory,
+    public void preSign(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId,
             List<X509Certificate> signingCertificateChain,
             List<Reference> references, List<XMLObject> objects)
@@ -61,7 +61,7 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
         DigestMethod digestMethod = signatureFactory.newDigestMethod(
                 this.hashAlgo.xmlSignUri, null);
 
-        List<Transform> transforms = new LinkedList<Transform>();
+        List<Transform> transforms = new ArrayList<Transform>();
         Transform envelopedTransform = signatureFactory
                 .newTransform(CanonicalizationMethod.ENVELOPED,
                         (TransformParameterSpec) null);

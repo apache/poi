@@ -33,9 +33,9 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.Provider;
 import java.security.Security;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.crypto.Data;
@@ -85,7 +85,7 @@ public class RelationshipTransformService extends TransformService {
      * Relationship Transform parameter specification class.
      */
     public static class RelationshipTransformParameterSpec implements TransformParameterSpec {
-        List<String> sourceIds = new LinkedList<String>();
+        List<String> sourceIds = new ArrayList<String>();
         public void addRelationshipReference(String relationshipId) {
             sourceIds.add(relationshipId);
         }
@@ -98,7 +98,7 @@ public class RelationshipTransformService extends TransformService {
     public RelationshipTransformService() {
         super();
         LOG.log(POILogger.DEBUG, "constructor");
-        this.sourceIds = new LinkedList<String>();
+        this.sourceIds = new ArrayList<String>();
     }
 
     /**

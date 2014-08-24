@@ -26,7 +26,7 @@ package org.apache.poi.poifs.crypt.dsig.services;
 
 import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,8 +45,8 @@ public class RevocationData {
      * Default constructor.
      */
     public RevocationData() {
-        this.crls = new LinkedList<byte[]>();
-        this.ocsps = new LinkedList<byte[]>();
+        this.crls = new ArrayList<byte[]>();
+        this.ocsps = new ArrayList<byte[]>();
     }
 
     /**

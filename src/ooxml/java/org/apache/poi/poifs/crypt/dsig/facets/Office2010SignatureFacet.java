@@ -34,11 +34,13 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
-import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlException;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
 import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
-import org.w3.x2000.x09.xmldsig.SignatureType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Work-around for Office2010 to accept the XAdES-BES/EPES signature.
@@ -51,7 +53,9 @@ import org.w3.x2000.x09.xmldsig.SignatureType;
  */
 public class Office2010SignatureFacet implements SignatureFacet {
 
-    public void preSign(XMLSignatureFactory signatureFactory,
+    @Override
+    public void preSign(Document document,
+        XMLSignatureFactory signatureFactory,
         String signatureId,
         List<X509Certificate> signingCertificateChain,
         List<Reference> references,
@@ -59,23 +63,18 @@ public class Office2010SignatureFacet implements SignatureFacet {
     ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
     }
 
-    public void postSign(SignatureType signatureElement, List<X509Certificate> signingCertificateChain) {
-        QualifyingPropertiesType qualProps = null;
-        
+    @Override
+    public void postSign(Document document, List<X509Certificate> signingCertificateChain)
+    throws XmlException {
         // check for XAdES-BES
-        String qualPropXQuery =
-                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
-              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
-              + "$this/ds:Object/xades:QualifyingProperties";
-        XmlObject xoList[] = signatureElement.selectPath(qualPropXQuery);
-        if (xoList.length == 1) {
-            qualProps = (QualifyingPropertiesType)xoList[0];
-        }
-        
-        if (qualProps == null) {
+        NodeList nl = document.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "QualifyingProperties");
+        if (nl.getLength() != 1) {
             throw new IllegalArgumentException("no XAdES-BES extension present");
         }
 
+        QualifyingPropertiesType qualProps =
+                QualifyingPropertiesType.Factory.parse(nl.item(0));
+        
         // create basic XML container structure
         UnsignedPropertiesType unsignedProps = qualProps.getUnsignedProperties();
         if (unsignedProps == null) {
@@ -85,6 +84,9 @@ public class Office2010SignatureFacet implements SignatureFacet {
         if (unsignedSigProps == null) {
             unsignedSigProps = unsignedProps.addNewUnsignedSignatureProperties();
         }
+        
+        Node n = document.importNode(qualProps.getDomNode().getFirstChild(), true);
+        nl.item(0).getParentNode().replaceChild(n, nl.item(0));
     }
     
     public Map<String,String> getNamespacePrefixMapping() {

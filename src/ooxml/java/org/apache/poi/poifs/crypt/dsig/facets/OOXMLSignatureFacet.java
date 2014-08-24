@@ -24,6 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
+import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlNS;
 import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.setPrefix;
 
 import java.io.IOException;
@@ -38,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -71,15 +72,13 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
-import org.apache.poi.poifs.crypt.dsig.spi.Constants;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTSignatureTime;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.SignatureTimeDocument;
-import org.w3.x2000.x09.xmldsig.SignatureType;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import com.microsoft.schemas.office.x2006.digsig.CTSignatureInfoV1;
 import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
@@ -112,48 +111,41 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         this.hashAlgo = (hashAlgo == null ? HashAlgorithm.sha1 : hashAlgo);
     }
 
-    public void preSign(XMLSignatureFactory signatureFactory,
+    @Override
+    public void preSign(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId,
             List<X509Certificate> signingCertificateChain,
             List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
         LOG.log(POILogger.DEBUG, "pre sign");
-        addManifestObject(signatureFactory, signatureId, references, objects);
-        addSignatureInfo(signatureFactory, signatureId, references, objects);
+        addManifestObject(document, signatureFactory, signatureId, references, objects);
+        addSignatureInfo(document, signatureFactory, signatureId, references, objects);
     }
 
-    private void addManifestObject(XMLSignatureFactory signatureFactory,
+    private void addManifestObject(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId, List<Reference> references,
             List<XMLObject> objects) throws NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException {
-        Manifest manifest = constructManifest(signatureFactory);
+            InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
+
+        List<Reference> manifestReferences = new ArrayList<Reference>();
+        addManifestReferences(signatureFactory, manifestReferences);
+        Manifest manifest =  signatureFactory.newManifest(manifestReferences);
+        
         String objectId = "idPackageObject"; // really has to be this value.
-        List<XMLStructure> objectContent = new LinkedList<XMLStructure>();
+        List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
         objectContent.add(manifest);
 
-        addSignatureTime(signatureFactory, signatureId, objectContent);
+        addSignatureTime(document, signatureFactory, signatureId, objectContent);
 
-        objects.add(signatureFactory.newXMLObject(objectContent, objectId,
-                null, null));
+        XMLObject xo = signatureFactory.newXMLObject(objectContent, objectId, null, null);
+        objects.add(xo);
 
         DigestMethod digestMethod = signatureFactory.newDigestMethod(this.hashAlgo.xmlSignUri, null);
-        Reference reference = signatureFactory.newReference("#" + objectId,
-                digestMethod, null, "http://www.w3.org/2000/09/xmldsig#Object",
-                null);
+        Reference reference = signatureFactory.newReference
+            ("#" + objectId, digestMethod, null, XmlDSigNS+"Object", null);
         references.add(reference);
-    }
-
-    private Manifest constructManifest(XMLSignatureFactory signatureFactory)
-    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        List<Reference> manifestReferences = new ArrayList<Reference>();
-
-        try {
-            addManifestReferences(signatureFactory, manifestReferences);
-        } catch (Exception e) {
-            throw new RuntimeException("error: " + e.getMessage(), e);
-        }
-
-        return signatureFactory.newManifest(manifestReferences);
     }
 
     private void addManifestReferences(XMLSignatureFactory signatureFactory, List<Reference> manifestReferences)
@@ -223,7 +215,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             }
             
             if (parameterSpec.hasSourceIds()) {
-                List<Transform> transforms = new LinkedList<Transform>();
+                List<Transform> transforms = new ArrayList<Transform>();
                 transforms.add(signatureFactory.newTransform(
                         RelationshipTransformService.TRANSFORM_URI,
                         parameterSpec));
@@ -239,7 +231,8 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
 
-    private void addSignatureTime(XMLSignatureFactory signatureFactory,
+    private void addSignatureTime(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId,
             List<XMLStructure> objectContent) {
         /*
@@ -256,15 +249,15 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         ctTime.setValue(nowStr);
 
         // TODO: find better method to have xmlbeans + export the prefix
-        Node n = ctTime.getDomNode();
-        setPrefix(ctTime, PackageNamespaces.DIGITAL_SIGNATURE, "mdssi");
+        Element n = (Element)document.importNode(ctTime.getDomNode(),true);
+        setPrefix(n, PackageNamespaces.DIGITAL_SIGNATURE, "mdssi");
         
-        List<XMLStructure> signatureTimeContent = new LinkedList<XMLStructure>();
+        List<XMLStructure> signatureTimeContent = new ArrayList<XMLStructure>();
         signatureTimeContent.add(new DOMStructure(n));
         SignatureProperty signatureTimeSignatureProperty = signatureFactory
                 .newSignatureProperty(signatureTimeContent, "#" + signatureId,
                         "idSignatureTime");
-        List<SignatureProperty> signaturePropertyContent = new LinkedList<SignatureProperty>();
+        List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
         SignatureProperties signatureProperties = signatureFactory
                 .newSignatureProperties(signaturePropertyContent,
@@ -272,43 +265,42 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         objectContent.add(signatureProperties);
     }
 
-    private void addSignatureInfo(XMLSignatureFactory signatureFactory,
+    private void addSignatureInfo(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId, List<Reference> references,
             List<XMLObject> objects) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException {
-        List<XMLStructure> objectContent = new LinkedList<XMLStructure>();
+        List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
         ctSigV1.setManifestHashAlgorithm(hashAlgo.xmlSignUri);
-        Node n = ctSigV1.getDomNode();
-        ((Element)n).setAttributeNS(Constants.NamespaceSpecNS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
+        Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
+        n.setAttributeNS(XmlNS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
         
-        List<XMLStructure> signatureInfoContent = new LinkedList<XMLStructure>();
+        List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
         signatureInfoContent.add(new DOMStructure(n));
         SignatureProperty signatureInfoSignatureProperty = signatureFactory
                 .newSignatureProperty(signatureInfoContent, "#" + signatureId,
                         "idOfficeV1Details");
 
-        List<SignatureProperty> signaturePropertyContent = new LinkedList<SignatureProperty>();
+        List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureInfoSignatureProperty);
         SignatureProperties signatureProperties = signatureFactory
                 .newSignatureProperties(signaturePropertyContent, null);
         objectContent.add(signatureProperties);
 
         String objectId = "idOfficeObject";
-        objects.add(signatureFactory.newXMLObject(objectContent, objectId,
-                null, null));
+        objects.add(signatureFactory.newXMLObject(objectContent, objectId, null, null));
 
         DigestMethod digestMethod = signatureFactory.newDigestMethod(this.hashAlgo.xmlSignUri, null);
-        Reference reference = signatureFactory.newReference("#" + objectId,
-                digestMethod, null, "http://www.w3.org/2000/09/xmldsig#Object",
-                null);
+        Reference reference = signatureFactory.newReference
+            ("#" + objectId, digestMethod, null, XmlDSigNS+"Object", null);
         references.add(reference);
     }
 
-    public void postSign(SignatureType signatureElement,
-            List<X509Certificate> signingCertificateChain) {
+    @Override
+    public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
         // empty
     }
 
