@@ -26,21 +26,22 @@ package org.apache.poi.poifs.crypt.dsig;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.Provider;
-import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.crypto.Cipher;
+import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -53,19 +54,24 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.InitIf;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SAXHelper;
+import org.apache.xml.security.Init;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SignatureInfo {
+
+    public static final String XmlNS = "http://www.w3.org/2000/xmlns/";
+    public static final String XmlDSigNS = XMLSignature.XMLNS;
     
     public static final byte[] SHA1_DIGEST_INFO_PREFIX = new byte[]
         { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x04, 0x14 };
@@ -108,31 +114,33 @@ public class SignatureInfo {
     public boolean verifySignature() {
         initXmlProvider();
         // http://www.oracle.com/technetwork/articles/javase/dig-signature-api-140772.html
-        List<X509Certificate> signers = new LinkedList<X509Certificate>();
+        List<X509Certificate> signers = new ArrayList<X509Certificate>();
         return getSignersAndValidate(signers, true);
     }
 
-    public void confirmSignature(Key key, X509Certificate x509)
-    throws NoSuchAlgorithmException, IOException {
+    public void confirmSignature(PrivateKey key, X509Certificate x509)
+    throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException {
         confirmSignature(key, x509, HashAlgorithm.sha1);
     }
     
-    public void confirmSignature(Key key, X509Certificate x509, HashAlgorithm hashAlgo)
-    throws NoSuchAlgorithmException, IOException {
+    public void confirmSignature(PrivateKey key, X509Certificate x509, HashAlgorithm hashAlgo)
+    throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException {
         XmlSignatureService signatureService = createSignatureService(hashAlgo, pkg);
+
+        Document document = SAXHelper.getDocumentBuilder().newDocument();
         
         // operate
         List<X509Certificate> x509Chain = Collections.singletonList(x509);
-        DigestInfo digestInfo = signatureService.preSign(null, x509Chain, null, null, null);
+        DigestInfo digestInfo = signatureService.preSign(document, null, key, x509Chain, null, null, null);
 
         // setup: key material, signature value
         byte[] signatureValue = signDigest(key, hashAlgo, digestInfo.digestValue);
         
         // operate: postSign
-        signatureService.postSign(signatureValue, Collections.singletonList(x509));
+        signatureService.postSign(document, signatureValue, Collections.singletonList(x509));
     }
 
-    public static byte[] signDigest(Key key, HashAlgorithm hashAlgo, byte digest[]) {
+    public static byte[] signDigest(PrivateKey key, HashAlgorithm hashAlgo, byte digest[]) {
         Cipher cipher = CryptoFunctions.getCipher(key, CipherAlgorithm.rsa
             , ChainingMode.ecb, null, Cipher.ENCRYPT_MODE, "PKCS1Padding");
             
@@ -156,7 +164,7 @@ public class SignatureInfo {
     
     public List<X509Certificate> getSigners() {
         initXmlProvider();
-        List<X509Certificate> signers = new LinkedList<X509Certificate>();
+        List<X509Certificate> signers = new ArrayList<X509Certificate>();
         getSignersAndValidate(signers, false);
         return signers;
     }
@@ -201,7 +209,7 @@ public class SignatureInfo {
     }
 
     protected List<PackagePart> getSignatureParts(boolean onlyFirst) {
-        List<PackagePart> packageParts = new LinkedList<PackagePart>();
+        List<PackagePart> packageParts = new ArrayList<PackagePart>();
         
         PackageRelationshipCollection sigOrigRels = pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);
         for (PackageRelationship rel : sigOrigRels) {
@@ -227,17 +235,32 @@ public class SignatureInfo {
     }
     
     public static XMLSignatureFactory getSignatureFactory() {
-        Provider p = Security.getProvider("XMLDSig");
-        assert(p != null);
-        return XMLSignatureFactory.getInstance("DOM", p);
+        return XMLSignatureFactory.getInstance("DOM", getProvider());
     }
 
     public static KeyInfoFactory getKeyInfoFactory() {
-        Provider p = Security.getProvider("XMLDSig");
-        assert(p != null);
-        return KeyInfoFactory.getInstance("DOM", p);
+        return KeyInfoFactory.getInstance("DOM", getProvider());
     }
 
+    // currently classes are linked to Apache Santuario, so this might be superfluous 
+    public static Provider getProvider() {
+        String dsigProviderNames[] = {
+            System.getProperty("jsr105Provider"),
+            "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI", // Santuario xmlsec
+            "org.jcp.xml.dsig.internal.dom.XMLDSigRI"         // JDK xmlsec
+        };
+        for (String pn : dsigProviderNames) {
+            if (pn == null) continue;
+            try {
+                return (Provider)Class.forName(pn).newInstance();
+            } catch (Exception e) {
+                LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+pn+"' can't be found - trying next.");
+            }
+        }
+
+        throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
+    }
+    
     public static void insertXChild(XmlObject root, XmlObject child) {
         XmlCursor rootCursor = root.newCursor();
         insertXChild(rootCursor, child);
@@ -252,12 +275,22 @@ public class SignatureInfo {
         childCursor.dispose();
     }
 
-    public static void setPrefix(XmlObject xobj, String ns, String prefix) {
-        for (XmlCursor cur = xobj.newCursor(); cur.hasNextToken(); cur.toNextToken()) {
-            if (cur.isStart()) {
-                Element el = (Element)cur.getDomNode();
-                if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
-            }
+//    public static void setPrefix(XmlObject xobj, String ns, String prefix) {
+//        XmlCursor cur;
+//        for (cur = xobj.newCursor(); cur.hasNextToken(); cur.toNextToken()) {
+//            if (cur.isStart()) {
+//                Element el = (Element)cur.getDomNode();
+//                if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
+//            }
+//        }
+//        cur.dispose();
+//    }
+
+    public static void setPrefix(Node el, String ns, String prefix) {
+        if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
+        NodeList nl = el.getChildNodes();
+        for (int i=0; i<nl.getLength(); i++) {
+            setPrefix(nl.item(i), ns, prefix);
         }
     }
     
@@ -280,18 +313,9 @@ public class SignatureInfo {
         isInitialized = true;
         
         try {
-            InitIf init = HorribleProxy.newProxy(InitIf.class);
-            init.init();
-
+            Init.init();
             RelationshipTransformService.registerDsigProvider();
-            
-            Provider bcProv = Security.getProvider("BC");
-            if (bcProv == null) {
-                ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                Class<?> c = cl.loadClass("org.bouncycastle.jce.provider.BouncyCastleProvider");
-                bcProv = (Provider)c.newInstance();
-                Security.addProvider(bcProv);
-            }
+            CryptoFunctions.registerBouncyCastle();
         } catch (Exception e) {
             throw new RuntimeException("Xml & BouncyCastle-Provider initialization failed", e);
         }

@@ -61,6 +61,7 @@ under the License.
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
+	<property name="compile.lib" location="compile-lib"/>
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
     <!-- compiler options options -->
@@ -146,11 +147,15 @@ under the License.
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
 
-	<!-- test libs -->
-	<property name="test.bouncycastle-prov.jar" location="${main.lib}/bcprov-ext-jdk15on-1.51.jar"/>
-	<property name="test.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
-	<property name="test.bouncycastle-pkix.jar" location="${main.lib}/bcpkix-jdk15on-151.jar"/>
-	<property name="test.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-151.jar"/>
+	<!-- xml signature libs -->
+	<property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.1.jar"/>
+	<property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.1/xmlsec-2.0.1.jar"/>
+	<property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
+	<property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
+	<property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-151.jar"/>
+	<property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-151.jar"/>
+	<property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.7.jar"/>
+	<property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar"/>
 
 	<!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
@@ -438,8 +443,16 @@ under the License.
             <param name="destfile" value="${rat.jar}"/>
         </antcall>
         <antcall target="downloadfile">
-            <param name="sourcefile" value="${test.bouncycastle-prov.url}"/>
-            <param name="destfile" value="${test.bouncycastle-prov.jar}"/>
+            <param name="sourcefile" value="${dsig.bouncycastle-prov.url}"/>
+            <param name="destfile" value="${dsig.bouncycastle-prov.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.bouncycastle-pkix.url}"/>
+            <param name="destfile" value="${dsig.bouncycastle-pkix.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.xmlsec.url}"/>
+            <param name="destfile" value="${dsig.xmlsec.jar}"/>
         </antcall>
     </target>
 
