@@ -24,6 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlNS;
 import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.setPrefix;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -31,10 +32,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -52,7 +53,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.poifs.crypt.dsig.spi.Constants;
+import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlString;
@@ -74,8 +75,8 @@ import org.etsi.uri.x01903.v13.SignedPropertiesType;
 import org.etsi.uri.x01903.v13.SignedSignaturePropertiesType;
 import org.etsi.uri.x01903.v13.SignerRoleType;
 import org.w3.x2000.x09.xmldsig.DigestMethodType;
-import org.w3.x2000.x09.xmldsig.SignatureType;
 import org.w3.x2000.x09.xmldsig.X509IssuerSerialType;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -133,12 +134,14 @@ public class XAdESSignatureFacet implements SignatureFacet {
         this.dataObjectFormatMimeTypes = new HashMap<String, String>();
     }
 
-    public void postSign(SignatureType signatureElement,
-            List<X509Certificate> signingCertificateChain) {
+    @Override
+    public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
         LOG.log(POILogger.DEBUG, "postSign");
     }
 
-    public void preSign(XMLSignatureFactory signatureFactory,
+    @Override
+    public void preSign(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId,
             List<X509Certificate> signingCertificateChain,
             List<Reference> references, List<XMLObject> objects)
@@ -152,10 +155,8 @@ public class XAdESSignatureFacet implements SignatureFacet {
         
         // SignedProperties
         SignedPropertiesType signedProperties = qualifyingProperties.addNewSignedProperties();
-        String signedPropertiesId;
-        if (null != this.idSignedProperties) {
-            signedPropertiesId = this.idSignedProperties;
-        } else {
+        String signedPropertiesId = this.idSignedProperties;
+        if (this.idSignedProperties == null) {
             signedPropertiesId = signatureId + "-xades";
         }
         signedProperties.setId(signedPropertiesId);
@@ -243,17 +244,18 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // ((Element)qualifyingProperties.getSignedProperties().getDomNode()).setIdAttribute("Id", true);
 
         // add XAdES ds:Object
-        List<XMLStructure> xadesObjectContent = new LinkedList<XMLStructure>();
-        Element qualDocEl = (Element)qualifyingProperties.getDomNode();
-        qualDocEl.setAttributeNS(Constants.NamespaceSpecNS, "xmlns:xd", "http://uri.etsi.org/01903/v1.3.2#");
-        setPrefix(qualifyingProperties, "http://uri.etsi.org/01903/v1.3.2#", "xd");
+        List<XMLStructure> xadesObjectContent = new ArrayList<XMLStructure>();
+        Element qualDocEl = (Element)document.importNode(qualifyingProperties.getDomNode(), true);
+        XmlSignatureService.registerIdAttribute(qualDocEl.getElementsByTagName("SignedProperties"));
+        qualDocEl.setAttributeNS(XmlNS, "xmlns:xd", "http://uri.etsi.org/01903/v1.3.2#");
+        setPrefix(qualDocEl, "http://uri.etsi.org/01903/v1.3.2#", "xd");
         xadesObjectContent.add(new DOMStructure(qualDocEl));
         XMLObject xadesObject = signatureFactory.newXMLObject(xadesObjectContent, null, null, null);
         objects.add(xadesObject);
 
         // add XAdES ds:Reference
         DigestMethod digestMethod = signatureFactory.newDigestMethod(hashAlgo.xmlSignUri, null);
-        List<Transform> transforms = new LinkedList<Transform>();
+        List<Transform> transforms = new ArrayList<Transform>();
         Transform exclusiveTransform = signatureFactory
                 .newTransform(CanonicalizationMethod.INCLUSIVE,
                         (TransformParameterSpec) null);

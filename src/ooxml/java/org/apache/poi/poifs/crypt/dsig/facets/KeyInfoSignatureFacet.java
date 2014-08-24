@@ -24,19 +24,21 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMCryptoContext;
+import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
@@ -46,13 +48,14 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
-import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DOMKeyInfoIf;
+import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfo;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.w3.x2000.x09.xmldsig.ObjectType;
-import org.w3.x2000.x09.xmldsig.SignatureType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Signature Facet implementation that adds ds:KeyInfo to the XML signature.
@@ -84,34 +87,27 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
         this.includeKeyValue = includeKeyValue;
     }
 
-    public void postSign(SignatureType signatureElement,
-            List<X509Certificate> signingCertificateChain) {
+    @Override
+    public void postSign(Document document, List<X509Certificate> signingCertificateChain) 
+    throws MarshalException {
         LOG.log(POILogger.DEBUG, "postSign");
 
-        List<ObjectType> objList = signatureElement.getObjectList();
+        NodeList nl = document.getElementsByTagNameNS(XmlDSigNS, "Object");
         
         /*
          * Make sure we insert right after the ds:SignatureValue element, just
          * before the first ds:Object element.
          */
-        Node nextSibling = (objList.isEmpty()) ? null : objList.get(0).getDomNode();
+        Node nextSibling = (nl.getLength() == 0) ? null : nl.item(0);
 
         /*
          * Construct the ds:KeyInfo element using JSR 105.
          */
-        String providerName = System.getProperty("jsr105Provider", "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
-        Provider xmlDSigProv;
-        try {
-            xmlDSigProv = (Provider) Class.forName(providerName).newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!", e);
-        }
-        
-        KeyInfoFactory keyInfoFactory = KeyInfoFactory.getInstance("DOM", xmlDSigProv);
-        List<Object> x509DataObjects = new LinkedList<Object>();
+        KeyInfoFactory keyInfoFactory = SignatureInfo.getKeyInfoFactory();
+        List<Object> x509DataObjects = new ArrayList<Object>();
         X509Certificate signingCertificate = signingCertificateChain.get(0);
 
-        List<Object> keyInfoContent = new LinkedList<Object>();
+        List<Object> keyInfoContent = new ArrayList<Object>();
 
         if (this.includeKeyValue) {
             KeyValue keyValue;
@@ -130,24 +126,17 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
         }
 
         if (this.includeEntireCertificateChain) {
-            for (X509Certificate certificate : signingCertificateChain) {
-                x509DataObjects.add(certificate);
-            }
+            x509DataObjects.addAll(signingCertificateChain);
         } else {
             x509DataObjects.add(signingCertificate);
         }
 
-        if (false == x509DataObjects.isEmpty()) {
+        if (!x509DataObjects.isEmpty()) {
             X509Data x509Data = keyInfoFactory.newX509Data(x509DataObjects);
             keyInfoContent.add(x509Data);
         }
         KeyInfo keyInfo = keyInfoFactory.newKeyInfo(keyInfoContent);
-        DOMKeyInfoIf domKeyInfo;
-        try {
-            domKeyInfo = HorribleProxy.newProxy(DOMKeyInfoIf.class, keyInfo);
-        } catch (Exception e) {
-            throw new RuntimeException("DOMKeyInfo instance error: " + e.getMessage(), e);
-        }        
+        DOMKeyInfo domKeyInfo = (DOMKeyInfo)keyInfo; 
 
         Key key = new Key() {
             private static final long serialVersionUID = 1L;
@@ -165,18 +154,27 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
             }
         };
 
-        DOMSignContext domSignContext = new DOMSignContext(key, signatureElement.getDomNode());
+        Element n = document.getDocumentElement();
+        DOMSignContext domSignContext = new DOMSignContext(key, n, nextSibling);
         DOMCryptoContext domCryptoContext = domSignContext;
-        String signatureNamespacePrefix = "xd";
-        try {
-            domKeyInfo.marshal(signatureElement.getDomNode(), nextSibling,
-                signatureNamespacePrefix, domCryptoContext);
-        } catch (MarshalException e) {
-            throw new RuntimeException("marshall error: " + e.getMessage(), e);
+        domCryptoContext.putNamespacePrefix(XmlDSigNS, "xd");
+        DOMStructure domStructure = new DOMStructure(n);
+        // how to set nextSibling??? - marshal is ignoring nextSibling in DOMSignContext
+        domKeyInfo.marshal(domStructure, domCryptoContext);
+        
+        // move keyinfo into the right place
+        if (nextSibling != null) {
+            NodeList kiNl = document.getElementsByTagNameNS(XmlDSigNS, "KeyInfo");
+            if (kiNl.getLength() != 1) {
+                throw new RuntimeException("KeyInfo wasn't set");
+            }
+            nextSibling.getParentNode().insertBefore(kiNl.item(0), nextSibling);
         }
     }
 
-    public void preSign(XMLSignatureFactory signatureFactory,
+    @Override
+    public void preSign(Document document,
+        XMLSignatureFactory signatureFactory,
         String signatureId,
         List<X509Certificate> signingCertificateChain,
         List<Reference> references,
@@ -187,7 +185,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
 
     public Map<String,String> getNamespacePrefixMapping() {
         Map<String,String> map = new HashMap<String,String>();
-        // map.put("xd", "http://www.w3.org/2000/09/xmldsig#");
+        // map.put("xd", XmlDSigNS);
         return map;
     }
 

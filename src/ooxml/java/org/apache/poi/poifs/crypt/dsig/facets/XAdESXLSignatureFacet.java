@@ -24,7 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.newProxy;
+import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,9 +37,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -50,26 +50,24 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1IntegerIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1OctetStringIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BasicOCSPRespIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.CanonicalizerIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DERTaggedObjectIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.InitIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.OCSPRespIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.RespIDIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ResponderIDIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509ExtensionsIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509NameIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxy;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.xmlbeans.XmlObject;
+import org.apache.xml.security.c14n.Canonicalizer;
+import org.apache.xmlbeans.XmlException;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.ocsp.ResponderID;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.cert.ocsp.BasicOCSPResp;
+import org.bouncycastle.cert.ocsp.OCSPResp;
+import org.bouncycastle.cert.ocsp.RespID;
 import org.etsi.uri.x01903.v13.CRLIdentifierType;
 import org.etsi.uri.x01903.v13.CRLRefType;
 import org.etsi.uri.x01903.v13.CRLRefsType;
@@ -93,9 +91,9 @@ import org.etsi.uri.x01903.v13.UnsignedSignaturePropertiesType;
 import org.etsi.uri.x01903.v13.XAdESTimeStampType;
 import org.etsi.uri.x01903.v14.ValidationDataType;
 import org.w3.x2000.x09.xmldsig.CanonicalizationMethodType;
-import org.w3.x2000.x09.xmldsig.SignatureType;
-import org.w3.x2000.x09.xmldsig.SignatureValueType;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * XAdES-X-L v1.4.1 signature facet. This signature facet implementation will
@@ -128,14 +126,6 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     private final CertificateFactory certificateFactory;
 
     private final HashAlgorithm hashAlgo;
-
-    static {
-        try {
-            HorribleProxy.createProxy(InitIf.class, "init");
-        } catch (Exception e) {
-            throw new RuntimeException("Can't initialize JDK xml signature classes - feature unsupported by the this JDK?!", e);
-        }
-    }
 
     /**
      * Convenience constructor.
@@ -184,21 +174,19 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         this.c14nAlgoId = c14nAlgoId;
     }
 
-    public void postSign(SignatureType signatureElement,
-            List<X509Certificate> signingCertificateChain) {
+    @Override
+    public void postSign(Document document,
+        List<X509Certificate> signingCertificateChain
+    ) throws XmlException {
         LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
 
         QualifyingPropertiesType qualProps = null;
-        String qualPropXQuery =
-                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
-              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
-              + "$this/ds:Object/xades:QualifyingProperties";
-        XmlObject xoList[] = signatureElement.selectPath(qualPropXQuery);
-        if (xoList.length == 1) {
-            qualProps = (QualifyingPropertiesType)xoList[0];
-        }
-        
-        if (qualProps == null) {
+
+        // check for XAdES-BES
+        NodeList qualNl = document.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "QualifyingProperties");
+        if (qualNl.getLength() == 1) {
+            qualProps = QualifyingPropertiesType.Factory.parse(qualNl.item(0));
+        } else {
             throw new IllegalArgumentException("no XAdES-BES extension present");
         }
 
@@ -214,14 +202,15 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         
 
         // create the XAdES-T time-stamp
-        SignatureValueType svt = signatureElement.getSignatureValue();
+        NodeList nlSigVal = document.getElementsByTagNameNS(XmlDSigNS, "SignatureValue");
+        if (nlSigVal.getLength() != 1) {
+            throw new IllegalArgumentException("SignatureValue is not set.");
+        }
         
         RevocationData tsaRevocationDataXadesT = new RevocationData();
         LOG.log(POILogger.DEBUG, "creating XAdES-T time-stamp");
         XAdESTimeStampType signatureTimeStamp = createXAdESTimeStamp(
-                Collections.singletonList(svt.getDomNode()),
-                tsaRevocationDataXadesT, this.c14nAlgoId,
-                this.timeStampService);
+            Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT, this.c14nAlgoId, this.timeStampService);
 
         // marshal the XAdES-T extension
         unsignedSigProps.addNewSignatureTimeStamp().set(signatureTimeStamp);
@@ -298,9 +287,9 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     
                     OCSPIdentifierType ocspIdentifier = ocspRef.addNewOCSPIdentifier();
                     
-                    OCSPRespIf ocspResp = HorribleProxy.newProxy(OCSPRespIf.class, ocsp);
+                    OCSPResp ocspResp = new OCSPResp(ocsp);
                     
-                    BasicOCSPRespIf basicOcspResp = ocspResp.getResponseObject();
+                    BasicOCSPResp basicOcspResp = (BasicOCSPResp)ocspResp.getResponseObject();
                     
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(basicOcspResp.getProducedAt());
@@ -308,16 +297,16 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     
                     ResponderIDType responderId = ocspIdentifier.addNewResponderID();
     
-                    RespIDIf respId = basicOcspResp.getResponderId();
-                    ResponderIDIf ocspResponderId = respId.toASN1Object();
-                    DERTaggedObjectIf derTaggedObject = ocspResponderId.toASN1Object();
+                    RespID respId = basicOcspResp.getResponderId();
+                    ResponderID ocspResponderId = respId.toASN1Object();
+                    DERTaggedObject derTaggedObject = (DERTaggedObject)ocspResponderId.toASN1Primitive();
                     if (2 == derTaggedObject.getTagNo()) {
-                        ASN1OctetStringIf keyHashOctetString = derTaggedObject.getObject$String();
+                        ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getObject();
                         byte key[] = keyHashOctetString.getOctets();
                         responderId.setByKey(key);
                     } else {
-                        X509NameIf name = HorribleProxy.createProxy(X509NameIf.class, "getInstance", derTaggedObject.getObject$Object());
-                        String nameStr = name.toString$delegate();
+                        X500Name name = X500Name.getInstance(derTaggedObject.getObject());
+                        String nameStr = name.toString();
                         responderId.setByName(nameStr);
                     }
                 } catch (Exception e) {
@@ -327,13 +316,10 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         }
 
         // marshal XAdES-C
-
+        
         // XAdES-X Type 1 timestamp
-        
-        
-        
-        List<Node> timeStampNodesXadesX1 = new LinkedList<Node>();
-        timeStampNodesXadesX1.add(signatureElement.getDomNode());
+        List<Node> timeStampNodesXadesX1 = new ArrayList<Node>();
+        timeStampNodesXadesX1.add(nlSigVal.item(0));
         timeStampNodesXadesX1.add(signatureTimeStamp.getDomNode());
         timeStampNodesXadesX1.add(completeCertificateRefs.getDomNode());
         timeStampNodesXadesX1.add(completeRevocationRefs.getDomNode());
@@ -365,6 +351,8 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         createRevocationValues(revocationValues, revocationData);
 
         // marshal XAdES-X-L
+        Node n = document.importNode(qualProps.getDomNode().getFirstChild(), true);
+        qualNl.item(0).getParentNode().replaceChild(n, qualNl.item(0));
     }
 
     public static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
@@ -375,7 +363,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                  * Re-initialize the c14n else the namespaces will get cached
                  * and will be missing from the c14n resulting nodes.
                  */
-                CanonicalizerIf c14n = HorribleProxy.createProxy(CanonicalizerIf.class, "getInstance", c14nAlgoId);
+                Canonicalizer c14n = Canonicalizer.getInstance(c14nAlgoId);
                 c14nValue.write(c14n.canonicalizeSubtree(node));
             }
         } catch (RuntimeException e) {
@@ -386,7 +374,9 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         return c14nValue.toByteArray();
     }
 
-    public void preSign(XMLSignatureFactory signatureFactory,
+    @Override
+    public void preSign(Document document,
+            XMLSignatureFactory signatureFactory,
             String signatureId,
             List<X509Certificate> signingCertificateChain,
             List<Reference> references, List<XMLObject> objects)
@@ -396,17 +386,17 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
     private BigInteger getCrlNumber(X509CRL crl) {
         try {
-            X509ExtensionsIf x509ext = newProxy(X509ExtensionsIf.class);
-            byte[] crlNumberExtensionValue = crl.getExtensionValue(x509ext.CRLNumber().getId());
+            byte[] crlNumberExtensionValue = crl.getExtensionValue(Extension.cRLNumber.getId());
             if (null == crlNumberExtensionValue) {
                 return null;
             }
 
-            ASN1InputStreamIf asn1InputStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, crlNumberExtensionValue);
-            ASN1OctetStringIf octetString = asn1InputStream.readObject$ASNString();
+            @SuppressWarnings("resource")
+            ASN1InputStream asn1InputStream = new ASN1InputStream(crlNumberExtensionValue);
+            ASN1OctetString octetString = (ASN1OctetString)asn1InputStream.readObject();
             byte[] octets = octetString.getOctets();
-            asn1InputStream = HorribleProxy.newProxy(ASN1InputStreamIf.class, octets);
-            ASN1IntegerIf integer =  asn1InputStream.readObject$Integer();
+            asn1InputStream = new ASN1InputStream(octets);
+            ASN1Integer integer = (ASN1Integer)asn1InputStream.readObject();
             BigInteger crlNumber = integer.getPositiveValue();
             return crlNumber;
         } catch (Exception e) {

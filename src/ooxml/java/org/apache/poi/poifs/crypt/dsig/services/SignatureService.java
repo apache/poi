@@ -26,16 +26,18 @@ package org.apache.poi.poifs.crypt.dsig.services;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
-import org.apache.poi.poifs.crypt.dsig.CertificateSecurityException;
-import org.apache.poi.poifs.crypt.dsig.ExpiredCertificateSecurityException;
-import org.apache.poi.poifs.crypt.dsig.RevokedCertificateSecurityException;
-import org.apache.poi.poifs.crypt.dsig.TrustCertificateSecurityException;
+import javax.xml.crypto.MarshalException;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.poi.poifs.crypt.dsig.spi.AddressDTO;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.poifs.crypt.dsig.spi.IdentityDTO;
+import org.apache.xmlbeans.XmlException;
+import org.w3c.dom.Document;
 
 /**
  * Interface for signature service component.
@@ -79,7 +81,8 @@ public interface SignatureService {
      * @return the digest to be signed.
      * @throws NoSuchAlgorithmException
      */
-    DigestInfo preSign(List<DigestInfo> digestInfos,
+    DigestInfo preSign(Document document, List<DigestInfo> digestInfos,
+            PrivateKey privateKey,
             List<X509Certificate> signingCertificateChain,
             IdentityDTO identity, AddressDTO address, byte[] photo)
             throws NoSuchAlgorithmException;
@@ -92,10 +95,7 @@ public interface SignatureService {
      * @param signingCertificateChain
      *            the optional chain of signing certificates.
      */
-    void postSign(byte[] signatureValue,
+    void postSign(Document document, byte[] signatureValue,
             List<X509Certificate> signingCertificateChain)
-            throws ExpiredCertificateSecurityException,
-            RevokedCertificateSecurityException,
-            TrustCertificateSecurityException, CertificateSecurityException,
-            SecurityException, IOException;
+            throws IOException, MarshalException, ParserConfigurationException, XmlException;
 }

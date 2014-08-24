@@ -24,10 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
-import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.createProxy;
-import static org.apache.poi.poifs.crypt.dsig.HorribleProxy.newProxy;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -38,39 +34,37 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.x500.X500Principal;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1InputStreamIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.ASN1OctetStringIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.AuthorityKeyIdentifierIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BcDigestCalculatorProviderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.BcRSASignerInfoVerifierBuilderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DEROctetStringIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.DefaultDigestAlgorithmIdentifierFinderIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.PKIFailureInfoIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.SignerIdIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.SignerInformationVerifierIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.SubjectKeyIdentifierIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampRequestGeneratorIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampRequestIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampResponseIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.TimeStampTokenIf;
-import org.apache.poi.poifs.crypt.dsig.HorribleProxies.X509CertificateHolderIf;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.bouncycastle.asn1.cmp.PKIFailureInfo;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
+import org.bouncycastle.cms.SignerId;
+import org.bouncycastle.cms.SignerInformationVerifier;
+import org.bouncycastle.cms.bc.BcRSASignerInfoVerifierBuilder;
+import org.bouncycastle.operator.DefaultDigestAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder;
+import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
+import org.bouncycastle.tsp.TimeStampRequest;
+import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampToken;
 
 /**
  * A TSP time-stamp service implementation.
@@ -108,6 +102,10 @@ public class TSPTimeStampService implements TimeStampService {
 
     private String digestAlgoOid;
 
+    private String requestContentType = "application/timestamp-query;charset=ISO-8859-1";
+
+    private String responseContentType = "application/timestamp-reply";
+    
     public TSPTimeStampService(String tspServiceUrl,
             TimeStampServiceValidator validator) {
         this(tspServiceUrl, validator, null, null);
@@ -234,12 +232,12 @@ public class TSPTimeStampService implements TimeStampService {
 
         // generate the TSP request
         BigInteger nonce = new BigInteger(128, new SecureRandom());
-        TimeStampRequestGeneratorIf requestGenerator = newProxy(TimeStampRequestGeneratorIf.class);
+        TimeStampRequestGenerator requestGenerator = new TimeStampRequestGenerator();
         requestGenerator.setCertReq(true);
         if (null != this.requestPolicy) {
             requestGenerator.setReqPolicy(this.requestPolicy);
         }
-        TimeStampRequestIf request = requestGenerator.generate(this.digestAlgoOid, digest, nonce);
+        TimeStampRequest request = requestGenerator.generate(this.digestAlgoOid, digest, nonce);
         byte[] encodedRequest = request.getEncoded();
 
         // create the HTTP POST request
@@ -256,8 +254,7 @@ public class TSPTimeStampService implements TimeStampService {
 
         huc.setDoOutput(true); // also sets method to POST.
         huc.setRequestProperty("User-Agent", this.userAgent);
-        // "application/timestamp-query;charset=ISO-8859-1"
-        huc.setRequestProperty("Content-Type", "application/timestamp-request");
+        huc.setRequestProperty("Content-Type", requestContentType);
         
         OutputStream hucOut = huc.getOutputStream();
         hucOut.write(encodedRequest);
@@ -281,8 +278,7 @@ public class TSPTimeStampService implements TimeStampService {
         IOUtils.copy(huc.getInputStream(), bos);
         LOG.log(POILogger.DEBUG, "response content: ", bos.toString());
         
-        // "application/timestamp-reply"
-        if (!contentType.startsWith("application/timestamp-response")) {
+        if (!contentType.startsWith(responseContentType)) {
             throw new RuntimeException("invalid Content-Type: " + contentType);
         }
         
@@ -291,13 +287,13 @@ public class TSPTimeStampService implements TimeStampService {
         }
 
         // TSP response parsing and validation
-        TimeStampResponseIf timeStampResponse = newProxy(TimeStampResponseIf.class, bos.toByteArray());
+        TimeStampResponse timeStampResponse = new TimeStampResponse(bos.toByteArray());
         timeStampResponse.validate(request);
 
         if (0 != timeStampResponse.getStatus()) {
             LOG.log(POILogger.DEBUG, "status: " + timeStampResponse.getStatus());
             LOG.log(POILogger.DEBUG, "status string: " + timeStampResponse.getStatusString());
-            PKIFailureInfoIf failInfo = timeStampResponse.getFailInfo();
+            PKIFailureInfo failInfo = timeStampResponse.getFailInfo();
             if (null != failInfo) {
                 LOG.log(POILogger.DEBUG, "fail info int value: " + failInfo.intValue());
                 if (/*PKIFailureInfo.unacceptedPolicy*/(1 << 8) == failInfo.intValue()) {
@@ -307,30 +303,29 @@ public class TSPTimeStampService implements TimeStampService {
             throw new RuntimeException("timestamp response status != 0: "
                     + timeStampResponse.getStatus());
         }
-        TimeStampTokenIf timeStampToken = timeStampResponse.getTimeStampToken();
-        SignerIdIf signerId = timeStampToken.getSID();
+        TimeStampToken timeStampToken = timeStampResponse.getTimeStampToken();
+        SignerId signerId = timeStampToken.getSID();
         BigInteger signerCertSerialNumber = signerId.getSerialNumber();
-        X500Principal signerCertIssuer = signerId.getIssuer();
+        X500Name signerCertIssuer = signerId.getIssuer();
         LOG.log(POILogger.DEBUG, "signer cert serial number: " + signerCertSerialNumber);
         LOG.log(POILogger.DEBUG, "signer cert issuer: " + signerCertIssuer);
 
         // TSP signer certificates retrieval
-        Collection<Certificate> certificates = timeStampToken.getCertificates().getMatches(null);
+        Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
+        JcaX509ExtensionUtils utils = new JcaX509ExtensionUtils();
         
-        X509Certificate signerCert = null;
-        Map<String, X509Certificate> certificateMap = new HashMap<String, X509Certificate>();
-        for (Certificate certificate : certificates) {
-            X509Certificate x509Certificate = (X509Certificate) certificate;
-            if (signerCertIssuer.equals(x509Certificate
-                    .getIssuerX500Principal())
-                    && signerCertSerialNumber.equals(x509Certificate
-                            .getSerialNumber())) {
-                signerCert = x509Certificate;
+        X509CertificateHolder signerCert = null;
+        Map<String, X509CertificateHolder> certificateMap = new HashMap<String, X509CertificateHolder>();
+        for (X509CertificateHolder certificate : certificates) {
+            if (signerCertIssuer.equals(certificate.getIssuer())
+                && signerCertSerialNumber.equals(certificate.getSerialNumber())) {
+                signerCert = certificate;
             }
-            String ski = Hex.encodeHexString(getSubjectKeyId(x509Certificate));
-            certificateMap.put(ski, x509Certificate);
+            byte skiBytes[] = utils.createSubjectKeyIdentifier(certificate.getSubjectPublicKeyInfo()).getKeyIdentifier();
+            String ski = Hex.encodeHexString(skiBytes);
+            certificateMap.put(ski, certificate);
             LOG.log(POILogger.DEBUG, "embedded certificate: "
-                    + x509Certificate.getSubjectX500Principal() + "; SKI="
+                    + certificate.getSubject() + "; SKI="
                     + ski);
         }
 
@@ -339,26 +334,29 @@ public class TSPTimeStampService implements TimeStampService {
             throw new RuntimeException(
                     "TSP response token has no signer certificate");
         }
-        List<X509Certificate> tspCertificateChain = new LinkedList<X509Certificate>();
-        X509Certificate certificate = signerCert;
+        List<X509Certificate> tspCertificateChain = new ArrayList<X509Certificate>();
+        JcaX509CertificateConverter x509converter = new JcaX509CertificateConverter();
+        x509converter.setProvider("BC");
+        X509CertificateHolder certificate = signerCert;
         do {
-            LOG.log(POILogger.DEBUG, "adding to certificate chain: "
-                    + certificate.getSubjectX500Principal());
-            tspCertificateChain.add(certificate);
-            if (certificate.getSubjectX500Principal().equals(
-                    certificate.getIssuerX500Principal())) {
+            LOG.log(POILogger.DEBUG, "adding to certificate chain: " + certificate.getSubject());
+            tspCertificateChain.add(x509converter.getCertificate(certificate));
+            if (certificate.getSubject().equals(certificate.getIssuer())) {
                 break;
             }
-            String aki = Hex.encodeHexString(getAuthorityKeyId(certificate));
+            byte akiBytes[] = utils.createAuthorityKeyIdentifier(certificate.getSubjectPublicKeyInfo()).getKeyIdentifier();
+            String aki = Hex.encodeHexString(akiBytes);
             certificate = certificateMap.get(aki);
         } while (null != certificate);
 
         // verify TSP signer signature
-        X509CertificateHolderIf holder = newProxy(X509CertificateHolderIf.class, tspCertificateChain.get(0).getEncoded());
-        DefaultDigestAlgorithmIdentifierFinderIf finder = newProxy(DefaultDigestAlgorithmIdentifierFinderIf.class);
-        BcDigestCalculatorProviderIf calculator = newProxy(BcDigestCalculatorProviderIf.class);
-        BcRSASignerInfoVerifierBuilderIf verifierBuilder = newProxy(BcRSASignerInfoVerifierBuilderIf.class, finder, calculator);
-        SignerInformationVerifierIf verifier = verifierBuilder.build(holder);
+        X509CertificateHolder holder = new X509CertificateHolder(tspCertificateChain.get(0).getEncoded());
+        DefaultCMSSignatureAlgorithmNameGenerator nameGen = new DefaultCMSSignatureAlgorithmNameGenerator();
+        DefaultSignatureAlgorithmIdentifierFinder sigAlgoFinder = new DefaultSignatureAlgorithmIdentifierFinder();
+        DefaultDigestAlgorithmIdentifierFinder hashAlgoFinder = new DefaultDigestAlgorithmIdentifierFinder();
+        BcDigestCalculatorProvider calculator = new BcDigestCalculatorProvider();
+        BcRSASignerInfoVerifierBuilder verifierBuilder = new BcRSASignerInfoVerifierBuilder(nameGen, sigAlgoFinder, hashAlgoFinder, calculator);
+        SignerInformationVerifier verifier = verifierBuilder.build(holder);
         
         timeStampToken.validate(verifier);
 
@@ -372,29 +370,19 @@ public class TSPTimeStampService implements TimeStampService {
         return timestamp;
     }
 
-    private byte[] getSubjectKeyId(X509Certificate cert) throws Exception {
-        // X509Extensions.SubjectKeyIdentifier.getId()
-        byte[] extvalue = cert.getExtensionValue("2.5.29.14");
-        if (extvalue == null) return null;
-
-        ASN1InputStreamIf keyCntStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(extvalue));
-        ASN1OctetStringIf cntStr = createProxy(ASN1OctetStringIf.class, "getInstance", keyCntStream.readObject$Object());
-        ASN1InputStreamIf keyIdStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(cntStr.getOctets()));
-        SubjectKeyIdentifierIf keyId = createProxy(SubjectKeyIdentifierIf.class, "getInstance", keyIdStream.readObject$Object());
-
-        return keyId.getKeyIdentifier();
+    /**
+     * usually the request content type is "application/timestamp-query;charset=ISO-8859-1",
+     * but some timestamp server use a different content type
+     */
+    public void setRequestContentType(String requestContentType) {
+        this.requestContentType = requestContentType;
     }
 
-    private byte[] getAuthorityKeyId(X509Certificate cert) throws Exception {
-        // X509Extensions.AuthorityKeyIdentifier.getId()
-        byte[] extvalue = cert.getExtensionValue("2.5.29.35");
-        if (extvalue == null) return null;
-
-        ASN1InputStreamIf keyCntStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(extvalue));
-        DEROctetStringIf cntStr = keyCntStream.readObject$DERString();
-        ASN1InputStreamIf keyIdStream = newProxy(ASN1InputStreamIf.class, new ByteArrayInputStream(cntStr.getOctets()));
-        AuthorityKeyIdentifierIf keyId = newProxy(AuthorityKeyIdentifierIf.class, keyIdStream.readObject$Sequence());
-        
-        return keyId.getKeyIdentifier();
+    /**
+     * usually the response content type is "application/timestamp-reply",
+     * but some timestamp server use a different content type
+     */
+    public void setResponseContentType(String responseContentType) {
+        this.responseContentType = responseContentType;
     }
 }

@@ -24,17 +24,21 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
-import org.w3.x2000.x09.xmldsig.SignatureType;
+import org.apache.xmlbeans.XmlException;
+import org.w3c.dom.Document;
 
 /**
  * JSR105 Signature Facet interface.
@@ -60,12 +64,13 @@ public interface SignatureFacet {
      * @throws NoSuchAlgorithmException
      */
     void preSign(
-          XMLSignatureFactory signatureFactory
+          Document document
+        , XMLSignatureFactory signatureFactory
         , String signatureId
         , List<X509Certificate> signingCertificateChain
         , List<Reference> references
         , List<XMLObject> objects
-    ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException;
+    ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException;
 
     /**
      * This method is being invoked by the XML signature service engine during
@@ -76,8 +81,9 @@ public interface SignatureFacet {
      * @param signingCertificateChain
      */
     void postSign(
-          SignatureType signatureElement
-        , List<X509Certificate> signingCertificateChain);
+          Document document
+        , List<X509Certificate> signingCertificateChain
+    ) throws MarshalException, XmlException;
     
     Map<String,String> getNamespacePrefixMapping();
 }
