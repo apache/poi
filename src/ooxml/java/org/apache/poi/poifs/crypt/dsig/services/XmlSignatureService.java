@@ -282,6 +282,7 @@ public class XmlSignatureService implements SignatureService {
             signatureFacet.postSign(document, signingCertificateChain);
         }
 
+        registerIds(document);
         writeDocument(document);
     }
 
@@ -384,8 +385,6 @@ public class XmlSignatureService implements SignatureService {
         xmlSignature.sign(xmlSignContext);
 
         registerIds(document);
-        // document.getElementById("idPackageObject").setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
-
         
         /*
          * Completion of undigested ds:References in the ds:Manifests.
