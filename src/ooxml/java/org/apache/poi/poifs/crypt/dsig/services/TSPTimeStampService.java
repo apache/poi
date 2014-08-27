@@ -43,7 +43,6 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
@@ -315,18 +314,13 @@ public class TSPTimeStampService implements TimeStampService {
         JcaX509ExtensionUtils utils = new JcaX509ExtensionUtils();
         
         X509CertificateHolder signerCert = null;
-        Map<String, X509CertificateHolder> certificateMap = new HashMap<String, X509CertificateHolder>();
+        Map<X500Name, X509CertificateHolder> certificateMap = new HashMap<X500Name, X509CertificateHolder>();
         for (X509CertificateHolder certificate : certificates) {
             if (signerCertIssuer.equals(certificate.getIssuer())
                 && signerCertSerialNumber.equals(certificate.getSerialNumber())) {
                 signerCert = certificate;
             }
-            byte skiBytes[] = utils.createSubjectKeyIdentifier(certificate.getSubjectPublicKeyInfo()).getKeyIdentifier();
-            String ski = Hex.encodeHexString(skiBytes);
-            certificateMap.put(ski, certificate);
-            LOG.log(POILogger.DEBUG, "embedded certificate: "
-                    + certificate.getSubject() + "; SKI="
-                    + ski);
+            certificateMap.put(certificate.getSubject(), certificate);
         }
 
         // TSP signer cert path building
@@ -344,9 +338,7 @@ public class TSPTimeStampService implements TimeStampService {
             if (certificate.getSubject().equals(certificate.getIssuer())) {
                 break;
             }
-            byte akiBytes[] = utils.createAuthorityKeyIdentifier(certificate.getSubjectPublicKeyInfo()).getKeyIdentifier();
-            String aki = Hex.encodeHexString(akiBytes);
-            certificate = certificateMap.get(aki);
+            certificate = certificateMap.get(certificate.getIssuer());
         } while (null != certificate);
 
         // verify TSP signer signature

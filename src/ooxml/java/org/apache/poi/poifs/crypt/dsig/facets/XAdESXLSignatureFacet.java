@@ -83,6 +83,7 @@ import org.etsi.uri.x01903.v13.OCSPIdentifierType;
 import org.etsi.uri.x01903.v13.OCSPRefType;
 import org.etsi.uri.x01903.v13.OCSPRefsType;
 import org.etsi.uri.x01903.v13.OCSPValuesType;
+import org.etsi.uri.x01903.v13.QualifyingPropertiesDocument;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.etsi.uri.x01903.v13.ResponderIDType;
 import org.etsi.uri.x01903.v13.RevocationValuesType;
@@ -180,12 +181,14 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     ) throws XmlException {
         LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
 
+        QualifyingPropertiesDocument qualDoc = null;
         QualifyingPropertiesType qualProps = null;
 
         // check for XAdES-BES
         NodeList qualNl = document.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "QualifyingProperties");
         if (qualNl.getLength() == 1) {
-            qualProps = QualifyingPropertiesType.Factory.parse(qualNl.item(0));
+            qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0));
+            qualProps = qualDoc.getQualifyingProperties();
         } else {
             throw new IllegalArgumentException("no XAdES-BES extension present");
         }
@@ -335,6 +338,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         }
 
         // marshal XAdES-X
+        unsignedSigProps.addNewSigAndRefsTimeStamp().set(timeStampXadesX1);
 
         // XAdES-X-L
         CertificateValuesType certificateValues = unsignedSigProps.addNewCertificateValues();
@@ -351,7 +355,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         createRevocationValues(revocationValues, revocationData);
 
         // marshal XAdES-X-L
-        Node n = document.importNode(qualProps.getDomNode().getFirstChild(), true);
+        Node n = document.importNode(qualProps.getDomNode(), true);
         qualNl.item(0).getParentNode().replaceChild(n, qualNl.item(0));
     }
 
