@@ -184,7 +184,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
                     // TODO Create according XWPFComment class, extending POIXMLDocumentPart
                     CommentsDocument cmntdoc = CommentsDocument.Factory.parse(p.getPackagePart().getInputStream());
-                    for (CTComment ctcomment : cmntdoc.getComments().getCommentList()) {
+                    for (CTComment ctcomment : cmntdoc.getComments().getCommentArray()) {
                         comments.add(new XWPFComment(ctcomment, this));
                     }
                 } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
@@ -232,6 +232,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void initFootnotes() throws XmlException, IOException {
         for(POIXMLDocumentPart p : getRelations()){
             String relation = p.getPackageRelationship().getRelationshipType();
@@ -241,7 +242,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())){
                 EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream());
 
-                for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteList()) {
+                for(CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteArray()) {
                     endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
                 }
             }
@@ -364,10 +365,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFHyperlink getHyperlinkByID(String id) {
-        Iterator<XWPFHyperlink> iter = hyperlinks.iterator();
-        while (iter.hasNext()) {
-            XWPFHyperlink link = iter.next();
-            if(link.getId().equals(id))
+        for (XWPFHyperlink link : hyperlinks) {
+            if (link.getId().equals(id))
                 return link;
         }
 
@@ -396,10 +395,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFComment getCommentByID(String id) {
-        Iterator<XWPFComment> iter = comments.iterator();
-        while (iter.hasNext()) {
-            XWPFComment comment = iter.next();
-            if(comment.getId().equals(id))
+        for (XWPFComment comment : comments) {
+            if (comment.getId().equals(id))
                 return comment;
         }
 
@@ -1187,14 +1184,15 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @param table
      */
     @Override
+    @SuppressWarnings("deprecation")
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
-        int i;
-        for (i = 0; i < ctDocument.getBody().getTblList().size(); i++) {
-            CTTbl tbl = ctDocument.getBody().getTblArray(i);
+        int i = 0;
+        for (CTTbl tbl : ctDocument.getBody().getTblArray()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
+            i++;
         }
         tables.add(i, table);
     }

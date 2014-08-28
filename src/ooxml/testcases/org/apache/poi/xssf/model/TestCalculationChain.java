@@ -32,7 +32,7 @@ public final class TestCalculationChain extends TestCase {
         CalculationChain chain = wb.getCalculationChain();
         //the bean holding the reference to the formula to be deleted
         CTCalcCell c = chain.getCTCalcChain().getCArray(0);
-        int cnt = chain.getCTCalcChain().getCList().size();
+        int cnt = chain.getCTCalcChain().sizeOfCArray();
         assertEquals(10, c.getI());
         assertEquals("E1", c.getR());
 
@@ -44,7 +44,7 @@ public final class TestCalculationChain extends TestCase {
 
         //the count of items is less by one
         c = chain.getCTCalcChain().getCArray(0);
-        int cnt2 =  chain.getCTCalcChain().getCList().size();
+        int cnt2 =  chain.getCTCalcChain().sizeOfCArray();
         assertEquals(cnt - 1, cnt2);
         //the first item in the calculation chain is the former second one
         assertEquals(10, c.getI());

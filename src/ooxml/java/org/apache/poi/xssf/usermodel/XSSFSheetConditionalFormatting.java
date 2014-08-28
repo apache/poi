@@ -19,21 +19,21 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.hssf.record.cf.CellRangeUtil;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.hssf.record.cf.CellRangeUtil;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-
-import java.util.List;
-import java.util.ArrayList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
 
 /**
  * @author Yegor Kozlov
@@ -115,6 +115,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         return rule;
     }
 
+    @SuppressWarnings("deprecation")
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         if (regions == null) {
             throw new IllegalArgumentException("regions must not be null");
@@ -144,7 +145,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
 
 
         int priority = 1;
-        for(CTConditionalFormatting c : _sheet.getCTWorksheet().getConditionalFormattingList()){
+        for(CTConditionalFormatting c : _sheet.getCTWorksheet().getConditionalFormattingArray()){
             priority += c.sizeOfCfRuleArray();
         }
 
@@ -220,7 +221,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     */
     public void removeConditionalFormatting(int index) {
         checkIndex(index);
-        _sheet.getCTWorksheet().getConditionalFormattingList().remove(index);
+        _sheet.getCTWorksheet().removeConditionalFormatting(index);
     }
 
     private void checkIndex(int index) {

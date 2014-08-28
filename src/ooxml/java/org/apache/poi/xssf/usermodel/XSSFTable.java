@@ -128,13 +128,14 @@ public class XSSFTable extends POIXMLDocumentPart {
 	 * 
 	 * @return the xpath of the table's root element
 	 */
+    @SuppressWarnings("deprecation")
 	public String getCommonXpath() {
 		
 		if(commonXPath == null){
 		
 		String[] commonTokens ={};
 		
-		for(CTTableColumn column :ctTable.getTableColumns().getTableColumnList()){
+		for(CTTableColumn column :ctTable.getTableColumns().getTableColumnArray()){
 			if(column.getXmlColumnPr()!=null){
 				String xpath = column.getXmlColumnPr().getXpath();
 				String[] tokens =  xpath.split("/");
@@ -173,11 +174,12 @@ public class XSSFTable extends POIXMLDocumentPart {
 	}
 
 	
+    @SuppressWarnings("deprecation")
 	public List<XSSFXmlColumnPr> getXmlColumnPrs() {
 		
 		if(xmlColumnPr==null){
 			xmlColumnPr = new ArrayList<XSSFXmlColumnPr>();
-			for (CTTableColumn column:ctTable.getTableColumns().getTableColumnList()){
+			for (CTTableColumn column:ctTable.getTableColumns().getTableColumnArray()){
 				if (column.getXmlColumnPr()!=null){
 					XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
 					xmlColumnPr.add(columnPr);
@@ -285,6 +287,7 @@ public class XSSFTable extends POIXMLDocumentPart {
      * Headers <em>must</em> be in sync, otherwise Excel will display a
      * "Found unreadable content" message on startup.
      */
+    @SuppressWarnings("deprecation")
     public void updateHeaders(){
         XSSFSheet sheet = (XSSFSheet)getParent();
         CellReference ref = getStartCellReference();
@@ -296,7 +299,7 @@ public class XSSFTable extends POIXMLDocumentPart {
 
         if (row != null && row.getCTRow().validate()) {
             int cellnum = firstHeaderColumn;
-            for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnList()) {
+            for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnArray()) {
                 XSSFCell cell = row.getCell(cellnum);
                 if (cell != null) {
                     col.setName(cell.getStringCellValue());

@@ -115,6 +115,7 @@ public class XMLSlideShow  extends POIXMLDocument {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void onDocumentRead() throws IOException {
         try {
             PresentationDocument doc =
@@ -140,8 +141,7 @@ public class XMLSlideShow  extends POIXMLDocument {
 
             _slides = new ArrayList<XSLFSlide>();
             if (_presentation.isSetSldIdLst()) {
-                List<CTSlideIdListEntry> slideIds = _presentation.getSldIdLst().getSldIdList();
-                for (CTSlideIdListEntry slId : slideIds) {
+                for (CTSlideIdListEntry slId : _presentation.getSldIdLst().getSldIdArray()) {
                     XSLFSlide sh = shIdMap.get(slId.getId2());
                     if (sh == null) {
                         _logger.log(POILogger.WARN, "Slide with r:id " + slId.getId() + " was defined, but didn't exist in package, skipping");
@@ -201,13 +201,14 @@ public class XMLSlideShow  extends POIXMLDocument {
      * @param layout
      * @return created slide
      */
+    @SuppressWarnings("deprecation")
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
         int slideNumber = 256, cnt = 1;
         CTSlideIdList slideList;
         if (!_presentation.isSetSldIdLst()) slideList = _presentation.addNewSldIdLst();
         else {
             slideList = _presentation.getSldIdLst();
-            for(CTSlideIdListEntry slideId : slideList.getSldIdList()){
+            for(CTSlideIdListEntry slideId : slideList.getSldIdArray()){
                 slideNumber = (int)Math.max(slideId.getId() + 1, slideNumber);
                 cnt++;
             }
@@ -283,16 +284,16 @@ public class XMLSlideShow  extends POIXMLDocument {
         _slides.add(newIndex, _slides.remove(oldIndex));
 
         // fix ordering in the low-level xml
-        List<CTSlideIdListEntry> slideIds = _presentation.getSldIdLst().getSldIdList();
-        CTSlideIdListEntry oldEntry = slideIds.get(oldIndex);
-        slideIds.add(newIndex, oldEntry);
-        slideIds.remove(oldEntry);
+        CTSlideIdList sldIdLst = _presentation.getSldIdLst();
+        CTSlideIdListEntry oldEntry = sldIdLst.getSldIdArray(oldIndex);
+        sldIdLst.insertNewSldId(newIndex).set(oldEntry);
+        sldIdLst.removeSldId(oldIndex);
     }
 
     public XSLFSlide removeSlide(int index){
         XSLFSlide slide = _slides.remove(index);
         removeRelation(slide);
-         _presentation.getSldIdLst().getSldIdList().remove(index);
+         _presentation.getSldIdLst().removeSldId(index);
         return slide;
     }
     

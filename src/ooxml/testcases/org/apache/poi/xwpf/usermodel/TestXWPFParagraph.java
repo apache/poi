@@ -24,6 +24,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
+import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
@@ -39,9 +42,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
-import        org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
-import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
-import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
 
 /**
  * Tests for XWPF Paragraphs
@@ -62,7 +62,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(1, ps.size());
         XWPFParagraph p = ps.get(0);
 
-        assertEquals(5, p.getCTP().getRList().size());
+        assertEquals(5, p.getCTP().sizeOfRArray());
         assertEquals("First header column!\tMid header\tRight header!", p
                 .getText());
     }
@@ -234,6 +234,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(STOnOff.TRUE, ppr.getPageBreakBefore().getVal());
     }
 
+    @SuppressWarnings("deprecation")
     public void testBookmarks() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bookmarks.docx");
         XWPFParagraph paragraph = doc.getParagraphs().get(0);
@@ -242,7 +243,7 @@ public final class TestXWPFParagraph extends TestCase {
         assertEquals(0, paragraph.getCTP().sizeOfBookmarkEndArray());
         CTBookmark ctBookmark = paragraph.getCTP().getBookmarkStartArray(0);
         assertEquals("poi", ctBookmark.getName());
-        for(CTBookmark bookmark : paragraph.getCTP().getBookmarkStartList()) {
+        for(CTBookmark bookmark : paragraph.getCTP().getBookmarkStartArray()) {
            assertEquals("poi", bookmark.getName());
         }
     }

@@ -17,6 +17,10 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlCursor;
@@ -32,10 +36,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 @Beta
 public class XSLFCommonSlideData {
     private final CTCommonSlideData data;
@@ -44,6 +44,7 @@ public class XSLFCommonSlideData {
         this.data = data;
     }
     
+    @SuppressWarnings("deprecation")
     public List<DrawingTextBody> getDrawingText() {
         CTGroupShape gs = data.getSpTree();
 
@@ -51,11 +52,11 @@ public class XSLFCommonSlideData {
 
         processShape(gs, out);
 
-        for (CTGroupShape shape : gs.getGrpSpList()) {
+        for (CTGroupShape shape : gs.getGrpSpArray()) {
             processShape(shape, out);
         }
 
-        for (CTGraphicalObjectFrame frame: gs.getGraphicFrameList()) {
+        for (CTGraphicalObjectFrame frame: gs.getGraphicFrameArray()) {
             CTGraphicalObjectData data = frame.getGraphic().getGraphicData();
             XmlCursor c = data.newCursor();
             c.selectPath("declare namespace pic='"+CTTable.type.getName().getNamespaceURI()+"' .//pic:tbl");
@@ -97,9 +98,9 @@ public class XSLFCommonSlideData {
        return paragraphs;
     }
 
+    @SuppressWarnings("deprecation")
     private void processShape(CTGroupShape gs, List<DrawingTextBody> out) {
-        List<CTShape> shapes = gs.getSpList();
-        for (CTShape shape : shapes) {
+        for (CTShape shape : gs.getSpArray()) {
             CTTextBody ctTextBody = shape.getTxBody();
             if (ctTextBody==null) {
                 continue;

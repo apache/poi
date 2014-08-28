@@ -19,14 +19,14 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.util.Units;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 
 /**
  * Represents a table in a .pptx presentation
@@ -38,11 +38,13 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     private List<XSLFTableCell> _cells;
     private XSLFTable _table;
 
+    @SuppressWarnings("deprecation")
     /*package*/ XSLFTableRow(CTTableRow row, XSLFTable table){
         _row = row;
         _table = table;
-        _cells = new ArrayList<XSLFTableCell>(_row.sizeOfTcArray());
-        for(CTTableCell cell : _row.getTcList()) {
+        CTTableCell[] tcArray = _row.getTcArray();
+        _cells = new ArrayList<XSLFTableCell>(tcArray.length);
+        for(CTTableCell cell : tcArray) {
             _cells.add(new XSLFTableCell(cell, table.getSheet()));
         }
     }

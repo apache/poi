@@ -37,7 +37,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
-
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPrDefault;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
@@ -74,6 +73,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
     * Read document
     */
    @Override
+   @SuppressWarnings("deprecation")
    protected void onDocumentRead() throws IOException{
       StylesDocument stylesDoc;
       try {
@@ -86,7 +86,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
       }
       
       // Build up all the style objects
-      for(CTStyle style : ctStyles.getStyleList()) {
+      for(CTStyle style : ctStyles.getStyleArray()) {
          listStyle.add(new XWPFStyle(style, this));
       }
    }
@@ -137,7 +137,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
 	public void addStyle(XWPFStyle style){
 		listStyle.add(style);
 		ctStyles.addNewStyle();
-		int pos = (ctStyles.getStyleList().size()) - 1;
+		int pos = ctStyles.sizeOfStyleArray() - 1;
 		ctStyles.setStyleArray(pos, style.getCTStyle());
 	}
 	/**

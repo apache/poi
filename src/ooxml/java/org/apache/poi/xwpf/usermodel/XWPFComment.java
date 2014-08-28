@@ -31,13 +31,14 @@ public class XWPFComment
     protected String author;
     protected StringBuffer text;
     
+    @SuppressWarnings("deprecation")
     public XWPFComment(CTComment comment, XWPFDocument document)
     {
         text = new StringBuffer();
         id = comment.getId().toString();
         author = comment.getAuthor();
         
-        for(CTP ctp : comment.getPList())
+        for(CTP ctp : comment.getPArray())
         {
             XWPFParagraph p = new XWPFParagraph(ctp, document);
             text.append(p.getText());

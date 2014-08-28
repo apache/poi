@@ -17,6 +17,7 @@
 package org.apache.poi.xslf;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -61,22 +62,19 @@ public class TestXSLFSlideShow extends TestCase {
 			);
 	}
 	
+    @SuppressWarnings("deprecation")
 	public void testSlideBasics() throws Exception {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		// Should have 1 master
 		assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
-		assertEquals(1, xml.getSlideMasterReferences().getSldMasterIdList().size());
-		
+
 		// Should have three sheets
 		assertEquals(2, xml.getSlideReferences().sizeOfSldIdArray());
-		assertEquals(2, xml.getSlideReferences().getSldIdList().size());
-		
+
 		// Check they're as expected
-		CTSlideIdListEntry[] slides = new CTSlideIdListEntry[
-		    xml.getSlideReferences().getSldIdList().size()];
-		xml.getSlideReferences().getSldIdList().toArray(slides);
-		
+		CTSlideIdListEntry[] slides = xml.getSlideReferences().getSldIdArray();
+
 		assertEquals(256, slides[0].getId());
 		assertEquals(257, slides[1].getId());
 		assertEquals("rId2", slides[0].getId2());
@@ -91,9 +89,7 @@ public class TestXSLFSlideShow extends TestCase {
 		assertNotNull(xml.getNotes(slides[1]));
 		
 		// And again for the master
-		CTSlideMasterIdListEntry[] masters = new CTSlideMasterIdListEntry[
-			xml.getSlideMasterReferences().getSldMasterIdList().size()];
-		xml.getSlideMasterReferences().getSldMasterIdList().toArray(masters);
+		CTSlideMasterIdListEntry[] masters = xml.getSlideMasterReferences().getSldMasterIdArray();
 		
 		assertEquals(2147483648l, masters[0].getId());
 		assertEquals("rId1", masters[0].getId2());

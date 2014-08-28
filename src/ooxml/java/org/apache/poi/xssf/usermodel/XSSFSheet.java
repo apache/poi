@@ -1342,8 +1342,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     /**
      * Do not leave the width attribute undefined (see #52186).
      */
+    @SuppressWarnings("deprecation")
     private void setColWidthAttribute(CTCols ctCols) {
-        for (CTCol col : ctCols.getColList()) {
+        for (CTCol col : ctCols.getColArray()) {
             if (!col.isSetWidth()) {
                 col.setWidth(getDefaultColumnWidth());
                 col.setCustomWidth(false);
@@ -1380,10 +1381,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
 
+    @SuppressWarnings("deprecation")
     private short getMaxOutlineLevelCols() {
         CTCols ctCols = worksheet.getColsArray(0);
         short outlineLevel = 0;
-        for (CTCol col : ctCols.getColList()) {
+        for (CTCol col : ctCols.getColArray()) {
             outlineLevel = col.getOutlineLevel() > outlineLevel ? col.getOutlineLevel() : outlineLevel;
         }
         return outlineLevel;
@@ -3543,7 +3545,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                  + ":$" + rowRef2.getCellRefParts()[1];
         }
 
-        StringBuffer rng = new StringBuffer();
+        StringBuilder rng = new StringBuilder();
         rng.append(c);
         if(rng.length() > 0 && r.length() > 0) {
           rng.append(',');

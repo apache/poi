@@ -65,7 +65,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
 
 		xssfFont.setBold(true);
-		assertEquals(ctFont.getBList().size(),1);
+		assertEquals(ctFont.sizeOfBArray(),1);
 		assertEquals(true, ctFont.getBArray(0).getVal());
 	}
 
@@ -135,7 +135,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(false, xssfFont.getItalic());
 
 		xssfFont.setItalic(true);
-		assertEquals(ctFont.getIList().size(),1);
+		assertEquals(ctFont.sizeOfIArray(),1);
 		assertEquals(true, ctFont.getIArray(0).getVal());
 		assertEquals(true,ctFont.getIArray(0).getVal());
 	}
@@ -150,7 +150,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(false, xssfFont.getStrikeout());
 
 		xssfFont.setStrikeout(true);
-		assertEquals(ctFont.getStrikeList().size(),1);
+		assertEquals(ctFont.sizeOfStrikeArray(),1);
 		assertEquals(true, ctFont.getStrikeArray(0).getVal());
 		assertEquals(true,ctFont.getStrikeArray(0).getVal());
 	}
@@ -191,11 +191,11 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(Font.U_SINGLE, xssfFont.getUnderline());
 
 		xssfFont.setUnderline(Font.U_DOUBLE);
-		assertEquals(ctFont.getUList().size(),1);
+		assertEquals(ctFont.sizeOfUArray(),1);
 		assertEquals(STUnderlineValues.DOUBLE,ctFont.getUArray(0).getVal());
 
 		xssfFont.setUnderline(FontUnderline.DOUBLE_ACCOUNTING);
-		assertEquals(ctFont.getUList().size(),1);
+		assertEquals(ctFont.sizeOfUArray(),1);
 		assertEquals(STUnderlineValues.DOUBLE_ACCOUNTING,ctFont.getUArray(0).getVal());
 	}
 

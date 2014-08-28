@@ -19,40 +19,40 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
-import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
 import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.ss.usermodel.charts.AxisPosition;
+import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
+import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
+import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -306,14 +306,16 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		parseValueAxis();
 	}
 
+    @SuppressWarnings("deprecation")
 	private void parseCategoryAxis() {
-		for (CTCatAx catAx : chart.getPlotArea().getCatAxList()) {
+		for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
 			axis.add(new XSSFCategoryAxis(this, catAx));
 		}
 	}
 
+    @SuppressWarnings("deprecation")
 	private void parseValueAxis() {
-		for (CTValAx valAx : chart.getPlotArea().getValAxList()) {
+		for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
 			axis.add(new XSSFValueAxis(this, valAx));
 		}
 	}
