@@ -49,7 +49,8 @@ import org.xml.sax.SAXException;
  * @author Roberto Manicardi
  */
 public final class TestXSSFExportToXML extends TestCase {
-	public void testExportToXML() throws Exception {
+
+    public void testExportToXML() throws Exception {
 
 		XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
 
@@ -573,6 +574,39 @@ public final class TestXSSFExportToXML extends TestCase {
 
            assertNotNull(xmlData);
            assertFalse(xmlData.equals(""));
+           
+           parseXML(xmlData);
+           
+           found = true;
+       }
+       assertTrue(found);
+   }
+
+   public void testRefElementsInXmlSchema_Bugzilla_56730() throws Exception {
+       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56730.xlsx");
+       
+       boolean found = false;
+       for (POIXMLDocumentPart p : wb.getRelations()) {
+           
+           if (!(p instanceof MapInfo)) {
+               continue;
+           }
+           MapInfo mapInfo = (MapInfo) p;
+           
+           XSSFMap map = mapInfo.getXSSFMapById(1);
+           
+           assertNotNull("XSSFMap is null", map);
+           
+           XSSFExportToXml exporter = new XSSFExportToXml(map);
+           ByteArrayOutputStream os = new ByteArrayOutputStream();
+           exporter.exportToXML(os, true);
+           String xmlData = os.toString("UTF-8");
+           
+           assertNotNull(xmlData);
+           assertFalse(xmlData.equals(""));
+           
+           assertEquals("2014-12-31", xmlData.split("<DATE>")[1].split("</DATE>")[0].trim());
+           assertEquals("12.5", xmlData.split("<REFELEMENT>")[1].split("</REFELEMENT>")[0].trim());
            
            parseXML(xmlData);
            

@@ -448,8 +448,8 @@ public class XSSFExportToXml implements Comparator<String>{
             Node node = list.item(i);
             if (node instanceof Element) {
                 if (node.getLocalName().equals("element")) {
-                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
-                    if (nameAttribute.getNodeValue().equals(removeNamespace(elementName))) {
+                    Node element = getNameOrRefElement(node);
+                    if (element.getNodeValue().equals(removeNamespace(elementName))) {
                         indexOf = i;
                         break;
                     }
@@ -459,6 +459,15 @@ public class XSSFExportToXml implements Comparator<String>{
         }
         return indexOf;
     }
+
+	private Node getNameOrRefElement(Node node) {
+		Node returnNode = node.getAttributes().getNamedItem("name");
+        if(returnNode != null) {
+            return returnNode;
+		}
+		
+        return node.getAttributes().getNamedItem("ref");
+	}
 
     private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
         String elementNameWithoutNamespace = removeNamespace(elementName);
@@ -483,7 +492,7 @@ public class XSSFExportToXml implements Comparator<String>{
             Node node = list.item(i);
             if ( node instanceof Element) {
                 if (node.getLocalName().equals("element")) {
-                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    Node nameAttribute = getNameOrRefElement(node);
                     if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
                         Node complexTypeAttribute = node.getAttributes().getNamedItem("type");
                         if (complexTypeAttribute!=null) {
@@ -504,7 +513,7 @@ public class XSSFExportToXml implements Comparator<String>{
             Node node = complexTypeList.item(i);
             if ( node instanceof Element) {
                 if (node.getLocalName().equals("complexType")) {
-                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    Node nameAttribute = getNameOrRefElement(node);
                     if (nameAttribute.getNodeValue().equals(complexTypeName)) {
 
                         NodeList complexTypeChildList  =node.getChildNodes();
