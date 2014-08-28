@@ -41,8 +41,9 @@ public class XWPFLatentStyles {
     @SuppressWarnings("deprecation")
 	protected boolean isLatentStyle(String latentStyleID){	
 		for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
-			if(lsd.getName().equals(latentStyleID));
+			if(lsd.getName().equals(latentStyleID)) {
 				return true;
+			}
 		}
 		return false;		
 	}
