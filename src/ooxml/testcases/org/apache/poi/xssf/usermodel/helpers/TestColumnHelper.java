@@ -186,7 +186,7 @@ public final class TestColumnHelper extends TestCase {
         helper.addCleanColIntoCols(cols1, col9);
 
         // TODO - assert something interesting
-        assertEquals(12, cols1.getColList().size());
+        assertEquals(12, cols1.sizeOfColArray());
         assertEquals(1, cols1.getColArray(0).getMin());
         assertEquals(16750, cols1.getColArray(11).getMax());
     }

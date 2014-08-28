@@ -17,13 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.util.TempFile;
-import org.junit.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,8 +27,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 
 public final class TestXSSFTable {
 
@@ -41,6 +41,7 @@ public final class TestXSSFTable {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void bug56274() throws IOException {
         // read sample file
         XSSFWorkbook inputWorkbook = XSSFTestDataSamples.openSampleWorkbook("56274.xlsx");
@@ -60,13 +61,13 @@ public final class TestXSSFTable {
         // re-read the saved file and make sure headers in the xml are in the original order
         inputWorkbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(new FileInputStream(outputFile));
         CTTable ctTable = inputWorkbook.getSheetAt(0).getTables().get(0).getCTTable();
-        List<CTTableColumn> ctTableColumnList = ctTable.getTableColumns().getTableColumnList();
+        CTTableColumn[] ctTableColumnArray = ctTable.getTableColumns().getTableColumnArray();
 
         assertEquals("number of headers in xml table should match number of header cells in worksheet",
-                headers.size(), ctTableColumnList.size());
+                headers.size(), ctTableColumnArray.length);
         for (int i = 0; i < headers.size(); i++) {
             assertEquals("header name in xml table should match number of header cells in worksheet",
-                    headers.get(i), ctTableColumnList.get(i).getName());
+                    headers.get(i), ctTableColumnArray[i].getName());
         }
         assertTrue(outputFile.delete());
     }

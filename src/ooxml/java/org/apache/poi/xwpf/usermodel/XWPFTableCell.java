@@ -79,7 +79,7 @@ public class XWPFTableCell implements IBody, ICell {
         this.part = part;
         this.tableRow = tableRow;
         // NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
-        if(cell.getPList().size()<1)
+        if(cell.sizeOfPArray()<1)
             cell.addNewP();
         bodyElements = new ArrayList<IBodyElement>();
         paragraphs = new ArrayList<XWPFParagraph>();
@@ -398,16 +398,17 @@ public class XWPFTableCell implements IBody, ICell {
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int, org.apache.poi.xwpf.usermodel.XWPFTable)
      */
+    @SuppressWarnings("deprecation")
     public void insertTable(int pos, XWPFTable table) {
-	bodyElements.add(pos, table);
-	int i;
-	for (i = 0; i < ctTc.getTblList().size(); i++) {
-	    CTTbl tbl = ctTc.getTblArray(i);
-	    if(tbl == table.getCTTbl()){
-		break;
-	    }
-	}
-	tables.add(i, table);
+        bodyElements.add(pos, table);
+        int i = 0;
+        for (CTTbl tbl : ctTc.getTblArray()) {
+            if (tbl == table.getCTTbl()) {
+                break;
+            }
+            i++;
+        }
+        tables.add(i, table);
     }
 
     public String getText(){

@@ -371,9 +371,10 @@ public class POIXMLProperties {
 		 *
 		 * @return next property id starting with 2
 		 */
-		protected int nextPid(){
+		@SuppressWarnings("deprecation")
+        protected int nextPid(){
 			int propid = 1;
-			for(CTProperty p : props.getProperties().getPropertyList()){
+			for(CTProperty p : props.getProperties().getPropertyArray()){
 				if(p.getPid() > propid) propid = p.getPid();
 			}
 			return propid + 1;
@@ -385,8 +386,9 @@ public class POIXMLProperties {
 		 * @param name the name to check
 		 * @return whether a property with the given name exists in the custom properties
 		 */
+        @SuppressWarnings("deprecation")
 		public boolean contains(String name){
-			for(CTProperty p : props.getProperties().getPropertyList()){
+			for(CTProperty p : props.getProperties().getPropertyArray()){
 				if(p.getName().equals(name)) return true;
 			}
 			return false;

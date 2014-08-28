@@ -149,15 +149,18 @@ public class CommentsTable extends POIXMLDocumentPart {
 
     public boolean removeComment(String cellRef) {
         CTCommentList lst = comments.getCommentList();
-        if(lst != null) for(int i=0; i < lst.sizeOfCommentArray(); i++) {
-            CTComment comment = lst.getCommentArray(i);
-            if (cellRef.equals(comment.getRef())) {
-                lst.removeComment(i);
-                
-                if(commentRefs != null) {
-                   commentRefs.remove(cellRef);
+        if(lst != null) {
+            int commentCount = lst.sizeOfCommentArray();
+            for(int i=0; i < commentCount; i++) {
+                CTComment comment = lst.getCommentArray(i);
+                if (cellRef.equals(comment.getRef())) {
+                    lst.removeComment(i);
+
+                    if(commentRefs != null) {
+                       commentRefs.remove(cellRef);
+                    }
+                    return true;
                 }
-                return true;
             }
         }
         return false;

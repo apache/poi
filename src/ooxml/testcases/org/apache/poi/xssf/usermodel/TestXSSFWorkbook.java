@@ -704,7 +704,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         CTPivotCache pivotCache = wb.addPivotCache("0");
         //Ensures that pivotCaches is initiated
         assertTrue(ctWb.isSetPivotCaches());
-        assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheList().get(0));
+        assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheArray(0));
         assertEquals("0", pivotCache.getId());
     }
 

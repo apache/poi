@@ -19,6 +19,11 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
+
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
@@ -34,11 +39,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DMoveTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
-
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Represents a custom geometric shape.
@@ -120,12 +120,13 @@ public class XSLFFreeformShape extends XSLFAutoShape {
      *
      * @return the path
      */
+    @SuppressWarnings("deprecation")
     public GeneralPath getPath() {
         GeneralPath path = new GeneralPath();
         Rectangle2D bounds = getAnchor();
 
         CTCustomGeometry2D geom = getSpPr().getCustGeom();
-        for(CTPath2D spPath : geom.getPathLst().getPathList()){
+        for(CTPath2D spPath : geom.getPathLst().getPathArray()){
             double scaleW = bounds.getWidth() / Units.toPoints(spPath.getW());
             double scaleH = bounds.getHeight() / Units.toPoints(spPath.getH());
             for(XmlObject ch : spPath.selectPath("*")){

@@ -20,8 +20,6 @@ package org.apache.poi.xslf.usermodel;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
-import java.util.List;
-
 public class DrawingTextBody {
     private final CTTextBody textBody;
 
@@ -29,12 +27,13 @@ public class DrawingTextBody {
        this.textBody = textBody;
     }
 
+    @SuppressWarnings("deprecation")
     public DrawingParagraph[] getParagraphs() {
-        List<CTTextParagraph> paragraphs = textBody.getPList();
-        DrawingParagraph[] o = new DrawingParagraph[paragraphs.size()];
+        CTTextParagraph[] paragraphs = textBody.getPArray();
+        DrawingParagraph[] o = new DrawingParagraph[paragraphs.length];
 
         for (int i=0; i<o.length; i++) {
-            o[i] = new DrawingParagraph(paragraphs.get(i));
+            o[i] = new DrawingParagraph(paragraphs[i]);
         }
 
         return o;

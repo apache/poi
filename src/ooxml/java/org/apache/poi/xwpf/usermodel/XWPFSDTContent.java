@@ -50,8 +50,8 @@ public class XWPFSDTContent implements ISDTContent {
     private List<ISDTContents> bodyElements = new ArrayList<ISDTContents>();
 
     public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent){
-        for (CTR ctr : sdtRun.getRList()){
-            XWPFRun run = new XWPFRun((CTR) ctr, parent);
+        for (CTR ctr : sdtRun.getRArray()){
+            XWPFRun run = new XWPFRun(ctr, parent);
             runs.add(run);
             bodyElements.add(run);
         }

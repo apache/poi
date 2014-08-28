@@ -43,6 +43,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
@@ -213,28 +214,29 @@ public final class XSSFRowShifter {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void updateConditionalFormatting(FormulaShifter shifter) {
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
 
 
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        List<CTConditionalFormatting> cfList = sheet.getCTWorksheet().getConditionalFormattingList();
-        for(int j = 0; j< cfList.size(); j++){
-            CTConditionalFormatting cf = cfList.get(j);
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
+        int cfCount = ctWorksheet.sizeOfConditionalFormattingArray();
+        for(int j = 0; j< cfCount; j++){
+            CTConditionalFormatting cf = ctWorksheet.getConditionalFormattingArray(j);
 
             ArrayList<CellRangeAddress> cellRanges = new ArrayList<CellRangeAddress>();
             for (Object stRef : cf.getSqref()) {
                 String[] regions = stRef.toString().split(" ");
-                for (int i = 0; i < regions.length; i++) {
-                    cellRanges.add(CellRangeAddress.valueOf(regions[i]));
+                for (String region : regions) {
+                    cellRanges.add(CellRangeAddress.valueOf(region));
                 }
             }
 
             boolean changed = false;
             List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
-            for (int i = 0; i < cellRanges.size(); i++) {
-                CellRangeAddress craOld = cellRanges.get(i);
+            for (CellRangeAddress craOld : cellRanges) {
                 CellRangeAddress craNew = shiftRange(shifter, craOld, sheetIndex);
                 if (craNew == null) {
                     changed = true;
@@ -249,7 +251,7 @@ public final class XSSFRowShifter {
             if (changed) {
                 int nRanges = temp.size();
                 if (nRanges == 0) {
-                    cfList.remove(j);
+                    ctWorksheet.removeConditionalFormatting(j);
                     continue;
                 }
                 List<String> refs = new ArrayList<String>();
@@ -257,14 +259,14 @@ public final class XSSFRowShifter {
                 cf.setSqref(refs);
             }
 
-            for(CTCfRule cfRule : cf.getCfRuleList()){
-                List<String> formulas = cfRule.getFormulaList();
-                for (int i = 0; i < formulas.size(); i++) {
-                    String formula = formulas.get(i);
+            for(CTCfRule cfRule : cf.getCfRuleArray()){
+                int formulaCount = cfRule.sizeOfFormulaArray();
+                for (int i = 0; i < formulaCount; i++) {
+                    String formula = cfRule.getFormulaArray(i);
                     Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
                     if (shifter.adjustFormula(ptgs, sheetIndex)) {
                         String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-                        formulas.set(i, shiftedFmla);
+                        cfRule.setFormulaArray(i, shiftedFmla);
                     }
                 }
             }

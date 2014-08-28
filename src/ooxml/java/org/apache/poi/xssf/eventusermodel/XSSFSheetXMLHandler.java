@@ -18,7 +18,6 @@ package org.apache.poi.xssf.eventusermodel;
 
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -159,11 +158,11 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
    
+   @SuppressWarnings("deprecation")
    private void init() {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<CellReference>();
-           List<CTComment> commentList = commentsTable.getCTComments().getCommentList().getCommentList();
-           for (CTComment comment : commentList) {
+           for (CTComment comment : commentsTable.getCTComments().getCommentList().getCommentArray()) {
                commentCellRefs.add(new CellReference(comment.getRef()));
            }
        }   
@@ -187,6 +186,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    }
    
    @Override
+   @SuppressWarnings("unused")
    public void startElement(String uri, String localName, String name,
                             Attributes attributes) throws SAXException {
 

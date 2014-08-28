@@ -1410,10 +1410,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
     
+    @SuppressWarnings("deprecation")
     private void reprocessNamedRanges() {
         namedRanges = new ArrayList<XSSFName>();
         if(workbook.isSetDefinedNames()) {
-            for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameList()) {
+            for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
                 namedRanges.add(new XSSFName(ctName, this));
             }
         }

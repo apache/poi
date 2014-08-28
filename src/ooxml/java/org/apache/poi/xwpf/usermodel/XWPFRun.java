@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -95,6 +96,7 @@ public class XWPFRun implements ISDTContents, IRunElement{
      * @param r the CTR bean which holds the run attributes
      * @param p the parent paragraph
      */
+    @SuppressWarnings("deprecation")
     public XWPFRun(CTR r, IRunBody p) {
         this.run = r;
         this.parent = p;
@@ -103,16 +105,13 @@ public class XWPFRun implements ISDTContents, IRunElement{
          * reserve already occupied drawing ids, so reserving new ids later will
          * not corrupt the document
          */
-        List<CTDrawing> drawingList = r.getDrawingList();
-        for (CTDrawing ctDrawing : drawingList) {
-            List<CTAnchor> anchorList = ctDrawing.getAnchorList();
-            for (CTAnchor anchor : anchorList) {
+        for (CTDrawing ctDrawing : r.getDrawingArray()) {
+            for (CTAnchor anchor : ctDrawing.getAnchorArray()) {
                 if (anchor.getDocPr() != null) {
                     getDocument().getDrawingIdManager().reserve(anchor.getDocPr().getId());
                 }
             }
-            List<CTInline> inlineList = ctDrawing.getInlineList();
-            for (CTInline inline : inlineList) {
+            for (CTInline inline : ctDrawing.getInlineArray()) {
                 if (inline.getDocPr() != null) {
                     getDocument().getDrawingIdManager().reserve(inline.getDocPr().getId());
                 }
@@ -120,17 +119,17 @@ public class XWPFRun implements ISDTContents, IRunElement{
         }
 
         // Look for any text in any of our pictures or drawings
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         List<XmlObject> pictTextObjs = new ArrayList<XmlObject>();
-        pictTextObjs.addAll(r.getPictList());
-        pictTextObjs.addAll(drawingList);
+        pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
+        pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
         for(XmlObject o : pictTextObjs) {
-            XmlObject[] t = o.selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
-            for (int m = 0; m < t.length; m++) {
-                NodeList kids = t[m].getDomNode().getChildNodes();
+            XmlObject[] ts = o.selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
+            for (XmlObject t : ts) {
+                NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
                     if (kids.item(n) instanceof Text) {
-                        if(text.length() > 0)
+                        if (text.length() > 0)
                             text.append("\n");
                         text.append(kids.item(n).getNodeValue());
                     }
@@ -317,7 +316,7 @@ public class XWPFRun implements ISDTContents, IRunElement{
      * @param value the literal text which shall be displayed in the document
      */
     public void setText(String value) {
-        setText(value,run.getTList().size());
+        setText(value,run.sizeOfTArray());
     }
 
     /**
