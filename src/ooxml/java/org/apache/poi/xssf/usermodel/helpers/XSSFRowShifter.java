@@ -18,7 +18,9 @@
 package org.apache.poi.xssf.usermodel.helpers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
@@ -67,8 +69,10 @@ public final class XSSFRowShifter {
      */
     public List<CellRangeAddress> shiftMerged(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
+        Set<Integer> removedIndices = new HashSet<Integer>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
-        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+        int size = sheet.getNumMergedRegions();
+        for (int i = 0; i < size; i++) {
             CellRangeAddress merged = sheet.getMergedRegion(i);
 
             boolean inStart = (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
@@ -85,9 +89,12 @@ public final class XSSFRowShifter {
                 merged.setLastRow(merged.getLastRow() + n);
                 //have to remove/add it back
                 shiftedRegions.add(merged);
-                sheet.removeMergedRegion(i);
-                i = i - 1; // we have to back up now since we removed one
+                removedIndices.add(i);
             }
+        }
+        
+        if(!removedIndices.isEmpty()) {
+            sheet.removeMergedRegions(removedIndices);
         }
 
         //read so it doesn't get shifted again
