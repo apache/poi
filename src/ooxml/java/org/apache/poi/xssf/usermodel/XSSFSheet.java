@@ -1579,8 +1579,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public void removeMergedRegion(int index) {
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
 
-        CTMergeCell[] mergeCellsArray = new CTMergeCell[ctMergeCells.sizeOfMergeCellArray() - 1];
-        for (int i = 0 ; i < ctMergeCells.sizeOfMergeCellArray() ; i++) {
+        int size = ctMergeCells.sizeOfMergeCellArray();
+        CTMergeCell[] mergeCellsArray = new CTMergeCell[size - 1];
+        for (int i = 0 ; i < size ; i++) {
             if (i < index) {
                 mergeCellsArray[i] = ctMergeCells.getMergeCellArray(i);
             }
