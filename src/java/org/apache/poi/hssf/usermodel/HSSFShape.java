@@ -27,6 +27,11 @@ import java.io.IOException;
 
 /**
  * An abstract shape.
+ * 
+ * Note: Microsoft Excel seems to sometimes disallow 
+ * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to 
+ * reverse them and draw shapes vertically or horizontally flipped via
+ * setFlipVertical() or setFlipHorizontally(). 
  */
 public abstract class HSSFShape {
     public static final int LINEWIDTH_ONE_PT = 12700;
