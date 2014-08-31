@@ -42,6 +42,10 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     /**
      * Creates a new client anchor and sets the top-left and bottom-right
      * coordinates of the anchor.
+     * 
+     * Note: Microsoft Excel seems to sometimes disallow 
+     * higher y1 than y2 or higher x1 than x2, you might need to 
+     * reverse them and draw shapes vertically or horizontally flipped! 
      *
      * @param dx1  the x coordinate within the first cell.
      * @param dy1  the y coordinate within the first cell.
@@ -186,8 +190,12 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     }
 
     /**
-     * Dets the top-left and bottom-right
-     * coordinates of the anchor.
+     * Sets the top-left and bottom-right coordinates of 
+     * the anchor.
+     * 
+     * Note: Microsoft Excel seems to sometimes disallow 
+     * higher y1 than y2 or higher x1 than x2, you might need to 
+     * reverse them and draw shapes vertically or horizontally flipped! 
      *
      * @param x1   the x coordinate within the first cell.
      * @param y1   the y coordinate within the first cell.

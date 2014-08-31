@@ -171,6 +171,10 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     /**
      * Creates a simple shape.  This includes such shapes as lines, rectangles,
      * and ovals.
+     * 
+     * Note: Microsoft Excel seems to sometimes disallow 
+     * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to 
+     * reverse them and draw shapes vertically or horizontally flipped! 
      *
      * @param anchor the client anchor describes how this group is attached
      *               to the sheet.
