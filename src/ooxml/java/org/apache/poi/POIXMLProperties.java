@@ -285,6 +285,7 @@ public class POIXMLProperties {
 		public org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties getUnderlyingProperties() {
 			return props.getProperties();
 		}
+		
 	}
 
 	/**
@@ -380,18 +381,37 @@ public class POIXMLProperties {
 			return propid + 1;
 		}
 
-		/**
-		 * Check if a property with this name already exists in the collection of custom properties
-		 *
-		 * @param name the name to check
-		 * @return whether a property with the given name exists in the custom properties
-		 */
+       /**
+         * Check if a property with this name already exists in the collection of custom properties
+         *
+         * @param name the name to check
+         * @return whether a property with the given name exists in the custom properties
+         */
         @SuppressWarnings("deprecation")
-		public boolean contains(String name){
-			for(CTProperty p : props.getProperties().getPropertyArray()){
-				if(p.getName().equals(name)) return true;
-			}
-			return false;
-		}
-	}
+        public boolean contains(String name) {
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getName().equals(name)) return true;
+            }
+            return false;
+        }
+        
+        /**
+         * Retrieve the custom property with this name, or null if none exists.
+         *
+         * You will need to test the various isSetX methods to work out
+         *  what the type of the property is, before fetching the 
+         *  appropriate value for it.
+         *
+         * @param name the name of the property to fetch
+         */
+        @SuppressWarnings("deprecation")
+        public CTProperty getProperty(String name) {
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getName().equals(name)) {
+                    return p;
+                }
+            }
+            return null;
+        }
+    }
 }
