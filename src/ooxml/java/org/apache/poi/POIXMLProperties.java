@@ -286,6 +286,116 @@ public class POIXMLProperties {
 			return props.getProperties();
 		}
 		
+        public String getTemplate() {
+            if (props.getProperties().isSetTemplate()) {
+                return props.getProperties().getTemplate();
+            }
+            return null;
+        }
+        public String getManager() {
+            if (props.getProperties().isSetManager()) {
+                return props.getProperties().getManager();
+            }
+            return null;
+        }
+        public String getCompany() {
+            if (props.getProperties().isSetCompany()) {
+                return props.getProperties().getCompany();
+            }
+            return null;
+        }
+        public String getPresentationFormat() {
+            if (props.getProperties().isSetPresentationFormat()) {
+                return props.getProperties().getPresentationFormat();
+            }
+            return null;
+        }
+        public String getApplication() {
+            if (props.getProperties().isSetApplication()) {
+                return props.getProperties().getApplication();
+            }
+            return null;
+        }
+        public String getAppVersion() {
+            if (props.getProperties().isSetAppVersion()) {
+                return props.getProperties().getAppVersion();
+            }
+            return null;
+        }
+
+        public int getPages() {
+            if (props.getProperties().isSetPages()) {
+                return props.getProperties().getPages();
+            }
+            return -1;
+        }
+        public int getWords() {
+            if (props.getProperties().isSetWords()) {
+                return props.getProperties().getWords();
+            }
+            return -1;
+        }
+        public int getCharacters() {
+            if (props.getProperties().isSetCharacters()) {
+                return props.getProperties().getCharacters();
+            }
+            return -1;
+        }
+        public int getCharactersWithSpaces() {
+            if (props.getProperties().isSetCharactersWithSpaces()) {
+                return props.getProperties().getCharactersWithSpaces();
+            }
+            return -1;
+        }
+        public int getLines() {
+            if (props.getProperties().isSetLines()) {
+                return props.getProperties().getLines();
+            }
+            return -1;
+        }
+        public int getParagraphs() {
+            if (props.getProperties().isSetParagraphs()) {
+                return props.getProperties().getParagraphs();
+            }
+            return -1;
+        }
+        public int getSlides() {
+            if (props.getProperties().isSetSlides()) {
+                return props.getProperties().getSlides();
+            }
+            return -1;
+        }
+        public int getNotes() {
+            if (props.getProperties().isSetNotes()) {
+                return props.getProperties().getNotes();
+            }
+            return -1;
+        }
+        public int getTotalTime()  {
+            if (props.getProperties().isSetTotalTime()) {
+                return props.getProperties().getTotalTime();
+            }
+            return -1;
+        }
+        public int getHiddenSlides()  {
+            if (props.getProperties().isSetHiddenSlides()) {
+                return props.getProperties().getHiddenSlides();
+            }
+            return -1;
+        }
+        public int getMMClips() {
+            if (props.getProperties().isSetMMClips()) {
+                return props.getProperties().getMMClips();
+            }
+            return -1;
+        }
+
+        public String getHyperlinkBase() {
+            if (props.getProperties().isSetHyperlinkBase()) {
+                return props.getProperties().getHyperlinkBase();
+            }
+            return null;
+        }
 	}
 
 	/**
