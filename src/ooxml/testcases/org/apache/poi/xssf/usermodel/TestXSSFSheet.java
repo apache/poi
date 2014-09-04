@@ -19,6 +19,8 @@ package org.apache.poi.xssf.usermodel;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
+import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
@@ -29,7 +31,8 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.PasswordRecord;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.usermodel.AutoFilter;
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,7 +44,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -1068,13 +1070,27 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertTrue("sheet protection should be on", pr.isSetSheet());
         assertTrue("object protection should be on", pr.isSetObjects());
         assertTrue("scenario protection should be on", pr.isSetScenarios());
-        String hash = String.valueOf(HexDump.shortToHex(PasswordRecord.hashPassword(password))).substring(2);
-        assertEquals("well known value for top secret hash should be "+ hash, hash, pr.xgetPassword().getStringValue());
+        int hashVal = CryptoFunctions.createXorVerifier1(password);
+        int actualVal = Integer.parseInt(pr.xgetPassword().getStringValue(),16);
+        assertEquals("well known value for top secret hash should match", hashVal, actualVal);
 
         sheet.protectSheet(null);
         assertNull("protectSheet(null) should unset CTSheetProtection", sheet.getCTWorksheet().getSheetProtection());
     }
 
+    @Test
+    public void protectSheet_lowlevel_2013() {
+        String password = "test";
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet xs = wb.createSheet();
+        xs.setSheetPassword(password, HashAlgorithm.sha384);
+        wb = writeOutAndReadBack(wb);
+        assertTrue(wb.getSheetAt(0).validateSheetPassword(password));
+        
+        wb = openSampleWorkbook("workbookProtection-sheet_password-2013.xlsx");
+        assertTrue(wb.getSheetAt(0).validateSheetPassword("pwd"));
+    }
+    
 
     @Test
     public void bug49966() {

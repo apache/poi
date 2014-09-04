@@ -180,14 +180,20 @@ public class CryptoFunctions {
     }
 
     /**
-     * 
+     * Initialize a new cipher object with the given cipher properties
+     * If the given algorithm is not implemented in the JCE, it will try to load it from the bouncy castle
+     * provider.
      *
-     * @param key
-     * @param chain
-     * @param vec
+     * @param key the secrect key
+     * @param cipherAlgorithm the cipher algorithm
+     * @param chain the chaining mode
+     * @param vec the initialization vector (IV), can be null
      * @param cipherMode Cipher.DECRYPT_MODE or Cipher.ENCRYPT_MODE
+     * @param padding
      * @return the requested cipher
      * @throws GeneralSecurityException
+     * @throws EncryptedDocumentException if the initialization failed or if an algorithm was specified,
+     *   which depends on a missing bouncy castle provider 
      */
     public static Cipher getCipher(SecretKey key, CipherAlgorithm cipherAlgorithm, ChainingMode chain, byte[] vec, int cipherMode, String padding) {
         int keySizeInBytes = key.getEncoded().length;
@@ -226,10 +232,26 @@ public class CryptoFunctions {
         }
     }    
     
+    /**
+     * Returns a new byte array with a truncated to the given size. 
+     * If the hash has less then size bytes, it will be filled with 0x36-bytes
+     *
+     * @param hash the to be truncated/filled hash byte array
+     * @param size the size of the returned byte array
+     * @return the padded hash
+     */
     public static byte[] getBlock36(byte[] hash, int size) {
         return getBlockX(hash, size, (byte)0x36);
     }
 
+    /**
+     * Returns a new byte array with a truncated to the given size. 
+     * If the hash has less then size bytes, it will be filled with 0-bytes
+     *
+     * @param hash the to be truncated/filled hash byte array
+     * @param size the size of the returned byte array
+     * @return the padded hash
+     */
     public static byte[] getBlock0(byte[] hash, int size) {
         return getBlockX(hash, size, (byte)0);
     }
@@ -331,11 +353,11 @@ public class CryptoFunctions {
         byte[] generatedKey = new byte[4];
 
         //Maximum length of the password is 15 chars.
-        final int intMaxPasswordLength = 15; 
+        final int maxPasswordLength = 15; 
         
         if (!"".equals(password)) {
             // Truncate the password to 15 characters
-            password = password.substring(0, Math.min(password.length(), intMaxPasswordLength));
+            password = password.substring(0, Math.min(password.length(), maxPasswordLength));
 
             // Construct a new NULL-terminated string consisting of single-byte characters:
             //  -- > Get the single-byte values by iterating through the Unicode characters of the truncated Password.
@@ -359,7 +381,7 @@ public class CryptoFunctions {
             //          the most significant, if the bit is set, XOR the keys high-order word with the corresponding word from 
             //          the Encryption Matrix
             for (int i = 0; i < arrByteChars.length; i++) {
-                int tmp = intMaxPasswordLength - arrByteChars.length + i;
+                int tmp = maxPasswordLength - arrByteChars.length + i;
                 for (int intBit = 0; intBit < 7; intBit++) {
                     if ((arrByteChars[i] & (0x0001 << intBit)) != 0) {
                         highOrderWord ^= EncryptionMatrix[tmp][intBit];
@@ -369,22 +391,28 @@ public class CryptoFunctions {
             
             // Compute the low-order word of the new key:
             
-            // Initialize with 0
-            int lowOrderWord = 0;
+            // SET Verifier TO 0x0000
+            short verifier = 0;
 
-            // For each character in the password, going backwards
-            for (int i = arrByteChars.length - 1; i >= 0; i--) {
-                // low-order word = (((low-order word SHR 14) AND 0x0001) OR (low-order word SHL 1) AND 0x7FFF)) XOR character
-                lowOrderWord = (((lowOrderWord >> 14) & 0x0001) | ((lowOrderWord << 1) & 0x7FFF)) ^ arrByteChars[i];
+            // FOR EACH PasswordByte IN PasswordArray IN REVERSE ORDER
+            for (int i = arrByteChars.length-1; i >= 0; i--) {
+                // SET Verifier TO Intermediate3 BITWISE XOR PasswordByte
+                verifier = rotateLeftBase15Bit(verifier);
+                verifier ^= arrByteChars[i];
             }
 
-            // Lastly,low-order word = (((low-order word SHR 14) AND 0x0001) OR (low-order word SHL 1) AND 0x7FFF)) XOR password length XOR 0xCE4B.
-            lowOrderWord = (((lowOrderWord >> 14) & 0x0001) | ((lowOrderWord << 1) & 0x7FFF)) ^ arrByteChars.length ^ 0xCE4B;
+            // as we haven't prepended the password length into the input array
+            // we need to do it now separately ...
+            verifier = rotateLeftBase15Bit(verifier);
+            verifier ^= arrByteChars.length;
+            
+            // RETURN Verifier BITWISE XOR 0xCE4B
+            verifier ^= 0xCE4B; // (0x8000 | ('N' << 8) | 'K')
 
             // The byte order of the result shall be reversed [password "Example": 0x64CEED7E becomes 7EEDCE64],
             // and that value shall be hashed as defined by the attribute values.
             
-            LittleEndian.putShort(generatedKey, 0, (short)lowOrderWord);
+            LittleEndian.putShort(generatedKey, 0, verifier);
             LittleEndian.putShort(generatedKey, 2, (short)highOrderWord);
         }
         
@@ -421,7 +449,7 @@ public class CryptoFunctions {
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd905229.aspx">2.3.7.4 Binary Document Password Verifier Derivation Method 2</a>
      * 
      * @param password the password
-     * @return the verifier
+     * @return the verifier (actually a short value)
      */
     public static int createXorVerifier1(String password) {
         // the verifier for method 1 is part of the verifier for method 2
@@ -479,5 +507,26 @@ public class CryptoFunctions {
 
     private static byte rotateLeft(byte bits, int shift) {
         return (byte)(((bits & 0xff) << shift) | ((bits & 0xff) >>> (8 - shift)));
+    }
+    
+    private static short rotateLeftBase15Bit(short verifier) {
+        /*
+         * IF (Verifier BITWISE AND 0x4000) is 0x0000
+         *    SET Intermediate1 TO 0
+         * ELSE
+         *    SET Intermediate1 TO 1
+         * ENDIF
+         */
+        short intermediate1 = (short)(((verifier & 0x4000) == 0) ? 0 : 1);
+        /*
+         *  SET Intermediate2 TO Verifier MULTIPLED BY 2
+         *  SET most significant bit of Intermediate2 TO 0
+         */
+        short intermediate2 = (short)((verifier<<1) & 0x7FFF);
+        /*
+         *  SET Intermediate3 TO Intermediate1 BITWISE OR Intermediate2
+         */
+        short intermediate3 = (short)(intermediate1 | intermediate2);
+        return intermediate3;
     }
 }

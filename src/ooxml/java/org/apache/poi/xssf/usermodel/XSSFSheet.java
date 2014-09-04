@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.setPassword;
+import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.validatePassword;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,7 +36,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
@@ -41,6 +43,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
@@ -52,7 +55,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -1056,7 +1058,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public boolean getProtect() {
-        return worksheet.isSetSheetProtection() && sheetProtectionEnabled();
+        return isSheetLocked();
     }
 
     /**
@@ -1068,10 +1070,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public void protectSheet(String password) {
-
-        if(password != null) {
-            CTSheetProtection sheetProtection = worksheet.addNewSheetProtection();
-            sheetProtection.xsetPassword(stringToExcelPassword(password));
+        if (password != null) {
+            CTSheetProtection sheetProtection = safeGetProtectionField();
+            setSheetPassword(password, null); // defaults to xor password
             sheetProtection.setSheet(true);
             sheetProtection.setScenarios(true);
             sheetProtection.setObjects(true);
@@ -1081,18 +1082,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Converts a String to a {@link STUnsignedShortHex} value that contains the {@link PasswordRecord#hashPassword(String)}
-     * value in hexadecimal format
-     *
-     * @param password the password string you wish convert to an {@link STUnsignedShortHex}
-     * @return {@link STUnsignedShortHex} that contains Excel hashed password in Hex format
+     * Sets the sheet password. 
+     * 
+     * @param password if null, the password will be removed
+     * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
+     *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
      */
-    private STUnsignedShortHex stringToExcelPassword(String password) {
-        STUnsignedShortHex hexPassword = STUnsignedShortHex.Factory.newInstance();
-        hexPassword.setStringValue(String.valueOf(HexDump.shortToHex(PasswordRecord.hashPassword(password))).substring(2));
-        return hexPassword;
+    public void setSheetPassword(String password, HashAlgorithm hashAlgo) {
+        if (password == null && !isSheetProtectionEnabled()) return;
+        setPassword(safeGetProtectionField(), password, hashAlgo, null);
     }
 
+    /**
+     * Validate the password against the stored hash, the hashing method will be determined
+     *  by the existing password attributes
+     * @return true, if the hashes match (... though original password may differ ...)
+     */
+    public boolean validateSheetPassword(String password) {
+        if (!isSheetProtectionEnabled()) return (password == null);
+        return validatePassword(safeGetProtectionField(), password, null);
+    }
+    
     /**
      * Returns the logical row ( 0-based).  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
@@ -1546,7 +1556,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             worksheet.unsetMergeCells();
         }
     }
-    
+
     /**
      * Removes a number of merged regions of cells (hence letting them free)
      * 
@@ -2910,304 +2920,440 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return true when Autofilters are locked and the sheet is protected.
      */
     public boolean isAutoFilterLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getAutoFilter();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getAutoFilter();
+        }
+        return false;
     }
 
     /**
      * @return true when Deleting columns is locked and the sheet is protected.
      */
     public boolean isDeleteColumnsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getDeleteColumns();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getDeleteColumns();
+        }
+        return false;
     }
 
     /**
      * @return true when Deleting rows is locked and the sheet is protected.
      */
     public boolean isDeleteRowsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getDeleteRows();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getDeleteRows();
+        }
+        return false;
     }
 
     /**
      * @return true when Formatting cells is locked and the sheet is protected.
      */
     public boolean isFormatCellsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getFormatCells();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getFormatCells();
+        }
+        return false;
     }
 
     /**
      * @return true when Formatting columns is locked and the sheet is protected.
      */
     public boolean isFormatColumnsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getFormatColumns();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getFormatColumns();
+        }
+        return false;
     }
 
     /**
      * @return true when Formatting rows is locked and the sheet is protected.
      */
     public boolean isFormatRowsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getFormatRows();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getFormatRows();
+        }
+        return false;
     }
 
     /**
      * @return true when Inserting columns is locked and the sheet is protected.
      */
     public boolean isInsertColumnsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getInsertColumns();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getInsertColumns();
+        }
+        return false;
     }
 
     /**
      * @return true when Inserting hyperlinks is locked and the sheet is protected.
      */
     public boolean isInsertHyperlinksLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getInsertHyperlinks();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getInsertHyperlinks();
+        }
+        return false;
     }
 
     /**
      * @return true when Inserting rows is locked and the sheet is protected.
      */
     public boolean isInsertRowsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getInsertRows();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getInsertRows();
+        }
+        return false;
     }
 
     /**
      * @return true when Pivot tables are locked and the sheet is protected.
      */
     public boolean isPivotTablesLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getPivotTables();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getPivotTables();
+        }
+        return false;
     }
 
     /**
      * @return true when Sorting is locked and the sheet is protected.
      */
     public boolean isSortLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getSort();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getSort();
+        }
+        return false;
     }
 
     /**
      * @return true when Objects are locked and the sheet is protected.
      */
     public boolean isObjectsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getObjects();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getObjects();
+        }
+        return false;
     }
 
     /**
      * @return true when Scenarios are locked and the sheet is protected.
      */
     public boolean isScenariosLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getScenarios();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getScenarios();
+        }
+        return false;
     }
 
     /**
      * @return true when Selection of locked cells is locked and the sheet is protected.
      */
     public boolean isSelectLockedCellsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getSelectLockedCells();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getSelectLockedCells();
+        }
+        return false;
     }
 
     /**
      * @return true when Selection of unlocked cells is locked and the sheet is protected.
      */
     public boolean isSelectUnlockedCellsLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getSelectUnlockedCells();
+        if (isSheetLocked()) {
+            return safeGetProtectionField().getSelectUnlockedCells();
+        }
+        return false;
     }
 
     /**
      * @return true when Sheet is Protected.
      */
     public boolean isSheetLocked() {
-        createProtectionFieldIfNotPresent();
-        return sheetProtectionEnabled() && worksheet.getSheetProtection().getSheet();
+        if (worksheet.isSetSheetProtection()) {
+            return safeGetProtectionField().getSheet();
+        }
+        return false;
     }
 
     /**
      * Enable sheet protection
      */
     public void enableLocking() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setSheet(true);
+        safeGetProtectionField().setSheet(true);
     }
 
     /**
      * Disable sheet protection
      */
     public void disableLocking() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setSheet(false);
+        safeGetProtectionField().setSheet(false);
     }
 
     /**
      * Enable Autofilters locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockAutoFilter(boolean)}
      */
     public void lockAutoFilter() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setAutoFilter(true);
+        lockAutoFilter(true);
+    }
+
+    /**
+     * Enable or disable Autofilters locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockAutoFilter(boolean enabled) {
+        safeGetProtectionField().setAutoFilter(enabled);
     }
 
     /**
      * Enable Deleting columns locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockDeleteColumns(boolean)}
      */
     public void lockDeleteColumns() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setDeleteColumns(true);
+        lockDeleteColumns(true);
+    }
+
+    /**
+     * Enable or disable Deleting columns locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockDeleteColumns(boolean enabled) {
+        safeGetProtectionField().setDeleteColumns(enabled);
     }
 
     /**
      * Enable Deleting rows locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockDeleteRows(boolean)}
      */
     public void lockDeleteRows() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setDeleteRows(true);
+        lockDeleteRows(true);
+    }
+
+    /**
+     * Enable or disable Deleting rows locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockDeleteRows(boolean enabled) {
+        safeGetProtectionField().setDeleteRows(enabled);
     }
 
     /**
      * Enable Formatting cells locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockFormatCells(boolean)}
      */
     public void lockFormatCells() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setDeleteColumns(true);
+        lockFormatCells(true);
+    }
+
+    /**
+     * Enable or disable Formatting cells locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockFormatCells(boolean enabled) {
+        safeGetProtectionField().setFormatCells(enabled);
     }
 
     /**
      * Enable Formatting columns locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockFormatColumns(boolean)}
      */
     public void lockFormatColumns() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setFormatColumns(true);
+        lockFormatColumns(true);
+    }
+
+    /**
+     * Enable or disable Formatting columns locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockFormatColumns(boolean enabled) {
+        safeGetProtectionField().setFormatColumns(enabled);
     }
 
     /**
      * Enable Formatting rows locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockFormatRows(boolean)}
      */
     public void lockFormatRows() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setFormatRows(true);
+        lockFormatRows(true);
+    }
+
+    /**
+     * Enable or disable Formatting rows locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockFormatRows(boolean enabled) {
+        safeGetProtectionField().setFormatRows(enabled);
     }
 
     /**
      * Enable Inserting columns locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockInsertColumns(boolean)}
      */
     public void lockInsertColumns() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setInsertColumns(true);
+        lockInsertColumns(true);
+    }
+
+    /**
+     * Enable or disable Inserting columns locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockInsertColumns(boolean enabled) {
+        safeGetProtectionField().setInsertColumns(enabled);
     }
 
     /**
      * Enable Inserting hyperlinks locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockInsertHyperlinks(boolean)}
      */
     public void lockInsertHyperlinks() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setInsertHyperlinks(true);
+        lockInsertHyperlinks(true);
+    }
+
+    /**
+     * Enable or disable Inserting hyperlinks locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockInsertHyperlinks(boolean enabled) {
+        safeGetProtectionField().setInsertHyperlinks(enabled);
     }
 
     /**
      * Enable Inserting rows locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockInsertRows(boolean)}
      */
     public void lockInsertRows() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setInsertRows(true);
+        lockInsertRows(true);
+    }
+
+    /**
+     * Enable or disable Inserting rows locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockInsertRows(boolean enabled) {
+        safeGetProtectionField().setInsertRows(enabled);
     }
 
     /**
      * Enable Pivot Tables locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockPivotTables(boolean)}
      */
     public void lockPivotTables() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setPivotTables(true);
+        lockPivotTables(true);
+    }
+
+    /**
+     * Enable or disable Pivot Tables locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockPivotTables(boolean enabled) {
+        safeGetProtectionField().setPivotTables(enabled);
     }
 
     /**
      * Enable Sort locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockSort(boolean)}
      */
     public void lockSort() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setSort(true);
+        lockSort(true);
+    }
+
+    /**
+     * Enable or disable Sort locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockSort(boolean enabled) {
+        safeGetProtectionField().setSort(enabled);
     }
 
     /**
      * Enable Objects locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockObjects(boolean)}
      */
     public void lockObjects() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setObjects(true);
+        lockObjects(true);
+    }
+
+    /**
+     * Enable or disable Objects locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockObjects(boolean enabled) {
+        safeGetProtectionField().setObjects(enabled);
     }
 
     /**
      * Enable Scenarios locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockScenarios(boolean)}
      */
     public void lockScenarios() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setScenarios(true);
+        lockScenarios(true);
+    }
+
+    /**
+     * Enable or disable Scenarios locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockScenarios(boolean enabled) {
+        safeGetProtectionField().setScenarios(enabled);
     }
 
     /**
      * Enable Selection of locked cells locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockSelectLockedCells(boolean)}
      */
     public void lockSelectLockedCells() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setSelectLockedCells(true);
+        lockSelectLockedCells(true);
+    }
+
+    /**
+     * Enable or disable Selection of locked cells locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockSelectLockedCells(boolean enabled) {
+        safeGetProtectionField().setSelectLockedCells(enabled);
     }
 
     /**
      * Enable Selection of unlocked cells locking.
-     * This does not modify sheet protection status.
-     * To enforce this locking, call {@link #enableLocking()}
+     * @deprecated use {@link #lockSelectUnlockedCells(boolean)}
      */
     public void lockSelectUnlockedCells() {
-        createProtectionFieldIfNotPresent();
-        worksheet.getSheetProtection().setSelectUnlockedCells(true);
+        lockSelectUnlockedCells(true);
     }
 
-    private void createProtectionFieldIfNotPresent() {
-        if (worksheet.getSheetProtection() == null) {
-            worksheet.setSheetProtection(CTSheetProtection.Factory.newInstance());
+    /**
+     * Enable or disable Selection of unlocked cells locking.
+     * This does not modify sheet protection status.
+     * To enforce this un-/locking, call {@link #disableLocking()} or {@link #enableLocking()}
+     */
+    public void lockSelectUnlockedCells(boolean enabled) {
+        safeGetProtectionField().setSelectUnlockedCells(enabled);
+    }
+
+    private CTSheetProtection safeGetProtectionField() {
+        if (!isSheetProtectionEnabled()) {
+            return worksheet.addNewSheetProtection();
         }
+        return worksheet.getSheetProtection();
     }
 
-    private boolean sheetProtectionEnabled() {
-        return worksheet.getSheetProtection().getSheet();
+    /* package */ boolean isSheetProtectionEnabled() {
+        return (worksheet.isSetSheetProtection());
     }
 
     /* package */ boolean isCellInArrayFormulaContext(XSSFCell cell) {

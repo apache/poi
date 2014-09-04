@@ -64,4 +64,11 @@ public enum HashAlgorithm {
         }
         throw new EncryptedDocumentException("hash algorithm not found");
     }
+    
+    public static HashAlgorithm fromString(String string) {
+        for (HashAlgorithm ha : values()) {
+            if (ha.ecmaString.equalsIgnoreCase(string) || ha.jceId.equalsIgnoreCase(string)) return ha;
+        }
+        throw new EncryptedDocumentException("hash algorithm not found");
+    }
 }
