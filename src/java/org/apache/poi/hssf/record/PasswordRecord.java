@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -39,23 +40,13 @@ public final class PasswordRecord extends StandardRecord {
         field_1_password = in.readShort();
     }
 
-    //this is the world's lamest "security".  thanks to Wouter van Vugt for making me
-    //not have to try real hard.  -ACO
+    /**
+     * Return the password hash
+     *
+     * @deprecated use {@link CryptoFunctions#createXorVerifier1(String)}
+     */
     public static short hashPassword(String password) {
-        byte[] passwordCharacters = password.getBytes();
-        int hash = 0;
-        if (passwordCharacters.length > 0) {
-            int charIndex = passwordCharacters.length;
-            while (charIndex-- > 0) {
-                hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff);
-                hash ^= passwordCharacters[charIndex];
-            }
-            // also hash with charcount
-            hash = ((hash >> 14) & 0x01) | ((hash << 1) & 0x7fff);
-            hash ^= passwordCharacters.length;
-            hash ^= (0x8000 | ('N' << 8) | 'K');
-        }
-        return (short)hash;
+        return (short)CryptoFunctions.createXorVerifier1(password);
     }
 
     /**

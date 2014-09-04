@@ -16,11 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xssf;
 
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class TestSheetProtection extends TestCase {
 	private XSSFSheet sheet;
@@ -75,6 +74,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isAutoFilterLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isAutoFilterLocked());
+		sheet.lockAutoFilter(false);
+		assertFalse(sheet.isAutoFilterLocked());
 	}
 	
 	public void testWriteDeleteColumns() throws Exception {
@@ -83,6 +84,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isDeleteColumnsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isDeleteColumnsLocked());
+		sheet.lockDeleteColumns(false);
+		assertFalse(sheet.isDeleteColumnsLocked());
 	}
 	
 	public void testWriteDeleteRows() throws Exception {
@@ -91,6 +94,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isDeleteRowsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isDeleteRowsLocked());
+        sheet.lockDeleteRows(false);
+        assertFalse(sheet.isDeleteRowsLocked());
 	}
 	
 	public void testWriteFormatCells() throws Exception {
@@ -99,6 +104,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isFormatCellsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isFormatCellsLocked());
+        sheet.lockFormatCells(false);
+        assertFalse(sheet.isFormatCellsLocked());
 	}
 	
 	public void testWriteFormatColumns() throws Exception {
@@ -107,6 +114,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isFormatColumnsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isFormatColumnsLocked());
+        sheet.lockFormatColumns(false);
+        assertFalse(sheet.isFormatColumnsLocked());
 	}
 	
 	public void testWriteFormatRows() throws Exception {
@@ -115,6 +124,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isFormatRowsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isFormatRowsLocked());
+        sheet.lockFormatRows(false);
+        assertFalse(sheet.isFormatRowsLocked());
 	}
 	
 	public void testWriteInsertColumns() throws Exception {
@@ -123,6 +134,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isInsertColumnsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isInsertColumnsLocked());
+        sheet.lockInsertColumns(false);
+        assertFalse(sheet.isInsertColumnsLocked());
 	}
 	
 	public void testWriteInsertHyperlinks() throws Exception {
@@ -131,6 +144,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isInsertHyperlinksLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isInsertHyperlinksLocked());
+        sheet.lockInsertHyperlinks(false);
+        assertFalse(sheet.isInsertHyperlinksLocked());
 	}
 	
 	public void testWriteInsertRows() throws Exception {
@@ -139,6 +154,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isInsertRowsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isInsertRowsLocked());
+        sheet.lockInsertRows(false);
+        assertFalse(sheet.isInsertRowsLocked());
 	}
 	
 	public void testWritePivotTables() throws Exception {
@@ -147,6 +164,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isPivotTablesLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isPivotTablesLocked());
+        sheet.lockPivotTables(false);
+        assertFalse(sheet.isPivotTablesLocked());
 	}
 	
 	public void testWriteSort() throws Exception {
@@ -155,6 +174,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isSortLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isSortLocked());
+        sheet.lockSort(false);
+        assertFalse(sheet.isSortLocked());
 	}
 	
 	public void testWriteObjects() throws Exception {
@@ -163,6 +184,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isObjectsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isObjectsLocked());
+        sheet.lockObjects(false);
+        assertFalse(sheet.isObjectsLocked());
 	}
 	
 	public void testWriteScenarios() throws Exception {
@@ -171,6 +194,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isScenariosLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isScenariosLocked());
+        sheet.lockScenarios(false);
+        assertFalse(sheet.isScenariosLocked());
 	}
 	
 	public void testWriteSelectLockedCells() throws Exception {
@@ -179,6 +204,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isSelectLockedCellsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isSelectLockedCellsLocked());
+        sheet.lockSelectLockedCells(false);
+        assertFalse(sheet.isSelectLockedCellsLocked());
 	}
 	
 	public void testWriteSelectUnlockedCells() throws Exception {
@@ -187,6 +214,8 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isSelectUnlockedCellsLocked());
 		sheet.enableLocking();
 		assertTrue(sheet.isSelectUnlockedCellsLocked());
+        sheet.lockSelectUnlockedCells(false);
+        assertFalse(sheet.isSelectUnlockedCellsLocked());
 	}
 
 	public void testWriteSelectEnableLocking() throws Exception {

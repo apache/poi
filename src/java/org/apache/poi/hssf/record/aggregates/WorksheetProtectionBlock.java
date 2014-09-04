@@ -24,6 +24,7 @@ import org.apache.poi.hssf.record.ProtectRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.hssf.record.ScenarioProtectRecord;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
 
 /**
  * Groups the sheet protection records for a worksheet.
@@ -186,7 +187,7 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 		ProtectRecord prec = getProtect();
 		PasswordRecord pass = getPassword();
 		prec.setProtect(true);
-		pass.setPassword(PasswordRecord.hashPassword(password));
+		pass.setPassword((short)CryptoFunctions.createXorVerifier1(password));
 		if (_objectProtectRecord == null && shouldProtectObjects) {
 			ObjectProtectRecord rec = createObjectProtect();
 			rec.setProtect(true);
