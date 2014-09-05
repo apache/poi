@@ -226,12 +226,12 @@ public final class XSSFRowShifter {
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
 
-
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
         CTWorksheet ctWorksheet = sheet.getCTWorksheet();
-        int cfCount = ctWorksheet.sizeOfConditionalFormattingArray();
-        for(int j = 0; j< cfCount; j++){
-            CTConditionalFormatting cf = ctWorksheet.getConditionalFormattingArray(j);
+        CTConditionalFormatting[] conditionalFormattingArray = ctWorksheet.getConditionalFormattingArray();
+        // iterate backwards due to possible calls to ctWorksheet.removeConditionalFormatting(j)
+        for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
+            CTConditionalFormatting cf = conditionalFormattingArray[j];
 
             ArrayList<CellRangeAddress> cellRanges = new ArrayList<CellRangeAddress>();
             for (Object stRef : cf.getSqref()) {
@@ -267,9 +267,9 @@ public final class XSSFRowShifter {
             }
 
             for(CTCfRule cfRule : cf.getCfRuleArray()){
-                int formulaCount = cfRule.sizeOfFormulaArray();
-                for (int i = 0; i < formulaCount; i++) {
-                    String formula = cfRule.getFormulaArray(i);
+                String[] formulaArray = cfRule.getFormulaArray();
+                for (int i = 0; i < formulaArray.length; i++) {
+                    String formula = formulaArray[i];
                     Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
                     if (shifter.adjustFormula(ptgs, sheetIndex)) {
                         String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);

@@ -131,18 +131,12 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         if (cfRules.length > 3) {
             throw new IllegalArgumentException("Number of rules must not exceed 3");
         }
-        XSSFConditionalFormattingRule[] hfRules;
-        if(cfRules instanceof XSSFConditionalFormattingRule[]) hfRules = (XSSFConditionalFormattingRule[])cfRules;
-        else {
-            hfRules = new XSSFConditionalFormattingRule[cfRules.length];
-            System.arraycopy(cfRules, 0, hfRules, 0, hfRules.length);
-        }
+
         CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(regions);
         CTConditionalFormatting cf = _sheet.getCTWorksheet().addNewConditionalFormatting();
         List<String> refs = new ArrayList<String>();
         for(CellRangeAddress a : mergeCellRanges) refs.add(a.formatAsString());
         cf.setSqref(refs);
-
 
         int priority = 1;
         for(CTConditionalFormatting c : _sheet.getCTWorksheet().getConditionalFormattingArray()){
