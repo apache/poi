@@ -118,7 +118,7 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
                 writeHeader( data, offset, segmentLength );
             writtenActualData += 4;
             offset += 4;
-            ArrayUtil.arraycopy( rawData, writtenRawData, data, offset, segmentLength );
+            System.arraycopy( rawData, writtenRawData, data, offset, segmentLength );
             offset += segmentLength;
             writtenRawData += segmentLength;
             writtenActualData += segmentLength;

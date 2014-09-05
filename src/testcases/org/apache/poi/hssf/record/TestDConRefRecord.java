@@ -23,7 +23,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import junit.framework.TestCase;
-import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndianOutputStream;
 
 /**
@@ -288,7 +287,7 @@ public class TestDConRefRecord extends TestCase
     public void testGetPath()
     {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
-        byte[] expResult = ArrayUtil.copyOfRange(data1, 9, data1.length);
+        byte[] expResult = Arrays.copyOfRange(data1, 9, data1.length);
         byte[] result = instance.getPath();
         assertTrue("get path", Arrays.equals(expResult, result));
     }
