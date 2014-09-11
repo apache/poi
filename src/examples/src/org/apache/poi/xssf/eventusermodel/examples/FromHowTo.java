@@ -115,6 +115,7 @@ public class FromHowTo {
 			if(nextIsString) {
 				int idx = Integer.parseInt(lastContents);
 				lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+            nextIsString = false;
 			}
 
 			// v => contents of a cell
