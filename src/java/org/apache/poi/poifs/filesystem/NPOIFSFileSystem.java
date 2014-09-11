@@ -167,20 +167,20 @@ public class NPOIFSFileSystem extends BlockStore
     /**
      * <p>Creates a POIFSFileSystem from an open <tt>FileChannel</tt>. This uses 
      *  less memory than creating from an <tt>InputStream</tt>. The stream will
-     *  be used in read-write mode.</p>
+     *  be used in read-only mode.</p>
      *  
      * <p>Note that with this constructor, you will need to call {@link #close()}
      *  when you're done to have the underlying Channel closed, as the channel is
      *  kept open during normal operation to read the data out.</p> 
      *  
-     * @param channel the FileChannel from which to read and write the data
+     * @param channel the FileChannel from which to read the data
      *
      * @exception IOException on errors reading, or on invalid data
      */
     public NPOIFSFileSystem(FileChannel channel)
          throws IOException
     {
-       this(channel, null, false, false);
+       this(channel, true);
     }
     
     /**
