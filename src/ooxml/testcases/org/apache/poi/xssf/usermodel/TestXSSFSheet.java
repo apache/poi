@@ -28,7 +28,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -295,6 +298,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         CellRangeAddress region_1 = CellRangeAddress.valueOf("A1:B2");
         CellRangeAddress region_2 = CellRangeAddress.valueOf("C3:D4");
         CellRangeAddress region_3 = CellRangeAddress.valueOf("E5:F6");
+        CellRangeAddress region_4 = CellRangeAddress.valueOf("G7:H8");
         sheet.addMergedRegion(region_1);
         sheet.addMergedRegion(region_2);
         sheet.addMergedRegion(region_3);
@@ -308,6 +312,17 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(0, sheet.getNumMergedRegions());
         assertNull(" CTMergeCells should be deleted after removing the last merged " +
                 "region on the sheet.", sheet.getCTWorksheet().getMergeCells());
+        sheet.addMergedRegion(region_1);
+        sheet.addMergedRegion(region_2);
+        sheet.addMergedRegion(region_3);
+        sheet.addMergedRegion(region_4);
+        // test invalid indexes OOBE
+        Set<Integer> rmIdx = new HashSet<Integer>(Arrays.asList(5,6));
+        sheet.removeMergedRegions(rmIdx);
+        rmIdx = new HashSet<Integer>(Arrays.asList(1,3));
+        sheet.removeMergedRegions(rmIdx);
+        assertEquals("A1:B2", ctWorksheet.getMergeCells().getMergeCellArray(0).getRef());
+        assertEquals("E5:F6", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
     }
 
     @Test

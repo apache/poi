@@ -47,7 +47,16 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.SheetNameFormatter;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellRange;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -64,7 +73,47 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -602,6 +651,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
+    private int[] getBreaks(CTPageBreak ctPageBreak) {
+        CTBreak[] brkArray = ctPageBreak.getBrkArray();
+        int[] breaks = new int[brkArray.length];
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            breaks[i] = (int) brkArray[i].getId() - 1;
+        }
+        return breaks;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void removeBreak(int index, CTPageBreak ctPageBreak) {
+        int index1 = index + 1;
+        CTBreak[] brkArray = ctPageBreak.getBrkArray();
+        for (int i = 0 ; i < brkArray.length ; i++) {
+            if (brkArray[i].getId() == index1) {
+                ctPageBreak.removeBrk(i);
+                // TODO: check if we can break here, i.e. if a page can have more than 1 break on the same id
+            }
+        }
+    }
+
     /**
      * Vertical page break information used for print layout view, page layout view, drawing print breaks
      * in normal view, and for printing the worksheet.
@@ -609,20 +680,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return column indexes of all the vertical page breaks, never <code>null</code>
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public int[] getColumnBreaks() {
-        if (!worksheet.isSetColBreaks() || worksheet.getColBreaks().sizeOfBrkArray() == 0) {
-            return new int[0];
-        }
-
-        CTBreak[] brkArray = worksheet.getColBreaks().getBrkArray();
-
-        int[] breaks = new int[brkArray.length];
-        for (int i = 0 ; i < brkArray.length ; i++) {
-            CTBreak brk = brkArray[i];
-            breaks[i] = (int)brk.getId() - 1;
-        }
-        return breaks;
+        return worksheet.isSetColBreaks() ? getBreaks(worksheet.getColBreaks()) : new int[0];
     }
 
     /**
@@ -705,8 +764,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param value true for right to left, false otherwise.
      */
     @Override
-    public void setRightToLeft(boolean value)
-    {
+    public void setRightToLeft(boolean value) {
        CTSheetView view = getDefaultSheetView();
        view.setRightToLeft(value);
     }
@@ -717,10 +775,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return whether the text is displayed in right-to-left mode in the window
      */
     @Override
-    public boolean isRightToLeft()
-    {
+    public boolean isRightToLeft() {
        CTSheetView view = getDefaultSheetView();
-       return view == null ? false : view.getRightToLeft();
+       return view != null && view.getRightToLeft();
     }
 
     /**
@@ -757,7 +814,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     @Override
     public boolean isDisplayZeros(){
         CTSheetView view = getDefaultSheetView();
-        return view == null ? true : view.getShowZeros();
+        return view == null || view.getShowZeros();
     }
 
     /**
@@ -779,7 +836,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public int getFirstRowNum() {
-        return _rows.size() == 0 ? 0 : _rows.firstKey();
+        return _rows.isEmpty() ? 0 : _rows.firstKey();
     }
 
     /**
@@ -897,7 +954,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     @Override
     public int getLastRowNum() {
-        return _rows.size() == 0 ? 0 : _rows.lastKey();
+        return _rows.isEmpty() ? 0 : _rows.lastKey();
     }
 
     @Override
@@ -1032,9 +1089,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
-     * Returns the number of phsyically defined rows (NOT the number of rows in the sheet)
+     * Returns the number of physically defined rows (NOT the number of rows in the sheet)
      *
-     * @return the number of phsyically defined rows
+     * @return the number of physically defined rows
      */
     @Override
     public int getPhysicalNumberOfRows() {
@@ -1122,19 +1179,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return row indexes of all the horizontal page breaks, never <code>null</code>
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public int[] getRowBreaks() {
-        if (!worksheet.isSetRowBreaks() || worksheet.getRowBreaks().sizeOfBrkArray() == 0) {
-            return new int[0];
-        }
+        return worksheet.isSetRowBreaks() ? getBreaks(worksheet.getRowBreaks()) : new int[0];
 
-        CTBreak[] brkArray = worksheet.getRowBreaks().getBrkArray();
-        int[] breaks = new int[brkArray.length];
-        for (int i = 0 ; i < brkArray.length ; i++) {
-            CTBreak brk = brkArray[i];
-            breaks[i] = (int)brk.getId() - 1;
-        }
-        return breaks;
     }
 
     /**
@@ -1334,22 +1381,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private short getMaxOutlineLevelRows(){
-        short outlineLevel=0;
-        for(XSSFRow xrow : _rows.values()){
-            outlineLevel=xrow.getCTRow().getOutlineLevel()>outlineLevel? xrow.getCTRow().getOutlineLevel(): outlineLevel;
+        int outlineLevel = 0;
+        for (XSSFRow xrow : _rows.values()) {
+            outlineLevel = Math.max(outlineLevel, xrow.getCTRow().getOutlineLevel());
         }
-        return outlineLevel;
+        return (short) outlineLevel;
     }
 
 
     @SuppressWarnings("deprecation")
     private short getMaxOutlineLevelCols() {
         CTCols ctCols = worksheet.getColsArray(0);
-        short outlineLevel = 0;
+        int outlineLevel = 0;
         for (CTCol col : ctCols.getColArray()) {
-            outlineLevel = col.getOutlineLevel() > outlineLevel ? col.getOutlineLevel() : outlineLevel;
+            outlineLevel = Math.max(outlineLevel, col.getOutlineLevel());
         }
-        return outlineLevel;
+        return (short) outlineLevel;
     }
 
     /**
@@ -1357,8 +1404,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public boolean isColumnBroken(int column) {
-        int[] colBreaks = getColumnBreaks();
-        for (int colBreak : colBreaks) {
+        for (int colBreak : getColumnBreaks()) {
             if (colBreak == column) {
                 return true;
             }
@@ -1477,13 +1523,23 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public boolean isRowBroken(int row) {
-        int[] rowBreaks = getRowBreaks();
-        for (int rowBreak : rowBreaks) {
+        for (int rowBreak : getRowBreaks()) {
             if (rowBreak == row) {
                 return true;
             }
         }
         return false;
+    }
+
+    private void setBreak(int id, CTPageBreak ctPgBreak, int lastIndex) {
+        CTBreak brk = ctPgBreak.addNewBrk();
+        brk.setId(id + 1); // this is id of the element which is 1-based: <row r="1" ... >
+        brk.setMan(true);
+        brk.setMax(lastIndex); //end column of the break
+
+        int nPageBreaks = ctPgBreak.sizeOfBrkArray();
+        ctPgBreak.setCount(nPageBreaks);
+        ctPgBreak.setManualBreakCount(nPageBreaks);
     }
 
     /**
@@ -1499,15 +1555,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public void setRowBreak(int row) {
-        CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
-        if (! isRowBroken(row)) {
-            CTBreak brk = pgBreak.addNewBrk();
-            brk.setId(row + 1); // this is id of the row element which is 1-based: <row r="1" ... >
-            brk.setMan(true);
-            brk.setMax(SpreadsheetVersion.EXCEL2007.getLastColumnIndex()); //end column of the break
-
-            pgBreak.setCount(pgBreak.sizeOfBrkArray());
-            pgBreak.setManualBreakCount(pgBreak.sizeOfBrkArray());
+        if (!isRowBroken(row)) {
+            CTPageBreak pgBreak = worksheet.isSetRowBreaks() ? worksheet.getRowBreaks() : worksheet.addNewRowBreaks();
+            setBreak(row, pgBreak, SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
         }
     }
 
@@ -1515,20 +1565,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Removes a page break at the indicated column
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeColumnBreak(int column) {
-        if (!worksheet.isSetColBreaks()) {
-            // no breaks
-            return;
-        }
-
-        CTPageBreak pgBreak = worksheet.getColBreaks();
-        CTBreak[] brkArray = pgBreak.getBrkArray();
-        for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == (column + 1)) {
-                pgBreak.removeBrk(i);
-            }
-        }
+        if (worksheet.isSetColBreaks()) {
+            removeBreak(column, worksheet.getColBreaks());
+        } // else no breaks
     }
 
     /**
@@ -1537,50 +1577,46 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param index of the region to unmerge
      */
     @Override
+    @SuppressWarnings("deprecation")
     public void removeMergedRegion(int index) {
+        if (!worksheet.isSetMergeCells()) return;
+        
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
-
         int size = ctMergeCells.sizeOfMergeCellArray();
-        CTMergeCell[] mergeCellsArray = new CTMergeCell[size - 1];
-        for (int i = 0 ; i < size ; i++) {
-            if (i < index) {
-                mergeCellsArray[i] = ctMergeCells.getMergeCellArray(i);
-            }
-            else if (i > index) {
-                mergeCellsArray[i - 1] = ctMergeCells.getMergeCellArray(i);
-            }
-        }
-        if(mergeCellsArray.length > 0){
-            ctMergeCells.setMergeCellArray(mergeCellsArray);
-        } else{
+        assert(0 <= index && index < size);
+        if (size > 1) {
+            ctMergeCells.removeMergeCell(index);
+        } else {
             worksheet.unsetMergeCells();
         }
     }
 
     /**
      * Removes a number of merged regions of cells (hence letting them free)
-     * 
+     *
      * This method can be used to bulk-remove merged regions in a way
-     * much faster than calling removeMergedRegion() for every single 
+     * much faster than calling removeMergedRegion() for every single
      * merged region.
      *
      * @param indices A set of the regions to unmerge
      */
+    @SuppressWarnings("deprecation")
     public void removeMergedRegions(Set<Integer> indices) {
+        if (!worksheet.isSetMergeCells()) return;
+        
         CTMergeCells ctMergeCells = worksheet.getMergeCells();
+        List<CTMergeCell> newMergeCells = new ArrayList<CTMergeCell>(ctMergeCells.sizeOfMergeCellArray());
 
-        int size = ctMergeCells.sizeOfMergeCellArray();
-        CTMergeCell[] mergeCellsArray = new CTMergeCell[size - indices.size()];
-        for (int i = 0, d = 0 ; i < size ; i++) {
-            if(!indices.contains(i)) {
-                mergeCellsArray[d] = ctMergeCells.getMergeCellArray(i);
-                d++;
-            }
+        int idx = 0;
+        for (CTMergeCell mc : ctMergeCells.getMergeCellArray()) {
+            if (!indices.contains(idx++)) newMergeCells.add(mc);
         }
-        if(mergeCellsArray.length > 0){
-            ctMergeCells.setMergeCellArray(mergeCellsArray);
-        } else{
+        
+        if (newMergeCells.isEmpty()) {
             worksheet.unsetMergeCells();
+        } else{
+            CTMergeCell[] newMergeCellsArray = new CTMergeCell[newMergeCells.size()];
+            ctMergeCells.setMergeCellArray(newMergeCells.toArray(newMergeCellsArray));
         }
     }
 
@@ -1609,18 +1645,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Removes the page break at the indicated row
      */
     @Override
-    @SuppressWarnings("deprecation") //YK: getXYZArray() array accessors are deprecated in xmlbeans with JDK 1.5 support
     public void removeRowBreak(int row) {
-        if(!worksheet.isSetRowBreaks()) {
-            return;
-        }
-        CTPageBreak pgBreak = worksheet.getRowBreaks();
-        CTBreak[] brkArray = pgBreak.getBrkArray();
-        for (int i = 0 ; i < brkArray.length ; i++) {
-            if (brkArray[i].getId() == (row + 1)) {
-                pgBreak.removeBrk(i);
-            }
-        }
+        if (worksheet.isSetRowBreaks()) {
+            removeBreak(row, worksheet.getRowBreaks());
+        } // else no breaks
     }
 
     /**
@@ -1734,15 +1762,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public void setColumnBreak(int column) {
-        if (! isColumnBroken(column)) {
+        if (!isColumnBroken(column)) {
             CTPageBreak pgBreak = worksheet.isSetColBreaks() ? worksheet.getColBreaks() : worksheet.addNewColBreaks();
-            CTBreak brk = pgBreak.addNewBrk();
-            brk.setId(column + 1);  // this is id of the row element which is 1-based: <row r="1" ... >
-            brk.setMan(true);
-            brk.setMax(SpreadsheetVersion.EXCEL2007.getLastRowIndex()); //end row of the break
-
-            pgBreak.setCount(pgBreak.sizeOfBrkArray());
-            pgBreak.setManualBreakCount(pgBreak.sizeOfBrkArray());
+            setBreak(column, pgBreak, SpreadsheetVersion.EXCEL2007.getLastRowIndex());
         }
     }
 
@@ -1772,23 +1794,23 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                 .getOutlineLevel(), true);
 
         // write collapse field
-        setColumn(lastColMax + 1, null, 0, null, null, Boolean.TRUE);
+        setColumn(lastColMax + 1, 0, null, null, Boolean.TRUE);
 
     }
 
-    private void setColumn(int targetColumnIx, Short xfIndex, Integer style,
-            Integer level, Boolean hidden, Boolean collapsed) {
+    @SuppressWarnings("deprecation")
+    private void setColumn(int targetColumnIx, Integer style,
+                           Integer level, Boolean hidden, Boolean collapsed) {
         CTCols cols = worksheet.getColsArray(0);
         CTCol ci = null;
-        int k = 0;
-        for (k = 0; k < cols.sizeOfColArray(); k++) {
-            CTCol tci = cols.getColArray(k);
-            if (tci.getMin() >= targetColumnIx
-                    && tci.getMax() <= targetColumnIx) {
+        for (CTCol tci : cols.getColArray()) {
+            long tciMin = tci.getMin();
+            long tciMax = tci.getMax();
+            if (tciMin >= targetColumnIx && tciMax <= targetColumnIx) {
                 ci = tci;
                 break;
             }
-            if (tci.getMin() > targetColumnIx) {
+            if (tciMin > targetColumnIx) {
                 // call column infos after k are for later columns
                 break; // exit now so k will be the correct insert pos
             }
@@ -1805,36 +1827,32 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             return;
         }
 
-        boolean styleChanged = style != null
-        && ci.getStyle() != style;
-        boolean levelChanged = level != null
-        && ci.getOutlineLevel() != level;
-        boolean hiddenChanged = hidden != null
-        && ci.getHidden() != hidden;
-        boolean collapsedChanged = collapsed != null
-        && ci.getCollapsed() != collapsed;
-        boolean columnChanged = levelChanged || hiddenChanged
-        || collapsedChanged || styleChanged;
+        boolean styleChanged = style != null && ci.getStyle() != style;
+        boolean levelChanged = level != null && ci.getOutlineLevel() != level;
+        boolean hiddenChanged = hidden != null && ci.getHidden() != hidden;
+        boolean collapsedChanged = collapsed != null && ci.getCollapsed() != collapsed;
+        boolean columnChanged = levelChanged || hiddenChanged || collapsedChanged || styleChanged;
         if (!columnChanged) {
             // do nothing...nothing changed.
             return;
         }
 
-        if (ci.getMin() == targetColumnIx && ci.getMax() == targetColumnIx) {
+        long ciMin = ci.getMin();
+        long ciMax = ci.getMax();
+        if (ciMin == targetColumnIx && ciMax == targetColumnIx) {
             // ColumnInfo ci for a single column, the target column
             unsetCollapsed(collapsed, ci);
             return;
         }
 
-        if (ci.getMin() == targetColumnIx || ci.getMax() == targetColumnIx) {
+        if (ciMin == targetColumnIx || ciMax == targetColumnIx) {
             // The target column is at either end of the multi-column ColumnInfo
             // ci
             // we'll just divide the info and create a new one
-            if (ci.getMin() == targetColumnIx) {
+            if (ciMin == targetColumnIx) {
                 ci.setMin(targetColumnIx + 1);
             } else {
                 ci.setMax(targetColumnIx - 1);
-                k++; // adjust insert pos to insert after
             }
             CTCol nci = columnHelper.cloneCol(cols, ci);
             nci.setMin(targetColumnIx);
@@ -1843,12 +1861,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
         } else {
             // split to 3 records
-            CTCol ciStart = ci;
             CTCol ciMid = columnHelper.cloneCol(cols, ci);
             CTCol ciEnd = columnHelper.cloneCol(cols, ci);
-            int lastcolumn = (int) ci.getMax();
+            int lastcolumn = (int) ciMax;
 
-            ciStart.setMax(targetColumnIx - 1);
+            ci.setMax(targetColumnIx - 1);
 
             ciMid.setMin(targetColumnIx);
             ciMid.setMax(targetColumnIx);
@@ -1877,14 +1894,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *                the col info index of the start of the outline group
      * @return the column index of the last column in the outline group
      */
+    @SuppressWarnings("deprecation")
     private int setGroupHidden(int pIdx, int level, boolean hidden) {
         CTCols cols = worksheet.getColsArray(0);
         int idx = pIdx;
-        CTCol columnInfo = cols.getColArray(idx);
-        while (idx < cols.sizeOfColArray()) {
+        CTCol[] colArray = cols.getColArray();
+        CTCol columnInfo = colArray[idx];
+        while (idx < colArray.length) {
             columnInfo.setHidden(hidden);
-            if (idx + 1 < cols.sizeOfColArray()) {
-                CTCol nextColumnInfo = cols.getColArray(idx + 1);
+            if (idx + 1 < colArray.length) {
+                CTCol nextColumnInfo = colArray[idx + 1];
 
                 if (!isAdjacentBefore(columnInfo, nextColumnInfo)) {
                     break;
@@ -1901,17 +1920,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private boolean isAdjacentBefore(CTCol col, CTCol other_col) {
-        return (col.getMax() == (other_col.getMin() - 1));
+        return col.getMax() == other_col.getMin() - 1;
     }
 
+    @SuppressWarnings("deprecation")
     private int findStartOfColumnOutlineGroup(int pIdx) {
         // Find the start of the group.
         CTCols cols = worksheet.getColsArray(0);
-        CTCol columnInfo = cols.getColArray(pIdx);
+        CTCol[] colArray = cols.getColArray();
+        CTCol columnInfo = colArray[pIdx];
         int level = columnInfo.getOutlineLevel();
         int idx = pIdx;
         while (idx != 0) {
-            CTCol prevColumnInfo = cols.getColArray(idx - 1);
+            CTCol prevColumnInfo = colArray[idx - 1];
             if (!isAdjacentBefore(prevColumnInfo, columnInfo)) {
                 break;
             }
@@ -1924,14 +1945,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return idx;
     }
 
+    @SuppressWarnings("deprecation")
     private int findEndOfColumnOutlineGroup(int colInfoIndex) {
         CTCols cols = worksheet.getColsArray(0);
         // Find the end of the group.
-        CTCol columnInfo = cols.getColArray(colInfoIndex);
+        CTCol[] colArray = cols.getColArray();
+        CTCol columnInfo = colArray[colInfoIndex];
         int level = columnInfo.getOutlineLevel();
         int idx = colInfoIndex;
-        while (idx < cols.sizeOfColArray() - 1) {
-            CTCol nextColumnInfo = cols.getColArray(idx + 1);
+        int lastIdx = colArray.length - 1;
+        while (idx < lastIdx) {
+            CTCol nextColumnInfo = colArray[idx + 1];
             if (!isAdjacentBefore(columnInfo, nextColumnInfo)) {
                 break;
             }
@@ -1944,6 +1968,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return idx;
     }
 
+    @SuppressWarnings("deprecation")
     private void expandColumn(int columnIndex) {
         CTCols cols = worksheet.getColsArray(0);
         CTCol col = columnHelper.getColumn(columnIndex, false);
@@ -1974,12 +1999,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // is the enclosing group
         // hidden bit only is altered for this outline level. ie. don't
         // uncollapse contained groups
-        CTCol columnInfo = cols.getColArray(endIdx);
+        CTCol[] colArray = cols.getColArray();
+        CTCol columnInfo = colArray[endIdx];
         if (!isColumnGroupHiddenByParent(idx)) {
-            int outlineLevel = columnInfo.getOutlineLevel();
+            short outlineLevel = columnInfo.getOutlineLevel();
             boolean nestedGroup = false;
             for (int i = startIdx; i <= endIdx; i++) {
-                CTCol ci = cols.getColArray(i);
+                CTCol ci = colArray[i];
                 if (outlineLevel == ci.getOutlineLevel()) {
                     ci.unsetHidden();
                     if (nestedGroup) {
@@ -1993,20 +2019,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         // Write collapse flag (stored in a single col info record after this
         // outline group)
-        setColumn((int) columnInfo.getMax() + 1, null, null, null,
+        setColumn((int) columnInfo.getMax() + 1, null, null,
                 Boolean.FALSE, Boolean.FALSE);
     }
 
+    @SuppressWarnings("deprecation")
     private boolean isColumnGroupHiddenByParent(int idx) {
         CTCols cols = worksheet.getColsArray(0);
         // Look out outline details of end
         int endLevel = 0;
         boolean endHidden = false;
         int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
-        if (endOfOutlineGroupIdx < cols.sizeOfColArray()) {
-            CTCol nextInfo = cols.getColArray(endOfOutlineGroupIdx + 1);
-            if (isAdjacentBefore(cols.getColArray(endOfOutlineGroupIdx),
-                    nextInfo)) {
+        CTCol[] colArray = cols.getColArray();
+        if (endOfOutlineGroupIdx < colArray.length) {
+            CTCol nextInfo = colArray[endOfOutlineGroupIdx + 1];
+            if (isAdjacentBefore(colArray[endOfOutlineGroupIdx], nextInfo)) {
                 endLevel = nextInfo.getOutlineLevel();
                 endHidden = nextInfo.getHidden();
             }
@@ -2016,10 +2043,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         boolean startHidden = false;
         int startOfOutlineGroupIdx = findStartOfColumnOutlineGroup(idx);
         if (startOfOutlineGroupIdx > 0) {
-            CTCol prevInfo = cols.getColArray(startOfOutlineGroupIdx - 1);
+            CTCol prevInfo = colArray[startOfOutlineGroupIdx - 1];
 
-            if (isAdjacentBefore(prevInfo, cols
-                    .getColArray(startOfOutlineGroupIdx))) {
+            if (isAdjacentBefore(prevInfo, colArray[startOfOutlineGroupIdx])) {
                 startLevel = prevInfo.getOutlineLevel();
                 startHidden = prevInfo.getHidden();
             }
@@ -2031,6 +2057,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         return startHidden;
     }
 
+    @SuppressWarnings("deprecation")
     private int findColInfoIdx(int columnValue, int fromColInfoIdx) {
         CTCols cols = worksheet.getColsArray(0);
 
@@ -2043,8 +2070,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
                     "fromIdx parameter out of range: " + fromColInfoIdx);
         }
 
-        for (int k = fromColInfoIdx; k < cols.sizeOfColArray(); k++) {
-            CTCol ci = cols.getColArray(k);
+        CTCol[] colArray = cols.getColArray();
+        for (int k = fromColInfoIdx; k < colArray.length; k++) {
+            CTCol ci = colArray[k];
 
             if (containsColumn(ci, columnValue)) {
                 return k;
@@ -2069,16 +2097,18 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param idx
      * @return a boolean represented if the column is collapsed
      */
+    @SuppressWarnings("deprecation")
     private boolean isColumnGroupCollapsed(int idx) {
         CTCols cols = worksheet.getColsArray(0);
+        CTCol[] colArray = cols.getColArray();
         int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
         int nextColInfoIx = endOfOutlineGroupIdx + 1;
-        if (nextColInfoIx >= cols.sizeOfColArray()) {
+        if (nextColInfoIx >= colArray.length) {
             return false;
         }
-        CTCol nextColInfo = cols.getColArray(nextColInfoIx);
+        CTCol nextColInfo = colArray[nextColInfoIx];
 
-        CTCol col = cols.getColArray(endOfOutlineGroupIdx);
+        CTCol col = colArray[endOfOutlineGroupIdx];
         if (!isAdjacentBefore(col, nextColInfo)) {
             return false;
         }
@@ -2285,7 +2315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     private int findStartOfRowOutlineGroup(int rowIndex) {
         // Find the start of the group.
-        int level = getRow(rowIndex).getCTRow().getOutlineLevel();
+        short level = getRow(rowIndex).getCTRow().getOutlineLevel();
         int currentRow = rowIndex;
         while (getRow(currentRow) != null) {
             if (getRow(currentRow).getCTRow().getOutlineLevel() < level)
@@ -2296,7 +2326,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     private int writeHidden(XSSFRow xRow, int rowIndex, boolean hidden) {
-        int level = xRow.getCTRow().getOutlineLevel();
+        short level = xRow.getCTRow().getOutlineLevel();
         for (Iterator<Row> it = rowIterator(); it.hasNext();) {
             xRow = (XSSFRow) it.next();
 
@@ -2343,10 +2373,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // is the enclosing group
         // hidden bit only is altered for this outline level. ie. don't
         // un-collapse contained groups
+        short level = row.getCTRow().getOutlineLevel();
         if (!isRowGroupHiddenByParent(rowNumber)) {
             for (int i = startIdx; i < endIdx; i++) {
-                if (row.getCTRow().getOutlineLevel() == getRow(i).getCTRow()
-                        .getOutlineLevel()) {
+                if (level == getRow(i).getCTRow().getOutlineLevel()) {
                     getRow(i).getCTRow().unsetHidden();
                 } else if (!isRowGroupCollapsed(i)) {
                     getRow(i).getCTRow().unsetHidden();
@@ -2365,7 +2395,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @param row the zero based row index to find from
      */
     public int findEndOfRowOutlineGroup(int row) {
-        int level = getRow(row).getCTRow().getOutlineLevel();
+        short level = getRow(row).getCTRow().getOutlineLevel();
         int currentRow;
         for (currentRow = row; currentRow < getLastRowNum(); currentRow++) {
             if (getRow(currentRow) == null
@@ -2621,11 +2651,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         for (int i = fromRow; i <= toRow; i++) {
             XSSFRow xrow = getRow(i);
             if (xrow != null) {
-                CTRow ctrow = xrow.getCTRow();
-                short outlinelevel = ctrow.getOutlineLevel();
-                ctrow.setOutlineLevel((short) (outlinelevel - 1));
+                CTRow ctRow = xrow.getCTRow();
+                int outlineLevel = ctRow.getOutlineLevel();
+                ctRow.setOutlineLevel((short) (outlineLevel - 1));
                 //remove a row only if the row has no cell and if the outline level is 0
-                if (ctrow.getOutlineLevel() == 0 && xrow.getFirstCellNum() == -1) {
+                if (outlineLevel == 1 && xrow.getFirstCellNum() == -1) {
                     removeRow(xrow);
                 }
             }
@@ -2737,13 +2767,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *  so we can decide about writing it to disk or not
      */
     public boolean hasComments() {
-        if(sheetComments == null) { return false; }
-        return (sheetComments.getNumberOfComments() > 0);
+        return sheetComments != null && sheetComments.getNumberOfComments() > 0;
     }
 
     protected int getNumberOfComments() {
-        if(sheetComments == null) { return 0; }
-        return sheetComments.getNumberOfComments();
+        return sheetComments == null ? 0 : sheetComments.getNumberOfComments();
     }
 
     private CTSelection getSheetTypeSelection() {
@@ -2842,7 +2870,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             CTCellFormula sf = (CTCellFormula)f.copy();
             CellRangeAddress sfRef = CellRangeAddress.valueOf(sf.getRef());
             CellReference cellRef = new CellReference(cell);
-            // If the shared formula range preceeds the master cell then the preceding  part is discarded, e.g.
+            // If the shared formula range precedes the master cell then the preceding  part is discarded, e.g.
             // if the cell is E60 and the shared formula range is C60:M85 then the effective range is E60:M85
             // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
             if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
@@ -2920,160 +2948,112 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * @return true when Autofilters are locked and the sheet is protected.
      */
     public boolean isAutoFilterLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getAutoFilter();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getAutoFilter();
     }
 
     /**
      * @return true when Deleting columns is locked and the sheet is protected.
      */
     public boolean isDeleteColumnsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getDeleteColumns();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getDeleteColumns();
     }
 
     /**
      * @return true when Deleting rows is locked and the sheet is protected.
      */
     public boolean isDeleteRowsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getDeleteRows();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getDeleteRows();
     }
 
     /**
      * @return true when Formatting cells is locked and the sheet is protected.
      */
     public boolean isFormatCellsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getFormatCells();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getFormatCells();
     }
 
     /**
      * @return true when Formatting columns is locked and the sheet is protected.
      */
     public boolean isFormatColumnsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getFormatColumns();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getFormatColumns();
     }
 
     /**
      * @return true when Formatting rows is locked and the sheet is protected.
      */
     public boolean isFormatRowsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getFormatRows();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getFormatRows();
     }
 
     /**
      * @return true when Inserting columns is locked and the sheet is protected.
      */
     public boolean isInsertColumnsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getInsertColumns();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getInsertColumns();
     }
 
     /**
      * @return true when Inserting hyperlinks is locked and the sheet is protected.
      */
     public boolean isInsertHyperlinksLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getInsertHyperlinks();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getInsertHyperlinks();
     }
 
     /**
      * @return true when Inserting rows is locked and the sheet is protected.
      */
     public boolean isInsertRowsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getInsertRows();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getInsertRows();
     }
 
     /**
      * @return true when Pivot tables are locked and the sheet is protected.
      */
     public boolean isPivotTablesLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getPivotTables();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getPivotTables();
     }
 
     /**
      * @return true when Sorting is locked and the sheet is protected.
      */
     public boolean isSortLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getSort();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getSort();
     }
 
     /**
      * @return true when Objects are locked and the sheet is protected.
      */
     public boolean isObjectsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getObjects();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getObjects();
     }
 
     /**
      * @return true when Scenarios are locked and the sheet is protected.
      */
     public boolean isScenariosLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getScenarios();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getScenarios();
     }
 
     /**
      * @return true when Selection of locked cells is locked and the sheet is protected.
      */
     public boolean isSelectLockedCellsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getSelectLockedCells();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getSelectLockedCells();
     }
 
     /**
      * @return true when Selection of unlocked cells is locked and the sheet is protected.
      */
     public boolean isSelectUnlockedCellsLocked() {
-        if (isSheetLocked()) {
-            return safeGetProtectionField().getSelectUnlockedCells();
-        }
-        return false;
+        return isSheetLocked() && safeGetProtectionField().getSelectUnlockedCells();
     }
 
     /**
      * @return true when Sheet is Protected.
      */
     public boolean isSheetLocked() {
-        if (worksheet.isSetSheetProtection()) {
-            return safeGetProtectionField().getSheet();
-        }
-        return false;
+        return worksheet.isSetSheetProtection() && safeGetProtectionField().getSheet();
     }
 
     /**
@@ -3530,10 +3510,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      * Returns any tables associated with this Sheet
      */
     public List<XSSFTable> getTables() {
-       List<XSSFTable> tableList = new ArrayList<XSSFTable>(
-             tables.values()
-       );
-       return tableList;
+        return new ArrayList<XSSFTable>(tables.values());
     }
 
     @Override
@@ -3656,18 +3633,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         String c = "";
         String r = "";
 
-        if(startC == -1 && endC == -1) {
-        } else {
+        if (startC != -1 || endC != -1) {
           c = escapedName + "!$" + colRef.getCellRefParts()[2]
               + ":$" + colRef2.getCellRefParts()[2];
         }
 
-        if (startR == -1 && endR == -1) {
-
-        } else if (!rowRef.getCellRefParts()[1].equals("0")
-            && !rowRef2.getCellRefParts()[1].equals("0")) {
-           r = escapedName + "!$" + rowRef.getCellRefParts()[1]
-                 + ":$" + rowRef2.getCellRefParts()[1];
+        if (startR != -1 || endR != -1) {
+            if (!rowRef.getCellRefParts()[1].equals("0")
+                && !rowRef2.getCellRefParts()[1].equals("0")) {
+               r = escapedName + "!$" + rowRef.getCellRefParts()[1]
+                     + ":$" + rowRef2.getCellRefParts()[1];
+            }
         }
 
         StringBuilder rng = new StringBuilder();

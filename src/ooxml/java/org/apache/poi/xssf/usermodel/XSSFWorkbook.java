@@ -1370,6 +1370,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param pos the position that we want to insert the sheet into (0 based)
      */
     @Override
+    @SuppressWarnings("deprecation")
     public void setSheetOrder(String sheetname, int pos) {
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
@@ -1381,8 +1382,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         newcts.set(cts);
 
         //notify sheets
-        for(int i=0; i < sheets.size(); i++) {
-            sheets.get(i).sheet = ct.getSheetArray(i);
+        CTSheet[] sheetArray = ct.getSheetArray();
+        for(int i=0; i < sheetArray.length; i++) {
+            sheets.get(i).sheet = sheetArray[i];
         }
     }
 
