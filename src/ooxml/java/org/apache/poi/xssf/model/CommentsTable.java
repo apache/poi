@@ -98,9 +98,11 @@ public class CommentsTable extends POIXMLDocumentPart {
         return comments.getAuthors().getAuthorArray((int)authorId);
     }
 
+    @SuppressWarnings("deprecation")
     public int findAuthor(String author) {
-        for (int i = 0 ; i < comments.getAuthors().sizeOfAuthorArray() ; i++) {
-            if (comments.getAuthors().getAuthorArray(i).equals(author)) {
+        String[] authorArray = comments.getAuthors().getAuthorArray();
+        for (int i = 0 ; i < authorArray.length; i++) {
+            if (authorArray[i].equals(author)) {
                 return i;
             }
         }
@@ -150,9 +152,9 @@ public class CommentsTable extends POIXMLDocumentPart {
     public boolean removeComment(String cellRef) {
         CTCommentList lst = comments.getCommentList();
         if(lst != null) {
-            int commentCount = lst.sizeOfCommentArray();
-            for(int i=0; i < commentCount; i++) {
-                CTComment comment = lst.getCommentArray(i);
+            CTComment[] commentArray = lst.getCommentArray();
+            for (int i = 0; i < commentArray.length; i++) {
+                CTComment comment = commentArray[i];
                 if (cellRef.equals(comment.getRef())) {
                     lst.removeComment(i);
 
