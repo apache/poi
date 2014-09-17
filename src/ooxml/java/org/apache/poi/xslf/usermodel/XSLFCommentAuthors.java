@@ -17,6 +17,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -25,8 +27,6 @@ import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthor;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTCommentAuthorList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CmAuthorLstDocument;
-
-import java.io.IOException;
 
 @Beta
 public class XSLFCommentAuthors extends POIXMLDocumentPart {
@@ -61,9 +61,10 @@ public class XSLFCommentAuthors extends POIXMLDocumentPart {
        return _authors;
     }
     
+    @SuppressWarnings("deprecation")
     public CTCommentAuthor getAuthorById(long id) {
        // TODO Have a map
-       for (CTCommentAuthor author : _authors.getCmAuthorList()) {
+       for (CTCommentAuthor author : _authors.getCmAuthorArray()) {
           if (author.getId() == id) {
              return author;
           }

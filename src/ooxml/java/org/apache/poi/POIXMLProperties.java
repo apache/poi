@@ -285,6 +285,117 @@ public class POIXMLProperties {
 		public org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties getUnderlyingProperties() {
 			return props.getProperties();
 		}
+		
+        public String getTemplate() {
+            if (props.getProperties().isSetTemplate()) {
+                return props.getProperties().getTemplate();
+            }
+            return null;
+        }
+        public String getManager() {
+            if (props.getProperties().isSetManager()) {
+                return props.getProperties().getManager();
+            }
+            return null;
+        }
+        public String getCompany() {
+            if (props.getProperties().isSetCompany()) {
+                return props.getProperties().getCompany();
+            }
+            return null;
+        }
+        public String getPresentationFormat() {
+            if (props.getProperties().isSetPresentationFormat()) {
+                return props.getProperties().getPresentationFormat();
+            }
+            return null;
+        }
+        public String getApplication() {
+            if (props.getProperties().isSetApplication()) {
+                return props.getProperties().getApplication();
+            }
+            return null;
+        }
+        public String getAppVersion() {
+            if (props.getProperties().isSetAppVersion()) {
+                return props.getProperties().getAppVersion();
+            }
+            return null;
+        }
+
+        public int getPages() {
+            if (props.getProperties().isSetPages()) {
+                return props.getProperties().getPages();
+            }
+            return -1;
+        }
+        public int getWords() {
+            if (props.getProperties().isSetWords()) {
+                return props.getProperties().getWords();
+            }
+            return -1;
+        }
+        public int getCharacters() {
+            if (props.getProperties().isSetCharacters()) {
+                return props.getProperties().getCharacters();
+            }
+            return -1;
+        }
+        public int getCharactersWithSpaces() {
+            if (props.getProperties().isSetCharactersWithSpaces()) {
+                return props.getProperties().getCharactersWithSpaces();
+            }
+            return -1;
+        }
+        public int getLines() {
+            if (props.getProperties().isSetLines()) {
+                return props.getProperties().getLines();
+            }
+            return -1;
+        }
+        public int getParagraphs() {
+            if (props.getProperties().isSetParagraphs()) {
+                return props.getProperties().getParagraphs();
+            }
+            return -1;
+        }
+        public int getSlides() {
+            if (props.getProperties().isSetSlides()) {
+                return props.getProperties().getSlides();
+            }
+            return -1;
+        }
+        public int getNotes() {
+            if (props.getProperties().isSetNotes()) {
+                return props.getProperties().getNotes();
+            }
+            return -1;
+        }
+        public int getTotalTime()  {
+            if (props.getProperties().isSetTotalTime()) {
+                return props.getProperties().getTotalTime();
+            }
+            return -1;
+        }
+        public int getHiddenSlides()  {
+            if (props.getProperties().isSetHiddenSlides()) {
+                return props.getProperties().getHiddenSlides();
+            }
+            return -1;
+        }
+        public int getMMClips() {
+            if (props.getProperties().isSetMMClips()) {
+                return props.getProperties().getMMClips();
+            }
+            return -1;
+        }
+
+        public String getHyperlinkBase() {
+            if (props.getProperties().isSetHyperlinkBase()) {
+                return props.getProperties().getHyperlinkBase();
+            }
+            return null;
+        }
 	}
 
 	/**
@@ -371,25 +482,46 @@ public class POIXMLProperties {
 		 *
 		 * @return next property id starting with 2
 		 */
-		protected int nextPid(){
+		@SuppressWarnings("deprecation")
+        protected int nextPid(){
 			int propid = 1;
-			for(CTProperty p : props.getProperties().getPropertyList()){
+			for(CTProperty p : props.getProperties().getPropertyArray()){
 				if(p.getPid() > propid) propid = p.getPid();
 			}
 			return propid + 1;
 		}
 
-		/**
-		 * Check if a property with this name already exists in the collection of custom properties
-		 *
-		 * @param name the name to check
-		 * @return whether a property with the given name exists in the custom properties
-		 */
-		public boolean contains(String name){
-			for(CTProperty p : props.getProperties().getPropertyList()){
-				if(p.getName().equals(name)) return true;
-			}
-			return false;
-		}
-	}
+       /**
+         * Check if a property with this name already exists in the collection of custom properties
+         *
+         * @param name the name to check
+         * @return whether a property with the given name exists in the custom properties
+         */
+        @SuppressWarnings("deprecation")
+        public boolean contains(String name) {
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getName().equals(name)) return true;
+            }
+            return false;
+        }
+        
+        /**
+         * Retrieve the custom property with this name, or null if none exists.
+         *
+         * You will need to test the various isSetX methods to work out
+         *  what the type of the property is, before fetching the 
+         *  appropriate value for it.
+         *
+         * @param name the name of the property to fetch
+         */
+        @SuppressWarnings("deprecation")
+        public CTProperty getProperty(String name) {
+            for(CTProperty p : props.getProperties().getPropertyArray()){
+                if(p.getName().equals(name)) {
+                    return p;
+                }
+            }
+            return null;
+        }
+    }
 }

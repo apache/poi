@@ -70,10 +70,10 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SAXHelper;
 import org.apache.xmlbeans.XmlObject;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -336,7 +336,7 @@ public class TestSignatureInfo {
         signatureService.initFacets(cal.getTime());
         initKeyPair(alias, signerDn);
 
-        Document document = SAXHelper.getDocumentBuilder().newDocument();
+        Document document = DocumentHelper.createDocument();
 
         // operate
         List<X509Certificate> x509Chain = Collections.singletonList(x509);

@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -50,44 +49,31 @@ public class ColumnHelper {
         cleanColumns();
     }
     
+    @SuppressWarnings("deprecation")
     public void cleanColumns() {
         this.newCols = CTCols.Factory.newInstance();
 
         CTCols aggregateCols = CTCols.Factory.newInstance();
-        List<CTCols> colsList = worksheet.getColsList();
-        assert(colsList != null);
+        CTCols[] colsArray = worksheet.getColsArray();
+        assert(colsArray != null);
         
-        for (CTCols cols : colsList) {
-            for (CTCol col : cols.getColList()) {
+        for (CTCols cols : colsArray) {
+            for (CTCol col : cols.getColArray()) {
                 cloneCol(aggregateCols, col);
             }
         }
         
         sortColumns(aggregateCols);
         
-        CTCol[] colArray = new CTCol[aggregateCols.getColList().size()];
-        aggregateCols.getColList().toArray(colArray);
+        CTCol[] colArray = aggregateCols.getColArray();
         sweepCleanColumns(newCols, colArray, null);
         
-        int i = colsList.size();
+        int i = colsArray.length;
         for (int y = i - 1; y >= 0; y--) {
             worksheet.removeCols(y);
         }
         worksheet.addNewCols();
         worksheet.setColsArray(0, newCols);
-    }
-    
-    private static class CTColByMaxComparator implements Comparator<CTCol> {
-
-        public int compare(CTCol arg0, CTCol arg1) {
-            if (arg0.getMax() < arg1.getMax()) {
-                return -1;
-            } else {
-                if (arg0.getMax() > arg1.getMax()) return 1;
-                else return 0;
-            }
-        }
-        
     }
 
     /**
@@ -95,7 +81,7 @@ public class ColumnHelper {
      */
     private void sweepCleanColumns(CTCols cols, CTCol[] flattenedColsArray, CTCol overrideColumn) {
         List<CTCol> flattenedCols = new ArrayList<CTCol>(Arrays.asList(flattenedColsArray));
-        TreeSet<CTCol> currentElements = new TreeSet<CTCol>(new CTColByMaxComparator());
+        TreeSet<CTCol> currentElements = new TreeSet<CTCol>(CTColComparator.BY_MAX);
         ListIterator<CTCol> flIter = flattenedCols.listIterator();
         CTCol haveOverrideColumn = null;
         long lastMaxIndex = 0;
@@ -103,7 +89,8 @@ public class ColumnHelper {
         while (flIter.hasNext()) {
             CTCol col = flIter.next();
             long currentIndex = col.getMin();
-            long nextIndex = (col.getMax() > currentMax) ? col.getMax() : currentMax;
+            long colMax = col.getMax();
+            long nextIndex = (colMax > currentMax) ? colMax : currentMax;
             if (flIter.hasNext()) {
                 nextIndex = flIter.next().getMin();
                 flIter.previous();
@@ -116,10 +103,10 @@ public class ColumnHelper {
             }
             if (!currentElements.isEmpty() && lastMaxIndex < currentIndex) {
                 // we need to process previous elements first
-                insertCol(cols, lastMaxIndex, currentIndex - 1, currentElements.toArray(new CTCol[]{}), true, haveOverrideColumn);
+                insertCol(cols, lastMaxIndex, currentIndex - 1, currentElements.toArray(new CTCol[currentElements.size()]), true, haveOverrideColumn);
             }
             currentElements.add(col);
-            if (col.getMax() > currentMax) currentMax = col.getMax();
+            if (colMax > currentMax) currentMax = colMax;
             if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
             while (currentIndex <= nextIndex && !currentElements.isEmpty()) {
                 Set<CTCol> currentIndexElements = new HashSet<CTCol>();
@@ -130,26 +117,21 @@ public class ColumnHelper {
                     CTCol currentElem = currentElements.first();
                     currentElemIndex = currentElem.getMax();
                     currentIndexElements.add(currentElem);
-                    
-                    for (CTCol cc : currentElements.tailSet(currentElem)) {
-                        if (cc == null || cc.getMax() == currentElemIndex) break;
-                        currentIndexElements.add(cc);
-                        if (col.getMax() > currentMax) currentMax = col.getMax();
+
+                    while (true) {
+                        CTCol higherElem = currentElements.higher(currentElem);
+                        if (higherElem == null || higherElem.getMax() != currentElemIndex)
+                            break;
+                        currentElem = higherElem;
+                        currentIndexElements.add(currentElem);
+                        if (colMax > currentMax) currentMax = colMax;
                         if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
                     }
-
-                    // JDK 6 code
-                    // while (currentElements.higher(currentElem) != null && currentElements.higher(currentElem).getMax() == currentElemIndex) {
-                    //     currentElem = currentElements.higher(currentElem);
-                    //     currentIndexElements.add(currentElem);
-                    //     if (col.getMax() > currentMax) currentMax = col.getMax();
-                    //     if (col.equals(overrideColumn)) haveOverrideColumn = overrideColumn;
-                    // }
                 }
                 
                 
                 if (currentElemIndex < nextIndex || !flIter.hasNext()) {
-                    insertCol(cols, currentIndex, currentElemIndex, currentElements.toArray(new CTCol[]{}), true, haveOverrideColumn);
+                    insertCol(cols, currentIndex, currentElemIndex, currentElements.toArray(new CTCol[currentElements.size()]), true, haveOverrideColumn);
                     if (flIter.hasNext()) {
                         if (nextIndex > currentElemIndex) {
                             currentElements.removeAll(currentIndexElements);
@@ -170,10 +152,10 @@ public class ColumnHelper {
         sortColumns(cols);
     }
 
+    @SuppressWarnings("deprecation")
     public static void sortColumns(CTCols newCols) {
-        CTCol[] colArray = new CTCol[newCols.getColList().size()];
-        newCols.getColList().toArray(colArray);
-        Arrays.sort(colArray, new CTColComparator());
+        CTCol[] colArray = newCols.getColArray();
+        Arrays.sort(colArray, CTColComparator.BY_MIN_MAX);
         newCols.setColArray(colArray);
     }
 
@@ -198,46 +180,46 @@ public class ColumnHelper {
      *  as 1 based.
      */
     public CTCol getColumn1Based(long index1, boolean splitColumns) {
-        CTCols colsArray = worksheet.getColsArray(0);
+        CTCols cols = worksheet.getColsArray(0);
         
         // Fetching the array is quicker than working on the new style
         //  list, assuming we need to read many of them (which we often do),
         //  and assuming we're not making many changes (which we're not)
         @SuppressWarnings("deprecation")
-        CTCol[] cols = colsArray.getColArray();
-        
-        for (int i = 0; i < cols.length; i++) {
-            CTCol colArray = cols[i];
-            if (colArray.getMin() <= index1 && colArray.getMax() >= index1) {
+        CTCol[] colArray = cols.getColArray();
+
+        for (CTCol col : colArray) {
+            long colMin = col.getMin();
+            long colMax = col.getMax();
+            if (colMin <= index1 && colMax >= index1) {
                 if (splitColumns) {
-                    if (colArray.getMin() < index1) {
-                        insertCol(colsArray, colArray.getMin(), (index1 - 1), new CTCol[]{colArray});
+                    if (colMin < index1) {
+                        insertCol(cols, colMin, (index1 - 1), new CTCol[]{col});
                     }
-                    if (colArray.getMax() > index1) {
-                        insertCol(colsArray, (index1 + 1), colArray.getMax(), new CTCol[]{colArray});
+                    if (colMax > index1) {
+                        insertCol(cols, (index1 + 1), colMax, new CTCol[]{col});
                     }
-                    colArray.setMin(index1);
-                    colArray.setMax(index1);
+                    col.setMin(index1);
+                    col.setMax(index1);
                 }
-                return colArray;
+                return col;
             }
         }
         return null;
     }
-    
+
+    @SuppressWarnings("deprecation")
     public CTCols addCleanColIntoCols(CTCols cols, CTCol col) {
         CTCols newCols = CTCols.Factory.newInstance();
-        for (CTCol c : cols.getColList()) {
+        for (CTCol c : cols.getColArray()) {
             cloneCol(newCols, c);
         }
         cloneCol(newCols, col);
         sortColumns(newCols);
-        CTCol[] colArray = new CTCol[newCols.getColList().size()];
-        newCols.getColList().toArray(colArray);
+        CTCol[] colArray = newCols.getColArray();
         CTCols returnCols = CTCols.Factory.newInstance();
         sweepCleanColumns(returnCols, colArray, col);
-        colArray = new CTCol[returnCols.getColList().size()];
-        returnCols.getColList().toArray(colArray);
+        colArray = returnCols.getColArray();
         cols.setColArray(colArray);
         return returnCols;
     }
@@ -272,9 +254,11 @@ public class ColumnHelper {
     public boolean columnExists(CTCols cols, long index) {
         return columnExists1Based(cols, index+1);
     }
+
+    @SuppressWarnings("deprecation")
     private boolean columnExists1Based(CTCols cols, long index1) {
-        for (int i = 0; i < cols.sizeOfColArray(); i++) {
-            if (cols.getColArray(i).getMin() == index1) {
+        for (CTCol col : cols.getColArray()) {
+            if (col.getMin() == index1) {
                 return true;
             }
         }
@@ -343,20 +327,24 @@ public class ColumnHelper {
         return -1;
     }
 
+    @SuppressWarnings("deprecation")
     private boolean columnExists(CTCols cols, long min, long max) {
-        for (int i = 0; i < cols.sizeOfColArray(); i++) {
-            if (cols.getColArray(i).getMin() == min && cols.getColArray(i).getMax() == max) {
+        for (CTCol col : cols.getColArray()) {
+            if (col.getMin() == min && col.getMax() == max) {
                 return true;
             }
         }
         return false;
     }
-    
-    public int getIndexOfColumn(CTCols cols, CTCol col) {
-        for (int i = 0; i < cols.sizeOfColArray(); i++) {
-            if (cols.getColArray(i).getMin() == col.getMin() && cols.getColArray(i).getMax() == col.getMax()) {
+
+    @SuppressWarnings("deprecation")
+    public int getIndexOfColumn(CTCols cols, CTCol searchCol) {
+        int i = 0;
+        for (CTCol col : cols.getColArray()) {
+            if (col.getMin() == searchCol.getMin() && col.getMax() == searchCol.getMax()) {
                 return i;
             }
+            i++;
         }
         return -1;
     }

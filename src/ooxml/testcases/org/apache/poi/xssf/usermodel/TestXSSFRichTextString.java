@@ -308,22 +308,22 @@ public final class TestXSSFRichTextString extends TestCase {
 
         str = new XSSFRichTextString("Incorrect\nLine-Breaking");
         str.applyFont(0, 8, font);
-        t1 = str.getCTRst().getRList().get(0).xgetT();
-        t2 = str.getCTRst().getRList().get(1).xgetT();
+        t1 = str.getCTRst().getRArray(0).xgetT();
+        t2 = str.getCTRst().getRArray(1).xgetT();
         assertEquals("<xml-fragment>Incorrec</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment>t\nLine-Breaking</xml-fragment>", t2.xmlText());
 
         str = new XSSFRichTextString("Incorrect\nLine-Breaking");
         str.applyFont(0, 9, font);
-        t1 = str.getCTRst().getRList().get(0).xgetT();
-        t2 = str.getCTRst().getRList().get(1).xgetT();
+        t1 = str.getCTRst().getRArray(0).xgetT();
+        t2 = str.getCTRst().getRArray(1).xgetT();
         assertEquals("<xml-fragment>Incorrect</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment xml:space=\"preserve\">\nLine-Breaking</xml-fragment>", t2.xmlText());
 
         str = new XSSFRichTextString("Incorrect\n Line-Breaking");
         str.applyFont(0, 9, font);
-        t1 = str.getCTRst().getRList().get(0).xgetT();
-        t2 = str.getCTRst().getRList().get(1).xgetT();
+        t1 = str.getCTRst().getRArray(0).xgetT();
+        t2 = str.getCTRst().getRArray(1).xgetT();
         assertEquals("<xml-fragment>Incorrect</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment xml:space=\"preserve\">\n Line-Breaking</xml-fragment>", t2.xmlText());
 
@@ -333,15 +333,15 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals("<xml-fragment xml:space=\"preserve\">Tab\tseparated\n</xml-fragment>", t1.xmlText());
 
         str.applyFont(0, 3, font);
-        t1 = str.getCTRst().getRList().get(0).xgetT();
-        t2 = str.getCTRst().getRList().get(1).xgetT();
+        t1 = str.getCTRst().getRArray(0).xgetT();
+        t2 = str.getCTRst().getRArray(1).xgetT();
         assertEquals("<xml-fragment>Tab</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment xml:space=\"preserve\">\tseparated\n</xml-fragment>", t2.xmlText());
 
         str = new XSSFRichTextString("Tab\tseparated\n");
         str.applyFont(0, 4, font);
-        t1 = str.getCTRst().getRList().get(0).xgetT();
-        t2 = str.getCTRst().getRList().get(1).xgetT();
+        t1 = str.getCTRst().getRArray(0).xgetT();
+        t2 = str.getCTRst().getRArray(1).xgetT();
         // YK: don't know why, but XmlBeans converts leading tab characters to spaces
         //assertEquals("<xml-fragment>Tab\t</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment xml:space=\"preserve\">separated\n</xml-fragment>", t2.xmlText());
@@ -349,9 +349,9 @@ public final class TestXSSFRichTextString extends TestCase {
         str = new XSSFRichTextString("\n\n\nNew Line\n\n");
         str.applyFont(0, 3, font);
         str.applyFont(11, 13, font);
-        t1 = str.getCTRst().getRList().get(0).xgetT();
-        t2 = str.getCTRst().getRList().get(1).xgetT();
-        t3 = str.getCTRst().getRList().get(2).xgetT();
+        t1 = str.getCTRst().getRArray(0).xgetT();
+        t2 = str.getCTRst().getRArray(1).xgetT();
+        t3 = str.getCTRst().getRArray(2).xgetT();
         // YK: don't know why, but XmlBeans converts leading tab characters to spaces
         assertEquals("<xml-fragment xml:space=\"preserve\">\n\n\n</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment>New Line</xml-fragment>", t2.xmlText());

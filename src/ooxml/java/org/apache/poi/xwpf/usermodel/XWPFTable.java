@@ -93,6 +93,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public XWPFTable(CTTbl table, IBody part){
         this.part = part;
         this.ctTbl = table;
@@ -103,12 +104,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (table.sizeOfTrArray() == 0)
             createEmptyTable(table);
 
-        for (CTRow row : table.getTrList()) {
-            StringBuffer rowText = new StringBuffer();
+        for (CTRow row : table.getTrArray()) {
+            StringBuilder rowText = new StringBuilder();
             XWPFTableRow tabRow = new XWPFTableRow(row, this);
             tableRows.add(tabRow);
-            for (CTTc cell : row.getTcList()) {
-                for (CTP ctp : cell.getPList()) {
+            for (CTTc cell : row.getTcArray()) {
+                for (CTP ctp : cell.getPArray()) {
                     XWPFParagraph p = new XWPFParagraph(ctp, part);
                     if (rowText.length() > 0) {
                         rowText.append('\t');

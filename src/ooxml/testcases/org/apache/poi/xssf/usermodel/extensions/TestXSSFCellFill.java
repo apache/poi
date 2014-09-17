@@ -31,34 +31,34 @@ import junit.framework.TestCase;
 
 
 public class TestXSSFCellFill extends TestCase {
-	
-	public void testGetFillBackgroundColor() {
-		CTFill ctFill = CTFill.Factory.newInstance();
-		XSSFCellFill cellFill = new XSSFCellFill(ctFill);
-		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
-		CTColor bgColor = ctPatternFill.addNewBgColor();
-		assertNotNull(cellFill.getFillBackgroundColor());
-		bgColor.setIndexed(2);
-		assertEquals(2, cellFill.getFillBackgroundColor().getIndexed());
-	}
-	
-	public void testGetFillForegroundColor() {
-		CTFill ctFill = CTFill.Factory.newInstance();
-		XSSFCellFill cellFill = new XSSFCellFill(ctFill);
-		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
-		CTColor fgColor = ctPatternFill.addNewFgColor();
-		assertNotNull(cellFill.getFillForegroundColor());
-		fgColor.setIndexed(8);
-		assertEquals(8, cellFill.getFillForegroundColor().getIndexed());
-	}
-	
-	public void testGetSetPatternType() {
-		CTFill ctFill = CTFill.Factory.newInstance();
-		XSSFCellFill cellFill = new XSSFCellFill(ctFill);
-		CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
-		ctPatternFill.setPatternType(STPatternType.SOLID);
-		//assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().ordinal());
-	}
+
+    public void testGetFillBackgroundColor() {
+        CTFill ctFill = CTFill.Factory.newInstance();
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+        CTColor bgColor = ctPatternFill.addNewBgColor();
+        assertNotNull(cellFill.getFillBackgroundColor());
+        bgColor.setIndexed(2);
+        assertEquals(2, cellFill.getFillBackgroundColor().getIndexed());
+    }
+
+    public void testGetFillForegroundColor() {
+        CTFill ctFill = CTFill.Factory.newInstance();
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+        CTColor fgColor = ctPatternFill.addNewFgColor();
+        assertNotNull(cellFill.getFillForegroundColor());
+        fgColor.setIndexed(8);
+        assertEquals(8, cellFill.getFillForegroundColor().getIndexed());
+    }
+
+    public void testGetSetPatternType() {
+        CTFill ctFill = CTFill.Factory.newInstance();
+        XSSFCellFill cellFill = new XSSFCellFill(ctFill);
+        CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
+        ctPatternFill.setPatternType(STPatternType.SOLID);
+        //assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().ordinal());
+    }
 
     public void testGetNotModifies() {
         CTFill ctFill = CTFill.Factory.newInstance();
@@ -75,11 +75,16 @@ public class TestXSSFCellFill extends TestCase {
         XSSFColor foregroundColor = cellWithThemeColor.getCellStyle().getFillForegroundXSSFColor();
         byte[] rgb = foregroundColor.getRgb();
         byte[] rgbWithTint = foregroundColor.getRgbWithTint();
-        assertEquals(rgb[0],-18);
-        assertEquals(rgb[1],-20);
-        assertEquals(rgb[2],-31);
-        assertEquals(rgbWithTint[0],-12);
-        assertEquals(rgbWithTint[1],-13);
-        assertEquals(rgbWithTint[2],-20);
+        // Dk2
+        assertEquals(rgb[0],31);
+        assertEquals(rgb[1],73);
+        assertEquals(rgb[2],125);
+        // Dk2, lighter 40% (tint is about 0.39998)
+        // 31 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 120.59552 => 120 (byte)
+        // 73 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 145.79636 => -111 (byte)
+        // 125 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 176.99740 => -80 (byte)
+        assertEquals(rgbWithTint[0],120);
+        assertEquals(rgbWithTint[1],-111);
+        assertEquals(rgbWithTint[2],-80);
     }
 }

@@ -17,6 +17,10 @@
 
 package org.apache.poi.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,20 +29,81 @@ import javax.xml.stream.events.Namespace;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
-public class DocumentHelper {
+public final class DocumentHelper {
+    private static POILogger logger = POILogFactory.getLogger(DocumentHelper.class);
+    
+    private DocumentHelper() {}
 
-    private static final DocumentBuilder newDocumentBuilder;
-    static {
+    /**
+     * Creates a new document builder, with sensible defaults
+     */
+    public static synchronized DocumentBuilder newDocumentBuilder() {
         try {
-            newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            documentBuilder.setEntityResolver(SAXHelper.IGNORING_ENTITY_RESOLVER);
+            return documentBuilder;
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("cannot create a DocumentBuilder", e);
         }
     }
 
+    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    static {
+        documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setValidating(false);
+        trySetSAXFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetXercesSecurityManager(documentBuilderFactory);
+    }
+
+    private static void trySetSAXFeature(DocumentBuilderFactory documentBuilderFactory, String feature, boolean enabled) {
+        try {
+            documentBuilderFactory.setFeature(feature, enabled);
+        } catch (Exception e) {
+            logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
+        } catch (AbstractMethodError ame) {
+            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", feature, ame);
+        }
+    }
+    
+    private static void trySetXercesSecurityManager(DocumentBuilderFactory documentBuilderFactory) {
+        // Try built-in JVM one first, standalone if not
+        for (String securityManagerClassName : new String[] {
+                "com.sun.org.apache.xerces.internal.util.SecurityManager",
+                "org.apache.xerces.util.SecurityManager"
+        }) {
+            try {
+                Object mgr = Class.forName(securityManagerClassName).newInstance();
+                Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
+                setLimit.invoke(mgr, 4096);
+                documentBuilderFactory.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
+                // Stop once one can be setup without error
+                return;
+            } catch (Exception e) {
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
+            }
+        }
+    }
+
+    /**
+     * Parses the given stream via the default (sensible)
+     * DocumentBuilder
+     * @param inp Stream to read the XML data from
+     * @return the parsed Document 
+     */
+    public static Document readDocument(InputStream inp) throws IOException, SAXException {
+        return newDocumentBuilder().parse(inp);
+    }
+
+    // must only be used to create empty documents, do not use it for parsing!
+    private static final DocumentBuilder documentBuilderSingleton = newDocumentBuilder();
+
+    /**
+     * Creates a new DOM Document
+     */
     public static synchronized Document createDocument() {
-        return newDocumentBuilder.newDocument();
+        return documentBuilderSingleton.newDocument();
     }
 
     /**

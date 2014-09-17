@@ -51,6 +51,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     private CTTable _table;
     private List<XSLFTableRow> _rows;
 
+    @SuppressWarnings("deprecation")
     /*package*/ XSLFTable(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape, sheet);
 
@@ -71,8 +72,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         }
 
         _table = (CTTable) rs[0];
-        _rows = new ArrayList<XSLFTableRow>(_table.sizeOfTrArray());
-        for(CTTableRow row : _table.getTrList()) _rows.add(new XSLFTableRow(row, this));
+        CTTableRow[] trArray = _table.getTrArray();
+        _rows = new ArrayList<XSLFTableRow>(trArray.length);
+        for(CTTableRow row : trArray) _rows.add(new XSLFTableRow(row, this));
     }
 
     @Internal

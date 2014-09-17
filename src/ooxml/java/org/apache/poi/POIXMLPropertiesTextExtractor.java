@@ -19,7 +19,6 @@ package org.apache.poi;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
@@ -126,13 +125,13 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
     * Returns the custom document properties, if
     *  there are any
     */
+   @SuppressWarnings("deprecation")
    public String getCustomPropertiesText() {
-      StringBuffer text = new StringBuffer();
+      StringBuilder text = new StringBuilder();
       org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
       props = getDocument().getProperties().getCustomProperties().getUnderlyingProperties();
 
-      List<CTProperty> properties = props.getPropertyList();
-      for(CTProperty property : properties) {
+       for(CTProperty property : props.getPropertyArray()) {
          String val = "(not implemented!)";
 
          if (property.isSetLpwstr()) {

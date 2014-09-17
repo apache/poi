@@ -35,17 +35,18 @@ public abstract class AbstractXWPFSDT implements ISDTContents {
    private final String tag;
    private final IBody part;
 
+   @SuppressWarnings("deprecation")
    public AbstractXWPFSDT(CTSdtPr pr, IBody part){
        
-       List<CTString> aliases = pr.getAliasList();
-       if (aliases != null && aliases.size() > 0){
-          title = aliases.get(0).getVal();
+       CTString[] aliases = pr.getAliasArray();
+       if (aliases != null && aliases.length > 0){
+          title = aliases[0].getVal();
        } else {
           title = "";
        }
-       List<CTString> tags = pr.getTagList();
-       if (tags != null && tags.size() > 0){
-          tag = tags.get(0).getVal();
+       CTString[] tags = pr.getTagArray();
+       if (tags != null && tags.length > 0){
+          tag = tags[0].getVal();
        } else {
           tag = "";
        }

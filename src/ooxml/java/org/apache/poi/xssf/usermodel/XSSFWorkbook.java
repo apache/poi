@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.setPassword;
+import static org.apache.poi.xssf.usermodel.helpers.XSSFPaswordHelper.validatePassword;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -47,6 +50,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -1366,6 +1370,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * @param pos the position that we want to insert the sheet into (0 based)
      */
     @Override
+    @SuppressWarnings("deprecation")
     public void setSheetOrder(String sheetname, int pos) {
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
@@ -1377,8 +1382,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         newcts.set(cts);
 
         //notify sheets
-        for(int i=0; i < sheets.size(); i++) {
-            sheets.get(i).sheet = ct.getSheetArray(i);
+        CTSheet[] sheetArray = ct.getSheetArray();
+        for(int i=0; i < sheetArray.length; i++) {
+            sheets.get(i).sheet = sheetArray[i];
         }
     }
 
@@ -1410,10 +1416,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
     
+    @SuppressWarnings("deprecation")
     private void reprocessNamedRanges() {
         namedRanges = new ArrayList<XSSFName>();
         if(workbook.isSetDefinedNames()) {
-            for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameList()) {
+            for(CTDefinedName ctName : workbook.getDefinedNames().getDefinedNameArray()) {
                 namedRanges.add(new XSSFName(ctName, this));
             }
         }
@@ -1735,60 +1742,108 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 	 * Locks the structure of workbook.
 	 */
 	public void lockStructure() {
-		createProtectionFieldIfNotPresent();
-		workbook.getWorkbookProtection().setLockStructure(true);
+	    safeGetWorkbookProtection().setLockStructure(true);
 	}
 
 	/**
 	 * Unlocks the structure of workbook.
 	 */
 	public void unLockStructure() {
-		createProtectionFieldIfNotPresent();
-		workbook.getWorkbookProtection().setLockStructure(false);
+	    safeGetWorkbookProtection().setLockStructure(false);
 	}
 
 	/**
 	 * Locks the windows that comprise the workbook.
 	 */
 	public void lockWindows() {
-		createProtectionFieldIfNotPresent();
-		workbook.getWorkbookProtection().setLockWindows(true);
+	    safeGetWorkbookProtection().setLockWindows(true);
 	}
 
 	/**
 	 * Unlocks the windows that comprise the workbook.
 	 */
 	public void unLockWindows() {
-		createProtectionFieldIfNotPresent();
-		workbook.getWorkbookProtection().setLockWindows(false);
+	    safeGetWorkbookProtection().setLockWindows(false);
 	}
 
 	/**
 	 * Locks the workbook for revisions.
 	 */
 	public void lockRevision() {
-		createProtectionFieldIfNotPresent();
-		workbook.getWorkbookProtection().setLockRevision(true);
+	    safeGetWorkbookProtection().setLockRevision(true);
 	}
 
 	/**
 	 * Unlocks the workbook for revisions.
 	 */
 	public void unLockRevision() {
-		createProtectionFieldIfNotPresent();
-		workbook.getWorkbookProtection().setLockRevision(false);
+	    safeGetWorkbookProtection().setLockRevision(false);
 	}
 
+	/**
+	 * Sets the workbook password. 
+	 * 
+	 * @param password if null, the password will be removed
+	 * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
+	 *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
+	 */
+	public void setWorkbookPassword(String password, HashAlgorithm hashAlgo) {
+        if (password == null && !workbookProtectionPresent()) return;
+        setPassword(safeGetWorkbookProtection(), password, hashAlgo, "workbook");
+	}
+
+    /**
+     * Validate the password against the stored hash, the hashing method will be determined
+     *  by the existing password attributes
+     * @return true, if the hashes match (... though original password may differ ...)
+     */
+    public boolean validateWorkbookPassword(String password) {
+        if (!workbookProtectionPresent()) return (password == null);
+        return validatePassword(safeGetWorkbookProtection(), password, "workbook");
+    }
+
+    /**
+     * Sets the revisions password.
+     * 
+     * @param password if null, the password will be removed
+     * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
+     *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
+     */
+    public void setRevisionsPassword(String password, HashAlgorithm hashAlgo) {
+        if (password == null && !workbookProtectionPresent()) return;
+        setPassword(safeGetWorkbookProtection(), password, hashAlgo, "revisions");
+    }
+
+    /**
+     * Validate the password against the stored hash, the hashing method will be determined
+     *  by the existing password attributes
+     * @return true if the hashes match (... though original password may differ ...)
+     */
+    public boolean validateRevisionsPassword(String password) {
+        if (!workbookProtectionPresent()) return (password == null);
+        return validatePassword(safeGetWorkbookProtection(), password, "revisions");
+    }
+    
+    /**
+     * Removes the workbook protection settings
+     */
+    public void unLock() {
+        if (workbookProtectionPresent()) {
+            workbook.unsetWorkbookProtection();
+        }
+    }
+    
 	private boolean workbookProtectionPresent() {
-		return workbook.getWorkbookProtection() != null;
+		return workbook.isSetWorkbookProtection();
 	}
 
-	private void createProtectionFieldIfNotPresent() {
-		if (workbook.getWorkbookProtection() == null){
-			workbook.setWorkbookProtection(CTWorkbookProtection.Factory.newInstance());
-		}
-	}
-
+    private CTWorkbookProtection safeGetWorkbookProtection() {
+        if (!workbookProtectionPresent()){
+            return workbook.addNewWorkbookProtection();
+        }
+        return workbook.getWorkbookProtection();
+    }
+	
     /**
      *
      * Returns the locator of user-defined functions.

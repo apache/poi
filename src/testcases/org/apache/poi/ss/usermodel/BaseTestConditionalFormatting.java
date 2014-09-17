@@ -390,7 +390,6 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
     }
 
     public void testShiftRows() {
-
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
 
@@ -403,30 +402,42 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
 
         PatternFormatting patternFmt = rule1.createPatternFormatting();
         patternFmt.setFillBackgroundColor(IndexedColors.YELLOW.index);
-        ConditionalFormattingRule [] cfRules = { rule1, };
+
+        ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(
+                ComparisonOperator.BETWEEN, "SUM(A10:A15)", "1+SUM(B16:B30)");
+        BorderFormatting borderFmt = rule2.createBorderFormatting();
+        borderFmt.setBorderDiagonal((short) 2);
 
         CellRangeAddress [] regions = {
             new CellRangeAddress(2, 4, 0, 0), // A3:A5
         };
-        sheetCF.addConditionalFormatting(regions, cfRules);
+        sheetCF.addConditionalFormatting(regions, rule1);
+        sheetCF.addConditionalFormatting(regions, rule2);
 
         // This row-shift should destroy the CF region
         sheet.shiftRows(10, 20, -9);
         assertEquals(0, sheetCF.getNumConditionalFormattings());
 
         // re-add the CF
-        sheetCF.addConditionalFormatting(regions, cfRules);
+        sheetCF.addConditionalFormatting(regions, rule1);
+        sheetCF.addConditionalFormatting(regions, rule2);
 
         // This row shift should only affect the formulas
         sheet.shiftRows(14, 17, 8);
-        ConditionalFormatting cf = sheetCF.getConditionalFormattingAt(0);
-        assertEquals("SUM(A10:A23)", cf.getRule(0).getFormula1());
-        assertEquals("1+SUM(B24:B30)", cf.getRule(0).getFormula2());
+        ConditionalFormatting cf1 = sheetCF.getConditionalFormattingAt(0);
+        assertEquals("SUM(A10:A23)", cf1.getRule(0).getFormula1());
+        assertEquals("1+SUM(B24:B30)", cf1.getRule(0).getFormula2());
+        ConditionalFormatting cf2 = sheetCF.getConditionalFormattingAt(1);
+        assertEquals("SUM(A10:A23)", cf2.getRule(0).getFormula1());
+        assertEquals("1+SUM(B24:B30)", cf2.getRule(0).getFormula2());
 
         sheet.shiftRows(0, 8, 21);
-        cf = sheetCF.getConditionalFormattingAt(0);
-        assertEquals("SUM(A10:A21)", cf.getRule(0).getFormula1());
-        assertEquals("1+SUM(#REF!)", cf.getRule(0).getFormula2());
+        cf1 = sheetCF.getConditionalFormattingAt(0);
+        assertEquals("SUM(A10:A21)", cf1.getRule(0).getFormula1());
+        assertEquals("1+SUM(#REF!)", cf1.getRule(0).getFormula2());
+        cf2 = sheetCF.getConditionalFormattingAt(1);
+        assertEquals("SUM(A10:A21)", cf2.getRule(0).getFormula1());
+        assertEquals("1+SUM(#REF!)", cf2.getRule(0).getFormula2());
     }
 
     protected void testRead(String filename){

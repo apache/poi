@@ -118,6 +118,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
     * @param notesText Should we retrieve text from notes?
     * @param masterText Should we retrieve text from master slides?
     */
+   @SuppressWarnings("deprecation")
    public String getText(boolean slideText, boolean notesText, boolean masterText) {
       StringBuffer text = new StringBuffer();
 
@@ -150,7 +151,7 @@ public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
 
                // If the slide has comments, do those too
                if (comments != null) {
-                  for (CTComment comment : comments.getCTCommentsList().getCmList()) {
+                  for (CTComment comment : comments.getCTCommentsList().getCmArray()) {
                      // Do the author if we can
                      if (commentAuthors != null) {
                         CTCommentAuthor author = commentAuthors.getAuthorById(comment.getAuthorId());

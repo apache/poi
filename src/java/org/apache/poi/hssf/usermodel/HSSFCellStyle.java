@@ -828,6 +828,29 @@ public final class HSSFCellStyle implements CellStyle {
     }
 	
     /**
+     * Get the reading order, for RTL/LTR ordering of
+     *  the text.
+     * <p>0 means Context (Default), 1 means Left To Right,
+     *  and 2 means Right to Left</p>
+     *
+     * @return order - the reading order (0,1,2)
+     */
+    public short getReadingOrder() {
+        return _format.getReadingOrder();
+    }
+    /**
+     * Sets the reading order, for RTL/LTR ordering of
+     *  the text.
+     * <p>0 means Context (Default), 1 means Left To Right,
+     *  and 2 means Right to Left</p>
+     *
+     * @param order - the reading order (0,1,2)
+     */
+    public void setReadingOrder(short order) {
+        _format.setReadingOrder(order);
+    }
+    
+    /**
      * Verifies that this style belongs to the supplied Workbook.
      * Will throw an exception if it belongs to a different one.
      * This is normally called when trying to assign a style to a

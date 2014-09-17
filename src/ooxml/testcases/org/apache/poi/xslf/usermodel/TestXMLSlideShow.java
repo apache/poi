@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -58,6 +59,7 @@ public class TestXMLSlideShow extends TestCase {
       assertTrue(xml.getSlideMasters().length > 0);
    }
 
+   @SuppressWarnings("deprecation")
    public void testSlideBasics() throws Exception {
       XMLSlideShow xml = new XMLSlideShow(pack);
 
@@ -68,9 +70,7 @@ public class TestXMLSlideShow extends TestCase {
       assertEquals(2, xml.getSlides().length);
 
       // Check they're as expected
-      CTSlideIdListEntry[] slides = new CTSlideIdListEntry[
-         xml.getCTPresentation().getSldIdLst().getSldIdList().size()];
-      xml.getCTPresentation().getSldIdLst().getSldIdList().toArray(slides);
+      CTSlideIdListEntry[] slides = xml.getCTPresentation().getSldIdLst().getSldIdArray();
 
       assertEquals(256, slides[0].getId());
       assertEquals(257, slides[1].getId());
@@ -86,9 +86,7 @@ public class TestXMLSlideShow extends TestCase {
       assertNotNull(xml.getSlides()[1].getNotes());
 
       // Next up look for the slide master
-      CTSlideMasterIdListEntry[] masters = new CTSlideMasterIdListEntry[
-         xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdList().size()];
-      xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdList().toArray(masters);
+      CTSlideMasterIdListEntry[] masters = xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdArray();
 
       assertEquals(2147483648l, masters[0].getId());
       assertEquals("rId1", masters[0].getId2());

@@ -18,7 +18,9 @@
 package org.apache.poi.xssf.usermodel.helpers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
@@ -43,6 +45,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
 /**
@@ -66,8 +69,10 @@ public final class XSSFRowShifter {
      */
     public List<CellRangeAddress> shiftMerged(int startRow, int endRow, int n) {
         List<CellRangeAddress> shiftedRegions = new ArrayList<CellRangeAddress>();
+        Set<Integer> removedIndices = new HashSet<Integer>();
         //move merged regions completely if they fall within the new region boundaries when they are shifted
-        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+        int size = sheet.getNumMergedRegions();
+        for (int i = 0; i < size; i++) {
             CellRangeAddress merged = sheet.getMergedRegion(i);
 
             boolean inStart = (merged.getFirstRow() >= startRow || merged.getLastRow() >= startRow);
@@ -84,9 +89,12 @@ public final class XSSFRowShifter {
                 merged.setLastRow(merged.getLastRow() + n);
                 //have to remove/add it back
                 shiftedRegions.add(merged);
-                sheet.removeMergedRegion(i);
-                i = i - 1; // we have to back up now since we removed one
+                removedIndices.add(i);
             }
+        }
+        
+        if(!removedIndices.isEmpty()) {
+            sheet.removeMergedRegions(removedIndices);
         }
 
         //read so it doesn't get shifted again
@@ -213,28 +221,29 @@ public final class XSSFRowShifter {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void updateConditionalFormatting(FormulaShifter shifter) {
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
 
-
         XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
-        List<CTConditionalFormatting> cfList = sheet.getCTWorksheet().getConditionalFormattingList();
-        for(int j = 0; j< cfList.size(); j++){
-            CTConditionalFormatting cf = cfList.get(j);
+        CTWorksheet ctWorksheet = sheet.getCTWorksheet();
+        CTConditionalFormatting[] conditionalFormattingArray = ctWorksheet.getConditionalFormattingArray();
+        // iterate backwards due to possible calls to ctWorksheet.removeConditionalFormatting(j)
+        for (int j = conditionalFormattingArray.length - 1; j >= 0; j--) {
+            CTConditionalFormatting cf = conditionalFormattingArray[j];
 
             ArrayList<CellRangeAddress> cellRanges = new ArrayList<CellRangeAddress>();
             for (Object stRef : cf.getSqref()) {
                 String[] regions = stRef.toString().split(" ");
-                for (int i = 0; i < regions.length; i++) {
-                    cellRanges.add(CellRangeAddress.valueOf(regions[i]));
+                for (String region : regions) {
+                    cellRanges.add(CellRangeAddress.valueOf(region));
                 }
             }
 
             boolean changed = false;
             List<CellRangeAddress> temp = new ArrayList<CellRangeAddress>();
-            for (int i = 0; i < cellRanges.size(); i++) {
-                CellRangeAddress craOld = cellRanges.get(i);
+            for (CellRangeAddress craOld : cellRanges) {
                 CellRangeAddress craNew = shiftRange(shifter, craOld, sheetIndex);
                 if (craNew == null) {
                     changed = true;
@@ -249,7 +258,7 @@ public final class XSSFRowShifter {
             if (changed) {
                 int nRanges = temp.size();
                 if (nRanges == 0) {
-                    cfList.remove(j);
+                    ctWorksheet.removeConditionalFormatting(j);
                     continue;
                 }
                 List<String> refs = new ArrayList<String>();
@@ -257,14 +266,14 @@ public final class XSSFRowShifter {
                 cf.setSqref(refs);
             }
 
-            for(CTCfRule cfRule : cf.getCfRuleList()){
-                List<String> formulas = cfRule.getFormulaList();
-                for (int i = 0; i < formulas.size(); i++) {
-                    String formula = formulas.get(i);
+            for(CTCfRule cfRule : cf.getCfRuleArray()){
+                String[] formulaArray = cfRule.getFormulaArray();
+                for (int i = 0; i < formulaArray.length; i++) {
+                    String formula = formulaArray[i];
                     Ptg[] ptgs = FormulaParser.parse(formula, fpb, FormulaType.CELL, sheetIndex);
                     if (shifter.adjustFormula(ptgs, sheetIndex)) {
                         String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);
-                        formulas.set(i, shiftedFmla);
+                        cfRule.setFormulaArray(i, shiftedFmla);
                     }
                 }
             }

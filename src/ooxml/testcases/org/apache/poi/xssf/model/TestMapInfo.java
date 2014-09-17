@@ -50,7 +50,7 @@ public final class TestMapInfo extends TestCase {
 
                 assertNotNull(ctMapInfo);
 
-                assertEquals(1, ctMapInfo.getSchemaList().size());
+                assertEquals(1, ctMapInfo.sizeOfSchemaArray());
 
                 for (XSSFMap map : mapInfo.getAllXSSFMaps()) {
                     Node xmlSchema = map.getSchema();

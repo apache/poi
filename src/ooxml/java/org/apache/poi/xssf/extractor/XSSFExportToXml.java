@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -45,7 +43,7 @@ import javax.xml.validation.Validator;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.XMLHelper;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -106,15 +104,6 @@ public class XSSFExportToXml implements Comparator<String>{
         exportToXML(os, "UTF-8", validate);
     }
 
-    private Document getEmptyDocument() throws ParserConfigurationException{
-
-        DocumentBuilderFactory dbfac = XMLHelper.getDocumentBuilderFactory();
-        DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-        Document doc = docBuilder.newDocument();
-
-        return doc;
-    }
-
     /**
      * Exports the data in an XML stream
      *
@@ -132,7 +121,7 @@ public class XSSFExportToXml implements Comparator<String>{
 
         String rootElement = map.getCtMap().getRootElement();
 
-        Document doc = getEmptyDocument();
+        Document doc = DocumentHelper.createDocument();
 
         Element root = null;
 
@@ -459,8 +448,8 @@ public class XSSFExportToXml implements Comparator<String>{
             Node node = list.item(i);
             if (node instanceof Element) {
                 if (node.getLocalName().equals("element")) {
-                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
-                    if (nameAttribute.getNodeValue().equals(removeNamespace(elementName))) {
+                    Node element = getNameOrRefElement(node);
+                    if (element.getNodeValue().equals(removeNamespace(elementName))) {
                         indexOf = i;
                         break;
                     }
@@ -470,6 +459,15 @@ public class XSSFExportToXml implements Comparator<String>{
         }
         return indexOf;
     }
+
+	private Node getNameOrRefElement(Node node) {
+		Node returnNode = node.getAttributes().getNamedItem("name");
+        if(returnNode != null) {
+            return returnNode;
+		}
+		
+        return node.getAttributes().getNamedItem("ref");
+	}
 
     private Node getComplexTypeForElement(String elementName,Node xmlSchema,Node localComplexTypeRootNode) {
         String elementNameWithoutNamespace = removeNamespace(elementName);
@@ -494,7 +492,7 @@ public class XSSFExportToXml implements Comparator<String>{
             Node node = list.item(i);
             if ( node instanceof Element) {
                 if (node.getLocalName().equals("element")) {
-                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    Node nameAttribute = getNameOrRefElement(node);
                     if (nameAttribute.getNodeValue().equals(elementNameWithoutNamespace)) {
                         Node complexTypeAttribute = node.getAttributes().getNamedItem("type");
                         if (complexTypeAttribute!=null) {
@@ -515,7 +513,7 @@ public class XSSFExportToXml implements Comparator<String>{
             Node node = complexTypeList.item(i);
             if ( node instanceof Element) {
                 if (node.getLocalName().equals("complexType")) {
-                    Node nameAttribute  = node.getAttributes().getNamedItem("name");
+                    Node nameAttribute = getNameOrRefElement(node);
                     if (nameAttribute.getNodeValue().equals(complexTypeName)) {
 
                         NodeList complexTypeChildList  =node.getChildNodes();

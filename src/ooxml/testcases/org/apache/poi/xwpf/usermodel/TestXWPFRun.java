@@ -180,7 +180,7 @@ public class TestXWPFRun extends TestCase {
         run.addCarriageReturn();
         run.setText("T2");
         run.addCarriageReturn();
-        assertEquals(3, run.getCTR().getCrList().size());
+        assertEquals(3, run.getCTR().sizeOfCrArray());
         
         assertEquals("T1\n\nT2\n", run.toString());
     }
@@ -200,8 +200,8 @@ public class TestXWPFRun extends TestCase {
         run.setText("T2");
         run.addTab();
         run.setText("T3");
-        assertEquals(1, run.getCTR().getCrList().size());
-        assertEquals(1, run.getCTR().getTabList().size());
+        assertEquals(1, run.getCTR().sizeOfCrArray());
+        assertEquals(1, run.getCTR().sizeOfTabArray());
         
         assertEquals("T1\nT2\tT3", run.toString());
     }

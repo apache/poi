@@ -123,14 +123,15 @@ public class XWPFFootnote implements Iterable<XWPFParagraph>,IBody {
      * @param table
      * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
      */
+    @SuppressWarnings("deprecation")
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
-        int i;
-        for (i = 0; i < ctFtnEdn.getTblList().size(); i++) {
-            CTTbl tbl = ctFtnEdn.getTblArray(i);
+        int i = 0;
+        for (CTTbl tbl : ctFtnEdn.getTblArray()) {
             if(tbl == table.getCTTbl()){
                 break;
             }
+            i++;
         }
         tables.add(i, table);
 

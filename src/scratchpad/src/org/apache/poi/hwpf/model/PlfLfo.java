@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.hwpf.model.io.HWPFOutputStream;
-import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -118,10 +117,10 @@ public class PlfLfo
     {
         final int newLfoMac = _lfoMac + 1;
 
-        _rgLfo = ArrayUtil.copyOf( _rgLfo, new LFO[newLfoMac] );
+        _rgLfo = Arrays.copyOf(_rgLfo, newLfoMac);
         _rgLfo[_lfoMac + 1] = lfo;
 
-        _rgLfoData = ArrayUtil.copyOf( _rgLfoData, new LFOData[_lfoMac + 1] );
+        _rgLfoData = Arrays.copyOf(_rgLfoData, newLfoMac);
         _rgLfoData[_lfoMac + 1] = lfoData;
 
         this._lfoMac = newLfoMac;

@@ -33,13 +33,15 @@ public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
 	public XWPFCommentsDecorator(XWPFParagraphDecorator nextDecorator) {
 		this(nextDecorator.paragraph, nextDecorator);
 	}
+
+	@SuppressWarnings("deprecation")
 	public XWPFCommentsDecorator(XWPFParagraph paragraph, XWPFParagraphDecorator nextDecorator) {
 		super(paragraph, nextDecorator);
 
 		XWPFComment comment;
 		commentText = new StringBuffer();
 
-		for(CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartList())
+		for(CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartArray())
 		{
 			if((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null)
 				commentText.append("\tComment by " + comment.getAuthor()+": "+comment.getText());

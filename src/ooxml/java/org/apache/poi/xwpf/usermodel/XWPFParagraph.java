@@ -137,7 +137,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
            }
            if (o instanceof CTHyperlink) {
                CTHyperlink link = (CTHyperlink) o;
-               for (CTR r : link.getRList()) {
+               for (CTR r : link.getRArray()) {
                    XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
                    runs.add(hr);
                    iruns.add(hr);
@@ -152,14 +152,14 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
                iruns.add(cc);
            }
            if (o instanceof CTRunTrackChange) {
-               for (CTR r : ((CTRunTrackChange) o).getRList()) {
+               for (CTR r : ((CTRunTrackChange) o).getRArray()) {
                    XWPFRun cr = new XWPFRun(r, this);
                    runs.add(cr);
                    iruns.add(cr);
                }
            }
            if (o instanceof CTSimpleField) {
-               for (CTR r : ((CTSimpleField) o).getRList()) {
+               for (CTR r : ((CTSimpleField) o).getRArray()) {
                    XWPFRun cr = new XWPFRun(r, this);
                    runs.add(cr);
                    iruns.add(cr);
@@ -1170,7 +1170,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
      */
     protected void addRun(CTR run){
         int pos;
-        pos = paragraph.getRList().size();
+        pos = paragraph.sizeOfRArray();
         paragraph.addNewR();
         paragraph.setRArray(pos, run);
     }
@@ -1230,9 +1230,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
             startChar = startPos.getChar();
         int beginRunPos = 0, candCharPos = 0;
         boolean newList = false;
-        for (int runPos=startRun; runPos<paragraph.getRList().size(); runPos++) {
+        CTR[] rArray = paragraph.getRArray();
+        for (int runPos=startRun; runPos<rArray.length; runPos++) {
             int beginTextPos = 0,beginCharPos = 0, textPos = 0,  charPos = 0;    
-            CTR ctRun = paragraph.getRArray(runPos);
+            CTR ctRun = rArray[runPos];
             XmlCursor c = ctRun.newCursor();
             c.selectPath("./*");
             while(c.toNextSelection()){
@@ -1298,15 +1299,17 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
         int runEnd = segment.getEndRun();
         int textEnd = segment.getEndText();
         int charEnd    = segment.getEndChar();
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
+        CTR[] rArray = paragraph.getRArray();
         for(int i=runBegin; i<=runEnd;i++){
-            int startText=0, endText = paragraph.getRArray(i).getTList().size()-1;
+            CTText[] tArray = rArray[i].getTArray();
+            int startText=0, endText = tArray.length-1;
             if(i==runBegin)
                 startText=textBegin;
             if(i==runEnd)
                 endText = textEnd;
             for(int j=startText;j<=endText;j++){
-                String tmpText = paragraph.getRArray(i).getTArray(j).getStringValue();
+                String tmpText = tArray[j].getStringValue();
                 int startChar=0, endChar = tmpText.length()-1;
                 if((j==textBegin)&&(i==runBegin))
                     startChar=charBegin;
@@ -1314,7 +1317,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
                     endChar = charEnd;
                 }
                 out.append(tmpText.substring(startChar, endChar+1));
-
             }
         }
         return out.toString();

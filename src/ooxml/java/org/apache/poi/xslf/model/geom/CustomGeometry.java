@@ -19,11 +19,16 @@
 
 package org.apache.poi.xslf.model.geom;
 
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuideList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomRect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DList;
 
 /**
  * Definition of a custom geometric shape
@@ -36,19 +41,20 @@ public class CustomGeometry implements Iterable<Path>{
     List<Path> paths = new ArrayList<Path>();
     Path textBounds;
 
+    @SuppressWarnings("deprecation")
     public CustomGeometry(CTCustomGeometry2D geom) {
         CTGeomGuideList avLst = geom.getAvLst();
-        if(avLst != null) for(CTGeomGuide gd : avLst.getGdList()){
+        if(avLst != null) for(CTGeomGuide gd : avLst.getGdArray()){
             adjusts.add(new AdjustValue(gd));
         }
 
         CTGeomGuideList gdLst = geom.getGdLst();
-        if(gdLst != null) for(CTGeomGuide gd : gdLst.getGdList()){
+        if(gdLst != null) for(CTGeomGuide gd : gdLst.getGdArray()){
             guides.add(new Guide(gd));
         }
 
         CTPath2DList pathLst = geom.getPathLst();
-        if(pathLst != null) for(CTPath2D spPath : pathLst.getPathList()){
+        if(pathLst != null) for(CTPath2D spPath : pathLst.getPathArray()){
             paths.add(new Path(spPath));
         }
 

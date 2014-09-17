@@ -57,20 +57,19 @@ public abstract class AbstractEscherHolderRecord extends Record {
     public AbstractEscherHolderRecord(RecordInputStream in)
     {
         escherRecords = new ArrayList<EscherRecord>();
-        if (! DESERIALISE )
-        {
+        if (! DESERIALISE ) {
             rawDataContainer.concatenate(in.readRemainder());
-        }
-        else
-        {
+        } else {
             byte[] data = in.readAllContinuedRemainder();
             convertToEscherRecords( 0, data.length, data );
         }
     }
 
     protected void convertRawBytesToEscherRecords() {
-        byte[] rawData = getRawData();
-    	convertToEscherRecords(0, rawData.length, rawData);
+        if (! DESERIALISE ) {
+            byte[] rawData = getRawData();
+        	convertToEscherRecords(0, rawData.length, rawData);
+        }
     }
     private void convertToEscherRecords( int offset, int size, byte[] data )
     {
@@ -224,7 +223,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
 
     public EscherRecord getEscherRecord(int index)
     {
-        return (EscherRecord) escherRecords.get(index);
+        return escherRecords.get(index);
     }
 
     /**
