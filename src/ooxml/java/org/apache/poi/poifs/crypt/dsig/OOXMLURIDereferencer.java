@@ -37,7 +37,6 @@ import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -51,17 +50,16 @@ public class OOXMLURIDereferencer implements URIDereferencer {
 
     private static final POILogger LOG = POILogFactory.getLogger(OOXMLURIDereferencer.class);
 
-    private final OPCPackage pkg;
+    private SignatureInfoConfig signatureConfig;
+    private URIDereferencer baseUriDereferencer;
 
-    private final URIDereferencer baseUriDereferencer;
-
-    public OOXMLURIDereferencer(OPCPackage pkg) {
-        if (null == pkg) {
-            throw new IllegalArgumentException("OPCPackage is null");
-        }
-        this.pkg = pkg;
+    public OOXMLURIDereferencer() {
         XMLSignatureFactory xmlSignatureFactory = SignatureInfo.getSignatureFactory();
         this.baseUriDereferencer = xmlSignatureFactory.getURIDereferencer();
+    }
+    
+    public void setSignatureConfig(SignatureInfoConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
     }
 
     public Data dereference(URIReference uriReference, XMLCryptoContext context) throws URIReferenceException {
@@ -109,6 +107,6 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             return null;
         }
         
-        return pkg.getPart(ppn);
+        return signatureConfig.getOpcPackage().getPart(ppn);
     }
 }
