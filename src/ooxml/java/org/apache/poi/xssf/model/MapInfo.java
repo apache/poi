@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -66,13 +65,14 @@ public class MapInfo extends POIXMLDocumentPart {
 		readFrom(part.getInputStream());
 	}
 
+    @SuppressWarnings("deprecation")
 	public void readFrom(InputStream is) throws IOException {
 		try {
 			MapInfoDocument doc = MapInfoDocument.Factory.parse(is);
 			mapInfo = doc.getMapInfo();
 
             maps= new HashMap<Integer, XSSFMap>();
-            for(CTMap map :mapInfo.getMapList()){
+            for(CTMap map :mapInfo.getMapArray()){
                 maps.put((int)map.getID(), new XSSFMap(map,this));
             }
 
@@ -104,10 +104,11 @@ public class MapInfo extends POIXMLDocumentPart {
 	 * @param schemaId the schema ID
 	 * @return CTSchema by it's ID
 	 */
+    @SuppressWarnings("deprecation")
 	public CTSchema getCTSchemaById(String schemaId){
 		CTSchema xmlSchema = null;
 
-		for(CTSchema schema: mapInfo.getSchemaList()){
+		for(CTSchema schema: mapInfo.getSchemaArray()){
 			if(schema.getID().equals(schemaId)){
 				xmlSchema = schema;
 				break;

@@ -45,6 +45,7 @@ public class TestXSSFColGrouping extends TestCase {
      * Tests that POI doesn't produce "col" elements without "width" attribute. 
      * POI-52186
      */
+    @SuppressWarnings("deprecation")
     public void testNoColsWithoutWidthWhenGrouping() {
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet("test");
@@ -60,7 +61,7 @@ public class TestXSSFColGrouping extends TestCase {
         
         CTCols cols = sheet.getCTWorksheet().getColsArray(0);
         logger.log(POILogger.DEBUG, "test52186/cols:" + cols);
-        for (CTCol col : cols.getColList()) {
+        for (CTCol col : cols.getColArray()) {
 			assertTrue("Col width attribute is unset: " + col.toString(), col.isSetWidth());
 		}
     }
@@ -69,6 +70,7 @@ public class TestXSSFColGrouping extends TestCase {
      * Tests that POI doesn't produce "col" elements without "width" attribute. 
      * POI-52186
      */
+    @SuppressWarnings("deprecation")
     public void testNoColsWithoutWidthWhenGroupingAndCollapsing() {
 		XSSFWorkbook wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet("test");
@@ -90,7 +92,7 @@ public class TestXSSFColGrouping extends TestCase {
         	assertEquals("Unexpected width of column "+ i, 5000, sheet.getColumnWidth(i));
         }
         cols = sheet.getCTWorksheet().getColsArray(0);
-        for (CTCol col : cols.getColList()) {
+        for (CTCol col : cols.getColArray()) {
 			assertTrue("Col width attribute is unset: " + col.toString(), col.isSetWidth());
 		}
     }

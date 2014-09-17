@@ -116,6 +116,6 @@ public class TestXWPFStyles extends TestCase {
         ex.setName("ex1");
         XWPFLatentStyles ls = new XWPFLatentStyles(latentStyles);
         assertEquals(true, ls.isLatentStyle("ex1"));
-
+        assertEquals(false, ls.isLatentStyle("notex1"));
     }
 }

@@ -16,12 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Color;
+
 import junit.framework.TestCase;
+
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
-
-import java.awt.Color;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleList;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
+import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 
 /**
  * @author Yegor Kozlov
@@ -243,13 +250,14 @@ public class TestXSLFSimpleShape extends TestCase {
 
     }
 
+    @SuppressWarnings({ "deprecation", "unused" })
     public void testShadowEffects(){
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         CTStyleMatrix styleMatrix = slide.getTheme().getXmlObject().getThemeElements().getFmtScheme();
         CTEffectStyleList lst = styleMatrix.getEffectStyleLst();
         assertNotNull(lst);
-        for(CTEffectStyleItem ef : lst.getEffectStyleList()){
+        for(CTEffectStyleItem ef : lst.getEffectStyleArray()){
             CTOuterShadowEffect obj = ef.getEffectLst().getOuterShdw();
         }
     }

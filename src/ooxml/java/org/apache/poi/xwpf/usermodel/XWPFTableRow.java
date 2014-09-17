@@ -152,10 +152,11 @@ public class XWPFTableRow {
      * who belongs to this row
      * @return a list of {@link XWPFTableCell} 
      */
+    @SuppressWarnings("deprecation")
     public List<XWPFTableCell> getTableCells(){
 	if(tableCells == null){
 	    List<XWPFTableCell> cells = new ArrayList<XWPFTableCell>();
-	    for (CTTc tableCell : ctRow.getTcList()) {
+	    for (CTTc tableCell : ctRow.getTcArray()) {
 		cells.add(new XWPFTableCell(tableCell, this, table.getBody()));
 	    }
        //TODO: it is possible to have an SDT that contains a cell in within a row
@@ -201,7 +202,7 @@ public class XWPFTableRow {
 	boolean isCant = false;
 	CTTrPr trpr = getTrPr();
 	if (trpr.sizeOfCantSplitArray() > 0) {
-	    CTOnOff onoff = trpr.getCantSplitList().get(0);
+	    CTOnOff onoff = trpr.getCantSplitArray(0);
 	    isCant = onoff.getVal().equals(STOnOff.ON);
 	}
 	return isCant;
@@ -229,7 +230,7 @@ public class XWPFTableRow {
 	boolean repeat = false;
 	CTTrPr trpr = getTrPr();
 	if (trpr.sizeOfTblHeaderArray() > 0) {
-	    CTOnOff rpt = trpr.getTblHeaderList().get(0);
+	    CTOnOff rpt = trpr.getTblHeaderArray(0);
 	    repeat = rpt.getVal().equals(STOnOff.ON);
 	}
 	return repeat;

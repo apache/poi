@@ -213,7 +213,7 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         if(blip.isSetExtLst()) {
 
             CTOfficeArtExtensionList extLst = blip.getExtLst();
-            for(CTOfficeArtExtension ext : extLst.getExtList()){
+            for(CTOfficeArtExtension ext : extLst.getExtArray()){
                 String xpath = "declare namespace a14='http://schemas.microsoft.com/office/drawing/2010/main' $this//a14:imgProps/a14:imgLayer";
                 XmlObject[] obj = ext.selectPath(xpath);
                 if(obj != null && obj.length == 1){

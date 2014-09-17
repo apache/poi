@@ -39,6 +39,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.Choose;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Function;
@@ -486,12 +487,15 @@ public final class WorkbookEvaluator {
 						continue;
 					}
 					if (evaluatedPredicate) {
-						// nothing to skip - true param folows
+						// nothing to skip - true param follows
 					} else {
 						int dist = attrPtg.getData();
 						i+= countTokensToBeSkipped(ptgs, i, dist);
 						Ptg nextPtg = ptgs[i+1];
-						if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg) {
+						if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg && 
+						        // in order to verify that there is no third param, we need to check 
+						        // if we really have the IF next or some other FuncVarPtg as third param, e.g. ROW()/COLUMN()!
+						        ((FuncVarPtg)nextPtg).getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF) {
 							// this is an if statement without a false param (as opposed to MissingArgPtg as the false param)
 							i++;
 							stack.push(BoolEval.FALSE);

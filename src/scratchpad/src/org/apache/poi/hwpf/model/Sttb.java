@@ -16,9 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+
+import java.util.Arrays;
 
 /**
  * The STTB is a string table that is made up of a header that is followed by an
@@ -64,7 +65,7 @@ public class Sttb
     {
         this._cDataLength = cDataLength;
 
-        this._data = ArrayUtil.copyOf( data, new String[data.length] );
+        this._data = Arrays.copyOf(data, data.length);
 
         this._cbExtra = 0;
         this._extraData = null;

@@ -30,6 +30,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.Date;
 
@@ -45,8 +46,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.DERSequence;
@@ -69,6 +68,7 @@ import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.cert.X509CRLHolder;
 import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509ExtensionUtils;
 import org.bouncycastle.cert.X509v2CRLBuilder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
@@ -83,6 +83,8 @@ import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPRespBuilder;
 import org.bouncycastle.cert.ocsp.Req;
 import org.bouncycastle.cert.ocsp.RevokedStatus;
+import org.bouncycastle.crypto.params.RSAKeyParameters;
+import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -108,24 +110,6 @@ public class PkiTestUtils {
         return keyPair;
     }
 
-    @SuppressWarnings("resource")
-    private static SubjectKeyIdentifier createSubjectKeyId(PublicKey publicKey)
-    throws IOException {
-        ASN1InputStream asnObj = new ASN1InputStream(publicKey.getEncoded());
-        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(asnObj.readObject());
-        SubjectKeyIdentifier keyId = SubjectKeyIdentifier.getInstance(info.getEncoded());
-        return keyId;
-    }
-
-    @SuppressWarnings("resource")
-    private static AuthorityKeyIdentifier createAuthorityKeyId(PublicKey publicKey)
-    throws IOException {
-        ASN1InputStream asnObj = new ASN1InputStream(publicKey.getEncoded());
-        SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(asnObj.readObject());
-        AuthorityKeyIdentifier keyId = AuthorityKeyIdentifier.getInstance(info);
-        return keyId;
-    }
-
     static X509Certificate generateCertificate(PublicKey subjectPublicKey,
             String subjectDn, Date notBefore, Date notAfter,
             X509Certificate issuerCertificate, PrivateKey issuerPrivateKey,
@@ -140,9 +124,15 @@ public class PkiTestUtils {
         } else {
             issuerName = new X500Name(subjectDn);
         }
+        
+        RSAPublicKey rsaPubKey = (RSAPublicKey)subjectPublicKey;
+        RSAKeyParameters rsaSpec = new RSAKeyParameters(false, rsaPubKey.getModulus(), rsaPubKey.getPublicExponent());
 
-        SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(
-            ASN1Sequence.getInstance(subjectPublicKey.getEncoded()));
+        SubjectPublicKeyInfo subjectPublicKeyInfo = 
+            SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(rsaSpec);
+
+        DigestCalculator digestCalc = new JcaDigestCalculatorProviderBuilder()
+            .setProvider("BC").build().get(CertificateID.HASH_SHA1);
         
         X509v3CertificateBuilder certificateGenerator = new X509v3CertificateBuilder(
               issuerName
@@ -153,8 +143,14 @@ public class PkiTestUtils {
             , subjectPublicKeyInfo
         );
 
-        certificateGenerator.addExtension(Extension.subjectKeyIdentifier, false, createSubjectKeyId(subjectPublicKey));
-        certificateGenerator.addExtension(Extension.authorityKeyIdentifier, false, createAuthorityKeyId(subjectPublicKey));
+        X509ExtensionUtils exUtils = new X509ExtensionUtils(digestCalc);
+        SubjectKeyIdentifier subKeyId = exUtils.createSubjectKeyIdentifier(subjectPublicKeyInfo);
+        AuthorityKeyIdentifier autKeyId = (issuerCertificate != null) 
+            ? exUtils.createAuthorityKeyIdentifier(new X509CertificateHolder(issuerCertificate.getEncoded()))
+            : exUtils.createAuthorityKeyIdentifier(subjectPublicKeyInfo);
+
+        certificateGenerator.addExtension(Extension.subjectKeyIdentifier, false, subKeyId);
+        certificateGenerator.addExtension(Extension.authorityKeyIdentifier, false, autKeyId);
 
         if (caFlag) {
             BasicConstraints bc;

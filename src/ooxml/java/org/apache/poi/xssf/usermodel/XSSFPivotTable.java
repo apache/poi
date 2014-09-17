@@ -240,7 +240,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
 
-        List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
         CTItems items = pivotField.addNewItems();
 
@@ -249,10 +248,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         for(int i = 0; i <= lastRowIndex; i++) {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
-        items.setCount(items.getItemList().size());
-        pivotFieldList.set(columnIndex, pivotField);
-
-        pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
+        items.setCount(items.sizeOfItemArray());
+        pivotFields.setPivotFieldArray(columnIndex, pivotField);
 
         CTRowFields rowFields;
         if(pivotTableDefinition.getRowFields() != null) {
@@ -262,7 +259,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
 
         rowFields.addNewField().setX(columnIndex);
-        rowFields.setCount(rowFields.getFieldList().size());
+        rowFields.setCount(rowFields.sizeOfFieldArray());
     }
     
     @Beta
@@ -307,7 +304,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
                 colFields = pivotTableDefinition.addNewColFields();
             }
             colFields.addNewField().setX(-2);
-            colFields.setCount(colFields.getFieldList().size());
+            colFields.setCount(colFields.sizeOfFieldArray());
         }
     }
 
@@ -338,7 +335,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         cell.setCellType(Cell.CELL_TYPE_STRING);
         dataField.setName(function.getName());
         dataField.setFld(columnIndex);
-        dataFields.setCount(dataFields.getDataFieldList().size());
+        dataFields.setCount(dataFields.sizeOfDataFieldArray());
     }
 
     /**
@@ -354,13 +351,11 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             throw new IndexOutOfBoundsException();
         }
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
-        List<CTPivotField> pivotFieldList = pivotFields.getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
 
         pivotField.setDataField(isDataField);
         pivotField.setShowAll(false);
-        pivotFieldList.set(columnIndex, pivotField);
-        pivotFields.setPivotFieldArray(pivotFieldList.toArray(new CTPivotField[pivotFieldList.size()]));
+        pivotFields.setPivotFieldArray(columnIndex, pivotField);
     }
 
     /**
@@ -378,7 +373,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTPivotFields pivotFields = pivotTableDefinition.getPivotFields();
 
-        List<CTPivotField> pivotFieldList = pivotTableDefinition.getPivotFields().getPivotFieldList();
         CTPivotField pivotField = CTPivotField.Factory.newInstance();
         CTItems items = pivotField.addNewItems();
 
@@ -387,8 +381,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         for(int i = 0; i <= lastRowIndex; i++) {
             items.addNewItem().setT(STItemType.DEFAULT);
         }
-        items.setCount(items.getItemList().size());
-        pivotFieldList.set(columnIndex, pivotField);
+        items.setCount(items.sizeOfItemArray());
+        pivotFields.setPivotFieldArray(columnIndex, pivotField);
 
         CTPageFields pageFields;
         if (pivotTableDefinition.getPageFields()!= null) {
@@ -402,7 +396,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         pageField.setHier(-1);
         pageField.setFld(columnIndex);
 
-        pageFields.setCount(pageFields.getPageFieldList().size());
+        pageFields.setCount(pageFields.sizeOfPageFieldArray());
         pivotTableDefinition.getLocation().setColPageCount(pageFields.getCount());
     }
 
@@ -459,6 +453,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             pivotField.setDataField(false);
             pivotField.setShowAll(false);
         }
-        pivotFields.setCount(pivotFields.getPivotFieldList().size());
+        pivotFields.setCount(pivotFields.sizeOfPivotFieldArray());
     }
 }

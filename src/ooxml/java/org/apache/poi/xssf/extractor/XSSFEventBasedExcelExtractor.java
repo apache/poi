@@ -24,8 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.POIXMLProperties.CoreProperties;
@@ -35,6 +33,7 @@ import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.util.SAXHelper;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -174,10 +173,8 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
        }
       
        InputSource sheetSource = new InputSource(sheetInputStream);
-       SAXParserFactory saxFactory = SAXParserFactory.newInstance();
        try {
-          SAXParser saxParser = saxFactory.newSAXParser();
-          XMLReader sheetParser = saxParser.getXMLReader();
+          XMLReader sheetParser = SAXHelper.newXMLReader();
           ContentHandler handler = new XSSFSheetXMLHandler(
                 styles, comments, strings, sheetContentsExtractor, formatter, formulasNotResults);
           sheetParser.setContentHandler(handler);

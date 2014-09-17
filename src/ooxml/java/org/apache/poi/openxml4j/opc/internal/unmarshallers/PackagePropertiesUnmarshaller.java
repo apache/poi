@@ -31,7 +31,7 @@ import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.util.SAXHelper;
+import org.apache.poi.util.DocumentHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -105,7 +105,7 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 
 		Document xmlDoc;
 		try {
-			xmlDoc = SAXHelper.readSAXDocument(in);
+			xmlDoc = DocumentHelper.readDocument(in);
 
 			/* Check OPC compliance */
 

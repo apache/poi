@@ -24,9 +24,9 @@ import java.util.TreeMap;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SAXHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -311,7 +311,7 @@ public final class PackageRelationshipCollection implements
             throws InvalidFormatException {
         try {
             logger.log(POILogger.DEBUG, "Parsing relationship: " + relPart.getPartName());
-            Document xmlRelationshipsDoc = SAXHelper.readSAXDocument(relPart.getInputStream());
+            Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
 
             // Browse default types
             Element root = xmlRelationshipsDoc.getDocumentElement();

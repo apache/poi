@@ -25,9 +25,11 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
@@ -186,5 +188,15 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+	}
+
+	@Test
+	public void testBug55280() {
+        Workbook w = new XSSFWorkbook();
+        Sheet s = w.createSheet();
+        for (int row = 0; row < 5000; ++row)
+            s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
+
+        s.shiftRows(0, 4999, 1);        // takes a long time...
 	}
 }

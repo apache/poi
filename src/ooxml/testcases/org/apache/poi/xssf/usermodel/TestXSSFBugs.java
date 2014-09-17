@@ -964,9 +964,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
        assertEquals(text, cell.getStringCellValue());
        
        assertEquals(4, cell.getRichStringCellValue().numFormattingRuns());
-       assertEquals("Use", cell.getRichStringCellValue().getCTRst().getRList().get(0).getT());
+       assertEquals("Use", cell.getRichStringCellValue().getCTRst().getRArray(0).getT());
        
-       String r3 = cell.getRichStringCellValue().getCTRst().getRList().get(2).getT();
+       String r3 = cell.getRichStringCellValue().getCTRst().getRArray(2).getT();
        assertEquals("line.\n", r3.substring(r3.length()-6));
 
        // Save and re-check

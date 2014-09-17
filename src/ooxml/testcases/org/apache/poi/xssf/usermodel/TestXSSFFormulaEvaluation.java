@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -288,48 +289,212 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
     }
     
-    public void testMultisheetFormulaEval() {
+    public void testMultisheetFormulaEval() throws IOException {
     	XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet1 = wb.createSheet("Sheet1");
-		XSSFSheet sheet2 = wb.createSheet("Sheet2");
-		XSSFSheet sheet3 = wb.createSheet("Sheet3");
-		
-		// sheet1 A1
-		XSSFCell cell = sheet1.createRow(0).createCell(0);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(1.0);
-		
-		// sheet2 A1
-		cell = sheet2.createRow(0).createCell(0);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(1.0);
-		
-		// sheet2 B1
-		cell = sheet2.getRow(0).createCell(1);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(1.0);
-		
-		// sheet3 A1
-		cell = sheet3.createRow(0).createCell(0);
-		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-		cell.setCellValue(1.0);
-		
-		// sheet1 A2 formulae
-		cell = sheet1.createRow(1).createCell(0);
-		cell.setCellType(Cell.CELL_TYPE_FORMULA);
-		cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
-		
-		// sheet1 A3 formulae
-		cell = sheet1.createRow(2).createCell(0);
-		cell.setCellType(Cell.CELL_TYPE_FORMULA);
-		cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
-		
-		wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
-		
-		cell = sheet1.getRow(1).getCell(0);
-		assertEquals(3.0, cell.getNumericCellValue());
-		
-		cell = sheet1.getRow(2).getCell(0);
-		assertEquals(4.0, cell.getNumericCellValue());
+    	try {
+    		XSSFSheet sheet1 = wb.createSheet("Sheet1");
+    		XSSFSheet sheet2 = wb.createSheet("Sheet2");
+    		XSSFSheet sheet3 = wb.createSheet("Sheet3");
+    		
+    		// sheet1 A1
+    		XSSFCell cell = sheet1.createRow(0).createCell(0);
+    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    		cell.setCellValue(1.0);
+    		
+    		// sheet2 A1
+    		cell = sheet2.createRow(0).createCell(0);
+    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    		cell.setCellValue(1.0);
+    		
+    		// sheet2 B1
+    		cell = sheet2.getRow(0).createCell(1);
+    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    		cell.setCellValue(1.0);
+    		
+    		// sheet3 A1
+    		cell = sheet3.createRow(0).createCell(0);
+    		cell.setCellType(Cell.CELL_TYPE_NUMERIC);
+    		cell.setCellValue(1.0);
+    		
+    		// sheet1 A2 formulae
+    		cell = sheet1.createRow(1).createCell(0);
+    		cell.setCellType(Cell.CELL_TYPE_FORMULA);
+    		cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
+    		
+    		// sheet1 A3 formulae
+    		cell = sheet1.createRow(2).createCell(0);
+    		cell.setCellType(Cell.CELL_TYPE_FORMULA);
+    		cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
+    		
+    		wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+    		
+    		cell = sheet1.getRow(1).getCell(0);
+    		assertEquals(3.0, cell.getNumericCellValue());
+    		
+    		cell = sheet1.getRow(2).getCell(0);
+    		assertEquals(4.0, cell.getNumericCellValue());
+    	} finally {
+    	    wb.close();
+    	}
 	}
+
+    public void testBug55843() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW()-ROW(A$1))*12))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluate);
+            assertEquals("12.0", evaluate.formatAsString());
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW()-ROW(A$1))*12),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluateN);
+            
+            assertEquals(evaluate.toString(), evaluateN.toString());
+            assertEquals("12.0", evaluateN.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }
+    
+    public void testBug55843a() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW(A$1))))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluate);
+            assertEquals("1.0", evaluate.formatAsString());
+
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW(A$1))),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluateN);
+            
+            assertEquals(evaluate.toString(), evaluateN.toString());
+            assertEquals("1.0", evaluateN.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }    
+
+    public void testBug55843b() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW())))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluate);
+            assertEquals("2.0", evaluate.formatAsString());
+            
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW())),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluateN);
+            
+            assertEquals(evaluate.toString(), evaluateN.toString());
+            assertEquals("2.0", evaluateN.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }
+    
+    public void testBug55843c() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW())))");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluateN);
+            assertEquals("2.0", evaluateN.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }
+    
+    public void testBug55843d() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            
+            cellA2.setCellFormula("IF(NOT(B1=0),((ROW())),\"\")");
+            CellValue evaluateN = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluateN);
+            assertEquals("2.0", evaluateN.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }
+
+    public void testBug55843e() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(B1=0,\"\",((ROW())))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluate);
+            assertEquals("2.0", evaluate.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }
+    
+
+    public void testBug55843f() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet("test");
+            XSSFRow row = sheet.createRow(0);
+            XSSFRow row2 = sheet.createRow(1);
+            XSSFCell cellA2 = row2.createCell(0, Cell.CELL_TYPE_FORMULA);
+            XSSFCell cellB1 = row.createCell(1, Cell.CELL_TYPE_NUMERIC);
+            cellB1.setCellValue(10);
+            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            cellA2.setCellFormula("IF(B1=0,\"\",IF(B1=10,3,4))");
+            CellValue evaluate = formulaEvaluator.evaluate(cellA2);
+            System.out.println(evaluate);
+            assertEquals("3.0", evaluate.formatAsString());
+        } finally {
+            wb.close();
+        }
+    }    
 }

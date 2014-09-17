@@ -127,7 +127,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
         for(int i=columnStart; i<=columnEnd; i++) {
             CTCacheField cf = cFields.addNewCacheField();
             if(i==columnEnd){
-                cFields.setCount(cFields.getCacheFieldList().size());
+                cFields.setCount(cFields.sizeOfCacheFieldArray());
             }
             //General number format
             cf.setNumFmtId(0);

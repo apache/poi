@@ -57,9 +57,9 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
+import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SAXHelper;
 import org.apache.xml.security.Init;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -127,7 +127,7 @@ public class SignatureInfo {
     throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException {
         XmlSignatureService signatureService = createSignatureService(hashAlgo, pkg);
 
-        Document document = SAXHelper.getDocumentBuilder().newDocument();
+        Document document = DocumentHelper.createDocument();
         
         // operate
         List<X509Certificate> x509Chain = Collections.singletonList(x509);
@@ -181,7 +181,7 @@ public class SignatureInfo {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
 
             try {
-                Document doc = SAXHelper.readSAXDocument(signaturePart.getInputStream());
+                Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
                 // dummy call to createSignatureService to tweak document afterwards
                 createSignatureService(HashAlgorithm.sha1, pkg).registerIds(doc);
                 

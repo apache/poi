@@ -34,7 +34,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFootnotes;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
@@ -68,6 +67,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      * Read document
      */
     @Override
+    @SuppressWarnings("deprecation")
     protected void onDocumentRead () throws IOException {
         FootnotesDocument notesDoc;
         try {
@@ -79,7 +79,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
         }
 
         // Find our footnotes
-        for(CTFtnEdn note : ctFootnotes.getFootnoteList()) {
+        for(CTFtnEdn note : ctFootnotes.getFootnoteArray()) {
             listFootnote.add(new XWPFFootnote(note, this));
         }
     }

@@ -66,6 +66,6 @@ public class XSLFComments extends POIXMLDocumentPart {
     }
     
     public CTComment getCommentAt(int pos) {
-       return _comments.getCmList().get(pos);
+       return _comments.getCmArray(pos);
     }
 }

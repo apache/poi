@@ -19,6 +19,25 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.TexturePaint;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Internal;
@@ -46,25 +65,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
-
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.TexturePaint;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 
 /**
  * Encapsulates logic to translate DrawingML objects to Java2D
@@ -548,6 +548,7 @@ class RenderableShape {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private Collection<Outline> computeOutlines(Graphics2D graphics) {
 
         Collection<Outline> lst = new ArrayList<Outline>();
@@ -576,7 +577,7 @@ class RenderableShape {
                 public Guide getAdjustValue(String name) {
                     CTPresetGeometry2D prst = _shape.getSpPr().getPrstGeom();
                     if (prst.isSetAvLst()) {
-                        for (CTGeomGuide g : prst.getAvLst().getGdList()) {
+                        for (CTGeomGuide g : prst.getAvLst().getGdArray()) {
                             if (g.getName().equals(name)) {
                                 return new Guide(g);
                             }

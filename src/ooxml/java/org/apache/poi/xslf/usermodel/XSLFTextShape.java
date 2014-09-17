@@ -19,6 +19,14 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
@@ -36,14 +44,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Represents a shape that can hold text.
  *
@@ -58,13 +58,14 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements Iterable<
      */
     private boolean _isTextBroken;
 
+    @SuppressWarnings("deprecation")
     /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
         super(shape, sheet);
 
         _paragraphs = new ArrayList<XSLFTextParagraph>();
         CTTextBody txBody = getTextBody(false);
         if (txBody != null) {
-            for (CTTextParagraph p : txBody.getPList()) {
+            for (CTTextParagraph p : txBody.getPArray()) {
                 _paragraphs.add(new XSLFTextParagraph(p, this));
             }
         }

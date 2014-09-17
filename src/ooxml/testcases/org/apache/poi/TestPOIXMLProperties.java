@@ -80,13 +80,14 @@ public final class TestPOIXMLProperties extends TestCase {
 		org.apache.poi.POIXMLProperties.ExtendedProperties newProperties =
 				newProps.getExtendedProperties();
 
+        assertEquals(application, newProperties.getApplication());
+        assertEquals(appVersion, newProperties.getAppVersion());
+        
 		org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties
 				newCtProps = newProperties.getUnderlyingProperties();
 
 		assertEquals(application, newCtProps.getApplication());
 		assertEquals(appVersion, newCtProps.getAppVersion());
-
-
 	}
 
 

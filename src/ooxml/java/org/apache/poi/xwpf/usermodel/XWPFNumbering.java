@@ -71,6 +71,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	 * read numbering form an existing package
 	 */
 	@Override
+    @SuppressWarnings("deprecation")
 	protected void onDocumentRead() throws IOException{
 		NumberingDocument numberingDoc = null;
 		InputStream is;
@@ -79,10 +80,10 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 			numberingDoc = NumberingDocument.Factory.parse(is);
 			ctNumbering = numberingDoc.getNumbering();
 	        //get any Nums
-	        for(CTNum ctNum : ctNumbering.getNumList()) {
+	        for(CTNum ctNum : ctNumbering.getNumArray()) {
 	            nums.add(new XWPFNum(ctNum, this));
 	        }
-	        for(CTAbstractNum ctAbstractNum : ctNumbering.getAbstractNumList()){
+	        for(CTAbstractNum ctAbstractNum : ctNumbering.getAbstractNumArray()){
 	        	abstractNums.add(new XWPFAbstractNum(ctAbstractNum, this));
 	        }
 	        isNew = false;
@@ -144,7 +145,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 	 */
 	public BigInteger addNum(XWPFNum num){
 		ctNumbering.addNewNum();
-		int pos = (ctNumbering.getNumList().size()) - 1;
+		int pos = ctNumbering.sizeOfNumArray() - 1;
 		ctNumbering.setNumArray(pos, num.getCTNum());
 		nums.add(num);
 		return num.getCTNum().getNumId();
