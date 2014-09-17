@@ -34,7 +34,6 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +52,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -97,12 +97,8 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
     
-    private final Date clock;
-
-    private final HashAlgorithm hashAlgo;
-
-    private final SignaturePolicyService signaturePolicyService;
-
+    private SignatureInfoConfig signatureConfig;
+    
     private String idSignedProperties;
 
     private boolean signaturePolicyImplied;
@@ -111,7 +107,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
     private boolean issuerNameNoReverseOrder = false;
 
-    private Map<String, String> dataObjectFormatMimeTypes;
+    private Map<String, String> dataObjectFormatMimeTypes = new HashMap<String, String>();
 
     /**
      * Main constructor.
@@ -126,12 +122,8 @@ public class XAdESSignatureFacet implements SignatureFacet {
      * @param signaturePolicyService
      *            the optional signature policy service used for XAdES-EPES.
      */
-    public XAdESSignatureFacet(Date clock, HashAlgorithm hashAlgo,
-            SignaturePolicyService signaturePolicyService) {
-        this.clock = (clock == null ? new Date() : clock);
-        this.hashAlgo = (hashAlgo == null ? HashAlgorithm.sha1 : hashAlgo);
-        this.signaturePolicyService = signaturePolicyService;
-        this.dataObjectFormatMimeTypes = new HashMap<String, String>();
+    public XAdESSignatureFacet(SignatureInfoConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
     }
 
     @Override
@@ -167,7 +159,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // SigningTime
         Calendar xmlGregorianCalendar = Calendar.getInstance();
         xmlGregorianCalendar.setTimeZone(TimeZone.getTimeZone("Z"));
-        xmlGregorianCalendar.setTime(this.clock);
+        xmlGregorianCalendar.setTime(this.signatureConfig.getExecutionTime());
         xmlGregorianCalendar.clear(Calendar.MILLISECOND);
         signedSignatureProperties.setSigningTime(xmlGregorianCalendar);
 
@@ -179,7 +171,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         CertIDListType signingCertificates = signedSignatureProperties.addNewSigningCertificate();
         CertIDType certId = signingCertificates.addNewCert();
         X509Certificate signingCertificate = signingCertificateChain.get(0);
-        setCertID(certId, signingCertificate, this.hashAlgo, this.issuerNameNoReverseOrder);
+        setCertID(certId, signingCertificate, this.signatureConfig.getDigestAlgo(), this.issuerNameNoReverseOrder);
 
         // ClaimedRole
         if (null != this.role && false == this.role.isEmpty()) {
@@ -193,24 +185,24 @@ public class XAdESSignatureFacet implements SignatureFacet {
         }
 
         // XAdES-EPES
-        if (null != this.signaturePolicyService) {
+        SignaturePolicyService policyService = this.signatureConfig.getSignaturePolicyService();
+        if (policyService != null) {
             SignaturePolicyIdentifierType signaturePolicyIdentifier =
                 signedSignatureProperties.addNewSignaturePolicyIdentifier();
             
             SignaturePolicyIdType signaturePolicyId = signaturePolicyIdentifier.addNewSignaturePolicyId();
 
             ObjectIdentifierType objectIdentifier = signaturePolicyId.addNewSigPolicyId();
-            objectIdentifier.setDescription(this.signaturePolicyService.getSignaturePolicyDescription());
+            objectIdentifier.setDescription(policyService.getSignaturePolicyDescription());
             
             IdentifierType identifier = objectIdentifier.addNewIdentifier();
-            identifier.setStringValue(this.signaturePolicyService.getSignaturePolicyIdentifier());
+            identifier.setStringValue(policyService.getSignaturePolicyIdentifier());
 
-            byte[] signaturePolicyDocumentData = this.signaturePolicyService.getSignaturePolicyDocument();
+            byte[] signaturePolicyDocumentData = policyService.getSignaturePolicyDocument();
             DigestAlgAndValueType sigPolicyHash = signaturePolicyId.addNewSigPolicyHash();
-            setDigestAlgAndValue(sigPolicyHash, signaturePolicyDocumentData, this.hashAlgo);
+            setDigestAlgAndValue(sigPolicyHash, signaturePolicyDocumentData, this.signatureConfig.getDigestAlgo());
 
-            String signaturePolicyDownloadUrl = this.signaturePolicyService
-                    .getSignaturePolicyDownloadUrl();
+            String signaturePolicyDownloadUrl = policyService.getSignaturePolicyDownloadUrl();
             if (null != signaturePolicyDownloadUrl) {
                 SigPolicyQualifiersListType sigPolicyQualifiers = signaturePolicyId.addNewSigPolicyQualifiers(); 
                 AnyType sigPolicyQualifier = sigPolicyQualifiers.addNewSigPolicyQualifier();
@@ -254,7 +246,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         objects.add(xadesObject);
 
         // add XAdES ds:Reference
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(hashAlgo.xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(this.signatureConfig.getDigestAlgo().xmlSignUri, null);
         List<Transform> transforms = new ArrayList<Transform>();
         Transform exclusiveTransform = signatureFactory
                 .newTransform(CanonicalizationMethod.INCLUSIVE,

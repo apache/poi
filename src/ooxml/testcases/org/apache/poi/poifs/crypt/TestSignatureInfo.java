@@ -52,15 +52,14 @@ import javax.xml.crypto.KeySelector;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
-import org.apache.poi.poifs.crypt.dsig.facets.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
@@ -208,13 +207,26 @@ public class TestSignatureInfo {
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
 
         initKeyPair("Test", "CN=Test");
+        final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
         
         // setup
-        EnvelopedSignatureFacet envelopedSignatureFacet = new EnvelopedSignatureFacet();
-        KeyInfoSignatureFacet keyInfoSignatureFacet = new KeyInfoSignatureFacet(true, false, false);
-        SignaturePolicyService signaturePolicyService = null;
-        XAdESSignatureFacet xadesSignatureFacet = new XAdESSignatureFacet(null, null, signaturePolicyService);
-        final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
+        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
+        signatureConfig.setOpcPackage(pkg);
+        signatureConfig.setKey(keyPair.getPrivate());
+
+        /*
+         * We need at least 2 certificates for the XAdES-C complete certificate
+         * refs construction.
+         */
+        List<X509Certificate> certificateChain = new ArrayList<X509Certificate>();
+        certificateChain.add(x509);
+        certificateChain.add(x509);
+        signatureConfig.setSigningCertificateChain(certificateChain);
+        
+        signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet());
+        signatureConfig.addSignatureFacet(new KeyInfoSignatureFacet(true, false, false));
+        signatureConfig.addSignatureFacet(new XAdESSignatureFacet(signatureConfig));
+        
 
         // http://timestamping.edelweb.fr/service/tsp
         // http://tsa.belgium.be/connect
@@ -248,14 +260,6 @@ public class TestSignatureInfo {
             timeStampService = tspService;
         }
         
-        List<X509Certificate> certificateChain = new ArrayList<X509Certificate>();
-        /*
-         * We need at least 2 certificates for the XAdES-C complete certificate
-         * refs construction.
-         */
-        certificateChain.add(x509);
-        certificateChain.add(x509);
-        
         final RevocationData revocationData = new RevocationData();
         revocationData.addCRL(crl);
         OCSPResp ocspResp = PkiTestUtils.createOcspResp(x509, false,
@@ -270,17 +274,12 @@ public class TestSignatureInfo {
 
         XAdESXLSignatureFacet xadesXLSignatureFacet = new XAdESXLSignatureFacet(
                 timeStampService, revocationDataService);
-        XmlSignatureService testedInstance = new XmlSignatureService(HashAlgorithm.sha1, pkg);
-        testedInstance.addSignatureFacet(envelopedSignatureFacet, keyInfoSignatureFacet,
-                xadesSignatureFacet, xadesXLSignatureFacet);
+        XmlSignatureService testedInstance = new XmlSignatureService(signatureConfig);
         
-        
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        Document document = dbf.newDocumentBuilder().newDocument();
+        Document document = DocumentHelper.createDocument();
         
         // operate
-        DigestInfo digestInfo = testedInstance.preSign(document, null, keyPair.getPrivate(), certificateChain, null, null, null);
+        DigestInfo digestInfo = testedInstance.preSign(document, null);
 
         // verify
         assertNotNull(digestInfo);
@@ -301,7 +300,7 @@ public class TestSignatureInfo {
         byte[] signatureValue = SignatureInfo.signDigest(keyPair.getPrivate(), HashAlgorithm.sha1, digestInfo.digestValue);
 
         // Operate: postSign
-        testedInstance.postSign(document, signatureValue, certificateChain);
+        testedInstance.postSign(document, signatureValue);
         
         DOMValidateContext domValidateContext = new DOMValidateContext(
                 KeySelector.singletonKeySelector(keyPair.getPublic()),
@@ -332,15 +331,22 @@ public class TestSignatureInfo {
     }
     
     private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
-        XmlSignatureService signatureService = new XmlSignatureService(HashAlgorithm.sha1, pkgCopy);
-        signatureService.initFacets(cal.getTime());
         initKeyPair(alias, signerDn);
+
+        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
+        signatureConfig.setKey(keyPair.getPrivate());
+        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setExecutionTime(cal.getTime());
+        signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
+        signatureConfig.setOpcPackage(pkgCopy);
+        signatureConfig.addDefaultFacets();
+        
+        XmlSignatureService signatureService = new XmlSignatureService(signatureConfig);
 
         Document document = DocumentHelper.createDocument();
 
         // operate
-        List<X509Certificate> x509Chain = Collections.singletonList(x509);
-        DigestInfo digestInfo = signatureService.preSign(document, null, keyPair.getPrivate(), x509Chain, null, null, null);
+        DigestInfo digestInfo = signatureService.preSign(document, null);
 
         // verify
         assertNotNull(digestInfo);
@@ -354,7 +360,7 @@ public class TestSignatureInfo {
         byte[] signatureValue = SignatureInfo.signDigest(keyPair.getPrivate(), HashAlgorithm.sha1, digestInfo.digestValue);
         
         // operate: postSign
-        signatureService.postSign(document, signatureValue, Collections.singletonList(x509));
+        signatureService.postSign(document, signatureValue);
 
         // verify: signature
         SignatureInfo si = new SignatureInfo(pkgCopy);

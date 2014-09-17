@@ -37,7 +37,6 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -68,10 +67,9 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
-import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlException;
@@ -96,19 +94,13 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     public static final String OOXML_DIGSIG_NS = "http://schemas.openxmlformats.org/package/2006/digital-signature";
     public static final String OFFICE_DIGSIG_NS = "http://schemas.microsoft.com/office/2006/digsig";
 
-    private final XmlSignatureService signatureService;
-
-    private final Date clock;
-
-    private final HashAlgorithm hashAlgo;
+    private final SignatureInfoConfig signatureConfig;
 
     /**
      * Main constructor.
      */
-    public OOXMLSignatureFacet(XmlSignatureService signatureService, Date clock, HashAlgorithm hashAlgo) {
-        this.signatureService = signatureService;
-        this.clock = (clock == null ? new Date() : clock);
-        this.hashAlgo = (hashAlgo == null ? HashAlgorithm.sha1 : hashAlgo);
+    public OOXMLSignatureFacet(SignatureInfoConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
     }
 
     @Override
@@ -142,7 +134,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         XMLObject xo = signatureFactory.newXMLObject(objectContent, objectId, null, null);
         objects.add(xo);
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(this.hashAlgo.xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         Reference reference = signatureFactory.newReference
             ("#" + objectId, digestMethod, null, XmlDSigNS+"Object", null);
         references.add(reference);
@@ -152,11 +144,11 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             throws IOException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, URISyntaxException, XmlException {
 
-        OPCPackage ooxml = this.signatureService.getOfficeOpenXMLDocument();
+        OPCPackage ooxml = this.signatureConfig.getOpcPackage();
         List<PackagePart> relsEntryNames = ooxml.getPartsByContentType(ContentTypes.RELATIONSHIPS_PART);
 
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(this.hashAlgo.xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         Set<String> digestedPartNames = new HashSet<String>();
         for (PackagePart pp : relsEntryNames) {
             String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
@@ -240,7 +232,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
          */
         DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String nowStr = fmt.format(this.clock);
+        String nowStr = fmt.format(this.signatureConfig.getExecutionTime());
         LOG.log(POILogger.DEBUG, "now: " + nowStr);
 
         SignatureTimeDocument sigTime = SignatureTimeDocument.Factory.newInstance();
@@ -261,7 +253,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         signaturePropertyContent.add(signatureTimeSignatureProperty);
         SignatureProperties signatureProperties = signatureFactory
                 .newSignatureProperties(signaturePropertyContent,
-                        "id-signature-time-" + this.clock.getTime());
+                        "id-signature-time-" + signatureConfig.getExecutionTime());
         objectContent.add(signatureProperties);
     }
 
@@ -274,7 +266,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
-        ctSigV1.setManifestHashAlgorithm(hashAlgo.xmlSignUri);
+        ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestAlgo().xmlSignUri);
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
         n.setAttributeNS(XmlNS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
         
@@ -293,7 +285,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         String objectId = "idOfficeObject";
         objects.add(signatureFactory.newXMLObject(objectContent, objectId, null, null));
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(this.hashAlgo.xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         Reference reference = signatureFactory.newReference
             ("#" + objectId, digestMethod, null, XmlDSigNS+"Object", null);
         references.add(reference);

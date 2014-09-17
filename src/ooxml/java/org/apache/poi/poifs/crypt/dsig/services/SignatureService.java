@@ -26,16 +26,12 @@ package org.apache.poi.poifs.crypt.dsig.services;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.poi.poifs.crypt.dsig.spi.AddressDTO;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
-import org.apache.poi.poifs.crypt.dsig.spi.IdentityDTO;
 import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Document;
 
@@ -48,44 +44,16 @@ import org.w3c.dom.Document;
 public interface SignatureService {
 
     /**
-     * Gives back the digest algorithm to be used for construction of the digest
-     * infos of the preSign method. Return a digest algorithm here if you want
-     * to let the client sign some locally stored files. Return
-     * <code>null</code> if no pre-sign digest infos are required.
-     * 
-     * @return the digest algorithm to be used when digesting local files.
-     * @see #preSign(List, List)
-     */
-    String getFilesDigestAlgorithm();
-
-    /**
      * Pre-sign callback method. Depending on the configuration some parameters
      * are passed. The returned value will be signed by the eID Applet.
      * 
-     * <p>
-     * TODO: service must be able to throw some exception on failure.
-     * </p>
-     * 
      * @param digestInfos
      *            the optional list of digest infos.
-     * @param signingCertificateChain
-     *            the optional list of certificates.
-     * @param identity
-     *            the optional identity.
-     * @param address
-     *            the optional identity address.
-     * @param photo
-     *            the optional identity photo.
-     * @param timestamp
-     *            the optional timestamp, defaults to now
      * @return the digest to be signed.
      * @throws NoSuchAlgorithmException
      */
-    DigestInfo preSign(Document document, List<DigestInfo> digestInfos,
-            PrivateKey privateKey,
-            List<X509Certificate> signingCertificateChain,
-            IdentityDTO identity, AddressDTO address, byte[] photo)
-            throws NoSuchAlgorithmException;
+    DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
+    throws NoSuchAlgorithmException;
 
     /**
      * Post-sign callback method. Received the signature value. Depending on the
@@ -95,7 +63,6 @@ public interface SignatureService {
      * @param signingCertificateChain
      *            the optional chain of signing certificates.
      */
-    void postSign(Document document, byte[] signatureValue,
-            List<X509Certificate> signingCertificateChain)
-            throws IOException, MarshalException, ParserConfigurationException, XmlException;
+    void postSign(Document document, byte[] signatureValue)
+    throws IOException, MarshalException, ParserConfigurationException, XmlException;
 }

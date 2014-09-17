@@ -32,7 +32,6 @@ import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -125,19 +124,24 @@ public class SignatureInfo {
     
     public void confirmSignature(PrivateKey key, X509Certificate x509, HashAlgorithm hashAlgo)
     throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException {
-        XmlSignatureService signatureService = createSignatureService(hashAlgo, pkg);
+        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
+        signatureConfig.setOpcPackage(pkg);
+        signatureConfig.setDigestAlgo(hashAlgo);
+        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+        signatureConfig.setKey(key);
+        signatureConfig.addDefaultFacets();
+        XmlSignatureService signatureService = new XmlSignatureService(signatureConfig);
 
         Document document = DocumentHelper.createDocument();
         
         // operate
-        List<X509Certificate> x509Chain = Collections.singletonList(x509);
-        DigestInfo digestInfo = signatureService.preSign(document, null, key, x509Chain, null, null, null);
+        DigestInfo digestInfo = signatureService.preSign(document, null);
 
         // setup: key material, signature value
         byte[] signatureValue = signDigest(key, hashAlgo, digestInfo.digestValue);
         
         // operate: postSign
-        signatureService.postSign(document, signatureValue, Collections.singletonList(x509));
+        signatureService.postSign(document, signatureValue);
     }
 
     public static byte[] signDigest(PrivateKey key, HashAlgorithm hashAlgo, byte digest[]) {
@@ -156,12 +160,6 @@ public class SignatureInfo {
         }
     }
     
-    public XmlSignatureService createSignatureService(HashAlgorithm hashAlgo, OPCPackage pkg) {
-        XmlSignatureService signatureService = new XmlSignatureService(hashAlgo, pkg);
-        signatureService.initFacets(new Date());
-        return signatureService;
-    }
-    
     public List<X509Certificate> getSigners() {
         initXmlProvider();
         List<X509Certificate> signers = new ArrayList<X509Certificate>();
@@ -176,19 +174,20 @@ public class SignatureInfo {
             LOG.log(POILogger.DEBUG, "no signature resources");
             allValid = false;
         }
+
+        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
+        signatureConfig.setOpcPackage(pkg);
         
         for (PackagePart signaturePart : signatureParts) {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
 
             try {
                 Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
-                // dummy call to createSignatureService to tweak document afterwards
-                createSignatureService(HashAlgorithm.sha1, pkg).registerIds(doc);
+                XmlSignatureService.registerIds(doc);
                 
                 DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
                 domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
-                OOXMLURIDereferencer dereferencer = new OOXMLURIDereferencer(pkg);
-                domValidateContext.setURIDereferencer(dereferencer);
+                domValidateContext.setURIDereferencer(signatureConfig.getUriDereferencer());
     
                 XMLSignatureFactory xmlSignatureFactory = getSignatureFactory();
                 XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);

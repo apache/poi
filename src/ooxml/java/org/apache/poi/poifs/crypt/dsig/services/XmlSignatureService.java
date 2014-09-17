@@ -37,11 +37,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,16 +76,10 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.OOXMLURIDereferencer;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
-import org.apache.poi.poifs.crypt.dsig.facets.OOXMLSignatureFacet;
-import org.apache.poi.poifs.crypt.dsig.facets.Office2010SignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
-import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
-import org.apache.poi.poifs.crypt.dsig.spi.AddressDTO;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
-import org.apache.poi.poifs.crypt.dsig.spi.IdentityDTO;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.signature.XMLSignature;
@@ -112,43 +103,23 @@ import org.xml.sax.SAXException;
 public class XmlSignatureService implements SignatureService {
     private static final POILogger LOG = POILogFactory.getLogger(XmlSignatureService.class);
 
-    protected final List<SignatureFacet> signatureFacets;
-
+    protected SignatureInfoConfig signatureConfig;
+    
     private String signatureNamespacePrefix;
     private String signatureId = "idPackageSignature";
-    private final HashAlgorithm hashAlgo;
-    private final OPCPackage opcPackage;
-    // private SignatureDocument sigDoc;
-    private XAdESSignatureFacet xadesSignatureFacet;
     
     /**
      * Main constructor.
      */
-    public XmlSignatureService(HashAlgorithm digestAlgo, OPCPackage opcPackage) {
-        this.signatureFacets = new ArrayList<SignatureFacet>();
+    public XmlSignatureService(SignatureInfoConfig signatureConfig) {
         this.signatureNamespacePrefix = null;
-        this.hashAlgo = digestAlgo;
-        this.opcPackage = opcPackage;
-        // this.sigDoc = null;
-    }
-
-    public void initFacets(Date clock) {
-        if (clock == null) clock = new Date();
-        addSignatureFacet(new OOXMLSignatureFacet(this, clock, hashAlgo));
-        addSignatureFacet(new KeyInfoSignatureFacet(true, false, false));
-
-        this.xadesSignatureFacet = new XAdESSignatureFacet(clock, hashAlgo, null);
-        this.xadesSignatureFacet.setIdSignedProperties("idSignedProperties");
-        this.xadesSignatureFacet.setSignaturePolicyImplied(true);
-        /*
-         * Work-around for Office 2010.
-         */
-        this.xadesSignatureFacet.setIssuerNameNoReverseOrder(true);
-        addSignatureFacet(this.xadesSignatureFacet);
-        addSignatureFacet(new Office2010SignatureFacet());
+        this.signatureConfig = signatureConfig;
     }
     
-    
+    public SignatureInfoConfig getSignatureConfig() {
+        return signatureConfig;
+    }
+
     /**
      * Sets the signature Id attribute value used to create the XML signature. A
      * <code>null</code> value will trigger an automatically generated signature
@@ -171,39 +142,6 @@ public class XmlSignatureService implements SignatureService {
     }
 
     /**
-     * Adds a signature facet to this XML signature service.
-     * 
-     * @param signatureFacet
-     */
-    public void addSignatureFacet(SignatureFacet... signatureFacets) {
-        for (SignatureFacet sf : signatureFacets) {
-            this.signatureFacets.add(sf);
-        }
-    }
-
-    /**
-     * Gives back the signature digest algorithm. Allowed values are SHA-1,
-     * SHA-256, SHA-384, SHA-512, RIPEND160. The default algorithm is SHA-1.
-     * Override this method to select another signature digest algorithm.
-     * 
-     * @return
-     */
-    protected HashAlgorithm getSignatureDigestAlgorithm() {
-        return null != this.hashAlgo ? this.hashAlgo : HashAlgorithm.sha1;
-    }
-
-    /**
-     * Override this method to change the URI dereferener used by the signing
-     * engine.
-     * 
-     * @return
-     */
-    protected URIDereferencer getURIDereferencer() {
-        OPCPackage ooxmlDocument = getOfficeOpenXMLDocument();
-        return new OOXMLURIDereferencer(ooxmlDocument);
-    }
-
-    /**
      * Gives back the human-readable description of what the citizen will be
      * signing. The default value is "XML Document". Override this method to
      * provide the citizen with another description.
@@ -215,36 +153,22 @@ public class XmlSignatureService implements SignatureService {
     }
 
     /**
-     * Gives back the URL of the OOXML to be signed.
-     * 
-     * @return
-     */
-    public OPCPackage getOfficeOpenXMLDocument() {
-        return opcPackage;
-    }
-    
-
-    
-    /**
      * Gives back the output stream to which to write the signed XML document.
      * 
      * @return
      */
     // protected abstract OutputStream getSignedDocumentOutputStream();
     @Override
-    public DigestInfo preSign(Document document, List<DigestInfo> digestInfos,
-        PrivateKey key,
-        List<X509Certificate> signingCertificateChain,
-        IdentityDTO identity, AddressDTO address, byte[] photo)
+    public DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
     throws NoSuchAlgorithmException {
         SignatureInfo.initXmlProvider();
 
         LOG.log(POILogger.DEBUG, "preSign");
-        HashAlgorithm hashAlgo = getSignatureDigestAlgorithm();
+        HashAlgorithm hashAlgo = this.signatureConfig.getDigestAlgo();
 
         byte[] digestValue;
         try {
-            digestValue = getXmlSignatureDigestValue(document, hashAlgo, digestInfos, key, signingCertificateChain);
+            digestValue = getXmlSignatureDigestValue(document, digestInfos);
         } catch (Exception e) {
             throw new RuntimeException("XML signature error: " + e.getMessage(), e);
         }
@@ -254,7 +178,7 @@ public class XmlSignatureService implements SignatureService {
     }
 
     @Override
-    public void postSign(Document document, byte[] signatureValue, List<X509Certificate> signingCertificateChain)
+    public void postSign(Document document, byte[] signatureValue)
     throws IOException, MarshalException, ParserConfigurationException, XmlException {
         LOG.log(POILogger.DEBUG, "postSign");
         SignatureInfo.initXmlProvider();
@@ -278,8 +202,8 @@ public class XmlSignatureService implements SignatureService {
         /*
          * Allow signature facets to inject their own stuff.
          */
-        for (SignatureFacet signatureFacet : this.signatureFacets) {
-            signatureFacet.postSign(document, signingCertificateChain);
+        for (SignatureFacet signatureFacet : this.signatureConfig.getSignatureFacets()) {
+            signatureFacet.postSign(document, this.signatureConfig.getSigningCertificateChain());
         }
 
         registerIds(document);
@@ -287,10 +211,7 @@ public class XmlSignatureService implements SignatureService {
     }
 
     @SuppressWarnings("unchecked")
-    private byte[] getXmlSignatureDigestValue(Document document, HashAlgorithm hashAlgo,
-        List<DigestInfo> digestInfos,
-        PrivateKey privateKey,
-        List<X509Certificate> signingCertificateChain)
+    private byte[] getXmlSignatureDigestValue(Document document, List<DigestInfo> digestInfos)
         throws ParserConfigurationException, NoSuchAlgorithmException,
         InvalidAlgorithmParameterException, MarshalException,
         javax.xml.crypto.dsig.XMLSignatureException,
@@ -321,8 +242,8 @@ public class XmlSignatureService implements SignatureService {
         /*
          * Signature context construction.
          */
-        XMLSignContext xmlSignContext = new DOMSignContext(privateKey, document);
-        URIDereferencer uriDereferencer = getURIDereferencer();
+        XMLSignContext xmlSignContext = new DOMSignContext(this.signatureConfig.getKey(), document);
+        URIDereferencer uriDereferencer = this.signatureConfig.getUriDereferencer();
         if (null != uriDereferencer) {
             xmlSignContext.setURIDereferencer(uriDereferencer);
         }
@@ -354,15 +275,15 @@ public class XmlSignatureService implements SignatureService {
             localSignatureId = "xmldsig-" + UUID.randomUUID().toString();
         }
         List<XMLObject> objects = new ArrayList<XMLObject>();
-        for (SignatureFacet signatureFacet : this.signatureFacets) {
+        for (SignatureFacet signatureFacet : this.signatureConfig.getSignatureFacets()) {
             LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
-            signatureFacet.preSign(document, signatureFactory, localSignatureId, signingCertificateChain, references, objects);
+            signatureFacet.preSign(document, signatureFactory, localSignatureId, this.signatureConfig.getSigningCertificateChain(), references, objects);
         }
 
         /*
          * ds:SignedInfo
          */
-        SignatureMethod signatureMethod = signatureFactory.newSignatureMethod(getSignatureMethod(hashAlgo), null);
+        SignatureMethod signatureMethod = signatureFactory.newSignatureMethod(getSignatureMethod(this.signatureConfig.getDigestAlgo()), null);
         CanonicalizationMethod canonicalizationMethod = signatureFactory
             .newCanonicalizationMethod(getCanonicalizationMethod(),
             (C14NMethodParameterSpec) null);
@@ -432,7 +353,7 @@ public class XmlSignatureService implements SignatureService {
          * usage.
          */
 
-        MessageDigest jcaMessageDigest = CryptoFunctions.getMessageDigest(hashAlgo);
+        MessageDigest jcaMessageDigest = CryptoFunctions.getMessageDigest(this.signatureConfig.getDigestAlgo());
         byte[] digestValue = jcaMessageDigest.digest(octets);
         return digestValue;
     }
@@ -443,7 +364,7 @@ public class XmlSignatureService implements SignatureService {
      *
      * @param doc
      */
-    public void registerIds(Document doc) {
+    public static void registerIds(Document doc) {
         NodeList nl = doc.getElementsByTagNameNS(XmlDSigNS, "Object");
         registerIdAttribute(nl);
         nl = doc.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "SignedProperties");
@@ -492,19 +413,6 @@ public class XmlSignatureService implements SignatureService {
         throw new RuntimeException("unsupported sign algo: " + hashAlgo);
     }
 
-    /**
-     * Gives back the used XAdES signature facet.
-     * 
-     * @return
-     */
-    protected XAdESSignatureFacet getXAdESSignatureFacet() {
-        return this.xadesSignatureFacet;
-    }
-
-    public String getFilesDigestAlgorithm() {
-        return null;
-    }
-    
     protected String getCanonicalizationMethod() {
         return CanonicalizationMethod.INCLUSIVE;
     }
@@ -512,7 +420,7 @@ public class XmlSignatureService implements SignatureService {
     protected void writeDocument(Document document) throws IOException, XmlException {
         XmlOptions xo = new XmlOptions();
         Map<String,String> namespaceMap = new HashMap<String,String>();
-        for (SignatureFacet sf : this.signatureFacets) {
+        for (SignatureFacet sf : this.signatureConfig.getSignatureFacets()) {
             Map<String,String> sfm = sf.getNamespacePrefixMapping();
             if (sfm != null) {
                 namespaceMap.putAll(sfm);
@@ -527,7 +435,7 @@ public class XmlSignatureService implements SignatureService {
          * Copy the original OOXML content to the signed OOXML package. During
          * copying some files need to changed.
          */
-        OPCPackage pkg = this.getOfficeOpenXMLDocument();
+        OPCPackage pkg = this.signatureConfig.getOpcPackage();
 
         PackagePartName sigPartName, sigsPartName;
         try {
