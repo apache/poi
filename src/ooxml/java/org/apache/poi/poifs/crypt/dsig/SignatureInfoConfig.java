@@ -22,8 +22,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.crypto.URIDereferencer;
+import javax.xml.crypto.dsig.CanonicalizationMethod;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
@@ -31,8 +33,8 @@ import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.OOXMLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.Office2010SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
-import org.apache.poi.poifs.crypt.dsig.facets.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.spi.AddressDTO;
 import org.apache.poi.poifs.crypt.dsig.spi.IdentityDTO;
 
@@ -48,7 +50,21 @@ public class SignatureInfoConfig {
     private AddressDTO address;
     private byte[] photo;
     private SignaturePolicyService signaturePolicyService;
-    private URIDereferencer uriDereferencer; 
+    private URIDereferencer uriDereferencer;
+    private String signatureNamespacePrefix;
+    private String canonicalizationMethod = CanonicalizationMethod.INCLUSIVE;
+
+    /**
+     * The signature Id attribute value used to create the XML signature. A
+     * <code>null</code> value will trigger an automatically generated signature Id.
+     */
+    private String packageSignatureId = "idPackageSignature";
+    
+    /**
+     * Gives back the human-readable description of what the citizen will be
+     * signing. The default value is "Office OpenXML Document".
+     */
+    private String signatureDescription = "Office OpenXML Document";
 
     public SignatureInfoConfig() {
         OOXMLURIDereferencer uriDereferencer = new OOXMLURIDereferencer();
@@ -148,8 +164,7 @@ public class SignatureInfoConfig {
     public SignaturePolicyService getSignaturePolicyService() {
         return signaturePolicyService;
     }
-    public void setSignaturePolicyService(
-            SignaturePolicyService signaturePolicyService) {
+    public void setSignaturePolicyService(SignaturePolicyService signaturePolicyService) {
         this.signaturePolicyService = signaturePolicyService;
     }
     public URIDereferencer getUriDereferencer() {
@@ -158,6 +173,30 @@ public class SignatureInfoConfig {
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
         this.uriDereferencer = uriDereferencer;
     }
-
-
+    public String getSignatureDescription() {
+        return signatureDescription;
+    }
+    public void setSignatureDescription(String signatureDescription) {
+        this.signatureDescription = signatureDescription;
+    }
+    public String getSignatureNamespacePrefix() {
+        return signatureNamespacePrefix;
+    }
+    public void setSignatureNamespacePrefix(String signatureNamespacePrefix) {
+        this.signatureNamespacePrefix = signatureNamespacePrefix;
+    }
+    public String getCanonicalizationMethod() {
+        return canonicalizationMethod;
+    }
+    public void setCanonicalizationMethod(String canonicalizationMethod) {
+        this.canonicalizationMethod = canonicalizationMethod;
+    }
+    public String getPackageSignatureId() {
+        return packageSignatureId;
+    }
+    public void setPackageSignatureId(String packageSignatureId) {
+        this.packageSignatureId = (packageSignatureId != null)
+            ? packageSignatureId
+            : "xmldsig-" + UUID.randomUUID();
+    }
 }

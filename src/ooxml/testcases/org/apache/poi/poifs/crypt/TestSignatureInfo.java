@@ -67,7 +67,6 @@ import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
-import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
@@ -120,7 +119,10 @@ public class TestSignatureInfo {
         
         for (String testFile : testFiles) {
             OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-            SignatureInfo si = new SignatureInfo(pkg);
+            SignatureInfoConfig sic = new SignatureInfoConfig();
+            sic.setOpcPackage(pkg);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sic);
             List<X509Certificate> result = si.getSigners();
             pkg.revert();
             pkg.close();
@@ -146,7 +148,10 @@ public class TestSignatureInfo {
         
         for (String testFile : testFiles) {
             OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-            SignatureInfo si = new SignatureInfo(pkg);
+            SignatureInfoConfig sic = new SignatureInfoConfig();
+            sic.setOpcPackage(pkg);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sic);
             List<X509Certificate> result = si.getSigners();
 
             assertNotNull(result);
@@ -164,7 +169,10 @@ public class TestSignatureInfo {
     public void getMultiSigners() throws Exception {
         String testFile = "hello-world-signed-twice.docx";
         OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-        SignatureInfo si = new SignatureInfo(pkg);
+        SignatureInfoConfig sic = new SignatureInfoConfig();
+        sic.setOpcPackage(pkg);
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(sic);
         List<X509Certificate> result = si.getSigners();
 
         assertNotNull(result);
@@ -189,12 +197,18 @@ public class TestSignatureInfo {
 
     @Test
     public void testSignSpreadsheetWithSignatureInfo() throws Exception {
+        initKeyPair("Test", "CN=Test");
         String testFile = "hello-world-unsigned.xlsx";
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
-        SignatureInfo si = new SignatureInfo(pkg);
-        initKeyPair("Test", "CN=Test");
+        SignatureInfoConfig sic = new SignatureInfoConfig();
+        sic.setOpcPackage(pkg);
+        sic.setKey(keyPair.getPrivate());
+        sic.setSigningCertificateChain(Collections.singletonList(x509));
+        sic.addDefaultFacets();
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(sic);
         // hash > sha1 doesn't work in excel viewer ...
-        si.confirmSignature(keyPair.getPrivate(), x509, HashAlgorithm.sha1);
+        si.confirmSignature();
         List<X509Certificate> signer = si.getSigners();
         assertEquals(1, signer.size());
         pkg.close();
@@ -223,7 +237,7 @@ public class TestSignatureInfo {
         certificateChain.add(x509);
         signatureConfig.setSigningCertificateChain(certificateChain);
         
-        signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet());
+        signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet(signatureConfig));
         signatureConfig.addSignatureFacet(new KeyInfoSignatureFacet(true, false, false));
         signatureConfig.addSignatureFacet(new XAdESSignatureFacet(signatureConfig));
         
@@ -274,12 +288,13 @@ public class TestSignatureInfo {
 
         XAdESXLSignatureFacet xadesXLSignatureFacet = new XAdESXLSignatureFacet(
                 timeStampService, revocationDataService);
-        XmlSignatureService testedInstance = new XmlSignatureService(signatureConfig);
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(signatureConfig);
         
         Document document = DocumentHelper.createDocument();
         
         // operate
-        DigestInfo digestInfo = testedInstance.preSign(document, null);
+        DigestInfo digestInfo = si.preSign(document, null);
 
         // verify
         assertNotNull(digestInfo);
@@ -297,10 +312,10 @@ public class TestSignatureInfo {
         assertNotNull(certDigest.getDigestValue());
 
         // Sign the received XML signature digest value.
-        byte[] signatureValue = SignatureInfo.signDigest(keyPair.getPrivate(), HashAlgorithm.sha1, digestInfo.digestValue);
+        byte[] signatureValue = si.signDigest(digestInfo.digestValue);
 
         // Operate: postSign
-        testedInstance.postSign(document, signatureValue);
+        si.postSign(document, signatureValue);
         
         DOMValidateContext domValidateContext = new DOMValidateContext(
                 KeySelector.singletonKeySelector(keyPair.getPublic()),
@@ -341,12 +356,13 @@ public class TestSignatureInfo {
         signatureConfig.setOpcPackage(pkgCopy);
         signatureConfig.addDefaultFacets();
         
-        XmlSignatureService signatureService = new XmlSignatureService(signatureConfig);
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(signatureConfig);
 
         Document document = DocumentHelper.createDocument();
 
         // operate
-        DigestInfo digestInfo = signatureService.preSign(document, null);
+        DigestInfo digestInfo = si.preSign(document, null);
 
         // verify
         assertNotNull(digestInfo);
@@ -357,13 +373,13 @@ public class TestSignatureInfo {
         assertNotNull(digestInfo.digestValue);
 
         // setup: key material, signature value
-        byte[] signatureValue = SignatureInfo.signDigest(keyPair.getPrivate(), HashAlgorithm.sha1, digestInfo.digestValue);
+        byte[] signatureValue = si.signDigest(digestInfo.digestValue);
         
         // operate: postSign
-        signatureService.postSign(document, signatureValue);
+        si.postSign(document, signatureValue);
 
         // verify: signature
-        SignatureInfo si = new SignatureInfo(pkgCopy);
+        si.getSignatureConfig().setOpcPackage(pkgCopy);
         List<X509Certificate> signers = si.getSigners();
         assertEquals(signerCount, signers.size());
 

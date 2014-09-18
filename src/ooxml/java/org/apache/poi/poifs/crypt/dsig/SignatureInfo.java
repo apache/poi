@@ -24,48 +24,88 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_MAC_HMAC_RIPEMD160;
+import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
+import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
+import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
+import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.URIDereferencer;
+import javax.xml.crypto.XMLStructure;
+import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Manifest;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.SignedInfo;
+import javax.xml.crypto.dsig.XMLObject;
+import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
+import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
+import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
-import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
-import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.Init;
-import org.apache.xmlbeans.XmlCursor;
+import org.apache.xml.security.utils.Base64;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.events.MutationEvent;
+import org.xml.sax.SAXException;
 
 public class SignatureInfo {
 
@@ -104,12 +144,16 @@ public class SignatureInfo {
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
     private static boolean isInitialized = false;
     
-    private final OPCPackage pkg;
-    
-    public SignatureInfo(OPCPackage pkg) {
-        this.pkg = pkg;
+    private SignatureInfoConfig signatureConfig;
+
+    public SignatureInfoConfig getSignatureConfig() {
+        return signatureConfig;
     }
-    
+
+    public void setSignatureConfig(SignatureInfoConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
+    }
+
     public boolean verifySignature() {
         initXmlProvider();
         // http://www.oracle.com/technetwork/articles/javase/dig-signature-api-140772.html
@@ -117,40 +161,27 @@ public class SignatureInfo {
         return getSignersAndValidate(signers, true);
     }
 
-    public void confirmSignature(PrivateKey key, X509Certificate x509)
-    throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException {
-        confirmSignature(key, x509, HashAlgorithm.sha1);
-    }
-    
-    public void confirmSignature(PrivateKey key, X509Certificate x509, HashAlgorithm hashAlgo)
-    throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException {
-        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
-        signatureConfig.setOpcPackage(pkg);
-        signatureConfig.setDigestAlgo(hashAlgo);
-        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
-        signatureConfig.setKey(key);
-        signatureConfig.addDefaultFacets();
-        XmlSignatureService signatureService = new XmlSignatureService(signatureConfig);
-
+    public void confirmSignature()
+    throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException, InvalidAlgorithmParameterException, NoSuchProviderException, XMLSignatureException, TransformerFactoryConfigurationError, TransformerException, SAXException, URISyntaxException {
         Document document = DocumentHelper.createDocument();
         
         // operate
-        DigestInfo digestInfo = signatureService.preSign(document, null);
+        DigestInfo digestInfo = preSign(document, null);
 
         // setup: key material, signature value
-        byte[] signatureValue = signDigest(key, hashAlgo, digestInfo.digestValue);
+        byte[] signatureValue = signDigest(digestInfo.digestValue);
         
         // operate: postSign
-        signatureService.postSign(document, signatureValue);
+        postSign(document, signatureValue);
     }
 
-    public static byte[] signDigest(PrivateKey key, HashAlgorithm hashAlgo, byte digest[]) {
-        Cipher cipher = CryptoFunctions.getCipher(key, CipherAlgorithm.rsa
+    public byte[] signDigest(byte digest[]) {
+        Cipher cipher = CryptoFunctions.getCipher(signatureConfig.getKey(), CipherAlgorithm.rsa
             , ChainingMode.ecb, null, Cipher.ENCRYPT_MODE, "PKCS1Padding");
             
         try {
             ByteArrayOutputStream digestInfoValueBuf = new ByteArrayOutputStream();
-            digestInfoValueBuf.write(getHashMagic(hashAlgo));
+            digestInfoValueBuf.write(getHashMagic());
             digestInfoValueBuf.write(digest);
             byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
             byte[] signatureValue = cipher.doFinal(digestInfoValue);
@@ -175,15 +206,12 @@ public class SignatureInfo {
             allValid = false;
         }
 
-        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
-        signatureConfig.setOpcPackage(pkg);
-        
         for (PackagePart signaturePart : signatureParts) {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
 
             try {
                 Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
-                XmlSignatureService.registerIds(doc);
+                registerIds(doc);
                 
                 DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
                 domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
@@ -209,6 +237,7 @@ public class SignatureInfo {
 
     protected List<PackagePart> getSignatureParts(boolean onlyFirst) {
         List<PackagePart> packageParts = new ArrayList<PackagePart>();
+        OPCPackage pkg = signatureConfig.getOpcPackage();
         
         PackageRelationshipCollection sigOrigRels = pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);
         for (PackageRelationship rel : sigOrigRels) {
@@ -260,31 +289,6 @@ public class SignatureInfo {
         throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
     }
     
-    public static void insertXChild(XmlObject root, XmlObject child) {
-        XmlCursor rootCursor = root.newCursor();
-        insertXChild(rootCursor, child);
-        rootCursor.dispose();
-    }
-
-    public static void insertXChild(XmlCursor rootCursor, XmlObject child) {
-        rootCursor.toEndToken();
-        XmlCursor childCursor = child.newCursor();
-        childCursor.toNextToken();
-        childCursor.moveXml(rootCursor);
-        childCursor.dispose();
-    }
-
-//    public static void setPrefix(XmlObject xobj, String ns, String prefix) {
-//        XmlCursor cur;
-//        for (cur = xobj.newCursor(); cur.hasNextToken(); cur.toNextToken()) {
-//            if (cur.isStart()) {
-//                Element el = (Element)cur.getDomNode();
-//                if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
-//            }
-//        }
-//        cur.dispose();
-//    }
-
     public static void setPrefix(Node el, String ns, String prefix) {
         if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
         NodeList nl = el.getChildNodes();
@@ -293,8 +297,8 @@ public class SignatureInfo {
         }
     }
     
-    protected static byte[] getHashMagic(HashAlgorithm hashAlgo) {
-        switch (hashAlgo) {
+    protected byte[] getHashMagic() {
+        switch (signatureConfig.getDigestAlgo()) {
         case sha1: return SHA1_DIGEST_INFO_PREFIX;
         // sha224: return SHA224_DIGEST_INFO_PREFIX;
         case sha256: return SHA256_DIGEST_INFO_PREFIX;
@@ -303,9 +307,22 @@ public class SignatureInfo {
         case ripemd128: return RIPEMD128_DIGEST_INFO_PREFIX;
         case ripemd160: return RIPEMD160_DIGEST_INFO_PREFIX;
         // case ripemd256: return RIPEMD256_DIGEST_INFO_PREFIX;
-        default: throw new EncryptedDocumentException("Hash algorithm "+hashAlgo+" not supported for signing.");
+        default: throw new EncryptedDocumentException("Hash algorithm "+signatureConfig.getDigestAlgo()+" not supported for signing.");
         }
     }
+
+    protected String getSignatureMethod() {
+        switch (signatureConfig.getDigestAlgo()) {
+        case sha1:   return ALGO_ID_SIGNATURE_RSA_SHA1;
+        case sha256: return ALGO_ID_SIGNATURE_RSA_SHA256;
+        case sha384: return ALGO_ID_SIGNATURE_RSA_SHA384;
+        case sha512: return ALGO_ID_SIGNATURE_RSA_SHA512;
+        case ripemd160: return ALGO_ID_MAC_HMAC_RIPEMD160;
+        default: throw new EncryptedDocumentException("Hash algorithm "+signatureConfig.getDigestAlgo()+" not supported for signing.");
+        }
+    }
+
+    
     
     public static synchronized void initXmlProvider() {
         if (isInitialized) return;
@@ -318,5 +335,282 @@ public class SignatureInfo {
         } catch (Exception e) {
             throw new RuntimeException("Xml & BouncyCastle-Provider initialization failed", e);
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
+        throws ParserConfigurationException, NoSuchAlgorithmException,
+        InvalidAlgorithmParameterException, MarshalException,
+        javax.xml.crypto.dsig.XMLSignatureException,
+        TransformerFactoryConfigurationError, TransformerException,
+        IOException, SAXException, NoSuchProviderException, XmlException, URISyntaxException {
+        SignatureInfo.initXmlProvider();
+        
+        // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
+        // normal way to interfere with, so we need to add the namespace under the hand ...
+        final EventTarget et = (EventTarget)document;
+        EventListener myModificationListener = new EventListener() {
+            @Override
+            public void handleEvent(Event e) {
+                if (e instanceof MutationEvent) {
+                    MutationEvent mutEvt = (MutationEvent)e;
+                    if (mutEvt.getTarget() instanceof Element) {
+                        Element el = (Element)mutEvt.getTarget();
+                        if ("idPackageObject".equals(el.getAttribute("Id"))) {
+                            et.removeEventListener("DOMSubtreeModified", this, false);
+                            el.setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+                        }
+                    }
+                }
+            }
+        };
+        
+        et.addEventListener("DOMSubtreeModified", myModificationListener, false);
+        
+        /*
+         * Signature context construction.
+         */
+        XMLSignContext xmlSignContext = new DOMSignContext(signatureConfig.getKey(), document);
+        URIDereferencer uriDereferencer = signatureConfig.getUriDereferencer();
+        if (null != uriDereferencer) {
+            xmlSignContext.setURIDereferencer(uriDereferencer);
+        }
+
+        xmlSignContext.putNamespacePrefix(
+                "http://schemas.openxmlformats.org/package/2006/digital-signature",
+                "mdssi");
+        
+        String sigNsPrefix = signatureConfig.getSignatureNamespacePrefix();
+        if (sigNsPrefix != null) {
+            /*
+             * OOo doesn't like ds namespaces so per default prefixing is off.
+             */
+            xmlSignContext.putNamespacePrefix(XmlDSigNS, sigNsPrefix);
+        }
+
+        XMLSignatureFactory signatureFactory = SignatureInfo.getSignatureFactory();
+
+        /*
+         * Add ds:References that come from signing client local files.
+         */
+        List<Reference> references = new ArrayList<Reference>();
+        for (DigestInfo digestInfo : safe(digestInfos)) {
+            byte[] documentDigestValue = digestInfo.digestValue;
+
+            DigestMethod digestMethod = signatureFactory.newDigestMethod(
+                            digestInfo.hashAlgo.xmlSignUri, null);
+
+            String uri = new File(digestInfo.description).getName();
+
+            Reference reference = signatureFactory.newReference
+                (uri, digestMethod, null, null, null, documentDigestValue);
+            references.add(reference);
+        }
+
+        /*
+         * Invoke the signature facets.
+         */
+        List<XMLObject> objects = new ArrayList<XMLObject>();
+        for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
+            LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
+            signatureFacet.preSign(document, signatureFactory, references, objects);
+        }
+
+        /*
+         * ds:SignedInfo
+         */
+        SignatureMethod signatureMethod = signatureFactory.newSignatureMethod(getSignatureMethod(), null);
+        CanonicalizationMethod canonicalizationMethod = signatureFactory
+            .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
+            (C14NMethodParameterSpec) null);
+        SignedInfo signedInfo = signatureFactory.newSignedInfo(
+            canonicalizationMethod, signatureMethod, references);
+
+        /*
+         * JSR105 ds:Signature creation
+         */
+        String signatureValueId = signatureConfig.getPackageSignatureId() + "-signature-value";
+        javax.xml.crypto.dsig.XMLSignature xmlSignature = signatureFactory
+            .newXMLSignature(signedInfo, null, objects, signatureConfig.getPackageSignatureId(),
+            signatureValueId);
+
+        /*
+         * ds:Signature Marshalling.
+         */
+        xmlSignContext.setDefaultNamespacePrefix(signatureConfig.getSignatureNamespacePrefix());
+        // xmlSignContext.putNamespacePrefix(PackageNamespaces.DIGITAL_SIGNATURE, "mdssi");
+        xmlSignature.sign(xmlSignContext);
+
+        registerIds(document);
+        
+        /*
+         * Completion of undigested ds:References in the ds:Manifests.
+         */
+        for (XMLObject object : objects) {
+            LOG.log(POILogger.DEBUG, "object java type: " + object.getClass().getName());
+            List<XMLStructure> objectContentList = object.getContent();
+            for (XMLStructure objectContent : objectContentList) {
+                LOG.log(POILogger.DEBUG, "object content java type: " + objectContent.getClass().getName());
+                if (!(objectContent instanceof Manifest)) continue;
+                Manifest manifest = (Manifest) objectContent;
+                List<Reference> manifestReferences = manifest.getReferences();
+                for (Reference manifestReference : manifestReferences) {
+                    if (manifestReference.getDigestValue() != null) continue;
+
+                    DOMReference manifestDOMReference = (DOMReference)manifestReference;
+                    manifestDOMReference.digest(xmlSignContext);
+                }
+            }
+        }
+
+        /*
+         * Completion of undigested ds:References.
+         */
+        List<Reference> signedInfoReferences = signedInfo.getReferences();
+        for (Reference signedInfoReference : signedInfoReferences) {
+            DOMReference domReference = (DOMReference)signedInfoReference;
+
+            // ds:Reference with external digest value
+            if (domReference.getDigestValue() != null) continue;
+            
+            domReference.digest(xmlSignContext);
+        }
+
+        /*
+         * Calculation of XML signature digest value.
+         */
+        DOMSignedInfo domSignedInfo = (DOMSignedInfo)signedInfo;
+        ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+        domSignedInfo.canonicalize(xmlSignContext, dataStream);
+        byte[] octets = dataStream.toByteArray();
+
+        /*
+         * TODO: we could be using DigestOutputStream here to optimize memory
+         * usage.
+         */
+
+        MessageDigest jcaMessageDigest = CryptoFunctions.getMessageDigest(signatureConfig.getDigestAlgo());
+        byte[] digestValue = jcaMessageDigest.digest(octets);
+        
+        
+        String description = signatureConfig.getSignatureDescription();
+        return new DigestInfo(digestValue, signatureConfig.getDigestAlgo(), description);
+    }
+
+    public void postSign(Document document, byte[] signatureValue)
+    throws IOException, MarshalException, ParserConfigurationException, XmlException {
+        LOG.log(POILogger.DEBUG, "postSign");
+        SignatureInfo.initXmlProvider();
+
+        /*
+         * Check ds:Signature node.
+         */
+        String signatureId = signatureConfig.getPackageSignatureId();
+        if (!signatureId.equals(document.getDocumentElement().getAttribute("Id"))) {
+            throw new RuntimeException("ds:Signature not found for @Id: " + signatureId);
+        }
+
+        /*
+         * Insert signature value into the ds:SignatureValue element
+         */
+        NodeList sigValNl = document.getElementsByTagNameNS(XmlDSigNS, "SignatureValue");
+        if (sigValNl.getLength() != 1) {
+            throw new RuntimeException("preSign has to be called before postSign");
+        }
+        sigValNl.item(0).setTextContent(Base64.encode(signatureValue));
+
+        /*
+         * Allow signature facets to inject their own stuff.
+         */
+        for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
+            signatureFacet.postSign(document, signatureConfig.getSigningCertificateChain());
+        }
+
+        registerIds(document);
+        writeDocument(document);
+    }
+
+    protected void writeDocument(Document document) throws IOException, XmlException {
+        XmlOptions xo = new XmlOptions();
+        Map<String,String> namespaceMap = new HashMap<String,String>();
+        for (SignatureFacet sf : signatureConfig.getSignatureFacets()) {
+            Map<String,String> sfm = sf.getNamespacePrefixMapping();
+            if (sfm != null) {
+                namespaceMap.putAll(sfm);
+            }
+        }
+        xo.setSaveSuggestedPrefixes(namespaceMap);
+        xo.setUseDefaultNamespace();
+
+        LOG.log(POILogger.DEBUG, "output signed Office OpenXML document");
+
+        /*
+         * Copy the original OOXML content to the signed OOXML package. During
+         * copying some files need to changed.
+         */
+        OPCPackage pkg = signatureConfig.getOpcPackage();
+
+        PackagePartName sigPartName, sigsPartName;
+        try {
+            // <Override PartName="/_xmlsignatures/sig1.xml" ContentType="application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml"/>
+            sigPartName = PackagingURIHelper.createPartName("/_xmlsignatures/sig1.xml");
+            // <Default Extension="sigs" ContentType="application/vnd.openxmlformats-package.digital-signature-origin"/>
+            sigsPartName = PackagingURIHelper.createPartName("/_xmlsignatures/origin.sigs");
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
+        }
+        
+        String sigContentType = "application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml";
+        PackagePart sigPart = pkg.getPart(sigPartName);
+        if (sigPart == null) {
+            sigPart = pkg.createPart(sigPartName, sigContentType);
+        }
+        
+        OutputStream os = sigPart.getOutputStream();
+        SignatureDocument sigDoc = SignatureDocument.Factory.parse(document);
+        sigDoc.save(os, xo);
+        os.close();
+        
+        String sigsContentType = "application/vnd.openxmlformats-package.digital-signature-origin";
+        PackagePart sigsPart = pkg.getPart(sigsPartName);
+        if (sigsPart == null) {
+            // touch empty marker file
+            sigsPart = pkg.createPart(sigsPartName, sigsContentType);
+        }
+        
+        PackageRelationshipCollection relCol = pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);
+        for (PackageRelationship pr : relCol) {
+            pkg.removeRelationship(pr.getId());
+        }
+        pkg.addRelationship(sigsPartName, TargetMode.INTERNAL, PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);
+        
+        sigsPart.addRelationship(sigPartName, TargetMode.INTERNAL, PackageRelationshipTypes.DIGITAL_SIGNATURE);
+    }
+    
+    /**
+     * the resulting document needs to be tweaked before it can be digested -
+     * this applies to the verification and signing step
+     *
+     * @param doc
+     */
+    private static void registerIds(Document doc) {
+        NodeList nl = doc.getElementsByTagNameNS(XmlDSigNS, "Object");
+        registerIdAttribute(nl);
+        nl = doc.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "SignedProperties");
+        registerIdAttribute(nl);
+    }
+    
+    public static void registerIdAttribute(NodeList nl) {
+        for (int i=0; i<nl.getLength(); i++) {
+            Element el = (Element)nl.item(i);
+            if (el.hasAttribute("Id")) {
+                el.setIdAttribute("Id", true);
+            }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> safe(List<T> other) {
+        return other == null ? Collections.EMPTY_LIST : other;
     }
 }

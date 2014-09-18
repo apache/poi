@@ -53,9 +53,11 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
-import org.apache.poi.poifs.crypt.dsig.services.XmlSignatureService;
+import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.etsi.uri.x01903.v13.AnyType;
 import org.etsi.uri.x01903.v13.CertIDListType;
@@ -134,8 +136,6 @@ public class XAdESSignatureFacet implements SignatureFacet {
     @Override
     public void preSign(Document document,
             XMLSignatureFactory signatureFactory,
-            String signatureId,
-            List<X509Certificate> signingCertificateChain,
             List<Reference> references, List<XMLObject> objects)
             throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         LOG.log(POILogger.DEBUG, "preSign");
@@ -143,13 +143,13 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // QualifyingProperties
         QualifyingPropertiesDocument qualDoc = QualifyingPropertiesDocument.Factory.newInstance();
         QualifyingPropertiesType qualifyingProperties = qualDoc.addNewQualifyingProperties();
-        qualifyingProperties.setTarget("#" + signatureId);
+        qualifyingProperties.setTarget("#" + signatureConfig.getPackageSignatureId());
         
         // SignedProperties
         SignedPropertiesType signedProperties = qualifyingProperties.addNewSignedProperties();
         String signedPropertiesId = this.idSignedProperties;
         if (this.idSignedProperties == null) {
-            signedPropertiesId = signatureId + "-xades";
+            signedPropertiesId = signatureConfig.getPackageSignatureId() + "-xades";
         }
         signedProperties.setId(signedPropertiesId);
 
@@ -164,13 +164,13 @@ public class XAdESSignatureFacet implements SignatureFacet {
         signedSignatureProperties.setSigningTime(xmlGregorianCalendar);
 
         // SigningCertificate
-        if (null == signingCertificateChain
-                || signingCertificateChain.isEmpty()) {
+        if (signatureConfig.getSigningCertificateChain() == null
+            || signatureConfig.getSigningCertificateChain().isEmpty()) {
             throw new RuntimeException("no signing certificate chain available");
         }
         CertIDListType signingCertificates = signedSignatureProperties.addNewSigningCertificate();
         CertIDType certId = signingCertificates.addNewCert();
-        X509Certificate signingCertificate = signingCertificateChain.get(0);
+        X509Certificate signingCertificate = signatureConfig.getSigningCertificateChain().get(0);
         setCertID(certId, signingCertificate, this.signatureConfig.getDigestAlgo(), this.issuerNameNoReverseOrder);
 
         // ClaimedRole
@@ -181,7 +181,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
             AnyType claimedRole = claimedRolesList.addNewClaimedRole();
             XmlString roleString = XmlString.Factory.newInstance();
             roleString.setStringValue(this.role);
-            SignatureInfo.insertXChild(claimedRole, roleString);
+            insertXChild(claimedRole, roleString);
         }
 
         // XAdES-EPES
@@ -208,7 +208,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
                 AnyType sigPolicyQualifier = sigPolicyQualifiers.addNewSigPolicyQualifier();
                 XmlString spUriElement = XmlString.Factory.newInstance();
                 spUriElement.setStringValue(signaturePolicyDownloadUrl);
-                SignatureInfo.insertXChild(sigPolicyQualifier, spUriElement);
+                insertXChild(sigPolicyQualifier, spUriElement);
             }
         } else if (this.signaturePolicyImplied) {
             SignaturePolicyIdentifierType signaturePolicyIdentifier = 
@@ -238,7 +238,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // add XAdES ds:Object
         List<XMLStructure> xadesObjectContent = new ArrayList<XMLStructure>();
         Element qualDocEl = (Element)document.importNode(qualifyingProperties.getDomNode(), true);
-        XmlSignatureService.registerIdAttribute(qualDocEl.getElementsByTagName("SignedProperties"));
+        SignatureInfo.registerIdAttribute(qualDocEl.getElementsByTagName("SignedProperties"));
         qualDocEl.setAttributeNS(XmlNS, "xmlns:xd", "http://uri.etsi.org/01903/v1.3.2#");
         setPrefix(qualDocEl, "http://uri.etsi.org/01903/v1.3.2#", "xd");
         xadesObjectContent.add(new DOMStructure(qualDocEl));
@@ -374,6 +374,16 @@ public class XAdESSignatureFacet implements SignatureFacet {
         Map<String,String> map = new HashMap<String,String>();
         map.put("xd", "http://uri.etsi.org/01903/v1.3.2#");
         return map;
+    }
+
+    protected static void insertXChild(XmlObject root, XmlObject child) {
+        XmlCursor rootCursor = root.newCursor();
+        rootCursor.toEndToken();
+        XmlCursor childCursor = child.newCursor();
+        childCursor.toNextToken();
+        childCursor.moveXml(rootCursor);
+        childCursor.dispose();
+        rootCursor.dispose();
     }
 
 }
