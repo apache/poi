@@ -25,6 +25,7 @@
 package org.apache.poi.poifs.crypt.dsig.facets;
 
 import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
+import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertXChild;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,7 +51,6 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
@@ -221,7 +221,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         // xadesv141::TimeStampValidationData
         if (tsaRevocationDataXadesT.hasRevocationDataEntries()) {
             ValidationDataType validationData = createValidationData(tsaRevocationDataXadesT);
-            SignatureInfo.insertXChild(unsignedSigProps, validationData);
+            insertXChild(unsignedSigProps, validationData);
         }
 
         if (null == this.revocationDataService) {
@@ -334,7 +334,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 this.c14nAlgoId, this.timeStampService);
         if (tsaRevocationDataXadesX1.hasRevocationDataEntries()) {
             ValidationDataType timeStampXadesX1ValidationData = createValidationData(tsaRevocationDataXadesX1);
-            SignatureInfo.insertXChild(unsignedSigProps, timeStampXadesX1ValidationData);
+            insertXChild(unsignedSigProps, timeStampXadesX1ValidationData);
         }
 
         // marshal XAdES-X
@@ -381,8 +381,6 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     @Override
     public void preSign(Document document,
             XMLSignatureFactory signatureFactory,
-            String signatureId,
-            List<X509Certificate> signingCertificateChain,
             List<Reference> references, List<XMLObject> objects)
             throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         // nothing to do here

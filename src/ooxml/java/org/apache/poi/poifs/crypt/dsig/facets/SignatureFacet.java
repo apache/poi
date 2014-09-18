@@ -66,8 +66,6 @@ public interface SignatureFacet {
     void preSign(
           Document document
         , XMLSignatureFactory signatureFactory
-        , String signatureId
-        , List<X509Certificate> signingCertificateChain
         , List<Reference> references
         , List<XMLObject> objects
     ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException;

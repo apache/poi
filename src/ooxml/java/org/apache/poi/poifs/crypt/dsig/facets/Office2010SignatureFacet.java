@@ -54,12 +54,11 @@ import org.w3c.dom.NodeList;
 public class Office2010SignatureFacet implements SignatureFacet {
 
     @Override
-    public void preSign(Document document,
-        XMLSignatureFactory signatureFactory,
-        String signatureId,
-        List<X509Certificate> signingCertificateChain,
-        List<Reference> references,
-        List<XMLObject> objects
+    public void preSign(
+          Document document
+        , XMLSignatureFactory signatureFactory
+        , List<Reference> references
+        , List<XMLObject> objects
     ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
     }
 

@@ -24,45 +24,42 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-
-import javax.xml.crypto.MarshalException;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
-import org.apache.xmlbeans.XmlException;
-import org.w3c.dom.Document;
-
 /**
- * Interface for signature service component.
+ * Interface for the signature policy service.
  * 
  * @author Frank Cornelis
  * 
  */
-public interface SignatureService {
+public interface SignaturePolicyService {
 
     /**
-     * Pre-sign callback method. Depending on the configuration some parameters
-     * are passed. The returned value will be signed by the eID Applet.
+     * Gives back the signature policy identifier URI.
      * 
-     * @param digestInfos
-     *            the optional list of digest infos.
-     * @return the digest to be signed.
-     * @throws NoSuchAlgorithmException
+     * @return
      */
-    DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
-    throws NoSuchAlgorithmException;
+    String getSignaturePolicyIdentifier();
 
     /**
-     * Post-sign callback method. Received the signature value. Depending on the
-     * configuration the signing certificate chain is also obtained.
+     * Gives back the short description of the signature policy or
+     * <code>null</code> if a description is not available.
      * 
-     * @param signatureValue
-     * @param signingCertificateChain
-     *            the optional chain of signing certificates.
+     * @return the description, or <code>null</code>.
      */
-    void postSign(Document document, byte[] signatureValue)
-    throws IOException, MarshalException, ParserConfigurationException, XmlException;
+    String getSignaturePolicyDescription();
+
+    /**
+     * Gives back the download URL where the signature policy document can be
+     * found. Can be <code>null</code> in case such a download location does not
+     * exist.
+     * 
+     * @return the download URL, or <code>null</code>.
+     */
+    String getSignaturePolicyDownloadUrl();
+
+    /**
+     * Gives back the signature policy document.
+     * 
+     * @return the bytes of the signature policy document.
+     */
+    byte[] getSignaturePolicyDocument();
 }

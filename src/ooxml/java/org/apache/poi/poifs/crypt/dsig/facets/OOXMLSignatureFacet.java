@@ -104,20 +104,20 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void preSign(Document document,
-            XMLSignatureFactory signatureFactory,
-            String signatureId,
-            List<X509Certificate> signingCertificateChain,
-            List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
+    public void preSign(
+        Document document
+        , XMLSignatureFactory signatureFactory
+        , List<Reference> references
+        , List<XMLObject> objects)
+    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
         LOG.log(POILogger.DEBUG, "pre sign");
-        addManifestObject(document, signatureFactory, signatureId, references, objects);
-        addSignatureInfo(document, signatureFactory, signatureId, references, objects);
+        addManifestObject(document, signatureFactory, references, objects);
+        addSignatureInfo(document, signatureFactory, references, objects);
     }
 
     private void addManifestObject(Document document,
             XMLSignatureFactory signatureFactory,
-            String signatureId, List<Reference> references,
+            List<Reference> references,
             List<XMLObject> objects) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
 
@@ -129,7 +129,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
         objectContent.add(manifest);
 
-        addSignatureTime(document, signatureFactory, signatureId, objectContent);
+        addSignatureTime(document, signatureFactory, objectContent);
 
         XMLObject xo = signatureFactory.newXMLObject(objectContent, objectId, null, null);
         objects.add(xo);
@@ -225,7 +225,6 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
     private void addSignatureTime(Document document,
             XMLSignatureFactory signatureFactory,
-            String signatureId,
             List<XMLStructure> objectContent) {
         /*
          * SignatureTime
@@ -247,7 +246,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         List<XMLStructure> signatureTimeContent = new ArrayList<XMLStructure>();
         signatureTimeContent.add(new DOMStructure(n));
         SignatureProperty signatureTimeSignatureProperty = signatureFactory
-                .newSignatureProperty(signatureTimeContent, "#" + signatureId,
+                .newSignatureProperty(signatureTimeContent, "#" + signatureConfig.getPackageSignatureId(),
                         "idSignatureTime");
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
@@ -258,10 +257,10 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
     private void addSignatureInfo(Document document,
-            XMLSignatureFactory signatureFactory,
-            String signatureId, List<Reference> references,
-            List<XMLObject> objects) throws NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException {
+        XMLSignatureFactory signatureFactory,
+        List<Reference> references,
+        List<XMLObject> objects)
+    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
@@ -273,7 +272,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
         signatureInfoContent.add(new DOMStructure(n));
         SignatureProperty signatureInfoSignatureProperty = signatureFactory
-                .newSignatureProperty(signatureInfoContent, "#" + signatureId,
+                .newSignatureProperty(signatureInfoContent, "#" + signatureConfig.getPackageSignatureId(),
                         "idOfficeV1Details");
 
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();

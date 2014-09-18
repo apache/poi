@@ -15,7 +15,7 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
-import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.w3c.dom.Document;
 
 /**
@@ -26,24 +26,10 @@ import org.w3c.dom.Document;
  */
 public class EnvelopedSignatureFacet implements SignatureFacet {
 
-    private final HashAlgorithm hashAlgo;
+    private SignatureInfoConfig signatureConfig;
 
-    /**
-     * Default constructor. Digest algorithm will be SHA-1.
-     */
-    public EnvelopedSignatureFacet() {
-        this(HashAlgorithm.sha1);
-    }
-
-    /**
-     * Main constructor.
-     * 
-     * @param hashAlgo
-     *            the digest algorithm to be used within the ds:Reference
-     *            element. Possible values: "SHA-1", "SHA-256, or "SHA-512".
-     */
-    public EnvelopedSignatureFacet(HashAlgorithm hashAlgo) {
-        this.hashAlgo = hashAlgo;
+    public EnvelopedSignatureFacet(SignatureInfoConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
     }
 
     @Override
@@ -52,14 +38,12 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void preSign(Document document,
-            XMLSignatureFactory signatureFactory,
-            String signatureId,
-            List<X509Certificate> signingCertificateChain,
-            List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(
-                this.hashAlgo.xmlSignUri, null);
+    public void preSign(Document document
+        , XMLSignatureFactory signatureFactory
+        , List<Reference> references
+        , List<XMLObject> objects)
+    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
 
         List<Transform> transforms = new ArrayList<Transform>();
         Transform envelopedTransform = signatureFactory
