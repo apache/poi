@@ -86,6 +86,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
@@ -107,11 +108,13 @@ import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.events.MutationEvent;
 import org.xml.sax.SAXException;
 
-public class SignatureInfo {
+public class SignatureInfo implements SignatureConfigurable {
 
     public static final String XmlNS = "http://www.w3.org/2000/xmlns/";
     public static final String XmlDSigNS = XMLSignature.XMLNS;
     
+    // see https://www.ietf.org/rfc/rfc3110.txt
+    // RSA/SHA1 SIG Resource Records
     public static final byte[] SHA1_DIGEST_INFO_PREFIX = new byte[]
         { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x04, 0x14 };
 
@@ -140,17 +143,41 @@ public class SignatureInfo {
     public static final byte[] RIPEMD256_DIGEST_INFO_PREFIX = new byte[]
         { 0x30, 0x2b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24, 0x03, 0x02, 0x03, 0x04, 0x20 };
     
+    protected static class SignCreationListener implements EventListener, SignatureConfigurable {
+        ThreadLocal<EventTarget> target = new ThreadLocal<EventTarget>();
+        SignatureConfig signatureConfig;
+        public void setEventTarget(EventTarget target) {
+            this.target.set(target);
+        }
+        public void handleEvent(Event e) {
+            if (e instanceof MutationEvent) {
+                MutationEvent mutEvt = (MutationEvent)e;
+                if (mutEvt.getTarget() instanceof Element) {
+                    Element el = (Element)mutEvt.getTarget();
+                    String packageId = signatureConfig.getPackageSignatureId();
+                    if (packageId.equals(el.getAttribute("Id"))) {
+                        target.get().removeEventListener("DOMSubtreeModified", this, false);
+                        el.setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+                    }
+                }
+            }
+        }
+        public void setSignatureConfig(SignatureConfig signatureConfig) {
+            this.signatureConfig = signatureConfig;
+        }
+    }
+    
     
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
     private static boolean isInitialized = false;
     
-    private SignatureInfoConfig signatureConfig;
+    private SignatureConfig signatureConfig;
 
-    public SignatureInfoConfig getSignatureConfig() {
+    public SignatureConfig getSignatureConfig() {
         return signatureConfig;
     }
 
-    public void setSignatureConfig(SignatureInfoConfig signatureConfig) {
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
 
@@ -199,6 +226,8 @@ public class SignatureInfo {
     }
     
     protected boolean getSignersAndValidate(List<X509Certificate> signers, boolean onlyFirst) {
+        signatureConfig.init(true);
+        
         boolean allValid = true;
         List<PackagePart> signatureParts = getSignatureParts(onlyFirst);
         if (signatureParts.isEmpty()) {
@@ -345,27 +374,18 @@ public class SignatureInfo {
         TransformerFactoryConfigurationError, TransformerException,
         IOException, SAXException, NoSuchProviderException, XmlException, URISyntaxException {
         SignatureInfo.initXmlProvider();
+        signatureConfig.init(false);
         
         // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
         // normal way to interfere with, so we need to add the namespace under the hand ...
-        final EventTarget et = (EventTarget)document;
-        EventListener myModificationListener = new EventListener() {
-            @Override
-            public void handleEvent(Event e) {
-                if (e instanceof MutationEvent) {
-                    MutationEvent mutEvt = (MutationEvent)e;
-                    if (mutEvt.getTarget() instanceof Element) {
-                        Element el = (Element)mutEvt.getTarget();
-                        if ("idPackageObject".equals(el.getAttribute("Id"))) {
-                            et.removeEventListener("DOMSubtreeModified", this, false);
-                            el.setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
-                        }
-                    }
-                }
+        EventTarget target = (EventTarget)document;
+        EventListener creationListener = signatureConfig.getSignCreationListener();
+        if (creationListener != null) {
+            if (creationListener instanceof SignCreationListener) {
+                ((SignCreationListener)creationListener).setEventTarget(target);
             }
-        };
-        
-        et.addEventListener("DOMSubtreeModified", myModificationListener, false);
+            target.addEventListener("DOMSubtreeModified", creationListener, false);
+        }
         
         /*
          * Signature context construction.

@@ -24,6 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
+
 
 /**
  * Interface for a time-stamp service.
@@ -31,7 +33,7 @@ package org.apache.poi.poifs.crypt.dsig.services;
  * @author Frank Cornelis
  * 
  */
-public interface TimeStampService {
+public interface TimeStampService extends SignatureConfigurable {
 
     /**
      * Gives back the encoded time-stamp token for the given array of data

@@ -50,10 +50,8 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
-import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
-import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
-import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.c14n.Canonicalizer;
@@ -117,53 +115,27 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     public static final String XADES_NAMESPACE = "http://uri.etsi.org/01903/v1.3.2#";
 
     public static final String XADES141_NAMESPACE = "http://uri.etsi.org/01903/v1.4.1#";
+    
+    private SignatureConfig signatureConfig;
 
-    private final TimeStampService timeStampService;
-
-    private String c14nAlgoId;
-
-    private final RevocationDataService revocationDataService;
+    private String c14nAlgoId = CanonicalizationMethod.EXCLUSIVE;
 
     private final CertificateFactory certificateFactory;
 
-    private final HashAlgorithm hashAlgo;
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
+         this.signatureConfig = signatureConfig;
+    }
+    
 
+    
     /**
      * Convenience constructor.
      * 
      * @param timeStampService
      *            the time-stamp service used for XAdES-T and XAdES-X.
      * @param revocationDataService
-     *            the optional revocation data service used for XAdES-C and
-     *            XAdES-X-L. When <code>null</code> the signature will be
-     *            limited to XAdES-T only.
      */
-    public XAdESXLSignatureFacet(TimeStampService timeStampService,
-            RevocationDataService revocationDataService) {
-        this(timeStampService, revocationDataService, HashAlgorithm.sha1);
-    }
-
-    /**
-     * Main constructor.
-     * 
-     * @param timeStampService
-     *            the time-stamp service used for XAdES-T and XAdES-X.
-     * @param revocationDataService
-     *            the optional revocation data service used for XAdES-C and
-     *            XAdES-X-L. When <code>null</code> the signature will be
-     *            limited to XAdES-T only.
-     * @param digestAlgorithm
-     *            the digest algorithm to be used for construction of the
-     *            XAdES-X-L elements.
-     */
-    public XAdESXLSignatureFacet(TimeStampService timeStampService,
-            RevocationDataService revocationDataService,
-            HashAlgorithm digestAlgorithm) {
-        this.c14nAlgoId = CanonicalizationMethod.EXCLUSIVE;
-        this.hashAlgo = digestAlgorithm;
-        this.timeStampService = timeStampService;
-        this.revocationDataService = revocationDataService;
-
+    public XAdESXLSignatureFacet() {
         try {
             this.certificateFactory = CertificateFactory.getInstance("X.509");
         } catch (CertificateException e) {
@@ -212,8 +184,8 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         
         RevocationData tsaRevocationDataXadesT = new RevocationData();
         LOG.log(POILogger.DEBUG, "creating XAdES-T time-stamp");
-        XAdESTimeStampType signatureTimeStamp = createXAdESTimeStamp(
-            Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT, this.c14nAlgoId, this.timeStampService);
+        XAdESTimeStampType signatureTimeStamp = createXAdESTimeStamp
+            (Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT);
 
         // marshal the XAdES-T extension
         unsignedSigProps.addNewSignatureTimeStamp().set(signatureTimeStamp);
@@ -224,7 +196,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             insertXChild(unsignedSigProps, validationData);
         }
 
-        if (null == this.revocationDataService) {
+        if (signatureConfig.getRevocationDataService() == null) {
             /*
              * Without revocation data service we cannot construct the XAdES-C
              * extension.
@@ -237,21 +209,23 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             unsignedSigProps.addNewCompleteCertificateRefs();
 
         CertIDListType certIdList = completeCertificateRefs.addNewCertRefs();
-        for (int certIdx = 1; certIdx < signingCertificateChain.size(); certIdx++) {
-            /*
-             * We skip the signing certificate itself according to section
-             * 4.4.3.2 of the XAdES 1.4.1 specification.
-             */
-            X509Certificate certificate = signingCertificateChain.get(certIdx);
-            CertIDType certId = certIdList.addNewCert();
-            XAdESSignatureFacet.setCertID(certId, certificate, this.hashAlgo, false);
+        /*
+         * We skip the signing certificate itself according to section
+         * 4.4.3.2 of the XAdES 1.4.1 specification.
+         */
+        int chainSize = signingCertificateChain.size();
+        if (chainSize > 1) {
+            for (X509Certificate cert : signingCertificateChain.subList(1, chainSize)) {
+                CertIDType certId = certIdList.addNewCert();
+                XAdESSignatureFacet.setCertID(certId, signatureConfig, false, cert);
+            }
         }
 
         // XAdES-C: complete revocation refs
         CompleteRevocationRefsType completeRevocationRefs = 
             unsignedSigProps.addNewCompleteRevocationRefs();
-        RevocationData revocationData = this.revocationDataService
-                .getRevocationData(signingCertificateChain);
+        RevocationData revocationData = signatureConfig.getRevocationDataService()
+            .getRevocationData(signingCertificateChain);
         if (revocationData.hasCRLs()) {
             CRLRefsType crlRefs = completeRevocationRefs.addNewCRLRefs();
             completeRevocationRefs.setCRLRefs(crlRefs);
@@ -276,7 +250,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 crlIdentifier.setNumber(getCrlNumber(crl));
 
                 DigestAlgAndValueType digestAlgAndValue = crlRef.addNewDigestAlgAndValue();
-                XAdESSignatureFacet.setDigestAlgAndValue(digestAlgAndValue, encodedCrl, this.hashAlgo);
+                XAdESSignatureFacet.setDigestAlgAndValue(digestAlgAndValue, encodedCrl, signatureConfig.getDigestAlgo());
             }
         }
         if (revocationData.hasOCSPs()) {
@@ -286,7 +260,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                     OCSPRefType ocspRef = ocspRefs.addNewOCSPRef();
     
                     DigestAlgAndValueType digestAlgAndValue = ocspRef.addNewDigestAlgAndValue();
-                    XAdESSignatureFacet.setDigestAlgAndValue(digestAlgAndValue, ocsp, this.hashAlgo);
+                    XAdESSignatureFacet.setDigestAlgAndValue(digestAlgAndValue, ocsp, signatureConfig.getDigestAlgo());
     
                     OCSPIdentifierType ocspIdentifier = ocspRef.addNewOCSPIdentifier();
                     
@@ -329,9 +303,8 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
         RevocationData tsaRevocationDataXadesX1 = new RevocationData();
         LOG.log(POILogger.DEBUG, "creating XAdES-X time-stamp");
-        XAdESTimeStampType timeStampXadesX1 = createXAdESTimeStamp(
-                timeStampNodesXadesX1, tsaRevocationDataXadesX1,
-                this.c14nAlgoId, this.timeStampService);
+        XAdESTimeStampType timeStampXadesX1 = createXAdESTimeStamp
+            (timeStampNodesXadesX1, tsaRevocationDataXadesX1);
         if (tsaRevocationDataXadesX1.hasRevocationDataEntries()) {
             ValidationDataType timeStampXadesX1ValidationData = createValidationData(tsaRevocationDataXadesX1);
             insertXChild(unsignedSigProps, timeStampXadesX1ValidationData);
@@ -406,26 +379,19 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         }
     }
 
-    public static XAdESTimeStampType createXAdESTimeStamp(
+    private XAdESTimeStampType createXAdESTimeStamp(
             List<Node> nodeList,
-            RevocationData revocationData,
-            String c14nAlgoId,
-            TimeStampService timeStampService) {
+            RevocationData revocationData) {
         byte[] c14nSignatureValueElement = getC14nValue(nodeList, c14nAlgoId);
 
-        return createXAdESTimeStamp(c14nSignatureValueElement, revocationData,
-                c14nAlgoId, timeStampService);
+        return createXAdESTimeStamp(c14nSignatureValueElement, revocationData);
     }
 
-    public static XAdESTimeStampType createXAdESTimeStamp(
-            byte[] data,
-            RevocationData revocationData,
-            String c14nAlgoId,
-            TimeStampService timeStampService) {
+    private XAdESTimeStampType createXAdESTimeStamp(byte[] data, RevocationData revocationData) {
         // create the time-stamp
         byte[] timeStampToken;
         try {
-            timeStampToken = timeStampService.timeStamp(data, revocationData);
+            timeStampToken = signatureConfig.getTspService().timeStamp(data, revocationData);
         } catch (Exception e) {
             throw new RuntimeException("error while creating a time-stamp: "
                     + e.getMessage(), e);

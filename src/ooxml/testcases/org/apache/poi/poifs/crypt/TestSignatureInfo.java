@@ -56,15 +56,14 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
-import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
@@ -107,7 +106,7 @@ public class TestSignatureInfo {
         cal.setTimeZone(TimeZone.getTimeZone("UTC"));
         cal.set(2014, 7, 6, 21, 42, 12);
     }
-    
+
     @Test
     public void getSignerUnsigned() throws Exception {
         String testFiles[] = { 
@@ -119,7 +118,7 @@ public class TestSignatureInfo {
         
         for (String testFile : testFiles) {
             OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-            SignatureInfoConfig sic = new SignatureInfoConfig();
+            SignatureConfig sic = new SignatureConfig();
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
@@ -148,7 +147,7 @@ public class TestSignatureInfo {
         
         for (String testFile : testFiles) {
             OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-            SignatureInfoConfig sic = new SignatureInfoConfig();
+            SignatureConfig sic = new SignatureConfig();
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
@@ -169,7 +168,7 @@ public class TestSignatureInfo {
     public void getMultiSigners() throws Exception {
         String testFile = "hello-world-signed-twice.docx";
         OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-        SignatureInfoConfig sic = new SignatureInfoConfig();
+        SignatureConfig sic = new SignatureConfig();
         sic.setOpcPackage(pkg);
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(sic);
@@ -200,11 +199,10 @@ public class TestSignatureInfo {
         initKeyPair("Test", "CN=Test");
         String testFile = "hello-world-unsigned.xlsx";
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
-        SignatureInfoConfig sic = new SignatureInfoConfig();
+        SignatureConfig sic = new SignatureConfig();
         sic.setOpcPackage(pkg);
         sic.setKey(keyPair.getPrivate());
         sic.setSigningCertificateChain(Collections.singletonList(x509));
-        sic.addDefaultFacets();
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(sic);
         // hash > sha1 doesn't work in excel viewer ...
@@ -224,7 +222,7 @@ public class TestSignatureInfo {
         final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
         
         // setup
-        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
+        SignatureConfig signatureConfig = new SignatureConfig();
         signatureConfig.setOpcPackage(pkg);
         signatureConfig.setKey(keyPair.getPrivate());
 
@@ -237,23 +235,26 @@ public class TestSignatureInfo {
         certificateChain.add(x509);
         signatureConfig.setSigningCertificateChain(certificateChain);
         
-        signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet(signatureConfig));
-        signatureConfig.addSignatureFacet(new KeyInfoSignatureFacet(true, false, false));
-        signatureConfig.addSignatureFacet(new XAdESSignatureFacet(signatureConfig));
+        signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet());
+        signatureConfig.addSignatureFacet(new KeyInfoSignatureFacet());
+        signatureConfig.addSignatureFacet(new XAdESSignatureFacet());
+        signatureConfig.addSignatureFacet(new XAdESXLSignatureFacet());
         
-
+        boolean mockTsp = false;
         // http://timestamping.edelweb.fr/service/tsp
         // http://tsa.belgium.be/connect
-        String tspServiceUrl = "http://timestamping.edelweb.fr/service/tsp";
+        signatureConfig.setTspUrl("http://timestamping.edelweb.fr/service/tsp");
+        signatureConfig.setTspOldProtocol(true);
 
-        TimeStampService timeStampService;
-        if (tspServiceUrl == null) {
-            timeStampService = new TimeStampService(){
+        if (mockTsp) {
+            TimeStampService tspService = new TimeStampService(){
                 public byte[] timeStamp(byte[] data, RevocationData revocationData) throws Exception {
                     revocationData.addCRL(crl);
                     return "time-stamp-token".getBytes();                
                 }
+                public void setSignatureConfig(SignatureConfig config) {}
             };
+            signatureConfig.setTspService(tspService);
         } else {
             TimeStampServiceValidator tspValidator = new TimeStampServiceValidator() {
                 @Override
@@ -265,13 +266,8 @@ public class TestSignatureInfo {
                     }
                 }
             };
-            
-            TSPTimeStampService tspService = new TSPTimeStampService(tspServiceUrl, tspValidator);
-            if (tspServiceUrl.contains("edelweb")) {
-                tspService.setRequestContentType("application/timestamp-request");
-                tspService.setResponseContentType("application/timestamp-response");
-            }
-            timeStampService = tspService;
+            signatureConfig.setTspValidator(tspValidator);
+            signatureConfig.setTspOldProtocol(signatureConfig.getTspUrl().contains("edelweb"));
         }
         
         final RevocationData revocationData = new RevocationData();
@@ -285,9 +281,8 @@ public class TestSignatureInfo {
                 return revocationData;
             }
         };
+        signatureConfig.setRevocationDataService(revocationDataService);
 
-        XAdESXLSignatureFacet xadesXLSignatureFacet = new XAdESXLSignatureFacet(
-                timeStampService, revocationDataService);
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
         
@@ -348,13 +343,12 @@ public class TestSignatureInfo {
     private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
         initKeyPair(alias, signerDn);
 
-        SignatureInfoConfig signatureConfig = new SignatureInfoConfig();
+        SignatureConfig signatureConfig = new SignatureConfig();
         signatureConfig.setKey(keyPair.getPrivate());
         signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
         signatureConfig.setExecutionTime(cal.getTime());
         signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
         signatureConfig.setOpcPackage(pkgCopy);
-        signatureConfig.addDefaultFacets();
         
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);

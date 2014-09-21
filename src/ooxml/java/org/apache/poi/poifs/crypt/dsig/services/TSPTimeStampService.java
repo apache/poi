@@ -25,6 +25,7 @@
 package org.apache.poi.poifs.crypt.dsig.services;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -45,14 +46,17 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
-import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
 import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformationVerifier;
@@ -75,185 +79,63 @@ public class TSPTimeStampService implements TimeStampService {
 
     private static final POILogger LOG = POILogFactory.getLogger(TSPTimeStampService.class);
 
-    static {
-        CryptoFunctions.registerBouncyCastle();
-    }
-
-    public static final String DEFAULT_USER_AGENT = "POI XmlSign Service TSP Client";
-
-    private final String tspServiceUrl;
-
-    private String requestPolicy;
-
-    private final String userAgent;
-
-    private final TimeStampServiceValidator validator;
-
-    private String username;
-
-    private String password;
-
-    private String proxyHost;
-
-    private int proxyPort;
-
-    private HashAlgorithm digestAlgo;
-
-    private String digestAlgoOid;
-
-    private String requestContentType = "application/timestamp-query;charset=ISO-8859-1";
-
-    private String responseContentType = "application/timestamp-reply";
-    
-    public TSPTimeStampService(String tspServiceUrl,
-            TimeStampServiceValidator validator) {
-        this(tspServiceUrl, validator, null, null);
-    }
+    private SignatureConfig signatureConfig;
 
     /**
-     * Main constructor.
-     * 
-     * @param tspServiceUrl
-     *            the URL of the TSP service.
-     * @param validator
-     *            the trust validator used to validate incoming TSP response
-     *            signatures.
-     * @param requestPolicy
-     *            the optional TSP request policy.
-     * @param userAgent
-     *            the optional User-Agent TSP request header value.
+     * Maps the digest algorithm to corresponding OID value.
      */
-    public TSPTimeStampService(String tspServiceUrl,
-            TimeStampServiceValidator validator, String requestPolicy,
-            String userAgent) {
-        if (null == tspServiceUrl) {
-            throw new IllegalArgumentException("TSP service URL required");
-        }
-        this.tspServiceUrl = tspServiceUrl;
-
-        if (null == validator) {
-            throw new IllegalArgumentException("TSP validator required");
-        }
-        this.validator = validator;
-
-        this.requestPolicy = requestPolicy;
-
-        if (null != userAgent) {
-            this.userAgent = userAgent;
-        } else {
-            this.userAgent = DEFAULT_USER_AGENT;
-        }
-        
-        setDigestAlgo(HashAlgorithm.sha1);
-    }
-
-    /**
-     * Sets the request policy OID.
-     * 
-     * @param policyOid
-     */
-    public void setRequestPolicy(String policyOid) {
-        this.requestPolicy = policyOid;
-    }
-
-    /**
-     * Sets the credentials used in case the TSP service requires
-     * authentication.
-     * 
-     * @param username
-     * @param password
-     */
-    public void setAuthenticationCredentials(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    /**
-     * Resets the authentication credentials.
-     */
-    public void resetAuthenticationCredentials() {
-        this.username = null;
-        this.password = null;
-    }
-
-    /**
-     * Sets the digest algorithm used for time-stamping data. Example value:
-     * "SHA-1".
-     * 
-     * @param digestAlgo
-     */
-    public void setDigestAlgo(HashAlgorithm digestAlgo) {
+    public ASN1ObjectIdentifier mapDigestAlgoToOID(HashAlgorithm digestAlgo) {
         switch (digestAlgo) {
-        case sha1:
-            digestAlgoOid = "1.3.14.3.2.26";
-            break;
-        case sha256:
-            digestAlgoOid = "2.16.840.1.101.3.4.2.1";
-            break;
-        case sha384:
-            digestAlgoOid = "2.16.840.1.101.3.4.2.2";
-            break;
-        case sha512:
-            digestAlgoOid = "2.16.840.1.101.3.4.2.3";
-            break;
+        case sha1:   return X509ObjectIdentifiers.id_SHA1;
+        case sha256: return NISTObjectIdentifiers.id_sha256;
+        case sha384: return NISTObjectIdentifiers.id_sha384;
+        case sha512: return NISTObjectIdentifiers.id_sha512;
         default:
             throw new IllegalArgumentException("unsupported digest algo: " + digestAlgo);
         }
-
-        this.digestAlgo = digestAlgo;
     }
 
-    /**
-     * Configures the HTTP proxy settings to be used to connect to the TSP
-     * service.
-     * 
-     * @param proxyHost
-     * @param proxyPort
-     */
-    public void setProxy(String proxyHost, int proxyPort) {
-        this.proxyHost = proxyHost;
-        this.proxyPort = proxyPort;
-    }
-
-    /**
-     * Resets the HTTP proxy settings.
-     */
-    public void resetProxy() {
-        this.proxyHost = null;
-        this.proxyPort = 0;
-    }
-
+    @SuppressWarnings("unchecked")
     public byte[] timeStamp(byte[] data, RevocationData revocationData)
             throws Exception {
         // digest the message
-        MessageDigest messageDigest = CryptoFunctions.getMessageDigest(this.digestAlgo);
+        MessageDigest messageDigest = CryptoFunctions.getMessageDigest(signatureConfig.getTspDigestAlgo());
         byte[] digest = messageDigest.digest(data);
 
         // generate the TSP request
         BigInteger nonce = new BigInteger(128, new SecureRandom());
         TimeStampRequestGenerator requestGenerator = new TimeStampRequestGenerator();
         requestGenerator.setCertReq(true);
-        if (null != this.requestPolicy) {
-            requestGenerator.setReqPolicy(this.requestPolicy);
+        String requestPolicy = signatureConfig.getTspRequestPolicy();
+        if (requestPolicy != null) {
+            requestGenerator.setReqPolicy(new ASN1ObjectIdentifier(requestPolicy));
         }
-        TimeStampRequest request = requestGenerator.generate(this.digestAlgoOid, digest, nonce);
+        ASN1ObjectIdentifier digestAlgoOid = mapDigestAlgoToOID(signatureConfig.getTspDigestAlgo());
+        TimeStampRequest request = requestGenerator.generate(digestAlgoOid, digest, nonce);
         byte[] encodedRequest = request.getEncoded();
 
         // create the HTTP POST request
-        Proxy proxy = (this.proxyHost != null)
-            ? new Proxy(Proxy.Type.HTTP, new InetSocketAddress(this.proxyHost, this.proxyPort))
-            : Proxy.NO_PROXY;
-        HttpURLConnection huc = (HttpURLConnection)new URL(this.tspServiceUrl).openConnection(proxy);
+        Proxy proxy = Proxy.NO_PROXY;
+        if (signatureConfig.getProxyUrl() != null) {
+            URL proxyUrl = new URL(signatureConfig.getProxyUrl());
+            String host = proxyUrl.getHost();
+            int port = proxyUrl.getPort();
+            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, (port == -1 ? 80 : port)));
+        }
         
-        if (null != this.username) {
-            String userPassword = this.username + ":" + this.password;
+        HttpURLConnection huc = (HttpURLConnection)new URL(signatureConfig.getTspUrl()).openConnection(proxy);
+        
+        if (signatureConfig.getTspUser() != null) {
+            String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
             String encoding = DatatypeConverter.printBase64Binary(userPassword.getBytes(Charset.forName("iso-8859-1")));
             huc.setRequestProperty("Authorization", "Basic " + encoding);
         }
 
         huc.setDoOutput(true); // also sets method to POST.
-        huc.setRequestProperty("User-Agent", this.userAgent);
-        huc.setRequestProperty("Content-Type", requestContentType);
+        huc.setRequestProperty("User-Agent", signatureConfig.getUserAgent());
+        huc.setRequestProperty("Content-Type", signatureConfig.isTspOldProtocol()
+            ? "application/timestamp-request"
+            : "application/timestamp-query;charset=ISO-8859-1");
         
         OutputStream hucOut = huc.getOutputStream();
         hucOut.write(encodedRequest);
@@ -263,8 +145,8 @@ public class TSPTimeStampService implements TimeStampService {
         
         int statusCode = huc.getResponseCode();
         if (statusCode != 200) {
-            LOG.log(POILogger.ERROR, "Error contacting TSP server ", this.tspServiceUrl);
-            throw new Exception("Error contacting TSP server " + this.tspServiceUrl);
+            LOG.log(POILogger.ERROR, "Error contacting TSP server ", signatureConfig.getTspUrl());
+            throw new IOException("Error contacting TSP server " + signatureConfig.getTspUrl());
         }
 
         // HTTP input validation
@@ -277,7 +159,10 @@ public class TSPTimeStampService implements TimeStampService {
         IOUtils.copy(huc.getInputStream(), bos);
         LOG.log(POILogger.DEBUG, "response content: ", bos.toString());
         
-        if (!contentType.startsWith(responseContentType)) {
+        if (!contentType.startsWith(signatureConfig.isTspOldProtocol() 
+            ? "application/timestamp-response"
+            : "application/timestamp-reply"
+        )) {
             throw new RuntimeException("invalid Content-Type: " + contentType);
         }
         
@@ -311,7 +196,6 @@ public class TSPTimeStampService implements TimeStampService {
 
         // TSP signer certificates retrieval
         Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
-        JcaX509ExtensionUtils utils = new JcaX509ExtensionUtils();
         
         X509CertificateHolder signerCert = null;
         Map<X500Name, X509CertificateHolder> certificateMap = new HashMap<X500Name, X509CertificateHolder>();
@@ -324,9 +208,8 @@ public class TSPTimeStampService implements TimeStampService {
         }
 
         // TSP signer cert path building
-        if (null == signerCert) {
-            throw new RuntimeException(
-                    "TSP response token has no signer certificate");
+        if (signerCert == null) {
+            throw new RuntimeException("TSP response token has no signer certificate");
         }
         List<X509Certificate> tspCertificateChain = new ArrayList<X509Certificate>();
         JcaX509CertificateConverter x509converter = new JcaX509CertificateConverter();
@@ -353,7 +236,9 @@ public class TSPTimeStampService implements TimeStampService {
         timeStampToken.validate(verifier);
 
         // verify TSP signer certificate
-        this.validator.validate(tspCertificateChain, revocationData);
+        if (signatureConfig.getTspValidator() != null) {
+            signatureConfig.getTspValidator().validate(tspCertificateChain, revocationData);
+        }
 
         LOG.log(POILogger.DEBUG, "time-stamp token time: "
                 + timeStampToken.getTimeStampInfo().getGenTime());
@@ -362,19 +247,7 @@ public class TSPTimeStampService implements TimeStampService {
         return timestamp;
     }
 
-    /**
-     * usually the request content type is "application/timestamp-query;charset=ISO-8859-1",
-     * but some timestamp server use a different content type
-     */
-    public void setRequestContentType(String requestContentType) {
-        this.requestContentType = requestContentType;
-    }
-
-    /**
-     * usually the response content type is "application/timestamp-reply",
-     * but some timestamp server use a different content type
-     */
-    public void setResponseContentType(String responseContentType) {
-        this.responseContentType = responseContentType;
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
     }
 }

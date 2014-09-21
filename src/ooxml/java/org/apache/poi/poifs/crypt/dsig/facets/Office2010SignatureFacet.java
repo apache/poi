@@ -34,6 +34,7 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.xmlbeans.XmlException;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
@@ -53,6 +54,10 @@ import org.w3c.dom.NodeList;
  */
 public class Office2010SignatureFacet implements SignatureFacet {
 
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
+        // this.signatureConfig = signatureConfig;
+    }
+    
     @Override
     public void preSign(
           Document document
