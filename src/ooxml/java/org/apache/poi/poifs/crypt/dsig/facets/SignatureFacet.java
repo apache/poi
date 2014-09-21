@@ -37,6 +37,7 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Document;
 
@@ -46,7 +47,7 @@ import org.w3c.dom.Document;
  * @author Frank Cornelis
  * 
  */
-public interface SignatureFacet {
+public interface SignatureFacet extends SignatureConfigurable {
 
     /**
      * This method is being invoked by the XML signature service engine during

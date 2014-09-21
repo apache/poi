@@ -49,6 +49,7 @@ import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfo;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -66,25 +67,11 @@ import org.w3c.dom.NodeList;
 public class KeyInfoSignatureFacet implements SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(KeyInfoSignatureFacet.class);
+    
+    SignatureConfig signatureConfig;
 
-    private final boolean includeEntireCertificateChain;
-
-    private final boolean includeIssuerSerial;
-
-    private final boolean includeKeyValue;
-
-    /**
-     * Main constructor.
-     * 
-     * @param includeEntireCertificateChain
-     * @param includeIssuerSerial
-     * @param includeKeyValue
-     */
-    public KeyInfoSignatureFacet(boolean includeEntireCertificateChain,
-            boolean includeIssuerSerial, boolean includeKeyValue) {
-        this.includeEntireCertificateChain = includeEntireCertificateChain;
-        this.includeIssuerSerial = includeIssuerSerial;
-        this.includeKeyValue = includeKeyValue;
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
+         this.signatureConfig = signatureConfig;
     }
 
     @Override
@@ -109,7 +96,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
 
         List<Object> keyInfoContent = new ArrayList<Object>();
 
-        if (this.includeKeyValue) {
+        if (signatureConfig.isIncludeKeyValue()) {
             KeyValue keyValue;
             try {
                 keyValue = keyInfoFactory.newKeyValue(signingCertificate.getPublicKey());
@@ -119,13 +106,13 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
             keyInfoContent.add(keyValue);
         }
 
-        if (this.includeIssuerSerial) {
+        if (signatureConfig.isIncludeIssuerSerial()) {
             x509DataObjects.add(keyInfoFactory.newX509IssuerSerial(
                     signingCertificate.getIssuerX500Principal().toString(),
                     signingCertificate.getSerialNumber()));
         }
 
-        if (this.includeEntireCertificateChain) {
+        if (signatureConfig.isIncludeEntireCertificateChain()) {
             x509DataObjects.addAll(signingCertificateChain);
         } else {
             x509DataObjects.add(signingCertificate);

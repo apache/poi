@@ -15,7 +15,7 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
-import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.w3c.dom.Document;
 
 /**
@@ -26,12 +26,12 @@ import org.w3c.dom.Document;
  */
 public class EnvelopedSignatureFacet implements SignatureFacet {
 
-    private SignatureInfoConfig signatureConfig;
+    private SignatureConfig signatureConfig;
 
-    public EnvelopedSignatureFacet(SignatureInfoConfig signatureConfig) {
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
-
+    
     @Override
     public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
         // empty

@@ -40,17 +40,18 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
  * JSR105 URI dereferencer for Office Open XML documents.
  */
-public class OOXMLURIDereferencer implements URIDereferencer {
+public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigurable {
 
     private static final POILogger LOG = POILogFactory.getLogger(OOXMLURIDereferencer.class);
 
-    private SignatureInfoConfig signatureConfig;
+    private SignatureConfig signatureConfig;
     private URIDereferencer baseUriDereferencer;
 
     public OOXMLURIDereferencer() {
@@ -58,7 +59,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
         this.baseUriDereferencer = xmlSignatureFactory.getURIDereferencer();
     }
     
-    public void setSignatureConfig(SignatureInfoConfig signatureConfig) {
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
 

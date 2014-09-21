@@ -51,8 +51,8 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
 import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -99,32 +99,11 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
     
-    private SignatureInfoConfig signatureConfig;
+    private SignatureConfig signatureConfig;
     
-    private String idSignedProperties;
-
-    private boolean signaturePolicyImplied;
-
-    private String role;
-
-    private boolean issuerNameNoReverseOrder = false;
-
     private Map<String, String> dataObjectFormatMimeTypes = new HashMap<String, String>();
 
-    /**
-     * Main constructor.
-     * 
-     * @param clock
-     *            the clock to be used for determining the xades:SigningTime,
-     *            defaults to now when null
-     * @param hashAlgo
-     *            the digest algorithm to be used for all required XAdES digest
-     *            operations. Possible values: "SHA-1", "SHA-256", or "SHA-512",
-     *            defaults to SHA-1 when null
-     * @param signaturePolicyService
-     *            the optional signature policy service used for XAdES-EPES.
-     */
-    public XAdESSignatureFacet(SignatureInfoConfig signatureConfig) {
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
 
@@ -147,11 +126,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         
         // SignedProperties
         SignedPropertiesType signedProperties = qualifyingProperties.addNewSignedProperties();
-        String signedPropertiesId = this.idSignedProperties;
-        if (this.idSignedProperties == null) {
-            signedPropertiesId = signatureConfig.getPackageSignatureId() + "-xades";
-        }
-        signedProperties.setId(signedPropertiesId);
+        signedProperties.setId(signatureConfig.getXadesSignatureId());
 
         // SignedSignatureProperties
         SignedSignaturePropertiesType signedSignatureProperties = signedProperties.addNewSignedSignatureProperties();
@@ -159,7 +134,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // SigningTime
         Calendar xmlGregorianCalendar = Calendar.getInstance();
         xmlGregorianCalendar.setTimeZone(TimeZone.getTimeZone("Z"));
-        xmlGregorianCalendar.setTime(this.signatureConfig.getExecutionTime());
+        xmlGregorianCalendar.setTime(signatureConfig.getExecutionTime());
         xmlGregorianCalendar.clear(Calendar.MILLISECOND);
         signedSignatureProperties.setSigningTime(xmlGregorianCalendar);
 
@@ -170,22 +145,23 @@ public class XAdESSignatureFacet implements SignatureFacet {
         }
         CertIDListType signingCertificates = signedSignatureProperties.addNewSigningCertificate();
         CertIDType certId = signingCertificates.addNewCert();
-        X509Certificate signingCertificate = signatureConfig.getSigningCertificateChain().get(0);
-        setCertID(certId, signingCertificate, this.signatureConfig.getDigestAlgo(), this.issuerNameNoReverseOrder);
+        X509Certificate certificate = signatureConfig.getSigningCertificateChain().get(0);
+        setCertID(certId, signatureConfig, signatureConfig.isXadesIssuerNameNoReverseOrder(), certificate);
 
         // ClaimedRole
-        if (null != this.role && false == this.role.isEmpty()) {
+        String role = signatureConfig.getXadesRole();
+        if (role != null && !role.isEmpty()) {
             SignerRoleType signerRole = signedSignatureProperties.addNewSignerRole();
             signedSignatureProperties.setSignerRole(signerRole);
             ClaimedRolesListType claimedRolesList = signerRole.addNewClaimedRoles();
             AnyType claimedRole = claimedRolesList.addNewClaimedRole();
             XmlString roleString = XmlString.Factory.newInstance();
-            roleString.setStringValue(this.role);
+            roleString.setStringValue(role);
             insertXChild(claimedRole, roleString);
         }
 
         // XAdES-EPES
-        SignaturePolicyService policyService = this.signatureConfig.getSignaturePolicyService();
+        SignaturePolicyService policyService = signatureConfig.getSignaturePolicyService();
         if (policyService != null) {
             SignaturePolicyIdentifierType signaturePolicyIdentifier =
                 signedSignatureProperties.addNewSignaturePolicyIdentifier();
@@ -200,7 +176,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
             byte[] signaturePolicyDocumentData = policyService.getSignaturePolicyDocument();
             DigestAlgAndValueType sigPolicyHash = signaturePolicyId.addNewSigPolicyHash();
-            setDigestAlgAndValue(sigPolicyHash, signaturePolicyDocumentData, this.signatureConfig.getDigestAlgo());
+            setDigestAlgAndValue(sigPolicyHash, signaturePolicyDocumentData, signatureConfig.getDigestAlgo());
 
             String signaturePolicyDownloadUrl = policyService.getSignaturePolicyDownloadUrl();
             if (null != signaturePolicyDownloadUrl) {
@@ -210,14 +186,14 @@ public class XAdESSignatureFacet implements SignatureFacet {
                 spUriElement.setStringValue(signaturePolicyDownloadUrl);
                 insertXChild(sigPolicyQualifier, spUriElement);
             }
-        } else if (this.signaturePolicyImplied) {
+        } else if (signatureConfig.isXadesSignaturePolicyImplied()) {
             SignaturePolicyIdentifierType signaturePolicyIdentifier = 
                     signedSignatureProperties.addNewSignaturePolicyIdentifier();
             signaturePolicyIdentifier.addNewSignaturePolicyImplied();
         }
 
         // DataObjectFormat
-        if (false == this.dataObjectFormatMimeTypes.isEmpty()) {
+        if (!dataObjectFormatMimeTypes.isEmpty()) {
             SignedDataObjectPropertiesType signedDataObjectProperties =
                 signedProperties.addNewSignedDataObjectProperties();
 
@@ -246,15 +222,14 @@ public class XAdESSignatureFacet implements SignatureFacet {
         objects.add(xadesObject);
 
         // add XAdES ds:Reference
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(this.signatureConfig.getDigestAlgo().xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         List<Transform> transforms = new ArrayList<Transform>();
         Transform exclusiveTransform = signatureFactory
                 .newTransform(CanonicalizationMethod.INCLUSIVE,
                         (TransformParameterSpec) null);
         transforms.add(exclusiveTransform);
-        Reference reference = signatureFactory.newReference("#"
-                + signedPropertiesId, digestMethod, transforms, XADES_TYPE,
-                null);
+        Reference reference = signatureFactory.newReference
+            ("#"+signatureConfig.getXadesSignatureId(), digestMethod, transforms, XADES_TYPE, null);
         references.add(reference);
     }
 
@@ -281,17 +256,9 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
     /**
      * Gives back the JAXB CertID data structure.
-     * 
-     * @param certificate
-     * @param xadesObjectFactory
-     * @param xmldsigObjectFactory
-     * @param digestAlgorithm
-     * @return
      */
-    protected static void setCertID(
-            CertIDType certId,
-            X509Certificate certificate,
-            HashAlgorithm digestAlgorithm, boolean issuerNameNoReverseOrder) {
+    protected static void setCertID
+        (CertIDType certId, SignatureConfig signatureConfig, boolean issuerNameNoReverseOrder, X509Certificate certificate) {
         X509IssuerSerialType issuerSerial = certId.addNewIssuerSerial();
         String issuerName;
         if (issuerNameNoReverseOrder) {
@@ -319,7 +286,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
                     + e.getMessage(), e);
         }
         DigestAlgAndValueType certDigest = certId.addNewCertDigest(); 
-        setDigestAlgAndValue(certDigest, encodedCertificate, digestAlgorithm);
+        setDigestAlgAndValue(certDigest, encodedCertificate, signatureConfig.getXadesDigestAlgo());
     }
 
     /**
@@ -332,43 +299,6 @@ public class XAdESSignatureFacet implements SignatureFacet {
     public void addMimeType(String dsReferenceUri, String mimetype) {
         this.dataObjectFormatMimeTypes.put(dsReferenceUri, mimetype);
     }
-
-    /**
-     * Sets the Id that will be used on the SignedProperties element;
-     * 
-     * @param idSignedProperties
-     */
-    public void setIdSignedProperties(String idSignedProperties) {
-        this.idSignedProperties = idSignedProperties;
-    }
-
-    /**
-     * Sets the signature policy to implied.
-     * 
-     * @param signaturePolicyImplied
-     */
-    public void setSignaturePolicyImplied(boolean signaturePolicyImplied) {
-        this.signaturePolicyImplied = signaturePolicyImplied;
-    }
-
-    /**
-     * Sets the XAdES claimed role.
-     * 
-     * @param role
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    /**
-     * Work-around for Office 2010 IssuerName encoding.
-     * 
-     * @param reverseOrder
-     */
-    public void setIssuerNameNoReverseOrder(boolean reverseOrder) {
-        this.issuerNameNoReverseOrder = reverseOrder;
-    }
-
 
     public Map<String,String> getNamespacePrefixMapping() {
         Map<String,String> map = new HashMap<String,String>();

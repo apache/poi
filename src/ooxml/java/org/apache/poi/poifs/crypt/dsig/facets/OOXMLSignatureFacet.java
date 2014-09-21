@@ -67,7 +67,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfoConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
 import org.apache.poi.util.POILogFactory;
@@ -94,15 +94,12 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     public static final String OOXML_DIGSIG_NS = "http://schemas.openxmlformats.org/package/2006/digital-signature";
     public static final String OFFICE_DIGSIG_NS = "http://schemas.microsoft.com/office/2006/digsig";
 
-    private final SignatureInfoConfig signatureConfig;
+    private SignatureConfig signatureConfig;
 
-    /**
-     * Main constructor.
-     */
-    public OOXMLSignatureFacet(SignatureInfoConfig signatureConfig) {
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
-
+    
     @Override
     public void preSign(
         Document document
