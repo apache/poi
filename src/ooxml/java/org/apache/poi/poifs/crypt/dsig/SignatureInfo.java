@@ -44,8 +44,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import javax.crypto.Cipher;
 import javax.xml.crypto.MarshalException;
@@ -142,6 +144,58 @@ public class SignatureInfo implements SignatureConfigurable {
 
     public static final byte[] RIPEMD256_DIGEST_INFO_PREFIX = new byte[]
         { 0x30, 0x2b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24, 0x03, 0x02, 0x03, 0x04, 0x20 };
+
+    private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
+    private static boolean isInitialized = false;
+    
+    private SignatureConfig signatureConfig;
+
+    public class SignaturePart {
+        private final PackagePart signaturePart;
+        private X509Certificate signer;
+        
+        private SignaturePart(PackagePart signaturePart) {
+            this.signaturePart = signaturePart;
+        }
+        
+        public PackagePart getPackagePart() {
+            return signaturePart;
+        }
+        
+        public X509Certificate getSigner() {
+            return signer;
+        }
+        
+        public SignatureDocument getSignatureDocument() throws IOException, XmlException {
+            // TODO: check for XXE
+            return SignatureDocument.Factory.parse(signaturePart.getInputStream());
+        }
+        
+        public boolean validate() {
+            KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
+            try {
+                Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
+                registerIds(doc);
+                
+                DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
+                domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
+                domValidateContext.setURIDereferencer(signatureConfig.getUriDereferencer());
+    
+                XMLSignatureFactory xmlSignatureFactory = getSignatureFactory();
+                XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
+                boolean valid = xmlSignature.validate(domValidateContext);
+
+                if (valid) {
+                    signer = keySelector.getCertificate();
+                }
+                
+                return valid;
+            } catch (Exception e) {
+                LOG.log(POILogger.ERROR, "error in marshalling and validating the signature", e);
+                return false;
+            }
+        }
+    }
     
     protected static class SignCreationListener implements EventListener, SignatureConfigurable {
         ThreadLocal<EventTarget> target = new ThreadLocal<EventTarget>();
@@ -168,11 +222,10 @@ public class SignatureInfo implements SignatureConfigurable {
     }
     
     
-    private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
-    private static boolean isInitialized = false;
+    public SignatureInfo() {
+        initXmlProvider();        
+    }
     
-    private SignatureConfig signatureConfig;
-
     public SignatureConfig getSignatureConfig() {
         return signatureConfig;
     }
@@ -182,10 +235,12 @@ public class SignatureInfo implements SignatureConfigurable {
     }
 
     public boolean verifySignature() {
-        initXmlProvider();
         // http://www.oracle.com/technetwork/articles/javase/dig-signature-api-140772.html
-        List<X509Certificate> signers = new ArrayList<X509Certificate>();
-        return getSignersAndValidate(signers, true);
+        for (SignaturePart sp : getSignatureParts()){
+            // only validate first part
+            return sp.validate();
+        }
+        return false;
     }
 
     public void confirmSignature()
@@ -218,77 +273,50 @@ public class SignatureInfo implements SignatureConfigurable {
         }
     }
     
-    public List<X509Certificate> getSigners() {
-        initXmlProvider();
-        List<X509Certificate> signers = new ArrayList<X509Certificate>();
-        getSignersAndValidate(signers, false);
-        return signers;
-    }
-    
-    protected boolean getSignersAndValidate(List<X509Certificate> signers, boolean onlyFirst) {
-        signatureConfig.init(true);
-        
-        boolean allValid = true;
-        List<PackagePart> signatureParts = getSignatureParts(onlyFirst);
-        if (signatureParts.isEmpty()) {
-            LOG.log(POILogger.DEBUG, "no signature resources");
-            allValid = false;
-        }
-
-        for (PackagePart signaturePart : signatureParts) {
-            KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
-
-            try {
-                Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
-                registerIds(doc);
-                
-                DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
-                domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
-                domValidateContext.setURIDereferencer(signatureConfig.getUriDereferencer());
-    
-                XMLSignatureFactory xmlSignatureFactory = getSignatureFactory();
-                XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
-                boolean validity = xmlSignature.validate(domValidateContext);
-                allValid &= validity;
-                if (!validity) continue;
-                // TODO: check what has been signed.
-            } catch (Exception e) {
-                LOG.log(POILogger.ERROR, "error in marshalling and validating the signature", e);
-                continue;
+    public Iterable<SignaturePart> getSignatureParts() {
+        return new Iterable<SignaturePart>() {
+            public Iterator<SignaturePart> iterator() {
+                return new Iterator<SignaturePart>() {
+                    OPCPackage pkg = signatureConfig.getOpcPackage();
+                    Iterator<PackageRelationship> sigOrigRels = 
+                        pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN).iterator();
+                    Iterator<PackageRelationship> sigRels = null;
+                    PackagePart sigPart = null;
+                    
+                    public boolean hasNext() {
+                        while (sigRels == null || !sigRels.hasNext()) {
+                            if (!sigOrigRels.hasNext()) return false;
+                            sigPart = pkg.getPart(sigOrigRels.next());
+                            LOG.log(POILogger.DEBUG, "Digital Signature Origin part", sigPart);
+                            try {
+                                sigRels = sigPart.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE).iterator();
+                            } catch (InvalidFormatException e) {
+                                LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
+                            }
+                        }
+                        return true;
+                    }
+                    
+                    public SignaturePart next() {
+                        PackagePart sigRelPart = null;
+                        do {
+                            try {
+                                if (!hasNext()) throw new NoSuchElementException();
+                                sigRelPart = sigPart.getRelatedPart(sigRels.next()); 
+                                LOG.log(POILogger.DEBUG, "XML Signature part", sigRelPart);
+                            } catch (InvalidFormatException e) {
+                                LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
+                            }
+                        } while (sigPart == null);
+                        return new SignaturePart(sigRelPart);
+                    }
+                    
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
             }
-
-            X509Certificate signer = keySelector.getCertificate();
-            signers.add(signer);
-        }
-        
-        return allValid;
-    }
-
-    protected List<PackagePart> getSignatureParts(boolean onlyFirst) {
-        List<PackagePart> packageParts = new ArrayList<PackagePart>();
-        OPCPackage pkg = signatureConfig.getOpcPackage();
-        
-        PackageRelationshipCollection sigOrigRels = pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);
-        for (PackageRelationship rel : sigOrigRels) {
-            PackagePart sigPart = pkg.getPart(rel);
-            LOG.log(POILogger.DEBUG, "Digital Signature Origin part", sigPart);
-
-            try {
-                PackageRelationshipCollection sigRels = sigPart.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE);
-                for (PackageRelationship sigRel : sigRels) {
-                    PackagePart sigRelPart = sigPart.getRelatedPart(sigRel); 
-                    LOG.log(POILogger.DEBUG, "XML Signature part", sigRelPart);
-                    packageParts.add(sigRelPart);
-                    if (onlyFirst) break;
-                }
-            } catch (InvalidFormatException e) {
-                LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
-            }
-            
-            if (onlyFirst && !packageParts.isEmpty()) break;
-        }
-
-        return packageParts;
+        };
     }
     
     public static XMLSignatureFactory getSignatureFactory() {

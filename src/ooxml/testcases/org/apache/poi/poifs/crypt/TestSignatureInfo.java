@@ -45,19 +45,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
-
-import javax.xml.crypto.KeySelector;
-import javax.xml.crypto.dsig.XMLSignature;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.dom.DOMValidateContext;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo.SignaturePart;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
@@ -78,6 +75,7 @@ import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
 
@@ -122,7 +120,12 @@ public class TestSignatureInfo {
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
-            List<X509Certificate> result = si.getSigners();
+            List<X509Certificate> result = new ArrayList<X509Certificate>();
+            for (SignaturePart sp : si.getSignatureParts()) {
+                if (sp.validate()) {
+                    result.add(sp.getSigner());
+                }
+            }
             pkg.revert();
             pkg.close();
             assertNotNull(result);
@@ -151,7 +154,12 @@ public class TestSignatureInfo {
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
             si.setSignatureConfig(sic);
-            List<X509Certificate> result = si.getSigners();
+            List<X509Certificate> result = new ArrayList<X509Certificate>();
+            for (SignaturePart sp : si.getSignatureParts()) {
+                if (sp.validate()) {
+                    result.add(sp.getSigner());
+                }
+            }
 
             assertNotNull(result);
             assertEquals("test-file: "+testFile, 1, result.size());
@@ -172,7 +180,12 @@ public class TestSignatureInfo {
         sic.setOpcPackage(pkg);
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(sic);
-        List<X509Certificate> result = si.getSigners();
+        List<X509Certificate> result = new ArrayList<X509Certificate>();
+        for (SignaturePart sp : si.getSignatureParts()) {
+            if (sp.validate()) {
+                result.add(sp.getSigner());
+            }
+        }
 
         assertNotNull(result);
         assertEquals("test-file: "+testFile, 2, result.size());
@@ -207,12 +220,16 @@ public class TestSignatureInfo {
         si.setSignatureConfig(sic);
         // hash > sha1 doesn't work in excel viewer ...
         si.confirmSignature();
-        List<X509Certificate> signer = si.getSigners();
-        assertEquals(1, signer.size());
+        List<X509Certificate> result = new ArrayList<X509Certificate>();
+        for (SignaturePart sp : si.getSignatureParts()) {
+            if (sp.validate()) {
+                result.add(sp.getSigner());
+            }
+        }
+        assertEquals(1, result.size());
         pkg.close();
     }
 
-    @SuppressWarnings("unused")
     @Test
     public void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
@@ -283,60 +300,45 @@ public class TestSignatureInfo {
         };
         signatureConfig.setRevocationDataService(revocationDataService);
 
+        // operate
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
+        si.confirmSignature();
         
-        Document document = DocumentHelper.createDocument();
-        
-        // operate
-        DigestInfo digestInfo = si.preSign(document, null);
-
         // verify
-        assertNotNull(digestInfo);
-        assertEquals(HashAlgorithm.sha1, digestInfo.hashAlgo);
-        assertNotNull(digestInfo.digestValue);
+        Iterator<SignaturePart> spIter = si.getSignatureParts().iterator();
+        assertTrue(spIter.hasNext());
+        SignaturePart sp = spIter.next();
+        boolean valid = sp.validate();
+        assertTrue(valid);
         
-        SignatureDocument sigDoc = SignatureDocument.Factory.parse(document);
-        String certDigestXQuery =
-                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
-              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
-              + "$this/ds:Signature/ds:Object/xades:QualifyingProperties/xades:SignedProperties/xades:SignedSignatureProperties/xades:SigningCertificate/xades:Cert/xades:CertDigest";
+        SignatureDocument sigDoc = sp.getSignatureDocument();
+        String declareNS = 
+            "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
+          + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; ";
+        
+        String digestValXQuery = declareNS +
+            "$this/ds:Signature/ds:SignedInfo/ds:Reference";
+        for (ReferenceType rt : (ReferenceType[])sigDoc.selectPath(digestValXQuery)) {
+            assertNotNull(rt.getDigestValue());
+            assertEquals(HashAlgorithm.sha1.xmlSignUri, rt.getDigestMethod().getAlgorithm());
+        }
+
+        String certDigestXQuery = declareNS +
+            "$this//xades:SigningCertificate/xades:Cert/xades:CertDigest";
         XmlObject xoList[] = sigDoc.selectPath(certDigestXQuery);
         assertEquals(xoList.length, 1);
         DigestAlgAndValueType certDigest = (DigestAlgAndValueType)xoList[0];
         assertNotNull(certDigest.getDigestValue());
 
-        // Sign the received XML signature digest value.
-        byte[] signatureValue = si.signDigest(digestInfo.digestValue);
-
-        // Operate: postSign
-        si.postSign(document, signatureValue);
-        
-        DOMValidateContext domValidateContext = new DOMValidateContext(
-                KeySelector.singletonKeySelector(keyPair.getPublic()),
-                document);
-        XMLSignatureFactory xmlSignatureFactory = SignatureInfo.getSignatureFactory();
-        XMLSignature xmlSignature = xmlSignatureFactory
-                .unmarshalXMLSignature(domValidateContext);
-        boolean validity = xmlSignature.validate(domValidateContext);
-        assertTrue(validity);
-
-        sigDoc = SignatureDocument.Factory.parse(document);
-        xoList = sigDoc.selectPath(certDigestXQuery);
-        assertEquals(xoList.length, 1);
-        certDigest = (DigestAlgAndValueType)xoList[0];
-        assertNotNull(certDigest.getDigestValue());
-        
-        String qualPropXQuery =
-                "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
-              + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; "
-              + "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
+        String qualPropXQuery = declareNS +
+            "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
         xoList = sigDoc.selectPath(qualPropXQuery);
         assertEquals(xoList.length, 1);
         QualifyingPropertiesType qualProp = (QualifyingPropertiesType)xoList[0];
         boolean qualPropXsdOk = qualProp.validate();
         assertTrue(qualPropXsdOk);
-        
+
         pkg.close();
     }
     
@@ -374,8 +376,13 @@ public class TestSignatureInfo {
 
         // verify: signature
         si.getSignatureConfig().setOpcPackage(pkgCopy);
-        List<X509Certificate> signers = si.getSigners();
-        assertEquals(signerCount, signers.size());
+        List<X509Certificate> result = new ArrayList<X509Certificate>();
+        for (SignaturePart sp : si.getSignatureParts()) {
+            if (sp.validate()) {
+                result.add(sp.getSigner());
+            }
+        }
+        assertEquals(signerCount, result.size());
 
         return pkgCopy;
     }
