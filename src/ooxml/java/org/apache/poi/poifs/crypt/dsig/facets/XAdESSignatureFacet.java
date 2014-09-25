@@ -52,7 +52,6 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -214,7 +213,6 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // add XAdES ds:Object
         List<XMLStructure> xadesObjectContent = new ArrayList<XMLStructure>();
         Element qualDocEl = (Element)document.importNode(qualifyingProperties.getDomNode(), true);
-        SignatureInfo.registerIdAttribute(qualDocEl.getElementsByTagName("SignedProperties"));
         qualDocEl.setAttributeNS(XmlNS, "xmlns:xd", "http://uri.etsi.org/01903/v1.3.2#");
         setPrefix(qualDocEl, "http://uri.etsi.org/01903/v1.3.2#", "xd");
         xadesObjectContent.add(new DOMStructure(qualDocEl));
