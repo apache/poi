@@ -71,6 +71,9 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
@@ -175,7 +178,11 @@ public class SignatureInfo implements SignatureConfigurable {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
             try {
                 Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
-                registerIds(doc);
+                XPath xpath = XPathFactory.newInstance().newXPath();
+                NodeList nl = (NodeList)xpath.compile("//*[@Id]").evaluate(doc, XPathConstants.NODESET);
+                for (int i=0; i<nl.getLength(); i++) {
+                    ((Element)nl.item(i)).setIdAttribute("Id", true);
+                }
                 
                 DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
                 domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
@@ -206,12 +213,18 @@ public class SignatureInfo implements SignatureConfigurable {
         public void handleEvent(Event e) {
             if (e instanceof MutationEvent) {
                 MutationEvent mutEvt = (MutationEvent)e;
-                if (mutEvt.getTarget() instanceof Element) {
+                EventTarget et = mutEvt.getTarget();
+                if (et instanceof Element) {
                     Element el = (Element)mutEvt.getTarget();
                     String packageId = signatureConfig.getPackageSignatureId();
-                    if (packageId.equals(el.getAttribute("Id"))) {
-                        target.get().removeEventListener("DOMSubtreeModified", this, false);
-                        el.setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+                    if (el.hasAttribute("Id")) {
+                        el.setIdAttribute("Id", true);
+                        
+                        if (packageId.equals(el.getAttribute("Id"))) {
+                            target.get().removeEventListener("DOMSubtreeModified", this, false);
+                            el.setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+                            target.get().addEventListener("DOMSubtreeModified", this, false);
+                        }
                     }
                 }
             }
@@ -274,6 +287,7 @@ public class SignatureInfo implements SignatureConfigurable {
     }
     
     public Iterable<SignaturePart> getSignatureParts() {
+        signatureConfig.init(true);
         return new Iterable<SignaturePart>() {
             public Iterator<SignaturePart> iterator() {
                 return new Iterator<SignaturePart>() {
@@ -378,10 +392,8 @@ public class SignatureInfo implements SignatureConfigurable {
         default: throw new EncryptedDocumentException("Hash algorithm "+signatureConfig.getDigestAlgo()+" not supported for signing.");
         }
     }
-
     
-    
-    public static synchronized void initXmlProvider() {
+    protected static synchronized void initXmlProvider() {
         if (isInitialized) return;
         isInitialized = true;
         
@@ -394,6 +406,10 @@ public class SignatureInfo implements SignatureConfigurable {
         }
     }
     
+    /**
+     * Helper method for adding informations before the signing.
+     * Normally {@link #confirmSignature()} is sufficient to be used.
+     */
     @SuppressWarnings("unchecked")
     public DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
         throws ParserConfigurationException, NoSuchAlgorithmException,
@@ -401,7 +417,6 @@ public class SignatureInfo implements SignatureConfigurable {
         javax.xml.crypto.dsig.XMLSignatureException,
         TransformerFactoryConfigurationError, TransformerException,
         IOException, SAXException, NoSuchProviderException, XmlException, URISyntaxException {
-        SignatureInfo.initXmlProvider();
         signatureConfig.init(false);
         
         // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
@@ -489,8 +504,6 @@ public class SignatureInfo implements SignatureConfigurable {
         // xmlSignContext.putNamespacePrefix(PackageNamespaces.DIGITAL_SIGNATURE, "mdssi");
         xmlSignature.sign(xmlSignContext);
 
-        registerIds(document);
-        
         /*
          * Completion of undigested ds:References in the ds:Manifests.
          */
@@ -545,10 +558,13 @@ public class SignatureInfo implements SignatureConfigurable {
         return new DigestInfo(digestValue, signatureConfig.getDigestAlgo(), description);
     }
 
+    /**
+     * Helper method for adding informations after the signing.
+     * Normally {@link #confirmSignature()} is sufficient to be used.
+     */
     public void postSign(Document document, byte[] signatureValue)
     throws IOException, MarshalException, ParserConfigurationException, XmlException {
         LOG.log(POILogger.DEBUG, "postSign");
-        SignatureInfo.initXmlProvider();
 
         /*
          * Check ds:Signature node.
@@ -574,7 +590,6 @@ public class SignatureInfo implements SignatureConfigurable {
             signatureFacet.postSign(document, signatureConfig.getSigningCertificateChain());
         }
 
-        registerIds(document);
         writeDocument(document);
     }
 
@@ -633,28 +648,6 @@ public class SignatureInfo implements SignatureConfigurable {
         pkg.addRelationship(sigsPartName, TargetMode.INTERNAL, PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);
         
         sigsPart.addRelationship(sigPartName, TargetMode.INTERNAL, PackageRelationshipTypes.DIGITAL_SIGNATURE);
-    }
-    
-    /**
-     * the resulting document needs to be tweaked before it can be digested -
-     * this applies to the verification and signing step
-     *
-     * @param doc
-     */
-    private static void registerIds(Document doc) {
-        NodeList nl = doc.getElementsByTagNameNS(XmlDSigNS, "Object");
-        registerIdAttribute(nl);
-        nl = doc.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "SignedProperties");
-        registerIdAttribute(nl);
-    }
-    
-    public static void registerIdAttribute(NodeList nl) {
-        for (int i=0; i<nl.getLength(); i++) {
-            Element el = (Element)nl.item(i);
-            if (el.hasAttribute("Id")) {
-                el.setIdAttribute("Id", true);
-            }
-        }
     }
     
     @SuppressWarnings("unchecked")
