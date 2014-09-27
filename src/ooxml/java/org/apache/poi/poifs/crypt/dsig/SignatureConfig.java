@@ -17,11 +17,16 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XADES_132_NS;
+
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.crypto.URIDereferencer;
@@ -73,7 +78,6 @@ public class SignatureConfig {
      */
     private SignaturePolicyService signaturePolicyService;
     private URIDereferencer uriDereferencer = new OOXMLURIDereferencer();
-    private String signatureNamespacePrefix;
     private String canonicalizationMethod = CanonicalizationMethod.INCLUSIVE;
     
     private boolean includeEntireCertificateChain = true;
@@ -130,6 +134,12 @@ public class SignatureConfig {
      */
     EventListener signCreationListener = null;
 
+    /**
+     * Map of namespace uris to prefix
+     * If a mapping is specified, the corresponding elements will be prefixed
+     */
+    Map<String,String> namespacePrefixes = new HashMap<String,String>();
+    
     protected void init(boolean onlyValidation) {
         if (uriDereferencer == null) {
             throw new EncryptedDocumentException("uriDereferencer is null");
@@ -140,6 +150,15 @@ public class SignatureConfig {
         if (uriDereferencer instanceof SignatureConfigurable) {
             ((SignatureConfigurable)uriDereferencer).setSignatureConfig(this);
         }
+        if (namespacePrefixes.isEmpty()) {
+            /*
+             * OOo doesn't like ds namespaces so per default prefixing is off.
+             */
+            // namespacePrefixes.put(XML_DIGSIG_NS, "");
+            namespacePrefixes.put(OO_DIGSIG_NS, "mdssi");
+            namespacePrefixes.put(XADES_132_NS, "xd");
+        }
+        
         if (onlyValidation) return;
 
         if (signCreationListener == null) {
@@ -149,7 +168,6 @@ public class SignatureConfig {
         if (signCreationListener instanceof SignatureConfigurable) {
             ((SignatureConfigurable)signCreationListener).setSignatureConfig(this);
         }
-
         
         if (tspService != null) {
             tspService.setSignatureConfig(this);
@@ -262,12 +280,6 @@ public class SignatureConfig {
     }
     public void setSignatureDescription(String signatureDescription) {
         this.signatureDescription = signatureDescription;
-    }
-    public String getSignatureNamespacePrefix() {
-        return signatureNamespacePrefix;
-    }
-    public void setSignatureNamespacePrefix(String signatureNamespacePrefix) {
-        this.signatureNamespacePrefix = signatureNamespacePrefix;
     }
     public String getCanonicalizationMethod() {
         return canonicalizationMethod;
@@ -402,5 +414,11 @@ public class SignatureConfig {
     }
     public void setSignCreationListener(EventListener signCreationListener) {
         this.signCreationListener = signCreationListener;
+    }
+    public Map<String, String> getNamespacePrefixes() {
+        return namespacePrefixes;
+    }
+    public void setNamespacePrefixes(Map<String, String> namespacePrefixes) {
+        this.namespacePrefixes = namespacePrefixes;
     }
 }

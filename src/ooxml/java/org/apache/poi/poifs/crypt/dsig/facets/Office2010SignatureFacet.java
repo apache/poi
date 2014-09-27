@@ -28,7 +28,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
@@ -71,7 +70,7 @@ public class Office2010SignatureFacet implements SignatureFacet {
     public void postSign(Document document, List<X509Certificate> signingCertificateChain)
     throws XmlException {
         // check for XAdES-BES
-        NodeList nl = document.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "QualifyingProperties");
+        NodeList nl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
         if (nl.getLength() != 1) {
             throw new IllegalArgumentException("no XAdES-BES extension present");
         }
@@ -91,9 +90,5 @@ public class Office2010SignatureFacet implements SignatureFacet {
         
         Node n = document.importNode(qualProps.getDomNode().getFirstChild(), true);
         nl.item(0).getParentNode().replaceChild(n, nl.item(0));
-    }
-    
-    public Map<String,String> getNamespacePrefixMapping() {
-        return null;
     }
 }

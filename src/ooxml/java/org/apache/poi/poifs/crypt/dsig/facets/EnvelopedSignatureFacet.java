@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -59,10 +58,5 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
                 transforms, null, null);
 
         references.add(reference);
-    }
-
-    @Override
-    public Map<String,String> getNamespacePrefixMapping() {
-        return null;
     }
 }

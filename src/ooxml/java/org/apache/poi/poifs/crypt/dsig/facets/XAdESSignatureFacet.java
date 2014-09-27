@@ -24,7 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlNS;
 import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.setPrefix;
 
 import java.security.InvalidAlgorithmParameterException;
@@ -213,8 +212,8 @@ public class XAdESSignatureFacet implements SignatureFacet {
         // add XAdES ds:Object
         List<XMLStructure> xadesObjectContent = new ArrayList<XMLStructure>();
         Element qualDocEl = (Element)document.importNode(qualifyingProperties.getDomNode(), true);
-        qualDocEl.setAttributeNS(XmlNS, "xmlns:xd", "http://uri.etsi.org/01903/v1.3.2#");
-        setPrefix(qualDocEl, "http://uri.etsi.org/01903/v1.3.2#", "xd");
+        qualDocEl.setAttributeNS(XML_NS, "xmlns:xd", XADES_132_NS);
+        setPrefix(qualDocEl, XADES_132_NS, "xd");
         xadesObjectContent.add(new DOMStructure(qualDocEl));
         XMLObject xadesObject = signatureFactory.newXMLObject(xadesObjectContent, null, null, null);
         objects.add(xadesObject);
@@ -296,12 +295,6 @@ public class XAdESSignatureFacet implements SignatureFacet {
      */
     public void addMimeType(String dsReferenceUri, String mimetype) {
         this.dataObjectFormatMimeTypes.put(dsReferenceUri, mimetype);
-    }
-
-    public Map<String,String> getNamespacePrefixMapping() {
-        Map<String,String> map = new HashMap<String,String>();
-        map.put("xd", "http://uri.etsi.org/01903/v1.3.2#");
-        return map;
     }
 
     protected static void insertXChild(XmlObject root, XmlObject child) {

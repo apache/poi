@@ -24,8 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlNS;
 import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.setPrefix;
 
 import java.io.IOException;
@@ -37,10 +35,8 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
@@ -60,7 +56,6 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -90,9 +85,6 @@ import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
 public class OOXMLSignatureFacet implements SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(OOXMLSignatureFacet.class);
-
-    public static final String OOXML_DIGSIG_NS = "http://schemas.openxmlformats.org/package/2006/digital-signature";
-    public static final String OFFICE_DIGSIG_NS = "http://schemas.microsoft.com/office/2006/digsig";
 
     private SignatureConfig signatureConfig;
 
@@ -133,7 +125,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         Reference reference = signatureFactory.newReference
-            ("#" + objectId, digestMethod, null, XmlDSigNS+"Object", null);
+            ("#" + objectId, digestMethod, null, XML_DIGSIG_NS+"Object", null);
         references.add(reference);
     }
 
@@ -238,7 +230,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         // TODO: find better method to have xmlbeans + export the prefix
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
-        setPrefix(n, PackageNamespaces.DIGITAL_SIGNATURE, "mdssi");
+        setPrefix(n, OO_DIGSIG_NS, "mdssi");
         
         List<XMLStructure> signatureTimeContent = new ArrayList<XMLStructure>();
         signatureTimeContent.add(new DOMStructure(n));
@@ -264,7 +256,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
         ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestAlgo().xmlSignUri);
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
-        n.setAttributeNS(XmlNS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
+        n.setAttributeNS(XML_NS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
         
         List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
         signatureInfoContent.add(new DOMStructure(n));
@@ -283,7 +275,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         Reference reference = signatureFactory.newReference
-            ("#" + objectId, digestMethod, null, XmlDSigNS+"Object", null);
+            ("#" + objectId, digestMethod, null, XML_DIGSIG_NS+"Object", null);
         references.add(reference);
     }
 
@@ -360,14 +352,6 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         return false;
     }
 
-    public Map<String,String> getNamespacePrefixMapping() {
-        Map<String,String> m = new HashMap<String,String>();
-        m.put("mdssi", OOXML_DIGSIG_NS);
-        m.put("xd", "http://uri.etsi.org/01903/v1.3.2#");
-        return m;
-    }
-
-    
     /**
      * Office 2010 list of signed types (extensions).
      */

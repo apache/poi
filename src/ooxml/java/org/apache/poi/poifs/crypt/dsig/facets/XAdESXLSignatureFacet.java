@@ -24,7 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
 import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertXChild;
 
 import java.io.ByteArrayInputStream;
@@ -42,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -112,10 +110,6 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(XAdESXLSignatureFacet.class);
 
-    public static final String XADES_NAMESPACE = "http://uri.etsi.org/01903/v1.3.2#";
-
-    public static final String XADES141_NAMESPACE = "http://uri.etsi.org/01903/v1.4.1#";
-    
     private SignatureConfig signatureConfig;
 
     private String c14nAlgoId = CanonicalizationMethod.EXCLUSIVE;
@@ -157,7 +151,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         QualifyingPropertiesType qualProps = null;
 
         // check for XAdES-BES
-        NodeList qualNl = document.getElementsByTagNameNS("http://uri.etsi.org/01903/v1.3.2#", "QualifyingProperties");
+        NodeList qualNl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
         if (qualNl.getLength() == 1) {
             qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0));
             qualProps = qualDoc.getQualifyingProperties();
@@ -177,7 +171,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         
 
         // create the XAdES-T time-stamp
-        NodeList nlSigVal = document.getElementsByTagNameNS(XmlDSigNS, "SignatureValue");
+        NodeList nlSigVal = document.getElementsByTagNameNS(XML_DIGSIG_NS, "SignatureValue");
         if (nlSigVal.getLength() != 1) {
             throw new IllegalArgumentException("SignatureValue is not set.");
         }
@@ -436,9 +430,4 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             }
         }
     }
-
-    public Map<String,String> getNamespacePrefixMapping() {
-        return null;
-    }
-
 }
