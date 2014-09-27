@@ -24,17 +24,13 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.XmlDSigNS;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMCryptoContext;
@@ -79,7 +75,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
     throws MarshalException {
         LOG.log(POILogger.DEBUG, "postSign");
 
-        NodeList nl = document.getElementsByTagNameNS(XmlDSigNS, "Object");
+        NodeList nl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "Object");
         
         /*
          * Make sure we insert right after the ds:SignatureValue element, just
@@ -144,14 +140,14 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
         Element n = document.getDocumentElement();
         DOMSignContext domSignContext = new DOMSignContext(key, n, nextSibling);
         DOMCryptoContext domCryptoContext = domSignContext;
-        domCryptoContext.putNamespacePrefix(XmlDSigNS, "xd");
+        domCryptoContext.putNamespacePrefix(XML_DIGSIG_NS, "xd");
         DOMStructure domStructure = new DOMStructure(n);
         // how to set nextSibling??? - marshal is ignoring nextSibling in DOMSignContext
         domKeyInfo.marshal(domStructure, domCryptoContext);
         
         // move keyinfo into the right place
         if (nextSibling != null) {
-            NodeList kiNl = document.getElementsByTagNameNS(XmlDSigNS, "KeyInfo");
+            NodeList kiNl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "KeyInfo");
             if (kiNl.getLength() != 1) {
                 throw new RuntimeException("KeyInfo wasn't set");
             }
@@ -168,11 +164,4 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
     ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         // empty
     }
-
-    public Map<String,String> getNamespacePrefixMapping() {
-        Map<String,String> map = new HashMap<String,String>();
-        // map.put("xd", XmlDSigNS);
-        return map;
-    }
-
 }

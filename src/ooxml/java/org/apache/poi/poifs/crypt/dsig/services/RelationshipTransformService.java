@@ -24,6 +24,9 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -161,7 +164,7 @@ public class RelationshipTransformService extends TransformService {
         LOG.log(POILogger.DEBUG, "marshallParams(parent,context)");
         DOMStructure domParent = (DOMStructure) parent;
         Element parentNode = (Element)domParent.getNode();
-        // parentNode.setAttributeNS(Constants.NamespaceSpecNS, "xmlns:mdssi", DIGITAL_SIGNATURE);
+        // parentNode.setAttributeNS(XML_NS, "xmlns:mdssi", XML_DIGSIG_NS);
         Document doc = parentNode.getOwnerDocument();
         
         for (String sourceId : this.sourceIds) {

@@ -30,13 +30,15 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.List;
-import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
+import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Document;
@@ -48,6 +50,14 @@ import org.w3c.dom.Document;
  * 
  */
 public interface SignatureFacet extends SignatureConfigurable {
+
+    String XML_NS = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+    String XML_DIGSIG_NS = XMLSignature.XMLNS;
+    String OO_DIGSIG_NS = PackageNamespaces.DIGITAL_SIGNATURE;
+    String MS_DIGSIG_NS = "http://schemas.microsoft.com/office/2006/digsig";
+    String XADES_132_NS = "http://uri.etsi.org/01903/v1.3.2#";
+    String XADES_141_NS = "http://uri.etsi.org/01903/v1.4.1#";
+
 
     /**
      * This method is being invoked by the XML signature service engine during
@@ -83,6 +93,4 @@ public interface SignatureFacet extends SignatureConfigurable {
           Document document
         , List<X509Certificate> signingCertificateChain
     ) throws MarshalException, XmlException;
-    
-    Map<String,String> getNamespacePrefixMapping();
 }

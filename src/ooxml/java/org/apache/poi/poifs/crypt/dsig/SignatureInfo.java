@@ -24,6 +24,9 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_MAC_HMAC_RIPEMD160;
 import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
 import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
@@ -80,7 +83,6 @@ import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -115,9 +117,6 @@ import org.xml.sax.SAXException;
 
 public class SignatureInfo implements SignatureConfigurable {
 
-    public static final String XmlNS = "http://www.w3.org/2000/xmlns/";
-    public static final String XmlDSigNS = XMLSignature.XMLNS;
-    
     // see https://www.ietf.org/rfc/rfc3110.txt
     // RSA/SHA1 SIG Resource Records
     public static final byte[] SHA1_DIGEST_INFO_PREFIX = new byte[]
@@ -222,13 +221,14 @@ public class SignatureInfo implements SignatureConfigurable {
                         
                         if (packageId.equals(el.getAttribute("Id"))) {
                             target.get().removeEventListener("DOMSubtreeModified", this, false);
-                            el.setAttributeNS(XmlNS, "xmlns:mdssi", PackageNamespaces.DIGITAL_SIGNATURE);
+                            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
                             target.get().addEventListener("DOMSubtreeModified", this, false);
                         }
                     }
                 }
             }
         }
+        
         public void setSignatureConfig(SignatureConfig signatureConfig) {
             this.signatureConfig = signatureConfig;
         }
@@ -439,18 +439,11 @@ public class SignatureInfo implements SignatureConfigurable {
             xmlSignContext.setURIDereferencer(uriDereferencer);
         }
 
-        xmlSignContext.putNamespacePrefix(
-                "http://schemas.openxmlformats.org/package/2006/digital-signature",
-                "mdssi");
-        
-        String sigNsPrefix = signatureConfig.getSignatureNamespacePrefix();
-        if (sigNsPrefix != null) {
-            /*
-             * OOo doesn't like ds namespaces so per default prefixing is off.
-             */
-            xmlSignContext.putNamespacePrefix(XmlDSigNS, sigNsPrefix);
+        for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
+            xmlSignContext.putNamespacePrefix(me.getKey(), me.getValue());
         }
-
+        xmlSignContext.setDefaultNamespacePrefix(signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
+        
         XMLSignatureFactory signatureFactory = SignatureInfo.getSignatureFactory();
 
         /*
@@ -500,8 +493,6 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * ds:Signature Marshalling.
          */
-        xmlSignContext.setDefaultNamespacePrefix(signatureConfig.getSignatureNamespacePrefix());
-        // xmlSignContext.putNamespacePrefix(PackageNamespaces.DIGITAL_SIGNATURE, "mdssi");
         xmlSignature.sign(xmlSignContext);
 
         /*
@@ -550,8 +541,8 @@ public class SignatureInfo implements SignatureConfigurable {
          * usage.
          */
 
-        MessageDigest jcaMessageDigest = CryptoFunctions.getMessageDigest(signatureConfig.getDigestAlgo());
-        byte[] digestValue = jcaMessageDigest.digest(octets);
+        MessageDigest md = CryptoFunctions.getMessageDigest(signatureConfig.getDigestAlgo());
+        byte[] digestValue = md.digest(octets);
         
         
         String description = signatureConfig.getSignatureDescription();
@@ -577,7 +568,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * Insert signature value into the ds:SignatureValue element
          */
-        NodeList sigValNl = document.getElementsByTagNameNS(XmlDSigNS, "SignatureValue");
+        NodeList sigValNl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "SignatureValue");
         if (sigValNl.getLength() != 1) {
             throw new RuntimeException("preSign has to be called before postSign");
         }
@@ -596,12 +587,9 @@ public class SignatureInfo implements SignatureConfigurable {
     protected void writeDocument(Document document) throws IOException, XmlException {
         XmlOptions xo = new XmlOptions();
         Map<String,String> namespaceMap = new HashMap<String,String>();
-        for (SignatureFacet sf : signatureConfig.getSignatureFacets()) {
-            Map<String,String> sfm = sf.getNamespacePrefixMapping();
-            if (sfm != null) {
-                namespaceMap.putAll(sfm);
-            }
-        }
+        for(Map.Entry<String,String> entry : signatureConfig.getNamespacePrefixes().entrySet()){
+            namespaceMap.put(entry.getValue(), entry.getKey());
+        }        
         xo.setSaveSuggestedPrefixes(namespaceMap);
         xo.setUseDefaultNamespace();
 
@@ -651,7 +639,7 @@ public class SignatureInfo implements SignatureConfigurable {
     }
     
     @SuppressWarnings("unchecked")
-    public static <T> List<T> safe(List<T> other) {
+    private static <T> List<T> safe(List<T> other) {
         return other == null ? Collections.EMPTY_LIST : other;
     }
 }
