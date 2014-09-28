@@ -24,9 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
-import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
-import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_MAC_HMAC_RIPEMD160;
 import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
 import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
@@ -82,6 +80,7 @@ import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -107,12 +106,9 @@ import org.apache.xmlbeans.XmlOptions;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
-import org.w3c.dom.events.MutationEvent;
 import org.xml.sax.SAXException;
 
 public class SignatureInfo implements SignatureConfigurable {
@@ -202,38 +198,6 @@ public class SignatureInfo implements SignatureConfigurable {
             }
         }
     }
-    
-    protected static class SignCreationListener implements EventListener, SignatureConfigurable {
-        ThreadLocal<EventTarget> target = new ThreadLocal<EventTarget>();
-        SignatureConfig signatureConfig;
-        public void setEventTarget(EventTarget target) {
-            this.target.set(target);
-        }
-        public void handleEvent(Event e) {
-            if (e instanceof MutationEvent) {
-                MutationEvent mutEvt = (MutationEvent)e;
-                EventTarget et = mutEvt.getTarget();
-                if (et instanceof Element) {
-                    Element el = (Element)mutEvt.getTarget();
-                    String packageId = signatureConfig.getPackageSignatureId();
-                    if (el.hasAttribute("Id")) {
-                        el.setIdAttribute("Id", true);
-                        
-                        if (packageId.equals(el.getAttribute("Id"))) {
-                            target.get().removeEventListener("DOMSubtreeModified", this, false);
-                            el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
-                            target.get().addEventListener("DOMSubtreeModified", this, false);
-                        }
-                    }
-                }
-            }
-        }
-        
-        public void setSignatureConfig(SignatureConfig signatureConfig) {
-            this.signatureConfig = signatureConfig;
-        }
-    }
-    
     
     public SignatureInfo() {
         initXmlProvider();        
@@ -360,14 +324,6 @@ public class SignatureInfo implements SignatureConfigurable {
         throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
     }
     
-    public static void setPrefix(Node el, String ns, String prefix) {
-        if (ns.equals(el.getNamespaceURI())) el.setPrefix(prefix);
-        NodeList nl = el.getChildNodes();
-        for (int i=0; i<nl.getLength(); i++) {
-            setPrefix(nl.item(i), ns, prefix);
-        }
-    }
-    
     protected byte[] getHashMagic() {
         switch (signatureConfig.getDigestAlgo()) {
         case sha1: return SHA1_DIGEST_INFO_PREFIX;
@@ -424,10 +380,10 @@ public class SignatureInfo implements SignatureConfigurable {
         EventTarget target = (EventTarget)document;
         EventListener creationListener = signatureConfig.getSignCreationListener();
         if (creationListener != null) {
-            if (creationListener instanceof SignCreationListener) {
-                ((SignCreationListener)creationListener).setEventTarget(target);
+            if (creationListener instanceof SignatureMarshalListener) {
+                ((SignatureMarshalListener)creationListener).setEventTarget(target);
             }
-            target.addEventListener("DOMSubtreeModified", creationListener, false);
+            SignatureMarshalListener.setListener(target, creationListener, true);
         }
         
         /*
@@ -442,7 +398,7 @@ public class SignatureInfo implements SignatureConfigurable {
         for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
             xmlSignContext.putNamespacePrefix(me.getKey(), me.getValue());
         }
-        xmlSignContext.setDefaultNamespacePrefix(signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
+        xmlSignContext.setDefaultNamespacePrefix(""); // signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
         
         XMLSignatureFactory signatureFactory = SignatureInfo.getSignatureFactory();
 
@@ -611,10 +567,9 @@ public class SignatureInfo implements SignatureConfigurable {
             throw new IOException(e);
         }
         
-        String sigContentType = "application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml";
         PackagePart sigPart = pkg.getPart(sigPartName);
         if (sigPart == null) {
-            sigPart = pkg.createPart(sigPartName, sigContentType);
+            sigPart = pkg.createPart(sigPartName, ContentTypes.DIGITAL_SIGNATURE_XML_SIGNATURE_PART);
         }
         
         OutputStream os = sigPart.getOutputStream();
@@ -622,11 +577,10 @@ public class SignatureInfo implements SignatureConfigurable {
         sigDoc.save(os, xo);
         os.close();
         
-        String sigsContentType = "application/vnd.openxmlformats-package.digital-signature-origin";
         PackagePart sigsPart = pkg.getPart(sigsPartName);
         if (sigsPart == null) {
             // touch empty marker file
-            sigsPart = pkg.createPart(sigsPartName, sigsContentType);
+            sigsPart = pkg.createPart(sigsPartName, ContentTypes.DIGITAL_SIGNATURE_ORIGIN_PART);
         }
         
         PackageRelationshipCollection relCol = pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN);

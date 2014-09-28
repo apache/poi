@@ -35,7 +35,6 @@ import javax.xml.crypto.dsig.CanonicalizationMethod;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfo.SignCreationListener;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.OOXMLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.Office2010SignatureFacet;
@@ -162,7 +161,7 @@ public class SignatureConfig {
         if (onlyValidation) return;
 
         if (signCreationListener == null) {
-            signCreationListener = new SignCreationListener();
+            signCreationListener = new SignatureMarshalListener();
         }
         
         if (signCreationListener instanceof SignatureConfigurable) {
