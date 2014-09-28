@@ -25,11 +25,6 @@
 package org.apache.poi.poifs.crypt.dsig;
 
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
-import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_MAC_HMAC_RIPEMD160;
-import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
-import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
-import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
-import static org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -113,36 +108,6 @@ import org.xml.sax.SAXException;
 
 public class SignatureInfo implements SignatureConfigurable {
 
-    // see https://www.ietf.org/rfc/rfc3110.txt
-    // RSA/SHA1 SIG Resource Records
-    public static final byte[] SHA1_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x0e, 0x03, 0x02, 0x1a, 0x04, 0x14 };
-
-    public static final byte[] SHA224_DIGEST_INFO_PREFIX = new byte[] 
-        { 0x30, 0x2b, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-        , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x04, 0x1c };
-
-    public static final byte[] SHA256_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x2f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-        , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x04, 0x20 };
-
-    public static final byte[] SHA384_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x3f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-        , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x04, 0x30 };
-
-    public static final byte[] SHA512_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x4f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-        , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x04, 0x40 };
-
-    public static final byte[] RIPEMD128_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x1b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24, 0x03, 0x02, 0x02, 0x04, 0x10 };
-
-    public static final byte[] RIPEMD160_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24, 0x03, 0x02, 0x01, 0x04, 0x14 };
-
-    public static final byte[] RIPEMD256_DIGEST_INFO_PREFIX = new byte[]
-        { 0x30, 0x2b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24, 0x03, 0x02, 0x03, 0x04, 0x20 };
-
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
     private static boolean isInitialized = false;
     
@@ -151,6 +116,7 @@ public class SignatureInfo implements SignatureConfigurable {
     public class SignaturePart {
         private final PackagePart signaturePart;
         private X509Certificate signer;
+        private List<X509Certificate> certChain;
         
         private SignaturePart(PackagePart signaturePart) {
             this.signaturePart = signaturePart;
@@ -162,6 +128,10 @@ public class SignatureInfo implements SignatureConfigurable {
         
         public X509Certificate getSigner() {
             return signer;
+        }
+        
+        public List<X509Certificate> getCertChain() {
+            return certChain;
         }
         
         public SignatureDocument getSignatureDocument() throws IOException, XmlException {
@@ -188,7 +158,8 @@ public class SignatureInfo implements SignatureConfigurable {
                 boolean valid = xmlSignature.validate(domValidateContext);
 
                 if (valid) {
-                    signer = keySelector.getCertificate();
+                    signer = keySelector.getSigner();
+                    certChain = keySelector.getCertChain();
                 }
                 
                 return valid;
@@ -240,7 +211,7 @@ public class SignatureInfo implements SignatureConfigurable {
             
         try {
             ByteArrayOutputStream digestInfoValueBuf = new ByteArrayOutputStream();
-            digestInfoValueBuf.write(getHashMagic());
+            digestInfoValueBuf.write(signatureConfig.getHashMagic());
             digestInfoValueBuf.write(digest);
             byte[] digestInfoValue = digestInfoValueBuf.toByteArray();
             byte[] signatureValue = cipher.doFinal(digestInfoValue);
@@ -324,31 +295,6 @@ public class SignatureInfo implements SignatureConfigurable {
         throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
     }
     
-    protected byte[] getHashMagic() {
-        switch (signatureConfig.getDigestAlgo()) {
-        case sha1: return SHA1_DIGEST_INFO_PREFIX;
-        // sha224: return SHA224_DIGEST_INFO_PREFIX;
-        case sha256: return SHA256_DIGEST_INFO_PREFIX;
-        case sha384: return SHA384_DIGEST_INFO_PREFIX;
-        case sha512: return SHA512_DIGEST_INFO_PREFIX;
-        case ripemd128: return RIPEMD128_DIGEST_INFO_PREFIX;
-        case ripemd160: return RIPEMD160_DIGEST_INFO_PREFIX;
-        // case ripemd256: return RIPEMD256_DIGEST_INFO_PREFIX;
-        default: throw new EncryptedDocumentException("Hash algorithm "+signatureConfig.getDigestAlgo()+" not supported for signing.");
-        }
-    }
-
-    protected String getSignatureMethod() {
-        switch (signatureConfig.getDigestAlgo()) {
-        case sha1:   return ALGO_ID_SIGNATURE_RSA_SHA1;
-        case sha256: return ALGO_ID_SIGNATURE_RSA_SHA256;
-        case sha384: return ALGO_ID_SIGNATURE_RSA_SHA384;
-        case sha512: return ALGO_ID_SIGNATURE_RSA_SHA512;
-        case ripemd160: return ALGO_ID_MAC_HMAC_RIPEMD160;
-        default: throw new EncryptedDocumentException("Hash algorithm "+signatureConfig.getDigestAlgo()+" not supported for signing.");
-        }
-    }
-    
     protected static synchronized void initXmlProvider() {
         if (isInitialized) return;
         isInitialized = true;
@@ -409,8 +355,8 @@ public class SignatureInfo implements SignatureConfigurable {
         for (DigestInfo digestInfo : safe(digestInfos)) {
             byte[] documentDigestValue = digestInfo.digestValue;
 
-            DigestMethod digestMethod = signatureFactory.newDigestMethod(
-                            digestInfo.hashAlgo.xmlSignUri, null);
+            DigestMethod digestMethod = signatureFactory.newDigestMethod
+                (signatureConfig.getDigestMethodUri(), null);
 
             String uri = new File(digestInfo.description).getName();
 
@@ -431,7 +377,8 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * ds:SignedInfo
          */
-        SignatureMethod signatureMethod = signatureFactory.newSignatureMethod(getSignatureMethod(), null);
+        SignatureMethod signatureMethod = signatureFactory.newSignatureMethod
+            (signatureConfig.getSignatureMethod(), null);
         CanonicalizationMethod canonicalizationMethod = signatureFactory
             .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
             (C14NMethodParameterSpec) null);

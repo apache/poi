@@ -42,16 +42,15 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
         , List<Reference> references
         , List<XMLObject> objects)
     throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod
+            (signatureConfig.getDigestMethodUri(), null);
 
         List<Transform> transforms = new ArrayList<Transform>();
-        Transform envelopedTransform = signatureFactory
-                .newTransform(CanonicalizationMethod.ENVELOPED,
-                        (TransformParameterSpec) null);
+        Transform envelopedTransform = signatureFactory.newTransform
+            (CanonicalizationMethod.ENVELOPED, (TransformParameterSpec) null);
         transforms.add(envelopedTransform);
-        Transform exclusiveTransform = signatureFactory
-                .newTransform(CanonicalizationMethod.EXCLUSIVE,
-                        (TransformParameterSpec) null);
+        Transform exclusiveTransform = signatureFactory.newTransform
+            (CanonicalizationMethod.EXCLUSIVE, (TransformParameterSpec) null);
         transforms.add(exclusiveTransform);
 
         Reference reference = signatureFactory.newReference("", digestMethod,

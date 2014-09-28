@@ -213,7 +213,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         objects.add(xadesObject);
 
         // add XAdES ds:Reference
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestMethodUri(), null);
         List<Transform> transforms = new ArrayList<Transform>();
         Transform exclusiveTransform = signatureFactory
                 .newTransform(CanonicalizationMethod.INCLUSIVE,
@@ -236,11 +236,11 @@ public class XAdESSignatureFacet implements SignatureFacet {
     protected static void setDigestAlgAndValue(
             DigestAlgAndValueType digestAlgAndValue,
             byte[] data,
-            HashAlgorithm hashAlgo) {
+            HashAlgorithm digestAlgo) {
         DigestMethodType digestMethod = digestAlgAndValue.addNewDigestMethod();
-        digestMethod.setAlgorithm(hashAlgo.xmlSignUri);
+        digestMethod.setAlgorithm(SignatureConfig.getDigestMethodUri(digestAlgo));
         
-        MessageDigest messageDigest = CryptoFunctions.getMessageDigest(hashAlgo);
+        MessageDigest messageDigest = CryptoFunctions.getMessageDigest(digestAlgo);
         byte[] digestValue = messageDigest.digest(data);
         digestAlgAndValue.setDigestValue(digestValue);
     }
