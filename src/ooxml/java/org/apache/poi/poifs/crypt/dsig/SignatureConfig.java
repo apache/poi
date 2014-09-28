@@ -31,6 +31,7 @@ import java.util.UUID;
 
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
+import javax.xml.crypto.dsig.DigestMethod;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -87,7 +88,10 @@ public class SignatureConfig {
     // timestamp service provider URL
     private String tspUrl;
     private boolean tspOldProtocol = false;
-    private HashAlgorithm tspDigestAlgo = HashAlgorithm.sha1;
+    /**
+     * if not defined, it's the same as the main digest
+     */
+    private HashAlgorithm tspDigestAlgo = null;
     private String tspUser;
     private String tspPass;
     private TimeStampServiceValidator tspValidator;
@@ -103,7 +107,10 @@ public class SignatureConfig {
      * When <code>null</code> the signature will be limited to XAdES-T only.
      */
     private RevocationDataService revocationDataService;
-    private HashAlgorithm xadesDigestAlgo = HashAlgorithm.sha1;
+    /**
+     * if not defined, it's the same as the main digest
+     */
+    private HashAlgorithm xadesDigestAlgo = null;
     private String xadesRole = null;
     private String xadesSignatureId = null;
     private boolean xadesSignaturePolicyImplied = true;
@@ -290,9 +297,7 @@ public class SignatureConfig {
         return packageSignatureId;
     }
     public void setPackageSignatureId(String packageSignatureId) {
-        this.packageSignatureId = (packageSignatureId != null)
-            ? packageSignatureId
-            : "xmldsig-" + UUID.randomUUID();
+        this.packageSignatureId = nvl(packageSignatureId,"xmldsig-"+UUID.randomUUID());
     }
     public String getTspUrl() {
         return tspUrl;
@@ -307,7 +312,7 @@ public class SignatureConfig {
         this.tspOldProtocol = tspOldProtocol;
     }
     public HashAlgorithm getTspDigestAlgo() {
-        return tspDigestAlgo;
+        return nvl(tspDigestAlgo,digestAlgo);
     }
     public void setTspDigestAlgo(HashAlgorithm tspDigestAlgo) {
         this.tspDigestAlgo = tspDigestAlgo;
@@ -349,7 +354,7 @@ public class SignatureConfig {
         this.revocationDataService = revocationDataService;
     }
     public HashAlgorithm getXadesDigestAlgo() {
-        return xadesDigestAlgo;
+        return nvl(xadesDigestAlgo,digestAlgo);
     }
     public void setXadesDigestAlgo(HashAlgorithm xadesDigestAlgo) {
         this.xadesDigestAlgo = xadesDigestAlgo;
@@ -420,4 +425,81 @@ public class SignatureConfig {
     public void setNamespacePrefixes(Map<String, String> namespacePrefixes) {
         this.namespacePrefixes = namespacePrefixes;
     }
+    protected static <T> T nvl(T value, T defaultValue)  {
+        return value == null ? defaultValue : value;
+    }
+    public byte[] getHashMagic() {
+        // see https://www.ietf.org/rfc/rfc3110.txt
+        // RSA/SHA1 SIG Resource Records
+        byte result[];
+        switch (getDigestAlgo()) {
+        case sha1: result = new byte[]
+            { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x0e
+            , 0x03, 0x02, 0x1a, 0x04, 0x14 };
+            break;
+        case sha224: result = new byte[] 
+            { 0x30, 0x2b, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
+            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x04, 0x1c };
+            break;
+        case sha256: result = new byte[]
+            { 0x30, 0x2f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
+            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x04, 0x20 };
+            break;
+        case sha384: result = new byte[]
+            { 0x30, 0x3f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
+            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x04, 0x30 };
+            break;
+        case sha512: result  = new byte[]
+            { 0x30, 0x4f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
+            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x04, 0x40 };
+            break;
+        case ripemd128: result = new byte[]
+            { 0x30, 0x1b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24
+            , 0x03, 0x02, 0x02, 0x04, 0x10 };
+            break;
+        case ripemd160: result = new byte[]
+            { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24
+            , 0x03, 0x02, 0x01, 0x04, 0x14 };
+            break;
+        // case ripemd256: result = new byte[]
+        //    { 0x30, 0x2b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24
+        //    , 0x03, 0x02, 0x03, 0x04, 0x20 };
+        //    break;
+        default: throw new EncryptedDocumentException("Hash algorithm "
+            +getDigestAlgo()+" not supported for signing.");
+        }
+        
+        return result;
+    }
+
+    public String getSignatureMethod() {
+        switch (getDigestAlgo()) {
+        case sha1:   return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
+        case sha224: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA224;
+        case sha256: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
+        case sha384: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
+        case sha512: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
+        case ripemd160: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_RIPEMD160;
+        default: throw new EncryptedDocumentException("Hash algorithm "
+            +getDigestAlgo()+" not supported for signing.");
+        }
+    }
+    
+    public String getDigestMethodUri() {
+        return getDigestMethodUri(getDigestAlgo());
+    }
+    
+    public static String getDigestMethodUri(HashAlgorithm digestAlgo) {
+        switch (digestAlgo) {
+        case sha1:   return DigestMethod.SHA1;
+        case sha224: return "http://www.w3.org/2001/04/xmldsig-more#sha224";
+        case sha256: return DigestMethod.SHA256;
+        case sha384: return "http://www.w3.org/2001/04/xmldsig-more#sha384";
+        case sha512: return DigestMethod.SHA512;
+        case ripemd160: return DigestMethod.RIPEMD160;
+        default: throw new EncryptedDocumentException("Hash algorithm "
+            +digestAlgo+" not supported for signing.");
+        }
+    }
+    
 }

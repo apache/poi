@@ -26,6 +26,7 @@ package org.apache.poi.poifs.crypt.dsig;
 
 import java.security.Key;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.crypto.AlgorithmMethod;
@@ -48,7 +49,7 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
 
     private static final POILogger LOG = POILogFactory.getLogger(KeyInfoKeySelector.class);
 
-    private X509Certificate certificate;
+    private List<X509Certificate> certChain = new ArrayList<X509Certificate>();
 
     @SuppressWarnings("unchecked")
     @Override
@@ -58,35 +59,31 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
             throw new KeySelectorException("no ds:KeyInfo present");
         }
         List<XMLStructure> keyInfoContent = keyInfo.getContent();
-        this.certificate = null;
+        certChain.clear();
         for (XMLStructure keyInfoStructure : keyInfoContent) {
-            if (false == (keyInfoStructure instanceof X509Data)) {
+            if (!(keyInfoStructure instanceof X509Data)) {
                 continue;
             }
             X509Data x509Data = (X509Data) keyInfoStructure;
             List<Object> x509DataList = x509Data.getContent();
             for (Object x509DataObject : x509DataList) {
-                if (false == (x509DataObject instanceof X509Certificate)) {
+                if (!(x509DataObject instanceof X509Certificate)) {
                     continue;
                 }
                 X509Certificate certificate = (X509Certificate) x509DataObject;
                 LOG.log(POILogger.DEBUG, "certificate", certificate.getSubjectX500Principal());
-                if (null == this.certificate) {
-                    /*
-                     * The first certificate is presumably the signer.
-                     */
-                    this.certificate = certificate;
-                }
-            }
-            if (null != this.certificate) {
-                return this;
+                certChain.add(certificate);
             }
         }
-        throw new KeySelectorException("No key found!");
+        if (certChain.isEmpty()) {
+            throw new KeySelectorException("No key found!");
+        }
+        return this;
     }
 
     public Key getKey() {
-        return this.certificate.getPublicKey();
+        // The first certificate is presumably the signer.
+        return certChain.isEmpty() ? null : certChain.get(0).getPublicKey();
     }
 
     /**
@@ -95,7 +92,12 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
      * 
      * @return
      */
-    public X509Certificate getCertificate() {
-        return this.certificate;
+    public X509Certificate getSigner() {
+        // The first certificate is presumably the signer.
+        return certChain.isEmpty() ? null : certChain.get(0);
+    }
+    
+    public List<X509Certificate> getCertChain() {
+        return certChain;
     }
 }

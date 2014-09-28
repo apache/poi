@@ -24,6 +24,7 @@
 package org.apache.poi.poifs.crypt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -31,6 +32,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -68,6 +71,7 @@ import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlObject;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.ocsp.OCSPResp;
@@ -208,6 +212,35 @@ public class TestSignatureInfo {
     }
 
     @Test
+    public void testManipulation() throws Exception {
+        // sign & validate
+        String testFile = "hello-world-unsigned.xlsx";
+        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
+        sign(pkg, "Test", "CN=Test", 1);
+        
+        // manipulate
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        wb.setSheetName(0, "manipulated");
+        // ... I don't know, why commit is protected ...
+        Method m = XSSFWorkbook.class.getDeclaredMethod("commit");
+        m.setAccessible(true);
+        m.invoke(wb);
+
+        // todo: test a manipulation on a package part, which is not signed
+        // ... maybe in combination with #56164 
+        
+        // validate
+        SignatureConfig sic = new SignatureConfig();
+        sic.setOpcPackage(pkg);
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(sic);
+        boolean b = si.verifySignature();
+        assertFalse("signature should be broken", b);
+        
+        wb.close();
+    }
+    
+    @Test
     public void testSignSpreadsheetWithSignatureInfo() throws Exception {
         initKeyPair("Test", "CN=Test");
         String testFile = "hello-world-unsigned.xlsx";
@@ -321,7 +354,7 @@ public class TestSignatureInfo {
             "$this/ds:Signature/ds:SignedInfo/ds:Reference";
         for (ReferenceType rt : (ReferenceType[])sigDoc.selectPath(digestValXQuery)) {
             assertNotNull(rt.getDigestValue());
-            assertEquals(HashAlgorithm.sha1.xmlSignUri, rt.getDigestMethod().getAlgorithm());
+            assertEquals(signatureConfig.getDigestMethodUri(), rt.getDigestMethod().getAlgorithm());
         }
 
         String certDigestXQuery = declareNS +
@@ -341,8 +374,83 @@ public class TestSignatureInfo {
 
         pkg.close();
     }
+
+    @Test
+    public void testCertChain() throws Exception {
+        KeyStore keystore = KeyStore.getInstance("PKCS12");
+        String password = "test";
+        InputStream is = testdata.openResourceAsStream("chaintest.pfx");
+        keystore.load(is, password.toCharArray());
+        is.close();
+
+        Key key = keystore.getKey("poitest", password.toCharArray());
+        Certificate chainList[] = keystore.getCertificateChain("poitest");
+        List<X509Certificate> certChain = new ArrayList<X509Certificate>();
+        for (Certificate c : chainList) {
+            certChain.add((X509Certificate)c);
+        }
+        x509 = certChain.get(0);
+        keyPair = new KeyPair(x509.getPublicKey(), (PrivateKey)key);
+        
+        String testFile = "hello-world-unsigned.xlsx";
+        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
+
+        SignatureConfig signatureConfig = new SignatureConfig();
+        signatureConfig.setKey(keyPair.getPrivate());
+        signatureConfig.setSigningCertificateChain(certChain);
+        Calendar cal = Calendar.getInstance();
+        cal.set(2007, 7, 1);
+        signatureConfig.setExecutionTime(cal.getTime());
+        signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
+        signatureConfig.setOpcPackage(pkg);
+        
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(signatureConfig);
+
+        si.confirmSignature();
+        
+        for (SignaturePart sp : si.getSignatureParts()){
+            boolean b = sp.validate();
+            assertTrue(b);
+            X509Certificate signer = sp.getSigner();
+            assertNotNull("signer undefined?!", signer);
+            List<X509Certificate> certChainRes = sp.getCertChain();
+            assertEquals(3, certChainRes.size());
+        }
+        
+        pkg.close();
+    }
+
+    @Test
+    public void testNonSha1() throws Exception {
+        String testFile = "hello-world-unsigned.xlsx";
+        initKeyPair("Test", "CN=Test");
+
+        SignatureConfig signatureConfig = new SignatureConfig();
+        signatureConfig.setKey(keyPair.getPrivate());
+        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+
+        HashAlgorithm testAlgo[] = { HashAlgorithm.sha224, HashAlgorithm.sha256
+            , HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.ripemd160 }; 
+        
+        for (HashAlgorithm ha : testAlgo) {
+            signatureConfig.setDigestAlgo(ha);
+            OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
+            signatureConfig.setOpcPackage(pkg);
+            
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(signatureConfig);
     
-    private OPCPackage sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
+            si.confirmSignature();
+            boolean b = si.verifySignature();
+            pkg.close();
+    
+            assertTrue(b);
+        }
+    }
+    
+    
+    private void sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
         initKeyPair(alias, signerDn);
 
         SignatureConfig signatureConfig = new SignatureConfig();
@@ -383,8 +491,6 @@ public class TestSignatureInfo {
             }
         }
         assertEquals(signerCount, result.size());
-
-        return pkgCopy;
     }
 
     private void initKeyPair(String alias, String subjectDN) throws Exception {

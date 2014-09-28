@@ -123,7 +123,8 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         XMLObject xo = signatureFactory.newXMLObject(objectContent, objectId, null, null);
         objects.add(xo);
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod
+            (signatureConfig.getDigestMethodUri(), null);
         Reference reference = signatureFactory.newReference
             ("#" + objectId, digestMethod, null, XML_DIGSIG_NS+"Object", null);
         references.add(reference);
@@ -136,7 +137,8 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         OPCPackage ooxml = signatureConfig.getOpcPackage();
         List<PackagePart> relsEntryNames = ooxml.getPartsByContentType(ContentTypes.RELATIONSHIPS_PART);
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod
+            (signatureConfig.getDigestMethodUri(), null);
         Set<String> digestedPartNames = new HashSet<String>();
         for (PackagePart pp : relsEntryNames) {
             String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
@@ -252,7 +254,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
-        ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestAlgo().xmlSignUri);
+        ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
         n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
         
@@ -271,7 +273,8 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         String objectId = "idOfficeObject";
         objects.add(signatureFactory.newXMLObject(objectContent, objectId, null, null));
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
+        DigestMethod digestMethod = signatureFactory.newDigestMethod
+            (signatureConfig.getDigestMethodUri(), null);
         Reference reference = signatureFactory.newReference
             ("#" + objectId, digestMethod, null, XML_DIGSIG_NS+"Object", null);
         references.add(reference);
