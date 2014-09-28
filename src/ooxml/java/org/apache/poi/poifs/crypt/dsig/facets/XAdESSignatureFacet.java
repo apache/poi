@@ -24,8 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.setPrefix;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -206,14 +204,10 @@ public class XAdESSignatureFacet implements SignatureFacet {
             }
         }
 
-        // marshall XAdES QualifyingProperties
-        // ((Element)qualifyingProperties.getSignedProperties().getDomNode()).setIdAttribute("Id", true);
-
         // add XAdES ds:Object
         List<XMLStructure> xadesObjectContent = new ArrayList<XMLStructure>();
-        Element qualDocEl = (Element)document.importNode(qualifyingProperties.getDomNode(), true);
-        qualDocEl.setAttributeNS(XML_NS, "xmlns:xd", XADES_132_NS);
-        setPrefix(qualDocEl, XADES_132_NS, "xd");
+        Element qualDocElSrc = (Element)qualifyingProperties.getDomNode();
+        Element qualDocEl = (Element)document.importNode(qualDocElSrc, true);
         xadesObjectContent.add(new DOMStructure(qualDocEl));
         XMLObject xadesObject = signatureFactory.newXMLObject(xadesObjectContent, null, null, null);
         objects.add(xadesObject);

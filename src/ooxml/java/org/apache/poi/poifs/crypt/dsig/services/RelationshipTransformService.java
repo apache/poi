@@ -24,9 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
-import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
-import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -171,8 +168,6 @@ public class RelationshipTransformService extends TransformService {
             RelationshipReferenceDocument relRef = RelationshipReferenceDocument.Factory.newInstance();
             relRef.addNewRelationshipReference().setSourceId(sourceId);
             Node n = relRef.getRelationshipReference().getDomNode();
-            // TODO: is there a more elegant way to do this?
-            n.setPrefix("mdssi");
             n = doc.importNode(n, true);
             parentNode.appendChild(n);
         }

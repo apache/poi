@@ -24,8 +24,6 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import static org.apache.poi.poifs.crypt.dsig.SignatureInfo.setPrefix;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -104,11 +103,12 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         addSignatureInfo(document, signatureFactory, references, objects);
     }
 
-    private void addManifestObject(Document document,
-            XMLSignatureFactory signatureFactory,
-            List<Reference> references,
-            List<XMLObject> objects) throws NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
+    protected void addManifestObject(
+        Document document
+        , XMLSignatureFactory signatureFactory
+        , List<Reference> references
+        , List<XMLObject> objects)
+    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
 
         List<Reference> manifestReferences = new ArrayList<Reference>();
         addManifestReferences(signatureFactory, manifestReferences);
@@ -129,13 +129,12 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         references.add(reference);
     }
 
-    private void addManifestReferences(XMLSignatureFactory signatureFactory, List<Reference> manifestReferences)
-            throws IOException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, URISyntaxException, XmlException {
+    protected void addManifestReferences
+        (XMLSignatureFactory signatureFactory, List<Reference> manifestReferences)
+    throws IOException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, URISyntaxException, XmlException {
 
-        OPCPackage ooxml = this.signatureConfig.getOpcPackage();
+        OPCPackage ooxml = signatureConfig.getOpcPackage();
         List<PackagePart> relsEntryNames = ooxml.getPartsByContentType(ContentTypes.RELATIONSHIPS_PART);
-
 
         DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestAlgo().xmlSignUri, null);
         Set<String> digestedPartNames = new HashSet<String>();
@@ -154,12 +153,12 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             for (PackageRelationship relationship : prc) {
                 String relationshipType = relationship.getRelationshipType();
                 
+                /*
+                 * ECMA-376 Part 2 - 3rd edition
+                 * 13.2.4.16 Manifest Element
+                 * "The producer shall not create a Manifest element that references any data outside of the package."
+                 */
                 if (TargetMode.EXTERNAL == relationship.getTargetMode()) {
-                    /*
-                     * ECMA-376 Part 2 - 3rd edition
-                     * 13.2.4.16 Manifest Element
-                     * "The producer shall not create a Manifest element that references any data outside of the package."
-                     */
                     continue;
                 }
 
@@ -180,6 +179,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 } catch (InvalidFormatException e) {
                     throw new IOException(e);
                 }
+                
                 if (relationshipType.endsWith("customXml")
                     && !(contentType.equals("inkml+xml") || contentType.equals("text/xml"))) {
                     LOG.log(POILogger.DEBUG, "skipping customXml with content type: " + contentType);
@@ -198,11 +198,11 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             if (parameterSpec.hasSourceIds()) {
                 List<Transform> transforms = new ArrayList<Transform>();
                 transforms.add(signatureFactory.newTransform(
-                        RelationshipTransformService.TRANSFORM_URI,
-                        parameterSpec));
+                    RelationshipTransformService.TRANSFORM_URI,
+                    parameterSpec));
                 transforms.add(signatureFactory.newTransform(
-                        CanonicalizationMethod.INCLUSIVE,
-                        (TransformParameterSpec) null));
+                    CanonicalizationMethod.INCLUSIVE,
+                    (TransformParameterSpec) null));
                 String uri = pp.getPartName().getName()
                     + "?ContentType=application/vnd.openxmlformats-package.relationships+xml";
                 Reference reference = signatureFactory.newReference(uri, digestMethod, transforms, null, null);
@@ -212,15 +212,16 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
 
-    private void addSignatureTime(Document document,
-            XMLSignatureFactory signatureFactory,
-            List<XMLStructure> objectContent) {
+    protected void addSignatureTime(
+        Document document
+        , XMLSignatureFactory signatureFactory
+        , List<XMLStructure> objectContent) {
         /*
          * SignatureTime
          */
         DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String nowStr = fmt.format(this.signatureConfig.getExecutionTime());
+        String nowStr = fmt.format(signatureConfig.getExecutionTime());
         LOG.log(POILogger.DEBUG, "now: " + nowStr);
 
         SignatureTimeDocument sigTime = SignatureTimeDocument.Factory.newInstance();
@@ -228,24 +229,21 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         ctTime.setFormat("YYYY-MM-DDThh:mm:ssTZD");
         ctTime.setValue(nowStr);
 
-        // TODO: find better method to have xmlbeans + export the prefix
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
-        setPrefix(n, OO_DIGSIG_NS, "mdssi");
-        
         List<XMLStructure> signatureTimeContent = new ArrayList<XMLStructure>();
         signatureTimeContent.add(new DOMStructure(n));
         SignatureProperty signatureTimeSignatureProperty = signatureFactory
-                .newSignatureProperty(signatureTimeContent, "#" + signatureConfig.getPackageSignatureId(),
-                        "idSignatureTime");
+            .newSignatureProperty(signatureTimeContent, "#" + signatureConfig.getPackageSignatureId(),
+            "idSignatureTime");
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
         SignatureProperties signatureProperties = signatureFactory
-                .newSignatureProperties(signaturePropertyContent,
-                        "id-signature-time-" + signatureConfig.getExecutionTime());
+            .newSignatureProperties(signaturePropertyContent,
+            "id-signature-time-" + signatureConfig.getExecutionTime());
         objectContent.add(signatureProperties);
     }
 
-    private void addSignatureInfo(Document document,
+    protected void addSignatureInfo(Document document,
         XMLSignatureFactory signatureFactory,
         List<Reference> references,
         List<XMLObject> objects)
@@ -256,18 +254,18 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
         ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestAlgo().xmlSignUri);
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
-        n.setAttributeNS(XML_NS, "xmlns", "http://schemas.microsoft.com/office/2006/digsig");
+        n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
         
         List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
         signatureInfoContent.add(new DOMStructure(n));
         SignatureProperty signatureInfoSignatureProperty = signatureFactory
-                .newSignatureProperty(signatureInfoContent, "#" + signatureConfig.getPackageSignatureId(),
-                        "idOfficeV1Details");
+            .newSignatureProperty(signatureInfoContent, "#" + signatureConfig.getPackageSignatureId(),
+            "idOfficeV1Details");
 
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureInfoSignatureProperty);
         SignatureProperties signatureProperties = signatureFactory
-                .newSignatureProperties(signaturePropertyContent, null);
+            .newSignatureProperties(signaturePropertyContent, null);
         objectContent.add(signatureProperties);
 
         String objectId = "idOfficeObject";
@@ -284,61 +282,17 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         // empty
     }
 
-    public static String getRelationshipReferenceURI(String zipEntryName) {
-
+    protected static String getRelationshipReferenceURI(String zipEntryName) {
         return "/"
-                + zipEntryName
-                + "?ContentType=application/vnd.openxmlformats-package.relationships+xml";
+            + zipEntryName
+            + "?ContentType=application/vnd.openxmlformats-package.relationships+xml";
     }
 
-    public static String getResourceReferenceURI(String resourceName,
-            String contentType) {
-
+    protected static String getResourceReferenceURI(String resourceName, String contentType) {
         return "/" + resourceName + "?ContentType=" + contentType;
     }
 
-    public static String[] contentTypes = {
-
-            /*
-             * Word
-             */
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
-            "application/vnd.openxmlformats-officedocument.theme+xml",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml",
-
-            /*
-             * Word 2010
-             */
-            "application/vnd.ms-word.stylesWithEffects+xml",
-
-            /*
-             * Excel
-             */
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
-
-            /*
-             * Powerpoint
-             */
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml",
-            "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml",
-            "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml",
-            "application/vnd.openxmlformats-officedocument.presentationml.slide+xml",
-            "application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml",
-
-            /*
-             * Powerpoint 2010
-             */
-            "application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml",
-            "application/vnd.openxmlformats-officedocument.presentationml.presProps+xml" };
-
-    public static boolean isSignedRelationship(String relationshipType) {
+    protected static boolean isSignedRelationship(String relationshipType) {
         LOG.log(POILogger.DEBUG, "relationship type: " + relationshipType);
         for (String signedTypeExtension : signed) {
             if (relationshipType.endsWith(signedTypeExtension)) {
@@ -351,155 +305,197 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         }
         return false;
     }
+    
+    public static final String[] contentTypes = {
+        /*
+         * Word
+         */
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml",
+        "application/vnd.openxmlformats-officedocument.theme+xml",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml",
+
+        /*
+         * Word 2010
+         */
+        "application/vnd.ms-word.stylesWithEffects+xml",
+
+        /*
+         * Excel
+         */
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
+
+        /*
+         * Powerpoint
+         */
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml",
+        "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml",
+        "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml",
+        "application/vnd.openxmlformats-officedocument.presentationml.slide+xml",
+        "application/vnd.openxmlformats-officedocument.presentationml.tableStyles+xml",
+
+        /*
+         * Powerpoint 2010
+         */
+        "application/vnd.openxmlformats-officedocument.presentationml.viewProps+xml",
+        "application/vnd.openxmlformats-officedocument.presentationml.presProps+xml"
+    };
 
     /**
      * Office 2010 list of signed types (extensions).
      */
-    public static String[] signed = { "powerPivotData", //
-            "activeXControlBinary", //
-            "attachedToolbars", //
-            "connectorXml", //
-            "downRev", //
-            "functionPrototypes", //
-            "graphicFrameDoc", //
-            "groupShapeXml", //
-            "ink", //
-            "keyMapCustomizations", //
-            "legacyDiagramText", //
-            "legacyDocTextInfo", //
-            "officeDocument", //
-            "pictureXml", //
-            "shapeXml", //
-            "smartTags", //
-            "ui/altText", //
-            "ui/buttonSize", //
-            "ui/controlID", //
-            "ui/description", //
-            "ui/enabled", //
-            "ui/extensibility", //
-            "ui/helperText", //
-            "ui/imageID", //
-            "ui/imageMso", //
-            "ui/keyTip", //
-            "ui/label", //
-            "ui/lcid", //
-            "ui/loud", //
-            "ui/pressed", //
-            "ui/progID", //
-            "ui/ribbonID", //
-            "ui/showImage", //
-            "ui/showLabel", //
-            "ui/supertip", //
-            "ui/target", //
-            "ui/text", //
-            "ui/title", //
-            "ui/tooltip", //
-            "ui/userCustomization", //
-            "ui/visible", //
-            "userXmlData", //
-            "vbaProject", //
-            "wordVbaData", //
-            "wsSortMap", //
-            "xlBinaryIndex", //
-            "xlExternalLinkPath/xlAlternateStartup", //
-            "xlExternalLinkPath/xlLibrary", //
-            "xlExternalLinkPath/xlPathMissing", //
-            "xlExternalLinkPath/xlStartup", //
-            "xlIntlMacrosheet", //
-            "xlMacrosheet", //
-            "customData", //
-            "diagramDrawing", //
-            "hdphoto", //
-            "inkXml", //
-            "media", //
-            "slicer", //
-            "slicerCache", //
-            "stylesWithEffects", //
-            "ui/extensibility", //
-            "chartColorStyle", //
-            "chartLayout", //
-            "chartStyle", //
-            "dictionary", //
-            "timeline", //
-            "timelineCache", //
-            "aFChunk", //
-            "attachedTemplate", //
-            "audio", //
-            "calcChain", //
-            "chart", //
-            "chartsheet", //
-            "chartUserShapes", //
-            "commentAuthors", //
-            "comments", //
-            "connections", //
-            "control", //
-            "customProperty", //
-            "customXml", //
-            "diagramColors", //
-            "diagramData", //
-            "diagramLayout", //
-            "diagramQuickStyle", //
-            "dialogsheet", //
-            "drawing", //
-            "endnotes", //
-            "externalLink", //
-            "externalLinkPath", //
-            "font", //
-            "fontTable", //
-            "footer", //
-            "footnotes", //
-            "glossaryDocument", //
-            "handoutMaster", //
-            "header", //
-            "hyperlink", //
-            "image", //
-            "mailMergeHeaderSource", //
-            "mailMergeRecipientData", //
-            "mailMergeSource", //
-            "notesMaster", //
-            "notesSlide", //
-            "numbering", //
-            "officeDocument", //
-            "oleObject", //
-            "package", //
-            "pivotCacheDefinition", //
-            "pivotCacheRecords", //
-            "pivotTable", //
-            "presProps", //
-            "printerSettings", //
-            "queryTable", //
-            "recipientData", //
-            "settings", //
-            "sharedStrings", //
-            "sheetMetadata", //
-            "slide", //
-            "slideLayout", //
-            "slideMaster", //
-            "slideUpdateInfo", //
-            "slideUpdateUrl", //
-            "styles", //
-            "table", //
-            "tableSingleCells", //
-            "tableStyles", //
-            "tags", //
-            "theme", //
-            "themeOverride", //
-            "transform", //
-            "video", //
-            "viewProps", //
-            "volatileDependencies", //
-            "webSettings", //
-            "worksheet", //
-            "xmlMaps", //
-            "ctrlProp", //
-            "customData", //
-            "diagram", //
-            "diagramColorsHeader", //
-            "diagramLayoutHeader", //
-            "diagramQuickStyleHeader", //
-            "documentParts", //
-            "slicer", //
-            "slicerCache", //
-            "vmlDrawing" //
+    public static final String[] signed = {
+        "powerPivotData", //
+        "activeXControlBinary", //
+        "attachedToolbars", //
+        "connectorXml", //
+        "downRev", //
+        "functionPrototypes", //
+        "graphicFrameDoc", //
+        "groupShapeXml", //
+        "ink", //
+        "keyMapCustomizations", //
+        "legacyDiagramText", //
+        "legacyDocTextInfo", //
+        "officeDocument", //
+        "pictureXml", //
+        "shapeXml", //
+        "smartTags", //
+        "ui/altText", //
+        "ui/buttonSize", //
+        "ui/controlID", //
+        "ui/description", //
+        "ui/enabled", //
+        "ui/extensibility", //
+        "ui/helperText", //
+        "ui/imageID", //
+        "ui/imageMso", //
+        "ui/keyTip", //
+        "ui/label", //
+        "ui/lcid", //
+        "ui/loud", //
+        "ui/pressed", //
+        "ui/progID", //
+        "ui/ribbonID", //
+        "ui/showImage", //
+        "ui/showLabel", //
+        "ui/supertip", //
+        "ui/target", //
+        "ui/text", //
+        "ui/title", //
+        "ui/tooltip", //
+        "ui/userCustomization", //
+        "ui/visible", //
+        "userXmlData", //
+        "vbaProject", //
+        "wordVbaData", //
+        "wsSortMap", //
+        "xlBinaryIndex", //
+        "xlExternalLinkPath/xlAlternateStartup", //
+        "xlExternalLinkPath/xlLibrary", //
+        "xlExternalLinkPath/xlPathMissing", //
+        "xlExternalLinkPath/xlStartup", //
+        "xlIntlMacrosheet", //
+        "xlMacrosheet", //
+        "customData", //
+        "diagramDrawing", //
+        "hdphoto", //
+        "inkXml", //
+        "media", //
+        "slicer", //
+        "slicerCache", //
+        "stylesWithEffects", //
+        "ui/extensibility", //
+        "chartColorStyle", //
+        "chartLayout", //
+        "chartStyle", //
+        "dictionary", //
+        "timeline", //
+        "timelineCache", //
+        "aFChunk", //
+        "attachedTemplate", //
+        "audio", //
+        "calcChain", //
+        "chart", //
+        "chartsheet", //
+        "chartUserShapes", //
+        "commentAuthors", //
+        "comments", //
+        "connections", //
+        "control", //
+        "customProperty", //
+        "customXml", //
+        "diagramColors", //
+        "diagramData", //
+        "diagramLayout", //
+        "diagramQuickStyle", //
+        "dialogsheet", //
+        "drawing", //
+        "endnotes", //
+        "externalLink", //
+        "externalLinkPath", //
+        "font", //
+        "fontTable", //
+        "footer", //
+        "footnotes", //
+        "glossaryDocument", //
+        "handoutMaster", //
+        "header", //
+        "hyperlink", //
+        "image", //
+        "mailMergeHeaderSource", //
+        "mailMergeRecipientData", //
+        "mailMergeSource", //
+        "notesMaster", //
+        "notesSlide", //
+        "numbering", //
+        "officeDocument", //
+        "oleObject", //
+        "package", //
+        "pivotCacheDefinition", //
+        "pivotCacheRecords", //
+        "pivotTable", //
+        "presProps", //
+        "printerSettings", //
+        "queryTable", //
+        "recipientData", //
+        "settings", //
+        "sharedStrings", //
+        "sheetMetadata", //
+        "slide", //
+        "slideLayout", //
+        "slideMaster", //
+        "slideUpdateInfo", //
+        "slideUpdateUrl", //
+        "styles", //
+        "table", //
+        "tableSingleCells", //
+        "tableStyles", //
+        "tags", //
+        "theme", //
+        "themeOverride", //
+        "transform", //
+        "video", //
+        "viewProps", //
+        "volatileDependencies", //
+        "webSettings", //
+        "worksheet", //
+        "xmlMaps", //
+        "ctrlProp", //
+        "customData", //
+        "diagram", //
+        "diagramColorsHeader", //
+        "diagramLayoutHeader", //
+        "diagramQuickStyleHeader", //
+        "documentParts", //
+        "slicer", //
+        "slicerCache", //
+        "vmlDrawing" //
     };
 }

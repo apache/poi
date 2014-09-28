@@ -31,9 +31,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.crypto.MarshalException;
-import javax.xml.crypto.dom.DOMCryptoContext;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
@@ -139,11 +139,12 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
 
         Element n = document.getDocumentElement();
         DOMSignContext domSignContext = new DOMSignContext(key, n, nextSibling);
-        DOMCryptoContext domCryptoContext = domSignContext;
-        domCryptoContext.putNamespacePrefix(XML_DIGSIG_NS, "xd");
+        for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
+            domSignContext.putNamespacePrefix(me.getKey(), me.getValue());
+        }
+        
         DOMStructure domStructure = new DOMStructure(n);
-        // how to set nextSibling??? - marshal is ignoring nextSibling in DOMSignContext
-        domKeyInfo.marshal(domStructure, domCryptoContext);
+        domKeyInfo.marshal(domStructure, domSignContext);
         
         // move keyinfo into the right place
         if (nextSibling != null) {
