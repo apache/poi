@@ -131,7 +131,7 @@ public class SignatureConfig {
      * with certain namespaces, so this EventListener is used to interfere
      * with the marshalling process.
      */
-    EventListener signCreationListener = null;
+    EventListener signatureMarshalListener = null;
 
     /**
      * Map of namespace uris to prefix
@@ -160,12 +160,12 @@ public class SignatureConfig {
         
         if (onlyValidation) return;
 
-        if (signCreationListener == null) {
-            signCreationListener = new SignatureMarshalListener();
+        if (signatureMarshalListener == null) {
+            signatureMarshalListener = new SignatureMarshalListener();
         }
         
-        if (signCreationListener instanceof SignatureConfigurable) {
-            ((SignatureConfigurable)signCreationListener).setSignatureConfig(this);
+        if (signatureMarshalListener instanceof SignatureConfigurable) {
+            ((SignatureConfigurable)signatureMarshalListener).setSignatureConfig(this);
         }
         
         if (tspService != null) {
@@ -408,11 +408,11 @@ public class SignatureConfig {
     public void setXadesIssuerNameNoReverseOrder(boolean xadesIssuerNameNoReverseOrder) {
         this.xadesIssuerNameNoReverseOrder = xadesIssuerNameNoReverseOrder;
     }
-    public EventListener getSignCreationListener() {
-        return signCreationListener;
+    public EventListener getSignatureMarshalListener() {
+        return signatureMarshalListener;
     }
-    public void setSignCreationListener(EventListener signCreationListener) {
-        this.signCreationListener = signCreationListener;
+    public void setSignatureMarshalListener(EventListener signatureMarshalListener) {
+        this.signatureMarshalListener = signatureMarshalListener;
     }
     public Map<String, String> getNamespacePrefixes() {
         return namespacePrefixes;

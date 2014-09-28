@@ -378,7 +378,7 @@ public class SignatureInfo implements SignatureConfigurable {
         // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
         // normal way to interfere with, so we need to add the namespace under the hand ...
         EventTarget target = (EventTarget)document;
-        EventListener creationListener = signatureConfig.getSignCreationListener();
+        EventListener creationListener = signatureConfig.getSignatureMarshalListener();
         if (creationListener != null) {
             if (creationListener instanceof SignatureMarshalListener) {
                 ((SignatureMarshalListener)creationListener).setEventTarget(target);
