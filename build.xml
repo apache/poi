@@ -152,8 +152,8 @@ under the License.
 	<property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.1/xmlsec-2.0.1.jar"/>
 	<property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
 	<property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
-	<property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-151.jar"/>
-	<property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-151.jar"/>
+	<property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.51.jar"/>
+	<property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-1.51.jar"/>
 	<property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.7.jar"/>
 	<property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar"/>
 
@@ -245,6 +245,13 @@ under the License.
         <pathelement location="${main.output.dir}"/>
     </path>
 
+    <path id="ooxml.xmlsec.classpath">
+        <pathelement location="${dsig.xmlsec.jar}"/>
+        <pathelement location="${dsig.bouncycastle-prov.jar}"/>
+        <pathelement location="${dsig.bouncycastle-pkix.jar}"/>
+        <pathelement location="${dsig.sl4j-api.jar}"/>
+    </path>
+
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
@@ -252,6 +259,7 @@ under the License.
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${ooxml.encryption.jar}"/>
+        <path refid="ooxml.xmlsec.classpath"/>
     </path>
 
     <path id="test.classpath">
@@ -398,6 +406,10 @@ under the License.
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
                     <available file="${xerces.jar}"/>
+                    <available file="${dsig.bouncycastle-prov.jar}"/>
+                    <available file="${dsig.bouncycastle-pkix.jar}"/>
+                    <available file="${dsig.xmlsec.jar}"/>
+                    <available file="${dsig.sl4j-api.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -467,6 +479,10 @@ under the License.
         <antcall target="downloadfile">
             <param name="sourcefile" value="${dsig.xmlsec.url}"/>
             <param name="destfile" value="${dsig.xmlsec.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.sl4j-api.url}"/>
+            <param name="destfile" value="${dsig.sl4j-api.jar}"/>
         </antcall>
     </target>
 
