@@ -182,8 +182,6 @@ public final class PackageRelationship {
 	}
 
 	/**
-	 * public URI getSourceUri(){ }
-	 *
 	 * @return the targetMode
 	 */
 	public TargetMode getTargetMode() {

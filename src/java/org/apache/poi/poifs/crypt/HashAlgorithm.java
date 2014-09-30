@@ -33,6 +33,8 @@ public enum HashAlgorithm {
     ripemd128("RipeMD128",     -1, "RIPEMD-128", 16, "HMac-RipeMD128", true),
     ripemd160("RipeMD160",     -1, "RIPEMD-160", 20, "HMac-RipeMD160", true),
     whirlpool("Whirlpool",     -1,  "WHIRLPOOL", 64, "HMac-Whirlpool", true),
+    // only for xml signing
+    sha224   (  "SHA-224",     -1,     "SHA224", 28,     "HmacSHA224", true);
     ;
 
     public final String jceId;
