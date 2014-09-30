@@ -61,6 +61,7 @@ under the License.
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
+	<property name="compile.lib" location="compile-lib"/>
     <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
     <!-- compiler options options -->
@@ -118,7 +119,6 @@ under the License.
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
-    <property name="ooxml.encryption.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
 
     <!-- Excelant: -->
     <property name="excelant.resource.dir" value="src/excelant/resources"/>
@@ -147,7 +147,17 @@ under the License.
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.9.4.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.9.4/ant-launcher-1.9.4.jar"/>
 
-    <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
+	<!-- xml signature libs -->
+	<property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.0.1.jar"/>
+	<property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.0.1/xmlsec-2.0.1.jar"/>
+	<property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
+	<property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
+	<property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.51.jar"/>
+	<property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-1.51.jar"/>
+	<property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.7.jar"/>
+	<property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.7/slf4j-api-1.7.7.jar"/>
+
+	<!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans23.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
@@ -160,7 +170,7 @@ under the License.
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.1.201405082137/jacoco-0.7.1.201405082137.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
-
+	
 	<!-- for testing with older Xerces implementation -->
     <property name="xerces.jar" location="${main.lib}/xercesImpl-2.6.1.jar"/>
     <property name="xerces.url" value="${repository.m2}/maven2/xerces/xercesImpl/2.6.1//xercesImpl-2.6.1.jar"/>
@@ -171,17 +181,30 @@ under the License.
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
-    <property name="ooxml.xsds.ozip" location="${ooxml.lib}/OfficeOpenXML-Part4.zip"/>
-    <property name="ooxml.xsds.izip" location="${ooxml.lib}/OfficeOpenXML-XMLSchema.zip"/>
-    <property name="ooxml.xsds.url"
+    <property name="ooxml.xsds.ozip.1" value="OfficeOpenXML-Part4.zip"/>
+    <property name="ooxml.xsds.izip.1" value="OfficeOpenXML-XMLSchema.zip"/>
+    <property name="ooxml.xsds.url.1"
               value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
     <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-src-1.1.jar"/>
     <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.1.jar"/>
 
+	<!-- additional schemas are packed into the poi schemas jar, -->
+	<!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
+	<property name="ooxml.xsds.dc.1" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dc.xsd"/>
+	<property name="ooxml.xsds.dc.2" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd"/>
+	<property name="ooxml.xsds.dc.3" value="http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd"/>
+	<property name="ooxml.xsds.dsig.1" value="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+	<property name="ooxml.xsds.dsig.2" value="http://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
+	<property name="ooxml.xsds.dsig.3" value="http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
+    <property name="ooxml.xsds.ozip.2" value="OfficeOpenXML-Part2.zip"/>
+    <property name="ooxml.xsds.izip.2" value="OpenPackagingConventions-XMLSchema.zip"/>
+    <property name="ooxml.xsds.url.2"
+              value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%202%20(PDF).zip"/>
     <property name="ooxml.encryption.src.dir" location="build/ooxml-encryption-src"/>
-    <property name="ooxml.encryption.src.jar" location="${ooxml.lib}/ooxml-encryption-src-1.1.jar"/>
-    <property name="ooxml.encryption.jar" location="${ooxml.lib}/ooxml-encryption-1.1.jar"/>
+    <property name="ooxml.encryption.src.jar" location="${ooxml.lib}/ooxml-encryption-src-1.2.jar"/>
+    <property name="ooxml.encryption.jar" location="${ooxml.lib}/ooxml-encryption-1.2.jar"/>
+    <property name="ooxml.encryption.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.0"/>
     <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
@@ -222,6 +245,13 @@ under the License.
         <pathelement location="${main.output.dir}"/>
     </path>
 
+    <path id="ooxml.xmlsec.classpath">
+        <pathelement location="${dsig.xmlsec.jar}"/>
+        <pathelement location="${dsig.bouncycastle-prov.jar}"/>
+        <pathelement location="${dsig.bouncycastle-pkix.jar}"/>
+        <pathelement location="${dsig.sl4j-api.jar}"/>
+    </path>
+
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
@@ -229,6 +259,7 @@ under the License.
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${ooxml.encryption.jar}"/>
+        <path refid="ooxml.xmlsec.classpath"/>
     </path>
 
     <path id="test.classpath">
@@ -361,7 +392,7 @@ under the License.
 			</fileset>
 		</delete>
 
-		<condition property="jars.present">
+        <condition property="jars.present">
             <or>
                 <and>
                     <available file="${main.commons-logging.jar}"/>
@@ -375,6 +406,10 @@ under the License.
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
                     <available file="${xerces.jar}"/>
+                    <available file="${dsig.bouncycastle-prov.jar}"/>
+                    <available file="${dsig.bouncycastle-pkix.jar}"/>
+                    <available file="${dsig.xmlsec.jar}"/>
+                    <available file="${dsig.sl4j-api.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -433,6 +468,22 @@ under the License.
             <param name="sourcefile" value="${rat.url}"/>
             <param name="destfile" value="${rat.jar}"/>
         </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.bouncycastle-prov.url}"/>
+            <param name="destfile" value="${dsig.bouncycastle-prov.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.bouncycastle-pkix.url}"/>
+            <param name="destfile" value="${dsig.bouncycastle-pkix.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.xmlsec.url}"/>
+            <param name="destfile" value="${dsig.xmlsec.jar}"/>
+        </antcall>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${dsig.sl4j-api.url}"/>
+            <param name="destfile" value="${dsig.sl4j-api.jar}"/>
+        </antcall>
     </target>
 
     <target name="check-ooxml-jars">
@@ -463,19 +514,37 @@ under the License.
         <condition property="ooxml-xsds.present">
             <or>
                 <and>
-                    <available file="${ooxml.xsds.izip}"/>
+                    <available file="${ooxml.lib}/${ooxml.xsds.izip.1}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
         </condition>
     </target>
     <target name="fetch-ooxml-xsds" unless="ooxml-xsds.present"
-            depends="check-ooxml-xsds"
+        depends="check-ooxml-xsds"
             description="Fetches needed OOXML xsd files from the Internet">
-        <get src="${ooxml.xsds.url}" dest="${ooxml.xsds.ozip}"/>
-        <unzip src="${ooxml.xsds.ozip}" dest="${ooxml.lib}">
+        <get dest="${ooxml.lib}" skipexisting="true">
+        	<url url="${ooxml.xsds.url.1}"/>
+        	<url url="${ooxml.xsds.url.2}"/>
+        	<url url="${ooxml.xsds.dc.1}"/>
+        	<url url="${ooxml.xsds.dc.2}"/>
+        	<url url="${ooxml.xsds.dc.3}"/>
+        	<url url="${ooxml.xsds.dsig.1}"/>
+        	<url url="${ooxml.xsds.dsig.2}"/>
+        	<url url="${ooxml.xsds.dsig.3}"/>
+        	<chainedmapper>
+        		<flattenmapper/>
+	        	<firstmatchmapper>
+	        		<globmapper from="Office%20Open%20XML%201st%20edition%20Part%20*%20(PDF).zip" to="OfficeOpenXML-Part*.zip"/>
+	        		<identitymapper/>
+	    		</firstmatchmapper>
+    		</chainedmapper>
+    	</get>
+        <unzip src="${ooxml.lib}/${ooxml.xsds.ozip.1}" dest="${ooxml.lib}">
+        	<fileset dir="${ooxml.lib}" includes="OfficeOpenXML-Part*.zip"/>
             <patternset>
-                <include name="OfficeOpenXML-XMLSchema.zip"/>
+                <include name="${ooxml.xsds.izip.1}"/>
+            	<include name="${ooxml.xsds.izip.2}"/>
             </patternset>
         </unzip>
     </target>
@@ -486,19 +555,10 @@ under the License.
                 <isset property="disconnected"/>
             </or>
         </condition>
-        <condition property="ooxml-compiled-encryption-xsds.present">
-            <or>
-                <available file="${ooxml.encryption.jar}"/>
-                <isset property="disconnected"/>
-            </or>
-        </condition>
     </target>
     <target name="compile-ooxml-xsds" unless="ooxml-compiled-xsds.present"
-            depends="check-jars,fetch-jars,check-compiled-ooxml-xsds"
-            description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
-        <property name="ooxml.xsds.tmp.dir" location="build/ooxml-xsds"/>
-        <mkdir dir="${ooxml.xsds.tmp.dir}"/>
-
+        depends="check-jars,fetch-jars,check-compiled-ooxml-xsds"
+        description="Unpacks the OOXML xsd files, and compiles them into XmlBeans">
         <taskdef name="xmlbean"
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
                  classpath="${ooxml.xmlbeans23.jar}"/>
@@ -510,11 +570,9 @@ under the License.
            <equals arg1="${sun.arch.data.model}" arg2="64" />
         </condition>
 
-        <unzip src="${ooxml.xsds.izip}" dest="${ooxml.xsds.tmp.dir}"/>
-        <!--
-              schema="build/ooxml-xsds/"
-              schema="build/ooxml-xsds/sml-workbook.xsd"
-          -->
+    	<property name="ooxml.xsds.tmp.dir" location="build/ooxml-xsds"/>
+        <mkdir dir="${ooxml.xsds.tmp.dir}"/>
+        <unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${ooxml.xsds.tmp.dir}"/>
         <xmlbean
                 schema="${ooxml.xsds.tmp.dir}"
                 srcgendir="${ooxml.xsds.src.dir}"
@@ -528,41 +586,40 @@ under the License.
             <classpath refid="ooxml.classpath"/>
         </xmlbean>
 
-        <!-- Now make a jar of the schema sources -->
-        <jar
+    	<!-- Now make a jar of the schema sources -->
+    	<jar
                 basedir="${ooxml.xsds.src.dir}"
                 destfile="${ooxml.xsds.src.jar}"
                 />
-    </target>
 
-    <target name="compile-ooxml-encryption-xsds" unless="ooxml-compiled-encryption-xsds.present"
-            depends="check-jars,fetch-jars,check-compiled-ooxml-xsds"
-            description="Compiles the OOXML encryption xsd files into XmlBeans">
-        <taskdef name="xmlbean"
-                 classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                 classpath="${ooxml.xmlbeans23.jar}"/>
+		<!-- Now do the same for the encryption and supporting schemas -->
+    	<property name="ooxml.enc.xsds.tmp.dir" location="build/ooxml-encryption-xsds"/>
+        <mkdir dir="${ooxml.enc.xsds.tmp.dir}"/>
+        <unzip src="${ooxml.lib}/${ooxml.xsds.izip.2}" dest="${ooxml.enc.xsds.tmp.dir}"/>
+    	
+    	<copy todir="${ooxml.enc.xsds.tmp.dir}">
+    		<fileset dir="${ooxml.lib}" includes="dc*.xsd,xmldsig*.xsd,XAdES*.xsd"/>
+    		<fileset dir="${ooxml.encryption.xsd.dir}"/>
+    	</copy>
 
-        <!-- We need a fair amount of memory to compile the xml schema, -->
-        <!--  but limit it in case it goes wrong! -->
-        <!-- Pick the right amount based on 32 vs 64 bit jvm -->
-        <condition property="ooxml.memory" value="768m" else="512m">
-           <equals arg1="${sun.arch.data.model}" arg2="64" />
-        </condition>
-
+    	<!-- noupa/nopvr is set because of the dublincore schemas -->
+    	<!-- https://issues.apache.org/jira/browse/XMLBEANS-340 -->
+    	<!-- javasource > 1.5 will not generate all array accessor -->
         <xmlbean
-                schema="${ooxml.encryption.xsd.dir}"
+                schema="${ooxml.enc.xsds.tmp.dir}"
                 srcgendir="${ooxml.encryption.src.dir}"
                 optimize="yes"
                 destfile="${ooxml.encryption.jar}"
-                javasource="1.5"
+                javasource="1.5" 
                 failonerror="true"
                 fork="true"
                 memoryMaximumSize="${ooxml.memory}"
+	    		noupa="true"
+	    		nopvr="true"
                 >
             <classpath refid="ooxml.classpath"/>
         </xmlbean>
 
-        <!-- Now make a jar of the schema sources -->
         <jar
                 basedir="${ooxml.encryption.src.dir}"
                 destfile="${ooxml.encryption.src.jar}"
@@ -655,7 +712,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds,compile-ooxml-encryption-xsds">
+    <target name="compile-ooxml" depends="compile-main,compile-scratchpad,compile-ooxml-xsds">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${ooxml.output.dir}"
@@ -676,6 +733,7 @@ under the License.
                includeantruntime="false">
             <classpath>
                 <path refid="ooxml.classpath"/>
+            	<path refid="test.ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
                 <pathelement path="${main.output.test.dir}"/>
             </classpath>
@@ -1354,7 +1412,7 @@ under the License.
 
     <target name="gump" depends="compile-all, test-all, jar"/>
     <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check"/>
-	
+
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">
       <fail unless="maven.ant.tasks.present">
@@ -1450,7 +1508,7 @@ under the License.
 				<exclude name="poi-*${version.id}-sources-*.jar"/>
 			</fileset>
 			<auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
-			<auxClasspath path="ooxml-lib/ooxml-encryption-1.1.jar" />
+			<auxClasspath path="ooxml-lib/ooxml-encryption-1.2.jar" />
 			<auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
 			<auxClasspath path="lib/commons-codec-1.9.jar" />
 			<auxClasspath path="lib/commons-logging-1.1.3.jar" />

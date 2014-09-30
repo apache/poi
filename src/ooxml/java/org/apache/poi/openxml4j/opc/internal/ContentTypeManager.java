@@ -145,11 +145,10 @@ public abstract class ContentTypeManager {
 	 * </p>
 	 */
 	public void addContentType(PackagePartName partName, String contentType) {
-		boolean defaultCTExists = false;
+		boolean defaultCTExists = this.defaultContentType.containsValue(contentType);
 		String extension = partName.getExtension().toLowerCase();
 		if ((extension.length() == 0)
-				|| (this.defaultContentType.containsKey(extension) && !(defaultCTExists = this.defaultContentType
-						.containsValue(contentType))))
+				|| (this.defaultContentType.containsKey(extension) && !defaultCTExists))
 			this.addOverrideContentType(partName, contentType);
 		else if (!defaultCTExists)
 			this.addDefaultContentType(extension, contentType);
@@ -452,7 +451,7 @@ public abstract class ContentTypeManager {
 	}
 
 	/**
-	 * Use to append default types XML elements, use by the save() metid.
+	 * Use to append default types XML elements, use by the save() method.
 	 *
 	 * @param root
 	 *            XML parent element use to append this default type element.
