@@ -26,7 +26,6 @@ package org.apache.poi.poifs.crypt.dsig.facets;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.xml.crypto.dsig.Reference;
@@ -67,7 +66,7 @@ public class Office2010SignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document, List<X509Certificate> signingCertificateChain)
+    public void postSign(Document document)
     throws XmlException {
         // check for XAdES-BES
         NodeList nl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");

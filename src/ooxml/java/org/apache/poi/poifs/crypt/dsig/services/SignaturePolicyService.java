@@ -35,7 +35,7 @@ public interface SignaturePolicyService {
     /**
      * Gives back the signature policy identifier URI.
      * 
-     * @return
+     * @return the signature policy identifier URI.
      */
     String getSignaturePolicyIdentifier();
 

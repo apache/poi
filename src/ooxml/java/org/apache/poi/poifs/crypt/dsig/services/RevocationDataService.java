@@ -40,8 +40,8 @@ public interface RevocationDataService {
      * Gives back the revocation data corresponding with the given certificate
      * chain.
      * 
-     * @param certificateChain
-     * @return
+     * @param certificateChain the certificate chain
+     * @return the revocation data corresponding with the given certificate chain.
      */
     RevocationData getRevocationData(List<X509Certificate> certificateChain);
 }

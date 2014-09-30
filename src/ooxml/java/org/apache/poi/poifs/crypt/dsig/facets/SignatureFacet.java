@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -64,15 +63,15 @@ public interface SignatureFacet extends SignatureConfigurable {
      * pre-sign phase. Via this method a signature facet implementation can add
      * signature facets to an XML signature.
      * 
-     * @param signatureFactory
-     * @param document
-     * @param signatureId
-     * @param signingCertificateChain
-     *            the optional signing certificate chain
-     * @param references
-     * @param objects
-     * @throws InvalidAlgorithmParameterException
+     * @param document the signature document to be used for imports
+     * @param signatureFactory the signature factory
+     * @param references list of reference definitions
+     * @param objects objects to be signed/included in the signature document
      * @throws NoSuchAlgorithmException
+     * @throws InvalidAlgorithmParameterException
+     * @throws IOException
+     * @throws URISyntaxException
+     * @throws XmlException
      */
     void preSign(
           Document document
@@ -85,12 +84,12 @@ public interface SignatureFacet extends SignatureConfigurable {
      * This method is being invoked by the XML signature service engine during
      * the post-sign phase. Via this method a signature facet can extend the XML
      * signatures with for example key information.
-     * 
-     * @param signatureElement
-     * @param signingCertificateChain
+     *
+     * @param document the signature document to be modified
+     * @throws MarshalException
+     * @throws XmlException
      */
     void postSign(
           Document document
-        , List<X509Certificate> signingCertificateChain
     ) throws MarshalException, XmlException;
 }

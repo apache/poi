@@ -90,7 +90,7 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
      * Gives back the X509 certificate used during the last signature
      * verification operation.
      * 
-     * @return
+     * @return the certificate which was used to sign the xml content
      */
     public X509Certificate getSigner() {
         // The first certificate is presumably the signer.

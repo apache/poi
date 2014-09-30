@@ -481,7 +481,7 @@ public class SignatureInfo implements SignatureConfigurable {
          * Allow signature facets to inject their own stuff.
          */
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
-            signatureFacet.postSign(document, signatureConfig.getSigningCertificateChain());
+            signatureFacet.postSign(document);
         }
 
         writeDocument(document);

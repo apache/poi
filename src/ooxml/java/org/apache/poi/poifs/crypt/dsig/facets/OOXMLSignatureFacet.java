@@ -29,7 +29,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
  * Office OpenXML Signature Facet implementation.
  * 
  * @author fcorneli
- * @see http://msdn.microsoft.com/en-us/library/cc313071.aspx
+ * @see <a href="http://msdn.microsoft.com/en-us/library/cc313071.aspx">[MS-OFFCRYPTO]: Office Document Cryptography Structure</a>
  */
 public class OOXMLSignatureFacet implements SignatureFacet {
 
@@ -281,7 +280,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
+    public void postSign(Document document) {
         // empty
     }
 

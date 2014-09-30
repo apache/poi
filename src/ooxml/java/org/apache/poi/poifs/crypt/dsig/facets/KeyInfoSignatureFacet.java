@@ -71,7 +71,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document, List<X509Certificate> signingCertificateChain) 
+    public void postSign(Document document) 
     throws MarshalException {
         LOG.log(POILogger.DEBUG, "postSign");
 
@@ -88,7 +88,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
          */
         KeyInfoFactory keyInfoFactory = SignatureInfo.getKeyInfoFactory();
         List<Object> x509DataObjects = new ArrayList<Object>();
-        X509Certificate signingCertificate = signingCertificateChain.get(0);
+        X509Certificate signingCertificate = signatureConfig.getSigningCertificateChain().get(0);
 
         List<Object> keyInfoContent = new ArrayList<Object>();
 
@@ -109,7 +109,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
         }
 
         if (signatureConfig.isIncludeEntireCertificateChain()) {
-            x509DataObjects.addAll(signingCertificateChain);
+            x509DataObjects.addAll(signatureConfig.getSigningCertificateChain());
         } else {
             x509DataObjects.add(signingCertificate);
         }
