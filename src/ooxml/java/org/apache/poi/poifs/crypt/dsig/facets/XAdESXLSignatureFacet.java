@@ -120,15 +120,6 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
          this.signatureConfig = signatureConfig;
     }
     
-
-    
-    /**
-     * Convenience constructor.
-     * 
-     * @param timeStampService
-     *            the time-stamp service used for XAdES-T and XAdES-X.
-     * @param revocationDataService
-     */
     public XAdESXLSignatureFacet() {
         try {
             this.certificateFactory = CertificateFactory.getInstance("X.509");
@@ -142,9 +133,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document,
-        List<X509Certificate> signingCertificateChain
-    ) throws XmlException {
+    public void postSign(Document document) throws XmlException {
         LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
 
         QualifyingPropertiesDocument qualDoc = null;
@@ -207,9 +196,10 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
          * We skip the signing certificate itself according to section
          * 4.4.3.2 of the XAdES 1.4.1 specification.
          */
-        int chainSize = signingCertificateChain.size();
+        List<X509Certificate> certChain = signatureConfig.getSigningCertificateChain();
+        int chainSize = certChain.size();
         if (chainSize > 1) {
-            for (X509Certificate cert : signingCertificateChain.subList(1, chainSize)) {
+            for (X509Certificate cert : certChain.subList(1, chainSize)) {
                 CertIDType certId = certIdList.addNewCert();
                 XAdESSignatureFacet.setCertID(certId, signatureConfig, false, cert);
             }
@@ -219,7 +209,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         CompleteRevocationRefsType completeRevocationRefs = 
             unsignedSigProps.addNewCompleteRevocationRefs();
         RevocationData revocationData = signatureConfig.getRevocationDataService()
-            .getRevocationData(signingCertificateChain);
+            .getRevocationData(certChain);
         if (revocationData.hasCRLs()) {
             CRLRefsType crlRefs = completeRevocationRefs.addNewCRLRefs();
             completeRevocationRefs.setCRLRefs(crlRefs);
@@ -309,7 +299,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
         // XAdES-X-L
         CertificateValuesType certificateValues = unsignedSigProps.addNewCertificateValues();
-        for (X509Certificate certificate : signingCertificateChain) {
+        for (X509Certificate certificate : certChain) {
             EncapsulatedPKIDataType encapsulatedPKIDataType = certificateValues.addNewEncapsulatedX509Certificate();
             try {
                 encapsulatedPKIDataType.setByteArrayValue(certificate.getEncoded());

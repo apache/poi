@@ -84,8 +84,13 @@ public class SignatureConfig {
     private boolean includeIssuerSerial = false;
     private boolean includeKeyValue = false;
     
+    /**
+     * the time-stamp service used for XAdES-T and XAdES-X.
+     */
     private TimeStampService tspService = new TSPTimeStampService();
-    // timestamp service provider URL
+    /**
+     * timestamp service provider URL
+     */
     private String tspUrl;
     private boolean tspOldProtocol = false;
     /**
@@ -198,21 +203,6 @@ public class SignatureConfig {
     public void addSignatureFacet(SignatureFacet sf) {
         signatureFacets.add(sf);
     }
-    
-    /**
-     * Gives back the used XAdES signature facet.
-     * 
-     * @return
-     */
-    public XAdESSignatureFacet getXAdESSignatureFacet() {
-        for (SignatureFacet sf : getSignatureFacets()) {
-            if (sf instanceof XAdESSignatureFacet) {
-                return (XAdESSignatureFacet)sf;
-            }
-        }
-        return null;
-    }
-    
     
     public List<SignatureFacet> getSignatureFacets() {
         return signatureFacets;

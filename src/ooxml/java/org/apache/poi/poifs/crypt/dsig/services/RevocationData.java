@@ -86,7 +86,7 @@ public class RevocationData {
     /**
      * Gives back a list of all CRLs.
      * 
-     * @return
+     * @return a list of all CRLs
      */
     public List<byte[]> getCRLs() {
         return this.crls;
@@ -95,7 +95,7 @@ public class RevocationData {
     /**
      * Gives back a list of all OCSP responses.
      * 
-     * @return
+     * @return a list of all OCSP response
      */
     public List<byte[]> getOCSPs() {
         return this.ocsps;
@@ -105,7 +105,8 @@ public class RevocationData {
      * Returns <code>true</code> if this revocation data set holds OCSP
      * responses.
      * 
-     * @return
+     * @return <code>true</code> if this revocation data set holds OCSP
+     * responses.
      */
     public boolean hasOCSPs() {
         return false == this.ocsps.isEmpty();
@@ -114,7 +115,7 @@ public class RevocationData {
     /**
      * Returns <code>true</code> if this revocation data set holds CRLs.
      * 
-     * @return
+     * @return <code>true</code> if this revocation data set holds CRLs.
      */
     public boolean hasCRLs() {
         return false == this.crls.isEmpty();
@@ -123,7 +124,7 @@ public class RevocationData {
     /**
      * Returns <code>true</code> if this revocation data is not empty.
      * 
-     * @return
+     * @return <code>true</code> if this revocation data is not empty.
      */
     public boolean hasRevocationDataEntries() {
         return hasOCSPs() || hasCRLs();

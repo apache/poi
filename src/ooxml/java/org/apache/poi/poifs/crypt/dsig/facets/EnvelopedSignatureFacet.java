@@ -26,7 +26,6 @@ package org.apache.poi.poifs.crypt.dsig.facets;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
     }
     
     @Override
-    public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
+    public void postSign(Document document) {
         // empty
     }
 

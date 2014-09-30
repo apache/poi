@@ -86,7 +86,7 @@ import org.w3c.dom.Element;
  * participated multiple ETSI XAdES plugtests.
  * 
  * @author Frank Cornelis
- * @see http://en.wikipedia.org/wiki/XAdES
+ * @see <a href="http://en.wikipedia.org/wiki/XAdES">XAdES</a>
  * 
  */
 public class XAdESSignatureFacet implements SignatureFacet {
@@ -104,7 +104,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document, List<X509Certificate> signingCertificateChain) {
+    public void postSign(Document document) {
         LOG.log(POILogger.DEBUG, "postSign");
     }
 
@@ -226,12 +226,10 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
     /**
      * Gives back the JAXB DigestAlgAndValue data structure.
-     * 
-     * @param data
-     * @param xadesObjectFactory
-     * @param xmldsigObjectFactory
-     * @param hashAlgo
-     * @return
+     *
+     * @param digestAlgAndValue the parent for the new digest element 
+     * @param data the data to be digested
+     * @param digestAlgo the digest algorithm
      */
     protected static void setDigestAlgAndValue(
             DigestAlgAndValueType digestAlgAndValue,
