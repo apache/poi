@@ -90,7 +90,6 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
-import org.apache.poi.poifs.crypt.dsig.spi.DigestInfo;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -106,6 +105,74 @@ import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.xml.sax.SAXException;
 
+
+/**
+ * <p>This class is the default entry point for XML signatures and can be used for
+ * validating an existing signed office document and signing a office document.</p>
+ * 
+ * <p><b>Validating a signed office document</b></p>
+ * 
+ * <pre>
+ * OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ);
+ * SignatureConfig sic = new SignatureConfig();
+ * sic.setOpcPackage(pkg);
+ * SignatureInfo si = new SignatureInfo();
+ * si.setSignatureConfig(sic);
+ * boolean isValid = si.validate();
+ * ...
+ * </pre>
+ * 
+ * <p><b>Signing a office document</b></p>
+ * 
+ * <pre>
+ * // loading the keystore - pkcs12 is used here, but of course jks &amp; co are also valid
+ * // the keystore needs to contain a private key and it's certificate having a
+ * // 'digitalSignature' key usage
+ * char password[] = "test".toCharArray();
+ * File file = new File("test.pfx");
+ * KeyStore keystore = KeyStore.getInstance("PKCS12");
+ * FileInputStream fis = new FileInputStream(file);
+ * keystore.load(fis, password);
+ * fis.close();
+ * 
+ * // extracting private key and certificate
+ * String alias = "xyz"; // alias of the keystore entry
+ * Key key = keystore.getKey(alias, password);
+ * X509Certificate x509 = (X509Certificate)keystore.getCertificate(alias);
+ * 
+ * // filling the SignatureConfig entries (minimum fields, more options are available ...)
+ * SignatureConfig signatureConfig = new SignatureConfig();
+ * signatureConfig.setKey(keyPair.getPrivate());
+ * signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+ * OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ);
+ * signatureConfig.setOpcPackage(pkg);
+ * 
+ * // adding the signature document to the package
+ * SignatureInfo si = new SignatureInfo();
+ * si.setSignatureConfig(signatureConfig);
+ * si.confirmSignature();
+ * // optionally verify the generated signature
+ * boolean b = si.verifySignature();
+ * assert (b);
+ * // write the changes back to disc
+ * pkg.close();
+ * </pre>
+ * 
+ * <p><b>Implementation notes:</b></p>
+ * 
+ * <p>Although there's a XML signature implementation in the Oracle JDKs 6 and higher,
+ * compatibility with IBM JDKs is also in focus (... but maybe not thoroughly tested ...).
+ * Therefore we are using the Apache Santuario libs (xmlsec) instead of the built-in classes,
+ * as the compatibility seems to be provided there.</p>
+ * 
+ * <p>To use SignatureInfo and its sibling classes, you'll need to have the following libs
+ * in the classpath:</p>
+ * <ul>
+ * <li>BouncyCastle bcpkix and bcprov (tested against 1.51)</li>
+ * <li>Apache Santuario "xmlsec" (tested against 2.0.1)</li>
+ * <li>and slf4j-api (tested against 1.7.7)</li>
+ * </ul>
+ */
 public class SignatureInfo implements SignatureConfigurable {
 
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);

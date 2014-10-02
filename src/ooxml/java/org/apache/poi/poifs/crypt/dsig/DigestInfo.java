@@ -22,7 +22,7 @@
    Copyright (C) 2008-2014 FedICT.
    ================================================================= */ 
 
-package org.apache.poi.poifs.crypt.dsig.spi;
+package org.apache.poi.poifs.crypt.dsig;
 
 import java.io.Serializable;
 
