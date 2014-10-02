@@ -46,8 +46,6 @@ import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
-import org.apache.poi.poifs.crypt.dsig.spi.AddressDTO;
-import org.apache.poi.poifs.crypt.dsig.spi.IdentityDTO;
 import org.w3c.dom.events.EventListener;
 
 /**
@@ -69,9 +67,6 @@ public class SignatureConfig {
     private Date executionTime = new Date();
     private PrivateKey key;
     private List<X509Certificate> signingCertificateChain;
-    private IdentityDTO identity;
-    private AddressDTO address;
-    private byte[] photo;
 
     /**
      * the optional signature policy service used for XAdES-EPES.
@@ -234,24 +229,6 @@ public class SignatureConfig {
     public void setSigningCertificateChain(
             List<X509Certificate> signingCertificateChain) {
         this.signingCertificateChain = signingCertificateChain;
-    }
-    public IdentityDTO getIdentity() {
-        return identity;
-    }
-    public void setIdentity(IdentityDTO identity) {
-        this.identity = identity;
-    }
-    public AddressDTO getAddress() {
-        return address;
-    }
-    public void setAddress(AddressDTO address) {
-        this.address = address;
-    }
-    public byte[] getPhoto() {
-        return photo;
-    }
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
     }
     public Date getExecutionTime() {
         return executionTime;
