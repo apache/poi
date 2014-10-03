@@ -34,7 +34,6 @@ import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -54,16 +53,15 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
     private SignatureConfig signatureConfig;
     private URIDereferencer baseUriDereferencer;
 
-    public OOXMLURIDereferencer() {
-        XMLSignatureFactory xmlSignatureFactory = SignatureInfo.getSignatureFactory();
-        this.baseUriDereferencer = xmlSignatureFactory.getURIDereferencer();
-    }
-    
     public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
 
     public Data dereference(URIReference uriReference, XMLCryptoContext context) throws URIReferenceException {
+        if (baseUriDereferencer == null) {
+            baseUriDereferencer = signatureConfig.getSignatureFactory().getURIDereferencer();
+        }
+        
         if (null == uriReference) {
             throw new NullPointerException("URIReference cannot be null");
         }
