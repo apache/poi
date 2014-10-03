@@ -24,10 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +33,6 @@ import java.util.Map;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dom.DOMStructure;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.XMLObject;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
@@ -45,8 +40,6 @@ import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfo;
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -60,16 +53,10 @@ import org.w3c.dom.NodeList;
  * @author Frank Cornelis
  * 
  */
-public class KeyInfoSignatureFacet implements SignatureFacet {
+public class KeyInfoSignatureFacet extends SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(KeyInfoSignatureFacet.class);
     
-    SignatureConfig signatureConfig;
-
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-         this.signatureConfig = signatureConfig;
-    }
-
     @Override
     public void postSign(Document document) 
     throws MarshalException {
@@ -86,7 +73,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
         /*
          * Construct the ds:KeyInfo element using JSR 105.
          */
-        KeyInfoFactory keyInfoFactory = SignatureInfo.getKeyInfoFactory();
+        KeyInfoFactory keyInfoFactory = signatureConfig.getKeyInfoFactory();
         List<Object> x509DataObjects = new ArrayList<Object>();
         X509Certificate signingCertificate = signatureConfig.getSigningCertificateChain().get(0);
 
@@ -104,8 +91,8 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
 
         if (signatureConfig.isIncludeIssuerSerial()) {
             x509DataObjects.add(keyInfoFactory.newX509IssuerSerial(
-                    signingCertificate.getIssuerX500Principal().toString(),
-                    signingCertificate.getSerialNumber()));
+                signingCertificate.getIssuerX500Principal().toString(),
+                signingCertificate.getSerialNumber()));
         }
 
         if (signatureConfig.isIncludeEntireCertificateChain()) {
@@ -154,15 +141,5 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
             }
             nextSibling.getParentNode().insertBefore(kiNl.item(0), nextSibling);
         }
-    }
-
-    @Override
-    public void preSign(
-          Document document
-        , XMLSignatureFactory signatureFactory
-        , List<Reference> references
-        , List<XMLObject> objects
-    ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        // empty
     }
 }

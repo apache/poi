@@ -30,12 +30,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
-import java.security.InvalidAlgorithmParameterException;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +46,6 @@ import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Manifest;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.SignatureMethod;
@@ -62,11 +57,7 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
-import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -103,7 +94,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -144,7 +134,7 @@ import org.xml.sax.SAXException;
  * SignatureConfig signatureConfig = new SignatureConfig();
  * signatureConfig.setKey(keyPair.getPrivate());
  * signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
- * OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ);
+ * OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ_WRITE);
  * signatureConfig.setOpcPackage(pkg);
  * 
  * // adding the signature document to the package
@@ -220,7 +210,7 @@ public class SignatureInfo implements SignatureConfigurable {
                 domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
                 domValidateContext.setURIDereferencer(signatureConfig.getUriDereferencer());
     
-                XMLSignatureFactory xmlSignatureFactory = getSignatureFactory();
+                XMLSignatureFactory xmlSignatureFactory = signatureConfig.getSignatureFactory();
                 XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
                 boolean valid = xmlSignature.validate(domValidateContext);
 
@@ -258,8 +248,7 @@ public class SignatureInfo implements SignatureConfigurable {
         return false;
     }
 
-    public void confirmSignature()
-    throws NoSuchAlgorithmException, IOException, MarshalException, ParserConfigurationException, XmlException, InvalidAlgorithmParameterException, NoSuchProviderException, XMLSignatureException, TransformerFactoryConfigurationError, TransformerException, SAXException, URISyntaxException {
+    public void confirmSignature() throws XMLSignatureException, MarshalException {
         Document document = DocumentHelper.createDocument();
         
         // operate
@@ -335,33 +324,6 @@ public class SignatureInfo implements SignatureConfigurable {
         };
     }
     
-    public static XMLSignatureFactory getSignatureFactory() {
-        return XMLSignatureFactory.getInstance("DOM", getProvider());
-    }
-
-    public static KeyInfoFactory getKeyInfoFactory() {
-        return KeyInfoFactory.getInstance("DOM", getProvider());
-    }
-
-    // currently classes are linked to Apache Santuario, so this might be superfluous 
-    public static Provider getProvider() {
-        String dsigProviderNames[] = {
-            System.getProperty("jsr105Provider"),
-            "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI", // Santuario xmlsec
-            "org.jcp.xml.dsig.internal.dom.XMLDSigRI"         // JDK xmlsec
-        };
-        for (String pn : dsigProviderNames) {
-            if (pn == null) continue;
-            try {
-                return (Provider)Class.forName(pn).newInstance();
-            } catch (Exception e) {
-                LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+pn+"' can't be found - trying next.");
-            }
-        }
-
-        throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
-    }
-    
     protected static synchronized void initXmlProvider() {
         if (isInitialized) return;
         isInitialized = true;
@@ -381,11 +343,7 @@ public class SignatureInfo implements SignatureConfigurable {
      */
     @SuppressWarnings("unchecked")
     public DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
-        throws ParserConfigurationException, NoSuchAlgorithmException,
-        InvalidAlgorithmParameterException, MarshalException,
-        javax.xml.crypto.dsig.XMLSignatureException,
-        TransformerFactoryConfigurationError, TransformerException,
-        IOException, SAXException, NoSuchProviderException, XmlException, URISyntaxException {
+    throws XMLSignatureException, MarshalException {
         signatureConfig.init(false);
         
         // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
@@ -413,7 +371,7 @@ public class SignatureInfo implements SignatureConfigurable {
         }
         xmlSignContext.setDefaultNamespacePrefix(""); // signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
         
-        XMLSignatureFactory signatureFactory = SignatureInfo.getSignatureFactory();
+        XMLSignatureFactory signatureFactory = signatureConfig.getSignatureFactory();
 
         /*
          * Add ds:References that come from signing client local files.
@@ -422,13 +380,9 @@ public class SignatureInfo implements SignatureConfigurable {
         for (DigestInfo digestInfo : safe(digestInfos)) {
             byte[] documentDigestValue = digestInfo.digestValue;
 
-            DigestMethod digestMethod = signatureFactory.newDigestMethod
-                (signatureConfig.getDigestMethodUri(), null);
-
             String uri = new File(digestInfo.description).getName();
-
-            Reference reference = signatureFactory.newReference
-                (uri, digestMethod, null, null, null, documentDigestValue);
+            Reference reference = SignatureFacet.newReference
+                (uri, null, null, null, documentDigestValue, signatureConfig);
             references.add(reference);
         }
 
@@ -438,19 +392,24 @@ public class SignatureInfo implements SignatureConfigurable {
         List<XMLObject> objects = new ArrayList<XMLObject>();
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
             LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
-            signatureFacet.preSign(document, signatureFactory, references, objects);
+            signatureFacet.preSign(document, references, objects);
         }
 
         /*
          * ds:SignedInfo
          */
-        SignatureMethod signatureMethod = signatureFactory.newSignatureMethod
-            (signatureConfig.getSignatureMethod(), null);
-        CanonicalizationMethod canonicalizationMethod = signatureFactory
-            .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
-            (C14NMethodParameterSpec) null);
-        SignedInfo signedInfo = signatureFactory.newSignedInfo(
-            canonicalizationMethod, signatureMethod, references);
+        SignedInfo signedInfo;
+        try {
+            SignatureMethod signatureMethod = signatureFactory.newSignatureMethod
+                (signatureConfig.getSignatureMethod(), null);
+            CanonicalizationMethod canonicalizationMethod = signatureFactory
+                .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
+                (C14NMethodParameterSpec) null);
+            signedInfo = signatureFactory.newSignedInfo(
+                canonicalizationMethod, signatureMethod, references);
+        } catch (GeneralSecurityException e) {
+            throw new XMLSignatureException(e);
+        }
 
         /*
          * JSR105 ds:Signature creation
@@ -524,7 +483,7 @@ public class SignatureInfo implements SignatureConfigurable {
      * Normally {@link #confirmSignature()} is sufficient to be used.
      */
     public void postSign(Document document, byte[] signatureValue)
-    throws IOException, MarshalException, ParserConfigurationException, XmlException {
+    throws MarshalException {
         LOG.log(POILogger.DEBUG, "postSign");
 
         /*
@@ -554,7 +513,7 @@ public class SignatureInfo implements SignatureConfigurable {
         writeDocument(document);
     }
 
-    protected void writeDocument(Document document) throws IOException, XmlException {
+    protected void writeDocument(Document document) throws MarshalException {
         XmlOptions xo = new XmlOptions();
         Map<String,String> namespaceMap = new HashMap<String,String>();
         for(Map.Entry<String,String> entry : signatureConfig.getNamespacePrefixes().entrySet()){
@@ -578,7 +537,7 @@ public class SignatureInfo implements SignatureConfigurable {
             // <Default Extension="sigs" ContentType="application/vnd.openxmlformats-package.digital-signature-origin"/>
             sigsPartName = PackagingURIHelper.createPartName("/_xmlsignatures/origin.sigs");
         } catch (InvalidFormatException e) {
-            throw new IOException(e);
+            throw new MarshalException(e);
         }
         
         PackagePart sigPart = pkg.getPart(sigPartName);
@@ -586,10 +545,14 @@ public class SignatureInfo implements SignatureConfigurable {
             sigPart = pkg.createPart(sigPartName, ContentTypes.DIGITAL_SIGNATURE_XML_SIGNATURE_PART);
         }
         
-        OutputStream os = sigPart.getOutputStream();
-        SignatureDocument sigDoc = SignatureDocument.Factory.parse(document);
-        sigDoc.save(os, xo);
-        os.close();
+        try {
+            OutputStream os = sigPart.getOutputStream();
+            SignatureDocument sigDoc = SignatureDocument.Factory.parse(document);
+            sigDoc.save(os, xo);
+            os.close();
+        } catch (Exception e) {
+            throw new MarshalException("Unable to write signature document", e);
+        }
         
         PackagePart sigsPart = pkg.getPart(sigsPartName);
         if (sigsPart == null) {

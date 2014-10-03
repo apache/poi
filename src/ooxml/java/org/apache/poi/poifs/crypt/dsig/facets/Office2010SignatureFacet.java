@@ -24,15 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
+import javax.xml.crypto.MarshalException;
 
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.XMLObject;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.xmlbeans.XmlException;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
 import org.etsi.uri.x01903.v13.UnsignedPropertiesType;
@@ -50,32 +43,23 @@ import org.w3c.dom.NodeList;
  * @author Frank Cornelis
  * 
  */
-public class Office2010SignatureFacet implements SignatureFacet {
-
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-        // this.signatureConfig = signatureConfig;
-    }
-    
-    @Override
-    public void preSign(
-          Document document
-        , XMLSignatureFactory signatureFactory
-        , List<Reference> references
-        , List<XMLObject> objects
-    ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-    }
+public class Office2010SignatureFacet extends SignatureFacet {
 
     @Override
     public void postSign(Document document)
-    throws XmlException {
+    throws MarshalException {
         // check for XAdES-BES
         NodeList nl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
         if (nl.getLength() != 1) {
-            throw new IllegalArgumentException("no XAdES-BES extension present");
+            throw new MarshalException("no XAdES-BES extension present");
         }
 
-        QualifyingPropertiesType qualProps =
-                QualifyingPropertiesType.Factory.parse(nl.item(0));
+        QualifyingPropertiesType qualProps;
+        try {
+            qualProps = QualifyingPropertiesType.Factory.parse(nl.item(0));
+        } catch (XmlException e) {
+            throw new MarshalException(e);
+        }
         
         // create basic XML container structure
         UnsignedPropertiesType unsignedProps = qualProps.getUnsignedProperties();

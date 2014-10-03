@@ -24,39 +24,43 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
-import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Document;
 
 /**
- * JSR105 Signature Facet interface.
- * 
- * @author Frank Cornelis
- * 
+ * JSR105 Signature Facet base class.
  */
-public interface SignatureFacet extends SignatureConfigurable {
+public abstract class SignatureFacet implements SignatureConfigurable {
 
-    String XML_NS = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-    String XML_DIGSIG_NS = XMLSignature.XMLNS;
-    String OO_DIGSIG_NS = PackageNamespaces.DIGITAL_SIGNATURE;
-    String MS_DIGSIG_NS = "http://schemas.microsoft.com/office/2006/digsig";
-    String XADES_132_NS = "http://uri.etsi.org/01903/v1.3.2#";
-    String XADES_141_NS = "http://uri.etsi.org/01903/v1.4.1#";
+    public static final String XML_NS = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
+    public static final String XML_DIGSIG_NS = XMLSignature.XMLNS;
+    public static final String OO_DIGSIG_NS = PackageNamespaces.DIGITAL_SIGNATURE;
+    public static final String MS_DIGSIG_NS = "http://schemas.microsoft.com/office/2006/digsig";
+    public static final String XADES_132_NS = "http://uri.etsi.org/01903/v1.3.2#";
+    public static final String XADES_141_NS = "http://uri.etsi.org/01903/v1.4.1#";
 
+    protected SignatureConfig signatureConfig;
+    protected ThreadLocal<XMLSignatureFactory> signatureFactory;
+
+    public void setSignatureConfig(SignatureConfig signatureConfig) {
+        this.signatureConfig = signatureConfig;
+    }
 
     /**
      * This method is being invoked by the XML signature service engine during
@@ -64,21 +68,17 @@ public interface SignatureFacet extends SignatureConfigurable {
      * signature facets to an XML signature.
      * 
      * @param document the signature document to be used for imports
-     * @param signatureFactory the signature factory
      * @param references list of reference definitions
      * @param objects objects to be signed/included in the signature document
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidAlgorithmParameterException
-     * @throws IOException
-     * @throws URISyntaxException
-     * @throws XmlException
+     * @throws XMLSignatureException
      */
-    void preSign(
+    public void preSign(
           Document document
-        , XMLSignatureFactory signatureFactory
         , List<Reference> references
         , List<XMLObject> objects
-    ) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException;
+    ) throws XMLSignatureException {
+        // empty
+    }
 
     /**
      * This method is being invoked by the XML signature service engine during
@@ -87,9 +87,59 @@ public interface SignatureFacet extends SignatureConfigurable {
      *
      * @param document the signature document to be modified
      * @throws MarshalException
-     * @throws XmlException
      */
-    void postSign(
-          Document document
-    ) throws MarshalException, XmlException;
+    public void postSign(Document document) throws MarshalException {
+        // empty
+    }
+
+    protected XMLSignatureFactory getSignatureFactory() {
+        return signatureConfig.getSignatureFactory();
+    }
+    
+    protected Transform newTransform(String canonicalizationMethod) throws XMLSignatureException {
+        return newTransform(canonicalizationMethod, null);
+    }
+    
+    protected Transform newTransform(String canonicalizationMethod, TransformParameterSpec paramSpec)
+    throws XMLSignatureException {
+        try {
+            return getSignatureFactory().newTransform(canonicalizationMethod, paramSpec);
+        } catch (GeneralSecurityException e) {
+            throw new XMLSignatureException("unknown canonicalization method: "+canonicalizationMethod, e);
+        }
+    }
+    
+    protected Reference newReference(String uri, List<Transform> transforms, String type, String id, byte digestValue[])
+    throws XMLSignatureException {
+        return newReference(uri, transforms, type, id, digestValue, signatureConfig);
+    }
+
+    public static Reference newReference(
+          String uri
+        , List<Transform> transforms
+        , String type
+        , String id
+        , byte digestValue[]
+        , SignatureConfig signatureConfig)
+    throws XMLSignatureException {
+        // the references appear in the package signature or the package object
+        // so we can use the default digest algorithm
+        String digestMethodUri = signatureConfig.getDigestMethodUri();
+        XMLSignatureFactory sigFac = signatureConfig.getSignatureFactory();
+        DigestMethod digestMethod;
+        try {
+            digestMethod = sigFac.newDigestMethod(digestMethodUri, null);
+        } catch (GeneralSecurityException e) {
+            throw new XMLSignatureException("unknown digest method uri: "+digestMethodUri, e);
+        }
+
+        Reference reference;
+        if (digestValue == null) {
+            reference = sigFac.newReference(uri, digestMethod, transforms, type, id);
+        } else {
+            reference = sigFac.newReference(uri, digestMethod, transforms, type, id, digestValue);
+        }
+
+        return reference;
+    }
 }

@@ -29,8 +29,6 @@ import static org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet.insertX
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -43,12 +41,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.XMLObject;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
 
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -106,20 +101,14 @@ import org.w3c.dom.NodeList;
  * @author Frank Cornelis
  * @see XAdESSignatureFacet
  */
-public class XAdESXLSignatureFacet implements SignatureFacet {
+public class XAdESXLSignatureFacet extends SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(XAdESXLSignatureFacet.class);
-
-    private SignatureConfig signatureConfig;
 
     private String c14nAlgoId = CanonicalizationMethod.EXCLUSIVE;
 
     private final CertificateFactory certificateFactory;
 
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-         this.signatureConfig = signatureConfig;
-    }
-    
     public XAdESXLSignatureFacet() {
         try {
             this.certificateFactory = CertificateFactory.getInstance("X.509");
@@ -133,7 +122,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document) throws XmlException {
+    public void postSign(Document document) throws MarshalException {
         LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
 
         QualifyingPropertiesDocument qualDoc = null;
@@ -142,10 +131,14 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         // check for XAdES-BES
         NodeList qualNl = document.getElementsByTagNameNS(XADES_132_NS, "QualifyingProperties");
         if (qualNl.getLength() == 1) {
-            qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0));
+            try {
+                qualDoc = QualifyingPropertiesDocument.Factory.parse(qualNl.item(0));
+            } catch (XmlException e) {
+                throw new MarshalException(e);
+            }
             qualProps = qualDoc.getQualifyingProperties();
         } else {
-            throw new IllegalArgumentException("no XAdES-BES extension present");
+            throw new MarshalException("no XAdES-BES extension present");
         }
 
         // create basic XML container structure
@@ -333,14 +326,6 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             throw new RuntimeException("c14n error: " + e.getMessage(), e);
         }
         return c14nValue.toByteArray();
-    }
-
-    @Override
-    public void preSign(Document document,
-            XMLSignatureFactory signatureFactory,
-            List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        // nothing to do here
     }
 
     private BigInteger getCrlNumber(X509CRL crl) {

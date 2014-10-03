@@ -24,9 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import java.security.InvalidAlgorithmParameterException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -39,12 +37,10 @@ import java.util.TimeZone;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.crypto.dsig.XMLSignatureException;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
@@ -89,30 +85,21 @@ import org.w3c.dom.Element;
  * @see <a href="http://en.wikipedia.org/wiki/XAdES">XAdES</a>
  * 
  */
-public class XAdESSignatureFacet implements SignatureFacet {
+public class XAdESSignatureFacet extends SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(XAdESSignatureFacet.class);
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
     
-    private SignatureConfig signatureConfig;
-    
     private Map<String, String> dataObjectFormatMimeTypes = new HashMap<String, String>();
 
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-        this.signatureConfig = signatureConfig;
-    }
 
     @Override
-    public void postSign(Document document) {
-        LOG.log(POILogger.DEBUG, "postSign");
-    }
-
-    @Override
-    public void preSign(Document document,
-            XMLSignatureFactory signatureFactory,
-            List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public void preSign(
+          Document document
+        , List<Reference> references
+        , List<XMLObject> objects)
+    throws XMLSignatureException {
         LOG.log(POILogger.DEBUG, "preSign");
 
         // QualifyingProperties
@@ -209,18 +196,15 @@ public class XAdESSignatureFacet implements SignatureFacet {
         Element qualDocElSrc = (Element)qualifyingProperties.getDomNode();
         Element qualDocEl = (Element)document.importNode(qualDocElSrc, true);
         xadesObjectContent.add(new DOMStructure(qualDocEl));
-        XMLObject xadesObject = signatureFactory.newXMLObject(xadesObjectContent, null, null, null);
+        XMLObject xadesObject = getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
         objects.add(xadesObject);
 
         // add XAdES ds:Reference
-        DigestMethod digestMethod = signatureFactory.newDigestMethod(signatureConfig.getDigestMethodUri(), null);
         List<Transform> transforms = new ArrayList<Transform>();
-        Transform exclusiveTransform = signatureFactory
-                .newTransform(CanonicalizationMethod.INCLUSIVE,
-                        (TransformParameterSpec) null);
+        Transform exclusiveTransform = newTransform(CanonicalizationMethod.INCLUSIVE);
         transforms.add(exclusiveTransform);
-        Reference reference = signatureFactory.newReference
-            ("#"+signatureConfig.getXadesSignatureId(), digestMethod, transforms, XADES_TYPE, null);
+        Reference reference = newReference
+            ("#"+signatureConfig.getXadesSignatureId(), transforms, XADES_TYPE, null, null);
         references.add(reference);
     }
 

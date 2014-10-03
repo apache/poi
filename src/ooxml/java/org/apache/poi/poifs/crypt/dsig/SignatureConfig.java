@@ -21,6 +21,7 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XADES_132_NS;
 
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,8 @@ import java.util.UUID;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -46,21 +49,28 @@ import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.w3c.dom.events.EventListener;
 
 /**
  * This class bundles the configuration options used for the existing
  * signature facets.
- * Apart of the opc-package (thread local) most values will probably be constant, so
+ * Apart of the thread local members (e.g. opc-package) most values will probably be constant, so
  * it might be configured centrally (e.g. by spring) 
  */
 public class SignatureConfig {
+
+    private static final POILogger LOG = POILogFactory.getLogger(SignatureConfig.class);
     
     public static interface SignatureConfigurable {
         void setSignatureConfig(SignatureConfig signatureConfig);        
     }
 
     private ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<OPCPackage>();
+    private ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<XMLSignatureFactory>();
+    private ThreadLocal<KeyInfoFactory> keyInfoFactory = new ThreadLocal<KeyInfoFactory>();
+    private ThreadLocal<Provider> provider = new ThreadLocal<Provider>();
     
     private List<SignatureFacet> signatureFacets = new ArrayList<SignatureFacet>();
     private HashAlgorithm digestAlgo = HashAlgorithm.sha1;
@@ -72,7 +82,7 @@ public class SignatureConfig {
      * the optional signature policy service used for XAdES-EPES.
      */
     private SignaturePolicyService signaturePolicyService;
-    private URIDereferencer uriDereferencer = new OOXMLURIDereferencer();
+    private URIDereferencer uriDereferencer = null;
     private String canonicalizationMethod = CanonicalizationMethod.INCLUSIVE;
     
     private boolean includeEntireCertificateChain = true;
@@ -146,12 +156,21 @@ public class SignatureConfig {
      */
     Map<String,String> namespacePrefixes = new HashMap<String,String>();
     
+    /**
+     * Inits and checks the config object.
+     * If not set previously, complex configuration properties also get 
+     * created/initialized via this initialization call.
+     *
+     * @param onlyValidation if true, only a subset of the properties
+     * is initialized, which are necessary for validation. If false,
+     * also the other properties needed for signing are been taken care of
+     */
     protected void init(boolean onlyValidation) {
-        if (uriDereferencer == null) {
-            throw new EncryptedDocumentException("uriDereferencer is null");
-        }
         if (opcPackage == null) {
             throw new EncryptedDocumentException("opcPackage is null");
+        }
+        if (uriDereferencer == null) {
+            uriDereferencer = new OOXMLURIDereferencer();
         }
         if (uriDereferencer instanceof SignatureConfigurable) {
             ((SignatureConfigurable)uriDereferencer).setSignatureConfig(this);
@@ -195,68 +214,155 @@ public class SignatureConfig {
         }
     }
     
-    public void addSignatureFacet(SignatureFacet sf) {
-        signatureFacets.add(sf);
+    /**
+     * @param signatureFacet the signature facet is appended to facet list 
+     */
+    public void addSignatureFacet(SignatureFacet signatureFacet) {
+        signatureFacets.add(signatureFacet);
     }
     
+    /**
+     * @return the list of facets, may be empty when the config object is not initialized
+     */
     public List<SignatureFacet> getSignatureFacets() {
         return signatureFacets;
     }
+
+    /**
+     * @param signatureFacets the new list of facets
+     */
     public void setSignatureFacets(List<SignatureFacet> signatureFacets) {
         this.signatureFacets = signatureFacets;
     }
+
+    /**
+     * @return the main digest algorithm, defaults to sha-1
+     */
     public HashAlgorithm getDigestAlgo() {
         return digestAlgo;
     }
+
+    /**
+     * @param digestAlgo the main digest algorithm
+     */
     public void setDigestAlgo(HashAlgorithm digestAlgo) {
         this.digestAlgo = digestAlgo;
     }
+    
+    /**
+     * @return the opc package to be used by this thread, stored as thread-local
+     */
     public OPCPackage getOpcPackage() {
         return opcPackage.get();
     }
+    
+    /**
+     * @param opcPackage the opc package to be handled by this thread, stored as thread-local
+     */
     public void setOpcPackage(OPCPackage opcPackage) {
         this.opcPackage.set(opcPackage);
     }
+
+    /**
+     * @return the private key
+     */
     public PrivateKey getKey() {
         return key;
     }
+
+    /**
+     * @param key the private key
+     */
     public void setKey(PrivateKey key) {
         this.key = key;
     }
+
+    /**
+     * @return the certificate chain, index 0 is usually the certificate matching
+     * the private key
+     */
     public List<X509Certificate> getSigningCertificateChain() {
         return signingCertificateChain;
     }
+
+    /**
+     * @param signingCertificateChain the certificate chain, index 0 should be
+     * the certificate matching the private key
+     */
     public void setSigningCertificateChain(
             List<X509Certificate> signingCertificateChain) {
         this.signingCertificateChain = signingCertificateChain;
     }
+
+    /**
+     * @return the time at which the document is signed, also used for the timestamp service.
+     * defaults to now
+     */
     public Date getExecutionTime() {
         return executionTime;
     }
+
+    /**
+     * @param executionTime sets the time at which the document ought to be signed
+     */
     public void setExecutionTime(Date executionTime) {
         this.executionTime = executionTime;
     }
+    
+    /**
+     * @return the service to be used for XAdES-EPES properties. There's no default implementation
+     */
     public SignaturePolicyService getSignaturePolicyService() {
         return signaturePolicyService;
     }
+
+    /**
+     * @param signaturePolicyService the service to be used for XAdES-EPES properties
+     */
     public void setSignaturePolicyService(SignaturePolicyService signaturePolicyService) {
         this.signaturePolicyService = signaturePolicyService;
     }
+
+    /**
+     * @return the dereferencer used for Reference/@URI attributes, defaults to {@link OOXMLURIDereferencer}
+     */
     public URIDereferencer getUriDereferencer() {
         return uriDereferencer;
     }
+
+    /**
+     * @param uriDereferencer the dereferencer used for Reference/@URI attributes
+     */
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
         this.uriDereferencer = uriDereferencer;
     }
+
+    /**
+     * @return Gives back the human-readable description of what the citizen
+     * will be signing. The default value is "Office OpenXML Document".
+     */
     public String getSignatureDescription() {
         return signatureDescription;
     }
+
+    /**
+     * @param signatureDescription the human-readable description of
+     * what the citizen will be signing.
+     */
     public void setSignatureDescription(String signatureDescription) {
         this.signatureDescription = signatureDescription;
     }
+    
+    /**
+     * @return the default canonicalization method, defaults to INCLUSIVE
+     */
     public String getCanonicalizationMethod() {
         return canonicalizationMethod;
     }
+    
+    /**
+     * @param canonicalizationMethod the default canonicalization method
+     */
     public void setCanonicalizationMethod(String canonicalizationMethod) {
         this.canonicalizationMethod = canonicalizationMethod;
     }
@@ -469,4 +575,59 @@ public class SignatureConfig {
         }
     }
     
+    public void setSignatureFactory(XMLSignatureFactory signatureFactory) {
+        this.signatureFactory.set(signatureFactory);
+    }
+    
+    public XMLSignatureFactory getSignatureFactory() {
+        XMLSignatureFactory sigFac = signatureFactory.get();
+        if (sigFac == null) {
+            sigFac = XMLSignatureFactory.getInstance("DOM", getProvider());
+            setSignatureFactory(sigFac);
+        }
+        return sigFac;
+    }
+
+    public void setKeyInfoFactory(KeyInfoFactory keyInfoFactory) {
+        this.keyInfoFactory.set(keyInfoFactory);
+    }
+    
+    public KeyInfoFactory getKeyInfoFactory() {
+        KeyInfoFactory keyFac = keyInfoFactory.get();
+        if (keyFac == null) {
+            keyFac = KeyInfoFactory.getInstance("DOM", getProvider());
+            setKeyInfoFactory(keyFac);
+        }
+        return keyFac;
+    }
+
+    // currently classes are linked to Apache Santuario, so this might be superfluous 
+    public Provider getProvider() {
+        Provider prov = provider.get();
+        if (prov == null) {
+            String dsigProviderNames[] = {
+                System.getProperty("jsr105Provider"),
+                "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI", // Santuario xmlsec
+                "org.jcp.xml.dsig.internal.dom.XMLDSigRI"         // JDK xmlsec
+            };
+            for (String pn : dsigProviderNames) {
+                if (pn == null) continue;
+                try {
+                    prov = (Provider)Class.forName(pn).newInstance();
+                    break;
+                } catch (Exception e) {
+                    LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+pn+"' can't be found - trying next.");
+                }
+            }
+        }
+
+        if (prov == null) {
+            throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
+        }
+        
+        return prov;
+    }
+    
+
+
 }

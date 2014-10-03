@@ -24,11 +24,8 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,15 +38,13 @@ import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Manifest;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.SignatureProperties;
 import javax.xml.crypto.dsig.SignatureProperty;
 import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.crypto.dsig.XMLSignatureException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -60,12 +55,10 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService.RelationshipTransformParameterSpec;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.CTSignatureTime;
 import org.openxmlformats.schemas.xpackage.x2006.digitalSignature.SignatureTimeDocument;
 import org.w3c.dom.Document;
@@ -80,64 +73,50 @@ import com.microsoft.schemas.office.x2006.digsig.SignatureInfoV1Document;
  * @author fcorneli
  * @see <a href="http://msdn.microsoft.com/en-us/library/cc313071.aspx">[MS-OFFCRYPTO]: Office Document Cryptography Structure</a>
  */
-public class OOXMLSignatureFacet implements SignatureFacet {
+public class OOXMLSignatureFacet extends SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(OOXMLSignatureFacet.class);
 
-    private SignatureConfig signatureConfig;
-
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-        this.signatureConfig = signatureConfig;
-    }
-    
     @Override
     public void preSign(
         Document document
-        , XMLSignatureFactory signatureFactory
         , List<Reference> references
         , List<XMLObject> objects)
-    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
+    throws XMLSignatureException {
         LOG.log(POILogger.DEBUG, "pre sign");
-        addManifestObject(document, signatureFactory, references, objects);
-        addSignatureInfo(document, signatureFactory, references, objects);
+        addManifestObject(document, references, objects);
+        addSignatureInfo(document, references, objects);
     }
 
     protected void addManifestObject(
         Document document
-        , XMLSignatureFactory signatureFactory
         , List<Reference> references
         , List<XMLObject> objects)
-    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, IOException, URISyntaxException, XmlException {
+    throws XMLSignatureException {
 
         List<Reference> manifestReferences = new ArrayList<Reference>();
-        addManifestReferences(signatureFactory, manifestReferences);
-        Manifest manifest =  signatureFactory.newManifest(manifestReferences);
+        addManifestReferences(manifestReferences);
+        Manifest manifest =  getSignatureFactory().newManifest(manifestReferences);
         
         String objectId = "idPackageObject"; // really has to be this value.
         List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
         objectContent.add(manifest);
 
-        addSignatureTime(document, signatureFactory, objectContent);
+        addSignatureTime(document, objectContent);
 
-        XMLObject xo = signatureFactory.newXMLObject(objectContent, objectId, null, null);
+        XMLObject xo = getSignatureFactory().newXMLObject(objectContent, objectId, null, null);
         objects.add(xo);
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod
-            (signatureConfig.getDigestMethodUri(), null);
-        Reference reference = signatureFactory.newReference
-            ("#" + objectId, digestMethod, null, XML_DIGSIG_NS+"Object", null);
+        Reference reference = newReference("#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
         references.add(reference);
     }
 
-    protected void addManifestReferences
-        (XMLSignatureFactory signatureFactory, List<Reference> manifestReferences)
-    throws IOException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, URISyntaxException, XmlException {
+    protected void addManifestReferences(List<Reference> manifestReferences)
+    throws XMLSignatureException {
 
         OPCPackage ooxml = signatureConfig.getOpcPackage();
         List<PackagePart> relsEntryNames = ooxml.getPartsByContentType(ContentTypes.RELATIONSHIPS_PART);
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod
-            (signatureConfig.getDigestMethodUri(), null);
         Set<String> digestedPartNames = new HashSet<String>();
         for (PackagePart pp : relsEntryNames) {
             String baseUri = pp.getPartName().getName().replaceFirst("(.*)/_rels/.*", "$1");
@@ -147,7 +126,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 prc = new PackageRelationshipCollection(ooxml);
                 prc.parseRelationshipsPart(pp);
             } catch (InvalidFormatException e) {
-                throw new IOException("Invalid relationship descriptor: "+pp.getPartName().getName(), e);
+                throw new XMLSignatureException("Invalid relationship descriptor: "+pp.getPartName().getName(), e);
             }
             
             RelationshipTransformParameterSpec parameterSpec = new RelationshipTransformParameterSpec();
@@ -169,8 +148,12 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
                 // TODO: find a better way ...
                 String partName = baseUri + relationship.getTargetURI().toString();
-                partName = new URI(partName).normalize().getPath().replace('\\', '/');
-                LOG.log(POILogger.DEBUG, "part name: " + partName);
+                try {
+                    partName = new URI(partName).normalize().getPath().replace('\\', '/');
+                    LOG.log(POILogger.DEBUG, "part name: " + partName);
+                } catch (URISyntaxException e) {
+                    throw new XMLSignatureException(e);
+                }
                 
                 String contentType;
                 try {
@@ -178,7 +161,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                     PackagePart pp2 = ooxml.getPart(relName);
                     contentType = pp2.getContentType();
                 } catch (InvalidFormatException e) {
-                    throw new IOException(e);
+                    throw new XMLSignatureException(e);
                 }
                 
                 if (relationshipType.endsWith("customXml")
@@ -190,7 +173,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 if (!digestedPartNames.contains(partName)) {
                     // We only digest a part once.
                     String uri = partName + "?ContentType=" + contentType;
-                    Reference reference = signatureFactory.newReference(uri, digestMethod);
+                    Reference reference = newReference(uri, null, null, null, null);
                     manifestReferences.add(reference);
                     digestedPartNames.add(partName);
                 }
@@ -198,25 +181,18 @@ public class OOXMLSignatureFacet implements SignatureFacet {
             
             if (parameterSpec.hasSourceIds()) {
                 List<Transform> transforms = new ArrayList<Transform>();
-                transforms.add(signatureFactory.newTransform(
-                    RelationshipTransformService.TRANSFORM_URI,
-                    parameterSpec));
-                transforms.add(signatureFactory.newTransform(
-                    CanonicalizationMethod.INCLUSIVE,
-                    (TransformParameterSpec) null));
+                transforms.add(newTransform(RelationshipTransformService.TRANSFORM_URI, parameterSpec));
+                transforms.add(newTransform(CanonicalizationMethod.INCLUSIVE));
                 String uri = pp.getPartName().getName()
                     + "?ContentType=application/vnd.openxmlformats-package.relationships+xml";
-                Reference reference = signatureFactory.newReference(uri, digestMethod, transforms, null, null);
+                Reference reference = newReference(uri, transforms, null, null, null);
                 manifestReferences.add(reference);
             }
         }
     }
 
 
-    protected void addSignatureTime(
-        Document document
-        , XMLSignatureFactory signatureFactory
-        , List<XMLStructure> objectContent) {
+    protected void addSignatureTime(Document document, List<XMLStructure> objectContent) {
         /*
          * SignatureTime
          */
@@ -233,22 +209,21 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
         List<XMLStructure> signatureTimeContent = new ArrayList<XMLStructure>();
         signatureTimeContent.add(new DOMStructure(n));
-        SignatureProperty signatureTimeSignatureProperty = signatureFactory
+        SignatureProperty signatureTimeSignatureProperty = getSignatureFactory()
             .newSignatureProperty(signatureTimeContent, "#" + signatureConfig.getPackageSignatureId(),
             "idSignatureTime");
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureTimeSignatureProperty);
-        SignatureProperties signatureProperties = signatureFactory
+        SignatureProperties signatureProperties = getSignatureFactory()
             .newSignatureProperties(signaturePropertyContent,
             "id-signature-time-" + signatureConfig.getExecutionTime());
         objectContent.add(signatureProperties);
     }
 
     protected void addSignatureInfo(Document document,
-        XMLSignatureFactory signatureFactory,
         List<Reference> references,
         List<XMLObject> objects)
-    throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    throws XMLSignatureException {
         List<XMLStructure> objectContent = new ArrayList<XMLStructure>();
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
@@ -259,29 +234,21 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         
         List<XMLStructure> signatureInfoContent = new ArrayList<XMLStructure>();
         signatureInfoContent.add(new DOMStructure(n));
-        SignatureProperty signatureInfoSignatureProperty = signatureFactory
+        SignatureProperty signatureInfoSignatureProperty = getSignatureFactory()
             .newSignatureProperty(signatureInfoContent, "#" + signatureConfig.getPackageSignatureId(),
             "idOfficeV1Details");
 
         List<SignatureProperty> signaturePropertyContent = new ArrayList<SignatureProperty>();
         signaturePropertyContent.add(signatureInfoSignatureProperty);
-        SignatureProperties signatureProperties = signatureFactory
+        SignatureProperties signatureProperties = getSignatureFactory()
             .newSignatureProperties(signaturePropertyContent, null);
         objectContent.add(signatureProperties);
 
         String objectId = "idOfficeObject";
-        objects.add(signatureFactory.newXMLObject(objectContent, objectId, null, null));
+        objects.add(getSignatureFactory().newXMLObject(objectContent, objectId, null, null));
 
-        DigestMethod digestMethod = signatureFactory.newDigestMethod
-            (signatureConfig.getDigestMethodUri(), null);
-        Reference reference = signatureFactory.newReference
-            ("#" + objectId, digestMethod, null, XML_DIGSIG_NS+"Object", null);
+        Reference reference = newReference("#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
         references.add(reference);
-    }
-
-    @Override
-    public void postSign(Document document) {
-        // empty
     }
 
     protected static String getRelationshipReferenceURI(String zipEntryName) {
