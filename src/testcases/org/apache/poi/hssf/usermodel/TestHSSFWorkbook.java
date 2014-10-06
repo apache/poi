@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,13 +55,8 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.TempFile;
 import org.junit.Test;
@@ -1069,72 +1069,5 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
 	private void expectName(HSSFWorkbook wb, String name, String expect) {
 		assertEquals(expect, wb.getName(name).getRefersToFormula());
-	}
-	
-	@Test
-    public void test55747() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        Sheet sheet =wb.createSheet("Test1");
-        Row row =sheet.createRow(0);
-        CellUtil.createCell(row, 0, "Hello world.");
-        row = sheet.createRow(1);
-        Cell cell = row.createCell(0);
-        cell.setCellType(Cell.CELL_TYPE_FORMULA);
-        cell.setCellFormula("IF(ISBLANK(A1),\" not blank a1\",CONCATENATE(A1,\" - %%s.\"))");
-        
-        Cell cell2 = row.createCell(1);
-        cell2.setCellType(Cell.CELL_TYPE_FORMULA);
-        cell2.setCellFormula("CONCATENATE(A1,\" - %%s.\")");
-        
-        Cell cell3 = row.createCell(2);
-        cell3.setCellType(Cell.CELL_TYPE_FORMULA);
-        cell3.setCellFormula("ISBLANK(A1)");
-
-        wb.setForceFormulaRecalculation(true);
-        
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        for(int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
-            sheet = wb.getSheetAt(sheetNum);
-            for(Row r : sheet) {
-                for(Cell c : r) {
-                    if(c.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                        evaluator.evaluateFormulaCell(c);
-                    }
-                }
-            }
-        }
-
-        cell = row.getCell(0);
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-        assertEquals("IF(ISBLANK(A1),\" not blank a1\",CONCATENATE(A1,\" - %%s.\"))", cell.getCellFormula());
-        assertEquals("Hello world. - %%s.", cell.getStringCellValue());
-        
-        cell2 = row.getCell(1);
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell2.getCellType());
-        assertEquals("CONCATENATE(A1,\" - %%s.\")", cell2.getCellFormula());
-        assertEquals("Hello world. - %%s.", cell2.getStringCellValue());
-
-        FileOutputStream stream = new FileOutputStream( "C:/temp/55747.xls");
-        try {
-            wb.write(stream);
-        } finally {
-            stream.close();
-        }
-        
-        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        Sheet sheetBack = wb.getSheetAt(0);
-        Row rowBack = sheetBack.getRow(1);
-        
-        cell = rowBack.getCell(0);
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
-        assertEquals("IF(ISBLANK(A1),\" not blank a1\",CONCATENATE(A1,\" - %%s.\"))", cell.getCellFormula());
-        assertEquals("Hello world. - %%s.", cell.getStringCellValue());
-        
-        cell2 = rowBack.getCell(1);
-        assertEquals(Cell.CELL_TYPE_FORMULA, cell2.getCellType());
-        assertEquals("CONCATENATE(A1,\" - %%s.\")", cell2.getCellFormula());
-        assertEquals("Hello world. - %%s.", cell2.getStringCellValue());
-        wbBack.close();
-        wb.close();
 	}
 }

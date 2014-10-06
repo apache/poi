@@ -132,9 +132,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectId((short) (shapeId % 1024));
         _note.setShapeId(shapeId % 1024);
-        /* This breaks TestCloneSheets!
-         * cod.setObjectId(shapeId);
-        _note.setShapeId(shapeId); */
     }
 
     /**

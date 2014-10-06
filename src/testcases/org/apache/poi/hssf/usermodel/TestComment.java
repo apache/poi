@@ -17,37 +17,20 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
 import junit.framework.TestCase;
-
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.CommentShape;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
-import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.record.*;
+
+import java.io.*;
+import java.util.Arrays;
 
 /**
  * @author Evgeniy Berlog
  * @date 26.06.12
  */
-@SuppressWarnings("deprecation")
 public class TestComment extends TestCase {
 
     public void testResultEqualsToAbstractShape() {
@@ -70,25 +53,25 @@ public class TestComment extends TestCase {
         byte[] actual = comment.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertArrayEquals(expected, actual);
+        assertTrue(Arrays.equals(expected, actual));
 
         expected = commentShape.getSpContainer().getChild(2).serialize();
         actual = comment.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertArrayEquals(expected, actual);
+        assertTrue(Arrays.equals(expected, actual));
 
         expected = commentShape.getSpContainer().getChild(3).serialize();
         actual = comment.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertArrayEquals(expected, actual);
+        assertTrue(Arrays.equals(expected, actual));
 
         expected = commentShape.getSpContainer().getChild(4).serialize();
         actual = comment.getEscherContainer().getChild(4).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertArrayEquals(expected, actual);
+        assertTrue(Arrays.equals(expected, actual));
 
         ObjRecord obj = comment.getObjRecord();
         ObjRecord objShape = commentShape.getObjRecord();
@@ -105,7 +88,7 @@ public class TestComment extends TestCase {
         actual = torShape.serialize();
 
         assertEquals(expected.length, actual.length);
-        assertArrayEquals(expected, actual);
+        assertTrue(Arrays.equals(expected, actual));
 
         NoteRecord note = comment.getNoteRecord();
         NoteRecord noteShape = commentShape.getNoteRecord();
@@ -115,10 +98,7 @@ public class TestComment extends TestCase {
         actual = noteShape.serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(
-                "\nHad:          " + Arrays.toString(actual) + 
-                "\n Expected: " + Arrays.toString(expected), 
-                Arrays.equals(expected, actual));
+        assertTrue(Arrays.equals(expected, actual));
     }
 
     public void testAddToExistingFile() {
@@ -260,7 +240,6 @@ public class TestComment extends TestCase {
         assertEquals(agg.getTailRecords().size(), 1);
 
         HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
-        assertNotNull(shape);
 
         assertEquals(comment.getOptRecord().getEscherProperties().size(), 10);
     }
@@ -281,12 +260,12 @@ public class TestComment extends TestCase {
 
         assertEquals(comment.getShapeId(), 2024);
 
-        /*CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
-        assertEquals(2024, cod.getObjectId());
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
+        assertEquals(cod.getObjectId(), 1000);
         EscherSpRecord spRecord = (EscherSpRecord) comment.getEscherContainer().getChild(0);
         assertEquals(spRecord.getShapeId(), 2024);
         assertEquals(comment.getShapeId(), 2024);
-        assertEquals(2024, comment.getNoteRecord().getShapeId());*/
+        assertEquals(comment.getNoteRecord().getShapeId(), 1000);
     }
     
     public void testAttemptToSave2CommentsWithSameCoordinates(){
@@ -305,117 +284,5 @@ public class TestComment extends TestCase {
             assertEquals(e.getMessage(), "found multiple cell comments for cell $A$1");
         }
         assertNotNull(err);
-    }
-
-    
-    public void testBug56380InsertComments() throws Exception {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        Drawing drawing = sheet.createDrawingPatriarch();
-        int noOfRows = 3000;
-        String comment = "c";
-        
-        for(int i = 0; i < noOfRows; i++) {
-            Row row = sheet.createRow(i);
-            Cell cell = row.createCell(0);
-            insertComment(drawing, cell, comment + i);
-        }
-
-        // assert that the comments are created properly before writing
-        checkComments(sheet, noOfRows, comment);
-        
-        System.out.println("Listing comments before write");
-        listComments(sheet.getDrawingPatriarch());
-
-        assertEquals(noOfRows, sheet.getDrawingPatriarch().getChildren().size());
-        
-        // store in temp-file
-        File file = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + "test_comments.xls");
-        FileOutputStream fs = new FileOutputStream(file);
-        try {
-            sheet.getWorkbook().write(fs);
-        } finally {
-            fs.close();
-        }
-        
-        // save and recreate the workbook from the saved file
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet = workbook.getSheetAt(0);
-        
-        // recreate the workbook from the saved file
-        /*FileInputStream fi = new FileInputStream(file);
-        try {
-            sheet = new HSSFWorkbook(fi).getSheetAt(0);
-        } finally {
-            fi.close();
-        }*/
-        
-        System.out.println("Listing comments after read");
-        listComments(sheet.getDrawingPatriarch());
-        
-        assertEquals(noOfRows, sheet.getDrawingPatriarch().getChildren().size());
-
-        // store file after
-        file = new File(System.getProperty("java.io.tmpdir") + File.separatorChar + "test_comments_after.xls");
-        fs = new FileOutputStream(file);
-        try {
-            sheet.getWorkbook().write(fs);
-        } finally {
-            fs.close();
-        }
-
-        // assert that the comments are created properly after reading back in
-        //checkComments(sheet, noOfRows, comment);
-    }
-
-    private void listComments(HSSFShapeContainer container) {
-        for (Object object : container.getChildren()) {
-            HSSFShape shape = (HSSFShape) object;
-            if (shape instanceof HSSFShapeGroup) {
-                listComments((HSSFShapeContainer) shape);
-                continue;
-            }
-            if (shape instanceof HSSFComment) {
-                HSSFComment comment = (HSSFComment) shape;
-                System.out.println("Comment " + comment.getString().getString() + " at " + comment.getColumn() + "/" + comment.getRow());
-            }
-        }
-    }
-    
-    private void checkComments(Sheet sheet, int noOfRows, String commentStr) {
-        for(int i = 0; i < noOfRows; i++) {
-            assertNotNull(sheet.getRow(i));
-            Cell cell = sheet.getRow(i).getCell(0);
-            assertNotNull(cell);
-            Comment comment = cell.getCellComment();
-            assertNotNull("Did not get a Cell Comment for row " + i, comment);
-            assertNotNull(comment.getString());
-            
-            assertEquals(i, comment.getRow());
-            assertEquals(0,comment.getColumn());
-            
-            assertEquals(commentStr + i, comment.getString().getString());
-        }
-    }
-
-    private void insertComment(Drawing drawing, Cell cell, String message) {
-        CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
-        
-        ClientAnchor anchor = factory.createClientAnchor();
-        anchor.setCol1(cell.getColumnIndex());
-        anchor.setCol2(cell.getColumnIndex() + 1);
-        anchor.setRow1(cell.getRowIndex());
-        anchor.setRow2(cell.getRowIndex() + 1);
-        anchor.setDx1(100); 
-        anchor.setDx2(100);
-        anchor.setDy1(100);
-        anchor.setDy2(100);
-            
-        Comment comment = drawing.createCellComment(anchor);
-        
-        RichTextString str = factory.createRichTextString(message);
-        comment.setString(str);
-        comment.setAuthor("fanfy");
-        cell.setCellComment(comment);
     }
 }

@@ -19,7 +19,11 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -234,6 +238,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         assertEquals("value?", cell.getStringCellValue());
 
         assertTrue(wb.dispose());
+
     }
 
     @Test
@@ -310,18 +315,16 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void workbookDispose() throws IOException
+    public void workbookDispose()
     {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         // the underlying writer is SheetDataWriter
         assertWorkbookDispose(wb);
-        wb.close();
-        
+
         wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
         // the underlying writer is GZIPSheetDataWriter
         assertWorkbookDispose(wb);
-        wb.close();
 
     }
 
@@ -331,12 +334,9 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 		Workbook wb = new SXSSFWorkbook(10);
 		populateWorkbook(wb);
 		saveTwice(wb);
-		wb.close();
-		
 		wb = new XSSFWorkbook();
 		populateWorkbook(wb);
 		saveTwice(wb);
-		wb.close();
 	}
 
 	// Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files
@@ -371,7 +371,6 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 			} finally {
 				assertTrue(wb.dispose());
 			}
-			wb.close();
 		}
 		out.delete();
 	}
@@ -405,30 +404,6 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
 	private static class NullOutputStream extends OutputStream {
 		@Override
 		public void write(int b) throws IOException {
-		    // nothing to do here
 		}
-	}
-	
-	@Test
-	public void testBug54523() throws IOException {
-	    SXSSFWorkbook wb = new SXSSFWorkbook(100);
-	    Sheet sh = wb.createSheet();
-
-	    for (int i = 0; i < 81000; i++) {
-	        Row row = sh.createRow(i);
-	        for (int j = 0; j < 1000; j++) {
-	            Cell cell = row.createCell(j);
-	            cell.setCellValue("dddd");
-	        }
-	        if (i % 100 == 0){
-	            System.out.println("x - " + i);
-	        }
-	    }
-
-	    FileOutputStream out = new FileOutputStream("C:\\temp\\54523_large.xlsx");
-	    wb.write(out);
-	    out.close();
-	    wb.dispose();
-	    wb.close();
 	}
 }
