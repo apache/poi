@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
@@ -136,7 +136,8 @@ public final class FormulaRecord extends CellRecord {
 			};
 			return new SpecialCachedValue(vd);
 		}
-		public String toString() {
+		@Override
+        public String toString() {
 			StringBuffer sb = new StringBuffer(64);
 			sb.append(getClass().getName());
 			sb.append('[').append(formatValue()).append(']');
@@ -319,7 +320,8 @@ public final class FormulaRecord extends CellRecord {
 		field_8_parsed_expr = Formula.create(ptgs);
 	}
 
-	public short getSid() {
+	@Override
+    public short getSid() {
 		return sid;
 	}
 
@@ -372,7 +374,8 @@ public final class FormulaRecord extends CellRecord {
 		}
 	}
 
-	public Object clone() {
+	@Override
+    public Object clone() {
 		FormulaRecord rec = new FormulaRecord();
 		copyBaseFields(rec);
 		rec.field_4_value = field_4_value;

@@ -17,9 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestRow;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
 /**
  * Tests for XSSFRow
@@ -36,5 +42,49 @@ public final class TestXSSFRow extends BaseTestRow {
 
     public void testCellBounds() {
         baseTestCellBounds(SpreadsheetVersion.EXCEL2007.getLastColumnIndex());
+    }
+
+    public void test56490() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56490.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        String columnWanted = "Link";
+        Integer columnNo = null;
+        List<Cell> cells = new ArrayList<Cell>();
+
+        // TODO: change this!!
+        assertEquals(-1, sheet.getFirstRowNum());
+        assertEquals(-1, sheet.getLastRowNum());
+        
+        Row firstRow = sheet.getRow(-1);
+        assertNotNull(firstRow);
+        assertNotNull(firstRow.iterator());
+        
+        for(Row row : sheet) {
+            for(Cell cell : row) {
+                System.out.println("Cell in Row: " + row.getRowNum() + ": " + cell.toString());
+            }
+        }
+
+        for (Cell cell : firstRow) {
+            if (cell.getStringCellValue().equals(columnWanted)) {
+                columnNo = cell.getColumnIndex();
+            }
+        }
+
+        if (columnNo != null) {
+            for (Row row : sheet) {
+                Cell c = row.getCell(columnNo);
+                if (c == null || c.getCellType() == Cell.CELL_TYPE_BLANK) {
+                } else {
+                    cells.add(c);
+                }
+
+            }
+
+        } else {
+            System.out.println("could not find column" + columnWanted
+                    + "in first row");
+        }
     }
 }

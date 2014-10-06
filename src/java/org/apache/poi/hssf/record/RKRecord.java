@@ -94,10 +94,12 @@ public final class RKRecord extends CellRecord {
     	return 4;
     }
 
+    @Override
     public short getSid() {
         return sid;
     }
 
+    @Override
     public Object clone() {
       RKRecord rec = new RKRecord();
       copyBaseFields(rec);

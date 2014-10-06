@@ -43,27 +43,31 @@ abstract class Ref2DPtgBase extends RefPtgBase {
 		super(cr);
 	}
 
-	public void write(LittleEndianOutput out) {
+	@Override
+    public void write(LittleEndianOutput out) {
 		out.writeByte(getSid() + getPtgClass());
 		writeCoordinates(out);
 	}
 
-	public final String toFormulaString() {
+	@Override
+    public final String toFormulaString() {
 		return formatReferenceAsString();
 	}
 
 	protected abstract byte getSid();
 
-	public final int getSize() {
+	@Override
+    public final int getSize() {
 		return SIZE;
 	}
 
-	public final String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(getClass().getName());
-		sb.append(" [");
-		sb.append(formatReferenceAsString());
-		sb.append("]");
-		return sb.toString();
-	}
+    @Override
+    public final String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(getClass().getName());
+        sb.append(" [");
+        sb.append(formatReferenceAsString());
+        sb.append("]");
+        return sb.toString();
+    }
 }

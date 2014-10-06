@@ -17,13 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -42,17 +36,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-
-import org.apache.poi.ss.usermodel.BaseTestWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
@@ -767,5 +751,21 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(new File(fileName));
         setPivotData(wb2);
         assertTrue(wb2.getPivotTables().size() == 2);
+    }
+
+    @Test
+    public void testBug55644() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("students");
+        XSSFRow row = sheet.createRow(1);
+        XSSFCell cell = row.createCell(1);
+        cell.setCellValue("sandeepzzzzzzzzzzzzzzzzzzzzzzzzz");
+        sheet.autoSizeColumn(1);
+
+        FileOutputStream fileOut = new FileOutputStream("C:\\temp\\55644.xlsx");
+        wb.write(fileOut);
+        fileOut.close();
+        
+        wb.close();
     }
 }

@@ -362,6 +362,8 @@ under the License.
         <mkdir dir="${examples.output.dir}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site}"/>
+
+		<echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />		
     </target>
 
     <target name="clean">

@@ -51,7 +51,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	/**
 	 * @deprecated (Sep 2008) HSSFSheet parameter is ignored
 	 */
-	public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
+	@Deprecated
+    public HSSFFormulaEvaluator(HSSFSheet sheet, HSSFWorkbook workbook) {
 		this(workbook);
 		if (false) {
 			sheet.toString(); // suppress unused parameter compiler warning
@@ -104,10 +105,12 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 		CollaboratingWorkbooksEnvironment.setup(workbookNames, wbEvals);
 	}
 
-	public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> evaluators) {
+	@Override
+    public void setupReferencedWorkbooks(Map<String, FormulaEvaluator> evaluators) {
         CollaboratingWorkbooksEnvironment.setupFormulaEvaluator(evaluators);
     }
 	
+    @Override
     public WorkbookEvaluator _getWorkbookEvaluator() {
         return _bookEvaluator;
     }
@@ -116,7 +119,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 * Does nothing
 	 * @deprecated (Aug 2008) - not needed, since the current row can be derived from the cell
 	 */
-	public void setCurrentRow(HSSFRow row) {
+	@Deprecated
+    public void setCurrentRow(HSSFRow row) {
 		// do nothing
 		if (false) {
 			row.getClass(); // suppress unused parameter compiler warning
@@ -131,7 +135,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
 	 * of the evaluate~ methods of this class
 	 */
-	public void clearAllCachedResultValues() {
+	@Override
+    public void clearAllCachedResultValues() {
 		_bookEvaluator.clearAllCachedResultValues();
 	}
 	/**
@@ -143,6 +148,7 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	public void notifyUpdateCell(HSSFCell cell) {
 		_bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell(cell));
 	}
+    @Override
     public void notifyUpdateCell(Cell cell) {
         _bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
     }
@@ -155,7 +161,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	public void notifyDeleteCell(HSSFCell cell) {
 		_bookEvaluator.notifyDeleteCell(new HSSFEvaluationCell(cell));
 	}
-	public void notifyDeleteCell(Cell cell) {
+	@Override
+    public void notifyDeleteCell(Cell cell) {
 		_bookEvaluator.notifyDeleteCell(new HSSFEvaluationCell((HSSFCell)cell));
 	}
 
@@ -165,7 +172,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 * Failure to call this method after changing cell values will cause incorrect behaviour
 	 * of the evaluate~ methods of this class
 	 */
-	public void notifySetFormula(Cell cell) {
+	@Override
+    public void notifySetFormula(Cell cell) {
 		_bookEvaluator.notifyUpdateCell(new HSSFEvaluationCell((HSSFCell)cell));
 	}
 
@@ -179,7 +187,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 * @param cell may be <code>null</code> signifying that the cell is not present (or blank)
 	 * @return <code>null</code> if the supplied cell is <code>null</code> or blank
 	 */
-	public CellValue evaluate(Cell cell) {
+	@Override
+    public CellValue evaluate(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
@@ -217,7 +226,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 * @param cell The cell to evaluate
 	 * @return -1 for non-formula cells, or the type of the <em>formula result</em>
 	 */
-	public int evaluateFormulaCell(Cell cell) {
+	@Override
+    public int evaluateFormulaCell(Cell cell) {
 		if (cell == null || cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
 			return -1;
 		}
@@ -242,7 +252,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 *  result of the formula. If you simply want the formula
 	 *  value computed for you, use {@link #evaluateFormulaCell(Cell)}}
 	 */
-	public HSSFCell evaluateInCell(Cell cell) {
+	@Override
+    public HSSFCell evaluateInCell(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
@@ -350,7 +361,8 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
     * This is a helpful wrapper around looping over all
     *  cells, and calling evaluateFormulaCell on each one.
     */
-   public void evaluateAll() {
+   @Override
+public void evaluateAll() {
       evaluateAllFormulaCells(_book, this);
    }
 
@@ -379,11 +391,13 @@ public class HSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	}
 
     /** {@inheritDoc} */
+    @Override
     public void setIgnoreMissingWorkbooks(boolean ignore){
         _bookEvaluator.setIgnoreMissingWorkbooks(ignore);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setDebugEvaluationOutputForNextEval(boolean value){
         _bookEvaluator.setDebugEvaluationOutputForNextEval(value);
     }
