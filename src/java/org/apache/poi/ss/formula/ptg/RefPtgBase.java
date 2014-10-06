@@ -111,7 +111,8 @@ public abstract class RefPtgBase extends OperandPtg {
 		return cr.formatAsString();
 	}
 
-	public final byte getDefaultOperandClass() {
+	@Override
+    public final byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
 }
