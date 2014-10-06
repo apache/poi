@@ -196,11 +196,9 @@ public final class POIDataSamples {
                 _sampleDataIsAvaliableOnClassPath = true;
                 return;
             }
-            
-            dataDirName = "test-data";
 
-            /*throw new RuntimeException("Must set system property '" +
-                    TEST_PROPERTY + "' before running tests");*/
+            throw new RuntimeException("Must set system property '" +
+                    TEST_PROPERTY + "' before running tests");
         }
         File dataDir = new File(dataDirName, _moduleDir);
         if (!dataDir.exists()) {
