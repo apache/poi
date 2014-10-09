@@ -26,13 +26,12 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hwpf.converter.WordToTextConverter;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.FieldsDocumentPart;
@@ -742,5 +741,17 @@ public class TestBugs extends TestCase
     public void testBug53380_4() throws Exception
     {
         HWPFTestDataSamples.openSampleFile( "Bug53380_4.doc" );
+    }
+    
+    /**
+     * java.lang.UnsupportedOperationException: Non-extended character 
+     *  Pascal strings are not supported right now
+     * 
+     * Disabled pending a fix for the bug
+     */
+    public void DISABLEDtest56880() throws Exception {
+        HWPFDocument doc =
+                HWPFTestDataSamples.openSampleFile("56880.doc");
+        assertEquals("Check Request", doc.getRange().text());
     }
 }
