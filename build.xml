@@ -176,8 +176,8 @@ under the License.
     <property name="xerces.url" value="${repository.m2}/maven2/xerces/xercesImpl/2.6.1//xercesImpl-2.6.1.jar"/>
 
     <!-- license checks -->
-    <property name="rat.jar" location="${main.lib}/apache-rat-0.10.jar"/>
-    <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.10/apache-rat-0.10.jar"/>
+    <property name="rat.jar" location="${main.lib}/apache-rat-0.11.jar"/>
+    <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.11/apache-rat-0.11.jar"/>
 
     <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -391,6 +391,7 @@ under the License.
 				<include name="log4j-1.2.13*"/>
 				<include name="org.jacoco.*-0.6.*"/>
 				<include name="dom4j*"/>
+				<include name="rat-0.10*"/>
 			</fileset>
 		</delete>
 
@@ -1458,7 +1459,7 @@ under the License.
 
        <typedef resource="org/apache/rat/anttasks/antlib.xml"
              uri="antlib:org.apache.rat.anttasks"
-             classpath="${main.lib}/apache-rat-0.10.jar" />
+             classpath="${rat.jar}" />
        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
            <fileset dir="src/">
               <exclude name="documentation/*.txt" />
