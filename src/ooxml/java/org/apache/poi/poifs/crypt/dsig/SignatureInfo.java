@@ -179,23 +179,42 @@ public class SignatureInfo implements SignatureConfigurable {
             this.signaturePart = signaturePart;
         }
         
+        /**
+         * @return the package part containing the signature
+         */
         public PackagePart getPackagePart() {
             return signaturePart;
         }
         
+        /**
+         * @return the signer certificate
+         */
         public X509Certificate getSigner() {
             return signer;
         }
         
+        /**
+         * @return the certificate chain of the signer
+         */
         public List<X509Certificate> getCertChain() {
             return certChain;
         }
         
+        /**
+         * Helper method for examining the xml signature
+         *
+         * @return the xml signature document
+         * @throws IOException if the xml signature doesn't exist or can't be read
+         * @throws XmlException if the xml signature is malformed
+         */
         public SignatureDocument getSignatureDocument() throws IOException, XmlException {
             // TODO: check for XXE
             return SignatureDocument.Factory.parse(signaturePart.getInputStream());
         }
         
+        /**
+         * @return true, when the xml signature is valid, false otherwise
+         */
         public boolean validate() {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
             try {
@@ -227,18 +246,30 @@ public class SignatureInfo implements SignatureConfigurable {
         }
     }
     
+    /**
+     * Constructor initializes xml signature environment, if it hasn't been initialized before
+     */
     public SignatureInfo() {
         initXmlProvider();        
     }
     
+    /**
+     * @return the signature config
+     */
     public SignatureConfig getSignatureConfig() {
         return signatureConfig;
     }
 
+    /**
+     * @param signatureConfig the signature config, needs to be set before a SignatureInfo object is used
+     */
     public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
     }
 
+    /**
+     * @return true, if first signature part is valid
+     */
     public boolean verifySignature() {
         // http://www.oracle.com/technetwork/articles/javase/dig-signature-api-140772.html
         for (SignaturePart sp : getSignatureParts()){
@@ -248,6 +279,12 @@ public class SignatureInfo implements SignatureConfigurable {
         return false;
     }
 
+    /**
+     * add the xml signature to the document
+     *
+     * @throws XMLSignatureException
+     * @throws MarshalException
+     */
     public void confirmSignature() throws XMLSignatureException, MarshalException {
         Document document = DocumentHelper.createDocument();
         
@@ -261,6 +298,13 @@ public class SignatureInfo implements SignatureConfigurable {
         postSign(document, signatureValue);
     }
 
+    /**
+     * Sign (encrypt) the digest with the private key.
+     * Currently only rsa is supported.
+     *
+     * @param digest the hashed input
+     * @return the encrypted hash
+     */
     public byte[] signDigest(byte digest[]) {
         Cipher cipher = CryptoFunctions.getCipher(signatureConfig.getKey(), CipherAlgorithm.rsa
             , ChainingMode.ecb, null, Cipher.ENCRYPT_MODE, "PKCS1Padding");
@@ -277,6 +321,10 @@ public class SignatureInfo implements SignatureConfigurable {
         }
     }
     
+    /**
+     * @return a signature part for each signature document.
+     * the parts can be validated independently.
+     */
     public Iterable<SignaturePart> getSignatureParts() {
         signatureConfig.init(true);
         return new Iterable<SignaturePart>() {
@@ -324,6 +372,9 @@ public class SignatureInfo implements SignatureConfigurable {
         };
     }
     
+    /**
+     * Initialize the xml signing environment and the bouncycastle provider 
+     */
     protected static synchronized void initXmlProvider() {
         if (isInitialized) return;
         isInitialized = true;
@@ -401,7 +452,7 @@ public class SignatureInfo implements SignatureConfigurable {
         SignedInfo signedInfo;
         try {
             SignatureMethod signatureMethod = signatureFactory.newSignatureMethod
-                (signatureConfig.getSignatureMethod(), null);
+                (signatureConfig.getSignatureMethodUri(), null);
             CanonicalizationMethod canonicalizationMethod = signatureFactory
                 .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
                 (C14NMethodParameterSpec) null);
@@ -513,6 +564,12 @@ public class SignatureInfo implements SignatureConfigurable {
         writeDocument(document);
     }
 
+    /**
+     * Write XML signature into the OPC package
+     *
+     * @param document the xml signature document
+     * @throws MarshalException
+     */
     protected void writeDocument(Document document) throws MarshalException {
         XmlOptions xo = new XmlOptions();
         Map<String,String> namespaceMap = new HashMap<String,String>();
@@ -569,6 +626,12 @@ public class SignatureInfo implements SignatureConfigurable {
         sigsPart.addRelationship(sigPartName, TargetMode.INTERNAL, PackageRelationshipTypes.DIGITAL_SIGNATURE);
     }
     
+    /**
+     * Helper method for null lists, which are converted to empty lists
+     *
+     * @param other the reference to wrap, if null
+     * @return if other is null, an empty lists is returned, otherwise other is returned
+     */
     @SuppressWarnings("unchecked")
     private static <T> List<T> safe(List<T> other) {
         return other == null ? Collections.EMPTY_LIST : other;

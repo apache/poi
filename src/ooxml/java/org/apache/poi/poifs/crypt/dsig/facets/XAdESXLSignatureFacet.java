@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
-import javax.xml.crypto.dsig.CanonicalizationMethod;
 
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.util.POILogFactory;
@@ -105,8 +104,6 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(XAdESXLSignatureFacet.class);
 
-    private String c14nAlgoId = CanonicalizationMethod.EXCLUSIVE;
-
     private final CertificateFactory certificateFactory;
 
     public XAdESXLSignatureFacet() {
@@ -115,10 +112,6 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         } catch (CertificateException e) {
             throw new RuntimeException("X509 JCA error: " + e.getMessage(), e);
         }
-    }
-
-    public void setCanonicalizerAlgorithm(String c14nAlgoId) {
-        this.c14nAlgoId = c14nAlgoId;
     }
 
     @Override
@@ -351,7 +344,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
     private XAdESTimeStampType createXAdESTimeStamp(
             List<Node> nodeList,
             RevocationData revocationData) {
-        byte[] c14nSignatureValueElement = getC14nValue(nodeList, c14nAlgoId);
+        byte[] c14nSignatureValueElement = getC14nValue(nodeList, signatureConfig.getXadesCanonicalizationMethod());
 
         return createXAdESTimeStamp(c14nSignatureValueElement, revocationData);
     }
@@ -370,7 +363,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         XAdESTimeStampType xadesTimeStamp = XAdESTimeStampType.Factory.newInstance();
         xadesTimeStamp.setId("time-stamp-" + UUID.randomUUID().toString());
         CanonicalizationMethodType c14nMethod = xadesTimeStamp.addNewCanonicalizationMethod();
-        c14nMethod.setAlgorithm(c14nAlgoId);
+        c14nMethod.setAlgorithm(signatureConfig.getXadesCanonicalizationMethod());
 
         // embed the time-stamp
         EncapsulatedPKIDataType encapsulatedTimeStamp = xadesTimeStamp.addNewEncapsulatedTimeStamp();

@@ -51,6 +51,7 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.xml.security.signature.XMLSignature;
 import org.w3c.dom.events.EventListener;
 
 /**
@@ -122,8 +123,9 @@ public class SignatureConfig {
      */
     private HashAlgorithm xadesDigestAlgo = null;
     private String xadesRole = null;
-    private String xadesSignatureId = null;
+    private String xadesSignatureId = "idSignedProperties";
     private boolean xadesSignaturePolicyImplied = true;
+    private String xadesCanonicalizationMethod = CanonicalizationMethod.EXCLUSIVE;
 
     /**
      * Work-around for Office 2010 IssuerName encoding.
@@ -198,10 +200,6 @@ public class SignatureConfig {
             tspService.setSignatureConfig(this);
         }
         
-        if (xadesSignatureId == null || xadesSignatureId.isEmpty()) {
-            xadesSignatureId = "idSignedProperties";
-        }
-
         if (signatureFacets.isEmpty()) {
             addSignatureFacet(new OOXMLSignatureFacet());
             addSignatureFacet(new KeyInfoSignatureFacet());
@@ -366,141 +364,358 @@ public class SignatureConfig {
     public void setCanonicalizationMethod(String canonicalizationMethod) {
         this.canonicalizationMethod = canonicalizationMethod;
     }
+
+    /**
+     * @return The signature Id attribute value used to create the XML signature.
+     * Defaults to "idPackageSignature"
+     */
     public String getPackageSignatureId() {
         return packageSignatureId;
     }
+
+    /**
+     * @param packageSignatureId The signature Id attribute value used to create the XML signature.
+     * A <code>null</code> value will trigger an automatically generated signature Id.
+     */
     public void setPackageSignatureId(String packageSignatureId) {
         this.packageSignatureId = nvl(packageSignatureId,"xmldsig-"+UUID.randomUUID());
     }
+
+    /**
+     * @return the url of the timestamp provider (TSP)
+     */
     public String getTspUrl() {
         return tspUrl;
     }
+
+    /**
+     * @param tspUrl the url of the timestamp provider (TSP)
+     */
     public void setTspUrl(String tspUrl) {
         this.tspUrl = tspUrl;
     }
+    
+    /**
+     * @return if true, uses timestamp-request/response mimetype,
+     * if false, timestamp-query/reply mimetype 
+     */
     public boolean isTspOldProtocol() {
         return tspOldProtocol;
     }
+    
+    /**
+     * @param tspOldProtocol defines the timestamp-protocol mimetype
+     * @see {@link #isTspOldProtocol()}
+     */
     public void setTspOldProtocol(boolean tspOldProtocol) {
         this.tspOldProtocol = tspOldProtocol;
     }
+    
+    /**
+     * @return the hash algorithm to be used for the timestamp entry.
+     * Defaults to the hash algorithm of the main entry
+     */
     public HashAlgorithm getTspDigestAlgo() {
         return nvl(tspDigestAlgo,digestAlgo);
     }
+    
+    /**
+     * @param tspDigestAlgo the algorithm to be used for the timestamp entry.
+     * if <code>null</code>, the hash algorithm of the main entry
+     */
     public void setTspDigestAlgo(HashAlgorithm tspDigestAlgo) {
         this.tspDigestAlgo = tspDigestAlgo;
     }
+
+    /**
+     * @return the proxy url to be used for all communications.
+     * Currently this affects the timestamp service
+     */
     public String getProxyUrl() {
         return proxyUrl;
     }
+    
+    /**
+     * @param proxyUrl the proxy url to be used for all communications.
+     * Currently this affects the timestamp service
+     */
     public void setProxyUrl(String proxyUrl) {
         this.proxyUrl = proxyUrl;
     }
+    
+    /**
+     * @return the timestamp service. Defaults to {@link TSPTimeStampService}
+     */
     public TimeStampService getTspService() {
         return tspService;
     }
+    
+    /**
+     * @param tspService the timestamp service
+     */
     public void setTspService(TimeStampService tspService) {
         this.tspService = tspService;
     }
+    
+    /**
+     * @return the user id for the timestamp service - currently only basic authorization is supported
+     */
     public String getTspUser() {
         return tspUser;
     }
+    
+    /**
+     * @param tspUser the user id for the timestamp service - currently only basic authorization is supported
+     */
     public void setTspUser(String tspUser) {
         this.tspUser = tspUser;
     }
+    
+    /**
+     * @return the password for the timestamp service
+     */
     public String getTspPass() {
         return tspPass;
     }
+    
+    /**
+     * @param tspPass the password for the timestamp service
+     */
     public void setTspPass(String tspPass) {
         this.tspPass = tspPass;
     }
+    
+    /**
+     * @return the validator for the timestamp service (certificate)
+     */
     public TimeStampServiceValidator getTspValidator() {
         return tspValidator;
     }
+    
+    /**
+     * @param tspValidator the validator for the timestamp service (certificate)
+     */
     public void setTspValidator(TimeStampServiceValidator tspValidator) {
         this.tspValidator = tspValidator;
     }
+
+    /**
+     * @return the optional revocation data service used for XAdES-C and XAdES-X-L.
+     * When <code>null</code> the signature will be limited to XAdES-T only.
+     */
     public RevocationDataService getRevocationDataService() {
         return revocationDataService;
     }
+
+    /**
+     * @param revocationDataService the optional revocation data service used for XAdES-C and XAdES-X-L.
+     * When <code>null</code> the signature will be limited to XAdES-T only.
+     */
     public void setRevocationDataService(RevocationDataService revocationDataService) {
         this.revocationDataService = revocationDataService;
     }
+
+    /**
+     * @return hash algorithm used for XAdES. Defaults to the {@link #getDigestAlgo()}
+     */
     public HashAlgorithm getXadesDigestAlgo() {
         return nvl(xadesDigestAlgo,digestAlgo);
     }
+    
+    /**
+     * @param xadesDigestAlgo hash algorithm used for XAdES.
+     * When <code>null</code>, defaults to {@link #getDigestAlgo()}
+     */
     public void setXadesDigestAlgo(HashAlgorithm xadesDigestAlgo) {
         this.xadesDigestAlgo = xadesDigestAlgo;
     }
+
+    /**
+     * @return the user agent used for http communication (e.g. to the TSP)
+     */
     public String getUserAgent() {
         return userAgent;
     }
+    
+    /**
+     * @param userAgent the user agent used for http communication (e.g. to the TSP)
+     */
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
     }
+
+    /**
+     * @return the asn.1 object id for the tsp request policy.
+     * Defaults to <code>1.3.6.1.4.1.13762.3</code>
+     */
     public String getTspRequestPolicy() {
         return tspRequestPolicy;
     }
+    
+    /**
+     * @param tspRequestPolicy the asn.1 object id for the tsp request policy.
+     */
     public void setTspRequestPolicy(String tspRequestPolicy) {
         this.tspRequestPolicy = tspRequestPolicy;
     }
+
+    /**
+     * @return true, if the whole certificate chain is included in the signature.
+     * When false, only the signer cert will be included 
+     */
     public boolean isIncludeEntireCertificateChain() {
         return includeEntireCertificateChain;
     }
+
+    /**
+     * @param includeEntireCertificateChain if true, include the whole certificate chain.
+     * If false, only include the signer cert
+     */
     public void setIncludeEntireCertificateChain(boolean includeEntireCertificateChain) {
         this.includeEntireCertificateChain = includeEntireCertificateChain;
     }
+
+    /**
+     * @return if true, issuer serial number is included
+     */
     public boolean isIncludeIssuerSerial() {
         return includeIssuerSerial;
     }
+
+    /**
+     * @param includeIssuerSerial if true, issuer serial number is included
+     */
     public void setIncludeIssuerSerial(boolean includeIssuerSerial) {
         this.includeIssuerSerial = includeIssuerSerial;
     }
+
+    /**
+     * @return if true, the key value of the public key (certificate) is included
+     */
     public boolean isIncludeKeyValue() {
         return includeKeyValue;
     }
+
+    /**
+     * @param includeKeyValue if true, the key value of the public key (certificate) is included
+     */
     public void setIncludeKeyValue(boolean includeKeyValue) {
         this.includeKeyValue = includeKeyValue;
     }
+
+    /**
+     * @return the xades role element. If <code>null</code> the claimed role element is omitted.
+     * Defaults to <code>null</code>
+     */
     public String getXadesRole() {
         return xadesRole;
     }
+
+    /**
+     * @param xadesRole the xades role element. If <code>null</code> the claimed role element is omitted.
+     */
     public void setXadesRole(String xadesRole) {
         this.xadesRole = xadesRole;
     }
+
+    /**
+     * @return the Id for the XAdES SignedProperties element.
+     * Defaults to <code>idSignedProperties</code>
+     */
     public String getXadesSignatureId() {
-        return xadesSignatureId;
+        return nvl(xadesSignatureId, "idSignedProperties");
     }
+
+    /**
+     * @param xadesSignatureId the Id for the XAdES SignedProperties element.
+     * When <code>null</code> defaults to <code>idSignedProperties</code>
+     */
     public void setXadesSignatureId(String xadesSignatureId) {
         this.xadesSignatureId = xadesSignatureId;
     }
+
+    /**
+     * @return when true, include the policy-implied block.
+     * Defaults to <code>true</code>
+     */
     public boolean isXadesSignaturePolicyImplied() {
         return xadesSignaturePolicyImplied;
     }
+
+    /**
+     * @param xadesSignaturePolicyImplied when true, include the policy-implied block
+     */
     public void setXadesSignaturePolicyImplied(boolean xadesSignaturePolicyImplied) {
         this.xadesSignaturePolicyImplied = xadesSignaturePolicyImplied;
     }
+
+    /**
+     * Make sure the DN is encoded using the same order as present
+     * within the certificate. This is an Office2010 work-around.
+     * Should be reverted back.
+     * 
+     * XXX: not correct according to RFC 4514.
+     *
+     * @return when true, the issuer DN is used instead of the issuer X500 principal
+     */
     public boolean isXadesIssuerNameNoReverseOrder() {
         return xadesIssuerNameNoReverseOrder;
     }
+
+    /**
+     * @param xadesIssuerNameNoReverseOrder when true, the issuer DN instead of the issuer X500 prinicpal is used
+     */
     public void setXadesIssuerNameNoReverseOrder(boolean xadesIssuerNameNoReverseOrder) {
         this.xadesIssuerNameNoReverseOrder = xadesIssuerNameNoReverseOrder;
     }
+
+    
+    /**
+     * @return the event listener which is active while xml structure for
+     * the signature is created.
+     * Defaults to {@link SignatureMarshalListener}
+     */
     public EventListener getSignatureMarshalListener() {
         return signatureMarshalListener;
     }
+
+    /**
+     * @param signatureMarshalListener the event listener watching the xml structure
+     * generation for the signature
+     */
     public void setSignatureMarshalListener(EventListener signatureMarshalListener) {
         this.signatureMarshalListener = signatureMarshalListener;
     }
+
+    /**
+     * @return the map of namespace uri (key) to prefix (value)
+     */
     public Map<String, String> getNamespacePrefixes() {
         return namespacePrefixes;
     }
+
+    /**
+     * @param namespacePrefixes the map of namespace uri (key) to prefix (value)
+     */
     public void setNamespacePrefixes(Map<String, String> namespacePrefixes) {
         this.namespacePrefixes = namespacePrefixes;
     }
+
+    /**
+     * helper method for null/default value handling
+     * @param value
+     * @param defaultValue
+     * @return if value is not null, return value otherwise defaultValue
+     */
     protected static <T> T nvl(T value, T defaultValue)  {
         return value == null ? defaultValue : value;
     }
+
+    /**
+     * Each digest method has its own IV (initial vector)
+     *
+     * @return the IV depending on the main digest method
+     */
     public byte[] getHashMagic() {
         // see https://www.ietf.org/rfc/rfc3110.txt
         // RSA/SHA1 SIG Resource Records
@@ -545,23 +760,34 @@ public class SignatureConfig {
         return result;
     }
 
-    public String getSignatureMethod() {
+    /**
+     * @return the uri for the signature method, i.e. currently only rsa is
+     * supported, so it's the rsa variant of the main digest
+     */
+    public String getSignatureMethodUri() {
         switch (getDigestAlgo()) {
-        case sha1:   return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
-        case sha224: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA224;
-        case sha256: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
-        case sha384: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
-        case sha512: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
-        case ripemd160: return org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA_RIPEMD160;
+        case sha1:   return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1;
+        case sha224: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA224;
+        case sha256: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256;
+        case sha384: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384;
+        case sha512: return XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512;
+        case ripemd160: return XMLSignature.ALGO_ID_SIGNATURE_RSA_RIPEMD160;
         default: throw new EncryptedDocumentException("Hash algorithm "
             +getDigestAlgo()+" not supported for signing.");
         }
     }
     
+    /**
+     * @return the uri for the main digest
+     */
     public String getDigestMethodUri() {
         return getDigestMethodUri(getDigestAlgo());
     }
     
+    /**
+     * @param digestAlgo the digest algo, currently only sha* and ripemd160 is supported 
+     * @return the uri for the given digest
+     */
     public static String getDigestMethodUri(HashAlgorithm digestAlgo) {
         switch (digestAlgo) {
         case sha1:   return DigestMethod.SHA1;
@@ -575,10 +801,16 @@ public class SignatureConfig {
         }
     }
     
+    /**
+     * @param signatureFactory the xml signature factory, saved as thread-local
+     */
     public void setSignatureFactory(XMLSignatureFactory signatureFactory) {
         this.signatureFactory.set(signatureFactory);
     }
     
+    /**
+     * @return the xml signature factory (thread-local)
+     */
     public XMLSignatureFactory getSignatureFactory() {
         XMLSignatureFactory sigFac = signatureFactory.get();
         if (sigFac == null) {
@@ -588,10 +820,16 @@ public class SignatureConfig {
         return sigFac;
     }
 
+    /**
+     * @param keyInfoFactory the key factory, saved as thread-local
+     */
     public void setKeyInfoFactory(KeyInfoFactory keyInfoFactory) {
         this.keyInfoFactory.set(keyInfoFactory);
     }
     
+    /**
+     * @return the key factory (thread-local)
+     */
     public KeyInfoFactory getKeyInfoFactory() {
         KeyInfoFactory keyFac = keyInfoFactory.get();
         if (keyFac == null) {
@@ -601,7 +839,19 @@ public class SignatureConfig {
         return keyFac;
     }
 
-    // currently classes are linked to Apache Santuario, so this might be superfluous 
+    /**
+     * This method tests the existence of xml signature provider in the following order:
+     * <ul>
+     * <li>the class pointed to by the system property "jsr105Provider"</li>
+     * <li>the Santuario xmlsec provider</li>
+     * <li>the JDK xmlsec provider</li>
+     * </ul>
+     * 
+     * For signing the classes are linked against the Santuario xmlsec, so this might
+     * only work for validation (not tested).
+     *  
+     * @return the xml dsig provider
+     */
     public Provider getProvider() {
         Provider prov = provider.get();
         if (prov == null) {
@@ -627,7 +877,21 @@ public class SignatureConfig {
         
         return prov;
     }
-    
 
+    /**
+     * @return the cannonicalization method for XAdES-XL signing.
+     * Defaults to <code>EXCLUSIVE</code>
+     * @see {@link CanonicalizationMethod}
+     */
+    public String getXadesCanonicalizationMethod() {
+        return xadesCanonicalizationMethod;
+    }
 
+    /**
+     * @param xadesCanonicalizationMethod the cannonicalization method for XAdES-XL signing
+     * @see {@link CanonicalizationMethod}
+     */
+    public void setXadesCanonicalizationMethod(String xadesCanonicalizationMethod) {
+        this.xadesCanonicalizationMethod = xadesCanonicalizationMethod;
+    }
 }
