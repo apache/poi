@@ -56,7 +56,6 @@ public abstract class SignatureFacet implements SignatureConfigurable {
     public static final String XADES_141_NS = "http://uri.etsi.org/01903/v1.4.1#";
 
     protected SignatureConfig signatureConfig;
-    protected ThreadLocal<XMLSignatureFactory> signatureFactory;
 
     public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
