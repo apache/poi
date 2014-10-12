@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author Glen Stampoultzis
@@ -38,5 +39,29 @@ public class TestTempFile extends TestCase {
         assertEquals("poifiles", tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
+    }
+    
+    public void testConstructor() {
+        // can currently be constructed...
+        new TempFile();
+    }
+    
+    public void testSetTempFileCreationStrategy() throws IOException {
+        TempFile.setTempFileCreationStrategy(new TempFile.DefaultTempFileCreationStrategy());
+        
+        File file1 = TempFile.createTempFile("TestTempFile", ".tst");
+        File file2 = TempFile.createTempFile("TestTempFile", ".tst");
+        assertFalse(file1.equals(file2));
+        assertNotNull(file2);
+        assertTrue(file2.delete());
+        assertNotNull(file1);
+        assertTrue(file1.delete());
+        
+        try {
+            TempFile.setTempFileCreationStrategy(null);
+            fail("Expecting an exception here");
+        } catch (IllegalArgumentException e) {
+            // expecting an exception here...
+        }
     }
 }
