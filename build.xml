@@ -391,7 +391,7 @@ under the License.
 				<include name="log4j-1.2.13*"/>
 				<include name="org.jacoco.*-0.6.*"/>
 				<include name="dom4j*"/>
-				<include name="rat-0.10*"/>
+				<include name="apache-rat-0.10*"/>
 			</fileset>
 		</delete>
 
@@ -495,7 +495,6 @@ under the License.
                 <and>
                     <available file="${ooxml.xmlbeans23.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
-                    <available file="${ooxml.xsds.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -518,6 +517,7 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.lib}/${ooxml.xsds.izip.1}"/>
+                    <available file="${ooxml.lib}/${ooxml.xsds.izip.2}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -554,7 +554,10 @@ under the License.
     <target name="check-compiled-ooxml-xsds" depends="fetch-ooxml-xsds">
         <condition property="ooxml-compiled-xsds.present">
             <or>
-                <available file="${ooxml.xsds.jar}"/>
+            	<and>
+                    <available file="${ooxml.xsds.jar}"/>
+                    <available file="${ooxml.encryption.jar}"/>
+            	</and>
                 <isset property="disconnected"/>
             </or>
         </condition>
