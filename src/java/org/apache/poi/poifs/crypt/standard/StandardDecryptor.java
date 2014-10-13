@@ -139,7 +139,15 @@ public class StandardDecryptor extends Decryptor {
 
         _length = dis.readLong();
 
-        return new BoundedInputStream(new CipherInputStream(dis, getCipher(getSecretKey())), _length);
+        // limit wrong calculated ole entries - (bug #57080)
+        // standard encryption always uses aes encoding, so blockSize is always 16 
+        // http://stackoverflow.com/questions/3283787/size-of-data-after-aes-encryption
+        int blockSize = info.getHeader().getCipherAlgorithm().blockSize;
+        long cipherLen = (_length/blockSize + 1) * blockSize;
+        Cipher cipher = getCipher(getSecretKey());
+        
+        InputStream boundedDis = new BoundedInputStream(dis, cipherLen);
+        return new BoundedInputStream(new CipherInputStream(boundedDis, cipher), _length);
     }
 
     public long getLength(){
