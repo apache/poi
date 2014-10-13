@@ -20,6 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -27,7 +29,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.junit.Test;
 
 /**
@@ -122,4 +126,25 @@ public class TestDecryptor {
         }
     }
 
+    @Test
+    public void bug57080() throws Exception {
+        // the test file contains a wrong ole entry size, produced by extenxls
+        // the fix limits the available size and tries to read all entries 
+        File f = POIDataSamples.getPOIFSInstance().getFile("extenxls_pwd123.xlsx");
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(f, true);
+        EncryptionInfo info = new EncryptionInfo(fs);
+        Decryptor d = Decryptor.getInstance(info);
+        d.verifyPassword("pwd123");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipInputStream zis = new ZipInputStream(d.getDataStream(fs));
+        ZipEntry ze;
+        while ((ze = zis.getNextEntry()) != null) {
+            bos.reset();
+            IOUtils.copy(zis, bos);
+            assertEquals(ze.getSize(), bos.size());
+        }
+        
+        zis.close();
+        fs.close();
+    }
 }
