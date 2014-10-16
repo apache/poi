@@ -112,7 +112,7 @@ import org.w3c.dom.events.EventTarget;
  * ...
  * </pre>
  * 
- * <p><b>Signing a office document</b></p>
+ * <p><b>Signing an office document</b></p>
  * 
  * <pre>
  * // loading the keystore - pkcs12 is used here, but of course jks &amp; co are also valid
