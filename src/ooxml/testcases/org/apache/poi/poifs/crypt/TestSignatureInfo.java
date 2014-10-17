@@ -23,10 +23,7 @@
    ================================================================= */ 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.Key;
@@ -94,19 +91,23 @@ public class TestSignatureInfo {
 
     
     @BeforeClass
-    public static void initBouncy() throws MalformedURLException {
+    public static void initBouncy() throws IOException {
         File bcProvJar = new File("lib/bcprov-ext-jdk15on-1.51.jar");
         File bcPkixJar = new File("lib/bcpkix-jdk15on-151.jar");
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         URLClassLoader ucl = new URLClassLoader(new URL[]{bcProvJar.toURI().toURL(),bcPkixJar.toURI().toURL()}, cl);
-        Thread.currentThread().setContextClassLoader(ucl);
-        CryptoFunctions.registerBouncyCastle();
-
-        /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
-        cal = Calendar.getInstance();
-        cal.clear();
-        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-        cal.set(2014, 7, 6, 21, 42, 12);
+        try {
+            Thread.currentThread().setContextClassLoader(ucl);
+            CryptoFunctions.registerBouncyCastle();
+    
+            /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
+            cal = Calendar.getInstance();
+            cal.clear();
+            cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+            cal.set(2014, 7, 6, 21, 42, 12);
+        } finally {
+            ucl.close();
+        }
     }
 
     @Test
@@ -154,6 +155,37 @@ public class TestSignatureInfo {
         
         for (String testFile : testFiles) {
             OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
+            try {
+                SignatureConfig sic = new SignatureConfig();
+                sic.setOpcPackage(pkg);
+                SignatureInfo si = new SignatureInfo();
+                si.setSignatureConfig(sic);
+                List<X509Certificate> result = new ArrayList<X509Certificate>();
+                for (SignaturePart sp : si.getSignatureParts()) {
+                    if (sp.validate()) {
+                        result.add(sp.getSigner());
+                    }
+                }
+    
+                assertNotNull(result);
+                assertEquals("test-file: "+testFile, 1, result.size());
+                X509Certificate signer = result.get(0);
+                LOG.log(POILogger.DEBUG, "signer: " + signer.getSubjectX500Principal());
+    
+                boolean b = si.verifySignature();
+                assertTrue("test-file: "+testFile, b);
+                pkg.revert();
+            } finally {
+                pkg.close();
+            }
+        }
+    }
+
+    @Test
+    public void getMultiSigners() throws Exception {
+        String testFile = "hello-world-signed-twice.docx";
+        OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
+        try {
             SignatureConfig sic = new SignatureConfig();
             sic.setOpcPackage(pkg);
             SignatureInfo si = new SignatureInfo();
@@ -164,43 +196,20 @@ public class TestSignatureInfo {
                     result.add(sp.getSigner());
                 }
             }
-
+    
             assertNotNull(result);
-            assertEquals("test-file: "+testFile, 1, result.size());
-            X509Certificate signer = result.get(0);
-            LOG.log(POILogger.DEBUG, "signer: " + signer.getSubjectX500Principal());
-
+            assertEquals("test-file: "+testFile, 2, result.size());
+            X509Certificate signer1 = result.get(0);
+            X509Certificate signer2 = result.get(1);
+            LOG.log(POILogger.DEBUG, "signer 1: " + signer1.getSubjectX500Principal());
+            LOG.log(POILogger.DEBUG, "signer 2: " + signer2.getSubjectX500Principal());
+    
             boolean b = si.verifySignature();
             assertTrue("test-file: "+testFile, b);
             pkg.revert();
+        } finally {
+            pkg.close();
         }
-    }
-
-    @Test
-    public void getMultiSigners() throws Exception {
-        String testFile = "hello-world-signed-twice.docx";
-        OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
-        SignatureConfig sic = new SignatureConfig();
-        sic.setOpcPackage(pkg);
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(sic);
-        List<X509Certificate> result = new ArrayList<X509Certificate>();
-        for (SignaturePart sp : si.getSignatureParts()) {
-            if (sp.validate()) {
-                result.add(sp.getSigner());
-            }
-        }
-
-        assertNotNull(result);
-        assertEquals("test-file: "+testFile, 2, result.size());
-        X509Certificate signer1 = result.get(0);
-        X509Certificate signer2 = result.get(1);
-        LOG.log(POILogger.DEBUG, "signer 1: " + signer1.getSubjectX500Principal());
-        LOG.log(POILogger.DEBUG, "signer 2: " + signer2.getSubjectX500Principal());
-
-        boolean b = si.verifySignature();
-        assertTrue("test-file: "+testFile, b);
-        pkg.revert();
     }
     
     @Test
@@ -215,6 +224,7 @@ public class TestSignatureInfo {
     public void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
+        @SuppressWarnings("resource")       // closed via XSSFWorkbook.close() below ?!
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
         sign(pkg, "Test", "CN=Test", 1);
         
@@ -298,11 +308,15 @@ public class TestSignatureInfo {
 
         if (mockTsp) {
             TimeStampService tspService = new TimeStampService(){
+                @Override
                 public byte[] timeStamp(byte[] data, RevocationData revocationData) throws Exception {
                     revocationData.addCRL(crl);
                     return "time-stamp-token".getBytes();                
                 }
-                public void setSignatureConfig(SignatureConfig config) {}
+                @Override
+                public void setSignatureConfig(SignatureConfig config) {
+                    // empty on purpose
+                }
             };
             signatureConfig.setTspService(tspService);
         } else {
@@ -327,6 +341,7 @@ public class TestSignatureInfo {
         revocationData.addOCSP(ocspResp.getEncoded());
 
         RevocationDataService revocationDataService = new RevocationDataService(){
+            @Override
             public RevocationData getRevocationData(List<X509Certificate> certificateChain) {
                 return revocationData;
             }
@@ -336,7 +351,14 @@ public class TestSignatureInfo {
         // operate
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
-        si.confirmSignature();
+        try {
+            si.confirmSignature();
+        } catch (RuntimeException e) {
+            // only allow a ConnectException because of timeout, we see this in Jenkins from time to time...
+            assertNotNull("Only allowing ConnectException here, but had: " + e, e.getCause());
+            assertTrue("Only allowing ConnectException here, but had: " + e, e.getCause() instanceof ConnectException);
+            assertTrue("Only allowing ConnectException here, but had: " + e, e.getCause().getMessage().contains("timed out"));
+        }
         
         // verify
         Iterator<SignaturePart> spIter = si.getSignatureParts().iterator();
