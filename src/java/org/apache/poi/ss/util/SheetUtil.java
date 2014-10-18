@@ -293,4 +293,41 @@ public class SheetUtil {
         return false;
     }
 
+    /**
+     * Return the cell, taking account of merged regions. Allows you to find the
+     *  cell who's contents are shown in a given position in the sheet.
+     * 
+     * <p>If the cell at the given co-ordinates is a merged cell, this will
+     *  return the primary (top-left) most cell of the merged region.
+     * <p>If the cell at the given co-ordinates is not in a merged region,
+     *  then will return the cell itself.
+     * <p>If there is no cell defined at the given co-ordinates, will return
+     *  null.
+     */
+    public static Cell getCellWithMerges(Sheet sheet, int rowIx, int colIx) {
+        Row r = sheet.getRow(rowIx);
+        if (r != null) {
+            Cell c = r.getCell(colIx);
+            if (c != null) {
+                // Normal, non-merged cell
+                return c;
+            }
+        }
+        
+        for (int mr=0; mr<sheet.getNumMergedRegions(); mr++) {
+            CellRangeAddress mergedRegion = sheet.getMergedRegion(mr);
+            if (mergedRegion.isInRange(rowIx, colIx)) {
+                // The cell wanted is in this merged range
+                // Return the primary (top-left) cell for the range
+                r = sheet.getRow(mergedRegion.getFirstRow());
+                if (r != null) {
+                    return r.getCell(mergedRegion.getFirstColumn());
+                }
+            }
+        }
+        
+        // If we get here, then the cell isn't defined, and doesn't
+        //  live within any merged regions
+        return null;
+    }
 }
