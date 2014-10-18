@@ -23,7 +23,10 @@
    ================================================================= */ 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,8 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -88,28 +89,17 @@ public class TestSignatureInfo {
     private KeyPair keyPair = null;
     private X509Certificate x509 = null;
     
-
-    
     @BeforeClass
     public static void initBouncy() throws IOException {
-        File bcProvJar = new File("lib/bcprov-ext-jdk15on-1.51.jar");
-        File bcPkixJar = new File("lib/bcpkix-jdk15on-151.jar");
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        URLClassLoader ucl = new URLClassLoader(new URL[]{bcProvJar.toURI().toURL(),bcPkixJar.toURI().toURL()}, cl);
-        try {
-            Thread.currentThread().setContextClassLoader(ucl);
-            CryptoFunctions.registerBouncyCastle();
-    
-            /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
-            cal = Calendar.getInstance();
-            cal.clear();
-            cal.setTimeZone(TimeZone.getTimeZone("UTC"));
-            cal.set(2014, 7, 6, 21, 42, 12);
-        } finally {
-            ucl.close();
-        }
-    }
+        CryptoFunctions.registerBouncyCastle();
 
+        /*** TODO : set cal to now ... only set to fixed date for debugging ... */ 
+        cal = Calendar.getInstance();
+        cal.clear();
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cal.set(2014, 7, 6, 21, 42, 12);
+    }
+    
     @Test
     public void getSignerUnsigned() throws Exception {
         String testFiles[] = { 
@@ -303,8 +293,12 @@ public class TestSignatureInfo {
         boolean mockTsp = false;
         // http://timestamping.edelweb.fr/service/tsp
         // http://tsa.belgium.be/connect
-        signatureConfig.setTspUrl("http://timestamping.edelweb.fr/service/tsp");
-        signatureConfig.setTspOldProtocol(true);
+        // http://timestamp.comodoca.com/authenticode
+        // http://timestamp.comodoca.com/rfc3161
+        // http://services.globaltrustfinder.com/adss/tsa
+        signatureConfig.setTspUrl("http://timestamp.comodoca.com/rfc3161");
+        signatureConfig.setTspRequestPolicy(null); // comodoca request fails, if default policy is set ...
+        signatureConfig.setTspOldProtocol(false);
 
         if (mockTsp) {
             TimeStampService tspService = new TimeStampService(){

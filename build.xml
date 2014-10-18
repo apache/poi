@@ -36,7 +36,7 @@ under the License.
 
     LIBRARY         LOCATION
     =======         ========
-    junit(3.8+)     http://www.junit.org
+    junit(4.11+)     http://www.junit.org
 
     To build the documentation you will need to install forrest and set
     the FORREST_HOME environment variable.  Forrest 0.5.1 required.
@@ -259,7 +259,8 @@ under the License.
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${ooxml.encryption.jar}"/>
-        <path refid="ooxml.xmlsec.classpath"/>
+    	<!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
+        <!--path refid="ooxml.xmlsec.classpath"/-->
     </path>
 
     <path id="test.classpath">
@@ -727,7 +728,10 @@ under the License.
                encoding="${java.source.encoding}"
                fork="yes"
                includeantruntime="false">
-            <classpath refid="ooxml.classpath"/>
+            <classpath>
+            	<path refid="ooxml.classpath"/>
+            	<path refid="ooxml.xmlsec.classpath"/>
+        	</classpath>
         </javac>
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
@@ -739,6 +743,7 @@ under the License.
                includeantruntime="false">
             <classpath>
                 <path refid="ooxml.classpath"/>
+            	<path refid="ooxml.xmlsec.classpath"/>
             	<path refid="test.ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
                 <pathelement path="${main.output.test.dir}"/>
@@ -986,6 +991,26 @@ under the License.
                           <include name="**/${testpattern}.java"/>
                           <exclude name="**/TestUnfixedBugs.java"/>
                           <exclude name="**/All*Tests.java"/>
+                      	  <exclude name="**/TestSignatureInfo.java"/>
+                      </fileset>
+                  </batchtest>
+              </junit>
+            </jacoco:coverage>
+            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-xmlsec.exec">
+              <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+                     failureproperty="ooxml.xmlsec.test.failed">
+                  <classpath>
+                  	<path refid="@{classpath}"/>
+                  	<path refid="ooxml.xmlsec.classpath"/>
+                  </classpath>
+                  <syspropertyset refid="junit.properties"/>
+                  <jvmarg value="${poi.test.locale}"/>
+                  <jvmarg value="-ea"/>
+                  <formatter type="plain"/>
+                  <formatter type="xml"/>
+                  <batchtest todir="${ooxml.reports.test}">
+                      <fileset dir="${ooxml.src.test}">
+                      	  <include name="**/TestSignatureInfo.java"/>
                       </fileset>
                   </batchtest>
               </junit>
