@@ -527,4 +527,56 @@ public abstract class BaseTestBugzillaIssues {
         assertAlmostEquals(2225, s.getColumnWidth(11), fontAccuracy);
     }
     
+    /**
+     * =ISNUMBER(SEARCH("*AM*",A1)) not evaluating properly 
+     */
+    //@Test
+    public void stackoverflow26437323() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r1 = s.createRow(0);
+        Row r2 = s.createRow(1);
+        
+        // A1 is a number
+        r1.createCell(0).setCellValue(1.1);
+        // B1 is a string, with the wanted text in it
+        r1.createCell(1).setCellValue("This is text with AM in it");
+        // C1 is a string, with different text
+        r1.createCell(2).setCellValue("This some other text");
+        // D1 is a blank cell
+        r1.createCell(3, Cell.CELL_TYPE_BLANK);
+        // E1 is null
+        
+        // A2 will hold our test formulas
+        Cell cf = r2.createCell(0, Cell.CELL_TYPE_FORMULA);
+        
+        
+        // First up, check that TRUE and ISLOGICAL both behave
+        cf.setCellFormula("TRUE()");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISLOGICAL(TRUE())");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISLOGICAL(4)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        
+        // Now, check ISNUMBER / ISTEXT / ISNONTEXT
+        // TODO
+        
+        // Next up, SEARCH on its own
+        // TODO
+        
+        // Finally, bring it all together
+        // TODO
+    }
+    private Cell evaluateCell(Workbook wb, Cell c) {
+        Sheet s = c.getSheet();
+        wb.getCreationHelper().createFormulaEvaluator().evaluate(c);
+        return s.getRow(c.getRowIndex()).getCell(c.getColumnIndex());
+    }
 }
