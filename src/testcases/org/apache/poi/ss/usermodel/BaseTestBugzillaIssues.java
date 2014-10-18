@@ -400,4 +400,131 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals(0,  paneInfo.getHorizontalSplitTopRow());
     }
 
+    /** 
+     * Test hyperlinks
+     * open resulting file in excel, and check that there is a link to Google
+     */
+    @Test
+    public void bug15353() {
+        String hyperlinkF = "HYPERLINK(\"http://google.com\",\"Google\")";
+        
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("My sheet");
+
+        Row row = sheet.createRow( 0 );
+        Cell cell = row.createCell( 0 );
+        cell.setCellFormula(hyperlinkF);
+        
+        assertEquals(hyperlinkF, cell.getCellFormula());
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        sheet = wb.getSheet("My Sheet");
+        row = sheet.getRow( 0 );
+        cell = row.getCell( 0 );
+        
+        assertEquals(hyperlinkF, cell.getCellFormula());
+    }
+
+    /**
+     * HLookup and VLookup with optional arguments 
+     */
+    @Test
+    public void bug51024() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r1 = s.createRow(0);
+        Row r2 = s.createRow(1);
+
+        r1.createCell(0).setCellValue("v A1");
+        r2.createCell(0).setCellValue("v A2");
+        r1.createCell(1).setCellValue("v B1");
+
+        Cell c = r1.createCell(4);
+
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+
+        c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1)");
+        assertEquals("v A1", eval.evaluate(c).getStringValue());
+
+        c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1, 1)");
+        assertEquals("v A1", eval.evaluate(c).getStringValue());
+
+        c.setCellFormula("VLOOKUP(\"v A1\", A1:B2, 1, )");
+        assertEquals("v A1", eval.evaluate(c).getStringValue());
+
+
+        c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1)");
+        assertEquals("v A1", eval.evaluate(c).getStringValue());
+
+        c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1, 1)");
+        assertEquals("v A1", eval.evaluate(c).getStringValue());
+
+        c.setCellFormula("HLOOKUP(\"v A1\", A1:B2, 1, )");
+        assertEquals("v A1", eval.evaluate(c).getStringValue());
+    }
+    
+    @Test
+    public void stackoverflow23114397() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        DataFormat format = wb.getCreationHelper().createDataFormat();
+        
+        // How close the sizing should be, given that not all
+        //  systems will have quite the same fonts on them
+        float fontAccuracy = 0.22f;
+        
+        // x%
+        CellStyle iPercent = wb.createCellStyle();
+        iPercent.setDataFormat(format.getFormat("0%"));
+        // x.x%
+        CellStyle d1Percent = wb.createCellStyle();
+        d1Percent.setDataFormat(format.getFormat("0.0%"));
+        // x.xx%
+        CellStyle d2Percent = wb.createCellStyle();
+        d2Percent.setDataFormat(format.getFormat("0.00%"));
+        
+        Sheet s = wb.createSheet();
+        Row r1 = s.createRow(0);
+        
+        for (int i=0; i<3; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(0);
+        }
+        for (int i=3; i<6; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1);
+        }
+        for (int i=6; i<9; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(0.12345);
+        }
+        for (int i=9; i<12; i++) {
+            r1.createCell(i, Cell.CELL_TYPE_NUMERIC).setCellValue(1.2345);
+        }
+        for (int i=0; i<12; i+=3) {
+            r1.getCell(i+0).setCellStyle(iPercent);
+            r1.getCell(i+1).setCellStyle(d1Percent);
+            r1.getCell(i+2).setCellStyle(d2Percent);
+        }
+        for (int i=0; i<12; i++) {
+            s.autoSizeColumn(i);
+        }
+        
+        // Check the 0(.00)% ones
+        assertAlmostEquals(980, s.getColumnWidth(0), fontAccuracy);
+        assertAlmostEquals(1400, s.getColumnWidth(1), fontAccuracy);
+        assertAlmostEquals(1700, s.getColumnWidth(2), fontAccuracy);
+        
+        // Check the 100(.00)% ones
+        assertAlmostEquals(1500, s.getColumnWidth(3), fontAccuracy);
+        assertAlmostEquals(1950, s.getColumnWidth(4), fontAccuracy);
+        assertAlmostEquals(2225, s.getColumnWidth(5), fontAccuracy);
+        
+        // Check the 12(.34)% ones
+        assertAlmostEquals(1225, s.getColumnWidth(6), fontAccuracy);
+        assertAlmostEquals(1650, s.getColumnWidth(7), fontAccuracy);
+        assertAlmostEquals(1950, s.getColumnWidth(8), fontAccuracy);
+        
+        // Check the 123(.45)% ones
+        assertAlmostEquals(1500, s.getColumnWidth(9), fontAccuracy);
+        assertAlmostEquals(1950, s.getColumnWidth(10), fontAccuracy);
+        assertAlmostEquals(2225, s.getColumnWidth(11), fontAccuracy);
+    }
+    
 }
