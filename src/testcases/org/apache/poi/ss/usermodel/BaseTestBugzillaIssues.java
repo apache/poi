@@ -528,9 +528,9 @@ public abstract class BaseTestBugzillaIssues {
     }
     
     /**
-     * =ISNUMBER(SEARCH("*AM*",A1)) not evaluating properly 
+     * =ISNUMBER(SEARCH("AM",A1)) evaluation 
      */
-    //@Test
+    @Test
     public void stackoverflow26437323() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
@@ -566,17 +566,111 @@ public abstract class BaseTestBugzillaIssues {
         
         
         // Now, check ISNUMBER / ISTEXT / ISNONTEXT
-        // TODO
+        cf.setCellFormula("ISNUMBER(A1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(B1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(C1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(D1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(E1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+
+        
+        cf.setCellFormula("ISTEXT(A1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISTEXT(B1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISTEXT(C1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISTEXT(D1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISTEXT(E1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+
+        
+        cf.setCellFormula("ISNONTEXT(A1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNONTEXT(B1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNONTEXT(C1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNONTEXT(D1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNONTEXT(E1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue()); // Blank and Null the same
+
         
         // Next up, SEARCH on its own
-        // TODO
+        cf.setCellFormula("SEARCH(\"am\", A1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        
+        cf.setCellFormula("SEARCH(\"am\", B1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(19, (int)cf.getNumericCellValue());
+        
+        cf.setCellFormula("SEARCH(\"am\", C1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        
+        cf.setCellFormula("SEARCH(\"am\", D1)");
+        cf = evaluateCell(wb, cf);
+        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        
         
         // Finally, bring it all together
-        // TODO
+        cf.setCellFormula("ISNUMBER(SEARCH(\"am\", A1))");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(SEARCH(\"am\", B1))");
+        cf = evaluateCell(wb, cf);
+        assertEquals(true, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(SEARCH(\"am\", C1))");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(SEARCH(\"am\", D1))");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());
+        
+        cf.setCellFormula("ISNUMBER(SEARCH(\"am\", E1))");
+        cf = evaluateCell(wb, cf);
+        assertEquals(false, cf.getBooleanCellValue());        
     }
     private Cell evaluateCell(Workbook wb, Cell c) {
         Sheet s = c.getSheet();
-        wb.getCreationHelper().createFormulaEvaluator().evaluate(c);
+        wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(c);
         return s.getRow(c.getRowIndex()).getCell(c.getColumnIndex());
     }
 }
