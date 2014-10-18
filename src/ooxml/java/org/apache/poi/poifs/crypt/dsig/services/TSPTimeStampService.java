@@ -131,11 +131,14 @@ public class TSPTimeStampService implements TimeStampService {
             huc.setRequestProperty("Authorization", "Basic " + encoding);
         }
 
+        huc.setRequestMethod("POST");
+        huc.setConnectTimeout(20000);
+        huc.setReadTimeout(20000);
         huc.setDoOutput(true); // also sets method to POST.
         huc.setRequestProperty("User-Agent", signatureConfig.getUserAgent());
         huc.setRequestProperty("Content-Type", signatureConfig.isTspOldProtocol()
             ? "application/timestamp-request"
-            : "application/timestamp-query;charset=ISO-8859-1");
+            : "application/timestamp-query"); // "; charset=ISO-8859-1");
         
         OutputStream hucOut = huc.getOutputStream();
         hucOut.write(encodedRequest);
