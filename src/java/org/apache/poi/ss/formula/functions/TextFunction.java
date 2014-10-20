@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.regex.Pattern;
+
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -112,6 +114,32 @@ public abstract class TextFunction implements Function {
 			return new StringEval(arg.toUpperCase());
 		}
 	};
+
+	/**
+	 * Implementation of the PROPER function:
+     * Normalizes all words (separated by non-word characters) by
+     * making the first letter upper and the rest lower case.
+	 */
+	public static final Function PROPER = new SingleArgTextFunc() {
+	    final Pattern nonAlphabeticPattern = Pattern.compile("\\P{IsL}");
+		protected ValueEval evaluate(String text) {
+			StringBuilder sb = new StringBuilder();
+			boolean shouldMakeUppercase = true;
+			String lowercaseText = text.toLowerCase();
+			String uppercaseText = text.toUpperCase();
+			for(int i = 0; i < text.length(); ++i) {
+				if (shouldMakeUppercase) {
+					sb.append(uppercaseText.charAt(i));
+				}
+				else {
+					sb.append(lowercaseText.charAt(i));
+				}
+				shouldMakeUppercase = nonAlphabeticPattern.matcher(text.subSequence(i, i + 1)).matches();
+			}
+			return new StringEval(sb.toString());
+		}
+	};
+
 	/**
 	 * An implementation of the TRIM function:
 	 * Removes leading and trailing spaces from value if evaluated operand
