@@ -34,4 +34,10 @@ public final class TestXSSFExcelExtractorUsingFactory extends TestXSSFExcelExtra
 			throw new RuntimeException(e);
 		}
 	}
+    
+    @Override
+    public void tearDown() {
+        // reset setting to not affect other tests
+        ExtractorFactory.setAllThreadsPreferEventExtractors(null);
+    }
 }

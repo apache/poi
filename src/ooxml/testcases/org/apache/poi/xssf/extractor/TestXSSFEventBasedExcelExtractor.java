@@ -20,12 +20,12 @@ package org.apache.poi.xssf.extractor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import junit.framework.TestCase;
+
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for {@link XSSFEventBasedExcelExtractor}
@@ -155,7 +155,8 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
 		POITextExtractor[] extractors =
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
 		for (int i = 0; i < extractors.length; i++) {
-			POITextExtractor extractor = extractors[i];
+			@SuppressWarnings("resource")
+            POITextExtractor extractor = extractors[i];
 			
 			String text = extractor.getText().replaceAll("[\r\t]", "");
 			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
@@ -175,12 +176,15 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
     public void testShapes() throws Exception{
 	    XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsx");
 	       
-	    String text = ooxmlExtractor.getText();
-
-	    assertTrue(text.indexOf("Line 1") > -1);
-	    assertTrue(text.indexOf("Line 2") > -1);
-	    assertTrue(text.indexOf("Line 3") > -1);
-
+	    try {
+    	    String text = ooxmlExtractor.getText();
+    
+    	    assertTrue(text.indexOf("Line 1") > -1);
+    	    assertTrue(text.indexOf("Line 2") > -1);
+    	    assertTrue(text.indexOf("Line 3") > -1);
+	    } finally {
+	        ooxmlExtractor.close();
+	    }
     }
 
     /**
@@ -229,16 +233,24 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
 
         XSSFExcelExtractor extractor = new XSSFExcelExtractor(
                 XSSFTestDataSamples.openSampleWorkbook("headerFooterTest.xlsx"));
-        assertEquals(expectedOutputWithHeadersAndFooters, extractor.getText());
-        extractor.setIncludeHeadersFooters(false);
-        assertEquals(expectedOutputWithoutHeadersAndFooters, extractor.getText());
+        try {
+            assertEquals(expectedOutputWithHeadersAndFooters, extractor.getText());
+            extractor.setIncludeHeadersFooters(false);
+            assertEquals(expectedOutputWithoutHeadersAndFooters, extractor.getText());
+        } finally {
+            extractor.close();
+        }
 
         XSSFEventBasedExcelExtractor fixture =
                 new XSSFEventBasedExcelExtractor(
                         XSSFTestDataSamples.openSamplePackage("headerFooterTest.xlsx"));
-        assertEquals(expectedOutputWithHeadersAndFooters, fixture.getText());
-        fixture.setIncludeHeadersFooters(false);
-        assertEquals(expectedOutputWithoutHeadersAndFooters, fixture.getText());
+        try {
+            assertEquals(expectedOutputWithHeadersAndFooters, fixture.getText());
+            fixture.setIncludeHeadersFooters(false);
+            assertEquals(expectedOutputWithoutHeadersAndFooters, fixture.getText());
+        } finally {
+            fixture.close();
+        }
     }
 
     /**

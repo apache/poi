@@ -172,10 +172,6 @@ under the License.
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 	
-	<!-- for testing with older Xerces implementation -->
-    <property name="xerces.jar" location="${main.lib}/xercesImpl-2.6.1.jar"/>
-    <property name="xerces.url" value="${repository.m2}/maven2/xerces/xercesImpl/2.6.1//xercesImpl-2.6.1.jar"/>
-
     <!-- license checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.11.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.11/apache-rat-0.11.jar"/>
@@ -394,6 +390,7 @@ under the License.
 				<include name="org.jacoco.*-0.6.*"/>
 				<include name="dom4j*"/>
 				<include name="apache-rat-0.10*"/>
+				<include name="xercesImpl-*.jar"/> 
 			</fileset>
 		</delete>
 
@@ -410,7 +407,6 @@ under the License.
                     <available file="${asm.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
-                    <available file="${xerces.jar}"/>
                     <available file="${dsig.bouncycastle-prov.jar}"/>
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
@@ -465,10 +461,6 @@ under the License.
                 <include name="lib/*.jar"/>
             </patternset>
         </unzip>
-        <antcall target="downloadfile">
-            <param name="sourcefile" value="${xerces.url}"/>
-            <param name="destfile" value="${xerces.jar}"/>
-        </antcall>
         <antcall target="downloadfile">
             <param name="sourcefile" value="${rat.url}"/>
             <param name="destfile" value="${rat.jar}"/>
@@ -1047,6 +1039,7 @@ under the License.
         		<pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
     		</classpath>
             <classpath refid="test.ooxml.classpath"/>
+        	<classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
             <arg value="-ooxml"/>
