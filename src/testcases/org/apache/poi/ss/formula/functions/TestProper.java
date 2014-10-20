@@ -57,10 +57,10 @@ public final class TestProper extends TestCase {
         confirm("PROPER(\"hi there\")", "Hi There");
         confirm("PROPER(\"what's up\")", "What'S Up");
         confirm("PROPER(\"I DON'T TH!NK SO!\")", "I Don'T Th!Nk So!");
-        confirm("PROPER(\"drÜbö'ä éloş|ëè \")", "Drübö'Ä Éloş|Ëè ");
+        confirm("PROPER(\"dr\u00dcb\u00f6'\u00e4 \u00e9lo\u015f|\u00eb\u00e8 \")", "Dr\u00fcb\u00f6'\u00c4 \u00c9lo\u015f|\u00cb\u00e8 ");
         confirm("PROPER(\"hi123 the123re\")", "Hi123 The123Re");
         confirm("PROPER(\"-\")", "-");
-        confirm("PROPER(\"!§$\")", "!§$");
+        confirm("PROPER(\"!\u00a7$\")", "!\u00a7$");
         confirm("PROPER(\"/&%\")", "/&%");
         
         // also test longer string
