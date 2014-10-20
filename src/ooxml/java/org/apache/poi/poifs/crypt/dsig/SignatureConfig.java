@@ -405,7 +405,7 @@ public class SignatureConfig {
     
     /**
      * @param tspOldProtocol defines the timestamp-protocol mimetype
-     * @see {@link #isTspOldProtocol()}
+     * @see #isTspOldProtocol
      */
     public void setTspOldProtocol(boolean tspOldProtocol) {
         this.tspOldProtocol = tspOldProtocol;
@@ -881,7 +881,7 @@ public class SignatureConfig {
     /**
      * @return the cannonicalization method for XAdES-XL signing.
      * Defaults to <code>EXCLUSIVE</code>
-     * @see {@link CanonicalizationMethod}
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/crypto/dsig/CanonicalizationMethod.html">javax.xml.crypto.dsig.CanonicalizationMethod</a>
      */
     public String getXadesCanonicalizationMethod() {
         return xadesCanonicalizationMethod;
@@ -889,7 +889,7 @@ public class SignatureConfig {
 
     /**
      * @param xadesCanonicalizationMethod the cannonicalization method for XAdES-XL signing
-     * @see {@link CanonicalizationMethod}
+     * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/crypto/dsig/CanonicalizationMethod.html">javax.xml.crypto.dsig.CanonicalizationMethod</a>
      */
     public void setXadesCanonicalizationMethod(String xadesCanonicalizationMethod) {
         this.xadesCanonicalizationMethod = xadesCanonicalizationMethod;
