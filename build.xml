@@ -30,9 +30,9 @@ under the License.
         Yegor Kozlov        yegor at apache.org
         Dominik Stadler     centic at apache.org
 
-    This build was tested with ant 1.6.2 although it will probably work with
-    other versions.  The following jar files should be available on the 
-    classpath when running ant:
+    This build was tested with ant 1.9.4 although it will probably work with
+    other versions, however at least 1.8.0 is required.  The following jar 
+	files should be available on the classpath when running ant:
 
     LIBRARY         LOCATION
     =======         ========
@@ -86,6 +86,7 @@ under the License.
     <property name="poi.test.locale" value="-Duser.language=en -Duser.country=US"/>
     <property name="POI.testdata.path" value="test-data"/>
     <property name="java.awt.headless" value="true"/>
+	<property name="additionaljar" value=""/>
     
     <!-- Main: -->
     <property name="main.resource1.dir" value="src/resources/main"/>
@@ -901,6 +902,7 @@ under the License.
                 <jvmarg value="${poi.test.locale}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
+            	<jvmarg value="-Dadditionaljar=${additionaljar}"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -942,6 +944,7 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="${poi.test.locale}"/>
                 <jvmarg value="-ea"/>
+            	<jvmarg value="-Dadditionaljar=${additionaljar}"/>
                 <!-- 
                   YK: ensure that JUnit has enough memory to run tests. 
                   Without the line below tests fail on Mac OS X with jdk-1.6.26 
@@ -984,6 +987,7 @@ under the License.
                   <syspropertyset refid="junit.properties"/>
                   <jvmarg value="${poi.test.locale}"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="-Dadditionaljar=${additionaljar}"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1006,6 +1010,7 @@ under the License.
                   <syspropertyset refid="junit.properties"/>
                   <jvmarg value="${poi.test.locale}"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="-Dadditionaljar=${additionaljar}"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1079,6 +1084,7 @@ under the License.
                 <syspropertyset refid="junit.properties"/>
                 <jvmarg value="${poi.test.locale}"/>
                 <jvmarg value="-ea"/>
+                <jvmarg value="-Dadditionaljar=${additionaljar}"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${excelant.reports.test}">
