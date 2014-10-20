@@ -207,7 +207,7 @@ public final class FunctionEval {
         retval[111] = TextFunction.CHAR;
         retval[112] = TextFunction.LOWER;
         retval[113] = TextFunction.UPPER;
-
+        retval[114] = TextFunction.PROPER;
         retval[115] = TextFunction.LEFT;
         retval[116] = TextFunction.RIGHT;
         retval[117] = TextFunction.EXACT;
