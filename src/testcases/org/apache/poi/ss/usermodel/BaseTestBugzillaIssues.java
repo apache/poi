@@ -21,6 +21,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -672,5 +676,84 @@ public abstract class BaseTestBugzillaIssues {
         Sheet s = c.getSheet();
         wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(c);
         return s.getRow(c.getRowIndex()).getCell(c.getColumnIndex());
+    }
+    
+    /**
+     * Should be able to write then read formulas with references
+     *  to cells in other files, eg '[refs/airport.xls]Sheet1'!$A$2
+     *  or 'http://192.168.1.2/[blank.xls]Sheet1'!$A$1 .
+     * Additionally, if a reference to that file is provided, it should
+     *  be possible to evaluate them too
+     * TODO Fix this to evaluate for XSSF
+     * TODO Fix this to work at all for HSSF
+     */
+//    @Test
+    public void bug46670() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r1 = s.createRow(0);
+        
+        
+        // References to try
+        String ext = "xls";
+        if (! (wb instanceof HSSFWorkbook)) ext += "x";
+        String refLocal = "'[test."+ext+"]Sheet1'!$A$2";
+        String refHttp  = "'[http://example.com/test."+ext+"]Sheet1'!$A$2";
+        String otherCellText = "In Another Workbook";
+
+        
+        // Create the references
+        Cell c1 = r1.createCell(0, Cell.CELL_TYPE_FORMULA);
+        c1.setCellFormula(refLocal);
+        
+        Cell c2 = r1.createCell(1, Cell.CELL_TYPE_FORMULA);
+        c2.setCellFormula(refHttp);
+        
+        
+        // Check they were set correctly
+        assertEquals(refLocal, c1.getCellFormula());
+        assertEquals(refHttp,  c2.getCellFormula());
+        
+        
+        // Reload, and ensure they were serialised and read correctly
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        r1 = s.getRow(0);
+        
+        c1 = r1.getCell(0);
+        c2 = r1.getCell(1);
+        assertEquals(refLocal, c1.getCellFormula());
+        assertEquals(refHttp,  c2.getCellFormula());
+
+        
+        // Try to evalutate, without giving a way to get at the other file
+        try {
+            evaluateCell(wb, c1);
+            fail("Shouldn't be able to evaluate without the other file");
+        } catch (Exception e) {}
+        try {
+            evaluateCell(wb, c2);
+            fail("Shouldn't be able to evaluate without the other file");
+        } catch (Exception e) {}
+        
+        
+        // Set up references to the other file
+        Workbook wb2 = _testDataProvider.createWorkbook();
+        wb2.createSheet().createRow(1).createCell(0).setCellValue(otherCellText);
+        
+        Map<String,FormulaEvaluator> evaluators = new HashMap<String, FormulaEvaluator>();
+        evaluators.put(refLocal, wb2.getCreationHelper().createFormulaEvaluator());
+        evaluators.put(refHttp,  wb2.getCreationHelper().createFormulaEvaluator());
+        
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        evaluator.setupReferencedWorkbooks(evaluators);
+        
+        
+        // Try to evaluate, with the other file
+        evaluator.evaluateFormulaCell(c1);
+        evaluator.evaluateFormulaCell(c2);
+        
+        assertEquals(otherCellText, c1.getStringCellValue());
+        assertEquals(otherCellText, c2.getStringCellValue());
     }
 }

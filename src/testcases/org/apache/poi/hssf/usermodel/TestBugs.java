@@ -2624,4 +2624,54 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals("International Communication Services SA", s.getRow(2).getCell(0).getStringCellValue());
         assertEquals("Saudi Arabia-Riyadh", s.getRow(210).getCell(0).getStringCellValue());
     }
+    
+    /**
+     * Read, write, read for formulas point to cells in other files.
+     * See {@link #bug46670()} for the main test, this just
+     *  covers reading an existing file and checking it.
+     * TODO Fix this so that it works - formulas are ending up as
+     *  #REF when being changed
+     */
+//    @Test
+    public void bug46670_existing() {
+        HSSFWorkbook wb;
+        Sheet s;
+        Cell c;
+        
+        // Expected values
+        String refLocal = "'[refs/airport.xls]Sheet1'!$A$2";
+        String refHttp  = "'[9http://www.principlesofeconometrics.com/excel/airline.xls]Sheet1'!$A$2";
+        
+        // Check we can read them correctly
+        wb = openSample("46670_local.xls");
+        s = wb.getSheetAt(0);
+        assertEquals(refLocal, s.getRow(0).getCell(0).getCellFormula());
+        
+        wb = openSample("46670_http.xls");
+        s = wb.getSheetAt(0);
+        assertEquals(refHttp, s.getRow(0).getCell(0).getCellFormula());
+        
+        // Now try to set them to the same values, and ensure that
+        //  they end up as they did before, even with a save and re-load
+        wb = openSample("46670_local.xls");
+        s = wb.getSheetAt(0);
+        c = s.getRow(0).getCell(0);
+        c.setCellFormula(refLocal);
+        assertEquals(refLocal, c.getCellFormula());
+        
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        assertEquals(refLocal, s.getRow(0).getCell(0).getCellFormula());
+
+        
+        wb = openSample("46670_http.xls");
+        s = wb.getSheetAt(0);
+        c = s.getRow(0).getCell(0);
+        c.setCellFormula(refHttp);
+        assertEquals(refHttp, c.getCellFormula());
+        
+        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        s = wb.getSheetAt(0);
+        assertEquals(refHttp, s.getRow(0).getCell(0).getCellFormula());
+    }
 }
