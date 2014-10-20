@@ -134,7 +134,8 @@ public class TestXSSFExcelExtractor extends TestCase {
 		POITextExtractor[] extractors =
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
 		for (int i = 0; i < extractors.length; i++) {
-			POITextExtractor extractor = extractors[i];
+			@SuppressWarnings("resource")
+            POITextExtractor extractor = extractors[i];
 			
 			String text = extractor.getText().replaceAll("[\r\t]", "");
 			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
@@ -217,10 +218,14 @@ public class TestXSSFExcelExtractor extends TestCase {
 	 */
 	public void testTextBoxes() throws IOException {
 	    XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx");
-	    extractor.setFormulasNotResults(true);
-	    String text = extractor.getText();
-	    assertTrue(text.indexOf("Line 1") > -1);
-	    assertTrue(text.indexOf("Line 2") > -1);
-	    assertTrue(text.indexOf("Line 3") > -1);
+	    try {
+    	    extractor.setFormulasNotResults(true);
+    	    String text = extractor.getText();
+    	    assertTrue(text.indexOf("Line 1") > -1);
+    	    assertTrue(text.indexOf("Line 2") > -1);
+    	    assertTrue(text.indexOf("Line 3") > -1);
+	    } finally {
+	        extractor.close();
+	    }
 	}
 }

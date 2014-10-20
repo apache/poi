@@ -26,4 +26,10 @@ public class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventB
 		ExtractorFactory.setAllThreadsPreferEventExtractors(true);
 		return (XSSFEventBasedExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
 	}
+	
+	@Override
+    public void tearDown() {
+	    // reset setting to not affect other tests
+	    ExtractorFactory.setAllThreadsPreferEventExtractors(null);
+	}
 }
