@@ -71,6 +71,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
 
 
+@SuppressWarnings("resource")
 public final class TestXSSFSheet extends BaseTestSheet {
 
     private static final int ROW_COUNT = 40000;
@@ -80,6 +81,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
     }
 
     //TODO column styles are not yet supported by XSSF
+    @Override
     @Test
     public void defaultColumnStyle() {
         //super.defaultColumnStyle();
@@ -975,6 +977,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
      * Rows and cells can be created in random order,
      * but CTRows are kept in ascending order
      */
+    @Override
     @Test
     @SuppressWarnings("deprecation")
     public void createRow() {
@@ -1371,6 +1374,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         return wb;
     }
 
+    @Test
     public void testCreateTwoPivotTablesInOneSheet(){
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -1385,6 +1389,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertTrue(wb.getPivotTables().size() > 1);
     }
 
+    @Test
     public void testCreateTwoPivotTablesInTwoSheets(){
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -1401,6 +1406,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertTrue(wb.getPivotTables().size() > 1);
     }
 
+    @Test
     public void testCreatePivotTable(){
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -1412,6 +1418,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertTrue(wb.getPivotTables().size() > 0);
     }
 
+    @Test
     public void testCreatePivotTableInOtherSheetThanDataSheet(){
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet1 = wb.getSheetAt(0);
@@ -1422,10 +1429,11 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(0, pivotTable.getRowLabelColumns().size());
         
         assertEquals(1, wb.getPivotTables().size());
-        assertEquals(1, sheet1.getPivotTables().size());
+        assertEquals(0, sheet1.getPivotTables().size());
         assertEquals(1, sheet2.getPivotTables().size());
     }
 
+    @Test
     public void testCreatePivotTableInOtherSheetThanDataSheetUsingAreaReference(){
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
@@ -1436,14 +1444,14 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(0, pivotTable.getRowLabelColumns().size());
     }
 
+    @Test
     public void testCreatePivotTableWithConflictingDataSheets(){
         XSSFWorkbook wb = setupSheet();
         XSSFSheet sheet = wb.getSheetAt(0);
         XSSFSheet sheet2 = wb.createSheet();
 
         try {
-            XSSFPivotTable pivotTable = sheet2.createPivotTable
-                (new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"), sheet2);
+            sheet2.createPivotTable(new AreaReference(sheet.getSheetName()+"!A$1:B$2"), new CellReference("H5"), sheet2);
         } catch(IllegalArgumentException e) {
             return;
         }
