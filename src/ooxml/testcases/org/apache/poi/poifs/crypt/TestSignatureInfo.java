@@ -23,10 +23,7 @@
    ================================================================= */ 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,6 +72,7 @@ import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
@@ -98,6 +96,13 @@ public class TestSignatureInfo {
         cal.clear();
         cal.setTimeZone(TimeZone.getTimeZone("UTC"));
         cal.set(2014, 7, 6, 21, 42, 12);
+
+        // don't run this test when we are using older Xerces as it triggers an XML Parser backwards compatibility issue 
+        // in the xmlsec jar file
+        String additionalJar = System.getProperty("additionaljar");
+        //System.out.println("Having: " + additionalJar);
+        Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar, 
+                additionalJar == null || additionalJar.trim().length() == 0);
     }
     
     @Test
