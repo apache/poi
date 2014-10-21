@@ -97,12 +97,15 @@ public class XSSFImportFromXML {
 
             String xpathString = singleXmlCell.getXpath();
             Node result = (Node) xpath.evaluate(xpathString, doc, XPathConstants.NODE);
-            String textContent = result.getTextContent();
-            logger.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
-            XSSFCell cell = singleXmlCell.getReferencedCell();
-            logger.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
-                                            + cell.getSheet().getSheetName());
-            cell.setCellValue(textContent);
+            // result can be null if value is optional (xsd:minOccurs=0), see bugzilla 55864
+            if (result != null) {
+	            String textContent = result.getTextContent();
+	            logger.log(POILogger.DEBUG, "Extracting with xpath " + xpathString + " : value is '" + textContent + "'");
+	            XSSFCell cell = singleXmlCell.getReferencedCell();
+	            logger.log(POILogger.DEBUG, "Setting '" + textContent + "' to cell " + cell.getColumnIndex() + "-" + cell.getRowIndex() + " in sheet "
+	                                            + cell.getSheet().getSheetName());
+	            cell.setCellValue(textContent);
+            }
         }
 
         for (XSSFTable table : tables) {
@@ -160,6 +163,7 @@ public class XSSFImportFromXML {
             _docElem = doc.getDocumentElement();
         }
 
+        @Override
         public String getNamespaceURI(String prefix) {
             return getNamespaceForPrefix(prefix);
         }
@@ -214,11 +218,13 @@ public class XSSFImportFromXML {
         }
 
         // Dummy implementation - not used!
+        @Override
         public Iterator getPrefixes(String val) {
             return null;
         }
 
         // Dummy implementation - not used!
+        @Override
         public String getPrefix(String uri) {
             return null;
         }
