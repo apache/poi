@@ -1042,6 +1042,7 @@ under the License.
         	<classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
             <jvmarg value="${poi.test.locale}"/>
+            <jvmarg value="-Dadditionaljar=${additionaljar}"/>
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
             <arg value="-test"/>
