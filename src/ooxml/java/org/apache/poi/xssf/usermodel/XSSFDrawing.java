@@ -127,7 +127,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         out.close();
     }
 
-	public XSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2,
+	@Override
+    public XSSFClientAnchor createAnchor(int dx1, int dy1, int dx2, int dy2,
 			int col1, int row1, int col2, int row2) {
 		return new XSSFClientAnchor(dx1, dy1, dx2, dy2, col1, row1, col2, row2);
 	}
@@ -177,6 +178,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         return shape;
     }
 
+    @Override
     public XSSFPicture createPicture(ClientAnchor anchor, int pictureIndex){
         return createPicture((XSSFClientAnchor)anchor, pictureIndex);
     }
@@ -202,7 +204,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         return chart;
     }
 
-	public XSSFChart createChart(ClientAnchor anchor) {
+	@Override
+    public XSSFChart createChart(ClientAnchor anchor) {
 		return createChart((XSSFClientAnchor)anchor);
 	}
 
@@ -212,6 +215,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
      *   {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
      */
+    @SuppressWarnings("resource")
     protected PackageRelationship addPictureReference(int pictureIndex){
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
@@ -285,6 +289,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
 	 *               to the sheet.
 	 * @return the newly created comment.
 	 */
+    @Override
     public XSSFComment createCellComment(ClientAnchor anchor) {
         XSSFClientAnchor ca = (XSSFClientAnchor)anchor;
         XSSFSheet sheet = (XSSFSheet)getParent();
@@ -300,8 +305,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
             vmlShape.getClientDataArray(0).setAnchorArray(0, position);
         }
         String ref = new CellReference(ca.getRow1(), ca.getCol1()).formatAsString();
-		XSSFComment shape = new XSSFComment(comments, comments.newComment(ref), vmlShape);
-        return shape;
+
+        if(comments.findCellComment(ref) != null) {
+            throw new IllegalArgumentException("Multiple cell comments in one cell are not allowed, cell: " + ref);
+        }
+        
+        return new XSSFComment(comments, comments.newComment(ref), vmlShape);
     }
 
     /**
