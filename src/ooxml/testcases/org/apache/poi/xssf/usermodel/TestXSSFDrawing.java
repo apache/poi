@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
@@ -37,7 +38,7 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
  * @author Yegor Kozlov
  */
 public class TestXSSFDrawing extends TestCase {
-    public void testRead(){
+    public void testRead() throws IOException{
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         //the sheet has one relationship and it is XSSFDrawing
@@ -718,5 +719,27 @@ public class TestXSSFDrawing extends TestCase {
         } finally {
             stream.close();
         }*/
+    }
+
+    public void testBug56835CellComment() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            
+            // first comment works
+            ClientAnchor anchor = new XSSFClientAnchor(1, 1, 2, 2, 3, 3, 4, 4);
+            XSSFComment comment = drawing.createCellComment(anchor);
+            assertNotNull(comment);
+            
+            try {
+                drawing.createCellComment(anchor);
+                fail("Should fail if we try to add the same comment for the same cell");
+            } catch (IllegalArgumentException e) {
+                // expected
+            }
+        } finally {
+            wb.close();
+        }
     }
 }
