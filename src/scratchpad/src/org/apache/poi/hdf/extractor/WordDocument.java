@@ -18,14 +18,25 @@
 package org.apache.poi.hdf.extractor;
 
 
-import org.apache.poi.hdf.extractor.util.*;
-import org.apache.poi.hdf.extractor.data.*;
-import java.util.*;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.ArrayList;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hdf.extractor.data.DOP;
+import org.apache.poi.hdf.extractor.data.LVL;
+import org.apache.poi.hdf.extractor.data.ListTables;
+import org.apache.poi.hdf.extractor.util.BTreeSet;
+import org.apache.poi.hdf.extractor.util.ChpxNode;
+import org.apache.poi.hdf.extractor.util.NumberFormatter;
+import org.apache.poi.hdf.extractor.util.PapxNode;
+import org.apache.poi.hdf.extractor.util.PropertyNode;
+import org.apache.poi.hdf.extractor.util.SepxNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -70,9 +81,9 @@ public final class WordDocument {
   /** used for XSL-FO table conversion*/
   StringBuffer _cellBuffer;
   /** used for XSL-FO table conversion*/
-  ArrayList _cells;
+  ArrayList<String> _cells;
   /** used for XSL-FO table conversion*/
-  ArrayList _table;
+  ArrayList<TableRow> _table;
 
   /** document's header and footer information*/
   byte[] _plcfHdd;
@@ -141,7 +152,7 @@ public final class WordDocument {
   {
     int textStart = Utils.convertBytesToInt(_header, 0x18);
     int textEnd = Utils.convertBytesToInt(_header, 0x1c);
-    ArrayList textPieces = findProperties(textStart, textEnd, _text.root);
+    ArrayList<PropertyNode> textPieces = findProperties(textStart, textEnd, _text.root);
     int size = textPieces.size();
 
     for(int x = 0; x < size; x++)
@@ -192,7 +203,7 @@ public final class WordDocument {
         readFIB();
 
         //get the SEPS for the main document text
-        ArrayList sections = findProperties(_fcMin, _fcMin + _ccpText, _sectionTable.root);
+        ArrayList<PropertyNode> sections = findProperties(_fcMin, _fcMin + _ccpText, _sectionTable.root);
 
         //iterate through sections, paragraphs, and character runs doing what
         //you will with the data.
@@ -674,11 +685,12 @@ public final class WordDocument {
     _sectionCounter++;
   }
 
+  @SuppressWarnings("unused")
   private int calculateHeaderHeight(int start, int end, int pageWidth)
   {
-    ArrayList paragraphs = findProperties(start, end, _paragraphTable.root);
+    ArrayList<PropertyNode> paragraphs = findProperties(start, end, _paragraphTable.root);
     int size = paragraphs.size();
-    ArrayList lineHeights = new ArrayList();
+    ArrayList<Integer> lineHeights = new ArrayList<Integer>();
     //StyleContext context = StyleContext.getDefaultStyleContext();
 
     for(int x = 0; x < size; x++)
@@ -690,7 +702,7 @@ public final class WordDocument {
       int lineWidth = 0;
       int maxHeight = 0;
 
-      ArrayList textRuns = findProperties(parStart, parEnd, _characterTable.root);
+      ArrayList<PropertyNode> textRuns = findProperties(parStart, parEnd, _characterTable.root);
       int charSize = textRuns.size();
 
       //StringBuffer lineBuffer = new StringBuffer();
@@ -710,7 +722,7 @@ public final class WordDocument {
         int charStart = Math.max(parStart, charNode.getStart());
         int charEnd = Math.min(parEnd, charNode.getEnd());
 
-        ArrayList text = findProperties(charStart, charEnd, _text.root);
+        ArrayList<PropertyNode> text = findProperties(charStart, charEnd, _text.root);
 
         int textSize = text.size();
         StringBuffer buf = new StringBuffer();
@@ -770,6 +782,7 @@ public final class WordDocument {
 
     return context.getFontMetrics(font);
   }*/
+  @SuppressWarnings("unused")
   private String createRegion(boolean before, HeaderFooter header, SEP sep, String name)
   {
     if(header.isEmpty())
@@ -818,6 +831,7 @@ public final class WordDocument {
 //             marginBottom + "pt\" " + region + "/>";
 
   }
+  @SuppressWarnings("unused")
   private String createRegion(String where, String name)
   {
     return "<fo:region-" + where + " overflow=\"scroll\" region-name=\"" + name + "\"/>";
@@ -859,7 +873,7 @@ public final class WordDocument {
   {
 
     BTreeSet.BTreeNode root = paragraphTable.root;
-    ArrayList pars = findProperties(start, end, root);
+    ArrayList<PropertyNode> pars = findProperties(start, end, root);
     //root = characterTable.root;
     int size = pars.size();
 
@@ -910,7 +924,7 @@ public final class WordDocument {
       {
         if(_table == null)
         {
-          _table = new ArrayList();
+          _table = new ArrayList<TableRow>();
         }
         TAP tap = (TAP)StyleSheet.uncompressProperty(papx, new TAP(), _styleSheet);
         TableRow nextRow = new TableRow(_cells, tap);
@@ -937,6 +951,7 @@ public final class WordDocument {
 
   }
 
+  @SuppressWarnings("unused")
   private void addListParagraphContent(LVL lvl, StringBuffer blockBuffer, PAP pap,
                                        PapxNode currentNode, int start, int end,
                                        StyleDescription std)
@@ -945,7 +960,7 @@ public final class WordDocument {
 
     addParagraphProperties(pap, blockBuffer);
 
-    ArrayList charRuns = findProperties(Math.max(currentNode.getStart(), start),
+    ArrayList<PropertyNode> charRuns = findProperties(Math.max(currentNode.getStart(), start),
                                      Math.min(currentNode.getEnd(), end),
                                      _characterTable.root);
     int len = charRuns.size();
@@ -1003,7 +1018,7 @@ public final class WordDocument {
 
       int charStart = Math.max(charNode.getStart(), currentNode.getStart());
       int charEnd = Math.min(charNode.getEnd(), currentNode.getEnd());
-      ArrayList textRuns = findProperties(charStart, charEnd, _text.root);
+      ArrayList<PropertyNode> textRuns = findProperties(charStart, charEnd, _text.root);
       int textRunLen = textRuns.size();
       for(int y = 0; y < textRunLen; y++)
       {
@@ -1031,7 +1046,7 @@ public final class WordDocument {
   {
     addParagraphProperties(pap, blockBuffer);
 
-    ArrayList charRuns = findProperties(Math.max(currentNode.getStart(), start),
+    ArrayList<PropertyNode> charRuns = findProperties(Math.max(currentNode.getStart(), start),
                                      Math.min(currentNode.getEnd(), end),
                                      _characterTable.root);
     int len = charRuns.size();
@@ -1046,7 +1061,7 @@ public final class WordDocument {
 
       int charStart = Math.max(charNode.getStart(), currentNode.getStart());
       int charEnd = Math.min(charNode.getEnd(), currentNode.getEnd());
-      ArrayList textRuns = findProperties(charStart, charEnd, _text.root);
+      ArrayList<PropertyNode> textRuns = findProperties(charStart, charEnd, _text.root);
       int textRunLen = textRuns.size();
       for(int y = 0; y < textRunLen; y++)
       {
@@ -1092,7 +1107,7 @@ public final class WordDocument {
 
       if(_cells == null)
       {
-        _cells = new ArrayList();
+        _cells = new ArrayList<String>();
       }
       closeLine(_cellBuffer);
       closeBlock(_cellBuffer);
@@ -1279,9 +1294,9 @@ public final class WordDocument {
   /**
    * finds all chpx's that are between start and end
    */
-  private ArrayList findProperties(int start, int end, BTreeSet.BTreeNode root)
+  private ArrayList<PropertyNode> findProperties(int start, int end, BTreeSet.BTreeNode root)
   {
-    ArrayList results = new ArrayList();
+    ArrayList<PropertyNode> results = new ArrayList<PropertyNode>();
     BTreeSet.Entry[] entries = root._entries;
 
     for(int x = 0; x < entries.length; x++)
@@ -1300,7 +1315,7 @@ public final class WordDocument {
             {
               if(child != null)
               {
-                ArrayList beforeItems = findProperties(start, end, child);
+                ArrayList<PropertyNode> beforeItems = findProperties(start, end, child);
                 results.addAll(beforeItems);
               }
               results.add(xNode);
@@ -1315,7 +1330,7 @@ public final class WordDocument {
           {
             if(child != null)
             {
-              ArrayList beforeItems = findProperties(start, end, child);
+              ArrayList<PropertyNode> beforeItems = findProperties(start, end, child);
               results.addAll(beforeItems);
             }
             break;
@@ -1323,7 +1338,7 @@ public final class WordDocument {
         }
         else if(child != null)
         {
-          ArrayList afterItems = findProperties(start, end, child);
+          ArrayList<PropertyNode> afterItems = findProperties(start, end, child);
           results.addAll(afterItems);
         }
       }
@@ -1358,9 +1373,10 @@ public final class WordDocument {
   {
     buf.append("</fo:block>\r\n");
   }
-  private ArrayList findPAPProperties(int start, int end, BTreeSet.BTreeNode root)
+  @SuppressWarnings("unused")
+  private ArrayList<PropertyNode> findPAPProperties(int start, int end, BTreeSet.BTreeNode root)
   {
-    ArrayList results = new ArrayList();
+    ArrayList<PropertyNode> results = new ArrayList<PropertyNode>();
     BTreeSet.Entry[] entries = root._entries;
 
     for(int x = 0; x < entries.length; x++)
@@ -1378,7 +1394,7 @@ public final class WordDocument {
             {
               if(child != null)
               {
-                ArrayList beforeItems = findPAPProperties(start, end, child);
+                ArrayList<PropertyNode> beforeItems = findPAPProperties(start, end, child);
                 results.addAll(beforeItems);
               }
               results.add(papxNode);
@@ -1388,7 +1404,7 @@ public final class WordDocument {
           {
             if(child != null)
             {
-              ArrayList beforeItems = findPAPProperties(start, end, child);
+              ArrayList<PropertyNode> beforeItems = findPAPProperties(start, end, child);
               results.addAll(beforeItems);
             }
             break;
@@ -1396,7 +1412,7 @@ public final class WordDocument {
         }
         else if(child != null)
         {
-          ArrayList afterItems = findPAPProperties(start, end, child);
+          ArrayList<PropertyNode> afterItems = findPAPProperties(start, end, child);
           results.addAll(afterItems);
         }
       }
@@ -1468,6 +1484,7 @@ public final class WordDocument {
     _headerBuffer.append("</fo:simple-page-master>\r\n");
     return thisPage;
   }
+  @SuppressWarnings("unused")
   private void addBorder(StringBuffer buf, short[] brc, String where)
   {
     if((brc[0] & 0xff00) != 0 && brc[0] != -1)
@@ -1497,7 +1514,7 @@ public final class WordDocument {
       test.flush();
       test.close();
     }
-    catch(Throwable t)
+    catch(Exception t)
     {
       t.printStackTrace();
     }
@@ -1750,7 +1767,7 @@ public final class WordDocument {
         StringBuffer rowBuffer = tableBodyBuffer;
         TableRow row = (TableRow)_table.get(x);
         TAP tap = row.getTAP();
-        ArrayList cells = row.getCells();
+        ArrayList<String> cells = row.getCells();
 
         if(tap._fTableHeader)
         {

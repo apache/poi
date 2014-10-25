@@ -120,4 +120,8 @@ public class CustomProperty extends MutableProperty
         return (int) this.getID();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof CustomProperty) ? equalsContents(o) : false;
+    }
 }

@@ -368,7 +368,7 @@ public class WordToTextConverter extends AbstractWordConverter
                     DirectoryNode.class );
             extractor = createExtractor.invoke( null, directoryNode );
         }
-        catch ( Error exc )
+        catch ( Exception exc )
         {
             // no extractor in classpath
             logger.log( POILogger.WARN, "There is an OLE object entry '",

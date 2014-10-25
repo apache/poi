@@ -70,7 +70,7 @@ public class TreeReaderListener implements POIFSReaderListener
      * <p>Maps filenames and POI document paths to their associated
      * tree nodes.</p>
      */
-    protected Map pathToNode;
+    protected Map<Object,MutableTreeNode> pathToNode;
 
     /**
      * <p>The name of the file this {@link TreeReaderListener}
@@ -99,7 +99,7 @@ public class TreeReaderListener implements POIFSReaderListener
     {
         this.filename = filename;
         this.rootNode = rootNode;
-        pathToNode = new HashMap(15); // Should be a reasonable guess.
+        pathToNode = new HashMap<Object,MutableTreeNode>(15); // Should be a reasonable guess.
     }
 
 
@@ -146,7 +146,7 @@ public class TreeReaderListener implements POIFSReaderListener
             d = new DocumentDescriptor(event.getName(), event.getPath(),
                                        is, nrOfBytes);
         }
-        catch (Throwable t)
+        catch (Exception t)
         {
             System.err.println
                 ("Unexpected exception while processing " +

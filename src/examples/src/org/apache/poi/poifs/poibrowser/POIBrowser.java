@@ -41,6 +41,7 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReader;
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
+@SuppressWarnings("serial")
 public class POIBrowser extends JFrame
 {
 
@@ -99,7 +100,7 @@ public class POIBrowser extends JFrame
             {
                 System.err.println(filename + ": " + ex);
             }
-            catch (Throwable t)
+            catch (Exception t)
             {
                 System.err.println("Unexpected exception while reading \"" +
                                    filename + "\":");

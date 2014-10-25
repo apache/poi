@@ -52,7 +52,7 @@ public final class OOXMLLite {
         try {
             _classes = ClassLoader.class.getDeclaredField("classes");
             _classes.setAccessible(true);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

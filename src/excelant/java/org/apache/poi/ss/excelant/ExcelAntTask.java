@@ -175,7 +175,7 @@ public class ExcelAntTask extends Task {
         try {
             Class.forName("org.apache.poi.hssf.usermodel.HSSFWorkbook");
             Class.forName("org.apache.poi.ss.usermodel.WorkbookFactory");
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new BuildException(
                     "The <classpath> for <excelant> must include poi.jar and poi-ooxml.jar " +
                     "if not in Ant's own classpath. Processing .xlsx spreadsheets requires " +

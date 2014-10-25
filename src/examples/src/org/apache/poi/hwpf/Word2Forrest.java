@@ -17,17 +17,26 @@
 
 package org.apache.poi.hwpf;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.*;
-import org.apache.poi.hwpf.model.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 
-import java.io.*;
+import org.apache.poi.hwpf.model.StyleDescription;
+import org.apache.poi.hwpf.model.StyleSheet;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Range;
 
 public final class Word2Forrest
 {
   Writer _out;
   HWPFDocument _doc;
 
+  @SuppressWarnings("unused")
   public Word2Forrest(HWPFDocument doc, OutputStream stream)
     throws IOException, UnsupportedEncodingException
   {
@@ -216,7 +225,7 @@ public final class Word2Forrest
       new Word2Forrest(new HWPFDocument(new FileInputStream(args[0])), out);
       out.close();
     }
-    catch (Throwable t)
+    catch (Exception t)
     {
       t.printStackTrace();
     }

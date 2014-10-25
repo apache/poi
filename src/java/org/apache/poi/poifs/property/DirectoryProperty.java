@@ -18,7 +18,13 @@
 package org.apache.poi.poifs.property;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Directory property
@@ -116,18 +122,6 @@ public class DirectoryProperty extends Property implements Parent { // TODO - fi
     }
 
     public static class PropertyComparator implements Comparator<Property> {
-
-        /**
-         * Object equality, implemented as object identity
-         *
-         * @param o Object we're being compared to
-         *
-         * @return true if identical, else false
-         */
-        public boolean equals(Object o)
-        {
-            return this == o;
-        }
 
         /**
          * compare method. Assumes both parameters are non-null
