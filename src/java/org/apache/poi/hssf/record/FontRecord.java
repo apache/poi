@@ -475,7 +475,15 @@ public final class FontRecord extends StandardRecord {
 		field_7_family              == other.field_7_family &&
 		field_8_charset             == other.field_8_charset &&
 		field_9_zero                == other.field_9_zero &&
-		field_11_font_name.equals(other.field_11_font_name)
+        stringEquals(this.field_11_font_name, other.field_11_font_name)
 		;
 	}
+
+    public boolean equals(Object o) {
+        return (o instanceof FontRecord) ? sameProperties((FontRecord)o) : false;
+    }
+    
+    private static boolean stringEquals(String s1, String s2) {
+        return (s1 == s2 || (s1 != null && s1.equals(s2)));
+    }
 }

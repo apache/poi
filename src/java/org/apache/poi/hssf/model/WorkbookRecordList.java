@@ -72,9 +72,21 @@ public final class WorkbookRecordList implements Iterable<Record> {
 		return records.iterator();
 	}
 
+	/**
+	 * Find the given record in the record list by identity and removes it
+	 *
+	 * @param record the identical record to be searched for
+	 */
 	public void remove( Object record ) {
-	   int i = records.indexOf(record);
-	   this.remove(i);
+	   // can't use List.indexOf here because it checks the records for equality and not identity
+	   int i = 0;
+	   for (Record r : records) {
+	       if (r == record) {
+	           remove(i);
+	           break;
+	       }
+	       i++;
+	   }
 	}
 
 	public void remove( int pos )

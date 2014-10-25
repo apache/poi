@@ -17,9 +17,12 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.*;
+import java.io.FileInputStream;
 
-import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Paragraph;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.hwpf.usermodel.Section;
 
 public final class QuickTest
 {
@@ -80,7 +83,7 @@ public final class QuickTest
 //      }
 
     }
-    catch (Throwable t)
+    catch (Exception t)
     {
       t.printStackTrace();
     }

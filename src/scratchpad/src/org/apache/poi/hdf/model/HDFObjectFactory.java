@@ -24,7 +24,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hdf.event.HDFLowLevelParsingListener;
-import org.apache.poi.hdf.model.hdftypes.*;
+import org.apache.poi.hdf.model.hdftypes.CHPFormattedDiskPage;
+import org.apache.poi.hdf.model.hdftypes.ChpxNode;
+import org.apache.poi.hdf.model.hdftypes.DocumentProperties;
+import org.apache.poi.hdf.model.hdftypes.FileInformationBlock;
+import org.apache.poi.hdf.model.hdftypes.FontTable;
+import org.apache.poi.hdf.model.hdftypes.FormattedDiskPage;
+import org.apache.poi.hdf.model.hdftypes.ListTables;
+import org.apache.poi.hdf.model.hdftypes.PAPFormattedDiskPage;
+import org.apache.poi.hdf.model.hdftypes.PapxNode;
+import org.apache.poi.hdf.model.hdftypes.PlexOfCps;
+import org.apache.poi.hdf.model.hdftypes.SepxNode;
+import org.apache.poi.hdf.model.hdftypes.StyleSheet;
+import org.apache.poi.hdf.model.hdftypes.TextPiece;
 import org.apache.poi.hdf.model.util.ParsingState;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -56,6 +68,7 @@ public final class HDFObjectFactory {
     byte[] _tableBuffer;
 
 
+    @SuppressWarnings("unused")
     public static void main(String args[])
     {
       try
@@ -63,7 +76,7 @@ public final class HDFObjectFactory {
         HDFObjectFactory f = new HDFObjectFactory(new FileInputStream("c:\\test.doc"));
         int k = 0;
       }
-      catch(Throwable t)
+      catch(Exception t)
       {
         t.printStackTrace();
       }
@@ -115,9 +128,9 @@ public final class HDFObjectFactory {
         this(istream, null);
     }
 
-    public static List getTypes(InputStream istream) throws IOException
+    public static List<FileInformationBlock> getTypes(InputStream istream) throws IOException
     {
-        List results = new ArrayList(1);
+        List<FileInformationBlock> results = new ArrayList<FileInformationBlock>(1);
 
         //do Ole stuff
         POIFSFileSystem filesystem = new POIFSFileSystem(istream);
@@ -355,6 +368,7 @@ public final class HDFObjectFactory {
     /**
      * intializes the Paragraph Properties BTree
      */
+    @SuppressWarnings("unused")
     private void initParagraphProperties()
     {
         //paragraphs
@@ -458,6 +472,7 @@ public final class HDFObjectFactory {
     /**
      * initializes the SectionProperties BTree
      */
+    @SuppressWarnings("unused")
     private void initSectionProperties()
     {
 
