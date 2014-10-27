@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.functions.Dec2Bin;
 import org.apache.poi.ss.formula.functions.Dec2Hex;
 import org.apache.poi.ss.formula.functions.Delta;
 import org.apache.poi.ss.formula.functions.EDate;
+import org.apache.poi.ss.formula.functions.EOMonth;
 import org.apache.poi.ss.formula.functions.FactDouble;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.Hex2Dec;
@@ -117,7 +118,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "DURATION", null);
         r(m, "EDATE", EDate.instance);
         r(m, "EFFECT", null);
-        r(m, "EOMONTH", null);
+        r(m, "EOMONTH", EOMonth.instance);
         r(m, "ERF", null);
         r(m, "ERFC", null);
         r(m, "FACTDOUBLE", FactDouble.instance);
