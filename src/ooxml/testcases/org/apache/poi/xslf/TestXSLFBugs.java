@@ -16,10 +16,24 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
+import static junit.framework.TestCase.assertEquals;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URI;
 import java.util.List;
 
-import org.apache.poi.POITestCase;
+import javax.imageio.ImageIO;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xslf.usermodel.DrawingParagraph;
@@ -31,11 +45,14 @@ import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideLayout;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public class TestXSLFBugs extends POITestCase {
+public class TestXSLFBugs {
 
+    @Test
     @SuppressWarnings("deprecation")
-    public void test51187() throws Exception {
+    public void bug51187() throws Exception {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("51187.pptx");
        
        assertEquals(1, ss.getSlides().length);
@@ -70,7 +87,8 @@ public class TestXSLFBugs extends POITestCase {
     /**
      * Slide relations with anchors in them
      */
-    public void testTIKA705() {
+    @Test
+    public void tika705() {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("with_japanese.pptx");
        
        // Should have one slide
@@ -117,7 +135,9 @@ public class TestXSLFBugs extends POITestCase {
      *  slide, eg presentation.xml rID1 -> slide1.xml, but slide1.xml 
      *  rID2 -> slide3.xml
      */
-    public void DISABLEDtest54916() throws Exception {
+    @Test
+    @Ignore
+    public void bug54916() throws Exception {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx");
         XSLFSlide slide; 
         
@@ -144,7 +164,8 @@ public class TestXSLFBugs extends POITestCase {
      * there is no data available and XSLFPictureShape.getPictureData()
      * gives a NPE, see bug #56812
      */
-    public void test56812() throws Exception {
+    @Test
+    public void bug56812() throws Exception {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("56812.pptx");
         
         int internalPictures = 0;
@@ -172,6 +193,34 @@ public class TestXSLFBugs extends POITestCase {
         
         assertEquals(2, internalPictures);
         assertEquals(1, externalPictures);
+    }
+
+    @Test
+    @Ignore("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
+    public void bug54542() throws Exception {
+        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("54542_cropped_bitmap.pptx");
+        
+        Dimension pgsize = ss.getPageSize();
+        
+        XSLFSlide slide = ss.getSlides()[0];
+        
+        // render it
+        double zoom = 1;
+        AffineTransform at = new AffineTransform();
+        at.setToScale(zoom, zoom);
+        
+        BufferedImage imgActual = new BufferedImage((int)Math.ceil(pgsize.width*zoom), (int)Math.ceil(pgsize.height*zoom), BufferedImage.TYPE_3BYTE_BGR);
+        Graphics2D graphics = imgActual.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        graphics.setTransform(at);                
+        graphics.setPaint(Color.white);
+        graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+        slide.draw(graphics);             
+        
+        ImageIO.write(imgActual, "PNG", new File("bug54542.png"));
     }
     
     protected String getSlideText(XSLFSlide slide) {

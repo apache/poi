@@ -19,15 +19,18 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.util.Beta;
-
-import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.util.Beta;
 
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO
@@ -72,17 +75,52 @@ public class XSLFImageRenderer {
 	 * 
 	 * @return true if the picture data was successfully rendered
 	 */
-	public boolean drawImage(Graphics2D graphics, XSLFPictureData data,
-			Rectangle2D anchor) {
+    public boolean drawImage(Graphics2D graphics, XSLFPictureData data,
+            Rectangle2D anchor) {
+        return drawImage(graphics, data, anchor, null);
+    }
+    
+    /**
+     * Render picture data into the supplied graphics
+     * 
+     * @return true if the picture data was successfully rendered
+     */
+    public boolean drawImage(Graphics2D graphics, XSLFPictureData data,
+			Rectangle2D anchor, Insets clip) {
+        boolean isClipped = true;
+        if (clip == null) {
+            isClipped = false;
+            clip = new Insets(0,0,0,0);
+        }
+        
 		try {
 			BufferedImage img = ImageIO.read(data.getPackagePart().getInputStream());
-            double sx = anchor.getWidth()/img.getWidth();
-            double sy = anchor.getHeight()/img.getHeight();
-            double tx = anchor.getX();
-            double ty = anchor.getY();
+			int iw = img.getWidth();
+			int ih = img.getHeight();
+
+            double aw = anchor.getWidth();
+            double ah = anchor.getHeight();
+            double ax = anchor.getX();
+            double ay = anchor.getY();
+            
+            double cw = (100000-clip.left-clip.right) / 100000.0;
+            double ch = (100000-clip.top-clip.bottom) / 100000.0;
+            double sx = aw/(iw*cw);
+            double sy = ah/(ih*ch);
+            double tx = anchor.getX()-(iw*sx*clip.left/100000.0);
+            double ty = anchor.getY()-(ih*sy*clip.top/100000.0);
             AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
 
-            graphics.drawRenderedImage(img, at);
+            if (isClipped) {
+                Shape clipOld = graphics.getClip();
+                AffineTransform atClip = new AffineTransform(aw, 0, 0, ah, ax, ay);
+                Shape clipNew = atClip.createTransformedShape(new Rectangle2D.Double(0, 0, 1, 1));
+                graphics.setClip(clipNew);
+                graphics.drawRenderedImage(img, at);
+                graphics.setClip(clipOld);
+            } else {
+                graphics.drawRenderedImage(img, at);
+            }
 
 			return true;
 		} catch (Exception e) {
