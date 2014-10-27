@@ -20,6 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -40,6 +41,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtension;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeArtExtensionList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
@@ -177,6 +179,12 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         return id;
     }
 
+    public Insets getBlipClip(){
+        CTPicture ct = (CTPicture)getXmlObject();
+        CTRelativeRect r = ct.getBlipFill().getSrcRect();
+        return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
+    }
+
     @Override
     public void drawContent(Graphics2D graphics) {
 
@@ -188,8 +196,10 @@ public class XSLFPictureShape extends XSLFSimpleShape {
 
         RenderableShape rShape = new RenderableShape(this);
         Rectangle2D anchor = rShape.getAnchor(graphics);
+        
+        Insets insets = getBlipClip();
 
-        renderer.drawImage(graphics, data, anchor);
+        renderer.drawImage(graphics, data, anchor, insets);
     }
 
 
