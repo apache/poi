@@ -31,42 +31,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.ErrorConstants;
 
-public class TestEDate extends TestCase{
-
-    private final class RefEvalImplementation implements RefEval {
-        private final ValueEval value;
-        
-        public RefEvalImplementation(ValueEval value) {
-            super();
-            this.value = value;
-        }
-
-        public AreaEval offset(int relFirstRowIx, int relLastRowIx,
-                int relFirstColIx, int relLastColIx) {
-            throw new UnsupportedOperationException();
-        }
-
-        public ValueEval getInnerValueEval(int sheetIndex) {
-            return value;
-        }
-        
-        public int getNumberOfSheets() {
-            return 1;
-        }
-        public int getFirstSheetIndex() {
-            return 0;
-        }
-        public int getLastSheetIndex() {
-            return 0;
-        }        
-        
-        public int getRow() {
-            throw new UnsupportedOperationException();
-        }
-        public int getColumn() {
-            throw new UnsupportedOperationException();
-        }
-    }
+public class TestEDate extends TestCase {
 
     public void testEDateProperValues() {
         // verify some border-case combinations of startDate and month-increase
