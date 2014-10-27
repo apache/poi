@@ -124,6 +124,7 @@ public class WorkbookUtil {
      * </p>
      *
      * @param sheetName the name to validate
+     * @throws IllegalArgumentException if validation fails
      */
     public static void validateSheetName(String sheetName) {
         if (sheetName == null) {
@@ -160,6 +161,15 @@ public class WorkbookUtil {
     }
 
 
+    /**
+     * Validates sheet state
+     *
+     * @param state the state to validate
+     * @throws IllegalArgumentException if state is not one of
+     *      {@link Workbook#SHEET_STATE_VISIBLE},
+     *      {@link Workbook#SHEET_STATE_HIDDEN} or
+     *      {@link Workbook#SHEET_STATE_VERY_HIDDEN}
+     */
     public static void validateSheetState(int state) {
         switch(state){
             case Workbook.SHEET_STATE_VISIBLE: break;
