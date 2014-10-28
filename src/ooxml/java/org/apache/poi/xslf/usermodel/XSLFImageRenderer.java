@@ -93,40 +93,30 @@ public class XSLFImageRenderer {
             clip = new Insets(0,0,0,0);
         }
         
-		try {
-			BufferedImage img = ImageIO.read(data.getPackagePart().getInputStream());
-			int iw = img.getWidth();
-			int ih = img.getHeight();
+        BufferedImage img;
+        try {
+            img = ImageIO.read(data.getPackagePart().getInputStream());
+        } catch (Exception e) {
+            return false;
+        }
 
-            double aw = anchor.getWidth();
-            double ah = anchor.getHeight();
-            double ax = anchor.getX();
-            double ay = anchor.getY();
-            
-            double cw = (100000-clip.left-clip.right) / 100000.0;
-            double ch = (100000-clip.top-clip.bottom) / 100000.0;
-            double sx = aw/(iw*cw);
-            double sy = ah/(ih*ch);
-            double tx = anchor.getX()-(iw*sx*clip.left/100000.0);
-            double ty = anchor.getY()-(ih*sy*clip.top/100000.0);
-            AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
+        int iw = img.getWidth();
+		int ih = img.getHeight();
 
-            if (isClipped) {
-                Shape clipOld = graphics.getClip();
-                AffineTransform atClip = new AffineTransform(aw, 0, 0, ah, ax, ay);
-                Shape clipNew = atClip.createTransformedShape(new Rectangle2D.Double(0, 0, 1, 1));
-                graphics.setClip(clipNew);
-                graphics.drawRenderedImage(img, at);
-                graphics.setClip(clipOld);
-            } else {
-                graphics.drawRenderedImage(img, at);
-            }
+        double cw = (100000-clip.left-clip.right) / 100000.0;
+        double ch = (100000-clip.top-clip.bottom) / 100000.0;
+        double sx = anchor.getWidth()/(iw*cw);
+        double sy = anchor.getHeight()/(ih*ch);
+        double tx = anchor.getX()-(iw*sx*clip.left/100000.0);
+        double ty = anchor.getY()-(ih*sy*clip.top/100000.0);
+        AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
 
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+        Shape clipOld = graphics.getClip();
+        if (isClipped) graphics.clip(anchor.getBounds2D());
+        graphics.drawRenderedImage(img, at);
+        graphics.setClip(clipOld);
 
+		return true;
 	}
 
     /**
