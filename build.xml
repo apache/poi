@@ -1497,6 +1497,7 @@ under the License.
               <exclude name="scratchpad/testcases/dummy.txt" />
               <exclude name="contrib/testcases/dummy.txt" />
               <exclude name="examples/lib/dummy.txt" />
+              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
               <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/presetShapeDefinitions.xml" />
               <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
            </fileset>
