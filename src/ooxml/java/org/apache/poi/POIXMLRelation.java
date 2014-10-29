@@ -110,9 +110,18 @@ public abstract class POIXMLRelation {
         }
         return _defaultName.replace("#", Integer.toString(index));
     }
-
+    
     /**
-     * Return type of the obejct used to construct instances of this relationship
+     * Returns the index of the filename within the package for the given part.
+     *  e.g. 4 for /xl/comments4.xml
+     */
+    public Integer getFileNameIndex(POIXMLDocumentPart part) {
+        String regex = _defaultName.replace("#", "(\\d+)");
+        return Integer.parseInt(part.getPackageRelationship().getTargetURI().getPath().replaceAll(regex, "$1"));
+    }
+    
+    /**
+     * Return type of the object used to construct instances of this relationship
      *
      * @return the class of the object used to construct instances of this relation
      */

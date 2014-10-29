@@ -49,6 +49,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
@@ -130,7 +132,7 @@ public class XMLSlideShow  extends POIXMLDocument {
                 } else if (p instanceof XSLFSlideMaster) {
                     XSLFSlideMaster master = (XSLFSlideMaster)p;
                     _masters.put(p.getPackageRelationship().getId(), master);
-                }else if (p instanceof XSLFTableStyles){
+                } else if (p instanceof XSLFTableStyles){
                     _tableStyles = (XSLFTableStyles)p;
                 } else if (p instanceof XSLFNotesMaster) {
                     _notesMaster = (XSLFNotesMaster)p;
@@ -154,7 +156,6 @@ public class XMLSlideShow  extends POIXMLDocument {
             throw new POIXMLException(e);
         }
     }
-
 
     @Override
     protected void commit() throws IOException {
@@ -231,7 +232,7 @@ public class XMLSlideShow  extends POIXMLDocument {
         _slides.add(slide);
         return slide;
     }
-
+    
     /**
      * Create a blank slide.
      */
@@ -244,7 +245,96 @@ public class XMLSlideShow  extends POIXMLDocument {
 
         return createSlide(layout);
     }
+    
+    /**
+     * Return notes slide for the specified slide or create new if it does not exist yet.
+     */
+    public XSLFNotes getNotesSlide(XSLFSlide slide) {
+        
+        XSLFNotes notesSlide = slide.getNotes();
+        if (notesSlide == null) {
+            notesSlide = createNotesSlide(slide);
+        }
+        
+        return notesSlide;
+    }    
+    
+    /**
+     * Create a blank notes slide.
+     */
+    private XSLFNotes createNotesSlide(XSLFSlide slide) {
 
+        if (_notesMaster == null) {
+            createNotesMaster();
+        }
+        
+        Integer slideIndex = XSLFRelation.SLIDE.getFileNameIndex(slide);
+        
+        XSLFNotes notesSlide = (XSLFNotes) createRelationship(XSLFRelation.NOTES, XSLFFactory.getInstance(), slideIndex);
+        
+        notesSlide.addRelation(_notesMaster.getPackageRelationship().getId(), _notesMaster);
+        PackagePartName notesMasterPackagePartName = _notesMaster.getPackagePart().getPartName();
+        notesSlide.getPackagePart().addRelationship(notesMasterPackagePartName, TargetMode.INTERNAL,
+                _notesMaster.getPackageRelationship().getRelationshipType());
+                
+        slide.addRelation(notesSlide.getPackageRelationship().getId(), notesSlide);
+        PackagePartName notesSlidesPackagePartName = notesSlide.getPackagePart().getPartName();
+        slide.getPackagePart().addRelationship(notesSlidesPackagePartName, TargetMode.INTERNAL, 
+                notesSlide.getPackageRelationship().getRelationshipType());
+
+        notesSlide.addRelation(slide.getPackageRelationship().getId(), slide);
+        PackagePartName slidesPackagePartName = slide.getPackagePart().getPartName();
+        notesSlide.getPackagePart().addRelationship(slidesPackagePartName, TargetMode.INTERNAL, 
+                slide.getPackageRelationship().getRelationshipType());
+
+        notesSlide.importContent(_notesMaster);
+        
+        return notesSlide;
+    }
+
+    /**
+     * Create a notes master.
+     */ 
+    public void createNotesMaster() {
+
+        _notesMaster = (XSLFNotesMaster) createRelationship(XSLFRelation.NOTES_MASTER, 
+                XSLFFactory.getInstance(), 1);
+        
+        CTNotesMasterIdList notesMasterIdList = _presentation.addNewNotesMasterIdLst();
+        CTNotesMasterIdListEntry notesMasterId = notesMasterIdList.addNewNotesMasterId();
+        notesMasterId.setId(_notesMaster.getPackageRelationship().getId());
+        
+        Integer themeIndex = 1;
+        List<Integer> themeIndexList = new ArrayList<Integer>();
+        for (POIXMLDocumentPart p : getRelations()) {
+            if (p instanceof XSLFTheme) {
+                themeIndexList.add(XSLFRelation.THEME.getFileNameIndex(p));
+            }
+        }
+         
+        if (!themeIndexList.isEmpty()) {
+            Boolean found = false;
+            for (Integer i = 1; i <= themeIndexList.size(); i++) {
+                if (!themeIndexList.contains(i)) {
+                    found = true;
+                    themeIndex = i;
+                }
+            }
+            if (!found) {
+                themeIndex = themeIndexList.size() + 1;
+            }
+        }
+        
+        XSLFTheme theme = (XSLFTheme) createRelationship(XSLFRelation.THEME, 
+                XSLFFactory.getInstance(), themeIndex);
+        theme.importTheme(getSlides()[0].getTheme());
+        
+        _notesMaster.addRelation(theme.getPackageRelationship().getId(), theme);
+        PackagePartName themePackagePartName = theme.getPackagePart().getPartName();
+        _notesMaster.getPackagePart().addRelationship(themePackagePartName, TargetMode.INTERNAL, 
+                theme.getPackageRelationship().getRelationshipType());
+    }
+    
     /**
      * Return the Notes Master, if there is one.
      * (May not be present if no notes exist)  

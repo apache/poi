@@ -999,13 +999,22 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
                 "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
                 "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
                 ".//p:txStyles/p:" + defaultStyleSelector +"/a:lvl" +(level+1)+ "pPr");
-        if(o.length == 1){
+        if (o.length == 1){
             return (CTTextParagraphProperties)o[0];
+        } else {
+                o = masterSheet.getXmlObject().selectPath(
+                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
+                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
+                ".//p:notesStyle/a:lvl" +(level+1)+ "pPr");
+                
+            if (o.length == 1){
+                return (CTTextParagraphProperties)o[0];
+            }
+            
+            throw new IllegalArgumentException("Failed to fetch default style for " +
+                    defaultStyleSelector + " and level=" + level);
         }
-        throw new IllegalArgumentException("Failed to fetch default style for " +
-                defaultStyleSelector + " and level=" + level);
     }
-
 
     private boolean fetchParagraphProperty(ParagraphPropertyFetcher visitor){
         boolean ok = false;
