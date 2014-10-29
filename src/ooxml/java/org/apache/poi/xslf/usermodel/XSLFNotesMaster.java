@@ -16,14 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
-
-import java.io.IOException;
 
 /**
 * Notes master object associated with this layout.
@@ -44,10 +48,11 @@ import java.io.IOException;
 @Beta
  public class XSLFNotesMaster extends XSLFSheet {
 	 private CTNotesMaster _slide;
+     private XSLFTheme _theme;
 
     XSLFNotesMaster() {
         super();
-        _slide = CTNotesMaster.Factory.newInstance();
+        _slide = prototype();
     }
 
     protected XSLFNotesMaster(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
@@ -58,6 +63,21 @@ import java.io.IOException;
         setCommonSlideData(_slide.getCSld());
     }
 
+    private static CTNotesMaster prototype() {
+        InputStream is = XSLFNotesMaster.class.getResourceAsStream("notesMaster.xml");
+        if (is == null) {
+            throw new POIXMLException("Missing resource 'notesMaster.xml'");
+        }        
+
+        try {
+            NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is);
+            CTNotesMaster slide =  doc.getNotesMaster();
+            return slide;
+        } catch (Exception e) {
+            throw new POIXMLException("Can't initialize NotesMaster", e);
+        }
+    }
+    
     @Override
     public CTNotesMaster getXmlObject() {
        return _slide;
@@ -72,5 +92,21 @@ import java.io.IOException;
     public XSLFSheet getMasterSheet() {
         return null;
     }
-
+    
+    @Override
+    public XSLFTheme getTheme() {
+        if (_theme == null) {
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFTheme) {
+                    _theme = (XSLFTheme) p;
+                    CTColorMapping cmap = _slide.getClrMap();
+                    if (cmap != null) {
+                        _theme.initColorMap(cmap);
+                    }
+                    break;
+                }
+            }
+        }
+        return _theme;
+    }    
 }

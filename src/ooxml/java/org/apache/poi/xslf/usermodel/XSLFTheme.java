@@ -16,6 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -32,12 +39,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A shared style sheet in a .pptx slide show
  *
@@ -52,13 +53,18 @@ public class XSLFTheme extends POIXMLDocumentPart {
         super();
         _theme = CTOfficeStyleSheet.Factory.newInstance();
     }
-
+    
     public XSLFTheme(PackagePart part, PackageRelationship rel) throws IOException, XmlException {
         super(part, rel);
         ThemeDocument doc =
             ThemeDocument.Factory.parse(getPackagePart().getInputStream());
         _theme = doc.getTheme();
         initialize();
+    }
+    
+    public void importTheme(XSLFTheme theme) {
+        _theme = theme.getXmlObject();
+        _schemeColors = theme._schemeColors;
     }
 
     private void initialize(){
@@ -111,7 +117,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     	return _schemeColors.get(name);
     }
     
-     /**
+    /**
      * While developing only!
      */
     @Internal
