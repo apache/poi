@@ -167,7 +167,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("\"Test A1\"", evaluator.evaluate(cXSL_sNR).formatAsString());
         assertEquals("142.0",   evaluator.evaluate(cXSL_gNR).formatAsString());
         
-        
+/**        
         // Now add a formula that refers to a different workbook again
         Cell cXSLX_nw_cell = rXSLX.createCell(42);
         cXSLX_nw_cell.setCellFormula("[alt.xslx]Sheet1!$A$1");
@@ -189,6 +189,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         
         evaluator.evaluate(cXSLX_nw_cell);
         assertEquals("In another workbook", cXSLX_nw_cell.getStringCellValue());
+*/
     }
     
     /**
