@@ -166,6 +166,29 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("\"Hello!\"",  evaluator.evaluate(cXSL_cell).formatAsString());
         assertEquals("\"Test A1\"", evaluator.evaluate(cXSL_sNR).formatAsString());
         assertEquals("142.0",   evaluator.evaluate(cXSL_gNR).formatAsString());
+        
+        
+        // Now add a formula that refers to a different workbook again
+        Cell cXSLX_nw_cell = rXSLX.createCell(42);
+        cXSLX_nw_cell.setCellFormula("[alt.xslx]Sheet1!$A$1");
+        
+        // Check it - TODO Is this correct? Or should it become [2]Sheet1!$A$1 ?
+        assertEquals("[alt.xslx]Sheet1!$A$1", cXSLX_nw_cell.getCellFormula());
+        
+        // Evaluate it, without a link to that workbook
+        try {
+            evaluator.evaluate(cXSLX_nw_cell);
+            fail("No cached value and no link to workbook, shouldn't evaluate");
+        } catch(Exception e) {}
+        
+        // Add a link, check it does
+        Workbook alt = new XSSFWorkbook();
+        alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
+        evaluators.put("alt.xslx", alt.getCreationHelper().createFormulaEvaluator());
+        evaluator.setupReferencedWorkbooks(evaluators);
+        
+        evaluator.evaluate(cXSLX_nw_cell);
+        assertEquals("In another workbook", cXSLX_nw_cell.getStringCellValue());
     }
     
     /**

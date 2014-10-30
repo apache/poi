@@ -184,20 +184,30 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         this(InternalWorkbook.createWorkbook());
     }
 
-	private HSSFWorkbook(InternalWorkbook book) {
-		super((DirectoryNode)null);
-		workbook = book;
-		_sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
-		names = new ArrayList<HSSFName>(INITIAL_CAPACITY);
-	}
+    private HSSFWorkbook(InternalWorkbook book) {
+        super((DirectoryNode)null);
+        workbook = book;
+        _sheets = new ArrayList<HSSFSheet>(INITIAL_CAPACITY);
+        names = new ArrayList<HSSFName>(INITIAL_CAPACITY);
+    }
 
+    /**
+     * Given a POI POIFSFileSystem object, read in its Workbook along
+     *  with all related nodes, and populate the high and low level models.
+     * <p>This calls {@link #HSSFWorkbook(POIFSFileSystem, boolean)} with
+     *  preserve nodes set to true. 
+     * 
+     * @see #HSSFWorkbook(POIFSFileSystem, boolean)
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @exception IOException if the stream cannot be read
+     */
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
         this(fs,true);
     }
 
     /**
-     * given a POI POIFSFileSystem object, read in its Workbook and populate the high and
-     * low level models.  If you're reading in a workbook...start here.
+     * Given a POI POIFSFileSystem object, read in its Workbook and populate 
+     * the high and low level models.  If you're reading in a workbook... start here!
      *
      * @param fs the POI filesystem that contains the Workbook stream.
      * @param preserveNodes whether to preseve other nodes, such as
@@ -208,8 +218,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @exception IOException if the stream cannot be read
      */
     public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
-            throws IOException
-    {
+            throws IOException {
         this(fs.getRoot(), fs, preserveNodes);
     }
 
@@ -338,13 +347,24 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
     }
 
-     public HSSFWorkbook(InputStream s) throws IOException {
-         this(s,true);
-     }
+    /**
+     * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the 
+     *  POI filesystem around your inputstream, including all nodes.
+     * <p>This calls {@link #HSSFWorkbook(InputStream, boolean)} with
+     *  preserve nodes set to true. 
+     *
+     * @see #HSSFWorkbook(InputStream, boolean)
+     * @see #HSSFWorkbook(POIFSFileSystem)
+     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
+     * @exception IOException if the stream cannot be read
+     */
+    public HSSFWorkbook(InputStream s) throws IOException {
+        this(s,true);
+    }
 
     /**
-     * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the POI filesystem around your
-     * inputstream.
+     * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the 
+     * POI filesystem around your inputstream.
      *
      * @param s  the POI filesystem that contains the Workbook stream.
      * @param preserveNodes whether to preseve other nodes, such as
@@ -354,7 +374,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @see #HSSFWorkbook(POIFSFileSystem)
      * @exception IOException if the stream cannot be read
      */
-
     public HSSFWorkbook(InputStream s, boolean preserveNodes)
             throws IOException
     {
