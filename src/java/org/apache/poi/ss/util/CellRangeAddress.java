@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.util;
 
-import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -38,14 +38,26 @@ public class CellRangeAddress extends CellRangeAddressBase {
 	 */
 	public static final int ENCODED_SIZE = 8;
 
+	/**
+	 * Creates new cell range. Indexes are zero-based.
+	 * 
+	 * @param firstRow Index of first row
+	 * @param lastRow Index of last row (inclusive), must be equal to or larger than {@code firstRow}
+	 * @param firstCol Index of first column
+	 * @param lastCol Index of last column (inclusive), must be equal to or larger than {@code firstCol}
+	 */
 	public CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) {
 		super(firstRow, lastRow, firstCol, lastCol);
+		
+		if (lastRow < firstRow || lastCol < firstCol)
+		    throw new IllegalArgumentException("lastRow < firstRow || lastCol < firstCol");
 	}
 
 	/**
 	 * @deprecated use {@link #serialize(LittleEndianOutput)}
 	 */
-	public int serialize(int offset, byte[] data) {
+	@Deprecated
+    public int serialize(int offset, byte[] data) {
 		serialize(new LittleEndianByteArrayOutputStream(data, offset, ENCODED_SIZE));
 		return ENCODED_SIZE;
 	}
