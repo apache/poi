@@ -36,8 +36,8 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.DocumentHelper;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -134,7 +134,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 
 		for (PackageRelationship rel : rels) {
 			// the relationship element
-            Element relElem = xmlOutDoc.createElement(PackageRelationship.RELATIONSHIP_TAG_NAME);
+            Element relElem = xmlOutDoc.createElementNS(PackageNamespaces.RELATIONSHIPS, PackageRelationship.RELATIONSHIP_TAG_NAME);
             root.appendChild(relElem);
 
 			// the relationship ID
