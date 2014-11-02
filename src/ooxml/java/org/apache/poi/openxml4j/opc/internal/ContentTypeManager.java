@@ -444,7 +444,7 @@ public abstract class ContentTypeManager {
 	 */
 	private void appendSpecificTypes(Element root,
 			Entry<PackagePartName, String> entry) {
-        Element specificType = root.getOwnerDocument().createElement(OVERRIDE_TAG_NAME);
+        Element specificType = root.getOwnerDocument().createElementNS(TYPES_NAMESPACE_URI, OVERRIDE_TAG_NAME);
         specificType.setAttribute(PART_NAME_ATTRIBUTE_NAME, entry.getKey().getName());
         specificType.setAttribute(CONTENT_TYPE_ATTRIBUTE_NAME, entry.getValue());
         root.appendChild(specificType);
@@ -460,7 +460,7 @@ public abstract class ContentTypeManager {
 	 * @see #save(java.io.OutputStream)
 	 */
 	private void appendDefaultType(Element root, Entry<String, String> entry) {
-        Element defaultType = root.getOwnerDocument().createElement(DEFAULT_TAG_NAME);
+        Element defaultType = root.getOwnerDocument().createElementNS(TYPES_NAMESPACE_URI, DEFAULT_TAG_NAME);
         defaultType.setAttribute(EXTENSION_ATTRIBUTE_NAME, entry.getKey());
         defaultType.setAttribute(CONTENT_TYPE_ATTRIBUTE_NAME, entry.getValue());
         root.appendChild(defaultType);
