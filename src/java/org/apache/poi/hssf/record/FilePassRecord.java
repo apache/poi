@@ -45,6 +45,7 @@ public final class FilePassRecord extends StandardRecord {
 	    private static final int ENCRYPTION_OTHER_RC4 = 1;
 	    private static final int ENCRYPTION_OTHER_CAPI_2 = 2;
 	    private static final int ENCRYPTION_OTHER_CAPI_3 = 3;
+        private static final int ENCRYPTION_OTHER_CAPI_4 = 4;
 	    
 	    private byte[] _salt;
 	    private byte[] _encryptedVerifier;
@@ -60,6 +61,7 @@ public final class FilePassRecord extends StandardRecord {
 	                break;
 	            case ENCRYPTION_OTHER_CAPI_2:
 	            case ENCRYPTION_OTHER_CAPI_3:
+                case ENCRYPTION_OTHER_CAPI_4:
 	                throw new EncryptedDocumentException(
 	                        "HSSF does not currently support CryptoAPI encryption");
 	            default:
