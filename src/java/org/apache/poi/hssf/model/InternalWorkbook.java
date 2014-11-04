@@ -94,6 +94,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -1802,6 +1803,10 @@ public final class InternalWorkbook {
             linkTable = new LinkTable((short) getNumSheets(), records);
         }
         return linkTable;
+    }
+    
+    public int linkExternalWorkbook(String name, Workbook externalWorkbook) {
+        return getOrCreateLinkTable().linkExternalWorkbook(name, externalWorkbook);
     }
 
     /** 

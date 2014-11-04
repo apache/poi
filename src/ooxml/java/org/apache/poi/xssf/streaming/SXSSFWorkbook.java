@@ -1174,6 +1174,20 @@ public class SXSSFWorkbook implements Workbook
     {
         _wb.setSheetHidden(sheetIx,hidden);
     }
+    
+    /**
+     * Adds the LinkTable records required to allow formulas referencing
+     *  the specified external workbook to be added to this one. Allows
+     *  formulas such as "[MyOtherWorkbook]Sheet3!$A$5" to be added to the 
+     *  file, for workbooks not already referenced.
+     *
+     * @param name The name the workbook will be referenced as in formulas
+     * @param workbook The open workbook to fetch the link required information from
+     */
+    public int linkExternalWorkbook(String name, Workbook workbook) {
+        throw new RuntimeException("NotImplemented");
+    }
+    
     /**
      * Register a new toolpack in this workbook.
      *
