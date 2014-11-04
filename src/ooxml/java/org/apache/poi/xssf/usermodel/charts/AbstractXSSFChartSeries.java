@@ -17,15 +17,15 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.ChartSerie;
+import org.apache.poi.ss.usermodel.charts.ChartSeries;
 import org.apache.poi.ss.usermodel.charts.TitleType;
 import org.apache.poi.ss.util.CellReference;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 /**
- * @author Martin Andersson
+ * Base of all XSSF Chart Series
  */
-public abstract class AbstractXSSFChartSerie implements ChartSerie {
+public abstract class AbstractXSSFChartSeries implements ChartSeries {
 
     private String titleValue;
     private CellReference titleRef;

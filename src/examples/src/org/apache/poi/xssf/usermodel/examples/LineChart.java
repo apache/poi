@@ -16,17 +16,29 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.charts.*;
+import java.io.FileOutputStream;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Chart;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.charts.AxisCrosses;
+import org.apache.poi.ss.usermodel.charts.AxisPosition;
+import org.apache.poi.ss.usermodel.charts.ChartAxis;
+import org.apache.poi.ss.usermodel.charts.ChartDataSource;
+import org.apache.poi.ss.usermodel.charts.ChartLegend;
+import org.apache.poi.ss.usermodel.charts.DataSources;
+import org.apache.poi.ss.usermodel.charts.LegendPosition;
+import org.apache.poi.ss.usermodel.charts.LineChartData;
+import org.apache.poi.ss.usermodel.charts.ValueAxis;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
-
 /**
  * Line chart example.
- *
- * @author Martin Andersson
  */
 public class LineChart {
 
@@ -66,8 +78,8 @@ public class LineChart {
         ChartDataSource<Number> ys2 = DataSources.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
 
-        data.addSerie(xs, ys1);
-        data.addSerie(xs, ys2);
+        data.addSeries(xs, ys1);
+        data.addSeries(xs, ys2);
 
         chart.plot(data, bottomAxis, leftAxis);
 

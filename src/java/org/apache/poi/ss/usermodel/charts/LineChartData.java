@@ -17,12 +17,12 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
-
 import java.util.List;
 
+import org.apache.poi.util.Beta;
+
 /**
- * @author Martin Andersson
+ * Data for a Line Chart
  */
 @Beta
 public interface LineChartData extends ChartData {
@@ -32,10 +32,10 @@ public interface LineChartData extends ChartData {
      * @param values     data source for values.
      * @return a new line chart serie.
      */
-    LineChartSerie addSerie(ChartDataSource<?> categories, ChartDataSource<? extends Number> values);
+    LineChartSeries addSeries(ChartDataSource<?> categories, ChartDataSource<? extends Number> values);
 
     /**
      * @return list of all series.
      */
-    List<? extends LineChartSerie> getSeries();
+    List<? extends LineChartSeries> getSeries();
 }

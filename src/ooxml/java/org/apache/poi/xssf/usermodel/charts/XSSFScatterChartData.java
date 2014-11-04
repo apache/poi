@@ -17,23 +17,27 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.ScatterChartData;
-import org.apache.poi.ss.usermodel.charts.ScatterChartSerie;
+import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterStyle;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STScatterStyle;
 
 
 /**
  * Represents DrawingML scatter charts.
- *
- * @author Roman Kashitsyn
  */
 @Beta
 public class XSSFScatterChartData implements ScatterChartData {
@@ -41,22 +45,22 @@ public class XSSFScatterChartData implements ScatterChartData {
     /**
      * List of all data series.
      */
-    private List<Serie> series;
+    private List<Series> series;
 
     public XSSFScatterChartData() {
-        series = new ArrayList<Serie>();
+        series = new ArrayList<Series>();
     }
 
     /**
      * Package private ScatterChartSerie implementation.
      */
-    static class Serie extends AbstractXSSFChartSerie implements ScatterChartSerie {
+    static class Series extends AbstractXSSFChartSeries implements ScatterChartSeries {
         private int id;
         private int order;
         private ChartDataSource<?> xs;
         private ChartDataSource<? extends Number> ys;
 
-        protected Serie(int id, int order,
+        protected Series(int id, int order,
                         ChartDataSource<?> xs,
                         ChartDataSource<? extends Number> ys) {
             super();
@@ -99,13 +103,13 @@ public class XSSFScatterChartData implements ScatterChartData {
         }
     }
 
-    public ScatterChartSerie addSerie(ChartDataSource<?> xs,
+    public ScatterChartSeries addSerie(ChartDataSource<?> xs,
                                       ChartDataSource<? extends Number> ys) {
         if (!ys.isNumeric()) {
             throw new IllegalArgumentException("Y axis data source must be numeric.");
         }
         int numOfSeries = series.size();
-        Serie newSerie = new Serie(numOfSeries, numOfSeries, xs, ys);
+        Series newSerie = new Series(numOfSeries, numOfSeries, xs, ys);
         series.add(newSerie);
         return newSerie;
     }
@@ -120,7 +124,7 @@ public class XSSFScatterChartData implements ScatterChartData {
         CTScatterChart scatterChart = plotArea.addNewScatterChart();
         addStyle(scatterChart);
 
-        for (Serie s : series) {
+        for (Series s : series) {
             s.addToChart(scatterChart);
         }
 
@@ -129,7 +133,7 @@ public class XSSFScatterChartData implements ScatterChartData {
         }
     }
 
-    public List<? extends Serie> getSeries() {
+    public List<? extends Series> getSeries() {
         return series;
     }
 
