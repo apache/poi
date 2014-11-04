@@ -87,4 +87,10 @@ public interface Comment {
      */
     void setString(RichTextString string);
 
+    /**
+     * Return defines position of this anchor in the sheet.
+     *
+     * @return defines position of this anchor in the sheet
+     */
+    public ClientAnchor getClientAnchor();
 }

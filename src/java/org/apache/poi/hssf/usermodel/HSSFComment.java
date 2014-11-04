@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.NoteStructureSubRecord;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 
 /**
@@ -229,6 +230,17 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         if (_note == null) return false;
         if (getColumn() < 0 || getRow() < 0) return false;
         return true;
+    }
+
+    @Override
+    public ClientAnchor getClientAnchor() {
+        HSSFAnchor ha = super.getAnchor();
+        if (ha instanceof ClientAnchor) {
+            return (ClientAnchor) ha;
+        }
+
+        throw new IllegalStateException("Anchor can not be changed in "
+                + ClientAnchor.class.getSimpleName());
     }
 
     @Override

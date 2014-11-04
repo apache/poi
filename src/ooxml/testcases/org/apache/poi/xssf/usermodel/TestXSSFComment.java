@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -166,5 +167,35 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         comment.setAuthor("");
         assertEquals("", comment.getAuthor());
         assertEquals(2, sheetComments.getNumberOfAuthors());
+    }
+
+    public void testGetClientAnchor() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        XSSFComment comment;
+        ClientAnchor anchor;
+
+        comment = drawing.createCellComment(new XSSFClientAnchor(101, 102, 103, 104, 1, 2, 3, 4));
+        anchor = comment.getClientAnchor();
+        assertEquals(0, anchor.getDx1());
+        assertEquals(0, anchor.getDy1());
+        assertEquals(0, anchor.getDx2());
+        assertEquals(0, anchor.getDy2());
+        assertEquals(1, anchor.getCol1());
+        assertEquals(2, anchor.getRow1());
+        assertEquals(3, anchor.getCol2());
+        assertEquals(4, anchor.getRow2());
+
+        comment = drawing.createCellComment(new XSSFClientAnchor());
+        anchor = comment.getClientAnchor();
+        assertEquals(0, anchor.getDx1());
+        assertEquals(0, anchor.getDy1());
+        assertEquals(0, anchor.getDx2());
+        assertEquals(0, anchor.getDy2());
+        assertEquals(1, anchor.getCol1());
+        assertEquals(0, anchor.getRow1());
+        assertEquals(3, anchor.getCol2());
+        assertEquals(3, anchor.getRow2());
     }
 }
