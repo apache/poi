@@ -16,15 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.math.BigInteger;
+
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-import schemasMicrosoftComVml.CTShape;
 
-import java.math.BigInteger;
+import schemasMicrosoftComVml.CTShape;
 
 public class XSSFComment implements Comment {
 	
@@ -171,6 +173,18 @@ public class XSSFComment implements Comment {
 	public void setString(String string) {
 		setString(new XSSFRichTextString(string));
 	}
+
+    @Override
+    public ClientAnchor getClientAnchor() {
+        String position = _vmlShape.getClientDataArray(0).getAnchorArray(0);
+        int[] pos = new int[8];
+        int i = 0;
+        for (String s : position.split(",")) {
+            pos[i++] = Integer.parseInt(s.trim());
+        }
+        XSSFClientAnchor ca = new XSSFClientAnchor(0, 0, 0, 0, pos[0], pos[2], pos[4], pos[6]);
+        return ca;
+    }
 
     /**
      * @return the xml bean holding this comment's properties

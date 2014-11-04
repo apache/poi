@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 
 /**
  * Tests TestHSSFCellComment.
@@ -69,5 +70,35 @@ public final class TestHSSFComment extends BaseTestCellComment {
         cell = sheet.getRow(5).getCell(2);
         comment = cell.getCellComment();
         assertEquals("c6", comment.getString().getString());
+    }
+
+    public void testGetClientAnchor() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFPatriarch drawing = sheet.createDrawingPatriarch();
+        HSSFComment comment;
+        ClientAnchor anchor;
+
+        comment = drawing.createCellComment(new HSSFClientAnchor(101, 102, 103, 104, (short) 1, 2, (short) 3, 4));
+        anchor = comment.getClientAnchor();
+        assertEquals(101, anchor.getDx1());
+        assertEquals(102, anchor.getDy1());
+        assertEquals(103, anchor.getDx2());
+        assertEquals(104, anchor.getDy2());
+        assertEquals(1, anchor.getCol1());
+        assertEquals(2, anchor.getRow1());
+        assertEquals(3, anchor.getCol2());
+        assertEquals(4, anchor.getRow2());
+
+        comment = drawing.createCellComment(new HSSFClientAnchor());
+        anchor = comment.getClientAnchor();
+        assertEquals(0, anchor.getDx1());
+        assertEquals(0, anchor.getDy1());
+        assertEquals(0, anchor.getDx2());
+        assertEquals(0, anchor.getDy2());
+        assertEquals(0, anchor.getCol1());
+        assertEquals(0, anchor.getRow1());
+        assertEquals(0, anchor.getCol2());
+        assertEquals(0, anchor.getRow2());
     }
 }
