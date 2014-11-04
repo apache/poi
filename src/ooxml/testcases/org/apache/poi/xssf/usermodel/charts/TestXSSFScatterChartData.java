@@ -52,11 +52,11 @@ public final class TestXSSFScatterChartData extends TestCase {
 
         ChartDataSource<String> xs = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf("A1:J1"));
         ChartDataSource<Number> ys = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf("A2:J2"));
-        ScatterChartSerie serie = scatterChartData.addSerie(xs, ys);
+        ScatterChartSerie series = scatterChartData.addSerie(xs, ys);
 
-        assertNotNull(serie);
+        assertNotNull(series);
         assertEquals(1, scatterChartData.getSeries().size());
-        assertTrue(scatterChartData.getSeries().contains(serie));
+        assertTrue(scatterChartData.getSeries().contains(series));
 
         chart.plot(scatterChartData, bottomAxis, leftAxis);
     }
