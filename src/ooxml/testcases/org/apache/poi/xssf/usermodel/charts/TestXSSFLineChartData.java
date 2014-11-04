@@ -58,11 +58,11 @@ public class TestXSSFLineChartData extends TestCase {
 
         ChartDataSource<String> xs = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf("A1:J1"));
         ChartDataSource<Number> ys = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf("A2:J2"));
-        LineChartSerie serie = lineChartData.addSerie(xs, ys);
+        LineChartSerie series = lineChartData.addSerie(xs, ys);
 
-        assertNotNull(serie);
+        assertNotNull(series);
         assertEquals(1, lineChartData.getSeries().size());
-        assertTrue(lineChartData.getSeries().contains(serie));
+        assertTrue(lineChartData.getSeries().contains(series));
 
         chart.plot(lineChartData, bottomAxis, leftAxis);
     }
