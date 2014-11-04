@@ -230,6 +230,36 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
       assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
+      
+/*      
+      // Now add a formula that refers to yet another (different) workbook
+      cell = wb.getSheetAt(0).getRow(1).createCell(42);
+      cell.setCellFormula("[alt.xls]Sheet1!$A$1");
+      
+      // Check it - TODO Is this correct? Or should it become [2]Sheet1!$A$1 ?
+      assertEquals("[alt.xls]Sheet1!$A$1", cell.getCellFormula());
+      
+      // Evaluate it, without a link to that workbook
+      try {
+          eval.evaluate(cell);
+          fail("No cached value and no link to workbook, shouldn't evaluate");
+      } catch(Exception e) {}
+      
+      // Add a link, check it does
+      HSSFWorkbook alt = new HSSFWorkbook();
+      alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
+      HSSFFormulaEvaluator.setupEnvironment(
+              new String[] { "XRefCalc.xls", "XRefCalcData.xls", "alt.xls" },
+              new HSSFFormulaEvaluator[] {
+                    eval,
+                    new HSSFFormulaEvaluator(wbData),
+                    new HSSFFormulaEvaluator(alt)
+              }
+      );
+      
+      eval.evaluate(cell);
+      assertEquals("In another workbook", cell.getStringCellValue());
+*/      
    }
 
     public void testSharedFormulas(){
