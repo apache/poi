@@ -37,6 +37,7 @@ import org.apache.poi.ss.formula.ptg.ErrPtg;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Link Table (OOO pdf reference: 4.10.3 ) <p/>
@@ -110,31 +111,39 @@ final class LinkTable {
 			_crnBlocks = new CRNBlock[temp.size()];
 			temp.toArray(_crnBlocks);
 		}
+		
+       /**
+        * Create a new block for external references.
+        */
+       public ExternalBookBlock(String url, String[] sheetNames) {
+           _externalBookRecord = SupBookRecord.createExternalReferences(url, sheetNames);
+           _crnBlocks = new CRNBlock[0];
+       }
 
-        /**
-         * Create a new block for internal references. It is called when constructing a new LinkTable.
-         *
-         * @see org.apache.poi.hssf.model.LinkTable#LinkTable(int, WorkbookRecordList)
-         */
-        public ExternalBookBlock(int numberOfSheets) {
-			_externalBookRecord = SupBookRecord.createInternalReferences((short)numberOfSheets);
-			_externalNameRecords = new ExternalNameRecord[0];
-			_crnBlocks = new CRNBlock[0];
-		}
+       /**
+        * Create a new block for internal references. It is called when constructing a new LinkTable.
+        *
+        * @see org.apache.poi.hssf.model.LinkTable#LinkTable(int, WorkbookRecordList)
+        */
+       public ExternalBookBlock(int numberOfSheets) {
+           _externalBookRecord = SupBookRecord.createInternalReferences((short)numberOfSheets);
+           _externalNameRecords = new ExternalNameRecord[0];
+           _crnBlocks = new CRNBlock[0];
+       }
 
-        /**
-         * Create a new block for registering add-in functions
-         *
-         * @see org.apache.poi.hssf.model.LinkTable#addNameXPtg(String)
-         */
-        public ExternalBookBlock() {
-            _externalBookRecord = SupBookRecord.createAddInFunctions();
-            _externalNameRecords = new ExternalNameRecord[0];
-            _crnBlocks = new CRNBlock[0];
-        }
+       /**
+        * Create a new block for registering add-in functions
+        *
+        * @see org.apache.poi.hssf.model.LinkTable#addNameXPtg(String)
+        */
+       public ExternalBookBlock() {
+           _externalBookRecord = SupBookRecord.createAddInFunctions();
+           _externalNameRecords = new ExternalNameRecord[0];
+           _crnBlocks = new CRNBlock[0];
+       }
 
 		public SupBookRecord getExternalBookRecord() {
-			return _externalBookRecord;
+		    return _externalBookRecord;
 		}
 
 		public String getNameText(int definedNameIndex) {
@@ -382,31 +391,68 @@ final class LinkTable {
             };
 		}
 	}
+	
+	private int getExternalWorkbookIndex(String workbookName) {
+	    for (int i=0; i<_externalBookBlocks.length; i++) {
+	        SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
+	        if (!ebr.isExternalReferences()) {
+	            continue;
+	        }
+	        if (workbookName.equals(ebr.getURL())) { // not sure if 'equals()' works when url has a directory
+	            return i;
+	        }
+	    } 
+	    return -1;
+	}
+	
+	public int linkExternalWorkbook(String name, Workbook externalWorkbook) {
+        int extBookIndex = getExternalWorkbookIndex(name);
+        if (extBookIndex != -1) {
+            // Already linked!
+            return extBookIndex;
+        }
+        
+        // Create a new SupBookRecord
+        String[] sheetNames = new String[externalWorkbook.getNumberOfSheets()];
+        for (int sn=0; sn<sheetNames.length; sn++) {
+            sheetNames[sn] = externalWorkbook.getSheetName(sn);
+        }
+        String url = "\000" + name;
+        ExternalBookBlock block = new ExternalBookBlock(url, sheetNames);
+        
+        // Add it into the list + records
+        extBookIndex = extendExternalBookBlocks(block);
+
+        // add the created SupBookRecord before ExternSheetRecord
+        int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
+        if (idx == -1) {
+            idx = _workbookRecordList.size();
+        }
+        _workbookRecordList.add(idx, block.getExternalBookRecord());
+        
+        // Setup links for the sheets
+        for (int sn=0; sn<sheetNames.length; sn++) {
+            _externSheetRecord.addRef(extBookIndex, sn, sn);
+        }
+        
+        // Report where it went
+        return extBookIndex;
+	}
 
 	public int getExternalSheetIndex(String workbookName, String firstSheetName, String lastSheetName) {
-		SupBookRecord ebrTarget = null;
-		int externalBookIndex = -1;
-		for (int i=0; i<_externalBookBlocks.length; i++) {
-			SupBookRecord ebr = _externalBookBlocks[i].getExternalBookRecord();
-			if (!ebr.isExternalReferences()) {
-				continue;
-			}
-			if (workbookName.equals(ebr.getURL())) { // not sure if 'equals()' works when url has a directory
-				ebrTarget = ebr;
-				externalBookIndex = i;
-				break;
-			}
-		}
-		if (ebrTarget == null) {
-			throw new RuntimeException("No external workbook with name '" + workbookName + "'");
-		}
+	    int externalBookIndex = getExternalWorkbookIndex(workbookName);
+        if (externalBookIndex == -1) {
+            throw new RuntimeException("No external workbook with name '" + workbookName + "'");
+        }
+        SupBookRecord ebrTarget = _externalBookBlocks[externalBookIndex].getExternalBookRecord();
+
 		int firstSheetIndex = getSheetIndex(ebrTarget.getSheetNames(), firstSheetName);
         int lastSheetIndex = getSheetIndex(ebrTarget.getSheetNames(), lastSheetName);
 
+        // Find or add the external sheet record definition for this
 		int result = _externSheetRecord.getRefIxForSheet(externalBookIndex, firstSheetIndex, lastSheetIndex);
 		if (result < 0) {
-			throw new RuntimeException("ExternSheetRecord does not contain combination ("
-					+ externalBookIndex + ", " + firstSheetIndex + ", " + lastSheetIndex + ")");
+		    result = _externSheetRecord.addRef(externalBookIndex, firstSheetIndex, lastSheetIndex);
 		}
 		return result;
 	}
@@ -580,13 +626,7 @@ final class LinkTable {
         // An ExternalBlock for Add-In functions was not found. Create a new one.
         if (extBlock == null) {
             extBlock = new ExternalBookBlock();
-
-            ExternalBookBlock[] tmp = new ExternalBookBlock[_externalBookBlocks.length + 1];
-            System.arraycopy(_externalBookBlocks, 0, tmp, 0, _externalBookBlocks.length);
-            tmp[tmp.length - 1] = extBlock;
-            _externalBookBlocks = tmp;
-
-            extBlockIndex = _externalBookBlocks.length - 1;
+            extBlockIndex = extendExternalBookBlocks(extBlock);
 
             // add the created SupBookRecord before ExternSheetRecord
             int idx = findFirstRecordLocBySid(ExternSheetRecord.sid);
@@ -619,6 +659,14 @@ final class LinkTable {
         int fakeSheetIdx = -2; /* the scope is workbook*/
         int ix = _externSheetRecord.getRefIxForSheet(extBlockIndex, fakeSheetIdx, fakeSheetIdx);
         return new NameXPtg(ix, nameIndex);
+    }
+    private int extendExternalBookBlocks(ExternalBookBlock newBlock) {
+        ExternalBookBlock[] tmp = new ExternalBookBlock[_externalBookBlocks.length + 1];
+        System.arraycopy(_externalBookBlocks, 0, tmp, 0, _externalBookBlocks.length);
+        tmp[tmp.length - 1] = newBlock;
+        _externalBookBlocks = tmp;
+
+        return (_externalBookBlocks.length - 1);
     }
 
     private int findRefIndexFromExtBookIndex(int extBookIndex) {

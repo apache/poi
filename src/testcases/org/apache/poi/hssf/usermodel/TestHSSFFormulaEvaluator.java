@@ -231,14 +231,35 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       assertEquals(Cell.CELL_TYPE_NUMERIC, cell.getCachedFormulaResultType());
       assertEquals(36.90, cell.getNumericCellValue(), 0.0001);
       
-/*      
-      // Now add a formula that refers to yet another (different) workbook
-      cell = wb.getSheetAt(0).getRow(1).createCell(42);
-      cell.setCellFormula("[alt.xls]Sheet1!$A$1");
       
-      // Check it - TODO Is this correct? Or should it become [2]Sheet1!$A$1 ?
-      assertEquals("[alt.xls]Sheet1!$A$1", cell.getCellFormula());
+      // Add a formula that refers to one of the existing external workbooks
+      cell = wb.getSheetAt(0).getRow(1).createCell(40);
+      cell.setCellFormula("Cost*[XRefCalcData.xls]MarkupSheet!$B$1");
       
+      // Check is was stored correctly
+      assertEquals("Cost*[XRefCalcData.xls]MarkupSheet!$B$1", cell.getCellFormula());
+      
+      // Check it evaluates correctly
+      eval.evaluateFormulaCell(cell);
+      assertEquals(24.60*1.8, cell.getNumericCellValue());
+      
+      
+      // Try to add a formula for a new external workbook, won't be allowed to start
+      try {
+          cell = wb.getSheetAt(0).getRow(1).createCell(42);
+          cell.setCellFormula("[alt.xls]Sheet0!$A$1");
+          fail("New workbook not linked, shouldn't be able to add");
+      } catch(Exception e) {}
+      
+      // Link our new workbook
+      HSSFWorkbook alt = new HSSFWorkbook();
+      alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
+      wb.linkExternalWorkbook("alt.xls", alt);
+      
+      // Now add a formula that refers to our new workbook
+      cell.setCellFormula("[alt.xls]Sheet0!$A$1");
+      assertEquals("[alt.xls]Sheet0!$A$1", cell.getCellFormula());
+
       // Evaluate it, without a link to that workbook
       try {
           eval.evaluate(cell);
@@ -246,8 +267,21 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
       } catch(Exception e) {}
       
       // Add a link, check it does
-      HSSFWorkbook alt = new HSSFWorkbook();
-      alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
+      HSSFFormulaEvaluator.setupEnvironment(
+              new String[] { "XRefCalc.xls", "XRefCalcData.xls", "alt.xls" },
+              new HSSFFormulaEvaluator[] {
+                    eval,
+                    new HSSFFormulaEvaluator(wbData),
+                    new HSSFFormulaEvaluator(alt)
+              }
+      );
+      eval.evaluateFormulaCell(cell);
+      assertEquals("In another workbook", cell.getStringCellValue());
+      
+      
+      // Save and re-load
+      wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+      eval = new HSSFFormulaEvaluator(wb);
       HSSFFormulaEvaluator.setupEnvironment(
               new String[] { "XRefCalc.xls", "XRefCalcData.xls", "alt.xls" },
               new HSSFFormulaEvaluator[] {
@@ -257,9 +291,17 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
               }
       );
       
-      eval.evaluate(cell);
+      // Check the one referring to the previously existing workbook behaves
+      cell = wb.getSheetAt(0).getRow(1).getCell(40);
+      assertEquals("Cost*[XRefCalcData.xls]MarkupSheet!$B$1", cell.getCellFormula());
+      eval.evaluateFormulaCell(cell);
+      assertEquals(24.60*1.8, cell.getNumericCellValue());
+      
+      // Now check the newly added reference
+      cell = wb.getSheetAt(0).getRow(1).getCell(42);
+      assertEquals("[alt.xls]Sheet0!$A$1", cell.getCellFormula());
+      eval.evaluateFormulaCell(cell);
       assertEquals("In another workbook", cell.getStringCellValue());
-*/      
    }
 
     public void testSharedFormulas(){

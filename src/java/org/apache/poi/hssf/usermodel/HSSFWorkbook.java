@@ -79,6 +79,7 @@ import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
@@ -1848,6 +1849,19 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         oleDir.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
         
     	return storageId;
+    }
+    
+    /**
+     * Adds the LinkTable records required to allow formulas referencing
+     *  the specified external workbook to be added to this one. Allows
+     *  formulas such as "[MyOtherWorkbook]Sheet3!$A$5" to be added to the 
+     *  file, for workbooks not already referenced.
+     *
+     * @param name The name the workbook will be referenced as in formulas
+     * @param workbook The open workbook to fetch the link required information from
+     */
+    public int linkExternalWorkbook(String name, Workbook workbook) {
+        return this.workbook.linkExternalWorkbook(name, workbook);
     }
     
     /**
