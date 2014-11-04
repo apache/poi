@@ -134,17 +134,21 @@ public final class SupBookRecord extends StandardRecord {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append(" [SUPBOOK ");
+        sb.append("[SUPBOOK ");
 
         if(isExternalReferences()) {
-            sb.append("External References");
-            sb.append(" nSheets=").append(field_1_number_of_sheets);
-            sb.append(" url=").append(field_2_encoded_url);
+            sb.append("External References]\n");
+            sb.append(" .url     = ").append(field_2_encoded_url).append("\n");
+            sb.append(" .nSheets = ").append(field_1_number_of_sheets).append("\n");
+            for (String sheetname : field_3_sheet_names) {
+                sb.append("    .name = ").append(sheetname).append("\n");
+            }
+            sb.append("[/SUPBOOK");
         } else if(_isAddInFunctions) {
             sb.append("Add-In Functions");
         } else {
-            sb.append("Internal References ");
-            sb.append(" nSheets= ").append(field_1_number_of_sheets);
+            sb.append("Internal References");
+            sb.append(" nSheets=").append(field_1_number_of_sheets);
         }
         sb.append("]");
         return sb.toString();
