@@ -2460,6 +2460,13 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
+        
+        // One using the only-recently-documented encryption header type 4,
+        //  and the RC4 CryptoAPI encryption header structure
+        try {
+            openSample("35897-type4.xls");
+            fail("POI doesn't currently support the RC4 CryptoAPI encryption header structure");
+        } catch (EncryptedDocumentException e) {}
     }
 
     @Test
