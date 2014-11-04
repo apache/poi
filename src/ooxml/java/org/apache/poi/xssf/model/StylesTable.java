@@ -39,7 +39,22 @@ import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorders;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellStyleXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellXfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxfs;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFills;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmts;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTStylesheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
 
 
 /**
