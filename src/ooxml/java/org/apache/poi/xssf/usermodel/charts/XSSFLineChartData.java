@@ -17,20 +17,25 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.LineChartData;
-import org.apache.poi.ss.usermodel.charts.LineChartSerie;
+import org.apache.poi.ss.usermodel.charts.LineChartSeries;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STMarkerStyle;
 
 /**
- * @author Martin Andersson
+ * Holds data for a XSSF Line Chart
  */
 @Beta
 public class XSSFLineChartData implements LineChartData {
@@ -38,19 +43,19 @@ public class XSSFLineChartData implements LineChartData {
     /**
      * List of all data series.
      */
-    private List<Serie> series;
+    private List<Series> series;
 
     public XSSFLineChartData() {
-        series = new ArrayList<Serie>();
+        series = new ArrayList<Series>();
     }
 
-    static class Serie extends AbstractXSSFChartSerie implements LineChartSerie {
+    static class Series extends AbstractXSSFChartSeries implements LineChartSeries {
         private int id;
         private int order;
         private ChartDataSource<?> categories;
         private ChartDataSource<? extends Number> values;
 
-        protected Serie(int id, int order,
+        protected Series(int id, int order,
                         ChartDataSource<?> categories,
                         ChartDataSource<? extends Number> values) {
             this.id = id;
@@ -86,17 +91,17 @@ public class XSSFLineChartData implements LineChartData {
         }
     }
 
-    public LineChartSerie addSerie(ChartDataSource<?> categoryAxisData, ChartDataSource<? extends Number> values) {
+    public LineChartSeries addSeries(ChartDataSource<?> categoryAxisData, ChartDataSource<? extends Number> values) {
         if (!values.isNumeric()) {
             throw new IllegalArgumentException("Value data source must be numeric.");
         }
         int numOfSeries = series.size();
-        Serie newSerie = new Serie(numOfSeries, numOfSeries, categoryAxisData, values);
-        series.add(newSerie);
-        return newSerie;
+        Series newSeries = new Series(numOfSeries, numOfSeries, categoryAxisData, values);
+        series.add(newSeries);
+        return newSeries;
     }
 
-    public List<? extends LineChartSerie> getSeries() {
+    public List<? extends LineChartSeries> getSeries() {
         return series;
     }
 
@@ -110,7 +115,7 @@ public class XSSFLineChartData implements LineChartData {
         CTLineChart lineChart = plotArea.addNewLineChart();
         lineChart.addNewVaryColors().setVal(false);
 
-        for (Serie s : series) {
+        for (Series s : series) {
             s.addToChart(lineChart);
         }
 

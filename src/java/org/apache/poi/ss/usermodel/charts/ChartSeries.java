@@ -21,10 +21,8 @@ import org.apache.poi.ss.util.CellReference;
 
 /**
  * Basic settings for all chart series.
- *
- * @author Martin Andersson
  */
-public interface ChartSerie {
+public interface ChartSeries {
 
     /**
      * Sets the title of the series as a string literal.

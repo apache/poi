@@ -28,13 +28,13 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.DataSources;
 import org.apache.poi.ss.usermodel.charts.LineChartData;
-import org.apache.poi.ss.usermodel.charts.LineChartSerie;
+import org.apache.poi.ss.usermodel.charts.LineChartSeries;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * @author Martin Andersson
+ * Tests for XSSF Line Charts
  */
 public class TestXSSFLineChartData extends TestCase {
 
@@ -58,7 +58,7 @@ public class TestXSSFLineChartData extends TestCase {
 
         ChartDataSource<String> xs = DataSources.fromStringCellRange(sheet, CellRangeAddress.valueOf("A1:J1"));
         ChartDataSource<Number> ys = DataSources.fromNumericCellRange(sheet, CellRangeAddress.valueOf("A2:J2"));
-        LineChartSerie series = lineChartData.addSerie(xs, ys);
+        LineChartSeries series = lineChartData.addSeries(xs, ys);
 
         assertNotNull(series);
         assertEquals(1, lineChartData.getSeries().size());

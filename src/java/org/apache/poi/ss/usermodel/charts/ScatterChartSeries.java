@@ -20,13 +20,10 @@ package org.apache.poi.ss.usermodel.charts;
 import org.apache.poi.util.Beta;
 
 /**
- * Represents scatter charts serie.
- *
- * @author Roman Kashitsyn
- * @author Martin Andersson
+ * Represents scatter charts series.
  */
 @Beta
-public interface ScatterChartSerie extends ChartSerie {
+public interface ScatterChartSeries extends ChartSeries {
 
     /**
      * @return data source used for X axis values

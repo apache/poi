@@ -20,12 +20,10 @@ package org.apache.poi.ss.usermodel.charts;
 import org.apache.poi.util.Beta;
 
 /**
- * Represents a line chart serie.
- *
- * @author Martin Andersson
+ * Represents a line chart series.
  */
 @Beta
-public interface LineChartSerie extends ChartSerie {
+public interface LineChartSeries extends ChartSeries {
 
     /**
      * @return data source used for category axis data.

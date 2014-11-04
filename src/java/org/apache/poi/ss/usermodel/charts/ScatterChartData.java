@@ -20,18 +20,18 @@ package org.apache.poi.ss.usermodel.charts;
 import java.util.List;
 
 /**
- * @author Roman Kashitsyn
+ * Data for a Scatter Chart
  */
 public interface ScatterChartData extends ChartData {
 	/**
 	 * @param xs data source to be used for X axis values
 	 * @param ys data source to be used for Y axis values
-	 * @return a new scatter charts serie
+	 * @return a new scatter charts series
 	 */
-	ScatterChartSerie addSerie(ChartDataSource<?> xs, ChartDataSource<? extends Number> ys);
+	ScatterChartSeries addSerie(ChartDataSource<?> xs, ChartDataSource<? extends Number> ys);
 
 	/**
 	 * @return list of all series
 	 */
-	List<? extends ScatterChartSerie> getSeries();
+	List<? extends ScatterChartSeries> getSeries();
 }
