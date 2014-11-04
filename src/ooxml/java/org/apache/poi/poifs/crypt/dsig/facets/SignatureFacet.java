@@ -24,7 +24,12 @@
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.Provider;
+import java.security.Security;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -38,9 +43,13 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
+import org.apache.jcp.xml.dsig.internal.dom.DOMDigestMethod;
+import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
 
 /**
@@ -48,6 +57,8 @@ import org.w3c.dom.Document;
  */
 public abstract class SignatureFacet implements SignatureConfigurable {
 
+    private static final POILogger LOG = POILogFactory.getLogger(SignatureFacet.class);
+    
     public static final String XML_NS = XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
     public static final String XML_DIGSIG_NS = XMLSignature.XMLNS;
     public static final String OO_DIGSIG_NS = PackageNamespaces.DIGITAL_SIGNATURE;
@@ -137,6 +148,23 @@ public abstract class SignatureFacet implements SignatureConfigurable {
             reference = sigFac.newReference(uri, digestMethod, transforms, type, id);
         } else {
             reference = sigFac.newReference(uri, digestMethod, transforms, type, id, digestValue);
+        }
+        
+        // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
+        // overwrite standard message digest, if a digest <> SHA1 is used
+        Provider bcProv = Security.getProvider("BC");
+        if (bcProv != null && !DigestMethod.SHA1.equals(digestMethodUri)) {
+            try {
+                Method m = DOMDigestMethod.class.getDeclaredMethod("getMessageDigestAlgorithm");
+                m.setAccessible(true);
+                String mdAlgo = (String)m.invoke(digestMethod);
+                MessageDigest md = MessageDigest.getInstance(mdAlgo, bcProv);
+                Field f = DOMReference.class.getDeclaredField("md");
+                f.setAccessible(true);
+                f.set(reference, md);
+            } catch (Exception e) {
+                LOG.log(POILogger.WARN, "Can't overwrite message digest (workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012)", e);
+            }
         }
 
         return reference;
