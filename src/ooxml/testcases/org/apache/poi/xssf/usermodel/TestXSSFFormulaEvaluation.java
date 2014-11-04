@@ -167,12 +167,32 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("\"Test A1\"", evaluator.evaluate(cXSL_sNR).formatAsString());
         assertEquals("142.0",   evaluator.evaluate(cXSL_gNR).formatAsString());
         
-/**        
-        // Now add a formula that refers to yet another (different) workbook
-        Cell cXSLX_nw_cell = rXSLX.createCell(42);
-        cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
         
-        // Check it - TODO Is this correct? Or should it become [2]Sheet1!$A$1 ?
+        // Add another formula referencing these workbooks
+        Cell cXSL_cell2 = rXSL.createCell(40);
+        cXSL_cell2.setCellFormula("[56737.xls]Uses!$C$1");
+        // TODO Shouldn't it become [2] like the others?
+        assertEquals("[56737.xls]Uses!$C$1", cXSL_cell2.getCellFormula());
+        assertEquals("\"Hello!\"",  evaluator.evaluate(cXSL_cell2).formatAsString());
+        
+        
+        // Now add a formula that refers to yet another (different) workbook
+        // Won't work without the workbook being linked
+        Cell cXSLX_nw_cell = rXSLX.createCell(42);
+        try {
+            cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
+            fail("New workbook not linked, shouldn't be able to add");
+        } catch (Exception e) {}
+        
+        // Link and re-try
+        Workbook alt = new XSSFWorkbook();
+        alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
+        // TODO Implement the rest of this, see bug #57184
+/*
+        wb.linkExternalWorkbook("alt.xlsx", alt);
+                
+        cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
+        // Check it - TODO Is this correct? Or should it become [3]Sheet1!$A$1 ?
         assertEquals("[alt.xlsx]Sheet1!$A$1", cXSLX_nw_cell.getCellFormula());
         
         // Evaluate it, without a link to that workbook
@@ -182,8 +202,6 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         } catch(Exception e) {}
         
         // Add a link, check it does
-        Workbook alt = new XSSFWorkbook();
-        alt.createSheet().createRow(0).createCell(0).setCellValue("In another workbook");
         evaluators.put("alt.xlsx", alt.getCreationHelper().createFormulaEvaluator());
         evaluator.setupReferencedWorkbooks(evaluators);
         
