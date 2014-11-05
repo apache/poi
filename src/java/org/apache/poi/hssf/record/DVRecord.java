@@ -18,9 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.BitField;
@@ -196,8 +196,29 @@ public final class DVRecord extends StandardRecord {
 	}
 	// <-- end option flags
 
+    public String getPromptTitle() {
+        return resolveTitleString(_promptTitle);
+    }
 
+    public String getErrorTitle() {
+        return resolveTitleString(_errorTitle);
+    }
 
+    public String getPromptText() {
+        return resolveTitleString(_promptText);
+    }
+
+    public String getErrorText() {
+        return resolveTitleString(_errorText);
+    }
+
+    public Ptg[] getFormula1() {
+        return Formula.getTokens(_formula1);
+    }
+
+    public Ptg[] getFormula2() {
+        return Formula.getTokens(_formula2);
+    }
 
 	public CellRangeAddressList getCellRangeAddress() {
 		return this._regions;
@@ -284,7 +305,14 @@ public final class DVRecord extends StandardRecord {
 		}
 		return new UnicodeString(str);
 	}
-	
+
+    private static String resolveTitleString(UnicodeString us) {
+        if (us == null || us.equals(NULL_TEXT_STRING)) {
+            return null;
+        }
+        return us.getString();
+    }
+
 	private static UnicodeString readUnicodeString(RecordInputStream in) {
 		return new UnicodeString(in);
 	}

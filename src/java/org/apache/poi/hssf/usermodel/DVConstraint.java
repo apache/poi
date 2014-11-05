@@ -17,15 +17,20 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
+import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
-import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 
 /**
@@ -429,4 +434,78 @@ public class DVConstraint implements DataValidationConstraint {
         HSSFWorkbook wb = sheet.getWorkbook();
 		return HSSFFormulaParser.parse(formula, wb, FormulaType.CELL, wb.getSheetIndex(sheet));
 	}	
+
+    static DVConstraint createDVConstraint(DVRecord dvRecord, FormulaRenderingWorkbook book) {
+        switch (dvRecord.getDataType()) {
+        case ValidationType.ANY:
+            return new DVConstraint(ValidationType.ANY, dvRecord.getConditionOperator(), null, null, null, null, null);
+        case ValidationType.INTEGER:
+        case ValidationType.DECIMAL:
+        case ValidationType.DATE:
+        case ValidationType.TIME:
+        case ValidationType.TEXT_LENGTH:
+            FormulaValuePair pair1 = toFormulaString(dvRecord.getFormula1(), book);
+            FormulaValuePair pair2 = toFormulaString(dvRecord.getFormula2(), book);
+            return new DVConstraint(dvRecord.getDataType(), dvRecord.getConditionOperator(), pair1.formula(),
+                    pair2.formula(), pair1.value(), pair2.value(), null);
+        case ValidationType.LIST:
+            if (dvRecord.getListExplicitFormula()) {
+                String values = toFormulaString(dvRecord.getFormula1(), book).string();
+                if (values.startsWith("\"")) {
+                    values = values.substring(1);
+                }
+                if (values.endsWith("\"")) {
+                    values = values.substring(0, values.length() - 1);
+                }
+                String[] explicitListValues = values.split(Pattern.quote("\0"));
+                return createExplicitListConstraint(explicitListValues);
+            } else {
+                String listFormula = toFormulaString(dvRecord.getFormula1(), book).string();
+                return createFormulaListConstraint(listFormula);
+            }
+        case ValidationType.FORMULA:
+            return createCustomFormulaConstraint(toFormulaString(dvRecord.getFormula1(), book).string());
+        default:
+            throw new UnsupportedOperationException(MessageFormat.format("validationType={0}", dvRecord.getDataType()));
+        }
+    }
+
+    private static class FormulaValuePair {
+        private String _formula;
+        private String _value;
+
+        public String formula() {
+            return _formula;
+        }
+
+        public Double value() {
+            if (_value == null) {
+                return null;
+            }
+            return new Double(_value);
+        }
+
+        public String string() {
+            if (_formula != null) {
+                return _formula;
+            }
+            if (_value != null) {
+                return _value;
+            }
+            return null;
+        }
+    }
+
+    private static FormulaValuePair toFormulaString(Ptg[] ptgs, FormulaRenderingWorkbook book) {
+        FormulaValuePair pair = new FormulaValuePair();
+        if (ptgs != null && ptgs.length > 0) {
+            String string = FormulaRenderer.toFormulaString(book, ptgs);
+            if (ptgs.length == 1 && ptgs[0].getClass() == NumberPtg.class) {
+                pair._value = string;
+            } else {
+                pair._formula = string;
+            }
+        }
+        return pair;
+    }
 }

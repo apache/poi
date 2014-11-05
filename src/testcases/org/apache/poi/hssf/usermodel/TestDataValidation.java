@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
@@ -34,7 +35,16 @@ import org.apache.poi.hssf.eventmodel.EventRecordFactory;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.RecordFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestDataValidation;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
@@ -209,4 +219,236 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		}
 		return -1;
 	}
+
+    public void testGetDataValidationsAny() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createNumericConstraint(ValidationType.ANY,
+                OperatorType.IGNORED, null, null);
+        CellRangeAddressList addressList = new CellRangeAddressList(1, 2, 3, 4);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        validation.setEmptyCellAllowed(true);
+        validation.createErrorBox("error-title", "error-text");
+        validation.createPromptBox("prompt-title", "prompt-text");
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        {
+            CellRangeAddressList regions = dv.getRegions();
+            assertEquals(1, regions.countRanges());
+
+            CellRangeAddress address = regions.getCellRangeAddress(0);
+            assertEquals(1, address.getFirstRow());
+            assertEquals(2, address.getLastRow());
+            assertEquals(3, address.getFirstColumn());
+            assertEquals(4, address.getLastColumn());
+        }
+        assertEquals(true, dv.getEmptyCellAllowed());
+        assertEquals(false, dv.getSuppressDropDownArrow());
+        assertEquals(true, dv.getShowErrorBox());
+        assertEquals("error-title", dv.getErrorBoxTitle());
+        assertEquals("error-text", dv.getErrorBoxText());
+        assertEquals(true, dv.getShowPromptBox());
+        assertEquals("prompt-title", dv.getPromptBoxTitle());
+        assertEquals("prompt-text", dv.getPromptBoxText());
+
+        DataValidationConstraint c = dv.getValidationConstraint();
+        assertEquals(ValidationType.ANY, c.getValidationType());
+        assertEquals(OperatorType.IGNORED, c.getOperator());
+    }
+
+    public void testGetDataValidationsIntegerFormula() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createIntegerConstraint(OperatorType.BETWEEN, "=A2",
+                "=A3");
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.INTEGER, c.getValidationType());
+        assertEquals(OperatorType.BETWEEN, c.getOperator());
+        assertEquals("A2", c.getFormula1());
+        assertEquals("A3", c.getFormula2());
+        assertEquals(null, c.getValue1());
+        assertEquals(null, c.getValue2());
+    }
+
+    public void testGetDataValidationsIntegerValue() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createIntegerConstraint(OperatorType.BETWEEN, "100",
+                "200");
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.INTEGER, c.getValidationType());
+        assertEquals(OperatorType.BETWEEN, c.getOperator());
+        assertEquals(null, c.getFormula1());
+        assertEquals(null, c.getFormula2());
+        assertEquals(new Double("100"), c.getValue1());
+        assertEquals(new Double("200"), c.getValue2());
+    }
+
+    public void testGetDataValidationsDecimal() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createDecimalConstraint(OperatorType.BETWEEN, "=A2",
+                "200");
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.DECIMAL, c.getValidationType());
+        assertEquals(OperatorType.BETWEEN, c.getOperator());
+        assertEquals("A2", c.getFormula1());
+        assertEquals(null, c.getFormula2());
+        assertEquals(null, c.getValue1());
+        assertEquals(new Double("200"), c.getValue2());
+    }
+
+    public void testGetDataValidationsDate() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createDateConstraint(OperatorType.EQUAL,
+                "2014/10/25", null, null);
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.DATE, c.getValidationType());
+        assertEquals(OperatorType.EQUAL, c.getOperator());
+        assertEquals(null, c.getFormula1());
+        assertEquals(null, c.getFormula2());
+        assertEquals(DateUtil.getExcelDate(DateUtil.parseYYYYMMDDDate("2014/10/25")), c.getValue1());
+        assertEquals(null, c.getValue2());
+    }
+
+    public void testGetDataValidationsListExplicit() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createExplicitListConstraint(new String[] { "aaa",
+                "bbb", "ccc" });
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        validation.setSuppressDropDownArrow(true);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        assertEquals(true, dv.getSuppressDropDownArrow());
+
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.LIST, c.getValidationType());
+        assertEquals(null, c.getFormula1());
+        assertEquals(null, c.getFormula2());
+        assertEquals(null, c.getValue1());
+        assertEquals(null, c.getValue2());
+        String[] values = c.getExplicitListValues();
+        assertEquals(3, values.length);
+        assertEquals("aaa", values[0]);
+        assertEquals("bbb", values[1]);
+        assertEquals("ccc", values[2]);
+    }
+
+    public void testGetDataValidationsListFormula() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createFormulaListConstraint("A2");
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        validation.setSuppressDropDownArrow(true);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        assertEquals(true, dv.getSuppressDropDownArrow());
+
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.LIST, c.getValidationType());
+        assertEquals("A2", c.getFormula1());
+        assertEquals(null, c.getFormula2());
+        assertEquals(null, c.getValue1());
+        assertEquals(null, c.getValue2());
+    }
+
+    public void testGetDataValidationsFormula() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        List<HSSFDataValidation> list = sheet.getDataValidations();
+        assertEquals(0, list.size());
+
+        DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = dataValidationHelper.createCustomConstraint("A2:A3");
+        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+        sheet.addValidationData(validation);
+
+        list = sheet.getDataValidations(); // <-- works
+        assertEquals(1, list.size());
+
+        HSSFDataValidation dv = list.get(0);
+        DVConstraint c = dv.getConstraint();
+        assertEquals(ValidationType.FORMULA, c.getValidationType());
+        assertEquals("A2:A3", c.getFormula1());
+        assertEquals(null, c.getFormula2());
+        assertEquals(null, c.getValue1());
+        assertEquals(null, c.getValue2());
+    }
 }

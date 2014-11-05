@@ -44,6 +44,7 @@ import org.apache.poi.hssf.record.WSBoolRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.DataValidityTable;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
+import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -60,6 +61,7 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
@@ -392,6 +394,35 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      */
     public int getLastRowNum() {
         return _lastrow;
+    }
+
+    public List<HSSFDataValidation> getDataValidations() {
+        DataValidityTable dvt = _sheet.getOrCreateDataValidityTable();
+        final List<HSSFDataValidation> hssfValidations = new ArrayList<HSSFDataValidation>();
+        RecordVisitor visitor = new RecordVisitor() {
+            private HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(getWorkbook());
+
+            @Override
+            public void visitRecord(Record r) {
+                if (!(r instanceof DVRecord)) {
+                    return;
+                }
+                DVRecord dvRecord = (DVRecord) r;
+                CellRangeAddressList regions = dvRecord.getCellRangeAddress().copy();
+                DVConstraint constraint = DVConstraint.createDVConstraint(dvRecord, book);
+                HSSFDataValidation hssfDataValidation = new HSSFDataValidation(regions, constraint);
+                hssfDataValidation.setErrorStyle(dvRecord.getErrorStyle());
+                hssfDataValidation.setEmptyCellAllowed(dvRecord.getEmptyCellAllowed());
+                hssfDataValidation.setSuppressDropDownArrow(dvRecord.getSuppressDropdownArrow());
+                hssfDataValidation.createPromptBox(dvRecord.getPromptTitle(), dvRecord.getPromptText());
+                hssfDataValidation.setShowPromptBox(dvRecord.getShowPromptOnCellSelected());
+                hssfDataValidation.createErrorBox(dvRecord.getErrorTitle(), dvRecord.getErrorText());
+                hssfDataValidation.setShowErrorBox(dvRecord.getShowErrorOnInvalidValue());
+                hssfValidations.add(hssfDataValidation);
+            }
+        };
+        dvt.visitContainedRecords(visitor);
+        return hssfValidations;
     }
 
     /**
