@@ -20,6 +20,7 @@ package org.apache.poi.xssf.streaming;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -42,6 +43,7 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -1337,6 +1339,11 @@ public class SXSSFSheet implements Sheet, Cloneable
     public DataValidationHelper getDataValidationHelper()
     {
         return _sh.getDataValidationHelper();
+    }
+
+    public List<XSSFDataValidation> getDataValidations()
+    {
+        return _sh.getDataValidations();
     }
 
     /**

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -920,6 +921,12 @@ public interface Sheet extends Iterable<Row> {
     CellRange<? extends Cell> removeArrayFormula(Cell cell);
     
     public DataValidationHelper getDataValidationHelper();
+
+    /**
+     * Returns the list of DataValidation in the sheet.
+     * @return list of DataValidation in the sheet
+     */
+    public List<? extends DataValidation> getDataValidations();
 
 	/**
 	 * Creates a data validation object
