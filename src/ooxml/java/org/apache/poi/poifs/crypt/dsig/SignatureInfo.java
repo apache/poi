@@ -241,6 +241,8 @@ public class SignatureInfo implements SignatureConfigurable {
                 }
                 
                 return valid;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                throw new JvmBrokenException(e);
             } catch (Exception e) {
                 LOG.log(POILogger.ERROR, "error in marshalling and validating the signature", e);
                 return false;
@@ -538,7 +540,7 @@ public class SignatureInfo implements SignatureConfigurable {
             String description = signatureConfig.getSignatureDescription();
             return new DigestInfo(digestValue, signatureConfig.getDigestAlgo(), description);
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EncryptedDocumentException("\"your JVM is just too broken\" - check https://bugzilla.redhat.com/show_bug.cgi?id=1155012 if this applies to the stacktrace ...", e);
+            throw new JvmBrokenException(e);
         }
     }
 
@@ -648,5 +650,11 @@ public class SignatureInfo implements SignatureConfigurable {
     @SuppressWarnings("unchecked")
     private static <T> List<T> safe(List<T> other) {
         return other == null ? Collections.EMPTY_LIST : other;
+    }
+    
+    private static class JvmBrokenException extends EncryptedDocumentException {
+        public JvmBrokenException(Throwable cause) {
+            super("\"your JVM is just too broken\" - check https://bugzilla.redhat.com/show_bug.cgi?id=1155012 if this applies to the stacktrace ...", cause);
+        }
     }
 }
