@@ -470,7 +470,7 @@ public class TestSignatureInfo {
         
                 si.confirmSignature();
                 boolean b = si.verifySignature();
-                assertTrue(b);
+                assertTrue("Signature not correctly calculated for " + ha, b);
             } catch (EncryptedDocumentException e) {
                 // see http://apache-poi.1045710.n5.nabble.com/org-apache-poi-poifs-crypt-TestSignatureInfo-failing-on-trunk-on-Java-6-tp5717032.html
                 Throwable cause = e.getCause();
