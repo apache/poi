@@ -150,6 +150,16 @@ public abstract class SignatureFacet implements SignatureConfigurable {
             reference = sigFac.newReference(uri, digestMethod, transforms, type, id, digestValue);
         }
         
+        brokenJvmWorkaround(reference);
+
+        return reference;
+    }
+    
+    // helper method ... will be removed soon
+    public static void brokenJvmWorkaround(Reference reference) {
+        DigestMethod digestMethod = reference.getDigestMethod();
+        String digestMethodUri = digestMethod.getAlgorithm();
+        
         // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
         // overwrite standard message digest, if a digest <> SHA1 is used
         Provider bcProv = Security.getProvider("BC");
@@ -166,7 +176,5 @@ public abstract class SignatureFacet implements SignatureConfigurable {
                 LOG.log(POILogger.WARN, "Can't overwrite message digest (workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012)", e);
             }
         }
-
-        return reference;
     }
 }

@@ -57,6 +57,7 @@ import javax.xml.crypto.dsig.XMLSignContext;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.XMLValidateContext;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
@@ -230,9 +231,25 @@ public class SignatureInfo implements SignatureConfigurable {
                 DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
                 domValidateContext.setProperty("org.jcp.xml.dsig.validateManifests", Boolean.TRUE);
                 domValidateContext.setURIDereferencer(signatureConfig.getUriDereferencer());
+                brokenJvmWorkaround(domValidateContext);
     
                 XMLSignatureFactory xmlSignatureFactory = signatureConfig.getSignatureFactory();
                 XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
+                
+                // TODO: replace with property when xml-sec patch is applied
+                for (Reference ref : (List<Reference>)xmlSignature.getSignedInfo().getReferences()) {
+                    SignatureFacet.brokenJvmWorkaround(ref);
+                }
+                for (XMLObject xo : (List<XMLObject>)xmlSignature.getObjects()) {
+                    for (XMLStructure xs : (List<XMLStructure>)xo.getContent()) {
+                        if (xs instanceof Manifest) {
+                           for (Reference ref : (List<Reference>)((Manifest)xs).getReferences()) {
+                               SignatureFacet.brokenJvmWorkaround(ref);
+                           }
+                        }
+                    }
+                }
+                
                 boolean valid = xmlSignature.validate(domValidateContext);
 
                 if (valid) {
@@ -241,8 +258,6 @@ public class SignatureInfo implements SignatureConfigurable {
                 }
                 
                 return valid;
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new JvmBrokenException(e);
             } catch (Exception e) {
                 LOG.log(POILogger.ERROR, "error in marshalling and validating the signature", e);
                 return false;
@@ -399,149 +414,141 @@ public class SignatureInfo implements SignatureConfigurable {
     @SuppressWarnings("unchecked")
     public DigestInfo preSign(Document document, List<DigestInfo> digestInfos)
     throws XMLSignatureException, MarshalException {
-        try {
-            signatureConfig.init(false);
-            
-            // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
-            // normal way to interfere with, so we need to add the namespace under the hand ...
-            EventTarget target = (EventTarget)document;
-            EventListener creationListener = signatureConfig.getSignatureMarshalListener();
-            if (creationListener != null) {
-                if (creationListener instanceof SignatureMarshalListener) {
-                    ((SignatureMarshalListener)creationListener).setEventTarget(target);
-                }
-                SignatureMarshalListener.setListener(target, creationListener, true);
+        signatureConfig.init(false);
+        
+        // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
+        // normal way to interfere with, so we need to add the namespace under the hand ...
+        EventTarget target = (EventTarget)document;
+        EventListener creationListener = signatureConfig.getSignatureMarshalListener();
+        if (creationListener != null) {
+            if (creationListener instanceof SignatureMarshalListener) {
+                ((SignatureMarshalListener)creationListener).setEventTarget(target);
             }
-            
-            /*
-             * Signature context construction.
-             */
-            XMLSignContext xmlSignContext = new DOMSignContext(signatureConfig.getKey(), document);
-            URIDereferencer uriDereferencer = signatureConfig.getUriDereferencer();
-            if (null != uriDereferencer) {
-                xmlSignContext.setURIDereferencer(uriDereferencer);
-            }
-    
-            for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
-                xmlSignContext.putNamespacePrefix(me.getKey(), me.getValue());
-            }
-            xmlSignContext.setDefaultNamespacePrefix("");
-            // signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
-            
-            // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
-            Provider bcProv = Security.getProvider("BC");
-            if (bcProv != null) {
-                xmlSignContext.setProperty("org.jcp.xml.dsig.internal.dom.SignatureProvider", bcProv);
-            }            
-            
-            XMLSignatureFactory signatureFactory = signatureConfig.getSignatureFactory();
-    
-            /*
-             * Add ds:References that come from signing client local files.
-             */
-            List<Reference> references = new ArrayList<Reference>();
-            for (DigestInfo digestInfo : safe(digestInfos)) {
-                byte[] documentDigestValue = digestInfo.digestValue;
-    
-                String uri = new File(digestInfo.description).getName();
-                Reference reference = SignatureFacet.newReference
-                    (uri, null, null, null, documentDigestValue, signatureConfig);
-                references.add(reference);
-            }
-    
-            /*
-             * Invoke the signature facets.
-             */
-            List<XMLObject> objects = new ArrayList<XMLObject>();
-            for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
-                LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
-                signatureFacet.preSign(document, references, objects);
-            }
-    
-            /*
-             * ds:SignedInfo
-             */
-            SignedInfo signedInfo;
-            try {
-                SignatureMethod signatureMethod = signatureFactory.newSignatureMethod
-                    (signatureConfig.getSignatureMethodUri(), null);
-                CanonicalizationMethod canonicalizationMethod = signatureFactory
-                    .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
-                    (C14NMethodParameterSpec) null);
-                signedInfo = signatureFactory.newSignedInfo(
-                    canonicalizationMethod, signatureMethod, references);
-            } catch (GeneralSecurityException e) {
-                throw new XMLSignatureException(e);
-            }
-    
-            /*
-             * JSR105 ds:Signature creation
-             */
-            String signatureValueId = signatureConfig.getPackageSignatureId() + "-signature-value";
-            javax.xml.crypto.dsig.XMLSignature xmlSignature = signatureFactory
-                .newXMLSignature(signedInfo, null, objects, signatureConfig.getPackageSignatureId(),
-                signatureValueId);
-    
-            /*
-             * ds:Signature Marshalling.
-             */
-            xmlSignature.sign(xmlSignContext);
-    
-            /*
-             * Completion of undigested ds:References in the ds:Manifests.
-             */
-            for (XMLObject object : objects) {
-                LOG.log(POILogger.DEBUG, "object java type: " + object.getClass().getName());
-                List<XMLStructure> objectContentList = object.getContent();
-                for (XMLStructure objectContent : objectContentList) {
-                    LOG.log(POILogger.DEBUG, "object content java type: " + objectContent.getClass().getName());
-                    if (!(objectContent instanceof Manifest)) continue;
-                    Manifest manifest = (Manifest) objectContent;
-                    List<Reference> manifestReferences = manifest.getReferences();
-                    for (Reference manifestReference : manifestReferences) {
-                        if (manifestReference.getDigestValue() != null) continue;
-    
-                        DOMReference manifestDOMReference = (DOMReference)manifestReference;
-                        manifestDOMReference.digest(xmlSignContext);
-                    }
-                }
-            }
-    
-            /*
-             * Completion of undigested ds:References.
-             */
-            List<Reference> signedInfoReferences = signedInfo.getReferences();
-            for (Reference signedInfoReference : signedInfoReferences) {
-                DOMReference domReference = (DOMReference)signedInfoReference;
-    
-                // ds:Reference with external digest value
-                if (domReference.getDigestValue() != null) continue;
-                
-                domReference.digest(xmlSignContext);
-            }
-    
-            /*
-             * Calculation of XML signature digest value.
-             */
-            DOMSignedInfo domSignedInfo = (DOMSignedInfo)signedInfo;
-            ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-            domSignedInfo.canonicalize(xmlSignContext, dataStream);
-            byte[] octets = dataStream.toByteArray();
-    
-            /*
-             * TODO: we could be using DigestOutputStream here to optimize memory
-             * usage.
-             */
-    
-            MessageDigest md = CryptoFunctions.getMessageDigest(signatureConfig.getDigestAlgo());
-            byte[] digestValue = md.digest(octets);
-            
-            
-            String description = signatureConfig.getSignatureDescription();
-            return new DigestInfo(digestValue, signatureConfig.getDigestAlgo(), description);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new JvmBrokenException(e);
+            SignatureMarshalListener.setListener(target, creationListener, true);
         }
+        
+        /*
+         * Signature context construction.
+         */
+        XMLSignContext xmlSignContext = new DOMSignContext(signatureConfig.getKey(), document);
+        URIDereferencer uriDereferencer = signatureConfig.getUriDereferencer();
+        if (null != uriDereferencer) {
+            xmlSignContext.setURIDereferencer(uriDereferencer);
+        }
+
+        for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
+            xmlSignContext.putNamespacePrefix(me.getKey(), me.getValue());
+        }
+        xmlSignContext.setDefaultNamespacePrefix("");
+        // signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
+        
+        brokenJvmWorkaround(xmlSignContext);
+        
+        XMLSignatureFactory signatureFactory = signatureConfig.getSignatureFactory();
+
+        /*
+         * Add ds:References that come from signing client local files.
+         */
+        List<Reference> references = new ArrayList<Reference>();
+        for (DigestInfo digestInfo : safe(digestInfos)) {
+            byte[] documentDigestValue = digestInfo.digestValue;
+
+            String uri = new File(digestInfo.description).getName();
+            Reference reference = SignatureFacet.newReference
+                (uri, null, null, null, documentDigestValue, signatureConfig);
+            references.add(reference);
+        }
+
+        /*
+         * Invoke the signature facets.
+         */
+        List<XMLObject> objects = new ArrayList<XMLObject>();
+        for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
+            LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
+            signatureFacet.preSign(document, references, objects);
+        }
+
+        /*
+         * ds:SignedInfo
+         */
+        SignedInfo signedInfo;
+        try {
+            SignatureMethod signatureMethod = signatureFactory.newSignatureMethod
+                (signatureConfig.getSignatureMethodUri(), null);
+            CanonicalizationMethod canonicalizationMethod = signatureFactory
+                .newCanonicalizationMethod(signatureConfig.getCanonicalizationMethod(),
+                (C14NMethodParameterSpec) null);
+            signedInfo = signatureFactory.newSignedInfo(
+                canonicalizationMethod, signatureMethod, references);
+        } catch (GeneralSecurityException e) {
+            throw new XMLSignatureException(e);
+        }
+
+        /*
+         * JSR105 ds:Signature creation
+         */
+        String signatureValueId = signatureConfig.getPackageSignatureId() + "-signature-value";
+        javax.xml.crypto.dsig.XMLSignature xmlSignature = signatureFactory
+            .newXMLSignature(signedInfo, null, objects, signatureConfig.getPackageSignatureId(),
+            signatureValueId);
+
+        /*
+         * ds:Signature Marshalling.
+         */
+        xmlSignature.sign(xmlSignContext);
+
+        /*
+         * Completion of undigested ds:References in the ds:Manifests.
+         */
+        for (XMLObject object : objects) {
+            LOG.log(POILogger.DEBUG, "object java type: " + object.getClass().getName());
+            List<XMLStructure> objectContentList = object.getContent();
+            for (XMLStructure objectContent : objectContentList) {
+                LOG.log(POILogger.DEBUG, "object content java type: " + objectContent.getClass().getName());
+                if (!(objectContent instanceof Manifest)) continue;
+                Manifest manifest = (Manifest) objectContent;
+                List<Reference> manifestReferences = manifest.getReferences();
+                for (Reference manifestReference : manifestReferences) {
+                    if (manifestReference.getDigestValue() != null) continue;
+
+                    DOMReference manifestDOMReference = (DOMReference)manifestReference;
+                    manifestDOMReference.digest(xmlSignContext);
+                }
+            }
+        }
+
+        /*
+         * Completion of undigested ds:References.
+         */
+        List<Reference> signedInfoReferences = signedInfo.getReferences();
+        for (Reference signedInfoReference : signedInfoReferences) {
+            DOMReference domReference = (DOMReference)signedInfoReference;
+
+            // ds:Reference with external digest value
+            if (domReference.getDigestValue() != null) continue;
+            
+            domReference.digest(xmlSignContext);
+        }
+
+        /*
+         * Calculation of XML signature digest value.
+         */
+        DOMSignedInfo domSignedInfo = (DOMSignedInfo)signedInfo;
+        ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+        domSignedInfo.canonicalize(xmlSignContext, dataStream);
+        byte[] octets = dataStream.toByteArray();
+
+        /*
+         * TODO: we could be using DigestOutputStream here to optimize memory
+         * usage.
+         */
+
+        MessageDigest md = CryptoFunctions.getMessageDigest(signatureConfig.getDigestAlgo());
+        byte[] digestValue = md.digest(octets);
+        
+        
+        String description = signatureConfig.getSignatureDescription();
+        return new DigestInfo(digestValue, signatureConfig.getDigestAlgo(), description);
     }
 
     /**
@@ -651,10 +658,20 @@ public class SignatureInfo implements SignatureConfigurable {
     private static <T> List<T> safe(List<T> other) {
         return other == null ? Collections.EMPTY_LIST : other;
     }
-    
-    private static class JvmBrokenException extends EncryptedDocumentException {
-        public JvmBrokenException(Throwable cause) {
-            super("\"your JVM is just too broken\" - check https://bugzilla.redhat.com/show_bug.cgi?id=1155012 if this applies to the stacktrace ...", cause);
-        }
+
+    private void brokenJvmWorkaround(XMLSignContext context) {
+        // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
+        Provider bcProv = Security.getProvider("BC");
+        if (bcProv != null) {
+            context.setProperty("org.jcp.xml.dsig.internal.dom.SignatureProvider", bcProv);
+        }        
+    }
+
+    private void brokenJvmWorkaround(XMLValidateContext context) {
+        // workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1155012
+        Provider bcProv = Security.getProvider("BC");
+        if (bcProv != null) {
+            context.setProperty("org.jcp.xml.dsig.internal.dom.SignatureProvider", bcProv);
+        }        
     }
 }
