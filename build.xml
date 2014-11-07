@@ -1034,7 +1034,8 @@ under the License.
         	<zipfileset includes="**/*" src="${ooxml.security.jar}"/>
         </jar>
     	
-        <java classname="org.apache.poi.util.OOXMLLite" fork="yes">
+        <java classname="org.apache.poi.util.OOXMLLite" fork="yes"
+        	failonerror="true">
         	<classpath>
         		<pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
     		</classpath>

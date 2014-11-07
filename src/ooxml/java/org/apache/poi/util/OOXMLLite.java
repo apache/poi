@@ -35,6 +35,7 @@ import java.util.jar.JarFile;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
+import junit.framework.TestResult;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
@@ -88,6 +89,7 @@ public final class OOXMLLite {
             else if (args[i].equals("-test")) test = args[++i];
             else if (args[i].equals("-ooxml")) ooxml = args[++i];
         }
+        
         OOXMLLite builder = new OOXMLLite(dest, test, ooxml);
         builder.build();
     }
@@ -97,23 +99,24 @@ public final class OOXMLLite {
         List<String> lst = new ArrayList<String>();
         //collect unit tests
         System.out.println("Collecting unit tests from " + _testDir);
-        collectTests(_testDir, _testDir, lst, ".+?\\.Test.+?\\.class$", ".+TestUnfixedBugs.class");
-        System.out.println("Found " + lst.size() + " tests");
+        collectTests(_testDir, _testDir, lst, ".+.class$", 
+                ".+(TestUnfixedBugs|MemoryUsage|TestDataProvider|TestDataSamples|All.+Tests|ZipFileAssert|PkiTestUtils|TestCellFormatPart\\$\\d|TestSignatureInfo\\$\\d).class");
+        System.out.println("Found " + lst.size() + " classes");
 
         TestSuite suite = new TestSuite();
         for (String arg : lst) {
             //ignore inner classes defined in tests
-            if (arg.indexOf('$') != -1) continue;
+            if (arg.indexOf('$') != -1) {
+                System.out.println("Inner class " + arg + " not included");
+                continue;
+            }
 
             String cls = arg.replace(".class", "");
             try {
                 Class<?> testclass = Class.forName(cls);
                 boolean isTest = TestCase.class.isAssignableFrom(testclass);
                 if (!isTest) {
-                    for (Method m : testclass.getDeclaredMethods()) {
-                        isTest = m.isAnnotationPresent(Test.class);
-                        if (isTest) break;
-                    }
+                    isTest = checkForTestAnnotation(testclass);
                 }
                 
                 if (isTest) {
@@ -124,8 +127,13 @@ public final class OOXMLLite {
             }
         }
 
+        System.out.println("Resulting TestSuite has " + suite.testCount() + " TestCases");
+        
         //run tests
-        TestRunner.run(suite);
+        TestResult result = TestRunner.run(suite);
+        if(!result.wasSuccessful()) {
+            throw new RuntimeException("Tests did not succeed, cannot build ooxml-lite jar");
+        }
 
         //see what classes from the ooxml-schemas.jar are loaded
         System.out.println("Copying classes to " + _destDest);
@@ -152,14 +160,33 @@ public final class OOXMLLite {
         //finally copy the compiled .xsb files
         System.out.println("Copying .xsb resources");
         JarFile jar = new  JarFile(_ooxmlJar);
-        for(Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ){
-            JarEntry je = e.nextElement();
-            if(je.getName().matches("schemaorg_apache_xmlbeans/system/\\w+/\\w+\\.xsb")) {
-                 File destFile = new File(_destDest, je.getName());
-                 copyFile(jar.getInputStream(je), destFile);
+        try {
+            for(Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ){
+                JarEntry je = e.nextElement();
+                if(je.getName().matches("schemaorg_apache_xmlbeans/system/\\w+/\\w+\\.xsb")) {
+                     File destFile = new File(_destDest, je.getName());
+                     copyFile(jar.getInputStream(je), destFile);
+                }
+            }
+        } finally {
+            jar.close();
+        }
+    }
+
+    private boolean checkForTestAnnotation(Class<?> testclass) {
+        for (Method m : testclass.getDeclaredMethods()) {
+            if(m.isAnnotationPresent(Test.class)) {
+                return true;
             }
         }
-        jar.close();
+        
+        System.out.println("Class " + testclass.getName() + " does not derive from TestCase and does not have a @Test annotation");
+
+        // Should we also look at superclasses to find cases
+        // where we have abstract base classes with derived tests?
+        // if(checkForTestAnnotation(testclass.getSuperclass())) return true;
+
+        return false;
     }
 
     /**
@@ -194,12 +221,14 @@ public final class OOXMLLite {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
             Map<String, Class<?>> map = new HashMap<String, Class<?>>();
             for (Class<?> cls : classes) {
-                try {
-                    String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
-                    if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
-                } catch (NullPointerException e) {
+                // e.g. proxy-classes, ... 
+                if(cls.getProtectionDomain() == null || 
+                        cls.getProtectionDomain().getCodeSource() == null) {
                     continue;
                 }
+
+                String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
+                if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
             }
             return map;
         } catch (IllegalAccessException e) {
@@ -216,6 +245,6 @@ public final class OOXMLLite {
         } finally {
             destStream.close();
         }
+        //System.out.println("Copied file to " + destFile);
     }
-
 }
