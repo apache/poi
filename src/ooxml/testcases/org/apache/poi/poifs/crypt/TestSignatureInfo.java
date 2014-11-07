@@ -50,7 +50,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -299,7 +298,9 @@ public class TestSignatureInfo {
         signatureConfig.addSignatureFacet(new XAdESSignatureFacet());
         signatureConfig.addSignatureFacet(new XAdESXLSignatureFacet());
         
-        boolean mockTsp = false;
+        // check for internet
+        Process p1 = Runtime.getRuntime().exec("ping www.google.com");
+        boolean mockTsp = (p1.waitFor() == 1);
         // http://timestamping.edelweb.fr/service/tsp
         // http://tsa.belgium.be/connect
         // http://timestamp.comodoca.com/authenticode
@@ -471,14 +472,14 @@ public class TestSignatureInfo {
                 si.confirmSignature();
                 boolean b = si.verifySignature();
                 assertTrue("Signature not correctly calculated for " + ha, b);
-            } catch (EncryptedDocumentException e) {
-                // see http://apache-poi.1045710.n5.nabble.com/org-apache-poi-poifs-crypt-TestSignatureInfo-failing-on-trunk-on-Java-6-tp5717032.html
-                Throwable cause = e.getCause();
-                if (cause instanceof ArrayIndexOutOfBoundsException) {
-                    LOG.log(POILogger.ERROR, "ignoring AIOOBE - hopefully a SHA2 bug ...", e);
-                } else {
-                    throw e;
-                }
+//            } catch (EncryptedDocumentException e) {
+//                // see http://apache-poi.1045710.n5.nabble.com/org-apache-poi-poifs-crypt-TestSignatureInfo-failing-on-trunk-on-Java-6-tp5717032.html
+//                Throwable cause = e.getCause();
+//                if (cause instanceof ArrayIndexOutOfBoundsException) {
+//                    LOG.log(POILogger.ERROR, "ignoring AIOOBE - hopefully a SHA2 bug ...", e);
+//                } else {
+//                    throw e;
+//                }
             } finally {
                 if (pkg != null) pkg.close();
             }
