@@ -41,6 +41,7 @@ import org.apache.poi.ss.formula.functions.Days360;
 import org.apache.poi.ss.formula.functions.Errortype;
 import org.apache.poi.ss.formula.functions.Even;
 import org.apache.poi.ss.formula.functions.FinanceFunction;
+import org.apache.poi.ss.formula.functions.Fixed;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.Hlookup;
 import org.apache.poi.ss.formula.functions.Hyperlink;
@@ -133,7 +134,7 @@ public final class FunctionEval {
         retval[11] = new Npv();
         retval[12] = AggregateFunction.STDEV;
         retval[13] = NumericFunction.DOLLAR;
-
+        retval[14] = new Fixed();
         retval[15] = NumericFunction.SIN;
         retval[16] = NumericFunction.COS;
         retval[17] = NumericFunction.TAN;
