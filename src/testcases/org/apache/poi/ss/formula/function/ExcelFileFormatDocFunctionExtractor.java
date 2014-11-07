@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.formula.function;
 
-import org.apache.poi.util.TempFile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,6 +44,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.TempFile;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -152,18 +151,18 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 	private static final class FunctionDataCollector {
 
-		private final Map _allFunctionsByIndex;
-		private final Map _allFunctionsByName;
-		private final Set _groupFunctionIndexes;
-		private final Set _groupFunctionNames;
+		private final Map<Integer, FunctionData> _allFunctionsByIndex;
+		private final Map<String, FunctionData> _allFunctionsByName;
+		private final Set<Integer> _groupFunctionIndexes;
+		private final Set<String> _groupFunctionNames;
 		private final PrintStream _ps;
 
 		public FunctionDataCollector(PrintStream ps) {
 			_ps = ps;
-			_allFunctionsByIndex = new HashMap();
-			_allFunctionsByName = new HashMap();
-			_groupFunctionIndexes = new HashSet();
-			_groupFunctionNames = new HashSet();
+			_allFunctionsByIndex = new HashMap<Integer, FunctionData>();
+			_allFunctionsByName = new HashMap<String, FunctionData>();
+			_groupFunctionIndexes = new HashSet<Integer>();
+			_groupFunctionNames = new HashSet<String>();
 		}
 
 		public void addFuntion(int funcIx, boolean hasFootnote, String funcName, int minParams, int maxParams,
@@ -193,7 +192,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		private void checkRedefinedFunction(boolean hasNote, String funcName, Integer funcIxKey) {
 			FunctionData fdPrev;
 			// check by index
-			fdPrev = (FunctionData) _allFunctionsByIndex.get(funcIxKey);
+			fdPrev = _allFunctionsByIndex.get(funcIxKey);
 			if(fdPrev != null) {
 				if(!fdPrev.hasFootnote() || !hasNote) {
 					throw new RuntimeException("changing function ["
@@ -202,7 +201,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 				_allFunctionsByName.remove(fdPrev.getName());
 			}
 			// check by name
-			fdPrev = (FunctionData) _allFunctionsByName.get(funcName);
+			fdPrev = _allFunctionsByName.get(funcName);
 			if(fdPrev != null) {
 				if(!fdPrev.hasFootnote() || !hasNote) {
 					throw new RuntimeException("changing function '"
@@ -221,7 +220,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 			_ps.println("# " + headingText);
 			for (int i = 0; i < keys.length; i++) {
-				FunctionData fd = (FunctionData) _allFunctionsByIndex.get(keys[i]);
+				FunctionData fd = _allFunctionsByIndex.get(keys[i]);
 				_ps.println(fd.formatAsDataLine());
 			}
 		}
@@ -252,13 +251,13 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		};
 
 
-		private final Stack _elemNameStack;
+		private final Stack<String> _elemNameStack;
 		/** <code>true</code> only when parsing the target tables */
 		private boolean _isInsideTable;
 
-		private final List _rowData;
+		private final List<String> _rowData;
 		private final StringBuffer _textNodeBuffer;
-		private final List _rowNoteFlags;
+		private final List<Boolean> _rowNoteFlags;
 		private boolean _cellHasNote;
 
 		private final FunctionDataCollector _fdc;
@@ -266,19 +265,21 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 		public EFFDocHandler(FunctionDataCollector fdc) {
 			_fdc = fdc;
-			_elemNameStack = new Stack();
+			_elemNameStack = new Stack<String>();
 			_isInsideTable = false;
-			_rowData = new ArrayList();
+			_rowData = new ArrayList<String>();
 			_textNodeBuffer = new StringBuffer();
-			_rowNoteFlags = new ArrayList();
+			_rowNoteFlags = new ArrayList<Boolean>();
 		}
 
 		private boolean matchesTargetPath() {
 			return matchesPath(0, TABLE_BASE_PATH_NAMES);
 		}
+
 		private boolean matchesRelPath(String[] pathNames) {
 			return matchesPath(TABLE_BASE_PATH_NAMES.length, pathNames);
 		}
+
 		private boolean matchesPath(int baseStackIndex, String[] pathNames) {
 			if(_elemNameStack.size() != baseStackIndex + pathNames.length) {
 				return false;
@@ -290,15 +291,18 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			}
 			return true;
 		}
-		public void characters(char[] ch, int start, int length) {
+
+		@Override
+        public void characters(char[] ch, int start, int length) {
 			// only 2 text nodes where text is collected:
 			if(matchesRelPath(TABLE_CELL_RELPATH_NAMES) || matchesPath(0, HEADING_PATH_NAMES)) {
 				_textNodeBuffer.append(ch, start, length);
 			}
 		}
 
-		public void endElement(String namespaceURI, String localName, String name) {
-			String expectedName = (String) _elemNameStack.peek();
+		@Override
+        public void endElement(String namespaceURI, String localName, String name) {
+			String expectedName = _elemNameStack.peek();
 			if(expectedName != name) {
 				throw new RuntimeException("close tag mismatch");
 			}
@@ -335,6 +339,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			processFunction(cellData, noteFlags, 0);
 			processFunction(cellData, noteFlags, 8);
 		}
+		
 		public void processFunction(String[] cellData, Boolean[] noteFlags, int i) {
 			String funcIxStr = cellData[i + 0];
 			if (funcIxStr.length() < 1) {
@@ -354,6 +359,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
 			_fdc.addFuntion(funcIx, hasFootnote, funcName, minParams, maxParams, returnClass, paramClasses, volatileFlagStr);
 		}
+
 		private static int parseInt(String valStr) {
 			try {
 				return Integer.parseInt(valStr);
@@ -361,7 +367,9 @@ public final class ExcelFileFormatDocFunctionExtractor {
 				throw new RuntimeException("Value '" + valStr + "' could not be parsed as an integer");
 			}
 		}
-		public void startElement(String namespaceURI, String localName, String name, Attributes atts) {
+
+		@Override
+        public void startElement(String namespaceURI, String localName, String name, Attributes atts) {
 			_elemNameStack.add(name);
 			if(matchesTargetPath()) {
 				String tableName = atts.getValue("table:name");
@@ -385,27 +393,35 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			}
 		}
 
-		public void endDocument() {
+		@Override
+        public void endDocument() {
 			// do nothing
 		}
-		public void endPrefixMapping(String prefix) {
+		@Override
+        public void endPrefixMapping(String prefix) {
 			// do nothing
 		}
+        @Override
 		public void ignorableWhitespace(char[] ch, int start, int length) {
 			// do nothing
 		}
+        @Override
 		public void processingInstruction(String target, String data) {
 			// do nothing
 		}
+        @Override
 		public void setDocumentLocator(Locator locator) {
 			// do nothing
 		}
+        @Override
 		public void skippedEntity(String name) {
 			// do nothing
 		}
+        @Override
 		public void startDocument() {
 			// do nothing
 		}
+        @Override
 		public void startPrefixMapping(String prefix, String uri) {
 			// do nothing
 		}
@@ -449,16 +465,21 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		public SimpleAsciiOutputStream(OutputStream os) {
 			_os = os;
 		}
-		public void write(int b) throws IOException {
+		
+		@Override
+        public void write(int b) throws IOException {
 			checkByte(b);
 			_os.write(b);
 		}
+
 		private static void checkByte(int b) {
 			if (!isSimpleAscii((char)b)) {
 				throw new RuntimeException("Encountered char (" + b + ") which was not simple ascii as expected");
 			}
 		}
-		public void write(byte[] b, int off, int len) throws IOException {
+
+		@Override
+        public void write(byte[] b, int off, int len) throws IOException {
 			for (int i = 0; i < len; i++) {
 				checkByte(b[i + off]);
 
@@ -486,7 +507,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		}
 
 		outputLicenseHeader(ps);
-		Class genClass = ExcelFileFormatDocFunctionExtractor.class;
+		Class<?> genClass = ExcelFileFormatDocFunctionExtractor.class;
 		ps.println("# Created by (" + genClass.getName() + ")");
 		// identify the source file
 		ps.print("# from source file '" + SOURCE_DOC_FILE_NAME + "'");
