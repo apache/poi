@@ -23,10 +23,7 @@
    ================================================================= */ 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +32,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyStore;
@@ -298,9 +298,9 @@ public class TestSignatureInfo {
         signatureConfig.addSignatureFacet(new XAdESSignatureFacet());
         signatureConfig.addSignatureFacet(new XAdESXLSignatureFacet());
         
-        // check for internet
-        Process p1 = Runtime.getRuntime().exec("ping www.google.com");
-        boolean mockTsp = (p1.waitFor() == 1);
+        // check for internet, no error means it works
+        boolean mockTsp = (getAccessError("http://timestamp.comodoca.com/rfc3161", true, 10000) == null);
+        
         // http://timestamping.edelweb.fr/service/tsp
         // http://tsa.belgium.be/connect
         // http://timestamp.comodoca.com/authenticode
@@ -401,6 +401,52 @@ public class TestSignatureInfo {
         pkg.close();
     }
 
+    public static String getAccessError(String destinationUrl, boolean fireRequest, int timeout) {
+        URL url;
+        try {
+            url = new URL(destinationUrl);
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Invalid destination URL", e);
+        }
+
+        HttpURLConnection conn = null;
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+
+            // set specified timeout if non-zero
+            if(timeout != 0) {
+                conn.setConnectTimeout(timeout);
+                conn.setReadTimeout(timeout);
+            }
+
+            conn.setDoOutput(false);
+            conn.setDoInput(true);
+
+            /* if connecting is not possible this will throw a connection refused exception */
+            conn.connect();
+
+            if (fireRequest) {
+                InputStream is = null;
+                try {
+                    is = conn.getInputStream();
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
+
+            }
+            /* if connecting is possible we return true here */
+            return null;
+
+        } catch (IOException e) {
+            /* exception is thrown -> server not available */
+            return e.getClass().getName() + ": " + e.getMessage();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+    }
+    
     @Test
     public void testCertChain() throws Exception {
         KeyStore keystore = KeyStore.getInstance("PKCS12");
