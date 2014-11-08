@@ -34,6 +34,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -252,6 +253,26 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals(8, link2.getFirstRow());
 		assertEquals(1, link2.getFirstColumn());
 	}
+
+    public void testRemoveHyperlink() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFCell cell1 = row.createCell(1);
+        HSSFHyperlink link1 = new HSSFHyperlink(Hyperlink.LINK_URL);
+        assertNotNull(link1);
+        cell1.removeHyperlink();
+        assertNull(cell1.getHyperlink());
+
+        HSSFCell cell2 = row.createCell(0);
+        HSSFHyperlink link2 = new HSSFHyperlink(Hyperlink.LINK_URL);
+        assertNotNull(link2);
+        cell2.setHyperlink(null);
+        assertNull(cell2.getHyperlink());
+
+        HSSFTestDataSamples.writeOutAndReadBack(wb);
+    }
 
 	/**
 	 * Test to ensure we can only assign cell styles that belong

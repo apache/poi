@@ -947,12 +947,18 @@ public final class XSSFCell implements Cell {
     }
 
     /**
-     * Assign a hyperlink to this cell
+     * Assign a hyperlink to this cell. If the supplied hyperlink is null, the
+     * hyperlink for this cell will be removed.
      *
      * @param hyperlink the hyperlink to associate with this cell
      */
     @Override
     public void setHyperlink(Hyperlink hyperlink) {
+        if (hyperlink == null) {
+            removeHyperlink();
+            return;
+        }
+
         XSSFHyperlink link = (XSSFHyperlink)hyperlink;
 
         // Assign to us
@@ -960,6 +966,14 @@ public final class XSSFCell implements Cell {
 
         // Add to the lists
         getSheet().addHyperlink(link);
+    }
+
+    /**
+     * Removes the hyperlink for this cell, if there is one.
+     */
+    @Override
+    public void removeHyperlink() {
+        getSheet().removeHyperlink(_row.getRowNum(), _cellNum);
     }
 
     /**
