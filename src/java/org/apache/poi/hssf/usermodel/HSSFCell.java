@@ -1062,11 +1062,17 @@ public class HSSFCell implements Cell {
     }
 
     /**
-     * Assign a hyperlink to this cell
+     * Assign a hyperlink to this cell. If the supplied hyperlink is null, the
+     * hyperlink for this cell will be removed.
      *
      * @param hyperlink hyperlink associated with this cell
      */
     public void setHyperlink(Hyperlink hyperlink){
+        if (hyperlink == null) {
+            removeHyperlink();
+            return;
+        }
+
         HSSFHyperlink link = (HSSFHyperlink)hyperlink;
 
         link.setFirstRow(_record.getRow());
@@ -1091,6 +1097,23 @@ public class HSSFCell implements Cell {
         int eofLoc = records.size() - 1;
         records.add( eofLoc, link.record );
     }
+
+    /**
+     * Removes the hyperlink for this cell, if there is one.
+     */
+    public void removeHyperlink() {
+        for (Iterator<RecordBase> it = _sheet.getSheet().getRecords().iterator(); it.hasNext();) {
+            RecordBase rec = it.next();
+            if (rec instanceof HyperlinkRecord) {
+                HyperlinkRecord link = (HyperlinkRecord) rec;
+                if (link.getFirstColumn() == _record.getColumn() && link.getFirstRow() == _record.getRow()) {
+                    it.remove();
+                    return;
+                }
+            }
+        }
+    }
+
     /**
      * Only valid for formula cells
      * @return one of ({@link #CELL_TYPE_NUMERIC}, {@link #CELL_TYPE_STRING},

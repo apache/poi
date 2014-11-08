@@ -381,6 +381,11 @@ public interface Cell {
     void setHyperlink(Hyperlink link);
 
     /**
+     * Removes the hyperlink for this cell, if there is one.
+     */
+    void removeHyperlink();
+
+    /**
      * Only valid for array formula cells
      *
      * @return range of the array formula group that the cell belongs to.

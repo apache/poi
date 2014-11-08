@@ -2743,6 +2743,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Removes a hyperlink in the collection of hyperlinks on this sheet
+     *
+     * @param row row index
+     * @param column column index
+     */
+    @Internal
+    public void removeHyperlink(int row, int column) {
+        String ref = new CellReference(row, column).formatAsString();
+        for (Iterator<XSSFHyperlink> it = hyperlinks.iterator(); it.hasNext();) {
+            XSSFHyperlink hyperlink = it.next();
+            if (hyperlink.getCellRef().equals(ref)) {
+                it.remove();
+                return;
+            }
+        }
+    }
+
+    /**
      * Return location of the active cell, e.g. <code>A1</code>.
      *
      * @return the location of the active cell.

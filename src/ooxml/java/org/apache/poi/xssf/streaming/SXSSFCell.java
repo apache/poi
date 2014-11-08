@@ -572,12 +572,18 @@ public class SXSSFCell implements Cell
     }
 
     /**
-     * Assign a hyperlink to this cell
+     * Assign a hyperlink to this cell. If the supplied hyperlink is null, the
+     * hyperlink for this cell will be removed.
      *
      * @param link hyperlink associated with this cell
      */
     public void setHyperlink(Hyperlink link)
     {
+        if (link == null) {
+            removeHyperlink();
+            return;
+        }
+
         setProperty(Property.HYPERLINK,link);
 
         XSSFHyperlink xssfobj = (XSSFHyperlink)link;
@@ -588,6 +594,16 @@ public class SXSSFCell implements Cell
         // Add to the lists
         ((SXSSFSheet)getSheet())._sh.addHyperlink(xssfobj);
 
+    }
+
+    /**
+     * Removes the hyperlink for this cell, if there is one.
+     */
+    public void removeHyperlink()
+    {
+        removeProperty(Property.HYPERLINK);
+
+        ((SXSSFSheet) getSheet())._sh.removeHyperlink(getRowIndex(), getColumnIndex());
     }
 
     /**
