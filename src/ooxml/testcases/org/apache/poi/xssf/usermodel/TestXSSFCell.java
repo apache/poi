@@ -22,6 +22,7 @@ import java.io.IOException;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -371,5 +372,26 @@ public final class TestXSSFCell extends BaseTestCell {
             cell.toString();
         }
     }    
-    
+
+    public void testRemoveHyperlink() {
+        final Workbook wb = new XSSFWorkbook();
+        final Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+
+        Cell cell1 = row.createCell(1);
+        Hyperlink link1 = new XSSFHyperlink(Hyperlink.LINK_URL);
+        cell1.setHyperlink(link1);
+        assertNotNull(cell1.getHyperlink());
+        cell1.removeHyperlink();
+        assertNull(cell1.getHyperlink());
+
+        Cell cell2 = row.createCell(0);
+        Hyperlink link2 = new XSSFHyperlink(Hyperlink.LINK_URL);
+        cell2.setHyperlink(link2);
+        assertNotNull(cell2.getHyperlink());
+        cell2.setHyperlink(null);
+        assertNull(cell2.getHyperlink());
+
+        XSSFTestDataSamples.writeOutAndReadBack(wb);
+    }
 }
