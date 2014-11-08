@@ -52,8 +52,8 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="3.11-beta2"/>
-    <property name="version.rel" value="REL_3_11_BETA2"/>
+    <property name="version.id" value="3.11-beta3"/>
+    <property name="version.rel" value="REL_3_11_BETA3"/>
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
