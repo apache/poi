@@ -1357,8 +1357,10 @@ under the License.
         <!-- patterns to exclude from source assemblies -->         
         <patternset id="src.dist.patterns"
             excludes="build/**,
+                      dist*/**,
                       maven/**,
                       lib/**,
+                      compile-lib/**,
                       ooxml-lib/**,
                       scripts/**,
                       TEST*,
