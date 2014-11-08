@@ -29,6 +29,7 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -36,6 +37,8 @@ import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 public final class TestPackageCoreProperties extends TestCase {
     private static final POILogger logger = POILogFactory.getLogger(TestPackageCoreProperties.class);
@@ -225,5 +228,21 @@ public final class TestPackageCoreProperties extends TestCase {
         
         // Check
         assertEquals("Stefan Kopf", props.getCreatorProperty().getValue());
+    }
+    
+    public void testListOfCustomProperties() throws Exception {
+        File inp = POIDataSamples.getSpreadSheetInstance().getFile("ExcelWithAttachments.xlsm");
+        OPCPackage pkg = OPCPackage.open(inp, PackageAccess.READ);
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        
+        assertNotNull(wb.getProperties());
+        assertNotNull(wb.getProperties().getCustomProperties());
+        
+        for (CTProperty prop : wb.getProperties().getCustomProperties().getUnderlyingProperties().getPropertyList()) {
+            assertNotNull(prop);
+        }
+        
+        wb.close();
+        pkg.close();
     }
 }
