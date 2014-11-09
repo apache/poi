@@ -595,7 +595,11 @@ public class CellNumberFormatter extends CellFormatter {
         } else {
             StringBuffer result = new StringBuffer();
             Formatter f = new Formatter(result);
-            f.format(LOCALE, printfFmt, value);
+            try {
+                f.format(LOCALE, printfFmt, value);
+            } finally {
+                f.close();
+            }
 
             if (numerator == null) {
                 writeFractional(result, output);
@@ -866,7 +870,11 @@ public class CellNumberFormatter extends CellFormatter {
 
         StringBuffer sb = new StringBuffer();
         Formatter formatter = new Formatter(sb);
-        formatter.format(LOCALE, fmt, num);
+        try {
+            formatter.format(LOCALE, fmt, num);
+        } finally {
+            formatter.close();
+        }
         writeInteger(sb, output, numSpecials, mods, false);
     }
 

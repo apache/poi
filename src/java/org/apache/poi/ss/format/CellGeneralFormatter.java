@@ -57,7 +57,11 @@ public class CellGeneralFormatter extends CellFormatter {
             }
 
             Formatter formatter = new Formatter(toAppendTo);
-            formatter.format(LOCALE, fmt, value);
+            try {
+                formatter.format(LOCALE, fmt, value);
+            } finally {
+                formatter.close();
+            }
             if (stripZeros) {
                 // strip off trailing zeros
                 int removeFrom;
