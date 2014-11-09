@@ -201,7 +201,11 @@ public class CellElapsedFormatter extends CellFormatter {
         }
 
         Formatter formatter = new Formatter(toAppendTo);
-        formatter.format(printfFmt, parts);
+        try {
+            formatter.format(printfFmt, parts);
+        } finally {
+            formatter.close();
+        }
     }
 
     /**

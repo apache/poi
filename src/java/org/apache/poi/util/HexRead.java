@@ -109,7 +109,7 @@ public class HexRead
     {
         int characterCount = 0;
         byte b = (byte) 0;
-        List bytes = new ArrayList();
+        List<Byte> bytes = new ArrayList<Byte>();
         boolean done = false;
         while ( !done )
         {
@@ -163,7 +163,7 @@ public class HexRead
                     break;
             }
         }
-        Byte[] polished = (Byte[]) bytes.toArray( new Byte[0] );
+        Byte[] polished = bytes.toArray( new Byte[0] );
         byte[] rval = new byte[polished.length];
         for ( int j = 0; j < polished.length; j++ )
         {

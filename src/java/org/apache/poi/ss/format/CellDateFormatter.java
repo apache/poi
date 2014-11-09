@@ -183,8 +183,12 @@ public class CellDateFormatter extends CellFormatter {
                     Date dateObj = (Date) value;
                     int pos = toAppendTo.length();
                     Formatter formatter = new Formatter(toAppendTo);
-                    long msecs = dateObj.getTime() % 1000;
-                    formatter.format(LOCALE, sFmt, msecs / 1000.0);
+                    try {
+                        long msecs = dateObj.getTime() % 1000;
+                        formatter.format(LOCALE, sFmt, msecs / 1000.0);
+                    } finally {
+                        formatter.close();
+                    }
                     toAppendTo.delete(pos, pos + 2);
                     doneMillis = true;
                 }

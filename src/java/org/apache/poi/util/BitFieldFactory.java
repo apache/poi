@@ -27,10 +27,10 @@ import java.util.*;
  */
 
 public class BitFieldFactory {
-    private static Map instances = new HashMap();
+    private static Map<Integer, BitField> instances = new HashMap<Integer, BitField>();
 
     public static BitField getInstance(int mask) {
-      BitField f = (BitField)instances.get(Integer.valueOf(mask));
+      BitField f = instances.get(Integer.valueOf(mask));
       if (f == null) {
         f = new BitField(mask);
         instances.put(Integer.valueOf(mask), f);
