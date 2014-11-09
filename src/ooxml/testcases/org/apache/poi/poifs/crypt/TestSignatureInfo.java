@@ -482,8 +482,7 @@ public class TestSignatureInfo {
         si.confirmSignature();
         
         for (SignaturePart sp : si.getSignatureParts()){
-            boolean b = sp.validate();
-            assertTrue(b);
+            assertTrue("Could not validate", sp.validate());
             X509Certificate signer = sp.getSigner();
             assertNotNull("signer undefined?!", signer);
             List<X509Certificate> certChainRes = sp.getCertChain();
