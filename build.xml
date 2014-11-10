@@ -86,8 +86,9 @@ under the License.
     <property name="poi.test.locale" value="-Duser.language=en -Duser.country=US"/>
     <property name="POI.testdata.path" value="test-data"/>
     <property name="java.awt.headless" value="true"/>
-	<property name="additionaljar" value=""/>
-    
+    <property name="additionaljar" value=""/>
+    <property name="http_proxy" value="${env.http_proxy}"/>
+
     <!-- Main: -->
     <property name="main.resource1.dir" value="src/resources/main"/>
     <property name="main.src" location="src/java"/>
@@ -227,6 +228,7 @@ under the License.
         <propertyref name="POI.testdata.path"/>
         <propertyref name="java.awt.headless"/>
         <propertyref name="org.apache.poi.util.POILogger"/>
+        <propertyref name="http_proxy"/>
     </propertyset>
 
     <path id="main.classpath">
