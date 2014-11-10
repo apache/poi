@@ -60,4 +60,11 @@ do
       -Dfile=$artifactId-$VERSION-sources-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
     scp $artifactId-$VERSION-sources-$DSTAMP.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/$artifactId-$VERSION-sources.jar.asc
   fi
+
+  if [ -r $artifactId-$VERSION-javadocs-$DSTAMP.jar ]; then
+    mvn deploy:deploy-file -DrepositoryId=apache-releases -P apache-releases \
+      -Durl=$M2_REPOSITORY -DgeneratePom=false -Dpackaging=javadoc \
+      -Dfile=$artifactId-$VERSION-javadocs-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
+    scp $artifactId-$VERSION-javadocs-$DSTAMP.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/$artifactId-$VERSION-javadocs.jar.asc
+  fi
 done
