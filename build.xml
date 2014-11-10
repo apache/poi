@@ -1334,6 +1334,11 @@ under the License.
         </jar>
     </target>
 
+    <target name="jar-javadocs" description="JavaDocs for Maven">
+        <!-- TODO -->
+        <echo message="TODO - Generate per-component JavaDocs for Maven use" />
+    </target>
+
     <target name="release-notes" depends="init">
         <copy file="src/documentation/RELEASE-NOTES.txt" todir="build/dist/">
             <filterset>
@@ -1344,7 +1349,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="assemble" depends="jar,jar-src">
+    <target name="assemble" depends="jar,jar-src,jar-javadocs">
          <!-- jars to include in binary assemblies -->         
          <patternset id="bin.dist.jars">
             <include name="${jar.name}-${version.id}-${DSTAMP}.jar"/>
@@ -1397,7 +1402,6 @@ under the License.
 
         <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
             <zipfileset dir="legal/" prefix="${zipdir}" />
-            <zipfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <zipfileset dir="." prefix="${zipdir}">
                 <patternset refid="src.dist.patterns"/>
             </zipfileset>
@@ -1426,7 +1430,6 @@ under the License.
              longfile="gnu"
              compression="gzip">
             <tarfileset dir="legal/" prefix="${zipdir}" />
-            <tarfileset dir="${build.site}" prefix="${zipdir}/docs"/>
             <tarfileset dir="." prefix="${zipdir}">
                 <patternset refid="src.dist.patterns"/>
             </tarfileset>
