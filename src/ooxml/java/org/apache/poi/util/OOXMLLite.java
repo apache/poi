@@ -33,13 +33,11 @@ import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import junit.framework.JUnit4TestAdapter;
 import junit.framework.TestCase;
-import junit.framework.TestResult;
-import junit.framework.TestSuite;
-import junit.textui.TestRunner;
 
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -80,7 +78,7 @@ public final class OOXMLLite {
         _ooxmlJar = new File(ooxmlJar);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
         String dest = null, test = null, ooxml = null;
 
@@ -89,49 +87,22 @@ public final class OOXMLLite {
             else if (args[i].equals("-test")) test = args[++i];
             else if (args[i].equals("-ooxml")) ooxml = args[++i];
         }
-        
         OOXMLLite builder = new OOXMLLite(dest, test, ooxml);
         builder.build();
     }
 
-    void build() throws IOException{
+    void build() throws IOException, ClassNotFoundException {
 
-        List<String> lst = new ArrayList<String>();
+        List<Class<?>> lst = new ArrayList<Class<?>>();
         //collect unit tests
         System.out.println("Collecting unit tests from " + _testDir);
         collectTests(_testDir, _testDir, lst, ".+.class$", 
                 ".+(TestUnfixedBugs|MemoryUsage|TestDataProvider|TestDataSamples|All.+Tests|ZipFileAssert|PkiTestUtils|TestCellFormatPart\\$\\d|TestSignatureInfo\\$\\d).class");
         System.out.println("Found " + lst.size() + " classes");
-
-        TestSuite suite = new TestSuite();
-        for (String arg : lst) {
-            //ignore inner classes defined in tests
-            if (arg.indexOf('$') != -1) {
-                System.out.println("Inner class " + arg + " not included");
-                continue;
-            }
-
-            String cls = arg.replace(".class", "");
-            try {
-                Class<?> testclass = Class.forName(cls);
-                boolean isTest = TestCase.class.isAssignableFrom(testclass);
-                if (!isTest) {
-                    isTest = checkForTestAnnotation(testclass);
-                }
-                
-                if (isTest) {
-                    suite.addTest(new JUnit4TestAdapter(testclass));
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        System.out.println("Resulting TestSuite has " + suite.testCount() + " TestCases");
         
         //run tests
-        TestResult result = TestRunner.run(suite);
-        if(!result.wasSuccessful()) {
+        Result result = JUnitCore.runClasses(lst.toArray(new Class<?>[lst.size()]));
+        if (!result.wasSuccessful()) {
             throw new RuntimeException("Tests did not succeed, cannot build ooxml-lite jar");
         }
 
@@ -173,7 +144,7 @@ public final class OOXMLLite {
         }
     }
 
-    private boolean checkForTestAnnotation(Class<?> testclass) {
+    private static boolean checkForTestAnnotation(Class<?> testclass) {
         for (Method m : testclass.getDeclaredMethods()) {
             if(m.isAnnotationPresent(Test.class)) {
                 return true;
@@ -196,7 +167,8 @@ public final class OOXMLLite {
      * @param out   output
      * @param ptrn  the pattern (regexp) to filter found files
      */
-    private static void collectTests(File root, File arg, List<String> out, String ptrn, String exclude) {
+    private static void collectTests(File root, File arg, List<Class<?>> out, String ptrn, String exclude)
+    throws ClassNotFoundException {
         if (arg.isDirectory()) {
             for (File f : arg.listFiles()) {
                 collectTests(root, f, out, ptrn, exclude);
@@ -205,7 +177,21 @@ public final class OOXMLLite {
             String path = arg.getAbsolutePath();
             String prefix = root.getAbsolutePath();
             String cls = path.substring(prefix.length() + 1).replace(File.separator, ".");
-            if(cls.matches(ptrn) && !cls.matches(exclude)) out.add(cls);
+            if(!cls.matches(ptrn)) return;
+            if (cls.matches(exclude)) return;
+            //ignore inner classes defined in tests
+            if (cls.indexOf('$') != -1) {
+                System.out.println("Inner class " + cls + " not included");
+                return;
+            }
+
+            cls = cls.replace(".class", "");
+
+            Class<?> testclass = Class.forName(cls);
+            if (TestCase.class.isAssignableFrom(testclass)
+                || checkForTestAnnotation(testclass)) {
+                out.add(testclass);
+            };
         }
     }
 
@@ -227,8 +213,8 @@ public final class OOXMLLite {
                     continue;
                 }
 
-                String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
-                if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
+                    String jar = cls.getProtectionDomain().getCodeSource().getLocation().toString();
+                    if(jar.indexOf(ptrn) != -1) map.put(cls.getName(), cls);
             }
             return map;
         } catch (IllegalAccessException e) {
@@ -245,6 +231,6 @@ public final class OOXMLLite {
         } finally {
             destStream.close();
         }
-        //System.out.println("Copied file to " + destFile);
     }
+
 }
