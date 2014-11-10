@@ -331,7 +331,7 @@ public class SXSSFWorkbook implements Workbook
             ZipOutputStream zos = new ZipOutputStream(out);
             try
             {
-                Enumeration<ZipEntry> en = (Enumeration<ZipEntry>) zip.entries();
+                Enumeration<? extends ZipEntry> en = zip.entries();
                 while (en.hasMoreElements()) 
                 {
                     ZipEntry ze = en.nextElement();
