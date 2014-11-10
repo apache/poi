@@ -317,6 +317,14 @@ under the License.
     	<pathelement location="${additionaljar}"/>
     </path>
 
+    <path id="javadoc.classpath">
+        <path refid="main.classpath"/>
+        <path refid="scratchpad.classpath"/>
+        <path refid="ooxml.classpath"/>
+        <path refid="ooxml.xmlsec.classpath"/>
+        <path path="${env.CLASSPATH}"/>
+    </path>
+
     <path id="lib.jacoco">
         <fileset dir="lib">
             <include name="org.jacoco*.jar" />
@@ -1140,8 +1148,8 @@ under the License.
             description="Generates the API documentation">
         <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
                  windowtitle="POI API Documentation" use="true" version="true" 
-                 maxmemory="384M" additionalparam="-notimestamp">
-
+                 maxmemory="384M" additionalparam="-notimestamp" 
+                 classpathref="javadoc.classpath">
             <packageset dir="${main.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
             </packageset>
@@ -1152,14 +1160,6 @@ under the License.
             <packageset dir="${ooxml.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
             </packageset>
-
-            <classpath id="javadoc.classpath">
-                <path refid="main.classpath"/>
-                <path refid="scratchpad.classpath"/>
-                <path refid="ooxml.classpath"/>
-            	<path refid="ooxml.xmlsec.classpath"/>
-                <path path="${env.CLASSPATH}"/>
-            </classpath>
 
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
             <bottom>
@@ -1196,7 +1196,6 @@ under the License.
                 <package name="org.apache.poi.hssf.usermodel.examples*"/>
             </group>
         </javadoc>
-
     </target>
 
 
@@ -1335,8 +1334,41 @@ under the License.
     </target>
 
     <target name="jar-javadocs" description="JavaDocs for Maven">
-        <!-- TODO -->
-        <echo message="TODO - Generate per-component JavaDocs for Maven use" />
+        <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
+
+        <!-- Build and package the main javadocs -->
+        <antcall target="-do-jar-javadocs">
+           <param name="srcfolder" value="${main.src}" />
+           <param name="jarname" value="${jar.name}" />
+        </antcall>
+        <!-- Build and package the scratchpad javadocs -->
+        <antcall target="-do-jar-javadocs">
+           <param name="srcfolder" value="${scratchpad.src}" />
+           <param name="jarname" value="${jar.name}-scratchpad" />
+        </antcall>
+        <!-- Build and package the ooxml javadocs -->
+        <antcall target="-do-jar-javadocs">
+           <param name="srcfolder" value="${ooxml.src}" />
+           <param name="jarname" value="${jar.name}-ooxml" />
+        </antcall>
+    </target>
+    <target name="-do-jar-javadocs">
+        <echo message="Building ${jarname} javadocs from ${srcfolder}" />
+        <delete dir="${build.maven.javadocs}"/>
+        <mkdir dir="${build.maven.javadocs}"/>
+        <javadoc verbose="false" author="false" destdir="${build.maven.javadocs}"
+                 windowtitle="POI API Documentation" use="false" version="false" 
+                 maxmemory="384M" additionalparam="-notimestamp -quiet"
+                 classpathref="javadoc.classpath">
+            <packageset dir="${srcfolder}" defaultexcludes="yes">
+                <include name="org/apache/poi/**"/>
+            </packageset>
+        </javadoc>
+        <jar destfile="${dist.dir}/${jarname}-${version.id}-javadocs-${DSTAMP}.jar"
+             manifest="build/poi-manifest.mf">
+            <fileset dir="${build.maven.javadocs}"/>
+            <metainf dir="legal/"/>
+        </jar>
     </target>
 
     <target name="release-notes" depends="init">
