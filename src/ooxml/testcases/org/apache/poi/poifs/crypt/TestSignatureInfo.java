@@ -309,6 +309,12 @@ public class TestSignatureInfo {
         signatureConfig.setTspUrl("http://timestamp.comodoca.com/rfc3161");
         signatureConfig.setTspRequestPolicy(null); // comodoca request fails, if default policy is set ...
         signatureConfig.setTspOldProtocol(false);
+        
+        //set proxy info if any
+        String proxy = System.getProperty("http_proxy");
+        if (proxy != null && proxy.trim().length() > 0) {
+            signatureConfig.setProxyUrl(proxy);
+        }
 
         if (mockTsp) {
             TimeStampService tspService = new TimeStampService(){
