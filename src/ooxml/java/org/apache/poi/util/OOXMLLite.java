@@ -36,6 +36,7 @@ import java.util.jar.JarFile;
 import junit.framework.TestCase;
 
 import org.junit.Test;
+import org.junit.internal.TextListener;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -92,7 +93,6 @@ public final class OOXMLLite {
     }
 
     void build() throws IOException, ClassNotFoundException {
-
         List<Class<?>> lst = new ArrayList<Class<?>>();
         //collect unit tests
         System.out.println("Collecting unit tests from " + _testDir);
@@ -101,7 +101,9 @@ public final class OOXMLLite {
         System.out.println("Found " + lst.size() + " classes");
         
         //run tests
-        Result result = JUnitCore.runClasses(lst.toArray(new Class<?>[lst.size()]));
+        JUnitCore jUnitCore = new JUnitCore();
+        jUnitCore.addListener(new TextListener(System.out));
+        Result result = jUnitCore.run(lst.toArray(new Class<?>[lst.size()]));
         if (!result.wasSuccessful()) {
             throw new RuntimeException("Tests did not succeed, cannot build ooxml-lite jar");
         }
