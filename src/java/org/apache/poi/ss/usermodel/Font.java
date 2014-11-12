@@ -277,8 +277,8 @@ public interface Font {
     public short getIndex();
 
     public void setBoldweight(short boldweight);
+    public void setBold(boolean bold);
 
     public short getBoldweight();
-
-
+    public boolean getBold();
 }
