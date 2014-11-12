@@ -18,7 +18,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -32,6 +35,8 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
+import org.junit.Ignore;
 
 /**
  * Test <code>HSSFPicture</code>.
@@ -44,14 +49,23 @@ public final class TestHSSFPicture extends BaseTestPicture {
         super(HSSFITestDataProvider.instance);
     }
 
-    public void testResize() {
-        baseTestResize(new HSSFClientAnchor(0, 0, 848, 240, (short)0, 0, (short)1, 9));
+    @Test
+    public void resize() throws Exception {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("resize_compare.xls");
+        HSSFPatriarch dp = wb.getSheetAt(0).createDrawingPatriarch();
+        List<HSSFShape> pics = dp.getChildren();
+        HSSFPicture inpPic = (HSSFPicture)pics.get(0);
+        HSSFPicture cmpPic = (HSSFPicture)pics.get(1);
+        
+        baseTestResize(inpPic, cmpPic, 2.0, 2.0);
+        wb.close();
     }
-
+    
     /**
      * Bug # 45829 reported ArithmeticException (/ by zero) when resizing png with zero DPI.
      */
-    public void test45829() {
+    @Test
+    public void bug45829() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh1 = wb.createSheet();
         HSSFPatriarch p1 = sh1.createDrawingPatriarch();
@@ -60,10 +74,14 @@ public final class TestHSSFPicture extends BaseTestPicture {
         int idx1 = wb.addPicture( pictureData, HSSFWorkbook.PICTURE_TYPE_PNG );
         HSSFPicture pic = p1.createPicture(new HSSFClientAnchor(), idx1);
         pic.resize();
+        
+        wb.close();
     }
 
 
-    public void testAddPictures(){
+    @SuppressWarnings("resource")
+    @Test
+    public void addPictures() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         
         HSSFSheet sh = wb.createSheet("Pictures");
@@ -154,9 +172,13 @@ public final class TestHSSFPicture extends BaseTestPicture {
         assertArrayEquals(data2, ((HSSFPicture)dr.getChildren().get(1)).getPictureData().getData());
         assertArrayEquals(data3, ((HSSFPicture)dr.getChildren().get(2)).getPictureData().getData());
         assertArrayEquals(data4, ((HSSFPicture)dr.getChildren().get(3)).getPictureData().getData());
+        
+        wb.close();
     }
 
-    public void testBSEPictureRef(){
+    @SuppressWarnings("unused")
+    @Test
+    public void bsePictureRef() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFSheet sh = wb.createSheet("Pictures");
@@ -180,9 +202,12 @@ public final class TestHSSFPicture extends BaseTestPicture {
         HSSFShapeGroup gr = dr.createGroup(new HSSFClientAnchor());
         gr.createPicture(new HSSFChildAnchor(), idx1);
         assertEquals(bse.getRef(), 3);
+        
+        wb.close();
     }
 
-    public void testReadExistingImage(){
+    @Test
+    public void readExistingImage(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("picture");
         HSSFPatriarch drawing = sheet.getDrawingPatriarch();
@@ -192,7 +217,9 @@ public final class TestHSSFPicture extends BaseTestPicture {
         assertEquals(picture.getFileName(), "test");
     }
 
-    public void testSetGetProperties(){
+    @SuppressWarnings("resource")
+    @Test
+    public void setGetProperties() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         HSSFSheet sh = wb.createSheet("Pictures");
@@ -214,9 +241,12 @@ public final class TestHSSFPicture extends BaseTestPicture {
 
         p1 = (HSSFPicture) dr.getChildren().get(0);
         assertEquals(p1.getFileName(), "aaa");
+        wb.close();
     }
 
-    public void test49658() throws IOException {
+    @SuppressWarnings("resource")
+    @Test
+    public void bug49658() throws IOException {
     	// test if inserted EscherMetafileBlip will be read again
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -262,6 +292,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
         pictureDataOut = wb.getAllPictures().get(2).getData();
         assertArrayEquals(wmfNoHeader, pictureDataOut);
 
+        wb.close();
     }
 
 }

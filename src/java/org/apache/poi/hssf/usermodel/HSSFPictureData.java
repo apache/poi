@@ -22,6 +22,7 @@ import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherMetafileBlip;
 import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.PngUtils;
 
 /**
@@ -130,5 +131,34 @@ public class HSSFPictureData implements PictureData
            default:
                return "image/unknown";
        }
+    }
+    
+    /**
+     * @return the POI internal image type, -1 if not unknown image type
+     *
+     * @see Workbook#PICTURE_TYPE_DIB
+     * @see Workbook#PICTURE_TYPE_EMF
+     * @see Workbook#PICTURE_TYPE_JPEG
+     * @see Workbook#PICTURE_TYPE_PICT
+     * @see Workbook#PICTURE_TYPE_PNG
+     * @see Workbook#PICTURE_TYPE_WMF
+     */
+    public int getPictureType() {
+        switch (blip.getRecordId()) {
+            case EscherMetafileBlip.RECORD_ID_WMF:
+                return Workbook.PICTURE_TYPE_WMF;
+            case EscherMetafileBlip.RECORD_ID_EMF:
+                return Workbook.PICTURE_TYPE_EMF;
+            case EscherMetafileBlip.RECORD_ID_PICT:
+                return Workbook.PICTURE_TYPE_PICT;
+            case EscherBitmapBlip.RECORD_ID_PNG:
+                return Workbook.PICTURE_TYPE_PNG;
+            case EscherBitmapBlip.RECORD_ID_JPEG:
+                return Workbook.PICTURE_TYPE_JPEG;
+            case EscherBitmapBlip.RECORD_ID_DIB:
+                return Workbook.PICTURE_TYPE_DIB;
+            default:
+                return -1;
+        }        
     }
 }

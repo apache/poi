@@ -21,7 +21,17 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
@@ -29,7 +39,6 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hssf.model.InternalWorkbook;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
@@ -43,20 +52,6 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     public static final int PICTURE_TYPE_JPEG = HSSFWorkbook.PICTURE_TYPE_JPEG;              // JFIF
     public static final int PICTURE_TYPE_PNG = HSSFWorkbook.PICTURE_TYPE_PNG;                // PNG
     public static final int PICTURE_TYPE_DIB = HSSFWorkbook.PICTURE_TYPE_DIB;                // Windows DIB
-
-    /**
-     * width of 1px in columns with default width in units of 1/256 of a character width
-     */
-    private static final float PX_DEFAULT = 32.00f;
-    /**
-     * width of 1px in columns with overridden width in units of 1/256 of a character width
-     */
-    private static final float PX_MODIFIED = 36.56f;
-
-    /**
-     * Height of 1px of a row
-     */
-    private static final int PX_ROW = 15;
 
     public HSSFPicture(EscherContainerRecord spContainer, ObjRecord objRecord) {
         super(spContainer, objRecord);
@@ -98,37 +93,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     }
 
     /**
-     * Resize the image
-     * <p>
-     * Please note, that this method works correctly only for workbooks
-     * with default font size (Arial 10pt for .xls).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
-     * </p>
-     *
-     * @param scale the amount by which image dimensions are multiplied relative to the original size.
-     * <code>resize(1.0)</code> sets the original size, <code>resize(0.5)</code> resize to 50% of the original,
-     * <code>resize(2.0)</code> resizes to 200% of the original.
-     */
-    public void resize(double scale){
-        HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
-        anchor.setAnchorType(2);
-
-        HSSFClientAnchor pref = getPreferredSize(scale);
-
-        int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
-        int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
-
-        anchor.setCol2((short)col2);
-        anchor.setDx1(0);
-        anchor.setDx2(pref.getDx2());
-
-        anchor.setRow2(row2);
-        anchor.setDy1(0);
-        anchor.setDy2(pref.getDy2());
-    }
-
-    /**
-     * Reset the image to the original size.
+     * Reset the image to the dimension of the embedded image
      * 
      * <p>
      * Please note, that this method works correctly only for workbooks
@@ -137,7 +102,51 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * </p>
      */
     public void resize(){
-        resize(1.0);
+        resize(Double.MAX_VALUE);
+    }
+
+    /**
+     * Resize the image proportionally.
+     *
+     * @see #resize(double, double)
+     */
+    public void resize(double scale) {
+        resize(scale,scale);
+    }
+    
+    /**
+     * Resize the image
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with default font size (Arial 10pt for .xls).
+     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * </p>
+     * <p>
+     * <code>resize(1.0,1.0)</code> keeps the original size,<br/>
+     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br/>
+     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br/>
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * </p>
+     *
+     * @param scaleX the amount by which the image width is multiplied relative to the original width.
+     * @param scaleY the amount by which the image height is multiplied relative to the original height.
+     */
+    public void resize(double scaleX, double scaleY) {
+        HSSFClientAnchor anchor = getClientAnchor();
+        anchor.setAnchorType(2);
+
+        HSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
+
+        int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
+        int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
+
+        anchor.setCol2((short)col2);
+        // anchor.setDx1(0);
+        anchor.setDx2(pref.getDx2());
+
+        anchor.setRow2(row2);
+        // anchor.setDy1(0);
+        anchor.setDy2(pref.getDy2());
     }
 
     /**
@@ -158,86 +167,30 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @since POI 3.0.2
      */
     public HSSFClientAnchor getPreferredSize(double scale){
-        HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
-
-        Dimension size = getImageDimension();
-        double scaledWidth = size.getWidth() * scale;
-        double scaledHeight = size.getHeight() * scale;
-
-        float w = 0;
-
-        //space in the leftmost cell
-        w += getColumnWidthInPixels(anchor.getCol1())*(1 - (float)anchor.getDx1()/1024);
-        short col2 = (short)(anchor.getCol1() + 1);
-        int dx2 = 0;
-
-        while(w < scaledWidth){
-            w += getColumnWidthInPixels(col2++);
-        }
-
-        if(w > scaledWidth) {
-            //calculate dx2, offset in the rightmost cell
-            col2--;
-            double cw = getColumnWidthInPixels(col2);
-            double delta = w - scaledWidth;
-            dx2 = (int)((cw-delta)/cw*1024);
-        }
-        anchor.setCol2(col2);
-        anchor.setDx2(dx2);
-
-        float h = 0;
-        h += (1 - (float)anchor.getDy1()/256)* getRowHeightInPixels(anchor.getRow1());
-        int row2 = anchor.getRow1() + 1;
-        int dy2 = 0;
-
-        while(h < scaledHeight){
-            h += getRowHeightInPixels(row2++);
-        }
-        if(h > scaledHeight) {
-            row2--;
-            double ch = getRowHeightInPixels(row2);
-            double delta = h - scaledHeight;
-            dy2 = (int)((ch-delta)/ch*256);
-        }
-        anchor.setRow2(row2);
-        anchor.setDy2(dy2);
-
-        return anchor;
+        return getPreferredSize(scale, scale);
     }
-
-    private float getColumnWidthInPixels(int column){
-
-        int cw = getPatriarch().getSheet().getColumnWidth(column);
-        float px = getPixelWidth(column);
-
-        return cw/px;
-    }
-
-    private float getRowHeightInPixels(int i){
-
-        HSSFRow row = getPatriarch().getSheet().getRow(i);
-        float height;
-        if(row != null) height = row.getHeight();
-        else height = getPatriarch().getSheet().getDefaultRowHeight();
-
-        return height/PX_ROW;
-    }
-
-    private float getPixelWidth(int column){
-
-        int def = getPatriarch().getSheet().getDefaultColumnWidth()*256;
-        int cw = getPatriarch().getSheet().getColumnWidth(column);
-
-        return cw == def ? PX_DEFAULT : PX_MODIFIED;
+    
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scaleX the amount by which image width is multiplied relative to the original width.
+     * @param scaleY the amount by which image height is multiplied relative to the original height.
+     * @return HSSFClientAnchor with the preferred size for this image
+     * @since POI 3.11
+     */
+    public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
+        ImageUtils.setPreferredSize(this, scaleX, scaleY);
+        return getClientAnchor();
     }
 
     /**
-     * Return the dimension of this image
+     * Return the dimension of the embedded image in pixel
      *
-     * @return image dimension
+     * @return image dimension in pixels
      */
     public Dimension getImageDimension(){
-        EscherBSERecord bse = getPatriarch().getSheet()._book.getBSERecord(getPictureIndex());
+        InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
+        EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
@@ -250,7 +203,8 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      */
     public HSSFPictureData getPictureData(){
         InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
-    	EscherBlipRecord blipRecord = iwb.getBSERecord(getPictureIndex()).getBlipRecord();
+        EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
+    	EscherBlipRecord blipRecord = bse.getBlipRecord();
     	return new HSSFPictureData(blipRecord);
     }
 
@@ -300,5 +254,23 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         return new HSSFPicture(spContainer, obj);
+    }
+    
+    /**
+     * @return the anchor that is used by this picture.
+     */
+    @Override
+    public HSSFClientAnchor getClientAnchor() {
+        HSSFAnchor a = getAnchor();
+        return (a instanceof HSSFClientAnchor) ? (HSSFClientAnchor)a : null;
+    }
+
+    
+    /**
+     * @return the sheet which contains the picture shape
+     */
+    @Override
+    public HSSFSheet getSheet() {
+        return getPatriarch().getSheet();
     }
 }

@@ -20,15 +20,14 @@ package org.apache.poi.xssf.usermodel;
 import java.awt.Dimension;
 import java.io.IOException;
 
-import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
@@ -40,7 +39,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 
 /**
  * Represents a picture shape in a SpreadsheetML drawing.
@@ -57,7 +55,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      *
      * This value is the same for default font in Office 2007 (Calibry) and Office 2003 and earlier (Arial)
      */
-    private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
+    // private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
 
     /**
      * A default instance of CTShape used for creating new shapes.
@@ -140,44 +138,56 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     }
 
     /**
-     * Reset the image to the original size.
+     * Reset the image to the dimension of the embedded image
      *
-     * <p>
-     * Please note, that this method works correctly only for workbooks
-     * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
-     * </p>
+     * @see #resize(double, double)
      */
     public void resize(){
-        resize(1.0);
+        resize(Double.MAX_VALUE);
     }
 
     /**
-     * Reset the image to the original size.
+     * Resize the image proportionally.
+     *
+     * @see #resize(double, double)
+     */
+    public void resize(double scale) {
+        resize(scale, scale);
+    }
+    
+    /**
+     * Resize the image relatively to its current size.
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
      * If the default font is changed the resized image can be streched vertically or horizontally.
      * </p>
+     * <p>
+     * <code>resize(1.0,1.0)</code> keeps the original size,<br/>
+     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br/>
+     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br/>
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * </p>
      *
-     * @param scale the amount by which image dimensions are multiplied relative to the original size.
-     * <code>resize(1.0)</code> sets the original size, <code>resize(0.5)</code> resize to 50% of the original,
-     * <code>resize(2.0)</code> resizes to 200% of the original.
+     * @param scaleX the amount by which the image width is multiplied relative to the original width,
+     *  when set to {@link java.lang.Double#MAX_VALUE} the width of the embedded image is used
+     * @param scaleY the amount by which the image height is multiplied relative to the original height,
+     *  when set to {@link java.lang.Double#MAX_VALUE} the height of the embedded image is used
      */
-    public void resize(double scale){
-        XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
+    public void resize(double scaleX, double scaleY){
+        XSSFClientAnchor anchor = getClientAnchor();
 
-        XSSFClientAnchor pref = getPreferredSize(scale);
+        XSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
 
         anchor.setCol2(col2);
-        anchor.setDx1(0);
+        // anchor.setDx1(0);
         anchor.setDx2(pref.getDx2());
 
         anchor.setRow2(row2);
-        anchor.setDy1(0);
+        // anchor.setDy1(0);
         anchor.setDy2(pref.getDy2());
     }
 
@@ -197,71 +207,22 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * @return XSSFClientAnchor with the preferred size for this image
      */
     public XSSFClientAnchor getPreferredSize(double scale){
-        XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
-
-        XSSFPictureData data = getPictureData();
-        Dimension size = getImageDimension(data.getPackagePart(), data.getPictureType());
-        double scaledWidth = size.getWidth() * scale;
-        double scaledHeight = size.getHeight() * scale;
-
-        float w = 0;
-        int col2 = anchor.getCol1();
-        int dx2 = 0;
-
-        for (;;) {
-            w += getColumnWidthInPixels(col2);
-            if(w > scaledWidth) break;
-            col2++;
-        }
-
-        if(w > scaledWidth) {
-            double cw = getColumnWidthInPixels(col2 );
-            double delta = w - scaledWidth;
-            dx2 = (int)(EMU_PER_PIXEL*(cw-delta));
-        }
-        anchor.setCol2(col2);
-        anchor.setDx2(dx2);
-
-        double h = 0;
-        int row2 = anchor.getRow1();
-        int dy2 = 0;
-
-        for (;;) {
-            h += getRowHeightInPixels(row2);
-            if(h > scaledHeight) break;
-            row2++;
-        }
-
-        if(h > scaledHeight) {
-            double ch = getRowHeightInPixels(row2);
-            double delta = h - scaledHeight;
-            dy2 = (int)(EMU_PER_PIXEL*(ch-delta));
-        }
-        anchor.setRow2(row2);
-        anchor.setDy2(dy2);
-
+        return getPreferredSize(scale, scale);
+    }
+    
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scaleX the amount by which image width is multiplied relative to the original width.
+     * @param scaleY the amount by which image height is multiplied relative to the original height.
+     * @return XSSFClientAnchor with the preferred size for this image
+     */
+    public XSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
+        Dimension dim = ImageUtils.setPreferredSize(this, scaleX, scaleY);
         CTPositiveSize2D size2d =  ctPicture.getSpPr().getXfrm().getExt();
-        size2d.setCx((long)(scaledWidth*EMU_PER_PIXEL));
-        size2d.setCy((long)(scaledHeight*EMU_PER_PIXEL));
-
-        return anchor;
-    }
-
-    private float getColumnWidthInPixels(int columnIndex){
-        XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-
-        CTCol col = sheet.getColumnHelper().getColumn(columnIndex, false);
-        double numChars = col == null || !col.isSetWidth() ? DEFAULT_COLUMN_WIDTH : col.getWidth();
-
-        return (float)numChars*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH;
-    }
-
-    private float getRowHeightInPixels(int rowIndex){
-        XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-
-        XSSFRow row = sheet.getRow(rowIndex);
-        float height = row != null ?  row.getHeightInPoints() : sheet.getDefaultRowHeightInPoints();
-        return height*PIXEL_DPI/POINT_DPI;
+        size2d.setCx((int)dim.getWidth());
+        size2d.setCy((int)dim.getHeight());
+        return getClientAnchor();
     }
 
     /**
@@ -284,6 +245,16 @@ public final class XSSFPicture extends XSSFShape implements Picture {
     }
 
     /**
+     * Return the dimension of the embedded image in pixel
+     *
+     * @return image dimension in pixels
+     */
+    public Dimension getImageDimension() {
+        XSSFPictureData picData = getPictureData();
+        return getImageDimension(picData.getPackagePart(), picData.getPictureType());
+    }
+    
+    /**
      * Return picture data for this shape
      *
      * @return picture data for this shape
@@ -297,4 +268,20 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         return ctPicture.getSpPr();
     }
 
+    /**
+     * @return the anchor that is used by this shape.
+     */
+    @Override
+    public XSSFClientAnchor getClientAnchor() {
+        XSSFAnchor a = getAnchor();
+        return (a instanceof XSSFClientAnchor) ? (XSSFClientAnchor)a : null;
+    }
+
+    /**
+     * @return the sheet which contains the picture shape
+     */
+    @Override
+    public XSSFSheet getSheet() {
+        return (XSSFSheet)getDrawing().getParent();
+    }
 }

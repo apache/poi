@@ -705,6 +705,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Get the actual column width in pixels
+     * 
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with the default font size (Calibri 11pt for .xlsx).
+     * </p>
+     */
+    @Override
+    public float getColumnWidthInPixels(int columnIndex) {
+        int styleIdx = getColumnHelper().getColDefaultStyle(columnIndex);
+        CellStyle cs = getWorkbook().getStylesSource().getStyleAt(styleIdx);
+        float widthIn256 = getColumnWidth(columnIndex);
+        return (float)(widthIn256/256.0*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH);
+    }
+    
+    /**
      * Get the default column width for the sheet (if the columns do not define their own width) in
      * characters.
      * <p>
@@ -729,6 +745,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     public short getDefaultRowHeight() {
         return (short)(getDefaultRowHeightInPoints() * 20);
     }
+
 
     /**
      * Get the default row height for the sheet measued in point size (if the rows do not define their own height).
