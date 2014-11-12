@@ -206,10 +206,20 @@ public final class HSSFFont implements Font {
      * @see #BOLDWEIGHT_NORMAL
      * @see #BOLDWEIGHT_BOLD
      */
-
     public void setBoldweight(short boldweight)
     {
         font.setBoldWeight(boldweight);
+    }
+    
+    /**
+     * sets the font to be bold or not
+     */
+    public void setBold(boolean bold)
+    {
+        if (bold)
+            font.setBoldWeight(BOLDWEIGHT_BOLD);
+        else
+            font.setBoldWeight(BOLDWEIGHT_NORMAL);
     }
 
     /**
@@ -218,10 +228,17 @@ public final class HSSFFont implements Font {
      * @see #BOLDWEIGHT_NORMAL
      * @see #BOLDWEIGHT_BOLD
      */
-
     public short getBoldweight()
     {
         return font.getBoldWeight();
+    }
+    
+    /**
+     * get if the font is bold or not
+     */
+    public boolean getBold()
+    {
+        return getBoldweight() == BOLDWEIGHT_BOLD;
     }
 
     /**
