@@ -18,13 +18,25 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFPicture;
+import org.apache.poi.hssf.usermodel.HSSFShape;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
@@ -37,12 +49,21 @@ public final class TestXSSFPicture extends BaseTestPicture {
         super(XSSFITestDataProvider.instance);
     }
 
-    public void testResize() {
-        baseTestResize(new XSSFClientAnchor(0, 0, 504825, 85725, (short)0, 0, (short)1, 8));
+    @Test
+    public void resize() throws Exception {
+        XSSFWorkbook wb = XSSFITestDataProvider.instance.openSampleWorkbook("resize_compare.xlsx");
+        XSSFDrawing dp = wb.getSheetAt(0).createDrawingPatriarch();
+        List<XSSFShape> pics = dp.getShapes();
+        XSSFPicture inpPic = (XSSFPicture)pics.get(0);
+        XSSFPicture cmpPic = (XSSFPicture)pics.get(0);
+        
+        baseTestResize(inpPic, cmpPic, 2.0, 2.0);
+        wb.close();
     }
 
 
-    public void testCreate(){
+    @Test
+    public void create() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -70,6 +91,8 @@ public final class TestXSSFPicture extends BaseTestPicture {
         CTTwoCellAnchor ctShapeHolder = drawing.getCTDrawing().getTwoCellAnchorArray(0);
         // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
         assertEquals(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
+        
+        wb.close();
     }
 
     /**
@@ -77,7 +100,8 @@ public final class TestXSSFPicture extends BaseTestPicture {
      *
      * See Bugzilla 50458
      */
-    public void testShapeId(){
+    @Test
+    public void incrementShapeId() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -93,12 +117,15 @@ public final class TestXSSFPicture extends BaseTestPicture {
         jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
         XSSFPicture shape2 = drawing.createPicture(anchor, jpegIdx);
         assertEquals(2, shape2.getCTPicture().getNvPicPr().getCNvPr().getId());
+        wb.close();
     }
 
     /**
      * same image refrerred by mulitple sheets
      */
-    public void testMultiRelationShips(){
+    @SuppressWarnings("resource")
+    @Test
+    public void multiRelationShips() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
 
         byte[] pic1Data = "test jpeg data".getBytes();
@@ -140,6 +167,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
         XSSFPicture shape44 = (XSSFPicture)drawing2.getShapes().get(1);
         assertArrayEquals(shape4.getPictureData().getData(), shape44.getPictureData().getData());
 
+        wb.close();
     }
 
 }

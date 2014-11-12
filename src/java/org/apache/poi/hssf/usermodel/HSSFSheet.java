@@ -77,6 +77,16 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     private static final int DEBUG = POILogger.DEBUG;
 
     /**
+     * width of 1px in columns with default width in units of 1/256 of a character width
+     */
+    private static final float PX_DEFAULT = 32.00f;
+    /**
+     * width of 1px in columns with overridden width in units of 1/256 of a character width
+     */
+    private static final float PX_MODIFIED = 36.56f;
+
+    
+    /**
      * Used for compile-time optimization.  This is the initial size for the collection of
      * rows.  It is currently set to 20.  If you generate larger sheets you may benefit
      * by setting this to a higher number and recompiling a custom edition of HSSFSheet.
@@ -555,6 +565,14 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         return _sheet.getColumnWidth(columnIndex);
     }
 
+    public float getColumnWidthInPixels(int column){
+        int cw = getColumnWidth(column);
+        int def = getDefaultColumnWidth()*256;
+        float px = (cw == def ? PX_DEFAULT : PX_MODIFIED);
+
+        return cw/px;
+    }
+    
     /**
      * get the default column width for the sheet (if the columns do not define their own width) in
      * characters

@@ -186,11 +186,26 @@ public interface Sheet extends Iterable<Row> {
      * using the default font (first font in the workbook)
      * </p>
      *
-     * @param columnIndex - the column to set (0-based)
+     * @param columnIndex - the column to get (0-based)
      * @return width - the width in units of 1/256th of a character width
      */
     int getColumnWidth(int columnIndex);
 
+    /**
+     * get the width in pixel
+     * 
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with the default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
+     * If the default font is changed the column width can be streched
+     * </p>
+     *
+     * @param columnIndex - the column to set (0-based)
+     * @return width in pixels
+     */
+    float getColumnWidthInPixels(int columnIndex);
+    
+    
     /**
      * Set the default column width for the sheet (if the columns do not define their own width)
      * in characters
@@ -214,7 +229,7 @@ public interface Sheet extends Iterable<Row> {
      * @return  default row height measured in twips (1/20 of  a point)
      */
     short getDefaultRowHeight();
-
+    
     /**
      * Get the default row height for the sheet (if the rows do not define their own height) in
      * points.
@@ -922,7 +937,7 @@ public interface Sheet extends Iterable<Row> {
     
     public DataValidationHelper getDataValidationHelper();
 
-    /**
+	/**
      * Returns the list of DataValidation in the sheet.
      * @return list of DataValidation in the sheet
      */

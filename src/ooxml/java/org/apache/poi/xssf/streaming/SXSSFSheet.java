@@ -265,6 +265,19 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
 
     /**
+     * Get the actual column width in pixels
+     * 
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with the default font size (Calibri 11pt for .xlsx).
+     * </p>
+     */
+    @Override
+    public float getColumnWidthInPixels(int columnIndex) {
+        return _sh.getColumnWidthInPixels(columnIndex);
+    }    
+    
+    /**
      * Set the default column width for the sheet (if the columns do not define their own width)
      * in characters
      *

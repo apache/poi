@@ -16,6 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.awt.Dimension;
+
+
 /**
  * Repersents a picture in a SpreadsheetML document
  *
@@ -24,32 +27,60 @@ package org.apache.poi.ss.usermodel;
 public interface Picture {
 
     /**
-     * Reset the image to the original size.
+     * Reset the image to the dimension of the embedded image
      *
-     * <p>
-     * Please note, that this method works correctly only for workbooks
-     * with default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
-     * </p>
+     * @see #resize(double, double)
      */
     void resize();
 
     /**
-     * Reset the image to the original size.
+     * Resize the image proportionally.
      *
-     * <p>
-     * Please note, that this method works correctly only for workbooks
-     * with default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
-     * If the default font is changed the resize() procedure can be 'off'.
-     * </p>
-     *
-     * @param scale the amount by which image dimensions are multiplied relative to the original size.
-     * <code>resize(1.0)</code> sets the original size, <code>resize(0.5)</code> resize to 50% of the original,
-     * <code>resize(2.0)</code> resizes to 200% of the original.
+     * @see #resize(double, double)
      */
     void resize(double scale);
+    
+    /**
+     * Resize the image.
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with the default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
+     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * </p>
+     * <p>
+     * <code>resize(1.0,1.0)</code> keeps the original size,<br/>
+     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br/>
+     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br/>
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * </p>
+     *
+     * @param scaleX the amount by which the image width is multiplied relative to the original width.
+     * @param scaleY the amount by which the image height is multiplied relative to the original height.
+     */
+    void resize(double scaleX, double scaleY);
 
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @return XSSFClientAnchor with the preferred size for this image
+     */
     ClientAnchor getPreferredSize();
+    
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scaleX the amount by which image width is multiplied relative to the original width.
+     * @param scaleY the amount by which image height is multiplied relative to the original height.
+     * @return ClientAnchor with the preferred size for this image
+     */
+    ClientAnchor getPreferredSize(double scaleX, double scaleY);
+
+    /**
+     * Return the dimension of the embedded image in pixel
+     *
+     * @return image dimension in pixels
+     */
+    Dimension getImageDimension();
     
     /**
      * Return picture data for this picture
@@ -58,4 +89,14 @@ public interface Picture {
      */
     PictureData getPictureData();
 
+    /**
+     * @return  the anchor that is used by this picture
+     */
+    ClientAnchor getClientAnchor();
+
+
+    /**
+     * @return the sheet which contains the picture
+     */
+    Sheet getSheet();
 }

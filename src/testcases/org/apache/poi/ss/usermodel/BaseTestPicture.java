@@ -17,14 +17,19 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.awt.Dimension;
+import java.io.FileOutputStream;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.util.ImageUtils;
+import org.apache.poi.util.Units;
 
 /**
  * @author Yegor Kozlov
  */
-public abstract class BaseTestPicture extends TestCase {
+public abstract class BaseTestPicture {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -32,26 +37,32 @@ public abstract class BaseTestPicture extends TestCase {
         _testDataProvider = testDataProvider;
     }
 
-    public void baseTestResize(ClientAnchor referenceAnchor) {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sh1 = wb.createSheet();
-        Drawing  p1 = sh1.createDrawingPatriarch();
-        CreationHelper factory = wb.getCreationHelper();
+    public void baseTestResize(Picture input, Picture compare, double scaleX, double scaleY) {
+        input.resize(scaleX, scaleY);
+        
+        ClientAnchor inpCA = input.getClientAnchor();
+        ClientAnchor cmpCA = compare.getClientAnchor();
+        
+        Dimension inpDim = ImageUtils.getDimensionFromAnchor(input);
+        Dimension cmpDim = ImageUtils.getDimensionFromAnchor(compare);
 
-        byte[] pictureData = _testDataProvider.getTestDataFileContent("logoKarmokar4.png");
-        int idx1 = wb.addPicture( pictureData, Workbook.PICTURE_TYPE_PNG );
-        Picture picture = p1.createPicture(factory.createClientAnchor(), idx1);
-        picture.resize();
-        ClientAnchor anchor1 = picture.getPreferredSize();
+        double emuPX = Units.EMU_PER_PIXEL;
+        
+        assertEquals("the image height differs", inpDim.getHeight(), cmpDim.getHeight(), emuPX*6);
+        assertEquals("the image width differs", inpDim.getWidth(),  cmpDim.getWidth(),  emuPX*6);
+        assertEquals("the starting column differs", inpCA.getCol1(), cmpCA.getCol1());
+        assertEquals("the column x-offset differs", inpCA.getDx1(), cmpCA.getDx1(), 1);
+        assertEquals("the column y-offset differs", inpCA.getDy1(), cmpCA.getDy1(), 1);
+        assertEquals("the ending columns differs", inpCA.getCol2(), cmpCA.getCol2());
+        // can't compare row heights because of variable test heights
+        
+        input.resize();
+        inpDim = ImageUtils.getDimensionFromAnchor(input);
+        
+        Dimension imgDim = input.getImageDimension();
 
-        //assert against what would BiffViewer print if we insert the image in xls and dump the file
-        assertEquals(referenceAnchor.getCol1(), anchor1.getCol1());
-        assertEquals(referenceAnchor.getRow1(), anchor1.getRow1());
-        assertEquals(referenceAnchor.getCol2(), anchor1.getCol2());
-        assertEquals(referenceAnchor.getRow2(), anchor1.getRow2());
-        assertEquals(referenceAnchor.getDx1(), anchor1.getDx1());
-        assertEquals(referenceAnchor.getDy1(), anchor1.getDy1());
-        assertEquals(referenceAnchor.getDx2(), anchor1.getDx2());
-        assertEquals(referenceAnchor.getDy2(), anchor1.getDy2());
+        assertEquals("the image height differs", imgDim.getHeight(), inpDim.getHeight()/emuPX, 1);
+        assertEquals("the image width differs",  imgDim.getWidth(), inpDim.getWidth()/emuPX,  1);
     }
+
 }
