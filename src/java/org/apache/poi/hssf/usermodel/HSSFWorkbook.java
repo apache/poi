@@ -973,6 +973,15 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     /**
+     * Returns an iterator of the sheets
+     *
+     * @return an iterator of the sheets
+     */
+    public Iterator<HSSFSheet> iterator() {
+        return _sheets.iterator();
+    }
+
+    /**
      * determine whether the Excel GUI will backup the workbook when saving.
      *
      * @param backupValue   true to indicate a backup will be performed.

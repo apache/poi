@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.CRC32;
 
@@ -42,7 +43,6 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -72,6 +72,20 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	public TestXSSFWorkbook() {
 		super(XSSFITestDataProvider.instance);
 	}
+
+    @Test
+    public void iterator() {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet1 = workbook.createSheet("sheet1");
+        XSSFSheet sheet2 = workbook.createSheet("sheet2");
+
+        Iterator<XSSFSheet> it = workbook.iterator();
+        assertTrue(it.hasNext());
+        assertSame(sheet1, it.next());
+        assertTrue(it.hasNext());
+        assertSame(sheet2, it.next());
+        assertFalse(it.hasNext());
+    }
 
 	/**
 	 * Tests that we can save, and then re-load a new document

@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -703,6 +704,29 @@ public class SXSSFWorkbook implements Workbook
         XSSFSheet xSheet=_wb.getSheetAt(index);
         _wb.removeSheetAt(index);
         deregisterSheetMapping(xSheet);
+    }
+
+    /**
+     * Returns an iterator of the sheets
+     *
+     * @return an iterator of the sheets
+     */
+    @Override
+    public Iterator<Sheet> iterator()
+    {
+        return new Iterator<Sheet>() {
+            private Iterator<XSSFSheet> iterator = _wb.iterator();
+
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext();
+            }
+
+            @Override
+            public Sheet next() {
+                return getSXSSFSheet(iterator.next());
+            }
+        };
     }
 
     /**
