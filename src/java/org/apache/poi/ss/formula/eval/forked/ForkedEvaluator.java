@@ -36,7 +36,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 /**
  * An alternative workbook evaluator that saves memory in situations where a single workbook is
  * concurrently and independently evaluated many times.  With standard formula evaluation, around
- * 90% of memory consumption is due to loading of the {@link HSSFWorkbook} or {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}.
+ * 90% of memory consumption is due to loading of the {@link HSSFWorkbook} or <a href="https://poi.apache.org/apidocs/org/apache/poi/xssf/usermodel/XSSFWorkbook.html">XSSFWorkbook</a>.
  * This class enables a 'master workbook' to be loaded just once and shared between many evaluation
  * clients.  Each evaluation client creates its own {@link ForkedEvaluator} and can set cell values
  * that will be used for local evaluations (and don't disturb evaluations on other evaluators).
