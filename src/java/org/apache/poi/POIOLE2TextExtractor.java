@@ -28,10 +28,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * You will typically find the implementation of
  *  a given format's text extractor under
  *  org.apache.poi.[format].extractor .
- * @see org.apache.poi.hssf.extractor.ExcelExtractor
- * @see org.apache.poi.hslf.extractor.PowerPointExtractor
- * @see org.apache.poi.hdgf.extractor.VisioTextExtractor
- * @see org.apache.poi.hwpf.extractor.WordExtractor
+ * @see <a href="https://poi.apache.org/apidocs/org/apache/poi/hssf/extractor/ExcelExtractor.html">org.apache.poi.hssf.extractor.ExcelExtractor</a>
+ * @see <a href="https://poi.apache.org/apidocs/org/apache/poi/hslf/extractor/PowerPointExtractor.html">org.apache.poi.hslf.extractor.PowerPointExtractor</a>
+ * @see <a href="https://poi.apache.org/apidocs/org/apache/poi/hdgf/extractor/VisioTextExtractor.html">org.apache.poi.hdgf.extractor.VisioTextExtractor</a>
+ * @see <a href="https://poi.apache.org/apidocs/org/apache/poi/hwpf/extractor/WordExtractor.html">org.apache.poi.hwpf.extractor.WordExtractor</a>
  */
 public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	/**
