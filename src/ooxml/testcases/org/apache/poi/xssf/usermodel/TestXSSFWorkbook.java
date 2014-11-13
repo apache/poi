@@ -74,12 +74,12 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-    public void iterator() {
+    public void sheetIterator() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet1 = workbook.createSheet("sheet1");
         XSSFSheet sheet2 = workbook.createSheet("sheet2");
 
-        Iterator<XSSFSheet> it = workbook.iterator();
+        Iterator<XSSFSheet> it = workbook.sheetIterator();
         assertTrue(it.hasNext());
         assertSame(sheet1, it.next());
         assertTrue(it.hasNext());

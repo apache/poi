@@ -712,7 +712,7 @@ public class SXSSFWorkbook implements Workbook
      * @return an iterator of the sheets
      */
     @Override
-    public Iterator<Sheet> iterator()
+    public Iterator<Sheet> sheetIterator()
     {
         return new Iterator<Sheet>() {
             private Iterator<XSSFSheet> iterator = _wb.iterator();

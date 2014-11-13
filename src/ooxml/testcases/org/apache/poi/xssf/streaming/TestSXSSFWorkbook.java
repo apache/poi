@@ -42,7 +42,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Ignore;
@@ -61,13 +60,13 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void iterator() {
+    public void sheetIterator() {
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
         xssfWorkbook.createSheet("sheet1");
         xssfWorkbook.createSheet("sheet2");
         SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
 
-        Iterator<Sheet> it = wb.iterator();
+        Iterator<Sheet> it = wb.sheetIterator();
         assertTrue(it.hasNext());
         assertSame(wb.getSheetAt(0), it.next());
         assertTrue(it.hasNext());

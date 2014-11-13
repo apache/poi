@@ -268,7 +268,7 @@ public interface Workbook extends Closeable {
      *
      * @return an iterator of the sheets
      */
-    Iterator<? extends Sheet> iterator();
+    Iterator<? extends Sheet> sheetIterator();
 
     /**
      * Sets the repeating rows and columns for a sheet (as found in

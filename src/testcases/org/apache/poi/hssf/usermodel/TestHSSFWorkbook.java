@@ -118,12 +118,12 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void iterator() {
+    public void sheetIterator() {
         HSSFWorkbook b = new HSSFWorkbook();
         HSSFSheet s1 = b.createSheet("Sheet One");
         HSSFSheet s2 = b.createSheet("Sheet Two");
 
-        Iterator<HSSFSheet> it = b.iterator();
+        Iterator<HSSFSheet> it = b.sheetIterator();
         assertTrue(it.hasNext());
         assertSame(s1, it.next());
         assertTrue(it.hasNext());

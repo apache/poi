@@ -977,7 +977,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @return an iterator of the sheets
      */
-    public Iterator<HSSFSheet> iterator() {
+    public Iterator<HSSFSheet> sheetIterator() {
         return _sheets.iterator();
     }
 
