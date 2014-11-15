@@ -22,7 +22,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Helper methods for working with javax.xml classes.
- * @see <a href="https://poi.apache.org/apidocs/org/apache/poi/util/SAXHelper.html">org.apache.poi.util.SAXHelper</a>
+ * @see org.apache.poi.util.SAXHelper
  */
 public final class XMLHelper
 {
