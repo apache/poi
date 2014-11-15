@@ -1264,7 +1264,7 @@ under the License.
         <echo>Use mvn-deploy.sh to deploy the artifacts in the remote repository</echo>
     </target>
 
-    <target name="jar" depends="compile-all, compile-version" description="Creates jar files for distribution">
+    <target name="-manifest">
         <manifest file="build/poi-manifest.mf">
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Specification-Title" value="Apache POI"/>
@@ -1275,6 +1275,9 @@ under the License.
             <attribute name="Implementation-Vendor-Id" value="org.apache.poi"/>
             <attribute name="Implementation-Vendor" value="The Apache Software Foundation"/>
         </manifest>
+    </target>
+
+    <target name="jar" depends="compile-all, compile-version, -manifest" description="Creates jar files for distribution">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${main.output.dir}"/>
@@ -1335,7 +1338,21 @@ under the License.
         </jar>
     </target>
 
-    <target name="jar-javadocs" description="JavaDocs for Maven">
+
+    <target name="-do-jar-check-javadocs-package-list">
+        <condition property="javadocs.package-list.present">
+        	<available file="build/tmp/site/build/site/apidocs/package-list"/>
+        </condition>
+    </target>
+
+    <target name="-do-jar-create-javadocs-package-list"
+    	depends="-do-jar-check-javadocs-package-list"
+    	unless="javadocs.package-list.present">
+    	<antcall target="javadocs"/>
+    </target>
+	
+	
+	<target name="jar-javadocs" description="JavaDocs for Maven" depends="compile,-manifest,-do-jar-create-javadocs-package-list">
         <property name="build.maven.javadocs" location="build/tmp/maven-javadocs"/>
 
         <!-- Build and package the main javadocs -->
@@ -1354,7 +1371,8 @@ under the License.
            <param name="jarname" value="${jar.name}-ooxml" />
         </antcall>
     </target>
-    <target name="-do-jar-javadocs">
+
+	<target name="-do-jar-javadocs">
         <echo message="Building ${jarname} javadocs from ${srcfolder}" />
         <delete dir="${build.maven.javadocs}"/>
         <mkdir dir="${build.maven.javadocs}"/>
@@ -1365,6 +1383,7 @@ under the License.
             <packageset dir="${srcfolder}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
             </packageset>
+            <link href="https://poi.apache.org/apidocs" packagelistLoc="build/tmp/site/build/site/apidocs"/>
         </javadoc>
         <jar destfile="${dist.dir}/${jarname}-${version.id}-javadocs-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
