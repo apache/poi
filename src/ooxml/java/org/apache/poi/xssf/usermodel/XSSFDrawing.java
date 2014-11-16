@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -215,7 +216,6 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
      *   {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()} .
      */
-    @SuppressWarnings("resource")
     protected PackageRelationship addPictureReference(int pictureIndex){
         XSSFWorkbook wb = (XSSFWorkbook)getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
@@ -299,9 +299,17 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing {
         XSSFVMLDrawing vml = sheet.getVMLDrawing(true);
         schemasMicrosoftComVml.CTShape vmlShape = vml.newCommentShape();
         if(ca.isSet()){
+            // convert offsets from emus to pixels since we get a DrawingML-anchor
+            // but create a VML Drawing
+            int dx1Pixels = ca.getDx1()/Units.EMU_PER_PIXEL;
+            int dy1Pixels = ca.getDy1()/Units.EMU_PER_PIXEL;
+            int dx2Pixels = ca.getDx2()/Units.EMU_PER_PIXEL;
+            int dy2Pixels = ca.getDy2()/Units.EMU_PER_PIXEL;
             String position =
-                    ca.getCol1() + ", 0, " + ca.getRow1() + ", 0, " +
-                    ca.getCol2() + ", 0, " + ca.getRow2() + ", 0";
+                    ca.getCol1() + ", " + dx1Pixels + ", " +
+                    ca.getRow1() + ", " + dy1Pixels + ", " +
+                    ca.getCol2() + ", " + dx2Pixels + ", " +
+                    ca.getRow2() + ", " + dy2Pixels;
             vmlShape.getClientDataArray(0).setAnchorArray(0, position);
         }
         String ref = new CellReference(ca.getRow1(), ca.getCol1()).formatAsString();

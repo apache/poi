@@ -17,24 +17,43 @@
 
 package org.apache.poi.xssf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.poi.ss.usermodel.*;
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 
-public class TestCommentsTable extends TestCase {
+public class TestCommentsTable {
 
 	private static final String TEST_A2_TEXT = "test A2 text";
 	private static final String TEST_A1_TEXT = "test A1 text";
 	private static final String TEST_AUTHOR = "test author";
 
-	public void testFindAuthor() throws Exception {
+	@Test
+	public void findAuthor() throws Exception {
 		CommentsTable sheetComments = new CommentsTable();
         assertEquals(1, sheetComments.getNumberOfAuthors());
         assertEquals(0, sheetComments.findAuthor(""));
@@ -47,7 +66,8 @@ public class TestCommentsTable extends TestCase {
 		assertEquals(2, sheetComments.findAuthor("another author"));
 	}
 
-	public void testGetCellComment() throws Exception {
+	@Test
+	public void getCellComment() throws Exception {
 		CommentsTable sheetComments = new CommentsTable();
 
 		CTComments comments = sheetComments.getCTComments();
@@ -72,7 +92,8 @@ public class TestCommentsTable extends TestCase {
 	}
 
 
-	public void testExisting() {
+	@Test
+	public void existing() {
 		Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		Sheet sheet1 = workbook.getSheetAt(0);
 		Sheet sheet2 = workbook.getSheetAt(1);
@@ -102,7 +123,8 @@ public class TestCommentsTable extends TestCase {
 		assertEquals(2, cc7.getColumn());
 	}
 
-	public void testWriteRead() {
+	@Test
+	public void writeRead() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
 		XSSFSheet sheet1 = workbook.getSheetAt(0);
 		XSSFSheet sheet2 = workbook.getSheetAt(1);
@@ -150,7 +172,8 @@ public class TestCommentsTable extends TestCase {
 				sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
 	}
 
-	public void testReadWriteMultipleAuthors() {
+	@Test
+	public void readWriteMultipleAuthors() {
 		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
 		XSSFSheet sheet1 = workbook.getSheetAt(0);
 		XSSFSheet sheet2 = workbook.getSheetAt(1);
@@ -185,7 +208,8 @@ public class TestCommentsTable extends TestCase {
 		// Todo - check text too, once bug fixed
 	}
 
-    public void testRemoveComment() throws Exception {
+	@Test
+	public void removeComment() throws Exception {
         CommentsTable sheetComments = new CommentsTable();
         CTComment a1 = sheetComments.newComment("A1");
         CTComment a2 = sheetComments.newComment("A2");
@@ -215,7 +239,8 @@ public class TestCommentsTable extends TestCase {
         assertNull(sheetComments.getCTComment("A3"));
     }
 
-    public void testBug54920() {
+	@Test
+    public void bug54920() throws IOException {
         final Workbook workbook = new XSSFWorkbook();
         final Sheet sheet = workbook.createSheet("sheet01");
         // create anchor
@@ -246,6 +271,8 @@ public class TestCommentsTable extends TestCase {
         commentA1 = A1.getCellComment();
         assertNotNull("Should still find the previous comment in A1, but had null", commentA1);
         assertEquals("should find correct comment in A1, but had null: " + commentA1, "for A1", commentA1.getString().getString());
+        
+        workbook.close();
     }
     
     // Set the comment on a sheet

@@ -17,15 +17,26 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.apache.poi.util.Units.EMU_PER_PIXEL;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.util.Units;
+import org.junit.Test;
 
 /**
  * Common superclass for testing implementations of
  * {@link Comment}
  */
-public abstract class BaseTestCellComment extends TestCase {
+public abstract class BaseTestCellComment {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -33,7 +44,8 @@ public abstract class BaseTestCellComment extends TestCase {
         _testDataProvider = testDataProvider;
     }
 
-    public final void testFind() {
+    @Test
+    public final void find() {
         Workbook book = _testDataProvider.createWorkbook();
         Sheet sheet = book.createSheet();
         assertNull(sheet.getCellComment(0, 0));
@@ -44,7 +56,8 @@ public abstract class BaseTestCellComment extends TestCase {
         assertNull(cell.getCellComment());
     }
 
-    public final void testCreate() {
+    @Test
+    public final void create() {
         String cellText = "Hello, World";
         String commentText = "We can set comments in POI";
         String commentAuthor = "Apache Software Foundation";
@@ -118,7 +131,8 @@ public abstract class BaseTestCellComment extends TestCase {
     /**
      * test that we can read cell comments from an existing workbook.
      */
-    public final void testReadComments() {
+    @Test
+    public final void readComments() {
 
         Workbook wb = _testDataProvider.openSampleWorkbook("SimpleWithComments." + _testDataProvider.getStandardFileNameExtension());
 
@@ -154,7 +168,8 @@ public abstract class BaseTestCellComment extends TestCase {
     /**
      * test that we can modify existing cell comments
      */
-    public final void testModifyComments() {
+    @Test
+    public final void modifyComments() {
 
         Workbook wb = _testDataProvider.openSampleWorkbook("SimpleWithComments." + _testDataProvider.getStandardFileNameExtension());
         CreationHelper factory = wb.getCreationHelper();
@@ -186,7 +201,8 @@ public abstract class BaseTestCellComment extends TestCase {
         }
     }
 
-    public final void testDeleteComments() {
+    @Test
+    public final void deleteComments() {
         Workbook wb = _testDataProvider.openSampleWorkbook("SimpleWithComments." + _testDataProvider.getStandardFileNameExtension());
         Sheet sheet = wb.getSheetAt(0);
 
@@ -215,7 +231,8 @@ public abstract class BaseTestCellComment extends TestCase {
     /**
      * code from the quick guide
      */
-    public void testQuickGuide(){
+    @Test
+    public void quickGuide(){
         Workbook wb = _testDataProvider.createWorkbook();
 
         CreationHelper factory = wb.getCreationHelper();
@@ -244,5 +261,78 @@ public abstract class BaseTestCellComment extends TestCase {
         assertEquals("Apache POI", comment.getAuthor());
         assertEquals(3, comment.getRow());
         assertEquals(5, comment.getColumn());
+    }
+
+    @Test
+    public void getClientAnchor() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(10);
+        Cell cell = row.createCell(5);
+        CreationHelper factory = wb.getCreationHelper();
+        
+        Drawing drawing = sheet.createDrawingPatriarch();
+        
+        double r_mul, c_mul;
+        if (sheet instanceof HSSFSheet) {
+            double rowheight = Units.toEMU(row.getHeightInPoints())/EMU_PER_PIXEL;
+            r_mul = 256.0/rowheight;
+            double colwidth = sheet.getColumnWidthInPixels(2);
+            c_mul = 1024.0/colwidth;
+        } else {
+            r_mul = c_mul = EMU_PER_PIXEL;
+        }
+
+        int dx1 = (int)Math.round(10*c_mul);
+        int dy1 = (int)Math.round(10*r_mul);
+        int dx2 = (int)Math.round(3*c_mul);
+        int dy2 = (int)Math.round(4*r_mul);
+        int col1 = cell.getColumnIndex()+1;
+        int row1 = row.getRowNum();
+        int col2 = cell.getColumnIndex()+2;
+        int row2 = row.getRowNum()+1;
+        
+        ClientAnchor anchor = drawing.createAnchor(dx1, dy1, dx2, dy2, col1, row1, col2, row2);
+        Comment comment = drawing.createCellComment(anchor);
+        comment.setVisible(true);
+        cell.setCellComment(comment);
+        
+        anchor = comment.getClientAnchor();
+        assertEquals(dx1, anchor.getDx1());
+        assertEquals(dy1, anchor.getDy1());
+        assertEquals(dx2, anchor.getDx2());
+        assertEquals(dy2, anchor.getDy2());
+        assertEquals(col1, anchor.getCol1());
+        assertEquals(row1, anchor.getRow1());
+        assertEquals(col2, anchor.getCol2());
+        assertEquals(row2, anchor.getRow2());
+
+        anchor = factory.createClientAnchor();
+        comment = drawing.createCellComment(anchor);
+        cell.setCellComment(comment);
+        anchor = comment.getClientAnchor();
+        
+        if (sheet instanceof HSSFSheet) {
+            assertEquals(0, anchor.getCol1());
+            assertEquals(0, anchor.getDx1());
+            assertEquals(0, anchor.getRow1());
+            assertEquals(0, anchor.getDy1());
+            assertEquals(0, anchor.getCol2());
+            assertEquals(0, anchor.getDx2());
+            assertEquals(0, anchor.getRow2());
+            assertEquals(0, anchor.getDy2());            
+        } else {
+            // when anchor is initialized without parameters, the comment anchor attributes default to
+            // "1, 15, 0, 2, 3, 15, 3, 16" ... see XSSFVMLDrawing.newCommentShape()
+            assertEquals( 1, anchor.getCol1());
+            assertEquals(15*EMU_PER_PIXEL, anchor.getDx1());
+            assertEquals( 0, anchor.getRow1());
+            assertEquals( 2*EMU_PER_PIXEL, anchor.getDy1());
+            assertEquals( 3, anchor.getCol2());
+            assertEquals(15*EMU_PER_PIXEL, anchor.getDx2());
+            assertEquals( 3, anchor.getRow2());
+            assertEquals(16*EMU_PER_PIXEL, anchor.getDy2());
+        }
     }
 }

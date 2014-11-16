@@ -17,15 +17,20 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.usermodel.BaseTestCellComment;
-import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.xmlbeans.XmlObject;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 
@@ -45,7 +50,8 @@ public final class TestXSSFComment extends BaseTestCellComment  {
     /**
      * test properties of a newly constructed comment
      */
-    public void testConstructor() {
+    @Test
+    public void constructor() {
         CommentsTable sheetComments = new CommentsTable();
         assertNotNull(sheetComments.getCTComments().getCommentList());
         assertNotNull(sheetComments.getCTComments().getAuthors());
@@ -63,7 +69,8 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertEquals(false, comment.isVisible());
     }
 
-    public void testGetSetCol() {
+    @Test
+    public void getSetCol() {
         CommentsTable sheetComments = new CommentsTable();
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         CTComment ctComment = sheetComments.newComment("A1");
@@ -81,7 +88,8 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertEquals(5, vmlShape.getClientDataArray(0).getColumnArray(0).intValue());
     }
 
-    public void testGetSetRow() {
+    @Test
+    public void getSetRow() {
         CommentsTable sheetComments = new CommentsTable();
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         CTComment ctComment = sheetComments.newComment("A1");
@@ -99,7 +107,8 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertEquals(5, vmlShape.getClientDataArray(0).getRowArray(0).intValue());
     }
 
-    public void testSetString() {
+    @Test
+    public void setString() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sh = wb.createSheet();
         XSSFComment comment = sh.createDrawingPatriarch().createCellComment(new XSSFClientAnchor());
@@ -145,14 +154,15 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         //check that the rich text is set in the comment
         CTRPrElt rPr = richText.getCTRst().getRArray(0).getRPr();
         assertEquals(true, rPr.getIArray(0).getVal());
-        assertEquals(8.5, rPr.getSzArray(0).getVal());
+        assertEquals(8.5, rPr.getSzArray(0).getVal(), 0);
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), rPr.getColorArray(0).getIndexed());
         assertEquals("Tahoma", rPr.getRFontArray(0).getVal());
         
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
-    public void testAuthor() {
+    @Test
+    public void author() {
         CommentsTable sheetComments = new CommentsTable();
         CTComment ctComment = sheetComments.newComment("A1");
 
@@ -167,35 +177,5 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         comment.setAuthor("");
         assertEquals("", comment.getAuthor());
         assertEquals(2, sheetComments.getNumberOfAuthors());
-    }
-
-    public void testGetClientAnchor() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        XSSFComment comment;
-        ClientAnchor anchor;
-
-        comment = drawing.createCellComment(new XSSFClientAnchor(101, 102, 103, 104, 1, 2, 3, 4));
-        anchor = comment.getClientAnchor();
-        assertEquals(0, anchor.getDx1());
-        assertEquals(0, anchor.getDy1());
-        assertEquals(0, anchor.getDx2());
-        assertEquals(0, anchor.getDy2());
-        assertEquals(1, anchor.getCol1());
-        assertEquals(2, anchor.getRow1());
-        assertEquals(3, anchor.getCol2());
-        assertEquals(4, anchor.getRow2());
-
-        comment = drawing.createCellComment(new XSSFClientAnchor());
-        anchor = comment.getClientAnchor();
-        assertEquals(0, anchor.getDx1());
-        assertEquals(0, anchor.getDy1());
-        assertEquals(0, anchor.getDx2());
-        assertEquals(0, anchor.getDy2());
-        assertEquals(1, anchor.getCol1());
-        assertEquals(0, anchor.getRow1());
-        assertEquals(3, anchor.getCol2());
-        assertEquals(3, anchor.getRow2());
     }
 }
