@@ -22,7 +22,7 @@
 #    <server>
 #      <id>apache-releases</id>
 #      <username>apacheId</username>
-#      <privateKey>/path/to/private/key</privateKey>
+#      <password>mySecurePassw0rd</password>
 #    </server>
 #
 #   <profiles>
@@ -38,33 +38,25 @@
 #   1. ant dist
 #   2. cd build/dist
 #   3. ./mvn-deploy.sh 
-# @author Yegor Kozlov
 
-M2_REPOSITORY=scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository
-M2_SCP=people.apache.org:/www/people.apache.org/repo/m2-ibiblio-rsync-repository
+M2_REPOSITORY=M2_REPOSITORY=https://repository.apache.org/service/local/staging/deploy/maven2
 
 VERSION=@VERSION@
 DSTAMP=@DSTAMP@
 
 for artifactId in poi poi-scratchpad poi-ooxml poi-examples poi-ooxml-schemas poi-excelant
 do
-  mvn gpg:sign-and-deploy-file -DrepositoryId=apache-releases -P apache-releases \
-    -Durl=$M2_REPOSITORY \
-    -Dfile=$artifactId-$VERSION-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
-  #The maven sign-and-deploy-file command does NOT sign POM files, so we have to upload the POM's .asc manually
-  scp $artifactId-$VERSION.pom.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/
-
+  SENDS="-Dfile=$artifactId-$VERSION-$DSTAMP.jar"
+  SENDS="$SENDS -DpomFile=$artifactId-$VERSION.pom"
   if [ -r $artifactId-$VERSION-sources-$DSTAMP.jar ]; then
-    mvn deploy:deploy-file -DrepositoryId=apache-releases -P apache-releases \
-      -Durl=$M2_REPOSITORY -DgeneratePom=false -Dpackaging=java-source \
-      -Dfile=$artifactId-$VERSION-sources-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
-    scp $artifactId-$VERSION-sources-$DSTAMP.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/$artifactId-$VERSION-sources.jar.asc
+     SENDS="$SENDS -Dsources=$artifactId-$VERSION-sources-$DSTAMP.jar"
+  fi
+  if [ -r $artifactId-$VERSION-javadocs-$DSTAMP.jar ]; then
+     SENDS="$SENDS -Dsources=$artifactId-$VERSION-javadocs-$DSTAMP.jar"
   fi
 
-  if [ -r $artifactId-$VERSION-javadocs-$DSTAMP.jar ]; then
-    mvn deploy:deploy-file -DrepositoryId=apache-releases -P apache-releases \
-      -Durl=$M2_REPOSITORY -DgeneratePom=false -Dpackaging=javadoc \
-      -Dfile=$artifactId-$VERSION-javadocs-$DSTAMP.jar -DpomFile=$artifactId-$VERSION.pom
-    scp $artifactId-$VERSION-javadocs-$DSTAMP.jar.asc $M2_SCP/org/apache/poi/$artifactId/$VERSION/$artifactId-$VERSION-javadocs.jar.asc
-  fi
+  mvn gpg:sign-and-deploy-file \
+    -DrepositoryId=apache-releases -P apache-releases \
+    -Durl=$M2_REPOSITORY \
+    $SENDS
 done
