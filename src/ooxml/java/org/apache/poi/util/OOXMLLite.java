@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -133,10 +134,11 @@ public final class OOXMLLite {
         //finally copy the compiled .xsb files
         System.out.println("Copying .xsb resources");
         JarFile jar = new  JarFile(_ooxmlJar);
+        Pattern p = Pattern.compile("schemaorg_apache_xmlbeans/(system|element)/.*\\.xsb");
         try {
             for(Enumeration<JarEntry> e = jar.entries(); e.hasMoreElements(); ){
                 JarEntry je = e.nextElement();
-                if(je.getName().matches("schemaorg_apache_xmlbeans/system/\\w+/\\w+\\.xsb")) {
+                if(p.matcher(je.getName()).matches()) {
                      File destFile = new File(_destDest, je.getName());
                      copyFile(jar.getInputStream(je), destFile);
                 }
