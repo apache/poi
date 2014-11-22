@@ -217,7 +217,10 @@ public class SignatureInfo implements SignatureConfigurable {
         
         /**
          * @return true, when the xml signature is valid, false otherwise
+         * 
+         * @throws EncryptedDocumentException if the signature can't be extracted or if its malformed
          */
+        @SuppressWarnings("unchecked")
         public boolean validate() {
             KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
             try {
@@ -259,8 +262,9 @@ public class SignatureInfo implements SignatureConfigurable {
                 
                 return valid;
             } catch (Exception e) {
-                LOG.log(POILogger.ERROR, "error in marshalling and validating the signature", e);
-                return false;
+                String s = "error in marshalling and validating the signature";
+                LOG.log(POILogger.ERROR, s, e);
+                throw new EncryptedDocumentException(s, e);
             }
         }
     }
