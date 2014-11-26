@@ -95,8 +95,7 @@ public final class ChunkFactory {
 				defsL.add(def);
 			}
 
-			CommandDefinition[] defs = (CommandDefinition[])
-				defsL.toArray(new CommandDefinition[defsL.size()]);
+			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[defsL.size()]);
 
 			// Add to the hashtable
 			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);
@@ -128,7 +127,7 @@ public final class ChunkFactory {
 		//  as required
 		if(endOfDataPos > data.length) {
 			logger.log(POILogger.WARN,
-				"Header called for " + header.getLength() +" bytes, but that would take us passed the end of the data!");
+				"Header called for " + header.getLength() +" bytes, but that would take us past the end of the data!");
 
 			endOfDataPos = data.length;
 			header.length = data.length - offset - header.getSizeInBytes();
@@ -171,8 +170,7 @@ public final class ChunkFactory {
 		Chunk chunk = new Chunk(header, trailer, separator, contents);
 
 		// Feed in the stuff from  chunks_parse_cmds.tbl
-		CommandDefinition[] defs = (CommandDefinition[])
-			chunkCommandDefinitions.get(Integer.valueOf(header.getType()));
+		CommandDefinition[] defs = chunkCommandDefinitions.get(Integer.valueOf(header.getType()));
 		if(defs == null) defs = new CommandDefinition[0];
 		chunk.commandDefinitions = defs;
 
