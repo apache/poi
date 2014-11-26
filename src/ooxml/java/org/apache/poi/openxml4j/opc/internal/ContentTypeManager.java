@@ -101,8 +101,12 @@ public abstract class ContentTypeManager {
 			try {
 				parseContentTypesFile(in);
 			} catch (InvalidFormatException e) {
-				throw new InvalidFormatException(
-						"Can't read content types part !");
+			    InvalidFormatException ex = new InvalidFormatException("Can't read content types part !");
+
+                // here it is useful to add the cause to not loose the original stack-trace
+                ex.initCause(e);
+		        
+                throw ex;
 			}
 		}
 	}
