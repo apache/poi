@@ -64,7 +64,7 @@ public enum CipherAlgorithm {
         for (CipherAlgorithm ca : CipherAlgorithm.values()) {
             if (ca.ecmaId == ecmaId) return ca;
         }
-        throw new EncryptedDocumentException("cipher algorithm not found");
+        throw new EncryptedDocumentException("cipher algorithm " + ecmaId + " not found");
     }
     
     public static CipherAlgorithm fromXmlId(String xmlId, int keySize) {
@@ -74,8 +74,6 @@ public enum CipherAlgorithm {
                 if (ks == keySize) return ca;
             }
         }
-        throw new EncryptedDocumentException("cipher algorithm not found");
+        throw new EncryptedDocumentException("cipher algorithm " + xmlId + "/" + keySize + " not found");
     }
-    
-
 }
