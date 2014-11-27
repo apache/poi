@@ -24,68 +24,7 @@ import java.util.TreeSet;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.Address;
-import org.apache.poi.ss.formula.functions.AggregateFunction;
-import org.apache.poi.ss.formula.functions.BooleanFunction;
-import org.apache.poi.ss.formula.functions.CalendarFieldFunction;
-import org.apache.poi.ss.formula.functions.Choose;
-import org.apache.poi.ss.formula.functions.Code;
-import org.apache.poi.ss.formula.functions.Column;
-import org.apache.poi.ss.formula.functions.Columns;
-import org.apache.poi.ss.formula.functions.Count;
-import org.apache.poi.ss.formula.functions.Counta;
-import org.apache.poi.ss.formula.functions.Countblank;
-import org.apache.poi.ss.formula.functions.Countif;
-import org.apache.poi.ss.formula.functions.DateFunc;
-import org.apache.poi.ss.formula.functions.Days360;
-import org.apache.poi.ss.formula.functions.Errortype;
-import org.apache.poi.ss.formula.functions.Even;
-import org.apache.poi.ss.formula.functions.FinanceFunction;
-import org.apache.poi.ss.formula.functions.Fixed;
-import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.formula.functions.Hlookup;
-import org.apache.poi.ss.formula.functions.Hyperlink;
-import org.apache.poi.ss.formula.functions.IPMT;
-import org.apache.poi.ss.formula.functions.IfFunc;
-import org.apache.poi.ss.formula.functions.Index;
-import org.apache.poi.ss.formula.functions.Intercept;
-import org.apache.poi.ss.formula.functions.Irr;
-import org.apache.poi.ss.formula.functions.LogicalFunction;
-import org.apache.poi.ss.formula.functions.Lookup;
-import org.apache.poi.ss.formula.functions.Match;
-import org.apache.poi.ss.formula.functions.MinaMaxa;
-import org.apache.poi.ss.formula.functions.Mirr;
-import org.apache.poi.ss.formula.functions.Mode;
-import org.apache.poi.ss.formula.functions.Na;
-import org.apache.poi.ss.formula.functions.NotImplementedFunction;
-import org.apache.poi.ss.formula.functions.Now;
-import org.apache.poi.ss.formula.functions.Npv;
-import org.apache.poi.ss.formula.functions.NumericFunction;
-import org.apache.poi.ss.formula.functions.Odd;
-import org.apache.poi.ss.formula.functions.Offset;
-import org.apache.poi.ss.formula.functions.PPMT;
-import org.apache.poi.ss.formula.functions.Rank;
-import org.apache.poi.ss.formula.functions.Rate;
-import org.apache.poi.ss.formula.functions.Replace;
-import org.apache.poi.ss.formula.functions.Rept;
-import org.apache.poi.ss.formula.functions.Roman;
-import org.apache.poi.ss.formula.functions.RowFunc;
-import org.apache.poi.ss.formula.functions.Rows;
-import org.apache.poi.ss.formula.functions.Slope;
-import org.apache.poi.ss.formula.functions.Substitute;
-import org.apache.poi.ss.formula.functions.Subtotal;
-import org.apache.poi.ss.formula.functions.Sumif;
-import org.apache.poi.ss.formula.functions.Sumproduct;
-import org.apache.poi.ss.formula.functions.Sumx2my2;
-import org.apache.poi.ss.formula.functions.Sumx2py2;
-import org.apache.poi.ss.formula.functions.Sumxmy2;
-import org.apache.poi.ss.formula.functions.T;
-import org.apache.poi.ss.formula.functions.TextFunction;
-import org.apache.poi.ss.formula.functions.TimeFunc;
-import org.apache.poi.ss.formula.functions.Today;
-import org.apache.poi.ss.formula.functions.Value;
-import org.apache.poi.ss.formula.functions.Vlookup;
-import org.apache.poi.ss.formula.functions.WeekdayFunc;
+import org.apache.poi.ss.formula.functions.*;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -109,8 +48,6 @@ public final class FunctionEval {
         /** 255 */
         public static final int EXTERNAL_FUNC = FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL;
     }
-    // convenient access to namespace
-    private static final FunctionID ID = null;
 
     /**
      * Array elements corresponding to unimplemented functions are <code>null</code>
@@ -121,10 +58,10 @@ public final class FunctionEval {
         Function[] retval = new Function[368];
 
         retval[0] = new Count();
-        retval[ID.IF] = new IfFunc();
+        retval[FunctionID.IF] = new IfFunc();
         retval[2] = LogicalFunction.ISNA;
         retval[3] = LogicalFunction.ISERROR;
-        retval[ID.SUM] = AggregateFunction.SUM;
+        retval[FunctionID.SUM] = AggregateFunction.SUM;
         retval[5] = AggregateFunction.AVERAGE;
         retval[6] = AggregateFunction.MIN;
         retval[7] = AggregateFunction.MAX;
@@ -151,7 +88,6 @@ public final class FunctionEval {
         retval[28] = new Lookup();
         retval[29] = new Index();
         retval[30] = new Rept();
-
         retval[31] = TextFunction.MID;
         retval[32] = TextFunction.LEN;
         retval[33] = new Value();
@@ -169,10 +105,8 @@ public final class FunctionEval {
         retval[57] = FinanceFunction.FV;
         retval[58] = FinanceFunction.NPER;
         retval[59] = FinanceFunction.PMT;
-
         retval[60] = new Rate();
         retval[61] = new Mirr();
-
         retval[62] = new Irr();
         retval[63] = NumericFunction.RAND;
         retval[64] = new Match();
@@ -181,7 +115,6 @@ public final class FunctionEval {
         retval[67] = CalendarFieldFunction.DAY;
         retval[68] = CalendarFieldFunction.MONTH;
         retval[69] = CalendarFieldFunction.YEAR;
-
         retval[70] = WeekdayFunc.instance;
         retval[71] = CalendarFieldFunction.HOUR;
         retval[72] = CalendarFieldFunction.MINUTE;
@@ -191,13 +124,13 @@ public final class FunctionEval {
         retval[76] = new Rows();
         retval[77] = new Columns();
         retval[82] = TextFunction.SEARCH;
-        retval[ID.OFFSET] = new Offset();
+        retval[FunctionID.OFFSET] = new Offset();
         retval[82] = TextFunction.SEARCH;
 
         retval[97] = NumericFunction.ATAN2;
         retval[98] = NumericFunction.ASIN;
         retval[99] = NumericFunction.ACOS;
-        retval[ID.CHOOSE] = new Choose();
+        retval[FunctionID.CHOOSE] = new Choose();
         retval[101] = new Hlookup();
         retval[102] = new Vlookup();
 
@@ -224,7 +157,8 @@ public final class FunctionEval {
         retval[129] = LogicalFunction.ISBLANK;
         retval[130] = new T();
 
-        retval[ID.INDIRECT] = null; // Indirect.evaluate has different signature
+        retval[FunctionID.INDIRECT] = null; // Indirect.evaluate has different signature
+
         retval[162] = TextFunction.CLEAN;  //Aniket Banerjee    
         retval[167] = new IPMT();
         retval[168] = new PPMT();
@@ -254,7 +188,7 @@ public final class FunctionEval {
         retval[233] = NumericFunction.ACOSH;
         retval[234] = NumericFunction.ATANH;
 
-        retval[ID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
+        retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
 
         retval[261] = new Errortype();
 
@@ -351,9 +285,9 @@ public final class FunctionEval {
             if(AnalysisToolPak.isATPFunction(name)) {
                 throw new IllegalArgumentException(name + " is a function from the Excel Analysis Toolpack. " +
                         "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.");
-            } else {
-                throw new IllegalArgumentException("Unknown function: " + name);
             }
+            
+            throw new IllegalArgumentException("Unknown function: " + name);
         }
 
         int idx = metaData.getIndex();
