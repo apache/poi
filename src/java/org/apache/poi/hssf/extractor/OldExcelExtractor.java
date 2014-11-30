@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.CodepageRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
@@ -37,6 +38,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
@@ -65,12 +67,10 @@ public class OldExcelExtractor {
     public OldExcelExtractor(File f) throws IOException {
         try {
             open(new NPOIFSFileSystem(f));
-        } catch (IOException e) {
-            if (e.getMessage().startsWith("Invalid header signature")) {
-                open(new FileInputStream(f));
-            } else {
-                throw e;
-            }
+        } catch (OldExcelFormatException oe) {
+            open(new FileInputStream(f));
+        } catch (NotOLE2FileException e) {
+            open(new FileInputStream(f));
         }
     }
     public OldExcelExtractor(NPOIFSFileSystem fs) throws IOException {
