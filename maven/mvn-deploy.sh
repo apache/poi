@@ -39,7 +39,7 @@
 #   2. cd build/dist
 #   3. ./mvn-deploy.sh 
 
-M2_REPOSITORY=M2_REPOSITORY=https://repository.apache.org/service/local/staging/deploy/maven2
+M2_REPOSITORY=https://repository.apache.org/service/local/staging/deploy/maven2
 
 VERSION=@VERSION@
 DSTAMP=@DSTAMP@
