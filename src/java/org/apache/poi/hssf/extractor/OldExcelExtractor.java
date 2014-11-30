@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.OldFormulaRecord;
 import org.apache.poi.hssf.record.OldLabelRecord;
+import org.apache.poi.hssf.record.OldSheetRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -140,6 +141,15 @@ public class OldExcelExtractor {
             ris.nextRecord();
 
             switch (sid) {
+                // Biff 5+ only, no sheet names in older formats
+                case OldSheetRecord.sid:
+                    OldSheetRecord shr = new OldSheetRecord(ris);
+                    shr.setCodePage(codepage);
+                    text.append("Sheet: ");
+                    text.append(shr.getSheetname());
+                    text.append('\n');
+                    break;
+            
                 // label - 5.63 - TODO Needs codepages
                 case OldLabelRecord.biff2_sid:
                 case OldLabelRecord.biff345_sid:

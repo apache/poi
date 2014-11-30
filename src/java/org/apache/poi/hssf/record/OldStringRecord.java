@@ -80,8 +80,7 @@ public final class OldStringRecord {
         try {
             return CodePageUtil.getStringFromCodePage(data, cp);
         } catch (UnsupportedEncodingException uee) {
-            // Hope the system default is ok...
-            return new String(data);
+            throw new IllegalArgumentException("Unsupported codepage requested", uee);
         }
     }
 
