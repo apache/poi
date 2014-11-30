@@ -22,9 +22,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.record.LabelRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.OldLabelRecord;
+import org.apache.poi.hssf.record.OldStringRecord;
+import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * A text extractor for very old (pre-OLE2) Excel files,
@@ -76,20 +80,44 @@ public class OldExcelExtractor {
             ris.nextRecord();
 
             switch (sid) {
-                case LabelRecord.sid:
+                // label - 5.63 - TODO Needs codepages
+                case OldLabelRecord.biff2_sid:
+                case OldLabelRecord.biff345_sid:
                     OldLabelRecord lr = new OldLabelRecord(ris);
                     text.append(lr.getValue());
                     text.append('\n');
                     break;
+                // string - 5.102 - TODO Needs codepages
+                case OldStringRecord.biff2_sid:
+                case OldStringRecord.biff345_sid:
+                    OldStringRecord sr = new OldStringRecord(ris);
+                    text.append(sr.getString());
+                    text.append('\n');
+                    break;
+                // number - 5.71 - TODO Needs format strings
+                case NumberRecord.sid:
+                    NumberRecord nr = new NumberRecord(ris);
+                    text.append(nr.getValue());
+                    text.append('\n');
+                    break;
+/*                    
+                case OldFormulaRecord.sid:
+                    FormulaRecord fr = new FormulaRecord(ris);
+System.out.println(fr.getCachedResultType());                    
+                    if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                        text.append(fr.getValue());
+                        text.append('\n');
+                    }
+*/
+                case RKRecord.sid:
+                    RKRecord rr = new RKRecord(ris);
+                    text.append(rr.getRKNumber());
+                    text.append('\n');
+                    break;
                 default:
                     ris.readFully(new byte[ris.remaining()]);
+      //              text.append(" = " + ris.getSid() + " = \n");
             }
-
-            // label - 5.63 - TODO Needs codepages
-            // number - 5.71
-            // rk - 5.87
-            // string - 5.102
-
         }
 
         return text.toString();
