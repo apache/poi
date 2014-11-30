@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.FormulaRecord.SpecialCachedValue;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 
@@ -30,6 +32,7 @@ public final class OldFormulaRecord extends OldCellRecord {
     public final static short biff4_sid = 0x0406;
     public final static short biff5_sid = 0x0006;
 
+    private SpecialCachedValue specialCachedValue;
     private double  field_4_value;
     private short   field_5_options;
     private Formula field_6_parsed_expr;
@@ -37,8 +40,15 @@ public final class OldFormulaRecord extends OldCellRecord {
     public OldFormulaRecord(RecordInputStream ris) {
         super(ris, ris.getSid() == biff2_sid);
 
-        // TODO Handle special cached values, for Biff 3+
-        field_4_value = ris.readDouble();
+        if (isBiff2()) {
+            field_4_value = ris.readDouble();
+        } else {
+            long valueLongBits  = ris.readLong();
+            specialCachedValue = SpecialCachedValue.create(valueLongBits);
+            if (specialCachedValue == null) {
+                field_4_value = Double.longBitsToDouble(valueLongBits);
+            }
+        }
 
         if (isBiff2()) {
             field_5_options = (short)ris.readUByte();
@@ -51,6 +61,20 @@ public final class OldFormulaRecord extends OldCellRecord {
         field_6_parsed_expr = Formula.read(expression_len, ris, nBytesAvailable);
     }
 
+    public int getCachedResultType() {
+        if (specialCachedValue == null) {
+            return HSSFCell.CELL_TYPE_NUMERIC;
+        }
+        return specialCachedValue.getValueType();
+    }
+    
+    public boolean getCachedBooleanValue() {
+        return specialCachedValue.getBooleanValue();
+    }
+    public int getCachedErrorValue() {
+        return specialCachedValue.getErrorValue();
+    }
+    
     /**
      * get the calculated value of the formula
      *
