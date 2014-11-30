@@ -24,6 +24,7 @@ import java.io.InputStream;
 
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.OldFormulaRecord;
 import org.apache.poi.hssf.record.OldLabelRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
@@ -100,15 +101,15 @@ public class OldExcelExtractor {
                     text.append(nr.getValue());
                     text.append('\n');
                     break;
-/*                    
-                case OldFormulaRecord.sid:
-                    FormulaRecord fr = new FormulaRecord(ris);
-System.out.println(fr.getCachedResultType());                    
-                    if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                case OldFormulaRecord.biff2_sid:
+                case OldFormulaRecord.biff3_sid:
+                case OldFormulaRecord.biff4_sid:
+                    OldFormulaRecord fr = new OldFormulaRecord(ris);
+//                  if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
                         text.append(fr.getValue());
                         text.append('\n');
-                    }
-*/
+//                  }
+                    break;
                 case RKRecord.sid:
                     RKRecord rr = new RKRecord(ris);
                     text.append(rr.getRKNumber());

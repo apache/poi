@@ -65,7 +65,7 @@ public final class TestOldExcelExtractor extends TestCase {
         assertTrue(text, text.contains("$100,000 or more"));
         assertTrue(text, text.contains("S corporation returns, Form 1120S [10,15]"));
         // TODO Get these quotes working correctly
-//        assertTrue(text, text.contains("individual income tax return “short forms.”"));
+//        assertTrue(text, text.contains("individual income tax return \u201Cshort forms.\u201D"));
         
         // Formula based strings
         // TODO Find some then test
