@@ -66,6 +66,9 @@ public final class TestOldExcelExtractor extends POITestCase {
             // Check we find a few numbers we expect in there
             assertContains(text, "15");
             assertContains(text, "169");
+            
+            // Check we got the sheet names (new formats only)
+            assertContains(text, "Sheet: Feuil3");
         }
     }
 
