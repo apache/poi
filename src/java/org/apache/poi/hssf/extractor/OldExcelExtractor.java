@@ -58,11 +58,14 @@ public class OldExcelExtractor {
         }
     }
     public OldExcelExtractor(File f) throws IOException {
-        InputStream input = new FileInputStream(f);
-        if (NPOIFSFileSystem.hasPOIFSHeader(input)) {
+        try {
             open(new NPOIFSFileSystem(f));
-        } else {
-            open(input);
+        } catch (IOException e) {
+            if (e.getMessage().startsWith("Invalid header signature")) {
+                open(new FileInputStream(f));
+            } else {
+                throw e;
+            }
         }
     }
     public OldExcelExtractor(NPOIFSFileSystem fs) throws IOException {

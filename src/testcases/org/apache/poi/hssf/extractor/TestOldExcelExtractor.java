@@ -17,17 +17,17 @@
 
 package org.apache.poi.hssf.extractor;
 
+import java.io.File;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 
 /**
  * Unit tests for the Excel 5/95 and Excel 4 (and older) text 
  *  extractor
  */
-public final class TestOldExcelExtractor extends TestCase {
+public final class TestOldExcelExtractor extends POITestCase {
     private static OldExcelExtractor createExtractor(String sampleFileName) {
         InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 
@@ -37,7 +37,7 @@ public final class TestOldExcelExtractor extends TestCase {
             throw new RuntimeException(e);
         }
     }
-
+    
     public void testSimpleExcel4() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
 
@@ -45,12 +45,12 @@ public final class TestOldExcelExtractor extends TestCase {
         String text = extractor.getText();
 
         // Check we find a few words we expect in there
-        assertTrue(text, text.contains("Size"));
-        assertTrue(text, text.contains("Returns"));
+        assertContains(text, "Size");
+        assertContains(text, "Returns");
         
         // Check we find a few numbers we expect in there
-        assertTrue(text, text.contains("11"));
-        assertTrue(text, text.contains("784"));
+        assertContains(text, "11");
+        assertContains(text, "784");
     }
     public void DISABLEDtestSimpleExcel5() {
         for (String ver : new String[] {"5", "95"}) {
@@ -60,12 +60,12 @@ public final class TestOldExcelExtractor extends TestCase {
             String text = extractor.getText();
     
             // Check we find a few words we expect in there
-            assertTrue(text, text.contains("Sample Excel"));
-            assertTrue(text, text.contains("Written and saved"));
+            assertContains(text, "Sample Excel");
+            assertContains(text, "Written and saved");
             
             // Check we find a few numbers we expect in there
-            assertTrue(text, text.contains("15"));
-            assertTrue(text, text.contains("169"));
+            assertContains(text, "15");
+            assertContains(text, "169");
         }
     }
 
@@ -74,15 +74,15 @@ public final class TestOldExcelExtractor extends TestCase {
         String text = extractor.getText();
 
         // Simple strings
-        assertTrue(text, text.contains("Table 10 -- Examination Coverage:"));
-        assertTrue(text, text.contains("Recommended and Average Recommended Additional Tax After"));
-        assertTrue(text, text.contains("Individual income tax returns, total"));
+        assertContains(text, "Table 10 -- Examination Coverage:");
+        assertContains(text, "Recommended and Average Recommended Additional Tax After");
+        assertContains(text, "Individual income tax returns, total");
         
         // More complicated strings
-        assertTrue(text, text.contains("$100,000 or more"));
-        assertTrue(text, text.contains("S corporation returns, Form 1120S [10,15]"));
+        assertContains(text, "$100,000 or more");
+        assertContains(text, "S corporation returns, Form 1120S [10,15]");
         // TODO Get these quotes working correctly
-//        assertTrue(text, text.contains("individual income tax return \u201Cshort forms.\u201D"));
+//        assertContains(text, "individual income tax return \u201Cshort forms.\u201D");
         
         // Formula based strings
         // TODO Find some then test
@@ -93,17 +93,17 @@ public final class TestOldExcelExtractor extends TestCase {
         String text = extractor.getText();
 
         // Simple numbers
-        assertTrue(text, text.contains("151"));
-        assertTrue(text, text.contains("784"));
+        assertContains(text, "151");
+        assertContains(text, "784");
         
         // Numbers which come from formulas
-        assertTrue(text, text.contains("0.398")); // TODO Rounding
-        assertTrue(text, text.contains("624"));
+        assertContains(text, "0.398"); // TODO Rounding
+        assertContains(text, "624");
         
         // Formatted numbers
         // TODO
-//      assertTrue(text, text.contains("55,624"));
-//      assertTrue(text, text.contains("11,743,477"));
+//      assertContains(text, "55,624");
+//      assertContains(text, "11,743,477");
     }
     public void DISABLEDtestFormattedNumbersExcel5() {
         for (String ver : new String[] {"5", "95"}) {
@@ -111,11 +111,23 @@ public final class TestOldExcelExtractor extends TestCase {
             String text = extractor.getText();
             
             // Simple numbers
-            assertTrue(text, text.contains("1"));
+            assertContains(text, "1");
             
             // Numbers which come from formulas
-            assertTrue(text, text.contains("13"));
-            assertTrue(text, text.contains("169"));
+            assertContains(text, "13");
+            assertContains(text, "169");
+        }
+    }
+    
+    public void testFromFile() throws Exception {
+        for (String ver : new String[] {"4", "5", "95"}) {
+            String filename = "testEXCEL_"+ver+".xls";
+            File f = HSSFTestDataSamples.getSampleFile(filename);
+            
+            OldExcelExtractor extractor = new OldExcelExtractor(f);
+            String text = extractor.getText();
+            assertNotNull(text);
+            assertTrue(text.length() > 100);
         }
     }
 }
