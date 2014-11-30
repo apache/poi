@@ -81,8 +81,7 @@ public final class TestOldExcelExtractor extends POITestCase {
         // More complicated strings
         assertContains(text, "$100,000 or more");
         assertContains(text, "S corporation returns, Form 1120S [10,15]");
-        // TODO Get these quotes working correctly
-//        assertContains(text, "individual income tax return \u201Cshort forms.\u201D");
+        assertContains(text, "individual income tax return \u201Cshort forms.\u201D");
         
         // Formula based strings
         // TODO Find some then test
