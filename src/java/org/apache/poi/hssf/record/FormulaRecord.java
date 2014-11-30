@@ -36,6 +36,7 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class FormulaRecord extends CellRecord {
 
 	public static final short sid = 0x0006;   // docs say 406...because of a bug Microsoft support site article #Q184647)
+	public static final short olderSid = 0x0406; // older biff versions do manage 406! 
 	private static int FIXED_SIZE = 14; // double + short + int
 
 	private static final BitField alwaysCalc = BitFieldFactory.getInstance(0x0001);

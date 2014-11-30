@@ -39,7 +39,7 @@ public final class OldLabelRecord extends Record implements CellValueRecordInter
     private short             field_3_xf_index;   // Biff 3+
     private short             field_4_string_len;
     private byte[]            field_5_bytes;
-    //private XXXXX           codepage; // TODO
+    //private XXXXX           codepage; // TODO Implement for this and OldStringRecord
 
     /**
      * @param in the RecordInputstream to read the record from

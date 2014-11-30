@@ -46,7 +46,45 @@ public final class TestOldExcelExtractor extends TestCase {
         // Check we find a few words we expect in there
         assertTrue(text, text.contains("Size"));
         assertTrue(text, text.contains("Returns"));
+        
+        // Check we find a few numbers we expect in there
+        assertTrue(text, text.contains("11"));
+        assertTrue(text, text.contains("784"));
     }
 
-    // TODO Rest of the tests
+    public void testStrings() {
+        OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
+        String text = extractor.getText();
+
+        // Simple strings
+        assertTrue(text, text.contains("Table 10 -- Examination Coverage:"));
+        assertTrue(text, text.contains("Recommended and Average Recommended Additional Tax After"));
+        assertTrue(text, text.contains("Individual income tax returns, total"));
+        
+        // More complicated strings
+        assertTrue(text, text.contains("$100,000 or more"));
+        assertTrue(text, text.contains("S corporation returns, Form 1120S [10,15]"));
+        // TODO Get these quotes working correctly
+//        assertTrue(text, text.contains("individual income tax return “short forms.”"));
+        
+        // Formula based strings
+        // TODO Find some then test
+    }
+
+    public void testFormattedNumbers() {
+        OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
+        String text = extractor.getText();
+
+        // Simple numbers
+        assertTrue(text, text.contains("151"));
+        assertTrue(text, text.contains("784"));
+        
+        // Numbers which come from formulas
+        // TODO
+//        assertTrue(text, text.contains("0.40"));
+//        assertTrue(text, text.contains("624"));
+        
+        // Formatted numbers
+        // TODO
+    }
 }
