@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.extractor;
 
+import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,11 +30,15 @@ import org.apache.poi.hssf.record.OldLabelRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 
 /**
- * A text extractor for very old (pre-OLE2) Excel files,
- *  such as Excel 4 files.
+ * A text extractor for old Excel files, which are too old for
+ *  HSSFWorkbook to handle. This includes Excel 95, and very old 
+ *  (pre-OLE2) Excel files, such as Excel 4 files.
  * <p>
  * Returns much (but not all) of the textual content of the file, 
  *  suitable for indexing by something like Apache Lucene, or used
@@ -40,13 +46,47 @@ import org.apache.poi.ss.usermodel.Cell;
  * </p>
  */
 public class OldExcelExtractor {
-    private InputStream input;
+    private RecordInputStream ris;
+    private Closeable input;
 
-    public OldExcelExtractor(InputStream input) {
-        this.input = input;
+    public OldExcelExtractor(InputStream input) throws IOException {
+        BufferedInputStream bstream = new BufferedInputStream(input, 8);
+        if (NPOIFSFileSystem.hasPOIFSHeader(bstream)) {
+            open(new NPOIFSFileSystem(bstream));
+        } else {
+            open(bstream);
+        }
     }
     public OldExcelExtractor(File f) throws IOException {
-        this.input = new FileInputStream(f);
+        InputStream input = new FileInputStream(f);
+        if (NPOIFSFileSystem.hasPOIFSHeader(input)) {
+            open(new NPOIFSFileSystem(f));
+        } else {
+            open(input);
+        }
+    }
+    public OldExcelExtractor(NPOIFSFileSystem fs) throws IOException {
+        open(fs);
+    }
+    public OldExcelExtractor(DirectoryNode directory) throws IOException {
+        open(directory);
+    }
+
+    private void open(InputStream biffStream) {
+        input = biffStream;
+        ris = new RecordInputStream(biffStream);
+    }
+    private void open(NPOIFSFileSystem fs) throws IOException {
+        input = fs;
+        open(fs.getRoot());
+    }
+    private void open(DirectoryNode directory) throws IOException {
+        DocumentNode book = (DocumentNode)directory.getEntry("Book");
+        if (book == null) {
+            throw new IOException("No Excel 5/95 Book stream found");
+        }
+        
+        ris = new RecordInputStream(directory.createDocumentInputStream(book));
     }
 
     public static void main(String[] args) throws Exception {
@@ -66,7 +106,6 @@ public class OldExcelExtractor {
     public String getText() {
         StringBuffer text = new StringBuffer();
 
-        RecordInputStream ris = new RecordInputStream(input);
         while (ris.hasNextRecord()) {
             int sid = ris.getNextSid();
             ris.nextRecord();
@@ -108,6 +147,14 @@ public class OldExcelExtractor {
                     ris.readFully(new byte[ris.remaining()]);
             }
         }
+        
+        if (input != null) {
+            try {
+                input.close();
+            } catch (IOException e) {}
+            input = null;
+        }
+        ris = null;
 
         return text.toString();
     }
