@@ -23,8 +23,10 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
@@ -124,20 +126,45 @@ public final class HeaderBlock implements HeaderBlockConstants {
 		if (signature != _signature) {
 			// Is it one of the usual suspects?
 			byte[] OOXML_FILE_HEADER = POIFSConstants.OOXML_FILE_HEADER;
-			if(_data[0] == OOXML_FILE_HEADER[0] &&
+			if (_data[0] == OOXML_FILE_HEADER[0] &&
 				_data[1] == OOXML_FILE_HEADER[1] &&
 				_data[2] == OOXML_FILE_HEADER[2] &&
 				_data[3] == OOXML_FILE_HEADER[3]) {
 				throw new OfficeXmlFileException("The supplied data appears to be in the Office 2007+ XML. You are calling the part of POI that deals with OLE2 Office Documents. You need to call a different part of POI to process this data (eg XSSF instead of HSSF)");
 			}
-			if ((signature & 0xFF8FFFFFFFFFFFFFL) == 0x0010000200040009L) {
-				// BIFF2 raw stream starts with BOF (sid=0x0009, size=0x0004, data=0x00t0)
-				throw new IllegalArgumentException("The supplied data appears to be in BIFF2 format.  "
-						+ "POI only supports BIFF8 format");
-			}
+			
+            if (_data[0] == 0x09 && _data[1] == 0x00 && // sid=0x0009
+                _data[2] == 0x04 && _data[3] == 0x00 && // size=0x0004
+                _data[4] == 0x00 && _data[5] == 0x00 && // unused
+               (_data[6] == 0x01 || _data[6] == 0x02 || _data[6] == 0x04) &&
+                _data[7] == 0x00) {
+                // BIFF2 raw stream
+                throw new OldExcelFormatException("The supplied data appears to be in BIFF2 format. " +
+                        "HSSF only supports the BIFF8 format, try OldExcelExtractor");
+            }
+            if (_data[0] == 0x09 && _data[1] == 0x02 && // sid=0x0209
+                _data[2] == 0x06 && _data[3] == 0x00 && // size=0x0006
+                _data[4] == 0x00 && _data[5] == 0x00 && // unused
+               (_data[6] == 0x01 || _data[6] == 0x02 || _data[6] == 0x04) &&
+                _data[7] == 0x00) {
+                // BIFF3 raw stream
+                throw new OldExcelFormatException("The supplied data appears to be in BIFF3 format. " +
+                        "HSSF only supports the BIFF8 format, try OldExcelExtractor");
+            }
+            if (_data[0] == 0x09 && _data[1] == 0x04 && // sid=0x0409
+                _data[2] == 0x06 && _data[3] == 0x00 && // size=0x0006
+                _data[4] == 0x00 && _data[5] == 0x00) { // unused
+                if (((_data[6] == 0x01 || _data[6] == 0x02 || _data[6] == 0x04) &&
+                      _data[7] == 0x00) ||
+                    (_data[6] == 0x00 && _data[7] == 0x01)) {
+                    // BIFF4 raw stream
+                    throw new OldExcelFormatException("The supplied data appears to be in BIFF4 format. " +
+                            "HSSF only supports the BIFF8 format, try OldExcelExtractor");
+                }
+            }
 
 			// Give a generic error if the OLE2 signature isn't found
-			throw new IOException("Invalid header signature; read "
+			throw new NotOLE2FileException("Invalid header signature; read "
 				                  + longToHex(signature) + ", expected "
 				                  + longToHex(_signature) + " - Your file appears "
 				                  + "not to be a valid OLE2 document");

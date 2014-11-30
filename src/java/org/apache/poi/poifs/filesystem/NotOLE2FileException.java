@@ -17,13 +17,14 @@
         
 package org.apache.poi.poifs.filesystem;
 
+import java.io.IOException;
+
 /**
- * This exception is thrown when we try to open a file that's actually
- *  an Office 2007+ XML file, rather than an OLE2 file (which is what
- *  POIFS works with)
+ * This exception is thrown when we try to open a file that doesn't
+ *  seem to actually be an OLE2 file after all
  */
-public class OfficeXmlFileException extends IllegalArgumentException {
-	public OfficeXmlFileException(String s) {
+public class NotOLE2FileException extends IOException {
+	public NotOLE2FileException(String s) {
 		super(s);
 	}
 }
