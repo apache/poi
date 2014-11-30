@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.OldFormulaRecord;
 import org.apache.poi.hssf.record.OldLabelRecord;
@@ -48,6 +50,7 @@ import org.apache.poi.ss.usermodel.Cell;
 public class OldExcelExtractor {
     private RecordInputStream ris;
     private Closeable input;
+    private int biffVersion;
 
     public OldExcelExtractor(InputStream input) throws IOException {
         BufferedInputStream bstream = new BufferedInputStream(input, 8);
@@ -107,8 +110,26 @@ public class OldExcelExtractor {
      *  for these old file formats
      */
     public String getText() {
-        StringBuffer text = new StringBuffer();
+        // Work out what version we're dealing with
+        int bofSid = ris.getNextSid();
+        switch (bofSid) {
+            case BOFRecord.biff2_sid:
+                biffVersion = 2;
+                break;
+            case BOFRecord.biff3_sid:
+                biffVersion = 3;
+                break;
+            case BOFRecord.biff4_sid:
+                biffVersion = 4;
+                break;
+            case BOFRecord.biff5_sid:
+                biffVersion = 5;
+                break;
+            default:
+                throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid); 
+        }
 
+        StringBuffer text = new StringBuffer();
         while (ris.hasNextRecord()) {
             int sid = ris.getNextSid();
             ris.nextRecord();
@@ -136,9 +157,17 @@ public class OldExcelExtractor {
                 case OldFormulaRecord.biff2_sid:
                 case OldFormulaRecord.biff3_sid:
                 case OldFormulaRecord.biff4_sid:
-                    OldFormulaRecord fr = new OldFormulaRecord(ris);
-                    if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
-                        handleNumericCell(text, fr.getValue());
+                    // Biff 2 and 5+ share the same SID, due to a bug...
+                    if (biffVersion == 5) {
+                        FormulaRecord fr = new FormulaRecord(ris);
+                        if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                            handleNumericCell(text, fr.getValue());
+                        }
+                    } else {
+                        OldFormulaRecord fr = new OldFormulaRecord(ris);
+                        if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                            handleNumericCell(text, fr.getValue());
+                        }
                     }
                     break;
                 case RKRecord.sid:

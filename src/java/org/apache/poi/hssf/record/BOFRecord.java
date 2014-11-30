@@ -31,9 +31,16 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class BOFRecord extends StandardRecord {
     /**
-     * for BIFF8 files the BOF is 0x809.  For earlier versions it was 0x09 or 0x(biffversion)09
+     * for BIFF8 files the BOF is 0x809. For earlier versions see
+     *  {@link #biff2_sid} {@link #biff3_sid} {@link #biff4_sid} 
+     *  {@link #biff5_sid}
      */
     public final static short sid = 0x809;
+    // SIDs from earlier BIFF versions
+    public final static short biff2_sid = 0x009;
+    public final static short biff3_sid = 0x209;
+    public final static short biff4_sid = 0x409;
+    public final static short biff5_sid = 0x809;
 
     /** suggested default (0x0600 - BIFF8) */
     public final static int VERSION             = 0x0600;
