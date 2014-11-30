@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +41,7 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -560,6 +562,40 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         ClassID clsid2 = fs2.getRoot().getStorageClsid();
 
         assertTrue(clsid1.equals(clsid2));
+    }
+    
+    /**
+     * If we try to open an old (pre-97) workbook, we get a helpful
+     *  Exception give to explain what we've done wrong
+     */
+    @Test
+    public void helpfulExceptionOnOldFiles() throws Exception {
+        InputStream excel4 = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("testEXCEL_4.xls");
+        try {
+            new HSSFWorkbook(excel4);
+            fail("Shouldn't be able to load an Excel 4 file");
+        } catch (OldExcelFormatException e) {
+            assertContains(e.getMessage(), "BIFF4");
+        }
+        excel4.close();
+        
+        InputStream excel5 = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("testEXCEL_5.xls");
+        try {
+            new HSSFWorkbook(excel5);
+            fail("Shouldn't be able to load an Excel 5 file");
+        } catch (OldExcelFormatException e) {
+            assertContains(e.getMessage(), "BIFF5");
+        }
+        excel5.close();
+        
+        InputStream excel95 = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("testEXCEL_95.xls");
+        try {
+            new HSSFWorkbook(excel95);
+            fail("Shouldn't be able to load an Excel 95 file");
+        } catch (OldExcelFormatException e) {
+            assertContains(e.getMessage(), "BIFF5");
+        }
+        excel95.close();
     }
 
     /**
