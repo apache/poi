@@ -47,7 +47,7 @@ public final class FormulaRecord extends CellRecord {
 	 * Excel encodes the same 8 bytes that would be field_4_value with various NaN
 	 * values that are decoded/encoded by this class. 
 	 */
-	private static final class SpecialCachedValue {
+	static final class SpecialCachedValue {
 		/** deliberately chosen by Excel in order to encode other values within Double NaNs */
 		private static final long BIT_MARKER = 0xFFFF000000000000L;
 		private static final int VARIABLE_DATA_LENGTH = 6;

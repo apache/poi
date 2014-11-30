@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.OldFormulaRecord;
 import org.apache.poi.hssf.record.OldLabelRecord;
@@ -42,7 +41,6 @@ import org.apache.poi.ss.usermodel.Cell;
  */
 public class OldExcelExtractor {
     private InputStream input;
-    private boolean _includeSheetNames = true;
 
     public OldExcelExtractor(InputStream input) {
         this.input = input;
@@ -59,13 +57,6 @@ public class OldExcelExtractor {
         }
         OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]));
         System.out.println(extractor.getText());
-    }
-
-    /**
-     * Should sheet names be included? Default is true
-     */
-    public void setIncludeSheetNames(boolean includeSheetNames) {
-        _includeSheetNames = includeSheetNames;
     }
 
     /**
@@ -95,32 +86,35 @@ public class OldExcelExtractor {
                     text.append(sr.getString());
                     text.append('\n');
                     break;
-                // number - 5.71 - TODO Needs format strings
+                    
                 case NumberRecord.sid:
                     NumberRecord nr = new NumberRecord(ris);
-                    text.append(nr.getValue());
-                    text.append('\n');
+                    handleNumericCell(text, nr.getValue());
                     break;
                 case OldFormulaRecord.biff2_sid:
                 case OldFormulaRecord.biff3_sid:
                 case OldFormulaRecord.biff4_sid:
                     OldFormulaRecord fr = new OldFormulaRecord(ris);
-//                  if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
-                        text.append(fr.getValue());
-                        text.append('\n');
-//                  }
+                    if (fr.getCachedResultType() == Cell.CELL_TYPE_NUMERIC) {
+                        handleNumericCell(text, fr.getValue());
+                    }
                     break;
                 case RKRecord.sid:
                     RKRecord rr = new RKRecord(ris);
-                    text.append(rr.getRKNumber());
-                    text.append('\n');
+                    handleNumericCell(text, rr.getRKNumber());
                     break;
+                    
                 default:
                     ris.readFully(new byte[ris.remaining()]);
-      //              text.append(" = " + ris.getSid() + " = \n");
             }
         }
 
         return text.toString();
+    }
+    
+    protected void handleNumericCell(StringBuffer text, double value) {
+        // TODO Need to fetch / use format strings
+        text.append(value);
+        text.append('\n');
     }
 }
