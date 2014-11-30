@@ -52,7 +52,7 @@ public final class TestOldExcelExtractor extends POITestCase {
         assertContains(text, "11");
         assertContains(text, "784");
     }
-    public void DISABLEDtestSimpleExcel5() {
+    public void testSimpleExcel5() {
         for (String ver : new String[] {"5", "95"}) {
             OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls");
     
@@ -105,7 +105,7 @@ public final class TestOldExcelExtractor extends POITestCase {
 //      assertContains(text, "55,624");
 //      assertContains(text, "11,743,477");
     }
-    public void DISABLEDtestFormattedNumbersExcel5() {
+    public void testFormattedNumbersExcel5() {
         for (String ver : new String[] {"5", "95"}) {
             OldExcelExtractor extractor = createExtractor("testEXCEL_"+ver+".xls");
             String text = extractor.getText();
@@ -116,6 +116,9 @@ public final class TestOldExcelExtractor extends POITestCase {
             // Numbers which come from formulas
             assertContains(text, "13");
             assertContains(text, "169");
+            
+            // Formatted numbers
+            // TODO
         }
     }
     
