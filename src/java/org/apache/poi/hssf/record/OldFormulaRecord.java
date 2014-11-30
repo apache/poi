@@ -24,36 +24,23 @@ import org.apache.poi.ss.formula.ptg.Ptg;
  * Formula Record (0x0006 / 0x0206 / 0x0406) - holds a formula in
  *  encoded form, along with the value if a number
  */
-public final class OldFormulaRecord {
+public final class OldFormulaRecord extends OldCellRecord {
     public final static short biff2_sid = 0x0006;
     public final static short biff3_sid = 0x0206;
     public final static short biff4_sid = 0x0406;
     public final static short biff5_sid = 0x0006;
 
-    private short   sid;
-    private int     field_1_row;
-    private short   field_2_column;
-    private int     field_3_cell_attrs; // Biff 2
-    private short   field_3_xf_index;   // Biff 3+
     private double  field_4_value;
     private short   field_5_options;
     private Formula field_6_parsed_expr;
 
     public OldFormulaRecord(RecordInputStream ris) {
-        field_1_row          = ris.readUShort();
-        field_2_column       = ris.readShort();
-
-        if (ris.getSid() == biff2_sid) {
-            field_3_cell_attrs = ris.readUShort() << 8;
-            field_3_cell_attrs += ris.readUByte();
-        } else {
-            field_3_xf_index     = ris.readShort();
-        }
+        super(ris, ris.getSid() == biff2_sid);
 
         // TODO Handle special cached values, for Biff 3+
         field_4_value = ris.readDouble();
 
-        if (ris.getSid() == biff2_sid) {
+        if (isBiff2()) {
             field_5_options = (short)ris.readUByte();
         } else {
             field_5_options = ris.readShort();
@@ -62,25 +49,6 @@ public final class OldFormulaRecord {
         int expression_len = ris.readShort();
         int nBytesAvailable = ris.available();
         field_6_parsed_expr = Formula.read(expression_len, ris, nBytesAvailable);
-    }
-
-    public int getRow()
-    {
-        return field_1_row;
-    }
-
-    public short getColumn()
-    {
-        return field_2_column;
-    }
-
-    public short getXFIndex()
-    {
-        return field_3_xf_index;
-    }
-    public int getCellAttrs()
-    {
-        return field_3_cell_attrs;
     }
 
     /**
@@ -112,7 +80,10 @@ public final class OldFormulaRecord {
         return field_6_parsed_expr;
     }
 
-    public short getSid() {
-        return sid;
+    protected void appendValueText(StringBuilder sb) {
+        sb.append("    .value       = ").append(getValue()).append("\n");
+    }
+    protected String getRecordName() {
+        return "Old Formula";
     }
 }

@@ -80,11 +80,12 @@ public final class TestOldExcelExtractor extends TestCase {
         assertTrue(text, text.contains("784"));
         
         // Numbers which come from formulas
-        // TODO
-//        assertTrue(text, text.contains("0.40"));
-//        assertTrue(text, text.contains("624"));
+        assertTrue(text, text.contains("0.398")); // TODO Rounding
+        assertTrue(text, text.contains("624"));
         
         // Formatted numbers
         // TODO
+//      assertTrue(text, text.contains("55,624"));
+//      assertTrue(text, text.contains("11,743,477"));
     }
 }

@@ -26,37 +26,26 @@ import org.apache.poi.util.POILogger;
  *  strings stored directly in the cell, from the older file formats that
  *  didn't use {@link LabelSSTRecord}
  */
-public final class OldLabelRecord extends Record implements CellValueRecordInterface {
+public final class OldLabelRecord extends OldCellRecord {
     private final static POILogger logger = POILogFactory.getLogger(OldLabelRecord.class);
 
     public final static short biff2_sid = 0x0004;
     public final static short biff345_sid = 0x0204;
 
-    private short             sid;
-    private int               field_1_row;
-    private short             field_2_column;
-    private int               field_3_cell_attrs; // Biff 2
-    private short             field_3_xf_index;   // Biff 3+
-    private short             field_4_string_len;
-    private byte[]            field_5_bytes;
-    //private XXXXX           codepage; // TODO Implement for this and OldStringRecord
+    private short     field_4_string_len;
+    private byte[]    field_5_bytes;
+    //private XXXXX   codepage; // TODO Implement for this and OldStringRecord
 
     /**
      * @param in the RecordInputstream to read the record from
      */
     public OldLabelRecord(RecordInputStream in)
     {
-        sid = in.getSid();
+        super(in, in.getSid() == biff2_sid);
 
-        field_1_row          = in.readUShort();
-        field_2_column       = in.readShort();
-
-        if (in.getSid() == biff2_sid) {
-            field_3_cell_attrs = in.readUShort() << 8;
-            field_3_cell_attrs += in.readUByte();
+        if (isBiff2()) {
             field_4_string_len  = (short)in.readUByte();
         } else {
-            field_3_xf_index     = in.readShort();
             field_4_string_len   = in.readShort();
         }
 
@@ -70,29 +59,6 @@ public final class OldLabelRecord extends Record implements CellValueRecordInter
                     " : " + HexDump.toHex(in.readRemainder())
                     );
         }
-    }
-
-    public boolean isBiff2() {
-        return sid == biff2_sid;
-    }
-
-    public int getRow()
-    {
-        return field_1_row;
-    }
-
-    public short getColumn()
-    {
-        return field_2_column;
-    }
-
-    public short getXFIndex()
-    {
-        return field_3_xf_index;
-    }
-    public int getCellAttrs()
-    {
-        return field_3_cell_attrs;
     }
 
     /**
@@ -123,46 +89,12 @@ public final class OldLabelRecord extends Record implements CellValueRecordInter
         throw new RecordFormatException("Old Label Records are supported READ ONLY");
     }
 
-    public short getSid()
-    {
-        return sid;
-    }
-
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append("[OLD LABEL]\n");
-        sb.append("    .row       = ").append(HexDump.shortToHex(getRow())).append("\n");
-        sb.append("    .column    = ").append(HexDump.shortToHex(getColumn())).append("\n");
-        if (isBiff2()) {
-            sb.append("    .cellattrs = ").append(HexDump.shortToHex(getCellAttrs())).append("\n");
-        } else {
-            sb.append("    .xfindex   = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-        }
+    protected void appendValueText(StringBuilder sb) {
         sb.append("    .string_len= ").append(HexDump.shortToHex(field_4_string_len)).append("\n");
         sb.append("    .value       = ").append(getValue()).append("\n");
-        sb.append("[/OLD LABEL]\n");
-        return sb.toString();
     }
 
-    /**
-     * NO-OP!
-     */
-    public void setColumn(short col)
-    {
-    }
-
-    /**
-     * NO-OP!
-     */
-    public void setRow(int row)
-    {
-    }
-
-    /**
-     * no op!
-     */
-    public void setXFIndex(short xf)
-    {
+    protected String getRecordName() {
+        return "OLD LABEL";
     }
 }
