@@ -136,7 +136,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
             if (_data[0] == 0x09 && _data[1] == 0x00 && // sid=0x0009
                 _data[2] == 0x04 && _data[3] == 0x00 && // size=0x0004
                 _data[4] == 0x00 && _data[5] == 0x00 && // unused
-               (_data[6] == 0x01 || _data[6] == 0x02 || _data[6] == 0x04) &&
+               (_data[6] == 0x10 || _data[6] == 0x20 || _data[6] == 0x40) &&
                 _data[7] == 0x00) {
                 // BIFF2 raw stream
                 throw new OldExcelFormatException("The supplied data appears to be in BIFF2 format. " +
@@ -145,7 +145,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
             if (_data[0] == 0x09 && _data[1] == 0x02 && // sid=0x0209
                 _data[2] == 0x06 && _data[3] == 0x00 && // size=0x0006
                 _data[4] == 0x00 && _data[5] == 0x00 && // unused
-               (_data[6] == 0x01 || _data[6] == 0x02 || _data[6] == 0x04) &&
+               (_data[6] == 0x10 || _data[6] == 0x20 || _data[6] == 0x40) &&
                 _data[7] == 0x00) {
                 // BIFF3 raw stream
                 throw new OldExcelFormatException("The supplied data appears to be in BIFF3 format. " +
@@ -154,7 +154,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
             if (_data[0] == 0x09 && _data[1] == 0x04 && // sid=0x0409
                 _data[2] == 0x06 && _data[3] == 0x00 && // size=0x0006
                 _data[4] == 0x00 && _data[5] == 0x00) { // unused
-                if (((_data[6] == 0x01 || _data[6] == 0x02 || _data[6] == 0x04) &&
+                if (((_data[6] == 0x10 || _data[6] == 0x20 || _data[6] == 0x40) &&
                       _data[7] == 0x00) ||
                     (_data[6] == 0x00 && _data[7] == 0x01)) {
                     // BIFF4 raw stream
