@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.OldFormulaRecord;
@@ -110,6 +111,8 @@ public class OldExcelExtractor {
      *  for these old file formats
      */
     public String getText() {
+        StringBuffer text = new StringBuffer();
+        
         // Work out what version we're dealing with
         int bofSid = ris.getNextSid();
         switch (bofSid) {
@@ -128,8 +131,10 @@ public class OldExcelExtractor {
             default:
                 throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid); 
         }
+        
+        // To track formats and encodings
+        CodepageRecord codepage = null;
 
-        StringBuffer text = new StringBuffer();
         while (ris.hasNextRecord()) {
             int sid = ris.getNextSid();
             ris.nextRecord();
@@ -139,6 +144,7 @@ public class OldExcelExtractor {
                 case OldLabelRecord.biff2_sid:
                 case OldLabelRecord.biff345_sid:
                     OldLabelRecord lr = new OldLabelRecord(ris);
+                    lr.setCodePage(codepage);
                     text.append(lr.getValue());
                     text.append('\n');
                     break;
@@ -146,6 +152,7 @@ public class OldExcelExtractor {
                 case OldStringRecord.biff2_sid:
                 case OldStringRecord.biff345_sid:
                     OldStringRecord sr = new OldStringRecord(ris);
+                    sr.setCodePage(codepage);
                     text.append(sr.getString());
                     text.append('\n');
                     break;
@@ -173,6 +180,10 @@ public class OldExcelExtractor {
                 case RKRecord.sid:
                     RKRecord rr = new RKRecord(ris);
                     handleNumericCell(text, rr.getRKNumber());
+                    break;
+                    
+                case CodepageRecord.sid:
+                    codepage = new CodepageRecord(ris);
                     break;
                     
                 default:

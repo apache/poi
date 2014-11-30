@@ -32,9 +32,9 @@ public final class OldLabelRecord extends OldCellRecord {
     public final static short biff2_sid = 0x0004;
     public final static short biff345_sid = 0x0204;
 
-    private short     field_4_string_len;
-    private byte[]    field_5_bytes;
-    //private XXXXX   codepage; // TODO Implement for this and OldStringRecord
+    private short          field_4_string_len;
+    private byte[]         field_5_bytes;
+    private CodepageRecord codepage;
 
     /**
      * @param in the RecordInputstream to read the record from
@@ -61,6 +61,10 @@ public final class OldLabelRecord extends OldCellRecord {
         }
     }
 
+    public void setCodePage(CodepageRecord codepage) {
+        this.codepage = codepage;
+    }
+    
     /**
      * get the number of characters this string contains
      * @return number of characters
@@ -75,8 +79,7 @@ public final class OldLabelRecord extends OldCellRecord {
      */
     public String getValue()
     {
-        // We really need the codepage here to do this right...
-        return new String(field_5_bytes);
+        return OldStringRecord.getString(field_5_bytes, codepage);
     }
 
     /**

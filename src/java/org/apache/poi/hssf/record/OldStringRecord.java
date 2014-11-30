@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.util.CodePageUtil;
+
 
 /**
  * Biff2 - Biff 4 Label Record (0x0007 / 0x0207) - read only support for 
@@ -29,7 +33,7 @@ public final class OldStringRecord {
     private short             sid;
     private short             field_1_string_len;
     private byte[]            field_2_bytes;
-    //private XXXXX           codepage; // TODO Implement for this and OldLabelRecord
+    private CodepageRecord    codepage;
 
     /**
      * @param in the RecordInputstream to read the record from
@@ -55,14 +59,30 @@ public final class OldStringRecord {
     public short getSid() {
         return sid;
     }
+    
+    public void setCodePage(CodepageRecord codepage) {
+        this.codepage = codepage;
+    }
 
     /**
      * @return The string represented by this record.
      */
     public String getString()
     {
-        // We really need the codepage here to do this right...
-        return new String(field_2_bytes);
+        return getString(field_2_bytes, codepage);
+    }
+    
+    protected static String getString(byte[] data, CodepageRecord codepage) {
+        int cp = CodePageUtil.CP_ISO_8859_1;
+        if (codepage != null) {
+            cp = codepage.getCodepage();
+        }
+        try {
+            return CodePageUtil.getStringFromCodePage(data, cp);
+        } catch (UnsupportedEncodingException uee) {
+            // Hope the system default is ok...
+            return new String(data);
+        }
     }
 
     public String toString()
