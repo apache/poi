@@ -135,7 +135,9 @@ public class OldExcelExtractor {
         
         // To track formats and encodings
         CodepageRecord codepage = null;
+        // TODO track the XFs and Format Strings
 
+        // Process each record in turn, looking for interesting ones
         while (ris.hasNextRecord()) {
             int sid = ris.getNextSid();
             ris.nextRecord();
@@ -150,7 +152,6 @@ public class OldExcelExtractor {
                     text.append('\n');
                     break;
             
-                // label - 5.63 - TODO Needs codepages
                 case OldLabelRecord.biff2_sid:
                 case OldLabelRecord.biff345_sid:
                     OldLabelRecord lr = new OldLabelRecord(ris);
@@ -158,7 +159,6 @@ public class OldExcelExtractor {
                     text.append(lr.getValue());
                     text.append('\n');
                     break;
-                // string - 5.102 - TODO Needs codepages
                 case OldStringRecord.biff2_sid:
                 case OldStringRecord.biff345_sid:
                     OldStringRecord sr = new OldStringRecord(ris);
