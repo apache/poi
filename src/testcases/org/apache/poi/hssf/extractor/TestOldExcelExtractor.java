@@ -119,6 +119,13 @@ public final class TestOldExcelExtractor extends POITestCase {
             
             // Formatted numbers
             // TODO
+//          assertContains(text, "100.00%");
+//          assertContains(text, "155.00%");
+//          assertContains(text, "1,125");
+//          assertContains(text, "189,945");
+//          assertContains(text, "1,234,500");
+//          assertContains(text, "$169.00");
+//          assertContains(text, "$1,253.82");
         }
     }
     
