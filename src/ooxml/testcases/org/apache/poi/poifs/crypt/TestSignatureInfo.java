@@ -23,7 +23,10 @@
    ================================================================= */ 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -106,6 +109,17 @@ public class TestSignatureInfo {
         //System.out.println("Having: " + additionalJar);
         Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar, 
                 additionalJar == null || additionalJar.trim().length() == 0);
+    }
+    
+    @Test
+    public void office2007prettyPrintedRels() throws Exception {
+        OPCPackage pkg = OPCPackage.open(testdata.getFile("office2007prettyPrintedRels.docx"), PackageAccess.READ);
+        SignatureConfig sic = new SignatureConfig();
+        sic.setOpcPackage(pkg);
+        SignatureInfo si = new SignatureInfo();
+        si.setSignatureConfig(sic);
+        boolean isValid = si.verifySignature();
+        assertTrue(isValid);
     }
     
     @Test
@@ -222,7 +236,6 @@ public class TestSignatureInfo {
     public void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
-        @SuppressWarnings("resource")       // closed via XSSFWorkbook.close() below ?!
         OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
         sign(pkg, "Test", "CN=Test", 1);
         
@@ -523,14 +536,6 @@ public class TestSignatureInfo {
                 si.confirmSignature();
                 boolean b = si.verifySignature();
                 assertTrue("Signature not correctly calculated for " + ha, b);
-//            } catch (EncryptedDocumentException e) {
-//                // see http://apache-poi.1045710.n5.nabble.com/org-apache-poi-poifs-crypt-TestSignatureInfo-failing-on-trunk-on-Java-6-tp5717032.html
-//                Throwable cause = e.getCause();
-//                if (cause instanceof ArrayIndexOutOfBoundsException) {
-//                    LOG.log(POILogger.ERROR, "ignoring AIOOBE - hopefully a SHA2 bug ...", e);
-//                } else {
-//                    throw e;
-//                }
             } finally {
                 if (pkg != null) pkg.close();
             }
