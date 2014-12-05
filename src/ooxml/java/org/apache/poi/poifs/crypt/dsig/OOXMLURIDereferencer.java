@@ -24,7 +24,10 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -81,12 +84,28 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
             LOG.log(POILogger.DEBUG, "cannot resolve, delegating to base DOM URI dereferencer", uri);
             return this.baseUriDereferencer.dereference(uriReference, context);
         }
-        
+
+        InputStream dataStream;
         try {
-            return new OctetStreamData(part.getInputStream(), uri.toString(), null);
+            dataStream = part.getInputStream();
+
+            // workaround for office 2007 pretty-printed .rels files
+            if (part.getPartName().toString().endsWith(".rels")) {
+                // although xmlsec has an option to ignore line breaks, currently this
+                // only affects .rels files, so we only modify these
+                // http://stackoverflow.com/questions/4728300
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                for (int ch; (ch = dataStream.read()) != -1; ) {
+                    if (ch == 10 || ch == 13) continue;
+                    bos.write(ch);
+                }
+                dataStream = new ByteArrayInputStream(bos.toByteArray());
+            }
         } catch (IOException e) {
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);
         }
+        
+        return new OctetStreamData(dataStream, uri.toString(), null);
     }
 
     private PackagePart findPart(URI uri) {
