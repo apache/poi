@@ -564,4 +564,19 @@ public final class TestBugs {
             inputStream.close();
         }
     }
+    
+    @Test
+    public void bug57272() throws Exception {
+        InputStream inputStream = new FileInputStream(_slTests.getFile("57272_corrupted_usereditatom.ppt"));
+        try {
+            SlideShow slideShow = new SlideShow(inputStream);
+            assertEquals(6, slideShow.getSlides().length);
+
+            SlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+            assertNotNull(slideBack);
+            assertEquals(6, slideBack.getSlides().length);
+        } finally {
+            inputStream.close();
+        }
+    }
 }
