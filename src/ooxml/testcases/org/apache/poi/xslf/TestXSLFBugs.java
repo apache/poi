@@ -233,4 +233,44 @@ public class TestXSLFBugs {
         }
         return text.toString();
     }
+
+    @Test
+    public void bug57250() throws Exception {
+        XMLSlideShow ss = new XMLSlideShow();
+        for (String s : new String[]{"Slide1","Slide2"}) {
+            ss.createSlide().createTextBox().setText(s);
+        }
+        validateSlides(ss, false, "Slide1","Slide2");
+
+        XSLFSlide slide = ss.createSlide();
+        slide.createTextBox().setText("New slide");
+        validateSlides(ss, true, "Slide1","Slide2","New slide");
+
+        // Move backward
+        ss.setSlideOrder(slide, 0);
+        validateSlides(ss, true, "New slide","Slide1","Slide2");
+
+        // Move forward
+        ss.setSlideOrder(slide, 1);
+        validateSlides(ss, true, "Slide1","New slide","Slide2");
+
+        // Move to end
+        ss.setSlideOrder(slide, 0);
+        ss.setSlideOrder(slide, 2);
+        validateSlides(ss, true, "Slide1","Slide2","New slide");
+    }
+
+    private void validateSlides(XMLSlideShow ss, boolean saveAndReload, String... slideTexts) {
+        if (saveAndReload) {
+            ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
+        }
+
+        assertEquals(slideTexts.length, ss.getSlides().length);
+
+        for (int i = 0; i < slideTexts.length; i++) {
+            XSLFSlide slide = ss.getSlides()[i];
+            assertContains(getSlideText(slide), slideTexts[i]);
+        }
+    }
+
 }

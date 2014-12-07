@@ -20,11 +20,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.poi.POIXMLDocument;
@@ -366,18 +362,26 @@ public class XMLSlideShow  extends POIXMLDocument {
      *
      * @param newIndex 0-based index of the slide
      */
+    @SuppressWarnings("deprecation")
     public void setSlideOrder(XSLFSlide slide, int newIndex){
         int oldIndex = _slides.indexOf(slide);
         if(oldIndex == -1) throw new IllegalArgumentException("Slide not found");
+        if (oldIndex == newIndex) return;
 
         // fix the usermodel container
         _slides.add(newIndex, _slides.remove(oldIndex));
 
         // fix ordering in the low-level xml
         CTSlideIdList sldIdLst = _presentation.getSldIdLst();
-        CTSlideIdListEntry oldEntry = sldIdLst.getSldIdArray(oldIndex);
-        sldIdLst.insertNewSldId(newIndex).set(oldEntry);
-        sldIdLst.removeSldId(oldIndex);
+        CTSlideIdListEntry[] entries = sldIdLst.getSldIdArray();
+        CTSlideIdListEntry oldEntry = entries[oldIndex];
+        if (oldIndex < newIndex) {
+            System.arraycopy(entries, oldIndex + 1, entries, oldIndex, newIndex - oldIndex);
+        } else {
+            System.arraycopy(entries, newIndex, entries, newIndex + 1, oldIndex - newIndex);
+        }
+        entries[newIndex] = oldEntry;
+        sldIdLst.setSldIdArray(entries);
     }
 
     public XSLFSlide removeSlide(int index){
