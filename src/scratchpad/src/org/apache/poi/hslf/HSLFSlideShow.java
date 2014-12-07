@@ -20,16 +20,16 @@ package org.apache.poi.hslf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 import org.apache.poi.POIDocument;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
@@ -81,7 +81,7 @@ public final class HSLFSlideShow extends POIDocument {
 
     // Embedded objects stored in storage records in the document stream, lazily populated.
     private ObjectData[] _objects;
-
+    
     /**
 	 * Returns the underlying POIFSFileSystem for the document
 	 *  that is open.
@@ -195,6 +195,9 @@ public final class HSLFSlideShow extends POIDocument {
 		// Look for any other streams
 		readOtherStreams();
 	}
+	
+	
+	
 	/**
 	 * Constructs a new, empty, Powerpoint document.
 	 */
@@ -269,41 +272,67 @@ public final class HSLFSlideShow extends POIDocument {
         _records = read(_docstream, (int)currentUser.getCurrentEditOffset());
 	}
 
-    private Record[] read(byte[] docstream, int usrOffset){
-        ArrayList<Integer> lst = new ArrayList<Integer>();
-        HashMap<Integer,Integer> offset2id = new HashMap<Integer,Integer>();
-        while (usrOffset != 0){
-            UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
-            lst.add(usrOffset);
-            int psrOffset = usr.getPersistPointersOffset();
-
-            PersistPtrHolder ptr = (PersistPtrHolder)Record.buildRecordAtOffset(docstream, psrOffset);
-            lst.add(psrOffset);
-            Hashtable<Integer,Integer> entries = ptr.getSlideLocationsLookup();
-            for(Integer id : entries.keySet()) {
-                Integer offset = entries.get(id);
-                lst.add(offset);
-                offset2id.put(offset, id);
-            }
-
-            usrOffset = usr.getLastUserEditAtomOffset();
-        }
+	private Record[] read(byte[] docstream, int usrOffset){
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
-        Integer a[] = lst.toArray(new Integer[lst.size()]);
-        Arrays.sort(a);
-        Record[] rec = new Record[lst.size()];
-        for (int i = 0; i < a.length; i++) {
-            Integer offset = a[i];
-            rec[i] = Record.buildRecordAtOffset(docstream, offset.intValue());
-            if(rec[i] instanceof PersistRecord) {
-                PersistRecord psr = (PersistRecord)rec[i];
-                Integer id = offset2id.get(offset);
-                psr.setPersistId(id.intValue());
+	    NavigableMap<Integer,Record> records = new TreeMap<Integer,Record>(); // offset -> record
+        Map<Integer,Integer> persistIds = new HashMap<Integer,Integer>(); // offset -> persistId
+        initRecordOffsets(docstream, usrOffset, records, persistIds);
+        
+        for (Map.Entry<Integer,Record> entry : records.entrySet()) {
+            Integer offset = entry.getKey();
+            Record record = entry.getValue();
+            Integer persistId = persistIds.get(offset);
+            if (record == null) {
+                // all plain records have been already added,
+                // only new records need to be decrypted (tbd #35897)
+                record = Record.buildRecordAtOffset(docstream, offset);
+                entry.setValue(record);
             }
+            
+            if (record instanceof PersistRecord) {
+                ((PersistRecord)record).setPersistId(persistId);
+            }            
         }
+        
+        return records.values().toArray(new Record[records.size()]);
+    }
 
-        return rec;
+    private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer,Record> recordMap, Map<Integer,Integer> offset2id) {
+        while (usrOffset != 0){
+            UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
+            recordMap.put(usrOffset, usr);
+            
+            int psrOffset = usr.getPersistPointersOffset();
+            PersistPtrHolder ptr = (PersistPtrHolder)Record.buildRecordAtOffset(docstream, psrOffset);
+            recordMap.put(psrOffset, ptr);
+            
+            for(Map.Entry<Integer,Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {
+                Integer offset = entry.getValue();
+                Integer id = entry.getKey();
+                recordMap.put(offset, null); // reserve a slot for the record
+                offset2id.put(offset, id);
+            }
+            
+            usrOffset = usr.getLastUserEditAtomOffset();
+
+            // check for corrupted user edit atom and try to repair it
+            // if the next user edit atom offset is already known, we would go into an endless loop
+            if (usrOffset > 0 && recordMap.containsKey(usrOffset)) {
+                // a user edit atom is usually located 36 byte before the smallest known record offset 
+                usrOffset = recordMap.firstKey()-36;
+                // check that we really are located on a user edit atom
+                int ver_inst = LittleEndian.getUShort(docstream, usrOffset);
+                int type = LittleEndian.getUShort(docstream, usrOffset+2);
+                int len = LittleEndian.getInt(docstream, usrOffset+4);
+                if (ver_inst == 0 && type == 4085 && (len == 0x1C || len == 0x20)) {
+                    logger.log(POILogger.WARN, "Repairing invalid user edit atom");
+                    usr.setLastUserEditAtomOffset(usrOffset);
+                } else {
+                    throw new CorruptPowerPointFileException("Powerpoint document contains invalid user edit atom");
+                }
+            }
+        }       
     }
 
 	/**
@@ -324,34 +353,30 @@ public final class HSLFSlideShow extends POIDocument {
 	private void readOtherStreams() {
 		// Currently, there aren't any
 	}
-
 	/**
 	 * Find and read in pictures contained in this presentation.
 	 * This is lazily called as and when we want to touch pictures.
 	 */
+    @SuppressWarnings("unused")
 	private void readPictures() throws IOException {
         _pictures = new ArrayList<PictureData>();
 
-		byte[] pictstream;
+        // if the presentation doesn't contain pictures - will use a null set instead
+        if (!directory.hasEntry("Pictures")) return;
+        
+		DocumentEntry entry = (DocumentEntry)directory.getEntry("Pictures");
+		byte[] pictstream = new byte[entry.getSize()];
+		DocumentInputStream is = directory.createDocumentInputStream(entry);
+		is.read(pictstream);
+		is.close();
 
-		try {
-			DocumentEntry entry = (DocumentEntry)directory.getEntry("Pictures");
-			pictstream = new byte[entry.getSize()];
-			DocumentInputStream is = directory.createDocumentInputStream("Pictures");
-			is.read(pictstream);
-		} catch (FileNotFoundException e){
-			// Silently catch exceptions if the presentation doesn't
-			//  contain pictures - will use a null set instead
-			return;
-		}
-
+		
         int pos = 0;
 		// An empty picture record (length 0) will take up 8 bytes
         while (pos <= (pictstream.length-8)) {
             int offset = pos;
-
+            
             // Image signature
-            @SuppressWarnings("unused")
             int signature = LittleEndian.getUShort(pictstream, pos);
             pos += LittleEndian.SHORT_SIZE;
             // Image type + 0xF018
