@@ -91,6 +91,8 @@ public class TestDecryptor {
                 zin.skip(zin.available());
             }
         }
+        
+        zin.close();
     }
 
     @Test
