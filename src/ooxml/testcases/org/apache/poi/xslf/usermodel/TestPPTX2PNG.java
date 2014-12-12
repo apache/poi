@@ -19,20 +19,25 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.xslf.XSLFTestDataSamples;
-
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.hslf.model.TextPainter;
+import org.apache.poi.util.JvmBugs;
+import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 
 /**
  * Date: 10/26/11
  *
  * @author Yegor Kozlov
  */
-public class TestPPTX2PNG extends TestCase {
-    public void testRender(){
+public class TestPPTX2PNG {
+    @Test
+    public void render(){
         String[] testFiles = {"layouts.pptx", "sample.pptx", "shapes.pptx",
                 "themes.pptx", "backgrounds.pptx"};
         for(String sampleFile : testFiles){
@@ -41,10 +46,20 @@ public class TestPPTX2PNG extends TestCase {
             for(XSLFSlide slide : pptx.getSlides()){
                 BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_RGB);
                 Graphics2D graphics = img.createGraphics();
-
+                fixFonts(graphics);
                 slide.draw(graphics);
 
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void fixFonts(Graphics2D graphics) {
+        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
+        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(TextPainter.KEY_FONTMAP);
+        if (fontMap == null) fontMap = new HashMap<String,String>();
+        fontMap.put("Calibri", "Lucida Sans");
+        fontMap.put("Cambria", "Lucida Bright");
+        graphics.setRenderingHint(TextPainter.KEY_FONTMAP, fontMap);        
     }
 }

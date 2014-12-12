@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -218,19 +219,14 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     }
 
     /**
-     * The color applied to the lines of this shape.
+     * The filename of the embedded image
      */
     public String getFileName() {
         EscherComplexProperty propFile = (EscherComplexProperty) getOptRecord().lookup(
                       EscherProperties.BLIP__BLIPFILENAME);
-        try {
-            if (null == propFile){
-                return "";
-            }
-            return new String(propFile.getComplexData(), "UTF-16LE").trim();
-        } catch (UnsupportedEncodingException e) {
-            return "";
-        }
+        return (null == propFile)
+            ? ""
+            : new String(propFile.getComplexData(), Charset.forName("UTF-16LE")).trim();
     }
     
     public void setFileName(String data){

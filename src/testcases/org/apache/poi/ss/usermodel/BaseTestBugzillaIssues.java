@@ -334,6 +334,7 @@ public abstract class BaseTestBugzillaIssues {
     @Test
     public final void bug506819_testAutoSize() {
         Workbook wb = _testDataProvider.createWorkbook();
+        BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet("Sheet1");
         Row row = sheet.createRow(0);
         Cell cell0 = row.createCell(0);
