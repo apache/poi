@@ -17,9 +17,12 @@
 
 package org.apache.poi.ss.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.JvmBugs;
+import org.junit.Test;
 
 import java.util.Calendar;
 
@@ -28,7 +31,7 @@ import java.util.Calendar;
  *
  * @author Yegor Kozlov
  */
-public abstract class BaseTestSheetAutosizeColumn extends TestCase {
+public abstract class BaseTestSheetAutosizeColumn {
 
     private final ITestDataProvider _testDataProvider;
 
@@ -36,23 +39,10 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
         _testDataProvider = testDataProvider;
     }
 
-    // TODO should we have this stuff in the FormulaEvaluator?
-    private void evaluateWorkbook(Workbook workbook){
-        FormulaEvaluator eval = workbook.getCreationHelper().createFormulaEvaluator();
-        for(int i=0; i < workbook.getNumberOfSheets(); i++) {
-            Sheet sheet = workbook.getSheetAt(i);
-            for (Row r : sheet) {
-                for (Cell c : r) {
-                    if (c.getCellType() == Cell.CELL_TYPE_FORMULA){
-                        eval.evaluateFormulaCell(c);
-                    }
-                }
-            }
-        }
-    }
-
-    public void testNumericCells(){
+    @Test
+    public void numericCells(){
         Workbook workbook = _testDataProvider.createWorkbook();
+        fixFonts(workbook);
         DataFormat df = workbook.getCreationHelper().createDataFormat();
         Sheet sheet = workbook.createSheet();
 
@@ -89,8 +79,10 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(5)); // 10.0000 and '10.0000'
     }
 
-    public void testBooleanCells(){
+    @Test
+    public void booleanCells(){
         Workbook workbook = _testDataProvider.createWorkbook();
+        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
 
         Row row = sheet.createRow(0);
@@ -116,8 +108,10 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
         assertEquals(sheet.getColumnWidth(2), sheet.getColumnWidth(3));  // columns 1, 2 and 3 should have the same width
     }
 
-    public void testDateCells(){
+    @Test
+    public void dateCells(){
         Workbook workbook = _testDataProvider.createWorkbook();
+        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         DataFormat df = workbook.getCreationHelper().createDataFormat();
 
@@ -180,11 +174,13 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(7)); // date formula formatted as 'mmm'
     }
 
-    public void testStringCells(){
+    @Test
+    public void stringCells(){
         Workbook workbook = _testDataProvider.createWorkbook();
+        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         Row row = sheet.createRow(0);
-
+        
         Font defaultFont = workbook.getFontAt((short)0);
 
         CellStyle style1 = workbook.createCellStyle();
@@ -207,11 +203,14 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
         assertTrue(2*sheet.getColumnWidth(0) < sheet.getColumnWidth(1)); // width is roughly proportional to the number of characters
         assertTrue(2*sheet.getColumnWidth(1) < sheet.getColumnWidth(2));
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(3));
-        assertTrue(sheet.getColumnWidth(5) > sheet.getColumnWidth(4)); //larger font results in a wider column width
+        boolean ignoreFontSizeX2 = JvmBugs.hasLineBreakMeasurerBug();
+        assertTrue(ignoreFontSizeX2 || sheet.getColumnWidth(5) > sheet.getColumnWidth(4)); //larger font results in a wider column width
     }
 
-    public void testRotatedText(){
+    @Test
+    public void rotatedText(){
         Workbook workbook = _testDataProvider.createWorkbook();
+        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         Row row = sheet.createRow(0);
 
@@ -233,8 +232,10 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
         assertTrue(w0*5 < w1); // rotated text occupies at least five times less horizontal space than normal text
     }
 
-    public void testMergedCells(){
+    @Test
+    public void mergedCells(){
         Workbook workbook = _testDataProvider.createWorkbook();
+        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
 
         Row row = sheet.createRow(0);
@@ -257,8 +258,10 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
      * Auto-Sizing a column needs to work when we have rows
      *  passed the 32767 boundary. See bug #48079
      */
-    public void testLargeRowNumbers() throws Exception {
+    @Test
+    public void largeRowNumbers() throws Exception {
        Workbook workbook = _testDataProvider.createWorkbook();
+       fixFonts(workbook);
        Sheet sheet = workbook.createSheet();
        
        Row r0 = sheet.createRow(0);
@@ -290,5 +293,32 @@ public abstract class BaseTestSheetAutosizeColumn extends TestCase {
        Row r60708 = sheet.createRow(60708);
        r60708.createCell(0).setCellValue("Near the end");
        sheet.autoSizeColumn(0);
+    }
+    
+    // TODO should we have this stuff in the FormulaEvaluator?
+    private void evaluateWorkbook(Workbook workbook){
+        FormulaEvaluator eval = workbook.getCreationHelper().createFormulaEvaluator();
+        for(int i=0; i < workbook.getNumberOfSheets(); i++) {
+            Sheet sheet = workbook.getSheetAt(i);
+            for (Row r : sheet) {
+                for (Cell c : r) {
+                    if (c.getCellType() == Cell.CELL_TYPE_FORMULA){
+                        eval.evaluateFormulaCell(c);
+                    }
+                }
+            }
+        }
+    }
+
+    protected static void fixFonts(Workbook workbook) {
+        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
+        for (int i=workbook.getNumberOfFonts()-1; i>=0; i--) {
+            Font f = workbook.getFontAt((short)0);
+            if ("Calibri".equals(f.getFontName())) {
+                f.setFontName("Lucida Sans");
+            } else if ("Cambria".equals(f.getFontName())) {
+                f.setFontName("Lucida Bright");
+            }
+        }
     }
 }

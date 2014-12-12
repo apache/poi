@@ -16,15 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
-import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.font.LineBreakMeasurer;
@@ -36,6 +27,35 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hslf.model.TextPainter;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
+import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextAutonumberBullet;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePercent;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePoint;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharBullet;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStop;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStopList;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAutonumberScheme;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
+import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
 /**
  * Represents a paragraph of text within the containing text body.
@@ -823,6 +843,11 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
 
             // user can pass an custom object to convert fonts
             String fontFamily = run.getFontFamily();
+            @SuppressWarnings("unchecked")
+            Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(TextPainter.KEY_FONTMAP);
+            if (fontMap != null && fontMap.containsKey(fontFamily)) {
+                fontFamily = fontMap.get(fontFamily);
+            }
             if(fontHandler != null) {
                 fontFamily = fontHandler.getRendererableFont(fontFamily, run.getPitchAndFamily());
             }
@@ -1016,7 +1041,7 @@ public class XSLFTextParagraph implements Iterable<XSLFTextRun>{
         }
     }
 
-    private boolean fetchParagraphProperty(ParagraphPropertyFetcher visitor){
+    private <T> boolean fetchParagraphProperty(ParagraphPropertyFetcher<T> visitor){
         boolean ok = false;
 
         if(_p.isSetPPr()) ok = visitor.fetch(_p.getPPr());
