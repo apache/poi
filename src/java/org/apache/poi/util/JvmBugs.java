@@ -33,7 +33,9 @@ public class JvmBugs {
      * 
      * @return true, if jvm is bugged, caller code should use Lucida Sans
      * instead of Calibri and Lucida Bright instead of Cambria
-     * 
+     *
+     * @see <a href="http://svn.apache.org/viewvc/poi/trunk/src/ooxml/testcases/org/apache/poi/xslf/usermodel/TestPPTX2PNG.java?view=markup">Workaround for XSLF</a>
+     * @see <a href="http://svn.apache.org/viewvc/poi/trunk/src/testcases/org/apache/poi/ss/usermodel/BaseTestSheetAutosizeColumn.java?view=markup">Workaround for XSSF and HSSF</a>
      * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=54904">POI Bug #54904</a>
      * @see <a href="http://bugs.java.com/view_bug.do?bug_id=6501991">JDK Bug #6501991</a>
      * @see <a href="https://bitbucket.org/fakraemer/line-break-measurer-test">LineBreakMeasurerTest</a>
