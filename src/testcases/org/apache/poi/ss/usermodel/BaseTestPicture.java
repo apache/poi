@@ -28,10 +28,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.Test;
 
 /**
@@ -108,7 +108,7 @@ public abstract class BaseTestPicture {
         Drawing drawing = sheet.createDrawingPatriarch();
         CreationHelper createHelper = wb.getCreationHelper();
 
-        final byte[] bytes = XSSFITestDataProvider.instance.getTestDataFileContent("logoKarmokar4.png");
+        final byte[] bytes = HSSFITestDataProvider.instance.getTestDataFileContent("logoKarmokar4.png");
         
         row.setHeightInPoints(getImageSize(bytes).y);
    
