@@ -714,8 +714,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public float getColumnWidthInPixels(int columnIndex) {
-        int styleIdx = getColumnHelper().getColDefaultStyle(columnIndex);
-        CellStyle cs = getWorkbook().getStylesSource().getStyleAt(styleIdx);
         float widthIn256 = getColumnWidth(columnIndex);
         return (float)(widthIn256/256.0*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH);
     }
