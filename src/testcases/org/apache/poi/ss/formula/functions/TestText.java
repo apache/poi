@@ -30,99 +30,92 @@ import org.apache.poi.ss.formula.eval.StringEval;
 
 /**
  * Test case for TEXT()
- *
- * @author Stephen Wolke (smwolke at geistig.com)
  */
 public final class TestText extends TestCase {
-	private static final TextFunction T = null;
+    public void testTextWithStringFirstArg() {
+        ValueEval strArg = new StringEval("abc");
+        ValueEval formatArg = new StringEval("abc");
+        ValueEval[] args = { strArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
 
-	public void testTextWithStringFirstArg() {
+    public void testTextWithDeciamlFormatSecondArg() {
+        ValueEval numArg = new NumberEval(321321.321);
+        ValueEval formatArg = new StringEval("#,###.00000");
+        ValueEval[] args = { numArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        char groupSeparator = new DecimalFormatSymbols(Locale.getDefault()).getGroupingSeparator();
+        char decimalSeparator = new DecimalFormatSymbols(Locale.getDefault()).getDecimalSeparator();
+        ValueEval testResult = new StringEval("321" + groupSeparator + "321" + decimalSeparator + "32100");
+        assertEquals(testResult.toString(), result.toString());
+        numArg = new NumberEval(321.321);
+        formatArg = new StringEval("00000.00000");
+        args[0] = numArg;
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval("00321" + decimalSeparator + "32100");
+        assertEquals(testResult.toString(), result.toString());
 
-		ValueEval strArg = new StringEval("abc");
-		ValueEval formatArg = new StringEval("abc");
-		ValueEval[] args = { strArg, formatArg };
-		ValueEval result = T.TEXT.evaluate(args, -1, (short)-1);
-		assertEquals(ErrorEval.VALUE_INVALID, result);
-	}
+        formatArg = new StringEval("$#.#");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval("$321" + decimalSeparator + "3");
+        assertEquals(testResult.toString(), result.toString());
+    }
 
-	public void testTextWithDeciamlFormatSecondArg() {
+    public void testTextWithFractionFormatSecondArg() {
+        ValueEval numArg = new NumberEval(321.321);
+        ValueEval formatArg = new StringEval("# #/#");
+        ValueEval[] args = { numArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        ValueEval testResult = new StringEval("321 1/3");
+        assertEquals(testResult.toString(), result.toString());
 
-		ValueEval numArg = new NumberEval(321321.321);
-		ValueEval formatArg = new StringEval("#,###.00000");
-		ValueEval[] args = { numArg, formatArg };
-		ValueEval result = T.TEXT.evaluate(args, -1, (short)-1);
-		char groupSeparator = new DecimalFormatSymbols(Locale.getDefault()).getGroupingSeparator();
-		char decimalSeparator = new DecimalFormatSymbols(Locale.getDefault()).getDecimalSeparator();
-		ValueEval testResult = new StringEval("321" + groupSeparator + "321" + decimalSeparator + "32100");
-		assertEquals(testResult.toString(), result.toString());
-		numArg = new NumberEval(321.321);
-		formatArg = new StringEval("00000.00000");
-		args[0] = numArg;
-		args[1] = formatArg;
-		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("00321" + decimalSeparator + "32100");
-		assertEquals(testResult.toString(), result.toString());
+        formatArg = new StringEval("# #/##");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval("321 26/81");
+        assertEquals(testResult.toString(), result.toString());
 
-		formatArg = new StringEval("$#.#");
-		args[1] = formatArg;
-		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("$321" + decimalSeparator + "3");
-		assertEquals(testResult.toString(), result.toString());
-	}
+        formatArg = new StringEval("#/##");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval("26027/81");
+        assertEquals(testResult.toString(), result.toString());
+    }
 
-	public void testTextWithFractionFormatSecondArg() {
+    public void testTextWithDateFormatSecondArg() {
+        // Test with Java style M=Month
+        ValueEval numArg = new NumberEval(321.321);
+        ValueEval formatArg = new StringEval("dd:MM:yyyy hh:mm:ss");
+        ValueEval[] args = { numArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        ValueEval testResult = new StringEval("16:11:1900 07:42:14");
+        assertEquals(testResult.toString(), result.toString());
 
-		ValueEval numArg = new NumberEval(321.321);
-		ValueEval formatArg = new StringEval("# #/#");
-		ValueEval[] args = { numArg, formatArg };
-		ValueEval result = T.TEXT.evaluate(args, -1, (short)-1);
-		ValueEval testResult = new StringEval("321 1/3");
-		assertEquals(testResult.toString(), result.toString());
+        // Excel also supports "m before h is month"
+        formatArg = new StringEval("dd:mm:yyyy hh:mm:ss");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval("16:11:1900 07:42:14");
+        assertEquals(testResult.toString(), result.toString());
 
-		formatArg = new StringEval("# #/##");
-		args[1] = formatArg;
-		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("321 26/81");
-		assertEquals(testResult.toString(), result.toString());
+        // this line is intended to compute how "November" would look like in the current locale
+        String november = new SimpleDateFormat("MMMM").format(new GregorianCalendar(2010,10,15).getTime());
 
-		formatArg = new StringEval("#/##");
-		args[1] = formatArg;
-		result = T.TEXT.evaluate(args, -1, (short)-1);
-		testResult = new StringEval("26027/81");
-		assertEquals(testResult.toString(), result.toString());
-	}
+        // Again with Java style
+        formatArg = new StringEval("MMMM dd, yyyy");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval(november + " 16, 1900");
+        assertEquals(testResult.toString(), result.toString());
 
-   public void testTextWithDateFormatSecondArg() {
-      // Test with Java style M=Month
-      ValueEval numArg = new NumberEval(321.321);
-      ValueEval formatArg = new StringEval("dd:MM:yyyy hh:mm:ss");
-      ValueEval[] args = { numArg, formatArg };
-      ValueEval result = T.TEXT.evaluate(args, -1, (short)-1);
-      ValueEval testResult = new StringEval("16:11:1900 07:42:14");
-      assertEquals(testResult.toString(), result.toString());
-
-      // Excel also supports "m before h is month"
-      formatArg = new StringEval("dd:mm:yyyy hh:mm:ss");
-      args[1] = formatArg;
-      result = T.TEXT.evaluate(args, -1, (short)-1);
-      testResult = new StringEval("16:11:1900 07:42:14");
-      assertEquals(testResult.toString(), result.toString());
-
-      // this line is intended to compute how "November" would look like in the current locale
-      String november = new SimpleDateFormat("MMMM").format(new GregorianCalendar(2010,10,15).getTime());
-
-      // Again with Java style
-      formatArg = new StringEval("MMMM dd, yyyy");
-      args[1] = formatArg;
-      result = T.TEXT.evaluate(args, -1, (short)-1);
-      testResult = new StringEval(november + " 16, 1900");
-      assertEquals(testResult.toString(), result.toString());
-
-      // And Excel style
-      formatArg = new StringEval("mmmm dd, yyyy");
-      args[1] = formatArg;
-      result = T.TEXT.evaluate(args, -1, (short)-1);
-      testResult = new StringEval(november + " 16, 1900");
-      assertEquals(testResult.toString(), result.toString());
-   }
+        // And Excel style
+        formatArg = new StringEval("mmmm dd, yyyy");
+        args[1] = formatArg;
+        result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
+        testResult = new StringEval(november + " 16, 1900");
+        assertEquals(testResult.toString(), result.toString());
+    }
 }
