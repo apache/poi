@@ -18,13 +18,21 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.awt.Dimension;
-import java.io.FileOutputStream;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Units;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
@@ -65,4 +73,65 @@ public abstract class BaseTestPicture {
         assertEquals("the image width differs",  imgDim.getWidth(), inpDim.getWidth()/emuPX,  1);
     }
 
+
+    @Test
+    public void testResizeNoColumns() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            Sheet sheet = wb.createSheet();
+    
+            Row row = sheet.createRow(0);
+            
+            handleResize(wb, sheet, row);
+        } finally {
+            wb.close();
+        }
+    }
+
+    @Test
+    public void testResizeWithColumns() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            Sheet sheet = wb.createSheet();
+    
+            Row row = sheet.createRow(0);
+            row.createCell(0);
+            
+            handleResize(wb, sheet, row);
+        } finally {
+            wb.close();
+        }
+    }
+
+
+    private void handleResize(Workbook wb, Sheet sheet, Row row) throws IOException {
+        Drawing drawing = sheet.createDrawingPatriarch();
+        CreationHelper createHelper = wb.getCreationHelper();
+
+        final byte[] bytes = HSSFITestDataProvider.instance.getTestDataFileContent("logoKarmokar4.png");
+        
+        row.setHeightInPoints(getImageSize(bytes).y);
+   
+        int pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+   
+        //add a picture shape
+        ClientAnchor anchor = createHelper.createClientAnchor();
+        //set top-left corner of the picture,
+        //subsequent call of Picture#resize() will operate relative to it
+        anchor.setCol1(0);
+        anchor.setRow1(0);
+   
+        Picture pict = drawing.createPicture(anchor, pictureIdx);
+   
+        //auto-size picture relative to its top-left corner
+        pict.resize();
+    }
+    
+    private static Point getImageSize( byte [] image) throws IOException {
+        BufferedImage img = ImageIO.read(new ByteArrayInputStream(image));
+        
+        assertNotNull(img);
+        
+        return new Point(img.getWidth(), img.getHeight());
+    }
 }
