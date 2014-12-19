@@ -73,22 +73,18 @@ public class XWPFStyles extends POIXMLDocumentPart{
     * Read document
     */
    @Override
-   @SuppressWarnings("deprecation")
    protected void onDocumentRead() throws IOException{
       StylesDocument stylesDoc;
       try {
          InputStream is = getPackagePart().getInputStream();
          stylesDoc = StylesDocument.Factory.parse(is);
-         ctStyles = stylesDoc.getStyles();
+         setStyles(stylesDoc.getStyles());
          latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
       } catch (XmlException e) {
          throw new POIXMLException("Unable to read styles", e);
       }
       
-      // Build up all the style objects
-      for(CTStyle style : ctStyles.getStyleArray()) {
-         listStyle.add(new XWPFStyle(style, this));
-      }
+      
    }
 	
    @Override
@@ -113,8 +109,14 @@ public class XWPFStyles extends POIXMLDocumentPart{
      * Sets the ctStyles
      * @param styles
      */
+    @SuppressWarnings("deprecation")
     public void setStyles(CTStyles styles) {
        ctStyles = styles;
+       
+       // Build up all the style objects
+       for(CTStyle style : ctStyles.getStyleArray()) {
+          listStyle.add(new XWPFStyle(style, this));
+       }
     }
 	
 	 /**
