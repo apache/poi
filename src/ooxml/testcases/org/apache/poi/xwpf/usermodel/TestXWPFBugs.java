@@ -16,8 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.io.IOException;
+
+import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
 import org.junit.Test;
 
@@ -48,4 +51,30 @@ public class TestXWPFBugs {
         assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Arial");
     }
 
+    
+    @Test
+    public void bug57312_NullPointException() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("57312.docx");
+        assertNotNull(doc);
+        
+        for( IBodyElement bodyElement : doc.getBodyElements()){
+            BodyElementType elementType = bodyElement.getElementType();
+            
+            if(elementType == BodyElementType.PARAGRAPH) {
+                XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
+                
+                for (IRunElement iRunElem : paragraph.getIRuns()){
+                    
+                    if (iRunElem instanceof XWPFRun){   
+                        XWPFRun runElement = (XWPFRun) iRunElem;
+                        
+                        UnderlinePatterns underline = runElement.getUnderline();
+                        assertNotNull(underline);
+                        
+                        //System.out.println("Found: " + underline + ": " + runElement.getText(0));
+                    }
+                }
+            } 
+        }
+    }
 }
