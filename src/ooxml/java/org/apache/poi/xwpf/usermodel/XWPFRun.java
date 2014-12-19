@@ -356,8 +356,9 @@ public class XWPFRun implements ISDTContents, IRunElement{
      */
     public UnderlinePatterns getUnderline() {
         CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetU()) ? UnderlinePatterns.valueOf(pr
-            .getU().getVal().intValue()) : UnderlinePatterns.NONE;
+        return (pr != null && pr.isSetU() && pr.getU().getVal() != null) 
+                ? UnderlinePatterns.valueOf(pr.getU().getVal().intValue()) 
+                : UnderlinePatterns.NONE;
     }
 
     /**
