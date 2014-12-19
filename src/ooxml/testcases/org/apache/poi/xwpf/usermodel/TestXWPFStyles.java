@@ -20,17 +20,16 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.String;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
 
 public class TestXWPFStyles extends TestCase {
 
@@ -59,17 +58,19 @@ public class TestXWPFStyles extends TestCase {
 		XWPFDocument docOut = new XWPFDocument();
 		XWPFStyles styles = docOut.createStyles();
 
-		String strStyleName = "headline1";
+		String strStyleId = "headline1";
 		CTStyle ctStyle = CTStyle.Factory.newInstance();
 
-		ctStyle.setStyleId(strStyleName);
+		ctStyle.setStyleId(strStyleId);
 		XWPFStyle s = new XWPFStyle(ctStyle);
 		styles.addStyle(s);
+		
+		assertTrue(styles.styleExist(strStyleId));
 
     	XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
 		styles = docIn.getStyles();
-		assertTrue(styles.styleExist(strStyleName));
+		assertTrue(styles.styleExist(strStyleId));
 	}
 
 	/**
@@ -117,5 +118,24 @@ public class TestXWPFStyles extends TestCase {
         XWPFLatentStyles ls = new XWPFLatentStyles(latentStyles);
         assertEquals(true, ls.isLatentStyle("ex1"));
         assertEquals(false, ls.isLatentStyle("notex1"));
+    }
+    
+    public void testSetStyles_Bug57254() throws IOException {
+        XWPFDocument docOut = new XWPFDocument();
+        XWPFStyles styles = docOut.createStyles();
+
+        CTStyles ctStyles = CTStyles.Factory.newInstance();
+        String strStyleId = "headline1";
+        CTStyle ctStyle = ctStyles.addNewStyle();
+
+        ctStyle.setStyleId(strStyleId);
+        styles.setStyles(ctStyles);
+        
+        assertTrue(styles.styleExist(strStyleId));
+
+        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+
+        styles = docIn.getStyles();
+        assertTrue(styles.styleExist(strStyleId));
     }
 }
