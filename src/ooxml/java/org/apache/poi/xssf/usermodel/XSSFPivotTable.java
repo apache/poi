@@ -296,8 +296,8 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         addDataColumn(columnIndex, true);
         addDataField(function, columnIndex, valueFieldName);
 
-        //Only add colfield if there is already one.
-        if (pivotTableDefinition.getDataFields().getCount() > 1) {
+        // colfield should be added for the second one.
+        if (pivotTableDefinition.getDataFields().getCount() == 2) {
             CTColFields colFields;
             if(pivotTableDefinition.getColFields() != null) {
                 colFields = pivotTableDefinition.getColFields();

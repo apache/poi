@@ -46,6 +46,8 @@ public class TestXSSFPivotTable extends TestCase {
         cell2.setCellValue("#");
         Cell cell7 = row1.createCell(2);
         cell7.setCellValue("Data");
+        Cell cell10 = row1.createCell(3);
+        cell10.setCellValue("Value");
 
         Row row2 = sheet.createRow(1);
         Cell cell3 = row2.createCell(0);
@@ -54,6 +56,8 @@ public class TestXSSFPivotTable extends TestCase {
         cell4.setCellValue(10);
         Cell cell8 = row2.createCell(2);
         cell8.setCellValue("Apa");
+        Cell cell11 = row1.createCell(3);
+        cell11.setCellValue(11.11);
 
         Row row3 = sheet.createRow(2);
         Cell cell5 = row3.createCell(0);
@@ -62,8 +66,10 @@ public class TestXSSFPivotTable extends TestCase {
         cell6.setCellValue(9);
         Cell cell9 = row3.createCell(2);
         cell9.setCellValue("Bepa");
+        Cell cell12 = row1.createCell(3);
+        cell12.setCellValue(12.12);
 
-        AreaReference source = new AreaReference("A1:B2");
+        AreaReference source = new AreaReference("A1:C2");
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
     }
 
@@ -116,6 +122,39 @@ public class TestXSSFPivotTable extends TestCase {
         assertEquals(defintion.getColFields(), null);
     }
 
+    /**
+     * Verify that it's possible to create three column labels with different DataConsolidateFunction
+     */
+    public void testAddThreeDifferentColumnLabelsToPivotTable() {
+        int columnOne = 0;
+        int columnTwo = 1;
+        int columnThree = 2;
+
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnOne);
+        pivotTable.addColumnLabel(DataConsolidateFunction.MAX, columnTwo);
+        pivotTable.addColumnLabel(DataConsolidateFunction.MIN, columnThree);
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+
+        assertEquals(defintion.getDataFields().getDataFieldList().size(), 3);
+    }
+    
+    
+    /**
+     * Verify that it's possible to create three column labels with the same DataConsolidateFunction
+     */
+    public void testAddThreeSametColumnLabelsToPivotTable() {
+        int columnOne = 0;
+        int columnTwo = 1;
+        int columnThree = 2;
+
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnOne);
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnTwo);
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnThree);
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+
+        assertEquals(defintion.getDataFields().getDataFieldList().size(), 3);
+    }
+    
     /**
      * Verify that when creating two column labels, a col field is being created and X is set to -2.
      */
