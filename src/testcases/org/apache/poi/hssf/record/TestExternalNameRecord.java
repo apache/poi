@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 /**
  *
  * @author Josh Micich
@@ -68,6 +68,8 @@ public final class TestExternalNameRecord extends TestCase {
 			throw new AssertionFailedError("Identified bug 44695");
 		}
 		assertEquals(17, enr.getRecordSize());
+		
+		assertNotNull(enr.serialize());		
 	}
 
 	public void testAutoStdDocName() {
@@ -171,5 +173,19 @@ public final class TestExternalNameRecord extends TestCase {
         ExternalNameRecord enr = new ExternalNameRecord(in);
         byte[] ser = enr.serialize();
         assertEquals(HexDump.toHex(data), HexDump.toHex(ser));
+    }
+    
+    public void testNPEWithFileFrom49219() {
+        // the file at test-data/spreadsheet/49219.xls has ExternalNameRecords without actual data, 
+    	// we did handle this during reading, but failed during serializing this out, ensure it works now
+        byte[] data = new byte[] {
+        		2, 127, 0, 0, 0, 0, 
+        		9, 0, 82, 97, 116, 101, 95, 68, 97, 116, 101};
+
+		ExternalNameRecord enr = createSimpleENR(data);
+
+        byte[] ser = enr.serialize();
+        assertEquals("[23, 00, 11, 00, 02, 7F, 00, 00, 00, 00, 09, 00, 52, 61, 74, 65, 5F, 44, 61, 74, 65]", 
+        		HexDump.toHex(ser));
     }
 }
