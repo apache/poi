@@ -132,7 +132,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class ToCSV {
 
     private Workbook workbook = null;
-    private ArrayList<ArrayList> csvData = null;
+    private ArrayList<ArrayList<String>> csvData = null;
     private int maxRowWidth = 0;
     private int formattingConvention = 0;
     private DataFormatter formatter = null;
@@ -406,7 +406,7 @@ public class ToCSV {
         Sheet sheet = null;
         Row row = null;
         int lastRowNum = 0;
-        this.csvData = new ArrayList<ArrayList>();
+        this.csvData = new ArrayList<ArrayList<String>>();
 
         System.out.println("Converting files contents to CSV format.");
 
