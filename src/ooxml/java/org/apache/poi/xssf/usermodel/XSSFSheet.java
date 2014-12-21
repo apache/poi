@@ -498,7 +498,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Creates a split (freezepane). Any existing freezepane or split pane is overwritten.
-     * @param colSplit      Horizonatal position of split.
+     * @param colSplit      Horizontal position of split.
      * @param rowSplit      Vertical position of split.
      */
     @Override
@@ -513,7 +513,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      *     If both colSplit and rowSplit are zero then the existing freeze pane is removed
      * </p>
      *
-     * @param colSplit      Horizonatal position of split.
+     * @param colSplit      Horizontal position of split.
      * @param rowSplit      Vertical position of split.
      * @param leftmostColumn   Left column visible in right pane.
      * @param topRow        Top row visible in bottom pane
@@ -608,7 +608,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
 
     /**
      * Creates a split pane. Any existing freezepane or split pane is overwritten.
-     * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
+     * @param xSplitPos      Horizontal position of split (in 1/20th of a point).
      * @param ySplitPos      Vertical position of split (in 1/20th of a point).
      * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
