@@ -275,16 +275,17 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             return Collections.emptyList();
         }
     }
-
+    
     /**
      * Add a column label using data from the given column and specified function
      * @param columnIndex the index of the column to be used as column label.
      * @param function the function to be used on the data
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     * @param valueFieldName the name of pivot table value field
      */
     @Beta
-    public void addColumnLabel(DataConsolidateFunction function, int columnIndex) {
+    public void addColumnLabel(DataConsolidateFunction function, int columnIndex, String valueFieldName) {
         AreaReference pivotArea = getPivotArea();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
 
@@ -293,7 +294,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
 
         addDataColumn(columnIndex, true);
-        addDataField(function, columnIndex);
+        addDataField(function, columnIndex, valueFieldName);
 
         //Only add colfield if there is already one.
         if (pivotTableDefinition.getDataFields().getCount() > 1) {
@@ -309,14 +310,27 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     }
 
     /**
+     * Add a column label using data from the given column and specified function
+     * @param columnIndex the index of the column to be used as column label.
+     * @param function the function to be used on the data
+     * The following functions exists:
+     * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     */
+    @Beta
+    public void addColumnLabel(DataConsolidateFunction function, int columnIndex) {
+        addColumnLabel(function, columnIndex, function.getName());
+    }
+
+    /**
      * Add data field with data from the given column and specified function.
      * @param function the function to be used on the data
      * @param index the index of the column to be used as column label.
      * The following functions exists:
      * Sum, Count, Average, Max, Min, Product, Count numbers, StdDev, StdDevp, Var, Varp
+     * @param valueFieldName the name of pivot table value field
      */
     @Beta
-    private void addDataField(DataConsolidateFunction function, int columnIndex) {
+    private void addDataField(DataConsolidateFunction function, int columnIndex, String valueFieldName) {
         AreaReference pivotArea = getPivotArea();
         int lastColIndex = pivotArea.getLastCell().getCol() - pivotArea.getFirstCell().getCol();
 
@@ -333,7 +347,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         dataField.setSubtotal(STDataConsolidateFunction.Enum.forInt(function.getValue()));
         Cell cell = getDataSheet().getRow(pivotArea.getFirstCell().getRow()).getCell(columnIndex);
         cell.setCellType(Cell.CELL_TYPE_STRING);
-        dataField.setName(function.getName());
+        dataField.setName(valueFieldName);
         dataField.setFld(columnIndex);
         dataFields.setCount(dataFields.sizeOfDataFieldArray());
     }
