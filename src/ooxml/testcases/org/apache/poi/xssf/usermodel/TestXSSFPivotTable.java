@@ -144,6 +144,22 @@ public class TestXSSFPivotTable extends TestCase {
         assertEquals(defintion.getDataFields().getDataFieldArray(0).getSubtotal(),
                 STDataConsolidateFunction.Enum.forInt(DataConsolidateFunction.SUM.getValue()));
     }
+    
+    /**
+     * Verify that it's possible to set a custom name when creating a data column
+     */
+    public void testColumnLabelSetCustomName() {
+        int columnIndex = 0;
+
+        String customName = "Custom Name";
+        
+        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex, customName);
+
+        CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
+
+        assertEquals(defintion.getDataFields().getDataFieldArray(0).getFld(), columnIndex);
+        assertEquals(defintion.getDataFields().getDataFieldArray(0).getName(), customName);
+    }
 
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
