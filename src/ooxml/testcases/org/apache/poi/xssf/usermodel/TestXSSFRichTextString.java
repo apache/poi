@@ -22,6 +22,10 @@ import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
@@ -356,5 +360,58 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals("<xml-fragment xml:space=\"preserve\">\n\n\n</xml-fragment>", t1.xmlText());
         assertEquals("<xml-fragment>New Line</xml-fragment>", t2.xmlText());
         assertEquals("<xml-fragment xml:space=\"preserve\">\n\n</xml-fragment>", t3.xmlText());
+    }
+
+    
+    @Test
+    public void testBug56511() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx");
+        for (XSSFSheet sheet : wb) {
+            int lastRow = sheet.getLastRowNum();
+            for (int rowIdx = sheet.getFirstRowNum(); rowIdx <= lastRow; rowIdx++) {
+                XSSFRow row = sheet.getRow(rowIdx);
+                if(row != null) {
+                    int lastCell = row.getLastCellNum();
+    
+                    for (int cellIdx = row.getFirstCellNum(); cellIdx <= lastCell; cellIdx++) {
+    
+                        XSSFCell cell = row.getCell(cellIdx);
+                        if (cell != null) {
+                            //System.out.println("row " + rowIdx + " column " + cellIdx + ": " + cell.getCellType() + ": " + cell.toString());
+                            
+                            XSSFRichTextString richText = cell.getRichStringCellValue();
+                            int anzFormattingRuns = richText.numFormattingRuns();
+                            for (int run = 0; run < anzFormattingRuns; run++) {
+                                /*XSSFFont font =*/ richText.getFontOfFormattingRun(run);
+                                //System.out.println("  run " + run
+                                //        + " font " + (font == null ? "<null>" : font.getFontName()));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testBug56511_values() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx");
+        Sheet sheet = wb.getSheetAt(0);
+        Row row = sheet.getRow(0);
+
+        // verify the values to ensure future changes keep the returned information equal 
+        assertEquals(0, row.getCell(0).getRichStringCellValue().numFormattingRuns());
+        assertEquals(0, row.getCell(1).getRichStringCellValue().numFormattingRuns());
+        
+        XSSFRichTextString rt = (XSSFRichTextString) row.getCell(2).getRichStringCellValue();
+        assertEquals(2, rt.numFormattingRuns());
+        assertNotNull(rt.getFontOfFormattingRun(0));
+        assertNotNull(rt.getFontOfFormattingRun(1));
+        
+        rt = (XSSFRichTextString) row.getCell(3).getRichStringCellValue();
+        assertEquals(3, rt.numFormattingRuns());
+        assertNull(rt.getFontOfFormattingRun(0));
+        assertNotNull(rt.getFontOfFormattingRun(1));
+        assertNotNull(rt.getFontOfFormattingRun(2));
     }
 }

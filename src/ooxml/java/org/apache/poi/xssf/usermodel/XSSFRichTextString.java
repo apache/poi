@@ -346,7 +346,7 @@ public class XSSFRichTextString implements RichTextString {
 
         for(int i = 0; i < st.sizeOfRArray(); i++){
             CTRElt r = st.getRArray(i);
-            if(i == index) {
+            if(i == index && r.getRPr() != null) {
                XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
                fnt.setThemesTable(getThemesTable());
                return fnt;
