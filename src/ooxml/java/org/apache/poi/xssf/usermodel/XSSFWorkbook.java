@@ -1192,7 +1192,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public int getFirstVisibleTab() {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView = bookViews.getWorkbookViewArray(0);
-        return (short) bookView.getActiveTab();
+        return (short) bookView.getFirstSheet();
     }
 
     /**
@@ -1204,7 +1204,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public void setFirstVisibleTab(int index) {
         CTBookViews bookViews = workbook.getBookViews();
         CTBookView bookView= bookViews.getWorkbookViewArray(0);
-        bookView.setActiveTab(index);
+        bookView.setFirstSheet(index);
     }
 
     /**
