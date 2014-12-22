@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationErrorStyle;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOperator;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationType;
 
@@ -166,6 +167,8 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 			sqref.add(cellRangeAddress.formatAsString());
 		}
 		newDataValidation.setSqref(sqref);
+		newDataValidation.setAllowBlank(true);
+		newDataValidation.setErrorStyle(STDataValidationErrorStyle.STOP);
 		
 		return new XSSFDataValidation(dataValidationConstraint,cellRangeAddressList,newDataValidation);
 	}
