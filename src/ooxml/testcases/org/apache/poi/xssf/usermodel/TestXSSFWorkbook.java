@@ -166,47 +166,59 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-	public void getCellStyleAt(){
+	public void getCellStyleAt() throws IOException{
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
-		short i = 0;
-		//get default style
-		CellStyle cellStyleAt = workbook.getCellStyleAt(i);
-		assertNotNull(cellStyleAt);
-
-		//get custom style
-		StylesTable styleSource = workbook.getStylesSource();
-		XSSFCellStyle customStyle = new XSSFCellStyle(styleSource);
-		XSSFFont font = new XSSFFont();
-		font.setFontName("Verdana");
-		customStyle.setFont(font);
-		int x = styleSource.putStyle(customStyle);
-		cellStyleAt = workbook.getCellStyleAt((short)x);
-		assertNotNull(cellStyleAt);
+	 	try {
+    		short i = 0;
+    		//get default style
+    		CellStyle cellStyleAt = workbook.getCellStyleAt(i);
+    		assertNotNull(cellStyleAt);
+    
+    		//get custom style
+    		StylesTable styleSource = workbook.getStylesSource();
+    		XSSFCellStyle customStyle = new XSSFCellStyle(styleSource);
+    		XSSFFont font = new XSSFFont();
+    		font.setFontName("Verdana");
+    		customStyle.setFont(font);
+    		int x = styleSource.putStyle(customStyle);
+    		cellStyleAt = workbook.getCellStyleAt((short)x);
+    		assertNotNull(cellStyleAt);
+	 	} finally {
+	 	    workbook.close();
+	 	}
 	}
 
     @Test
-	public void getFontAt(){
+	public void getFontAt() throws IOException{
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
-		StylesTable styleSource = workbook.getStylesSource();
-		short i = 0;
-		//get default font
-		Font fontAt = workbook.getFontAt(i);
-		assertNotNull(fontAt);
-
-		//get customized font
-		XSSFFont customFont = new XSSFFont();
-		customFont.setItalic(true);
-		int x = styleSource.putFont(customFont);
-		fontAt = workbook.getFontAt((short)x);
-		assertNotNull(fontAt);
+	 	try {
+    		StylesTable styleSource = workbook.getStylesSource();
+    		short i = 0;
+    		//get default font
+    		Font fontAt = workbook.getFontAt(i);
+    		assertNotNull(fontAt);
+    
+    		//get customized font
+    		XSSFFont customFont = new XSSFFont();
+    		customFont.setItalic(true);
+    		int x = styleSource.putFont(customFont);
+    		fontAt = workbook.getFontAt((short)x);
+    		assertNotNull(fontAt);
+	 	} finally {
+	 	    workbook.close();
+	 	}
 	}
 
     @Test
-	public void getNumCellStyles(){
+	public void getNumCellStyles() throws IOException{
 	 	XSSFWorkbook workbook = new XSSFWorkbook();
-		short i = workbook.getNumCellStyles();
-		//get default cellStyles
-		assertEquals(1, i);
+	 	try {
+    		short i = workbook.getNumCellStyles();
+    		//get default cellStyles
+    		assertEquals(1, i);
+	 	} finally {
+	 	    workbook.close();
+	 	}
 	}
 
     @Test
@@ -456,30 +468,33 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-    public void recalcId() {
+    public void recalcId() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
-        assertFalse(wb.getForceFormulaRecalculation());
-        CTWorkbook ctWorkbook = wb.getCTWorkbook();
-        assertFalse(ctWorkbook.isSetCalcPr());
-
-        wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
-
-        CTCalcPr calcPr = ctWorkbook.getCalcPr();
-        assertNotNull(calcPr);
-        assertEquals(0, (int) calcPr.getCalcId());
-
-        calcPr.setCalcId(100);
-        assertTrue(wb.getForceFormulaRecalculation());
-
-        wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
-        assertEquals(0, (int) calcPr.getCalcId());
-        assertFalse(wb.getForceFormulaRecalculation());
-
-        // calcMode="manual" is unset when forceFormulaRecalculation=true
-        calcPr.setCalcMode(STCalcMode.MANUAL);
-        wb.setForceFormulaRecalculation(true);
-        assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
-
+        try {
+            assertFalse(wb.getForceFormulaRecalculation());
+            CTWorkbook ctWorkbook = wb.getCTWorkbook();
+            assertFalse(ctWorkbook.isSetCalcPr());
+    
+            wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
+    
+            CTCalcPr calcPr = ctWorkbook.getCalcPr();
+            assertNotNull(calcPr);
+            assertEquals(0, (int) calcPr.getCalcId());
+    
+            calcPr.setCalcId(100);
+            assertTrue(wb.getForceFormulaRecalculation());
+    
+            wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
+            assertEquals(0, (int) calcPr.getCalcId());
+            assertFalse(wb.getForceFormulaRecalculation());
+    
+            // calcMode="manual" is unset when forceFormulaRecalculation=true
+            calcPr.setCalcMode(STCalcMode.MANUAL);
+            wb.setForceFormulaRecalculation(true);
+            assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
+        } finally {
+            wb.close();
+        }
     }
 
     @Test
@@ -488,14 +503,18 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void setTabColor() {
+    public void setTabColor() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sh = wb.createSheet();
-        assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
-        sh.setTabColor(IndexedColors.RED.index);
-        assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
-        assertEquals(IndexedColors.RED.index,
-                sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
+        try {
+            XSSFSheet sh = wb.createSheet();
+            assertTrue(sh.getCTWorksheet().getSheetPr() == null || !sh.getCTWorksheet().getSheetPr().isSetTabColor());
+            sh.setTabColor(IndexedColors.RED.index);
+            assertTrue(sh.getCTWorksheet().getSheetPr().isSetTabColor());
+            assertEquals(IndexedColors.RED.index,
+                    sh.getCTWorksheet().getSheetPr().getTabColor().getIndexed());
+        } finally {
+            wb.close();
+        }
     }
 
     @Test
@@ -655,24 +674,28 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	public void bug51158a() throws IOException {
         // create a workbook
         final XSSFWorkbook workbook = new XSSFWorkbook();
-        workbook.createSheet("Test Sheet");
-
-        XSSFSheet sheetBack = workbook.getSheetAt(0);
-
-        // committing twice did add the XML twice without clearing the part in between
-        sheetBack.commit();
-
-        // ensure that a memory based package part does not have lingering data from previous commit() calls
-        if(sheetBack.getPackagePart() instanceof MemoryPackagePart) {
-            ((MemoryPackagePart)sheetBack.getPackagePart()).clear();
+        try {
+            workbook.createSheet("Test Sheet");
+    
+            XSSFSheet sheetBack = workbook.getSheetAt(0);
+    
+            // committing twice did add the XML twice without clearing the part in between
+            sheetBack.commit();
+    
+            // ensure that a memory based package part does not have lingering data from previous commit() calls
+            if(sheetBack.getPackagePart() instanceof MemoryPackagePart) {
+                ((MemoryPackagePart)sheetBack.getPackagePart()).clear();
+            }
+    
+            sheetBack.commit();
+    
+            String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()));
+            System.out.println(str);
+            
+            assertEquals(1, countMatches(str, "<worksheet"));
+        } finally {
+            workbook.close();
         }
-
-        sheetBack.commit();
-
-        String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()));
-        System.out.println(str);
-        
-        assertEquals(1, countMatches(str, "<worksheet"));
     }	
 	
     private static final int INDEX_NOT_FOUND = -1;
@@ -698,18 +721,23 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         return cs.toString().indexOf(searchChar.toString(), start);
     }
 
-    public void testAddPivotCache() {
+    @Test
+    public void testAddPivotCache() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
-        CTWorkbook ctWb = wb.getCTWorkbook();
-        CTPivotCache pivotCache = wb.addPivotCache("0");
-        //Ensures that pivotCaches is initiated
-        assertTrue(ctWb.isSetPivotCaches());
-        assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheArray(0));
-        assertEquals("0", pivotCache.getId());
+        try {
+            CTWorkbook ctWb = wb.getCTWorkbook();
+            CTPivotCache pivotCache = wb.addPivotCache("0");
+            //Ensures that pivotCaches is initiated
+            assertTrue(ctWb.isSetPivotCaches());
+            assertSame(pivotCache, ctWb.getPivotCaches().getPivotCacheArray(0));
+            assertEquals("0", pivotCache.getId());
+        } finally {
+            wb.close();
+        }
     }
 
     public void setPivotData(XSSFWorkbook wb){
-        XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+        XSSFSheet sheet = wb.createSheet();
 
         Row row1 = sheet.createRow(0);
         // Create a cell and put a value in it.
@@ -740,6 +768,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         sheet.createPivotTable(source, new CellReference("H5"));
     }
 
+    @Test
     public void testLoadWorkbookWithPivotTable() throws Exception {
         String fileName = "ooxml-pivottable.xlsx";
 
@@ -754,6 +783,7 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         assertTrue(wb2.getPivotTables().size() == 1);
     }
 
+    @Test
     public void testAddPivotTableToWorkbookWithLoadedPivotTable() throws Exception {
         String fileName = "ooxml-pivottable.xlsx";
 
@@ -767,5 +797,40 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
         XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(new File(fileName));
         setPivotData(wb2);
         assertTrue(wb2.getPivotTables().size() == 2);
+    }
+    
+    @Test
+    public void testSetFirstVisibleTab_57373() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        
+        try {
+            /*Sheet sheet1 =*/ wb.createSheet();
+            Sheet sheet2 = wb.createSheet();
+            int idx2 = wb.getSheetIndex(sheet2);
+            Sheet sheet3 = wb.createSheet();
+            int idx3 = wb.getSheetIndex(sheet3);
+            
+            // add many sheets so "first visible" is relevant
+            for(int i = 0; i < 30;i++) {
+                wb.createSheet();
+            }
+            
+            wb.setFirstVisibleTab(idx2);
+            wb.setActiveSheet(idx3);
+            
+            //wb.write(new FileOutputStream(new File("C:\\temp\\test.xlsx")));
+
+            assertEquals(idx2, wb.getFirstVisibleTab());
+            assertEquals(idx3, wb.getActiveSheetIndex());
+
+            Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+            sheet2 = wbBack.getSheetAt(idx2);
+            sheet3 = wbBack.getSheetAt(idx3);
+            assertEquals(idx2, wb.getFirstVisibleTab());
+            assertEquals(idx3, wb.getActiveSheetIndex());
+        } finally {
+            wb.close();
+        }
     }
 }
