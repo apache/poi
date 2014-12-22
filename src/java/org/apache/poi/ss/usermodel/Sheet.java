@@ -937,6 +937,12 @@ public interface Sheet extends Iterable<Row> {
     
     public DataValidationHelper getDataValidationHelper();
 
+    /**
+     * Returns the list of DataValidation in the sheet.
+     * @return list of DataValidation in the sheet
+     */
+    public List<? extends DataValidation> getDataValidations();
+
 	/**
      * Returns the list of DataValidation in the sheet.
      * @return list of DataValidation in the sheet
