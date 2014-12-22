@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -100,6 +101,35 @@ public final class TestUnfixedBugs extends TestCase {
                     }
                     
                     prev = cell.getDateCellValue();
+                }
+            }
+        }
+    }
+
+
+    public void test57236() {
+        // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
+        
+        /*
+        DecimalFormat format = new DecimalFormat("#.##########", new DecimalFormatSymbols(Locale.getDefault()));
+        double d = 3.0E-104;
+        assertEquals("3.0E-104", format.format(d));
+         */
+        
+        DataFormatter formatter = new DataFormatter(true);
+
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57236.xlsx");
+        for(int sheetNum = 0;sheetNum < wb.getNumberOfSheets();sheetNum++) {
+            Sheet sheet = wb.getSheetAt(sheetNum);
+            for(int rowNum = sheet.getFirstRowNum();rowNum < sheet.getLastRowNum();rowNum++) {
+                Row row = sheet.getRow(rowNum);
+                for(int cellNum = row.getFirstCellNum();cellNum < row.getLastCellNum();cellNum++) {
+                    Cell cell = row.getCell(cellNum);
+                    String fmtCellValue = formatter.formatCellValue(cell);
+                    
+                    System.out.println("Cell: " + fmtCellValue);
+                    assertNotNull(fmtCellValue);
+                    assertFalse(fmtCellValue.equals("0"));
                 }
             }
         }
