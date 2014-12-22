@@ -55,6 +55,7 @@ public class OldExcelExtractor {
     private RecordInputStream ris;
     private Closeable input;
     private int biffVersion;
+    private int fileType;
 
     public OldExcelExtractor(InputStream input) throws IOException {
         BufferedInputStream bstream = new BufferedInputStream(input, 8);
@@ -83,6 +84,7 @@ public class OldExcelExtractor {
     private void open(InputStream biffStream) {
         input = biffStream;
         ris = new RecordInputStream(biffStream);
+        prepare();
     }
     private void open(NPOIFSFileSystem fs) throws IOException {
         input = fs;
@@ -95,6 +97,7 @@ public class OldExcelExtractor {
         }
         
         ris = new RecordInputStream(directory.createDocumentInputStream(book));
+        prepare();
     }
 
     public static void main(String[] args) throws Exception {
@@ -106,16 +109,14 @@ public class OldExcelExtractor {
         OldExcelExtractor extractor = new OldExcelExtractor(new File(args[0]));
         System.out.println(extractor.getText());
     }
-
-    /**
-     * Retrieves the text contents of the file, as best we can
-     *  for these old file formats
-     */
-    public String getText() {
-        StringBuffer text = new StringBuffer();
+    
+    private void prepare() {
+        if (! ris.hasNextRecord())
+            throw new IllegalArgumentException("File contains no records!"); 
+        ris.nextRecord();
         
         // Work out what version we're dealing with
-        int bofSid = ris.getNextSid();
+        int bofSid = ris.getSid();
         switch (bofSid) {
             case BOFRecord.biff2_sid:
                 biffVersion = 2;
@@ -132,6 +133,33 @@ public class OldExcelExtractor {
             default:
                 throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid); 
         }
+        
+        // Get the type
+        BOFRecord bof = new BOFRecord(ris);
+        fileType = bof.getType();
+    }
+
+    /**
+     * The Biff version, largely corresponding to the Excel version
+     */
+    public int getBiffVersion() {
+        return biffVersion;
+    }
+    /**
+     * The kind of the file, one of {@link BOFRecord#TYPE_WORKSHEET},
+     *  {@link BOFRecord#TYPE_CHART}, {@link BOFRecord#TYPE_EXCEL_4_MACRO}
+     *  or {@link BOFRecord#TYPE_WORKSPACE_FILE}
+     */
+    public int getFileType() {
+        return fileType;
+    }
+
+    /**
+     * Retrieves the text contents of the file, as best we can
+     *  for these old file formats
+     */
+    public String getText() {
+        StringBuffer text = new StringBuffer();
         
         // To track formats and encodings
         CodepageRecord codepage = null;
