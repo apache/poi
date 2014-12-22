@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.junit.Test;
 
 /**
  * @author centic
@@ -132,6 +133,38 @@ public final class TestUnfixedBugs extends TestCase {
                     assertFalse(fmtCellValue.equals("0"));
                 }
             }
+        }
+    }
+
+    
+    @Test
+    public void test57165() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        try {
+            removeAllSheetsBut(3, wb);
+            wb.cloneSheet(0); // Throws exception here
+            wb.setSheetName(1, "New Sheet");
+            //saveWorkbook(wb, fileName);
+            
+            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            try {
+                
+            } finally {
+                wbBack.close();
+            }
+        } finally {
+            wb.close();
+        }
+    }
+
+    private static void removeAllSheetsBut(int sheetIndex, Workbook wb)
+    {
+        int sheetNb = wb.getNumberOfSheets();
+        // Move this sheet at the first position
+        wb.setSheetOrder(wb.getSheetName(sheetIndex), 0);
+        for (int sn = sheetNb - 1; sn > 0; sn--)
+        {
+            wb.removeSheetAt(sn);
         }
     }
 }
