@@ -327,15 +327,30 @@ public class DateUtil {
         return calendar;
     }
 
-
     // variables for performance optimization:
     // avoid re-checking DataUtil.isADateFormat(int, String) if a given format
     // string represents a date format if the same string is passed multiple times.
     // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
-    private static int lastFormatIndex = -1;
-    private static String lastFormatString = null;
-    private static boolean cached = false;
+    private static ThreadLocal<Integer> lastFormatIndex = new ThreadLocal<Integer>() {
+        protected Integer initialValue() {
+            return -1;
+        }
+    };
+    private static ThreadLocal<String> lastFormatString = new ThreadLocal<String>();
+    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<Boolean>();
 
+    private static boolean isCached(String formatString, int formatIndex) {
+        String cachedFormatString = lastFormatString.get();
+        return cachedFormatString != null && formatIndex == lastFormatIndex.get()
+                && formatString.equals(cachedFormatString);
+    }
+
+    private static void cache(String formatString, int formatIndex, boolean cached) {
+        lastFormatIndex.set(formatIndex);
+        lastFormatString.set(formatString);
+        lastCachedResult.set(Boolean.valueOf(cached));
+    }
+    
     /**
      * Given a format ID and its format String, will check to see if the
      *  format represents a date format or not.
@@ -350,25 +365,21 @@ public class DateUtil {
      * @see #isInternalDateFormat(int)
      */
 
-    public static synchronized boolean isADateFormat(int formatIndex, String formatString) {
-       
-         if (formatString != null && formatIndex == lastFormatIndex && formatString.equals(lastFormatString)) {
-           		return cached;
-         }
+    public static boolean isADateFormat(int formatIndex, String formatString) {
         // First up, is this an internal date format?
         if(isInternalDateFormat(formatIndex)) {
-            lastFormatIndex = formatIndex;
-            lastFormatString = formatString;
-            cached = true;
+            cache(formatString, formatIndex, true);
             return true;
         }
 
-        // If we didn't get a real string, it can't be
+        // If we didn't get a real string, don't even cache it as we can always find this out quickly
         if(formatString == null || formatString.length() == 0) {
-            lastFormatIndex = formatIndex;
-            lastFormatString = formatString;
-            cached = false;
             return false;
+        }
+
+        // check the cache first
+        if (isCached(formatString, formatIndex)) {
+            return lastCachedResult.get();
         }
 
         String fs = formatString;
@@ -419,9 +430,7 @@ public class DateUtil {
 
         // short-circuit if it indicates elapsed time: [h], [m] or [s]
         if(date_ptrn4.matcher(fs).matches()){
-            lastFormatIndex = formatIndex;
-            lastFormatString = formatString;
-            cached = true;
+            cache(formatString, formatIndex, true);
             return true;
         }
 
@@ -449,9 +458,7 @@ public class DateUtil {
         // optionally followed by AM/PM
 
         boolean result = date_ptrn3b.matcher(fs).matches();
-        lastFormatIndex = formatIndex;
-        lastFormatString = formatString;
-        cached = result;
+        cache(formatString, formatIndex, result);
         return result;
     }
 

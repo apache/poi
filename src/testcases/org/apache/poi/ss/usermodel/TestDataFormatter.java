@@ -21,6 +21,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -158,7 +159,7 @@ public class TestDataFormatter extends TestCase {
        String p2dp_n1dp_z0 = "00.00;(00.0);0";
        String all2dpTSP = "00.00_x";
        String p2dp_n2dpTSP = "00.00_x;(00.00)_x";
-       String p2dp_n1dpTSP = "00.00_x;(00.0)_x";
+       //String p2dp_n1dpTSP = "00.00_x;(00.0)_x";
        
        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, all2dp));
        assertEquals("12.34", dfUS.formatRawCellContents(12.343, -1, p2dp_n1dp));
@@ -493,20 +494,24 @@ public class TestDataFormatter extends TestCase {
         assertEquals(" $-   ", dfUS.formatRawCellContents(0.0, -1, "_-$* #,##0.00_-;-$* #,##0.00_-;_-$* \"-\"??_-;_-@_-"));
     }
     
-    public void testErrors() {
+    public void testErrors() throws IOException {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
         // Create a spreadsheet with some formula errors in it
         Workbook wb = new HSSFWorkbook();
-        Sheet s = wb.createSheet();
-        Row r = s.createRow(0);
-        Cell c = r.createCell(0, Cell.CELL_TYPE_ERROR);
-        
-        c.setCellErrorValue(FormulaError.DIV0.getCode());
-        assertEquals(FormulaError.DIV0.getString(), dfUS.formatCellValue(c));
-        
-        c.setCellErrorValue(FormulaError.REF.getCode());
-        assertEquals(FormulaError.REF.getString(), dfUS.formatCellValue(c));
+        try {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0, Cell.CELL_TYPE_ERROR);
+            
+            c.setCellErrorValue(FormulaError.DIV0.getCode());
+            assertEquals(FormulaError.DIV0.getString(), dfUS.formatCellValue(c));
+            
+            c.setCellErrorValue(FormulaError.REF.getCode());
+            assertEquals(FormulaError.REF.getString(), dfUS.formatCellValue(c));
+        } finally {
+            wb.close();
+        }
     }
 
     /**
@@ -606,5 +611,26 @@ public class TestDataFormatter extends TestCase {
 		} catch (IllegalArgumentException e) {
 			assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
 		}
+	}
+	
+	public void testIsADateFormat() {
+	    // first check some cases that should not be a date, also call multiple times to ensure the cache is used
+	    assertFalse(DateUtil.isADateFormat(-1, null));
+	    assertFalse(DateUtil.isADateFormat(-1, null));
+        assertFalse(DateUtil.isADateFormat(123, null));
+        assertFalse(DateUtil.isADateFormat(123, ""));
+        assertFalse(DateUtil.isADateFormat(124, ""));
+        assertFalse(DateUtil.isADateFormat(-1, ""));
+        assertFalse(DateUtil.isADateFormat(-1, ""));
+        assertFalse(DateUtil.isADateFormat(-1, "nodateformat"));
+
+        // then also do the same for some valid date formats
+        assertTrue(DateUtil.isADateFormat(0x0e, null));
+        assertTrue(DateUtil.isADateFormat(0x2f, null));
+        assertTrue(DateUtil.isADateFormat(-1, "yyyy"));
+        assertTrue(DateUtil.isADateFormat(-1, "yyyy"));
+        assertTrue(DateUtil.isADateFormat(-1, "dd/mm/yy;[red]dd/mm/yy"));
+        assertTrue(DateUtil.isADateFormat(-1, "dd/mm/yy;[red]dd/mm/yy"));
+        assertTrue(DateUtil.isADateFormat(-1, "[h]"));
 	}
 }
