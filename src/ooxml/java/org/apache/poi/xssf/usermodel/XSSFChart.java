@@ -79,14 +79,13 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 	 */
 	private CTChart chart;
 
-	List<XSSFChartAxis> axis;
+	List<XSSFChartAxis> axis = new ArrayList<XSSFChartAxis>();
 
 	/**
 	 * Create a new SpreadsheetML chart
 	 */
 	protected XSSFChart() {
 		super();
-		axis = new ArrayList<XSSFChartAxis>();
 		createChart();
 	}
 
@@ -227,13 +226,13 @@ public final class XSSFChart extends POIXMLDocumentPart implements Chart, ChartA
 		return categoryAxis;
 	}
 
-	public List<? extends XSSFChartAxis> getAxis() {
-		if (axis.isEmpty() && hasAxis()) {
-			parseAxis();
-		}
-		return axis;
-	}
-
+    public List<? extends XSSFChartAxis> getAxis() {
+        if (axis.isEmpty() && hasAxis()) {
+            parseAxis();
+        }
+        return axis;
+    }
+	
 	public XSSFManualLayout getManualLayout() {
 		return new XSSFManualLayout(this);
 	}
