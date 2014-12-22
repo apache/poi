@@ -52,7 +52,7 @@ do
      SENDS="$SENDS -Dsources=$artifactId-$VERSION-sources-$DSTAMP.jar"
   fi
   if [ -r $artifactId-$VERSION-javadocs-$DSTAMP.jar ]; then
-     SENDS="$SENDS -Dsources=$artifactId-$VERSION-javadocs-$DSTAMP.jar"
+     SENDS="$SENDS -Djavadoc=$artifactId-$VERSION-javadocs-$DSTAMP.jar"
   fi
 
   mvn gpg:sign-and-deploy-file \
