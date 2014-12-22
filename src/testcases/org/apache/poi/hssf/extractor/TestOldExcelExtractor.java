@@ -51,6 +51,10 @@ public final class TestOldExcelExtractor extends POITestCase {
         // Check we find a few numbers we expect in there
         assertContains(text, "11");
         assertContains(text, "784");
+        
+        // Check the type
+        assertEquals(4, extractor.getBiffVersion());
+        assertEquals(0x10, extractor.getFileType());
     }
     public void testSimpleExcel5() {
         for (String ver : new String[] {"5", "95"}) {
@@ -69,6 +73,10 @@ public final class TestOldExcelExtractor extends POITestCase {
             
             // Check we got the sheet names (new formats only)
             assertContains(text, "Sheet: Feuil3");
+            
+            // Check the type
+            assertEquals(5, extractor.getBiffVersion());
+            assertEquals(0x05, extractor.getFileType());
         }
     }
 
