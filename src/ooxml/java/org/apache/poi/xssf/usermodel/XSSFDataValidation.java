@@ -83,12 +83,7 @@ public class XSSFDataValidation implements DataValidation {
 
 	
 	XSSFDataValidation(CellRangeAddressList regions,CTDataValidation ctDataValidation) {
-		super();
-		this.validationConstraint = getConstraint(ctDataValidation);
-		this.ctDdataValidation = ctDataValidation;
-		this.regions = regions;
-		this.ctDdataValidation.setErrorStyle(STDataValidationErrorStyle.STOP);
-		this.ctDdataValidation.setAllowBlank(true);
+	    this(getConstraint(ctDataValidation), regions, ctDataValidation);
 	}	
 
 	public XSSFDataValidation(XSSFDataValidationConstraint constraint,CellRangeAddressList regions,CTDataValidation ctDataValidation) {
@@ -96,8 +91,6 @@ public class XSSFDataValidation implements DataValidation {
 		this.validationConstraint = constraint;
 		this.ctDdataValidation = ctDataValidation;
 		this.regions = regions;
-		this.ctDdataValidation.setErrorStyle(STDataValidationErrorStyle.STOP);
-		this.ctDdataValidation.setAllowBlank(true);
 	}
  
 	CTDataValidation getCtDdataValidation() {
@@ -243,7 +236,7 @@ public class XSSFDataValidation implements DataValidation {
 		return builder.toString();
 	}
 	
-    private XSSFDataValidationConstraint getConstraint(CTDataValidation ctDataValidation) {
+    private static XSSFDataValidationConstraint getConstraint(CTDataValidation ctDataValidation) {
     	XSSFDataValidationConstraint constraint = null;
     	String formula1 = ctDataValidation.getFormula1();
     	String formula2 = ctDataValidation.getFormula2();

@@ -16,13 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestDataValidation;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
@@ -242,23 +248,87 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
 	}
 
     public void test53965() throws Exception {
-
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        List<XSSFDataValidation> lst = sheet.getDataValidations();    //<-- works
-        assertEquals(0, lst.size());
+        try {
+            XSSFSheet sheet = wb.createSheet();
+            List<XSSFDataValidation> lst = sheet.getDataValidations();    //<-- works
+            assertEquals(0, lst.size());
+    
+            //create the cell that will have the validation applied
+            sheet.createRow(0).createCell(0);
+    
+            DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
+            DataValidationConstraint constraint = dataValidationHelper.createCustomConstraint("SUM($A$1:$A$1) <= 3500");
+            CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+            DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
+            sheet.addValidationData(validation);
+    
+            // this line caused XmlValueOutOfRangeException , see Bugzilla 3965
+            lst = sheet.getDataValidations();
+            assertEquals(1, lst.size());
+        } finally {
+            wb.close();
+        }
+    }
 
+    public void testDefaultAllowBlank() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet();
+    
+            final XSSFDataValidation validation = createValidation(sheet);
+            sheet.addValidationData(validation);
+    
+            final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            assertEquals(true, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+        } finally {
+            wb.close();
+        }
+    }
+
+    public void testSetAllowBlankToFalse() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet();
+    
+            final XSSFDataValidation validation = createValidation(sheet);
+            validation.getCtDdataValidation().setAllowBlank(false);
+    
+            sheet.addValidationData(validation);
+    
+            final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            assertEquals(false, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+        } finally {
+            wb.close();
+        }
+    }
+
+    public void testSetAllowBlankToTrue() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet();
+    
+            final XSSFDataValidation validation = createValidation(sheet);
+            validation.getCtDdataValidation().setAllowBlank(true);
+    
+            sheet.addValidationData(validation);
+    
+            final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            assertEquals(true, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+        } finally {
+            wb.close();
+        }
+    }
+
+    private XSSFDataValidation createValidation(XSSFSheet sheet) {
         //create the cell that will have the validation applied
-        sheet.createRow(0).createCell(0);
+        final Row row = sheet.createRow(0);
+        row.createCell(0);
 
         DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
-        DataValidationConstraint constraint = dataValidationHelper.createCustomConstraint("SUM($A$1:$A$1) <= 3500");
-        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
-        DataValidation validation = dataValidationHelper.createValidation(constraint, addressList);
-        sheet.addValidationData(validation);
 
-        // this line caused XmlValueOutOfRangeException , see Bugzilla 3965
-        lst = sheet.getDataValidations();
-        assertEquals(1, lst.size());
+        DataValidationConstraint constraint = dataValidationHelper.createCustomConstraint("true");
+        final XSSFDataValidation validation = (XSSFDataValidation) dataValidationHelper.createValidation(constraint, new CellRangeAddressList(0, 0, 0, 0));
+        return validation;
     }
 }
