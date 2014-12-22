@@ -17,9 +17,14 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.charts.*;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.*;
 
 public final class TestXSSFChartAxis extends TestCase {
@@ -110,5 +115,22 @@ public final class TestXSSFChartAxis extends TestCase {
 
 		axis.setMinorTickMark(AxisTickMark.CROSS);
 		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
+	}
+
+	public void testGetChartAxisBug57362() {
+	  //Load existing excel with some chart on it having primary and secondary axis.
+	    final Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx");
+        final Sheet sh = workbook.getSheetAt(0);
+        final XSSFSheet xsh = (XSSFSheet) sh;
+        final XSSFDrawing drawing = xsh.createDrawingPatriarch();
+        final XSSFChart chart = drawing.getCharts().get(0);
+
+        final List<? extends XSSFChartAxis> axisList = chart.getAxis();
+
+        assertEquals(4, axisList.size());
+        assertNotNull(axisList.get(0));
+        assertNotNull(axisList.get(1));
+        assertNotNull(axisList.get(2));
+        assertNotNull(axisList.get(3));
 	}
 }
