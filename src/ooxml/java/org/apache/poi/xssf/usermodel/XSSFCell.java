@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
@@ -107,7 +108,7 @@ public final class XSSFCell implements Cell {
         } else {
             int prevNum = row.getLastCellNum();
             if(prevNum != -1){
-                _cellNum = row.getCell(prevNum-1).getColumnIndex() + 1;
+                _cellNum = row.getCell(prevNum-1, Row.RETURN_NULL_AND_BLANK).getColumnIndex() + 1;
             }
         }
         _sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
