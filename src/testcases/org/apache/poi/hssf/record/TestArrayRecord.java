@@ -19,14 +19,17 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.util.HexRead;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
 
 public final class TestArrayRecord extends TestCase {
 
@@ -53,7 +56,22 @@ public final class TestArrayRecord extends TestCase {
         byte[] ser = r2.serialize();
         //serialize and check that the data is the same as in r1
         assertEquals(HexDump.toHex(data), HexDump.toHex(ser));
+    }
 
+    public void testBug57231() {
+        HSSFWorkbook wb = HSSFTestDataSamples
+                .openSampleWorkbook("57231_MixedGasReport.xls");
+        HSSFSheet sheet = wb.getSheet("master");
 
+        HSSFSheet newSheet = wb.cloneSheet(wb.getSheetIndex(sheet));
+        int idx = wb.getSheetIndex(newSheet);
+        wb.setSheetName(idx, "newName");
+
+        // Write the output to a file
+        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+
+        assertNotNull(wbBack.getSheet("master"));
+        assertNotNull(wbBack.getSheet("newName"));
     }
 }

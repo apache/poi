@@ -94,5 +94,15 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		}
 		sb.append("]");
 		return sb.toString();
-	}
+	}	
+    
+    public Object clone() {
+        ArrayRecord rec = new ArrayRecord(_formula.copy(), getRange());
+
+        // they both seem unused, but clone them nevertheless to have an exact copy
+        rec._options = _options;
+        rec._field3notUsed = _field3notUsed;
+
+        return rec;
+    }
 }
