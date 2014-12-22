@@ -47,16 +47,7 @@ import org.junit.runner.Result;
  * @author Yegor Kozlov
  */
 public final class OOXMLLite {
-
-    private static final Field _classes;
-    static {
-        try {
-            _classes = ClassLoader.class.getDeclaredField("classes");
-            _classes.setAccessible(true);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private static Field _classes;
 
     /**
      * Destination directory to copy filtered classes
@@ -206,6 +197,16 @@ public final class OOXMLLite {
      */
     @SuppressWarnings("unchecked")
     private static Map<String, Class<?>> getLoadedClasses(String ptrn) {
+        // make the field accessible, we defer this from static initialization to here to 
+        // allow JDKs which do not have this field (e.g. IBM JDK) to at least load the class
+        // without failing, see https://issues.apache.org/bugzilla/show_bug.cgi?id=56550
+        try {
+            _classes = ClassLoader.class.getDeclaredField("classes");
+            _classes.setAccessible(true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         ClassLoader appLoader = ClassLoader.getSystemClassLoader();
         try {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
