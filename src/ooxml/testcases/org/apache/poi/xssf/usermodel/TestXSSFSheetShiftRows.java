@@ -29,7 +29,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
@@ -190,13 +189,167 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
 	}
 
-	@Test
-	public void testBug55280() {
+	public void testBug55280() throws IOException {
         Workbook w = new XSSFWorkbook();
-        Sheet s = w.createSheet();
-        for (int row = 0; row < 5000; ++row)
-            s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
+        try {
+            Sheet s = w.createSheet();
+            for (int row = 0; row < 5000; ++row)
+                s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
 
-        s.shiftRows(0, 4999, 1);        // takes a long time...
+            s.shiftRows(0, 4999, 1);        // takes a long time...
+        } finally {
+            w.close();
+        }
 	}
+
+    public void test57171() throws Exception {
+	    Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        assertEquals(5, wb.getActiveSheetIndex());
+        removeAllSheetsBut(5, wb); // 5 is the active / selected sheet
+        assertEquals(0, wb.getActiveSheetIndex());
+
+        Workbook wbRead = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(0, wbRead.getActiveSheetIndex());
+
+        wbRead.removeSheetAt(0);
+        assertEquals(0, wbRead.getActiveSheetIndex());
+
+        //wb.write(new FileOutputStream("/tmp/57171.xls"));
+    }
+
+    public void test57163() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        assertEquals(5, wb.getActiveSheetIndex());
+        wb.removeSheetAt(0);
+        assertEquals(4, wb.getActiveSheetIndex());
+
+        //wb.write(new FileOutputStream("/tmp/57163.xls"));
+    }
+
+    public void testSetSheetOrderAndAdjustActiveSheet() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        
+        assertEquals(5, wb.getActiveSheetIndex());
+
+        // move the sheets around in all possible combinations to check that the active sheet
+        // is set correctly in all cases
+        wb.setSheetOrder(wb.getSheetName(5), 4);
+        assertEquals(4, wb.getActiveSheetIndex());
+        
+        wb.setSheetOrder(wb.getSheetName(5), 5);
+        assertEquals(4, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(3), 5);
+        assertEquals(3, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(4), 5);
+        assertEquals(3, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(2), 2);
+        assertEquals(3, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(2), 1);
+        assertEquals(3, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(3), 5);
+        assertEquals(5, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(0), 5);
+        assertEquals(4, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(0), 5);
+        assertEquals(3, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(0), 5);
+        assertEquals(2, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(0), 5);
+        assertEquals(1, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(0), 5);
+        assertEquals(0, wb.getActiveSheetIndex());
+
+        wb.setSheetOrder(wb.getSheetName(0), 5);
+        assertEquals(5, wb.getActiveSheetIndex());
+    }   
+
+    public void testRemoveSheetAndAdjustActiveSheet() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        
+        assertEquals(5, wb.getActiveSheetIndex());
+        
+        wb.removeSheetAt(0);
+        assertEquals(4, wb.getActiveSheetIndex());
+        
+        wb.setActiveSheet(3);
+        assertEquals(3, wb.getActiveSheetIndex());
+        
+        wb.removeSheetAt(4);
+        assertEquals(3, wb.getActiveSheetIndex());
+
+        wb.removeSheetAt(3);
+        assertEquals(2, wb.getActiveSheetIndex());
+
+        wb.removeSheetAt(0);
+        assertEquals(1, wb.getActiveSheetIndex());
+
+        wb.removeSheetAt(1);
+        assertEquals(0, wb.getActiveSheetIndex());
+
+        wb.removeSheetAt(0);
+        assertEquals(0, wb.getActiveSheetIndex());
+
+        try {
+            wb.removeSheetAt(0);
+            fail("Should catch exception as no more sheets are there");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+        assertEquals(0, wb.getActiveSheetIndex());
+        
+        wb.createSheet();
+        assertEquals(0, wb.getActiveSheetIndex());
+        
+        wb.removeSheetAt(0);
+        assertEquals(0, wb.getActiveSheetIndex());
+    }
+
+    // TODO: enable when bug 57165 is fixed
+    public void disabled_test57165() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        assertEquals(5, wb.getActiveSheetIndex());
+        removeAllSheetsBut(3, wb);
+        assertEquals(0, wb.getActiveSheetIndex());
+        wb.createSheet("New Sheet1");
+        assertEquals(0, wb.getActiveSheetIndex());
+        wb.cloneSheet(0); // Throws exception here
+        wb.setSheetName(1, "New Sheet");
+        assertEquals(0, wb.getActiveSheetIndex());
+
+        //wb.write(new FileOutputStream("/tmp/57165.xls"));
+    }
+
+//    public void test57165b() throws IOException {
+//        Workbook wb = new XSSFWorkbook();
+//        try {
+//            wb.createSheet("New Sheet 1");
+//            wb.createSheet("New Sheet 2");
+//        } finally {
+//            wb.close();
+//        }
+//    }
+
+    private static void removeAllSheetsBut(int sheetIndex, Workbook wb)
+    {
+        int sheetNb = wb.getNumberOfSheets();
+        // Move this sheet at the first position
+        wb.setSheetOrder(wb.getSheetName(sheetIndex), 0);
+        // Must make this sheet active (otherwise, for XLSX, Excel might protest that active sheet no longer exists)
+        // I think POI should automatically handle this case when deleting sheets...
+//      wb.setActiveSheet(0);
+        for (int sn = sheetNb - 1; sn > 0; sn--)
+        {
+            wb.removeSheetAt(sn);
+        }
+    }
 }

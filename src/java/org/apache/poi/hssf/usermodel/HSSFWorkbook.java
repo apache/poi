@@ -480,6 +480,21 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
         workbook.updateNamesAfterCellShift(shifter);
 
+        // adjust active sheet if necessary
+        int active = getActiveSheetIndex();
+        if(active == oldSheetIndex) {
+            // moved sheet was the active one
+            setActiveSheet(pos);
+        } else if ((active < oldSheetIndex && active < pos) ||
+                (active > oldSheetIndex && active > pos)) {
+            // not affected
+        } else if (pos > oldSheetIndex) {
+            // moved sheet was below before and is above now => active is one less
+            setActiveSheet(active-1);
+        } else {
+            // remaining case: moved sheet was higher than active before and is lower now => active is one more
+            setActiveSheet(active+1);
+        }
     }
 
     private void validateSheetIndex(int index) {
@@ -937,7 +952,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     public void removeSheetAt(int index) {
         validateSheetIndex(index);
-        boolean wasActive = getSheetAt(index).isActive();
         boolean wasSelected = getSheetAt(index).isSelected();
 
         _sheets.remove(index);
@@ -954,9 +968,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         if (newSheetIndex >= nSheets) {
             newSheetIndex = nSheets-1;
         }
-        if (wasActive) {
-            setActiveSheet(newSheetIndex);
-        }
 
         if (wasSelected) {
             boolean someOtherSheetIsStillSelected = false;
@@ -969,6 +980,16 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             if (!someOtherSheetIsStillSelected) {
                 setSelectedTab(newSheetIndex);
             }
+        }
+
+        // adjust active sheet
+        int active = getActiveSheetIndex();
+        if(active == index) {
+            // removed sheet was the active one, reset active sheet if there is still one left now
+            setActiveSheet(newSheetIndex);
+        } else if (active > index) {
+            // removed sheet was below the active one => active is one less now
+            setActiveSheet(active-1);
         }
     }
 
