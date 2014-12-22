@@ -400,18 +400,35 @@ public final class TestXSSFRichTextString extends TestCase {
         Row row = sheet.getRow(0);
 
         // verify the values to ensure future changes keep the returned information equal 
-        assertEquals(0, row.getCell(0).getRichStringCellValue().numFormattingRuns());
-        assertEquals(0, row.getCell(1).getRichStringCellValue().numFormattingRuns());
+        XSSFRichTextString rt = (XSSFRichTextString) row.getCell(0).getRichStringCellValue();
+        assertEquals(0, rt.numFormattingRuns());
+        assertNull(rt.getFontOfFormattingRun(0));
+        assertEquals(-1, rt.getLengthOfFormattingRun(0));
         
-        XSSFRichTextString rt = (XSSFRichTextString) row.getCell(2).getRichStringCellValue();
+        rt = (XSSFRichTextString) row.getCell(1).getRichStringCellValue();
+        assertEquals(0, row.getCell(1).getRichStringCellValue().numFormattingRuns());
+        assertNull(rt.getFontOfFormattingRun(1));
+        assertEquals(-1, rt.getLengthOfFormattingRun(1));
+               
+        rt = (XSSFRichTextString) row.getCell(2).getRichStringCellValue();
         assertEquals(2, rt.numFormattingRuns());
         assertNotNull(rt.getFontOfFormattingRun(0));
+        assertEquals(4, rt.getLengthOfFormattingRun(0));
+        
         assertNotNull(rt.getFontOfFormattingRun(1));
+        assertEquals(9, rt.getLengthOfFormattingRun(1));
+
+        assertNull(rt.getFontOfFormattingRun(2));
         
         rt = (XSSFRichTextString) row.getCell(3).getRichStringCellValue();
         assertEquals(3, rt.numFormattingRuns());
         assertNull(rt.getFontOfFormattingRun(0));
+        assertEquals(1, rt.getLengthOfFormattingRun(0));
+        
         assertNotNull(rt.getFontOfFormattingRun(1));
+        assertEquals(3, rt.getLengthOfFormattingRun(1));
+        
         assertNotNull(rt.getFontOfFormattingRun(2));
+        assertEquals(9, rt.getLengthOfFormattingRun(2));
     }
 }

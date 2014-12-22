@@ -279,13 +279,12 @@ public class XSSFRichTextString implements RichTextString {
      * @return  the number of characters this format run covers
      */
     public int getLengthOfFormattingRun(int index) {
-        if(st.sizeOfRArray() == 0) return length();
-
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
-            if(i == index) return r.getT().length();
+        if(st.sizeOfRArray() == 0 || index >= st.sizeOfRArray()) {
+            return -1;
         }
-        return -1;
+
+        CTRElt r = st.getRArray(index);
+        return r.getT().length();
     }
 
     /**
@@ -342,16 +341,17 @@ public class XSSFRichTextString implements RichTextString {
      * @return  A copy of the  font used or null if no formatting is applied to the specified text run.
      */
     public XSSFFont getFontOfFormattingRun(int index) {
-        if(st.sizeOfRArray() == 0) return null;
-
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
-            if(i == index && r.getRPr() != null) {
-               XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
-               fnt.setThemesTable(getThemesTable());
-               return fnt;
-            }
+        if(st.sizeOfRArray() == 0 || index >= st.sizeOfRArray()) {
+            return null;
         }
+
+        CTRElt r = st.getRArray(index);
+        if(r.getRPr() != null) {
+           XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
+           fnt.setThemesTable(getThemesTable());
+           return fnt;
+        }
+
         return null;
     }
 
