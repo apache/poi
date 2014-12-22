@@ -407,4 +407,40 @@ public final class TestXSSFCell extends BaseTestCell {
 
         XSSFTestDataSamples.writeOutAndReadBack(wb);
     }
+
+    public void testBug56644ReturnNull() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
+        try {
+            wb.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
+            Sheet sheet = wb.getSheet("samplelist");
+            Row row = sheet.getRow(20);
+            row.createCell(2);
+        } finally {
+            wb.close();
+        }
+    }
+
+    public void testBug56644ReturnBlank() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
+        try {
+            wb.setMissingCellPolicy(Row.RETURN_NULL_AND_BLANK);
+            Sheet sheet = wb.getSheet("samplelist");
+            Row row = sheet.getRow(20);
+            row.createCell(2);
+        } finally {
+            wb.close();
+        }
+    }
+
+    public void testBug56644CreateBlank() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
+        try {
+            wb.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
+            Sheet sheet = wb.getSheet("samplelist");
+            Row row = sheet.getRow(20);
+            row.createCell(2);
+        } finally {
+            wb.close();
+        }
+    }
 }
