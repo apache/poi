@@ -96,7 +96,7 @@ final class OperationEvaluatorFactory {
 	private static void put(Map<OperationPtg, Function> m, OperationPtg ptgKey,
 			Function instance) {
 		// make sure ptg has single private constructor because map lookups assume singleton keys
-		Constructor[] cc = ptgKey.getClass().getDeclaredConstructors();
+		Constructor<?>[] cc = ptgKey.getClass().getDeclaredConstructors();
 		if (cc.length > 1 || !Modifier.isPrivate(cc[0].getModifiers())) {
 			throw new RuntimeException("Failed to verify instance ("
 					+ ptgKey.getClass().getName() + ") is a singleton.");

@@ -118,38 +118,42 @@ public final class TestXSSFCell extends BaseTestCell {
         assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_1.getCellType());
     }
 
-    public void testFormulaString() {
+    public void testFormulaString() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
-        CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
-
-        cell.setCellFormula("A2");
-        assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
-        assertEquals("A2", cell.getCellFormula());
-        //the value is not set and cell's type='N' which means blank
-        assertEquals(STCellType.N, ctCell.getT());
-
-        //set cached formula value
-        cell.setCellValue("t='str'");
-        //we are still of 'formula' type
-        assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
-        assertEquals("A2", cell.getCellFormula());
-        //cached formula value is set and cell's type='STR'
-        assertEquals(STCellType.STR, ctCell.getT());
-        assertEquals("t='str'", cell.getStringCellValue());
-
-        //now remove the formula, the cached formula result remains
-        cell.setCellFormula(null);
-        assertEquals(XSSFCell.CELL_TYPE_STRING, cell.getCellType());
-        assertEquals(STCellType.STR, ctCell.getT());
-        //the line below failed prior to fix of Bug #47889
-        assertEquals("t='str'", cell.getStringCellValue());
-
-        //revert to a blank cell
-        cell.setCellValue((String)null);
-        assertEquals(XSSFCell.CELL_TYPE_BLANK, cell.getCellType());
-        assertEquals(STCellType.N, ctCell.getT());
-        assertEquals("", cell.getStringCellValue());
+        try {
+            XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
+    
+            cell.setCellFormula("A2");
+            assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+            assertEquals("A2", cell.getCellFormula());
+            //the value is not set and cell's type='N' which means blank
+            assertEquals(STCellType.N, ctCell.getT());
+    
+            //set cached formula value
+            cell.setCellValue("t='str'");
+            //we are still of 'formula' type
+            assertEquals(XSSFCell.CELL_TYPE_FORMULA, cell.getCellType());
+            assertEquals("A2", cell.getCellFormula());
+            //cached formula value is set and cell's type='STR'
+            assertEquals(STCellType.STR, ctCell.getT());
+            assertEquals("t='str'", cell.getStringCellValue());
+    
+            //now remove the formula, the cached formula result remains
+            cell.setCellFormula(null);
+            assertEquals(XSSFCell.CELL_TYPE_STRING, cell.getCellType());
+            assertEquals(STCellType.STR, ctCell.getT());
+            //the line below failed prior to fix of Bug #47889
+            assertEquals("t='str'", cell.getStringCellValue());
+    
+            //revert to a blank cell
+            cell.setCellValue((String)null);
+            assertEquals(XSSFCell.CELL_TYPE_BLANK, cell.getCellType());
+            assertEquals(STCellType.N, ctCell.getT());
+            assertEquals("", cell.getStringCellValue());
+        } finally {
+            wb.close();
+        }
     }
 
     /**
@@ -183,15 +187,20 @@ public final class TestXSSFCell extends BaseTestCell {
     /**
      * Cell with the formula that returns error must return error code(There was
      * an problem that cell could not return error value form formula cell).
+     * @throws IOException 
      */
-    public void testGetErrorCellValueFromFormulaCell() {
+    public void testGetErrorCellValueFromFormulaCell() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFRow row = sheet.createRow(0);
-        XSSFCell cell = row.createCell(0);
-        cell.setCellFormula("SQRT(-1)");
-        wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
-        assertEquals(36, cell.getErrorCellValue());
+        try {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell = row.createCell(0);
+            cell.setCellFormula("SQRT(-1)");
+            wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
+            assertEquals(36, cell.getErrorCellValue());
+        } finally {
+            wb.close();
+        }
     }
 
     public void testMissingRAttribute() {
@@ -214,8 +223,8 @@ public final class TestXSSFCell extends BaseTestCell {
 
         assertCellsWithMissingR(row);
 
-        wb = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(wb);
-        row = wb.getSheetAt(0).getRow(0);
+        XSSFWorkbook wbNew = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(wb);
+        row = wbNew.getSheetAt(0).getRow(0);
         assertCellsWithMissingR(row);
     }
 
@@ -335,33 +344,37 @@ public final class TestXSSFCell extends BaseTestCell {
     
     public void test56170Reproduce() throws IOException {
         final Workbook wb = new XSSFWorkbook();
-        final Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-        
-        // by creating Cells out of order we trigger the handling in onDocumentWrite()
-        Cell cell1 = row.createCell(1);
-        Cell cell2 = row.createCell(0);
-
-        validateRow(row);
-        
-        validateRow(row);
-
-        // once again with removing one cell
-        row.removeCell(cell1);
-
-        validateRow(row);
-
-        // once again with removing one cell
-        row.removeCell(cell1);
-
-        // now check again
-        validateRow(row);
-
-        // once again with removing one cell
-        row.removeCell(cell2);
-
-        // now check again
-        validateRow(row);
+        try {
+            final Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            
+            // by creating Cells out of order we trigger the handling in onDocumentWrite()
+            Cell cell1 = row.createCell(1);
+            Cell cell2 = row.createCell(0);
+    
+            validateRow(row);
+            
+            validateRow(row);
+    
+            // once again with removing one cell
+            row.removeCell(cell1);
+    
+            validateRow(row);
+    
+            // once again with removing one cell
+            row.removeCell(cell1);
+    
+            // now check again
+            validateRow(row);
+    
+            // once again with removing one cell
+            row.removeCell(cell2);
+    
+            // now check again
+            validateRow(row);
+        } finally {
+            wb.close();
+        }
     }
 
     private void validateRow(Row row) {
