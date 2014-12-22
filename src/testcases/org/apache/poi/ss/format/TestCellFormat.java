@@ -16,11 +16,14 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+
+import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -28,8 +31,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
-import junit.framework.TestCase;
 
 public class TestCellFormat extends TestCase {
     
@@ -825,15 +826,19 @@ public class TestCellFormat extends TestCase {
         
     }
     
-    public void testSimpleFractionFormat() {
+    public void testSimpleFractionFormat() throws IOException {
         CellFormat cf1 = CellFormat.getInstance("# ?/?");
         // Create a workbook, row and cell to test with
         Workbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue(123456.6);
-        System.out.println(cf1.apply(cell).text);
-        assertEquals("123456 3/5", cf1.apply(cell).text);
+        try {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(123456.6);
+            System.out.println(cf1.apply(cell).text);
+            assertEquals("123456 3/5", cf1.apply(cell).text);
+        } finally {
+            wb.close();
+        }
     }
 }
