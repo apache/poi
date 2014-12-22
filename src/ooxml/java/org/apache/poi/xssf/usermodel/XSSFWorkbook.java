@@ -727,7 +727,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTSheet sheet = addSheet(sheetname);
 
         int sheetNumber = 1;
-        for(XSSFSheet sh : sheets) sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+        for(XSSFSheet sh : sheets) {
+            sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+        }
 
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
         wrapper.sheet = sheet;
@@ -1072,6 +1074,27 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         XSSFSheet sheet = getSheetAt(index);
         removeRelation(sheet);
         sheets.remove(index);
+
+        // only set new sheet if there are still some left
+        if(sheets.size() == 0) {
+            return;
+        }
+
+        // the index of the closest remaining sheet to the one just deleted
+        int newSheetIndex = index;
+        if (newSheetIndex >= sheets.size()) {
+            newSheetIndex = sheets.size()-1;
+        }
+
+        // adjust active sheet
+        int active = getActiveSheetIndex();
+        if(active == index) {
+            // removed sheet was the active one, reset active sheet if there is still one left now
+            setActiveSheet(newSheetIndex);
+        } else if (active > index) {
+            // removed sheet was below the active one => active is one less now
+            setActiveSheet(active-1);
+        }
     }
 
     /**
@@ -1374,6 +1397,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     public void setSheetOrder(String sheetname, int pos) {
         int idx = getSheetIndex(sheetname);
         sheets.add(pos, sheets.remove(idx));
+
         // Reorder CTSheets
         CTSheets ct = workbook.getSheets();
         XmlObject cts = ct.getSheetArray(idx).copy();
@@ -1385,6 +1409,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTSheet[] sheetArray = ct.getSheetArray();
         for(int i=0; i < sheetArray.length; i++) {
             sheets.get(i).sheet = sheetArray[i];
+        }
+
+        // adjust active sheet if necessary
+        int active = getActiveSheetIndex();
+        if(active == idx) {
+            // moved sheet was the active one
+            setActiveSheet(pos);
+        } else if ((active < idx && active < pos) ||
+                (active > idx && active > pos)) {
+            // not affected
+        } else if (pos > idx) {
+            // moved sheet was below before and is above now => active is one less
+            setActiveSheet(active-1);
+        } else {
+            // remaining case: moved sheet was higher than active before and is lower now => active is one more
+            setActiveSheet(active+1);
         }
     }
 
