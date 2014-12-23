@@ -105,6 +105,7 @@ public class WorkbookFactory {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
             return new HSSFWorkbook(fs.getRoot(), true);
         } catch(OfficeXmlFileException e) {
+            // opening as .xls failed => try opening as .xlsx
             OPCPackage pkg = OPCPackage.open(file);
             return new XSSFWorkbook(pkg);
         }
