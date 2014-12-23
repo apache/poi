@@ -285,43 +285,56 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 	}
 
     @Test
-	public void incrementSheetId() {
+	public void incrementSheetId() throws IOException {
 		XSSFWorkbook wb = new XSSFWorkbook();
-		int sheetId = (int)wb.createSheet().sheet.getSheetId();
-		assertEquals(1, sheetId);
-		sheetId = (int)wb.createSheet().sheet.getSheetId();
-		assertEquals(2, sheetId);
-
-		//test file with gaps in the sheetId sequence
-		wb = XSSFTestDataSamples.openSampleWorkbook("47089.xlsm");
-		int lastSheetId = (int)wb.getSheetAt(wb.getNumberOfSheets() - 1).sheet.getSheetId();
-		sheetId = (int)wb.createSheet().sheet.getSheetId();
-		assertEquals(lastSheetId+1, sheetId);
+		try {
+    		int sheetId = (int)wb.createSheet().sheet.getSheetId();
+    		assertEquals(1, sheetId);
+    		sheetId = (int)wb.createSheet().sheet.getSheetId();
+    		assertEquals(2, sheetId);
+    
+    		//test file with gaps in the sheetId sequence
+    		XSSFWorkbook wbBack = XSSFTestDataSamples.openSampleWorkbook("47089.xlsm");
+    		try {
+        		int lastSheetId = (int)wbBack.getSheetAt(wbBack.getNumberOfSheets() - 1).sheet.getSheetId();
+        		sheetId = (int)wbBack.createSheet().sheet.getSheetId();
+        		assertEquals(lastSheetId+1, sheetId);
+    		} finally {
+    		    wbBack.close();
+    		}
+		} finally {
+		    wb.close();
+		}
 	}
 
 	/**
 	 *  Test setting of core properties such as Title and Author
+	 * @throws IOException 
 	 */
     @Test
-	public void workbookProperties() {
+	public void workbookProperties() throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
-		POIXMLProperties props = workbook.getProperties();
-		assertNotNull(props);
-		//the Application property must be set for new workbooks, see Bugzilla #47559
-		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
-
-		PackagePropertiesPart opcProps = props.getCoreProperties().getUnderlyingProperties();
-		assertNotNull(opcProps);
-
-		opcProps.setTitleProperty("Testing Bugzilla #47460");
-		assertEquals("Apache POI", opcProps.getCreatorProperty().getValue());
-		opcProps.setCreatorProperty("poi-dev@poi.apache.org");
-
-		workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-		assertEquals("Apache POI", workbook.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
-		opcProps = workbook.getProperties().getCoreProperties().getUnderlyingProperties();
-		assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
-		assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
+		try {
+    		POIXMLProperties props = workbook.getProperties();
+    		assertNotNull(props);
+    		//the Application property must be set for new workbooks, see Bugzilla #47559
+    		assertEquals("Apache POI", props.getExtendedProperties().getUnderlyingProperties().getApplication());
+    
+    		PackagePropertiesPart opcProps = props.getCoreProperties().getUnderlyingProperties();
+    		assertNotNull(opcProps);
+    
+    		opcProps.setTitleProperty("Testing Bugzilla #47460");
+    		assertEquals("Apache POI", opcProps.getCreatorProperty().getValue());
+    		opcProps.setCreatorProperty("poi-dev@poi.apache.org");
+    
+    		XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+    		assertEquals("Apache POI", wbBack.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+    		opcProps = wbBack.getProperties().getCoreProperties().getUnderlyingProperties();
+    		assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
+    		assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
+		} finally {
+		    workbook.close();
+		}
 	}
 
 	/**
@@ -770,33 +783,56 @@ public final class TestXSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void testLoadWorkbookWithPivotTable() throws Exception {
-        String fileName = "ooxml-pivottable.xlsx";
+        File file = TempFile.createTempFile("ooxml-pivottable", ".xlsx");
 
         XSSFWorkbook wb = new XSSFWorkbook();
-        setPivotData(wb);
+        try {
+            setPivotData(wb);
+    
+            FileOutputStream fileOut = new FileOutputStream(file);
+            wb.write(fileOut);
+            fileOut.close();
+        } finally {
+            wb.close();
+        }
 
-        FileOutputStream fileOut = new FileOutputStream(fileName);
-        wb.write(fileOut);
-        fileOut.close();
-
-        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(new File(fileName));
-        assertTrue(wb2.getPivotTables().size() == 1);
+        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file);
+        try {
+            assertTrue(wb2.getPivotTables().size() == 1);
+        } finally {
+            wb2.close();
+        }
+        
+        assertTrue(file.delete());
     }
 
     @Test
     public void testAddPivotTableToWorkbookWithLoadedPivotTable() throws Exception {
-        String fileName = "ooxml-pivottable.xlsx";
+        File file = TempFile.createTempFile("ooxml-pivottable", ".xlsx");
 
         XSSFWorkbook wb = new XSSFWorkbook();
-        setPivotData(wb);
+        try {
+            setPivotData(wb);
+    
+            FileOutputStream fileOut = new FileOutputStream(file);
+            try {
+                wb.write(fileOut);
+            } finally {
+                fileOut.close();
+            }
+        } finally {
+            wb.close();
+        }
 
-        FileOutputStream fileOut = new FileOutputStream(fileName);
-        wb.write(fileOut);
-        fileOut.close();
-
-        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(new File(fileName));
-        setPivotData(wb2);
-        assertTrue(wb2.getPivotTables().size() == 2);
+        XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file);
+        try {
+            setPivotData(wb2);
+            assertTrue(wb2.getPivotTables().size() == 2);
+        } finally {
+            wb2.close();
+        }
+        
+        assertTrue(file.delete());
     }
     
     @Test
