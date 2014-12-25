@@ -34,7 +34,7 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -47,12 +47,12 @@ import org.apache.poi.util.LittleEndian;
 public class StandardDecryptor extends Decryptor {
     private long _length = -1;
 
-    protected StandardDecryptor(EncryptionInfo info) {
-        super(info);
+    protected StandardDecryptor(EncryptionInfoBuilder builder) {
+        super(builder);
     }
 
     public boolean verifyPassword(String password) {
-        EncryptionVerifier ver = info.getVerifier();
+        EncryptionVerifier ver = builder.getVerifier();
         SecretKey skey = generateSecretKey(password, ver, getKeySizeInBytes());
         Cipher cipher = getCipher(skey);
 
@@ -64,7 +64,11 @@ public class StandardDecryptor extends Decryptor {
             byte[] calcVerifierHash = sha1.digest(verifier);
             byte encryptedVerifierHash[] = ver.getEncryptedVerifierHash();
             byte decryptedVerifierHash[] = cipher.doFinal(encryptedVerifierHash);
-            byte[] verifierHash = truncateOrPad(decryptedVerifierHash, calcVerifierHash.length);
+
+            // see 2.3.4.9 Password Verification (Standard Encryption)
+            // ... The number of bytes used by the encrypted Verifier hash MUST be 32 ...
+            // TODO: check and trim/pad the hashes to 32
+            byte[] verifierHash = Arrays.copyOf(decryptedVerifierHash, calcVerifierHash.length);
     
             if (Arrays.equals(calcVerifierHash, verifierHash)) {
                 setSecretKey(skey);
@@ -93,7 +97,7 @@ public class StandardDecryptor extends Decryptor {
         System.arraycopy(x1, 0, x3, 0, x1.length);
         System.arraycopy(x2, 0, x3, x1.length, x2.length);
         
-        byte[] key = truncateOrPad(x3, keySize);
+        byte[] key = Arrays.copyOf(x3, keySize);
 
         SecretKey skey = new SecretKeySpec(key, ver.getCipherAlgorithm().jceId);
         return skey;
@@ -111,24 +115,8 @@ public class StandardDecryptor extends Decryptor {
         return sha1.digest(buff);
     }
 
-    /**
-     * Returns a byte array of the requested length,
-     *  truncated or zero padded as needed.
-     * Behaves like Arrays.copyOf in Java 1.6
-     */
-    protected static byte[] truncateOrPad(byte[] source, int length) {
-       byte[] result = new byte[length];
-       System.arraycopy(source, 0, result, 0, Math.min(length, source.length));
-       if(length > source.length) {
-          for(int i=source.length; i<length; i++) {
-             result[i] = 0;
-          }
-       }
-       return result;
-    }
-
     private Cipher getCipher(SecretKey key) {
-        EncryptionHeader em = info.getHeader();
+        EncryptionHeader em = builder.getHeader();
         ChainingMode cm = em.getChainingMode();
         assert(cm == ChainingMode.ecb);
         return CryptoFunctions.getCipher(key, em.getCipherAlgorithm(), cm, null, Cipher.DECRYPT_MODE);
@@ -142,7 +130,7 @@ public class StandardDecryptor extends Decryptor {
         // limit wrong calculated ole entries - (bug #57080)
         // standard encryption always uses aes encoding, so blockSize is always 16 
         // http://stackoverflow.com/questions/3283787/size-of-data-after-aes-encryption
-        int blockSize = info.getHeader().getCipherAlgorithm().blockSize;
+        int blockSize = builder.getHeader().getCipherAlgorithm().blockSize;
         long cipherLen = (_length/blockSize + 1) * blockSize;
         Cipher cipher = getCipher(getSecretKey());
         
@@ -150,12 +138,11 @@ public class StandardDecryptor extends Decryptor {
         return new BoundedInputStream(new CipherInputStream(boundedDis, cipher), _length);
     }
 
+    /**
+     * @return the length of the stream returned by {@link #getDataStream(DirectoryNode)}
+     */
     public long getLength(){
         if(_length == -1) throw new IllegalStateException("Decryptor.getDataStream() was not called");
         return _length;
-    }
-
-    protected int getKeySizeInBytes() {
-        return info.getHeader().getKeySize()/8;
     }
 }

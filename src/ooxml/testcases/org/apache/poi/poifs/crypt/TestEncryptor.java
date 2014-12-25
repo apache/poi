@@ -16,9 +16,8 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -49,7 +48,44 @@ import org.junit.Test;
 
 public class TestEncryptor {
     @Test
-    public void testAgileEncryption() throws Exception {
+    public void binaryRC4Encryption() throws Exception {
+        // please contribute a real sample file, which is binary rc4 encrypted
+        // ... at least the output can be opened in Excel Viewer 
+        String password = "pass";
+
+        InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleMultiCell.xlsx");
+        ByteArrayOutputStream payloadExpected = new ByteArrayOutputStream();
+        IOUtils.copy(is, payloadExpected);
+        is.close();
+        
+        POIFSFileSystem fs = new POIFSFileSystem();
+        EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
+        Encryptor enc = ei.getEncryptor();
+        enc.confirmPassword(password);
+        
+        OutputStream os = enc.getDataStream(fs.getRoot());
+        payloadExpected.writeTo(os);
+        os.close();
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        fs.writeFilesystem(bos);
+        
+        fs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+        ei = new EncryptionInfo(fs);
+        Decryptor dec = ei.getDecryptor();
+        boolean b = dec.verifyPassword(password);
+        assertTrue(b);
+        
+        ByteArrayOutputStream payloadActual = new ByteArrayOutputStream();
+        is = dec.getDataStream(fs.getRoot());
+        IOUtils.copy(is,payloadActual);
+        is.close();
+        
+        assertArrayEquals(payloadExpected.toByteArray(), payloadActual.toByteArray());
+    }
+    
+    @Test
+    public void agileEncryption() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
 
@@ -92,7 +128,7 @@ public class TestEncryptor {
         
         POIFSFileSystem fs = new POIFSFileSystem();
         EncryptionInfo infoActual = new EncryptionInfo(
-              fs, EncryptionMode.agile
+              EncryptionMode.agile
             , infoExpected.getVerifier().getCipherAlgorithm()
             , infoExpected.getVerifier().getHashAlgorithm()
             , infoExpected.getHeader().getKeySize()
@@ -134,14 +170,14 @@ public class TestEncryptor {
         
         AgileEncryptionHeader aehExpected = (AgileEncryptionHeader)infoExpected.getHeader();
         AgileEncryptionHeader aehActual = (AgileEncryptionHeader)infoActual.getHeader();
-        assertThat(aehExpected.getEncryptedHmacKey(), equalTo(aehActual.getEncryptedHmacKey()));
+        assertArrayEquals(aehExpected.getEncryptedHmacKey(), aehActual.getEncryptedHmacKey());
         assertEquals(decPackLenExpected, decPackLenActual);
-        assertThat(payloadExpected, equalTo(payloadActual));
-        assertThat(encPackExpected, equalTo(encPackActual));
+        assertArrayEquals(payloadExpected, payloadActual);
+        assertArrayEquals(encPackExpected, encPackActual);
     }
     
     @Test
-    public void testStandardEncryption() throws Exception {
+    public void standardEncryption() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-solrcell.docx");
         String pass = "solrcell";
         
@@ -170,7 +206,7 @@ public class TestEncryptor {
         
         POIFSFileSystem fs = new POIFSFileSystem();
         EncryptionInfo infoActual = new EncryptionInfo(
-              fs, EncryptionMode.standard
+              EncryptionMode.standard
             , infoExpected.getVerifier().getCipherAlgorithm()
             , infoExpected.getVerifier().getHashAlgorithm()
             , infoExpected.getHeader().getKeySize()
@@ -181,15 +217,15 @@ public class TestEncryptor {
         Encryptor e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass, keySpec, keySalt, verifierExpected, verifierSaltExpected, null);
         
-        assertThat(infoExpected.getVerifier().getEncryptedVerifier(), equalTo(infoActual.getVerifier().getEncryptedVerifier()));
-        assertThat(infoExpected.getVerifier().getEncryptedVerifierHash(), equalTo(infoActual.getVerifier().getEncryptedVerifierHash()));
+        assertArrayEquals(infoExpected.getVerifier().getEncryptedVerifier(), infoActual.getVerifier().getEncryptedVerifier());
+        assertArrayEquals(infoExpected.getVerifier().getEncryptedVerifierHash(), infoActual.getVerifier().getEncryptedVerifierHash());
 
         // now we use a newly generated salt/verifier and check
         // if the file content is still the same 
 
         fs = new POIFSFileSystem();
         infoActual = new EncryptionInfo(
-              fs, EncryptionMode.standard
+              EncryptionMode.standard
             , infoExpected.getVerifier().getCipherAlgorithm()
             , infoExpected.getVerifier().getHashAlgorithm()
             , infoExpected.getHeader().getKeySize()
@@ -227,12 +263,12 @@ public class TestEncryptor {
         nfs.close();
         byte payloadActual[] = bos.toByteArray();        
         
-        assertThat(payloadExpected, equalTo(payloadActual));
+        assertArrayEquals(payloadExpected, payloadActual);
     }
     
     @Test
     @Ignore
-    public void testInPlaceRewrite() throws Exception {
+    public void inPlaceRewrite() throws Exception {
         File f = TempFile.createTempFile("protected_agile", ".docx");
         // File f = new File("protected_agile.docx");
         FileOutputStream fos = new FileOutputStream(f);
@@ -264,10 +300,10 @@ public class TestEncryptor {
     
     
     private void listEntry(DocumentNode de, String ext, String path) throws IOException {
-        path += "\\" + de.getName().replace('\u0006', '_');
+        path += "\\" + de.getName().replaceAll("[\\p{Cntrl}]", "_");
         System.out.println(ext+": "+path+" ("+de.getSize()+" bytes)");
         
-        String name = de.getName().replace('\u0006', '_');
+        String name = de.getName().replaceAll("[\\p{Cntrl}]", "_");
         
         InputStream is = ((DirectoryNode)de.getParent()).createDocumentInputStream(de);
         FileOutputStream fos = new FileOutputStream("solr."+name+"."+ext);

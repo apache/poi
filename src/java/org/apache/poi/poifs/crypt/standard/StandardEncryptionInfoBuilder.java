@@ -24,7 +24,7 @@ import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 public class StandardEncryptionInfoBuilder implements EncryptionInfoBuilder {
     
@@ -34,7 +34,10 @@ public class StandardEncryptionInfoBuilder implements EncryptionInfoBuilder {
     StandardDecryptor decryptor;
     StandardEncryptor encryptor;
 
-    public void initialize(EncryptionInfo info, DocumentInputStream dis) throws IOException {
+    /**
+     * initialize the builder from a stream
+     */
+    public void initialize(EncryptionInfo info, LittleEndianInput dis) throws IOException {
         this.info = info;
         
         @SuppressWarnings("unused")
@@ -43,10 +46,13 @@ public class StandardEncryptionInfoBuilder implements EncryptionInfoBuilder {
         verifier = new StandardEncryptionVerifier(dis, header);
 
         if (info.getVersionMinor() == 2 && (info.getVersionMajor() == 3 || info.getVersionMajor() == 4)) {
-            decryptor = new StandardDecryptor(info);
+            decryptor = new StandardDecryptor(this);
         }
     }
     
+    /**
+     * initialize the builder from scratch
+     */
     public void initialize(EncryptionInfo info, CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
         this.info = info;
 
@@ -80,7 +86,7 @@ public class StandardEncryptionInfoBuilder implements EncryptionInfoBuilder {
         }
         header = new StandardEncryptionHeader(cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
         verifier = new StandardEncryptionVerifier(cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
-        decryptor = new StandardDecryptor(info);
+        decryptor = new StandardDecryptor(this);
         encryptor = new StandardEncryptor(this);
     }
 

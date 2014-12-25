@@ -29,6 +29,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -60,7 +61,7 @@ public class TestDecryptor {
 
         d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
 
-        zipOk(fs, d);
+        zipOk(fs.getRoot(), d);
     }
 
     @Test
@@ -75,21 +76,22 @@ public class TestDecryptor {
 
         assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
 
-        zipOk(fs, d);
+        zipOk(fs.getRoot(), d);
     }
 
-    private void zipOk(POIFSFileSystem fs, Decryptor d) throws IOException, GeneralSecurityException {
-        ZipInputStream zin = new ZipInputStream(d.getDataStream(fs));
+    private void zipOk(DirectoryNode root, Decryptor d) throws IOException, GeneralSecurityException {
+        ZipInputStream zin = new ZipInputStream(d.getDataStream(root));
 
         while (true) {
             ZipEntry entry = zin.getNextEntry();
-            if (entry==null) {
-                break;
-            }
-
-            while (zin.available()>0) {
-                zin.skip(zin.available());
-            }
+            if (entry==null) break;
+            // crc32 is checked within zip-stream
+            if (entry.isDirectory()) continue;
+            zin.skip(entry.getSize());
+            byte buf[] = new byte[10];
+            int readBytes = zin.read(buf);
+            // zin.available() doesn't work for entries
+            assertEquals("size failed for "+entry.getName(), -1, readBytes);
         }
         
         zin.close();

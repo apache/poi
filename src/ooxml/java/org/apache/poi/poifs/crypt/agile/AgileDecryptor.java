@@ -40,10 +40,12 @@ import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
+import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier.AgileCertificateEntry;
@@ -55,9 +57,6 @@ import org.apache.poi.util.LittleEndian;
  * Decryptor implementation for Agile Encryption
  */
 public class AgileDecryptor extends Decryptor {
-    private final AgileEncryptionInfoBuilder builder;
-    
-
     private long _length = -1;
 
     protected static final byte[] kVerifierInputBlock;
@@ -85,16 +84,15 @@ public class AgileDecryptor extends Decryptor {
     }
 
     protected AgileDecryptor(AgileEncryptionInfoBuilder builder) {
-        super(builder.getInfo());
-        this.builder = builder; 
+        super(builder);
     }
     
     /**
      * set decryption password
      */
     public boolean verifyPassword(String password) throws GeneralSecurityException {
-        AgileEncryptionVerifier ver = builder.getVerifier();
-        AgileEncryptionHeader header = builder.getHeader(); 
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)builder.getVerifier();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)builder.getHeader(); 
         HashAlgorithm hashAlgo = header.getHashAlgorithmEx();
         CipherAlgorithm cipherAlgo = header.getCipherAlgorithm();
         int blockSize = header.getBlockSize();
@@ -206,8 +204,8 @@ public class AgileDecryptor extends Decryptor {
      * @throws GeneralSecurityException
      */
     public boolean verifyPassword(KeyPair keyPair, X509Certificate x509) throws GeneralSecurityException {
-        AgileEncryptionVerifier ver = builder.getVerifier();
-        AgileEncryptionHeader header = builder.getHeader();
+        AgileEncryptionVerifier ver = (AgileEncryptionVerifier)builder.getVerifier();
+        AgileEncryptionHeader header = (AgileEncryptionHeader)builder.getHeader();
         HashAlgorithm hashAlgo = header.getHashAlgorithmEx();
         CipherAlgorithm cipherAlgo = header.getCipherAlgorithm();
         int blockSize = header.getBlockSize();
@@ -257,10 +255,11 @@ public class AgileDecryptor extends Decryptor {
         return fillSize;
     }
 
-    protected static byte[] hashInput(AgileEncryptionInfoBuilder builder, byte pwHash[], byte blockKey[], byte inputKey[], int cipherMode) {
+    protected static byte[] hashInput(EncryptionInfoBuilder builder, byte pwHash[], byte blockKey[], byte inputKey[], int cipherMode) {
         EncryptionVerifier ver = builder.getVerifier();
-        int keySize = builder.getDecryptor().getKeySizeInBytes();
-        int blockSize = builder.getDecryptor().getBlockSizeInBytes();
+        AgileDecryptor dec = (AgileDecryptor)builder.getDecryptor();
+        int keySize = dec.getKeySizeInBytes();
+        int blockSize = dec.getBlockSizeInBytes();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         byte[] salt = ver.getSalt();
 
@@ -283,13 +282,38 @@ public class AgileDecryptor extends Decryptor {
         DocumentInputStream dis = dir.createDocumentInputStream("EncryptedPackage");
         _length = dis.readLong();
         
-        ChunkedCipherInputStream cipherStream = new ChunkedCipherInputStream(dis, _length);
+        ChunkedCipherInputStream cipherStream = new AgileCipherInputStream(dis, _length);
         return cipherStream;
     }
 
     public long getLength(){
         if(_length == -1) throw new IllegalStateException("EcmaDecryptor.getDataStream() was not called");
         return _length;
+    }
+
+
+    protected static Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk, EncryptionInfoBuilder builder, SecretKey skey, int encryptionMode)
+    throws GeneralSecurityException {
+        EncryptionHeader header = builder.getHeader();
+        if (existing == null || lastChunk) {
+            String padding = (lastChunk ? "PKCS5Padding" : "NoPadding");
+            existing = getCipher(skey, header.getCipherAlgorithm(), header.getChainingMode(), header.getKeySalt(), encryptionMode, padding);
+        }
+
+        byte[] blockKey = new byte[4];
+        LittleEndian.putInt(blockKey, 0, block);
+        byte[] iv = generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), blockKey, header.getBlockSize());
+
+        AlgorithmParameterSpec aps;
+        if (header.getCipherAlgorithm() == CipherAlgorithm.rc2) {
+            aps = new RC2ParameterSpec(skey.getEncoded().length*8, iv);
+        } else {
+            aps = new IvParameterSpec(iv);
+        }
+            
+        existing.init(encryptionMode, skey, aps);
+        
+        return existing;
     }
 
     /**
@@ -307,107 +331,18 @@ public class AgileDecryptor extends Decryptor {
      * that the StreamSize field of the EncryptedPackage field specifies the number of bytes of
      * unencrypted data as specified in section 2.3.4.4.
      */
-    private class ChunkedCipherInputStream extends InputStream {
-        private int _lastIndex = 0;
-        private long _pos = 0;
-        private final long _size;
-        private final InputStream _stream;
-        private byte[] _chunk;
-        private Cipher _cipher;
-
-        public ChunkedCipherInputStream(DocumentInputStream stream, long size)
-            throws GeneralSecurityException {
-            EncryptionHeader header = info.getHeader();
-            _size = size;
-            _stream = stream;
-            _cipher = getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), header.getKeySalt(), Cipher.DECRYPT_MODE);
+    private class AgileCipherInputStream extends ChunkedCipherInputStream {
+        public AgileCipherInputStream(DocumentInputStream stream, long size)
+        throws GeneralSecurityException {
+            super(stream, size, 4096);
         }
 
-        public int read() throws IOException {
-            byte[] b = new byte[1];
-            if (read(b) == 1)
-                return b[0];
-            return -1;
+        // TODO: calculate integrity hmac while reading the stream
+        // for a post-validation of the data
+        
+        protected Cipher initCipherForBlock(Cipher cipher, int block)
+        throws GeneralSecurityException {
+            return AgileDecryptor.initCipherForBlock(cipher, block, false, builder, getSecretKey(), Cipher.DECRYPT_MODE);
         }
-
-        public int read(byte[] b) throws IOException {
-            return read(b, 0, b.length);
-        }
-
-        public int read(byte[] b, int off, int len) throws IOException {
-            int total = 0;
-            
-            if (available() <= 0) return -1;
-
-            while (len > 0) {
-                if (_chunk == null) {
-                    try {
-                        _chunk = nextChunk();
-                    } catch (GeneralSecurityException e) {
-                        throw new EncryptedDocumentException(e.getMessage());
-                    }
-                }
-                int count = (int)(4096L - (_pos & 0xfff));
-                int avail = available();
-                if (avail == 0) {
-                    return total;
-                }
-                count = Math.min(avail, Math.min(count, len));
-                System.arraycopy(_chunk, (int)(_pos & 0xfff), b, off, count);
-                off += count;
-                len -= count;
-                _pos += count;
-                if ((_pos & 0xfff) == 0)
-                    _chunk = null;
-                total += count;
-            }
-
-            return total;
-        }
-
-        public long skip(long n) throws IOException {
-            long start = _pos;
-            long skip = Math.min(available(), n);
-
-            if ((((_pos + skip) ^ start) & ~0xfff) != 0)
-                _chunk = null;
-            _pos += skip;
-            return skip;
-        }
-
-        public int available() throws IOException { return (int)(_size - _pos); }
-        public void close() throws IOException { _stream.close(); }
-        public boolean markSupported() { return false; }
-
-        private byte[] nextChunk() throws GeneralSecurityException, IOException {
-            int index = (int)(_pos >> 12);
-            byte[] blockKey = new byte[4];
-            LittleEndian.putInt(blockKey, 0, index);
-            EncryptionHeader header = info.getHeader();
-            byte[] iv = generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), blockKey, getBlockSizeInBytes());
-            AlgorithmParameterSpec aps;
-            if (header.getCipherAlgorithm() == CipherAlgorithm.rc2) {
-                aps = new RC2ParameterSpec(getSecretKey().getEncoded().length*8, iv);
-            } else {
-                aps = new IvParameterSpec(iv);
-            }
-            
-            _cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), aps);
-            if (_lastIndex != index)
-                _stream.skip((index - _lastIndex) << 12);
-
-            byte[] block = new byte[Math.min(_stream.available(), 4096)];
-            _stream.read(block);
-            _lastIndex = index + 1;
-            return _cipher.doFinal(block);
-        }
-    }
-
-    protected int getBlockSizeInBytes() {
-    	return info.getHeader().getBlockSize();
-    }
-    
-    protected int getKeySizeInBytes() {
-    	return info.getHeader().getKeySize()/8;
     }
 }

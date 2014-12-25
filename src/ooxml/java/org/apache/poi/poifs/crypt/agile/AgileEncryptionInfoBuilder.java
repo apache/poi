@@ -26,7 +26,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionInfoBuilder;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.xmlbeans.XmlException;
 
 import com.microsoft.schemas.office.x2006.encryption.EncryptionDocument;
@@ -39,10 +39,10 @@ public class AgileEncryptionInfoBuilder implements EncryptionInfoBuilder {
     AgileDecryptor decryptor;
     AgileEncryptor encryptor;
 
-    public void initialize(EncryptionInfo info, DocumentInputStream dis) throws IOException {
+    public void initialize(EncryptionInfo info, LittleEndianInput dis) throws IOException {
         this.info = info;
         
-        EncryptionDocument ed = parseDescriptor(dis);
+        EncryptionDocument ed = parseDescriptor((InputStream)dis);
         header = new AgileEncryptionHeader(ed);
         verifier = new AgileEncryptionVerifier(ed);
         if (info.getVersionMajor() == EncryptionMode.agile.versionMajor

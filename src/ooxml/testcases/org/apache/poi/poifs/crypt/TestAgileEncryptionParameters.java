@@ -53,7 +53,7 @@ public class TestAgileEncryptionParameters {
     @Parameter(value = 2)
     public ChainingMode cm;
 
-    @Parameters
+    @Parameters(name="{0} {1} {2}")
     public static Collection<Object[]> data() {
         CipherAlgorithm caList[] = { CipherAlgorithm.aes128, CipherAlgorithm.aes192, CipherAlgorithm.aes256, CipherAlgorithm.rc2, CipherAlgorithm.des, CipherAlgorithm.des3 };
         HashAlgorithm haList[] = { HashAlgorithm.sha1, HashAlgorithm.sha256, HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.md5 };
@@ -86,7 +86,7 @@ public class TestAgileEncryptionParameters {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         POIFSFileSystem fsEnc = new POIFSFileSystem();
-        EncryptionInfo infoEnc = new EncryptionInfo(fsEnc, EncryptionMode.agile, ca, ha, -1, -1, cm);
+        EncryptionInfo infoEnc = new EncryptionInfo(EncryptionMode.agile, ca, ha, -1, -1, cm);
         Encryptor enc = infoEnc.getEncryptor();
         enc.confirmPassword("foobaa");
         OutputStream os = enc.getDataStream(fsEnc);

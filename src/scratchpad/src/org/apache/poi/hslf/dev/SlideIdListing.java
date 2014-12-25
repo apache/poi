@@ -17,14 +17,22 @@
 
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
+
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.Notes;
+import org.apache.poi.hslf.record.NotesAtom;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.Slide;
+import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
 import org.apache.poi.hslf.usermodel.SlideShow;
-
 import org.apache.poi.util.LittleEndian;
-
-import java.io.*;
-import java.util.Hashtable;
 
 /**
  * Gets all the different things that have Slide IDs (of sorts)
@@ -122,10 +130,10 @@ public final class SlideIdListing {
 
 				// Check the sheet offsets
 				int[] sheetIDs = pph.getKnownSlideIDs();
-				Hashtable sheetOffsets = pph.getSlideLocationsLookup();
+				Map<Integer,Integer> sheetOffsets = pph.getSlideLocationsLookup();
 				for(int j=0; j<sheetIDs.length; j++) {
-					Integer id = Integer.valueOf(sheetIDs[j]);
-					Integer offset = (Integer)sheetOffsets.get(id);
+					Integer id = sheetIDs[j];
+					Integer offset = sheetOffsets.get(id);
 
 					System.out.println("  Knows about sheet " + id);
 					System.out.println("    That sheet lives at " + offset);

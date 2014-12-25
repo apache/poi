@@ -74,7 +74,7 @@ public abstract class Record
 	 */
 	public static void writeLittleEndian(int i,OutputStream o) throws IOException {
 		byte[] bi = new byte[4];
-		LittleEndian.putInt(bi,i);
+		LittleEndian.putInt(bi,0,i);
 		o.write(bi);
 	}
 	/**
@@ -82,7 +82,7 @@ public abstract class Record
 	 */
 	public static void writeLittleEndian(short s,OutputStream o) throws IOException {
 		byte[] bs = new byte[2];
-		LittleEndian.putShort(bs,s);
+		LittleEndian.putShort(bs,0,s);
 		o.write(bs);
 	}
 

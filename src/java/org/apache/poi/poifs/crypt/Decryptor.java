@@ -30,12 +30,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public abstract class Decryptor {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
     
-    protected final EncryptionInfo info;
+    protected final EncryptionInfoBuilder builder;
     private SecretKey secretKey;
     private byte[] verifier, integrityHmacKey, integrityHmacValue;
 
-    protected Decryptor(EncryptionInfo info) {
-        this.info = info;
+    protected Decryptor(EncryptionInfoBuilder builder) {
+        this.builder = builder;
     }
     
     /**
@@ -56,7 +56,7 @@ public abstract class Decryptor {
         throws GeneralSecurityException;
 
     /**
-     * Returns the length of the encytpted data that can be safely read with
+     * Returns the length of the encrypted data that can be safely read with
      * {@link #getDataStream(org.apache.poi.poifs.filesystem.DirectoryNode)}.
      * Just reading to the end of the input stream is not sufficient because there are
      * normally padding bytes that must be discarded
@@ -119,5 +119,13 @@ public abstract class Decryptor {
 
     protected void setIntegrityHmacValue(byte[] integrityHmacValue) {
         this.integrityHmacValue = integrityHmacValue;
+    }
+
+    protected int getBlockSizeInBytes() {
+        return builder.getHeader().getBlockSize();
+    }
+    
+    protected int getKeySizeInBytes() {
+        return builder.getHeader().getKeySize()/8;
     }
 }

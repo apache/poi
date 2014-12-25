@@ -20,6 +20,7 @@ package org.apache.poi;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.apache.poi.hpsf.MutablePropertySet;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -163,14 +165,40 @@ public abstract class POIDocument {
      *  @return The value of the given property or null if it wasn't found.
      */
     protected PropertySet getPropertySet(String setName) {
+        return getPropertySet(setName, null);
+    }
+    
+    /** 
+     * For a given named property entry, either return it or null if
+     *  if it wasn't found
+     *  
+     *  @param setName The property to read
+     *  @param encryptionInfo the encryption descriptor in case of cryptoAPI encryption
+     *  @return The value of the given property or null if it wasn't found.
+     */
+    protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) {
+        DirectoryNode dirNode = directory;
+        
+        if (encryptionInfo != null) {
+            try {
+                InputStream is = encryptionInfo.getDecryptor().getDataStream(directory);
+                POIFSFileSystem poifs = new POIFSFileSystem(is);
+                is.close();
+                dirNode = poifs.getRoot();
+            } catch (Exception e) {
+                logger.log(POILogger.ERROR, "Error getting encrypted property set with name " + setName, e);
+                return null;
+            }
+        }
+        
         //directory can be null when creating new documents
-        if (directory == null || !directory.hasEntry(setName)) 
+        if (dirNode == null || !dirNode.hasEntry(setName)) 
             return null;
 
         DocumentInputStream dis;
         try {
             // Find the entry, and get an input stream for it
-            dis = directory.createDocumentInputStream( directory.getEntry(setName) );
+            dis = dirNode.createDocumentInputStream( dirNode.getEntry(setName) );
         } catch(IOException ie) {
             // Oh well, doesn't exist
             logger.log(POILogger.WARN, "Error getting property set with name " + setName + "\n" + ie);

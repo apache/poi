@@ -17,36 +17,33 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.POIDataSamples;
+import org.junit.Test;
 
 /**
  * Tests that CurrentUserAtom works properly.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestCurrentUserAtom extends TestCase {
+public final class TestCurrentUserAtom {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 	/** Not encrypted */
-	private String normalFile;
+	private static final String normalFile = "basic_test_ppt_file.ppt";
 	/** Encrypted */
-	private String encFile;
+	private static final String encFile = "Password_Protected-hello.ppt";
 
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		normalFile = "basic_test_ppt_file.ppt";
-		encFile = "Password_Protected-hello.ppt";
-	}
-
-	public void testReadNormal() throws Exception {
+	@Test
+	public void readNormal() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				_slTests.openResourceAsStream(normalFile)
 		);
@@ -66,20 +63,20 @@ public final class TestCurrentUserAtom extends TestCase {
 		assertEquals(0x2942, cu2.getCurrentEditOffset());
 	}
 
-	public void testReadEnc() throws Exception {
+	@Test(expected = EncryptedPowerPointFileException.class)
+	public void readEnc() throws Exception {
 		POIFSFileSystem fs = new POIFSFileSystem(
 				_slTests.openResourceAsStream(encFile)
 		);
 
-		try {
-			new CurrentUserAtom(fs);
-			fail();
-		} catch(EncryptedPowerPointFileException e) {
-			// Good
-		}
+		new CurrentUserAtom(fs);
+		assertTrue(true); // not yet failed
+		
+		new HSLFSlideShow(fs);
 	}
 
-	public void testWriteNormal() throws Exception {
+	@Test
+	public void writeNormal() throws Exception {
 		// Get raw contents from a known file
 		POIFSFileSystem fs = new POIFSFileSystem(
 				_slTests.openResourceAsStream(normalFile)

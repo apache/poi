@@ -15,27 +15,30 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.poifs.crypt;
+package org.apache.poi.poifs.crypt.binaryrc4;
 
-import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.CipherAlgorithm;
+import org.apache.poi.poifs.crypt.CipherProvider;
+import org.apache.poi.poifs.crypt.EncryptionHeader;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
+import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
-public enum CipherProvider {
-    rc4("RC4", 1, "Microsoft Base Cryptographic Provider v1.0"),
-    aes("AES", 0x18, "Microsoft Enhanced RSA and AES Cryptographic Provider");
+public class BinaryRC4EncryptionHeader extends EncryptionHeader implements
+        EncryptionRecord {
 
-    public static CipherProvider fromEcmaId(int ecmaId) {
-        for (CipherProvider cp : CipherProvider.values()) {
-            if (cp.ecmaId == ecmaId) return cp;
-        }
-        throw new EncryptedDocumentException("cipher provider not found");
-    }    
-    
-    public final String jceId;
-    public final int ecmaId;
-    public final String cipherProviderName;
-    CipherProvider(String jceId, int ecmaId, String cipherProviderName) {
-        this.jceId = jceId;
-        this.ecmaId = ecmaId;
-        this.cipherProviderName = cipherProviderName;
+    protected BinaryRC4EncryptionHeader() {
+        setCipherAlgorithm(CipherAlgorithm.rc4);
+        setKeySize(40);
+        setBlockSize(-1);
+        setCipherProvider(CipherProvider.rc4);
+        setHashAlgorithm(HashAlgorithm.md5);
+        setSizeExtra(0);
+        setFlags(0);
+        setCspName("");
+        setChainingMode(null);
+    }
+
+    public void write(LittleEndianByteArrayOutputStream littleendianbytearrayoutputstream) {
     }
 }
