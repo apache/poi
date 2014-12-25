@@ -24,6 +24,10 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * @author aviks
@@ -73,5 +77,49 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", e1.getCellFormula());
         
         // Problem 3 - fixed and transfered
+    }
+
+    public void testFormulaRecordAggregate_1() throws Exception {
+        // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958_1.xls");
+        for(int i = 0;i < wb.getNumberOfSheets();i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            assertNotNull(wb.getSheet(sheet.getSheetName()));
+            sheet.groupColumn((short) 4, (short) 5);
+            sheet.setColumnGroupCollapsed(4, true);
+            sheet.setColumnGroupCollapsed(4, false);
+            
+            for(Row row : sheet) {
+                for(Cell cell : row) {
+                    try {
+                        cell.toString();
+                    } catch (Exception e) {
+                        throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
+                    }
+                }
+            }
+        }
+    }
+
+    public void testFormulaRecordAggregate() throws Exception {
+        // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958.xls");
+        for(int i = 0;i < wb.getNumberOfSheets();i++) {
+            Sheet sheet = wb.getSheetAt(i);
+            assertNotNull(wb.getSheet(sheet.getSheetName()));
+            sheet.groupColumn((short) 4, (short) 5);
+            sheet.setColumnGroupCollapsed(4, true);
+            sheet.setColumnGroupCollapsed(4, false);
+            
+            for(Row row : sheet) {
+                for(Cell cell : row) {
+                    try {
+                        cell.toString();
+                    } catch (Exception e) {
+                        throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
+                    }
+                }
+            }
+        }
     }
 }

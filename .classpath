@@ -14,6 +14,7 @@
 	<classpathentry kind="src" path="src/excelant/java"/>
 	<classpathentry kind="src" path="src/excelant/testcases"/>
 	<classpathentry kind="src" path="src/excelant/resources"/>
+	<classpathentry kind="src" path="src/integrationtest"/>
 	<classpathentry kind="lib" path="lib/ant-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher-1.9.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>

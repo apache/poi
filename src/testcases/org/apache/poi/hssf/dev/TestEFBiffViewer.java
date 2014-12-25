@@ -32,8 +32,13 @@ public class TestEFBiffViewer extends BaseXLSIteratingTest {
 		SILENT_EXCLUDED.add("51832.xls"); 		// password
 		SILENT_EXCLUDED.add("xor-encryption-abc.xls");    // password, ty again later!
 		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
+		SILENT_EXCLUDED.add("44958_1.xls");   // known bad file
 		SILENT_EXCLUDED.add("46904.xls");     // Exception, too old
 		SILENT_EXCLUDED.add("47251_1.xls");   // Broken test file
+		SILENT_EXCLUDED.add("testEXCEL_4.xls");   // old unsupported format
+		SILENT_EXCLUDED.add("testEXCEL_5.xls");   // old unsupported format
+		SILENT_EXCLUDED.add("testEXCEL_95.xls");   // old unsupported format
+		SILENT_EXCLUDED.add("35897-type4.xls");   // unsupported encryption
 	}
 	
 	@Override
