@@ -17,9 +17,24 @@
 
 package org.apache.poi.poifs.crypt;
 
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+
+/**
+ * Office supports various encryption modes.
+ * The encryption is either based on the whole container ({@link #agile}, {@link #standard} or {@link #binaryRC4})
+ * or record based ({@link #cryptoAPI}). The record based encryption can't be accessed directly, but will be
+ * invoked by using the {@link Biff8EncryptionKey#setCurrentUserPassword(String)} before saving the document.
+ */
 public enum EncryptionMode {
-      standard("org.apache.poi.poifs.crypt.standard.StandardEncryptionInfoBuilder", 4, 2, 0x24)
-    , agile("org.apache.poi.poifs.crypt.agile.AgileEncryptionInfoBuilder", 4, 4, 0x40);
+    /* @see <a href="http://msdn.microsoft.com/en-us/library/dd907466(v=office.12).aspx">2.3.6 Office Binary Document RC4 Encryption</a> */
+    binaryRC4("org.apache.poi.poifs.crypt.binaryrc4.BinaryRC4EncryptionInfoBuilder", 1, 1, 0x0),
+    /* @see <a href="http://msdn.microsoft.com/en-us/library/dd905225(v=office.12).aspx">2.3.5 Office Binary Document RC4 CryptoAPI Encryption</a> */
+    cryptoAPI("org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionInfoBuilder", 4, 2, 0x04),
+    /* @see <a href="http://msdn.microsoft.com/en-us/library/dd906097(v=office.12).aspx">2.3.4.5 \EncryptionInfo Stream (Standard Encryption)</a> */
+    standard("org.apache.poi.poifs.crypt.standard.StandardEncryptionInfoBuilder", 4, 2, 0x24),
+    /* @see <a href="http://msdn.microsoft.com/en-us/library/dd925810(v=office.12).aspx">2.3.4.10 \EncryptionInfo Stream (Agile Encryption)</a> */
+    agile("org.apache.poi.poifs.crypt.agile.AgileEncryptionInfoBuilder", 4, 4, 0x40)
+    ;
     
     public final String builder;
     public final int versionMajor;

@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.agile;
 
-import static org.apache.poi.poifs.crypt.CryptoFunctions.generateIv;
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getBlock0;
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getCipher;
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getMessageDigest;
 import static org.apache.poi.poifs.crypt.CryptoFunctions.hashPassword;
+import static org.apache.poi.poifs.crypt.DataSpaceMapUtils.createEncryptionEntry;
 import static org.apache.poi.poifs.crypt.agile.AgileDecryptor.getNextBlockSize;
 import static org.apache.poi.poifs.crypt.agile.AgileDecryptor.hashInput;
 import static org.apache.poi.poifs.crypt.agile.AgileDecryptor.kCryptoKeyBlock;
@@ -32,16 +32,12 @@ import static org.apache.poi.poifs.crypt.agile.AgileDecryptor.kVerifierInputBloc
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
-import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -49,28 +45,20 @@ import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.poifs.crypt.CipherAlgorithm;
+import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
-import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier.AgileCertificateEntry;
+import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
-import org.apache.poi.poifs.filesystem.POIFSWriterListener;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.TempFile;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.microsoft.schemas.office.x2006.encryption.CTDataIntegrity;
@@ -87,9 +75,7 @@ import com.microsoft.schemas.office.x2006.keyEncryptor.password.CTPasswordKeyEnc
 
 public class AgileEncryptor extends Encryptor {
     private final AgileEncryptionInfoBuilder builder;
-    @SuppressWarnings("unused")
     private byte integritySalt[];
-    private Mac integrityMD;
 	private byte pwHash[];
     
 	protected AgileEncryptor(AgileEncryptionInfoBuilder builder) {
@@ -214,10 +200,6 @@ public class AgileEncryptor extends Encryptor {
             byte encryptedHmacKey[] = cipher.doFinal(filledSalt);
             header.setEncryptedHmacKey(encryptedHmacKey);
 
-            this.integrityMD = CryptoFunctions.getMac(hashAlgo);
-            this.integrityMD.init(new SecretKeySpec(integritySalt, hashAlgo.jceHmacId));
-
-        
             cipher = Cipher.getInstance("RSA");
             for (AgileCertificateEntry ace : ver.getCertificates()) {
                 cipher.init(Cipher.ENCRYPT_MODE, ace.x509.getPublicKey());
@@ -234,182 +216,59 @@ public class AgileEncryptor extends Encryptor {
     public OutputStream getDataStream(DirectoryNode dir)
             throws IOException, GeneralSecurityException {
         // TODO: initialize headers
-        OutputStream countStream = new ChunkedCipherOutputStream(dir);
+        AgileCipherOutputStream countStream = new AgileCipherOutputStream(dir);
     	return countStream;
     }
 
     /**
-     * 2.3.4.15 Data Encryption (Agile Encryption)
+     * Generate an HMAC, as specified in [RFC2104], of the encrypted form of the data (message), 
+     * which the DataIntegrity element will verify by using the Salt generated in step 2 as the key. 
+     * Note that the entire EncryptedPackage stream (1), including the StreamSize field, MUST be 
+     * used as the message.
      * 
-     * The EncryptedPackage stream (1) MUST be encrypted in 4096-byte segments to facilitate nearly
-     * random access while allowing CBC modes to be used in the encryption process.
-     * The initialization vector for the encryption process MUST be obtained by using the zero-based
-     * segment number as a blockKey and the binary form of the KeyData.saltValue as specified in
-     * section 2.3.4.12. The block number MUST be represented as a 32-bit unsigned integer.
-     * Data blocks MUST then be encrypted by using the initialization vector and the intermediate key
-     * obtained by decrypting the encryptedKeyValue from a KeyEncryptor contained within the
-     * KeyEncryptors sequence as specified in section 2.3.4.10. The final data block MUST be padded to
-     * the next integral multiple of the KeyData.blockSize value. Any padding bytes can be used. Note
-     * that the StreamSize field of the EncryptedPackage field specifies the number of bytes of
-     * unencrypted data as specified in section 2.3.4.4.
-     */
-    private class ChunkedCipherOutputStream extends FilterOutputStream implements POIFSWriterListener {
-        private long _pos = 0;
-        private final byte[] _chunk = new byte[4096];
-        private Cipher _cipher;
-        private final File fileOut;
-        protected final DirectoryNode dir;
-
-        public ChunkedCipherOutputStream(DirectoryNode dir) throws IOException {
-            super(null);
-            fileOut = TempFile.createTempFile("encrypted_package", "crypt");
-            this.out = new FileOutputStream(fileOut);
-            this.dir = dir;
-            EncryptionHeader header = builder.getHeader();
-            _cipher = getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), null, Cipher.ENCRYPT_MODE);
-        }
-
-        public void write(int b) throws IOException {
-            write(new byte[]{(byte)b});
-        }
-
-        public void write(byte[] b) throws IOException {
-            write(b, 0, b.length);
-        }
-
-        public void write(byte[] b, int off, int len)
-        throws IOException {
-            if (len == 0) return;
-            
-            if (len < 0 || b.length < off+len) {
-                throw new IOException("not enough bytes in your input buffer");
-            }
-            
-            while (len > 0) {
-                int posInChunk = (int)(_pos & 0xfff);
-                int nextLen = Math.min(4096-posInChunk, len);
-                System.arraycopy(b, off, _chunk, posInChunk, nextLen);
-                _pos += nextLen;
-                off += nextLen;
-                len -= nextLen;
-                if ((_pos & 0xfff) == 0) {
-                    writeChunk();
-                }
-            }
-        }
-
-        private void writeChunk() throws IOException {
-            EncryptionHeader header = builder.getHeader();
-            int blockSize = header.getBlockSize();
-
-            int posInChunk = (int)(_pos & 0xfff);
-            // normally posInChunk is 0, i.e. on the next chunk (-> index-1)
-            // but if called on close(), posInChunk is somewhere within the chunk data
-            int index = (int)(_pos >> 12);
-            if (posInChunk==0) {
-                index--;
-                posInChunk = 4096;
-            } else {
-                // pad the last chunk
-                _cipher = getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), null, Cipher.ENCRYPT_MODE, "PKCS5Padding");
-            }
-
-            byte[] blockKey = new byte[4];
-            LittleEndian.putInt(blockKey, 0, index);
-            byte[] iv = generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), blockKey, blockSize);
-            try {
-                AlgorithmParameterSpec aps;
-                if (header.getCipherAlgorithm() == CipherAlgorithm.rc2) {
-                    aps = new RC2ParameterSpec(getSecretKey().getEncoded().length*8, iv);
-                } else {
-                    aps = new IvParameterSpec(iv);
-                }
-                
-                _cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(), aps);
-                int ciLen = _cipher.doFinal(_chunk, 0, posInChunk, _chunk);
-                out.write(_chunk, 0, ciLen);
-            } catch (GeneralSecurityException e) {
-                throw (IOException)new IOException().initCause(e);
-            }
-        }
-        
-        public void close() throws IOException {
-            writeChunk();
-            super.close();
-            writeToPOIFS();
-        }
-
-        void writeToPOIFS() throws IOException {
-            DataSpaceMapUtils.addDefaultDataSpace(dir);
-            
-            /**
-             * Generate an HMAC, as specified in [RFC2104], of the encrypted form of the data (message), 
-             * which the DataIntegrity element will verify by using the Salt generated in step 2 as the key. 
-             * Note that the entire EncryptedPackage stream (1), including the StreamSize field, MUST be 
-             * used as the message.
-             * 
-             * Encrypt the HMAC as in step 3 by using a blockKey byte array consisting of the following bytes:
-             * 0xa0, 0x67, 0x7f, 0x02, 0xb2, 0x2c, 0x84, and 0x33.
-             **/
-            byte buf[] = new byte[4096];
-            LittleEndian.putLong(buf, 0, _pos);
-            integrityMD.update(buf, 0, LittleEndianConsts.LONG_SIZE);
-            
-            InputStream fis = new FileInputStream(fileOut);
-            for (int readBytes; (readBytes = fis.read(buf)) != -1; integrityMD.update(buf, 0, readBytes));
-            fis.close();
-            
-            AgileEncryptionHeader header = builder.getHeader(); 
-            int blockSize = header.getBlockSize();
-            
-            byte hmacValue[] = integrityMD.doFinal();
-            byte iv[] = CryptoFunctions.generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), kIntegrityValueBlock, header.getBlockSize());
-            Cipher cipher = CryptoFunctions.getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), iv, Cipher.ENCRYPT_MODE);
-            try {
-                byte hmacValueFilled[] = getBlock0(hmacValue, getNextBlockSize(hmacValue.length, blockSize));
-                byte encryptedHmacValue[] = cipher.doFinal(hmacValueFilled);
-                header.setEncryptedHmacValue(encryptedHmacValue);
-            } catch (GeneralSecurityException e) {
-                throw new EncryptedDocumentException(e);
-            }
-
-            createEncryptionInfoEntry(dir);
-            
-            int oleStreamSize = (int)(fileOut.length()+LittleEndianConsts.LONG_SIZE);
-            dir.createDocument("EncryptedPackage", oleStreamSize, this);
-            // TODO: any properties???
-        }
-    
-        public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-            try {
-                LittleEndianOutputStream leos = new LittleEndianOutputStream(event.getStream());
-
-                // StreamSize (8 bytes): An unsigned integer that specifies the number of bytes used by data 
-                // encrypted within the EncryptedData field, not including the size of the StreamSize field. 
-                // Note that the actual size of the \EncryptedPackage stream (1) can be larger than this 
-                // value, depending on the block size of the chosen encryption algorithm
-                leos.writeLong(_pos);
-
-                FileInputStream fis = new FileInputStream(fileOut);
-                IOUtils.copy(fis, leos);
-                fis.close();
-                fileOut.delete();
-
-                leos.close();
-            } catch (IOException e) {
-                throw new EncryptedDocumentException(e);
-            }
-        }
-    }
-
-    protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
-        final CTKeyEncryptor.Uri.Enum passwordUri = 
-            CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_PASSWORD;
-        final CTKeyEncryptor.Uri.Enum certificateUri = 
-                CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_CERTIFICATE;
-        
+     * Encrypt the HMAC as in step 3 by using a blockKey byte array consisting of the following bytes:
+     * 0xa0, 0x67, 0x7f, 0x02, 0xb2, 0x2c, 0x84, and 0x33.
+     **/
+    protected void updateIntegrityHMAC(File tmpFile, int oleStreamSize) throws GeneralSecurityException, IOException {
+        // as the integrity hmac needs to contain the StreamSize,
+        // it's not possible to calculate it on-the-fly while buffering
+        // TODO: add stream size parameter to getDataStream()
         AgileEncryptionVerifier ver = builder.getVerifier();
+        HashAlgorithm hashAlgo = ver.getHashAlgorithm();
+        Mac integrityMD = CryptoFunctions.getMac(hashAlgo);
+        integrityMD.init(new SecretKeySpec(integritySalt, hashAlgo.jceHmacId));
+
+        byte buf[] = new byte[1024];
+        LittleEndian.putLong(buf, 0, oleStreamSize);
+        integrityMD.update(buf, 0, LittleEndian.LONG_SIZE);
+        
+        FileInputStream fis = new FileInputStream(tmpFile);
+        int readBytes;
+        while ((readBytes = fis.read(buf)) != -1) {
+            integrityMD.update(buf, 0, readBytes);
+        }
+        fis.close();
+        
+        byte hmacValue[] = integrityMD.doFinal();
+        
         AgileEncryptionHeader header = builder.getHeader();
+        int blockSize = header.getBlockSize();
+        byte iv[] = CryptoFunctions.generateIv(header.getHashAlgorithmEx(), header.getKeySalt(), kIntegrityValueBlock, blockSize);
+        Cipher cipher = CryptoFunctions.getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), iv, Cipher.ENCRYPT_MODE);
+        byte hmacValueFilled[] = getBlock0(hmacValue, getNextBlockSize(hmacValue.length, blockSize));
+        byte encryptedHmacValue[] = cipher.doFinal(hmacValueFilled);
+        
+        header.setEncryptedHmacValue(encryptedHmacValue);
+    }
+    
+    private final CTKeyEncryptor.Uri.Enum passwordUri = 
+        CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_PASSWORD;
+    private final CTKeyEncryptor.Uri.Enum certificateUri = 
+        CTKeyEncryptor.Uri.HTTP_SCHEMAS_MICROSOFT_COM_OFFICE_2006_KEY_ENCRYPTOR_CERTIFICATE;
+    
+    protected EncryptionDocument createEncryptionDocument() {
+        AgileEncryptionVerifier ver = builder.getVerifier();
+        AgileEncryptionHeader header = builder.getHeader(); 
         
         EncryptionDocument ed = EncryptionDocument.Factory.newInstance();
         CTEncryption edRoot = ed.addNewEncryption();
@@ -485,6 +344,10 @@ public class AgileEncryptor extends Encryptor {
             certData.setCertVerifier(ace.certVerifier);
         }
         
+        return ed;
+    }
+    
+    protected void marshallEncryptionDocument(EncryptionDocument ed, LittleEndianByteArrayOutputStream os) {
         XmlOptions xo = new XmlOptions();
         xo.setCharacterEncoding("UTF-8");
         Map<String,String> nsMap = new HashMap<String,String>();
@@ -494,33 +357,82 @@ public class AgileEncryptor extends Encryptor {
         xo.setSaveSuggestedPrefixes(nsMap);
         xo.setSaveNamespacesFirst();
         xo.setSaveAggressiveNamespaces();
-        // setting standalone doesn't work with xmlbeans-2.3
+
+        // setting standalone doesn't work with xmlbeans-2.3 & 2.6
+        // ed.documentProperties().setStandalone(true);
         xo.setSaveNoXmlDecl();
-        
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n".getBytes("UTF-8"));
-        ed.save(bos, xo);
-
-        final byte buf[] = new byte[5000];        
-        LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0);
-        EncryptionInfo info = builder.getInfo();
-
-        // EncryptionVersionInfo (4 bytes): A Version structure (section 2.1.4), where 
-        // Version.vMajor MUST be 0x0004 and Version.vMinor MUST be 0x0004
-        leos.writeShort(info.getVersionMajor());
-        leos.writeShort(info.getVersionMinor());
-        // Reserved (4 bytes): A value that MUST be 0x00000040
-        leos.writeInt(info.getEncryptionFlags());
-        leos.write(bos.toByteArray());
-        
-        dir.createDocument("EncryptionInfo", leos.getWriteIndex(), new POIFSWriterListener() {
-            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-                try {
-                    event.getStream().write(buf, 0, event.getLimit());
-                } catch (IOException e) {
-                    throw new EncryptedDocumentException(e);
-                }
-            }
-        });
+        try {
+            bos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n".getBytes("UTF-8"));
+            ed.save(bos, xo);
+            os.write(bos.toByteArray());
+        } catch (IOException e) {
+            throw new EncryptedDocumentException("error marshalling encryption info document", e);
+        }
     }
+
+    protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile)
+    throws IOException, GeneralSecurityException {
+        DataSpaceMapUtils.addDefaultDataSpace(dir);
+
+        final EncryptionInfo info = builder.getInfo();
+
+        EncryptionRecord er = new EncryptionRecord(){
+            public void write(LittleEndianByteArrayOutputStream bos) {
+                // EncryptionVersionInfo (4 bytes): A Version structure (section 2.1.4), where 
+                // Version.vMajor MUST be 0x0004 and Version.vMinor MUST be 0x0004
+                bos.writeShort(info.getVersionMajor());
+                bos.writeShort(info.getVersionMinor());
+                // Reserved (4 bytes): A value that MUST be 0x00000040
+                bos.writeInt(info.getEncryptionFlags());
+
+                EncryptionDocument ed = createEncryptionDocument();
+                marshallEncryptionDocument(ed, bos);
+            }
+        };
+        
+        createEncryptionEntry(dir, "EncryptionInfo", er);
+    }
+    
+    
+    /**
+     * 2.3.4.15 Data Encryption (Agile Encryption)
+     * 
+     * The EncryptedPackage stream (1) MUST be encrypted in 4096-byte segments to facilitate nearly
+     * random access while allowing CBC modes to be used in the encryption process.
+     * The initialization vector for the encryption process MUST be obtained by using the zero-based
+     * segment number as a blockKey and the binary form of the KeyData.saltValue as specified in
+     * section 2.3.4.12. The block number MUST be represented as a 32-bit unsigned integer.
+     * Data blocks MUST then be encrypted by using the initialization vector and the intermediate key
+     * obtained by decrypting the encryptedKeyValue from a KeyEncryptor contained within the
+     * KeyEncryptors sequence as specified in section 2.3.4.10. The final data block MUST be padded to
+     * the next integral multiple of the KeyData.blockSize value. Any padding bytes can be used. Note
+     * that the StreamSize field of the EncryptedPackage field specifies the number of bytes of
+     * unencrypted data as specified in section 2.3.4.4.
+     */
+    private class AgileCipherOutputStream extends ChunkedCipherOutputStream {
+        public AgileCipherOutputStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
+            super(dir, 4096);
+        }
+        
+        @Override
+        protected Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk)
+        throws GeneralSecurityException {
+            return AgileDecryptor.initCipherForBlock(existing, block, lastChunk, builder, getSecretKey(), Cipher.ENCRYPT_MODE);
+        }
+
+        @Override
+        protected void calculateChecksum(File fileOut, int oleStreamSize)
+        throws GeneralSecurityException, IOException {
+            // integrityHMAC needs to be updated before the encryption document is created
+            updateIntegrityHMAC(fileOut, oleStreamSize); 
+        }
+        
+        @Override
+        protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile)
+        throws IOException, GeneralSecurityException {
+            AgileEncryptor.this.createEncryptionInfoEntry(dir, tmpFile);
+        }
+    }
+
 }

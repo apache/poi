@@ -21,8 +21,8 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  * Used when checking if a key is valid for a document 
@@ -31,7 +31,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     private static final int SPIN_COUNT = 50000;
     private final int verifierHashSize;
     
-    protected StandardEncryptionVerifier(DocumentInputStream is, StandardEncryptionHeader header) {
+    protected StandardEncryptionVerifier(LittleEndianInput is, StandardEncryptionHeader header) {
         int saltSize = is.readInt();
 
         if (saltSize!=16) {
@@ -53,10 +53,10 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         setEncryptedVerifierHash(encryptedVerifierHash);
 
         setSpinCount(SPIN_COUNT);
-        setCipherAlgorithm(CipherAlgorithm.aes128);
-        setChainingMode(ChainingMode.ecb);
+        setCipherAlgorithm(header.getCipherAlgorithm());
+        setChainingMode(header.getChainingMode());
         setEncryptedKey(null);
-        setHashAlgorithm(HashAlgorithm.sha1); 
+        setHashAlgorithm(header.getHashAlgorithmEx()); 
     }
     
     protected StandardEncryptionVerifier(CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
@@ -97,12 +97,18 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         assert(encryptedVerifier.length == 16);
         bos.write(encryptedVerifier);
 
-        // The number of bytes used by the encrypted Verifier hash MUST be 32.
         // The number of bytes used by the decrypted Verifier hash is given by
         // the VerifierHashSize field, which MUST be 20
-        byte encryptedVerifierHash[] = getEncryptedVerifierHash(); 
-        assert(encryptedVerifierHash.length == 32);
         bos.writeInt(20);
+
+        // EncryptedVerifierHash: An array of bytes that contains the encrypted form of the hash of
+        // the randomly generated Verifier value. The length of the array MUST be the size of the
+        // encryption block size multiplied by the number of blocks needed to encrypt the hash of the
+        // Verifier. If the encryption algorithm is RC4, the length MUST be 20 bytes. If the encryption
+        // algorithm is AES, the length MUST be 32 bytes. After decrypting the EncryptedVerifierHash
+        // field, only the first VerifierHashSize bytes MUST be used.
+        byte encryptedVerifierHash[] = getEncryptedVerifierHash(); 
+        assert(encryptedVerifierHash.length == getCipherAlgorithm().encryptedVerifierHashLength);
         bos.write(encryptedVerifierHash);
     }
 

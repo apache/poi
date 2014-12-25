@@ -17,45 +17,37 @@
 package org.apache.poi.poifs.crypt.standard;
 
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getUtf16LeString;
+import static org.apache.poi.poifs.crypt.EncryptionInfo.flagAES;
+import static org.apache.poi.poifs.crypt.EncryptionInfo.flagCryptoAPI;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CipherProvider;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 public class StandardEncryptionHeader extends EncryptionHeader implements EncryptionRecord {
-    // A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption 
-    // [ECMA-376] is used. It MUST be 1 unless fExternal is 1. If fExternal is 1, it MUST be 0.
-    private static BitField flagsCryptoAPI = new BitField(0x04);
 
-    // A value that MUST be 0 if document properties are encrypted. The 
-    // encryption of document properties is specified in section 2.3.5.4 [MS-OFFCRYPTO].
-    @SuppressWarnings("unused")
-    private static BitField flagsDocProps = new BitField(0x08);
-    
-    // A value that MUST be 1 if extensible encryption is used,. If this value is 1, 
-    // the value of every other field in this structure MUST be 0.
-    @SuppressWarnings("unused")
-    private static BitField flagsExternal = new BitField(0x10);
-    
-    // A value that MUST be 1 if the protected content is an ECMA-376 document 
-    // [ECMA-376]. If the fAES bit is 1, the fCryptoAPI bit MUST also be 1.
-    private static BitField flagsAES = new BitField(0x20);
-    
-    protected StandardEncryptionHeader(DocumentInputStream is) throws IOException {
+    protected StandardEncryptionHeader(LittleEndianInput is) throws IOException {
         setFlags(is.readInt());
         setSizeExtra(is.readInt());
         setCipherAlgorithm(CipherAlgorithm.fromEcmaId(is.readInt()));
         setHashAlgorithm(HashAlgorithm.fromEcmaId(is.readInt()));
-        setKeySize(is.readInt());
+        int keySize = is.readInt();
+        if (keySize == 0) {
+            // for the sake of inheritance of the cryptoAPI classes
+            // see 2.3.5.1 RC4 CryptoAPI Encryption Header
+            // If set to 0x00000000, it MUST be interpreted as 0x00000028 bits.
+            keySize = 0x28;
+        }
+        setKeySize(keySize);
         setBlockSize(getKeySize());
         setCipherProvider(CipherProvider.fromEcmaId(is.readInt()));
 
@@ -63,9 +55,9 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
 
         // CSPName may not always be specified
         // In some cases, the salt value of the EncryptionVerifier is the next chunk of data
-        is.mark(LittleEndianConsts.INT_SIZE+1);
+        ((InputStream)is).mark(LittleEndianConsts.INT_SIZE+1);
         int checkForSalt = is.readInt();
-        is.reset();
+        ((InputStream)is).reset();
         
         if (checkForSalt == 16) {
             setCspName("");
@@ -89,12 +81,15 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         setKeySize(keyBits);
         setBlockSize(blockSize);
         setCipherProvider(cipherAlgorithm.provider);
-        setFlags(flagsCryptoAPI.setBoolean(0, true)
-                | flagsAES.setBoolean(0, cipherAlgorithm.provider == CipherProvider.aes));
+        setFlags(flagCryptoAPI.setBoolean(0, true)
+                | flagAES.setBoolean(0, cipherAlgorithm.provider == CipherProvider.aes));
         // see http://msdn.microsoft.com/en-us/library/windows/desktop/bb931357(v=vs.85).aspx for a full list
         // setCspName("Microsoft Enhanced RSA and AES Cryptographic Provider");
     }
     
+    /**
+     * serializes the header 
+     */
     public void write(LittleEndianByteArrayOutputStream bos) {
         int startIdx = bos.getWriteIndex();
         LittleEndianOutput sizeOutput = bos.createDelayedOutput(LittleEndianConsts.INT_SIZE);
@@ -106,10 +101,10 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         bos.writeInt(getCipherProvider().ecmaId);
         bos.writeInt(0); // reserved1
         bos.writeInt(0); // reserved2
-        if (getCspName() != null) {
-            bos.write(getUtf16LeString(getCspName()));
-            bos.writeShort(0);
-        }
+        String cspName = getCspName();
+        if (cspName == null) cspName = getCipherProvider().cipherProviderName;
+        bos.write(getUtf16LeString(cspName));
+        bos.writeShort(0);
         int headerSize = bos.getWriteIndex()-startIdx-LittleEndianConsts.INT_SIZE;
         sizeOutput.writeInt(headerSize);        
     }

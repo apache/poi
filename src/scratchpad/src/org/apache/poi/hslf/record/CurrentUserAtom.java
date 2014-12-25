@@ -20,15 +20,21 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.*;
-import org.apache.poi.poifs.filesystem.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
-import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
-import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 
 
 /**
@@ -47,7 +53,7 @@ public class CurrentUserAtom
 	public static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
 	/** The PowerPoint magic number for a non-encrypted file */
 	public static final byte[] headerToken = new byte[] { 95, -64, -111, -29 };
-	/** The PowerPoint magic number for an encrytpted file */ 
+	/** The PowerPoint magic number for an encrypted file */ 
 	public static final byte[] encHeaderToken = new byte[] { -33, -60, -47, -13 };
 	/** The Powerpoint 97 version, major and minor numbers */
 	public static final byte[] ppt97FileVer = new byte[] { 8, 00, -13, 03, 03, 00 };
@@ -66,6 +72,9 @@ public class CurrentUserAtom
 
 	/** Only correct after reading in or writing out */
 	private byte[] _contents;
+	
+	/** Flag for encryption state of the whole file */
+	private boolean isEncrypted;
 
 
 	/* ********************* getter/setter follows *********************** */
@@ -84,6 +93,9 @@ public class CurrentUserAtom
 	public String getLastEditUsername() { return lastEditUser; }
 	public void setLastEditUsername(String u) { lastEditUser = u; }
 
+	public boolean isEncrypted() { return isEncrypted; }
+	public void setEncrypted(boolean isEncrypted) { this.isEncrypted = isEncrypted; }
+	
 
 	/* ********************* real code follows *************************** */
 
@@ -100,6 +112,7 @@ public class CurrentUserAtom
 		releaseVersion = 8;
 		currentEditOffset = 0;
 		lastEditUser = "Apache POI";
+		isEncrypted = false;
 	}
 
 	/** 
@@ -157,14 +170,10 @@ public class CurrentUserAtom
 	 */
 	private void init() {
 		// First up is the size, in 4 bytes, which is fixed
-		// Then is the header - check for encrypted
-		if(_contents[12] == encHeaderToken[0] && 
-			_contents[13] == encHeaderToken[1] &&
-			_contents[14] == encHeaderToken[2] &&
-			_contents[15] == encHeaderToken[3]) {
-			throw new EncryptedPowerPointFileException("The CurrentUserAtom specifies that the document is encrypted");
-		}
+		// Then is the header
 		
+	    isEncrypted = (LittleEndian.getInt(encHeaderToken) == LittleEndian.getInt(_contents,12)); 
+	    
 		// Grab the edit offset
 		currentEditOffset = LittleEndian.getUInt(_contents,16);
 
@@ -229,7 +238,7 @@ public class CurrentUserAtom
 		LittleEndian.putInt(_contents,8,20);
 
 		// Now the ppt un-encrypted header token (4 bytes)
-		System.arraycopy(headerToken,0,_contents,12,4);
+		System.arraycopy((isEncrypted ? encHeaderToken : headerToken),0,_contents,12,4);
 
 		// Now the current edit offset
 		LittleEndian.putInt(_contents,16,(int)currentEditOffset);

@@ -18,14 +18,18 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * Tests that DocumentEncryptionAtom works properly.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestDocumentEncryptionAtom extends TestCase {
+public final class TestDocumentEncryptionAtom {
 	// From a real file
 	private byte[] data_a = new byte[] {
 		0x0F, 00, 0x14, 0x2F, 0xBE-256, 00, 00, 00,
@@ -84,7 +88,8 @@ public final class TestDocumentEncryptionAtom extends TestCase {
 			3, -104, 22, 6, 102, -61, -98, 62, 40, 61, 21
 	};
 
-    public void testRecordType() {
+	@Test
+    public void recordType() throws IOException {
 		DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
 		assertEquals(12052l, dea1.getRecordType());
 
@@ -95,7 +100,8 @@ public final class TestDocumentEncryptionAtom extends TestCase {
 		assertEquals(198, data_b.length);
 	}
 
-    public void testEncryptionTypeName() {
+	@Test
+    public void encryptionTypeName() throws IOException {
 		DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
 		assertEquals("Microsoft Base Cryptographic Provider v1.0", dea1.getEncryptionProviderName());
 

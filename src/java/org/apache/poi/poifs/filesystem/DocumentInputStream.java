@@ -166,4 +166,9 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 	public int readUByte() {
 	   return delegate.readUByte();
 	}
+	
+    public long readUInt() {
+        int i = readInt();
+        return i & 0xFFFFFFFFL;
+    }
 }

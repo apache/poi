@@ -19,7 +19,6 @@ package org.apache.poi.poifs.crypt.standard;
 
 import static org.apache.poi.poifs.crypt.DataSpaceMapUtils.createEncryptionEntry;
 import static org.apache.poi.poifs.crypt.standard.StandardDecryptor.generateSecretKey;
-import static org.apache.poi.poifs.crypt.standard.StandardDecryptor.truncateOrPad;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +29,7 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.crypto.Cipher;
@@ -96,7 +96,7 @@ public class StandardEncryptor extends Encryptor {
             // algorithm is AES, the length MUST be 32 bytes. After decrypting the EncryptedVerifierHash
             // field, only the first VerifierHashSize bytes MUST be used.
             int encVerHashSize = ver.getCipherAlgorithm().encryptedVerifierHashLength; 
-            byte encryptedVerifierHash[] = cipher.doFinal(truncateOrPad(calcVerifierHash, encVerHashSize));
+            byte encryptedVerifierHash[] = cipher.doFinal(Arrays.copyOf(calcVerifierHash, encVerHashSize));
     
             ver.setEncryptedVerifier(encryptedVerifier);
             ver.setEncryptedVerifierHash(encryptedVerifierHash);

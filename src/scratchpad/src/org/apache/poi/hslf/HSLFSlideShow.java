@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -32,10 +33,11 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
-import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.CurrentUserAtom;
+import org.apache.poi.hslf.record.DocumentEncryptionAtom;
 import org.apache.poi.hslf.record.ExOleObjStg;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PersistRecord;
@@ -45,6 +47,7 @@ import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.usermodel.ObjectData;
 import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -182,13 +185,6 @@ public final class HSLFSlideShow extends POIDocument {
 		//  PowerPoint stream
 		readPowerPointStream();
 
-		// Check to see if we have an encrypted document,
-		//  bailing out if we do
-		boolean encrypted = EncryptedSlideShow.checkIfEncrypted(this);
-		if(encrypted) {
-			throw new EncryptedPowerPointFileException("Encrypted PowerPoint files are not supported");
-		}
-
 		// Now, build records based on the PowerPoint stream
 		buildRecords();
 
@@ -278,6 +274,7 @@ public final class HSLFSlideShow extends POIDocument {
 	    NavigableMap<Integer,Record> records = new TreeMap<Integer,Record>(); // offset -> record
         Map<Integer,Integer> persistIds = new HashMap<Integer,Integer>(); // offset -> persistId
         initRecordOffsets(docstream, usrOffset, records, persistIds);
+        EncryptedSlideShow decryptData = new EncryptedSlideShow(docstream, records);
         
         for (Map.Entry<Integer,Record> entry : records.entrySet()) {
             Integer offset = entry.getKey();
@@ -286,6 +283,7 @@ public final class HSLFSlideShow extends POIDocument {
             if (record == null) {
                 // all plain records have been already added,
                 // only new records need to be decrypted (tbd #35897)
+                decryptData.decryptRecord(docstream, persistId, offset);
                 record = Record.buildRecordAtOffset(docstream, offset);
                 entry.setValue(record);
             }
@@ -335,6 +333,16 @@ public final class HSLFSlideShow extends POIDocument {
         }       
     }
 
+    public DocumentEncryptionAtom getDocumentEncryptionAtom() {
+        for (Record r : _records) {
+            if (r instanceof DocumentEncryptionAtom) {
+                return (DocumentEncryptionAtom)r;
+            }
+        }
+        return null;
+    }
+    
+    
 	/**
 	 * Find the "Current User" stream, and load it
 	 */
@@ -353,6 +361,7 @@ public final class HSLFSlideShow extends POIDocument {
 	private void readOtherStreams() {
 		// Currently, there aren't any
 	}
+	
 	/**
 	 * Find and read in pictures contained in this presentation.
 	 * This is lazily called as and when we want to touch pictures.
@@ -363,6 +372,8 @@ public final class HSLFSlideShow extends POIDocument {
 
         // if the presentation doesn't contain pictures - will use a null set instead
         if (!directory.hasEntry("Pictures")) return;
+
+        EncryptedSlideShow decryptData = new EncryptedSlideShow(getDocumentEncryptionAtom());
         
 		DocumentEntry entry = (DocumentEntry)directory.getEntry("Pictures");
 		byte[] pictstream = new byte[entry.getSize()];
@@ -375,6 +386,8 @@ public final class HSLFSlideShow extends POIDocument {
 		// An empty picture record (length 0) will take up 8 bytes
         while (pos <= (pictstream.length-8)) {
             int offset = pos;
+
+            decryptData.decryptPicture(pictstream, offset);
             
             // Image signature
             int signature = LittleEndian.getUShort(pictstream, pos);
@@ -422,7 +435,21 @@ public final class HSLFSlideShow extends POIDocument {
             pos += imgsize;
         }
 	}
-
+    
+    /**
+     * remove duplicated UserEditAtoms and merge PersistPtrHolder, i.e.
+     * remove document edit history
+     */
+    public void normalizeRecords() {
+        try {
+            updateAndWriteDependantRecords(null, null);
+        } catch (IOException e) {
+            throw new CorruptPowerPointFileException(e);
+        }
+        _records = EncryptedSlideShow.normalizeRecords(_records);
+    }
+   
+    
 	/**
      * This is a helper functions, which is needed for adding new position dependent records
      * or finally write the slideshow to a file.
@@ -444,55 +471,67 @@ public final class HSLFSlideShow extends POIDocument {
         //   records are going to end up, in the new scheme
         // (Annoyingly, some powerpoint files have PersistPtrHolders
         //  that reference slides after the PersistPtrHolder)
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        UserEditAtom usr = null;
+        PersistPtrHolder ptr = null;
+        CountingOS cos = new CountingOS();
         for (Record record : _records) {
-            if(record instanceof PositionDependentRecord) {
-                PositionDependentRecord pdr = (PositionDependentRecord)record;
-                int oldPos = pdr.getLastOnDiskOffset();
-                int newPos = baos.size();
-                pdr.setLastOnDiskOffset(newPos);
-                if (oldPos != UNSET_OFFSET) {
-                    // new records don't need a mapping, as they aren't in a relation yet
-                    oldToNewPositions.put(Integer.valueOf(oldPos),Integer.valueOf(newPos));
-                }
+            // all top level records are position dependent
+            assert(record instanceof PositionDependentRecord);
+            PositionDependentRecord pdr = (PositionDependentRecord)record;
+            int oldPos = pdr.getLastOnDiskOffset();
+            int newPos = cos.size();
+            pdr.setLastOnDiskOffset(newPos);
+            if (oldPos != UNSET_OFFSET) {
+                // new records don't need a mapping, as they aren't in a relation yet
+                oldToNewPositions.put(oldPos,newPos);
+            }
+
+            // Grab interesting records as they come past
+            // this will only save the very last record of each type
+            RecordTypes.Type saveme = null;
+            int recordType = (int)record.getRecordType();
+            if (recordType == RecordTypes.PersistPtrIncrementalBlock.typeID) {
+                saveme = RecordTypes.PersistPtrIncrementalBlock;
+                ptr = (PersistPtrHolder)pdr;
+            } else if (recordType == RecordTypes.UserEditAtom.typeID) {
+                saveme = RecordTypes.UserEditAtom;
+                usr = (UserEditAtom)pdr;
+            }
+            if (interestingRecords != null && saveme != null) {
+                interestingRecords.put(saveme,pdr);
             }
             
             // Dummy write out, so the position winds on properly
-            record.writeOut(baos);
+            record.writeOut(cos);
         }
-        baos = null;
         
-        // For now, we're only handling PositionDependentRecord's that
-        // happen at the top level.
-        // In future, we'll need the handle them everywhere, but that's
-        // a bit trickier
-	    UserEditAtom usr = null;
-        for (Record record : _records) {
-            if (record instanceof PositionDependentRecord) {
-                // We've already figured out their new location, and
-                // told them that
-                // Tell them of the positions of the other records though
-                PositionDependentRecord pdr = (PositionDependentRecord)record;
-                pdr.updateOtherRecordReferences(oldToNewPositions);
-    
-                // Grab interesting records as they come past
-                // this will only save the very last record of each type
-                RecordTypes.Type saveme = null;
-                int recordType = (int)record.getRecordType();
-                if (recordType == RecordTypes.PersistPtrIncrementalBlock.typeID) {
-                    saveme = RecordTypes.PersistPtrIncrementalBlock;
-                } else if (recordType == RecordTypes.UserEditAtom.typeID) {
-                    saveme = RecordTypes.UserEditAtom;
-                    usr = (UserEditAtom)pdr;
-                }
-                if (interestingRecords != null && saveme != null) {
-                    interestingRecords.put(saveme,pdr);
-                }
-            }
+        assert(usr != null && ptr != null);
+        
+        Map<Integer,Integer> persistIds = new HashMap<Integer,Integer>();
+        for (Map.Entry<Integer,Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {
+            persistIds.put(oldToNewPositions.get(entry.getValue()), entry.getKey());
+        }
+        
+        EncryptedSlideShow encData = new EncryptedSlideShow(getDocumentEncryptionAtom());
+	    
+	    for (Record record : _records) {
+            assert(record instanceof PositionDependentRecord);
+            // We've already figured out their new location, and
+            // told them that
+            // Tell them of the positions of the other records though
+            PositionDependentRecord pdr = (PositionDependentRecord)record;
+            Integer persistId = persistIds.get(pdr.getLastOnDiskOffset());
+            if (persistId == null) persistId = 0;
+            
+            // For now, we're only handling PositionDependentRecord's that
+            // happen at the top level.
+            // In future, we'll need the handle them everywhere, but that's
+            // a bit trickier
+            pdr.updateOtherRecordReferences(oldToNewPositions);
             
             // Whatever happens, write out that record tree
             if (os != null) {
-                record.writeOut(os);
+                record.writeOut(encData.encryptRecord(os, persistId, record));
             }
         }
 
@@ -504,7 +543,7 @@ public final class HSLFSlideShow extends POIDocument {
         }
         currentUser.setCurrentEditOffset(usr.getLastOnDiskOffset());
 	}
-	
+
     /**
      * Writes out the slideshow file the is represented by an instance
      *  of this class.
@@ -529,6 +568,16 @@ public final class HSLFSlideShow extends POIDocument {
      *           the passed in OutputStream
      */
     public void write(OutputStream out, boolean preserveNodes) throws IOException {
+        // read properties and pictures, with old encryption settings where appropriate 
+        if(_pictures == null) {
+           readPictures();
+        }
+        getDocumentSummaryInformation();
+
+        // set new encryption settings
+        EncryptedSlideShow encryptedSS = new EncryptedSlideShow(getDocumentEncryptionAtom());
+        _records = encryptedSS.updateEncryptionRecord(_records);
+
         // Get a new Filesystem to write into
         POIFSFileSystem outFS = new POIFSFileSystem();
 
@@ -537,8 +586,8 @@ public final class HSLFSlideShow extends POIDocument {
 
         // Write out the Property Streams
         writeProperties(outFS, writtenEntries);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        
+        BufAccessBAOS baos = new BufAccessBAOS();
 
         // For position dependent records, hold where they were and now are
         // As we go along, update, and hand over, to any Position Dependent
@@ -546,27 +595,28 @@ public final class HSLFSlideShow extends POIDocument {
         updateAndWriteDependantRecords(baos, null);
 
         // Update our cached copy of the bytes that make up the PPT stream
-        _docstream = baos.toByteArray();
+        _docstream = new byte[baos.size()];
+        System.arraycopy(baos.getBuf(), 0, _docstream, 0, baos.size());
 
         // Write the PPT stream into the POIFS layer
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
         outFS.createDocument(bais,"PowerPoint Document");
         writtenEntries.add("PowerPoint Document");
+        
+        currentUser.setEncrypted(encryptedSS.getDocumentEncryptionAtom() != null);
         currentUser.writeToFS(outFS);
         writtenEntries.add("Current User");
 
 
-        // Write any pictures, into another stream
-        if(_pictures == null) {
-           readPictures();
-        }
         if (_pictures.size() > 0) {
-            ByteArrayOutputStream pict = new ByteArrayOutputStream();
+            BufAccessBAOS pict = new BufAccessBAOS();
             for (PictureData p : _pictures) {
+                int offset = pict.size();
                 p.write(pict);
+                encryptedSS.encryptPicture(pict.getBuf(), offset);
             }
             outFS.createDocument(
-                new ByteArrayInputStream(pict.toByteArray()), "Pictures"
+                new ByteArrayInputStream(pict.getBuf(), 0, pict.size()), "Pictures"
             );
             writtenEntries.add("Pictures");
         }
@@ -580,8 +630,44 @@ public final class HSLFSlideShow extends POIDocument {
         outFS.writeFilesystem(out);
     }
 
+    /** 
+     * For a given named property entry, either return it or null if
+     *  if it wasn't found
+     *  
+     *  @param setName The property to read
+     *  @return The value of the given property or null if it wasn't found.
+     */
+    protected PropertySet getPropertySet(String setName) {
+        DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
+        return (dea == null)
+            ? super.getPropertySet(setName)
+            : super.getPropertySet(setName, dea.getEncryptionInfo());
+    }
 
-	/* ******************* adding methods follow ********************* */
+    /**
+     * Writes out the standard Documment Information Properties (HPSF)
+     * @param outFS the POIFSFileSystem to write the properties into
+     * @param writtenEntries a list of POIFS entries to add the property names too
+     * 
+     * @throws IOException if an error when writing to the 
+     *      {@link POIFSFileSystem} occurs
+     */
+    protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+        super.writeProperties(outFS, writtenEntries);
+        DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
+        if (dea != null) {
+            CryptoAPIEncryptor enc = (CryptoAPIEncryptor)dea.getEncryptionInfo().getEncryptor();
+            try {
+                enc.getDataStream(outFS.getRoot()); // ignore OutputStream
+            } catch (IOException e) {
+                throw e;
+            } catch (GeneralSecurityException e) {
+                throw new IOException(e);
+            }
+        }
+    }
+    
+    /* ******************* adding methods follow ********************* */
 
 	/**
 	 * Adds a new root level record, at the end, but before the last
@@ -687,5 +773,31 @@ public final class HSLFSlideShow extends POIDocument {
             _objects = objects.toArray(new ObjectData[objects.size()]);
         }
         return _objects;
+    }
+    
+    
+    private static class BufAccessBAOS extends ByteArrayOutputStream {
+        public byte[] getBuf() {
+            return buf;
+        }
+    }
+    
+    private static class CountingOS extends OutputStream {
+        int count = 0;
+        public void write(int b) throws IOException {
+            count++;
+        }
+
+        public void write(byte[] b) throws IOException {
+            count += b.length;
+        }
+
+        public void write(byte[] b, int off, int len) throws IOException {
+            count += len;
+        }
+        
+        public int size() {
+            return count;
+        }
     }
 }

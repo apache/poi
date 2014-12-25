@@ -17,15 +17,19 @@
 package org.apache.poi.poifs.crypt;
 
 import static org.apache.poi.poifs.crypt.EncryptionMode.agile;
+import static org.apache.poi.poifs.crypt.EncryptionMode.binaryRC4;
+import static org.apache.poi.poifs.crypt.EncryptionMode.cryptoAPI;
 import static org.apache.poi.poifs.crypt.EncryptionMode.standard;
 
 import java.io.IOException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianInput;
 
 /**
  */
@@ -39,6 +43,31 @@ public class EncryptionInfo {
     private final Decryptor decryptor;
     private final Encryptor encryptor;
 
+    /**
+     * A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption
+     * ECMA-376 is used. It MUST be 1 unless flagExternal is 1. If flagExternal is 1, it MUST be 0.
+     */
+    public static BitField flagCryptoAPI = BitFieldFactory.getInstance(0x04);
+
+    /**
+     * A value that MUST be 0 if document properties are encrypted.
+     * The encryption of document properties is specified in section 2.3.5.4.
+     */
+    public static BitField flagDocProps = BitFieldFactory.getInstance(0x08);
+    
+    /**
+     * A value that MUST be 1 if extensible encryption is used. If this value is 1,
+     * the value of every other field in this structure MUST be 0.
+     */
+    public static BitField flagExternal = BitFieldFactory.getInstance(0x10);
+    
+    /**
+     * A value that MUST be 1 if the protected content is an ECMA-376 document
+     * ECMA-376. If the fAES bit is 1, the fCryptoAPI bit MUST also be 1.
+     */
+    public static BitField flagAES = BitFieldFactory.getInstance(0x20);
+    
+    
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
@@ -48,18 +77,43 @@ public class EncryptionInfo {
     }
     
     public EncryptionInfo(DirectoryNode dir) throws IOException {
-        DocumentInputStream dis = dir.createDocumentInputStream("EncryptionInfo");
+        this(dir.createDocumentInputStream("EncryptionInfo"), false);
+    }
+
+    public EncryptionInfo(LittleEndianInput dis, boolean isCryptoAPI) throws IOException {
+        final EncryptionMode encryptionMode;
         versionMajor = dis.readShort();
         versionMinor = dis.readShort();
-        encryptionFlags = dis.readInt();
-        
-        EncryptionMode encryptionMode;
-        if (versionMajor == agile.versionMajor
-            && versionMinor == agile.versionMinor
-            && encryptionFlags == agile.encryptionFlags) {
+
+        if (!isCryptoAPI
+            && versionMajor == binaryRC4.versionMajor
+            && versionMinor == binaryRC4.versionMinor) {
+            encryptionMode = binaryRC4;
+            encryptionFlags = -1;
+        } else if (!isCryptoAPI
+            && versionMajor == agile.versionMajor
+            && versionMinor == agile.versionMinor){
             encryptionMode = agile;
-        } else {
+            encryptionFlags = dis.readInt();
+        } else if (!isCryptoAPI
+            && 2 <= versionMajor && versionMajor <= 4
+            && versionMinor == standard.versionMinor) {
             encryptionMode = standard;
+            encryptionFlags = dis.readInt();
+        } else if (isCryptoAPI
+            && 2 <= versionMajor && versionMajor <= 4
+            && versionMinor == cryptoAPI.versionMinor) {
+            encryptionMode = cryptoAPI;
+            encryptionFlags = dis.readInt();
+        } else {
+            encryptionFlags = dis.readInt();
+            throw new EncryptedDocumentException(
+                "Unknown encryption: version major: "+versionMajor+
+                " / version minor: "+versionMinor+
+                " / fCrypto: "+flagCryptoAPI.isSet(encryptionFlags)+
+                " / fExternal: "+flagExternal.isSet(encryptionFlags)+
+                " / fDocProps: "+flagDocProps.isSet(encryptionFlags)+
+                " / fAES: "+flagAES.isSet(encryptionFlags));
         }
         
         EncryptionInfoBuilder eib;
@@ -75,22 +129,35 @@ public class EncryptionInfo {
         decryptor = eib.getDecryptor();
         encryptor = eib.getEncryptor();
     }
-
-    public EncryptionInfo(POIFSFileSystem fs, EncryptionMode encryptionMode) throws IOException {
-        this(fs.getRoot(), encryptionMode);
-     }
+    
+    /**
+     * @deprecated use constructor without fs parameter
+     */
+    @Deprecated
+    public EncryptionInfo(POIFSFileSystem fs, EncryptionMode encryptionMode) {
+        this(encryptionMode);
+    }
      
-     public EncryptionInfo(NPOIFSFileSystem fs, EncryptionMode encryptionMode) throws IOException {
-        this(fs.getRoot(), encryptionMode);
-     }
+    /**
+     * @deprecated use constructor without fs parameter
+     */
+    @Deprecated
+    public EncryptionInfo(NPOIFSFileSystem fs, EncryptionMode encryptionMode) {
+        this(encryptionMode);
+    }
      
-    public EncryptionInfo(
-          DirectoryNode dir
-        , EncryptionMode encryptionMode
-    ) throws EncryptedDocumentException {
-        this(dir, encryptionMode, null, null, -1, -1, null);
+    /**
+     * @deprecated use constructor without dir parameter
+     */
+    @Deprecated
+    public EncryptionInfo(DirectoryNode dir, EncryptionMode encryptionMode) {
+        this(encryptionMode);
     }
     
+    /**
+     * @deprecated use constructor without fs parameter
+     */
+    @Deprecated
     public EncryptionInfo(
         POIFSFileSystem fs
       , EncryptionMode encryptionMode
@@ -99,10 +166,14 @@ public class EncryptionInfo {
       , int keyBits
       , int blockSize
       , ChainingMode chainingMode
-    ) throws EncryptedDocumentException {
-        this(fs.getRoot(), encryptionMode, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
+    ) {
+        this(encryptionMode, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
     }
     
+    /**
+     * @deprecated use constructor without fs parameter
+     */
+    @Deprecated
     public EncryptionInfo(
         NPOIFSFileSystem fs
       , EncryptionMode encryptionMode
@@ -111,10 +182,14 @@ public class EncryptionInfo {
       , int keyBits
       , int blockSize
       , ChainingMode chainingMode
-    ) throws EncryptedDocumentException {
-        this(fs.getRoot(), encryptionMode, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
+    ) {
+        this(encryptionMode, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
     }
         
+    /**
+     * @deprecated use constructor without dir parameter
+     */
+    @Deprecated
     public EncryptionInfo(
           DirectoryNode dir
         , EncryptionMode encryptionMode
@@ -123,7 +198,36 @@ public class EncryptionInfo {
         , int keyBits
         , int blockSize
         , ChainingMode chainingMode
-    ) throws EncryptedDocumentException {
+    ) {
+        this(encryptionMode, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
+    }        
+
+    public EncryptionInfo(EncryptionMode encryptionMode) {
+        this(encryptionMode, null, null, -1, -1, null);
+    }
+    
+    /**
+     * Constructs an EncryptionInfo from scratch
+     *
+     * @param encryptionMode see {@link EncryptionMode} for values, {@link EncryptionMode#cryptoAPI} is for
+     *   internal use only, as it's record based
+     * @param cipherAlgorithm
+     * @param hashAlgorithm
+     * @param keyBits
+     * @param blockSize
+     * @param chainingMode
+     * 
+     * @throws EncryptedDocumentException if the given parameters mismatch, e.g. only certain combinations
+     *   of keyBits, blockSize are allowed for a given {@link CipherAlgorithm}
+     */
+    public EncryptionInfo(
+            EncryptionMode encryptionMode
+          , CipherAlgorithm cipherAlgorithm
+          , HashAlgorithm hashAlgorithm
+          , int keyBits
+          , int blockSize
+          , ChainingMode chainingMode
+      ) {
         versionMajor = encryptionMode.versionMajor;
         versionMinor = encryptionMode.versionMinor;
         encryptionFlags = encryptionMode.encryptionFlags;

@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
@@ -42,7 +44,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 
 	private byte[] _header;
 	private static long _type = 4085l;
-	private byte[] reserved;
+	private short unused;
 
 	private int lastViewedSlideID;
 	private int pptVersion;
@@ -51,6 +53,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	private int docPersistRef;
 	private int maxPersistWritten;
 	private short lastViewType;
+	private int encryptSessionPersistIdRef = -1;
 
 	// Somewhat user facing getters
 	public int getLastViewedSlideID() { return lastViewedSlideID; }
@@ -61,12 +64,17 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	public int getPersistPointersOffset()  { return persistPointersOffset; }
 	public int getDocPersistRef()          { return docPersistRef; }
 	public int getMaxPersistWritten()      { return maxPersistWritten; }
+	public int getEncryptSessionPersistIdRef() { return encryptSessionPersistIdRef; }
 
 	// More scary internal setters
 	public void setLastUserEditAtomOffset(int offset) { lastUserEditAtomOffset = offset; }
 	public void setPersistPointersOffset(int offset)  { persistPointersOffset = offset; }
 	public void setLastViewType(short type)           { lastViewType=type; }
-    public void setMaxPersistWritten(int max)           { maxPersistWritten=max; }
+    public void setMaxPersistWritten(int max)         { maxPersistWritten=max; }
+    public void setEncryptSessionPersistIdRef(int id) {
+        encryptSessionPersistIdRef=id;
+        LittleEndian.putInt(_header,4,(id == -1 ? 28 : 32));
+    }
 
 	/* *************** record code follows ********************** */
 
@@ -77,39 +85,56 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		// Sanity Checking
 		if(len < 34) { len = 34; }
 
+		int offset = start;
 		// Get the header
 		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		System.arraycopy(source,offset,_header,0,8);
+		offset += 8;
 
 		// Get the last viewed slide ID
-		lastViewedSlideID = LittleEndian.getInt(source,start+0+8);
+		lastViewedSlideID = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the PPT version
-		pptVersion = LittleEndian.getInt(source,start+4+8);
+		pptVersion = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the offset to the previous incremental save's UserEditAtom
 		// This will be the byte offset on disk where the previous one
 		//  starts, or 0 if this is the first one
-		lastUserEditAtomOffset = LittleEndian.getInt(source,start+8+8);
+		lastUserEditAtomOffset = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the offset to the persist pointers
 		// This will be the byte offset on disk where the preceding
 		//  PersistPtrFullBlock or PersistPtrIncrementalBlock starts
-		persistPointersOffset = LittleEndian.getInt(source,start+12+8);
+		persistPointersOffset = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the persist reference for the document persist object
 		// Normally seems to be 1
-		docPersistRef = LittleEndian.getInt(source,start+16+8);
+		docPersistRef = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Maximum number of persist objects written
-		maxPersistWritten = LittleEndian.getInt(source,start+20+8);
+		maxPersistWritten = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Last view type
-		lastViewType = LittleEndian.getShort(source,start+24+8);
+		lastViewType = LittleEndian.getShort(source,offset);
+		offset += LittleEndianConsts.SHORT_SIZE;
+		
+		// unused
+		unused = LittleEndian.getShort(source,offset);
+		offset += LittleEndianConsts.SHORT_SIZE;
 
 		// There might be a few more bytes, which are a reserved field
-		reserved = new byte[len-26-8];
-		System.arraycopy(source,start+26+8,reserved,0,reserved.length);
+		if (offset-start<len) {
+		    encryptSessionPersistIdRef = LittleEndian.getInt(source,offset);
+		    offset += LittleEndianConsts.INT_SIZE;
+		}
+		
+		assert(offset-start == len);
 	}
 
 	/**
@@ -155,8 +180,10 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		writeLittleEndian(docPersistRef,out);
 		writeLittleEndian(maxPersistWritten,out);
 		writeLittleEndian(lastViewType,out);
-
-		// Reserved fields
-		out.write(reserved);
+		writeLittleEndian(unused,out);
+		if (encryptSessionPersistIdRef != -1) {
+		    // optional field
+		    writeLittleEndian(encryptSessionPersistIdRef,out);
+		}
 	}
 }

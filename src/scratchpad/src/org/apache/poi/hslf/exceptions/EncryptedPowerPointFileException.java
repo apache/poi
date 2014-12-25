@@ -28,4 +28,12 @@ public final class EncryptedPowerPointFileException extends EncryptedDocumentExc
 	public EncryptedPowerPointFileException(String s) {
 		super(s);
 	}
+	
+	public EncryptedPowerPointFileException(String s, Throwable t) {
+        super(s, t);
+	}
+
+    public EncryptedPowerPointFileException(Throwable t) {
+        super(t);
+    }
 }

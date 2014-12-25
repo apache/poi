@@ -18,13 +18,36 @@ package org.apache.poi.poifs.crypt;
 
 import java.io.IOException;
 
-import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.util.LittleEndianInput;
 
 public interface EncryptionInfoBuilder {
-    void initialize(EncryptionInfo ei, DocumentInputStream dis) throws IOException;
+    /**
+     * initialize the builder from a stream
+     */
+    void initialize(EncryptionInfo ei, LittleEndianInput dis) throws IOException;
+
+    /**
+     * initialize the builder from scratch
+     */
     void initialize(EncryptionInfo ei, CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode);
+
+    /**
+     * @return the header data
+     */
     EncryptionHeader getHeader();
+
+    /**
+     * @return the verifier data
+     */
     EncryptionVerifier getVerifier();
+
+    /**
+     * @return the decryptor
+     */
     Decryptor getDecryptor();
+
+    /**
+     * @return the encryptor
+     */
     Encryptor getEncryptor();
 }

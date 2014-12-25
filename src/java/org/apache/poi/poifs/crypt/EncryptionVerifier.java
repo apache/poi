@@ -41,6 +41,7 @@ public abstract class EncryptionVerifier {
      * The method name is misleading - you'll get the encrypted verifier, not the plain verifier
      * @deprecated use getEncryptedVerifier()
      */
+    @Deprecated
     public byte[] getVerifier() {
         return encryptedVerifier;
     }
@@ -53,6 +54,7 @@ public abstract class EncryptionVerifier {
      * The method name is misleading - you'll get the encrypted verifier hash, not the plain verifier hash
      * @deprecated use getEnryptedVerifierHash
      */
+    @Deprecated
     public byte[] getVerifierHash() {
         return encryptedVerifierHash;
     }
@@ -76,6 +78,7 @@ public abstract class EncryptionVerifier {
     /**
      * @deprecated use getCipherAlgorithm().jceId
      */
+    @Deprecated
     public String getAlgorithmName() {
         return cipherAlgorithm.jceId;
     }

@@ -17,56 +17,54 @@
 
 package org.apache.poi.hslf.record;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests from the package <tt>org.apache.poi.hslf.record</tt>.
  * 
  * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestAnimationInfoAtom.class,
+    TestCString.class,
+    TestColorSchemeAtom.class,
+    TestComment2000.class,
+    TestComment2000Atom.class,
+    TestCurrentUserAtom.class,
+    TestDocument.class,
+    TestDocumentAtom.class,
+    TestDocumentEncryptionAtom.class,
+    TestExControl.class,
+    TestExHyperlink.class,
+    TestExHyperlinkAtom.class,
+    TestExMediaAtom.class,
+    TestExObjList.class,
+    TestExObjListAtom.class,
+    TestExOleObjAtom.class,
+    TestExOleObjStg.class,
+    TestExVideoContainer.class,
+    TestFontCollection.class,
+    TestHeadersFootersAtom.class,
+    TestHeadersFootersContainer.class,
+    TestInteractiveInfo.class,
+    TestInteractiveInfoAtom.class,
+    TestNotesAtom.class,
+    TestRecordContainer.class,
+    TestRecordTypes.class,
+    TestSlideAtom.class,
+    TestSlidePersistAtom.class,
+    TestSound.class,
+    TestStyleTextPropAtom.class,
+    TestTextBytesAtom.class,
+    TestTextCharsAtom.class,
+    TestTextHeaderAtom.class,
+    TestTextRulerAtom.class,
+    TestTextSpecInfoAtom.class,
+    TestTxInteractiveInfoAtom.class,
+    TestTxMasterStyleAtom.class,
+    TestUserEditAtom.class
+})
 public class AllHSLFRecordTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllHSLFRecordTests.class.getName());
-		result.addTestSuite(TestAnimationInfoAtom.class);
-		result.addTestSuite(TestCString.class);
-		result.addTestSuite(TestColorSchemeAtom.class);
-		result.addTestSuite(TestComment2000.class);
-		result.addTestSuite(TestComment2000Atom.class);
-		result.addTestSuite(TestCurrentUserAtom.class);
-		result.addTestSuite(TestDocument.class);
-		result.addTestSuite(TestDocumentAtom.class);
-		result.addTestSuite(TestDocumentEncryptionAtom.class);
-		result.addTestSuite(TestExControl.class);
-		result.addTestSuite(TestExHyperlink.class);
-		result.addTestSuite(TestExHyperlinkAtom.class);
-		result.addTestSuite(TestExMediaAtom.class);
-		result.addTestSuite(TestExObjList.class);
-		result.addTestSuite(TestExObjListAtom.class);
-		result.addTestSuite(TestExOleObjAtom.class);
-		result.addTestSuite(TestExOleObjStg.class);
-		result.addTestSuite(TestExVideoContainer.class);
-		result.addTestSuite(TestFontCollection.class);
-		result.addTestSuite(TestHeadersFootersAtom.class);
-		result.addTestSuite(TestHeadersFootersContainer.class);
-		result.addTestSuite(TestInteractiveInfo.class);
-		result.addTestSuite(TestInteractiveInfoAtom.class);
-		result.addTestSuite(TestNotesAtom.class);
-		result.addTestSuite(TestRecordContainer.class);
-		result.addTestSuite(TestRecordTypes.class);
-		result.addTestSuite(TestSlideAtom.class);
-		result.addTestSuite(TestSlidePersistAtom.class);
-		result.addTestSuite(TestSound.class);
-		result.addTestSuite(TestStyleTextPropAtom.class);
-		result.addTestSuite(TestTextBytesAtom.class);
-		result.addTestSuite(TestTextCharsAtom.class);
-		result.addTestSuite(TestTextHeaderAtom.class);
-		result.addTestSuite(TestTextRulerAtom.class);
-		result.addTestSuite(TestTextSpecInfoAtom.class);
-		result.addTestSuite(TestTxInteractiveInfoAtom.class);
-		result.addTestSuite(TestTxMasterStyleAtom.class);
-		result.addTestSuite(TestUserEditAtom.class);
-		return result;
-	}
 }
