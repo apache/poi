@@ -34,6 +34,11 @@ public interface CellRange<C extends Cell> extends Iterable<C> {
 	 * @return <tt>height * width </tt>
 	 */
 	int size();
+
+    /**
+     * @return the text format of this range.  Single cell ranges are formatted
+     *         like single cell references (e.g. 'A1' instead of 'A1:A1').
+     */
 	String getReferenceText();
 
 	/**
