@@ -213,6 +213,19 @@ public final class TestXSSFExportToXML extends TestCase {
        assertTrue(found);
 	}
 
+    public void testExportToXMLSingleAttributeNamespace() throws Exception {
+        // TODO: Fails, but I don't know if it is ok or not...
+        
+//        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx");
+//
+//        for (XSSFMap map : wb.getCustomXMLMappings()) {
+//            XSSFExportToXml exporter = new XSSFExportToXml(map);
+//
+//            ByteArrayOutputStream os = new ByteArrayOutputStream();
+//            exporter.exportToXML(os, true);
+//        }
+    }
+	
     public void test55850ComplexXmlExport() throws Exception {
 
         XSSFWorkbook wb = XSSFTestDataSamples

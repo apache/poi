@@ -122,6 +122,12 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
     <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
 
+	<!-- Integration testing -->
+    <property name="integration.src.test" location="src/integrationtest"/>
+    <property name="integration.reports.test" location="build/integration-test-results"/>
+    <property name="integration.output.test.dir" location="build/integration-test-classes"/>
+    <property name="integration.testokfile" location="build/integration-testokfile.txt"/>
+
     <!-- Excelant: -->
     <property name="excelant.resource.dir" value="src/excelant/resources"/>
     <property name="excelant.src" location="src/excelant/java"/>
@@ -285,6 +291,14 @@ under the License.
     	<pathelement location="${additionaljar}"/>
     </path>
 
+    <path id="test.integration.classpath">
+        <path refid="scratchpad.classpath"/>
+        <path refid="ooxml.classpath"/>
+        <pathelement location="${main.output.test.dir}"/>
+    	<pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${integration.output.test.dir}"/>
+    </path>
+
     <path id="ooxml-lite.classpath">
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
@@ -369,6 +383,8 @@ under the License.
         <mkdir dir="${excelant.output.test.dir}"/>
         <mkdir dir="${excelant.reports.test}"/>
         <mkdir dir="${examples.output.dir}"/>
+        <mkdir dir="${integration.output.test.dir}"/>
+        <mkdir dir="${integration.reports.test}"/>
         <mkdir dir="${dist.dir}"/>
         <mkdir dir="${build.site}"/>
 
@@ -788,6 +804,28 @@ under the License.
         </copy>
     </target>
 
+    <target name="compile-integration" depends="compile-scratchpad, compile-main, compile-ooxml">
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${integration.output.test.dir}"
+               srcdir="${integration.src.test}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="scratchpad.classpath"/>
+                <path refid="ooxml.classpath"/>
+            	<pathelement location="${ooxml.output.dir}"/>
+                <pathelement location="${main.output.test.dir}"/>
+            	<pathelement location="${main.ant.jar}"/>
+            </classpath>
+        </javac>
+        <!--copy todir="${integration.output.dir}">
+            <fileset dir="${integration.resource1.dir}"/>
+        </copy-->
+    </target>
+
     <target name="compile-version" depends="init"
             description="Compiles the version class">
         <!-- Generate the .java file -->
@@ -1036,6 +1074,45 @@ under the License.
         <echo file="${ooxml.testokfile}" append="false" message="testok"/>
     </target>
 
+    <target name="-test-integration-check">
+        <uptodate property="integration.test.notRequired" targetfile="${integration.testokfile}">
+            <srcfiles dir="${integration.src.test}"/>
+        </uptodate>
+    </target>
+
+    <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
+            unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
+        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-integration.exec">
+            <junit printsummary="withOutAndErr" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+                   failureproperty="integration.test.failed" showoutput="true">
+                <classpath refid="test.integration.classpath"/>
+                <syspropertyset refid="junit.properties"/>
+                <jvmarg value="${poi.test.locale}"/>
+                <jvmarg value="-ea"/>
+                <!-- 
+                  YK: ensure that JUnit has enough memory to run tests. 
+                  Without the line below tests fail on Mac OS X with jdk-1.6.26 
+                  and on Windows with jdk-1.5.22 
+                -->
+                <jvmarg value="-Xmx1512M"/>            
+            	<jvmarg value="-Dadditionaljar=${additionaljar}"/>
+                <formatter type="plain"/>
+                <formatter type="xml"/>
+                <batchtest todir="${integration.reports.test}">
+                    <fileset dir="${integration.src.test}">
+                        <include name="**/${testpattern}.java"/>
+                    </fileset>
+                </batchtest>
+            </junit>
+        </jacoco:coverage>
+        <delete file="${integration.testokfile}"/>
+        <antcall target="-test-integration-write-testfile"/>
+    </target>
+
+    <target name="-test-integration-write-testfile" unless="integration.test.failed">
+        <echo file="${integration.testokfile}" append="false" message="testok"/>
+    </target>
+	
     <target name="compile-ooxml-lite" depends="compile-ooxml">
         <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
         <mkdir dir="${ooxml.lite-merged.dir}"/>
@@ -1503,7 +1580,7 @@ under the License.
     </target>
 
     <target name="gump" depends="compile-all, test-all, jar"/>
-    <target name="jenkins" depends="compile-all, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check"/>
+    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check"/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
     <target name="maven.ant.tasks-check">

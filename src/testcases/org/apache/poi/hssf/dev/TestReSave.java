@@ -37,6 +37,7 @@ public class TestReSave extends BaseXLSIteratingTest {
 		SILENT_EXCLUDED.add("43493.xls");	// HSSFWorkbook cannot open it as well
 		SILENT_EXCLUDED.add("46904.xls"); 
 		SILENT_EXCLUDED.add("51832.xls");	// password 
+        SILENT_EXCLUDED.add("44958_1.xls");   // known bad file
 	}
 	
 	@Override
