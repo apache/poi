@@ -1677,6 +1677,10 @@ under the License.
 				<include name="poi-ooxml-${version.id}-*.jar"/>
 				<exclude name="poi-*${version.id}-sources-*.jar"/>
 			</fileset>
+			<auxClasspath path="${compile.lib}/bcpkix-jdk15on-1.51.jar" />
+			<auxClasspath path="${compile.lib}/bcprov-ext-jdk15on-1.51.jar" />
+			<auxClasspath path="${compile.lib}/slf4j-api-1.7.7.jar" /> 
+			<auxClasspath path="${compile.lib}/xmlsec-2.0.1.jar" />
 			<auxClasspath path="ooxml-lib/ooxml-schemas-1.1.jar" />
 			<auxClasspath path="ooxml-lib/ooxml-security-1.0.jar" />
 			<auxClasspath path="ooxml-lib/xmlbeans-2.6.0.jar" />
