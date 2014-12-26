@@ -111,7 +111,7 @@ public class Picture extends SimpleShape {
      * @return the index to this picture (1 based).
      */
     public int getPictureIndex(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY);
         return prop == null ? 0 : prop.getPropertyValue();
     }
@@ -130,7 +130,7 @@ public class Picture extends SimpleShape {
         spRecord.setOptions((short)((ShapeTypes.PictureFrame << 4) | 0x2));
 
         //set default properties for a picture
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x800080);
 
         //another weird feature of powerpoint: for picture id we must add 0x4000.
@@ -214,7 +214,7 @@ public class Picture extends SimpleShape {
      * @return name of this picture
      */
     public String getPictureName(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherComplexProperty prop = (EscherComplexProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
         String name = null;
         if(prop != null){
@@ -235,7 +235,7 @@ public class Picture extends SimpleShape {
      * @param name of this picture
      */
     public void setPictureName(String name){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         try {
             byte[] data = (name + '\u0000').getBytes("UTF-16LE");
             EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, false, data);

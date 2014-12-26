@@ -56,7 +56,7 @@ public final class Placeholder extends TextBox {
         EscherClientDataRecord cldata = new EscherClientDataRecord();
         cldata.setOptions((short)15);
 
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
 
         //Placeholders can't be grouped
         setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 262144);

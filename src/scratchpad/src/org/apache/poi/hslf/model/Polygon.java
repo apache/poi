@@ -71,7 +71,7 @@ public final class Polygon extends AutoShape {
         float left   = findSmallest(xPoints);
         float top    = findSmallest(yPoints);
 
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, (int)((right - left)*POINT_DPI/MASTER_DPI)));
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, (int)((bottom - top)*POINT_DPI/MASTER_DPI)));
 

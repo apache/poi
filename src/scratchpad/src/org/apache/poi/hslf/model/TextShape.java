@@ -280,7 +280,7 @@ public abstract class TextShape extends SimpleShape {
      * @return the type of alignment
      */
     public int getVerticalAlignment(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
         int valign = TextShape.AnchorTop;
         if (prop == null){
@@ -351,7 +351,7 @@ public abstract class TextShape extends SimpleShape {
      * @return the botom margin
      */
     public float getMarginBottom(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTBOTTOM);
         int val = prop == null ? EMU_PER_INCH/20 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
@@ -376,7 +376,7 @@ public abstract class TextShape extends SimpleShape {
      * @return the left margin
      */
     public float getMarginLeft(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTLEFT);
         int val = prop == null ? EMU_PER_INCH/10 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
@@ -401,7 +401,7 @@ public abstract class TextShape extends SimpleShape {
      * @return the right margin
      */
     public float getMarginRight(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTRIGHT);
         int val = prop == null ? EMU_PER_INCH/10 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
@@ -425,7 +425,7 @@ public abstract class TextShape extends SimpleShape {
      * @return the top margin
      */
     public float getMarginTop(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTTOP);
         int val = prop == null ? EMU_PER_INCH/20 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
@@ -449,7 +449,7 @@ public abstract class TextShape extends SimpleShape {
      *  Must be one of the <code>Wrap*</code> constants defined in this class.
      */
     public int getWordWrap(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__WRAPTEXT);
         return prop == null ? WrapSquare : prop.getPropertyValue();
     }
@@ -468,7 +468,7 @@ public abstract class TextShape extends SimpleShape {
      * @return id for the text.
      */
     public int getTextId(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTID);
         return prop == null ? 0 : prop.getPropertyValue();
     }

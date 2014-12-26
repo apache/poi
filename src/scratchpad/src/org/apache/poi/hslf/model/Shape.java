@@ -299,7 +299,7 @@ public abstract class Shape {
      * @param value     value of the property. If value = -1 then the property is removed.
      */
     public void setEscherProperty(short propId, int value){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, propId, value);
     }
 
@@ -309,7 +309,7 @@ public abstract class Shape {
      * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
      */
    public int getEscherProperty(short propId){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
         return prop == null ? 0 : prop.getPropertyValue();
     }
@@ -320,7 +320,7 @@ public abstract class Shape {
      * @param propId    The id of the property. One of the constants defined in EscherOptRecord.
      */
    public int getEscherProperty(short propId, int defaultValue){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
         return prop == null ? defaultValue : prop.getPropertyValue();
     }
@@ -364,7 +364,7 @@ public abstract class Shape {
     }
 
     Color getColor(short colorProperty, short opacityProperty, int defaultColor){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty p = (EscherSimpleProperty)getEscherProperty(opt, colorProperty);
         if(p == null && defaultColor == -1) return null;
 
@@ -482,5 +482,9 @@ public abstract class Shape {
      */
     public java.awt.Shape getOutline(){
         return getLogicalAnchor2D();
+    }
+    
+    protected EscherOptRecord getEscherOptRecord() {
+        return (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
     }
 }

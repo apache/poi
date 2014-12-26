@@ -116,7 +116,7 @@ public final class Line extends SimpleShape {
         spRecord.setOptions(type);
 
         //set default properties for a line
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
 
         //default line properties
         setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, 4);
