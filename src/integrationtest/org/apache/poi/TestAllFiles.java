@@ -223,7 +223,7 @@ public class TestAllFiles {
     public static Iterable<Object[]> files() {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(new File("test-data"));
-        scanner.setExcludes(new String[] { "**/.svn" });
+        scanner.setExcludes(new String[] { "**/.svn/**" });
         
         scanner.scan();
         
