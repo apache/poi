@@ -189,7 +189,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      *
      * @exception IOException if anything can't be written.
      */
-    public final void write(OutputStream stream) throws IOException {
+    public void write(OutputStream stream) throws IOException {
         //force all children to commit their changes into the underlying OOXML Package
         Set<PackagePart> context = new HashSet<PackagePart>();
         onSave(context);

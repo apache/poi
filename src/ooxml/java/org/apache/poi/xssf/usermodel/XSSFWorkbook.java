@@ -34,6 +34,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import javax.xml.namespace.QName;
 
@@ -75,6 +78,7 @@ import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
+import org.apache.poi.xssf.model.SharedStringsTableType;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -145,6 +149,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * shared string table - a cache of strings in this workbook
      */
     private SharedStringsTable sharedStringSource;
+
+    /**
+     * shared strings table type- to specify use default or map db shared strings table source
+     */
+    private SharedStringsTableType sharedStringsTableType = SharedStringsTableType.DEFAULT_SST;
 
     /**
      * A collection of shared objects used for styling content,
@@ -218,12 +227,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         onWorkbookCreate();
     }
 
+    public XSSFWorkbook(SharedStringsTableType sharedStringsTableType) {
+        super(newPackage());
+        this.sharedStringsTableType = sharedStringsTableType;
+        onWorkbookCreate();
+    }
+
+    public SharedStringsTableType getSharedStringsTableType() {
+        return sharedStringsTableType;
+    }
+
     /**
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
      *  see <a href="http://poi.apache.org/oxml4j/">http://poi.apache.org/oxml4j/</a>.
      * 
      * <p>Once you have finished working with the Workbook, you should close the package
-     * by calling either {@link #close()} or {@link OPCPackage#close()}, to avoid 
+     * by calling either {@link #close()} or {@link OPCPackage#close()}, to avoid
      * leaving file handles open.
      * 
      * <p>Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
@@ -338,7 +357,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
 
             if (sharedStringSource == null) {
                 // Create SST if it is missing
-                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
+                sharedStringSource = createSSTSourceBasedOnSSTType();
             }
             
             // Load individual sheets. The order of sheets is defined by the order
@@ -376,6 +395,73 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         }
     }
 
+    @Override
+    public void write(OutputStream stream) throws IOException {
+        if (getSharedStringsTableType() == SharedStringsTableType.DEFAULT_SST) {
+            super.write(stream);
+        } else {
+            writeWithPatchingMDBSST(stream);
+        }
+    }
+
+    public void writeWithPatchingMDBSST(OutputStream stream) throws IOException {
+        //Save the template
+        File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
+        try {
+            FileOutputStream os = new FileOutputStream(tmplFile);
+            try {
+                super.write(os);
+            } finally {
+                os.close();
+            }
+
+            //Substitute the template shared string xml with the temporarily generated xml data file
+            injectSharedStringTableXml(tmplFile, stream);
+        } finally {
+            if (!tmplFile.delete()) {
+                throw new IOException("Could not delete temporary file after processing: " + tmplFile);
+            }
+        }
+    }
+
+    private void injectSharedStringTableXml(File zipfile, OutputStream out) throws IOException {
+        ZipFile zip = new ZipFile(zipfile);
+        DBMappedSharedStringsTable _sst = (DBMappedSharedStringsTable) sharedStringSource;
+        try {
+            ZipOutputStream zos = new ZipOutputStream(out);
+            try {
+                Enumeration<? extends ZipEntry> en = zip.entries();
+                while (en.hasMoreElements()) {
+                    ZipEntry ze = en.nextElement();
+                    zos.putNextEntry(new ZipEntry(ze.getName()));
+                    InputStream is;
+                    if (ze.getName().equals("xl/sharedStrings.xml")) {
+                        is = _sst.getSharedStringInputStream(); //injecting shared string table in target output
+                    } else {
+                        is = zip.getInputStream(ze);
+                    }
+                    copyStream(is, zos);
+                    is.close();
+                }
+            } finally {
+                zos.close();
+                if (!_sst.getTemp_shared_string_file().delete()) {
+                    throw new RuntimeException("Couldn't delete temporary shared strings table file.");
+                }
+            }
+        } finally {
+            zip.close();
+        }
+    }
+
+    private static void copyStream(InputStream in, OutputStream out) throws IOException {
+        byte[] chunk = new byte[1024];
+        int count;
+        while ((count = in.read(chunk)) >= 0) {
+            out.write(chunk, 0, count);
+        }
+    }
+
     /**
      * Create a new CTWorkbook with all values set to default
      */
@@ -394,12 +480,38 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         POIXMLProperties.ExtendedProperties expProps = getProperties().getExtendedProperties();
         expProps.getUnderlyingProperties().setApplication(DOCUMENT_CREATOR);
 
-        sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
-        stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+        sharedStringSource = createSSTSourceBasedOnSSTType();
+        stylesSource = (StylesTable) createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
 
         namedRanges = new ArrayList<XSSFName>();
         sheets = new ArrayList<XSSFSheet>();
         pivotTables = new ArrayList<XSSFPivotTable>();
+    }
+
+    private SharedStringsTable createSSTSourceBasedOnSSTType() {
+        return (SharedStringsTable) createRelationship(XSSFRelation.SHARED_STRINGS, new POIXMLFactory() {
+            @Override
+            public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part) {
+                try {
+                    Class<? extends POIXMLDocumentPart> cls = sharedStringsTableType.getInstance();
+                    Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(PackagePart.class, PackageRelationship.class);
+                    return constructor.newInstance(part, rel);
+                } catch (Exception e) {
+                    throw new POIXMLException(e);
+                }
+            }
+
+            @Override
+            public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor) {
+                try {
+                    Class<? extends POIXMLDocumentPart> cls = sharedStringsTableType.getInstance();
+                    Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor();
+                    return constructor.newInstance();
+                } catch (Exception e) {
+                    throw new POIXMLException(e);
+                }
+            }
+        });
     }
 
     /**
