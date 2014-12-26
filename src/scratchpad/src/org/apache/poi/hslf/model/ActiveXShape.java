@@ -159,7 +159,7 @@ public final class ActiveXShape extends Picture {
             String name = ctrl.getProgId() + "-" + getControlIndex();
             byte[] data = (name + '\u0000').getBytes("UTF-16LE");
             EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.GROUPSHAPE__SHAPENAME, false, data);
-            EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+            EscherOptRecord opt = getEscherOptRecord();
             opt.addEscherProperty(prop);
         } catch (UnsupportedEncodingException e){
             throw new HSLFException(e);

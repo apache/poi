@@ -61,7 +61,7 @@ public final class TableCell extends TextBox {
 
     protected EscherContainerRecord createSpContainer(boolean isChild){
         _escherContainer = super.createSpContainer(isChild);
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.TEXT__TEXTID, 0);
         setEscherProperty(opt, EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20000);
         setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150001);

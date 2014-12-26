@@ -102,7 +102,7 @@ public abstract class SimpleShape extends Shape {
      *  Returns width of the line in in points
      */
     public double getLineWidth(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         double width = prop == null ? DEFAULT_LINE_WIDTH : (double)prop.getPropertyValue()/EMU_PER_POINT;
         return width;
@@ -113,7 +113,7 @@ public abstract class SimpleShape extends Shape {
      *  @param width  the width of line in in points
      */
     public void setLineWidth(double width){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH, (int)(width*EMU_PER_POINT));
     }
 
@@ -123,7 +123,7 @@ public abstract class SimpleShape extends Shape {
      * @param color new color of the line
      */
     public void setLineColor(Color color){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         if (color == null) {
             setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
         } else {
@@ -137,7 +137,7 @@ public abstract class SimpleShape extends Shape {
      * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
      */
     public Color getLineColor(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
 
         EscherSimpleProperty p = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
         if(p != null && (p.getPropertyValue() & 0x8) == 0) return null;
@@ -152,7 +152,7 @@ public abstract class SimpleShape extends Shape {
      * @return dashing of the line.
      */
     public int getLineDashing(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
 
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
         return prop == null ? Line.PEN_SOLID : prop.getPropertyValue();
@@ -164,7 +164,7 @@ public abstract class SimpleShape extends Shape {
      * @param pen new style of the line.
      */
     public void setLineDashing(int pen){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
 
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING, pen == Line.PEN_SOLID ? -1 : pen);
     }
@@ -175,7 +175,7 @@ public abstract class SimpleShape extends Shape {
      * @param style new style of the line.
      */
     public void setLineStyle(int style){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE, style == Line.LINE_SIMPLE ? -1 : style);
     }
 
@@ -185,7 +185,7 @@ public abstract class SimpleShape extends Shape {
      * @return style of the line.
      */
     public int getLineStyle(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
         return prop == null ? Line.LINE_SIMPLE : prop.getPropertyValue();
     }

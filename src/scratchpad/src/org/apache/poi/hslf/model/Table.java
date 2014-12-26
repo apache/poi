@@ -332,7 +332,7 @@ public final class Table extends ShapeGroup {
     public Line createBorder(){
         Line line = new Line(this);
 
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(line.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, -1);
         setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, -1);
         setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);

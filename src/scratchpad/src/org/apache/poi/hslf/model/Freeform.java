@@ -136,7 +136,7 @@ public final class Freeform extends AutoShape {
         if(!isClosed) segInfo.add(SEGMENTINFO_LINETO);
         segInfo.add(new byte[]{0x00, (byte)0x80});
 
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
 
         EscherArrayProperty verticesProp = new EscherArrayProperty((short)(EscherProperties.GEOMETRY__VERTICES + 0x4000), false, null);
@@ -176,7 +176,7 @@ public final class Freeform extends AutoShape {
      * @return the freeform path
      */
      public GeneralPath getPath(){
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
 
         EscherArrayProperty verticesProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES + 0x4000));
