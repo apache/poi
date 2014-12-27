@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -48,6 +47,7 @@ import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIDecryptor extends Decryptor {
 
@@ -185,7 +185,7 @@ public class CryptoAPIDecryptor extends Decryptor {
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
         hashAlg.update(ver.getSalt());
-        byte hash[] = hashAlg.digest(CryptoFunctions.getUtf16LeString(password));
+        byte hash[] = hashAlg.digest(StringUtil.getToUnicodeLE(password));
         SecretKey skey = new SecretKeySpec(hash, ver.getCipherAlgorithm().jceId);
         return skey;
     }
@@ -224,9 +224,7 @@ public class CryptoAPIDecryptor extends Decryptor {
             entry.flags = leis.readUByte();
             boolean isStream = StreamDescriptorEntry.flagStream.isSet(entry.flags);
             entry.reserved2 = leis.readInt();
-            byte nameBuf[] = new byte[nameSize * 2];
-            leis.read(nameBuf);
-            entry.streamName = new String(nameBuf, Charset.forName("UTF-16LE"));
+            entry.streamName = StringUtil.readUnicodeLE(leis, nameSize);
             leis.readShort();
             assert(entry.streamName.length() == nameSize);
         }

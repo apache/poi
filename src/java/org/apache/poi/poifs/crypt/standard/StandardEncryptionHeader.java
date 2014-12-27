@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.standard;
 
-import static org.apache.poi.poifs.crypt.CryptoFunctions.getUtf16LeString;
 import static org.apache.poi.poifs.crypt.EncryptionInfo.flagAES;
 import static org.apache.poi.poifs.crypt.EncryptionInfo.flagCryptoAPI;
 
@@ -32,6 +31,7 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.StringUtil;
 
 public class StandardEncryptionHeader extends EncryptionHeader implements EncryptionRecord {
 
@@ -103,7 +103,7 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         bos.writeInt(0); // reserved2
         String cspName = getCspName();
         if (cspName == null) cspName = getCipherProvider().cipherProviderName;
-        bos.write(getUtf16LeString(cspName));
+        bos.write(StringUtil.getToUnicodeLE(cspName));
         bos.writeShort(0);
         int headerSize = bos.getWriteIndex()-startIdx-LittleEndianConsts.INT_SIZE;
         sizeOutput.writeInt(headerSize);        

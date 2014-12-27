@@ -19,8 +19,6 @@ package org.apache.poi.hssf.usermodel;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -40,12 +38,14 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
-	private static POILogger logger = POILogFactory.getLogger(HSSFPicture.class);
+	@SuppressWarnings("unused")
+    private static POILogger logger = POILogFactory.getLogger(HSSFPicture.class);
 	
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
@@ -226,16 +226,14 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
                       EscherProperties.BLIP__BLIPFILENAME);
         return (null == propFile)
             ? ""
-            : new String(propFile.getComplexData(), Charset.forName("UTF-16LE")).trim();
+            : StringUtil.getFromUnicodeLE(propFile.getComplexData()).trim();
     }
     
     public void setFileName(String data){
-        try {
-            EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, data.getBytes("UTF-16LE"));
-            setPropertyValue(prop);
-        } catch (UnsupportedEncodingException e) {
-        	logger.log( POILogger.ERROR, "Unsupported encoding: UTF-16LE");
-        }
+        // TODO: add trailing \u0000? 
+        byte bytes[] = StringUtil.getToUnicodeLE(data);
+        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, bytes);
+        setPropertyValue(prop);
     }
 
     @Override

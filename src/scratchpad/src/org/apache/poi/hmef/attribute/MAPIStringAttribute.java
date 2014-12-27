@@ -17,7 +17,7 @@
 
 package org.apache.poi.hmef.attribute;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
@@ -41,11 +41,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
       
       String tmpData = null;
       if(type == Types.ASCII_STRING.getId()) {
-         try {
-            tmpData = new String(data, CODEPAGE);
-         } catch(UnsupportedEncodingException e) {
-            throw new RuntimeException("JVM Broken - core encoding " + CODEPAGE + " missing");
-         }
+         tmpData = new String(data, Charset.forName(CODEPAGE));
       } else if(type == Types.UNICODE_STRING.getId()) {
          tmpData = StringUtil.getFromUnicodeLE(data);
       } else {

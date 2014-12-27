@@ -22,8 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 import org.apache.poi.hwpf.model.StyleDescription;
 import org.apache.poi.hwpf.model.StyleSheet;
@@ -37,10 +37,9 @@ public final class Word2Forrest
   HWPFDocument _doc;
 
   @SuppressWarnings("unused")
-  public Word2Forrest(HWPFDocument doc, OutputStream stream)
-    throws IOException, UnsupportedEncodingException
+  public Word2Forrest(HWPFDocument doc, OutputStream stream) throws IOException
   {
-    OutputStreamWriter out = new OutputStreamWriter (stream, "UTF-8");
+    OutputStreamWriter out = new OutputStreamWriter (stream, Charset.forName("UTF-8"));
     _out = out;
     _doc = doc;
 

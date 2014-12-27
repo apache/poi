@@ -18,7 +18,11 @@ package org.apache.poi.stress;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public final class POIXMLDocumentHandler {
 	protected void handlePOIXMLDocument(POIXMLDocument doc) throws Exception {
@@ -28,4 +32,15 @@ public final class POIXMLDocumentHandler {
 		assertNotNull(doc.getProperties());
 		assertNotNull(doc.getRelations());
 	}
+
+    protected static boolean isEncrypted(InputStream stream) throws IOException {
+        if (POIFSFileSystem.hasPOIFSHeader(stream)) {
+            POIFSFileSystem poifs = new POIFSFileSystem(stream);
+            if (poifs.getRoot().hasEntry("EncryptedPackage")) {
+                return true;
+            }
+            throw new IOException("wrong file format or file extension for OO XML file");
+        }
+        return false;
+    }
 }

@@ -18,7 +18,7 @@
 package org.apache.poi.hwpf.model;
 
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.util.Internal;
 
@@ -81,17 +81,9 @@ public class TextPiece extends PropertyNode<TextPiece>
    * Create the StringBuilder from the text and unicode flag
    */
   private static StringBuilder buildInitSB(byte[] text, PieceDescriptor pd) {
-	  String str;
-	  try {
-		  if(pd.isUnicode()) {
-			  str = new String(text, "UTF-16LE");
-		  } else {
-			  str = new String(text, "Cp1252");
-		  }
-	  } catch(UnsupportedEncodingException e) {
-		  throw new RuntimeException("Your Java is broken! It doesn't know about basic, required character encodings!");
-	  }
-	  return new StringBuilder(str);
+	  String str = new String(text, Charset.forName(pd.isUnicode() ? "UTF-16LE" : "Cp1252"));
+
+      return new StringBuilder(str);
   }
 
   /**
@@ -120,12 +112,9 @@ public class TextPiece extends PropertyNode<TextPiece>
 
    public byte[] getRawBytes()
    {
-     try {
-       return ((CharSequence)_buf).toString().getBytes(_usesUnicode ?
-           "UTF-16LE" : "Cp1252");
-     } catch (UnsupportedEncodingException ignore) {
-		  throw new RuntimeException("Your Java is broken! It doesn't know about basic, required character encodings!");
-     }
+       return ((CharSequence)_buf).toString().getBytes(
+           Charset.forName(_usesUnicode ? "UTF-16LE" : "Cp1252")
+       );
    }
 
    /**

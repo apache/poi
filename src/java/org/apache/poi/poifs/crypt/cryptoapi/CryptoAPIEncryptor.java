@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -49,6 +48,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIEncryptor extends Encryptor {
     private final CryptoAPIEncryptionInfoBuilder builder;
@@ -164,7 +164,7 @@ public class CryptoAPIEncryptor extends Encryptor {
             bos.write(buf, 0, 1);
             LittleEndian.putUInt(buf, 0, sde.reserved2);
             bos.write(buf, 0, 4);
-            byte nameBytes[] = sde.streamName.getBytes(Charset.forName("UTF-16LE"));
+            byte nameBytes[] = StringUtil.getToUnicodeLE(sde.streamName);
             bos.write(nameBytes, 0, nameBytes.length);
             LittleEndian.putShort(buf, 0, (short)0); // null-termination
             bos.write(buf, 0, 2);

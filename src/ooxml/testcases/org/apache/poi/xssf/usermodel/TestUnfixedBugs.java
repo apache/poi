@@ -18,7 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Date;
 
 import junit.framework.TestCase;
@@ -66,9 +66,10 @@ public final class TestUnfixedBugs extends TestCase {
         verifyBug54084Unicode(wbStreamingWritten);
     }
 
-    private void verifyBug54084Unicode(Workbook wb) throws UnsupportedEncodingException {
+    private void verifyBug54084Unicode(Workbook wb) {
         // expected data is stored in UTF-8 in a text-file
-        String testData = new String(HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt"), "UTF-8").trim();
+        byte data[] = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
+        String testData = new String(data, Charset.forName("UTF-8")).trim();
 
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);

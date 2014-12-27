@@ -25,7 +25,10 @@ import org.junit.Test;
 public class XWPFFileHandler implements FileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
-		XWPFDocument doc = new XWPFDocument(stream);
+        // ignore password protected files
+        if (POIXMLDocumentHandler.isEncrypted(stream)) return;
+
+        XWPFDocument doc = new XWPFDocument(stream);
 		
 		new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
 	}

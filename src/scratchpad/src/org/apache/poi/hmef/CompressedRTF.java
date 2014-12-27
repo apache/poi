@@ -20,7 +20,7 @@ package org.apache.poi.hmef;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LZWDecompresser;
@@ -73,6 +73,7 @@ public final class CompressedRTF extends LZWDecompresser {
       compressedSize = LittleEndian.readInt(src);
       decompressedSize = LittleEndian.readInt(src);
       int compressionType = LittleEndian.readInt(src);
+      @SuppressWarnings("unused")
       int dataCRC = LittleEndian.readInt(src);
       
       // TODO - Handle CRC checking on the output side
@@ -117,15 +118,11 @@ public final class CompressedRTF extends LZWDecompresser {
 
    @Override
    protected int populateDictionary(byte[] dict) {
-      try {
-         // Copy in the RTF constants 
-         byte[] preload = LZW_RTF_PRELOAD.getBytes("US-ASCII");
-         System.arraycopy(preload, 0, dict, 0, preload.length);
-         
-         // Start adding new codes after the constants
-         return preload.length;
-      } catch(UnsupportedEncodingException e) {
-         throw new RuntimeException("Your JVM is broken as it doesn't support US ASCII");
-      }
+     // Copy in the RTF constants 
+     byte[] preload = LZW_RTF_PRELOAD.getBytes(Charset.forName("US-ASCII"));
+     System.arraycopy(preload, 0, dict, 0, preload.length);
+     
+     // Start adding new codes after the constants
+     return preload.length;
    }
 }

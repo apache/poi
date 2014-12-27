@@ -285,9 +285,30 @@ public final class RecordInputStream implements LittleEndianInput {
 	}
 
 	public void readFully(byte[] buf, int off, int len) {
-		checkRecordPosition(len);
-		_dataInput.readFully(buf, off, len);
-		_currentDataOffset+=len;
+	    int origLen = len;
+	    if (buf == null) {
+	        throw new NullPointerException();
+	    } else if (off < 0 || len < 0 || len > buf.length - off) {
+	        throw new IndexOutOfBoundsException();
+	    }
+	    
+	    while (len > 0) {
+	        int nextChunk = Math.min(available(),len);
+	        if (nextChunk == 0) {
+	            if (!hasNextRecord()) {
+	                throw new RecordFormatException("Can't read the remaining "+len+" bytes of the requested "+origLen+" bytes. No further record exists.");
+	            } else {
+	                nextRecord();
+	                nextChunk = Math.min(available(),len);
+	                assert(nextChunk > 0);
+	            }
+	        }
+	        checkRecordPosition(nextChunk);
+	        _dataInput.readFully(buf, off, nextChunk);
+	        _currentDataOffset+=nextChunk;
+	        off += nextChunk;
+	        len -= nextChunk;
+	    }
 	}
 
 	public String readString() {
@@ -362,6 +383,7 @@ public final class RecordInputStream implements LittleEndianInput {
 			nextRecord();
 			// note - the compressed flag may change on the fly
 			byte compressFlag = readByte();
+            assert(compressFlag == 0 || compressFlag == 1);
 			isCompressedEncoding = (compressFlag == 0);
 		}
 	}

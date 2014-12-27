@@ -20,7 +20,7 @@ package org.apache.poi.hsmf.datatypes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.util.IOUtils;
@@ -98,14 +98,9 @@ public class StringChunk extends Chunk {
    }
    private void storeString() {
       if (type == Types.ASCII_STRING) {
-         try {
-            rawValue = value.getBytes(encoding7Bit);
-         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Encoding not found - " + encoding7Bit, e);
-         }
+         rawValue = value.getBytes(Charset.forName(encoding7Bit));
       } else if (type == Types.UNICODE_STRING) {
-         rawValue = new byte[value.length()*2];
-         StringUtil.putUnicodeLE(value, rawValue, 0);
+         rawValue = StringUtil.getToUnicodeLE(value);
       } else {
          throw new IllegalArgumentException("Invalid type " + type + " for String Chunk");
       }
@@ -149,10 +144,6 @@ public class StringChunk extends Chunk {
       }
       
       // Decode
-      try {
-         return new String(data, encoding);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("Encoding not found - " + encoding, e);
-      }
+      return new String(data, Charset.forName(encoding));
    }
 }
