@@ -16,3 +16,8 @@ This product contains the Piccolo XML Parser for Java
 
 This product contains the chunks_parse_cmds.tbl file from the vsdump program.
 Copyright (C) 2006-2007 Valek Filippov (frob@df.ru)
+
+This product contains parts of the eID Applet project 
+(http://eid-applet.googlecode.com). Copyright (c) 2009-2014
+FedICT (federal ICT department of Belgium), e-Contract.be BVBA (https://www.e-contract.be),
+Bart Hanssens from FedICT

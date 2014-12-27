@@ -19,7 +19,7 @@ package org.apache.poi.hsmf.datatypes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,12 +61,8 @@ public class MessageSubmissionChunk extends Chunk {
 
    public void readValue(InputStream value) throws IOException {
       // Stored in the file as us-ascii
-      try {
-         byte[] data = IOUtils.toByteArray(value); 
-         rawId = new String(data, "ASCII");
-      } catch(UnsupportedEncodingException e) {
-         throw new RuntimeException("Core encoding not found, JVM broken?", e);
-      }
+     byte[] data = IOUtils.toByteArray(value); 
+     rawId = new String(data, Charset.forName("ASCII"));
       
       // Now process the date
       String[] parts = rawId.split(";");
@@ -97,12 +93,8 @@ public class MessageSubmissionChunk extends Chunk {
    }
 
    public void writeValue(OutputStream out) throws IOException {
-      try {
-         byte[] data = rawId.getBytes("ASCII"); 
-         out.write(data);
-      } catch(UnsupportedEncodingException e) {
-         throw new RuntimeException("Core encoding not found, JVM broken?", e);
-      }
+     byte[] data = rawId.getBytes(Charset.forName("ASCII")); 
+     out.write(data);
    }
    
    /**

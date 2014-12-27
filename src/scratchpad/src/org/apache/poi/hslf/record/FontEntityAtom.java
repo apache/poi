@@ -17,10 +17,11 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * This atom corresponds exactly to a Windows Logical Font (LOGFONT) structure.
@@ -77,21 +78,14 @@ public final class FontEntityAtom extends RecordAtom {
      * @return font name
      */
     public String getFontName(){
-        String name = null;
-        try {
-            int i = 0;
-            while(i < 64){
-                //loop until find null-terminated end of the font name
-                if(_recdata[i] == 0 && _recdata[i + 1] == 0) {
-                    name = new String(_recdata, 0, i, "UTF-16LE");
-                    break;
-                }
-                i += 2;
+    	int maxLen = Math.min(_recdata.length,64);
+        for(int i = 0; i < maxLen; i+=2){
+            //loop until find null-terminated end of the font name
+            if(_recdata[i] == 0 && _recdata[i + 1] == 0) {
+                return StringUtil.getFromUnicodeLE(_recdata, 0, i/2);
             }
-        } catch (UnsupportedEncodingException e){
-            throw new RuntimeException(e.getMessage(), e);
         }
-        return name;
+        return null;
     }
 
     /**
@@ -103,8 +97,8 @@ public final class FontEntityAtom extends RecordAtom {
      */
     public void setFontName(String name){
 		// Add a null termination if required
-		if(! name.endsWith("\000")) {
-			name = name + "\000";
+		if(! name.endsWith("\u0000")) {
+			name += '\u0000';
 		}
 
 		// Ensure it's not now too long
@@ -113,12 +107,8 @@ public final class FontEntityAtom extends RecordAtom {
 		}
 
 		// Everything's happy, so save the name
-        try {
-            byte[] bytes = name.getBytes("UTF-16LE");
-            System.arraycopy(bytes, 0, _recdata, 0, bytes.length);
-        } catch (UnsupportedEncodingException e){
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        byte[] bytes = StringUtil.getToUnicodeLE(name);
+        System.arraycopy(bytes, 0, _recdata, 0, bytes.length);
     }
 
     public void setFontIndex(int idx){

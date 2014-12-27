@@ -32,6 +32,9 @@ import org.xml.sax.SAXException;
 public class XSSFFileHandler extends SpreadsheetHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
+	    // ignore password protected files
+	    if (POIXMLDocumentHandler.isEncrypted(stream)) return;
+	    
 		XSSFWorkbook wb = new XSSFWorkbook(stream);
 		
 		// use the combined handler for HSSF/XSSF
@@ -57,7 +60,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             exporter.exportToXML(os, true);
         }
     }
-	
+    
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {

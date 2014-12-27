@@ -20,6 +20,7 @@ package org.apache.poi;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -153,7 +154,6 @@ public class TestAllFiles {
 	private static final Set<String> EXPECTED_FAILURES = new HashSet<String>();
 	static {
 		// password protected files
-		EXPECTED_FAILURES.add("poifs/protect.xlsx");
 		EXPECTED_FAILURES.add("spreadsheet/password.xls");
 		EXPECTED_FAILURES.add("spreadsheet/51832.xls");
 		EXPECTED_FAILURES.add("document/PasswordProtected.doc");
@@ -161,10 +161,14 @@ public class TestAllFiles {
 		EXPECTED_FAILURES.add("slideshow/Password_Protected-56-hello.ppt");
 		EXPECTED_FAILURES.add("slideshow/Password_Protected-np-hello.ppt");
 		EXPECTED_FAILURES.add("slideshow/cryptoapi-proc2356.ppt");
-		EXPECTED_FAILURES.add("document/bug53475-password-is-pass.docx");
-		EXPECTED_FAILURES.add("document/bug53475-password-is-solrcell.docx");
+		//EXPECTED_FAILURES.add("document/bug53475-password-is-pass.docx");
+		//EXPECTED_FAILURES.add("document/bug53475-password-is-solrcell.docx");
 		EXPECTED_FAILURES.add("spreadsheet/xor-encryption-abc.xls");
         EXPECTED_FAILURES.add("spreadsheet/35897-type4.xls");
+        //EXPECTED_FAILURES.add("poifs/protect.xlsx");
+        //EXPECTED_FAILURES.add("poifs/protected_sha512.xlsx");
+        //EXPECTED_FAILURES.add("poifs/extenxls_pwd123.xlsx");
+        //EXPECTED_FAILURES.add("poifs/protected_agile.docx");
 		
 		// TODO: fails XMLExportTest, is this ok?
 		EXPECTED_FAILURES.add("spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx");
@@ -178,15 +182,12 @@ public class TestAllFiles {
 		// TODO: good to ignore?
 		EXPECTED_FAILURES.add("spreadsheet/sample-beta.xlsx");
 		EXPECTED_FAILURES.add("spreadsheet/49931.xls");
-		EXPECTED_FAILURES.add("poifs/protected_sha512.xlsx");
-		EXPECTED_FAILURES.add("poifs/extenxls_pwd123.xlsx");
 		EXPECTED_FAILURES.add("openxml4j/ContentTypeHasParameters.ooxml");
 
 		// This is actually a spreadsheet!
 		EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
 		
 		// some files that are broken, Excel 5.0/95, Word 95, ...
-		EXPECTED_FAILURES.add("poifs/protected_agile.docx");
 		EXPECTED_FAILURES.add("spreadsheet/43493.xls");
 		EXPECTED_FAILURES.add("spreadsheet/46904.xls");
 		EXPECTED_FAILURES.add("document/56880.doc");
@@ -231,6 +232,7 @@ public class TestAllFiles {
 
         List<Object[]> files = new ArrayList<Object[]>();
         for(String file : scanner.getIncludedFiles()) {
+            file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
             files.add(new Object[] { file, HANDLERS.get(getExtension(file)) });
         }
             
@@ -246,7 +248,7 @@ public class TestAllFiles {
     @Test
     public void testAllFiles() throws Exception {
 		assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
-		InputStream stream = new FileInputStream(new File("test-data", file));
+		InputStream stream = new BufferedInputStream(new FileInputStream(new File("test-data", file)),100);
 		try {
 			handler.handleFile(stream);
 			

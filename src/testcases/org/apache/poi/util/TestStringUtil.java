@@ -17,12 +17,12 @@
 
 package org.apache.poi.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.text.NumberFormat;
 
-import org.apache.poi.util.StringUtil.StringsIterator;
-
 import junit.framework.TestCase;
+
+import org.apache.poi.util.StringUtil.StringsIterator;
 
 /**
  * Unit test for StringUtil
@@ -61,12 +61,7 @@ public final class TestStringUtil extends TestCase {
                     (byte) 'o', (byte) ' ', (byte) 'W', (byte) 'o',
                     (byte) 'r', (byte) 'l', (byte) 'd', (byte) 0xAE
                 };
-        String input;
-        try {
-            input = new String( expected_output, StringUtil.getPreferredEncoding() );
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        String input = new String( expected_output, Charset.forName(StringUtil.getPreferredEncoding()) );
 
         StringUtil.putCompressedUnicode( input, output, 0 );
         for ( int j = 0; j < expected_output.length; j++ )

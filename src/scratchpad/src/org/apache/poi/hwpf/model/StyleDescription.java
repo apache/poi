@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.model;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
@@ -26,6 +25,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Comment me
@@ -104,14 +104,7 @@ public final class StyleDescription implements HDFType
           nameLength = std[nameStart];
       }
 
-      try
-      {
-        _name = new String(std, nameStart, nameLength * multiplier, "UTF-16LE");
-      }
-      catch (UnsupportedEncodingException ignore)
-      {
-        // ignore
-      }
+      _name = StringUtil.getFromUnicodeLE(std, nameStart, (nameLength*multiplier)/2);
 
       //length then null terminator.
       int grupxStart = ((nameLength + 1) * multiplier) + nameStart;

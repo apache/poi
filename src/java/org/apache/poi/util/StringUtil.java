@@ -17,7 +17,7 @@
 
 package org.apache.poi.util;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Iterator;
@@ -26,16 +26,17 @@ import org.apache.poi.hssf.record.RecordInputStream;
 /**
  *  Title: String Utility Description: Collection of string handling utilities<p/>
  *
- * Note - none of the methods in this class deals with {@link org.apache.poi.hssf.record.ContinueRecord}s.  For such
- * functionality, consider using {@link RecordInputStream
-} *
+ * Note - none of the methods in this class deals with {@link org.apache.poi.hssf.record.ContinueRecord}s.
+ * For such functionality, consider using {@link RecordInputStream}
+ * 
  *
  *@author     Andrew C. Oliver
  *@author     Sergei Kozello (sergeikozello at mail.ru)
  *@author     Toshiaki Kamoshida (kamoshida.toshiaki at future dot co dot jp)
  */
 public class StringUtil {
-	private static final String ENCODING_ISO_8859_1 = "ISO-8859-1";
+	private static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
+	private static final Charset UTF16LE = Charset.forName("UTF-16LE");
 
 	private StringUtil() {
 		// no instances of this class
@@ -73,11 +74,7 @@ public class StringUtil {
 			throw new IllegalArgumentException("Illegal length " + len);
 		}
 
-		try {
-			return new String(string, offset, len * 2, "UTF-16LE");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		return new String(string, offset, len * 2, UTF16LE);
 	}
 
 	/**
@@ -91,8 +88,18 @@ public class StringUtil {
 	 * @return the converted string, never <code>null</code>
 	 */
 	public static String getFromUnicodeLE(byte[] string) {
-		if(string.length == 0) { return ""; }
-		return getFromUnicodeLE(string, 0, string.length / 2);
+        if(string.length == 0) { return ""; }
+        return getFromUnicodeLE(string, 0, string.length / 2);
+	}
+	
+	/**
+	 * Convert String to 16-bit unicode characters in little endian format
+	 *
+	 * @param string the string
+	 * @return the byte array of 16-bit unicode characters
+	 */
+	public static byte[] getToUnicodeLE(String string) {
+	    return string.getBytes(UTF16LE);
 	}
 
 	/**
@@ -109,20 +116,16 @@ public class StringUtil {
 		final byte[] string,
 		final int offset,
 		final int len) {
-		try {
-			int len_to_use = Math.min(len, string.length - offset);
-			return new String(string, offset, len_to_use, ENCODING_ISO_8859_1);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		int len_to_use = Math.min(len, string.length - offset);
+		return new String(string, offset, len_to_use, ISO_8859_1);
 	}
+	
 	public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
-		char[] buf = new char[nChars];
-		for (int i = 0; i < buf.length; i++) {
-			buf[i] = (char) in.readUByte();
-		}
-		return new String(buf);
+		byte[] buf = new byte[nChars];
+		in.readFully(buf);
+		return new String(buf, ISO_8859_1);
 	}
+	
 	/**
 	 * InputStream <tt>in</tt> is expected to contain:
 	 * <ol>
@@ -225,21 +228,12 @@ public class StringUtil {
 	 *      when written
 	 */
 	public static void putCompressedUnicode(String input, byte[] output, int offset) {
-		byte[] bytes;
-		try {
-			bytes = input.getBytes(ENCODING_ISO_8859_1);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		byte[] bytes = input.getBytes(ISO_8859_1);
 		System.arraycopy(bytes, 0, output, offset, bytes.length);
 	}
+
 	public static void putCompressedUnicode(String input, LittleEndianOutput out) {
-		byte[] bytes;
-		try {
-			bytes = input.getBytes(ENCODING_ISO_8859_1);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		byte[] bytes = input.getBytes(ISO_8859_1);
 		out.write(bytes);
 	}
 
@@ -253,30 +247,18 @@ public class StringUtil {
 	 * @param  offset  the offset to start writing into the byte array
 	 */
 	public static void putUnicodeLE(String input, byte[] output, int offset) {
-		byte[] bytes;
-		try {
-			bytes = input.getBytes("UTF-16LE");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		byte[] bytes = input.getBytes(UTF16LE);
 		System.arraycopy(bytes, 0, output, offset, bytes.length);
 	}
 	public static void putUnicodeLE(String input, LittleEndianOutput out) {
-		byte[] bytes;
-		try {
-			bytes = input.getBytes("UTF-16LE");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		byte[] bytes = input.getBytes(UTF16LE);
 		out.write(bytes);
 	}
 
 	public static String readUnicodeLE(LittleEndianInput in, int nChars) {
-		char[] buf = new char[nChars];
-		for (int i = 0; i < buf.length; i++) {
-			buf[i] = (char) in.readUShort();
-		}
-		return new String(buf);
+        byte[] bytes = new byte[nChars*2];
+        in.readFully(bytes);
+        return new String(bytes, UTF16LE);
 	}
 
 	/**
@@ -358,7 +340,7 @@ public class StringUtil {
 	 * @return the encoding we want to use, currently hardcoded to ISO-8859-1
 	 */
 	public static String getPreferredEncoding() {
-		return ENCODING_ISO_8859_1;
+		return ISO_8859_1.name();
 	}
 
 	/**
@@ -386,12 +368,7 @@ public class StringUtil {
 	 * @return true if string needs Unicode to be represented.
 	 */
 	public static boolean isUnicodeString(final String value) {
-		try {
-			return !value.equals(new String(value.getBytes(ENCODING_ISO_8859_1),
-					ENCODING_ISO_8859_1));
-		} catch (UnsupportedEncodingException e) {
-			return true;
-		}
+        return !value.equals(new String(value.getBytes(ISO_8859_1), ISO_8859_1));
 	}
 	
    /**

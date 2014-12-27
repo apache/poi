@@ -35,6 +35,7 @@ import javax.crypto.spec.RC2ParameterSpec;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Helper functions used for standard and agile encryption
@@ -100,7 +101,7 @@ public class CryptoFunctions {
         MessageDigest hashAlg = getMessageDigest(hashAlgorithm);
         
         hashAlg.update(salt);
-        byte[] hash = hashAlg.digest(getUtf16LeString(password));
+        byte[] hash = hashAlg.digest(StringUtil.getToUnicodeLE(password));
         byte[] iterator = new byte[LittleEndianConsts.INT_SIZE];
 
         byte[] first = (iteratorFirst ? iterator : hash);
@@ -264,10 +265,6 @@ public class CryptoFunctions {
         Arrays.fill(result, fill);
         System.arraycopy(hash, 0, result, 0, Math.min(result.length, hash.length));
         return result;
-    }
-    
-    public static byte[] getUtf16LeString(String str) {
-        return str.getBytes(Charset.forName("UTF-16LE"));
     }
     
     public static MessageDigest getMessageDigest(HashAlgorithm hashAlgorithm) {

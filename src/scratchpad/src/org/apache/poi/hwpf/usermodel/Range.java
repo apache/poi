@@ -392,7 +392,6 @@ public class Range { // TODO -instantiable superclass
 	 */
     @Deprecated
 	public CharacterRun insertBefore(String text, CharacterProperties props)
-	// throws UnsupportedEncodingException
 	{
 		initAll();
 		PAPX papx = _paragraphs.get(_parStart);
@@ -421,7 +420,6 @@ public class Range { // TODO -instantiable superclass
 	 */
     @Deprecated
 	public CharacterRun insertAfter(String text, CharacterProperties props)
-	// throws UnsupportedEncodingException
 	{
 		initAll();
 		PAPX papx = _paragraphs.get(_parEnd - 1);
@@ -448,7 +446,6 @@ public class Range { // TODO -instantiable superclass
 	 */
 	@Deprecated
 	public Paragraph insertBefore(ParagraphProperties props, int styleIndex)
-	// throws UnsupportedEncodingException
 	{
 		return this.insertBefore(props, styleIndex, "\r");
 	}
@@ -471,7 +468,6 @@ public class Range { // TODO -instantiable superclass
 	 */
     @Deprecated
 	protected Paragraph insertBefore(ParagraphProperties props, int styleIndex, String text)
-	// throws UnsupportedEncodingException
 	{
 		initAll();
 		StyleSheet ss = _doc.getStyleSheet();
@@ -501,7 +497,6 @@ public class Range { // TODO -instantiable superclass
 	 */
     @Deprecated
 	public Paragraph insertAfter(ParagraphProperties props, int styleIndex)
-	// throws UnsupportedEncodingException
 	{
 		return this.insertAfter(props, styleIndex, "\r");
 	}
@@ -524,7 +519,6 @@ public class Range { // TODO -instantiable superclass
 	 */
     @Deprecated
 	protected Paragraph insertAfter(ParagraphProperties props, int styleIndex, String text)
-	// throws UnsupportedEncodingException
 	{
 		initAll();
 		StyleSheet ss = _doc.getStyleSheet();

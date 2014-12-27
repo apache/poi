@@ -28,7 +28,10 @@ import org.junit.Test;
 public class XSLFFileHandler implements FileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
-		XSLFSlideShow slide = new XSLFSlideShow(OPCPackage.open(stream));
+        // ignore password protected files
+        if (POIXMLDocumentHandler.isEncrypted(stream)) return;
+
+        XSLFSlideShow slide = new XSLFSlideShow(OPCPackage.open(stream));
 		assertNotNull(slide.getPresentation());
 		assertNotNull(slide.getSlideMasterReferences());
 		assertNotNull(slide.getSlideReferences());

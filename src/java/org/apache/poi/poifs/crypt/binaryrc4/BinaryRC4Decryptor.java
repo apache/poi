@@ -22,14 +22,17 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.Arrays;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.*;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 public class BinaryRC4Decryptor extends Decryptor {
     private long _length = -1L;
@@ -99,7 +102,7 @@ public class BinaryRC4Decryptor extends Decryptor {
             password = password.substring(0, 255);
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
-        byte hash[] = hashAlg.digest(CryptoFunctions.getUtf16LeString(password));
+        byte hash[] = hashAlg.digest(StringUtil.getToUnicodeLE(password));
         byte salt[] = ver.getSalt();
         hashAlg.reset();
         for (int i = 0; i < 16; i++) {

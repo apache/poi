@@ -23,6 +23,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Test cases for {@link OfficeDrawing} and {@link OfficeDrawingsImpl} classes.
@@ -48,7 +49,7 @@ public class TestOfficeDrawings extends TestCase
         EscherComplexProperty gtextUNICODE = (EscherComplexProperty) officeArtFOPT
                 .lookup( 0x00c0 );
 
-        String text = new String( gtextUNICODE.getComplexData(), "UTF-16LE" );
+        String text = StringUtil.getFromUnicodeLE(gtextUNICODE.getComplexData());
         assertEquals( "DRAFT CONTRACT\0", text );
     }
 }

@@ -17,14 +17,25 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.LittleEndian;
-
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
+
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.ExControl;
+import org.apache.poi.hslf.record.ExObjList;
+import org.apache.poi.hslf.record.OEShapeAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents an ActiveX control in a PowerPoint document.
@@ -155,14 +166,10 @@ public final class ActiveXShape extends Picture {
         ExControl ctrl = getExControl();
         ctrl.getExControlAtom().setSlideId(sheet._getSheetNumber());
 
-        try {
-            String name = ctrl.getProgId() + "-" + getControlIndex();
-            byte[] data = (name + '\u0000').getBytes("UTF-16LE");
-            EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.GROUPSHAPE__SHAPENAME, false, data);
-            EscherOptRecord opt = getEscherOptRecord();
-            opt.addEscherProperty(prop);
-        } catch (UnsupportedEncodingException e){
-            throw new HSLFException(e);
-        }
+        String name = ctrl.getProgId() + "-" + getControlIndex() + '\u0000';
+        byte[] data = StringUtil.getToUnicodeLE(name);
+        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.GROUPSHAPE__SHAPENAME, false, data);
+        EscherOptRecord opt = getEscherOptRecord();
+        opt.addEscherProperty(prop);
     }
 }

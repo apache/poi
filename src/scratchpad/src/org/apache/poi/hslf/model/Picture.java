@@ -17,22 +17,29 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.blip.Bitmap;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.POILogger;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.blip.Bitmap;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 
 /**
@@ -199,7 +206,7 @@ public class Picture extends SimpleShape {
             logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
-        List lst = bstore.getChildRecords();
+        List<EscherRecord> lst = bstore.getChildRecords();
         int idx = getPictureIndex();
         if (idx == 0){
             logger.log(POILogger.DEBUG, "picture index was not found, returning ");
@@ -216,17 +223,9 @@ public class Picture extends SimpleShape {
     public String getPictureName(){
         EscherOptRecord opt = getEscherOptRecord();
         EscherComplexProperty prop = (EscherComplexProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
-        String name = null;
-        if(prop != null){
-            try {
-                name = new String(prop.getComplexData(), "UTF-16LE");
-                int idx = name.indexOf('\u0000');
-                return idx == -1 ? name : name.substring(0, idx);
-            } catch (UnsupportedEncodingException e){
-                throw new HSLFException(e);
-            }
-        }
-        return name;
+        if (prop == null) return null;
+        String name = StringUtil.getFromUnicodeLE(prop.getComplexData());
+        return name.trim();
     }
 
     /**
@@ -236,13 +235,9 @@ public class Picture extends SimpleShape {
      */
     public void setPictureName(String name){
         EscherOptRecord opt = getEscherOptRecord();
-        try {
-            byte[] data = (name + '\u0000').getBytes("UTF-16LE");
-            EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, false, data);
-            opt.addEscherProperty(prop);
-        } catch (UnsupportedEncodingException e){
-            throw new HSLFException(e);
-        }
+        byte[] data = StringUtil.getToUnicodeLE(name + '\u0000');
+        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, false, data);
+        opt.addEscherProperty(prop);
     }
 
     /**
