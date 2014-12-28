@@ -238,6 +238,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         
         // Build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
+        
+        // some broken Workbooks miss this...
+        if(!workbook.isSetBookViews()) {
+            CTBookViews bvs = workbook.addNewBookViews();
+            CTBookView bv = bvs.addNewWorkbookView();
+            bv.setActiveTab(0);
+        }
     }
 
     /**
@@ -261,6 +268,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         
         // Build a tree of POIXMLDocumentParts, this workbook being the root
         load(XSSFFactory.getInstance());
+
+        // some broken Workbooks miss this...
+        if(!workbook.isSetBookViews()) {
+            CTBookViews bvs = workbook.addNewBookViews();
+            CTBookView bv = bvs.addNewWorkbookView();
+            bv.setActiveTab(0);
+        }
     }
 
     /**
