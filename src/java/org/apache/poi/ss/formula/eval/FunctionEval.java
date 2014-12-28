@@ -98,6 +98,8 @@ public final class FunctionEval {
         retval[38] = BooleanFunction.NOT;
         retval[39] = NumericFunction.MOD;
 
+        retval[43] = new DStarRunner(new DMin());
+        
         retval[46] = AggregateFunction.VAR;
         retval[48] = TextFunction.TEXT;
 
@@ -187,6 +189,8 @@ public final class FunctionEval {
         retval[232] = NumericFunction.ASINH;
         retval[233] = NumericFunction.ACOSH;
         retval[234] = NumericFunction.ATANH;
+
+        retval[235] = new DStarRunner(new DGet());
 
         retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeREfFunction
 
