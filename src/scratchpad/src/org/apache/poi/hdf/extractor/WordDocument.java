@@ -139,8 +139,8 @@ public final class WordDocument {
       {
           e.printStackTrace();
       }
-      System.exit(0);
   }
+
   /**
    * Spits out the document text
    *
