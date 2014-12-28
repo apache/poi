@@ -1676,6 +1676,7 @@ under the License.
 				<include name="poi-scratchpad-${version.id}-*.jar"/>
 				<include name="poi-ooxml-${version.id}-*.jar"/>
 				<exclude name="poi-*${version.id}-sources-*.jar"/>
+				<exclude name="poi-*${version.id}-javadocs-*.jar"/>
 			</fileset>
 			<auxClasspath path="${compile.lib}/bcpkix-jdk15on-1.51.jar" />
 			<auxClasspath path="${compile.lib}/bcprov-ext-jdk15on-1.51.jar" />
