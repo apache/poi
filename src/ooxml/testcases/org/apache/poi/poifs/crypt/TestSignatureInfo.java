@@ -114,12 +114,16 @@ public class TestSignatureInfo {
     @Test
     public void office2007prettyPrintedRels() throws Exception {
         OPCPackage pkg = OPCPackage.open(testdata.getFile("office2007prettyPrintedRels.docx"), PackageAccess.READ);
-        SignatureConfig sic = new SignatureConfig();
-        sic.setOpcPackage(pkg);
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(sic);
-        boolean isValid = si.verifySignature();
-        assertTrue(isValid);
+        try {
+            SignatureConfig sic = new SignatureConfig();
+            sic.setOpcPackage(pkg);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sic);
+            boolean isValid = si.verifySignature();
+            assertTrue(isValid);
+        } finally {
+            pkg.close();
+        }
     }
     
     @Test

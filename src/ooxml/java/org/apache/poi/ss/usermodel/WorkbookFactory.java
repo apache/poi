@@ -107,7 +107,23 @@ public class WorkbookFactory {
         } catch(OfficeXmlFileException e) {
             // opening as .xls failed => try opening as .xlsx
             OPCPackage pkg = OPCPackage.open(file);
-            return new XSSFWorkbook(pkg);
+            try {
+                return new XSSFWorkbook(pkg);
+            } catch (IOException ioe) {
+                // ensure that file handles are closed (use revert() to not re-write the file)
+                pkg.revert();
+                //pkg.close();
+                
+                // rethrow exception
+                throw ioe;
+            } catch (IllegalArgumentException ioe) {
+                // ensure that file handles are closed (use revert() to not re-write the file) 
+                pkg.revert();
+                //pkg.close();
+                
+                // rethrow exception
+                throw ioe;
+            }
         }
     }
 }

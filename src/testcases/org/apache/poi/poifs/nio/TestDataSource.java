@@ -38,44 +38,48 @@ public class TestDataSource extends TestCase
       File f = data.getFile("Notes.ole2");
       
       FileBackedDataSource ds = new FileBackedDataSource(f);
-      assertEquals(8192, ds.size());
-      
-      // Start of file
-      ByteBuffer bs; 
-      bs = ds.read(4, 0);
-      assertEquals(4, bs.capacity());
-      assertEquals(0, bs.position());
-      assertEquals(0xd0-256, bs.get(0));
-      assertEquals(0xcf-256, bs.get(1));
-      assertEquals(0x11-000, bs.get(2));
-      assertEquals(0xe0-256, bs.get(3));
-      assertEquals(0xd0-256, bs.get());
-      assertEquals(0xcf-256, bs.get());
-      assertEquals(0x11-000, bs.get());
-      assertEquals(0xe0-256, bs.get());
-      
-      // Mid way through
-      bs = ds.read(8, 0x400);
-      assertEquals(8, bs.capacity());
-      assertEquals(0, bs.position());
-      assertEquals((byte)'R', bs.get(0));
-      assertEquals(0, bs.get(1));
-      assertEquals((byte)'o', bs.get(2));
-      assertEquals(0, bs.get(3));
-      assertEquals((byte)'o', bs.get(4));
-      assertEquals(0, bs.get(5));
-      assertEquals((byte)'t', bs.get(6));
-      assertEquals(0, bs.get(7));
-      
-      // Can go to the end, but not past it
-      bs = ds.read(8, 8190);
-      assertEquals(0, bs.position()); // TODO How best to warn of a short read?
-      
-      // Can't go off the end
       try {
-         bs = ds.read(4, 8192);
-         fail("Shouldn't be able to read off the end of the file");
-      } catch(IllegalArgumentException e) {}
+          assertEquals(8192, ds.size());
+          
+          // Start of file
+          ByteBuffer bs; 
+          bs = ds.read(4, 0);
+          assertEquals(4, bs.capacity());
+          assertEquals(0, bs.position());
+          assertEquals(0xd0-256, bs.get(0));
+          assertEquals(0xcf-256, bs.get(1));
+          assertEquals(0x11-000, bs.get(2));
+          assertEquals(0xe0-256, bs.get(3));
+          assertEquals(0xd0-256, bs.get());
+          assertEquals(0xcf-256, bs.get());
+          assertEquals(0x11-000, bs.get());
+          assertEquals(0xe0-256, bs.get());
+          
+          // Mid way through
+          bs = ds.read(8, 0x400);
+          assertEquals(8, bs.capacity());
+          assertEquals(0, bs.position());
+          assertEquals((byte)'R', bs.get(0));
+          assertEquals(0, bs.get(1));
+          assertEquals((byte)'o', bs.get(2));
+          assertEquals(0, bs.get(3));
+          assertEquals((byte)'o', bs.get(4));
+          assertEquals(0, bs.get(5));
+          assertEquals((byte)'t', bs.get(6));
+          assertEquals(0, bs.get(7));
+          
+          // Can go to the end, but not past it
+          bs = ds.read(8, 8190);
+          assertEquals(0, bs.position()); // TODO How best to warn of a short read?
+          
+          // Can't go off the end
+          try {
+             bs = ds.read(4, 8192);
+             fail("Shouldn't be able to read off the end of the file");
+          } catch(IllegalArgumentException e) {}
+      } finally {
+          ds.close();
+      }
    }
    
    public void testByteArray() throws Exception {

@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
@@ -35,6 +36,7 @@ import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
@@ -128,22 +130,33 @@ public class TestExtractorFactory extends TestCase {
       assertTrue(
             xlsExtractor.getText().length() > 200
       );
+      xlsExtractor.close();
 
+      POITextExtractor extractor = ExtractorFactory.createExtractor(xlsx);
       assertTrue(
-            ExtractorFactory.createExtractor(xlsx)
+            extractor
             instanceof XSSFExcelExtractor
       );
-      assertTrue(
-            ExtractorFactory.createExtractor(xlsx).getText().length() > 200
-      );
+      extractor.close();
 
+      extractor = ExtractorFactory.createExtractor(xlsx);
       assertTrue(
-            ExtractorFactory.createExtractor(xltx)
+            extractor.getText().length() > 200
+      );
+      extractor.close();
+
+      extractor = ExtractorFactory.createExtractor(xltx);
+      assertTrue(
+            extractor
             instanceof XSSFExcelExtractor
       );
+      extractor.close();
+
+      extractor = ExtractorFactory.createExtractor(xltx);
       assertTrue(
-            ExtractorFactory.createExtractor(xltx).getText().contains("test")
+            extractor.getText().contains("test")
       );
+      extractor.close();
 
 
       // Word
@@ -171,22 +184,29 @@ public class TestExtractorFactory extends TestCase {
             ExtractorFactory.createExtractor(doc95).getText().length() > 120
       );
           
-        
+      extractor = ExtractorFactory.createExtractor(docx);
       assertTrue(
-            ExtractorFactory.createExtractor(docx)
-            instanceof XWPFWordExtractor
+            extractor instanceof XWPFWordExtractor
       );
+      extractor.close();
+      
+      extractor = ExtractorFactory.createExtractor(docx);
       assertTrue(
-            ExtractorFactory.createExtractor(docx).getText().length() > 120
+            extractor.getText().length() > 120
       );
+      extractor.close();
 
+      extractor = ExtractorFactory.createExtractor(dotx);
       assertTrue(
-            ExtractorFactory.createExtractor(dotx)
-            instanceof XWPFWordExtractor
+            extractor instanceof XWPFWordExtractor
       );
+      extractor.close();
+      
+      extractor = ExtractorFactory.createExtractor(dotx);
       assertTrue(
-            ExtractorFactory.createExtractor(dotx).getText().contains("Test")
+            extractor.getText().contains("Test")
       );
+      extractor.close();
 
       // PowerPoint
       assertTrue(
@@ -197,13 +217,18 @@ public class TestExtractorFactory extends TestCase {
             ExtractorFactory.createExtractor(ppt).getText().length() > 120
       );
 
+      extractor = ExtractorFactory.createExtractor(pptx);
       assertTrue(
-            ExtractorFactory.createExtractor(pptx)
+            extractor
             instanceof XSLFPowerPointExtractor
       );
+      extractor.close();
+
+      extractor = ExtractorFactory.createExtractor(pptx);
       assertTrue(
-            ExtractorFactory.createExtractor(pptx).getText().length() > 120
+            extractor.getText().length() > 120
       );
+      extractor.close();
 
       // Visio
       assertTrue(
@@ -338,8 +363,13 @@ public class TestExtractorFactory extends TestCase {
 		
 		// Text
 		try {
-			ExtractorFactory.createExtractor(new FileInputStream(txt));
-			fail();
+			FileInputStream stream = new FileInputStream(txt);
+			try {
+                ExtractorFactory.createExtractor(stream);
+    			fail();
+			} finally {
+			    stream.close();
+			}
 		} catch(IllegalArgumentException e) {
 			// Good
 		}
@@ -427,31 +457,43 @@ public class TestExtractorFactory extends TestCase {
 	
 	public void testPackage() throws Exception {
 		// Excel
-		assertTrue(
-				ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
+		POIXMLTextExtractor extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
+        assertTrue(
+				extractor
 				instanceof XSSFExcelExtractor
 		);
-		assertTrue(
-				ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
-		);
+        extractor.close();
+		extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()));
+        assertTrue(extractor.getText().length() > 200);
+        extractor.close();
 		
 		// Word
-		assertTrue(
-				ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()))
+		extractor = ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()));
+        assertTrue(
+				extractor
 				instanceof XWPFWordExtractor
 		);
-		assertTrue(
-				ExtractorFactory.createExtractor(OPCPackage.open(docx.toString())).getText().length() > 120
+        extractor.close();
+        
+		extractor = ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()));
+        assertTrue(
+				extractor.getText().length() > 120
 		);
+        extractor.close();
 		
 		// PowerPoint
-		assertTrue(
-				ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()))
+		extractor = ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()));
+        assertTrue(
+				extractor
 				instanceof XSLFPowerPointExtractor
 		);
-		assertTrue(
-				ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString())).getText().length() > 120
+        extractor.close();
+
+		extractor = ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()));
+        assertTrue(
+				extractor.getText().length() > 120
 		);
+        extractor.close();
 		
 		// Text
 		try {
@@ -487,21 +529,27 @@ public class TestExtractorFactory extends TestCase {
       
       
       // Check we get the right extractors now
+      POITextExtractor extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)));
       assertTrue(
-            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))
+            extractor
             instanceof EventBasedExcelExtractor
       );
+      extractor.close();
+      extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)));
       assertTrue(
-            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
+            extractor.getText().length() > 200
       );
+      extractor.close();
       
+      extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
+      assertTrue(extractor instanceof XSSFEventBasedExcelExtractor);
+      extractor.close();
+
+      extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
       assertTrue(
-            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
-            instanceof XSSFEventBasedExcelExtractor
+            extractor.getText().length() > 200
       );
-      assertTrue(
-            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
-      );
+      extractor.close();
       
       
       // Put back to normal
@@ -511,21 +559,29 @@ public class TestExtractorFactory extends TestCase {
       assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
       
       // And back
+      extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)));
       assertTrue(
-            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))
+            extractor
             instanceof ExcelExtractor
       );
+      extractor.close();
+      extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)));
       assertTrue(
-            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
+            extractor.getText().length() > 200
       );
+      extractor.close();
       
+      extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
       assertTrue(
-            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()))
+            extractor
             instanceof XSSFExcelExtractor
       );
+      extractor.close();
+      extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()));
       assertTrue(
-            ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString())).getText().length() > 200
+            extractor.getText().length() > 200
       );
+      extractor.close();
 	}
 
    /**

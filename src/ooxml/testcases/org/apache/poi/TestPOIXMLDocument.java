@@ -105,29 +105,32 @@ public final class TestPOIXMLDocument extends TestCase {
         out.close();
 
         OPCPackage pkg2 = OPCPackage.open(tmp.getAbsolutePath());
-
-        doc = new OPCParser(pkg1);
-        doc.parse(new TestFactory());
-        context = new HashMap<String,POIXMLDocumentPart>();
-        traverse(doc, context);
-        context.clear();
-
-        assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
-
-        ArrayList<PackagePart> l1 = pkg1.getParts();
-        ArrayList<PackagePart> l2 = pkg2.getParts();
-
-        assertEquals(l1.size(), l2.size());
-        for (int i=0; i < l1.size(); i++){
-            PackagePart p1 = l1.get(i);
-            PackagePart p2 = l2.get(i);
-
-            assertEquals(p1.getContentType(), p2.getContentType());
-            assertEquals(p1.hasRelationships(), p2.hasRelationships());
-            if(p1.hasRelationships()){
-                assertEquals(p1.getRelationships().size(), p2.getRelationships().size());
+        try {
+            doc = new OPCParser(pkg1);
+            doc.parse(new TestFactory());
+            context = new HashMap<String,POIXMLDocumentPart>();
+            traverse(doc, context);
+            context.clear();
+    
+            assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
+    
+            ArrayList<PackagePart> l1 = pkg1.getParts();
+            ArrayList<PackagePart> l2 = pkg2.getParts();
+    
+            assertEquals(l1.size(), l2.size());
+            for (int i=0; i < l1.size(); i++){
+                PackagePart p1 = l1.get(i);
+                PackagePart p2 = l2.get(i);
+    
+                assertEquals(p1.getContentType(), p2.getContentType());
+                assertEquals(p1.hasRelationships(), p2.hasRelationships());
+                if(p1.hasRelationships()){
+                    assertEquals(p1.getRelationships().size(), p2.getRelationships().size());
+                }
+                assertEquals(p1.getPartName(), p2.getPartName());
             }
-            assertEquals(p1.getPartName(), p2.getPartName());
+        } finally {
+            pkg2.close();
         }
     }
 
@@ -156,6 +159,7 @@ public final class TestPOIXMLDocument extends TestCase {
 
         for(POIXMLDocumentPart rel : doc.getRelations()){
             //TODO finish me
+            assertNotNull(rel);
         }
 
     }

@@ -70,37 +70,45 @@ public final class TestPackageCoreProperties extends TestCase {
 
 		// Open package
 		OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE);
-
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(
-				0));
-
-		PackageProperties props = p.getPackageProperties();
-		props.setCategoryProperty("MyCategory");
-		props.setContentStatusProperty("MyContentStatus");
-		props.setContentTypeProperty("MyContentType");
-		props.setCreatedProperty(new Nullable<Date>(dateToInsert));
-		props.setCreatorProperty("MyCreator");
-		props.setDescriptionProperty("MyDescription");
-		props.setIdentifierProperty("MyIdentifier");
-		props.setKeywordsProperty("MyKeywords");
-		props.setLanguageProperty("MyLanguage");
-		props.setLastModifiedByProperty("Julien Chable");
-		props.setLastPrintedProperty(new Nullable<Date>(dateToInsert));
-		props.setModifiedProperty(new Nullable<Date>(dateToInsert));
-		props.setRevisionProperty("2");
-		props.setTitleProperty("MyTitle");
-		props.setSubjectProperty("MySubject");
-		props.setVersionProperty("2");
-		// Save the package in the output directory
-		p.save(outputFile);
-
-		// Open the newly created file to check core properties saved values.
-		OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ);
-		compareProperties(p2);
-		p2.revert();
-		outputFile.delete();
+		try {
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+    		Date dateToInsert = df.parse("2007-05-12T08:00:00Z", new ParsePosition(
+    				0));
+    
+    		PackageProperties props = p.getPackageProperties();
+    		props.setCategoryProperty("MyCategory");
+    		props.setContentStatusProperty("MyContentStatus");
+    		props.setContentTypeProperty("MyContentType");
+    		props.setCreatedProperty(new Nullable<Date>(dateToInsert));
+    		props.setCreatorProperty("MyCreator");
+    		props.setDescriptionProperty("MyDescription");
+    		props.setIdentifierProperty("MyIdentifier");
+    		props.setKeywordsProperty("MyKeywords");
+    		props.setLanguageProperty("MyLanguage");
+    		props.setLastModifiedByProperty("Julien Chable");
+    		props.setLastPrintedProperty(new Nullable<Date>(dateToInsert));
+    		props.setModifiedProperty(new Nullable<Date>(dateToInsert));
+    		props.setRevisionProperty("2");
+    		props.setTitleProperty("MyTitle");
+    		props.setSubjectProperty("MySubject");
+    		props.setVersionProperty("2");
+    		// Save the package in the output directory
+    		p.save(outputFile);
+    
+    		// Open the newly created file to check core properties saved values.
+    		OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ);
+    		try {
+    		    compareProperties(p2);
+    		    p2.revert();
+    		} finally {
+    		    p2.close();
+    		}
+    		outputFile.delete();
+		} finally {
+            // use revert to not re-write the input file
+            p.revert();
+		}
 	}
 
 	private void compareProperties(OPCPackage p) throws InvalidFormatException {

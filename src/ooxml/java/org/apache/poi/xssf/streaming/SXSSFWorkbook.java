@@ -312,7 +312,16 @@ public class SXSSFWorkbook implements Workbook
     void deregisterSheetMapping(XSSFSheet xSheet)
     {
         SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
+        
+        // ensure that the writer is closed in all cases to not have lingering writers
+        try {
+            sxSheet.getSheetDataWriter().close();
+        } catch (IOException e) {
+            // ignore exception here
+        }
+        
         _sxFromXHash.remove(sxSheet);
+
         _xFromSxHash.remove(xSheet);
     }
     private XSSFSheet getSheetFromZipEntryName(String sheetRef)
@@ -827,6 +836,17 @@ public class SXSSFWorkbook implements Workbook
      */
     @Override
     public void close() throws IOException {
+        // ensure that any lingering writer is closed
+        for (SXSSFSheet sheet : _xFromSxHash.values())
+        {
+            try {
+                sheet.getSheetDataWriter().close();
+            } catch (IOException e) {
+                // ignore exception here
+            }
+        }
+
+        
         // Tell the base workbook to close, does nothing if 
         //  it's a newly created one
         _wb.close();

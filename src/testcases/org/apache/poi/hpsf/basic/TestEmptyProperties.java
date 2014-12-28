@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.MarkUnsupportedException;
@@ -35,7 +35,6 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.Variant;
-import org.apache.poi.POIDataSamples;
 
 /**
  * <p>Test case for OLE2 files with empty properties. An empty property's type
@@ -84,7 +83,7 @@ public final class TestEmptyProperties extends TestCase {
     {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++)
-            Assert.assertEquals(poiFiles[i].getName(), expected[i]);
+            assertEquals(poiFiles[i].getName(), expected[i]);
     }
 
     /**
@@ -104,7 +103,7 @@ public final class TestEmptyProperties extends TestCase {
     public void testCreatePropertySets()
     throws UnsupportedEncodingException, IOException
     {
-        Class[] expected = new Class[]
+        Class<?>[] expected = new Class[]
             {
                 NoPropertySetStreamException.class,
                 SummaryInformation.class,
@@ -127,7 +126,7 @@ public final class TestEmptyProperties extends TestCase {
                 o = ex;
             }
             in.close();
-            Assert.assertEquals(o.getClass(), expected[i]);
+            assertEquals(o.getClass(), expected[i]);
         }
     }
 

@@ -167,7 +167,12 @@ final class Util {
                 r.registerListener(pfl, poiFiles[i]);
 
         /* Read the POI filesystem. */
-        r.read(new FileInputStream(poiFs));
+        FileInputStream stream = new FileInputStream(poiFs);
+        try {
+            r.read(stream);
+        } finally {
+            stream.close();
+        }
         POIFile[] result = new POIFile[files.size()];
         for (int i = 0; i < result.length; i++)
             result[i] = files.get(i);
@@ -238,7 +243,7 @@ final class Util {
 
         POIFile[] result = new POIFile[files.size()];
         for (int i = 0; i < result.length; i++)
-            result[i] = (POIFile) files.get(i);
+            result[i] = files.get(i);
         return result;
     }
 
@@ -250,14 +255,14 @@ final class Util {
     public static void printSystemProperties()
     {
         final Properties p = System.getProperties();
-        final List names = new LinkedList();
-        for (Iterator i = p.keySet().iterator(); i.hasNext();)
+        final List<String> names = new LinkedList<String>();
+        for (Iterator<String> i = p.stringPropertyNames().iterator(); i.hasNext();)
             names.add(i.next());
         Collections.sort(names);
-        for (final Iterator i = names.iterator(); i.hasNext();)
+        for (final Iterator<String> i = names.iterator(); i.hasNext();)
         {
-            String name = (String) i.next();
-            String value = (String) p.get(name);
+            String name = i.next();
+            String value = p.getProperty(name);
             System.out.println(name + ": " + value);
         }
         System.out.println("Current directory: " +

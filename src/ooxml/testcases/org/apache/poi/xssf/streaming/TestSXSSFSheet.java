@@ -22,6 +22,8 @@ package org.apache.poi.xssf.streaming;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -94,41 +96,49 @@ public class TestSXSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void overrideFlushedRows() {
+    public void overrideFlushedRows() throws IOException {
         Workbook wb = new SXSSFWorkbook(3);
-        Sheet sheet = wb.createSheet();
-
-        sheet.createRow(1);
-        sheet.createRow(2);
-        sheet.createRow(3);
-        sheet.createRow(4);
-
-        thrown.expect(Throwable.class);
-        thrown.expectMessage("Attempting to write a row[1] in the range [0,1] that is already written to disk.");
-        sheet.createRow(1);
+        try {
+            Sheet sheet = wb.createSheet();
+    
+            sheet.createRow(1);
+            sheet.createRow(2);
+            sheet.createRow(3);
+            sheet.createRow(4);
+    
+            thrown.expect(Throwable.class);
+            thrown.expectMessage("Attempting to write a row[1] in the range [0,1] that is already written to disk.");
+            sheet.createRow(1);
+        } finally {
+            wb.close();
+        }
     }
 
     @Test
-    public void overrideRowsInTemplate() {
+    public void overrideRowsInTemplate() throws IOException {
         XSSFWorkbook template = new XSSFWorkbook();
         template.createSheet().createRow(1);
 
         Workbook wb = new SXSSFWorkbook(template);
-        Sheet sheet = wb.getSheetAt(0);
-
         try {
-            sheet.createRow(1);
-            fail("expected exception");
-        } catch (Throwable e){
-            assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", e.getMessage());
+            Sheet sheet = wb.getSheetAt(0);
+    
+            try {
+                sheet.createRow(1);
+                fail("expected exception");
+            } catch (Throwable e){
+                assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", e.getMessage());
+            }
+            try {
+                sheet.createRow(0);
+                fail("expected exception");
+            } catch (Throwable e){
+                assertEquals("Attempting to write a row[0] in the range [0,1] that is already written to disk.", e.getMessage());
+            }
+            sheet.createRow(2);
+        } finally {
+            wb.close();
         }
-        try {
-            sheet.createRow(0);
-            fail("expected exception");
-        } catch (Throwable e){
-            assertEquals("Attempting to write a row[0] in the range [0,1] that is already written to disk.", e.getMessage());
-        }
-        sheet.createRow(2);
 
     }
 }

@@ -850,12 +850,21 @@ public final class TestFormulas extends TestCase {
     /** test for bug 34021*/
     public void testComplexSheetRefs () throws IOException {
          HSSFWorkbook sb = new HSSFWorkbook();
-         HSSFSheet s1 = sb.createSheet("Sheet a.1");
-         HSSFSheet s2 = sb.createSheet("Sheet.A");
-         s2.createRow(1).createCell(2).setCellFormula("'Sheet a.1'!A1");
-         s1.createRow(1).createCell(2).setCellFormula("'Sheet.A'!A1");
-         File file = TempFile.createTempFile("testComplexSheetRefs",".xls");
-         sb.write(new FileOutputStream(file));
+         try {
+             HSSFSheet s1 = sb.createSheet("Sheet a.1");
+             HSSFSheet s2 = sb.createSheet("Sheet.A");
+             s2.createRow(1).createCell(2).setCellFormula("'Sheet a.1'!A1");
+             s1.createRow(1).createCell(2).setCellFormula("'Sheet.A'!A1");
+             File file = TempFile.createTempFile("testComplexSheetRefs",".xls");
+             FileOutputStream stream = new FileOutputStream(file);
+             try {
+                 sb.write(stream);
+             } finally {
+                 stream.close();
+             }
+         } finally {
+             sb.close();
+         }
     }
 
     /** Unknown Ptg 3C*/
@@ -864,7 +873,12 @@ public final class TestFormulas extends TestCase {
         wb.getSheetAt(0);
         assertEquals("Reference for named range ", "Compliance!#REF!",wb.getNameAt(0).getRefersToFormula());
         File outF = TempFile.createTempFile("bug27272_1",".xls");
-        wb.write(new FileOutputStream(outF));
+        FileOutputStream stream = new FileOutputStream(outF);
+        try {
+            wb.write(stream);
+        } finally {
+            stream.close();
+        }
         System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
     }
     /** Unknown Ptg 3D*/
@@ -872,15 +886,25 @@ public final class TestFormulas extends TestCase {
         HSSFWorkbook wb = openSample("27272_2.xls");
         assertEquals("Reference for named range ", "LOAD.POD_HISTORIES!#REF!",wb.getNameAt(0).getRefersToFormula());
         File outF = TempFile.createTempFile("bug27272_2",".xls");
-        wb.write(new FileOutputStream(outF));
+        FileOutputStream stream = new FileOutputStream(outF);
+        try {
+            wb.write(stream);
+        } finally {
+            stream.close();
+        }
         System.out.println("Open "+outF.getAbsolutePath()+" in Excel");
     }
 
-    /** MissingArgPtg */
-    public void testMissingArgPtg() {
+    /** MissingArgPtg 
+     * @throws IOException */
+    public void testMissingArgPtg() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);
-        cell.setCellFormula("IF(A1=\"A\",1,)");
+        try {
+            HSSFCell cell = wb.createSheet("Sheet1").createRow(4).createCell(0);
+            cell.setCellFormula("IF(A1=\"A\",1,)");
+        } finally {
+            wb.close();
+        }
     }
 
     public void testSharedFormula() {
@@ -942,20 +966,25 @@ public final class TestFormulas extends TestCase {
     /**
      * Verify that FormulaParser handles defined names beginning with underscores,
      * see Bug #49640
+     * @throws IOException 
      */
-    public void testFormulasWithUnderscore(){
+    public void testFormulasWithUnderscore() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
-        Name nm1 = wb.createName();
-        nm1.setNameName("_score1");
-        nm1.setRefersToFormula("A1");
-
-        Name nm2 = wb.createName();
-        nm2.setNameName("_score2");
-        nm2.setRefersToFormula("A2");
-
-        Sheet sheet = wb.createSheet();
-        Cell cell = sheet.createRow(0).createCell(2);
-        cell.setCellFormula("_score1*SUM(_score1+_score2)");
-        assertEquals("_score1*SUM(_score1+_score2)", cell.getCellFormula());
+        try {
+            Name nm1 = wb.createName();
+            nm1.setNameName("_score1");
+            nm1.setRefersToFormula("A1");
+    
+            Name nm2 = wb.createName();
+            nm2.setNameName("_score2");
+            nm2.setRefersToFormula("A2");
+    
+            Sheet sheet = wb.createSheet();
+            Cell cell = sheet.createRow(0).createCell(2);
+            cell.setCellFormula("_score1*SUM(_score1+_score2)");
+            assertEquals("_score1*SUM(_score1+_score2)", cell.getCellFormula());
+        } finally {
+            wb.close();
+        }
     }
 }

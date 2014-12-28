@@ -188,7 +188,11 @@ public class TestRelationships extends TestCase {
 	    // Write out and re-load
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    pkg.save(baos);
-	    ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        
+	    // use revert to not re-write the input file
+        pkg.revert();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 	    pkg = OPCPackage.open(bais);
 	    
 	    // Check again
@@ -280,7 +284,6 @@ public class TestRelationships extends TestCase {
 
 
     public void testTargetWithSpecialChars() throws Exception{
-
         OPCPackage pkg;
 
         String filepath = OpenXML4JTestDataSamples.getSampleFileName("50154.xlsx");
@@ -289,6 +292,10 @@ public class TestRelationships extends TestCase {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         pkg.save(baos);
+
+        // use revert to not re-write the input file
+        pkg.revert();
+
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         pkg = OPCPackage.open(bais);
 

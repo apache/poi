@@ -70,9 +70,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
         }        
 
         try {
-            NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is);
-            CTNotesMaster slide =  doc.getNotesMaster();
-            return slide;
+            try {
+                NotesMasterDocument doc = NotesMasterDocument.Factory.parse(is);
+                CTNotesMaster slide =  doc.getNotesMaster();
+                return slide;
+            } finally {
+                is.close();
+            }            
         } catch (Exception e) {
             throw new POIXMLException("Can't initialize NotesMaster", e);
         }

@@ -18,6 +18,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.xmlbeans.XmlObject;
+
 import schemasMicrosoftComVml.*;
 import schemasMicrosoftComOfficeOffice.CTShapeLayout;
 import schemasMicrosoftComOfficeOffice.STConnectType;
@@ -95,7 +97,12 @@ public class TestXSSFVMLDrawing extends TestCase {
     public void testFindCommentShape() throws Exception {
         
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        vml.read(POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml"));
+        InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml");
+        try {
+            vml.read(stream);
+        } finally {
+            stream.close();
+        }
 
         CTShape sh_a1 = vml.findCommentShape(0, 0);
         assertNotNull(sh_a1);
@@ -127,7 +134,12 @@ public class TestXSSFVMLDrawing extends TestCase {
 
     public void testRemoveCommentShape() throws Exception {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        vml.read(POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml"));
+        InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml");
+        try {
+            vml.read(stream);
+        } finally {
+            stream.close();
+        }
 
         CTShape sh_a1 = vml.findCommentShape(0, 0);
         assertNotNull(sh_a1);

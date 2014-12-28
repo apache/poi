@@ -58,12 +58,17 @@ public final class TestPackage extends TestCase {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
 		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
-		p.save(targetFile.getAbsoluteFile());
-
-		// Compare the original and newly saved document
-		assertTrue(targetFile.exists());
-		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
-		assertTrue(targetFile.delete());
+		try {
+    		p.save(targetFile.getAbsoluteFile());
+    
+    		// Compare the original and newly saved document
+    		assertTrue(targetFile.exists());
+    		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
+    		assertTrue(targetFile.delete());
+		} finally {
+            // use revert to not re-write the input file
+            p.revert();
+		}
 	}
 
 	/**
@@ -168,6 +173,8 @@ public final class TestPackage extends TestCase {
         PackageRelationship rel =
         	 corePart.addRelationship(sheetPartName, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", "rSheet1");
         PackagePart part = pkg.createPart(sheetPartName, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml");
+        assertNotNull(part);
+
         // Dummy content again
         coreOut = corePart.getOutputStream();
         coreOut.write("<dummy-xml2 />".getBytes());
@@ -189,28 +196,35 @@ public final class TestPackage extends TestCase {
         // Save and re-load
         pkg.close();
         File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
-            FileOutputStream fout = new FileOutputStream(tmp);
-        fout.write(baos.toByteArray());
-        fout.close();
+        OutputStream fout = new FileOutputStream(tmp);
+        try {
+            fout.write(baos.toByteArray());
+        } finally {
+            fout.close();
+        }
         pkg = OPCPackage.open(tmp.getPath());
         //tmp.delete();
 
-        // Check still right
-        coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
-        assertEquals(1, coreRels.size());
-        coreRel = coreRels.getRelationship(0);
-
-        assertEquals("/", coreRel.getSourceURI().toString());
-        assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
-        corePart = pkg.getPart(coreRel);
-        assertNotNull(corePart);
-
-        PackageRelationshipCollection rels = corePart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
-        assertEquals(1, rels.size());
-        rel = rels.getRelationship(0);
-        assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
-
-        assertMSCompatibility(pkg);
+        try {
+            // Check still right
+            coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
+            assertEquals(1, coreRels.size());
+            coreRel = coreRels.getRelationship(0);
+    
+            assertEquals("/", coreRel.getSourceURI().toString());
+            assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
+            corePart = pkg.getPart(coreRel);
+            assertNotNull(corePart);
+    
+            PackageRelationshipCollection rels = corePart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
+            assertEquals(1, rels.size());
+            rel = rels.getRelationship(0);
+            assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
+    
+            assertMSCompatibility(pkg);
+        } finally {
+            pkg.close();
+        }
     }
 
     private void assertMSCompatibility(OPCPackage pkg) throws Exception {
@@ -297,14 +311,22 @@ public final class TestPackage extends TestCase {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
 
 		OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
-		FileOutputStream fout = new FileOutputStream(targetFile);
-		p.save(fout);
-		fout.close();
-
-		// Compare the original and newly saved document
-		assertTrue(targetFile.exists());
-		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
-		assertTrue(targetFile.delete());
+		try {
+    		FileOutputStream fout = new FileOutputStream(targetFile);
+    		try {
+    		    p.save(fout);
+    		} finally {
+    		    fout.close();
+    		}
+    
+    		// Compare the original and newly saved document
+    		assertTrue(targetFile.exists());
+    		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
+    		assertTrue(targetFile.delete());
+		} finally {
+		    // use revert to not re-write the input file
+		    p.revert();
+		}
 	}
 
 	/**
@@ -511,48 +533,56 @@ public final class TestPackage extends TestCase {
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
         OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
-        List<PackagePart> rs =  pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
-        HashMap<String, PackagePart>  selected = new HashMap<String, PackagePart>();
-
-        for(PackagePart p : rs)
-            selected.put(p.getPartName().getName(), p);
-
-        assertEquals(6, selected.size());
-        assertTrue(selected.containsKey("/word/document.xml"));
-        assertTrue(selected.containsKey("/word/fontTable.xml"));
-        assertTrue(selected.containsKey("/word/settings.xml"));
-        assertTrue(selected.containsKey("/word/styles.xml"));
-        assertTrue(selected.containsKey("/word/theme/theme1.xml"));
-        assertTrue(selected.containsKey("/word/webSettings.xml"));
+        try {
+            List<PackagePart> rs =  pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
+            HashMap<String, PackagePart>  selected = new HashMap<String, PackagePart>();
+    
+            for(PackagePart p : rs)
+                selected.put(p.getPartName().getName(), p);
+    
+            assertEquals(6, selected.size());
+            assertTrue(selected.containsKey("/word/document.xml"));
+            assertTrue(selected.containsKey("/word/fontTable.xml"));
+            assertTrue(selected.containsKey("/word/settings.xml"));
+            assertTrue(selected.containsKey("/word/styles.xml"));
+            assertTrue(selected.containsKey("/word/theme/theme1.xml"));
+            assertTrue(selected.containsKey("/word/webSettings.xml"));
+        } finally {
+            // use revert to not re-write the input file
+            pkg.revert();
+        }
     }
     
     public void testGetPartSize() throws Exception {
        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
        OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ);
-
-       int checked = 0;
-       for (PackagePart part : pkg.getParts()) {
-          // Can get the size of zip parts
-          if (part.getPartName().getName().equals("/word/document.xml")) {
-             checked++;
-             assertEquals(ZipPackagePart.class, part.getClass());
-             assertEquals(6031l, part.getSize());
-          }
-          if (part.getPartName().getName().equals("/word/fontTable.xml")) {
-             checked++;
-             assertEquals(ZipPackagePart.class, part.getClass());
-             assertEquals(1312l, part.getSize());
-          }
-          
-          // But not from the others
-          if (part.getPartName().getName().equals("/docProps/core.xml")) {
-             checked++;
-             assertEquals(PackagePropertiesPart.class, part.getClass());
-             assertEquals(-1, part.getSize());
-          }
+       try {
+           int checked = 0;
+           for (PackagePart part : pkg.getParts()) {
+              // Can get the size of zip parts
+              if (part.getPartName().getName().equals("/word/document.xml")) {
+                 checked++;
+                 assertEquals(ZipPackagePart.class, part.getClass());
+                 assertEquals(6031l, part.getSize());
+              }
+              if (part.getPartName().getName().equals("/word/fontTable.xml")) {
+                 checked++;
+                 assertEquals(ZipPackagePart.class, part.getClass());
+                 assertEquals(1312l, part.getSize());
+              }
+              
+              // But not from the others
+              if (part.getPartName().getName().equals("/docProps/core.xml")) {
+                 checked++;
+                 assertEquals(PackagePropertiesPart.class, part.getClass());
+                 assertEquals(-1, part.getSize());
+              }
+           }
+           // Ensure we actually found the parts we want to check
+           assertEquals(3, checked);
+       } finally {
+           pkg.close();
        }
-       // Ensure we actually found the parts we want to check
-       assertEquals(3, checked);
     }
 
     public void testReplaceContentType() throws Exception {
