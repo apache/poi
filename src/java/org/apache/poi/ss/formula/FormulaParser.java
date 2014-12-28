@@ -1040,13 +1040,11 @@ public final class FormulaParser {
 		}
 
 		boolean missedPrevArg = true;
-		int numArgs = 0;
 		while (true) {
 			SkipWhite();
 			if (isArgumentDelimiter(look)) {
 				if (missedPrevArg) {
 					temp.add(new ParseNode(MissingArgPtg.instance));
-					numArgs++;
 				}
 				if (look == ')') {
 					break;
@@ -1056,7 +1054,6 @@ public final class FormulaParser {
 				continue;
 			}
 			temp.add(comparisonExpression());
-			numArgs++;
 			missedPrevArg = false;
 			SkipWhite();
 			if (!isArgumentDelimiter(look)) {
