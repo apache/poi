@@ -576,7 +576,7 @@ public class MutableSection extends Section
      */
     public Property[] getProperties()
     {
-        properties = (Property[]) preprops.toArray(new Property[0]);
+        properties = preprops.toArray(new Property[0]);
         return properties;
     }
 

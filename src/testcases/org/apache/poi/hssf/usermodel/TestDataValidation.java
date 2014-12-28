@@ -45,6 +45,9 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.DataValidation.ErrorStyle;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
@@ -149,11 +152,11 @@ public final class TestDataValidation extends BaseTestDataValidation {
 		int dvRow = 0;
 		Sheet sheet = wb.getSheetAt(0);
 		DataValidationHelper dataValidationHelper = sheet.getDataValidationHelper();
-		DataValidationConstraint dc = dataValidationHelper.createIntegerConstraint(OP.EQUAL, "42", null);
+		DataValidationConstraint dc = dataValidationHelper.createIntegerConstraint(OperatorType.EQUAL, "42", null);
 		DataValidation dv = dataValidationHelper.createValidation(dc,new CellRangeAddressList(dvRow, dvRow, 0, 0));
 		
 		dv.setEmptyCellAllowed(false);
-		dv.setErrorStyle(ES.STOP);
+		dv.setErrorStyle(ErrorStyle.STOP);
 		dv.setShowPromptBox(true);
 		dv.createErrorBox("Xxx", "Yyy");
 		dv.setSuppressDropDownArrow(true);

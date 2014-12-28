@@ -33,7 +33,7 @@ public final class TestTrunc extends AbstractNumericTestCase {
 
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2) };
-		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
+		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 
@@ -53,7 +53,7 @@ public final class TestTrunc extends AbstractNumericTestCase {
 	
 	public void testTruncWithDecimalNumberOneArg() {
 		ValueEval[] args = { new NumberEval(2.612777) };
-		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
+		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
 		assertEquals("TRUNC", (new NumberEval(2d)).getNumberValue(), ((NumberEval)result).getNumberValue());
 	}
 

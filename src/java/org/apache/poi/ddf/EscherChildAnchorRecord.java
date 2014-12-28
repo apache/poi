@@ -40,7 +40,7 @@ public class EscherChildAnchorRecord
     private int field_4_dy2;
 
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
-        int bytesRemaining = readHeader( data, offset );
+        /*int bytesRemaining =*/ readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
         field_1_dx1    =  LittleEndian.getInt( data, pos + size );size+=4;

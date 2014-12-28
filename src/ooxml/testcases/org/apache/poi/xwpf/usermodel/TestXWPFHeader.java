@@ -93,10 +93,10 @@ public final class TestXWPFHeader extends TestCase {
         pars2[1] = p3;
 
         // Set headers
-        XWPFHeader headerD = policy.createHeader(policy.DEFAULT, pars);
-        XWPFHeader headerF = policy.createHeader(policy.FIRST);
+        XWPFHeader headerD = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT, pars);
+        XWPFHeader headerF = policy.createHeader(XWPFHeaderFooterPolicy.FIRST);
         // Set a default footer and capture the returned XWPFFooter object.
-        XWPFFooter footer = policy.createFooter(policy.DEFAULT, pars2);
+        XWPFFooter footer = policy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars2);
 
         // Ensure the headers and footer were set correctly....
         assertNotNull(policy.getDefaultHeader());

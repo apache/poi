@@ -42,10 +42,10 @@ public class CellRangeAddressList {
 	/**
 	 * List of <tt>CellRangeAddress</tt>es. Each structure represents a cell range
 	 */
-	protected final List _list;
+	protected final List<CellRangeAddress> _list;
 
 	public CellRangeAddressList() {
-		_list = new ArrayList();
+		_list = new ArrayList<CellRangeAddress>();
 	}
 	/**
 	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single 
@@ -101,14 +101,14 @@ public class CellRangeAddressList {
 			throw new RuntimeException("Range index (" + rangeIndex 
 					+ ") is outside allowable range (0.." + (_list.size()-1) + ")");
 		}
-		return (CellRangeAddress) _list.remove(rangeIndex);
+		return _list.remove(rangeIndex);
 	}
 
 	/**
 	 * @return <tt>CellRangeAddress</tt> at the given index
 	 */
 	public CellRangeAddress getCellRangeAddress(int index) {
-		return (CellRangeAddress) _list.get(index);
+		return _list.get(index);
 	}
 
 	public int getSize() {
@@ -131,7 +131,7 @@ public class CellRangeAddressList {
 		int nItems = _list.size();
 		out.writeShort(nItems);
 		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = (CellRangeAddress) _list.get(k);
+			CellRangeAddress region = _list.get(k);
 			region.serialize(out);
 		}
 	}
@@ -142,7 +142,7 @@ public class CellRangeAddressList {
 		
 		int nItems = _list.size();
 		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = (CellRangeAddress) _list.get(k);
+			CellRangeAddress region = _list.get(k);
 			result.addCellRangeAddress(region.copy());
 		}
 		return result;

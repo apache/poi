@@ -29,18 +29,25 @@ public final class ErrorEval implements ValueEval {
     private static final ErrorConstants EC = null;
 
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
+    @SuppressWarnings("static-access")
     public static final ErrorEval NULL_INTERSECTION = new ErrorEval(EC.ERROR_NULL);
     /** <b>#DIV/0!</b> - Division by zero */
+    @SuppressWarnings("static-access")
     public static final ErrorEval DIV_ZERO = new ErrorEval(EC.ERROR_DIV_0);
     /** <b>#VALUE!</b> - Wrong type of operand */
+    @SuppressWarnings("static-access")
     public static final ErrorEval VALUE_INVALID = new ErrorEval(EC.ERROR_VALUE);
     /** <b>#REF!</b> - Illegal or deleted cell reference */
+    @SuppressWarnings("static-access")
     public static final ErrorEval REF_INVALID = new ErrorEval(EC.ERROR_REF);
     /** <b>#NAME?</b> - Wrong function or range name */
+    @SuppressWarnings("static-access")
     public static final ErrorEval NAME_INVALID = new ErrorEval(EC.ERROR_NAME);
     /** <b>#NUM!</b> - Value range overflow */
+    @SuppressWarnings("static-access")
     public static final ErrorEval NUM_ERROR = new ErrorEval(EC.ERROR_NUM);
     /** <b>#N/A</b> - Argument or function not available */
+    @SuppressWarnings("static-access")
     public static final ErrorEval NA = new ErrorEval(EC.ERROR_NA);
 
 

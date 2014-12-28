@@ -178,7 +178,7 @@ public abstract class BaseTestCell extends TestCase {
 		Font f = wb.createFont();
 		f.setFontHeightInPoints((short) 20);
 		f.setColor(IndexedColors.RED.getIndex());
-		f.setBoldweight(f.BOLDWEIGHT_BOLD);
+		f.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		f.setFontName("Arial Unicode MS");
 		cs.setFillBackgroundColor((short)3);
 		cs.setFont(f);
@@ -197,7 +197,7 @@ public abstract class BaseTestCell extends TestCase {
 		r = s.getRow(0);
 		c = r.getCell(0);
 
-		assertTrue("Formula Cell at 0,0", (c.getCellType()==c.CELL_TYPE_FORMULA));
+		assertTrue("Formula Cell at 0,0", (c.getCellType()==Cell.CELL_TYPE_FORMULA));
 		cs = c.getCellStyle();
 
 		assertNotNull("Formula Cell Style", cs);

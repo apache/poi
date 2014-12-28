@@ -30,18 +30,25 @@ public final class ErrPtg extends ScalarConstantPtg {
     private static final ErrorConstants EC = null;
 
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
+    @SuppressWarnings("static-access")
     public static final ErrPtg NULL_INTERSECTION = new ErrPtg(EC.ERROR_NULL);
     /** <b>#DIV/0!</b> - Division by zero */
+    @SuppressWarnings("static-access")
     public static final ErrPtg DIV_ZERO = new ErrPtg(EC.ERROR_DIV_0);
     /** <b>#VALUE!</b> - Wrong type of operand */
+    @SuppressWarnings("static-access")
     public static final ErrPtg VALUE_INVALID = new ErrPtg(EC.ERROR_VALUE);
     /** <b>#REF!</b> - Illegal or deleted cell reference */
+    @SuppressWarnings("static-access")
     public static final ErrPtg REF_INVALID = new ErrPtg(EC.ERROR_REF);
     /** <b>#NAME?</b> - Wrong function or range name */
+    @SuppressWarnings("static-access")
     public static final ErrPtg NAME_INVALID = new ErrPtg(EC.ERROR_NAME);
     /** <b>#NUM!</b> - Value range overflow */
+    @SuppressWarnings("static-access")
     public static final ErrPtg NUM_ERROR = new ErrPtg(EC.ERROR_NUM);
     /** <b>#N/A</b> - Argument or function not available */
+    @SuppressWarnings("static-access")
     public static final ErrPtg N_A = new ErrPtg(EC.ERROR_NA);
 
 

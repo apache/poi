@@ -569,7 +569,7 @@ public class DocumentSummaryInformation extends SpecialPropertySet
         if (getSectionCount() >= 2)
         {
             cps = new CustomProperties();
-            final Section section = (Section) getSections().get(1);
+            final Section section = getSections().get(1);
             final Map<Long,String> dictionary = section.getDictionary();
             final Property[] properties = section.getProperties();
             int propertyCount = 0;

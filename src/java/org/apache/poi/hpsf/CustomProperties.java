@@ -131,7 +131,7 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
         final String name = customProperty.getName();
 
         /* Check whether a property with this name is in the map already. */
-        final Long oldId = (Long) dictionaryNameToID.get(name);
+        final Long oldId = dictionaryNameToID.get(name);
         if (oldId != null)
             customProperty.setID(oldId.longValue());
         else
@@ -159,7 +159,7 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
      */
     public Object remove(final String name)
     {
-        final Long id = (Long) dictionaryNameToID.get(name);
+        final Long id = dictionaryNameToID.get(name);
         if (id == null)
             return null;
         dictionaryIDToName.remove(id);
@@ -267,8 +267,8 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
      */
     public Object get(final String name)
     {
-        final Long id = (Long) dictionaryNameToID.get(name);
-        final CustomProperty cp = (CustomProperty) super.get(id);
+        final Long id = dictionaryNameToID.get(name);
+        final CustomProperty cp = super.get(id);
         return cp != null ? cp.getValue() : null;
     }
 
@@ -351,10 +351,10 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
      */
    public boolean containsKey(Object key) {
       if(key instanceof Long) {
-         return super.containsKey((Long)key);
+         return super.containsKey(key);
       }
       if(key instanceof String) {
-         return super.containsKey((Long)dictionaryNameToID.get(key));
+         return super.containsKey(dictionaryNameToID.get(key));
       }
       return false;
    }
@@ -364,7 +364,7 @@ public class CustomProperties extends HashMap<Object,CustomProperty>
     */
    public boolean containsValue(Object value) {
       if(value instanceof CustomProperty) {
-         return super.containsValue((CustomProperty)value);
+         return super.containsValue(value);
       } else {
          for(CustomProperty cp : super.values()) {
             if(cp.getValue() == value) {

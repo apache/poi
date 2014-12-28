@@ -33,13 +33,20 @@ public class ErrorConstant {
 	// convenient access to name space
 	private static final ErrorConstants EC = null;
 
-	private static final ErrorConstant NULL = new ErrorConstant(EC.ERROR_NULL);
-	private static final ErrorConstant DIV_0 = new ErrorConstant(EC.ERROR_DIV_0);
-	private static final ErrorConstant VALUE = new ErrorConstant(EC.ERROR_VALUE);
-	private static final ErrorConstant REF = new ErrorConstant(EC.ERROR_REF);
-	private static final ErrorConstant NAME = new ErrorConstant(EC.ERROR_NAME);
-	private static final ErrorConstant NUM = new ErrorConstant(EC.ERROR_NUM);
-	private static final ErrorConstant NA = new ErrorConstant(EC.ERROR_NA);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant NULL = new ErrorConstant(EC.ERROR_NULL);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant DIV_0 = new ErrorConstant(EC.ERROR_DIV_0);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant VALUE = new ErrorConstant(EC.ERROR_VALUE);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant REF = new ErrorConstant(EC.ERROR_REF);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant NAME = new ErrorConstant(EC.ERROR_NAME);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant NUM = new ErrorConstant(EC.ERROR_NUM);
+	@SuppressWarnings("static-access")
+    private static final ErrorConstant NA = new ErrorConstant(EC.ERROR_NA);
 
 	private final int _errorCode;
 

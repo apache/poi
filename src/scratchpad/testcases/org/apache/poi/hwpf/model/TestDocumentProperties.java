@@ -22,7 +22,9 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.model.types.DOPAbstractType;
 
 public final class TestDocumentProperties
   extends TestCase
@@ -33,7 +35,7 @@ public final class TestDocumentProperties
   public void testReadWrite()
     throws Exception
   {
-    int size = _documentProperties.getSize();
+    int size = DOPAbstractType.getSize();
     byte[] buf = new byte[size];
 
     _documentProperties.serialize(buf, 0);

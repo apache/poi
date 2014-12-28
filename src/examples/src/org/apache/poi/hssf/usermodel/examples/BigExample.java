@@ -19,6 +19,8 @@ package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,14 +59,14 @@ public class BigExample {
         f.setColor(HSSFColor.RED.index);
         // make it bold
         //arial is the default font
-        f.setBoldweight(f.BOLDWEIGHT_BOLD);
+        f.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
         //set font 2 to 10 point type
         f2.setFontHeightInPoints((short) 10);
         //make it the color at palette index 0xf (white)
         f2.setColor(HSSFColor.WHITE.index);
         //make it bold
-        f2.setBoldweight(f2.BOLDWEIGHT_BOLD);
+        f2.setBoldweight(Font.BOLDWEIGHT_BOLD);
 
         //set cell stlye
         cs.setFont(f);
@@ -72,7 +74,7 @@ public class BigExample {
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("($#,##0_);[Red]($#,##0)"));
 
         //set a thin border
-        cs2.setBorderBottom(cs2.BORDER_THIN);
+        cs2.setBorderBottom(CellStyle.BORDER_THIN);
         //fill w fg fill color
         cs2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         // set foreground fill to red
@@ -141,7 +143,7 @@ public class BigExample {
 
         // define the third style to be the default
         // except with a thick black border at the bottom
-        cs3.setBorderBottom(cs3.BORDER_THICK);
+        cs3.setBorderBottom(CellStyle.BORDER_THICK);
 
         //create 50 cells
         for (int cellnum =0; cellnum < 50; cellnum++) {

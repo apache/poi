@@ -35,7 +35,7 @@ public final class TestRoundFuncs extends TestCase {
 
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2), };
-		ValueEval result = F.ROUNDDOWN.evaluate(args, -1, (short)-1);
+		ValueEval result = NumericFunction.ROUNDDOWN.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 
@@ -43,7 +43,7 @@ public final class TestRoundFuncs extends TestCase {
 
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2), };
-		ValueEval result = F.ROUNDUP.evaluate(args, -1, (short)-1);
+		ValueEval result = NumericFunction.ROUNDUP.evaluate(args, -1, (short)-1);
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 

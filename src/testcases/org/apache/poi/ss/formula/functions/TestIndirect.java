@@ -118,31 +118,31 @@ public final class TestIndirect extends TestCase {
 		// simple error propagation:
 
 		// arg0 is evaluated to text first
-		confirm(feA, c, "INDIRECT(#DIV/0!)", EE.DIV_ZERO);
-		confirm(feA, c, "INDIRECT(#DIV/0!)", EE.DIV_ZERO);
-		confirm(feA, c, "INDIRECT(#NAME?, \"x\")", EE.NAME_INVALID);
-		confirm(feA, c, "INDIRECT(#NUM!, #N/A)", EE.NUM_ERROR);
+		confirm(feA, c, "INDIRECT(#DIV/0!)", ErrorEval.DIV_ZERO);
+		confirm(feA, c, "INDIRECT(#DIV/0!)", ErrorEval.DIV_ZERO);
+		confirm(feA, c, "INDIRECT(#NAME?, \"x\")", ErrorEval.NAME_INVALID);
+		confirm(feA, c, "INDIRECT(#NUM!, #N/A)", ErrorEval.NUM_ERROR);
 
 		// arg1 is evaluated to boolean before arg0 is decoded
-		confirm(feA, c, "INDIRECT(\"garbage\", #N/A)", EE.NA);
-		confirm(feA, c, "INDIRECT(\"garbage\", \"\")", EE.VALUE_INVALID); // empty string is not valid boolean
-		confirm(feA, c, "INDIRECT(\"garbage\", \"flase\")", EE.VALUE_INVALID); // must be "TRUE" or "FALSE"
+		confirm(feA, c, "INDIRECT(\"garbage\", #N/A)", ErrorEval.NA);
+		confirm(feA, c, "INDIRECT(\"garbage\", \"\")", ErrorEval.VALUE_INVALID); // empty string is not valid boolean
+		confirm(feA, c, "INDIRECT(\"garbage\", \"flase\")", ErrorEval.VALUE_INVALID); // must be "TRUE" or "FALSE"
 
 
 		// spaces around sheet name (with or without quotes makes no difference)
-		confirm(feA, c, "INDIRECT(\"'Sheet1 '!D3\")", EE.REF_INVALID);
-		confirm(feA, c, "INDIRECT(\" Sheet1!D3\")", EE.REF_INVALID);
-		confirm(feA, c, "INDIRECT(\"'Sheet1' !D3\")", EE.REF_INVALID);
+		confirm(feA, c, "INDIRECT(\"'Sheet1 '!D3\")", ErrorEval.REF_INVALID);
+		confirm(feA, c, "INDIRECT(\" Sheet1!D3\")", ErrorEval.REF_INVALID);
+		confirm(feA, c, "INDIRECT(\"'Sheet1' !D3\")", ErrorEval.REF_INVALID);
 
 
-		confirm(feA, c, "SUM(INDIRECT(\"'John's sales'!A1:C1\"))", EE.REF_INVALID); // bad quote escaping
-		confirm(feA, c, "INDIRECT(\"[Book1]Sheet1!A1\")", EE.REF_INVALID); // unknown external workbook
-		confirm(feA, c, "INDIRECT(\"Sheet3!A1\")", EE.REF_INVALID); // unknown sheet
+		confirm(feA, c, "SUM(INDIRECT(\"'John's sales'!A1:C1\"))", ErrorEval.REF_INVALID); // bad quote escaping
+		confirm(feA, c, "INDIRECT(\"[Book1]Sheet1!A1\")", ErrorEval.REF_INVALID); // unknown external workbook
+		confirm(feA, c, "INDIRECT(\"Sheet3!A1\")", ErrorEval.REF_INVALID); // unknown sheet
 		if (false) { // TODO - support evaluation of defined names
-			confirm(feA, c, "INDIRECT(\"Sheet1!IW1\")", EE.REF_INVALID); // bad column
-			confirm(feA, c, "INDIRECT(\"Sheet1!A65537\")", EE.REF_INVALID); // bad row
+			confirm(feA, c, "INDIRECT(\"Sheet1!IW1\")", ErrorEval.REF_INVALID); // bad column
+			confirm(feA, c, "INDIRECT(\"Sheet1!A65537\")", ErrorEval.REF_INVALID); // bad row
 		}
-		confirm(feA, c, "INDIRECT(\"Sheet1!A 1\")", EE.REF_INVALID); // space in cell ref
+		confirm(feA, c, "INDIRECT(\"Sheet1!A 1\")", ErrorEval.REF_INVALID); // space in cell ref
 	}
 
 	public void testMultipleWorkbooks() {
@@ -186,7 +186,7 @@ public final class TestIndirect extends TestCase {
 		}
 		int expCode = expectedResult.getErrorCode();
 		if (cv.getErrorValue() != expCode) {
-			throw new AssertionFailedError("Expected error '" + EE.getText(expCode)
+			throw new AssertionFailedError("Expected error '" + ErrorEval.getText(expCode)
 					+ "' but got '" + cv.formatAsString() + "'.");
 		}
 	}

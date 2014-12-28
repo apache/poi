@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.font.TextLayout;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.text.CharacterIterator;
 
 /**
  * a renderable text fragment
@@ -76,7 +77,7 @@ class TextFragment {
 
         AttributedCharacterIterator it = _str.getIterator();
          StringBuffer buf = new StringBuffer();
-         for (char c = it.first(); c != it.DONE; c = it.next()) {
+         for (char c = it.first(); c != CharacterIterator.DONE; c = it.next()) {
              buf.append(c);
          }
         return buf.toString();

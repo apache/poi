@@ -43,7 +43,7 @@ public final class TestEqualEval extends TestCase {
 			EvalFactory.createAreaEval("B1:B1", values),
 			BoolEval.FALSE,
 		};
-		ValueEval result = evaluate(EI.Equal, args, 10, 10);
+		ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
 		if (result instanceof ErrorEval) {
 			if (result == ErrorEval.VALUE_INVALID) {
 				throw new AssertionFailedError("Identified bug in evaluation of 1x1 area");
@@ -61,7 +61,7 @@ public final class TestEqualEval extends TestCase {
 			new StringEval(""),
 			BlankEval.instance,
 		};
-		ValueEval result = evaluate(EI.Equal, args, 10, 10);
+		ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
 		if (!be.getBooleanValue()) {
@@ -74,14 +74,14 @@ public final class TestEqualEval extends TestCase {
 	 * Test for bug 46613 (observable at svn r737248)
 	 */
 	public void testStringInsensitive_bug46613() {
-		if (!evalStringCmp("abc", "aBc", EI.Equal)) {
+		if (!evalStringCmp("abc", "aBc", EvalInstances.Equal)) {
 			throw new AssertionFailedError("Identified bug 46613");
 		}
-		assertTrue(evalStringCmp("abc", "aBc", EI.Equal));
-		assertTrue(evalStringCmp("ABC", "azz", EI.LessThan));
-		assertTrue(evalStringCmp("abc", "AZZ", EI.LessThan));
-		assertTrue(evalStringCmp("ABC", "aaa", EI.GreaterThan));
-		assertTrue(evalStringCmp("abc", "AAA", EI.GreaterThan));
+		assertTrue(evalStringCmp("abc", "aBc", EvalInstances.Equal));
+		assertTrue(evalStringCmp("ABC", "azz", EvalInstances.LessThan));
+		assertTrue(evalStringCmp("abc", "AZZ", EvalInstances.LessThan));
+		assertTrue(evalStringCmp("ABC", "aaa", EvalInstances.GreaterThan));
+		assertTrue(evalStringCmp("abc", "AAA", EvalInstances.GreaterThan));
 	}
 
 	private static boolean evalStringCmp(String a, String b, Function cmpOp) {
@@ -107,17 +107,17 @@ public final class TestEqualEval extends TestCase {
 		confirmCompares(BoolEval.FALSE, BoolEval.FALSE, 0);
 	}
 	private static void confirmCompares(ValueEval a, ValueEval b, int expRes) {
-		confirm(a, b, expRes>0,  EI.GreaterThan);
-		confirm(a, b, expRes>=0, EI.GreaterEqual);
-		confirm(a, b, expRes==0, EI.Equal);
-		confirm(a, b, expRes<=0, EI.LessEqual);
-		confirm(a, b, expRes<0,  EI.LessThan);
+		confirm(a, b, expRes>0,  EvalInstances.GreaterThan);
+		confirm(a, b, expRes>=0, EvalInstances.GreaterEqual);
+		confirm(a, b, expRes==0, EvalInstances.Equal);
+		confirm(a, b, expRes<=0, EvalInstances.LessEqual);
+		confirm(a, b, expRes<0,  EvalInstances.LessThan);
 
-		confirm(b, a, expRes<0,  EI.GreaterThan);
-		confirm(b, a, expRes<=0, EI.GreaterEqual);
-		confirm(b, a, expRes==0, EI.Equal);
-		confirm(b, a, expRes>=0, EI.LessEqual);
-		confirm(b, a, expRes>0,  EI.LessThan);
+		confirm(b, a, expRes<0,  EvalInstances.GreaterThan);
+		confirm(b, a, expRes<=0, EvalInstances.GreaterEqual);
+		confirm(b, a, expRes==0, EvalInstances.Equal);
+		confirm(b, a, expRes>=0, EvalInstances.LessEqual);
+		confirm(b, a, expRes>0,  EvalInstances.LessThan);
 	}
 	private static void confirm(ValueEval a, ValueEval b, boolean expectedResult, Function cmpOp) {
 		ValueEval[] args = { a, b, };
@@ -142,7 +142,7 @@ public final class TestEqualEval extends TestCase {
 			throw new AssertionFailedError("Identified bug 47198: unary minus should convert -0.0 to 0.0");
 		}
 		ValueEval[] args = { zero, mZero, };
-		BoolEval result = (BoolEval) evaluate(EI.Equal, args, 0, 0);
+		BoolEval result = (BoolEval) evaluate(EvalInstances.Equal, args, 0, 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47198: -0.0 != 0.0");
 		}
@@ -157,7 +157,7 @@ public final class TestEqualEval extends TestCase {
 		assertEquals("1.0055", b.getStringValue());
 
 		ValueEval[] args = { a, b, };
-		BoolEval result = (BoolEval) evaluate(EI.Equal, args, 0, 0);
+		BoolEval result = (BoolEval) evaluate(EvalInstances.Equal, args, 0, 0);
 		if (!result.getBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 47598: 1+1.0028-0.9973 != 1.0055");
 		}

@@ -17,12 +17,11 @@
 
 package org.apache.poi.hssf.dev;
 
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  *  Utility to test that POI produces readable output
@@ -40,22 +39,28 @@ public class ReSave {
                 System.out.print("reading " + arg + "...");
                 FileInputStream is = new FileInputStream(arg);
                 HSSFWorkbook wb = new HSSFWorkbook(is);
-                is.close();
-                System.out.println("done");
-
-                for(int i = 0; i < wb.getNumberOfSheets(); i++){
-                    HSSFSheet sheet = wb.getSheetAt(i);
-                    if(initDrawing) {
-                        HSSFPatriarch dg = sheet.getDrawingPatriarch();
+                try {
+                    System.out.println("done");
+    
+                    for(int i = 0; i < wb.getNumberOfSheets(); i++){
+                        HSSFSheet sheet = wb.getSheetAt(i);
+                        if(initDrawing) {
+                            /*HSSFPatriarch dg =*/ sheet.getDrawingPatriarch();
+                        }
                     }
+    
+                    String outputFile = arg.replace(".xls", "-saved.xls");
+                    System.out.print("saving to " + outputFile + "...");
+                    FileOutputStream out = new FileOutputStream(outputFile);
+                    try {
+                        wb.write(out);
+                    } finally {
+                        out.close();
+                    }
+                    System.out.println("done");
+                } finally {
+                    wb.close();
                 }
-
-                String outputFile = arg.replace(".xls", "-saved.xls");
-                System.out.print("saving to " + outputFile + "...");
-                FileOutputStream out = new FileOutputStream(outputFile);
-                wb.write(out);
-                out.close();
-                System.out.println("done");
             }
         }
     }

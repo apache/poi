@@ -88,6 +88,7 @@ import java.util.*;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 //for performance
+@SuppressWarnings("rawtypes")
 public class BinaryTree extends AbstractMap {
     final Node[] _root;
     int _size = 0;

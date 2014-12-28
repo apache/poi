@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Evaluates formula cells.<p/>
@@ -239,7 +238,7 @@ public class XSSFFormulaEvaluator implements FormulaEvaluator, WorkbookEvaluator
 	 *  cells, and calling evaluateFormulaCell on each one.
 	 */
 	public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
-	   HSSFFormulaEvaluator.evaluateAllFormulaCells((Workbook)wb);
+	   HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
 	}
    /**
     * Loops over all cells in all sheets of the supplied

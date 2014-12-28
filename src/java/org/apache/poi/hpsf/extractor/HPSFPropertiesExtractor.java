@@ -17,6 +17,7 @@
 
 package org.apache.poi.hpsf.extractor;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -39,6 +40,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  textual form.
  */
 public class HPSFPropertiesExtractor extends POITextExtractor {
+    private Closeable toClose;
+
     public HPSFPropertiesExtractor(POITextExtractor mainExtractor) {
         super(mainExtractor);
     }
@@ -50,6 +53,7 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
     }
     public HPSFPropertiesExtractor(NPOIFSFileSystem fs) {
         super(new HPSFPropertiesOnlyDocument(fs));
+        this.toClose = fs;
     }
 
     public String getDocumentSummaryInformationText() {
@@ -119,6 +123,19 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
         throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
     }
     
+    
+    
+    public void close() throws IOException {
+        super.close();
+        
+        if(toClose != null) {
+            toClose.close();
+            toClose = null;
+        }
+    }
+
+
+
     private static abstract class HelperPropertySet extends SpecialPropertySet {
         public HelperPropertySet() {
             super(null);
@@ -135,7 +152,11 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
         for (String file : args) {
             HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
                     new NPOIFSFileSystem(new File(file)));
-            System.out.println(ext.getText());
+            try {
+                System.out.println(ext.getText());
+            } finally {
+                ext.close();
+            }
         }
     }
 }
