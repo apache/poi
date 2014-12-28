@@ -24,10 +24,10 @@ import java.util.List;
  *  tests can see what got logged
  */
 public class DummyPOILogger extends POILogger {
-	public List logged = new ArrayList(); 
+	public List<String>logged = new ArrayList<String>(); 
 
 	public void reset() {
-		logged = new ArrayList();
+		logged = new ArrayList<String>();
 	}
 	
 	public boolean check(int level) {

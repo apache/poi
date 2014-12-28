@@ -53,7 +53,7 @@ public final class RecordStream {
 			throw new RuntimeException("Attempt to read past end of record stream");
 		}
 		_countRead ++;
-		return (Record) _list.get(_nextIndex++);
+		return _list.get(_nextIndex++);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public final class RecordStream {
 		if(!hasNext()) {
 			return -1;
 		}
-		return ((Record)_list.get(_nextIndex)).getSid();
+		return _list.get(_nextIndex).getSid();
 	}
 
 	public int getCountRead() {

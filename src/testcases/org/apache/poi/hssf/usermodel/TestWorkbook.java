@@ -31,6 +31,7 @@ import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.Region;
 import org.apache.poi.util.TempFile;
@@ -395,7 +396,7 @@ public final class TestWorkbook extends TestCase {
         HSSFCell        c  = s.getRow(0).getCell(0);
         int             a  = c.getCellType();
 
-        assertEquals(a, c.CELL_TYPE_NUMERIC);
+        assertEquals(a, Cell.CELL_TYPE_NUMERIC);
     }
 
     /**

@@ -164,7 +164,7 @@ public class OfficeDrawing {
         HSSFPicture picture = patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4s.png", wb ));
         //Reset the image to the original size.
         picture.resize();
-        picture.setLineStyle( picture.LINESTYLE_DASHDOTGEL );
+        picture.setLineStyle( HSSFShape.LINESTYLE_DASHDOTGEL );
 
     }
 

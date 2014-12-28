@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Rainer Klute <a
  * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
  */
-public class PropertyIDMap extends HashMap {
+public class PropertyIDMap extends HashMap<Long,String> {
 
     /*
      * The following definitions are for property IDs in the first
@@ -271,7 +271,7 @@ public class PropertyIDMap extends HashMap {
      *
      * @param map The instance to be created is backed by this map.
      */
-    public PropertyIDMap(final Map map)
+    public PropertyIDMap(final Map<Long,String> map)
     {
         super(map);
     }

@@ -32,16 +32,16 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	/**
 	 * List of {@link ColumnInfoRecord}s assumed to be in order
 	 */
-	private final List records;
+	private final List<ColumnInfoRecord> records;
 
 
-	private static final class CIRComparator implements Comparator {
-		public static final Comparator instance = new CIRComparator();
+	private static final class CIRComparator implements Comparator<ColumnInfoRecord> {
+		public static final Comparator<ColumnInfoRecord> instance = new CIRComparator();
 		private CIRComparator() {
 			// enforce singleton
 		}
-		public int compare(Object a, Object b) {
-			return compareColInfos((ColumnInfoRecord)a, (ColumnInfoRecord)b);
+		public int compare(ColumnInfoRecord a, ColumnInfoRecord b) {
+			return compareColInfos(a, b);
 		}
 		public static int compareColInfos(ColumnInfoRecord a, ColumnInfoRecord b) {
 			return a.getFirstColumn()-b.getFirstColumn();
@@ -52,7 +52,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	 * Creates an empty aggregate
 	 */
 	public ColumnInfoRecordsAggregate() {
-		records = new ArrayList();
+		records = new ArrayList<ColumnInfoRecord>();
 	}
 	public ColumnInfoRecordsAggregate(RecordStream rs) {
 		this();
@@ -81,8 +81,8 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	public Object clone() {
 		ColumnInfoRecordsAggregate rec = new ColumnInfoRecordsAggregate();
 		for (int k = 0; k < records.size(); k++) {
-			ColumnInfoRecord ci = ( ColumnInfoRecord ) records.get(k);
-			rec.records.add(ci.clone());
+			ColumnInfoRecord ci = records.get(k);
+			rec.records.add((ColumnInfoRecord) ci.clone());
 		}
 		return rec;
 	}
@@ -114,7 +114,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 		}
 		ColumnInfoRecord cirPrev = null;
 		for(int i=0; i<nItems; i++) {
-			ColumnInfoRecord cir = (ColumnInfoRecord)records.get(i);
+			ColumnInfoRecord cir = records.get(i);
 			rv.visitRecord(cir);
 			if (cirPrev != null && CIRComparator.compareColInfos(cirPrev, cir) > 0) {
 				// Excel probably wouldn't mind, but there is much logic in this class
@@ -127,11 +127,11 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 
 	private int findStartOfColumnOutlineGroup(int pIdx) {
 		// Find the start of the group.
-		ColumnInfoRecord columnInfo = (ColumnInfoRecord) records.get(pIdx);
+		ColumnInfoRecord columnInfo = records.get(pIdx);
 		int level = columnInfo.getOutlineLevel();
 		int idx = pIdx;
 		while (idx != 0) {
-			ColumnInfoRecord prevColumnInfo = (ColumnInfoRecord) records.get(idx - 1);
+			ColumnInfoRecord prevColumnInfo = records.get(idx - 1);
 			if (!prevColumnInfo.isAdjacentBefore(columnInfo)) {
 				break;
 			}
@@ -147,11 +147,11 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 
 	private int findEndOfColumnOutlineGroup(int colInfoIndex) {
 		// Find the end of the group.
-		ColumnInfoRecord columnInfo = (ColumnInfoRecord) records.get(colInfoIndex);
+		ColumnInfoRecord columnInfo = records.get(colInfoIndex);
 		int level = columnInfo.getOutlineLevel();
 		int idx = colInfoIndex;
 		while (idx < records.size() - 1) {
-			ColumnInfoRecord nextColumnInfo = (ColumnInfoRecord) records.get(idx + 1);
+			ColumnInfoRecord nextColumnInfo = records.get(idx + 1);
 			if (!columnInfo.isAdjacentBefore(nextColumnInfo)) {
 				break;
 			}
@@ -165,7 +165,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 	private ColumnInfoRecord getColInfo(int idx) {
-		return (ColumnInfoRecord) records.get( idx );
+		return records.get( idx );
 	}
 
 	/**
@@ -305,7 +305,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 		int k  = 0;
 
 		for (k = 0; k < records.size(); k++) {
-			ColumnInfoRecord tci = (ColumnInfoRecord) records.get(k);
+			ColumnInfoRecord tci = records.get(k);
 			if (tci.containsColumn(targetColumnIx)) {
 				ci = tci;
 				break;

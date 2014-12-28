@@ -352,9 +352,9 @@ public class Variant
      * <p>Maps the numbers denoting the variant types to their corresponding
      * variant type names.</p>
      */
-    private static Map numberToName;
+    private static Map<Long,String> numberToName;
 
-    private static Map numberToLength;
+    private static Map<Long,Integer> numberToLength;
 
     /**
      * <p>Denotes a variant type with a length that is unknown to HPSF yet.</p>
@@ -391,7 +391,7 @@ public class Variant
     static
     {
         /* Initialize the number-to-name map: */
-        Map tm1 = new HashMap();
+        Map<Long,String> tm1 = new HashMap<Long,String>();
         tm1.put(Long.valueOf(0), "VT_EMPTY");
         tm1.put(Long.valueOf(1), "VT_NULL");
         tm1.put(Long.valueOf(2), "VT_I2");
@@ -432,55 +432,55 @@ public class Variant
         tm1.put(Long.valueOf(70), "VT_BLOB_OBJECT");
         tm1.put(Long.valueOf(71), "VT_CF");
         tm1.put(Long.valueOf(72), "VT_CLSID");
-        Map tm2 = new HashMap(tm1.size(), 1.0F);
+        Map<Long,String> tm2 = new HashMap<Long,String>(tm1.size(), 1.0F);
         tm2.putAll(tm1);
         numberToName = Collections.unmodifiableMap(tm2);
 
         /* Initialize the number-to-length map: */
-        tm1.clear();
-        tm1.put(Long.valueOf(0), LENGTH_0);
-        tm1.put(Long.valueOf(1), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(2), LENGTH_2);
-        tm1.put(Long.valueOf(3), LENGTH_4);
-        tm1.put(Long.valueOf(4), LENGTH_4);
-        tm1.put(Long.valueOf(5), LENGTH_8);
-        tm1.put(Long.valueOf(6), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(7), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(8), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(9), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(10), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(11), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(12), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(13), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(14), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(16), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(17), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(18), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(19), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(20), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(21), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(22), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(23), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(24), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(25), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(26), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(27), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(28), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(29), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(30), LENGTH_VARIABLE);
-        tm1.put(Long.valueOf(31), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(64), LENGTH_8);
-        tm1.put(Long.valueOf(65), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(66), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(67), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(68), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(69), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(70), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(71), LENGTH_UNKNOWN);
-        tm1.put(Long.valueOf(72), LENGTH_UNKNOWN);
-        tm2 = new HashMap(tm1.size(), 1.0F);
-        tm2.putAll(tm1);
-        numberToLength = Collections.unmodifiableMap(tm2);
+        Map<Long,Integer> tm3 = new HashMap<Long,Integer>();
+        tm3.put(Long.valueOf(0), LENGTH_0);
+        tm3.put(Long.valueOf(1), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(2), LENGTH_2);
+        tm3.put(Long.valueOf(3), LENGTH_4);
+        tm3.put(Long.valueOf(4), LENGTH_4);
+        tm3.put(Long.valueOf(5), LENGTH_8);
+        tm3.put(Long.valueOf(6), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(7), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(8), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(9), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(10), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(11), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(12), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(13), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(14), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(16), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(17), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(18), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(19), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(20), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(21), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(22), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(23), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(24), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(25), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(26), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(27), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(28), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(29), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(30), LENGTH_VARIABLE);
+        tm3.put(Long.valueOf(31), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(64), LENGTH_8);
+        tm3.put(Long.valueOf(65), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(66), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(67), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(68), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(69), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(70), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(71), LENGTH_UNKNOWN);
+        tm3.put(Long.valueOf(72), LENGTH_UNKNOWN);
+        Map<Long,Integer> tm4 = new HashMap<Long,Integer>(tm1.size(), 1.0F);
+        tm4.putAll(tm3);
+        numberToLength = Collections.unmodifiableMap(tm4);
     }
 
 
@@ -494,7 +494,7 @@ public class Variant
      */
     public static String getVariantName(final long variantType)
     {
-        final String name = (String) numberToName.get(Long.valueOf(variantType));
+        final String name = numberToName.get(Long.valueOf(variantType));
         return name != null ? name : "unknown variant type";
     }
 
@@ -510,7 +510,7 @@ public class Variant
     public static int getVariantLength(final long variantType)
     {
         final Long key = Long.valueOf((int) variantType);
-        final Long length = (Long) numberToLength.get(key);
+        final Integer length = numberToLength.get(key);
         if (length == null)
             return -2;
         return length.intValue();

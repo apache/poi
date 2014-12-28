@@ -448,7 +448,7 @@ public class Section
     {
         String s = null;
         if (dictionary != null)
-            s = (String) dictionary.get(Long.valueOf(pid));
+            s = dictionary.get(Long.valueOf(pid));
         if (s == null)
             s = SectionIDMap.getPIDString(getFormatID().getBytes(), pid);
         if (s == null)

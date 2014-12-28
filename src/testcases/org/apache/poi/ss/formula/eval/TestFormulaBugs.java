@@ -124,49 +124,54 @@ public final class TestFormulaBugs extends TestCase {
 
 	/**
 	 * Bug 42448 - Can't parse SUMPRODUCT(A!C7:A!C67, B8:B68) / B69 <p/>
+	 * @throws IOException 
 	 */
-	public void test42448() {
+	public void test42448() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet1 = wb.createSheet("Sheet1");
-
-		HSSFRow row = sheet1.createRow(0);
-		HSSFCell cell = row.createCell(0);
-
-		// it's important to create the referenced sheet first
-		HSSFSheet sheet2 = wb.createSheet("A"); // note name 'A'
-		// TODO - POI crashes if the formula is added before this sheet
-		// RuntimeException("Zero length string is an invalid sheet name")
-		// Excel doesn't crash but the formula doesn't work until it is
-		// re-entered
-
-		String inputFormula = "SUMPRODUCT(A!C7:A!C67, B8:B68) / B69"; // as per bug report
 		try {
-			cell.setCellFormula(inputFormula); 
-		} catch (StringIndexOutOfBoundsException e) {
-			throw new AssertionFailedError("Identified bug 42448");
+    		HSSFSheet sheet1 = wb.createSheet("Sheet1");
+    
+    		HSSFRow row = sheet1.createRow(0);
+    		HSSFCell cell = row.createCell(0);
+    
+    		// it's important to create the referenced sheet first
+    		HSSFSheet sheet2 = wb.createSheet("A"); // note name 'A'
+    		// TODO - POI crashes if the formula is added before this sheet
+    		// RuntimeException("Zero length string is an invalid sheet name")
+    		// Excel doesn't crash but the formula doesn't work until it is
+    		// re-entered
+    
+    		String inputFormula = "SUMPRODUCT(A!C7:A!C67, B8:B68) / B69"; // as per bug report
+    		try {
+    			cell.setCellFormula(inputFormula); 
+    		} catch (StringIndexOutOfBoundsException e) {
+    			throw new AssertionFailedError("Identified bug 42448");
+    		}
+    
+    		assertEquals("SUMPRODUCT(A!C7:A!C67,B8:B68)/B69", cell.getCellFormula());
+    
+    		// might as well evaluate the sucker...
+    
+    		addCell(sheet2, 5, 2, 3.0); // A!C6
+    		addCell(sheet2, 6, 2, 4.0); // A!C7
+    		addCell(sheet2, 66, 2, 5.0); // A!C67
+    		addCell(sheet2, 67, 2, 6.0); // A!C68
+    
+    		addCell(sheet1, 6, 1, 7.0); // B7
+    		addCell(sheet1, 7, 1, 8.0); // B8
+    		addCell(sheet1, 67, 1, 9.0); // B68
+    		addCell(sheet1, 68, 1, 10.0); // B69
+    
+    		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
+    
+    		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+    		CellValue cv = fe.evaluate(cell);
+    
+    		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
+    		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
+		} finally {
+		    wb.close();
 		}
-
-		assertEquals("SUMPRODUCT(A!C7:A!C67,B8:B68)/B69", cell.getCellFormula());
-
-		// might as well evaluate the sucker...
-
-		addCell(sheet2, 5, 2, 3.0); // A!C6
-		addCell(sheet2, 6, 2, 4.0); // A!C7
-		addCell(sheet2, 66, 2, 5.0); // A!C67
-		addCell(sheet2, 67, 2, 6.0); // A!C68
-
-		addCell(sheet1, 6, 1, 7.0); // B7
-		addCell(sheet1, 7, 1, 8.0); // B8
-		addCell(sheet1, 67, 1, 9.0); // B68
-		addCell(sheet1, 68, 1, 10.0); // B69
-
-		double expectedResult = (4.0 * 8.0 + 5.0 * 9.0) / 10.0;
-
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		CellValue cv = fe.evaluate(cell);
-
-		assertEquals(HSSFCell.CELL_TYPE_NUMERIC, cv.getCellType());
-		assertEquals(expectedResult, cv.getNumberValue(), 0.0);
 	}
 
 	private static void addCell(HSSFSheet sheet, int rowIx, int colIx,

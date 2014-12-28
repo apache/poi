@@ -212,7 +212,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 		for (int i = 0; i < nRuns; i++) {
 			out.writeShort(str.getIndexOfFormattingRun(i));
 			int fontIndex = str.getFontOfFormattingRun(i);
-			out.writeShort(fontIndex == str.NO_FONT ? 0 : fontIndex);
+			out.writeShort(fontIndex == HSSFRichTextString.NO_FONT ? 0 : fontIndex);
 			out.writeInt(0); // skip reserved
 		}
 		out.writeShort(str.length());

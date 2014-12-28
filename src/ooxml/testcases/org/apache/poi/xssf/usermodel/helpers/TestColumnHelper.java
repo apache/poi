@@ -109,7 +109,7 @@ public final class TestColumnHelper extends TestCase {
         assertEquals(9, cols1.sizeOfColArray());
         assertEquals(20, cols1.getColArray(8).getMin());
         assertEquals(30, cols1.getColArray(8).getMax());
-        helper.sortColumns(cols1);
+        ColumnHelper.sortColumns(cols1);
         assertEquals(9, cols1.sizeOfColArray());
         assertEquals(25, cols1.getColArray(8).getMin());
         assertEquals(27, cols1.getColArray(8).getMax());

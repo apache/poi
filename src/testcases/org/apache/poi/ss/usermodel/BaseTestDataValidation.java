@@ -20,6 +20,9 @@ package org.apache.poi.ss.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.DataValidation.ErrorStyle;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.POILogFactory;
@@ -107,29 +110,29 @@ public abstract class BaseTestDataValidation extends TestCase {
 		}
 		private DataValidationConstraint createConstraint(DataValidationHelper dataValidationHelper,int operatorType, String firstFormula,
 				String secondFormula, String[] explicitListValues) {
-			if (_validationType == VT.LIST) {
+			if (_validationType == ValidationType.LIST) {
 				if (explicitListValues != null) {
 					return dataValidationHelper.createExplicitListConstraint(explicitListValues);
 				}
 				return dataValidationHelper.createFormulaListConstraint(firstFormula);
 			}
-			if (_validationType == VT.TIME) {
+			if (_validationType == ValidationType.TIME) {
 				return dataValidationHelper.createTimeConstraint(operatorType, firstFormula, secondFormula);
 			}
-			if (_validationType == VT.DATE) {
+			if (_validationType == ValidationType.DATE) {
 				return dataValidationHelper.createDateConstraint(operatorType, firstFormula, secondFormula, null);
 			}
-			if (_validationType == VT.FORMULA) {
+			if (_validationType == ValidationType.FORMULA) {
 				return dataValidationHelper.createCustomConstraint(firstFormula);
 			}
 
-			if( _validationType == VT.INTEGER) {
+			if( _validationType == ValidationType.INTEGER) {
 				return dataValidationHelper.createIntegerConstraint(operatorType, firstFormula, secondFormula);
 			}
-			if( _validationType == VT.DECIMAL) {
+			if( _validationType == ValidationType.DECIMAL) {
 				return dataValidationHelper.createDecimalConstraint(operatorType, firstFormula, secondFormula);
 			}
-			if( _validationType == VT.TEXT_LENGTH) {
+			if( _validationType == ValidationType.TEXT_LENGTH) {
 				return dataValidationHelper.createTextLengthConstraint(operatorType, firstFormula, secondFormula);
 			}
 			return null;
@@ -170,7 +173,7 @@ public abstract class BaseTestDataValidation extends TestCase {
 				boolean allowEmpty, boolean suppressDropDown) {
 			String promptDescr = (allowEmpty ? "empty ok" : "not empty")
 					+ ", " + (suppressDropDown ? "no drop-down" : "drop-down");
-			addValidationInternal(VT.LIST, listFormula, null, ES.STOP, listValsDescr, promptDescr,
+			addValidationInternal(ValidationType.LIST, listFormula, null, ErrorStyle.STOP, listValsDescr, promptDescr,
 					allowEmpty, false, true, suppressDropDown, explicitListValues);
 		}
 	}
@@ -312,9 +315,9 @@ public abstract class BaseTestDataValidation extends TestCase {
 		wf.createSheet("Custom");
 		wf.createHeaderRow();
 
-		ValidationAdder va = wf.createValidationAdder(null, VT.FORMULA);
-		va.addValidation(OP.BETWEEN, "ISNUMBER($A2)", null, ES.STOP, "ISNUMBER(A2)", "Error box type = STOP", true, true, true);
-		va.addValidation(OP.BETWEEN, "IF(SUM(A2:A3)=5,TRUE,FALSE)", null, ES.WARNING, "IF(SUM(A2:A3)=5,TRUE,FALSE)", "Error box type = WARNING", false, false, true);
+		ValidationAdder va = wf.createValidationAdder(null, ValidationType.FORMULA);
+		va.addValidation(OperatorType.BETWEEN, "ISNUMBER($A2)", null, ErrorStyle.STOP, "ISNUMBER(A2)", "Error box type = STOP", true, true, true);
+		va.addValidation(OperatorType.BETWEEN, "IF(SUM(A2:A3)=5,TRUE,FALSE)", null, ErrorStyle.WARNING, "IF(SUM(A2:A3)=5,TRUE,FALSE)", "Error box type = WARNING", false, false, true);
 	}
 
 	private static void addSimpleNumericValidations(WorkbookFormatter wf) {
@@ -325,29 +328,29 @@ public abstract class BaseTestDataValidation extends TestCase {
 		wf.createDVTypeRow("Whole number");
 		wf.createHeaderRow();
 
-		ValidationAdder va = wf.createValidationAdder(null, VT.INTEGER);
-		va.addValidation(OP.BETWEEN, "2", "6", ES.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
-		va.addValidation(OP.NOT_BETWEEN, "2", "6", ES.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
-		va.addValidation(OP.EQUAL, "=3+2", null, ES.WARNING, "Equal to (3+2)", "Error box type = WARNING", false, false, true);
-		va.addValidation(OP.NOT_EQUAL, "3", null, ES.WARNING, "Not equal to 3", "-", false, false, false);
-		va.addValidation(OP.GREATER_THAN, "3", null, ES.WARNING, "Greater than 3", "-", true, false, false);
-		va.addValidation(OP.LESS_THAN, "3", null, ES.WARNING, "Less than 3", "-", true, true, false);
-		va.addValidation(OP.GREATER_OR_EQUAL, "4", null, ES.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
-		va.addValidation(OP.LESS_OR_EQUAL, "4", null, ES.STOP, "Less than or equal to 4", "-", false, true, false);
+		ValidationAdder va = wf.createValidationAdder(null, ValidationType.INTEGER);
+		va.addValidation(OperatorType.BETWEEN, "2", "6", ErrorStyle.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OperatorType.NOT_BETWEEN, "2", "6", ErrorStyle.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OperatorType.EQUAL, "=3+2", null, ErrorStyle.WARNING, "Equal to (3+2)", "Error box type = WARNING", false, false, true);
+		va.addValidation(OperatorType.NOT_EQUAL, "3", null, ErrorStyle.WARNING, "Not equal to 3", "-", false, false, false);
+		va.addValidation(OperatorType.GREATER_THAN, "3", null, ErrorStyle.WARNING, "Greater than 3", "-", true, false, false);
+		va.addValidation(OperatorType.LESS_THAN, "3", null, ErrorStyle.WARNING, "Less than 3", "-", true, true, false);
+		va.addValidation(OperatorType.GREATER_OR_EQUAL, "4", null, ErrorStyle.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
+		va.addValidation(OperatorType.LESS_OR_EQUAL, "4", null, ErrorStyle.STOP, "Less than or equal to 4", "-", false, true, false);
 
 		// "Decimal" validation type
 		wf.createDVTypeRow("Decimal");
 		wf.createHeaderRow();
 
-		va = wf.createValidationAdder(null, VT.DECIMAL);
-		va.addValidation(OP.BETWEEN, "2", "6", ES.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
-		va.addValidation(OP.NOT_BETWEEN, "2", "6", ES.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
-		va.addValidation(OP.EQUAL, "3", null, ES.WARNING, "Equal to 3", "Error box type = WARNING", false, false, true);
-		va.addValidation(OP.NOT_EQUAL, "3", null, ES.WARNING, "Not equal to 3", "-", false, false, false);
-		va.addValidation(OP.GREATER_THAN, "=12/6", null, ES.WARNING, "Greater than (12/6)", "-", true, false, false);
-		va.addValidation(OP.LESS_THAN, "3", null, ES.WARNING, "Less than 3", "-", true, true, false);
-		va.addValidation(OP.GREATER_OR_EQUAL, "4", null, ES.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
-		va.addValidation(OP.LESS_OR_EQUAL, "4", null, ES.STOP, "Less than or equal to 4", "-", false, true, false);
+		va = wf.createValidationAdder(null, ValidationType.DECIMAL);
+		va.addValidation(OperatorType.BETWEEN, "2", "6", ErrorStyle.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OperatorType.NOT_BETWEEN, "2", "6", ErrorStyle.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OperatorType.EQUAL, "3", null, ErrorStyle.WARNING, "Equal to 3", "Error box type = WARNING", false, false, true);
+		va.addValidation(OperatorType.NOT_EQUAL, "3", null, ErrorStyle.WARNING, "Not equal to 3", "-", false, false, false);
+		va.addValidation(OperatorType.GREATER_THAN, "=12/6", null, ErrorStyle.WARNING, "Greater than (12/6)", "-", true, false, false);
+		va.addValidation(OperatorType.LESS_THAN, "3", null, ErrorStyle.WARNING, "Less than 3", "-", true, true, false);
+		va.addValidation(OperatorType.GREATER_OR_EQUAL, "4", null, ErrorStyle.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
+		va.addValidation(OperatorType.LESS_OR_EQUAL, "4", null, ErrorStyle.STOP, "Less than or equal to 4", "-", false, true, false);
 	}
 
 	private static void addListValidations(WorkbookFormatter wf, Workbook wb) {
@@ -366,7 +369,7 @@ public abstract class BaseTestDataValidation extends TestCase {
 		wf.createDVDescriptionRow("Disadvantage - sum of item's length should be less than 255 characters");
 		wf.createHeaderRow();
 
-		ValidationAdder va = wf.createValidationAdder(null, VT.LIST);
+		ValidationAdder va = wf.createValidationAdder(null, ValidationType.LIST);
 		String listValsDescr = "POIFS,HSSF,HWPF,HPSF";
 		String[] listVals = listValsDescr.split(",");
 		va.addListValidation(listVals, null, listValsDescr, false, false);
@@ -379,7 +382,7 @@ public abstract class BaseTestDataValidation extends TestCase {
 		wf.createDVTypeRow("Reference lists - list items are taken from others cells");
 		wf.createDVDescriptionRow("Advantage - no restriction regarding the sum of item's length");
 		wf.createHeaderRow();
-		va = wf.createValidationAdder(null, VT.LIST);
+		va = wf.createValidationAdder(null, ValidationType.LIST);
 		String strFormula = "$A$30:$A$39";
 		va.addListValidation(null, strFormula, strFormula, false, false);
 
@@ -422,44 +425,44 @@ public abstract class BaseTestDataValidation extends TestCase {
 		wf.createDVTypeRow("Date ( cells are already formated as date - m/d/yyyy)");
 		wf.createHeaderRow();
 
-		ValidationAdder va = wf.createValidationAdder(cellStyle_date, VT.DATE);
-		va.addValidation(OP.BETWEEN,     "2004/01/02", "2004/01/06", ES.STOP, "Between 1/2/2004 and 1/6/2004 ", "Error box type = STOP", true, true, true);
-		va.addValidation(OP.NOT_BETWEEN, "2004/01/01", "2004/01/06", ES.INFO, "Not between 1/2/2004 and 1/6/2004 ", "Error box type = INFO", false, true, true);
-		va.addValidation(OP.EQUAL,       "2004/03/02", null,       ES.WARNING, "Equal to 3/2/2004", "Error box type = WARNING", false, false, true);
-		va.addValidation(OP.NOT_EQUAL,   "2004/03/02", null,       ES.WARNING, "Not equal to 3/2/2004", "-", false, false, false);
-		va.addValidation(OP.GREATER_THAN,"=DATEVALUE(\"4-Jul-2001\")", null,       ES.WARNING, "Greater than DATEVALUE('4-Jul-2001')", "-", true, false, false);
-		va.addValidation(OP.LESS_THAN,   "2004/03/02", null,       ES.WARNING, "Less than 3/2/2004", "-", true, true, false);
-		va.addValidation(OP.GREATER_OR_EQUAL, "2004/03/02", null,       ES.STOP, "Greater than or equal to 3/2/2004", "Error box type = STOP", true, false, true);
-		va.addValidation(OP.LESS_OR_EQUAL, "2004/03/04", null,       ES.STOP, "Less than or equal to 3/4/2004", "-", false, true, false);
+		ValidationAdder va = wf.createValidationAdder(cellStyle_date, ValidationType.DATE);
+		va.addValidation(OperatorType.BETWEEN,     "2004/01/02", "2004/01/06", ErrorStyle.STOP, "Between 1/2/2004 and 1/6/2004 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OperatorType.NOT_BETWEEN, "2004/01/01", "2004/01/06", ErrorStyle.INFO, "Not between 1/2/2004 and 1/6/2004 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OperatorType.EQUAL,       "2004/03/02", null,       ErrorStyle.WARNING, "Equal to 3/2/2004", "Error box type = WARNING", false, false, true);
+		va.addValidation(OperatorType.NOT_EQUAL,   "2004/03/02", null,       ErrorStyle.WARNING, "Not equal to 3/2/2004", "-", false, false, false);
+		va.addValidation(OperatorType.GREATER_THAN,"=DATEVALUE(\"4-Jul-2001\")", null,       ErrorStyle.WARNING, "Greater than DATEVALUE('4-Jul-2001')", "-", true, false, false);
+		va.addValidation(OperatorType.LESS_THAN,   "2004/03/02", null,       ErrorStyle.WARNING, "Less than 3/2/2004", "-", true, true, false);
+		va.addValidation(OperatorType.GREATER_OR_EQUAL, "2004/03/02", null,       ErrorStyle.STOP, "Greater than or equal to 3/2/2004", "Error box type = STOP", true, false, true);
+		va.addValidation(OperatorType.LESS_OR_EQUAL, "2004/03/04", null,       ErrorStyle.STOP, "Less than or equal to 3/4/2004", "-", false, true, false);
 
 		// "Time" validation type
 		wf.createDVTypeRow("Time ( cells are already formated as time - h:mm)");
 		wf.createHeaderRow();
 
-		va = wf.createValidationAdder(cellStyle_time, VT.TIME);
-		va.addValidation(OP.BETWEEN,     "12:00", "16:00", ES.STOP, "Between 12:00 and 16:00 ", "Error box type = STOP", true, true, true);
-		va.addValidation(OP.NOT_BETWEEN, "12:00", "16:00", ES.INFO, "Not between 12:00 and 16:00 ", "Error box type = INFO", false, true, true);
-		va.addValidation(OP.EQUAL,       "13:35", null,    ES.WARNING, "Equal to 13:35", "Error box type = WARNING", false, false, true);
-		va.addValidation(OP.NOT_EQUAL,   "13:35", null,    ES.WARNING, "Not equal to 13:35", "-", false, false, false);
-		va.addValidation(OP.GREATER_THAN,"12:00", null,    ES.WARNING, "Greater than 12:00", "-", true, false, false);
-		va.addValidation(OP.LESS_THAN,   "=1/2", null,    ES.WARNING, "Less than (1/2) -> 12:00", "-", true, true, false);
-		va.addValidation(OP.GREATER_OR_EQUAL, "14:00", null,    ES.STOP, "Greater than or equal to 14:00", "Error box type = STOP", true, false, true);
-		va.addValidation(OP.LESS_OR_EQUAL,"14:00", null,    ES.STOP, "Less than or equal to 14:00", "-", false, true, false);
+		va = wf.createValidationAdder(cellStyle_time, ValidationType.TIME);
+		va.addValidation(OperatorType.BETWEEN,     "12:00", "16:00", ErrorStyle.STOP, "Between 12:00 and 16:00 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OperatorType.NOT_BETWEEN, "12:00", "16:00", ErrorStyle.INFO, "Not between 12:00 and 16:00 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OperatorType.EQUAL,       "13:35", null,    ErrorStyle.WARNING, "Equal to 13:35", "Error box type = WARNING", false, false, true);
+		va.addValidation(OperatorType.NOT_EQUAL,   "13:35", null,    ErrorStyle.WARNING, "Not equal to 13:35", "-", false, false, false);
+		va.addValidation(OperatorType.GREATER_THAN,"12:00", null,    ErrorStyle.WARNING, "Greater than 12:00", "-", true, false, false);
+		va.addValidation(OperatorType.LESS_THAN,   "=1/2", null,    ErrorStyle.WARNING, "Less than (1/2) -> 12:00", "-", true, true, false);
+		va.addValidation(OperatorType.GREATER_OR_EQUAL, "14:00", null,    ErrorStyle.STOP, "Greater than or equal to 14:00", "Error box type = STOP", true, false, true);
+		va.addValidation(OperatorType.LESS_OR_EQUAL,"14:00", null,    ErrorStyle.STOP, "Less than or equal to 14:00", "-", false, true, false);
 	}
 
 	private static void addTextLengthValidations(WorkbookFormatter wf) {
 		wf.createSheet("Text lengths");
 		wf.createHeaderRow();
 
-		ValidationAdder va = wf.createValidationAdder(null, VT.TEXT_LENGTH);
-		va.addValidation(OP.BETWEEN, "2", "6", ES.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
-		va.addValidation(OP.NOT_BETWEEN, "2", "6", ES.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
-		va.addValidation(OP.EQUAL, "3", null, ES.WARNING, "Equal to 3", "Error box type = WARNING", false, false, true);
-		va.addValidation(OP.NOT_EQUAL, "3", null, ES.WARNING, "Not equal to 3", "-", false, false, false);
-		va.addValidation(OP.GREATER_THAN, "3", null, ES.WARNING, "Greater than 3", "-", true, false, false);
-		va.addValidation(OP.LESS_THAN, "3", null, ES.WARNING, "Less than 3", "-", true, true, false);
-		va.addValidation(OP.GREATER_OR_EQUAL, "4", null, ES.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
-		va.addValidation(OP.LESS_OR_EQUAL, "4", null, ES.STOP, "Less than or equal to 4", "-", false, true, false);
+		ValidationAdder va = wf.createValidationAdder(null, ValidationType.TEXT_LENGTH);
+		va.addValidation(OperatorType.BETWEEN, "2", "6", ErrorStyle.STOP, "Between 2 and 6 ", "Error box type = STOP", true, true, true);
+		va.addValidation(OperatorType.NOT_BETWEEN, "2", "6", ErrorStyle.INFO, "Not between 2 and 6 ", "Error box type = INFO", false, true, true);
+		va.addValidation(OperatorType.EQUAL, "3", null, ErrorStyle.WARNING, "Equal to 3", "Error box type = WARNING", false, false, true);
+		va.addValidation(OperatorType.NOT_EQUAL, "3", null, ErrorStyle.WARNING, "Not equal to 3", "-", false, false, false);
+		va.addValidation(OperatorType.GREATER_THAN, "3", null, ErrorStyle.WARNING, "Greater than 3", "-", true, false, false);
+		va.addValidation(OperatorType.LESS_THAN, "3", null, ErrorStyle.WARNING, "Less than 3", "-", true, true, false);
+		va.addValidation(OperatorType.GREATER_OR_EQUAL, "4", null, ErrorStyle.STOP, "Greater than or equal to 4", "Error box type = STOP", true, false, true);
+		va.addValidation(OperatorType.LESS_OR_EQUAL, "4", null, ErrorStyle.STOP, "Less than or equal to 4", "-", false, true, false);
 	}
 
 	public void testDataValidation() {
