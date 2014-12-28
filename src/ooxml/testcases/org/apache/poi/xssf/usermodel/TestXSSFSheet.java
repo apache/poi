@@ -28,6 +28,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -1188,7 +1189,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
     }
 
     @Test
-    public void bug54607() {
+    public void bug54607() throws IOException {
         // run with the file provided in the Bug-Report
         runGetTopRow("54607.xlsx", true, 1, 0, 0);
         runGetLeftCol("54607.xlsx", true, 0, 0, 0);
@@ -1202,7 +1203,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         runGetLeftCol("TwoSheetsNoneHidden.xls", false, 0, 0);
     }
 
-    private void runGetTopRow(String file, boolean isXSSF, int... topRows) {
+    private void runGetTopRow(String file, boolean isXSSF, int... topRows) throws IOException {
         final Workbook wb;
         if(isXSSF) {
             wb = XSSFTestDataSamples.openSampleWorkbook(file);
@@ -1218,15 +1219,19 @@ public final class TestXSSFSheet extends BaseTestSheet {
         // for XSSF also test with SXSSF
         if(isXSSF) {
             Workbook swb = new SXSSFWorkbook((XSSFWorkbook) wb);
-            for (int si = 0; si < swb.getNumberOfSheets(); si++) {
-                Sheet sh = swb.getSheetAt(si);
-                assertNotNull(sh.getSheetName());
-                assertEquals("Did not match for sheet " + si, topRows[si], sh.getTopRow());
+            try {
+                for (int si = 0; si < swb.getNumberOfSheets(); si++) {
+                    Sheet sh = swb.getSheetAt(si);
+                    assertNotNull(sh.getSheetName());
+                    assertEquals("Did not match for sheet " + si, topRows[si], sh.getTopRow());
+                }
+            } finally {
+                swb.close();
             }
         }
     }
 
-    private void runGetLeftCol(String file, boolean isXSSF, int... topRows) {
+    private void runGetLeftCol(String file, boolean isXSSF, int... topRows) throws IOException {
         final Workbook wb;
         if(isXSSF) {
             wb = XSSFTestDataSamples.openSampleWorkbook(file);
@@ -1247,6 +1252,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
                 assertNotNull(sh.getSheetName());
                 assertEquals("Did not match for sheet " + si, topRows[si], sh.getLeftCol());
             }
+            swb.close();
         }
     }
 

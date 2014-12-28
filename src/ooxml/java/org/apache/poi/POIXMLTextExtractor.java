@@ -84,7 +84,8 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 		if(_document != null) {
 			OPCPackage pkg = _document.getPackage();
 			if(pkg != null) {
-				pkg.close();
+			    // revert the package to not re-write the file, which is very likely not wanted for a TextExtractor!
+				pkg.revert();
 			}
 		}
 		super.close();

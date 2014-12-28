@@ -178,5 +178,6 @@ public class TestDocumentEncryption {
         ps = PropertySetFactory.create(fs2.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         assertTrue(ps.isDocumentSummaryInformation());
         assertEquals("On-screen Show (4:3)", ps.getProperties()[1].getValue());
+        fs.close();
     }
 }

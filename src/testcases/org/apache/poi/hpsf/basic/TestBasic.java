@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
@@ -95,7 +95,7 @@ public final class TestBasic extends TestCase {
     {
         String[] expected = POI_FILES;
         for (int i = 0; i < expected.length; i++)
-            Assert.assertEquals(poiFiles[i].getName(), expected[i]);
+            assertEquals(poiFiles[i].getName(), expected[i]);
     }
 
     /**
@@ -115,7 +115,7 @@ public final class TestBasic extends TestCase {
     public void testCreatePropertySets()
     throws UnsupportedEncodingException, IOException
     {
-        Class[] expected = new Class[]
+        Class<?>[] expected = new Class[]
             {
                 SummaryInformation.class,
                 DocumentSummaryInformation.class,
@@ -140,7 +140,7 @@ public final class TestBasic extends TestCase {
                 o = ex;
             }
             in.close();
-            Assert.assertEquals(expected[i], o.getClass());
+            assertEquals(expected[i], o.getClass());
         }
     }
 
@@ -160,15 +160,15 @@ public final class TestBasic extends TestCase {
             byte[] b = poiFiles[i].getBytes();
             PropertySet ps =
                 PropertySetFactory.create(new ByteArrayInputStream(b));
-            Assert.assertEquals(ps.getByteOrder(), BYTE_ORDER);
-            Assert.assertEquals(ps.getFormat(), FORMAT);
-            Assert.assertEquals(ps.getOSVersion(), OS_VERSION);
-            Assert.assertEquals(new String(ps.getClassID().getBytes()),
+            assertEquals(ps.getByteOrder(), BYTE_ORDER);
+            assertEquals(ps.getFormat(), FORMAT);
+            assertEquals(ps.getOSVersion(), OS_VERSION);
+            assertEquals(new String(ps.getClassID().getBytes()),
                                 new String(CLASS_ID));
-            Assert.assertEquals(ps.getSectionCount(), SECTION_COUNT[i]);
-            Assert.assertEquals(ps.isSummaryInformation(),
+            assertEquals(ps.getSectionCount(), SECTION_COUNT[i]);
+            assertEquals(ps.isSummaryInformation(),
                                 IS_SUMMARY_INFORMATION[i]);
-            Assert.assertEquals(ps.isDocumentSummaryInformation(),
+            assertEquals(ps.isDocumentSummaryInformation(),
                                 IS_DOCUMENT_SUMMARY_INFORMATION[i]);
         }
     }
@@ -186,13 +186,13 @@ public final class TestBasic extends TestCase {
         final SummaryInformation si = (SummaryInformation)
             PropertySetFactory.create(new ByteArrayInputStream
                 (poiFiles[0].getBytes()));
-        final List sections = si.getSections();
-        final Section s = (Section) sections.get(0);
-        Assert.assertTrue(org.apache.poi.hpsf.Util.equal
+        final List<Section> sections = si.getSections();
+        final Section s = sections.get(0);
+        assertTrue(org.apache.poi.hpsf.Util.equal
             (s.getFormatID().getBytes(), SectionIDMap.SUMMARY_INFORMATION_ID));
-        Assert.assertNotNull(s.getProperties());
-        Assert.assertEquals(17, s.getPropertyCount());
-        Assert.assertEquals("Titel", s.getProperty(2));
-        Assert.assertEquals(1764, s.getSize());
+        assertNotNull(s.getProperties());
+        assertEquals(17, s.getPropertyCount());
+        assertEquals("Titel", s.getProperty(2));
+        assertEquals(1764, s.getSize());
     }
 }

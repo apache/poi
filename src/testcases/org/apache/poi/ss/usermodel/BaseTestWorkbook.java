@@ -24,6 +24,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.ss.ITestDataProvider;
@@ -186,51 +189,55 @@ public abstract class BaseTestWorkbook {
     }
 
     @Test
-    public void removeSheetAt() {
+    public void removeSheetAt() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
-        workbook.createSheet("sheet1");
-        workbook.createSheet("sheet2");
-        workbook.createSheet("sheet3");
-        assertEquals(3, workbook.getNumberOfSheets());
-
-        assertEquals(0, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(1);
-        assertEquals(2, workbook.getNumberOfSheets());
-        assertEquals("sheet3", workbook.getSheetName(1));
-        assertEquals(0, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(0);
-        assertEquals(1, workbook.getNumberOfSheets());
-        assertEquals("sheet3", workbook.getSheetName(0));
-        assertEquals(0, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(0);
-        assertEquals(0, workbook.getNumberOfSheets());
-        assertEquals(0, workbook.getActiveSheetIndex());
-
-        //re-create the sheets
-        workbook.createSheet("sheet1");
-        workbook.createSheet("sheet2");
-        workbook.createSheet("sheet3");
-        workbook.createSheet("sheet4");
-        assertEquals(4, workbook.getNumberOfSheets());
-
-        assertEquals(0, workbook.getActiveSheetIndex());
-        workbook.setActiveSheet(2);
-        assertEquals(2, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(2);
-        assertEquals(2, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(1);
-        assertEquals(1, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(0);
-        assertEquals(0, workbook.getActiveSheetIndex());
-
-        workbook.removeSheetAt(0);
-        assertEquals(0, workbook.getActiveSheetIndex());
+        try {
+            workbook.createSheet("sheet1");
+            workbook.createSheet("sheet2");
+            workbook.createSheet("sheet3");
+            assertEquals(3, workbook.getNumberOfSheets());
+    
+            assertEquals(0, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(1);
+            assertEquals(2, workbook.getNumberOfSheets());
+            assertEquals("sheet3", workbook.getSheetName(1));
+            assertEquals(0, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(0);
+            assertEquals(1, workbook.getNumberOfSheets());
+            assertEquals("sheet3", workbook.getSheetName(0));
+            assertEquals(0, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(0);
+            assertEquals(0, workbook.getNumberOfSheets());
+            assertEquals(0, workbook.getActiveSheetIndex());
+    
+            //re-create the sheets
+            workbook.createSheet("sheet1");
+            workbook.createSheet("sheet2");
+            workbook.createSheet("sheet3");
+            workbook.createSheet("sheet4");
+            assertEquals(4, workbook.getNumberOfSheets());
+    
+            assertEquals(0, workbook.getActiveSheetIndex());
+            workbook.setActiveSheet(2);
+            assertEquals(2, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(2);
+            assertEquals(2, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(1);
+            assertEquals(1, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(0);
+            assertEquals(0, workbook.getActiveSheetIndex());
+    
+            workbook.removeSheetAt(0);
+            assertEquals(0, workbook.getActiveSheetIndex());
+        } finally {
+            workbook.close();
+        }
     }
 
     @Test

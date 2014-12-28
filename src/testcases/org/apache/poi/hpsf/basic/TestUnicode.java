@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
@@ -78,18 +77,18 @@ public class TestUnicode extends TestCase {
         byte[] b = poiFile.getBytes();
         PropertySet ps =
             PropertySetFactory.create(new ByteArrayInputStream(b));
-        Assert.assertTrue(ps.isDocumentSummaryInformation());
-        Assert.assertEquals(ps.getSectionCount(), 2);
-        Section s = (Section) ps.getSections().get(1);
-        Assert.assertEquals(s.getProperty(1),
+        assertTrue(ps.isDocumentSummaryInformation());
+        assertEquals(ps.getSectionCount(), 2);
+        Section s = ps.getSections().get(1);
+        assertEquals(s.getProperty(1),
                             Integer.valueOf(CodePageUtil.CP_UTF16));
-        Assert.assertEquals(s.getProperty(2),
+        assertEquals(s.getProperty(2),
                             Integer.valueOf(-96070278));
-        Assert.assertEquals(s.getProperty(3),
+        assertEquals(s.getProperty(3),
                             "MCon_Info zu Office bei Schreiner");
-        Assert.assertEquals(s.getProperty(4),
+        assertEquals(s.getProperty(4),
                             "petrovitsch@schreiner-online.de");
-        Assert.assertEquals(s.getProperty(5),
+        assertEquals(s.getProperty(5),
                             "Petrovitsch, Wilhelm");
     }
 }

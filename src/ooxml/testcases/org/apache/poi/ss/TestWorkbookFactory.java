@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss;
 
+import java.io.InputStream;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -47,6 +49,7 @@ public final class TestWorkbookFactory extends TestCase {
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof HSSFWorkbook);
+		wb.close();
 
 		// Package -> xssf
 		wb = WorkbookFactory.create(
@@ -55,6 +58,7 @@ public final class TestWorkbookFactory extends TestCase {
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
+		// TODO: this re-writes the sample-file?! wb.close();
 	}
 
 	/**
@@ -71,12 +75,14 @@ public final class TestWorkbookFactory extends TestCase {
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof HSSFWorkbook);
+		wb.close();
 
 		wb = WorkbookFactory.create(
 				HSSFTestDataSamples.openSampleFileStream(xlsx)
 		);
 		assertNotNull(wb);
 		assertTrue(wb instanceof XSSFWorkbook);
+		// TODO: this re-writes the sample-file?! wb.close();
 		
 		// File -> either
       wb = WorkbookFactory.create(
@@ -84,18 +90,25 @@ public final class TestWorkbookFactory extends TestCase {
       );
       assertNotNull(wb);
       assertTrue(wb instanceof HSSFWorkbook);
+      wb.close();
 
       wb = WorkbookFactory.create(
             HSSFTestDataSamples.getSampleFile(xlsx)
       );
       assertNotNull(wb);
       assertTrue(wb instanceof XSSFWorkbook);
+      
+      // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
+      ((XSSFWorkbook)wb).getPackage().revert();
 
 		// Invalid type -> exception
 		try {
-			wb = WorkbookFactory.create(
-					HSSFTestDataSamples.openSampleFileStream(txt)
-			);
+			InputStream stream = HSSFTestDataSamples.openSampleFileStream(txt);
+			try {
+                wb = WorkbookFactory.create(stream);
+			} finally {
+			    stream.close();
+			}
 			fail();
 		} catch(IllegalArgumentException e) {
 			// Good

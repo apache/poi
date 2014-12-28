@@ -19,8 +19,10 @@
 
 package org.apache.poi;
 
+import java.io.InputStream;
+import java.io.PushbackInputStream;
+
 import junit.framework.TestCase;
-import java.io.*;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -44,17 +46,20 @@ public class TestDetectAsOOXML extends TestCase
 				HSSFTestDataSamples.openSampleFileStream("SampleSS.xlsx"), 10
 		);
 		assertTrue(POIXMLDocument.hasOOXMLHeader(in));
+		in.close();
 		
 		// xls file isn't
 		in = new PushbackInputStream(
 				HSSFTestDataSamples.openSampleFileStream("SampleSS.xls"), 10
 		);
 		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
+		in.close();
 		
 		// text file isn't
 		in = new PushbackInputStream(
 				HSSFTestDataSamples.openSampleFileStream("SampleSS.txt"), 10
 		);
 		assertFalse(POIXMLDocument.hasOOXMLHeader(in));
+		in.close();
 	}
 }

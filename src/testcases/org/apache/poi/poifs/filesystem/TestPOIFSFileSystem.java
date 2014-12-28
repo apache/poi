@@ -163,16 +163,19 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 *  sectors that exist in the file.
 	 */
 	public void testFATandDIFATsectors() throws Exception {
-      // Open the file up
-      try {
-         POIFSFileSystem fs = new POIFSFileSystem(
-             _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")
-         );
-         fail("File is corrupt and shouldn't have been opened");
-      } catch(IOException e) {
-         String msg = e.getMessage();
-         assertTrue(msg.startsWith("Your file contains 695 sectors"));
-      }
+        // Open the file up
+        try {
+            InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp");
+            try {
+                new POIFSFileSystem(stream);
+                fail("File is corrupt and shouldn't have been opened");
+            } finally {
+                stream.close();
+            }
+        } catch (IOException e) {
+            String msg = e.getMessage();
+            assertTrue(msg.startsWith("Your file contains 695 sectors"));
+        }
 	}
 	
 	/**
@@ -242,39 +245,40 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 *  use 4k blocks. Check that we can open these.
 	 */
 	public void test4KBlocks() throws Exception {
-      POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-	   InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi");
-	   
-	   // First up, check that we can process the header properly
-      HeaderBlock header_block = new HeaderBlock(inp);
-      POIFSBigBlockSize bigBlockSize = header_block.getBigBlockSize();
-      assertEquals(4096, bigBlockSize.getBigBlockSize());
-      
-      // Check the fat info looks sane
-      assertEquals(1, header_block.getBATArray().length);
-      assertEquals(1, header_block.getBATCount());
-      assertEquals(0, header_block.getXBATCount());
-      
-      // Now check we can get the basic fat
-      RawDataBlockList data_blocks = new RawDataBlockList(inp, bigBlockSize);
+        POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+        InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi");
+        try {
+            // First up, check that we can process the header properly
+            HeaderBlock header_block = new HeaderBlock(inp);
+            POIFSBigBlockSize bigBlockSize = header_block.getBigBlockSize();
+            assertEquals(4096, bigBlockSize.getBigBlockSize());
 
-	   
-	   // Now try and open properly
-	   POIFSFileSystem fs = new POIFSFileSystem(
-	         _samples.openResourceAsStream("BlockSize4096.zvi")
-	   );
-	   assertTrue(fs.getRoot().getEntryCount() > 3);
-	   
-	   // Check we can get at all the contents
-	   checkAllDirectoryContents(fs.getRoot());
-	   
-	   
-	   // Finally, check we can do a similar 512byte one too
-	   fs = new POIFSFileSystem(
-            _samples.openResourceAsStream("BlockSize512.zvi")
-      );
-      assertTrue(fs.getRoot().getEntryCount() > 3);
-      checkAllDirectoryContents(fs.getRoot());
+            // Check the fat info looks sane
+            assertEquals(1, header_block.getBATArray().length);
+            assertEquals(1, header_block.getBATCount());
+            assertEquals(0, header_block.getXBATCount());
+
+            // Now check we can get the basic fat
+            RawDataBlockList data_blocks = new RawDataBlockList(inp,
+                    bigBlockSize);
+            assertEquals(15, data_blocks.blockCount());
+
+            // Now try and open properly
+            POIFSFileSystem fs = new POIFSFileSystem(
+                    _samples.openResourceAsStream("BlockSize4096.zvi"));
+            assertTrue(fs.getRoot().getEntryCount() > 3);
+
+            // Check we can get at all the contents
+            checkAllDirectoryContents(fs.getRoot());
+
+            // Finally, check we can do a similar 512byte one too
+            fs = new POIFSFileSystem(
+                    _samples.openResourceAsStream("BlockSize512.zvi"));
+            assertTrue(fs.getRoot().getEntryCount() > 3);
+            checkAllDirectoryContents(fs.getRoot());
+        } finally {
+            inp.close();
+        }
 	}
 	private void checkAllDirectoryContents(DirectoryEntry dir) throws IOException {
 	   for(Entry entry : dir) {
@@ -283,9 +287,13 @@ public final class TestPOIFSFileSystem extends TestCase {
 	      } else {
 	         DocumentNode doc = (DocumentNode) entry;
 	         DocumentInputStream dis = new DocumentInputStream(doc);
-	         int numBytes = dis.available();
-	         byte[] data = new byte [numBytes];
-            dis.read(data);
+	         try {
+    	         int numBytes = dis.available();
+    	         byte[] data = new byte [numBytes];
+                dis.read(data);
+	         } finally {
+	             dis.close();
+	         }
 	      }
 	   }
 	}

@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import junit.framework.TestCase;
+
 import java.io.*;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -46,7 +47,7 @@ public class TestOffice2007XMLException extends TestCase {
 		}
 	}
 	
-	public void testDetectAsPOIFS() {
+	public void testDetectAsPOIFS() throws IOException {
 		
 		// ooxml file isn't
 		confirmIsPOIFS("SampleSS.xlsx", false);
@@ -57,14 +58,18 @@ public class TestOffice2007XMLException extends TestCase {
 		// text file isn't
 		confirmIsPOIFS("SampleSS.txt", false);
 	}
-	private void confirmIsPOIFS(String sampleFileName, boolean expectedResult) {
+	private void confirmIsPOIFS(String sampleFileName, boolean expectedResult) throws IOException {
 		InputStream in  = new PushbackInputStream(openSampleStream(sampleFileName), 10);
-		boolean actualResult;
 		try {
-			actualResult = POIFSFileSystem.hasPOIFSHeader(in);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+    		boolean actualResult;
+    		try {
+    			actualResult = POIFSFileSystem.hasPOIFSHeader(in);
+    		} catch (IOException e) {
+    			throw new RuntimeException(e);
+    		}
+    		assertEquals(expectedResult, actualResult);
+		} finally {
+		    in.close();
 		}
-		assertEquals(expectedResult, actualResult);
 	}
 }
