@@ -22,6 +22,9 @@ import org.apache.poi.hslf.model.Picture;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 
+
+
+
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -39,7 +42,9 @@ import org.apache.poi.util.POILogFactory;
    limitations under the License.
 ==================================================================== */
 import javax.imageio.ImageIO;
+
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 
@@ -54,15 +59,36 @@ public final class BitmapPainter implements ImagePainter {
     public void paint(Graphics2D graphics, PictureData pict, Picture parent) {
         BufferedImage img;
         try {
-               img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
-        }
-        catch (Exception e){
+            img = ImageIO.read(new ByteArrayInputStream(pict.getData()));
+        } catch (Exception e) {
             logger.log(POILogger.WARN, "ImageIO failed to create image. image.type: " + pict.getType());
             return;
         }
 
+        boolean isClipped = true;
+        Insets clip = parent.getBlipClip();
+        if (clip == null) {
+            isClipped = false;
+            clip = new Insets(0,0,0,0);
+        }        
+        
+        int iw = img.getWidth();
+        int ih = img.getHeight();
+
         Rectangle anchor = parent.getLogicalAnchor2D().getBounds();
-        graphics.drawImage(img, anchor.x, anchor.y, anchor.width, anchor.height, null);
+
+        double cw = (100000-clip.left-clip.right) / 100000.0;
+        double ch = (100000-clip.top-clip.bottom) / 100000.0;
+        double sx = anchor.getWidth()/(iw*cw);
+        double sy = anchor.getHeight()/(ih*ch);
+        double tx = anchor.getX()-(iw*sx*clip.left/100000.0);
+        double ty = anchor.getY()-(ih*sy*clip.top/100000.0);
+        AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
+
+        Shape clipOld = graphics.getClip();
+        if (isClipped) graphics.clip(anchor.getBounds2D());
+        graphics.drawRenderedImage(img, at);
+        graphics.setClip(clipOld);
     }
 
 }

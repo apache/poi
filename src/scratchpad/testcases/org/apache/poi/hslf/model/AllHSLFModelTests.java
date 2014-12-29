@@ -17,39 +17,35 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests from the package <tt>org.apache.poi.hslf.model</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestBackground.class,
+    TestFreeform.class,
+    TestHeadersFooters.class,
+    TestHyperlink.class,
+    TestImagePainter.class,
+    TestLine.class,
+    TestMovieShape.class,
+    TestOleEmbedding.class,
+    TestPPFont.class,
+    TestPPGraphics2D.class,
+    TestPicture.class,
+    TestSetBoldItalic.class,
+    TestShapes.class,
+    TestSheet.class,
+    TestSlideChangeNotes.class,
+    TestSlideMaster.class,
+    TestSlides.class,
+    TestTable.class,
+    TestTextRun.class,
+    TestTextRunReWrite.class,
+    TestTextShape.class
+})
 public class AllHSLFModelTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllHSLFModelTests.class.getName());
-		result.addTestSuite(TestBackground.class);
-		result.addTestSuite(TestFreeform.class);
-		result.addTestSuite(TestHeadersFooters.class);
-		result.addTestSuite(TestHyperlink.class);
-		result.addTestSuite(TestImagePainter.class);
-		result.addTestSuite(TestLine.class);
-		result.addTestSuite(TestMovieShape.class);
-		result.addTestSuite(TestOleEmbedding.class);
-		result.addTestSuite(TestPPFont.class);
-		result.addTestSuite(TestPPGraphics2D.class);
-		result.addTestSuite(TestPicture.class);
-		result.addTestSuite(TestSetBoldItalic.class);
-		result.addTestSuite(TestShapes.class);
-		result.addTestSuite(TestSheet.class);
-		result.addTestSuite(TestSlideChangeNotes.class);
-		result.addTestSuite(TestSlideMaster.class);
-		result.addTestSuite(TestSlides.class);
-		result.addTestSuite(TestTable.class);
-		result.addTestSuite(TestTextRun.class);
-		result.addTestSuite(TestTextRunReWrite.class);
-		result.addTestSuite(TestTextShape.class);
-		return result;
-	}
 }
