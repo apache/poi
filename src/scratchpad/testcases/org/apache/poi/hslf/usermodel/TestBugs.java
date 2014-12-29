@@ -58,6 +58,7 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.util.StringUtil;
 import org.junit.Test;
 
 /**
@@ -575,6 +576,21 @@ public final class TestBugs {
             SlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
             assertNotNull(slideBack);
             assertEquals(6, slideBack.getSlides().length);
+        } finally {
+            inputStream.close();
+        }
+    }
+
+    @Test
+    public void bug49541() throws Exception {
+        InputStream inputStream = new FileInputStream(_slTests.getFile("49541_symbol_map.ppt"));
+        try {
+            SlideShow slideShow = new SlideShow(inputStream);
+            Slide slide = slideShow.getSlides()[0];
+            ShapeGroup sg = (ShapeGroup)slide.getShapes()[0];
+            TextBox tb = (TextBox)sg.getShapes()[0];
+            String text = StringUtil.mapMsCodepointString(tb.getText());
+            assertEquals("\u226575 years", text);
         } finally {
             inputStream.close();
         }
