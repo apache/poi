@@ -17,26 +17,38 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.JvmBugs;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Test Picture shape.
  *
  * @author Yegor Kozlov
  */
-public final class TestPicture extends TestCase {
+public final class TestPicture {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
@@ -44,7 +56,8 @@ public final class TestPicture extends TestCase {
      * This is important when the same image appears multiple times in a slide show.
      *
      */
-    public void testMultiplePictures() throws Exception {
+    @Test
+    public void multiplePictures() throws Exception {
         SlideShow ppt = new SlideShow();
 
         Slide s = ppt.createSlide();
@@ -78,7 +91,8 @@ public final class TestPicture extends TestCase {
      * Picture#getEscherBSERecord threw NullPointerException if EscherContainerRecord.BSTORE_CONTAINER
      * was not found. The correct behaviour is to return null.
      */
-    public void test46122() {
+    @Test
+    public void bug46122() {
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
 
@@ -92,7 +106,8 @@ public final class TestPicture extends TestCase {
         pict.draw(graphics);
     }
 
-    public void testMacImages() throws Exception {
+    @Test
+    public void macImages() throws Exception {
         HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("53446.ppt"));
 
         PictureData[] pictures = hss.getPictures();
@@ -127,5 +142,48 @@ public final class TestPicture extends TestCase {
                 assertEquals(dimensions[1], image.getHeight());
             }
         }
+    }
+
+    @Test
+    @Ignore("Just for visual validation - antialiasing is different on various systems")
+    public void bug54541() throws Exception {
+//        InputStream xis = _slTests.openResourceAsStream("54542_cropped_bitmap.pptx");
+//        XMLSlideShow xss = new XMLSlideShow(xis);
+//        xis.close();
+//        
+//        Dimension xpg = xss.getPageSize();
+//        for(XSLFSlide slide : xss.getSlides()) {
+//            BufferedImage img = new BufferedImage(xpg.width, xpg.height, BufferedImage.TYPE_INT_RGB);
+//            Graphics2D graphics = img.createGraphics();
+//            fixFonts(graphics);
+//            slide.draw(graphics);
+//            ImageIO.write(img, "PNG", new File("testx.png"));
+//        }
+//
+//        System.out.println("########################");
+        
+        InputStream is = _slTests.openResourceAsStream("54541_cropped_bitmap.ppt");
+        SlideShow ss = new SlideShow(is);
+        is.close();
+        
+        Dimension pg = ss.getPageSize();
+        int i=1;
+        for(Slide slide : ss.getSlides()) {
+            BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D graphics = img.createGraphics();
+            fixFonts(graphics);
+            slide.draw(graphics);
+            ImageIO.write(img, "PNG", new File("test"+(i++)+".png"));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void fixFonts(Graphics2D graphics) {
+        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
+        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(TextPainter.KEY_FONTMAP);
+        if (fontMap == null) fontMap = new HashMap<String,String>();
+        fontMap.put("Calibri", "Lucida Sans");
+        fontMap.put("Cambria", "Lucida Bright");
+        graphics.setRenderingHint(TextPainter.KEY_FONTMAP, fontMap);        
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -263,5 +264,41 @@ public class Picture extends SimpleShape {
         if(data != null) data.draw(graphics, this);
 
         graphics.setTransform(at);
+    }
+
+    /**
+     * Returns the clipping values as percent ratio relatively to the image size.
+     * The anchor specified by {@link #getLogicalAnchor2D()} is the displayed size,
+     * i.e. the size of the already clipped image
+     * 
+     * @return the clipping as insets converted/scaled to 100000 (=100%) 
+     */
+    public Insets getBlipClip() {
+        EscherOptRecord opt = getEscherOptRecord();
+        
+        double top    = getFractProp(opt, EscherProperties.BLIP__CROPFROMTOP);
+        double bottom = getFractProp(opt, EscherProperties.BLIP__CROPFROMBOTTOM);
+        double left   = getFractProp(opt, EscherProperties.BLIP__CROPFROMLEFT);
+        double right  = getFractProp(opt, EscherProperties.BLIP__CROPFROMRIGHT);
+        
+        // if all crop values are zero (the default) then no crop rectangle is set, return null
+        return (top==0 && bottom==0 && left==0 && right==0)
+            ? null
+            : new Insets((int)(top*100000), (int)(left*100000), (int)(bottom*100000), (int)(right*100000));
+    }
+    
+    /**
+     * @return the fractional property or 0 if not defined
+     *
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd910765(v=office.12).aspx">2.2.1.6 FixedPoint</a>
+     */
+    private static double getFractProp(EscherOptRecord opt, short propertyId) {
+        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propertyId);
+        if (prop == null) return 0;
+        int fixedPoint = prop.getPropertyValue();
+        int i = (fixedPoint >> 16);
+        int f = (fixedPoint >> 0) & 0xFFFF;
+        double fp = i + f/65536.0;
+        return fp;
     }
 }
