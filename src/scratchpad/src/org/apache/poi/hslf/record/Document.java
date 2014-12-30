@@ -175,6 +175,10 @@ public final class Document extends PositionDependentRecordContainer
 		// The new SlideListWithText should go in
 		//  just before the EndDocumentRecord
 		Record endDoc = _children[_children.length - 1];
+		if(endDoc.getRecordType() == RecordTypes.RoundTripCustomTableStyles12Atom.typeID) {
+		    // last record can optionally be a RoundTripCustomTableStyles12Atom
+		    endDoc = _children[_children.length - 2];
+		}
 		if(endDoc.getRecordType() != RecordTypes.EndDocument.typeID) {
 			throw new IllegalStateException("The last child record of a Document should be EndDocument, but it was " + endDoc);
 		}
