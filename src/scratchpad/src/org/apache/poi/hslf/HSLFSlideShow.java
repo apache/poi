@@ -173,9 +173,8 @@ public final class HSLFSlideShow extends POIDocument {
 	 * @param dir the POIFS directory to read from
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(DirectoryNode dir) throws IOException
-	{
-		super(dir);
+	public HSLFSlideShow(DirectoryNode dir) throws IOException {
+		super(handleDualStorage(dir));
 
 		// First up, grab the "Current User" stream
 		// We need this before we can detect Encrypted Documents
@@ -192,7 +191,13 @@ public final class HSLFSlideShow extends POIDocument {
 		readOtherStreams();
 	}
 	
-	
+	private static DirectoryNode handleDualStorage(DirectoryNode dir) throws IOException {
+	    // when there's a dual storage entry, use it, as the outer document can't be read quite probably ...
+	    String dualName = "PP97_DUALSTORAGE";
+	    if (!dir.hasEntry(dualName)) return dir;
+	    dir = (DirectoryNode)dir.getEntry(dualName);
+	    return dir;
+	}
 	
 	/**
 	 * Constructs a new, empty, Powerpoint document.

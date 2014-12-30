@@ -610,4 +610,19 @@ public final class TestBugs {
             inputStream.close();
         }
     }
+    
+    @Test
+    public void bug56240() throws Exception {
+        InputStream inputStream = new FileInputStream(_slTests.getFile("bug56240.ppt"));
+        try {
+            SlideShow slideShow = new SlideShow(inputStream);
+            int slideCnt = slideShow.getSlides().length;
+            assertEquals(105, slideCnt);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            slideShow.write(bos);
+            bos.close();
+        } finally {
+            inputStream.close();
+        }
+    }
 }
