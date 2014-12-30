@@ -67,6 +67,7 @@ public final class RecordTypes {
     public static final Type NamedShow = new Type(1041,null);
     public static final Type NamedShowSlides = new Type(1042,null);
     public static final Type SheetProperties = new Type(1044,null);
+    public static final Type RoundTripCustomTableStyles12Atom = new Type(1064,null);
     public static final Type List = new Type(2000,null);
     public static final Type FontCollection = new Type(2005,FontCollection.class);
     public static final Type BookmarkCollection = new Type(2019,null);

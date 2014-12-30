@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -591,6 +592,20 @@ public final class TestBugs {
             TextBox tb = (TextBox)sg.getShapes()[0];
             String text = StringUtil.mapMsCodepointString(tb.getText());
             assertEquals("\u226575 years", text);
+        } finally {
+            inputStream.close();
+        }
+    }
+    
+    @Test
+    public void bug47261() throws Exception {
+        InputStream inputStream = new FileInputStream(_slTests.getFile("bug47261.ppt"));
+        try {
+            SlideShow slideShow = new SlideShow(inputStream);
+            slideShow.removeSlide(0);
+            slideShow.createSlide();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            slideShow.write(bos);
         } finally {
             inputStream.close();
         }
