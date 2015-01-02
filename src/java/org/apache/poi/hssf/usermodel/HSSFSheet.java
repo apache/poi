@@ -2340,6 +2340,13 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         }
         return _workbook.getNameRecord(recIndex);
     }
-
-
+    
+    /**
+     * Returns the column outline level. Increased as you
+     *  put it into more groups (outlines), reduced as
+     *  you take it out of them.
+     */
+    public int getColumnOutlineLevel(int columnIndex) {
+        return _sheet.getColumnOutlineLevel(columnIndex);
+    }
 }

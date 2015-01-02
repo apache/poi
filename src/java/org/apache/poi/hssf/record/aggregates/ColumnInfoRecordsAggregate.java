@@ -520,4 +520,12 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 		}
 		return result;
 	}
+	public int getOutlineLevel(int columnIndex) {
+	    ColumnInfoRecord ci = findColumnInfo(columnIndex);
+	    if (ci != null) {
+            return ci.getOutlineLevel();
+	    } else {
+	        return 0;
+	    }
+	}
 }

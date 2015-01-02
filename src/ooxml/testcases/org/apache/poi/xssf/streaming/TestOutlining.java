@@ -19,11 +19,18 @@
 
 package org.apache.poi.xssf.streaming;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public final class TestOutlining extends TestCase {
 	public void testSetRowGroupCollapsed() throws Exception {
-
 		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
 		wb2.setCompressTempFiles(true);
 		SXSSFSheet sheet2 = (SXSSFSheet) wb2.createSheet("new sheet");
@@ -45,10 +52,11 @@ public final class TestOutlining extends TestCase {
 		r = (SXSSFRow) sheet2.getRow(12);
 		assertNull(r.getHidden());
 		wb2.dispose();
+		
+		wb2.close();
 	}
 
 	public void testSetRowGroupCollapsedError() throws Exception {
-
 		SXSSFWorkbook wb2 = new SXSSFWorkbook(100);
 		wb2.setCompressTempFiles(true);
 		SXSSFSheet sheet2 = (SXSSFSheet) wb2.createSheet("new sheet");
@@ -98,5 +106,61 @@ public final class TestOutlining extends TestCase {
 		r = (SXSSFRow) sheet2.getRow(12);
 		assertNull(r.getHidden());
 		wb2.dispose();
+		
+		wb2.close();
 	}
+	
+    public void testOutlineGetters() throws IOException {
+        HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
+        HSSFSheet hssfSheet = hssfWorkbook.createSheet();
+        hssfSheet.createRow(0);
+        hssfSheet.createRow(1);
+        hssfSheet.createRow(2);
+        hssfSheet.createRow(3);
+        hssfSheet.createRow(4);
+        hssfSheet.groupRow(1, 3);
+        hssfSheet.groupRow(2, 3);
+
+        assertEquals(0, hssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(1, hssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(2, hssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(2, hssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(0, hssfSheet.getRow(4).getOutlineLevel());
+        hssfWorkbook.close();
+
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+        XSSFSheet xssfSheet = xssfWorkbook.createSheet();
+        xssfSheet.createRow(0);
+        xssfSheet.createRow(1);
+        xssfSheet.createRow(2);
+        xssfSheet.createRow(3);
+        xssfSheet.createRow(4);
+        xssfSheet.groupRow(1, 3);
+        xssfSheet.groupRow(2, 3);
+
+        assertEquals(0, xssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(1, xssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(2, xssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(2, xssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(0, xssfSheet.getRow(4).getOutlineLevel());
+        xssfWorkbook.close();
+
+        SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+        Sheet sxssfSheet = sxssfWorkbook.createSheet();
+        sxssfSheet.createRow(0);
+        sxssfSheet.createRow(1);
+        sxssfSheet.createRow(2);
+        sxssfSheet.createRow(3);
+        sxssfSheet.createRow(4);
+        sxssfSheet.groupRow(1, 3);
+        sxssfSheet.groupRow(2, 3);
+
+        assertEquals(0, sxssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(1, sxssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(2, sxssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(2, sxssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(4).getOutlineLevel());
+        sxssfWorkbook.dispose();
+        sxssfWorkbook.close();
+    }
 }

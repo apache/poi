@@ -268,9 +268,8 @@ public final class HSSFRow implements Row {
      * Returns the rows outline level. Increased as you
      *  put it into more groups (outlines), reduced as
      *  you take it out of them.
-     * TODO - Should this really be public?
      */
-    protected int getOutlineLevel() {
+    public int getOutlineLevel() {
         return row.getOutlineLevel();
     }
 

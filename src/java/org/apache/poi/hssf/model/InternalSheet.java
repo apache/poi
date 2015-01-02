@@ -1667,4 +1667,8 @@ public final class InternalSheet {
         temp.toArray(result);
         return result;
     }
+    
+    public int getColumnOutlineLevel(int columnIndex) {
+        return _columnInfos.getOutlineLevel(columnIndex);
+    }
 }

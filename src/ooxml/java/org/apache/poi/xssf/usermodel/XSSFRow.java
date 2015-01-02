@@ -513,4 +513,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
         setRowNum(rownum);
     }
+
+    public int getOutlineLevel() {
+        return _row.getOutlineLevel();
+    }
 }
