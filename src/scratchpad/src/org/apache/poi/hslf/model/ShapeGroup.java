@@ -100,9 +100,7 @@ public class ShapeGroup extends Shape{
      */
     public void setAnchor(java.awt.Rectangle anchor){
 
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
-
-        EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
+        EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         //hack. internal variable EscherClientAnchorRecord.shortRecord can be
         //initialized only in fillFields(). We need to set shortRecord=false;
         byte[] header = new byte[16];
@@ -116,7 +114,7 @@ public class ShapeGroup extends Shape{
         clientAnchor.setDx1((short)((anchor.width + anchor.x)*MASTER_DPI/POINT_DPI));
         clientAnchor.setRow1((short)((anchor.height + anchor.y)*MASTER_DPI/POINT_DPI));
 
-        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
+        EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
 
         spgr.setRectX1(anchor.x*MASTER_DPI/POINT_DPI);
         spgr.setRectY1(anchor.y*MASTER_DPI/POINT_DPI);
@@ -131,8 +129,7 @@ public class ShapeGroup extends Shape{
      * @param anchor the coordinate space of this group
      */
     public void setCoordinates(Rectangle2D anchor){
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
-        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
+        EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
 
         int x1 = (int)Math.round(anchor.getX()*MASTER_DPI/POINT_DPI);
         int y1 = (int)Math.round(anchor.getY()*MASTER_DPI/POINT_DPI);
@@ -153,8 +150,7 @@ public class ShapeGroup extends Shape{
      * @return the coordinate space of this group
      */
     public Rectangle2D getCoordinates(){
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
-        EscherSpgrRecord spgr = (EscherSpgrRecord)getEscherChild(spContainer, EscherSpgrRecord.RECORD_ID);
+        EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
 
         Rectangle2D.Float anchor = new Rectangle2D.Float();
         anchor.x = (float)spgr.getRectX1()*POINT_DPI/MASTER_DPI;
@@ -237,12 +233,11 @@ public class ShapeGroup extends Shape{
      * @return the anchor of this shape group
      */
     public Rectangle2D getAnchor2D(){
-        EscherContainerRecord spContainer = (EscherContainerRecord)_escherContainer.getChild(0);
-        EscherClientAnchorRecord clientAnchor = (EscherClientAnchorRecord)getEscherChild(spContainer, EscherClientAnchorRecord.RECORD_ID);
+        EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
         Rectangle2D.Float anchor = new Rectangle2D.Float();
         if(clientAnchor == null){
             logger.log(POILogger.INFO, "EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
-            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(spContainer, EscherChildAnchorRecord.RECORD_ID);
+            EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             anchor = new Rectangle2D.Float(
                 (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
                 (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
@@ -266,8 +261,7 @@ public class ShapeGroup extends Shape{
      * @return type of the shape.
      */
     public int getShapeType(){
-        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
-        EscherSpRecord spRecord = groupInfoContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return spRecord.getOptions() >> 4;
     }
 
@@ -290,5 +284,11 @@ public class ShapeGroup extends Shape{
         }
 
         graphics.setTransform(at);
+    }
+
+    @Override
+    public <T extends EscherRecord> T getEscherChild(int recordId){
+        EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
+        return groupInfoContainer.getChildById((short)recordId);
     }
 }

@@ -37,9 +37,14 @@ import java.util.Set;
 import junit.framework.AssertionFailedError;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherArrayProperty;
+import org.apache.poi.ddf.EscherColorRef;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
+import org.apache.poi.hslf.model.AutoShape;
 import org.apache.poi.hslf.model.Background;
 import org.apache.poi.hslf.model.Fill;
 import org.apache.poi.hslf.model.HeadersFooters;
@@ -59,7 +64,9 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.Units;
 import org.junit.Test;
 
 /**
@@ -621,6 +628,38 @@ public final class TestBugs {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             slideShow.write(bos);
             bos.close();
+        } finally {
+            inputStream.close();
+        }
+    }
+    
+    @Test
+    public void bug46441() throws Exception {
+        InputStream inputStream = new FileInputStream(_slTests.getFile("bug46441.ppt"));
+        try {
+            SlideShow slideShow = new SlideShow(inputStream);
+            AutoShape as = (AutoShape)slideShow.getSlides()[0].getShapes()[0];
+            EscherOptRecord opt = as.getEscherOptRecord();
+            EscherArrayProperty ep = Shape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
+            double exp[][] = {
+                // r, g, b, position
+                { 94, 158, 255, 0 },
+                { 133, 194, 255, 0.399994 },
+                { 196, 214, 235, 0.699997 },
+                { 255, 235, 250, 1 }                    
+            };
+            
+            int i = 0;
+            for (byte data[] : ep) {
+                EscherColorRef ecr = new EscherColorRef(data, 0, 4);
+                int rgb[] = ecr.getRGB();
+                double pos = Units.fixedPointToDecimal(LittleEndian.getInt(data, 4));
+                assertEquals((int)exp[i][0], rgb[0]);
+                assertEquals((int)exp[i][1], rgb[1]);
+                assertEquals((int)exp[i][2], rgb[2]);
+                assertEquals(exp[i][3], pos, 0.01);
+                i++;
+            }
         } finally {
             inputStream.close();
         }

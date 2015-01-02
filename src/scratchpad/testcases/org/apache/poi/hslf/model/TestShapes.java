@@ -17,38 +17,60 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.ddf.*;
-import org.apache.poi.POIDataSamples;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test drawing shapes via Graphics2D
  *
  * @author Yegor Kozlov
  */
-public final class TestShapes extends TestCase {
+public final class TestShapes {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     private SlideShow ppt;
     private SlideShow pptB;
 
-    protected void setUp() throws Exception {
-		ppt = new SlideShow(_slTests.openResourceAsStream("empty.ppt"));
-
-		pptB = new SlideShow(_slTests.openResourceAsStream("empty_textbox.ppt"));
+    @Before
+    public void setUp() throws Exception {
+        InputStream is1 = null, is2 = null;
+        try {
+            is1 = _slTests.openResourceAsStream("empty.ppt");
+            ppt = new SlideShow(is1);
+            is2 = _slTests.openResourceAsStream("empty_textbox.ppt");
+            pptB = new SlideShow(is2);
+        } finally {
+            is1.close();
+            is2.close();
+        }
     }
 
-    public void testGraphics() throws Exception {
+    @Test
+    public void graphics() throws Exception {
         Slide slide = ppt.createSlide();
 
         Line line = new Line();
@@ -92,7 +114,8 @@ public final class TestShapes extends TestCase {
      * Verify that we can read TextBox shapes
      * @throws Exception
      */
-    public void testTextBoxRead() throws Exception {
+    @Test
+    public void textBoxRead() throws Exception {
         ppt = new SlideShow(_slTests.openResourceAsStream("with_textbox.ppt"));
         Slide sl = ppt.getSlides()[0];
         Shape[] sh = sl.getShapes();
@@ -127,7 +150,8 @@ public final class TestShapes extends TestCase {
      * Verify that we can add TextBox shapes to a slide
      * and set some of the style attributes
      */
-    public void testTextBoxWriteBytes() throws Exception {
+    @Test
+    public void textBoxWriteBytes() throws Exception {
         ppt = new SlideShow();
         Slide sl = ppt.createSlide();
         RichTextRun rt;
@@ -180,7 +204,8 @@ public final class TestShapes extends TestCase {
     /**
      * Test with an empty text box
      */
-    public void testEmptyTextBox() {
+    @Test
+    public void emptyTextBox() {
     	assertEquals(2, pptB.getSlides().length);
     	Slide s1 = pptB.getSlides()[0];
     	Slide s2 = pptB.getSlides()[1];
@@ -194,7 +219,8 @@ public final class TestShapes extends TestCase {
      * If you iterate over text shapes in a slide and collect them in a set
      * it must be the same as returned by Slide.getTextRuns().
      */
-    public void testTextBoxSet() throws Exception {
+    @Test
+    public void textBoxSet() throws Exception {
         textBoxSet("with_textbox.ppt");
         textBoxSet("basic_test_ppt_file.ppt");
         textBoxSet("next_test_ppt_file.ppt");
@@ -207,13 +233,13 @@ public final class TestShapes extends TestCase {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(filename));
         Slide[] sl = ppt.getSlides();
         for (int k = 0; k < sl.length; k++) {
-            ArrayList lst1 = new ArrayList();
+            ArrayList<String> lst1 = new ArrayList<String>();
             TextRun[] txt = sl[k].getTextRuns();
             for (int i = 0; i < txt.length; i++) {
                 lst1.add(txt[i].getText());
             }
 
-            ArrayList lst2 = new ArrayList();
+            ArrayList<String> lst2 = new ArrayList<String>();
             Shape[] sh = sl[k].getShapes();
             for (int i = 0; i < sh.length; i++) {
                 if (sh[i] instanceof TextShape){
@@ -229,7 +255,8 @@ public final class TestShapes extends TestCase {
     /**
      * Test adding shapes to <code>ShapeGroup</code>
      */
-    public void testShapeGroup() throws Exception {
+    @Test
+    public void shapeGroup() throws Exception {
         SlideShow ppt = new SlideShow();
 
         Slide slide = ppt.createSlide();
@@ -280,7 +307,8 @@ public final class TestShapes extends TestCase {
     /**
      * Test functionality of Sheet.removeShape(Shape shape)
      */
-    public void testRemoveShapes() throws IOException {
+    @Test
+    public void removeShapes() throws IOException {
         String file = "with_textbox.ppt";
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
         Slide sl = ppt.getSlides()[0];
@@ -304,21 +332,23 @@ public final class TestShapes extends TestCase {
         assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
     }
 
-    public void testLineWidth() {
+    @Test
+    public void lineWidth() {
         SimpleShape sh = new AutoShape(ShapeTypes.RightTriangle);
 
-        EscherOptRecord opt = (EscherOptRecord)SimpleShape.getEscherChild(sh.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty prop = (EscherSimpleProperty)SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        EscherOptRecord opt = sh.getEscherOptRecord();
+        EscherSimpleProperty prop = SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         assertNull(prop);
-        assertEquals(SimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth());
+        assertEquals(SimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth(), 0);
 
         sh.setLineWidth(1.0);
-        prop = (EscherSimpleProperty)SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        prop = SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         assertNotNull(prop);
-        assertEquals(1.0, sh.getLineWidth());
+        assertEquals(1.0, sh.getLineWidth(), 0);
     }
 
-    public void testShapeId() {
+    @Test
+    public void shapeId() {
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
         Shape shape = null;
@@ -367,7 +397,8 @@ public final class TestShapes extends TestCase {
         assertEquals(numClusters + 1, dgg.getNumIdClusters());
     }
 
-    public void testLineColor() throws IOException {
+    @Test
+    public void lineColor() throws IOException {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("51731.ppt"));
         Shape[] shape = ppt.getSlides()[0].getShapes();
 
@@ -384,11 +415,11 @@ public final class TestShapes extends TestCase {
         TextShape sh3 = (TextShape)shape[2];
         assertEquals("Text in a black border", sh3.getText());
         assertEquals(Color.black, sh3.getLineColor());
-        assertEquals(0.75, sh3.getLineWidth());
+        assertEquals(0.75, sh3.getLineWidth(), 0);
 
         TextShape sh4 = (TextShape)shape[3];
         assertEquals("Border width is 5 pt", sh4.getText());
         assertEquals(Color.black, sh4.getLineColor());
-        assertEquals(5.0, sh4.getLineWidth());
+        assertEquals(5.0, sh4.getLineWidth(), 0);
     }
 }

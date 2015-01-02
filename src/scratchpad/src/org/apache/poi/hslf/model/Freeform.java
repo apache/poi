@@ -179,11 +179,11 @@ public final class Freeform extends AutoShape {
         EscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
 
-        EscherArrayProperty verticesProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES + 0x4000));
-        if(verticesProp == null) verticesProp = (EscherArrayProperty)getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp = getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__VERTICES + 0x4000));
+        if(verticesProp == null) verticesProp = getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
 
-        EscherArrayProperty segmentsProp = (EscherArrayProperty)getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__SEGMENTINFO + 0x4000));
-        if(segmentsProp == null) segmentsProp = (EscherArrayProperty)getEscherProperty(opt, EscherProperties.GEOMETRY__SEGMENTINFO);
+        EscherArrayProperty segmentsProp = getEscherProperty(opt, (short)(EscherProperties.GEOMETRY__SEGMENTINFO + 0x4000));
+        if(segmentsProp == null) segmentsProp = getEscherProperty(opt, EscherProperties.GEOMETRY__SEGMENTINFO);
 
         //sanity check
         if(verticesProp == null) {

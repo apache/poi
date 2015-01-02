@@ -40,4 +40,19 @@ public class Units {
     public static double toPoints(long emu){
         return (double)emu/EMU_PER_POINT;
     }
+    
+    /**
+     * Converts a value of type FixedPoint to a decimal number
+     *
+     * @param fixedPoint
+     * @return decimal number
+     * 
+     * @see <a href="http://msdn.microsoft.com/en-us/library/dd910765(v=office.12).aspx">[MS-OSHARED] - 2.2.1.6 FixedPoint</a>
+     */
+    public static double fixedPointToDecimal(int fixedPoint) {
+        int i = (fixedPoint >> 16);
+        int f = (fixedPoint >> 0) & 0xFFFF;
+        double decimal = (i + f/65536.0);
+        return decimal;
+    }
 }
