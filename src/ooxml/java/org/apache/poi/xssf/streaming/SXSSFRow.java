@@ -58,7 +58,7 @@ public class SXSSFRow implements Row
         return _height!=-1;
     }
 
-    int getOutlineLevel(){
+    public int getOutlineLevel(){
         return _outlineLevel;
     }
     void setOutlineLevel(int level){

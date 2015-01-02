@@ -234,4 +234,11 @@ public interface Row extends Iterable<Cell> {
     public static final MissingCellPolicy RETURN_BLANK_AS_NULL = new MissingCellPolicy();
     /** A new, blank cell is created for missing cells. Blank cells are returned as normal */
     public static final MissingCellPolicy CREATE_NULL_AS_BLANK = new MissingCellPolicy();
+    
+    /**
+     * Returns the rows outline level. Increased as you
+     *  put it into more groups (outlines), reduced as
+     *  you take it out of them.
+     */
+    public int getOutlineLevel();
 }

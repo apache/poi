@@ -1053,5 +1053,11 @@ public interface Sheet extends Iterable<Row> {
      *        columns for the Sheet, or null.
      */
     void setRepeatingColumns(CellRangeAddress columnRangeRef);
-
+    
+    /**
+     * Returns the column outline level. Increased as you
+     *  put it into more groups (outlines), reduced as
+     *  you take it out of them.
+     */
+    int getColumnOutlineLevel(int columnIndex);
 }

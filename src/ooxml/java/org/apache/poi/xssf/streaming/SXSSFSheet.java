@@ -1477,4 +1477,8 @@ public class SXSSFSheet implements Sheet, Cloneable
     boolean dispose() {
         return _writer.dispose();
     }
+
+    public int getColumnOutlineLevel(int columnIndex) {
+        return _sh.getColumnOutlineLevel(columnIndex);
+    }
 }

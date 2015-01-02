@@ -3821,4 +3821,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         }
         return tables;
     }
+    
+    public int getColumnOutlineLevel(int columnIndex) {
+        CTCol col = columnHelper.getColumn(columnIndex, false);
+        if (col == null) {
+            return 0;
+        }
+        return col.getOutlineLevel();
+    }
 }
