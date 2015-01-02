@@ -65,7 +65,9 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class TestAllFiles {
-	// map file extensions to the actual mappers
+	private static final File ROOT_DIR = new File("test-data");
+
+    // map file extensions to the actual mappers
 	private static final Map<String, FileHandler> HANDLERS = new HashMap<String, FileHandler>();
 	static {
 		// Excel
@@ -136,6 +138,7 @@ public class TestAllFiles {
 		HANDLERS.put(".wav", new NullFileHandler());
 		HANDLERS.put(".pfx", new NullFileHandler());
 		HANDLERS.put(".xml", new NullFileHandler());
+		HANDLERS.put(".csv", new NullFileHandler());
 		
 		// map some files without extension
 		HANDLERS.put("spreadsheet/BigSSTRecord", new NullFileHandler());
@@ -223,7 +226,7 @@ public class TestAllFiles {
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir(new File("test-data"));
+        scanner.setBasedir(ROOT_DIR);
         scanner.setExcludes(new String[] { "**/.svn/**" });
         
         scanner.scan();
@@ -248,7 +251,7 @@ public class TestAllFiles {
     @Test
     public void testAllFiles() throws Exception {
 		assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
-		InputStream stream = new BufferedInputStream(new FileInputStream(new File("test-data", file)),100);
+		InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)),100);
 		try {
 			handler.handleFile(stream);
 			
@@ -263,7 +266,7 @@ public class TestAllFiles {
 			stream.close();
 		}
 	}
-	
+
 	private static String getExtension(String file) {
 		int pos = file.lastIndexOf('.');
 		if(pos == -1 || pos == file.length()-1) {
