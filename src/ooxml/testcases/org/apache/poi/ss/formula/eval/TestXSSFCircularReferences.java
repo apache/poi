@@ -17,30 +17,15 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
- * Collects all tests the package <tt>org.apache.poi.hssf.record.formula.eval</tt>.
+ * Tests XSSFFormulaEvaluator for its handling of cell formula circular references.
  *
  * @author Josh Micich
  */
-public class AllFormulaEvalTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllFormulaEvalTests.class.getName());
-		result.addTestSuite(TestAreaEval.class);
-		result.addTestSuite(TestHSSFCircularReferences.class);
-		result.addTestSuite(TestDivideEval.class);
-		result.addTestSuite(TestEqualEval.class);
-		result.addTestSuite(TestExternalFunction.class);
-		result.addTestSuite(TestFormulaBugs.class);
-		result.addTestSuite(TestFormulasFromSpreadsheet.class);
-		result.addTestSuite(TestMinusZeroResult.class);
-		result.addTestSuite(TestMissingArgEval.class);
-		result.addTestSuite(TestPercentEval.class);
-		result.addTestSuite(TestRangeEval.class);
-		result.addTestSuite(TestUnaryPlusEval.class);
-		return result;
-	}
+public final class TestXSSFCircularReferences extends BaseTestCircularReferences {
+	public TestXSSFCircularReferences() {
+        super(XSSFITestDataProvider.instance);
+    }
 }

@@ -18,9 +18,11 @@
 package org.apache.poi.hssf;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -32,24 +34,34 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     private HSSFITestDataProvider(){
         // enforce singleton
     }
+    
     public HSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
+    
     public HSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof HSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of HSSFWorkbook");
         }
         return HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)original);
     }
+    
     public HSSFWorkbook createWorkbook(){
         return new HSSFWorkbook();
     }
+    
+    public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
+        return new HSSFFormulaEvaluator((HSSFWorkbook) wb);
+    }
+
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
+    
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL97;
     }
+    
     public String getStandardFileNameExtension() {
         return "xls";
     }

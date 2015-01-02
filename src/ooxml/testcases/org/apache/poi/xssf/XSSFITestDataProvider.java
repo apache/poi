@@ -20,7 +20,9 @@ package org.apache.poi.xssf;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -32,24 +34,34 @@ public final class XSSFITestDataProvider implements ITestDataProvider {
     private XSSFITestDataProvider() {
         // enforce singleton
     }
+
     public XSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return XSSFTestDataSamples.openSampleWorkbook(sampleFileName);
     }
+
     public XSSFWorkbook writeOutAndReadBack(Workbook original) {
         if(!(original instanceof XSSFWorkbook)) {
             throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
         }
         return XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)original);
     }
+
     public XSSFWorkbook createWorkbook(){
         return new XSSFWorkbook();
     }
+    
+    public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
+        return new XSSFFormulaEvaluator((XSSFWorkbook) wb);
+    }
+
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
+
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL2007;
     }
+
     public String getStandardFileNameExtension() {
         return "xlsx";
     }
