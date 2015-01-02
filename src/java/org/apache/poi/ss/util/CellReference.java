@@ -133,10 +133,10 @@ public class CellReference {
 		// TODO - "-1" is a special value being temporarily used for whole row and whole column area references.
 		// so these checks are currently N.Q.R.
 		if(pRow < -1) {
-			throw new IllegalArgumentException("row index may not be negative");
+			throw new IllegalArgumentException("row index may not be negative, but had " + pRow);
 		}
 		if(pCol < -1) {
-			throw new IllegalArgumentException("column index may not be negative");
+			throw new IllegalArgumentException("column index may not be negative, but had " + pCol);
 		}
 		_sheetName = pSheetName;
 		_rowIndex=pRow;
