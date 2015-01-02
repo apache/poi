@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss;
 
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -44,6 +45,15 @@ public interface ITestDataProvider {
      * @return an instance of Workbook
      */
     Workbook createWorkbook();
+
+    /**
+     * Creates the corresponding {@link FormulaEvaluator} for the
+     * type of Workbook handled by this Provider. 
+     *
+     * @param wb The workbook to base the formula evaluator on.
+     * @return A new instance of a matching type of formula evaluator. 
+     */
+    FormulaEvaluator createFormulaEvaluator(Workbook wb);
 
     /**
      * Opens a sample file from the standard HSSF test data directory

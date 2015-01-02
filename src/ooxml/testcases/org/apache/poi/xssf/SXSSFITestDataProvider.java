@@ -19,18 +19,20 @@
 
 package org.apache.poi.xssf;
 
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * @author Yegor Kozlov
@@ -43,6 +45,7 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
     private SXSSFITestDataProvider() {
         // enforce singleton
     }
+
     public Workbook openSampleWorkbook(String sampleFileName) {
     	XSSFWorkbook xssfWorkbook = XSSFITestDataProvider.instance.openSampleWorkbook(sampleFileName);
         SXSSFWorkbook swb = new SXSSFWorkbook(xssfWorkbook);
@@ -66,17 +69,25 @@ public final class SXSSFITestDataProvider implements ITestDataProvider {
         }
         return result;
     }
+
     public SXSSFWorkbook createWorkbook(){
         SXSSFWorkbook wb = new SXSSFWorkbook();
         instances.add(wb);
         return wb;
     }
+    
+    public FormulaEvaluator createFormulaEvaluator(Workbook wb) {
+        return new XSSFFormulaEvaluator(((SXSSFWorkbook) wb).getXSSFWorkbook());
+    }
+
     public byte[] getTestDataFileContent(String fileName) {
         return POIDataSamples.getSpreadSheetInstance().readFile(fileName);
     }
+
     public SpreadsheetVersion getSpreadsheetVersion(){
         return SpreadsheetVersion.EXCEL2007;
     }
+
     public String getStandardFileNameExtension() {
         return "xlsx";
     }
