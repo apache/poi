@@ -123,7 +123,7 @@ public final class ActiveXShape extends Picture {
 
     public int getControlIndex(){
         int idx = -1;
-        OEShapeAtom oe = (OEShapeAtom)getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
+        OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
         if(oe != null) idx = oe.getOptions();
         return idx;
     }

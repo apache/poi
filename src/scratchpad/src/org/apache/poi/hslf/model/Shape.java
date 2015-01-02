@@ -21,6 +21,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.Units;
 
 import java.util.*;
 import java.awt.*;
@@ -129,7 +130,7 @@ public abstract class Shape {
      * @see org.apache.poi.hslf.record.RecordTypes
      */
     public int getShapeType(){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return spRecord.getShapeType();
     }
 
@@ -138,7 +139,7 @@ public abstract class Shape {
      * @see org.apache.poi.hslf.record.RecordTypes
      */
     public void setShapeType(int type){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         spRecord.setShapeType( (short) type );
         spRecord.setVersion( (short) 0x2 );
     }
@@ -161,15 +162,15 @@ public abstract class Shape {
      * @return the anchor of this shape
      */
     public Rectangle2D getAnchor2D(){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         Rectangle2D anchor=null;
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
-            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
+            EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
             if(rec == null){
                 logger.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
-                EscherClientAnchorRecord clrec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
+                EscherClientAnchorRecord clrec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
                 anchor = new java.awt.Rectangle();
                 anchor = new Rectangle2D.Float(
                     (float)clrec.getCol1()*POINT_DPI/MASTER_DPI,
@@ -187,7 +188,7 @@ public abstract class Shape {
             }
         }
         else {
-            EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
+            EscherClientAnchorRecord rec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
             anchor = new java.awt.Rectangle();
             anchor = new Rectangle2D.Float(
                 (float)rec.getCol1()*POINT_DPI/MASTER_DPI,
@@ -210,17 +211,17 @@ public abstract class Shape {
      * @param anchor new anchor
      */
     public void setAnchor(Rectangle2D anchor){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
-            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(_escherContainer, EscherChildAnchorRecord.RECORD_ID);
+            EscherChildAnchorRecord rec = (EscherChildAnchorRecord)getEscherChild(EscherChildAnchorRecord.RECORD_ID);
             rec.setDx1((int)(anchor.getX()*MASTER_DPI/POINT_DPI));
             rec.setDy1((int)(anchor.getY()*MASTER_DPI/POINT_DPI));
             rec.setDx2((int)((anchor.getWidth() + anchor.getX())*MASTER_DPI/POINT_DPI));
             rec.setDy2((int)((anchor.getHeight() + anchor.getY())*MASTER_DPI/POINT_DPI));
         }
         else {
-            EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(_escherContainer, EscherClientAnchorRecord.RECORD_ID);
+            EscherClientAnchorRecord rec = (EscherClientAnchorRecord)getEscherChild(EscherClientAnchorRecord.RECORD_ID);
             rec.setFlag((short)(anchor.getY()*MASTER_DPI/POINT_DPI));
             rec.setCol1((short)(anchor.getX()*MASTER_DPI/POINT_DPI));
             rec.setDx1((short)(((anchor.getWidth() + anchor.getX())*MASTER_DPI/POINT_DPI)));
@@ -246,29 +247,21 @@ public abstract class Shape {
      *
      * @return escher record or <code>null</code> if not found.
      */
-    public static EscherRecord getEscherChild(EscherContainerRecord owner, int recordId){
-        for ( Iterator<EscherRecord> iterator = owner.getChildIterator(); iterator.hasNext(); )
-        {
-            EscherRecord escherRecord = iterator.next();
-            if (escherRecord.getRecordId() == recordId)
-                return escherRecord;
-        }
-        return null;
+    public static <T extends EscherRecord> T getEscherChild(EscherContainerRecord owner, int recordId){
+        return owner.getChildById((short)recordId);
     }
 
+    public <T extends EscherRecord> T getEscherChild(int recordId){
+        return _escherContainer.getChildById((short)recordId);
+    }
+    
     /**
      * Returns  escher property by id.
      *
      * @return escher property or <code>null</code> if not found.
      */
-     public static EscherProperty getEscherProperty(EscherOptRecord opt, int propId){
-        if(opt != null) for ( Iterator iterator = opt.getEscherProperties().iterator(); iterator.hasNext(); )
-        {
-            EscherProperty prop = (EscherProperty) iterator.next();
-            if (prop.getPropertyNumber() == propId)
-                return prop;
-        }
-        return null;
+     public static <T extends EscherProperty> T getEscherProperty(EscherOptRecord opt, int propId){
+        return opt.lookup(propId);
     }
 
     /**
@@ -279,11 +272,11 @@ public abstract class Shape {
      * @param value     value of the property. If value = -1 then the property is removed.
      */
      public static void setEscherProperty(EscherOptRecord opt, short propId, int value){
-        java.util.List props = opt.getEscherProperties();
-        for ( Iterator iterator = props.iterator(); iterator.hasNext(); ) {
-            EscherProperty prop = (EscherProperty) iterator.next();
-            if (prop.getId() == propId){
+        java.util.List<EscherProperty> props = opt.getEscherProperties();
+        for ( Iterator<EscherProperty> iterator = props.iterator(); iterator.hasNext(); ) {
+            if (iterator.next().getPropertyNumber() == propId){
                 iterator.remove();
+                break;
             }
         }
         if (value != -1) {
@@ -310,7 +303,7 @@ public abstract class Shape {
      */
    public int getEscherProperty(short propId){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
+        EscherSimpleProperty prop = getEscherProperty(opt, propId);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
@@ -321,7 +314,7 @@ public abstract class Shape {
      */
    public int getEscherProperty(short propId, int defaultValue){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propId);
+        EscherSimpleProperty prop = getEscherProperty(opt, propId);
         return prop == null ? defaultValue : prop.getPropertyValue();
     }
 
@@ -365,32 +358,30 @@ public abstract class Shape {
 
     Color getColor(short colorProperty, short opacityProperty, int defaultColor){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty p = (EscherSimpleProperty)getEscherProperty(opt, colorProperty);
+        EscherSimpleProperty p = getEscherProperty(opt, colorProperty);
         if(p == null && defaultColor == -1) return null;
 
-        int val = p == null ? defaultColor : p.getPropertyValue();
+        int val = (p == null) ? defaultColor : p.getPropertyValue();
 
-        int a = (val >> 24) & 0xFF;
-        int b = (val >> 16) & 0xFF;
-        int g = (val >> 8) & 0xFF;
-        int r = (val >> 0) & 0xFF;
-
-        boolean fPaletteIndex = (a & 1) != 0;
-        boolean fPaletteRGB = (a & (1 << 1)) != 0;
-        boolean fSystemRGB = (a & (1 << 2)) != 0;
-        boolean fSchemeIndex = (a & (1 << 3)) != 0;
-        boolean fSysIndex = (a & (1 << 4)) != 0;
+        EscherColorRef ecr = new EscherColorRef(val);
+        
+        boolean fPaletteIndex = ecr.hasPaletteIndexFlag();
+        boolean fPaletteRGB = ecr.hasPaletteRGBFlag();
+        boolean fSystemRGB = ecr.hasSystemRGBFlag();
+        boolean fSchemeIndex = ecr.hasSchemeIndexFlag();
+        boolean fSysIndex = ecr.hasSysIndexFlag();
+        
+        int rgb[] = ecr.getRGB();
 
         Sheet sheet = getSheet();
-        if (fSchemeIndex && sheet != null)
-        {
+        if (fSchemeIndex && sheet != null) {
             //red is the index to the color scheme
             ColorSchemeAtom ca = sheet.getColorScheme();
-            int schemeColor = ca.getColor(r);
+            int schemeColor = ca.getColor(ecr.getSchemeIndex());
 
-            r = (schemeColor >> 0) & 0xFF;
-            g = (schemeColor >> 8) & 0xFF;
-            b = (schemeColor >> 16) & 0xFF;
+            rgb[0] = (schemeColor >> 0) & 0xFF;
+            rgb[1] = (schemeColor >> 8) & 0xFF;
+            rgb[2] = (schemeColor >> 16) & 0xFF;
         } else if (fPaletteIndex){
             //TODO
         } else if (fPaletteRGB){
@@ -401,13 +392,11 @@ public abstract class Shape {
             //TODO
         }
 
-        EscherSimpleProperty op = (EscherSimpleProperty)getEscherProperty(opt, opacityProperty);
+        EscherSimpleProperty op = getEscherProperty(opt, opacityProperty);
         int defaultOpacity = 0x00010000;
-        int opacity = op == null ? defaultOpacity : op.getPropertyValue();
-        int i = (opacity >> 16);
-        int f = (opacity >> 0) & 0xFFFF ;
-        double alpha = (i + f/65536.0)*255;
-        return new Color(r, g, b, (int)alpha);
+        int opacity = (op == null) ? defaultOpacity : op.getPropertyValue();
+        double alpha = Units.fixedPointToDecimal(opacity)*255.0;
+        return new Color(rgb[0], rgb[1], rgb[2], (int)alpha);
     }
 
     Color toRGB(int val){
@@ -436,7 +425,7 @@ public abstract class Shape {
      * @return id for the shape.
      */
     public int getShapeId(){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return spRecord == null ? 0 : spRecord.getShapeId();
     }
 
@@ -446,7 +435,7 @@ public abstract class Shape {
      * @param id of the shape
      */
     public void setShapeId(int id){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         if(spRecord != null) spRecord.setShapeId(id);
     }
 
@@ -484,7 +473,48 @@ public abstract class Shape {
         return getLogicalAnchor2D();
     }
     
-    protected EscherOptRecord getEscherOptRecord() {
-        return (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
+    public EscherOptRecord getEscherOptRecord() {
+        return getEscherChild(EscherOptRecord.RECORD_ID);
+    }
+    
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+     public boolean getFlipHorizontal(){
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
+        return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPHORIZ) != 0;
+    }
+
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @return whether the shape is vertically flipped
+     */
+    public boolean getFlipVertical(){
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
+        return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPVERT) != 0;
+    }
+
+    /**
+     * Rotation angle in degrees
+     *
+     * @return rotation angle in degrees
+     */
+    public int getRotation(){
+        int rot = getEscherProperty(EscherProperties.TRANSFORM__ROTATION);
+        int angle = (rot >> 16) % 360;
+
+        return angle;
+    }
+
+    /**
+     * Rotate this shape
+     *
+     * @param theta the rotation angle in degrees
+     */
+    public void setRotation(int theta){
+        setEscherProperty(EscherProperties.TRANSFORM__ROTATION, (theta << 16));
     }
 }

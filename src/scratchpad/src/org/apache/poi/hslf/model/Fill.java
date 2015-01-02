@@ -17,15 +17,20 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import java.awt.Color;
 import java.util.List;
 
-import java.awt.*;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Represents functionality provided by the 'Fill Effects' dialog in PowerPoint.
@@ -112,16 +117,16 @@ public final class Fill {
      * @return type of fill
      */
     public int getFillType(){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty prop = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
+        EscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty prop = Shape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
     }
 
     /**
      */
     protected void afterInsert(Sheet sh){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
             EscherBSERecord bse = getEscherBSERecord(idx);
@@ -138,12 +143,12 @@ public final class Fill {
         SlideShow ppt = sheet.getSlideShow();
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
             logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
         }
-        List lst = bstore.getChildRecords();
+        List<EscherRecord> lst = bstore.getChildRecords();
         return (EscherBSERecord)lst.get(idx-1);
     }
 
@@ -154,7 +159,7 @@ public final class Fill {
      * @param type type of the fill
      */
     public void setFillType(int type){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = shape.getEscherOptRecord();
         Shape.setEscherProperty(opt, EscherProperties.FILL__FILLTYPE, type);
     }
 
@@ -162,8 +167,8 @@ public final class Fill {
      * Foreground color
      */
     public Color getForegroundColor(){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
         if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
 
@@ -175,7 +180,7 @@ public final class Fill {
      * Foreground color
      */
     public void setForegroundColor(Color color){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
             Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
         }
@@ -190,8 +195,8 @@ public final class Fill {
      * Background color
      */
     public Color getBackgroundColor(){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
         if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
 
@@ -202,7 +207,7 @@ public final class Fill {
      * Background color
      */
     public void setBackgroundColor(Color color){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
             Shape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, -1);
         }
@@ -216,8 +221,8 @@ public final class Fill {
      * <code>PictureData</code> object used in a texture, pattern of picture fill.
      */
     public PictureData getPictureData(){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if (p == null) return null;
 
         SlideShow ppt = shape.getSheet().getSlideShow();
@@ -225,7 +230,7 @@ public final class Fill {
         Document doc = ppt.getDocumentRecord();
 
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
         java.util.List<EscherRecord> lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
@@ -249,7 +254,7 @@ public final class Fill {
      * @param idx 0-based index of the picture added to this ppt by <code>SlideShow.addPicture</code> method.
      */
     public void setPictureData(int idx){
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = shape.getEscherOptRecord();
         Shape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), idx);
         if( idx != 0 ) {
             if( shape.getSheet() != null ) {

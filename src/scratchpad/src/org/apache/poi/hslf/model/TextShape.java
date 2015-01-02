@@ -225,7 +225,7 @@ public abstract class TextShape extends SimpleShape {
 
     protected EscherTextboxWrapper getEscherTextboxWrapper(){
         if(_txtbox == null){
-            EscherTextboxRecord textRecord = (EscherTextboxRecord)Shape.getEscherChild(_escherContainer, EscherTextboxRecord.RECORD_ID);
+            EscherTextboxRecord textRecord = getEscherChild(EscherTextboxRecord.RECORD_ID);
             if(textRecord != null) _txtbox = new EscherTextboxWrapper(textRecord);
         }
         return _txtbox;
@@ -281,7 +281,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public int getVerticalAlignment(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
         int valign = TextShape.AnchorTop;
         if (prop == null){
             /**
@@ -352,7 +352,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public float getMarginBottom(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTBOTTOM);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTBOTTOM);
         int val = prop == null ? EMU_PER_INCH/20 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
     }
@@ -377,7 +377,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public float getMarginLeft(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTLEFT);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTLEFT);
         int val = prop == null ? EMU_PER_INCH/10 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
     }
@@ -402,7 +402,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public float getMarginRight(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTRIGHT);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTRIGHT);
         int val = prop == null ? EMU_PER_INCH/10 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
     }
@@ -426,7 +426,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public float getMarginTop(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTTOP);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTTOP);
         int val = prop == null ? EMU_PER_INCH/20 : prop.getPropertyValue();
         return (float)val/EMU_PER_POINT;
     }
@@ -450,7 +450,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public int getWordWrap(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__WRAPTEXT);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__WRAPTEXT);
         return prop == null ? WrapSquare : prop.getPropertyValue();
     }
 
@@ -469,7 +469,7 @@ public abstract class TextShape extends SimpleShape {
      */
     public int getTextId(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.TEXT__TEXTID);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTID);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
@@ -561,7 +561,7 @@ public abstract class TextShape extends SimpleShape {
                 logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
             }
         } else {
-            EscherSpRecord escherSpRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+            EscherSpRecord escherSpRecord = getEscherChild(EscherSpRecord.RECORD_ID);
             int shapeId = escherSpRecord.getShapeId();
             if(runs != null) for (int i = 0; i < runs.length; i++) {
                 if(runs[i].getShapeId() == shapeId){
@@ -593,7 +593,7 @@ public abstract class TextShape extends SimpleShape {
      * @return <code>OEPlaceholderAtom</code> or <code>null</code> if not found
      */
     public OEPlaceholderAtom getPlaceholderAtom(){
-        return (OEPlaceholderAtom)getClientDataRecord(RecordTypes.OEPlaceholderAtom.typeID);
+        return getClientDataRecord(RecordTypes.OEPlaceholderAtom.typeID);
     }
 
     /**

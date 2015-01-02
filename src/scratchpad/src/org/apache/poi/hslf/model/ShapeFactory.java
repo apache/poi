@@ -62,7 +62,7 @@ public final class ShapeFactory {
         if(opt != null){
             try {
                 EscherPropertyFactory f = new EscherPropertyFactory();
-                List props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
+                List<EscherProperty> props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
                 EscherSimpleProperty p = (EscherSimpleProperty)props.get(0);
                 if(p.getPropertyNumber() == 0x39F && p.getPropertyValue() == 1){
                     group = new Table(spContainer, parent);
@@ -91,8 +91,8 @@ public final class ShapeFactory {
                 break;
             case ShapeTypes.HostControl:
             case ShapeTypes.PictureFrame: {
-                InteractiveInfo info = (InteractiveInfo)getClientDataRecord(spContainer, RecordTypes.InteractiveInfo.typeID);
-                OEShapeAtom oes = (OEShapeAtom)getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
+                InteractiveInfo info = getClientDataRecord(spContainer, RecordTypes.InteractiveInfo.typeID);
+                OEShapeAtom oes = getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
                 if(info != null && info.getInteractiveInfoAtom() != null){
                     switch(info.getInteractiveInfoAtom().getAction()){
                         case InteractiveInfoAtom.ACTION_OLE:
@@ -115,7 +115,7 @@ public final class ShapeFactory {
                 shape = new Line(spContainer, parent);
                 break;
             case ShapeTypes.NotPrimitive: {
-                EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+                EscherOptRecord opt = Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
                 if(prop != null)
                     shape = new Freeform(spContainer, parent);
@@ -134,7 +134,8 @@ public final class ShapeFactory {
 
     }
 
-    protected static Record getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
+    @SuppressWarnings("unchecked")
+    protected static <T extends Record> T getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
         Record oep = null;
         for (Iterator<EscherRecord> it = spContainer.getChildIterator(); it.hasNext();) {
             EscherRecord obj = it.next();
@@ -143,12 +144,12 @@ public final class ShapeFactory {
                 Record[] records = Record.findChildRecords(data, 8, data.length - 8);
                 for (int j = 0; j < records.length; j++) {
                     if (records[j].getRecordType() == recordType) {
-                        return records[j];
+                        return (T)records[j];
                     }
                 }
             }
         }
-        return oep;
+        return (T)oep;
     }
 
 }

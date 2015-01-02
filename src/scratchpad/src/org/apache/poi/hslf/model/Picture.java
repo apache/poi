@@ -41,6 +41,7 @@ import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.Units;
 
 
 /**
@@ -120,7 +121,7 @@ public class Picture extends SimpleShape {
      */
     public int getPictureIndex(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
@@ -202,7 +203,7 @@ public class Picture extends SimpleShape {
         SlideShow ppt = getSheet().getSlideShow();
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
             logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
@@ -223,7 +224,7 @@ public class Picture extends SimpleShape {
      */
     public String getPictureName(){
         EscherOptRecord opt = getEscherOptRecord();
-        EscherComplexProperty prop = (EscherComplexProperty)getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
+        EscherComplexProperty prop = getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
         if (prop == null) return null;
         String name = StringUtil.getFromUnicodeLE(prop.getComplexData());
         return name.trim();
@@ -289,16 +290,11 @@ public class Picture extends SimpleShape {
     
     /**
      * @return the fractional property or 0 if not defined
-     *
-     * @see <a href="http://msdn.microsoft.com/en-us/library/dd910765(v=office.12).aspx">2.2.1.6 FixedPoint</a>
      */
     private static double getFractProp(EscherOptRecord opt, short propertyId) {
-        EscherSimpleProperty prop = (EscherSimpleProperty)getEscherProperty(opt, propertyId);
+        EscherSimpleProperty prop = getEscherProperty(opt, propertyId);
         if (prop == null) return 0;
         int fixedPoint = prop.getPropertyValue();
-        int i = (fixedPoint >> 16);
-        int f = (fixedPoint >> 0) & 0xFFFF;
-        double fp = i + f/65536.0;
-        return fp;
+        return Units.fixedPointToDecimal(fixedPoint);
     }
 }

@@ -17,17 +17,25 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
-import java.awt.*;
+import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.POIDataSamples;
+import org.junit.Test;
 
 
 /**
@@ -35,13 +43,14 @@ import org.apache.poi.POIDataSamples;
  *
  * @author Yegor Kozlov
  */
-public final class TestBackground extends TestCase {
+public final class TestBackground {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Default background for slide, shape and slide master.
      */
-    public void testDefaults() {
+    @Test
+    public void defaults() {
         SlideShow ppt = new SlideShow();
 
         assertEquals(Fill.FILL_SOLID, ppt.getSlidesMasters()[0].getBackground().getFill().getFillType());
@@ -57,7 +66,8 @@ public final class TestBackground extends TestCase {
     /**
      * Read fill information from an reference ppt file
      */
-    public void testReadBackground() throws Exception {
+    @Test
+    public void readBackground() throws Exception {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("backgrounds.ppt"));
         Fill fill;
         Shape shape;
@@ -88,7 +98,8 @@ public final class TestBackground extends TestCase {
     /**
      * Create a ppt with various fill effects
      */
-    public void testBackgroundPicture() throws Exception {
+    @Test
+    public void backgroundPicture() throws Exception {
         SlideShow ppt = new SlideShow();
         Slide slide;
         Fill fill;
@@ -191,8 +202,8 @@ public final class TestBackground extends TestCase {
     }
 
     private int getFillPictureRefCount(Shape shape, Fill fill) {
-        EscherOptRecord opt = (EscherOptRecord)Shape.getEscherChild(shape.getSpContainer(), EscherOptRecord.RECORD_ID);
-        EscherSimpleProperty p = (EscherSimpleProperty)Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
 
@@ -200,8 +211,8 @@ public final class TestBackground extends TestCase {
             SlideShow ppt = sheet.getSlideShow();
             Document doc = ppt.getDocumentRecord();
             EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-            EscherContainerRecord bstore = (EscherContainerRecord)Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
-            List lst = bstore.getChildRecords();
+            EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+            List<EscherRecord> lst = bstore.getChildRecords();
             return ((EscherBSERecord)lst.get(idx-1)).getRef();
         }
         return 0;

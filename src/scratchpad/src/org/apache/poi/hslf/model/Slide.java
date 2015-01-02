@@ -88,7 +88,7 @@ public final class Slide extends Sheet
 		// Grab text from SlideListWithTexts entries
 		int i=0;
 		for(i=0; i<textRuns.size(); i++) {
-			_runs[i] = (TextRun)textRuns.get(i);
+			_runs[i] = textRuns.get(i);
             _runs[i].setSheet(this);
 		}
 		// Grab text from slide's PPDrawing

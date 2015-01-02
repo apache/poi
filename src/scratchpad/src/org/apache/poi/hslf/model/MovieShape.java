@@ -116,10 +116,10 @@ public final class MovieShape extends Picture {
      * @param idx  the index of the movie
      */
     public void setMovieIndex(int idx){
-        OEShapeAtom oe = (OEShapeAtom)getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
+        OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
         oe.setOptions(idx);
 
-        AnimationInfo an = (AnimationInfo)getClientDataRecord(RecordTypes.AnimationInfo.typeID);
+        AnimationInfo an = getClientDataRecord(RecordTypes.AnimationInfo.typeID);
         if(an != null) {
             AnimationInfoAtom ai = an.getAnimationInfoAtom();
             ai.setDimColor(0x07000000);
@@ -131,7 +131,7 @@ public final class MovieShape extends Picture {
     }
 
     public void setAutoPlay(boolean flag){
-        AnimationInfo an = (AnimationInfo)getClientDataRecord(RecordTypes.AnimationInfo.typeID);
+        AnimationInfo an = getClientDataRecord(RecordTypes.AnimationInfo.typeID);
         if(an != null){
             an.getAnimationInfoAtom().setFlag(AnimationInfoAtom.Automatic, flag);
             updateClientData();
@@ -139,7 +139,7 @@ public final class MovieShape extends Picture {
     }
 
     public boolean  isAutoPlay(){
-        AnimationInfo an = (AnimationInfo)getClientDataRecord(RecordTypes.AnimationInfo.typeID);
+        AnimationInfo an = getClientDataRecord(RecordTypes.AnimationInfo.typeID);
         if(an != null){
             return an.getAnimationInfoAtom().getFlag(AnimationInfoAtom.Automatic);
         }
@@ -150,7 +150,7 @@ public final class MovieShape extends Picture {
      * @return UNC or local path to a video file
      */
     public String getPath(){
-        OEShapeAtom oe = (OEShapeAtom)getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
+        OEShapeAtom oe = getClientDataRecord(RecordTypes.OEShapeAtom.typeID);
         int idx = oe.getOptions();
 
         SlideShow ppt = getSheet().getSlideShow();

@@ -17,8 +17,11 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Escher array properties are the most wierd construction ever invented
@@ -26,7 +29,7 @@ import org.apache.poi.util.HexDump;
  *
  * @author Glen Stampoultzis (glens at superlinksoftware.com)
  */
-public final class EscherArrayProperty extends EscherComplexProperty {
+public final class EscherArrayProperty extends EscherComplexProperty implements Iterable<byte[]> {
     /**
      * The size of the header that goes at the
      *  start of the array, before the data
@@ -205,4 +208,24 @@ public final class EscherArrayProperty extends EscherComplexProperty {
         }
         return sizeOfElements;
     }
+
+    public Iterator<byte[]> iterator() {
+        return new Iterator<byte[]>(){
+            int idx = 0;
+            public boolean hasNext() {
+                return (idx < getNumberOfElementsInArray());
+            }
+            
+            public byte[] next() {
+                if (!hasNext()) throw new NoSuchElementException();
+                return getElement(idx++);
+            }
+            
+            public void remove() {
+                throw new UnsupportedOperationException("not yet implemented");
+            }
+        };
+    }
+    
+    
 }

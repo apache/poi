@@ -484,7 +484,7 @@ public abstract class Sheet {
                     placeholderId = oep.getPlaceholderId();
                 } else {
                     //special case for files saved in Office 2007
-                    RoundTripHFPlaceholder12 hldr = (RoundTripHFPlaceholder12)tx.getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
+                    RoundTripHFPlaceholder12 hldr = tx.getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
                     if(hldr != null) placeholderId = hldr.getPlaceholderId();
                 }
                 if(placeholderId == type){
