@@ -19,6 +19,8 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,7 +29,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Iterator;
 
-import junit.framework.Assert;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -194,7 +195,7 @@ public class UpdateEmbeddedDoc {
                     sheet = workbook.getSheetAt(SHEET_NUM);
                     row = sheet.getRow(ROW_NUM);
                     cell = row.getCell(CELL_NUM);
-                    Assert.assertEquals(cell.getNumericCellValue(), NEW_VALUE);
+                    assertEquals(cell.getNumericCellValue(), NEW_VALUE, 0.0001);
                 }
             }
         }

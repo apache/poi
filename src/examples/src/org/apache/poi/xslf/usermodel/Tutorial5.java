@@ -41,7 +41,7 @@ public class Tutorial5 {
         byte[] data = IOUtils.toByteArray(new FileInputStream(img));
         int pictureIndex = ppt.addPicture(data, XSLFPictureData.PICTURE_TYPE_PNG);
 
-        XSLFPictureShape shape = slide.createPicture(pictureIndex);
+        /*XSLFPictureShape shape =*/ slide.createPicture(pictureIndex);
 
         FileOutputStream out = new FileOutputStream("images.pptx");
         ppt.write(out);

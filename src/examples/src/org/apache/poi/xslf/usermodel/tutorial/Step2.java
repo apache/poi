@@ -47,7 +47,7 @@ public class Step2 {
         }
 
         // blank slide
-        XSLFSlide blankSlide = ppt.createSlide();
+        /*XSLFSlide blankSlide =*/ ppt.createSlide();
 
         XSLFSlideMaster defaultMaster = ppt.getSlideMasters()[0];
 

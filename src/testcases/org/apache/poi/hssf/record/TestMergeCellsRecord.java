@@ -64,7 +64,7 @@ public final class TestMergeCellsRecord extends TestCase {
 	};
 	public void testMCTable_bug46009() {
 		MergedCellsTable mct = new MergedCellsTable();
-		List recList = new ArrayList();
+		List<Record> recList = new ArrayList<Record>();
 		CellRangeAddress[] cras = new CellRangeAddress[] {
 				new CellRangeAddress(0, 0, 0, 3), 
 		};
