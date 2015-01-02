@@ -1627,9 +1627,9 @@ public final class InternalSheet {
 
     private void recalcRowGutter() {
         int maxLevel = 0;
-        Iterator iterator = _rowsAggregate.getIterator();
+        Iterator<RowRecord> iterator = _rowsAggregate.getIterator();
         while (iterator.hasNext()) {
-            RowRecord rowRecord = (RowRecord) iterator.next();
+            RowRecord rowRecord = iterator.next();
             maxLevel = Math.max(rowRecord.getOutlineLevel(), maxLevel);
         }
 

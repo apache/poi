@@ -61,7 +61,7 @@ public class ExcelAntHandlerTask extends Task {
     public void execute() throws BuildException {
         log( "handling the workbook with class " + className, Project.MSG_INFO ) ;
         try {
-            Class clazz = Class.forName( className ) ;
+            Class<?> clazz = Class.forName( className ) ;
             Object handlerObj = clazz.newInstance() ;
             if( handlerObj instanceof IExcelAntWorkbookHandler ) {
                 IExcelAntWorkbookHandler iHandler = (IExcelAntWorkbookHandler)handlerObj ;

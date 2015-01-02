@@ -34,7 +34,7 @@ public class Tutorial1 {
         XMLSlideShow ppt = new XMLSlideShow();
 
         // XSLFSlide#createSlide() with no arguments creates a blank slide
-        XSLFSlide blankSlide = ppt.createSlide();
+        /*XSLFSlide blankSlide =*/ ppt.createSlide();
 
         
         XSLFSlideMaster master = ppt.getSlideMasters()[0];

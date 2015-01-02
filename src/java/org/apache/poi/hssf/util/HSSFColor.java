@@ -164,7 +164,7 @@ public class HSSFColor implements Color {
 
             String hexString = color.getHexString();
             if (result.containsKey(hexString)) {
-            	HSSFColor other = (HSSFColor)result.get(hexString);
+            	HSSFColor other = result.get(hexString);
                 throw new RuntimeException(
                 		"Dup color hexString (" + hexString
                         + ") for color (" + color.getClass().getName() + ") - "
