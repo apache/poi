@@ -7,7 +7,7 @@
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.11-SNAPSHOT</version>
+    <version>3.12-SNAPSHOT</version>
 
     <name>Apache POI - the Java API for Microsoft Documents</name>
 
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

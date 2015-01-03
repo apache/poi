@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>3.11-SNAPSHOT</version>
+        <version>3.12-SNAPSHOT</version>
     </parent>
     <artifactId>poi-examples</artifactId>
     <packaging>jar</packaging>
@@ -70,7 +70,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
         </dependency>
     </dependencies>
 </project>
