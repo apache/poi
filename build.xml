@@ -174,8 +174,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 	
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.1.201405082137.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.1.201405082137/jacoco-0.7.1.201405082137.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.2.201409121644.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.2.201409121644/jacoco-0.7.2.201409121644.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 	
@@ -216,8 +216,8 @@ under the License.
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
-    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:"/>
-
+    <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*"/>
+    
     <!-- Apache RAT license check properties -->
     <property name="rat.reportdir" value="build/rat"/>
     <property name="rat.report" value="${rat.reportdir}/report.txt"/>    
@@ -413,8 +413,10 @@ under the License.
 				<include name="commons-codec-1.5*"/>
 				<include name="commons-logging-1.1.jar"/>
 				<include name="jacoco-0.6*"/>
+				<include name="jacoco-0.7.1*"/>
 				<include name="log4j-1.2.13*"/>
 				<include name="org.jacoco.*-0.6.*"/>
+				<include name="org.jacoco.*-0.7.1*"/>
 				<include name="dom4j*"/>
 				<include name="apache-rat-0.10*"/>
 				<include name="xercesImpl-*.jar"/> 
@@ -876,6 +878,7 @@ under the License.
                 <group name="Main">
                     <classfiles>
                         <fileset dir="${main.output.dir}">
+                        	<!-- exclude large test-class -->
                             <exclude name="org/apache/poi/hssf/usermodel/DummyGraphics2d.class"/>
                         </fileset>
                     </classfiles>
@@ -886,6 +889,7 @@ under the License.
                 <group name="Scratchpad">
                     <classfiles>
                         <fileset dir="${scratchpad.output.dir}">
+                        	<!-- exclude some generated classes -->
 							<exclude name="org/apache/poi/hwpf/model/types/*.class"/>
 							<exclude name="org/apache/poi/hdf/model/hdftypes/definitions/*.class"/>
 						</fileset>
@@ -896,13 +900,15 @@ under the License.
                 </group>
                 <group name="OOXML">
                     <classfiles>
-                        <fileset dir="${ooxml.output.dir}">
-                            <exclude name=""/>
-                        </fileset>
-                        <fileset dir="${ooxml.lite.output.dir}">
+                        <fileset dir="${ooxml.output.dir}"/>
+                        <!-- there are no actual POI classes in build/ooxml-lite-classes, only generated code...
+                        fileset dir="${ooxml.lite.output.dir}">
                             <exclude name="org/openxmlformats/**"/>
                             <exclude name="schema*/**"/>
-                        </fileset>
+                        	<exclude name="org/etsi/**"/>
+                        	<exclude name="org/w3/**"/>
+                        	<exclude name="com/**"/>
+                        </fileset-->
                     </classfiles>
                     <sourcefiles encoding="UTF-8">
                         <fileset dir="${ooxml.src}"/>
@@ -917,6 +923,14 @@ under the License.
                         <fileset dir="${excelant.src}"/>
                     </sourcefiles>
                 </group>
+                <!--group name="Examples">
+                    <classfiles>
+                        <fileset dir="${examples.output.dir}"/>
+                    </classfiles>
+                    <sourcefiles encoding="UTF-8">
+                        <fileset dir="${examples.src}"/>
+                    </sourcefiles>
+                </group-->
             </structure>
         
             <html destdir="${coverage.dir}"/>
