@@ -172,7 +172,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public TextFontAlign getTextFontAlign(){
         ParagraphPropertyFetcher<TextFontAlign> fetcher = new ParagraphPropertyFetcher<TextFontAlign>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetAlgn()){
+                if(props.isSetFontAlgn()){
                     TextFontAlign val = TextFontAlign.values()[props.getFontAlgn().intValue() - 1];
                     setValue(val);
                     return true;
@@ -322,12 +322,16 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
 
         if(bulletSize >= 0) {
+            // percentage
             CTTextBulletSizePercent pt = pr.isSetBuSzPct() ? pr.getBuSzPct() : pr.addNewBuSzPct();
             pt.setVal((int)(bulletSize*1000));
+            // unset points if percentage is now set
             if(pr.isSetBuSzPts()) pr.unsetBuSzPts();
         } else {
+            // points
             CTTextBulletSizePoint pt = pr.isSetBuSzPts() ? pr.getBuSzPts() : pr.addNewBuSzPts();
             pt.setVal((int)(-bulletSize*100));
+            // unset percentage if points is now set
             if(pr.isSetBuSzPct()) pr.unsetBuSzPct();
         }
     }
@@ -335,7 +339,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     /**
      * Specifies the indent size that will be applied to the first line of text in the paragraph.
      *
-     * @param value the indent in points. 
+     * @param value the indent in points, -1 to unset indent and use the default of 0. 
      */
     public void setIndent(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -372,7 +376,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * inset and applies only to this text paragraph. That is the text body inset and the LeftMargin
      * attributes are additive with respect to the text position.
      *
-     * @param value the left margin of the paragraph
+     * @param value the left margin of the paragraph, -1 to clear the margin and use the default of 0.
      */
     public void setLeftMargin(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -409,7 +413,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * inset and applies only to this text paragraph. That is the text body inset and the marR
      * attributes are additive with respect to the text position.
      *
-     * @param value the right margin of the paragraph
+     * @param value the right margin of the paragraph, -1 to clear the margin and use the default of 0.
      */
     public void setRightMargin(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
