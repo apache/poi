@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.model.StylesTable;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -38,7 +39,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
 public final class TestXSSFRichTextString extends TestCase {
 
     public void testCreate() {
-
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
 
@@ -53,9 +53,14 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals("Apache POI is cool stuff", rt.getString());
     }
 
+    public void testEmpty() {
+        XSSFRichTextString rt = new XSSFRichTextString();
+        assertEquals(0, rt.getIndexOfFormattingRun(9999));
+        assertEquals(-1, rt.getLengthOfFormattingRun(9999));
+        assertNull(rt.getFontAtIndex(9999));
+    }
 
     public void testApplyFont() {
-
         XSSFRichTextString rt = new XSSFRichTextString();
         rt.append("123");
         rt.append("4567");
@@ -82,6 +87,65 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals(7, rt.getIndexOfFormattingRun(3));
         assertEquals(2, rt.getLengthOfFormattingRun(3));
         assertEquals("89", rt.getCTRst().getRArray(3).getT());
+        
+        
+        assertEquals(-1, rt.getIndexOfFormattingRun(9999));
+        assertEquals(-1, rt.getLengthOfFormattingRun(9999));
+        assertNull(rt.getFontAtIndex(9999));
+    }
+
+    public void testApplyFontIndex() {
+        XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
+        rt.applyFont(0, 10, (short)1);
+        
+        rt.applyFont((short)1);
+        
+        assertNotNull(rt.getFontAtIndex(0));
+    }
+
+    public void testApplyFontWithStyles() {
+        XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
+        
+        StylesTable tbl = new StylesTable();
+        rt.setStylesTableReference(tbl);
+        
+        try {
+            rt.applyFont(0, 10, (short)1);
+            fail("Fails without styles in the table");
+        } catch (IndexOutOfBoundsException e) {
+            // expected
+        }
+        
+        tbl.putFont(new XSSFFont());
+        rt.applyFont(0, 10, (short)1);
+        rt.applyFont((short)1);
+    }
+
+    public void testApplyFontException() {
+        XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
+        
+        rt.applyFont(0, 0, (short)1);
+
+        try {
+            rt.applyFont(11, 10, (short)1);
+            fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("11"));
+        }
+
+        try {
+            rt.applyFont(-1, 10, (short)1);
+            fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("-1"));
+        }
+
+        try {
+            rt.applyFont(0, 555, (short)1);
+            fail("Should catch Exception here");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("555"));
+        }
     }
 
     public void testClearFormatting() {
@@ -430,5 +494,14 @@ public final class TestXSSFRichTextString extends TestCase {
         
         assertNotNull(rt.getFontOfFormattingRun(2));
         assertEquals(9, rt.getLengthOfFormattingRun(2));
+    }
+
+    public void testToString() {
+        XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
+        assertNotNull(rt.toString());
+        
+        // TODO: normally toString() should never return null, should we adjust this?
+        rt = new XSSFRichTextString();
+        assertNull(rt.toString());
     }
 }

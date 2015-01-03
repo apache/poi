@@ -135,9 +135,10 @@ public class XSSFRichTextString implements RichTextString {
      */
     public void applyFont(int startIndex, int endIndex, Font font) {
         if (startIndex > endIndex)
-            throw new IllegalArgumentException("Start index must be less than end index.");
+            throw new IllegalArgumentException("Start index must be less than end index, but had " + startIndex + " and " + endIndex);
         if (startIndex < 0 || endIndex > length())
-            throw new IllegalArgumentException("Start and end index not in range.");
+            throw new IllegalArgumentException("Start and end index not in range, but had " + startIndex + " and " + endIndex);
+
         if (startIndex == endIndex)
             return;
 
