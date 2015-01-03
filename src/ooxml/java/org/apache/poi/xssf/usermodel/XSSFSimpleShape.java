@@ -321,7 +321,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         while (value > 0) {
             modulo = (value - 1) % 26;
             alpha = (char)(65 + modulo) + alpha;
-            value = (int)((value - modulo) / 26);
+            value = (value - modulo) / 26;
         }
         return alpha;
     }
@@ -481,7 +481,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public void setTextHorizontalOverflow(TextHorizontalOverflow overflow){
         CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
         if (bodyPr != null) {
-             if(anchor == null) {
+             if(overflow == null) {
                 if(bodyPr.isSetHorzOverflow()) bodyPr.unsetHorzOverflow();
             } else {
                 bodyPr.setHorzOverflow(STTextHorzOverflowType.Enum.forInt(overflow.ordinal() + 1));
@@ -498,7 +498,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     	CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
     	if(bodyPr != null) {
     		if(bodyPr.isSetHorzOverflow()){
-    			return TextHorizontalOverflow.values()[bodyPr.getVertOverflow().intValue() - 1];
+    			return TextHorizontalOverflow.values()[bodyPr.getHorzOverflow().intValue() - 1];
     		}    			
     	}
     	return TextHorizontalOverflow.OVERFLOW;
@@ -513,7 +513,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public void setTextVerticalOverflow(TextVerticalOverflow overflow){
         CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
         if (bodyPr != null) {
-             if(anchor == null) {
+             if(overflow == null) {
                 if(bodyPr.isSetVertOverflow()) bodyPr.unsetVertOverflow();
             } else {
                 bodyPr.setVertOverflow(STTextVertOverflowType.Enum.forInt(overflow.ordinal() + 1));
@@ -681,8 +681,9 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public void setBottomInset(double margin){
         CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetBIns();
-            else bodyPr.setBIns(Units.toEMU(margin));
+            if(margin == -1) {
+                if(bodyPr.isSetBIns()) bodyPr.unsetBIns();
+            } else bodyPr.setBIns(Units.toEMU(margin));
         }
     }
 
@@ -695,8 +696,9 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public void setLeftInset(double margin){
         CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetLIns();
-            else bodyPr.setLIns(Units.toEMU(margin));
+            if(margin == -1) {
+                if(bodyPr.isSetLIns()) bodyPr.unsetLIns();
+            } else bodyPr.setLIns(Units.toEMU(margin));
         }
     }
 
@@ -709,8 +711,9 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public void setRightInset(double margin){
         CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetRIns();
-            else bodyPr.setRIns(Units.toEMU(margin));
+            if(margin == -1) {
+                if(bodyPr.isSetRIns()) bodyPr.unsetRIns();
+            } else bodyPr.setRIns(Units.toEMU(margin));
         }
     }
 
@@ -723,8 +726,9 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     public void setTopInset(double margin){
         CTTextBodyProperties bodyPr = ctShape.getTxBody().getBodyPr();
         if (bodyPr != null) {
-            if(margin == -1) bodyPr.unsetTIns();
-            else bodyPr.setTIns(Units.toEMU(margin));
+            if(margin == -1) {
+                if(bodyPr.isSetTIns()) bodyPr.unsetTIns();
+            } else bodyPr.setTIns(Units.toEMU(margin));
         }
     }
 
