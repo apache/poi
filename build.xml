@@ -1152,7 +1152,7 @@ under the License.
         </java>
     </target>
 
-    <target name="test-ooxml-lite" depends="jacocotask">
+    <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-xsds,compile-ooxml-lite">
         <delete file="${ooxml.testokfile}"/>
         <echo message="Running ooxml tests against 'poi-ooxml-schemas'"/>
         <ooxml-test-runner classpath="ooxml-lite.classpath" type="ooxml-lite"/>
