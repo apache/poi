@@ -138,8 +138,8 @@ public final class TextRun
             // Build one for each run with the same style
             while(pos <= runRawText.length() && curP < pStyles.size() && curC < cStyles.size()) {
                 // Get the Props to use
-                TextPropCollection pProps = (TextPropCollection)pStyles.get(curP);
-                TextPropCollection cProps = (TextPropCollection)cStyles.get(curC);
+                TextPropCollection pProps = pStyles.get(curP);
+                TextPropCollection cProps = cStyles.get(curC);
 
                 int pLen = pProps.getCharactersCovered();
                 int cLen = cProps.getCharactersCovered();
@@ -291,15 +291,13 @@ public final class TextRun
 		int pOverRun = _styleAtom.getParagraphTextLengthCovered() - oldSize;
 		int cOverRun = _styleAtom.getCharacterTextLengthCovered() - oldSize;
 		if(pOverRun > 0) {
-			TextPropCollection tpc = (TextPropCollection)
-				_styleAtom.getParagraphStyles().getLast();
+			TextPropCollection tpc = _styleAtom.getParagraphStyles().getLast();
 			tpc.updateTextSize(
 					tpc.getCharactersCovered() - pOverRun
 			);
 		}
 		if(cOverRun > 0) {
-			TextPropCollection tpc = (TextPropCollection)
-				_styleAtom.getCharacterStyles().getLast();
+			TextPropCollection tpc = _styleAtom.getCharacterStyles().getLast();
 			tpc.updateTextSize(
 					tpc.getCharactersCovered() - cOverRun
 			);
@@ -540,8 +538,8 @@ public final class TextRun
 		}
 		// These are the only styles for now
 		_rtRuns[0].supplyTextProps(
-				(TextPropCollection)_styleAtom.getParagraphStyles().get(0),
-				(TextPropCollection)_styleAtom.getCharacterStyles().get(0),
+				_styleAtom.getParagraphStyles().get(0),
+				_styleAtom.getCharacterStyles().get(0),
 				false,
 				false
 		);
