@@ -21,12 +21,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.POIXMLException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
@@ -58,18 +54,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.junit.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 
 @SuppressWarnings("resource")
@@ -370,6 +355,7 @@ public final class TestXSSFSheet extends BaseTestSheet {
         assertEquals(2 + 1, colArray[0].getMin()); // 1 based
         assertEquals(7 + 1, colArray[0].getMax()); // 1 based
         assertEquals(1, colArray[0].getOutlineLevel());
+        assertEquals(0, sheet.getColumnOutlineLevel(0));
 
         //two level
         sheet.groupColumn(1, 2);
@@ -1167,6 +1153,8 @@ public final class TestXSSFSheet extends BaseTestSheet {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet 1");
 
+        assertFalse(sheet.getForceFormulaRecalculation());
+        
         // Set
         sheet.setForceFormulaRecalculation(true);
         assertEquals(true, sheet.getForceFormulaRecalculation());
@@ -1462,5 +1450,38 @@ public final class TestXSSFSheet extends BaseTestSheet {
             return;
         }
         fail();
+    }
+    
+    @Test
+    public void testReadFails() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        
+        try {
+            sheet.onDocumentRead();
+            fail("Throws exception because we cannot read here");
+        } catch (POIXMLException e) {
+            // expected here
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testCreateComment() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        assertNotNull(sheet.createComment());
+    }
+    
+    @Test
+    public void testRightToLeft() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+
+        assertFalse(sheet.isRightToLeft());
+        sheet.setRightToLeft(true);
+        assertTrue(sheet.isRightToLeft());
+        sheet.setRightToLeft(false);
+        assertFalse(sheet.isRightToLeft());
     }
 }

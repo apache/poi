@@ -27,21 +27,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
 import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSpacing;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * Tests for XWPF Paragraphs
@@ -342,6 +328,7 @@ public final class TestXWPFParagraph extends TestCase {
        r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic();
        r.getCTR().getDrawingArray(0).getInlineArray(0).getGraphic().getGraphicData();
        PicDocument pd = new PicDocumentImpl(null);
+       assertTrue(pd.isNil());
     }
     
     public void testTika792() throws Exception{
@@ -351,4 +338,159 @@ public final class TestXWPFParagraph extends TestCase {
        XWPFParagraph paragraph = doc.getParagraphs().get(0);
        assertEquals("s", paragraph.getText());
     }
- }
+
+    public void testSettersGetters() {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFParagraph p = doc.createParagraph();
+        
+        assertTrue(p.isEmpty());
+        assertFalse(p.removeRun(0));
+
+        p.setBorderTop(Borders.BABY_PACIFIER);
+        p.setBorderBetween(Borders.BABY_PACIFIER);
+        p.setBorderBottom(Borders.BABY_RATTLE);
+
+        assertNotNull(p.getIRuns());
+        assertEquals(0, p.getIRuns().size());
+        assertFalse(p.isEmpty());
+        assertNull(p.getStyleID());
+        assertNull(p.getStyle());
+        
+        assertNull(p.getNumID());
+        p.setNumID(BigInteger.valueOf(12));
+        assertEquals(BigInteger.valueOf(12), p.getNumID());
+        p.setNumID(BigInteger.valueOf(13));
+        assertEquals(BigInteger.valueOf(13), p.getNumID());
+
+        assertNull(p.getNumFmt());
+        
+        assertNull(p.getNumIlvl());
+        
+        assertEquals("", p.getParagraphText());
+        assertEquals("", p.getPictureText());
+        assertEquals("", p.getFootnoteText());
+        
+        p.setBorderBetween(Borders.NONE);
+        assertEquals(Borders.NONE, p.getBorderBetween());
+        p.setBorderBetween(Borders.BASIC_BLACK_DASHES);
+        assertEquals(Borders.BASIC_BLACK_DASHES, p.getBorderBetween());
+        
+        p.setBorderBottom(Borders.NONE);
+        assertEquals(Borders.NONE, p.getBorderBottom());
+        p.setBorderBottom(Borders.BABY_RATTLE);
+        assertEquals(Borders.BABY_RATTLE, p.getBorderBottom());
+
+        p.setBorderLeft(Borders.NONE);
+        assertEquals(Borders.NONE, p.getBorderLeft());
+        p.setBorderLeft(Borders.BASIC_WHITE_SQUARES);
+        assertEquals(Borders.BASIC_WHITE_SQUARES, p.getBorderLeft());
+
+        p.setBorderRight(Borders.NONE);
+        assertEquals(Borders.NONE, p.getBorderRight());
+        p.setBorderRight(Borders.BASIC_WHITE_DASHES);
+        assertEquals(Borders.BASIC_WHITE_DASHES, p.getBorderRight());
+
+        p.setBorderBottom(Borders.NONE);
+        assertEquals(Borders.NONE, p.getBorderBottom());
+        p.setBorderBottom(Borders.BASIC_WHITE_DOTS);
+        assertEquals(Borders.BASIC_WHITE_DOTS, p.getBorderBottom());
+        
+        assertFalse(p.isPageBreak());
+        p.setPageBreak(true);
+        assertTrue(p.isPageBreak());
+        p.setPageBreak(false);
+        assertFalse(p.isPageBreak());
+        
+        assertEquals(-1, p.getSpacingAfter());
+        p.setSpacingAfter(12);
+        assertEquals(12, p.getSpacingAfter());
+        
+        assertEquals(-1, p.getSpacingAfterLines());
+        p.setSpacingAfterLines(14);
+        assertEquals(14, p.getSpacingAfterLines());
+        
+        assertEquals(-1, p.getSpacingBefore());
+        p.setSpacingBefore(16);
+        assertEquals(16, p.getSpacingBefore());
+        
+        assertEquals(-1, p.getSpacingBeforeLines());
+        p.setSpacingBeforeLines(18);
+        assertEquals(18, p.getSpacingBeforeLines());
+        
+        assertEquals(LineSpacingRule.AUTO, p.getSpacingLineRule());
+        p.setSpacingLineRule(LineSpacingRule.EXACT);
+        assertEquals(LineSpacingRule.EXACT, p.getSpacingLineRule());
+        
+        assertEquals(-1, p.getIndentationLeft());
+        p.setIndentationLeft(21);
+        assertEquals(21, p.getIndentationLeft());
+        
+        assertEquals(-1, p.getIndentationRight());
+        p.setIndentationRight(25);
+        assertEquals(25, p.getIndentationRight());
+
+        assertEquals(-1, p.getIndentationHanging());
+        p.setIndentationHanging(25);
+        assertEquals(25, p.getIndentationHanging());
+
+        assertEquals(-1, p.getIndentationFirstLine());
+        p.setIndentationFirstLine(25);
+        assertEquals(25, p.getIndentationFirstLine());
+
+        assertFalse(p.isWordWrap());
+        p.setWordWrap(true);
+        assertTrue(p.isWordWrap());
+        p.setWordWrap(false);
+        assertFalse(p.isWordWrap());
+        
+        assertNull(p.getStyle());
+        p.setStyle("teststyle");
+        assertEquals("teststyle", p.getStyle());
+        
+        p.addRun(CTR.Factory.newInstance());
+        
+        //assertTrue(p.removeRun(0));
+        
+        assertNotNull(p.getBody());
+        assertEquals(BodyElementType.PARAGRAPH, p.getElementType());
+        assertEquals(BodyType.DOCUMENT, p.getPartType());
+    }
+    
+    public void testSearchTextNotFound() {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFParagraph p = doc.createParagraph();
+
+        assertNull(p.searchText("test", new PositionInParagraph()));
+        assertEquals("", p.getText());
+    }
+
+    public void testSearchTextFound() throws IOException {
+        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
+
+        List<XWPFParagraph> ps = xml.getParagraphs();
+        assertEquals(10, ps.size());
+        
+        XWPFParagraph p = ps.get(0);
+
+        TextSegement segment = p.searchText("sample word document", new PositionInParagraph());
+        assertNotNull(segment);
+        
+        assertEquals("sample word document", p.getText(segment));
+        
+        assertTrue(p.removeRun(0));
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void testRuns() {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFParagraph p = doc.createParagraph();
+
+        CTR run = CTR.Factory.newInstance();
+        XWPFRun r = new XWPFRun(run, doc.createParagraph());
+        p.addRun(r);
+        p.addRun(r);
+        
+        assertNotNull(p.getRun(run));
+        assertNull(p.getRun(null));
+    }
+}
