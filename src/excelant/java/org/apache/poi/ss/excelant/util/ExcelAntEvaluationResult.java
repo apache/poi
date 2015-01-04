@@ -30,7 +30,7 @@ public class ExcelAntEvaluationResult {
 	/**
 	 * This boolean flag is used to determine if the evaluation completed
 	 * without error.  This alone doesn't ensure that the evaluation was 
-	 * sucessful.
+	 * successful.
 	 */
 	private boolean evaluationCompletedWithError ;
 	
@@ -108,7 +108,5 @@ public class ExcelAntEvaluationResult {
 				+ ", returnValue=" + returnValue + ", errorMessage="
 				+ errorMessage + ", actualDelta=" + actualDelta + ", cellName="
 				+ cellName + "]";
-	}
-
-	
+	}	
 }

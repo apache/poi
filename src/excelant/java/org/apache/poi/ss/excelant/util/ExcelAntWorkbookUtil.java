@@ -52,7 +52,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     private Workbook workbook;
 
-    private HashMap<String, FreeRefFunction> xlsMacroList;
+    private final HashMap<String, FreeRefFunction> xlsMacroList = new HashMap<String, FreeRefFunction>();
 
     /**
      * Constructs an instance using a String that contains the fully qualified
@@ -63,7 +63,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
      */
     protected ExcelAntWorkbookUtil(String fName) {
         excelFileName = fName;
-        xlsMacroList = new HashMap<String, FreeRefFunction>() ;
         loadWorkbook();
 
     }
@@ -75,7 +74,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
      */
     protected ExcelAntWorkbookUtil(Workbook wb) {
         workbook = wb;
-        xlsMacroList = new HashMap<String, FreeRefFunction>() ;
     }
 
     /**
@@ -164,14 +162,14 @@ public class ExcelAntWorkbookUtil extends Typedef {
     protected FormulaEvaluator getEvaluator( String fileName ) {
         FormulaEvaluator evaluator ;
         if (fileName.endsWith(".xlsx")) {
-            if( xlsMacroList != null && xlsMacroList.size() > 0 ) {
+            if( xlsMacroList.size() > 0 ) {
                 evaluator = XSSFFormulaEvaluator.create( (XSSFWorkbook) workbook,
                                                          null,
                                                          getFunctions() ) ;
             }
             evaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
         } else {
-            if( xlsMacroList != null && xlsMacroList.size() > 0 ) {
+            if( xlsMacroList.size() > 0 ) {
                 evaluator = HSSFFormulaEvaluator.create( (HSSFWorkbook)workbook,
                                                          null,
                                                          getFunctions() ) ;
@@ -312,7 +310,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
                                 Byte.toString( resultOfEval.getErrorValue() ) ;
             }
 
-            evalResults = new ExcelAntEvaluationResult(false, false,
+            evalResults = new ExcelAntEvaluationResult(true, false,
                     resultOfEval.getNumberValue(),
                     "Evaluation failed due to an evaluation error of "
                             + resultOfEval.getErrorValue()
@@ -331,10 +329,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
      */
     public String getCellAsString( String cellName ) {
     	Cell cell = getCell( cellName ) ;
-    	if( cell != null ) {
-    		return cell.getStringCellValue() ;
-    	}
-    	return "" ;
+		return cell.getStringCellValue() ;
     }
 
 
@@ -346,10 +341,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
      */
     public double getCellAsDouble( String cellName ) {
     	Cell cell = getCell( cellName ) ;
-    	if( cell != null ) {
-    		return cell.getNumericCellValue() ;
-    	}
-    	return 0.0 ;
+		return cell.getNumericCellValue() ;
     }
     /**
      * Returns a cell reference based on a String in standard Excel format
@@ -360,7 +352,6 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @return
      */
     private Cell getCell(String cellName) {
-
         CellReference cellRef = new CellReference(cellName);
         String sheetName = cellRef.getSheetName();
         Sheet sheet = workbook.getSheet(sheetName);
@@ -384,5 +375,4 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
         return cell;
     }
-
 }
