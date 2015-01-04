@@ -48,6 +48,12 @@ public class TestBuildFile extends BuildFileTest {
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
     }
 
+    public void testEvaluateNoDetails() {
+        executeTarget("test-evaluate-nodetails");
+        assertLogContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
+        assertLogNotContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
+    }
+
     public void testPrecision() {
         executeTarget("test-precision");
 
@@ -61,12 +67,25 @@ public class TestBuildFile extends BuildFileTest {
         assertLogContaining("2/3 tests passed");
     }
 
+    public void testPrecisionFail() {
+        expectSpecificBuildException("test-precision-fails", "precision not matched",
+                "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
+    }
+
     public void testPassOnError() {
         executeTarget("test-passonerror");
     }
 
     public void testFailOnError() {
         expectBuildException("test-failonerror", "fail on error");
+        assertLogContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
+        assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
+    }
+
+    public void testFailOnErrorNoDetails() {
+        expectBuildException("test-failonerror-nodetails", "fail on error");
+        assertLogNotContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
+        assertLogNotContaining("failed because 1 of 0 evaluations failed to evaluate correctly. Failed to evaluate cell 'MortageCalculatorFunction'!$D$3");
     }
 
     public void testUdf() {
@@ -77,5 +96,24 @@ public class TestBuildFile extends BuildFileTest {
     public void testSetText() {
         executeTarget("test-settext");
         assertLogContaining("1/1 tests passed");
+    }
+    
+    public void testAddHandler() {
+        executeTarget("test-addhandler");
+        assertLogContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
+        assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
+        
+        assertNotNull("The workbook should have been passed to the handler", MockExcelAntWorkbookHandler.workbook);
+        assertTrue("The handler should have been executed", MockExcelAntWorkbookHandler.executed);
+    }
+    
+    public void testAddHandlerWrongClass() {
+        executeTarget("test-addhandler-wrongclass");
+        assertLogContaining("Using input file: " + BuildFileTest.getDataDir() + "/spreadsheet/excelant.xls");
+        assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
+    }
+    
+    public void testAddHandlerFails() {
+        expectSpecificBuildException("test-addhandler-fails", "NullPointException", null);
     }
 }
