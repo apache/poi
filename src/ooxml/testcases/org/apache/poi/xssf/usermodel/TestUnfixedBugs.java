@@ -29,6 +29,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -210,5 +211,33 @@ public final class TestUnfixedBugs extends TestCase {
         {
             wb.removeSheetAt(sn);
         }
+    }
+
+    // When this is fixed, the test case should go to BaseTestXCell with 
+    // adjustments to use _testDataProvider to also verify this for XSSF
+    public void testBug57294() throws IOException {
+        Workbook wb = SXSSFITestDataProvider.instance.createWorkbook();
+        
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        
+        RichTextString str = new XSSFRichTextString("Test rich text string");
+        str.applyFont(2, 4, (short)0);
+        assertEquals(3, str.numFormattingRuns());
+        cell.setCellValue(str);
+        
+        Workbook wbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        wb.close();
+        
+        // re-read after serializing and reading back
+        Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(0);
+        assertNotNull(cellBack);
+        RichTextString strBack = cellBack.getRichStringCellValue();
+        assertNotNull(strBack);
+        assertEquals(3, strBack.numFormattingRuns());
+        assertEquals(0, strBack.getIndexOfFormattingRun(0));
+        assertEquals(2, strBack.getIndexOfFormattingRun(1));
+        assertEquals(4, strBack.getIndexOfFormattingRun(2));
     }
 }
