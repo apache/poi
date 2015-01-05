@@ -19,13 +19,16 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -107,7 +110,47 @@ public final class TestUnfixedBugs extends TestCase {
             }
         }
     }
+    
+    public void test54071Simple() {
+        double value1 = 41224.999988425923;
+        double value2 = 41224.999988368058;
+        
+        int wholeDays1 = (int)Math.floor(value1);
+        int millisecondsInDay1 = (int)((value1 - wholeDays1) * DateUtil.DAY_MILLISECONDS + 0.5);
 
+        int wholeDays2 = (int)Math.floor(value2);
+        int millisecondsInDay2 = (int)((value2 - wholeDays2) * DateUtil.DAY_MILLISECONDS + 0.5);
+        
+        assertEquals(wholeDays1, wholeDays2);
+        // here we see that the time-value is 5 milliseconds apart, one is 86399000 and the other is 86398995, 
+        // thus one is one second higher than the other
+        assertEquals("The time-values are 5 milliseconds apart", 
+                millisecondsInDay1, millisecondsInDay2);
+
+        // when we do the calendar-stuff, there is a boolean which determines if
+        // the milliseconds are rounded or not, having this at "false" causes the 
+        // second to be different here!
+        int startYear = 1900;
+        int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
+        Calendar calendar1 = new GregorianCalendar();
+        calendar1.set(startYear,0, wholeDays1 + dayAdjust, 0, 0, 0);
+        calendar1.set(Calendar.MILLISECOND, millisecondsInDay1);
+      // this is the rounding part:
+      calendar1.add(Calendar.MILLISECOND, 500);
+      calendar1.clear(Calendar.MILLISECOND);
+
+        Calendar calendar2 = new GregorianCalendar();
+        calendar2.set(startYear,0, wholeDays2 + dayAdjust, 0, 0, 0);
+        calendar2.set(Calendar.MILLISECOND, millisecondsInDay2);
+      // this is the rounding part:
+      calendar2.add(Calendar.MILLISECOND, 500);
+      calendar2.clear(Calendar.MILLISECOND);
+
+        // now the calendars are equal
+        assertEquals(calendar1, calendar2);
+        
+        assertEquals(DateUtil.getJavaDate(value1, false), DateUtil.getJavaDate(value2, false));
+    }
 
     public void test57236() {
         // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
