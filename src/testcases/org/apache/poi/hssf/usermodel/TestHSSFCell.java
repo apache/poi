@@ -34,8 +34,9 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ErrorConstants;
-import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -51,6 +52,7 @@ public final class TestHSSFCell extends BaseTestCell {
 	public TestHSSFCell() {
 		super(HSSFITestDataProvider.instance);
 	}
+
 	/**
 	 * Checks that the recognition of files using 1904 date windowing
 	 *  is working properly. Conversion of the date is also an issue,
@@ -189,27 +191,31 @@ public final class TestHSSFCell extends BaseTestCell {
 //
 //	    fos.close();
 	            
-	    wb = _testDataProvider.writeOutAndReadBack(wb);
+	    Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
+	    wb.close();
+
+	    assertEquals(1, ((HSSFSheet)wbBack.getSheetAt(0)).getSheet().getActiveCellRow());
+	    assertEquals(3, ((HSSFSheet)wbBack.getSheetAt(0)).getSheet().getActiveCellCol());
 	    
-	    assertEquals(1, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
-	    assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
-	    
-	    wb.getSheetAt(0).getRow(3).getCell(3).setAsActiveCell();
+	    wbBack.getSheetAt(0).getRow(3).getCell(3).setAsActiveCell();
         
-        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
-        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+        assertEquals(3, ((HSSFSheet)wbBack.getSheetAt(0)).getSheet().getActiveCellRow());
+        assertEquals(3, ((HSSFSheet)wbBack.getSheetAt(0)).getSheet().getActiveCellCol());
 	    
 //	    fos = new FileOutputStream("/tmp/56114a.xls");
 //
-//	    wb.write(fos);
+//	    wbBack.write(fos);
 //
 //	    fos.close();
 	            
-        wb = _testDataProvider.writeOutAndReadBack(wb);
+        Workbook wbBack2 = _testDataProvider.writeOutAndReadBack(wbBack);
+        wbBack.close();
         
-        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellRow());
-        assertEquals(3, ((HSSFSheet)wb.getSheetAt(0)).getSheet().getActiveCellCol());
+        assertEquals(3, ((HSSFSheet)wbBack2.getSheetAt(0)).getSheet().getActiveCellRow());
+        assertEquals(3, ((HSSFSheet)wbBack2.getSheetAt(0)).getSheet().getActiveCellCol());
+        wbBack2.close();
 	}
+
 	/**
 	 * Test reading hyperlinks
 	 */
@@ -253,26 +259,6 @@ public final class TestHSSFCell extends BaseTestCell {
 		assertEquals(8, link2.getFirstRow());
 		assertEquals(1, link2.getFirstColumn());
 	}
-
-    public void testRemoveHyperlink() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFRow row = sheet.createRow(0);
-
-        HSSFCell cell1 = row.createCell(1);
-        HSSFHyperlink link1 = new HSSFHyperlink(Hyperlink.LINK_URL);
-        assertNotNull(link1);
-        cell1.removeHyperlink();
-        assertNull(cell1.getHyperlink());
-
-        HSSFCell cell2 = row.createCell(0);
-        HSSFHyperlink link2 = new HSSFHyperlink(Hyperlink.LINK_URL);
-        assertNotNull(link2);
-        cell2.setHyperlink(null);
-        assertNull(cell2.getHyperlink());
-
-        HSSFTestDataSamples.writeOutAndReadBack(wb);
-    }
 
 	/**
 	 * Test to ensure we can only assign cell styles that belong
@@ -324,16 +310,19 @@ public final class TestHSSFCell extends BaseTestCell {
 	 * the {@link StringRecord} following the {@link FormulaRecord} after the result type had been
 	 * changed to number/boolean/error.  Excel silently ignores the extra record, but some POI
 	 * versions (prior to bug 46213 / r717883) crash instead.
+	 * @throws IOException 
 	 */
-	public void testCachedTypeChange() {
-		HSSFSheet sheet = new HSSFWorkbook().createSheet("Sheet1");
-		HSSFCell cell = sheet.createRow(0).createCell(0);
+	public void testCachedTypeChange() throws IOException {
+		HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("Sheet1");
+		Cell cell = sheet.createRow(0).createCell(0);
 		cell.setCellFormula("A1");
 		cell.setCellValue("abc");
 		confirmStringRecord(sheet, true);
 		cell.setCellValue(123);
 		Record[] recs = RecordInspector.getRecords(sheet, 0);
 		if (recs.length == 28 && recs[23] instanceof StringRecord) {
+		    wb.close();
 			throw new AssertionFailedError("Identified bug - leftover StringRecord");
 		}
 		confirmStringRecord(sheet, false);
@@ -349,6 +338,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		confirmStringRecord(sheet, true);
 		cell.setCellValue(false);
 		confirmStringRecord(sheet, false);
+		wb.close();
 	}
 
 	private static void confirmStringRecord(HSSFSheet sheet, boolean isPresent) {
@@ -368,9 +358,11 @@ public final class TestHSSFCell extends BaseTestCell {
 
 	/**
 	 *  The maximum length of cell contents (text) is 32,767 characters.
+	 * @throws IOException 
 	 */
-	public void testMaxTextLength(){
-		HSSFSheet sheet = new HSSFWorkbook().createSheet();
+	public void testMaxTextLength() throws IOException{
+		HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
 		HSSFCell cell = sheet.createRow(0).createCell(0);
 
 		int maxlen = SpreadsheetVersion.EXCEL97.getMaxTextLength();
@@ -393,6 +385,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		} catch (IllegalArgumentException e){
 			assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
 		}
+		wb.close();
 	}
 
     /**
@@ -440,11 +433,11 @@ public final class TestHSSFCell extends BaseTestCell {
         cell.removeCellComment();
     }
 
-    public void testCellType() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
+    public void testCellType() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
 
         cell.setCellType(Cell.CELL_TYPE_BLANK);
         assertNull(null, cell.getDateCellValue());
@@ -460,6 +453,7 @@ public final class TestHSSFCell extends BaseTestCell {
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
         assertEquals("TRUE", cell.toString());
         cell.setCellType(Cell.CELL_TYPE_BOOLEAN);
+        cell.setCellValue("" + FormulaError.VALUE.name());
         cell.setCellType(Cell.CELL_TYPE_ERROR);
         assertEquals("#VALUE!", cell.toString());
         cell.setCellType(Cell.CELL_TYPE_ERROR);
@@ -479,41 +473,6 @@ public final class TestHSSFCell extends BaseTestCell {
         
         cell.setCellValue((String)null);
         cell.setCellValue((RichTextString)null);
-    }
-    
-    public void testSetRemoveStyle() throws Exception {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFRow row = sheet.createRow(0);
-        HSSFCell cell = row.createCell(0);
-        
-        HSSFCellStyle defaultStyle = wb.getCellStyleAt((short)15);
-        
-        // Starts out with the default style
-        assertEquals(defaultStyle, cell.getCellStyle());
-        
-        // Create some styles, no change
-        HSSFCellStyle style1 = wb.createCellStyle();
-        HSSFCellStyle style2 = wb.createCellStyle();
-        style1.setDataFormat((short)2);
-        style2.setDataFormat((short)3);
-        
-        assertEquals(defaultStyle, cell.getCellStyle());
-        
-        // Apply one, changes
-        cell.setCellStyle(style1);
-        assertEquals(style1, cell.getCellStyle());
-        
-        // Apply the other, changes
-        cell.setCellStyle(style2);
-        assertEquals(style2, cell.getCellStyle());
-        
-        // Remove, goes back to default
-        cell.setCellStyle(null);
-        assertEquals(defaultStyle, cell.getCellStyle());
-        
-        // Add back, returns
-        cell.setCellStyle(style2);
-        assertEquals(style2, cell.getCellStyle());
+        wb.close();
     }
 }

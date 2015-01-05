@@ -17,15 +17,17 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 
 /**
- * Common superclass for testing implementatiosn of
+ * Common superclass for testing implementations of
  *  {@link org.apache.poi.ss.usermodel.Cell}
  */
 public abstract class BaseTestCell extends TestCase {
@@ -579,4 +581,118 @@ public abstract class BaseTestCell extends TestCase {
         assertFalse(style2.getHidden());
     }
 
+    public void testBug55658SetNumericValue(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet();
+        Row row = sh.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue(Integer.valueOf(23));
+        
+        cell.setCellValue("some");
+
+        cell = row.createCell(1);
+        cell.setCellValue(Integer.valueOf(23));
+        
+        cell.setCellValue("24");
+
+        wb = _testDataProvider.writeOutAndReadBack(wb);
+
+        assertEquals("some", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+        assertEquals("24", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
+    }
+
+    public void testRemoveHyperlink(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sh = wb.createSheet("test");
+        Row row = sh.createRow(0);
+        CreationHelper helper = wb.getCreationHelper();
+
+        Cell cell1 = row.createCell(1);
+        Hyperlink link1 = helper.createHyperlink(Hyperlink.LINK_URL);
+        cell1.setHyperlink(link1);
+        assertNotNull(cell1.getHyperlink());
+        cell1.removeHyperlink();
+        assertNull(cell1.getHyperlink());
+
+        Cell cell2 = row.createCell(0);
+        Hyperlink link2 = helper.createHyperlink(Hyperlink.LINK_URL);
+        cell2.setHyperlink(link2);
+        assertNotNull(cell2.getHyperlink());
+        cell2.setHyperlink(null);
+        assertNull(cell2.getHyperlink());
+
+        Cell cell3 = row.createCell(2);
+        Hyperlink link3 = helper.createHyperlink(Hyperlink.LINK_URL);
+        link3.setAddress("http://poi.apache.org/");
+        cell3.setHyperlink(link3);
+        assertNotNull(cell3.getHyperlink());
+
+        Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        
+        cell1 = wbBack.getSheet("test").getRow(0).getCell(1);
+        assertNull(cell1.getHyperlink());
+        cell2 = wbBack.getSheet("test").getRow(0).getCell(0);
+        assertNull(cell2.getHyperlink());
+        cell3 = wbBack.getSheet("test").getRow(0).getCell(2);
+        assertNotNull(cell3.getHyperlink());
+    }
+
+    /**
+     * Cell with the formula that returns error must return error code(There was
+     * an problem that cell could not return error value form formula cell).
+     * @throws IOException 
+     */
+    public void testGetErrorCellValueFromFormulaCell() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("SQRT(-1)");
+            wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
+            assertEquals(36, cell.getErrorCellValue());
+        } finally {
+            wb.close();
+        }
+    }
+    
+    public void testSetRemoveStyle() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        
+        // different default style indexes for HSSF and XSSF/SXSSF
+        CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? (short)15 : (short)0);
+        
+        // Starts out with the default style
+        assertEquals(defaultStyle, cell.getCellStyle());
+        
+        // Create some styles, no change
+        CellStyle style1 = wb.createCellStyle();
+        CellStyle style2 = wb.createCellStyle();
+        style1.setDataFormat((short)2);
+        style2.setDataFormat((short)3);
+        
+        assertEquals(defaultStyle, cell.getCellStyle());
+        
+        // Apply one, changes
+        cell.setCellStyle(style1);
+        assertEquals(style1, cell.getCellStyle());
+        
+        // Apply the other, changes
+        cell.setCellStyle(style2);
+        assertEquals(style2, cell.getCellStyle());
+        
+        // Remove, goes back to default
+        cell.setCellStyle(null);
+        assertEquals(defaultStyle, cell.getCellStyle());
+        
+        // Add back, returns
+        cell.setCellStyle(style2);
+        assertEquals(style2, cell.getCellStyle());
+        
+        wb.close();
+    }
 }

@@ -19,10 +19,10 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.BaseTestCell;
+import org.apache.poi.ss.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -37,7 +37,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 /**
  * @author Yegor Kozlov
  */
-public final class TestXSSFCell extends BaseTestCell {
+public final class TestXSSFCell extends BaseTestXCell {
 
     public TestXSSFCell() {
         super(XSSFITestDataProvider.instance);
@@ -98,28 +98,28 @@ public final class TestXSSFCell extends BaseTestCell {
      */
     public void test47278() {
         XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFRow row = sheet.createRow(0);
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
         SharedStringsTable sst = wb.getSharedStringSource();
         assertEquals(0, sst.getCount());
 
         //case 1. cell.setCellValue(new XSSFRichTextString((String)null));
-        XSSFCell cell_0 = row.createCell(0);
-        XSSFRichTextString str = new XSSFRichTextString((String)null);
+        Cell cell_0 = row.createCell(0);
+        RichTextString str = new XSSFRichTextString((String)null);
         assertNull(str.getString());
         cell_0.setCellValue(str);
         assertEquals(0, sst.getCount());
-        assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_0.getCellType());
+        assertEquals(Cell.CELL_TYPE_BLANK, cell_0.getCellType());
 
         //case 2. cell.setCellValue((String)null);
-        XSSFCell cell_1 = row.createCell(1);
+        Cell cell_1 = row.createCell(1);
         cell_1.setCellValue((String)null);
         assertEquals(0, sst.getCount());
-        assertEquals(XSSFCell.CELL_TYPE_BLANK, cell_1.getCellType());
+        assertEquals(Cell.CELL_TYPE_BLANK, cell_1.getCellType());
     }
 
     public void testFormulaString() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = (XSSFWorkbook)_testDataProvider.createWorkbook();
         try {
             XSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             CTCell ctCell = cell.getCTCell(); //low-level bean holding cell's xml
@@ -182,25 +182,6 @@ public final class TestXSSFCell extends BaseTestCell {
         //Gnumeric produces spreadsheets without styles
         //make sure we return null for that instead of throwing OutOfBounds
         assertEquals(null, cell.getCellStyle());
-    }
-
-    /**
-     * Cell with the formula that returns error must return error code(There was
-     * an problem that cell could not return error value form formula cell).
-     * @throws IOException 
-     */
-    public void testGetErrorCellValueFromFormulaCell() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
-            XSSFSheet sheet = wb.createSheet();
-            XSSFRow row = sheet.createRow(0);
-            XSSFCell cell = row.createCell(0);
-            cell.setCellFormula("SQRT(-1)");
-            wb.getCreationHelper().createFormulaEvaluator().evaluateFormulaCell(cell);
-            assertEquals(36, cell.getErrorCellValue());
-        } finally {
-            wb.close();
-        }
     }
 
     public void testMissingRAttribute() {
@@ -385,28 +366,6 @@ public final class TestXSSFCell extends BaseTestCell {
             cell.toString();
         }
     }    
-
-    public void testRemoveHyperlink() {
-        final Workbook wb = new XSSFWorkbook();
-        final Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-
-        Cell cell1 = row.createCell(1);
-        Hyperlink link1 = new XSSFHyperlink(Hyperlink.LINK_URL);
-        cell1.setHyperlink(link1);
-        assertNotNull(cell1.getHyperlink());
-        cell1.removeHyperlink();
-        assertNull(cell1.getHyperlink());
-
-        Cell cell2 = row.createCell(0);
-        Hyperlink link2 = new XSSFHyperlink(Hyperlink.LINK_URL);
-        cell2.setHyperlink(link2);
-        assertNotNull(cell2.getHyperlink());
-        cell2.setHyperlink(null);
-        assertNull(cell2.getHyperlink());
-
-        XSSFTestDataSamples.writeOutAndReadBack(wb);
-    }
 
     public void testBug56644ReturnNull() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56644.xlsx");
