@@ -218,4 +218,34 @@ public final class TestCellReference extends TestCase {
 		throw new AssertionFailedError("expected (c='" + colStr + "', r='" + rowStr + "' to be "
 				+ (expResult ? "within" : "out of") + " bounds for version " + sv.name());
 	}
+	
+	public void testConvertColStringToIndex() {
+	    assertEquals(0, CellReference.convertColStringToIndex("A"));
+	    assertEquals(1, CellReference.convertColStringToIndex("B"));
+	    assertEquals(14, CellReference.convertColStringToIndex("O"));
+	    assertEquals(701, CellReference.convertColStringToIndex("ZZ"));
+	    assertEquals(18252, CellReference.convertColStringToIndex("ZZA"));
+	    
+	    assertEquals(0, CellReference.convertColStringToIndex("$A"));
+	    assertEquals(1, CellReference.convertColStringToIndex("$B"));
+	    
+	    try {
+	        CellReference.convertColStringToIndex("A$");
+	        fail("Should throw exception here");
+	    } catch (IllegalArgumentException e) {
+	        assertTrue(e.getMessage().contains("A$"));
+	    }
+    }
+    
+    public void testConvertNumColColString() {
+        assertEquals("A", CellReference.convertNumToColString(0));
+	    assertEquals("AV", CellReference.convertNumToColString(47));
+	    assertEquals("AW", CellReference.convertNumToColString(48));
+	    assertEquals("BF", CellReference.convertNumToColString(57));
+	    
+	    assertEquals("", CellReference.convertNumToColString(-1));
+	    assertEquals("", CellReference.convertNumToColString(Integer.MIN_VALUE));
+	    assertEquals("", CellReference.convertNumToColString(Integer.MAX_VALUE));
+	    assertEquals("FXSHRXW", CellReference.convertNumToColString(Integer.MAX_VALUE-1));
+	}
 }
