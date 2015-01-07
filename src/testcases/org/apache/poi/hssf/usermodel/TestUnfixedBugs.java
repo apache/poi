@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import junit.framework.AssertionFailedError;
@@ -24,10 +26,12 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.RecordFormatException;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
 
 /**
  * @author aviks
@@ -121,5 +125,23 @@ public final class TestUnfixedBugs extends TestCase {
                 }
             }
         }
+    }
+
+    @Test
+    public void testBug57074() {
+        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("57074.xls");
+        Sheet sheet = wb.getSheet("Sheet1");
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell(0);
+        
+        HSSFColor bgColor = (HSSFColor) cell.getCellStyle().getFillBackgroundColorColor();
+        String bgColorStr = bgColor.getTriplet()[0]+", "+bgColor.getTriplet()[1]+", "+bgColor.getTriplet()[2];
+        //System.out.println(bgColorStr);
+        assertEquals("215, 228, 188", bgColorStr);
+
+        HSSFColor fontColor = (HSSFColor) cell.getCellStyle().getFillForegroundColorColor();
+        String fontColorStr = fontColor.getTriplet()[0]+", "+fontColor.getTriplet()[1]+", "+fontColor.getTriplet()[2];
+        //System.out.println(fontColorStr);
+        assertEquals("0, 128, 128", fontColorStr);
     }
 }
