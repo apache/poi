@@ -71,25 +71,30 @@ public class ImageUtils {
                 try {
                     //read the image using javax.imageio.*
                     ImageInputStream iis = ImageIO.createImageInputStream( is );
-                    Iterator<ImageReader> i = ImageIO.getImageReaders( iis );
-                    ImageReader r = i.next();
-                    r.setInput( iis );
-                    BufferedImage img = r.read(0);
+                    try {
+                        Iterator<ImageReader> i = ImageIO.getImageReaders( iis );
+                        ImageReader r = i.next();
+                        try {
+                            r.setInput( iis );
+                            BufferedImage img = r.read(0);
+        
+                            int[] dpi = getResolution(r);
+        
+                            //if DPI is zero then assume standard 96 DPI
+                            //since cannot divide by zero
+                            if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
+                            if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
+        
+                            size.width = img.getWidth()*PIXEL_DPI/dpi[0];
+                            size.height = img.getHeight()*PIXEL_DPI/dpi[1];
+                        } finally {
+                            r.dispose();
+                        }
+                    } finally {
+                        iis.close();
+                    }
 
-                    int[] dpi = getResolution(r);
-
-                    //if DPI is zero then assume standard 96 DPI
-                    //since cannot divide by zero
-                    if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
-                    if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
-
-                    size.width = img.getWidth()*PIXEL_DPI/dpi[0];
-                    size.height = img.getHeight()*PIXEL_DPI/dpi[1];
-
-                    r.dispose();
-                    iis.close();
-
-                } catch (IOException e){
+                } catch (IOException e) {
                     //silently return if ImageIO failed to read the image
                     logger.log(POILogger.WARN, e);
                 }
