@@ -80,8 +80,8 @@ public final class DocumentHelper {
                 documentBuilderFactory.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
                 // Stop once one can be setup without error
                 return;
-            } catch (Exception e) {
-                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
+            } catch (Throwable t) {
+                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", t);
             }
         }
     }
