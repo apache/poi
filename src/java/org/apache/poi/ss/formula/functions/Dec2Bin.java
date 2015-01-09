@@ -52,8 +52,8 @@ public class Dec2Bin extends Var1or2ArgFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new Dec2Bin();
 
-    private final static long MIN_VALUE = Long.parseLong("-512");
-    private final static long MAX_VALUE = Long.parseLong("512");
+    private final static long MIN_VALUE = -512;
+    private final static long MAX_VALUE =  511;
     private final static int DEFAULT_PLACES_VALUE = 10;
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE, ValueEval placesVE) {

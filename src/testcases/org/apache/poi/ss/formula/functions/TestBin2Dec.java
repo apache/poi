@@ -30,20 +30,20 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Tests for {@link Hex2Dec}
+ * Tests for {@link Bin2Dec}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestHex2Dec extends TestCase {
+public final class TestBin2Dec extends TestCase {
 
     private static ValueEval invokeValue(String number1) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
-		return new Hex2Dec().evaluate(args, -1, -1);
+		return new Bin2Dec().evaluate(args, -1, -1);
 	}
 
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
-		assertEquals(NumberEval.class, result.getClass());
+		assertEquals("Had: " + result.toString(), NumberEval.class, result.getClass());
 		assertEquals(msg, expected, ((NumberEval) result).getStringValue());
 	}
 
@@ -54,21 +54,23 @@ public final class TestHex2Dec extends TestCase {
     }
 
 	public void testBasic() {
-		confirmValue("Converts hex 'A5' to decimal (165)", "A5", "165");
-		confirmValue("Converts hex FFFFFFFF5B to decimal (-165)", "FFFFFFFF5B", "-165");
-		confirmValue("Converts hex 3DA408B9 to decimal (-165)", "3DA408B9", "1034160313");
+		confirmValue("Converts binary '00101' to decimal (5)", "00101", "5");
+		confirmValue("Converts binary '1111111111' to decimal (-1)", "1111111111", "-1");
+		confirmValue("Converts binary '1111111110' to decimal (-2)", "1111111110", "-2");
+        confirmValue("Converts binary '0111111111' to decimal (511)", "0111111111", "511");
 	}
 
     public void testErrors() {
-        confirmValueError("not a valid hex number","GGGGGGG", ErrorEval.NUM_ERROR);
-        confirmValueError("not a valid hex number","3.14159", ErrorEval.NUM_ERROR);
+        confirmValueError("does not support more than 10 digits","01010101010", ErrorEval.NUM_ERROR);
+        confirmValueError("not a valid binary number","GGGGGGG", ErrorEval.NUM_ERROR);
+        confirmValueError("not a valid binary number","3.14159", ErrorEval.NUM_ERROR);
     }
 
     public void testEvalOperationEvaluationContext() {
         OperationEvaluationContext ctx = createContext();
         
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
-        ValueEval result = new Hex2Dec().evaluate(args, ctx);
+        ValueEval result = new Bin2Dec().evaluate(args, ctx);
 
         assertEquals(NumberEval.class, result.getClass());
         assertEquals("0", ((NumberEval) result).getStringValue());
@@ -78,7 +80,7 @@ public final class TestHex2Dec extends TestCase {
         OperationEvaluationContext ctx = createContext();
         
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 0) };
-        ValueEval result = new Hex2Dec().evaluate(args, ctx);
+        ValueEval result = new Bin2Dec().evaluate(args, ctx);
 
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID, result);
@@ -103,7 +105,7 @@ public final class TestHex2Dec extends TestCase {
         OperationEvaluationContext ctx = createContext();
         
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
-        ValueEval result = new Hex2Dec().evaluate(args, -1, -1);
+        ValueEval result = new Bin2Dec().evaluate(args, -1, -1);
 
         assertEquals(NumberEval.class, result.getClass());
         assertEquals("0", ((NumberEval) result).getStringValue());
