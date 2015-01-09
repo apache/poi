@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula;
 
+import java.io.IOException;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -213,37 +215,43 @@ public class TestWorkbookEvaluator extends TestCase {
 	/**
 	 * Functions like IF, INDIRECT, INDEX, OFFSET etc can return AreaEvals which
 	 * should be dereferenced by the evaluator
+	 * @throws IOException 
 	 */
-	public void testResultOutsideRange() {
+	public void testResultOutsideRange() throws IOException {
 		Workbook wb = new HSSFWorkbook();
-		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
-		cell.setCellFormula("D2:D5"); // IF(TRUE,D2:D5,D2) or  OFFSET(D2:D5,0,0) would work too
-		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
-		CellValue cv;
 		try {
-			cv = fe.evaluate(cell);
-		} catch (IllegalArgumentException e) {
-			if ("Specified row index (0) is outside the allowed range (1..4)".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug in result dereferencing");
-			}
-			throw new RuntimeException(e);
+    		Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+    		cell.setCellFormula("D2:D5"); // IF(TRUE,D2:D5,D2) or  OFFSET(D2:D5,0,0) would work too
+    		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+    		CellValue cv;
+    		try {
+    			cv = fe.evaluate(cell);
+    		} catch (IllegalArgumentException e) {
+    			if ("Specified row index (0) is outside the allowed range (1..4)".equals(e.getMessage())) {
+    				throw new AssertionFailedError("Identified bug in result dereferencing");
+    			}
+    			throw new RuntimeException(e);
+    		}
+    		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
+    		assertEquals(ErrorConstants.ERROR_VALUE, cv.getErrorValue());
+    
+    		// verify circular refs are still detected properly
+    		fe.clearAllCachedResultValues();
+    		cell.setCellFormula("OFFSET(A1,0,0)");
+    		cv = fe.evaluate(cell);
+    		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
+    		assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
+		} finally {
+		    wb.close();
 		}
-		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
-		assertEquals(ErrorConstants.ERROR_VALUE, cv.getErrorValue());
-
-		// verify circular refs are still detected properly
-		fe.clearAllCachedResultValues();
-		cell.setCellFormula("OFFSET(A1,0,0)");
-		cv = fe.evaluate(cell);
-		assertEquals(Cell.CELL_TYPE_ERROR, cv.getCellType());
-		assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
 	}
 	
 
   /**
    * formulas with defined names.
+ * @throws IOException 
    */
-  public void testNamesInFormulas() {
+  public void testNamesInFormulas() throws IOException {
     Workbook wb = new HSSFWorkbook();
     Sheet sheet = wb.createSheet("Sheet1");
     
@@ -279,6 +287,8 @@ public class TestWorkbookEvaluator extends TestCase {
     assertEquals(10.0, fe.evaluate(row1.getCell(2)).getNumberValue());
     assertEquals(15.0, fe.evaluate(row2.getCell(2)).getNumberValue());
     assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue());
+    
+    wb.close();
   }
 	
 }

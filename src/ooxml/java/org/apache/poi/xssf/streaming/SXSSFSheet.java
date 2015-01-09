@@ -98,6 +98,8 @@ public class SXSSFSheet implements Sheet, Cloneable
      *
      * @param rownum  row number
      * @return high level Row object representing a row in the sheet
+     * @throws IllegalArgumentException If the max. number of rows is exceeded or 
+     *      a rownum is provided where the row is already flushed to disk.
      * @see #removeRow(Row)
      */
     public Row createRow(int rownum)
