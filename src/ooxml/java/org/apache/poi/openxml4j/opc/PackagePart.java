@@ -168,7 +168,7 @@ public abstract class PackagePart implements RelationshipSource {
 	public PackageRelationship addExternalRelationship(String target,
 			String relationshipType, String id) {
 		if (target == null) {
-			throw new IllegalArgumentException("target");
+			throw new IllegalArgumentException("target is null for type " + relationshipType);
 		}
 		if (relationshipType == null) {
 			throw new IllegalArgumentException("relationshipType");
