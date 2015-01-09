@@ -35,6 +35,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -1923,5 +1924,89 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         CellValue value = evaluator.evaluate(cell);
         
         assertEquals(expect, value.formatAsString());
+    }
+    
+    @Test
+    public void testBug57196() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57196.xlsx");
+        Sheet sheet = wb.getSheet("Feuil1");
+        Row mod=sheet.getRow(1);
+        mod.getCell(1).setCellValue(3);
+        HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+//        FileOutputStream fileOutput = new FileOutputStream("/tmp/57196.xlsx");
+//        wb.write(fileOutput);
+//        fileOutput.close();
+        wb.close();
+    }
+    
+    @Test
+    public void test57196_Detail() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("Sheet1");
+        XSSFRow row = sheet.createRow(0);
+        XSSFCell cell = row.createCell(0);
+        cell.setCellFormula("DEC2HEX(HEX2DEC(O8)-O2+D2)");
+        XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+        CellValue cv = fe.evaluate(cell);
+
+        assertNotNull(cv);
+    }    
+    
+    @Test
+    public void test57196_Detail2() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("Sheet1");
+        XSSFRow row = sheet.createRow(0);
+        XSSFCell cell = row.createCell(0);
+        cell.setCellFormula("DEC2HEX(O2+D2)");
+        XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(wb);
+        CellValue cv = fe.evaluate(cell);
+
+        assertNotNull(cv);
+    }    
+
+    @Test
+    public void test57196_WorkbookEvaluator() {
+        //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
+        //System.setProperty("poi.log.level", "3");
+        try {
+            XSSFWorkbook wb = new XSSFWorkbook();
+            XSSFSheet sheet = wb.createSheet("Sheet1");
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell = row.createCell(0);
+
+            // simple formula worked
+            cell.setCellFormula("DEC2HEX(O2+D2)");
+    
+            WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+            
+            // this already failed! Hex2Dec did not correctly handle RefEval
+            cell.setCellFormula("HEX2DEC(O8)");
+            workbookEvaluator.clearAllCachedResultValues();
+    
+            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+
+            // slightly more complex one failed
+            cell.setCellFormula("HEX2DEC(O8)-O2+D2");
+            workbookEvaluator.clearAllCachedResultValues();
+    
+            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+
+            // more complicated failed
+            cell.setCellFormula("DEC2HEX(HEX2DEC(O8)-O2+D2)");
+            workbookEvaluator.clearAllCachedResultValues();
+
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+        } finally {
+            System.clearProperty("org.apache.poi.util.POILogger");
+            System.clearProperty("poi.log.level");
+        }
     }
 }

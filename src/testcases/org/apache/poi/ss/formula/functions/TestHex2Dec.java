@@ -18,6 +18,12 @@
 package org.apache.poi.ss.formula.functions;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.IStabilityClassifier;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -56,5 +62,50 @@ public final class TestHex2Dec extends TestCase {
     public void testErrors() {
         confirmValueError("not a valid octal number","GGGGGGG", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid octal number","3.14159", ErrorEval.NUM_ERROR);
+    }
+
+    public void testEvalOperationEvaluationContext() {
+        OperationEvaluationContext ctx = createContext();
+        
+        ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
+        ValueEval result = new Hex2Dec().evaluate(args, ctx);
+
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals("0", ((NumberEval) result).getStringValue());
+    }
+    
+    public void testEvalOperationEvaluationContextFails() {
+        OperationEvaluationContext ctx = createContext();
+        
+        ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 0) };
+        ValueEval result = new Hex2Dec().evaluate(args, ctx);
+
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
+
+    private OperationEvaluationContext createContext() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        wb.createSheet();
+        HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
+        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
+            
+            public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
+                return true;
+            }
+        }, null);
+        OperationEvaluationContext ctx = new OperationEvaluationContext(workbookEvaluator, 
+                workbook, 0, 0, 0, null);
+        return ctx;
+    }
+
+    public void testRefs() {
+        OperationEvaluationContext ctx = createContext();
+        
+        ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
+        ValueEval result = new Hex2Dec().evaluate(args, -1, -1);
+
+        assertEquals(NumberEval.class, result.getClass());
+        assertEquals("0", ((NumberEval) result).getStringValue());
     }
 }
