@@ -1974,6 +1974,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             XSSFSheet sheet = wb.createSheet("Sheet1");
             XSSFRow row = sheet.createRow(0);
             XSSFCell cell = row.createCell(0);
+            cell.setCellValue("0");
+            cell = row.createCell(1);
+            cell.setCellValue(0);
+            cell = row.createCell(2);
+            cell.setCellValue(0);
 
             // simple formula worked
             cell.setCellFormula("DEC2HEX(O2+D2)");
@@ -2002,6 +2007,30 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             cell.setCellFormula("DEC2HEX(HEX2DEC(O8)-O2+D2)");
             workbookEvaluator.clearAllCachedResultValues();
 
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+
+            // what other similar functions
+            cell.setCellFormula("DEC2BIN(O8)-O2+D2");
+            workbookEvaluator.clearAllCachedResultValues();
+    
+            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+
+            // what other similar functions
+            cell.setCellFormula("DEC2BIN(A1)");
+            workbookEvaluator.clearAllCachedResultValues();
+    
+            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
+            workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
+            workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
+
+            // what other similar functions
+            cell.setCellFormula("BIN2DEC(B1)");
+            workbookEvaluator.clearAllCachedResultValues();
+    
+            workbookEvaluator = new WorkbookEvaluator(XSSFEvaluationWorkbook.create(wb), null, null);
             workbookEvaluator.setDebugEvaluationOutputForNextEval(true);
             workbookEvaluator.evaluate(new XSSFEvaluationCell(cell));
         } finally {

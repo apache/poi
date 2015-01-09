@@ -20,6 +20,7 @@ import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
@@ -44,7 +45,13 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
     public static final FreeRefFunction instance = new Bin2Dec();
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE) {
-        String number = OperandResolver.coerceValueToString(numberVE);
+        final String number;
+        if (numberVE instanceof RefEval) {
+            RefEval re = (RefEval) numberVE;
+            number = OperandResolver.coerceValueToString(re.getInnerValueEval(re.getFirstSheetIndex()));
+        } else {
+            number = OperandResolver.coerceValueToString(numberVE);
+        }
         if (number.length() > 10) {
             return ErrorEval.NUM_ERROR;
         }
@@ -62,22 +69,25 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
         }
 
         String value;
-        int sum;
-        if (isPositive) {
-            //bit9*2^8 + bit8*2^7 + bit7*2^6 + bit6*2^5 + bit5*2^4+ bit3*2^2+ bit2*2^1+ bit1*2^0
-            sum = getDecimalValue(unsigned);
-            value = String.valueOf(sum);
-        } else {
-            //The leftmost bit is 1 -- this is negative number
-            //Inverse bits [1-9]
-            String inverted = toggleBits(unsigned);
-            // Calculate decimal number
-            sum = getDecimalValue(inverted);
-
-            //Add 1 to obtained number
-            sum++;
-
-            value = "-" + String.valueOf(sum);
+        try {
+            if (isPositive) {
+                //bit9*2^8 + bit8*2^7 + bit7*2^6 + bit6*2^5 + bit5*2^4+ bit3*2^2+ bit2*2^1+ bit1*2^0
+                int sum = getDecimalValue(unsigned);
+                value = String.valueOf(sum);
+            } else {
+                //The leftmost bit is 1 -- this is negative number
+                //Inverse bits [1-9]
+                String inverted = toggleBits(unsigned);
+                // Calculate decimal number
+                int sum = getDecimalValue(inverted);
+    
+                //Add 1 to obtained number
+                sum++;
+    
+                value = "-" + String.valueOf(sum);
+            }
+        } catch (NumberFormatException e) {
+            return ErrorEval.NUM_ERROR;
         }
 
         return new NumberEval(Long.parseLong(value));
