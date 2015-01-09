@@ -18,6 +18,9 @@
 package org.apache.poi.hssf.model;
 
 import static org.junit.Assert.assertArrayEquals;
+
+import java.io.IOException;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -37,44 +40,12 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.constant.ErrorConstant;
-import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
-import org.apache.poi.ss.formula.ptg.AddPtg;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.AreaI;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
-import org.apache.poi.ss.formula.ptg.AreaPtgBase;
-import org.apache.poi.ss.formula.ptg.ArrayPtg;
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.BoolPtg;
-import org.apache.poi.ss.formula.ptg.ConcatPtg;
-import org.apache.poi.ss.formula.ptg.DividePtg;
-import org.apache.poi.ss.formula.ptg.EqualPtg;
-import org.apache.poi.ss.formula.ptg.ErrPtg;
-import org.apache.poi.ss.formula.ptg.FuncPtg;
-import org.apache.poi.ss.formula.ptg.FuncVarPtg;
-import org.apache.poi.ss.formula.ptg.IntPtg;
-import org.apache.poi.ss.formula.ptg.MemAreaPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.MissingArgPtg;
-import org.apache.poi.ss.formula.ptg.MultiplyPtg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.NumberPtg;
-import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
-import org.apache.poi.ss.formula.ptg.PercentPtg;
-import org.apache.poi.ss.formula.ptg.PowerPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RangePtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.formula.ptg.StringPtg;
-import org.apache.poi.ss.formula.ptg.SubtractPtg;
-import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
-import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.junit.Test;
 
 /**
  * Test the low level formula parser functionality. High level tests are to
@@ -166,7 +137,7 @@ public final class TestFormulaParser extends TestCase {
 				StringPtg.class, StringPtg.class, FuncVarPtg.class);
 	}
 
-	public void testWorksheetReferences() {
+	public void testWorksheetReferences() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		wb.createSheet("NoQuotesNeeded");
@@ -181,6 +152,8 @@ public final class TestFormulaParser extends TestCase {
 
 		cell = row.createCell(1);
 		cell.setCellFormula("'Quotes Needed Here &#$@'!A1");
+		
+		wb.close();
 	}
 
 	public void testUnaryMinus() {
@@ -256,8 +229,9 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses("40000/2", IntPtg.class, IntPtg.class, DividePtg.class);
 	}
 
-	/** bug 35027, underscore in sheet name */
-	public void testUnderscore() {
+	/** bug 35027, underscore in sheet name 
+	 * @throws IOException */
+	public void testUnderscore() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		wb.createSheet("Cash_Flow");
@@ -268,10 +242,13 @@ public final class TestFormulaParser extends TestCase {
 
 		cell = row.createCell(0);
 		cell.setCellFormula("Cash_Flow!A1");
+		
+		wb.close();
 	}
 
-    /** bug 49725, defined names with underscore */
-    public void testNamesWithUnderscore() {
+    /** bug 49725, defined names with underscore 
+     * @throws IOException */
+    public void testNamesWithUnderscore() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook(); //or new XSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("NamesWithUnderscore");
 
@@ -312,6 +289,8 @@ public final class TestFormulaParser extends TestCase {
 
         cell.setCellFormula("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))");
         assertEquals("INDEX(DA6_LEO_WBS_Name,MATCH($A3,DA6_LEO_WBS_Number,0))", cell.getCellFormula());
+        
+        wb.close();
     }
 
     // bug 38396 : Formula with exponential numbers not parsed correctly.
@@ -321,7 +300,7 @@ public final class TestFormulaParser extends TestCase {
 		confirmTokenClasses("1.3E1/2",   NumberPtg.class, IntPtg.class, DividePtg.class);
 	}
 
-	public void testExponentialInSheet() {
+	public void testExponentialInSheet() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		wb.createSheet("Cash_Flow");
@@ -390,9 +369,11 @@ public final class TestFormulaParser extends TestCase {
 		cell.setCellFormula("-10E-1/3.1E2*4E3/3E4");
 		formula = cell.getCellFormula();
 		assertEquals("Exponential formula string", "-1/310*4000/30000", formula);
+		
+		wb.close();
 	}
 
-	public void testNumbers() {
+	public void testNumbers() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		wb.createSheet("Cash_Flow");
@@ -429,9 +410,11 @@ public final class TestFormulaParser extends TestCase {
 		cell.setCellFormula("10E-1");
 		formula = cell.getCellFormula();
 		assertEquals("1", formula);
+		
+		wb.close();
 	}
 
-	public void testRanges() {
+	public void testRanges() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		wb.createSheet("Cash_Flow");
@@ -452,9 +435,11 @@ public final class TestFormulaParser extends TestCase {
 		cell.setCellFormula("A1...A2");
 		formula = cell.getCellFormula();
 		assertEquals("A1:A2", formula);
+		
+		wb.close();
 	}
 
-	public void testMultiSheetReference() {
+	public void testMultiSheetReference() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 
         wb.createSheet("Cash_Flow");
@@ -500,6 +485,8 @@ public final class TestFormulaParser extends TestCase {
         cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1:B2");
         formula = cell.getCellFormula();
         assertEquals("Cash_Flow:\'Test Sheet\'!A1:B2", formula);
+        
+        wb.close();
 	}
 	
 	/**
@@ -660,7 +647,7 @@ public final class TestFormulaParser extends TestCase {
 		StringPtg sp = (StringPtg) parseSingleToken(formula, StringPtg.class);
 		assertEquals(expectedValue, sp.getValue());
 	}
-	public void testParseStringLiterals_bug28754() {
+	public void testParseStringLiterals_bug28754() throws IOException {
 
 		StringPtg sp;
 		try {
@@ -674,17 +661,21 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals("test\"ing", sp.getValue());
 
 		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet();
-		wb.setSheetName(0, "Sheet1");
-
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell(0);
-		cell.setCellFormula("right(\"test\"\"ing\", 3)");
-		String actualCellFormula = cell.getCellFormula();
-		if("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
-			throw new AssertionFailedError("Identified bug 28754b");
+		try {
+    		HSSFSheet sheet = wb.createSheet();
+    		wb.setSheetName(0, "Sheet1");
+    
+    		HSSFRow row = sheet.createRow(0);
+    		HSSFCell cell = row.createCell(0);
+    		cell.setCellFormula("right(\"test\"\"ing\", 3)");
+    		String actualCellFormula = cell.getCellFormula();
+    		if("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
+    			throw new AssertionFailedError("Identified bug 28754b");
+    		}
+    		assertEquals("RIGHT(\"test\"\"ing\",3)", actualCellFormula);
+		} finally {
+		    wb.close();
 		}
-		assertEquals("RIGHT(\"test\"\"ing\",3)", actualCellFormula);
 	}
 
 	public void testParseStringLiterals() {
@@ -735,7 +726,7 @@ public final class TestFormulaParser extends TestCase {
 		}
 	}
 
-	public void testSetFormulaWithRowBeyond32768_Bug44539() {
+	public void testSetFormulaWithRowBeyond32768_Bug44539() throws IOException {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
@@ -748,6 +739,8 @@ public final class TestFormulaParser extends TestCase {
 			fail("Identified bug 44539");
 		}
 		assertEquals("SUM(A32769:A32770)", cell.getCellFormula());
+		
+		wb.close();
 	}
 
 	public void testSpaceAtStartOfFormula() {
@@ -984,7 +977,7 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(-5.0, ((Double)element).doubleValue(), 0.0);
 	}
 
-	public void testRangeOperator() {
+	public void testRangeOperator() throws IOException {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
@@ -1004,16 +997,19 @@ public final class TestFormulaParser extends TestCase {
 		wb.setSheetName(0, "A1...A2");
 		cell.setCellFormula("A1...A2!B1");
 		assertEquals("A1...A2!B1", cell.getCellFormula());
+		
+		wb.close();
 	}
 
-	public void testBooleanNamedSheet() {
-
+	public void testBooleanNamedSheet() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("true");
 		HSSFCell cell = sheet.createRow(0).createCell(0);
 		cell.setCellFormula("'true'!B2");
 
 		assertEquals("'true'!B2", cell.getCellFormula());
+		
+		wb.close();
 	}
 
 	public void testParseExternalWorkbookReference() {
@@ -1087,8 +1083,9 @@ public final class TestFormulaParser extends TestCase {
 		assertEquals(15, mf.getLenRefSubexpression());
 	}
 
-	/** Named ranges with backslashes, e.g. 'POI\\2009' */
-	public void testBackSlashInNames() {
+	/** Named ranges with backslashes, e.g. 'POI\\2009' 
+	 * @throws IOException */
+	public void testBackSlashInNames() throws IOException {
 		HSSFWorkbook wb = new HSSFWorkbook();
 
 		HSSFName name = wb.createName();
@@ -1105,6 +1102,8 @@ public final class TestFormulaParser extends TestCase {
 		HSSFCell cell_D1 = row.createCell(2);
 		cell_D1.setCellFormula("NOT(POI\\2009=\"3.5-final\")");
 		assertEquals("NOT(POI\\2009=\"3.5-final\")", cell_D1.getCellFormula());
+		
+		wb.close();
 	}
 
 	/**
@@ -1353,4 +1352,36 @@ public final class TestFormulaParser extends TestCase {
 	private static void confirmParseException(FormulaParseException e, String expMsg) {
 		assertEquals(expMsg, e.getMessage());
 	}
+
+    @Test
+    public void test57196_Formula() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        Ptg[] ptgs = HSSFFormulaParser.parse("DEC2HEX(HEX2DEC(O8)-O2+D2)", wb, FormulaType.CELL, -1); 
+        assertNotNull("Ptg array should not be null", ptgs);
+        
+        confirmTokenClasses(ptgs,
+            NameXPtg.class, // ??
+            NameXPtg.class, // ??
+            RefPtg.class, // O8
+            FuncVarPtg.class, // HEX2DEC
+            RefPtg.class, // O2
+            SubtractPtg.class,
+            RefPtg.class,   // D2
+            AddPtg.class,
+            FuncVarPtg.class // DEC2HEX
+        );
+
+        RefPtg o8 = (RefPtg) ptgs[2];
+        FuncVarPtg hex2Dec = (FuncVarPtg) ptgs[3];
+        RefPtg o2 = (RefPtg) ptgs[4];
+        RefPtg d2 = (RefPtg) ptgs[6];
+        FuncVarPtg dec2Hex = (FuncVarPtg) ptgs[8];
+
+        assertEquals("O8", o8.toFormulaString());
+        assertEquals(255, hex2Dec.getFunctionIndex());
+        //assertEquals("", hex2Dec.toString());
+        assertEquals("O2", o2.toFormulaString());
+        assertEquals("D2", d2.toFormulaString());
+        assertEquals(255, dec2Hex.getFunctionIndex());
+    }    
 }
