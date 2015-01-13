@@ -2038,4 +2038,18 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             System.clearProperty("poi.log.level");
         }
     }
+    
+    @Test
+    public void bug57430() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            wb.createSheet("Sheet1");
+
+            XSSFName name1 = wb.createName();
+            name1.setNameName("FMLA");
+            name1.setRefersToFormula("Sheet1!$B$3");
+        } finally {
+            wb.close();
+        }
+    }
 }
