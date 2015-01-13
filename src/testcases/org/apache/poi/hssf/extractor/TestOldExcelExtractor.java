@@ -38,7 +38,7 @@ public final class TestOldExcelExtractor extends POITestCase {
         }
     }
     
-    public void DISABLEDtestSimpleExcel3() {
+    public void testSimpleExcel3() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls");
 
         // Check we can call getText without error

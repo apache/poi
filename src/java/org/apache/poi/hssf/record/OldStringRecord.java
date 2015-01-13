@@ -75,7 +75,7 @@ public final class OldStringRecord {
     protected static String getString(byte[] data, CodepageRecord codepage) {
         int cp = CodePageUtil.CP_ISO_8859_1;
         if (codepage != null) {
-            cp = codepage.getCodepage();
+            cp = codepage.getCodepage() & 0xffff;
         }
         try {
             return CodePageUtil.getStringFromCodePage(data, cp);
