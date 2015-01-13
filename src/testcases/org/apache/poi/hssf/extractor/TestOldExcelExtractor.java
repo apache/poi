@@ -38,6 +38,27 @@ public final class TestOldExcelExtractor extends POITestCase {
         }
     }
     
+    public void DISABLEDtestSimpleExcel3() {
+        OldExcelExtractor extractor = createExtractor("testEXCEL_3.xls");
+
+        // Check we can call getText without error
+        String text = extractor.getText();
+
+        // Check we find a few words we expect in there
+        assertContains(text, "Season beginning August");
+        assertContains(text, "USDA");
+        
+        // Check we find a few numbers we expect in there
+        assertContains(text, "347");
+        assertContains(text, "228");
+        
+        // Check we find a few string-literal dates in there
+        assertContains(text, "1981/82");
+        
+        // Check the type
+        assertEquals(3, extractor.getBiffVersion());
+        assertEquals(0x10, extractor.getFileType());
+    }
     public void testSimpleExcel4() {
         OldExcelExtractor extractor = createExtractor("testEXCEL_4.xls");
 
