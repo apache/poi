@@ -214,6 +214,8 @@ public class TestAllFiles {
 		EXPECTED_FAILURES.add("spreadsheet/54764-2.xlsx");   // see TestXSSFBugs.bug54764()
 		EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/Simple.xlsb");
+        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_2.xls");
+        EXPECTED_FAILURES.add("spreadsheet/testEXCEL_3.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
