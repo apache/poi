@@ -53,6 +53,7 @@ public class CodePageUtil
 
     /** <p>Codepage for Windows 1252</p> */
     public static final int CP_WINDOWS_1252 = 1252;
+    public static final int CP_WINDOWS_1252_BIFF23 = 32769;
 
     /** <p>Codepage for Windows 1253</p> */
     public static final int CP_WINDOWS_1253 = 1253;
@@ -77,6 +78,7 @@ public class CodePageUtil
 
     /** <p>Codepage for Macintosh Roman (Java: MacRoman)</p> */
     public static final int CP_MAC_ROMAN = 10000;
+    public static final int CP_MAC_ROMAN_BIFF23 = 32768;
 
     /** <p>Codepage for Macintosh Japan (Java: unknown - use SJIS, cp942 or
      * cp943)</p> */
@@ -298,6 +300,7 @@ public class CodePageUtil
                 else
                     return "windows-1251";
             case CP_WINDOWS_1252:
+            case CP_WINDOWS_1252_BIFF23:
                 if (javaLangFormat)
                     return "Cp1252";
                 else
@@ -335,6 +338,7 @@ public class CodePageUtil
             case CP_JOHAB:
                 return "johab";
             case CP_MAC_ROMAN:
+            case CP_MAC_ROMAN_BIFF23:
                 return "MacRoman";
             case CP_MAC_JAPAN:
                 return "SJIS";
