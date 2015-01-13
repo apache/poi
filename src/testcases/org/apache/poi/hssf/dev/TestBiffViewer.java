@@ -38,6 +38,8 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 		SILENT_EXCLUDED.add("46904.xls");
         SILENT_EXCLUDED.add("35897-type4.xls"); // unsupported crypto api header 
 		SILENT_EXCLUDED.add("xor-encryption-abc.xls"); // unsupported XOR-encryption
+        SILENT_EXCLUDED.add("testEXCEL_2.xls");  // Biff 2 / Excel 2, pre-OLE2
+        SILENT_EXCLUDED.add("testEXCEL_3.xls");  // Biff 3 / Excel 3, pre-OLE2
         SILENT_EXCLUDED.add("testEXCEL_4.xls");  // Biff 4 / Excel 4, pre-OLE2
         SILENT_EXCLUDED.add("testEXCEL_5.xls");  // Biff 5 / Excel 5
         SILENT_EXCLUDED.add("testEXCEL_95.xls"); // Biff 5 / Excel 95
