@@ -195,13 +195,15 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
             
             // add textboxes
             if (includeTextBoxes){
-                XSSFDrawing drawing = sheet.createDrawingPatriarch();
-                for (XSSFShape shape : drawing.getShapes()){
-                    if (shape instanceof XSSFSimpleShape){
-                        String boxText = ((XSSFSimpleShape)shape).getText();
-                        if (boxText.length() > 0){
-                            text.append(boxText);
-                            text.append('\n');
+                XSSFDrawing drawing = sheet.getDrawingPatriarch();
+                if (drawing != null) {
+                    for (XSSFShape shape : drawing.getShapes()){
+                        if (shape instanceof XSSFSimpleShape){
+                            String boxText = ((XSSFSimpleShape)shape).getText();
+                            if (boxText.length() > 0){
+                                text.append(boxText);
+                                text.append('\n');
+                            }
                         }
                     }
                 }

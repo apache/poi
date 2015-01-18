@@ -44,6 +44,7 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
@@ -131,7 +132,7 @@ public class ExtractorFactory {
                 return createExtractor(new POIFSFileSystem(inp));
             }
             if(POIXMLDocument.hasOOXMLHeader(inp)) {
-                return createExtractor(OPCPackage.open(f.toString()));
+                return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
             }
             throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
         } finally {
