@@ -407,6 +407,32 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
             columnHelper.setColBestFit(column, true);
         }
     }
+    
+    /**
+     * Return the sheet's existing drawing, or null if there isn't yet one.
+     * 
+     * Use {@link #createDrawingPatriarch()} to get or create
+     *
+     * @return a SpreadsheetML drawing
+     */
+    public XSSFDrawing getDrawingPatriarch() {
+        CTDrawing ctDrawing = getCTDrawing();
+        if (ctDrawing != null) {
+            // Search the referenced drawing in the list of the sheet's relations
+            for (POIXMLDocumentPart p : getRelations()){
+                if (p instanceof XSSFDrawing) {
+                    XSSFDrawing dr = (XSSFDrawing)p;
+                    String drId = dr.getPackageRelationship().getId();
+                    if (drId.equals(ctDrawing.getId())){
+                        return dr;
+                    }
+                    break;
+                }
+            }
+            logger.log(POILogger.ERROR, "Can't find drawing with id=" + ctDrawing.getId() + " in the list of the sheet's relationships");
+        }
+        return null;
+    }
 
     /**
      * Create a new SpreadsheetML drawing. If this sheet already contains a drawing - return that.
@@ -415,35 +441,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
      */
     @Override
     public XSSFDrawing createDrawingPatriarch() {
-        XSSFDrawing drawing = null;
         CTDrawing ctDrawing = getCTDrawing();
-        if(ctDrawing == null) {
-            //drawingNumber = #drawings.size() + 1
-            int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
-            drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
-            String relId = drawing.getPackageRelationship().getId();
-
-            //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
-            //The relationship Id references the part containing the drawingML definitions.
-            ctDrawing = worksheet.addNewDrawing();
-            ctDrawing.setId(relId);
-        } else {
-            //search the referenced drawing in the list of the sheet's relations
-            for(POIXMLDocumentPart p : getRelations()){
-                if(p instanceof XSSFDrawing) {
-                    XSSFDrawing dr = (XSSFDrawing)p;
-                    String drId = dr.getPackageRelationship().getId();
-                    if(drId.equals(ctDrawing.getId())){
-                        drawing = dr;
-                        break;
-                    }
-                    break;
-                }
-            }
-            if(drawing == null){
-                logger.log(POILogger.ERROR, "Can't find drawing with id=" + ctDrawing.getId() + " in the list of the sheet's relationships");
-            }
+        if (ctDrawing != null) {
+            return getDrawingPatriarch();
         }
+        
+        //drawingNumber = #drawings.size() + 1
+        int drawingNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size() + 1;
+        XSSFDrawing drawing = (XSSFDrawing)createRelationship(XSSFRelation.DRAWINGS, XSSFFactory.getInstance(), drawingNumber);
+        String relId = drawing.getPackageRelationship().getId();
+
+        //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
+        //The relationship Id references the part containing the drawingML definitions.
+        ctDrawing = worksheet.addNewDrawing();
+        ctDrawing.setId(relId);
+        
+        // Return the newly created drawing
         return drawing;
     }
 
