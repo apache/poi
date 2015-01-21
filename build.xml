@@ -401,6 +401,7 @@ under the License.
     <target name="check-jars">
     	<!-- remove previous versions of third-party jars to prevent them from lingering around, 
     		we often had hard-to-find build/CI-problems because of these! -->
+		<mkdir dir="${main.lib}"/>
 		<delete verbose="true">
 			<fileset dir="${main.lib}">
 	    		<include name="ant-1.8*"/>
