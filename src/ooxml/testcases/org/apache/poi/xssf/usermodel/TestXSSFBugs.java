@@ -43,6 +43,7 @@ import org.apache.poi.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -2083,7 +2084,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * A .xlsx file with no Shared Strings table should open fine
      *  in read-only mode
      */
-    @Ignore
     @Test
     public void bug57482() throws Exception {
         for (PackageAccess access : new PackageAccess[] {
@@ -2092,6 +2092,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             File file = HSSFTestDataSamples.getSampleFile("57482-OnlyNumeric.xlsx");
             OPCPackage pkg = OPCPackage.open(file, access);
             try {
+                // Try to open it and read the contents
                 XSSFWorkbook wb = new XSSFWorkbook(pkg);
                 assertNotNull(wb.getSharedStringSource());
                 assertEquals(0, wb.getSharedStringSource().getCount());
@@ -2101,8 +2102,34 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 assertEquals("1",  fmt.formatCellValue(s.getRow(0).getCell(0)));
                 assertEquals("11", fmt.formatCellValue(s.getRow(0).getCell(1)));
                 assertEquals("5",  fmt.formatCellValue(s.getRow(4).getCell(0)));
+                
+                // Add a text cell
+                s.getRow(0).createCell(3).setCellValue("Testing");
+                assertEquals("Testing",  fmt.formatCellValue(s.getRow(0).getCell(3)));
+                
+                // Try to write-out and read again, should only work
+                //  in read-write mode, not read-only mode
+                try {
+                    wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+                    if (access == PackageAccess.READ)
+                        fail("Shouln't be able to write from read-only mode");
+                } catch (InvalidOperationException e) {
+                    if (access == PackageAccess.READ) {
+                        // Expected
+                    } else {
+                        // Shouldn't occur in write-mode
+                        throw e;
+                    }
+                }
+                
+                // Check again
+                s = wb.getSheetAt(0);
+                assertEquals("1",  fmt.formatCellValue(s.getRow(0).getCell(0)));
+                assertEquals("11", fmt.formatCellValue(s.getRow(0).getCell(1)));
+                assertEquals("5",  fmt.formatCellValue(s.getRow(4).getCell(0)));
+                assertEquals("Testing",  fmt.formatCellValue(s.getRow(0).getCell(3)));
             } finally {
-                pkg.close();
+                pkg.revert();
             }
         }
     }

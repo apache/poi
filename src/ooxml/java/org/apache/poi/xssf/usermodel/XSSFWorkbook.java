@@ -44,6 +44,7 @@ import org.apache.poi.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -343,16 +344,25 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
                     elIdMap.put(p.getPackageRelationship().getId(), (ExternalLinksTable)p);
                 }
             }
+            boolean packageReadOnly = (getPackage().getPackageAccess() == PackageAccess.READ);
             
             if (stylesSource == null) {
                 // Create Styles if it is missing
-                stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+                if (packageReadOnly) {
+                    stylesSource = new StylesTable();
+                } else {
+                    stylesSource = (StylesTable)createRelationship(XSSFRelation.STYLES, XSSFFactory.getInstance());
+                }
             }
             stylesSource.setTheme(theme);
 
             if (sharedStringSource == null) {
                 // Create SST if it is missing
-                sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
+                if (packageReadOnly) {
+                    sharedStringSource = new SharedStringsTable();
+                } else {
+                    sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, XSSFFactory.getInstance());
+                }
             }
             
             // Load individual sheets. The order of sheets is defined by the order
