@@ -18,7 +18,13 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,6 +44,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -47,7 +54,26 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -2050,6 +2076,34 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             name1.setRefersToFormula("Sheet1!$B$3");
         } finally {
             wb.close();
+        }
+    }
+    
+    /**
+     * A .xlsx file with no Shared Strings table should open fine
+     *  in read-only mode
+     */
+    @Ignore
+    @Test
+    public void bug57482() throws Exception {
+        for (PackageAccess access : new PackageAccess[] {
+                PackageAccess.READ_WRITE, PackageAccess.READ
+        }) {
+            File file = HSSFTestDataSamples.getSampleFile("57482-OnlyNumeric.xlsx");
+            OPCPackage pkg = OPCPackage.open(file, access);
+            try {
+                XSSFWorkbook wb = new XSSFWorkbook(pkg);
+                assertNotNull(wb.getSharedStringSource());
+                assertEquals(0, wb.getSharedStringSource().getCount());
+                
+                DataFormatter fmt = new DataFormatter();
+                XSSFSheet s = wb.getSheetAt(0);
+                assertEquals("1",  fmt.formatCellValue(s.getRow(0).getCell(0)));
+                assertEquals("11", fmt.formatCellValue(s.getRow(0).getCell(1)));
+                assertEquals("5",  fmt.formatCellValue(s.getRow(4).getCell(0)));
+            } finally {
+                pkg.close();
+            }
         }
     }
 }
