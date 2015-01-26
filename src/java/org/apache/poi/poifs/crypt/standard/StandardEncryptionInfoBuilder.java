@@ -57,8 +57,14 @@ public class StandardEncryptionInfoBuilder implements EncryptionInfoBuilder {
         this.info = info;
 
         if (cipherAlgorithm == null) {
-            cipherAlgorithm = CipherAlgorithm.rc4;
+            cipherAlgorithm = CipherAlgorithm.aes128;
         }
+        if (cipherAlgorithm != CipherAlgorithm.aes128 &&
+            cipherAlgorithm != CipherAlgorithm.aes192 &&
+            cipherAlgorithm != CipherAlgorithm.aes256) {
+            throw new EncryptedDocumentException("Standard encryption only supports AES128/192/256.");
+        }
+        
         if (hashAlgorithm == null) {
             hashAlgorithm = HashAlgorithm.sha1;
         }
