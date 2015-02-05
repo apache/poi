@@ -456,6 +456,65 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         dstrike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
+    public boolean isSmallCaps() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetSmallCaps())
+            return false;
+        return isCTOnOff(pr.getSmallCaps());
+    }
+    public void setSmallCaps(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff caps = pr.isSetSmallCaps() ? pr.getSmallCaps() : pr.addNewSmallCaps();
+        caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+    public boolean isCapitalized() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetCaps())
+            return false;
+        return isCTOnOff(pr.getCaps());
+    }
+    public void setCapitalized(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff caps = pr.isSetCaps() ? pr.getCaps() : pr.addNewCaps();
+        caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+    
+    public boolean isShadowed() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetShadow())
+            return false;
+        return isCTOnOff(pr.getShadow());
+    }
+    public void setShadow(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff shadow = pr.isSetShadow() ? pr.getShadow() : pr.addNewShadow();
+        shadow.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+    
+    public boolean isImprinted() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetImprint())
+            return false;
+        return isCTOnOff(pr.getImprint());
+    }
+    public void setImprinted(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff imprinted = pr.isSetImprint() ? pr.getImprint() : pr.addNewImprint();
+        imprinted.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+    
+    public boolean isEmbossed() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetEmboss())
+            return false;
+        return isCTOnOff(pr.getEmboss());
+    }
+    public void setEmbossed(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff emboss = pr.isSetEmboss() ? pr.getEmboss() : pr.addNewEmboss();
+        emboss.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+    
     /**
      * Specifies the alignment which shall be applied to the contents of this
      * run in relation to the default appearance of the run's text.
@@ -492,6 +551,30 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         ctValign.setVal(STVerticalAlignRun.Enum.forInt(valign.getValue()));
     }
 
+    public int getKerning() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetKern())
+            return 0;
+        return pr.getKern().getVal().intValue();
+    }
+    public void setKerning(int kern) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTHpsMeasure kernmes = pr.isSetKern() ? pr.getKern() : pr.addNewKern();
+        kernmes.setVal(BigInteger.valueOf(kern));
+    }
+    
+    public int getCharacterSpacing() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetSpacing())
+            return 0;
+        return pr.getSpacing().getVal().intValue();
+    }
+    public void setCharacterSpacing(int twips) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTSignedTwipsMeasure spc = pr.isSetSpacing() ? pr.getSpacing() : pr.addNewSpacing();
+        spc.setVal(BigInteger.valueOf(twips));
+    }
+    
     /**
      * Gets the fonts which shall be used to display the text contents of
      * this run. Specifies a font which shall be used to format all characters
@@ -501,6 +584,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getFontFamily() {
         return getFontFamily(null);
+    }
+    /**
+     * Alias for {@link #getFontFamily()}
+     */
+    public String getFontName() {
+        return getFontFamily();
     }
 
     /**
