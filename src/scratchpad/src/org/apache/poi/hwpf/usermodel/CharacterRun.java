@@ -27,12 +27,9 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * This class represents a run of text that share common properties.
- *
- * @author Ryan Ackley
  */
-public final class CharacterRun
-  extends Range
-  implements Cloneable
+public final class CharacterRun extends Range
+  implements Cloneable, org.apache.poi.wp.usermodel.CharacterRun
 {
   public final static short SPRM_FRMARKDEL = (short)0x0800;
   public final static short SPRM_FRMARK = 0x0801;
@@ -245,6 +242,10 @@ public final class CharacterRun
     return _props.isFStrike();
   }
 
+  public void setStrikeThrough(boolean strike)
+  {
+      strikeThrough(strike);
+  }
   public void strikeThrough(boolean strike)
   {
     _props.setFStrike(strike);
