@@ -62,7 +62,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
  *  actual text (possibly along with more styling) is held on
  *  the child {@link XWPFRun}s.</p>
  */
-public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents {
+public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Paragraph {
     private final CTP paragraph;
     protected IBody part;
     /** For access to the document's hyperlink, comments, tables etc */
