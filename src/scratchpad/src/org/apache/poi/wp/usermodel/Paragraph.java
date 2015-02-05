@@ -47,6 +47,15 @@ public interface Paragraph {
     public void setSideBySide(boolean fSideBySide);
 */
 
+    public int getIndentFromRight();
+    public void setIndentFromRight(int dxaRight);
+
+    public int getIndentFromLeft();
+    public void setIndentFromLeft(int dxaLeft);
+
+    public int getFirstLineIndent();
+    public void setFirstLineIndent(int first);
+
 /*
     public boolean isLineNotNumbered();
     public void setLineNotNumbered(boolean fNoLnn);
@@ -56,15 +65,6 @@ public interface Paragraph {
 
     public boolean isWidowControlled();
     public void setWidowControl(boolean widowControl);
-
-    public int getIndentFromRight();
-    public void setIndentFromRight(int dxaRight);
-
-    public int getIndentFromLeft();
-    public void setIndentFromLeft(int dxaLeft);
-
-    public int getFirstLineIndent();
-    public void setFirstLineIndent(int first);
 
     public int getSpacingBefore();
     public void setSpacingBefore(int before);
@@ -76,13 +76,13 @@ public interface Paragraph {
     //  public LineSpacingDescriptor getLineSpacing();
     //  public void setLineSpacing(LineSpacingDescriptor lspd);
 
-/*
-    public boolean isWordWrapped();
-    public void setWordWrapped(boolean wrap);
-
     public int getFontAlignment();
     public void setFontAlignment(int align);
 
+    public boolean isWordWrapped();
+    public void setWordWrapped(boolean wrap);
+
+/*
     public boolean isVertical();
     public void setVertical(boolean vertical);
 
@@ -90,6 +90,7 @@ public interface Paragraph {
     public void setBackward(boolean bward);
 */
 
+    // TODO Make the HWPF and XWPF interface wrappers compatible for these
 /*
     public BorderCode getTopBorder();
     public void setTopBorder(BorderCode top);

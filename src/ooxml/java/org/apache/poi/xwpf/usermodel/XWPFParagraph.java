@@ -380,6 +380,17 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
+     * @return The raw alignment value, {@link #getAlignment()} is suggested
+     */
+    public int getFontAlignment() {
+        return getAlignment().getValue();
+    }
+    public void setFontAlignment(int align) {
+        ParagraphAlignment pAlign = ParagraphAlignment.valueOf(align);
+        setAlignment(pAlign);
+    }
+
+    /**
      * Returns the text vertical alignment which shall be applied to text in
      * this paragraph.
      * <p/>
@@ -942,7 +953,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         return (indentation != null && indentation.isSetLeft()) ? indentation.getLeft().intValue()
                 : -1;
     }
-
+    
     /**
      * Specifies the indentation which shall be placed between the right text
      * margin for this paragraph and the right edge of that paragraph's content
@@ -1061,6 +1072,27 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 : -1;
     }
 
+    public int getIndentFromLeft() {
+        return getIndentFromLeft();
+    }
+    public void setIndentFromLeft(int dxaLeft) {
+        setIndentationLeft(dxaLeft);
+    }
+
+    public int getIndentFromRight() {
+        return getIndentFromRight();
+    }
+    public void setIndentFromRight(int dxaRight) {
+        setIndentationRight(dxaRight);
+    }
+
+    public int getFirstLineIndent() {
+        return getIndentationFirstLine();
+    }
+    public void setFirstLineIndent(int first) {
+        setIndentationFirstLine(first);
+    }
+
     /**
      * This element specifies whether a consumer shall break Latin text which
      * exceeds the text extents of a line by breaking the word across two lines
@@ -1069,13 +1101,17 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param wrap - boolean
      */
-    public void setWordWrap(boolean wrap) {
+    public void setWordWrapped(boolean wrap) {
         CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
                 .getWordWrap() : getCTPPr().addNewWordWrap();
         if (wrap)
             wordWrap.setVal(STOnOff.TRUE);
         else
             wordWrap.unsetVal();
+    }
+    @Deprecated
+    public void setWordWrap(boolean wrap) {
+        setWordWrapped(wrap);
     }
 
     /**
@@ -1086,7 +1122,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @return boolean
      */
-    public boolean isWordWrap() {
+    public boolean isWordWrapped() {
         CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
                 .getWordWrap() : null;
         if (wordWrap != null) {
@@ -1095,6 +1131,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     : false;
         }
         return false;
+    }
+    public boolean isWordWrap() {
+        return isWordWrapped();
     }
 
     /**
