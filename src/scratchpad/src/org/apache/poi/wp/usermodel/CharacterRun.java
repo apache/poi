@@ -20,7 +20,7 @@ package org.apache.poi.wp.usermodel;
 /**
  * This class represents a run of text that share common properties.
  */
-public interface CharacterRun {// extends Range {
+public interface CharacterRun {
     public boolean isBold();
     public void setBold(boolean bold);
 
@@ -32,23 +32,6 @@ public interface CharacterRun {// extends Range {
 
     public boolean isCapitalized();
     public void setCapitalized(boolean caps);
-
-/*
-    public boolean isFldVanished();
-    public void setFldVanish(boolean fldVanish);
-    
-    public boolean isOutlined();
-    public void setOutline(boolean outlined);
-    
-    public boolean isVanished();
-    public void setVanished(boolean vanish);
-
-    public boolean isMarkedDeleted();
-    public void markDeleted(boolean mark);
-
-    public boolean isMarkedInserted();
-    public void markInserted(boolean mark);
-*/
 
     public boolean isStrikeThrough();
     public void setStrikeThrough(boolean strike);
@@ -70,6 +53,16 @@ public interface CharacterRun {// extends Range {
     public int getCharacterSpacing();
     public void setCharacterSpacing(int twips);
 
+    public int getKerning();
+    public void setKerning(int kern);
+
+    public String getFontName();
+    
+    /**
+     * @return The text of the run, including any tabs/spaces/etc
+     */
+    public String text();
+
     // HWPF uses indexes, XWPF special
 //    public int getUnderlineCode();
 //    public void setUnderlineCode(int kul);
@@ -86,8 +79,21 @@ public interface CharacterRun {// extends Range {
 //    public int getColor();
 //    public void setColor(int color);
 
-    public int getKerning();
-    public void setKerning(int kern);
+    // TODO Review these, and add to XWPFRun if possible
+/*
+    public boolean isFldVanished();
+    public void setFldVanish(boolean fldVanish);
+    
+    public boolean isOutlined();
+    public void setOutline(boolean outlined);
+    
+    public boolean isVanished();
+    public void setVanished(boolean vanish);
 
-    public String getFontName();
+    public boolean isMarkedDeleted();
+    public void markDeleted(boolean mark);
+
+    public boolean isMarkedInserted();
+    public void markInserted(boolean mark);
+*/
 }

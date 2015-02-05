@@ -965,10 +965,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
+     * Returns the string version of the text
+     */
+    public String toString() {
+        return text();
+    }
+    /**
      * Returns the string version of the text, with tabs and
      *  carriage returns in place of their xml equivalents.
      */
-    public String toString() {
+    public String text() {
         StringBuffer text = new StringBuffer();
 
         // Grab the text and tabs of the text run

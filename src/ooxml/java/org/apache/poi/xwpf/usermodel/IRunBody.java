@@ -17,10 +17,13 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.wp.usermodel.Paragraph;
 
 /**
  * Simple interface describing both {@link XWPFParagraph}
  * and {@link XWPFSDT}
+ * 
+ * TODO Should this be based on / extend {@link Paragraph}?
  */
 public interface IRunBody {
    public XWPFDocument getDocument();
