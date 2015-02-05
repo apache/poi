@@ -21,21 +21,11 @@ package org.apache.poi.wp.usermodel;
  * This class represents a run of text that share common properties.
  */
 public interface CharacterRun {// extends Range {
-/*    
-    public boolean isMarkedDeleted();
-    public void markDeleted(boolean mark);
-
     public boolean isBold();
     public void setBold(boolean bold);
 
     public boolean isItalic();
     public void setItalic(boolean italic);
-
-    public boolean isOutlined();
-    public void setOutline(boolean outlined);
-
-    public boolean isFldVanished();
-    public void setFldVanish(boolean fldVanish);
 
     public boolean isSmallCaps();
     public void setSmallCaps(boolean smallCaps);
@@ -43,11 +33,22 @@ public interface CharacterRun {// extends Range {
     public boolean isCapitalized();
     public void setCapitalized(boolean caps);
 
+/*
+    public boolean isFldVanished();
+    public void setFldVanish(boolean fldVanish);
+    
+    public boolean isOutlined();
+    public void setOutline(boolean outlined);
+    
     public boolean isVanished();
     public void setVanished(boolean vanish);
 
+    public boolean isMarkedDeleted();
+    public void markDeleted(boolean mark);
+
     public boolean isMarkedInserted();
     public void markInserted(boolean mark);
+*/
 
     public boolean isStrikeThrough();
     public void setStrikeThrough(boolean strike);
@@ -69,23 +70,24 @@ public interface CharacterRun {// extends Range {
     public int getCharacterSpacing();
     public void setCharacterSpacing(int twips);
 
-    public int getUnderlineCode();
-    public void setUnderlineCode(int kul);
+    // HWPF uses indexes, XWPF special
+//    public int getUnderlineCode();
+//    public void setUnderlineCode(int kul);
 
-    // HWPF uses indexes, XWPF enums
+    // HWPF uses indexes, XWPF special vertical alignments
 //    public short getSubSuperScriptIndex();
 //    public void setSubSuperScriptIndex(short iss);
+
+    // HWPF uses indexes, XWPF special vertical alignments
+//    public int getVerticalOffset();
+//    public void setVerticalOffset(int hpsPos);
 
     // HWPF has colour indexes, XWPF colour names
 //    public int getColor();
 //    public void setColor(int color);
 
-    public int getVerticalOffset();
-    public void setVerticalOffset(int hpsPos);
-
     public int getKerning();
     public void setKerning(int kern);
 
     public String getFontName();
-*/
 }
