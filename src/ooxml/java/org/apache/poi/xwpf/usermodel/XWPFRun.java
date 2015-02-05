@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Internal;
+import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -47,7 +48,7 @@ import org.w3c.dom.Text;
 /**
  * XWPFRun object defines a region of text with a common set of properties
  */
-public class XWPFRun implements ISDTContents, IRunElement{
+public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     private CTR run;
     private String pictureText;
     private IRunBody parent;
@@ -388,11 +389,27 @@ public class XWPFRun implements ISDTContents, IRunElement{
      *
      * @return <code>true</code> if the strike property is applied
      */
-    public boolean isStrike() {
+    public boolean isStrikeThrough() {
         CTRPr pr = run.getRPr();
         if(pr == null || !pr.isSetStrike())
             return false;
         return isCTOnOff(pr.getStrike());
+    }
+    @Deprecated
+    public boolean isStrike() {
+        return isStrikeThrough();
+    }
+    /**
+     * Specifies that the contents of this run shall be displayed with a double
+     * horizontal line through the center of the line.
+     *
+     * @return <code>true</code> if the double strike property is applied
+     */
+    public boolean isDoubleStrikeThrough() {
+        CTRPr pr = run.getRPr();
+        if(pr == null || !pr.isSetDstrike())
+            return false;
+        return isCTOnOff(pr.getDstrike());
     }
 
     /**
@@ -400,7 +417,7 @@ public class XWPFRun implements ISDTContents, IRunElement{
      * horizontal line through the center of the line.
      * <p/>
      * This formatting property is a toggle property, which specifies that its
-     * behavior differs between its use within a style definition and its use as
+     * behaviour differs between its use within a style definition and its use as
      * direct formatting. When used as part of a style definition, setting this
      * property shall toggle the current state of that property as specified up
      * to this point in the hierarchy (i.e. applied to not applied, and vice
@@ -419,10 +436,24 @@ public class XWPFRun implements ISDTContents, IRunElement{
      * @param value <code>true</code> if the strike property is applied to
      *              this run
      */
-    public void setStrike(boolean value) {
+    public void setStrikeThrough(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff strike = pr.isSetStrike() ? pr.getStrike() : pr.addNewStrike();
         strike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+    @Deprecated
+    public void setStrike(boolean value) {
+        setStrikeThrough(value);
+    }
+    /**
+     * Specifies that the contents of this run shall be displayed with a
+     * double horizontal line through the center of the line.
+     * @see #setStrikeThrough(boolean) for the rules about this
+     */
+    public void setDoubleStrikethrough(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff dstrike = pr.isSetDstrike() ? pr.getDstrike() : pr.addNewDstrike();
+        dstrike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     /**

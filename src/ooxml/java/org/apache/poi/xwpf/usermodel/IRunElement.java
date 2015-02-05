@@ -16,11 +16,15 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.wp.usermodel.CharacterRun;
+
 /**
  * Common interface for things that can occur
  *  where a run (text with common stylings) can,
  *  eg {@link XWPFRun} or {@link XWPFSDT}.
- * More methods to follow shortly!
+ * TODO More methods to follow shortly!
+ * 
+ * TODO Make this based on {@link CharacterRun}
  */
 public interface IRunElement {
 }
