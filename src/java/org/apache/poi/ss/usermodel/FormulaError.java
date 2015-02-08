@@ -95,11 +95,13 @@ public enum FormulaError {
      */
     NA(0x2A, "#N/A");
 
-    private byte type;
-    private String repr;
+    private final byte type;
+    private final int longType;
+    private final String repr;
 
     private FormulaError(int type, String repr) {
-        this.type = (byte) type;
+        this.type = (byte)type;
+        this.longType = type;
         this.repr = repr;
     }
 
@@ -108,6 +110,12 @@ public enum FormulaError {
      */
     public byte getCode() {
         return type;
+    }
+    /**
+     * @return long (internal) numeric code of the error
+     */
+    public int getLongCode() {
+        return longType;
     }
 
     /**
@@ -118,10 +126,12 @@ public enum FormulaError {
     }
 
     private static Map<String, FormulaError> smap = new HashMap<String, FormulaError>();
-    private static Map<Byte, FormulaError> imap = new HashMap<Byte, FormulaError>();
+    private static Map<Byte, FormulaError> bmap = new HashMap<Byte, FormulaError>();
+    private static Map<Integer, FormulaError> imap = new HashMap<Integer, FormulaError>();
     static{
         for (FormulaError error : values()) {
-            imap.put(error.getCode(), error);
+            bmap.put(error.getCode(), error);
+            imap.put(error.getLongCode(), error);
             smap.put(error.getString(), error);
         }
     }
@@ -129,11 +139,17 @@ public enum FormulaError {
     public static final boolean isValidCode(int errorCode) {
         for (FormulaError error : values()) {
             if (error.getCode() == errorCode) return true;
+            if (error.getLongCode() == errorCode) return true;
         }
         return false;
     }
 
     public static FormulaError forInt(byte type){
+        FormulaError err = bmap.get(type);
+        if(err == null) throw new IllegalArgumentException("Unknown error type: " + type);
+        return err;
+    }
+    public static FormulaError forInt(int type){
         FormulaError err = imap.get(type);
         if(err == null) throw new IllegalArgumentException("Unknown error type: " + type);
         return err;
