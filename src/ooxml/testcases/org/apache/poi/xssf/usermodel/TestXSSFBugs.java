@@ -2151,7 +2151,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         CellValue value = evaluator.evaluate(cell);
         assertEquals(Cell.CELL_TYPE_ERROR, value.getCellType());
         assertEquals(-60, value.getErrorValue());
-        // TODO Fix this
-//        assertEquals("", FormulaError.forInt(value.getErrorValue()).toString());
+        assertEquals("~CIRCULAR~REF~", FormulaError.forInt(value.getErrorValue()).getString());
+        assertEquals("CIRCULAR_REF", FormulaError.forInt(value.getErrorValue()).toString());
     }
 }
