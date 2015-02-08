@@ -93,7 +93,23 @@ public enum FormulaError {
      * </p>
      * This error value can be produced by calling the function NA
      */
-    NA(0x2A, "#N/A");
+    NA(0x2A, "#N/A"),
+    
+    // These are POI-specific error codes
+    // It is desirable to make these (arbitrary) strings look clearly different from any other
+    // value expression that might appear in a formula.  In addition these error strings should
+    // look unlike the standard Excel errors.  Hence tilde ('~') was used.
+    
+    /**
+     * POI specific code to indicate that there is a circular reference
+     *  in the formula
+     */
+    CIRCULAR_REF(0xFFFFFFC4, "~CIRCULAR~REF~"),
+    /**
+     * POI specific code to indicate that the funcition required is
+     *  not implemented in POI
+     */
+    FUNCTION_NOT_IMPLEMENTED(0xFFFFFFE2, "~FUNCTION~NOT~IMPLEMENTED~");
 
     private final byte type;
     private final int longType;
@@ -151,6 +167,7 @@ public enum FormulaError {
     }
     public static FormulaError forInt(int type){
         FormulaError err = imap.get(type);
+        if(err == null) err = bmap.get((byte)type);
         if(err == null) throw new IllegalArgumentException("Unknown error type: " + type);
         return err;
     }

@@ -17,13 +17,17 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.ss.usermodel.FormulaError;
 
 /**
  * Evaluations for formula errors
  */
 public final class ErrorEval implements ValueEval {
+    private static final Map<FormulaError,ErrorEval> evals = new HashMap<FormulaError, ErrorEval>();
+    
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
     public static final ErrorEval NULL_INTERSECTION = new ErrorEval(FormulaError.NULL);
     /** <b>#DIV/0!</b> - Division by zero */
@@ -40,29 +44,23 @@ public final class ErrorEval implements ValueEval {
     public static final ErrorEval NA = new ErrorEval(FormulaError.NA);
 
     // POI internal error codes
-    private static final int CIRCULAR_REF_ERROR_CODE = 0xFFFFFFC4;
-    private static final int FUNCTION_NOT_IMPLEMENTED_CODE = 0xFFFFFFE2;
+    public static final ErrorEval FUNCTION_NOT_IMPLEMENTED = new ErrorEval(FormulaError.FUNCTION_NOT_IMPLEMENTED);
 
     // Note - Excel does not seem to represent this condition with an error code
-    public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(CIRCULAR_REF_ERROR_CODE);
+    public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(FormulaError.CIRCULAR_REF);
 
     /**
      * Translates an Excel internal error code into the corresponding POI ErrorEval instance
      * @param errorCode
      */
     public static ErrorEval valueOf(int errorCode) {
-        switch(errorCode) {
-            case ErrorConstants.ERROR_NULL:  return NULL_INTERSECTION;
-            case ErrorConstants.ERROR_DIV_0: return DIV_ZERO;
-            case ErrorConstants.ERROR_VALUE: return VALUE_INVALID;
-            case ErrorConstants.ERROR_REF:   return REF_INVALID;
-            case ErrorConstants.ERROR_NAME:  return NAME_INVALID;
-            case ErrorConstants.ERROR_NUM:   return NUM_ERROR;
-            case ErrorConstants.ERROR_NA:    return NA;
-            // non-std errors (conditions modelled as errors by POI)
-            case CIRCULAR_REF_ERROR_CODE:        return CIRCULAR_REF_ERROR;
+        FormulaError error = FormulaError.forInt(errorCode);
+        ErrorEval eval = evals.get(error);
+        if (eval != null) {
+            return eval;
+        } else {
+            throw new RuntimeException("Unhandled error type " + eval + " for code " + errorCode);
         }
-        throw new RuntimeException("Unexpected error code (" + errorCode + ")");
     }
 
     /**
@@ -72,36 +70,28 @@ public final class ErrorEval implements ValueEval {
      */
     public static String getText(int errorCode) {
         if(FormulaError.isValidCode(errorCode)) {
-            return FormulaError.forInt((byte)errorCode).getString();
+            return FormulaError.forInt(errorCode).getString();
         }
-        // It is desirable to make these (arbitrary) strings look clearly different from any other
-        // value expression that might appear in a formula.  In addition these error strings should
-        // look unlike the standard Excel errors.  Hence tilde ('~') was used.
-        switch(errorCode) {
-            case CIRCULAR_REF_ERROR_CODE: return "~CIRCULAR~REF~";
-            case FUNCTION_NOT_IMPLEMENTED_CODE: return "~FUNCTION~NOT~IMPLEMENTED~";
-        }
+        // Give a special string, based on ~, to make clear this isn't a standard Excel error
         return "~non~std~err(" + errorCode + ")~";
     }
 
-    private int _errorCode;
-    /**
-     * @param errorCode an 8-bit value
-     */
-    private ErrorEval(int errorCode) {
-        _errorCode = errorCode;
-    }
+    private FormulaError _error;
     private ErrorEval(FormulaError error) {
-        _errorCode = error.getCode();
+        _error = error;
+        evals.put(error, this);
     }
 
     public int getErrorCode() {
-        return _errorCode;
+        return _error.getLongCode();
+    }
+    public String getErrorString() {
+        return _error.getString();
     }
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");
-        sb.append(getText(_errorCode));
+        sb.append(_error.getString());
         sb.append("]");
         return sb.toString();
     }
