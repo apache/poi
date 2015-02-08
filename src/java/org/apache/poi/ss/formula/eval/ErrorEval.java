@@ -18,38 +18,26 @@
 package org.apache.poi.ss.formula.eval;
 
 import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 
 /**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
+ * Evaluations for formula errors
  */
 public final class ErrorEval implements ValueEval {
-
-    // convenient access to namespace
-    private static final ErrorConstants EC = null;
-
     /** <b>#NULL!</b>  - Intersection of two cell ranges is empty */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval NULL_INTERSECTION = new ErrorEval(EC.ERROR_NULL);
+    public static final ErrorEval NULL_INTERSECTION = new ErrorEval(FormulaError.NULL);
     /** <b>#DIV/0!</b> - Division by zero */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval DIV_ZERO = new ErrorEval(EC.ERROR_DIV_0);
+    public static final ErrorEval DIV_ZERO = new ErrorEval(FormulaError.DIV0);
     /** <b>#VALUE!</b> - Wrong type of operand */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval VALUE_INVALID = new ErrorEval(EC.ERROR_VALUE);
+    public static final ErrorEval VALUE_INVALID = new ErrorEval(FormulaError.VALUE);
     /** <b>#REF!</b> - Illegal or deleted cell reference */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval REF_INVALID = new ErrorEval(EC.ERROR_REF);
+    public static final ErrorEval REF_INVALID = new ErrorEval(FormulaError.REF);
     /** <b>#NAME?</b> - Wrong function or range name */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval NAME_INVALID = new ErrorEval(EC.ERROR_NAME);
+    public static final ErrorEval NAME_INVALID = new ErrorEval(FormulaError.NAME);
     /** <b>#NUM!</b> - Value range overflow */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval NUM_ERROR = new ErrorEval(EC.ERROR_NUM);
+    public static final ErrorEval NUM_ERROR = new ErrorEval(FormulaError.NUM);
     /** <b>#N/A</b> - Argument or function not available */
-    @SuppressWarnings("static-access")
-    public static final ErrorEval NA = new ErrorEval(EC.ERROR_NA);
-
+    public static final ErrorEval NA = new ErrorEval(FormulaError.NA);
 
     // POI internal error codes
     private static final int CIRCULAR_REF_ERROR_CODE = 0xFFFFFFC4;
@@ -57,7 +45,6 @@ public final class ErrorEval implements ValueEval {
 
     // Note - Excel does not seem to represent this condition with an error code
     public static final ErrorEval CIRCULAR_REF_ERROR = new ErrorEval(CIRCULAR_REF_ERROR_CODE);
-
 
     /**
      * Translates an Excel internal error code into the corresponding POI ErrorEval instance
@@ -72,7 +59,7 @@ public final class ErrorEval implements ValueEval {
             case ErrorConstants.ERROR_NAME:  return NAME_INVALID;
             case ErrorConstants.ERROR_NUM:   return NUM_ERROR;
             case ErrorConstants.ERROR_NA:    return NA;
-            // non-std errors (conditions modeled as errors by POI)
+            // non-std errors (conditions modelled as errors by POI)
             case CIRCULAR_REF_ERROR_CODE:        return CIRCULAR_REF_ERROR;
         }
         throw new RuntimeException("Unexpected error code (" + errorCode + ")");
@@ -84,8 +71,8 @@ public final class ErrorEval implements ValueEval {
      * @return the String representation of the specified Excel error code.
      */
     public static String getText(int errorCode) {
-        if(ErrorConstants.isValidCode(errorCode)) {
-            return ErrorConstants.getText(errorCode);
+        if(FormulaError.isValidCode(errorCode)) {
+            return FormulaError.forInt((byte)errorCode).getString();
         }
         // It is desirable to make these (arbitrary) strings look clearly different from any other
         // value expression that might appear in a formula.  In addition these error strings should
@@ -103,6 +90,9 @@ public final class ErrorEval implements ValueEval {
      */
     private ErrorEval(int errorCode) {
         _errorCode = errorCode;
+    }
+    private ErrorEval(FormulaError error) {
+        _errorCode = error.getCode();
     }
 
     public int getErrorCode() {

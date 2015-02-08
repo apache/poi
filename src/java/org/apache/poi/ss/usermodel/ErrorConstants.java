@@ -20,7 +20,7 @@ package org.apache.poi.ss.usermodel;
 /**
  * Contains raw Excel error codes (as defined in OOO's excelfileformat.pdf (2.5.6)
  * 
- * @author  Michael Harhen
+ * @deprecated Use {@link FormulaError} instead where possible
  */
 public class ErrorConstants {
     protected ErrorConstants() {

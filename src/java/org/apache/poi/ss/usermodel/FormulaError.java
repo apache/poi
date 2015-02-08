@@ -21,8 +21,8 @@ import java.util.HashMap;
 
 /**
  * Enumerates error values in SpreadsheetML formula calculations.
- *
- * @author Yegor Kozlov
+ * 
+ * See also OOO's excelfileformat.pdf (2.5.6)
  */
 public enum FormulaError {
     /**
@@ -124,6 +124,13 @@ public enum FormulaError {
             imap.put(error.getCode(), error);
             smap.put(error.getString(), error);
         }
+    }
+    
+    public static final boolean isValidCode(int errorCode) {
+        for (FormulaError error : values()) {
+            if (error.getCode() == errorCode) return true;
+        }
+        return false;
     }
 
     public static FormulaError forInt(byte type){
