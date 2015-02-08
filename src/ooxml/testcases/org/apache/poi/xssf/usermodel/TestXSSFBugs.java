@@ -2133,4 +2133,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
     }
+    
+    /**
+     * "Unknown error type: -60" fetching formula error value
+     */
+    @Test
+    public void bug57535() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57535.xlsx");
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        evaluator.clearAllCachedResultValues();
+        
+        Sheet sheet = wb.getSheet("Sheet1");
+        Cell cell = sheet.getRow(5).getCell(4);
+        assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        assertEquals("E4+E5", cell.getCellFormula());
+        
+        CellValue value = evaluator.evaluate(cell);
+        assertEquals(Cell.CELL_TYPE_ERROR, value.getCellType());
+        assertEquals(-60, value.getErrorValue());
+        // TODO Fix this
+//        assertEquals("", FormulaError.forInt(value.getErrorValue()).toString());
+    }
 }
