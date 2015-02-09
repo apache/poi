@@ -578,6 +578,8 @@ under the License.
             	<and>
                     <available file="${ooxml.xsds.jar}"/>
                     <available file="${ooxml.security.jar}"/>
+                    <available file="${ooxml.xsds.src.jar}"/>
+                    <available file="${${ooxml.security.src.jar}"/>
             	</and>
                 <isset property="disconnected"/>
             </or>
