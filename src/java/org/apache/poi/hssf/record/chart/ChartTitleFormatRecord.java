@@ -38,11 +38,6 @@ public class ChartTitleFormatRecord extends StandardRecord {
 		private int _offset;
 		private int _fontIndex;
 		
-		protected CTFormat(short offset,short fontIdx){
-			_offset = offset;
-			_fontIndex = fontIdx;
-		}
-		
 		public CTFormat(RecordInputStream in) {
 			_offset = in.readShort();
 			_fontIndex = in.readShort();

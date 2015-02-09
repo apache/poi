@@ -29,7 +29,7 @@ import java.util.HashMap;
 public class DrawingManager
 {
     EscherDggRecord dgg;
-    Map dgMap = new HashMap(); // key = Short(drawingId), value=EscherDgRecord
+    Map<Short, EscherDgRecord> dgMap = new HashMap<Short, EscherDgRecord>(); // key = Short(drawingId), value=EscherDgRecord
 
     public DrawingManager( EscherDggRecord dgg )
     {
@@ -46,7 +46,7 @@ public class DrawingManager
         dg.setLastMSOSPID( -1 );
         dgg.addCluster( dgId, 0 );
         dgg.setDrawingsSaved( dgg.getDrawingsSaved() + 1 );
-        dgMap.put( Short.valueOf( dgId ), dg );
+        dgMap.put( dgId, dg );
         return dg;
     }
 
@@ -58,7 +58,7 @@ public class DrawingManager
     public int allocateShapeId(short drawingGroupId)
     {
         // Get the last shape id for this drawing group.
-        EscherDgRecord dg = (EscherDgRecord) dgMap.get(Short.valueOf(drawingGroupId));
+        EscherDgRecord dg = dgMap.get(drawingGroupId);
         int lastShapeId = dg.getLastMSOSPID();
 
 

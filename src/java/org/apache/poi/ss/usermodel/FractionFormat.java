@@ -130,7 +130,7 @@ public class FractionFormat extends Format {
             if (exactDenom > 0){
                 fract = SimpleFraction.buildFractionExactDenominator(decPart, exactDenom);
             } else {
-                fract = SimpleFraction.buildFractionMaxDenominator((double)decPart, maxDenom);
+                fract = SimpleFraction.buildFractionMaxDenominator(decPart, maxDenom);
             }
         } catch (RuntimeException e){
             e.printStackTrace();

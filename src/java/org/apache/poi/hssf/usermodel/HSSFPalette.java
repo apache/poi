@@ -134,7 +134,7 @@ public final class HSSFPalette {
      *  0 and 255, so distance calculations work as expected.
      */
     private int unsignedInt(byte b) {
-    	return 0xFF & ((int) b);
+    	return 0xFF & b;
     }
 
     /**

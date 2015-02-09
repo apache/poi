@@ -72,7 +72,6 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
      * @deprecated Use {@link #ExcelExtractor(DirectoryNode)} instead
      */
     @Deprecated
-    @SuppressWarnings( "unused" )
     public ExcelExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
         this( dir );
     }
@@ -241,6 +240,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			extractor.setIncludeBlankCells(cmdArgs.shouldShowBlankCells());
 			extractor.setIncludeHeadersFooters(cmdArgs.shouldIncludeHeadersFooters());
 			System.out.println(extractor.getText());
+			extractor.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

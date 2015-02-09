@@ -92,11 +92,10 @@ public class HSSFRequest {
 	 * @throws HSSFUserException User exception condition
 	 */
 	protected short processRecord(Record rec) throws HSSFUserException {
-		Object obj = _records.get(Short.valueOf(rec.getSid()));
+		List<HSSFListener> listeners = _records.get(Short.valueOf(rec.getSid()));
 		short userCode = 0;
 
-		if (obj != null) {
-			List listeners = (List) obj;
+		if (listeners != null) {
 
 			for (int k = 0; k < listeners.size(); k++) {
 				Object listenObj = listeners.get(k);

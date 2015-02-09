@@ -19,8 +19,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.*;
-import org.apache.poi.ss.formula.functions.*;
 import org.apache.poi.ss.formula.eval.*;
 
 /**

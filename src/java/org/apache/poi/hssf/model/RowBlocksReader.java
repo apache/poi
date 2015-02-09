@@ -36,7 +36,7 @@ import org.apache.poi.ss.util.CellReference;
  */
 public final class RowBlocksReader {
 
-	private final List _plainRecords;
+	private final List<Record> _plainRecords;
 	private final SharedValueManager _sfm;
 	private final MergeCellsRecord[] _mergedCellsRecords;
 

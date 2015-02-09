@@ -309,7 +309,7 @@ public final class HSSFFont implements Font {
     {
         byte charset = font.getCharset();
         if(charset >= 0) {
-           return (int)charset;
+           return charset;
         } else {
            return charset + 256;
         }
