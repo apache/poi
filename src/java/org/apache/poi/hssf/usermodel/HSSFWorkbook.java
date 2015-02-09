@@ -211,7 +211,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * the high and low level models.  If you're reading in a workbook... start here!
      *
      * @param fs the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as
+     * @param preserveNodes whether to preserve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem
      *        in memory
@@ -275,7 +275,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *
      * @param directory the POI filesystem directory to process from
      * @param fs the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as
+     * @param preserveNodes whether to preserve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem
      *        in memory
@@ -294,7 +294,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      *  low level models.  If you're reading in a workbook...start here.
      *
      * @param directory the POI filesystem directory to process from
-     * @param preserveNodes whether to preseve other nodes, such as
+     * @param preserveNodes whether to preserve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to. If set, will store all of the POIFSFileSystem
      *        in memory
@@ -350,7 +350,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the 
-     *  POI filesystem around your inputstream, including all nodes.
+     *  POI filesystem around your {@link InputStream}, including all nodes.
      * <p>This calls {@link #HSSFWorkbook(InputStream, boolean)} with
      *  preserve nodes set to true. 
      *
@@ -365,10 +365,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     /**
      * Companion to HSSFWorkbook(POIFSFileSystem), this constructs the 
-     * POI filesystem around your inputstream.
+     * POI filesystem around your {@link InputStream}.
      *
      * @param s  the POI filesystem that contains the Workbook stream.
-     * @param preserveNodes whether to preseve other nodes, such as
+     * @param preserveNodes whether to preserve other nodes, such as
      *        macros.  This takes more memory, so only say yes if you
      *        need to.
      * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
@@ -397,9 +397,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
       * you have to read in a sheet that contains Label records, be aware that the rest
       * of the API doesn't deal with them, the low level structure only provides read-only
       * semi-immutable structures (the sets are there for interface conformance with NO
-      * impelmentation).  In short, you need to call this function passing it a reference
+      * Implementation).  In short, you need to call this function passing it a reference
       * to the Workbook object.  All labels will be converted to LabelSST records and their
-      * contained strings will be written to the Shared String tabel (SSTRecord) within
+      * contained strings will be written to the Shared String table (SSTRecord) within
       * the Workbook.
       *
       * @param records a collection of sheet's records.
@@ -1262,7 +1262,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     /**
-     * Method write - write out this workbook to an Outputstream.  Constructs
+     * Method write - write out this workbook to an {@link OutputStream}.  Constructs
      * a new POI POIFSFileSystem, passes in the workbook binary representation  and
      * writes it out.
      *
@@ -2014,9 +2014,9 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
 	/**
 	 * Changes an external referenced file to another file.
-	 * A formular in Excel which refers a cell in another file is saved in two parts:
+	 * A formula in Excel which references a cell in another file is saved in two parts:
 	 * The referenced file is stored in an reference table. the row/cell information is saved separate.
-	 * This method invokation will only change the reference in the lookup-table itself.
+	 * This method invocation will only change the reference in the lookup-table itself.
 	 * @param oldUrl The old URL to search for and which is to be replaced
 	 * @param newUrl The URL replacement
 	 * @return true if the oldUrl was found and replaced with newUrl. Otherwise false
