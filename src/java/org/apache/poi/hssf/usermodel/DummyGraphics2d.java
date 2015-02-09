@@ -42,7 +42,7 @@ public class DummyGraphics2d
         g2D = (Graphics2D)img.getGraphics();
     }
 
-    public void addRenderingHints(Map hints)
+    public void addRenderingHints(Map<?,?> hints)
     {
         System.out.println( "addRenderingHinds(Map):" );
         System.out.println( "  hints = " + hints );
@@ -275,7 +275,7 @@ public class DummyGraphics2d
         g2D.setRenderingHint( hintKey, hintValue );
     }
 
-    public void setRenderingHints(Map hints)
+    public void setRenderingHints(Map<?,?> hints)
     {
         System.out.println( "setRenderingHints(Map):" );
         System.out.println( "hints = " + hints );

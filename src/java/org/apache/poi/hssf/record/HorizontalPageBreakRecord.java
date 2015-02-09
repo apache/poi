@@ -50,9 +50,9 @@ public final class HorizontalPageBreakRecord extends PageBreakRecord {
 
 	public Object clone() {
 		PageBreakRecord result = new HorizontalPageBreakRecord();
-		Iterator iterator = getBreaksIterator();
+		Iterator<Break> iterator = getBreaksIterator();
 		while (iterator.hasNext()) {
-			Break original = (Break) iterator.next();
+			Break original = iterator.next();
 			result.addBreak(original.main, original.subFrom, original.subTo);
 		}
 		return result;

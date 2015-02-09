@@ -46,7 +46,7 @@ public class Code extends Fixed1ArgFunction {
             return ErrorEval.VALUE_INVALID;
         }
 
-        int code = (int)text.charAt(0);
+        int code = text.charAt(0);
 
         return new StringEval(String.valueOf(code));
     }

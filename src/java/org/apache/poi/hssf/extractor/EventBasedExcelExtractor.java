@@ -68,7 +68,6 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
      * @deprecated Use {@link #EventBasedExcelExtractor(DirectoryNode)} instead
      */
     @Deprecated
-    @SuppressWarnings( "unused" )
     public EventBasedExcelExtractor( DirectoryNode dir, POIFSFileSystem fs )
     {
         this( dir );

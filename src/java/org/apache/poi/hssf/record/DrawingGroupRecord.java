@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.NullEscherSerializationListener;
-import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.Iterator;
@@ -60,9 +59,9 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         }
         byte[] buffer = new byte[getRawDataSize()];
         int pos = 0;
-        for ( Iterator iterator = getEscherRecords().iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = getEscherRecords().iterator(); iterator.hasNext(); )
         {
-            EscherRecord r = (EscherRecord) iterator.next();
+            EscherRecord r = iterator.next();
             pos += r.serialize(pos, buffer, new NullEscherSerializationListener() );
         }
 
@@ -85,16 +84,16 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     }
 
     private int getRawDataSize() {
-        List escherRecords = getEscherRecords();
+        List<EscherRecord> escherRecords = getEscherRecords();
         byte[] rawData = getRawData();
         if (escherRecords.size() == 0 && rawData != null)
         {
             return rawData.length;
         }
         int size = 0;
-        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            EscherRecord r = (EscherRecord) iterator.next();
+            EscherRecord r = iterator.next();
             size += r.getRecordSize();
         }
         return size;

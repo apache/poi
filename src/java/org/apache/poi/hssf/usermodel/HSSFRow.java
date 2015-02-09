@@ -617,7 +617,7 @@ public final class HSSFRow implements Row {
      * Alias for {@link #cellIterator} to allow
      *  foreach loops
      */
-    public Iterator iterator() {
+    public Iterator<Cell> iterator() {
        return cellIterator();
     }
 

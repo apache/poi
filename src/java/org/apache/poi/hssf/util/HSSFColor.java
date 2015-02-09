@@ -75,7 +75,7 @@ public class HSSFColor implements Color {
 
             Integer index1 = Integer.valueOf(color.getIndex());
             if (result.containsKey(index1)) {
-                HSSFColor prevColor = (HSSFColor)result.get(index1);
+                HSSFColor prevColor = result.get(index1);
                 throw new RuntimeException("Dup color index (" + index1
                         + ") for colors (" + prevColor.getClass().getName()
                         + "),(" + color.getClass().getName() + ")");

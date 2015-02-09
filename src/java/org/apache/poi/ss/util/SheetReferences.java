@@ -29,17 +29,17 @@ import java.util.Map;
  */
 public class SheetReferences
 {
-    Map map;
+    Map<Integer, String> map;
     public SheetReferences()
     {
-      map = new HashMap(5);
+      map = new HashMap<Integer, String>(5);
     }
 
     public void addSheetReference(String sheetName, int number) {
-       map.put(Integer.valueOf(number), sheetName);
+       map.put(number, sheetName);
     }
 
     public String getSheetName(int number) {
-       return (String)map.get(Integer.valueOf(number));
+       return map.get(number);
     }
 }

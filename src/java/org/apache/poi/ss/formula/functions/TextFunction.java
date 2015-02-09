@@ -182,7 +182,7 @@ public abstract class TextFunction implements Function {
          * @return  whether the character is printable
          */
         private boolean isPrintable(char c){
-            int charCode = (int)c ;
+            int charCode = c;
             return charCode >= 32;
         }
     };

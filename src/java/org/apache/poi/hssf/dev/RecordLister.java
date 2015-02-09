@@ -154,7 +154,7 @@ public class RecordLister
        return s.toString();
     }
     private static String byteToHex(byte b) {
-       int i = (int)b;
+       int i = b;
        if(i<0) {
           i += 256;
        }
