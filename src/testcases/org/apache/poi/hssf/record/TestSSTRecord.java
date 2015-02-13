@@ -47,26 +47,24 @@ public final class TestSSTRecord extends TestCase {
     /**
      * decodes hexdump files and concatenates the results
      * @param hexDumpFileNames names of sample files in the hssf test data directory
+     * @throws IOException 
      */
-    private static byte[] concatHexDumps(String... hexDumpFileNames) {
+    private static byte[] concatHexDumps(String... hexDumpFileNames) throws IOException {
         int nFiles = hexDumpFileNames.length;
         ByteArrayOutputStream baos = new ByteArrayOutputStream(nFiles * 8228);
         for (int i = 0; i < nFiles; i++) {
             String sampleFileName = hexDumpFileNames[i];
             InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            try {
-                while (true) {
-                    String line = br.readLine();
-                    if (line == null) {
-                        break;
-                    }
-                    baos.write(HexRead.readFromString(line));
+
+            while (true) {
+                String line = br.readLine();
+                if (line == null) {
+                    break;
                 }
-                is.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                baos.write(HexRead.readFromString(line));
             }
+            is.close();
         }
 
         return baos.toByteArray();
@@ -86,8 +84,9 @@ public final class TestSSTRecord extends TestCase {
 
     /**
      * SST is often split over several {@link ContinueRecord}s
+     * @throws IOException 
      */
-    public void testContinuedRecord() {
+    public void testContinuedRecord() throws IOException {
         byte[] origData;
         SSTRecord record;
         byte[] ser_output;
@@ -288,11 +287,10 @@ public final class TestSSTRecord extends TestCase {
         assertEquals( 2, record.countStrings() );
         assertEquals( 3, record.getNumStrings() );
         assertEquals( 2, record.getNumUniqueStrings() );
-        Iterator iter = record.getStrings();
+        Iterator<UnicodeString> iter = record.getStrings();
 
-        while ( iter.hasNext() )
-        {
-            UnicodeString ucs = (UnicodeString) iter.next();
+        while ( iter.hasNext() ) {
+            UnicodeString ucs = iter.next();
 
             if ( ucs.equals( s1 ) )
             {
@@ -1498,4 +1496,13 @@ public final class TestSSTRecord extends TestCase {
         assertEquals(src, dst);
     }
 
+    public void test57456() {
+        byte[] bytes = HexRead.readFromString("FC, 00, 08, 00, 00, 00, 00, 00, E1, 06, 00, 00");
+        RecordInputStream in = TestcaseRecordInputStream.create(bytes);
+        assertEquals(SSTRecord.sid, in.getSid());
+        SSTRecord src = new SSTRecord(in);
+        assertEquals(0, src.getNumStrings());
+        assertEquals(0, src.getNumUniqueStrings());
+        
+    }
 }

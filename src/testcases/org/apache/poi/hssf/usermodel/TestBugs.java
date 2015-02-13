@@ -2681,4 +2681,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         s = wb.getSheetAt(0);
         assertEquals(refHttp, s.getRow(0).getCell(0).getCellFormula());
     }
+
+    @Test
+    public void test57456() throws IOException {
+        Workbook wb = openSample("57456.xls");
+        wb.close();
+    }
 }
