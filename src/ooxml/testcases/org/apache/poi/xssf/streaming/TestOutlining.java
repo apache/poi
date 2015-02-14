@@ -110,7 +110,7 @@ public final class TestOutlining extends TestCase {
 		wb2.close();
 	}
 	
-    public void testOutlineGetters() throws IOException {
+    public void testOutlineGettersHSSF() throws IOException {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
         HSSFSheet hssfSheet = hssfWorkbook.createSheet();
         hssfSheet.createRow(0);
@@ -127,7 +127,9 @@ public final class TestOutlining extends TestCase {
         assertEquals(2, hssfSheet.getRow(3).getOutlineLevel());
         assertEquals(0, hssfSheet.getRow(4).getOutlineLevel());
         hssfWorkbook.close();
-
+    }
+    
+    public void testOutlineGettersXSSF() throws IOException {
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
         XSSFSheet xssfSheet = xssfWorkbook.createSheet();
         xssfSheet.createRow(0);
@@ -144,7 +146,9 @@ public final class TestOutlining extends TestCase {
         assertEquals(2, xssfSheet.getRow(3).getOutlineLevel());
         assertEquals(0, xssfSheet.getRow(4).getOutlineLevel());
         xssfWorkbook.close();
-
+    }
+    
+    public void testOutlineGettersSXSSF() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
         Sheet sxssfSheet = sxssfWorkbook.createSheet();
         sxssfSheet.createRow(0);
@@ -152,6 +156,17 @@ public final class TestOutlining extends TestCase {
         sxssfSheet.createRow(2);
         sxssfSheet.createRow(3);
         sxssfSheet.createRow(4);
+        sxssfSheet.createRow(5);
+        
+        // nothing happens with empty row-area
+        sxssfSheet.groupRow(1, 0);
+        assertEquals(0, sxssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(4).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
+        
         sxssfSheet.groupRow(1, 3);
         sxssfSheet.groupRow(2, 3);
 
@@ -160,6 +175,49 @@ public final class TestOutlining extends TestCase {
         assertEquals(2, sxssfSheet.getRow(2).getOutlineLevel());
         assertEquals(2, sxssfSheet.getRow(3).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(4).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
+        
+        // add tests for direct setting - add row 4 to deepest group
+        ((SXSSFSheet)sxssfSheet).setRowOutlineLevel(4, 2);
+        assertEquals(0, sxssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(1, sxssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(2, sxssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(2, sxssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(2, sxssfSheet.getRow(4).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
+        
+        sxssfWorkbook.dispose();
+        sxssfWorkbook.close();
+    }
+    
+    public void testOutlineGettersSXSSFSetOutlineLevel() throws IOException {
+        SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+        Sheet sxssfSheet = sxssfWorkbook.createSheet();
+        sxssfSheet.createRow(0);
+        sxssfSheet.createRow(1);
+        sxssfSheet.createRow(2);
+        sxssfSheet.createRow(3);
+        sxssfSheet.createRow(4);
+        sxssfSheet.createRow(5);
+    
+        // what happens with level below 1
+        ((SXSSFSheet)sxssfSheet).setRowOutlineLevel(0, -2);
+        assertEquals(-2, sxssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(4).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
+
+        // add tests for direct setting
+        ((SXSSFSheet)sxssfSheet).setRowOutlineLevel(4, 2);
+        assertEquals(-2, sxssfSheet.getRow(0).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(1).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(2).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(3).getOutlineLevel());
+        assertEquals(2, sxssfSheet.getRow(4).getOutlineLevel());
+        assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
+        
         sxssfWorkbook.dispose();
         sxssfWorkbook.close();
     }

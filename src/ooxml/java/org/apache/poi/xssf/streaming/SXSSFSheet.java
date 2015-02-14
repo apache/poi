@@ -1134,10 +1134,38 @@ public class SXSSFSheet implements Sheet, Cloneable
             if(level > outlineLevelRow) outlineLevelRow = level;
         }
 
+        setWorksheetOutlineLevelRow();
+    }
+    
+    /**
+     * Set row groupings (like groupRow) in a stream-friendly manner
+     *
+     * <p>
+     *    groupRows requires all rows in the group to be in the current window.
+     *    This is not always practical.  Instead use setRowOutlineLevel to 
+     *    explicitly set the group level.  Level 1 is the top level group, 
+     *    followed by 2, etc.  It is up to the user to ensure that level 2
+     *    groups are correctly nested under level 1, etc.
+     * </p>
+     *
+     * @param rownum    index of row to update (0-based)
+     * @param level     outline level (> 0)
+     */
+    public void setRowOutlineLevel(int rownum, int level)
+    {
+        SXSSFRow row = _rows.get(new Integer(rownum));
+        row.setOutlineLevel(level);
+        if(level > 0 && level > outlineLevelRow) {
+            outlineLevelRow = level;
+            setWorksheetOutlineLevelRow();
+        }
+    }
+
+    private void setWorksheetOutlineLevelRow() {
         CTWorksheet ct = _sh.getCTWorksheet();
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
-                ct.getSheetFormatPr() :
-                ct.addNewSheetFormatPr();
+            ct.getSheetFormatPr() :
+            ct.addNewSheetFormatPr();
         if(outlineLevelRow > 0) pr.setOutlineLevelRow((short)outlineLevelRow);
     }
 
