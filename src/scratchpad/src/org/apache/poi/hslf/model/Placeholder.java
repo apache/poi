@@ -20,6 +20,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 
 import java.io.ByteArrayOutputStream;
 
@@ -30,11 +31,11 @@ import java.io.ByteArrayOutputStream;
  */
 public final class Placeholder extends TextBox {
 
-    protected Placeholder(EscherContainerRecord escherRecord, Shape parent){
+    protected Placeholder(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
-    public Placeholder(Shape parent){
+    public Placeholder(ShapeContainer<Shape> parent){
         super(parent);
     }
 

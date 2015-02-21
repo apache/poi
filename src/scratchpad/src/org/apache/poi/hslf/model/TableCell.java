@@ -17,9 +17,13 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
+import java.awt.Rectangle;
 
-import java.awt.*;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * Represents a cell in a ppt table
@@ -38,10 +42,10 @@ public final class TableCell extends TextBox {
     /**
      * Create a TableCell object and initialize it from the supplied Record container.
      *
-     * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
+     * @param escherRecord       {@link EscherSpContainer} container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TableCell(EscherContainerRecord escherRecord, Shape parent){
+   protected TableCell(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
@@ -51,10 +55,10 @@ public final class TableCell extends TextBox {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TableCell(Shape parent){
+    public TableCell(ShapeContainer<Shape> parent){
         super(parent);
 
-        setShapeType(ShapeTypes.Rectangle);
+        setShapeType(ShapeType.RECT);
         //_txtrun.setRunType(TextHeaderAtom.HALF_BODY_TYPE);
         //_txtrun.getRichTextRuns()[0].setFlag(false, 0, false);
     }

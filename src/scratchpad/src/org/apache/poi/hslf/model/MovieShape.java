@@ -25,6 +25,7 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
  * Represents a movie in a PowerPoint document.
@@ -54,7 +55,7 @@ public final class MovieShape extends Picture {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public MovieShape(int movieIdx, int idx, Shape parent) {
+    public MovieShape(int movieIdx, int idx, ShapeContainer<Shape> parent) {
         super(idx, parent);
         setMovieIndex(movieIdx);
     }
@@ -66,7 +67,7 @@ public final class MovieShape extends Picture {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected MovieShape(EscherContainerRecord escherRecord, Shape parent){
+     protected MovieShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 

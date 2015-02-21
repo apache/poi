@@ -17,8 +17,28 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface ShapeContainer {
+
+public interface ShapeContainer extends Iterable<Shape>, PlaceableShape {
+    /**
+     * Returns an array containing all of the elements in this container in proper
+     * sequence (from first to last element).
+     *
+     * @return an array containing all of the elements in this container in proper
+     *         sequence
+     */
 	public Shape[] getShapes();
+
 	public void addShape(Shape shape);
+
+    /**
+     * Removes the specified shape from this sheet, if it is present
+     * (optional operation).  If this sheet does not contain the element,
+     * it is unchanged.
+     *
+     * @param xShape shape to be removed from this sheet, if present
+     * @return <tt>true</tt> if this sheet contained the specified element
+     * @throws IllegalArgumentException if the type of the specified shape
+     *         is incompatible with this sheet (optional)
+     */
 	public boolean removeShape(Shape shape);
 }

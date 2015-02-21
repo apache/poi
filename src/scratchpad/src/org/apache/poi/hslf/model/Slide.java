@@ -34,9 +34,10 @@ import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SSSlideInfoAtom;
 import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows
@@ -47,8 +48,7 @@ import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
  * @author Yegor Kozlov
  */
 
-public final class Slide extends Sheet
-{
+public final class Slide extends Sheet {
 	private int _slideNo;
 	private SlideAtomsSet _atomSet;
 	private TextRun[] _runs;
@@ -180,7 +180,7 @@ public final class Slide extends Sheet
 	 */
 	public TextBox addTitle() {
 		Placeholder pl = new Placeholder();
-		pl.setShapeType(ShapeTypes.Rectangle);
+		pl.setShapeType(ShapeType.RECT);
 		pl.getTextRun().setRunType(TextHeaderAtom.TITLE_TYPE);
 		pl.setText("Click to edit title");
 		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));

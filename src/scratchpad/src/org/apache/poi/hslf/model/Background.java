@@ -17,15 +17,21 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.blip.Bitmap;
-import org.apache.poi.util.POILogger;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+
+import javax.imageio.ImageIO;
+
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hslf.blip.Bitmap;
+import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.util.POILogger;
 
 /**
  * Background shape
@@ -34,7 +40,7 @@ import java.io.ByteArrayInputStream;
  */
 public final class Background extends Shape {
 
-    protected Background(EscherContainerRecord escherRecord, Shape parent) {
+    protected Background(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent) {
         super(escherRecord, parent);
     }
 

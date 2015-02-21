@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
 
 import java.awt.geom.Point2D;
@@ -34,7 +36,7 @@ public final class Polygon extends AutoShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected Polygon(EscherContainerRecord escherRecord, Shape parent){
+   protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
 
     }
@@ -45,9 +47,9 @@ public final class Polygon extends AutoShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public Polygon(Shape parent){
-        super(null, parent);
-        _escherContainer = createSpContainer(ShapeTypes.NotPrimitive, parent instanceof ShapeGroup);
+    public Polygon(ShapeContainer<Shape> parent){
+        super((EscherContainerRecord)null, parent);
+        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof ShapeGroup);
     }
 
     /**

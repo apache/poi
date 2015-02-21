@@ -17,6 +17,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.sl.usermodel.Shadow;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
@@ -31,7 +32,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author Yegor Kozlov
  */
-public class XSLFShadow extends XSLFSimpleShape {
+public class XSLFShadow extends XSLFSimpleShape implements Shadow {
 
     private XSLFSimpleShape _parent;
 

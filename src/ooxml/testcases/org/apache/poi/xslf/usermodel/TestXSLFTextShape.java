@@ -17,6 +17,9 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.sl.usermodel.TextAlign;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;

@@ -19,9 +19,17 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
@@ -34,13 +42,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Represents a group shape that consists of many shapes grouped together.
@@ -207,30 +208,35 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
     public XSLFAutoShape createAutoShape(){
         XSLFAutoShape sh = getDrawing().createAutoShape();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFFreeformShape createFreeform(){
         XSLFFreeformShape sh = getDrawing().createFreeform();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFTextBox createTextBox(){
         XSLFTextBox sh = getDrawing().createTextBox();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFConnectorShape createConnector(){
         XSLFConnectorShape sh = getDrawing().createConnector();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
     public XSLFGroupShape createGroup(){
         XSLFGroupShape sh = getDrawing().createGroup();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -251,6 +257,7 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
         XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
         sh.resize();
         _shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -343,4 +350,13 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer {
         }
     }
 
+    public ShapeType getShapeType(){
+        return null;
+    }
+
+    public void addShape(XSLFShape shape) {
+        throw new UnsupportedOperationException(
+            "Adding a shape from a different container is not supported -"
+            + " create it from scratch witht XSLFGroupShape.create* methods");
+    }
 }

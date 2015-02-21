@@ -1456,7 +1456,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param hints the rendering hints to be set
      * @see RenderingHints
      */
-    public void addRenderingHints(Map hints){
+    public void addRenderingHints(Map<?,?> hints){
         this._hints.putAll(hints);
     }
 
@@ -1581,8 +1581,9 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      * @param hints the rendering hints to be set
      * @see RenderingHints
      */
-    public void setRenderingHints(Map hints){
-        this._hints = new RenderingHints(hints);
+    public void setRenderingHints(Map<?,?> hints){
+        this._hints = new RenderingHints(null);
+        this._hints.putAll(hints);
     }
 
     /**

@@ -17,14 +17,38 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Color;
+
 /**
  * Some text.
  *
  * TODO - decide on how we do rich text stuff
  */
 public interface TextRun {
-	public String getText();
+    enum TextCap {
+        NONE,
+        SMALL,
+        ALL
+    }
+    
+    public String getText();
 	public void setText(String text);
 
-	// TODO - rich text formatting stuff
+	TextCap getTextCap();
+	
+	Color getFontColor();
+	double getFontSize();
+	String getFontFamily();
+	
+	boolean isBold();
+	boolean isItalic();
+	boolean isUnderline();
+	boolean isStrikethrough();
+	boolean isSubscript();
+	boolean isSuperscript();
+	
+	/**
+	 * @return the pitch and family id or -1 if not applicable
+	 */
+	byte getPitchAndFamily();
 }

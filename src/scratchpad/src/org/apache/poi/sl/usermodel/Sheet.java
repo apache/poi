@@ -17,13 +17,21 @@
 
 package org.apache.poi.sl.usermodel;
 
+
 /**
  * Common parent of Slides, Notes and Masters
  */
 public interface Sheet extends ShapeContainer {
-	public SlideShow getSlideShow();
+	SlideShow getSlideShow();
 
-	public MasterSheet getMasterSheet();
+    /**
+     * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.
+     * Sheets that support the notion of master (slide, slideLayout) should override it and
+     * check this setting in the sheet XML
+     */
+	boolean getFollowMasterGraphics();
+	
+	MasterSheet getMasterSheet();
 
-	public Background getBackground();
+	Background getBackground();
 }

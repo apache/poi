@@ -22,6 +22,7 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.text.AttributedString;
 
+import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
@@ -45,7 +46,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFTextRun {
+public class XSLFTextRun implements TextRun {
     private final CTRegularTextRun _r;
     private final XSLFTextParagraph _p;
 

@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
@@ -30,7 +31,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
 import java.io.IOException;
 
 @Beta
-public class XSLFSlideLayout extends XSLFSheet {
+public class XSLFSlideLayout extends XSLFSheet implements MasterSheet {
     private CTSlideLayout _layout;
     private XSLFSlideMaster _master;
 

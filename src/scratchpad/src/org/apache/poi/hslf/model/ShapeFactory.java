@@ -34,6 +34,8 @@ import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.OEShapeAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -49,14 +51,14 @@ public final class ShapeFactory {
     /**
      * Create a new shape from the data provided.
      */
-    public static Shape createShape(EscherContainerRecord spContainer, Shape parent){
+    public static Shape createShape(EscherContainerRecord spContainer, ShapeContainer<Shape> parent){
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
             return createShapeGroup(spContainer, parent);
         }
         return createSimpeShape(spContainer, parent);
     }
 
-    public static ShapeGroup createShapeGroup(EscherContainerRecord spContainer, Shape parent){
+    public static ShapeGroup createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<Shape> parent){
         ShapeGroup group = null;
         EscherRecord opt = Shape.getEscherChild((EscherContainerRecord)spContainer.getChild(0), (short)0xF122);
         if(opt != null){
@@ -80,17 +82,17 @@ public final class ShapeFactory {
         return group;
      }
 
-    public static Shape createSimpeShape(EscherContainerRecord spContainer, Shape parent){
+    public static Shape createSimpeShape(EscherContainerRecord spContainer, ShapeContainer<Shape> parent){
         Shape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 
-        int type = spRecord.getShapeType();
+        ShapeType type = ShapeType.forId(spRecord.getShapeType(), false);
         switch (type){
-            case ShapeTypes.TextBox:
+            case TEXT_BOX:
                 shape = new TextBox(spContainer, parent);
                 break;
-            case ShapeTypes.HostControl:
-            case ShapeTypes.PictureFrame: {
+            case HOST_CONTROL:
+            case FRAME: {
                 InteractiveInfo info = getClientDataRecord(spContainer, RecordTypes.InteractiveInfo.typeID);
                 OEShapeAtom oes = getClientDataRecord(spContainer, RecordTypes.OEShapeAtom.typeID);
                 if(info != null && info.getInteractiveInfoAtom() != null){
@@ -111,10 +113,10 @@ public final class ShapeFactory {
                 if(shape == null) shape = new Picture(spContainer, parent);
                 break;
             }
-            case ShapeTypes.Line:
+            case LINE:
                 shape = new Line(spContainer, parent);
                 break;
-            case ShapeTypes.NotPrimitive: {
+            case NOT_PRIMITIVE: {
                 EscherOptRecord opt = Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
                 if(prop != null)

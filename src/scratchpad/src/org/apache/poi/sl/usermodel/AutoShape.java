@@ -17,6 +17,6 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface AutoShape extends SimpleShape {
+public interface AutoShape extends TextShape {
 	public TextRun getTextRun();
 }

@@ -26,6 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * Stores definition of auto-shapes.
@@ -45,8 +46,8 @@ public final class AutoShapes {
      *
      * @return the shape outline
      */
-    public static ShapeOutline getShapeOutline(int type){
-        ShapeOutline outline = shapes[type];
+    public static ShapeOutline getShapeOutline(ShapeType type){
+        ShapeOutline outline = shapes[type.nativeId];
         return outline;
     }
 
@@ -68,14 +69,14 @@ public final class AutoShapes {
     static {
         shapes = new ShapeOutline[255];
 
-        shapes[ShapeTypes.Rectangle] = new ShapeOutline(){
+        shapes[ShapeType.RECT.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 Rectangle2D path = new Rectangle2D.Float(0, 0, 21600, 21600);
                 return path;
             }
         };
 
-        shapes[ShapeTypes.RoundRectangle] = new ShapeOutline(){
+        shapes[ShapeType.ROUND_RECT.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
                 RoundRectangle2D path = new RoundRectangle2D.Float(0, 0, 21600, 21600, adjval, adjval);
@@ -83,14 +84,14 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Ellipse] = new ShapeOutline(){
+        shapes[ShapeType.ELLIPSE.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 Ellipse2D path = new Ellipse2D.Float(0, 0, 21600, 21600);
                 return path;
             }
         };
 
-        shapes[ShapeTypes.Diamond] = new ShapeOutline(){
+        shapes[ShapeType.DIAMOND.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 GeneralPath path = new GeneralPath();
                 path.moveTo(10800, 0);
@@ -103,7 +104,7 @@ public final class AutoShapes {
         };
 
         //m@0,l,21600r21600
-        shapes[ShapeTypes.IsocelesTriangle] = new ShapeOutline(){
+        shapes[ShapeType.TRIANGLE.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 10800);
                 GeneralPath path = new GeneralPath();
@@ -115,7 +116,7 @@ public final class AutoShapes {
            }
         };
 
-        shapes[ShapeTypes.RightTriangle] = new ShapeOutline(){
+        shapes[ShapeType.RT_TRIANGLE.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 GeneralPath path = new GeneralPath();
                 path.moveTo(0, 0);
@@ -126,7 +127,7 @@ public final class AutoShapes {
            }
         };
 
-        shapes[ShapeTypes.Parallelogram] = new ShapeOutline(){
+        shapes[ShapeType.PARALLELOGRAM.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
 
@@ -140,7 +141,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Trapezoid] = new ShapeOutline(){
+        shapes[ShapeType.TRAPEZOID.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
 
@@ -154,7 +155,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Hexagon] = new ShapeOutline(){
+        shapes[ShapeType.HEXAGON.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
 
@@ -170,7 +171,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Octagon] = new ShapeOutline(){
+        shapes[ShapeType.OCTAGON.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 6326);
 
@@ -188,7 +189,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Plus] = new ShapeOutline(){
+        shapes[ShapeType.PLUS.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
 
@@ -210,7 +211,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Pentagon] = new ShapeOutline(){
+        shapes[ShapeType.PENTAGON.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
 
                 GeneralPath path = new GeneralPath();
@@ -224,7 +225,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.DownArrow] = new ShapeOutline(){
+        shapes[ShapeType.DOWN_ARROW.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m0@0 l@1@0 @1,0 @2,0 @2@0,21600@0,10800,21600xe
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 16200);
@@ -242,7 +243,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.UpArrow] = new ShapeOutline(){
+        shapes[ShapeType.UP_ARROW.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m0@0 l@1@0 @1,21600@2,21600@2@0,21600@0,10800,xe
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
@@ -260,7 +261,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Arrow] = new ShapeOutline(){
+        shapes[ShapeType.RIGHT_ARROW.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m@0, l@0@1 ,0@1,0@2@0@2@0,21600,21600,10800xe
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 16200);
@@ -278,7 +279,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.LeftArrow] = new ShapeOutline(){
+        shapes[ShapeType.LEFT_ARROW.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m@0, l@0@1,21600@1,21600@2@0@2@0,21600,,10800xe
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
@@ -296,7 +297,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.Can] = new ShapeOutline(){
+        shapes[ShapeType.CAN.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m10800,qx0@1l0@2qy10800,21600,21600@2l21600@1qy10800,xem0@1qy10800@0,21600@1nfe
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 5400);
@@ -320,7 +321,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.LeftBrace] = new ShapeOutline(){
+        shapes[ShapeType.LEFT_BRACE.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m21600,qx10800@0l10800@2qy0@11,10800@3l10800@1qy21600,21600e
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 1800);
@@ -348,7 +349,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.RightBrace] = new ShapeOutline(){
+        shapes[ShapeType.RIGHT_BRACE.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 //m,qx10800@0 l10800@2qy21600@11,10800@3l10800@1qy,21600e
                 int adjval = shape.getEscherProperty(EscherProperties.GEOMETRY__ADJUSTVALUE, 1800);
@@ -376,7 +377,7 @@ public final class AutoShapes {
             }
         };
 
-        shapes[ShapeTypes.StraightConnector1] = new ShapeOutline(){
+        shapes[ShapeType.STRAIGHT_CONNECTOR_1.nativeId] = new ShapeOutline(){
             public java.awt.Shape getOutline(Shape shape){
                 return new Line2D.Float(0, 0, 21600, 21600);
             }

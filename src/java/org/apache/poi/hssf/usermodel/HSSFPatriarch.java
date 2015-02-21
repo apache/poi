@@ -519,7 +519,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing {
     }
 
     public Chart createChart(ClientAnchor anchor) {
-        throw new RuntimeException("NotImplemented");
+        throw new UnsupportedOperationException("NotImplemented");
     }
 
 

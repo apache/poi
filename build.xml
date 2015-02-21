@@ -103,6 +103,12 @@ under the License.
     <property name="scratchpad.output.test.dir" location="build/scratchpad-test-classes"/>
     <property name="scratchpad.testokfile" location="build/scratchpad-testokfile.txt"/>
 
+    <!-- Scratchpad/Geometry -->
+	<property name="geometry.schema" value="src/resources/ooxml/org/apache/poi/xslf/usermodel/presetShapeDefinitions.xml"/>
+	<property name="geometry.pkg" value="org.apache.poi.sl.draw.binding"/>
+	<property name="geometry.output.tmpdir" value="build/geometry-java"/>
+	
+	
     <!-- Examples: -->
     <property name="examples.src" location="src/examples/src"/>
     <property name="examples.output.dir" location="build/examples-classes"/>
@@ -371,6 +377,7 @@ under the License.
         <mkdir dir="${scratchpad.output.dir}"/>
         <mkdir dir="${scratchpad.output.test.dir}"/>
         <mkdir dir="${scratchpad.reports.test}"/>
+    	<mkdir dir="${geometry.output.tmpdir}"/>
         <mkdir dir="${ooxml.output.dir}"/>
         <mkdir dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
@@ -690,7 +697,38 @@ under the License.
         </copy>
     </target>
 
-    <target name="compile-scratchpad" depends="compile-main">
+	<target name="generate-geometry" depends="fetch-ooxml-xsds">
+		<delete dir="${geometry.output.tmpdir}"/>
+		<!-- taskdef xjc -->
+		<!-- "D:\Program Files\Java\jdk1.6.0_45\bin\xjc" -p org.apache.poi.sl.model.geom.binding -readOnly -Xlocator -mark-generated ooxml-schemas\dml-shapeGeometry.xsd -->
+		<unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${geometry.output.tmpdir}"/>
+		<exec executable="${env.JAVA_HOME}/bin/xjc">
+			<arg value="-p"/>
+			<arg value="${geometry.pkg}"/>
+			<arg value="-b"/>
+			<arg file="src/types/definitions/dml-shapeGeometry.xjb"/>
+			<arg value="-readOnly"/>
+			<arg value="-npa"/>
+			<arg value="-no-header"/>
+			<arg value="-Xlocator"/>
+			<arg file="${geometry.output.tmpdir}/dml-shapeGeometry.xsd"/>
+			<arg value="-d"/>
+			<arg file="${geometry.output.tmpdir}"/>
+		</exec>
+		<copy file="src/java/org/apache/poi/POIDocument.java" tofile="${geometry.output.tmpdir}/apache-license.txt">
+			<filterchain>
+			<headfilter lines="16"/>
+			</filterchain>
+		</copy>
+		<copy todir="${scratchpad.src}">
+			<fileset dir="${geometry.output.tmpdir}" includes="**/*.java"/>
+		     <filterchain>
+		         <concatfilter prepend="${geometry.output.tmpdir}/apache-license.txt"/>
+		     </filterchain>
+		</copy>
+	</target>
+	
+	<target name="compile-scratchpad" depends="compile-main,generate-geometry">
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
                destdir="${scratchpad.output.dir}"

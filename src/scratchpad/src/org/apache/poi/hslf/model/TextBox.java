@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 /**
  * Represents a TextFrame shape in PowerPoint.
@@ -36,7 +38,7 @@ public class TextBox extends TextShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TextBox(EscherContainerRecord escherRecord, Shape parent){
+   protected TextBox(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
 
     }
@@ -47,7 +49,7 @@ public class TextBox extends TextShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TextBox(Shape parent){
+    public TextBox(ShapeContainer<Shape> parent){
         super(parent);
     }
 
@@ -67,7 +69,7 @@ public class TextBox extends TextShape {
     protected EscherContainerRecord createSpContainer(boolean isChild){
         _escherContainer = super.createSpContainer(isChild);
 
-        setShapeType(ShapeTypes.TextBox);
+        setShapeType(ShapeType.TEXT_BOX);
 
         //set default properties for a TextBox
         setEscherProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004);

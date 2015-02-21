@@ -24,6 +24,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.sl.usermodel.TextAlign;
+
 /**
  * PPTX Tables
  *

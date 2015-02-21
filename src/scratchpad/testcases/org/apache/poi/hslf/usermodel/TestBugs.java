@@ -653,7 +653,7 @@ public final class TestBugs {
             for (byte data[] : ep) {
                 EscherColorRef ecr = new EscherColorRef(data, 0, 4);
                 int rgb[] = ecr.getRGB();
-                double pos = Units.fixedPointToDecimal(LittleEndian.getInt(data, 4));
+                double pos = Units.fixedPointToDouble(LittleEndian.getInt(data, 4));
                 assertEquals((int)exp[i][0], rgb[0]);
                 assertEquals((int)exp[i][1], rgb[1]);
                 assertEquals((int)exp[i][2], rgb[2]);

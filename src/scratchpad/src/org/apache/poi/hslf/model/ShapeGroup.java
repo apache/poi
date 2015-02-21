@@ -30,6 +30,8 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -38,7 +40,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public class ShapeGroup extends Shape{
+public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
 
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
@@ -55,7 +57,7 @@ public class ShapeGroup extends Shape{
       * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
       * @param parent    the parent of the shape
       */
-    protected ShapeGroup(EscherContainerRecord escherRecord, Shape parent){
+    protected ShapeGroup(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
@@ -63,31 +65,7 @@ public class ShapeGroup extends Shape{
      * @return the shapes contained in this group container
      */
     public Shape[] getShapes() {
-    	// Out escher container record should contain several
-        //  SpContainers, the first of which is the group shape itself
-        Iterator<EscherRecord> iter = _escherContainer.getChildIterator();
-
-        // Don't include the first SpContainer, it is always NotPrimitive
-        if (iter.hasNext()) {
-        	iter.next();
-        }
-        List<Shape> shapeList = new ArrayList<Shape>();
-        while (iter.hasNext()) {
-        	EscherRecord r = iter.next();
-        	if(r instanceof EscherContainerRecord) {
-        		// Create the Shape for it
-        		EscherContainerRecord container = (EscherContainerRecord)r;
-        		Shape shape = ShapeFactory.createShape(container, this);
-                shape.setSheet(getSheet());
-        		shapeList.add( shape );
-        	} else {
-        		// Should we do anything special with these non
-        		//  Container records?
-        		logger.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
-        	}
-        }
-
-        // Put the shapes into an array, and return
+        List<Shape> shapeList = getShapeList();
         Shape[] shapes = shapeList.toArray(new Shape[shapeList.size()]);
         return shapes;
     }
@@ -179,7 +157,7 @@ public class ShapeGroup extends Shape{
         spcont.addChildRecord(spg);
 
         EscherSpRecord sp = new EscherSpRecord();
-        short type = (ShapeTypes.NotPrimitive << 4) + 2;
+        short type = (short)((ShapeType.NOT_PRIMITIVE.nativeId << 4) + 2);
         sp.setOptions(type);
         sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_GROUP);
         spcont.addChildRecord(sp);
@@ -260,9 +238,10 @@ public class ShapeGroup extends Shape{
      *
      * @return type of the shape.
      */
-    public int getShapeType(){
+    public ShapeType getShapeType(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        return spRecord.getOptions() >> 4;
+        int nativeId = spRecord.getOptions() >> 4;
+        return ShapeType.forId(nativeId, false);
     }
 
     /**
@@ -291,4 +270,45 @@ public class ShapeGroup extends Shape{
         EscherContainerRecord groupInfoContainer = (EscherContainerRecord)_escherContainer.getChild(0);
         return groupInfoContainer.getChildById((short)recordId);
     }
+
+    public Iterator<Shape> iterator() {
+        return getShapeList().iterator();
+    }
+
+    public boolean removeShape(Shape shape) {
+        // TODO: implement!
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @return the shapes contained in this group container
+     */
+    protected List<Shape> getShapeList() {
+        // Out escher container record should contain several
+        //  SpContainers, the first of which is the group shape itself
+        Iterator<EscherRecord> iter = _escherContainer.getChildIterator();
+
+        // Don't include the first SpContainer, it is always NotPrimitive
+        if (iter.hasNext()) {
+            iter.next();
+        }
+        List<Shape> shapeList = new ArrayList<Shape>();
+        while (iter.hasNext()) {
+            EscherRecord r = iter.next();
+            if(r instanceof EscherContainerRecord) {
+                // Create the Shape for it
+                EscherContainerRecord container = (EscherContainerRecord)r;
+                Shape shape = ShapeFactory.createShape(container, this);
+                shape.setSheet(getSheet());
+                shapeList.add( shape );
+            } else {
+                // Should we do anything special with these non
+                //  Container records?
+                logger.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
+            }
+        }
+
+        return shapeList;
+    }
+
 }

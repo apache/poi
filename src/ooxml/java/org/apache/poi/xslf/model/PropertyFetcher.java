@@ -19,8 +19,8 @@
 
 package org.apache.poi.xslf.model;
 
-import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 
 /**
  *  Used internally to navigate the PresentationML text style hierarchy and fetch properties
@@ -36,7 +36,7 @@ public abstract class PropertyFetcher<T> {
      * @param shape the shape being examined
      * @return true if the desired property was fetched
      */
-    public abstract boolean fetch(XSLFSimpleShape shape) ;
+    public abstract boolean fetch(XSLFShape shape) ;
 
     public T getValue(){
         return _value;

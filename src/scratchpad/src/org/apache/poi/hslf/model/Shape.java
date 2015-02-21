@@ -19,6 +19,8 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.Units;
@@ -43,7 +45,7 @@ import java.awt.geom.Rectangle2D;
   *
   * @author Yegor Kozlov
  */
-public abstract class Shape {
+public abstract class Shape implements org.apache.poi.sl.usermodel.Shape<Shape> {
 
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
@@ -83,7 +85,7 @@ public abstract class Shape {
      * Parent of this shape.
      * <code>null</code> for the topmost shapes.
      */
-    protected Shape _parent;
+    protected ShapeContainer<Shape> _parent;
 
     /**
      * The <code>Sheet</code> this shape belongs to
@@ -101,7 +103,7 @@ public abstract class Shape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent             the parent of this Shape
      */
-      protected Shape(EscherContainerRecord escherRecord, Shape parent){
+      protected Shape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         _escherContainer = escherRecord;
         _parent = parent;
      }
@@ -114,7 +116,7 @@ public abstract class Shape {
     /**
      *  @return the parent of this shape
      */
-    public Shape getParent(){
+    public ShapeContainer<Shape> getParent(){
         return _parent;
     }
 
@@ -122,25 +124,25 @@ public abstract class Shape {
      * @return name of the shape.
      */
     public String getShapeName(){
-        return ShapeTypes.typeName(getShapeType());
+        return getShapeType().nativeName;
     }
 
     /**
      * @return type of the shape.
      * @see org.apache.poi.hslf.record.RecordTypes
      */
-    public int getShapeType(){
+    public ShapeType getShapeType(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        return spRecord.getShapeType();
+        return ShapeType.forId(spRecord.getShapeType(), false);
     }
 
     /**
      * @param type type of the shape.
      * @see org.apache.poi.hslf.record.RecordTypes
      */
-    public void setShapeType(int type){
+    public void setShapeType(ShapeType type){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        spRecord.setShapeType( (short) type );
+        spRecord.setShapeType( (short) type.nativeId );
         spRecord.setVersion( (short) 0x2 );
     }
 
@@ -395,7 +397,7 @@ public abstract class Shape {
         EscherSimpleProperty op = getEscherProperty(opt, opacityProperty);
         int defaultOpacity = 0x00010000;
         int opacity = (op == null) ? defaultOpacity : op.getPropertyValue();
-        double alpha = Units.fixedPointToDecimal(opacity)*255.0;
+        double alpha = Units.fixedPointToDouble(opacity)*255.0;
         return new Color(rgb[0], rgb[1], rgb[2], (int)alpha);
     }
 
@@ -456,7 +458,7 @@ public abstract class Shape {
      * @return the hyperlink assigned to this shape
      * or <code>null</code> if not found.
      */
-     public Hyperlink getHyperlink(){
+    public Hyperlink getHyperlink(){
         return Hyperlink.find(this);
     }
 
@@ -477,44 +479,47 @@ public abstract class Shape {
         return getEscherChild(EscherOptRecord.RECORD_ID);
     }
     
-    /**
-     * Whether the shape is horizontally flipped
-     *
-     * @return whether the shape is horizontally flipped
-     */
-     public boolean getFlipHorizontal(){
+    @Override
+    public boolean getFlipHorizontal(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPHORIZ) != 0;
     }
+     
+    @Override
+    public void setFlipHorizontal(boolean flip) {
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
+        int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ;
+        spRecord.setFlags(flag);
+    }
 
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @return whether the shape is vertically flipped
-     */
+    @Override
     public boolean getFlipVertical(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPVERT) != 0;
     }
-
-    /**
-     * Rotation angle in degrees
-     *
-     * @return rotation angle in degrees
-     */
-    public int getRotation(){
-        int rot = getEscherProperty(EscherProperties.TRANSFORM__ROTATION);
-        int angle = (rot >> 16) % 360;
-
-        return angle;
+    
+    @Override
+    public void setFlipVertical(boolean flip) {
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
+        int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPVERT;
+        spRecord.setFlags(flag);
     }
 
-    /**
-     * Rotate this shape
-     *
-     * @param theta the rotation angle in degrees
-     */
-    public void setRotation(int theta){
-        setEscherProperty(EscherProperties.TRANSFORM__ROTATION, (theta << 16));
+    @Override
+    public double getRotation(){
+        int rot = getEscherProperty(EscherProperties.TRANSFORM__ROTATION);
+        double angle = Units.fixedPointToDouble(rot) % 360.0;
+        return angle;
+    }
+    
+    @Override
+    public void setRotation(double theta){
+        int rot = Units.doubleToFixedPoint(theta % 360.0);
+        setEscherProperty(EscherProperties.TRANSFORM__ROTATION, rot);
+    }
+
+    @Override
+    public boolean isPlaceholder() {
+        return false;
     }
 }

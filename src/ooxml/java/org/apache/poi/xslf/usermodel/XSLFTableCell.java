@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;

@@ -17,25 +17,20 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBackgroundFillStyleList;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Paint;
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
+
+import org.apache.poi.sl.usermodel.Background;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 
 /**
  * Background shape
  *
  * @author Yegor Kozlov
  */
-public class XSLFBackground extends XSLFSimpleShape {
+public class XSLFBackground extends XSLFSimpleShape implements Background {
 
     /* package */XSLFBackground(CTBackground shape, XSLFSheet sheet) {
         super(shape, sheet);

@@ -23,6 +23,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
@@ -34,6 +35,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 import javax.xml.namespace.QName;
+
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
@@ -58,8 +60,8 @@ public class XSLFGraphicFrame extends XSLFShape {
         return _sheet;
     }
 
-    public int getShapeType(){
-        throw new RuntimeException("NotImplemented");
+    public ShapeType getShapeType(){
+        throw new UnsupportedOperationException();
     }
 
     public int getShapeId(){

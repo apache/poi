@@ -41,6 +41,7 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.RichTextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -81,7 +82,7 @@ public final class TestShapes {
         line.setLineColor(Color.red);
         slide.addShape(line);
 
-        AutoShape ellipse = new AutoShape(ShapeTypes.Ellipse);
+        AutoShape ellipse = new AutoShape(ShapeType.ELLIPSE);
         java.awt.Rectangle ellipseAnchor = new Rectangle(320, 154, 55, 111);
         ellipse.setAnchor(ellipseAnchor);
         ellipse.setLineWidth(2);
@@ -334,7 +335,7 @@ public final class TestShapes {
 
     @Test
     public void lineWidth() {
-        SimpleShape sh = new AutoShape(ShapeTypes.RightTriangle);
+        SimpleShape sh = new AutoShape(ShapeType.RT_TRIANGLE);
 
         EscherOptRecord opt = sh.getEscherOptRecord();
         EscherSimpleProperty prop = SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
