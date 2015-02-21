@@ -39,6 +39,8 @@ import org.apache.poi.hslf.blip.Bitmap;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.usermodel.PictureData;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -96,7 +98,7 @@ public class Picture extends SimpleShape {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public Picture(int idx, Shape parent) {
+    public Picture(int idx, ShapeContainer<Shape> parent) {
         super(null, parent);
         _escherContainer = createSpContainer(idx, parent instanceof ShapeGroup);
     }
@@ -108,7 +110,7 @@ public class Picture extends SimpleShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected Picture(EscherContainerRecord escherRecord, Shape parent){
+     protected Picture(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
@@ -136,7 +138,7 @@ public class Picture extends SimpleShape {
         _escherContainer.setOptions((short)15);
 
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-        spRecord.setOptions((short)((ShapeTypes.PictureFrame << 4) | 0x2));
+        spRecord.setOptions((short)((ShapeType.FRAME.nativeId << 4) | 0x2));
 
         //set default properties for a picture
         EscherOptRecord opt = getEscherOptRecord();
@@ -295,6 +297,6 @@ public class Picture extends SimpleShape {
         EscherSimpleProperty prop = getEscherProperty(opt, propertyId);
         if (prop == null) return 0;
         int fixedPoint = prop.getPropertyValue();
-        return Units.fixedPointToDecimal(fixedPoint);
+        return Units.fixedPointToDouble(fixedPoint);
     }
 }

@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogger;
 
 import java.awt.geom.Rectangle2D;
@@ -33,20 +35,20 @@ import java.awt.geom.Rectangle2D;
  */
 public class AutoShape extends TextShape {
 
-    protected AutoShape(EscherContainerRecord escherRecord, Shape parent){
+    protected AutoShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
-    public AutoShape(int type, Shape parent){
+    public AutoShape(ShapeType type, ShapeContainer<Shape> parent){
         super(null, parent);
         _escherContainer = createSpContainer(type, parent instanceof ShapeGroup);
     }
 
-    public AutoShape(int type){
+    public AutoShape(ShapeType type){
         this(type, null);
     }
 
-    protected EscherContainerRecord createSpContainer(int shapeType, boolean isChild){
+    protected EscherContainerRecord createSpContainer(ShapeType shapeType, boolean isChild){
         _escherContainer = super.createSpContainer(isChild);
 
         setShapeType(shapeType);
@@ -110,7 +112,7 @@ public class AutoShape extends TextShape {
         ShapeOutline outline = AutoShapes.getShapeOutline(getShapeType());
         Rectangle2D anchor = getLogicalAnchor2D();
         if(outline == null){
-            logger.log(POILogger.WARN, "Outline not found for " + ShapeTypes.typeName(getShapeType()));
+            logger.log(POILogger.WARN, "Outline not found for " + getShapeType().nativeName);
             return anchor;
         }
         java.awt.Shape shape = outline.getOutline(this);

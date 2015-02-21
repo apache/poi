@@ -20,6 +20,7 @@ package org.apache.poi.hslf.examples;
 import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 import java.io.IOException;
 import java.io.FileOutputStream;
@@ -312,7 +313,7 @@ public final class ApacheconEU08 {
         box3.setAnchor(new Rectangle(473, 243, 170, 170));
         slide.addShape(box3);
 
-        AutoShape box4 = new AutoShape(ShapeTypes.Arrow);
+        AutoShape box4 = new AutoShape(ShapeType.RIGHT_ARROW);
         box4.getFill().setForegroundColor(new Color(187, 224, 227));
         box4.setLineWidth(0.75);
         box4.setLineColor(Color.black);

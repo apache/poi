@@ -38,6 +38,7 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -62,7 +63,7 @@ public abstract class SimpleShape extends Shape {
      * @param escherRecord    <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-    protected SimpleShape(EscherContainerRecord escherRecord, Shape parent){
+    protected SimpleShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
@@ -191,7 +192,7 @@ public abstract class SimpleShape extends Shape {
      *
      * @return style of the line.
      */
-    public int getLineStyle(){
+    public int getStrokeStyle(){
         EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
         return prop == null ? Line.LINE_SIMPLE : prop.getPropertyValue();
@@ -221,12 +222,14 @@ public abstract class SimpleShape extends Shape {
         Rectangle2D anchor = getAnchor2D();
 
         //if it is a groupped shape see if we need to transform the coordinates
-        if (_parent != null){
+        if (getParent() != null){
             ArrayList<ShapeGroup> lst = new ArrayList<ShapeGroup>();
-            for (Shape top=this; (top = top.getParent()) != null; ) {
-                lst.add(0, (ShapeGroup)top);
+            for (ShapeContainer<Shape> parent=this.getParent();
+                parent instanceof ShapeGroup;
+                parent = ((ShapeGroup)parent).getParent()) {
+                lst.add(0, (ShapeGroup)parent);
             }
-
+            
             AffineTransform tx = new AffineTransform();
             for(ShapeGroup prnt : lst) {
                 Rectangle2D exterior = prnt.getAnchor2D();
@@ -243,8 +246,8 @@ public abstract class SimpleShape extends Shape {
             anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
 
-        int angle = getRotation();
-        if(angle != 0){
+        double angle = getRotation();
+        if(angle != 0.){
             double centerX = anchor.getX() + anchor.getWidth()/2;
             double centerY = anchor.getY() + anchor.getHeight()/2;
 

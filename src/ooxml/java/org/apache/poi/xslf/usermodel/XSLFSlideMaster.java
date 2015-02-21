@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
@@ -53,7 +54,7 @@ import java.util.Map;
  * @author Yegor Kozlov
 */
 @Beta
- public class XSLFSlideMaster extends XSLFSheet {
+ public class XSLFSlideMaster extends XSLFSheet implements MasterSheet {
 	private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
     private XSLFTheme _theme;
@@ -82,7 +83,7 @@ import java.util.Map;
     }
 
     @Override
-    public XSLFSheet getMasterSheet() {
+    public MasterSheet getMasterSheet() {
         return null;
     }
 
@@ -177,5 +178,4 @@ import java.util.Map;
             return null;
         }
     }
-
 }

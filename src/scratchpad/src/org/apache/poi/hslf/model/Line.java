@@ -18,6 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Line2D;
@@ -95,11 +97,11 @@ public final class Line extends SimpleShape {
     public static final int LINE_TRIPLE = 4;
 
 
-    protected Line(EscherContainerRecord escherRecord, Shape parent){
+    protected Line(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
-    public Line(Shape parent){
+    public Line(ShapeContainer<Shape> parent){
         super(null, parent);
         _escherContainer = createSpContainer(parent instanceof ShapeGroup);
     }
@@ -112,7 +114,7 @@ public final class Line extends SimpleShape {
         _escherContainer = super.createSpContainer(isChild);
 
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
-        short type = (ShapeTypes.Line << 4) | 0x2;
+        short type = (short)((ShapeType.LINE.nativeId << 4) | 0x2);
         spRecord.setOptions(type);
 
         //set default properties for a line

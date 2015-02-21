@@ -17,6 +17,8 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 
@@ -112,12 +114,12 @@ public class TestXSLFConnectorShape extends TestCase {
         XSLFSlide slide = pptx.createSlide();
 
         XSLFAutoShape rect1 = slide.createAutoShape();
-        rect1.setShapeType(XSLFShapeType.RECT);
+        rect1.setShapeType(ShapeType.RECT);
         rect1.setAnchor(new Rectangle(100, 100, 100, 100));
         rect1.setFillColor(Color.blue);
 
         XSLFAutoShape rect2 = slide.createAutoShape();
-        rect2.setShapeType(XSLFShapeType.RECT);
+        rect2.setShapeType(ShapeType.RECT);
         rect2.setAnchor(new Rectangle(300, 300, 100, 100));
         rect2.setFillColor(Color.red);
 

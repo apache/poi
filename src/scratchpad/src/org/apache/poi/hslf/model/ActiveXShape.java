@@ -34,6 +34,8 @@ import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.OEShapeAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -63,7 +65,7 @@ public final class ActiveXShape extends Picture {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected ActiveXShape(EscherContainerRecord escherRecord, Shape parent){
+     protected ActiveXShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 
@@ -78,7 +80,7 @@ public final class ActiveXShape extends Picture {
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE | EscherSpRecord.FLAG_OLESHAPE);
 
-        setShapeType(ShapeTypes.HostControl);
+        setShapeType(ShapeType.HOST_CONTROL);
         setEscherProperty(EscherProperties.BLIP__PICTUREID, idx);
         setEscherProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001);
         setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008);

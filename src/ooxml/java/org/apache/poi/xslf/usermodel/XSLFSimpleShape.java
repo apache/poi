@@ -19,26 +19,25 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.*;
+import java.awt.Shape;
+import java.awt.geom.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.poi.sl.draw.geom.*;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
-import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Outline;
-import org.apache.poi.xslf.model.geom.Path;
-import org.apache.poi.xslf.model.geom.PresetGeometries;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * Represents a single (non-group) shape in a .pptx slide show
@@ -46,24 +45,11 @@ import java.util.List;
  * @author Yegor Kozlov
  */
 @Beta
-public abstract class XSLFSimpleShape extends XSLFShape {
+public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
     private static CTOuterShadowEffect NO_SHADOW = CTOuterShadowEffect.Factory.newInstance();
 
-    private final XmlObject _shape;
-    private final XSLFSheet _sheet;
-    private CTShapeProperties _spPr;
-    private CTShapeStyle _spStyle;
-    private CTNonVisualDrawingProps _nvPr;
-    private CTPlaceholder _ph;
-
     /* package */XSLFSimpleShape(XmlObject shape, XSLFSheet sheet) {
-        _shape = shape;
-        _sheet = sheet;
-    }
-
-    @Override
-    public XmlObject getXmlObject() {
-        return _shape;
+        super(shape,sheet);
     }
 
     /**
@@ -78,16 +64,16 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      *
      * @param type
      */
-    public void setShapeType(XSLFShapeType type){
+    public void setShapeType(ShapeType type){
         CTShape shape = (CTShape) getXmlObject();
-        STShapeType.Enum geom = STShapeType.Enum.forInt(type.getIndex());
+        STShapeType.Enum geom = STShapeType.Enum.forInt(type.ooxmlId);
         shape.getSpPr().getPrstGeom().setPrst(geom);
     }
 
-    public XSLFShapeType getShapeType(){
+    public ShapeType getShapeType(){
         CTShape shape = (CTShape) getXmlObject();
         STShapeType.Enum geom = shape.getSpPr().getPrstGeom().getPrst();
-        return XSLFShapeType.forInt(geom.intValue());
+        return ShapeType.forId(geom.intValue(), true);
     }
 
     @Override
@@ -98,101 +84,6 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     @Override
     public int getShapeId() {
         return (int) getNvPr().getId();
-    }
-
-    protected CTNonVisualDrawingProps getNvPr() {
-        if (_nvPr == null) {
-            XmlObject[] rs = _shape
-                    .selectPath("declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:cNvPr");
-            if (rs.length != 0) {
-                _nvPr = (CTNonVisualDrawingProps) rs[0];
-            }
-        }
-        return _nvPr;
-    }
-
-    protected CTShapeProperties getSpPr() {
-        if (_spPr == null) {
-            for (XmlObject obj : _shape.selectPath("*")) {
-                if (obj instanceof CTShapeProperties) {
-                    _spPr = (CTShapeProperties) obj;
-                }
-            }
-        }
-        if (_spPr == null) {
-            throw new IllegalStateException("CTShapeProperties was not found.");
-        }
-        return _spPr;
-    }
-
-    protected CTShapeStyle getSpStyle() {
-        if (_spStyle == null) {
-            for (XmlObject obj : _shape.selectPath("*")) {
-                if (obj instanceof CTShapeStyle) {
-                    _spStyle = (CTShapeStyle) obj;
-                }
-            }
-        }
-        return _spStyle;
-    }
-
-    protected CTPlaceholder getCTPlaceholder() {
-        if (_ph == null) {
-            XmlObject[] obj = _shape.selectPath(
-                    "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph");
-            if (obj.length == 1) {
-                _ph = (CTPlaceholder) obj[0];
-            }
-        }
-        return _ph;
-    }
-
-    CTTransform2D getXfrm() {
-        PropertyFetcher<CTTransform2D> fetcher = new PropertyFetcher<CTTransform2D>() {
-            public boolean fetch(XSLFSimpleShape shape) {
-                CTShapeProperties pr = shape.getSpPr();
-                if (pr.isSetXfrm()) {
-                    setValue(pr.getXfrm());
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchShapeProperty(fetcher);
-        return fetcher.getValue();
-    }
-
-    @Override
-    public Rectangle2D getAnchor() {
-
-        CTTransform2D xfrm = getXfrm();
-
-        CTPoint2D off = xfrm.getOff();
-        long x = off.getX();
-        long y = off.getY();
-        CTPositiveSize2D ext = xfrm.getExt();
-        long cx = ext.getCx();
-        long cy = ext.getCy();
-        return new Rectangle2D.Double(
-                Units.toPoints(x), Units.toPoints(y),
-                Units.toPoints(cx), Units.toPoints(cy));
-    }
-
-    @Override
-    public void setAnchor(Rectangle2D anchor) {
-        CTShapeProperties spPr = getSpPr();
-        CTTransform2D xfrm = spPr.isSetXfrm() ? spPr.getXfrm() : spPr.addNewXfrm();
-        CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
-        long x = Units.toEMU(anchor.getX());
-        long y = Units.toEMU(anchor.getY());
-        off.setX(x);
-        off.setY(y);
-        CTPositiveSize2D ext = xfrm.isSetExt() ? xfrm.getExt() : xfrm
-                .addNewExt();
-        long cx = Units.toEMU(anchor.getWidth());
-        long cy = Units.toEMU(anchor.getHeight());
-        ext.setCx(cx);
-        ext.setCy(cy);
     }
 
     @Override
@@ -314,7 +205,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      */
     public double getLineWidth() {
         PropertyFetcher<Double> fetcher = new PropertyFetcher<Double>() {
-            public boolean fetch(XSLFSimpleShape shape) {
+            public boolean fetch(XSLFShape shape) {
                 CTShapeProperties spPr = shape.getSpPr();
                 CTLineProperties ln = spPr.getLn();
                 if (ln != null) {
@@ -371,7 +262,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
     public LineDash getLineDash() {
 
         PropertyFetcher<LineDash> fetcher = new PropertyFetcher<LineDash>() {
-            public boolean fetch(XSLFSimpleShape shape) {
+            public boolean fetch(XSLFShape shape) {
                 CTShapeProperties spPr = shape.getSpPr();
                 CTLineProperties ln = spPr.getLn();
                 if (ln != null) {
@@ -421,7 +312,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      */
     public LineCap getLineCap() {
         PropertyFetcher<LineCap> fetcher = new PropertyFetcher<LineCap>() {
-            public boolean fetch(XSLFSimpleShape shape) {
+            public boolean fetch(XSLFShape shape) {
                 CTShapeProperties spPr = shape.getSpPr();
                 CTLineProperties ln = spPr.getLn();
                 if (ln != null) {
@@ -499,7 +390,7 @@ public abstract class XSLFSimpleShape extends XSLFShape {
      */
     public XSLFShadow getShadow() {
         PropertyFetcher<CTOuterShadowEffect> fetcher = new PropertyFetcher<CTOuterShadowEffect>() {
-            public boolean fetch(XSLFSimpleShape shape) {
+            public boolean fetch(XSLFShape shape) {
                 CTShapeProperties spPr = shape.getSpPr();
                 if (spPr.isSetEffectLst()) {
                     CTOuterShadowEffect obj = spPr.getEffectLst().getOuterShdw();
@@ -528,90 +419,11 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         return (obj == null || obj == NO_SHADOW) ? null : new XSLFShadow(obj, this);
     }
 
-    @Override
-    public void draw(Graphics2D graphics) {
-        RenderableShape rShape = new RenderableShape(this);
-        rShape.render(graphics);
-
-        // draw line decorations
-        Color lineColor = getLineColor();
-        if(lineColor != null) {
-            graphics.setPaint(lineColor);
-            for(Outline o : getDecorationOutlines(graphics)){
-                if(o.getPath().isFilled()){
-                    graphics.fill(o.getOutline());
-                }
-                if(o.getPath().isStroked()){
-                    graphics.draw(o.getOutline());
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Walk up the inheritance tree and fetch shape properties.
-     *
-     * The following order of inheritance is assumed:
-     * <p>
-     * slide <-- slideLayout <-- slideMaster
-     * </p>
-     *
-     * @param visitor the object that collects the desired property
-     * @return true if the property was fetched
-     */
-    boolean fetchShapeProperty(PropertyFetcher visitor) {
-        boolean ok = visitor.fetch(this);
-
-        XSLFSimpleShape masterShape;
-        XSLFSheet masterSheet = getSheet().getMasterSheet();
-        CTPlaceholder ph = getCTPlaceholder();
-
-        if (masterSheet != null && ph != null) {
-            if (!ok) {
-                masterShape = masterSheet.getPlaceholder(ph);
-                if (masterShape != null) {
-                    ok = visitor.fetch(masterShape);
-                }
-            }
-
-            // try slide master
-            if (!ok ) {
-                int textType;
-                if ( !ph.isSetType()) textType = STPlaceholderType.INT_BODY;
-                else {
-                    switch (ph.getType().intValue()) {
-                        case STPlaceholderType.INT_TITLE:
-                        case STPlaceholderType.INT_CTR_TITLE:
-                            textType = STPlaceholderType.INT_TITLE;
-                            break;
-                        case STPlaceholderType.INT_FTR:
-                        case STPlaceholderType.INT_SLD_NUM:
-                        case STPlaceholderType.INT_DT:
-                            textType = ph.getType().intValue();
-                            break;
-                        default:
-                            textType = STPlaceholderType.INT_BODY;
-                            break;
-                    }
-                }
-                XSLFSheet master = masterSheet.getMasterSheet();
-                if (master != null) {
-                    masterShape = master.getPlaceholderByType(textType);
-                    if (masterShape != null) {
-                        ok = visitor.fetch(masterShape);
-                    }
-                }
-            }
-        }
-        return ok;
-    }
-
     /**
      *
      * @return definition of the shape geometry
      */
-    CustomGeometry getGeometry(){
+    public CustomGeometry getGeometry(){
         CTShapeProperties spPr = getSpPr();
         CustomGeometry geom;
         PresetGeometries dict = PresetGeometries.getInstance();
@@ -622,23 +434,16 @@ public abstract class XSLFSimpleShape extends XSLFShape {
                 throw new IllegalStateException("Unknown shape geometry: " + name);
             }
         } else if (spPr.isSetCustGeom()){
-            geom = new CustomGeometry(spPr.getCustGeom());
+            XMLStreamReader staxReader = spPr.getCustGeom().newXMLStreamReader();
+            geom = PresetGeometries.convertCustomGeometry(staxReader);
+            try { staxReader.close(); }
+            catch (XMLStreamException e) {}
         } else {
             geom = dict.get("rect");
         }
         return geom;
     }
-
-
-    /**
-     * draw any content within this shape (image, text, etc.).
-     *
-     * @param graphics the graphics to draw into
-     */
-    public void drawContent(Graphics2D graphics){
-
-    }
-
+    
     @Override
     void copy(XSLFShape sh){
         super.copy(sh);
@@ -943,4 +748,30 @@ public abstract class XSLFSimpleShape extends XSLFShape {
         return lst;
     }
 
+    public boolean isPlaceholder() {
+        CTPlaceholder ph = getCTPlaceholder();
+        return ph != null;
+    }
+
+    public Hyperlink getHyperlink() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void setHyperlink(Hyperlink hyperlink) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public Guide getAdjustValue(String name) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public org.apache.poi.sl.usermodel.LineDecoration getLineDecoration() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    
 }

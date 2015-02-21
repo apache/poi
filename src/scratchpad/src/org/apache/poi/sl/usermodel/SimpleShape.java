@@ -17,10 +17,14 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface SimpleShape extends Shape {
-	public Fill getFill();
-	public LineStyle getLineStyle();
+import org.apache.poi.sl.draw.geom.IAdjustableShape;
 
-	public Hyperlink getHyperlink();
-	public void setHyperlink(Hyperlink hyperlink);
+
+public interface SimpleShape extends Shape, IAdjustableShape {
+	StrokeStyle getStrokeStyle();
+	Shadow getShadow();
+	LineDecoration getLineDecoration();
+	
+	Hyperlink getHyperlink();
+	void setHyperlink(Hyperlink hyperlink);
 }

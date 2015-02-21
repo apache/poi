@@ -18,21 +18,17 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTScRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
-import org.w3c.dom.Node;
-
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.w3c.dom.Node;
 
 /**
  * Encapsulates logic to read color definitions from DrawingML and convert them to java.awt.Color
@@ -63,40 +59,37 @@ public class XSLFColor {
      * If not color information was found in the supplied xml object then a null is returned.
      */
     public Color getColor() {
-        return _color == null ? null : applyColorTransform(_color);
+        return DrawPaint.applyColorTransform(getColorStyle());
     }
 
-    private Color applyColorTransform(Color color){
-        Color result = color;
+    public ColorStyle getColorStyle() {
+        return new ColorStyle() {
+            public Color getColor() {
+                return _color;
+            }
 
-        int alpha = getAlpha();
-        if(alpha != -1){
-            result = new Color(
-                    result.getRed(), result.getGreen(), result.getBlue(), 
-                    Math.round(255 * alpha * 0.01f));
-        }
+            public int getAlpha() {
+                return getRawValue("alpha");
+            }
 
-        int lumOff = getLumOff();
-        int lumMod = getLumMod();
-        if(lumMod != -1 || lumOff != -1){
-            result = modulateLuminanace(result,
-                    lumMod == -1 ? 100 : lumMod,
-                    lumOff == -1 ? 0 : lumOff);
-        }
+            public int getLumOff() {
+                return getRawValue("lumOff");
+            }
 
-        int shade = getShade();
-        if(shade != -1){
-        	result = shade(result, shade);
-        }
+            public int getLumMod() {
+                return getRawValue("lumMod");
+            }
 
-        int tint = getTint();
-        if(tint != -1){
-            result = tint(result, tint);
-        }
+            public int getShade() {
+                return getRawValue("shade");
+            }
 
-        return result;
+            public int getTint() {
+                return getRawValue("tint");
+            }
+        };
     }
-
+    
     Color toColor(XmlObject obj, XSLFTheme theme) {
         Color color = null;
         for (XmlObject ch : obj.selectPath("*")) {
@@ -140,6 +133,7 @@ public class XSLFColor {
                     color = new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
                 } else {
                     // YK: color is a string like "menuText" or "windowText", we return black for such cases
+                    @SuppressWarnings("unused")
                     String colorName = sys.getVal().toString();
                     color = Color.black;
                 }
@@ -150,6 +144,33 @@ public class XSLFColor {
         return color;
     }
 
+    private int getRawValue(String elem) {
+        String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
+
+        XmlObject[] obj;
+
+        // first ask the context color and if not found, ask the actual color bean
+        if (_phClr != null){
+            obj = _phClr.selectPath(query);
+            if (obj.length == 1){
+                Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
+                if(attr != null) {
+                    return Integer.parseInt(attr.getNodeValue());
+                }
+            }
+        }
+
+        obj = _xmlObject.selectPath(query);
+        if (obj.length == 1){
+            Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
+            if(attr != null) {
+                return Integer.parseInt(attr.getNodeValue());
+            }
+        }
+
+        return -1;        
+    }
+    
     /**
      * Read a perecentage value from the supplied xml bean.
      * Example:
@@ -160,56 +181,13 @@ public class XSLFColor {
      * @return  the percentage value in the range [0 .. 100]
      */
     private int getPercentageValue(String elem){
-        String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
-
-        XmlObject[] obj;
-
-        // first ask the context color and if not found, ask the actual color bean
-        if(_phClr != null){
-            obj = _phClr.selectPath(query);
-            if(obj.length == 1){
-                Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
-                if(attr != null) {
-                    return Integer.parseInt(attr.getNodeValue()) / 1000;
-                }
-            }
-        }
-
-        obj = _xmlObject.selectPath(query);
-        if(obj.length == 1){
-            Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
-            if(attr != null) {
-                return Integer.parseInt(attr.getNodeValue()) / 1000;
-            }
-        }
-
-
-        return -1;
+        int val = getRawValue(elem);
+        return (val == -1) ? val : (val / 1000);
     }
 
     private int getAngleValue(String elem){
-        String color = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
-        XmlObject[] obj;
-
-        // first ask the context color and if not found, ask the actual color bean
-        if(_phClr != null){
-            obj = _xmlObject.selectPath( color );
-            if(obj.length == 1){
-                Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
-                if(attr != null) {
-                    return Integer.parseInt(attr.getNodeValue()) / 60000;
-                }
-            }
-        }
-
-        obj = _xmlObject.selectPath( color );
-        if(obj.length == 1){
-            Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
-            if(attr != null) {
-                return Integer.parseInt(attr.getNodeValue()) / 60000;
-            }
-        }
-        return -1;
+        int val = getRawValue(elem);
+        return (val == -1) ? val : (val / 60000);
     }
 
     /**
@@ -387,7 +365,7 @@ public class XSLFColor {
      * percentage with 0% indicating minimal shade and 100% indicating maximum
      * or -1 if the value is not set
      */
-    int getShade(){
+    public int getShade(){
         return getPercentageValue("shade");
     }
 
@@ -399,68 +377,10 @@ public class XSLFColor {
      * percentage with 0% indicating minimal tint and 100% indicating maximum
      * or -1 if the value is not set
      */
-    int getTint(){
+    public int getTint(){
         return getPercentageValue("tint");
     }
 
-
-    /**
-     * Apply lumMod / lumOff adjustments
-     *
-     * @param c the color to modify
-     * @param lumMod luminance modulation in the range [0..100]
-     * @param lumOff luminance offset in the range [0..100]
-     * @return  modified color
-     */
-    private static Color modulateLuminanace(Color c, int lumMod, int lumOff) {
-        Color color;
-        if (lumOff > 0) {
-            color = new Color(
-                    (int) (Math.round((255 - c.getRed()) * (100.0 - lumMod) / 100.0 + c.getRed())),
-                    (int) (Math.round((255 - c.getGreen()) * lumOff / 100.0 + c.getGreen())),
-                    (int) (Math.round((255 - c.getBlue()) * lumOff / 100.0 + c.getBlue())),
-                    c.getAlpha()
-            );
-        } else {
-            color = new Color(
-                    (int) (Math.round(c.getRed() * lumMod / 100.0)),
-                    (int) (Math.round(c.getGreen() * lumMod / 100.0)),
-                    (int) (Math.round(c.getBlue() * lumMod / 100.0)),
-                    c.getAlpha()
-            );
-        }
-        return color;
-    }
-
-    /**
-     * This algorithm returns result different from PowerPoint.
-     * TODO: revisit and improve
-     */
-    private static Color shade(Color c, int shade) {
-        return new Color(
-                (int)(c.getRed() * shade * 0.01),
-                (int)(c.getGreen() * shade * 0.01),
-                (int)(c.getBlue() * shade * 0.01),
-                c.getAlpha());
-    }
-
-    /**
-     * This algorithm returns result different from PowerPoint.
-     * TODO: revisit and improve
-     */
-    private static Color tint(Color c, int tint) {
-        int r = c.getRed();
-        int g = c.getGreen();
-        int b = c.getBlue();
-
-        float ftint = tint / 100.0f;
-
-        int red = Math.round(ftint * r + (1 - ftint) * 255);
-        int green = Math.round(ftint * g + (1 - ftint) * 255);
-        int blue = Math.round(ftint * b + (1 - ftint) * 255);
-
-        return new Color(red, green, blue);
-    }
 
     /**
      * Preset colors defined in DrawingML

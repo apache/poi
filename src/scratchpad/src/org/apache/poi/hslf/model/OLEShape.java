@@ -24,6 +24,7 @@ import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.ExEmbed;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -51,7 +52,7 @@ public final class OLEShape extends Picture {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public OLEShape(int idx, Shape parent) {
+    public OLEShape(int idx, ShapeContainer<Shape> parent) {
         super(idx, parent);
     }
 
@@ -62,7 +63,7 @@ public final class OLEShape extends Picture {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected OLEShape(EscherContainerRecord escherRecord, Shape parent){
+     protected OLEShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
     }
 

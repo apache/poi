@@ -19,13 +19,61 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.geom.Rectangle2D;
 
-public interface Shape {
-	public int getShapeType();
+import org.apache.poi.sl.draw.geom.CustomGeometry;
 
-	public Rectangle2D getAnchor();
-	public void setAnchor(Rectangle2D anchor);
+public interface Shape extends PlaceableShape {
+    CustomGeometry getGeometry();
+    
+	ShapeType getShapeType();
 
-	public void moveTo(float x, float y);
+	void setAnchor(Rectangle2D anchor);
 
-	public Shape getParent();
+	ShapeContainer getParent();
+	
+	boolean isPlaceholder();
+	
+    /**
+    *
+    * @return the sheet this shape belongs to
+    */
+   Sheet getSheet();
+	
+    /**
+     * Rotate this shape.
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @param theta the rotation angle in degrees.
+     */
+    void setRotation(double theta);
+
+    /**
+     * @param flip whether the shape is horizontally flipped
+     */
+    void setFlipHorizontal(boolean flip);
+
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @param flip whether the shape is vertically flipped
+     */
+    void setFlipVertical(boolean flip);
+
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+    boolean getFlipHorizontal();
+
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @return whether the shape is vertically flipped
+     */
+    boolean getFlipVertical();
+
+	
 }

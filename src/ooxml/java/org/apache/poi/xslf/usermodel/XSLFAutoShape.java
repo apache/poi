@@ -19,6 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import org.apache.poi.sl.usermodel.AutoShape;
 import org.apache.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
@@ -35,7 +36,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFAutoShape extends XSLFTextShape {
+public class XSLFAutoShape extends XSLFTextShape implements AutoShape {
 
     /*package*/ XSLFAutoShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);

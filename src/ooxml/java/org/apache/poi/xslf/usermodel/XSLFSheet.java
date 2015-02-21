@@ -23,6 +23,8 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.sl.usermodel.MasterSheet;
+import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -37,7 +39,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
+import com.sun.org.apache.xml.internal.utils.UnImplNode;
+
 import javax.xml.namespace.QName;
+
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
@@ -51,7 +56,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -142,6 +147,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFAutoShape sh = getDrawing().createAutoShape();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -149,6 +155,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFFreeformShape sh = getDrawing().createFreeform();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -156,6 +163,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFTextBox sh = getDrawing().createTextBox();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -163,6 +171,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFConnectorShape sh = getDrawing().createConnector();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -170,6 +179,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFGroupShape sh = getDrawing().createGroup();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -191,6 +201,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         sh.resize();
 
         getShapeList().add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -198,6 +209,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         List<XSLFShape> shapes = getShapeList();
         XSLFTable sh = getDrawing().createTable();
         shapes.add(sh);
+        sh.setParent(this);
         return sh;
     }
 
@@ -219,6 +231,12 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         return getShapeList().iterator();
     }
 
+    public void addShape(XSLFShape shape) {
+        throw new UnsupportedOperationException(
+            "Adding a shape from a different container is not supported -"
+            + " create it from scratch witht XSLFSheet.create* methods");
+    }
+    
     /**
      * Removes the specified shape from this sheet, if it is present
      * (optional operation).  If this sheet does not contain the element,
@@ -370,12 +388,6 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
     	return null;
     }
 
-    /**
-     *
-     * @return master of this sheet.
-     */
-    public abstract XSLFSheet getMasterSheet();
-
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
             if(shape instanceof XSLFTextShape) {
@@ -486,7 +498,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * @param graphics
      */
     public void draw(Graphics2D graphics){
-        XSLFSheet master = getMasterSheet();
+        XSLFSheet master = (XSLFSheet)getMasterSheet();
         if(getFollowMasterGraphics() && master != null) master.draw(graphics);
 
         graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, new AffineTransform());

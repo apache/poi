@@ -20,6 +20,8 @@ import java.awt.Color;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.sl.usermodel.LineCap;
+import org.apache.poi.sl.usermodel.LineDash;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;

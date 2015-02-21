@@ -35,6 +35,7 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
 
 
@@ -59,7 +60,7 @@ public final class TestBackground {
         assertTrue(slide.getFollowMasterBackground());
         assertEquals(Fill.FILL_SOLID, slide.getBackground().getFill().getFillType());
 
-        Shape shape = new AutoShape(ShapeTypes.Rectangle);
+        Shape shape = new AutoShape(ShapeType.RECT);
         assertEquals(Fill.FILL_SOLID, shape.getFill().getFillType());
     }
 
@@ -114,7 +115,7 @@ public final class TestBackground {
         fill.setFillType(Fill.FILL_PICTURE);
         fill.setPictureData(idx);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new AutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(Fill.FILL_SOLID);
@@ -130,7 +131,7 @@ public final class TestBackground {
         fill.setBackgroundColor(Color.green);
         fill.setForegroundColor(Color.red);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new AutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(Fill.FILL_BACKGROUND);
@@ -144,7 +145,7 @@ public final class TestBackground {
         fill.setFillType(Fill.FILL_TEXTURE);
         fill.setPictureData(idx);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new AutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(Fill.FILL_PICTURE);
@@ -160,7 +161,7 @@ public final class TestBackground {
         fill.setBackgroundColor(Color.white);
         fill.setForegroundColor(Color.darkGray);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new AutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
         fill.setFillType(Fill.FILL_SHADE);

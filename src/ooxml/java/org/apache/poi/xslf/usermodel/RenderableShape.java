@@ -40,6 +40,8 @@ import java.util.Comparator;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.LineCap;
+import org.apache.poi.sl.usermodel.LineDash;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;

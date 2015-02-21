@@ -17,6 +17,9 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.sl.draw.TextFragment;
+import org.apache.poi.sl.usermodel.TextAlign;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.XSLFTestDataSamples;

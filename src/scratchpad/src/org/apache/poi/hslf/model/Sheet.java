@@ -45,6 +45,7 @@ import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TextRulerAtom;
 import org.apache.poi.hslf.record.TextSpecInfoAtom;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -56,7 +57,7 @@ import org.apache.poi.util.POILogger;
  * @author Yegor Kozlov
  */
 
-public abstract class Sheet {
+public abstract class Sheet implements ShapeContainer<Shape> {
 	private static POILogger logger = POILogFactory.getLogger(Sheet.class);
 
     /**
@@ -272,36 +273,8 @@ public abstract class Sheet {
      * @return all shapes contained in this Sheet (Slide or Notes)
      */
     public Shape[] getShapes() {
-        PPDrawing ppdrawing = getPPDrawing();
-
-        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
-        EscherContainerRecord spgr = null;
-
-        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
-            EscherRecord rec = it.next();
-            if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
-                spgr = (EscherContainerRecord) rec;
-                break;
-            }
-        }
-        if (spgr == null) {
-            throw new IllegalStateException("spgr not found");
-        }
-
-        List<Shape> shapes = new ArrayList<Shape>();
-        Iterator<EscherRecord> it = spgr.getChildIterator();
-        if (it.hasNext()) {
-            // skip first item
-            it.next();
-        }
-        for (; it.hasNext();) {
-            EscherContainerRecord sp = (EscherContainerRecord) it.next();
-            Shape sh = ShapeFactory.createShape(sp, null);
-            sh.setSheet(this);
-            shapes.add(sh);
-        }
-
-        return shapes.toArray(new Shape[shapes.size()]);
+        List<Shape> shapeList = getShapeList();
+        return shapeList.toArray(new Shape[shapeList.size()]);
     }
 
     /**
@@ -522,6 +495,49 @@ public abstract class Sheet {
 
         return tag;
 
+    }
+
+    public Iterator<Shape> iterator() {
+        return getShapeList().iterator();
+    }
+
+
+    /**
+     * Returns all shapes contained in this Sheet
+     *
+     * @return all shapes contained in this Sheet (Slide or Notes)
+     */
+    protected List<Shape> getShapeList() {
+        PPDrawing ppdrawing = getPPDrawing();
+
+        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+        EscherContainerRecord spgr = null;
+
+        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
+            EscherRecord rec = it.next();
+            if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
+                spgr = (EscherContainerRecord) rec;
+                break;
+            }
+        }
+        if (spgr == null) {
+            throw new IllegalStateException("spgr not found");
+        }
+
+        List<Shape> shapeList = new ArrayList<Shape>();
+        Iterator<EscherRecord> it = spgr.getChildIterator();
+        if (it.hasNext()) {
+            // skip first item
+            it.next();
+        }
+        for (; it.hasNext();) {
+            EscherContainerRecord sp = (EscherContainerRecord) it.next();
+            Shape sh = ShapeFactory.createShape(sp, null);
+            sh.setSheet(this);
+            shapeList.add(sh);
+        }
+
+        return shapeList;
     }
 
 }

@@ -41,12 +41,14 @@ import org.apache.poi.hslf.record.OutlineTextRefAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.POILogger;
 
 /**
@@ -109,7 +111,7 @@ public abstract class TextShape extends SimpleShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TextShape(EscherContainerRecord escherRecord, Shape parent){
+   protected TextShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
         super(escherRecord, parent);
 
     }
@@ -120,7 +122,7 @@ public abstract class TextShape extends SimpleShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TextShape(Shape parent){
+    public TextShape(ShapeContainer<Shape> parent){
         super(null, parent);
         _escherContainer = createSpContainer(parent instanceof ShapeGroup);
     }
@@ -623,4 +625,17 @@ public abstract class TextShape extends SimpleShape {
 
     }
 
+    @Override
+    public boolean isPlaceholder() {
+        OEPlaceholderAtom oep = getPlaceholderAtom();
+        if (oep != null) return true;
+
+        //special case for files saved in Office 2007
+        RoundTripHFPlaceholder12 hldr = getClientDataRecord(RecordTypes.RoundTripHFPlaceholder12.typeID);
+        if (hldr != null) return true;
+
+        return false;
+    }
+
+    
 }

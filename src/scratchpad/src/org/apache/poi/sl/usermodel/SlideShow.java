@@ -17,14 +17,22 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Dimension;
 import java.io.IOException;
 
 public interface SlideShow {
-	public Slide createSlide() throws IOException;
-	public MasterSheet createMasterSheet() throws IOException;
+	Slide createSlide() throws IOException;
+	MasterSheet createMasterSheet() throws IOException;
 
-	public Slide[] getSlides();
-	public MasterSheet[] getMasterSheet();
+	Slide[] getSlides();
+	MasterSheet[] getMasterSheet();
 
-	public Resources getResources();
+	Resources getResources();
+
+    /**
+     * Returns the current page size
+     *
+     * @return the page size
+     */
+    Dimension getPageSize();    
 }

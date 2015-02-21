@@ -17,26 +17,38 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.junit.Test;
 
 /**
  * Verify behavior of <code>TextShape</code> and its sub-classes
  *
  * @author Yegor Kozlov
  */
-public final class TestTextShape extends TestCase {
+public final class TestTextShape {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-    public void testCreateAutoShape(){
-        TextShape shape = new AutoShape(ShapeTypes.Trapezoid);
+    @Test
+    public void createAutoShape(){
+        TextShape shape = new AutoShape(ShapeType.TRAPEZOID);
         assertNull(shape.getTextRun());
         assertNull(shape.getText());
         assertNull(shape.getEscherTextboxWrapper());
@@ -50,7 +62,8 @@ public final class TestTextShape extends TestCase {
         assertEquals(-1, run.getIndex());
     }
 
-    public void testCreateTextBox(){
+    @Test
+    public void createTextBox(){
         TextShape shape = new TextBox();
         TextRun run = shape.getTextRun();
         assertNotNull(run);
@@ -70,10 +83,11 @@ public final class TestTextShape extends TestCase {
      *  - normal TextBox object
      *  - text in auto-shapes
      */
-    public void testRead() throws IOException {
+    @Test
+    public void read() throws IOException {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("text_shapes.ppt"));
 
-        ArrayList lst1 = new ArrayList();
+        List<String> lst1 = new ArrayList<String>();
         Slide slide = ppt.getSlides()[0];
         Shape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
@@ -83,24 +97,24 @@ public final class TestTextShape extends TestCase {
             assertNotNull(run);
             int runType = run.getRunType();
 
-            int type = shape[i].getShapeType();
+            ShapeType type = shape[i].getShapeType();
             switch (type){
-                case ShapeTypes.TextBox:
+                case TEXT_BOX:
                     assertEquals("Text in a TextBox", run.getText());
                     break;
-                case ShapeTypes.Rectangle:
+                case RECT:
                     if(runType == TextHeaderAtom.OTHER_TYPE)
                         assertEquals("Rectangle", run.getText());
                     else if(runType == TextHeaderAtom.TITLE_TYPE)
                         assertEquals("Title Placeholder", run.getText());
                     break;
-                case ShapeTypes.Octagon:
+                case OCTAGON:
                     assertEquals("Octagon", run.getText());
                     break;
-                case ShapeTypes.Ellipse:
+                case ELLIPSE:
                     assertEquals("Ellipse", run.getText());
                     break;
-                case ShapeTypes.RoundRectangle:
+                case ROUND_RECT:
                     assertEquals("RoundRectangle", run.getText());
                     break;
                 default:
@@ -110,7 +124,7 @@ public final class TestTextShape extends TestCase {
             lst1.add(run.getText());
         }
 
-        ArrayList lst2 = new ArrayList();
+        List<String> lst2 = new ArrayList<String>();
         TextRun[] run = slide.getTextRuns();
         for (int i = 0; i < run.length; i++) {
             lst2.add(run[i].getText());
@@ -119,7 +133,8 @@ public final class TestTextShape extends TestCase {
         assertTrue(lst1.containsAll(lst2));
     }
 
-    public void testReadWrite() throws IOException {
+    @Test
+    public void readWrite() throws IOException {
         SlideShow ppt = new SlideShow();
         Slide slide =  ppt.createSlide();
 
@@ -130,7 +145,7 @@ public final class TestTextShape extends TestCase {
 
         shape1.moveTo(100, 100);
 
-        TextShape shape2 = new AutoShape(ShapeTypes.Arrow);
+        TextShape shape2 = new AutoShape(ShapeType.RIGHT_ARROW);
         TextRun run2 = shape2.createTextRun();
         run2.setText("Testing TextShape");
         slide.addShape(shape2);
@@ -146,21 +161,22 @@ public final class TestTextShape extends TestCase {
 
         assertTrue(shape[0] instanceof TextShape);
         shape1 = (TextShape)shape[0];
-        assertEquals(ShapeTypes.TextBox, shape1.getShapeType());
+        assertEquals(ShapeType.TEXT_BOX, shape1.getShapeType());
         assertEquals("Hello, World!", shape1.getTextRun().getText());
 
         assertTrue(shape[1] instanceof TextShape);
         shape1 = (TextShape)shape[1];
-        assertEquals(ShapeTypes.Arrow, shape1.getShapeType());
+        assertEquals(ShapeType.RIGHT_ARROW, shape1.getShapeType());
         assertEquals("Testing TextShape", shape1.getTextRun().getText());
     }
 
-    public void testMargins() throws IOException {
+    @Test
+    public void margins() throws IOException {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("text-margins.ppt"));
 
         Slide slide = ppt.getSlides()[0];
 
-        HashMap map = new HashMap();
+        Map<String,TextShape> map = new HashMap<String,TextShape>();
         Shape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
             if(shape[i] instanceof TextShape){
@@ -171,32 +187,33 @@ public final class TestTextShape extends TestCase {
 
         TextShape tx;
 
-        tx = (TextShape)map.get("TEST1");
+        tx = map.get("TEST1");
         assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.39, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
 
-        tx = (TextShape)map.get("TEST2");
+        tx = map.get("TEST2");
         assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.39, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
 
-        tx = (TextShape)map.get("TEST3");
+        tx = map.get("TEST3");
         assertEquals(0.39, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
 
-        tx = (TextShape)map.get("TEST4");
+        tx = map.get("TEST4");
         assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.39, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
         assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
     }
 
-    public void test52599() throws IOException {
+    @Test
+    public void bug52599() throws IOException {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("52599.ppt"));
 
         Slide slide = ppt.getSlides()[0];

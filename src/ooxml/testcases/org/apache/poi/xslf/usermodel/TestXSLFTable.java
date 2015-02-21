@@ -17,6 +17,8 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 

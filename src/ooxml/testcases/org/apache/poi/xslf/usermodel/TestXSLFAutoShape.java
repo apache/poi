@@ -17,6 +17,10 @@
 package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.TextAlign;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
@@ -270,12 +274,12 @@ public class TestXSLFAutoShape extends TestCase {
         XSLFSlide slide = ppt.createSlide();
 
         XSLFAutoShape shape = slide.createAutoShape();
-        assertEquals(XSLFShapeType.RECT, shape.getShapeType());
+        assertEquals(ShapeType.RECT, shape.getShapeType());
 
-        shape.setShapeType(XSLFShapeType.TRIANGLE);
-        assertEquals(XSLFShapeType.TRIANGLE, shape.getShapeType());
+        shape.setShapeType(ShapeType.TRIANGLE);
+        assertEquals(ShapeType.TRIANGLE, shape.getShapeType());
 
-        for(XSLFShapeType tp : XSLFShapeType.values()) {
+        for(ShapeType tp : ShapeType.values()) {
             shape.setShapeType(tp);
             assertEquals(tp, shape.getShapeType());
         }

@@ -23,6 +23,7 @@ import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
@@ -46,7 +47,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
  * @author Yegor Kozlov
 */
 @Beta
- public class XSLFNotesMaster extends XSLFSheet {
+ public class XSLFNotesMaster extends XSLFSheet implements MasterSheet<XSLFShape> {
 	 private CTNotesMaster _slide;
      private XSLFTheme _theme;
 
@@ -93,7 +94,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
     }
 
     @Override
-    public XSLFSheet getMasterSheet() {
+    public MasterSheet getMasterSheet() {
         return null;
     }
     
