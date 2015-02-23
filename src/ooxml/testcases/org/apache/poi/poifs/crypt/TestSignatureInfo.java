@@ -316,7 +316,7 @@ public class TestSignatureInfo {
         signatureConfig.addSignatureFacet(new XAdESXLSignatureFacet());
         
         // check for internet, no error means it works
-        boolean mockTsp = (getAccessError("http://timestamp.comodoca.com/rfc3161", true, 10000) == null);
+        boolean mockTsp = (getAccessError("http://timestamp.comodoca.com/rfc3161", true, 10000) != null);
         
         // http://timestamping.edelweb.fr/service/tsp
         // http://tsa.belgium.be/connect
