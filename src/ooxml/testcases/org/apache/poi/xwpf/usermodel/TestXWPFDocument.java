@@ -342,7 +342,6 @@ public final class TestXWPFDocument extends TestCase {
         assertNotNull(xml.getProperties().getCoreProperties());
         assertNotNull(xml.getProperties().getExtendedProperties());
 
-        assertEquals("LibreOffice/4.2.8.2$MacOSX_x86 LibreOffice_project/48d50dbfc06349262c9d50868e5c1f630a573ebd", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
         assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
     }
 
