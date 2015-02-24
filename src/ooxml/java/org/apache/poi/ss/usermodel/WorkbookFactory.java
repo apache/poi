@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -73,8 +74,9 @@ public class WorkbookFactory {
      *  than using a {@link File}.</p> 
      * <p>Note that in order to properly release resources the 
      *  Workbook should be closed after use.
+     * @throws EncryptedDocumentException If the workbook given is password protected
      */
-    public static Workbook create(InputStream inp) throws IOException, InvalidFormatException {
+    public static Workbook create(InputStream inp) throws IOException, InvalidFormatException, EncryptedDocumentException {
         // If clearly doesn't do mark/reset, wrap up
         if (! inp.markSupported()) {
             inp = new PushbackInputStream(inp, 8);
@@ -94,8 +96,9 @@ public class WorkbookFactory {
      *  the given File, which must exist and be readable.
      * <p>Note that in order to properly release resources the 
      *  Workbook should be closed after use.
+     * @throws EncryptedDocumentException If the workbook given is password protected
      */
-    public static Workbook create(File file) throws IOException, InvalidFormatException {
+    public static Workbook create(File file) throws IOException, InvalidFormatException, EncryptedDocumentException {
         if (! file.exists()) {
             throw new FileNotFoundException(file.toString());
         }
