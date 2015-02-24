@@ -92,7 +92,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Keeps track on all id-values used in this document and included parts, like headers, footers, etc.
      */
-    private IdentifierManager drawingIdManager = new IdentifierManager(1L,4294967295L);
+    private IdentifierManager drawingIdManager = new IdentifierManager(0L,4294967295L);
     protected List<XWPFFooter> footers = new ArrayList<XWPFFooter>();
     protected List<XWPFHeader> headers = new ArrayList<XWPFHeader>();
     protected List<XWPFComment> comments = new ArrayList<XWPFComment>();
