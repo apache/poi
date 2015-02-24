@@ -34,15 +34,11 @@ import org.w3c.dom.Element;
 
 /**
  * Package properties marshaller.
- *
- * @author CDubet, Julien Chable
  */
 public class PackagePropertiesMarshaller implements PartMarshaller {
-
-    
     private final static Namespace namespaceDC, namespaceCoreProperties, namespaceDcTerms, namespaceXSI;
 	static {
-	    final XMLEventFactory f = XMLEventFactory.newFactory();
+	    final XMLEventFactory f = XMLEventFactory.newInstance();
 	    namespaceDC = f.createNamespace("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
 	    namespaceCoreProperties = f.createNamespace("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
 	    namespaceDcTerms = f.createNamespace("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
