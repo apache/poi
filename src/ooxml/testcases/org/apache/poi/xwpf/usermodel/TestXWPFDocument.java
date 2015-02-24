@@ -343,6 +343,7 @@ public final class TestXWPFDocument extends TestCase {
         assertNotNull(doc.getProperties().getExtendedProperties());
         assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
         assertEquals("image1.png", doc.getHeaderArray(0).pictures.get(0).getFileName());
+        assertEquals("", doc.getHeaderArray(0).getText());
 
         assertEquals(0, doc.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
     }
