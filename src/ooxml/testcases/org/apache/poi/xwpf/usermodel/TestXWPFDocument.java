@@ -339,13 +339,18 @@ public final class TestXWPFDocument extends TestCase {
 	}
     public void testZeroLengthLibreOfficeDocumentWithWaterMarkHeader() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("zero-length.docx");
-        assertNotNull(doc.getProperties().getCoreProperties());
-        assertNotNull(doc.getProperties().getExtendedProperties());
-        assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
-        assertEquals("image1.png", doc.getHeaderArray(0).pictures.get(0).getFileName());
-        assertEquals("", doc.getHeaderArray(0).getText());
+        POIXMLProperties properties = doc.getProperties();
 
-        assertEquals(0, doc.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
+        assertNotNull(properties.getCoreProperties());
+
+        XWPFHeader headerArray = doc.getHeaderArray(0);
+        assertEquals(1, headerArray.getAllPictures().size());
+        assertEquals("image1.png", headerArray.pictures.get(0).getFileName());
+        assertEquals("", headerArray.getText());
+
+        POIXMLProperties.ExtendedProperties extendedProperties = properties.getExtendedProperties();
+        assertNotNull(extendedProperties);
+        assertEquals(0, extendedProperties.getUnderlyingProperties().getCharacters());
     }
 
     public void testSettings(){
