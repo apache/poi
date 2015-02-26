@@ -382,11 +382,13 @@ public class TestSignatureInfo {
             si.confirmSignature();
         } catch (RuntimeException e) {
             // only allow a ConnectException because of timeout, we see this in Jenkins from time to time...
-            assertNotNull("Only allowing ConnectException here, but had: " + e, e.getCause());
+            if(e.getCause() == null) {
+                throw e;
+            }
             if(!(e.getCause() instanceof ConnectException)) {
                 throw e;
             }
-            assertTrue("Only allowing ConnectException here, but had: " + e, e.getCause().getMessage().contains("timed out"));
+            assertTrue("Only allowing ConnectException with 'timed out' as message here, but had: " + e, e.getCause().getMessage().contains("timed out"));
         }
         
         // verify
