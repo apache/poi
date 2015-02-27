@@ -20,6 +20,7 @@ package org.apache.poi.hwpf.extractor;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.OldWordFileFormatException;
@@ -377,10 +378,35 @@ public final class TestWordExtractor extends TestCase {
         for (Entry entry : fs.getRoot()) {
             if ("WordDocument".equals(entry.getName())) {
                 WordExtractor ex = new WordExtractor(fs);
-                text = ex.getText();
+                try {
+                    text = ex.getText();
+                } finally {
+                    ex.close();
+                }
             }
         }
 
         assertNotNull(text);
+    }
+
+
+    public void testExtractorFromWord6Extractor() throws Exception {
+        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getHPSFInstance().openResourceAsStream("TestMickey.doc"));
+        Word6Extractor wExt = new Word6Extractor(fs);
+        try {
+            POITextExtractor ext = wExt.getMetadataTextExtractor();
+            try {
+                // Now overall
+                String text = ext.getText();
+                assertTrue(text.indexOf("TEMPLATE = Normal") > -1);
+                assertTrue(text.indexOf("SUBJECT = sample subject") > -1);
+                assertTrue(text.indexOf("MANAGER = sample manager") > -1);
+                assertTrue(text.indexOf("COMPANY = sample company") > -1);
+            } finally {
+                ext.close();
+            }
+        } finally {
+            wExt.close();
+        }
     }
 }
