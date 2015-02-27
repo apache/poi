@@ -57,6 +57,10 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
     }
 
     public String getDocumentSummaryInformationText() {
+        if(document == null) {  // event based extractor does not have a document
+            return "";
+        }
+
         DocumentSummaryInformation dsi = document.getDocumentSummaryInformation();
         StringBuffer text = new StringBuffer();
 
@@ -78,6 +82,10 @@ public class HPSFPropertiesExtractor extends POITextExtractor {
         return text.toString();
     }
     public String getSummaryInformationText() {
+        if(document == null) {  // event based extractor does not have a document
+            return "";
+        }
+
         SummaryInformation si = document.getSummaryInformation();
 
         // Just normal properties

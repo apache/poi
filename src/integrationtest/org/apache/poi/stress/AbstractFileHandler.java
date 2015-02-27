@@ -16,15 +16,23 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.xmlbeans.XmlException;
 
 public abstract class AbstractFileHandler implements FileHandler {
     public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<String>();
@@ -48,6 +56,22 @@ public abstract class AbstractFileHandler implements FileHandler {
     }
 
     public void handleExtracting(File file) throws Exception {
+        boolean before = ExtractorFactory.getThreadPrefersEventExtractors();
+        try {
+            ExtractorFactory.setThreadPrefersEventExtractors(true);
+            handleExtractingInternal(file);
+
+            ExtractorFactory.setThreadPrefersEventExtractors(false);
+            handleExtractingInternal(file);
+        } finally {
+            ExtractorFactory.setThreadPrefersEventExtractors(before);
+        }
+    }
+
+    private void handleExtractingInternal(File file) throws Exception {
+        long length = file.length();
+        long modified = file.lastModified();
+        
         POITextExtractor extractor = ExtractorFactory.createExtractor(file);
         try  {
             assertNotNull(extractor);
@@ -60,12 +84,35 @@ public abstract class AbstractFileHandler implements FileHandler {
 
             assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!", 
                     EXPECTED_EXTRACTOR_FAILURES.contains(file));
+            
+            assertEquals("File should not be modified by extractor", length, file.length());
+            assertEquals("File should not be modified by extractor", modified, file.lastModified());
+            
+            handleExtractingAsStream(file);
         } catch (IllegalArgumentException e) {
             if(!EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
                 throw new Exception("While handling " + file, e);
             }
         } finally {
             extractor.close();
+        }
+    }
+
+    private void handleExtractingAsStream(File file) throws FileNotFoundException,
+            IOException, InvalidFormatException, OpenXML4JException,
+            XmlException {
+        InputStream stream = new FileInputStream(file);
+        try {
+            POITextExtractor streamExtractor = ExtractorFactory.createExtractor(stream);
+            try {
+                assertNotNull(streamExtractor);
+   
+                assertNotNull(streamExtractor.getText());
+            } finally {
+                streamExtractor.close();
+            }
+        } finally {
+            stream.close();
         }
     }
 }

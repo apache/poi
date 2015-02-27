@@ -96,6 +96,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private String formatString;
    private final DataFormatter formatter;
    private int rowNum;
+   private int nextRowNum;      // some sheets do not have rowNums, Excel can read them so we should try to handle them correctly as well
    private String cellRef;
    private boolean formulasNotResults;
 
@@ -240,7 +241,12 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           headerFooter.setLength(0);
        }
        else if("row".equals(name)) {
-           rowNum = Integer.parseInt(attributes.getValue("r")) - 1;
+           String rowNumStr = attributes.getValue("r");
+           if(rowNumStr != null) {
+               rowNum = Integer.parseInt(rowNumStr) - 1;
+           } else {
+               rowNum = nextRowNum;
+           }
            output.startRow(rowNum);
        }
        // c => cell
@@ -343,7 +349,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
                case NUMBER:
                    String n = value.toString();
-                   if (this.formatString != null)
+                   if (this.formatString != null && n.length() > 0)
                        thisStr = formatter.formatRawCellContents(Double.parseDouble(n), this.formatIndex, this.formatString);
                    else
                        thisStr = n;
@@ -370,6 +376,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           
           // Finish up the row
           output.endRow(rowNum);
+          
+          // some sheets do not have rowNum set in the XML, Excel can read them so we should try to read them as well
+          nextRowNum = rowNum + 1;
        } else if ("sheetData".equals(name)) {
            // Handle any "missing" cells which had comments attached
            checkForEmptyCellComments(EmptyCellCommentsCheckType.END_OF_SHEET_DATA);

@@ -265,10 +265,10 @@ public class ExtractorFactory {
 
 	/**
 	 * Returns an array of text extractors, one for each of
-	 *  the embeded documents in the file (if there are any).
-	 * If there are no embeded documents, you'll get back an
+	 *  the embedded documents in the file (if there are any).
+	 * If there are no embedded documents, you'll get back an
 	 *  empty array. Otherwise, you'll get one open
-	 *  {@link POITextExtractor} for each embeded file.
+	 *  {@link POITextExtractor} for each embedded file.
 	 */
 	public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 	   // All the embded directories we spotted

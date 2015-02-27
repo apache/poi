@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -155,7 +156,6 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
 		POITextExtractor[] extractors =
 			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
 		for (int i = 0; i < extractors.length; i++) {
-			@SuppressWarnings("resource")
             POITextExtractor extractor = extractors[i];
 			
 			String text = extractor.getText().replaceAll("[\r\t]", "");
@@ -314,6 +314,27 @@ public class TestXSSFEventBasedExcelExtractor extends TestCase {
             assertEquals(eventBasedExtractorOutputWithComments, fixture.getText());
         } finally {
             fixture.close();
+        }
+    }
+    
+    public void testFile56278_normal() throws Exception {
+        // first with normal Text Extractor
+        POIXMLTextExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("56278.xlsx"));
+        try {
+            assertNotNull(extractor.getText());
+        } finally {
+            extractor.close();
+        }
+    }
+    
+    public void testFile56278_event() throws Exception {
+        // then with event based one
+        POIXMLTextExtractor extractor = getExtractor("56278.xlsx");        
+        try {
+            assertNotNull(extractor.getText());
+        } finally {
+            extractor.close();
         }
     }
 }
