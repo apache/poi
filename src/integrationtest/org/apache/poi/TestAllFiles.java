@@ -253,20 +253,26 @@ public class TestAllFiles {
     @Test
     public void testAllFiles() throws Exception {
 		assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
-		InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)),100);
+		File inputFile = new File(ROOT_DIR, file);
+		
 		try {
-			handler.handleFile(stream);
-			
-			assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-			        EXPECTED_FAILURES.contains(file));
-		} catch (Exception e) {
-		    // check if we expect failure for this file
-			if(!EXPECTED_FAILURES.contains(file)) {
-			    throw new Exception("While handling " + file, e);
-			}
-		} finally {
-			stream.close();
-		}
+            InputStream stream = new BufferedInputStream(new FileInputStream(inputFile),100);
+    		try {
+    			handler.handleFile(stream);
+    
+    			assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
+    			        EXPECTED_FAILURES.contains(file));
+    		} finally {
+    			stream.close();
+    		}
+
+            handler.handleExtracting(inputFile);
+        } catch (Exception e) {
+            // check if we expect failure for this file
+            if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                throw new Exception("While handling " + file, e);
+            }
+        }
 	}
 
 	private static String getExtension(String file) {
@@ -282,5 +288,9 @@ public class TestAllFiles {
 		@Override
         public void handleFile(InputStream stream) throws Exception {
 		}
+
+		@Override
+        public void handleExtracting(File file) throws Exception {
+        }
 	}
 }

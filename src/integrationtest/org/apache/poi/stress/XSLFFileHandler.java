@@ -25,7 +25,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.junit.Test;
 
-public class XSLFFileHandler implements FileHandler {
+public class XSLFFileHandler extends AbstractFileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
         // ignore password protected files

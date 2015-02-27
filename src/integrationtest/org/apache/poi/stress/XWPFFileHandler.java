@@ -22,7 +22,7 @@ import java.io.InputStream;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.Test;
 
-public class XWPFFileHandler implements FileHandler {
+public class XWPFFileHandler extends AbstractFileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
         // ignore password protected files

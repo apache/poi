@@ -30,7 +30,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-public abstract class SpreadsheetHandler implements FileHandler {
+public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	public void handleWorkbook(Workbook wb, String extension) throws IOException {
 		// try to access some of the content
 		readContent(wb);
