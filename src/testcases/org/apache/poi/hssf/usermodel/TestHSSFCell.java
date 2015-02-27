@@ -33,7 +33,6 @@ import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.ErrorConstants;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
@@ -330,7 +329,7 @@ public final class TestHSSFCell extends BaseTestCell {
 		// string to error code
 		cell.setCellValue("abc");
 		confirmStringRecord(sheet, true);
-		cell.setCellErrorValue((byte)ErrorConstants.ERROR_REF);
+		cell.setCellErrorValue(FormulaError.REF.getCode());
 		confirmStringRecord(sheet, false);
 
 		// string to boolean

@@ -88,19 +88,23 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     }
 
     @Test
-    public void existingWorkbook() {
+    public void existingWorkbook() throws IOException {
     	XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
     	xssfWorkbook.createSheet("S1");
     	SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
-    	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-    	assertTrue(wb.dispose());
-
-        wb = new SXSSFWorkbook(xssfWorkbook);
-    	assertEquals(1, wb.getNumberOfSheets());
-    	Sheet sheet  = wb.getSheetAt(0);
-    	assertNotNull(sheet);
-    	assertEquals("S1", sheet.getSheetName());
-        assertTrue(wb.dispose());
+    	try {
+        	xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        	assertTrue(wb.dispose());
+    
+            wb = new SXSSFWorkbook(xssfWorkbook);
+        	assertEquals(1, wb.getNumberOfSheets());
+        	Sheet sheet  = wb.getSheetAt(0);
+        	assertNotNull(sheet);
+        	assertEquals("S1", sheet.getSheetName());
+    	} finally {
+    	    assertTrue(wb.dispose());
+    	    wb.close();
+    	}
 
     }
 
@@ -123,7 +127,7 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
         XSSFWorkbook xssfWorkbook = (XSSFWorkbook) SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         sss = (SharedStringsTable)f.get(wb);
         assertEquals(2, sss.getUniqueCount());
-        wb.dispose();
+        assertTrue(wb.dispose());
 
         Sheet sheet1 = xssfWorkbook.getSheetAt(0);
         assertEquals("S1", sheet1.getSheetName());

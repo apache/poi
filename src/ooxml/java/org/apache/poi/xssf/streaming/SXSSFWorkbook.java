@@ -831,7 +831,7 @@ public class SXSSFWorkbook implements Workbook
 
     /**
      * Closes the underlying {@link XSSFWorkbook} and {@link OPCPackage} 
-     *  on which this Workbook is based, if any. Has no effect on Worbooks
+     *  on which this Workbook is based, if any. Has no effect on Workbooks
      *  created from scratch.
      */
     @Override
