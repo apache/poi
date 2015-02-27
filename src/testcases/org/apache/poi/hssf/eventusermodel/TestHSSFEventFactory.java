@@ -107,8 +107,6 @@ public final class TestHSSFEventFactory extends TestCase {
 		POIFSFileSystem fs = new POIFSFileSystem(openSample("42844.xls"));
 		HSSFEventFactory factory = new HSSFEventFactory();
 		factory.processWorkbookEvents(req, fs);
-
-		assertTrue("no errors while processing the file", true);
 	}
 
 	private static class MockHSSFListener implements HSSFListener {
@@ -124,5 +122,19 @@ public final class TestHSSFEventFactory extends TestCase {
 		public void processRecord(Record record) {
 			records.add(record);
 		}
+	}
+
+	public void testWithDifferentWorkbookName() throws Exception {
+        HSSFRequest req = new HSSFRequest();
+        MockHSSFListener mockListen = new MockHSSFListener();
+        req.addListenerForAllRecords(mockListen);
+
+        POIFSFileSystem fs = new POIFSFileSystem(openSample("BOOK_in_capitals.xls"));
+        HSSFEventFactory factory = new HSSFEventFactory();
+        factory.processWorkbookEvents(req, fs);
+
+        fs = new POIFSFileSystem(openSample("WORKBOOK_in_capitals.xls"));
+        factory = new HSSFEventFactory();
+        factory.processWorkbookEvents(req, fs);
 	}
 }	

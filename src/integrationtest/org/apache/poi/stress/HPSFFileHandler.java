@@ -18,6 +18,7 @@ package org.apache.poi.stress;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -43,4 +44,10 @@ public class HPSFFileHandler extends AbstractFileHandler {
 			stream.close();
 		}
 	}
+
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/hpsf/TestBug44375.xls"));
+    }
 }

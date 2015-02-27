@@ -17,6 +17,7 @@
 package org.apache.poi.stress;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -71,4 +72,10 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 			stream.close();
 		}
 	}
+
+    // a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/spreadsheet/56278.xlsx"));
+    }
 }
