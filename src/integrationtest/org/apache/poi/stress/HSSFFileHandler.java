@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -49,4 +50,10 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 			stream.close();
 		}
 	}
+
+	// a test-case to test this locally without executing the full TestAllFiles
+    @Test
+    public void testExtractor() throws Exception {
+        handleExtracting(new File("test-data/spreadsheet/BOOK_in_capitals.xls"));
+    }
 }

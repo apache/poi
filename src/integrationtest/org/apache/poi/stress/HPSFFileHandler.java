@@ -25,7 +25,7 @@ import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
-public class HPSFFileHandler implements FileHandler {
+public class HPSFFileHandler extends AbstractFileHandler {
 	@Override
     public void handleFile(InputStream stream) throws Exception {
 		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(stream));

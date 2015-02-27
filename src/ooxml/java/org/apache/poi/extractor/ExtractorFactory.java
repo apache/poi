@@ -213,7 +213,9 @@ public class ExtractorFactory {
     {
         // Look for certain entries in the stream, to figure it
         // out from
-        if (poifsDir.hasEntry("Workbook")) {
+        if (poifsDir.hasEntry("Workbook") ||
+                // some XLS files have different entry-names
+                poifsDir.hasEntry("WORKBOOK") || poifsDir.hasEntry("BOOK")) {
             if (getPreferEventExtractor()) {
                 return new EventBasedExcelExtractor(poifsDir);
             }
