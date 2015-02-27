@@ -22,12 +22,10 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITextExtractor;
 import org.apache.poi.hpsf.Thumbnail;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public final class TestHPSFPropertiesExtractor extends TestCase {
@@ -167,25 +165,5 @@ public final class TestHPSFPropertiesExtractor extends TestCase {
         assertEquals(3, thumbnail.getClipboardFormat());
         assertNotNull(thumbnail.getThumbnailAsWMF());
         wb.close();
-    }
-
-    public void testExtractorFromWord6Extractor() throws Exception {
-        POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestMickey.doc"));
-        Word6Extractor wExt = new Word6Extractor(fs);
-        try {
-            POITextExtractor ext = wExt.getMetadataTextExtractor();
-            try {
-                // Now overall
-                String text = ext.getText();
-                assertTrue(text.indexOf("TEMPLATE = Normal") > -1);
-                assertTrue(text.indexOf("SUBJECT = sample subject") > -1);
-                assertTrue(text.indexOf("MANAGER = sample manager") > -1);
-                assertTrue(text.indexOf("COMPANY = sample company") > -1);
-            } finally {
-                ext.close();
-            }
-        } finally {
-            wExt.close();
-        }
     }
 }
