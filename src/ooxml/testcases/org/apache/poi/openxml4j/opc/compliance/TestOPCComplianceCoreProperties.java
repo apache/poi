@@ -237,14 +237,9 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
      */
     public void testNoCoreProperties_saveNew() throws Exception {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
-        OPCPackage pkg = null;
-        try {
-            pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
 
-        // Empty properties
+        // Verify it has empty properties
         assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
@@ -258,6 +253,22 @@ public final class TestOPCComplianceCoreProperties extends TestCase {
         pkg = OPCPackage.open(bais);
 
         // An Empty Properties part has been added in the save/load
+        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        
+        
+        // Open a new copy of it
+        pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+        
+        // Save and re-load, without having touched the properties yet
+        baos = new ByteArrayOutputStream();
+        pkg.save(baos);
+        bais = new ByteArrayInputStream(baos.toByteArray());
+        pkg = OPCPackage.open(bais);
+        
+        // Check that this too added empty properties without error
         assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
