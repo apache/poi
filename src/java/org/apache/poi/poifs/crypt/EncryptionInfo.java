@@ -68,14 +68,21 @@ public class EncryptionInfo {
     public static BitField flagAES = BitFieldFactory.getInstance(0x20);
     
     
+    /**
+     * Opens for decryption
+     */
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
-    
+    /**
+     * Opens for decryption
+     */
     public EncryptionInfo(NPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
-    
+    /**
+     * Opens for decryption
+     */
     public EncryptionInfo(DirectoryNode dir) throws IOException {
         this(dir.createDocumentInputStream("EncryptionInfo"), false);
     }
@@ -131,7 +138,7 @@ public class EncryptionInfo {
     }
     
     /**
-     * @deprecated use constructor without fs parameter
+     * @deprecated Use {@link #EncryptionInfo(EncryptionMode)} (fs parameter no longer required)
      */
     @Deprecated
     public EncryptionInfo(POIFSFileSystem fs, EncryptionMode encryptionMode) {
@@ -139,7 +146,7 @@ public class EncryptionInfo {
     }
      
     /**
-     * @deprecated use constructor without fs parameter
+     * @deprecated Use {@link #EncryptionInfo(EncryptionMode)} (fs parameter no longer required)
      */
     @Deprecated
     public EncryptionInfo(NPOIFSFileSystem fs, EncryptionMode encryptionMode) {
@@ -147,7 +154,7 @@ public class EncryptionInfo {
     }
      
     /**
-     * @deprecated use constructor without dir parameter
+     * @deprecated Use {@link #EncryptionInfo(EncryptionMode)} (dir parameter no longer required)
      */
     @Deprecated
     public EncryptionInfo(DirectoryNode dir, EncryptionMode encryptionMode) {
@@ -155,7 +162,7 @@ public class EncryptionInfo {
     }
     
     /**
-     * @deprecated use constructor without fs parameter
+     * @deprecated use {@link #EncryptionInfo(EncryptionMode, CipherAlgorithm, HashAlgorithm, int, int, ChainingMode)}
      */
     @Deprecated
     public EncryptionInfo(
@@ -171,7 +178,7 @@ public class EncryptionInfo {
     }
     
     /**
-     * @deprecated use constructor without fs parameter
+     * @deprecated use {@link #EncryptionInfo(EncryptionMode, CipherAlgorithm, HashAlgorithm, int, int, ChainingMode)}
      */
     @Deprecated
     public EncryptionInfo(
@@ -187,7 +194,7 @@ public class EncryptionInfo {
     }
         
     /**
-     * @deprecated use constructor without dir parameter
+     * @deprecated use {@link #EncryptionInfo(EncryptionMode, CipherAlgorithm, HashAlgorithm, int, int, ChainingMode)}
      */
     @Deprecated
     public EncryptionInfo(
@@ -202,6 +209,11 @@ public class EncryptionInfo {
         this(encryptionMode, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
     }        
 
+    /**
+     * Prepares for encryption, using the given Encryption Mode, and
+     *  all other parameters as default.
+     * @see #EncryptionInfo(EncryptionMode, CipherAlgorithm, HashAlgorithm, int, int, ChainingMode)
+     */
     public EncryptionInfo(EncryptionMode encryptionMode) {
         this(encryptionMode, null, null, -1, -1, null);
     }
