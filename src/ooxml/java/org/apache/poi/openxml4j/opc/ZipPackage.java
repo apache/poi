@@ -443,7 +443,9 @@ public final class ZipPackage extends Package {
 			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
                 this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
 				logger.log(POILogger.DEBUG,"Save core properties part");
-
+				
+				// Ensure that core properties are added if missing
+				getPackageProperties();
 				// Add core properties to part list ...
 				addPackagePart(this.packageProperties);
 				// ... and to add its relationship ...
