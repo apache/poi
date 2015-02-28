@@ -18,6 +18,8 @@ package org.apache.poi.poifs.crypt;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +34,8 @@ import java.util.Iterator;
 import javax.crypto.Cipher;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.opc.ContentTypes;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
@@ -264,6 +268,55 @@ public class TestEncryptor {
         byte payloadActual[] = bos.toByteArray();        
         
         assertArrayEquals(payloadExpected, payloadActual);
+    }
+    
+    /**
+     * Ensure we can encrypt a package that is missing the Core
+     *  Properties, eg one from dodgy versions of Jasper Reports 
+     * See https://github.com/nestoru/xlsxenc/ and
+     * http://stackoverflow.com/questions/28593223
+     */
+    @Test
+    public void encryptPackageWithoutCoreProperties() throws Exception {
+        // Open our file without core properties
+        File inp = POIDataSamples.getOpenXML4JInstance().getFile("OPCCompliance_NoCoreProperties.xlsx");
+        OPCPackage pkg = OPCPackage.open(inp.getPath());
+        
+        // It doesn't have any core properties yet
+        assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(pkg.getPackageProperties());
+        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        
+        // Encrypt it
+        EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+        NPOIFSFileSystem fs = new NPOIFSFileSystem();
+        
+        Encryptor enc = info.getEncryptor();
+        enc.confirmPassword("password");
+        OutputStream os = enc.getDataStream(fs);
+        pkg.save(os);
+        pkg.revert();
+        
+        // Save the resulting OLE2 document, and re-open it
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        fs.writeFilesystem(baos);
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        NPOIFSFileSystem inpFS = new NPOIFSFileSystem(bais);
+        
+        // Check we can decrypt it
+        info = new EncryptionInfo(inpFS);
+        Decryptor d = Decryptor.getInstance(info);
+        assertEquals(true, d.verifyPassword("password"));
+        
+        OPCPackage inpPkg = OPCPackage.open(d.getDataStream(inpFS));
+        
+        // Check it now has empty core properties
+        assertEquals(1, inpPkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+        assertNotNull(inpPkg.getPackageProperties());
+        assertNotNull(inpPkg.getPackageProperties().getLanguageProperty());
+        assertNull(inpPkg.getPackageProperties().getLanguageProperty().getValue());
     }
     
     @Test
