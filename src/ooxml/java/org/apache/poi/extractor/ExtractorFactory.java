@@ -51,6 +51,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
@@ -190,6 +191,14 @@ public class ExtractorFactory {
           }
        }
 
+       // special handling for SlideShow-Theme-files, 
+       if(XSLFRelation.THEME_MANAGER.getContentType().equals(corePart.getContentType())) {
+           return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
+       }
+
+       // ensure that we close the package again if there is an error opening it, however
+       // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
+       pkg.revert();
        throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+corePart.getContentType()+")");
 	}
 
