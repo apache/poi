@@ -349,11 +349,27 @@ public class POIXMLDocumentPart {
      * @param descriptor the part descriptor
      * @param factory the factory that will create an instance of the requested relation
      * @return the created child POIXMLDocumentPart
+     * @throws PartAlreadyExistsException
+     *             If rule M1.12 is not verified : Packages shall not contain
+     *             equivalent part names and package implementers shall neither
+     *             create nor recognize packages with equivalent part names.
      */
     public final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
         return createRelationship(descriptor, factory, -1, false);
     }
 
+    /**
+     * Create a new child POIXMLDocumentPart
+     *
+     * @param descriptor the part descriptor
+     * @param factory the factory that will create an instance of the requested relation
+     * @param idx part number
+     * @return the created child POIXMLDocumentPart
+     * @throws PartAlreadyExistsException
+     *             If rule M1.12 is not verified : Packages shall not contain
+     *             equivalent part names and package implementers shall neither
+     *             create nor recognize packages with equivalent part names.
+     */
     public final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx){
         return createRelationship(descriptor, factory, idx, false);
     }
@@ -366,6 +382,10 @@ public class POIXMLDocumentPart {
      * @param idx part number
      * @param noRelation if true, then no relationship is added.
      * @return the created child POIXMLDocumentPart
+     * @throws PartAlreadyExistsException
+     *             If rule M1.12 is not verified : Packages shall not contain
+     *             equivalent part names and package implementers shall neither
+     *             create nor recognize packages with equivalent part names.
      */
     protected final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory, int idx, boolean noRelation){
         try {

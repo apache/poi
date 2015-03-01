@@ -228,8 +228,13 @@ public abstract class PackagePart implements RelationshipSource {
 	 *            Relationship unique id.
 	 * @return The newly created and added relationship
 	 *
+	 * @throws InvalidOperationException
+	 *             If a writing operation is done on a read only package or 
+	 *             invalid nested relations are created.
 	 * @throws InvalidFormatException
 	 *             If the URI point to a relationship part URI.
+	 * @throws IllegalArgumentException if targetPartName, targetMode 
+	 *             or relationshipType are passed as null
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#addRelationship(org.apache.poi.openxml4j.opc.PackagePartName,
 	 *      org.apache.poi.openxml4j.opc.TargetMode, java.lang.String, java.lang.String)
 	 */

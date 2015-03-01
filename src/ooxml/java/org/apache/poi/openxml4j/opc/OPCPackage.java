@@ -739,7 +739,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param contentType
 	 *            Part content type.
 	 * @return The newly created part.
-	 * @throws InvalidFormatException
+	 * @throws PartAlreadyExistsException
 	 *             If rule M1.12 is not verified : Packages shall not contain
 	 *             equivalent part names and package implementers shall neither
 	 *             create nor recognize packages with equivalent part names.
@@ -762,7 +762,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *            Specify if the existing relationship part, if any, logically
 	 *            associated to the newly created part will be loaded.
 	 * @return The newly created part.
-	 * @throws InvalidFormatException
+	 * @throws PartAlreadyExistsException
 	 *             If rule M1.12 is not verified : Packages shall not contain
 	 *             equivalent part names and package implementers shall neither
 	 *             create nor recognize packages with equivalent part names.
