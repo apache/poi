@@ -2156,6 +2156,26 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    public void test57165_create() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
+        try {
+            removeAllSheetsBut(3, wb);
+            wb.createSheet("newsheet"); // Throws exception here
+            wb.setSheetName(1, "New Sheet");
+            //saveWorkbook(wb, fileName);
+            
+            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            try {
+                
+            } finally {
+                wbBack.close();
+            }
+        } finally {
+            wb.close();
+        }
+    }
+
     private static void removeAllSheetsBut(int sheetIndex, Workbook wb)
     {
         int sheetNb = wb.getNumberOfSheets();
