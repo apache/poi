@@ -751,8 +751,26 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
         CTSheet sheet = addSheet(sheetname);
 
         int sheetNumber = 1;
-        for(XSSFSheet sh : sheets) {
-            sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+        outerloop:
+        while(true) {
+            for(XSSFSheet sh : sheets) {
+                sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
+            }
+            
+            // Bug 57165: We also need to check that the resulting file name is not already taken
+            // this can happen when moving/cloning sheets
+            String sheetName = XSSFRelation.WORKSHEET.getFileName(sheetNumber);
+            for(POIXMLDocumentPart relation : getRelations()) {
+                if(relation.getPackagePart() != null && 
+                        sheetName.equals(relation.getPackagePart().getPartName().getName())) {
+                    // name is taken => try next one
+                    sheetNumber++;
+                    continue outerloop;
+                }
+            }
+
+            // no duplicate found => use this one
+            break;
         }
 
         XSSFSheet wrapper = (XSSFSheet)createRelationship(XSSFRelation.WORKSHEET, XSSFFactory.getInstance(), sheetNumber);
