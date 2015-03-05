@@ -29,6 +29,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblCellMar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblGrid;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
@@ -64,6 +65,17 @@ public class TestXWPFTable extends TestCase {
         assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
     }
 
+    public void testTblGrid() {
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        CTTblGrid cttblgrid = ctTable.addNewTblGrid();
+        cttblgrid.addNewGridCol().setW(new BigInteger("123"));
+        cttblgrid.addNewGridCol().setW(new BigInteger("321"));
+
+        XWPFTable xtab = new XWPFTable(ctTable, doc);
+        assertEquals(123, xtab.getCTTbl().getTblGrid().getGridColArray(0).getW().intValue());
+        assertEquals(321, xtab.getCTTbl().getTblGrid().getGridColArray(1).getW().intValue());
+    }
 
     public void testGetText() {
         XWPFDocument doc = new XWPFDocument();
