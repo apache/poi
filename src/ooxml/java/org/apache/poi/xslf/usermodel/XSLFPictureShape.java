@@ -179,30 +179,13 @@ public class XSLFPictureShape extends XSLFSimpleShape {
         return id;
     }
 
-    public Insets getBlipClip(){
+    public Insets getClipping(){
         CTPicture ct = (CTPicture)getXmlObject();
         CTRelativeRect r = ct.getBlipFill().getSrcRect();
         return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
     }
 
-    @Override
-    public void drawContent(Graphics2D graphics) {
-
-        XSLFPictureData data = getPictureData();
-    	if(data == null) return;
-
-        XSLFImageRenderer renderer = (XSLFImageRenderer)graphics.getRenderingHint(XSLFRenderingHint.IMAGE_RENDERER);
-        if(renderer == null) renderer = new XSLFImageRenderer();
-
-        RenderableShape rShape = new RenderableShape(this);
-        Rectangle2D anchor = rShape.getAnchor(graphics);
-        
-        Insets insets = getBlipClip();
-
-        renderer.drawImage(graphics, data, anchor, insets);
-    }
-
-
+    @SuppressWarnings("deprecation")
     @Override
     void copy(XSLFShape sh){
         super.copy(sh);

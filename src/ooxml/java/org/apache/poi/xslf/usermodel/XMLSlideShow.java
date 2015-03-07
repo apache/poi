@@ -496,11 +496,11 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
         return null;
     }
 
-    public MasterSheet<XSLFShape>[] getMasterSheet() {
+    public XSLFSlideMaster[] getMasterSheet() {
         return getSlideMasters();
     }
 
-    public MasterSheet<XSLFShape> createMasterSheet() throws IOException {
+    public MasterSheet createMasterSheet() throws IOException {
         // TODO: implement!
         throw new UnsupportedOperationException();
     }

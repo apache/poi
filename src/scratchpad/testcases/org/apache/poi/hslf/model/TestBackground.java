@@ -60,7 +60,7 @@ public final class TestBackground {
         assertTrue(slide.getFollowMasterBackground());
         assertEquals(Fill.FILL_SOLID, slide.getBackground().getFill().getFillType());
 
-        Shape shape = new AutoShape(ShapeType.RECT);
+        HSLFShape shape = new AutoShape(ShapeType.RECT);
         assertEquals(Fill.FILL_SOLID, shape.getFill().getFillType());
     }
 
@@ -71,7 +71,7 @@ public final class TestBackground {
     public void readBackground() throws Exception {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("backgrounds.ppt"));
         Fill fill;
-        Shape shape;
+        HSLFShape shape;
 
         Slide[] slide = ppt.getSlides();
 
@@ -104,7 +104,7 @@ public final class TestBackground {
         SlideShow ppt = new SlideShow();
         Slide slide;
         Fill fill;
-        Shape shape;
+        HSLFShape shape;
         int idx;
 
         //slide 1
@@ -202,9 +202,9 @@ public final class TestBackground {
 
     }
 
-    private int getFillPictureRefCount(Shape shape, Fill fill) {
+    private int getFillPictureRefCount(HSLFShape shape, Fill fill) {
         EscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
 
@@ -212,7 +212,7 @@ public final class TestBackground {
             SlideShow ppt = sheet.getSlideShow();
             Document doc = ppt.getDocumentRecord();
             EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-            EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+            EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
             List<EscherRecord> lst = bstore.getChildRecords();
             return ((EscherBSERecord)lst.get(idx-1)).getRef();
         }

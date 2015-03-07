@@ -477,7 +477,7 @@ public final class TestTextRun extends TestCase {
 		assertSame(run2, runs[1]);
 
 		//as getShapes()
-		Shape[] sh = slide.getShapes();
+		HSLFShape[] sh = slide.getShapes();
 		assertEquals(2, sh.length);
 		assertTrue(sh[0] instanceof TextBox);
 		TextBox box1 = (TextBox)sh[0];
@@ -498,7 +498,7 @@ public final class TestTextRun extends TestCase {
     public void test48916() throws IOException {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
         for(Slide slide : ppt.getSlides()){
-            for(Shape sh : slide.getShapes()){
+            for(HSLFShape sh : slide.getShapes()){
                 if(sh instanceof TextShape){
                     TextShape tx = (TextShape)sh;
                     TextRun run = tx.getTextRun();
@@ -519,7 +519,7 @@ public final class TestTextRun extends TestCase {
         ppt.write(out);
         ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
         for(Slide slide : ppt.getSlides()){
-            for(Shape sh : slide.getShapes()){
+            for(HSLFShape sh : slide.getShapes()){
                 if(sh instanceof TextShape){
                     TextShape tx = (TextShape)sh;
                     TextRun run = tx.getTextRun();

@@ -20,7 +20,7 @@ package org.apache.poi.sl.usermodel;
 import java.awt.Color;
 
 
-public interface TextParagraph extends Iterable<TextRun> {
+public interface TextParagraph<T extends TextRun> extends Iterable<T> {
     /**
      * Specified a list of text alignment types
      */
@@ -128,5 +128,5 @@ public interface TextParagraph extends Iterable<TextRun> {
      */
     BulletStyle getBulletStyle();
     
-    TextShape getParentShape();
+    TextShape<? extends TextParagraph<T>> getParentShape();
 }

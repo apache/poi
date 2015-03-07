@@ -87,7 +87,7 @@ public final class TestSheet extends TestCase {
             assertNotNull(txt[i].getSheet());
         }
 
-        Shape[] shape = sheet.getShapes();
+        HSLFShape[] shape = sheet.getShapes();
         if (shape == null) {
             throw new AssertionFailedError("no shapes");
         }

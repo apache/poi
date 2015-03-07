@@ -17,6 +17,7 @@ import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
 import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
 
@@ -257,6 +258,9 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
           Shadow shadow = shape.getShadow();
           if (shadow == null || (fill == null && line == null)) return;
 
+          SolidPaint shadowPaint = shadow.getFillStyle();
+          Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
+          
           double shapeRotation = shape.getRotation();
           if(shape.getFlipVertical()) {
               shapeRotation += 180;
@@ -272,12 +276,11 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
               java.awt.Shape s = o.getOutline();
               Path p = o.getPath();
               graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
+              graphics.setPaint(shadowColor);
               
               if(fill != null && p.isFilled()){
-                  graphics.setPaint(fill);
                   graphics.fill(s);
               } else if (line != null && p.isStroked()) {
-                  graphics.setPaint(line);
                   graphics.draw(s);
               }
           }

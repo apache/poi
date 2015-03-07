@@ -43,7 +43,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     protected POILogger log = POILogFactory.getLogger(this.getClass());
 
     //The ppt object to write into.
-    private ShapeGroup _group;
+    private HSLFGroupShape _group;
 
     private AffineTransform _transform;
     private Stroke _stroke;
@@ -58,7 +58,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      *
      * @param group           The shape group to write the graphics calls into.
      */
-    public PPGraphics2D(ShapeGroup group){
+    public PPGraphics2D(HSLFGroupShape group){
         this._group = group;
 
         _transform = new AffineTransform();
@@ -73,7 +73,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
     /**
      * @return  the shape group being used for drawing
      */
-    public ShapeGroup getShapeGroup(){
+    public HSLFGroupShape getShapeGroup(){
         return _group;
     }
 

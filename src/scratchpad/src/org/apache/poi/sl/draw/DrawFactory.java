@@ -40,8 +40,13 @@ public class DrawFactory {
     }
 
     public static DrawFactory getInstance(Graphics2D graphics) {
-        // first try to find the factory over the rendering hing
-        DrawFactory factory = (DrawFactory)graphics.getRenderingHint(DRAW_FACTORY);
+        // first try to find the factory over the rendering hint
+        DrawFactory factory = null;
+        boolean isHint = false;
+        if (graphics != null) {
+            factory = (DrawFactory)graphics.getRenderingHint(DRAW_FACTORY);
+            isHint = true;
+        }
         // secondly try the thread local default
         if (factory == null) {
             factory = defaultFactory.get();
@@ -49,43 +54,78 @@ public class DrawFactory {
         // and at last, use the default factory
         if (factory == null) {
             factory = new DrawFactory();
+        }
+        if (graphics != null && !isHint) {
             graphics.setRenderingHint(DRAW_FACTORY, factory);
         }
         return factory;
     }
 
-    public Drawable getDrawable(Sheet sheet) {
-        return new DrawSheet(sheet);
-    }
-
-    public Drawable getDrawable(MasterSheet sheet) {
-        return new DrawMasterSheet(sheet);
-    }
-
     @SuppressWarnings("unchecked")
     public Drawable getDrawable(Shape shape) {
         if (shape instanceof TextBox) {
-            return getDrawable((TextBox)shape);
+            return getDrawable((TextBox<? extends TextParagraph<? extends TextRun>>)shape);
         } else if (shape instanceof FreeformShape) {
-            return getDrawable((FreeformShape)shape);
+            return getDrawable((FreeformShape<? extends TextParagraph<? extends TextRun>>)shape);
+        } else if (shape instanceof TextShape) {
+            return getDrawable((TextShape<? extends TextParagraph<? extends TextRun>>)shape);
+        } else if (shape instanceof ShapeGroup) {
+            return getDrawable((ShapeGroup<? extends Shape>)shape);
+        } else if (shape instanceof PictureShape) {
+            return getDrawable((PictureShape)shape);
+        } else if (shape instanceof Background) {
+            return getDrawable((Background)shape);
+        } else if (shape instanceof Slide) {
+            return getDrawable((Slide<? extends Shape>)shape);
+        } else if (shape instanceof MasterSheet) {
+            return getDrawable((MasterSheet<? extends Shape>)shape);
+        } else if (shape instanceof Sheet) {
+            return getDrawable((Sheet<? extends Shape>)shape);
         }
 
         throw new IllegalArgumentException("Unsupported shape type: "+shape.getClass());
     }
 
-    public <T extends TextBox> DrawTextBox<T> getDrawable(T shape) {
+    public <T extends Slide<? extends Shape>> DrawSlide<T> getDrawable(T sheet) {
+        return new DrawSlide<T>(sheet);
+    }
+
+    public <T extends Sheet<? extends Shape>> DrawSheet<T> getDrawable(T sheet) {
+        return new DrawSheet<T>(sheet);
+    }
+
+    public <T extends MasterSheet<? extends Shape>> DrawMasterSheet<T> getDrawable(T sheet) {
+        return new DrawMasterSheet<T>(sheet);
+    }
+
+    public <T extends TextBox<? extends TextParagraph<?>>> DrawTextBox<T> getDrawable(T shape) {
         return new DrawTextBox<T>(shape);
     }
 
-    public <T extends FreeformShape> DrawFreeformShape<T> getDrawable(T shape) {
+    public <T extends FreeformShape<? extends TextParagraph<? extends TextRun>>> DrawFreeformShape<T> getDrawable(T shape) {
         return new DrawFreeformShape<T>(shape);
     }
 
-    
-    public DrawTextParagraph getDrawable(TextParagraph paragraph) {
-        return new DrawTextParagraph(paragraph);
+    public <T extends TextShape<? extends TextParagraph<? extends TextRun>>> DrawTextShape<T> getDrawable(T shape) {
+        return new DrawTextShape<T>(shape);
     }
 
+    public <T extends ShapeGroup<? extends Shape>> DrawShapeGroup<T> getDrawable(T shape) {
+        return new DrawShapeGroup<T>(shape);
+    }
+    
+    public <T extends PictureShape> DrawPictureShape<T> getDrawable(T shape) {
+        return new DrawPictureShape<T>(shape);
+    }
+    
+    public <T extends TextRun> DrawTextParagraph<T> getDrawable(TextParagraph<T> paragraph) {
+        return new DrawTextParagraph<T>(paragraph);
+    }
+
+    public <T extends Background> DrawBackground<T> getDrawable(T shape) {
+        return new DrawBackground<T>(shape);
+    }
+    
     public DrawTextFragment getTextFragment(TextLayout layout, AttributedString str) {
         return new DrawTextFragment(layout, str);
     }

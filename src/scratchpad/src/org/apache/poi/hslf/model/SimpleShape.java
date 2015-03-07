@@ -47,7 +47,7 @@ import org.apache.poi.util.LittleEndian;
  *
  *  @author Yegor Kozlov
  */
-public abstract class SimpleShape extends Shape {
+public abstract class SimpleShape extends HSLFShape {
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
 
@@ -63,7 +63,7 @@ public abstract class SimpleShape extends Shape {
      * @param escherRecord    <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-    protected SimpleShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+    protected SimpleShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -223,15 +223,15 @@ public abstract class SimpleShape extends Shape {
 
         //if it is a groupped shape see if we need to transform the coordinates
         if (getParent() != null){
-            ArrayList<ShapeGroup> lst = new ArrayList<ShapeGroup>();
-            for (ShapeContainer<Shape> parent=this.getParent();
-                parent instanceof ShapeGroup;
-                parent = ((ShapeGroup)parent).getParent()) {
-                lst.add(0, (ShapeGroup)parent);
+            ArrayList<HSLFGroupShape> lst = new ArrayList<HSLFGroupShape>();
+            for (ShapeContainer<HSLFShape> parent=this.getParent();
+                parent instanceof HSLFGroupShape;
+                parent = ((HSLFGroupShape)parent).getParent()) {
+                lst.add(0, (HSLFGroupShape)parent);
             }
             
             AffineTransform tx = new AffineTransform();
-            for(ShapeGroup prnt : lst) {
+            for(HSLFGroupShape prnt : lst) {
                 Rectangle2D exterior = prnt.getAnchor2D();
                 Rectangle2D interior = prnt.getCoordinates();
 

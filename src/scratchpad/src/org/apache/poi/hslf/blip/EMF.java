@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.ByteArrayOutputStream;
@@ -67,7 +67,7 @@ public final class EMF extends Metafile {
         header.wmfsize = data.length;
         //we don't have a EMF reader in java, have to set default image size  200x200
         header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Shape.EMU_PER_POINT, header.bounds.height*Shape.EMU_PER_POINT);
+        header.size = new java.awt.Dimension(header.bounds.width*HSLFShape.EMU_PER_POINT, header.bounds.height*HSLFShape.EMU_PER_POINT);
         header.zipsize = compressed.length;
 
         byte[] checksum = getChecksum(data);

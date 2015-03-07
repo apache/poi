@@ -23,6 +23,6 @@ package org.apache.poi.hslf.model;
  * @author Yegor Kozlov
  */
 public interface ShapeOutline {
-    java.awt.Shape getOutline(Shape shape);
+    java.awt.Shape getOutline(HSLFShape shape);
 
 }

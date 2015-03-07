@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
 import java.io.IOException;
 
 @Beta
-public class XSLFSlideLayout extends XSLFSheet implements MasterSheet {
+public class XSLFSlideLayout extends XSLFSheet implements MasterSheet<XSLFShape> {
     private CTSlideLayout _layout;
     private XSLFSlideMaster _master;
 

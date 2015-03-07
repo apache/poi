@@ -37,7 +37,7 @@ public class SoundFinder {
 
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
+            HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
                 int soundRef = getSoundReference(shape[j]);
                 if(soundRef != -1) {
@@ -54,7 +54,7 @@ public class SoundFinder {
      * @return 0-based reference to a sound in the sound collection
      * or -1 if the shape is not associated with a sound
      */
-    protected static int getSoundReference(Shape shape){
+    protected static int getSoundReference(HSLFShape shape){
         int soundRef = -1;
         //dive into the shape container and search for InteractiveInfoAtom
         EscherContainerRecord spContainer = shape.getSpContainer();

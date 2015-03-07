@@ -17,5 +17,5 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface TextBox extends AutoShape {
+public interface TextBox<T extends TextParagraph> extends AutoShape<T> {
 }

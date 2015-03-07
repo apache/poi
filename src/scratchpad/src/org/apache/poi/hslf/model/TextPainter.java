@@ -270,8 +270,8 @@ public final class TextPainter {
 
             TextRulerAtom ruler = run.getTextRuler();
             if(ruler != null) {
-                int bullet_val = ruler.getBulletOffsets()[indent]*Shape.POINT_DPI/Shape.MASTER_DPI;
-                int text_val = ruler.getTextOffsets()[indent]*Shape.POINT_DPI/Shape.MASTER_DPI;
+                int bullet_val = ruler.getBulletOffsets()[indent]*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
+                int text_val = ruler.getTextOffsets()[indent]*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
                 if(bullet_val > text_val){
                     int a = bullet_val;
                     bullet_val = text_val;
@@ -309,7 +309,7 @@ public final class TextPainter {
             if(linespacing >= 0){
                 el.ascent = textLayout.getAscent()*linespacing/100;
             } else {
-                el.ascent = -linespacing*Shape.POINT_DPI/Shape.MASTER_DPI;
+                el.ascent = -linespacing*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
             }
 
             el._align = rt.getAlignment();
@@ -325,7 +325,7 @@ public final class TextPainter {
                 if(sp >= 0){
                     spaceBefore = lineHeight * sp/100;
                 } else {
-                    spaceBefore = -sp*Shape.POINT_DPI/Shape.MASTER_DPI;
+                    spaceBefore = -sp*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
                 }
                 el.ascent += spaceBefore;
             }
@@ -334,7 +334,7 @@ public final class TextPainter {
             if(linespacing >= 0){
                 descent = (textLayout.getDescent() + textLayout.getLeading())*linespacing/100;
             } else {
-                descent = -linespacing*Shape.POINT_DPI/Shape.MASTER_DPI;
+                descent = -linespacing*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
             }
             if (prStart){
                 int sp = rt.getSpaceAfter();
@@ -342,7 +342,7 @@ public final class TextPainter {
                 if(sp >= 0){
                     spaceAfter = lineHeight * sp/100;
                 } else {
-                    spaceAfter = -sp*Shape.POINT_DPI/Shape.MASTER_DPI;
+                    spaceAfter = -sp*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
                 }
                 el.ascent += spaceAfter;
             }

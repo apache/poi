@@ -19,7 +19,7 @@ package org.apache.poi.sl.usermodel;
 
 
 
-public interface TextShape extends SimpleShape, Iterable<TextParagraph>  {
+public interface TextShape<T extends TextParagraph<?>> extends SimpleShape, Iterable<T>  {
     /**
      * Vertical Text Types
      */

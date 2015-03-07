@@ -46,7 +46,7 @@ import org.apache.poi.hslf.model.MovieShape;
 import org.apache.poi.hslf.model.Notes;
 import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.SlideMaster;
 import org.apache.poi.hslf.model.TitleMaster;
@@ -532,8 +532,8 @@ public final class SlideShow {
 	 */
 	public Dimension getPageSize() {
 		DocumentAtom docatom = _documentRecord.getDocumentAtom();
-		int pgx = (int) docatom.getSlideSizeX() * Shape.POINT_DPI / Shape.MASTER_DPI;
-		int pgy = (int) docatom.getSlideSizeY() * Shape.POINT_DPI / Shape.MASTER_DPI;
+		int pgx = (int) docatom.getSlideSizeX() * HSLFShape.POINT_DPI / HSLFShape.MASTER_DPI;
+		int pgy = (int) docatom.getSlideSizeY() * HSLFShape.POINT_DPI / HSLFShape.MASTER_DPI;
 		return new Dimension(pgx, pgy);
 	}
 
@@ -545,8 +545,8 @@ public final class SlideShow {
 	 */
 	public void setPageSize(Dimension pgsize) {
 		DocumentAtom docatom = _documentRecord.getDocumentAtom();
-		docatom.setSlideSizeX(pgsize.width * Shape.MASTER_DPI / Shape.POINT_DPI);
-		docatom.setSlideSizeY(pgsize.height * Shape.MASTER_DPI / Shape.POINT_DPI);
+		docatom.setSlideSizeX(pgsize.width * HSLFShape.MASTER_DPI / HSLFShape.POINT_DPI);
+		docatom.setSlideSizeY(pgsize.height * HSLFShape.MASTER_DPI / HSLFShape.POINT_DPI);
 	}
 
 	/**
@@ -784,7 +784,7 @@ public final class SlideShow {
 		EscherContainerRecord bstore;
 
 		EscherContainerRecord dggContainer = _documentRecord.getPPDrawingGroup().getDggContainer();
-		bstore = (EscherContainerRecord) Shape.getEscherChild(dggContainer,
+		bstore = (EscherContainerRecord) HSLFShape.getEscherChild(dggContainer,
 				EscherContainerRecord.BSTORE_CONTAINER);
 		if (bstore == null) {
 			bstore = new EscherContainerRecord();

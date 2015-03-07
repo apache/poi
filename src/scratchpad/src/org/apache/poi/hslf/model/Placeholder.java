@@ -31,11 +31,11 @@ import java.io.ByteArrayOutputStream;
  */
 public final class Placeholder extends TextBox {
 
-    protected Placeholder(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+    protected Placeholder(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
-    public Placeholder(ShapeContainer<Shape> parent){
+    public Placeholder(ShapeContainer<HSLFShape> parent){
         super(parent);
     }
 

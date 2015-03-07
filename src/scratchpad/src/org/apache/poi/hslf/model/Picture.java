@@ -98,9 +98,9 @@ public class Picture extends SimpleShape {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public Picture(int idx, ShapeContainer<Shape> parent) {
+    public Picture(int idx, ShapeContainer<HSLFShape> parent) {
         super(null, parent);
-        _escherContainer = createSpContainer(idx, parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(idx, parent instanceof HSLFGroupShape);
     }
 
     /**
@@ -110,7 +110,7 @@ public class Picture extends SimpleShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected Picture(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+     protected Picture(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -205,7 +205,7 @@ public class Picture extends SimpleShape {
         SlideShow ppt = getSheet().getSlideShow();
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
             logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;

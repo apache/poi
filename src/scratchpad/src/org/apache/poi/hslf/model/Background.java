@@ -38,9 +38,9 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public final class Background extends Shape {
+public final class Background extends HSLFShape {
 
-    protected Background(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent) {
+    protected Background(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
         super(escherRecord, parent);
     }
 

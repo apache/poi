@@ -64,7 +64,7 @@ public final class TestOleEmbedding extends TestCase {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
 
         Slide slide = ppt.getSlides()[0];
-        Shape[] sh = slide.getShapes();
+        HSLFShape[] sh = slide.getShapes();
         int cnt = 0;
         for (int i = 0; i < sh.length; i++) {
             if(sh[i] instanceof OLEShape){

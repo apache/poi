@@ -21,7 +21,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.Hyperlink;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 
 import java.io.FileInputStream;
 
@@ -63,7 +63,7 @@ public final class Hyperlinks {
                 //for example to a Line object. The code below demonstrates how to
                 //read such hyperlinks
                 System.out.println("  reading hyperlinks from the slide's shapes");
-                Shape[] sh = slide[j].getShapes();
+                HSLFShape[] sh = slide[j].getShapes();
                 for (int k = 0; k < sh.length; k++) {
                     Hyperlink link = sh[k].getHyperlink();
                     if(link != null)  {

@@ -17,14 +17,20 @@
 
 package org.apache.poi.sl.usermodel;
 
+import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.IAdjustableShape;
 
 
-public interface SimpleShape extends Shape, IAdjustableShape {
-	StrokeStyle getStrokeStyle();
+public interface SimpleShape extends Shape, IAdjustableShape, PlaceableShape {
+    FillStyle getFillStyle();
+    LineDecoration getLineDecoration();
+    StrokeStyle getStrokeStyle();
+
+    CustomGeometry getGeometry();
+    
+    ShapeType getShapeType();
+
+    boolean isPlaceholder();
+    
 	Shadow getShadow();
-	LineDecoration getLineDecoration();
-	
-	Hyperlink getHyperlink();
-	void setHyperlink(Hyperlink hyperlink);
 }

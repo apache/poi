@@ -20,12 +20,12 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.*;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 
@@ -35,7 +35,7 @@ import org.apache.poi.util.IOUtils;
  * @author Yegor Kozlov
  */
 @Beta
-public final class XSLFPictureData extends POIXMLDocumentPart {
+public final class XSLFPictureData extends POIXMLDocumentPart implements PictureData {
     /**
      * Extended windows meta file
      */
@@ -215,4 +215,17 @@ public final class XSLFPictureData extends POIXMLDocumentPart {
     protected void prepareForCommit() {
         // do not clear the part here
     }
+    
+    public String getContentType() {
+        POIXMLRelation rel = RELATIONS[getPictureType()];
+        return (rel == null) ? null : rel.getContentType();
+    }
+
+    public void setData(byte[] data) throws IOException {
+        OutputStream os = getPackagePart().getOutputStream();
+        os.write(data);
+        os.close();
+    }
+    
+    
 }

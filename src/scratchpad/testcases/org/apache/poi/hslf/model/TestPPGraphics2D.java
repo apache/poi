@@ -49,7 +49,7 @@ public final class TestPPGraphics2D extends TestCase {
     	assertEquals(1, ppt.getSlides().length);
 
     	// Add some stuff into it
-        ShapeGroup group = new ShapeGroup();
+        HSLFGroupShape group = new HSLFGroupShape();
         Dimension pgsize = ppt.getPageSize();
         java.awt.Rectangle bounds = new java.awt.Rectangle(0, 0, (int)pgsize.getWidth(), (int)pgsize.getHeight());
         group.setAnchor(bounds);
@@ -77,12 +77,12 @@ public final class TestPPGraphics2D extends TestCase {
         assertEquals(1, ppt.getSlides().length);
 
         slide = ppt.getSlides()[0];
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
         assertEquals(shape.length, 1); //group shape
 
-        assertTrue(shape[0] instanceof ShapeGroup); //group shape
+        assertTrue(shape[0] instanceof HSLFGroupShape); //group shape
 
-        group = (ShapeGroup)shape[0];
+        group = (HSLFGroupShape)shape[0];
         shape = group.getShapes();
         assertEquals(shape.length, 3);
     }

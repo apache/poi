@@ -18,7 +18,7 @@
 package org.apache.poi.sl.usermodel;
 
 
-public interface ShapeContainer extends Iterable<Shape>, PlaceableShape {
+public interface ShapeContainer<T extends Shape> extends Iterable<T> {
     /**
      * Returns an array containing all of the elements in this container in proper
      * sequence (from first to last element).
@@ -26,9 +26,9 @@ public interface ShapeContainer extends Iterable<Shape>, PlaceableShape {
      * @return an array containing all of the elements in this container in proper
      *         sequence
      */
-	public Shape[] getShapes();
+	public T[] getShapes();
 
-	public void addShape(Shape shape);
+	public void addShape(T shape);
 
     /**
      * Removes the specified shape from this sheet, if it is present
@@ -40,5 +40,5 @@ public interface ShapeContainer extends Iterable<Shape>, PlaceableShape {
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
-	public boolean removeShape(Shape shape);
+	public boolean removeShape(T shape);
 }

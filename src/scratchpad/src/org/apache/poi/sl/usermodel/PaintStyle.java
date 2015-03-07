@@ -17,9 +17,42 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.io.InputStream;
+
 
 
 public interface PaintStyle {
+    public interface SolidPaint extends PaintStyle {
+        ColorStyle getSolidColor();
+    }
 
+    public interface GradientPaint extends PaintStyle {
+        enum GradientType { linear, circular, shape }
+        
+        /**
+         * @return the angle of the gradient
+         */
+        double getGradientAngle();
+        ColorStyle[] getGradientColors();
+        float[] getGradientFractions();
+        boolean isRotatedWithShape();
+        GradientType getGradientType();
+    }    
     
+    public interface TexturePaint extends PaintStyle {
+        /**
+         * @return the raw image stream
+         */
+        InputStream getImageData();
+
+        /**
+         * @return the content type of the image data
+         */
+        String getContentType();
+        
+        /**
+         * @return the alpha mask in percents [0..100000]
+         */
+        int getAlpha();
+    }
 }

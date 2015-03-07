@@ -24,7 +24,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 
 /**
  * Represents Macintosh PICT picture data.
@@ -86,8 +86,8 @@ public final class PICT extends Metafile {
         header.wmfsize = data.length - 512;
         //we don't have a PICT reader in java, have to set default image size  200x200
         header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Shape.EMU_PER_POINT,
-                header.bounds.height*Shape.EMU_PER_POINT);
+        header.size = new java.awt.Dimension(header.bounds.width*HSLFShape.EMU_PER_POINT,
+                header.bounds.height*HSLFShape.EMU_PER_POINT);
         header.zipsize = compressed.length;
 
         byte[] checksum = getChecksum(data);

@@ -17,8 +17,6 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import org.apache.poi.sl.usermodel.TextParagraph;
@@ -37,7 +35,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  * @since POI-3.8
  */
 @Beta
-public class XSLFTextParagraph implements TextParagraph {
+public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     private final CTTextParagraph _p;
     private final List<XSLFTextRun> _runs;
     private final XSLFTextShape _shape;
@@ -697,44 +695,6 @@ public class XSLFTextParagraph implements TextParagraph {
         return "[" + getClass() + "]" + getText();
     }
 
-    /**
-     * Returns wrapping width to break lines in this paragraph
-     *
-     * @param firstLine whether the first line is breaking
-     *
-     * @return  wrapping width in points
-     */
-    double getWrappingWidth(boolean firstLine, Graphics2D graphics){
-        // internal margins for the text box
-        double leftInset = _shape.getLeftInset();
-        double rightInset = _shape.getRightInset();
-
-        RenderableShape rShape = new RenderableShape(_shape);
-        Rectangle2D anchor = rShape.getAnchor(graphics);
-
-        double leftMargin = getLeftMargin();
-        double indent = getIndent();
-
-        double width;
-        if(!_shape.getWordWrap()) {
-            // if wordWrap == false then we return the advance to the right border of the sheet
-            width = _shape.getSheet().getSlideShow().getPageSize().getWidth() - anchor.getX();
-        } else {
-            width = anchor.getWidth() -  leftInset - rightInset - leftMargin;
-            if(firstLine) {
-                if(isBullet()){
-                    if(indent > 0) width -= indent;
-                } else {
-                    if(indent > 0) width -= indent; // first line indentation
-                    else if (indent < 0) { // hanging indentation: the first line start at the left margin
-                        width += leftMargin;
-                    }
-                }
-            }
-        }
-
-        return width;
-    }
 
     CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getCTPlaceholder();

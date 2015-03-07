@@ -18,5 +18,5 @@
 package org.apache.poi.sl.usermodel;
 
 public interface Background extends Shape {
-
+    FillStyle getFillStyle();
 }

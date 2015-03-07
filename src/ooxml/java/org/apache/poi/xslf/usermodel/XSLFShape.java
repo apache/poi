@@ -20,7 +20,6 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -30,14 +29,16 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawPaint;
-import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.util.*;
+import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * Base super-class class for all shapes in PresentationML
@@ -46,16 +47,16 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  */
 @Beta
 public abstract class XSLFShape implements Shape {
-    protected final XmlObject _shape;
-    protected final XSLFSheet _sheet;
-    protected XSLFShapeContainer _parent;
+    private final XmlObject _shape;
+    private final XSLFSheet _sheet;
+    private XSLFShapeContainer _parent;
 
     private CTShapeProperties _spPr;
     private CTShapeStyle _spStyle;
     private CTNonVisualDrawingProps _nvPr;
     private CTPlaceholder _ph;
 
-    private static final PaintStyle TRANSPARENT_PAINT = new SolidPaint() {
+    protected static final SolidPaint TRANSPARENT_PAINT = new SolidPaint() {
         public ColorStyle getSolidColor() {
             return new ColorStyle(){
                 public Color getColor() { return DrawPaint.NO_PAINT; }
@@ -68,24 +69,30 @@ public abstract class XSLFShape implements Shape {
         }
     };
     
-    
     protected XSLFShape(XmlObject shape, XSLFSheet sheet) {
         _shape = shape;
         _sheet = sheet;
     }
-
     
     /**
      * @return the xml bean holding this shape's data
      */
-    public XmlObject getXmlObject() {
+    public final XmlObject getXmlObject() {
+        // it's final because the xslf inheritance hierarchy is not necessary the same as
+        // the (not existing) xmlbeans hierarchy and subclasses shouldn't narrow it's return value
         return _shape;
+    }
+    
+    public XSLFSheet getSheet() {
+        return _sheet;
     }
     
     /**
      * @return human-readable name of this shape, e.g. "Rectange 3"
      */
-    public abstract String getShapeName();
+    public String getShapeName(){
+        return getCNvPr().getName();
+    }
 
     /**
      * Returns a unique identifier for this shape within the current document.
@@ -98,55 +105,9 @@ public abstract class XSLFShape implements Shape {
      *
      * @return unique id of this shape
      */
-    public abstract int getShapeId();
-
-    /**
-     * Rotate this shape.
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @param theta the rotation angle in degrees.
-     */
-    public abstract void setRotation(double theta);
-
-    /**
-     * Rotation angle in degrees
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @return rotation angle in degrees
-     */
-    public abstract double getRotation();
-
-    /**
-     * @param flip whether the shape is horizontally flipped
-     */
-    public abstract void setFlipHorizontal(boolean flip);
-
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @param flip whether the shape is vertically flipped
-     */
-    public abstract void setFlipVertical(boolean flip);
-
-    /**
-     * Whether the shape is horizontally flipped
-     *
-     * @return whether the shape is horizontally flipped
-     */
-    public abstract boolean getFlipHorizontal();
-
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @return whether the shape is vertically flipped
-     */
-    public abstract boolean getFlipVertical();
+    public int getShapeId() {
+        return (int)getCNvPr().getId();
+    }
 
     /**
      * Set the contents of this shape to be a copy of the source shape.
@@ -162,7 +123,12 @@ public abstract class XSLFShape implements Shape {
                     "Can't copy " + sh.getClass().getSimpleName() + " into " + getClass().getSimpleName());
         }
 
-        setAnchor(sh.getAnchor());
+        if (this instanceof PlaceableShape) {
+            PlaceableShape ps = (PlaceableShape)this;
+            ps.setAnchor(((PlaceableShape)sh).getAnchor());
+        }
+        
+        
     }
     
     public void setParent(XSLFShapeContainer parent) {
@@ -173,93 +139,148 @@ public abstract class XSLFShape implements Shape {
         return this._parent;
     }
     
-    public boolean isPlaceholder() {
-        return false;
+    protected PaintStyle getFillPaint() {
+        PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
+            public boolean fetch(XSLFShape shape) {
+                XmlObject pr = null;
+                try {
+                    pr = shape.getSpPr();
+                    if (((CTShapeProperties)pr).isSetNoFill()) {
+                        setValue(TRANSPARENT_PAINT);
+                        return true;
+                    }                    
+                } catch (IllegalStateException e) {}
+                // trying background properties now
+                if (pr == null) {
+                    pr = shape.getBgPr();
+                }
+                if (pr == null) {
+                    pr = shape.getGrpSpPr();
+                }
+                if (pr == null) {
+                    setValue(TRANSPARENT_PAINT);
+                    return true;
+                }
+                
+                PaintStyle paint = null;
+                for (XmlObject obj : pr.selectPath("*")) {
+                    paint = selectPaint(obj, null, getSheet().getPackagePart());
+                    if (paint != null) break;
+                }
+                
+                if (paint == null) return false;
+                
+                setValue(paint);
+                return true;
+            }
+        };
+        fetchShapeProperty(fetcher);
+
+        PaintStyle paint = fetcher.getValue();
+        if (paint != null) return paint;
+        
+        // fill color was not found, check if it is defined in the theme
+        // get a reference to a fill style within the style matrix.
+        CTStyleMatrixReference fillRef = null;
+        if (fillRef == null) {
+            CTShapeStyle style = getSpStyle();
+            if (style != null) fillRef = style.getFillRef();
+        }
+        if (fillRef == null) {
+            fillRef = getBgRef();
+        }
+        if (fillRef == null) {
+            return TRANSPARENT_PAINT;
+        }
+
+        // The idx attribute refers to the index of a fill style or
+        // background fill style within the presentation's style matrix, defined by the fmtScheme element.
+        // value of 0 or 1000 indicates no background,
+        // values 1-999 refer to the index of a fill style within the fillStyleLst element
+        // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
+        int idx = (int)fillRef.getIdx();
+        CTSchemeColor phClr = fillRef.getSchemeClr();
+        XSLFSheet sheet = getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XmlObject fillProps = null;
+        CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
+        if(idx >= 1 && idx <= 999){
+            fillProps = matrix.getFillStyleLst().selectPath("*")[idx - 1];
+        } else if (idx >= 1001 ){
+            fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
+        }
+        if(fillProps != null) {
+            paint = selectPaint(fillProps, phClr, sheet.getPackagePart());
+        }
+
+        return paint == null ? TRANSPARENT_PAINT : paint;
     }
 
-    public StrokeStyle getStrokeStyle() {
-        // TODO Auto-generated method stub
-        return null;
+    protected CTBackgroundProperties getBgPr() {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:bgPr";
+        return selectProperty(CTBackgroundProperties.class, xquery);
+    }
+    
+    protected CTStyleMatrixReference getBgRef() {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:bgRef";
+        return selectProperty(CTStyleMatrixReference.class, xquery);
+    }
+    
+    protected CTGroupShapeProperties getGrpSpPr() {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:grpSpPr";
+        return selectProperty(CTGroupShapeProperties.class, xquery);
+    }
+    
+    protected CTNonVisualDrawingProps getCNvPr() {
+        if (_nvPr == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:cNvPr";
+            _nvPr = selectProperty(CTNonVisualDrawingProps.class, xquery);
+        }
+        return _nvPr;
     }
 
-    public CustomGeometry getGeometry() {
-        // TODO Auto-generated method stub
-        return null;
+    protected CTShapeProperties getSpPr() {
+        if (_spPr == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:spPr";
+            _spPr = selectProperty(CTShapeProperties.class, xquery);
+        }
+        if (_spPr == null) {
+            throw new IllegalStateException("CTShapeProperties was not found.");
+        }
+        return _spPr;
     }
 
-    public ShapeType getShapeType() {
-        // TODO Auto-generated method stub
-        return null;
+    protected CTShapeStyle getSpStyle() {
+        if (_spStyle == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:style";
+            _spStyle = selectProperty(CTShapeStyle.class, xquery);
+        }
+        return _spStyle;
     }
 
-    public XSLFSheet getSheet() {
-        // TODO Auto-generated method stub
-        return null;
+    protected CTPlaceholder getCTPlaceholder() {
+        if (_ph == null) {
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph";
+            _ph = selectProperty(CTPlaceholder.class, xquery);
+        }
+        return _ph;
     }
     
     /**
-     * fetch shape fill as a java.awt.Paint
+     * As there's no xmlbeans hierarchy, but XSLF works with subclassing, not all
+     * child classes work with a {@link CTShape} object, but often contain the same
+     * properties. This method is the generalized form of selecting and casting those
+     * properties.
      *
-     * @return either Color or GradientPaint or TexturePaint or null
+     * @param resultClass
+     * @param xquery
+     * @return
      */
-    @Override
-    public FillStyle getFillStyle() {
-        return new FillStyle() {
-            public PaintStyle getPaint() {
-                PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
-                    public boolean fetch(XSLFShape shape) {
-                        CTShapeProperties spPr = shape.getSpPr();
-                        if (spPr.isSetNoFill()) {
-                            setValue(TRANSPARENT_PAINT);
-                            return true;
-                        }
-                        
-                        PaintStyle paint = null;
-                        for (XmlObject obj : spPr.selectPath("*")) {
-                            paint = selectPaint(obj, null, getSheet().getPackagePart());
-                            if (paint != null) break;
-                        }
-                        
-                        if (paint == null) return false;
-                        
-                        setValue(paint);
-                        return true;
-                    }
-                };
-                fetchShapeProperty(fetcher);
-
-                PaintStyle paint = fetcher.getValue();
-
-                if (paint != null) return paint;
-                
-                // fill color was not found, check if it is defined in the theme
-                CTShapeStyle style = getSpStyle();
-                if (style != null) {
-                    // get a reference to a fill style within the style matrix.
-                    CTStyleMatrixReference fillRef = style.getFillRef();
-                    // The idx attribute refers to the index of a fill style or
-                    // background fill style within the presentation's style matrix, defined by the fmtScheme element.
-                    // value of 0 or 1000 indicates no background,
-                    // values 1-999 refer to the index of a fill style within the fillStyleLst element
-                    // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
-                    int idx = (int)fillRef.getIdx();
-                    CTSchemeColor phClr = fillRef.getSchemeClr();
-                    XSLFSheet sheet = _sheet;
-                    XSLFTheme theme = sheet.getTheme();
-                    XmlObject fillProps = null;
-                    CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
-                    if(idx >= 1 && idx <= 999){
-                        fillProps = matrix.getFillStyleLst().selectPath("*")[idx - 1];
-                    } else if (idx >= 1001 ){
-                        fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
-                    }
-                    if(fillProps != null) {
-                        paint = selectPaint(fillProps, phClr, sheet.getPackagePart());
-                    }
-                }
-                return paint == RenderableShape.NO_PAINT ? null : paint;
-            }
-        };
+    @SuppressWarnings("unchecked")
+    protected <T extends XmlObject> T selectProperty(Class<T> resultClass, String xquery) {
+        XmlObject[] rs = getXmlObject().selectPath(xquery);
+        if (rs.length == 0) return null;
+        return (resultClass.isInstance(rs[0])) ? (T)rs[0] : null;
     }
 
     /**
@@ -320,108 +341,15 @@ public abstract class XSLFShape implements Shape {
         return ok;
     }
 
-    protected CTPlaceholder getCTPlaceholder() {
-        if (_ph == null) {
-            XmlObject[] obj = _shape.selectPath(
-                    "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph");
-            if (obj.length == 1) {
-                _ph = (CTPlaceholder) obj[0];
-            }
+    protected PaintStyle getPaint(XmlObject spPr, CTSchemeColor phClr) {
+        PaintStyle paint = null;
+        PackagePart pp = getSheet().getPackagePart();
+        for (XmlObject obj : spPr.selectPath("*")) {
+            paint = selectPaint(obj, phClr, pp);
+            if(paint != null) break;
         }
-        return _ph;
-    }
-    
-    protected CTShapeStyle getSpStyle() {
-        if (_spStyle == null) {
-            for (XmlObject obj : _shape.selectPath("*")) {
-                if (obj instanceof CTShapeStyle) {
-                    _spStyle = (CTShapeStyle) obj;
-                }
-            }
-        }
-        return _spStyle;
-    }
-
-    protected CTNonVisualDrawingProps getNvPr() {
-        if (_nvPr == null) {
-            XmlObject[] rs = _shape
-                    .selectPath("declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:cNvPr");
-            if (rs.length != 0) {
-                _nvPr = (CTNonVisualDrawingProps) rs[0];
-            }
-        }
-        return _nvPr;
-    }
-
-    protected CTShapeProperties getSpPr() {
-        if (_spPr == null) {
-            for (XmlObject obj : _shape.selectPath("*")) {
-                if (obj instanceof CTShapeProperties) {
-                    _spPr = (CTShapeProperties) obj;
-                }
-            }
-        }
-        if (_spPr == null) {
-            throw new IllegalStateException("CTShapeProperties was not found.");
-        }
-        return _spPr;
-    }
-
-    CTTransform2D getXfrm() {
-        PropertyFetcher<CTTransform2D> fetcher = new PropertyFetcher<CTTransform2D>() {
-            public boolean fetch(XSLFShape shape) {
-                CTShapeProperties pr = shape.getSpPr();
-                if (pr.isSetXfrm()) {
-                    setValue(pr.getXfrm());
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchShapeProperty(fetcher);
-        return fetcher.getValue();
-    }
-    
-    /**
-     * @return the position of this shape within the drawing canvas.
-     *         The coordinates are expressed in points
-     */
-    public Rectangle2D getAnchor() {
-        CTTransform2D xfrm = getXfrm();
-        if (xfrm == null) return null;
-
-        CTPoint2D off = xfrm.getOff();
-        long x = off.getX();
-        long y = off.getY();
-        CTPositiveSize2D ext = xfrm.getExt();
-        long cx = ext.getCx();
-        long cy = ext.getCy();
-        return new Rectangle2D.Double(
-                Units.toPoints(x), Units.toPoints(y),
-                Units.toPoints(cx), Units.toPoints(cy));
-    }
-
-    /**
-     * @param anchor the position of this shape within the drawing canvas.
-     *               The coordinates are expressed in points
-     */
-    public void setAnchor(Rectangle2D anchor) {
-        CTShapeProperties spPr = getSpPr();
-        if (spPr == null) return;
-        
-        CTTransform2D xfrm = spPr.isSetXfrm() ? spPr.getXfrm() : spPr.addNewXfrm();
-        CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
-        long x = Units.toEMU(anchor.getX());
-        long y = Units.toEMU(anchor.getY());
-        off.setX(x);
-        off.setY(y);
-        CTPositiveSize2D ext = xfrm.isSetExt() ? xfrm.getExt() : xfrm
-                .addNewExt();
-        long cx = Units.toEMU(anchor.getWidth());
-        long cy = Units.toEMU(anchor.getHeight());
-        ext.setCx(cx);
-        ext.setCy(cy);
-    }
+        return paint == null ? TRANSPARENT_PAINT : paint;
+    }    
     
     /**
      * Convert shape fill into java.awt.Paint. The result is either Color or
@@ -444,122 +372,126 @@ public abstract class XSLFShape implements Shape {
      * @return  the applied Paint or null if none was applied
      */
     protected PaintStyle selectPaint(XmlObject obj, final CTSchemeColor phClr, final PackagePart parentPart) {
-        final XSLFTheme theme = getSheet().getTheme();
-
         if (obj instanceof CTNoFillProperties) {
             return TRANSPARENT_PAINT;
+        } else if (obj instanceof CTSolidColorFillProperties) {
+            return selectPaint((CTSolidColorFillProperties)obj, phClr, parentPart);
+        } else if (obj instanceof CTBlipFillProperties) {
+            return selectPaint((CTBlipFillProperties)obj, phClr, parentPart);
+        } else if (obj instanceof CTGradientFillProperties) {
+            return selectPaint((CTGradientFillProperties) obj, phClr, parentPart);
+        } else {
+            return null;
         }
-        
-        if (obj instanceof CTSolidColorFillProperties) {
-            CTSolidColorFillProperties solidFill = (CTSolidColorFillProperties) obj;
-            final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
-            return new SolidPaint() {
-                public ColorStyle getSolidColor() {
-                    return c.getColorStyle();
+    }
+
+    protected PaintStyle selectPaint(final CTSolidColorFillProperties solidFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+        final XSLFTheme theme = getSheet().getTheme();
+        final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
+        return new SolidPaint() {
+            public ColorStyle getSolidColor() {
+                return c.getColorStyle();
+            }
+        };
+    }
+    
+    protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+        final CTBlip blip = blipFill.getBlip();
+        return new TexturePaint() {
+            private PackagePart getPart() {
+                try {
+                    String blipId = blip.getEmbed();
+                    PackageRelationship rel = parentPart.getRelationship(blipId);
+                    return parentPart.getRelatedPart(rel);
+                } catch (InvalidFormatException e) {
+                    throw new RuntimeException(e);
                 }
-            };
+            }
+            
+            public InputStream getImageData() {
+                try {
+                    return getPart().getInputStream();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            public String getContentType() {
+                /* TOOD: map content-type */
+                return getPart().getContentType();
+            }
+
+            public int getAlpha() {
+                return (blip.sizeOfAlphaModFixArray() > 0)
+                    ? blip.getAlphaModFixArray(0).getAmt()
+                    : 0;
+            }
+        };        
+    }
+    
+    protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, final CTSchemeColor phClr, final PackagePart parentPart) {
+
+        @SuppressWarnings("deprecation")
+        final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
+
+        Arrays.sort(gs, new Comparator<CTGradientStop>() {
+            public int compare(CTGradientStop o1, CTGradientStop o2) {
+                Integer pos1 = o1.getPos();
+                Integer pos2 = o2.getPos();
+                return pos1.compareTo(pos2);
+            }
+        });
+
+        final ColorStyle cs[] = new ColorStyle[gs.length];
+        final float fractions[] = new float[gs.length];
+        XSLFTheme theme = getSheet().getTheme();
+        
+        int i=0;
+        for (CTGradientStop cgs : gs) {
+            cs[i] = new XSLFColor(cgs, theme, phClr).getColorStyle();
+            fractions[i] = cgs.getPos() / 100000.f;
         }
         
-        if (obj instanceof CTBlipFillProperties) {
-            CTBlipFillProperties blipFill = (CTBlipFillProperties)obj;
-            final CTBlip blip = blipFill.getBlip();
-            return new TexturePaint() {
-                private PackagePart getPart() {
-                    try {
-                        String blipId = blip.getEmbed();
-                        PackageRelationship rel = parentPart.getRelationship(blipId);
-                        return parentPart.getRelatedPart(rel);
-                    } catch (InvalidFormatException e) {
-                        throw new RuntimeException(e);
+        return new GradientPaint() {
+
+            public double getGradientAngle() {
+                return (gradFill.isSetLin())
+                    ? gradFill.getLin().getAng() / 60000.d
+                    : 0;
+            }
+
+            public ColorStyle[] getGradientColors() {
+                return cs;
+            }
+
+            public float[] getGradientFractions() {
+                return fractions;
+            }
+
+            public boolean isRotatedWithShape() {
+                // TODO: is this correct???
+                return (gradFill.isSetRotWithShape() || !gradFill.getRotWithShape());
+            }
+
+            public GradientType getGradientType() {
+                if (gradFill.isSetLin()) {
+                    return GradientType.linear;
+                }
+                
+                if (gradFill.isSetPath()) {
+                    /* TODO: handle rect path */
+                    STPathShadeType.Enum ps = gradFill.getPath().getPath();
+                    if (ps == STPathShadeType.CIRCLE) {
+                        return GradientType.circular;
+                    } else if (ps == STPathShadeType.SHAPE) {
+                        return GradientType.shape;
                     }
                 }
                 
-                public InputStream getImageData() {
-                    try {
-                        return getPart().getInputStream();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                public String getContentType() {
-                    /* TOOD: map content-type */
-                    return getPart().getContentType();
-                }
-
-                public int getAlpha() {
-                    return (blip.sizeOfAlphaModFixArray() > 0)
-                        ? blip.getAlphaModFixArray(0).getAmt()
-                        : 0;
-                }
-            };
-        }
-        
-        if (obj instanceof CTGradientFillProperties) {
-            final CTGradientFillProperties gradFill = (CTGradientFillProperties) obj;
-
-            @SuppressWarnings("deprecation")
-            final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
-
-            Arrays.sort(gs, new Comparator<CTGradientStop>() {
-                public int compare(CTGradientStop o1, CTGradientStop o2) {
-                    Integer pos1 = o1.getPos();
-                    Integer pos2 = o2.getPos();
-                    return pos1.compareTo(pos2);
-                }
-            });
-
-            final ColorStyle cs[] = new ColorStyle[gs.length];
-            final float fractions[] = new float[gs.length];
-            
-            int i=0;
-            for (CTGradientStop cgs : gs) {
-                cs[i] = new XSLFColor(cgs, theme, phClr).getColorStyle();
-                fractions[i] = cgs.getPos() / 100000.f;
+                return GradientType.linear;
             }
-            
-            return new GradientPaint() {
-
-                public double getGradientAngle() {
-                    return (gradFill.isSetLin())
-                        ? gradFill.getLin().getAng() / 60000.d
-                        : 0;
-                }
-
-                public ColorStyle[] getGradientColors() {
-                    return cs;
-                }
-
-                public float[] getGradientFractions() {
-                    return fractions;
-                }
-
-                public boolean isRotatedWithShape() {
-                    // TODO: is this correct???
-                    return (gradFill.isSetRotWithShape() || !gradFill.getRotWithShape());
-                }
-
-                public GradientType getGradientType() {
-                    if (gradFill.isSetLin()) {
-                        return GradientType.linear;
-                    }
-                    
-                    if (gradFill.isSetPath()) {
-                        /* TODO: handle rect path */
-                        STPathShadeType.Enum ps = gradFill.getPath().getPath();
-                        if (ps == STPathShadeType.CIRCLE) {
-                            return GradientType.circular;
-                        } else if (ps == STPathShadeType.SHAPE) {
-                            return GradientType.shape;
-                        }
-                    }
-                    
-                    return GradientType.linear;
-                }
-            };
-        }
-        
-        return TRANSPARENT_PAINT;
+        };        
     }
+    
 
 }

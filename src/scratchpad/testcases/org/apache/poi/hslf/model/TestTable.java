@@ -70,7 +70,7 @@ public final class TestTable extends TestCase {
     public void test45889(){
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
-        Shape[] shapes;
+        HSLFShape[] shapes;
         Table tbl1 = new Table(1, 5);
         assertEquals(5, tbl1.getNumberOfColumns());
         assertEquals(1, tbl1.getNumberOfRows());

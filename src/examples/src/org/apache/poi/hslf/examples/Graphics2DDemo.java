@@ -46,7 +46,7 @@ public final class Graphics2DDemo {
 
         Slide slide = ppt.createSlide();
 
-        ShapeGroup group = new ShapeGroup();
+        HSLFGroupShape group = new HSLFGroupShape();
         //define position of the drawing in the slide
         Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);
         group.setAnchor(bounds);

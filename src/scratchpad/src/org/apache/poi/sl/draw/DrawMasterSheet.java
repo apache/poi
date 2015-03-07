@@ -1,12 +1,11 @@
 package org.apache.poi.sl.draw;
 
-import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawMasterSheet extends DrawSheet {
+public class DrawMasterSheet<T extends MasterSheet<? extends Shape>> extends DrawSheet<T> {
 
-    public DrawMasterSheet(MasterSheet sheet) {
+    public DrawMasterSheet(T sheet) {
         super(sheet);
     }
 
@@ -17,6 +16,6 @@ public class DrawMasterSheet extends DrawSheet {
      * for instance, slide masters and layouts don't display placeholders
      */
     protected boolean canDraw(Shape shape){
-        return !shape.isPlaceholder();
+        return !(shape instanceof SimpleShape) || !((SimpleShape)shape).isPlaceholder();
     }
 }

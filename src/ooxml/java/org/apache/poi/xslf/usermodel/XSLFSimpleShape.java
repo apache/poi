@@ -19,17 +19,18 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.*;
-import java.awt.Shape;
-import java.awt.geom.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
+import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
@@ -37,7 +38,7 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxmlformats.schemas.presentationml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
  * Represents a single (non-group) shape in a .pptx slide show
@@ -54,75 +55,104 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
 
     /**
      *
-     * @return the sheet this shape belongs to
-     */
-    public XSLFSheet getSheet() {
-        return _sheet;
-    }
-
-    /**
-     *
      * @param type
      */
     public void setShapeType(ShapeType type){
-        CTShape shape = (CTShape) getXmlObject();
         STShapeType.Enum geom = STShapeType.Enum.forInt(type.ooxmlId);
-        shape.getSpPr().getPrstGeom().setPrst(geom);
+        getSpPr().getPrstGeom().setPrst(geom);
     }
 
     public ShapeType getShapeType(){
-        CTShape shape = (CTShape) getXmlObject();
-        STShapeType.Enum geom = shape.getSpPr().getPrstGeom().getPrst();
+        STShapeType.Enum geom = getSpPr().getPrstGeom().getPrst();
         return ShapeType.forId(geom.intValue(), true);
     }
-
-    @Override
-    public String getShapeName() {
-        return getNvPr().getName();
+    
+    protected CTTransform2D getSafeXfrm() {
+        CTTransform2D xfrm = getXfrm();
+        return (xfrm == null ? getSpPr().addNewXfrm() : xfrm);
+    }
+    
+    protected CTTransform2D getXfrm() {
+        PropertyFetcher<CTTransform2D> fetcher = new PropertyFetcher<CTTransform2D>() {
+            public boolean fetch(XSLFShape shape) {
+                CTShapeProperties pr = getSpPr();
+                if (pr.isSetXfrm()) {
+                    setValue(pr.getXfrm());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue();
     }
 
     @Override
-    public int getShapeId() {
-        return (int) getNvPr().getId();
+    public Rectangle2D getAnchor() {
+
+        CTTransform2D xfrm = getXfrm();
+
+        CTPoint2D off = xfrm.getOff();
+        long x = off.getX();
+        long y = off.getY();
+        CTPositiveSize2D ext = xfrm.getExt();
+        long cx = ext.getCx();
+        long cy = ext.getCy();
+        return new Rectangle2D.Double(
+                Units.toPoints(x), Units.toPoints(y),
+                Units.toPoints(cx), Units.toPoints(cy));
     }
 
+    @Override
+    public void setAnchor(Rectangle2D anchor) {
+        CTTransform2D xfrm = getSafeXfrm();
+        CTPoint2D off = xfrm.isSetOff() ? xfrm.getOff() : xfrm.addNewOff();
+        long x = Units.toEMU(anchor.getX());
+        long y = Units.toEMU(anchor.getY());
+        off.setX(x);
+        off.setY(y);
+        CTPositiveSize2D ext = xfrm.isSetExt() ? xfrm.getExt() : xfrm
+                .addNewExt();
+        long cx = Units.toEMU(anchor.getWidth());
+        long cy = Units.toEMU(anchor.getHeight());
+        ext.setCx(cx);
+        ext.setCy(cy);
+    }
+    
     @Override
     public void setRotation(double theta) {
-        CTShapeProperties spPr = getSpPr();
-        CTTransform2D xfrm = spPr.isSetXfrm() ? spPr.getXfrm() : spPr.addNewXfrm();
-        xfrm.setRot((int) (theta * 60000));
+        getSafeXfrm().setRot((int) (theta * 60000));
     }
 
     @Override
     public double getRotation() {
         CTTransform2D xfrm = getXfrm();
-        return (double) xfrm.getRot() / 60000;
+        return (xfrm == null || !xfrm.isSetRot()) ? 0 : (xfrm.getRot() / 60000.d);
     }
 
     @Override
     public void setFlipHorizontal(boolean flip) {
-        CTShapeProperties spPr = getSpPr();
-        CTTransform2D xfrm = spPr.isSetXfrm() ? spPr.getXfrm() : spPr.addNewXfrm();
-        xfrm.setFlipH(flip);
+        getSafeXfrm().setFlipH(flip);
     }
 
     @Override
     public void setFlipVertical(boolean flip) {
-        CTShapeProperties spPr = getSpPr();
-        CTTransform2D xfrm = spPr.isSetXfrm() ? spPr.getXfrm() : spPr.addNewXfrm();
-        xfrm.setFlipV(flip);
+        getSafeXfrm().setFlipV(flip);
     }
 
     @Override
     public boolean getFlipHorizontal() {
-        return getXfrm().getFlipH();
+        CTTransform2D xfrm = getXfrm();
+        return (xfrm == null || !xfrm.isSetFlipH()) ? false : getXfrm().getFlipH();
     }
 
     @Override
     public boolean getFlipVertical() {
-        return getXfrm().getFlipV();
+        CTTransform2D xfrm = getXfrm();
+        return (xfrm == null || !xfrm.isSetFlipV()) ? false : getXfrm().getFlipV();
     }
 
+    
     /**
      * Get default line properties defined in the theme (if any).
      * Used internally to resolve shape properties.
@@ -135,7 +165,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style != null) {
             // 1-based index of a line style within the style matrix
             int idx = (int) style.getLnRef().getIdx();
-            CTStyleMatrix styleMatrix = _sheet.getTheme().getXmlObject().getThemeElements().getFmtScheme();
+            CTStyleMatrix styleMatrix = getSheet().getTheme().getXmlObject().getThemeElements().getFmtScheme();
             ln = styleMatrix.getLnStyleLst().getLnArray(idx - 1);
         }
         return ln;
@@ -175,14 +205,57 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
      * if outline is turned off
      */
     public Color getLineColor() {
-        RenderableShape rShape = new RenderableShape(this);
-        Paint paint = rShape.getLinePaint(null);
-        if (paint instanceof Color) {
-            return (Color) paint;
+        PaintStyle ps = getLinePaint();
+        if (ps == null || ps == TRANSPARENT_PAINT) return null;
+        if (ps instanceof SolidPaint) {
+            Color col = ((SolidPaint)ps).getSolidColor().getColor();
+            return (col == DrawPaint.NO_PAINT) ? null : col;
         }
         return null;
     }
 
+    protected PaintStyle getLinePaint() {
+        PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
+            public boolean fetch(XSLFShape shape) {
+                CTLineProperties spPr = shape.getSpPr().getLn();
+                if (spPr != null) {
+                    if (spPr.isSetNoFill()) {
+                        setValue(TRANSPARENT_PAINT); // use it as 'nofill' value
+                        return true;
+                    }
+                    PaintStyle paint = getPaint(spPr, null);
+                    if (paint != null) {
+                        setValue(paint);
+                        return true;
+                    }
+                }
+                return false;
+
+            }
+        };
+        fetchShapeProperty(fetcher);
+
+        PaintStyle paint = fetcher.getValue();
+        if (paint != null) return paint;
+        
+        // line color was not found, check if it is defined in the theme
+        CTShapeStyle style = getSpStyle();
+        if (style == null) return TRANSPARENT_PAINT;
+        
+        // get a reference to a line style within the style matrix.
+        CTStyleMatrixReference lnRef = style.getLnRef();
+        int idx = (int)lnRef.getIdx();
+        CTSchemeColor phClr = lnRef.getSchemeClr();
+        if(idx > 0){
+            XSLFTheme theme = getSheet().getTheme();
+            XmlObject lnProps = theme.getXmlObject().
+                    getThemeElements().getFmtScheme().getLnStyleLst().selectPath("*")[idx - 1];
+            paint = getPaint(lnProps, phClr);
+        }
+
+        return paint == null ? TRANSPARENT_PAINT : paint;
+    }
+    
     /**
      *
      * @param width line width in points. <code>0</code> means no line
@@ -377,10 +450,11 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
      * is not solid (pattern or gradient)
      */
     public Color getFillColor() {
-        RenderableShape rShape = new RenderableShape(this);
-        Paint paint = rShape.getFillPaint(null);
-        if (paint instanceof Color) {
-            return (Color) paint;
+        PaintStyle ps = getFillPaint();
+        if (ps == null || ps == TRANSPARENT_PAINT) return null;
+        if (ps instanceof SolidPaint) {
+            Color col = ((SolidPaint)ps).getSolidColor().getColor();
+            return (col == DrawPaint.NO_PAINT) ? null : col;
         }
         return null;
     }
@@ -410,7 +484,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
                 // 1-based index of a shadow style within the style matrix
                 int idx = (int) style.getEffectRef().getIdx();
                 if(idx != 0) {
-                    CTStyleMatrix styleMatrix = _sheet.getTheme().getXmlObject().getThemeElements().getFmtScheme();
+                    CTStyleMatrix styleMatrix = getSheet().getTheme().getXmlObject().getThemeElements().getFmtScheme();
                     CTEffectStyleItem ef = styleMatrix.getEffectStyleLst().getEffectStyleArray(idx - 1);
                     obj = ef.getEffectLst().getOuterShdw();
                 }
@@ -493,7 +567,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
     /**
      * Specifies the line end decoration, such as a triangle or arrowhead.
      */
-    public void setLineHeadDecoration(LineDecoration style) {
+    public void setLineHeadDecoration(DecorationShape style) {
         CTLineProperties ln = getSpPr().getLn();
         CTLineEndProperties lnEnd = ln.isSetHeadEnd() ? ln.getHeadEnd() : ln.addNewHeadEnd();
         if (style == null) {
@@ -503,18 +577,18 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
     }
 
-    public LineDecoration getLineHeadDecoration() {
+    public DecorationShape getLineHeadDecoration() {
         CTLineProperties ln = getSpPr().getLn();
-        if (ln == null || !ln.isSetHeadEnd()) return LineDecoration.NONE;
+        if (ln == null || !ln.isSetHeadEnd()) return DecorationShape.NONE;
 
         STLineEndType.Enum end = ln.getHeadEnd().getType();
-        return end == null ? LineDecoration.NONE : LineDecoration.values()[end.intValue() - 1];
+        return end == null ? DecorationShape.NONE : DecorationShape.values()[end.intValue() - 1];
     }
 
     /**
      * specifies decorations which can be added to the head of a line.
      */
-    public void setLineHeadWidth(LineEndWidth style) {
+    public void setLineHeadWidth(DecorationSize style) {
         CTLineProperties ln = getSpPr().getLn();
         CTLineEndProperties lnEnd = ln.isSetHeadEnd() ? ln.getHeadEnd() : ln.addNewHeadEnd();
         if (style == null) {
@@ -524,18 +598,18 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
     }
 
-    public LineEndWidth getLineHeadWidth() {
+    public DecorationSize getLineHeadWidth() {
         CTLineProperties ln = getSpPr().getLn();
-        if (ln == null || !ln.isSetHeadEnd()) return LineEndWidth.MEDIUM;
+        if (ln == null || !ln.isSetHeadEnd()) return DecorationSize.MEDIUM;
 
         STLineEndWidth.Enum w = ln.getHeadEnd().getW();
-        return w == null ? LineEndWidth.MEDIUM : LineEndWidth.values()[w.intValue() - 1];
+        return w == null ? DecorationSize.MEDIUM : DecorationSize.values()[w.intValue() - 1];
     }
 
     /**
      * Specifies the line end width in relation to the line width.
      */
-    public void setLineHeadLength(LineEndLength style) {
+    public void setLineHeadLength(DecorationSize style) {
         CTLineProperties ln = getSpPr().getLn();
         CTLineEndProperties lnEnd = ln.isSetHeadEnd() ? ln.getHeadEnd() : ln.addNewHeadEnd();
 
@@ -546,18 +620,18 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
     }
 
-    public LineEndLength getLineHeadLength() {
+    public DecorationSize getLineHeadLength() {
         CTLineProperties ln = getSpPr().getLn();
-        if (ln == null || !ln.isSetHeadEnd()) return LineEndLength.MEDIUM;
+        if (ln == null || !ln.isSetHeadEnd()) return DecorationSize.MEDIUM;
 
         STLineEndLength.Enum len = ln.getHeadEnd().getLen();
-        return len == null ? LineEndLength.MEDIUM : LineEndLength.values()[len.intValue() - 1];
+        return len == null ? DecorationSize.MEDIUM : DecorationSize.values()[len.intValue() - 1];
     }
 
     /**
      * Specifies the line end decoration, such as a triangle or arrowhead.
      */
-    public void setLineTailDecoration(LineDecoration style) {
+    public void setLineTailDecoration(DecorationShape style) {
         CTLineProperties ln = getSpPr().getLn();
         CTLineEndProperties lnEnd = ln.isSetTailEnd() ? ln.getTailEnd() : ln.addNewTailEnd();
         if (style == null) {
@@ -567,18 +641,18 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
     }
 
-    public LineDecoration getLineTailDecoration() {
+    public DecorationShape getLineTailDecoration() {
         CTLineProperties ln = getSpPr().getLn();
-        if (ln == null || !ln.isSetTailEnd()) return LineDecoration.NONE;
+        if (ln == null || !ln.isSetTailEnd()) return DecorationShape.NONE;
 
         STLineEndType.Enum end = ln.getTailEnd().getType();
-        return end == null ? LineDecoration.NONE : LineDecoration.values()[end.intValue() - 1];
+        return end == null ? DecorationShape.NONE : DecorationShape.values()[end.intValue() - 1];
     }
 
     /**
      * specifies decorations which can be added to the tail of a line.
      */
-    public void setLineTailWidth(LineEndWidth style) {
+    public void setLineTailWidth(DecorationSize style) {
         CTLineProperties ln = getSpPr().getLn();
         CTLineEndProperties lnEnd = ln.isSetTailEnd() ? ln.getTailEnd() : ln.addNewTailEnd();
         if (style == null) {
@@ -588,18 +662,18 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
     }
 
-    public LineEndWidth getLineTailWidth() {
+    public DecorationSize getLineTailWidth() {
         CTLineProperties ln = getSpPr().getLn();
-        if (ln == null || !ln.isSetTailEnd()) return LineEndWidth.MEDIUM;
+        if (ln == null || !ln.isSetTailEnd()) return DecorationSize.MEDIUM;
 
         STLineEndWidth.Enum w = ln.getTailEnd().getW();
-        return w == null ? LineEndWidth.MEDIUM : LineEndWidth.values()[w.intValue() - 1];
+        return w == null ? DecorationSize.MEDIUM : DecorationSize.values()[w.intValue() - 1];
     }
 
     /**
      * Specifies the line end width in relation to the line width.
      */
-    public void setLineTailLength(LineEndLength style) {
+    public void setLineTailLength(DecorationSize style) {
         CTLineProperties ln = getSpPr().getLn();
         CTLineEndProperties lnEnd = ln.isSetTailEnd() ? ln.getTailEnd() : ln.addNewTailEnd();
 
@@ -610,142 +684,12 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
     }
 
-    public LineEndLength getLineTailLength() {
+    public DecorationSize getLineTailLength() {
         CTLineProperties ln = getSpPr().getLn();
-        if (ln == null || !ln.isSetTailEnd()) return LineEndLength.MEDIUM;
+        if (ln == null || !ln.isSetTailEnd()) return DecorationSize.MEDIUM;
 
         STLineEndLength.Enum len = ln.getTailEnd().getLen();
-        return len == null ? LineEndLength.MEDIUM : LineEndLength.values()[len.intValue() - 1];
-    }
-
-    Outline getTailDecoration(Graphics2D graphics) {
-        LineEndLength tailLength = getLineTailLength();
-        LineEndWidth tailWidth = getLineTailWidth();
-
-        double lineWidth = Math.max(2.5, getLineWidth());
-
-        Rectangle2D anchor = new RenderableShape(this).getAnchor(graphics);
-        double x2 = anchor.getX() + anchor.getWidth(),
-                y2 = anchor.getY() + anchor.getHeight();
-
-        double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
-
-        AffineTransform at = new AffineTransform();
-        Shape shape = null;
-        Path p = null;
-        Rectangle2D bounds;
-        double scaleY = Math.pow(2, tailWidth.ordinal());
-        double scaleX = Math.pow(2, tailLength.ordinal());
-        switch (getLineTailDecoration()) {
-            case OVAL:
-                p = new Path();
-                shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
-                bounds = shape.getBounds2D();
-                at.translate(x2 - bounds.getWidth() / 2, y2 - bounds.getHeight() / 2);
-                at.rotate(alpha, bounds.getX() + bounds.getWidth() / 2, bounds.getY() + bounds.getHeight() / 2);
-                break;
-            case ARROW:
-                p = new Path();
-                GeneralPath arrow = new GeneralPath();
-                arrow.moveTo((float) (-lineWidth * 3), (float) (-lineWidth * 2));
-                arrow.lineTo(0, 0);
-                arrow.lineTo((float) (-lineWidth * 3), (float) (lineWidth * 2));
-                shape = arrow;
-                at.translate(x2, y2);
-                at.rotate(alpha);
-                break;
-            case TRIANGLE:
-                p = new Path();
-                scaleY = tailWidth.ordinal() + 1;
-                scaleX = tailLength.ordinal() + 1;
-                GeneralPath triangle = new GeneralPath();
-                triangle.moveTo((float) (-lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
-                triangle.lineTo(0, 0);
-                triangle.lineTo((float) (-lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
-                triangle.closePath();
-                shape = triangle;
-                at.translate(x2, y2);
-                at.rotate(alpha);
-                break;
-            default:
-                break;
-        }
-
-        if (shape != null) {
-            shape = at.createTransformedShape(shape);
-        }
-        return shape == null ? null : new Outline(shape, p);
-    }
-
-    Outline getHeadDecoration(Graphics2D graphics) {
-        LineEndLength headLength = getLineHeadLength();
-        LineEndWidth headWidth = getLineHeadWidth();
-
-        double lineWidth = Math.max(2.5, getLineWidth());
-
-        Rectangle2D anchor = new RenderableShape(this).getAnchor(graphics);
-        double x1 = anchor.getX(),
-                y1 = anchor.getY();
-
-        double alpha = Math.atan(anchor.getHeight() / anchor.getWidth());
-
-        AffineTransform at = new AffineTransform();
-        Shape shape = null;
-        Path p = null;
-        Rectangle2D bounds;
-        double scaleY = 1;
-        double scaleX = 1;
-        switch (getLineHeadDecoration()) {
-            case OVAL:
-                p = new Path();
-                shape = new Ellipse2D.Double(0, 0, lineWidth * scaleX, lineWidth * scaleY);
-                bounds = shape.getBounds2D();
-                at.translate(x1 - bounds.getWidth() / 2, y1 - bounds.getHeight() / 2);
-                at.rotate(alpha, bounds.getX() + bounds.getWidth() / 2, bounds.getY() + bounds.getHeight() / 2);
-                break;
-            case STEALTH:
-            case ARROW:
-                p = new Path(false, true);
-                GeneralPath arrow = new GeneralPath();
-                arrow.moveTo((float) (lineWidth * 3 * scaleX), (float) (-lineWidth * scaleY * 2));
-                arrow.lineTo(0, 0);
-                arrow.lineTo((float) (lineWidth * 3 * scaleX), (float) (lineWidth * scaleY * 2));
-                shape = arrow;
-                at.translate(x1, y1);
-                at.rotate(alpha);
-                break;
-            case TRIANGLE:
-                p = new Path();
-                scaleY = headWidth.ordinal() + 1;
-                scaleX = headLength.ordinal() + 1;
-                GeneralPath triangle = new GeneralPath();
-                triangle.moveTo((float) (lineWidth * scaleX), (float) (-lineWidth * scaleY / 2));
-                triangle.lineTo(0, 0);
-                triangle.lineTo((float) (lineWidth * scaleX), (float) (lineWidth * scaleY / 2));
-                triangle.closePath();
-                shape = triangle;
-                at.translate(x1, y1);
-                at.rotate(alpha);
-                break;
-            default:
-                break;
-        }
-
-        if (shape != null) {
-            shape = at.createTransformedShape(shape);
-        }
-        return shape == null ? null : new Outline(shape, p);
-    }
-
-    private List<Outline> getDecorationOutlines(Graphics2D graphics){
-        List<Outline> lst = new ArrayList<Outline>();
-
-        Outline head = getHeadDecoration(graphics);
-        if(head != null) lst.add(head);
-
-        Outline tail = getTailDecoration(graphics);
-        if(tail != null) lst.add(tail);
-        return lst;
+        return len == null ? DecorationSize.MEDIUM : DecorationSize.values()[len.intValue() - 1];
     }
 
     public boolean isPlaceholder() {
@@ -753,25 +697,79 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         return ph != null;
     }
 
-    public Hyperlink getHyperlink() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void setHyperlink(Hyperlink hyperlink) {
-        // TODO Auto-generated method stub
-        
-    }
-
+    @SuppressWarnings("deprecation")
     public Guide getAdjustValue(String name) {
-        // TODO Auto-generated method stub
+        CTPresetGeometry2D prst = getSpPr().getPrstGeom();
+        if (prst.isSetAvLst()) {
+            for (CTGeomGuide g : prst.getAvLst().getGdArray()) {
+                if (g.getName().equals(name)) {
+                    return new Guide(g.getName(), g.getFmla());
+                }
+            }
+        }
+
         return null;
     }
 
-    public org.apache.poi.sl.usermodel.LineDecoration getLineDecoration() {
-        // TODO Auto-generated method stub
-        return null;
+    public LineDecoration getLineDecoration() {
+        return new LineDecoration() {
+            public DecorationShape getHeadShape() {
+                return getLineHeadDecoration();
+            }
+
+            public DecorationSize getHeadWidth() {
+                return getLineHeadWidth();
+            }
+
+            public DecorationSize getHeadLength() {
+                return getLineHeadLength();
+            }
+
+            public DecorationShape getTailShape() {
+                return getLineTailDecoration();
+            }
+
+            public DecorationSize getTailWidth() {
+                return getLineTailWidth();
+            }
+
+            public DecorationSize getTailLength() {
+                return getLineTailLength();
+            }
+        };
     }
-    
-    
+
+    /**
+     * fetch shape fill as a java.awt.Paint
+     *
+     * @return either Color or GradientPaint or TexturePaint or null
+     */
+    public FillStyle getFillStyle() {
+        return new FillStyle() {
+            public PaintStyle getPaint() {
+                return XSLFSimpleShape.this.getFillPaint();
+            }
+        };
+    }
+
+    public StrokeStyle getStrokeStyle() {
+        return new StrokeStyle() {
+            public PaintStyle getPaint() {
+                return XSLFSimpleShape.this.getLinePaint();
+            }
+
+            public LineCap getLineCap() {
+                return XSLFSimpleShape.this.getLineCap();
+            }
+
+            public LineDash getLineDash() {
+                return XSLFSimpleShape.this.getLineDash();
+            }
+
+            public double getLineWidth() {
+                return XSLFSimpleShape.this.getLineWidth();
+            }
+            
+        };
+    }
 }

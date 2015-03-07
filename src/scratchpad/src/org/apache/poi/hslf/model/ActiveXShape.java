@@ -65,7 +65,7 @@ public final class ActiveXShape extends Picture {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected ActiveXShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+     protected ActiveXShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 

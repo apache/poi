@@ -23,8 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import javax.imageio.ImageIO;
 
@@ -73,6 +72,17 @@ public class ImageRenderer {
         img = ImageIO.read(data);
     }
 
+    /**
+     * Load and buffer the image
+     *
+     * @param data the raw image stream
+     * @param contentType the content type
+     */
+    public void loadImage(byte data[], String contentType) throws IOException {
+        img = ImageIO.read(new ByteArrayInputStream(data));
+    }
+
+    
     /**
      * @return the buffered image
      */

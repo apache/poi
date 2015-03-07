@@ -60,7 +60,7 @@ public final class DataExtraction {
         //extract embedded OLE documents
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
+            HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
                 if (shape[j] instanceof OLEShape) {
                     OLEShape ole = (OLEShape) shape[j];
@@ -102,7 +102,7 @@ public final class DataExtraction {
 
         //Pictures
         for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
+            HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
                 if (shape[j] instanceof Picture) {
                     Picture p = (Picture) shape[j];

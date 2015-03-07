@@ -27,8 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.sl.usermodel.GradientPaint;
-import org.apache.poi.sl.usermodel.TexturePaint;
+import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -142,7 +143,6 @@ public class DrawPaint {
         
         float red,green,blue;
         
-        Color color;
         if (lumOff > 0) {
             float flumOff = lumOff / 100000.f;
             red = (255.f - r) * (1.f - flumOff) + r;
@@ -150,9 +150,9 @@ public class DrawPaint {
             blue = (255.f - b) * flumOff + b;
         } else {
             float flumMod = lumMod / 100000.f;
-            red = r * lumMod;
-            green = g * lumMod;
-            blue = b * lumMod;
+            red = r * flumMod;
+            green = g * flumMod;
+            blue = b * flumMod;
         }
         return new Color(Math.round(red), Math.round(green), Math.round(blue), c.getAlpha());
     }

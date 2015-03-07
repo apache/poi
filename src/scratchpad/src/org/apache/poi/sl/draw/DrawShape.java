@@ -22,14 +22,17 @@ public class DrawShape<T extends Shape> implements Drawable {
      * @param graphics the graphics whos transform matrix will be modified
      */
     public void applyTransform(Graphics2D graphics) {
-        Rectangle2D anchor = shape.getAnchor();
+        if (!(shape instanceof PlaceableShape)) return;
+        
+        PlaceableShape ps = (PlaceableShape)shape;
+        Rectangle2D anchor = ps.getAnchor();
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
         if(tx != null) {
             anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
 
         // rotation
-        double rotation = shape.getRotation();
+        double rotation = ps.getRotation();
         if (rotation != 0.) {
             // PowerPoint rotates shapes relative to the geometric center
             double centerX = anchor.getCenterX();
@@ -59,7 +62,7 @@ public class DrawShape<T extends Shape> implements Drawable {
                 txs.rotate(Math.toRadians(-quadrant*90));
                 txs.translate(-centerX, -centerY);
                 txg.concatenate(txs);
-                Rectangle2D anchor2 = txg.createTransformedShape(shape.getAnchor()).getBounds2D();
+                Rectangle2D anchor2 = txg.createTransformedShape(ps.getAnchor()).getBounds2D();
                 scaleX = anchor.getWidth() == 0. ? 1.0 : anchor.getWidth() / anchor2.getWidth();
                 scaleY = anchor.getHeight() == 0. ? 1.0 : anchor.getHeight() / anchor2.getHeight();
             }
@@ -73,14 +76,14 @@ public class DrawShape<T extends Shape> implements Drawable {
         }
 
         //flip horizontal
-        if (shape.getFlipHorizontal()) {
+        if (ps.getFlipHorizontal()) {
             graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
             graphics.scale(-1, 1);
             graphics.translate(-anchor.getX(), -anchor.getY());
         }
 
         //flip vertical
-        if (shape.getFlipVertical()) {
+        if (ps.getFlipVertical()) {
             graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
             graphics.scale(1, -1);
             graphics.translate(-anchor.getX(), -anchor.getY());
@@ -93,9 +96,12 @@ public class DrawShape<T extends Shape> implements Drawable {
 
     public void drawContent(Graphics2D context) {
     }
-    
+
     public static Rectangle2D getAnchor(Graphics2D graphics, PlaceableShape shape) {
-        Rectangle2D anchor = shape.getAnchor();
+        return getAnchor(graphics, shape.getAnchor());
+    }
+    
+    public static Rectangle2D getAnchor(Graphics2D graphics, Rectangle2D anchor) {
         if(graphics == null)  {
             return anchor;
         }

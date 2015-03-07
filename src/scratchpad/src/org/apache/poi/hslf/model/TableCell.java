@@ -45,7 +45,7 @@ public final class TableCell extends TextBox {
      * @param escherRecord       {@link EscherSpContainer} container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TableCell(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+   protected TableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -55,7 +55,7 @@ public final class TableCell extends TextBox {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TableCell(ShapeContainer<Shape> parent){
+    public TableCell(ShapeContainer<HSLFShape> parent){
         super(parent);
 
         setShapeType(ShapeType.RECT);

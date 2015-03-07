@@ -98,7 +98,7 @@ public final class Fill {
     /**
      * The shape this background applies to
      */
-    protected Shape shape;
+    protected HSLFShape shape;
 
     /**
      * Construct a <code>Fill</code> object for a shape.
@@ -106,7 +106,7 @@ public final class Fill {
      *
      * @param shape the shape this background applies to
      */
-    public Fill(Shape shape){
+    public Fill(HSLFShape shape){
         this.shape = shape;
     }
 
@@ -118,7 +118,7 @@ public final class Fill {
      */
     public int getFillType(){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty prop = Shape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
+        EscherSimpleProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
     }
 
@@ -126,7 +126,7 @@ public final class Fill {
      */
     protected void afterInsert(Sheet sh){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
             EscherBSERecord bse = getEscherBSERecord(idx);
@@ -143,7 +143,7 @@ public final class Fill {
         SlideShow ppt = sheet.getSlideShow();
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
         if(bstore == null) {
             logger.log(POILogger.DEBUG, "EscherContainerRecord.BSTORE_CONTAINER was not found ");
             return null;
@@ -160,7 +160,7 @@ public final class Fill {
      */
     public void setFillType(int type){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        Shape.setEscherProperty(opt, EscherProperties.FILL__FILLTYPE, type);
+        HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLTYPE, type);
     }
 
     /**
@@ -168,7 +168,7 @@ public final class Fill {
      */
     public Color getForegroundColor(){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
         if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
 
@@ -182,12 +182,12 @@ public final class Fill {
     public void setForegroundColor(Color color){
         EscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
-            Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
+            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150000);
         }
         else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            Shape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
-            Shape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
+            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
+            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150011);
         }
     }
 
@@ -196,7 +196,7 @@ public final class Fill {
      */
     public Color getBackgroundColor(){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
 
         if(p != null && (p.getPropertyValue() & 0x10) == 0) return null;
 
@@ -209,11 +209,11 @@ public final class Fill {
     public void setBackgroundColor(Color color){
         EscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
-            Shape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, -1);
+            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, -1);
         }
         else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            Shape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, rgb);
+            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, rgb);
         }
     }
 
@@ -222,7 +222,7 @@ public final class Fill {
      */
     public PictureData getPictureData(){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = Shape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if (p == null) return null;
 
         SlideShow ppt = shape.getSheet().getSlideShow();
@@ -230,7 +230,7 @@ public final class Fill {
         Document doc = ppt.getDocumentRecord();
 
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
-        EscherContainerRecord bstore = Shape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+        EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
 
         java.util.List<EscherRecord> lst = bstore.getChildRecords();
         int idx = p.getPropertyValue();
@@ -255,7 +255,7 @@ public final class Fill {
      */
     public void setPictureData(int idx){
         EscherOptRecord opt = shape.getEscherOptRecord();
-        Shape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), idx);
+        HSLFShape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), idx);
         if( idx != 0 ) {
             if( shape.getSheet() != null ) {
                 EscherBSERecord bse = getEscherBSERecord(idx);

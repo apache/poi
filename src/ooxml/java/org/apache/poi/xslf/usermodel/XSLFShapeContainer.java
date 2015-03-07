@@ -24,7 +24,7 @@ import org.apache.poi.sl.usermodel.ShapeContainer;
 /**
  * Common interface for shape containers, e.g. sheets or groups of shapes
  */
-public interface XSLFShapeContainer extends ShapeContainer {
+public interface XSLFShapeContainer extends ShapeContainer<XSLFShape> {
 
     /**
      * create a new shape with a predefined geometry and add it to this shape container

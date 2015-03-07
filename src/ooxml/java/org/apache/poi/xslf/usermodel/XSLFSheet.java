@@ -16,47 +16,28 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Sheet;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
-
-import com.sun.org.apache.xml.internal.utils.UnImplNode;
+import java.awt.Graphics2D;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.util.*;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet<XSLFShape> {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -498,31 +479,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * @param graphics
      */
     public void draw(Graphics2D graphics){
-        XSLFSheet master = (XSLFSheet)getMasterSheet();
-        if(getFollowMasterGraphics() && master != null) master.draw(graphics);
-
-        graphics.setRenderingHint(XSLFRenderingHint.GROUP_TRANSFORM, new AffineTransform());
-        for(XSLFShape shape : getShapeList()) {
-            if(!canDraw(shape)) continue;
-
-        	// remember the initial transform and restore it after we are done with drawing
-        	AffineTransform at = graphics.getTransform();
-
-            // concrete implementations can make sense of this hint,
-            // for example PSGraphics2D or PDFGraphics2D would call gsave() / grestore
-            graphics.setRenderingHint(XSLFRenderingHint.GSAVE, true);
-
-            // apply rotation and flipping
-            shape.applyTransform(graphics);
-            // draw stuff
-            shape.draw(graphics);
-
-            // restore the coordinate system
-            graphics.setTransform(at);
-
-            graphics.setRenderingHint(XSLFRenderingHint.GRESTORE, true);
-
-        }
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        Drawable draw = drawFact.getDrawable(this);
+        draw.draw(graphics);
     }
 
     /**

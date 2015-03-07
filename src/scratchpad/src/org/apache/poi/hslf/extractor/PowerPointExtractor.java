@@ -192,7 +192,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		for (int i = 0; i < _slides.length; i++) {
 			Slide slide = _slides[i];
 
-			Shape[] shapes = slide.getShapes();
+			HSLFShape[] shapes = slide.getShapes();
 			for (int j = 0; j < shapes.length; j++) {
 				if (shapes[j] instanceof OLEShape) {
 					list.add((OLEShape) shapes[j]);
@@ -221,7 +221,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		if (getSlideText) {
             if (getMasterText) {
                 for (SlideMaster master : _show.getSlidesMasters()) {
-                    for(Shape sh : master.getShapes()){
+                    for(HSLFShape sh : master.getShapes()){
                         if(sh instanceof TextShape){
                             if(MasterSheet.isPlaceholder(sh)) {
                                 // don't bother about boiler
@@ -255,7 +255,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
                 textRunsToText(ret, slide.getTextRuns());
 
                 // Table text
-                for (Shape shape : slide.getShapes()){
+                for (HSLFShape shape : slide.getShapes()){
                     if (shape instanceof Table){
                         extractTableText(ret, (Table)shape);
                     }
