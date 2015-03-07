@@ -21,7 +21,7 @@ package org.apache.poi.hslf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.Table;
 import org.apache.poi.hslf.model.TextRun;
@@ -58,7 +58,7 @@ public final class TestTable extends TestCase {
 
 		assertEquals("Dummy text", textRuns[1].getRawText());
 		
-		final Shape[] shapes = s.getShapes();
+		final HSLFShape[] shapes = s.getShapes();
 		assertNotNull(shapes);
 		assertEquals(3, shapes.length);
 		assertTrue(shapes[2] instanceof Table);

@@ -35,13 +35,13 @@ import java.awt.geom.Rectangle2D;
  */
 public class AutoShape extends TextShape {
 
-    protected AutoShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+    protected AutoShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
-    public AutoShape(ShapeType type, ShapeContainer<Shape> parent){
+    public AutoShape(ShapeType type, ShapeContainer<HSLFShape> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(type, parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(type, parent instanceof HSLFGroupShape);
     }
 
     public AutoShape(ShapeType type){

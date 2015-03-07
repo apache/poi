@@ -176,7 +176,7 @@ public final class Hyperlink {
      * @param shape  <code>Shape</code> to lookup hyperlink in
      * @return found hyperlink or <code>null</code>
      */
-    protected static Hyperlink find(Shape shape){
+    protected static Hyperlink find(HSLFShape shape){
         List<Hyperlink> lst = new ArrayList<Hyperlink>();
         SlideShow ppt = shape.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation

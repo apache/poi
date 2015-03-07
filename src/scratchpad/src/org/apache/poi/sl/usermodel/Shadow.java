@@ -17,10 +17,13 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.Color;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+
 
 
 public interface Shadow {
+    SimpleShape getShadowParent();
+    
     /**
      * @return the offset of this shadow in points
      */
@@ -43,5 +46,5 @@ public interface Shadow {
      * @return the color of this shadow. 
      * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
      */
-    Color getColor();    
+    SolidPaint getFillStyle();    
 }

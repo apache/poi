@@ -62,7 +62,7 @@ public final class Freeform extends AutoShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected Freeform(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+   protected Freeform(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -73,9 +73,9 @@ public final class Freeform extends AutoShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public Freeform(ShapeContainer<Shape> parent){
+    public Freeform(ShapeContainer<HSLFShape> parent){
         super((EscherContainerRecord)null, parent);
-        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
 
     /**

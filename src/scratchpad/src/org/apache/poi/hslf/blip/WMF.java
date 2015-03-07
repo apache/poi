@@ -20,7 +20,7 @@ package org.apache.poi.hslf.blip;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.*;
@@ -78,7 +78,7 @@ public final class WMF extends Metafile {
         header.wmfsize = data.length - aldus.getSize();
         header.bounds = new java.awt.Rectangle((short)aldus.left, (short)aldus.top, (short)aldus.right-(short)aldus.left, (short)aldus.bottom-(short)aldus.top);
         //coefficient to translate from WMF dpi to 96pdi
-        int coeff = 96*Shape.EMU_PER_POINT/aldus.inch;
+        int coeff = 96*HSLFShape.EMU_PER_POINT/aldus.inch;
         header.size = new java.awt.Dimension(header.bounds.width*coeff, header.bounds.height*coeff);
         header.zipsize = compressed.length;
 

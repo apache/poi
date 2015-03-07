@@ -3,16 +3,14 @@ package org.apache.poi.sl.draw;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Shape;
-import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawSheet implements Drawable {
+public class DrawSheet<T extends Sheet<? extends Shape>> implements Drawable {
 
-    protected final Sheet sheet;
+    protected final T sheet;
     
-    public DrawSheet(Sheet sheet) {
+    public DrawSheet(T sheet) {
         this.sheet = sheet;
     }
     
@@ -23,7 +21,7 @@ public class DrawSheet implements Drawable {
 
     public void draw(Graphics2D graphics) {
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
-        MasterSheet master = sheet.getMasterSheet();
+        MasterSheet<? extends Shape> master = sheet.getMasterSheet();
         
         if(sheet.getFollowMasterGraphics() && master != null) {
             Drawable drawer = drawFact.getDrawable(master);

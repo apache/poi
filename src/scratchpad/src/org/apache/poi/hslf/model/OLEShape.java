@@ -52,7 +52,7 @@ public final class OLEShape extends Picture {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public OLEShape(int idx, ShapeContainer<Shape> parent) {
+    public OLEShape(int idx, ShapeContainer<HSLFShape> parent) {
         super(idx, parent);
     }
 
@@ -63,7 +63,7 @@ public final class OLEShape extends Picture {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected OLEShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+     protected OLEShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 

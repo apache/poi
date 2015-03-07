@@ -17,6 +17,6 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface Notes extends Sheet {
+public interface Notes<T extends Shape> extends Sheet<T> {
 	public TextRun getTextRun();
 }

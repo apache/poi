@@ -101,7 +101,7 @@ public final class TestShapes {
         assertEquals(1, ppt.getSlides().length);
 
         slide = ppt.getSlides()[0];
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
         assertEquals(2, shape.length);
 
         assertTrue(shape[0] instanceof Line); //group shape
@@ -119,7 +119,7 @@ public final class TestShapes {
     public void textBoxRead() throws Exception {
         ppt = new SlideShow(_slTests.openResourceAsStream("with_textbox.ppt"));
         Slide sl = ppt.getSlides()[0];
-        Shape[] sh = sl.getShapes();
+        HSLFShape[] sh = sl.getShapes();
         for (int i = 0; i < sh.length; i++) {
             assertTrue(sh[i] instanceof TextBox);
             TextBox txtbox = (TextBox)sh[i];
@@ -241,7 +241,7 @@ public final class TestShapes {
             }
 
             ArrayList<String> lst2 = new ArrayList<String>();
-            Shape[] sh = sl[k].getShapes();
+            HSLFShape[] sh = sl[k].getShapes();
             for (int i = 0; i < sh.length; i++) {
                 if (sh[i] instanceof TextShape){
                     TextShape tbox = (TextShape)sh[i];
@@ -263,7 +263,7 @@ public final class TestShapes {
         Slide slide = ppt.createSlide();
         Dimension pgsize = ppt.getPageSize();
 
-        ShapeGroup group = new ShapeGroup();
+        HSLFGroupShape group = new HSLFGroupShape();
 
         group.setAnchor(new Rectangle(0, 0, (int)pgsize.getWidth(), (int)pgsize.getHeight()));
         slide.addShape(group);
@@ -288,12 +288,12 @@ public final class TestShapes {
 
         slide = ppt.getSlides()[0];
 
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
         assertEquals(1, shape.length);
-        assertTrue(shape[0] instanceof ShapeGroup);
+        assertTrue(shape[0] instanceof HSLFGroupShape);
 
-        group = (ShapeGroup)shape[0];
-        Shape[] grshape = group.getShapes();
+        group = (HSLFGroupShape)shape[0];
+        HSLFShape[] grshape = group.getShapes();
         assertEquals(2, grshape.length);
         assertTrue(grshape[0] instanceof Picture);
         assertTrue(grshape[1] instanceof Line);
@@ -313,7 +313,7 @@ public final class TestShapes {
         String file = "with_textbox.ppt";
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
         Slide sl = ppt.getSlides()[0];
-        Shape[] sh = sl.getShapes();
+        HSLFShape[] sh = sl.getShapes();
         assertEquals("expected four shaped in " + file, 4, sh.length);
         //remove all
         for (int i = 0; i < sh.length; i++) {
@@ -352,7 +352,7 @@ public final class TestShapes {
     public void shapeId() {
         SlideShow ppt = new SlideShow();
         Slide slide = ppt.createSlide();
-        Shape shape = null;
+        HSLFShape shape = null;
 
         //EscherDgg is a document-level record which keeps track of the drawing groups
         EscherDggRecord dgg = ppt.getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
@@ -401,7 +401,7 @@ public final class TestShapes {
     @Test
     public void lineColor() throws IOException {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("51731.ppt"));
-        Shape[] shape = ppt.getSlides()[0].getShapes();
+        HSLFShape[] shape = ppt.getSlides()[0].getShapes();
 
         assertEquals(4, shape.length);
 

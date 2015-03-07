@@ -17,6 +17,13 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface Picture extends SimpleShape {
-	public PictureData getPictureData();
+import java.awt.Insets;
+
+public interface PictureShape extends SimpleShape {
+	PictureData getPictureData();
+
+	/**
+	 * @return the clipping rectangle, which is given in percent in relation to the image width/height
+	 */
+	Insets getClipping();
 }

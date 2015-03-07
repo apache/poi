@@ -30,7 +30,7 @@ import java.awt.*;
  *
  * @author Yegor Kozlov
  */
-public final class Table extends ShapeGroup {
+public final class Table extends HSLFGroupShape {
 
     protected static final int BORDER_TOP = 1;
     protected static final int BORDER_RIGHT = 2;
@@ -93,7 +93,7 @@ public final class Table extends ShapeGroup {
      * @param escherRecord <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent       the parent of the shape
      */
-    public Table(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent) {
+    public Table(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
         super(escherRecord, parent);
     }
 
@@ -150,9 +150,9 @@ public final class Table extends ShapeGroup {
     }
 
     protected void initTable(){
-        List<Shape> shapeList = getShapeList();
-        Collections.sort(shapeList, new Comparator<Shape>(){
-            public int compare( Shape o1, Shape o2 ) {
+        List<HSLFShape> shapeList = getShapeList();
+        Collections.sort(shapeList, new Comparator<HSLFShape>(){
+            public int compare( HSLFShape o1, HSLFShape o2 ) {
                 Rectangle anchor1 = o1.getAnchor();
                 Rectangle anchor2 = o2.getAnchor();
                 int delta = anchor1.y - anchor2.y;
@@ -162,14 +162,14 @@ public final class Table extends ShapeGroup {
         });
         int y0 = -1;
         int maxrowlen = 0;
-        List<List<Shape>> lst = new ArrayList<List<Shape>>();
-        List<Shape> row = null;
-        for (Shape sh : shapeList) {
+        List<List<HSLFShape>> lst = new ArrayList<List<HSLFShape>>();
+        List<HSLFShape> row = null;
+        for (HSLFShape sh : shapeList) {
             if(sh instanceof TextShape){
                 Rectangle anchor = sh.getAnchor();
                 if(anchor.y != y0){
                     y0 = anchor.y;
-                    row = new ArrayList<Shape>();
+                    row = new ArrayList<HSLFShape>();
                     lst.add(row);
                 }
                 row.add(sh);

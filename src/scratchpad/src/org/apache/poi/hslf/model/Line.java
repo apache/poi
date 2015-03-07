@@ -97,13 +97,13 @@ public final class Line extends SimpleShape {
     public static final int LINE_TRIPLE = 4;
 
 
-    protected Line(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+    protected Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
-    public Line(ShapeContainer<Shape> parent){
+    public Line(ShapeContainer<HSLFShape> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     public Line(){

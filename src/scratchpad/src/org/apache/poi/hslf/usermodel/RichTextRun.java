@@ -20,7 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import java.awt.Color;
 
 import org.apache.poi.hslf.model.MasterSheet;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.model.Sheet;
 import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
@@ -618,28 +618,28 @@ public final class RichTextRun {
 	 * Sets the bullet offset
 	 */
 	public void setBulletOffset(int offset) {
-		setParaTextPropVal("bullet.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
+		setParaTextPropVal("bullet.offset", offset*HSLFShape.MASTER_DPI/HSLFShape.POINT_DPI);
 	}
 
 	/**
 	 * Returns the bullet offset
 	 */
 	public int getBulletOffset() {
-		return getParaTextPropVal("bullet.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
+		return getParaTextPropVal("bullet.offset")*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
 	}
 
 	/**
 	 * Sets the text offset
 	 */
 	public void setTextOffset(int offset) {
-		setParaTextPropVal("text.offset", offset*Shape.MASTER_DPI/Shape.POINT_DPI);
+		setParaTextPropVal("text.offset", offset*HSLFShape.MASTER_DPI/HSLFShape.POINT_DPI);
 	}
 
 	/**
 	 * Returns the text offset
 	 */
 	public int getTextOffset() {
-		return getParaTextPropVal("text.offset")*Shape.POINT_DPI/Shape.MASTER_DPI;
+		return getParaTextPropVal("text.offset")*HSLFShape.POINT_DPI/HSLFShape.MASTER_DPI;
 	}
 
 	/**

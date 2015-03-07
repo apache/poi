@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface ShapeGroup extends ShapeContainer {
+import java.awt.geom.Rectangle2D;
 
+public interface ShapeGroup<T extends Shape> extends ShapeContainer<T>, PlaceableShape {
+    Rectangle2D getInteriorAnchor();
 }

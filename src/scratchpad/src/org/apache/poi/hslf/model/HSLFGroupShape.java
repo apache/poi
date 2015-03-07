@@ -40,13 +40,13 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
+public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShape> {
 
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
       *
       */
-    public ShapeGroup(){
+    public HSLFGroupShape(){
         this(null, null);
         _escherContainer = createSpContainer(false);
     }
@@ -57,16 +57,16 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
       * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
       * @param parent    the parent of the shape
       */
-    protected ShapeGroup(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+    protected HSLFGroupShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
     /**
      * @return the shapes contained in this group container
      */
-    public Shape[] getShapes() {
-        List<Shape> shapeList = getShapeList();
-        Shape[] shapes = shapeList.toArray(new Shape[shapeList.size()]);
+    public HSLFShape[] getShapes() {
+        List<HSLFShape> shapeList = getShapeList();
+        HSLFShape[] shapes = shapeList.toArray(new HSLFShape[shapeList.size()]);
         return shapes;
     }
 
@@ -174,7 +174,7 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
      *
      * @param shape - the Shape to add
      */
-    public void addShape(Shape shape){
+    public void addShape(HSLFShape shape){
         _escherContainer.addChildRecord(shape.getSpContainer());
 
         Sheet sheet = getSheet();
@@ -196,7 +196,7 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
         anchor.translate(dx, dy);
         setAnchor(anchor);
 
-        Shape[] shape = getShapes();
+        HSLFShape[] shape = getShapes();
         for (int i = 0; i < shape.length; i++) {
             java.awt.Rectangle chanchor = shape[i].getAnchor();
             chanchor.translate(dx, dy);
@@ -257,7 +257,7 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
 
         AffineTransform at = graphics.getTransform();
 
-        Shape[] sh = getShapes();
+        HSLFShape[] sh = getShapes();
         for (int i = 0; i < sh.length; i++) {
             sh[i].draw(graphics);
         }
@@ -271,11 +271,11 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
         return groupInfoContainer.getChildById((short)recordId);
     }
 
-    public Iterator<Shape> iterator() {
+    public Iterator<HSLFShape> iterator() {
         return getShapeList().iterator();
     }
 
-    public boolean removeShape(Shape shape) {
+    public boolean removeShape(HSLFShape shape) {
         // TODO: implement!
         throw new UnsupportedOperationException();
     }
@@ -283,7 +283,7 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
     /**
      * @return the shapes contained in this group container
      */
-    protected List<Shape> getShapeList() {
+    protected List<HSLFShape> getShapeList() {
         // Out escher container record should contain several
         //  SpContainers, the first of which is the group shape itself
         Iterator<EscherRecord> iter = _escherContainer.getChildIterator();
@@ -292,13 +292,13 @@ public class ShapeGroup extends Shape implements ShapeContainer<Shape> {
         if (iter.hasNext()) {
             iter.next();
         }
-        List<Shape> shapeList = new ArrayList<Shape>();
+        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
         while (iter.hasNext()) {
             EscherRecord r = iter.next();
             if(r instanceof EscherContainerRecord) {
                 // Create the Shape for it
                 EscherContainerRecord container = (EscherContainerRecord)r;
-                Shape shape = ShapeFactory.createShape(container, this);
+                HSLFShape shape = ShapeFactory.createShape(container, this);
                 shape.setSheet(getSheet());
                 shapeList.add( shape );
             } else {

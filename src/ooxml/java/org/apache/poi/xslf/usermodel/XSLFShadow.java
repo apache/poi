@@ -17,22 +17,22 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.sl.usermodel.Shadow;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Represents a shadow of a shape. For now supports only outer shadows.
  *
  * @author Yegor Kozlov
  */
-public class XSLFShadow extends XSLFSimpleShape implements Shadow {
+public class XSLFShadow extends XSLFShape implements Shadow {
 
     private XSLFSimpleShape _parent;
 
@@ -42,54 +42,15 @@ public class XSLFShadow extends XSLFSimpleShape implements Shadow {
         _parent = parentShape;
     }
 
-
-    public void fill(Graphics2D graphics, Shape outline) {
-
-        double shapeRotation = _parent.getRotation();
-        if(_parent.getFlipVertical()){
-            shapeRotation += 180;
-        }
-        double angle = getAngle() - shapeRotation;
-        double dist = getDistance();
-        double dx = dist * Math.cos(Math.toRadians(angle));
-        double dy = dist * Math.sin(Math.toRadians(angle));
-
-        graphics.translate(dx, dy);
-
-        Color fillColor = getFillColor();
-        if (fillColor != null) {
-            graphics.setColor(fillColor);
-            graphics.fill(outline);
-        }
-
-        graphics.translate(-dx, -dy);
-    }
-
-    public void draw(Graphics2D graphics, Shape outline) {
-
-        double angle = getAngle();
-        double dist = getDistance();
-        double dx = dist * Math.cos(Math.toRadians(angle));
-        double dy = dist * Math.sin(Math.toRadians(angle));
-
-        graphics.translate(dx, dy);
-
-        Color fillColor = getFillColor();
-        if (fillColor != null) {
-            graphics.setColor(fillColor);
-            graphics.draw(outline);
-        }
-
-        graphics.translate(-dx, -dy);
-    }
-
-
     @Override
+    public XSLFSimpleShape getShadowParent() {
+        return _parent;
+    }
+
     public Rectangle2D getAnchor(){
         return _parent.getAnchor();
     }
 
-    @Override
     public void setAnchor(Rectangle2D anchor){
         throw new IllegalStateException("You can't set anchor of a shadow");
     }
@@ -125,15 +86,25 @@ public class XSLFShadow extends XSLFSimpleShape implements Shadow {
      * @return the color of this shadow. 
      * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
      */
-    @Override
     public Color getFillColor() {
+        SolidPaint ps = getFillStyle();
+        if (ps == TRANSPARENT_PAINT) return null;
+        Color col = DrawPaint.applyColorTransform(ps.getSolidColor());
+        return col;
+    }
+
+    @Override
+    public SolidPaint getFillStyle() {
         XSLFTheme theme = getSheet().getTheme();
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
-        if(ct == null) {
-            return null;
-        } else {
-            CTSchemeColor phClr = ct.getSchemeClr();
-            return new XSLFColor(ct, theme, phClr).getColor();
-        }
+        if(ct == null) return TRANSPARENT_PAINT;
+            
+        CTSchemeColor phClr = ct.getSchemeClr();
+        final XSLFColor xc = new XSLFColor(ct, theme, phClr);
+        return new SolidPaint(){
+            public ColorStyle getSolidColor() {
+                return xc.getColorStyle();
+            }
+        };
     }
 }

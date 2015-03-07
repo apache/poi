@@ -36,7 +36,7 @@ public final class Polygon extends AutoShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+   protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -47,9 +47,9 @@ public final class Polygon extends AutoShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public Polygon(ShapeContainer<Shape> parent){
+    public Polygon(ShapeContainer<HSLFShape> parent){
         super((EscherContainerRecord)null, parent);
-        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
 
     /**

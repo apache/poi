@@ -34,7 +34,7 @@ import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
+import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.model.Slide;
 
 /**
@@ -68,7 +68,7 @@ public final class TestPictures extends TestCase{
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         //make sure we can read this picture shape and it refers to the correct picture data
-        Shape[] sh = ppt.getSlides()[0].getShapes();
+        HSLFShape[] sh = ppt.getSlides()[0].getShapes();
         assertEquals(1, sh.length);
         pict = (Picture)sh[0];
         assertEquals(idx, pict.getPictureIndex());
@@ -113,7 +113,7 @@ public final class TestPictures extends TestCase{
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         //make sure we can read this picture shape and it refers to the correct picture data
-        Shape[] sh = ppt.getSlides()[0].getShapes();
+        HSLFShape[] sh = ppt.getSlides()[0].getShapes();
         assertEquals(1, sh.length);
         pict = (Picture)sh[0];
         assertEquals(idx, pict.getPictureIndex());
@@ -159,7 +159,7 @@ public final class TestPictures extends TestCase{
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         //make sure we can get this picture shape and it refers to the correct picture data
-        Shape[] sh = ppt.getSlides()[0].getShapes();
+        HSLFShape[] sh = ppt.getSlides()[0].getShapes();
         assertEquals(1, sh.length);
         pict = (Picture)sh[0];
         assertEquals(idx, pict.getPictureIndex());
@@ -198,7 +198,7 @@ public final class TestPictures extends TestCase{
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         //make sure we can read this picture shape and it refers to the correct picture data
-        Shape[] sh = ppt.getSlides()[0].getShapes();
+        HSLFShape[] sh = ppt.getSlides()[0].getShapes();
         assertEquals(1, sh.length);
         pict = (Picture)sh[0];
         assertEquals(idx, pict.getPictureIndex());
@@ -238,7 +238,7 @@ public final class TestPictures extends TestCase{
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         //make sure we can read this picture shape and it refers to the correct picture data
-        Shape[] sh = ppt.getSlides()[0].getShapes();
+        HSLFShape[] sh = ppt.getSlides()[0].getShapes();
         assertEquals(1, sh.length);
         pict = (Picture)sh[0];
         assertEquals(idx, pict.getPictureIndex());
@@ -277,7 +277,7 @@ public final class TestPictures extends TestCase{
         ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
 
         //make sure we can read this picture shape and it refers to the correct picture data
-        Shape[] sh = ppt.getSlides()[0].getShapes();
+        HSLFShape[] sh = ppt.getSlides()[0].getShapes();
         assertEquals(1, sh.length);
         pict = (Picture)sh[0];
         assertEquals(idx, pict.getPictureIndex());

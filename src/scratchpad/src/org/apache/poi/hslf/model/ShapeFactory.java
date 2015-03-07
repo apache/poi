@@ -51,16 +51,16 @@ public final class ShapeFactory {
     /**
      * Create a new shape from the data provided.
      */
-    public static Shape createShape(EscherContainerRecord spContainer, ShapeContainer<Shape> parent){
+    public static HSLFShape createShape(EscherContainerRecord spContainer, ShapeContainer<HSLFShape> parent){
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
             return createShapeGroup(spContainer, parent);
         }
         return createSimpeShape(spContainer, parent);
     }
 
-    public static ShapeGroup createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<Shape> parent){
-        ShapeGroup group = null;
-        EscherRecord opt = Shape.getEscherChild((EscherContainerRecord)spContainer.getChild(0), (short)0xF122);
+    public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape> parent){
+        HSLFGroupShape group = null;
+        EscherRecord opt = HSLFShape.getEscherChild((EscherContainerRecord)spContainer.getChild(0), (short)0xF122);
         if(opt != null){
             try {
                 EscherPropertyFactory f = new EscherPropertyFactory();
@@ -69,21 +69,21 @@ public final class ShapeFactory {
                 if(p.getPropertyNumber() == 0x39F && p.getPropertyValue() == 1){
                     group = new Table(spContainer, parent);
                 } else {
-                    group = new ShapeGroup(spContainer, parent);
+                    group = new HSLFGroupShape(spContainer, parent);
                 }
             } catch (Exception e){
                 logger.log(POILogger.WARN, e.getMessage());
-                group = new ShapeGroup(spContainer, parent);
+                group = new HSLFGroupShape(spContainer, parent);
             }
         }  else {
-            group = new ShapeGroup(spContainer, parent);
+            group = new HSLFGroupShape(spContainer, parent);
         }
 
         return group;
      }
 
-    public static Shape createSimpeShape(EscherContainerRecord spContainer, ShapeContainer<Shape> parent){
-        Shape shape = null;
+    public static HSLFShape createSimpeShape(EscherContainerRecord spContainer, ShapeContainer<HSLFShape> parent){
+        HSLFShape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 
         ShapeType type = ShapeType.forId(spRecord.getShapeType(), false);
@@ -117,8 +117,8 @@ public final class ShapeFactory {
                 shape = new Line(spContainer, parent);
                 break;
             case NOT_PRIMITIVE: {
-                EscherOptRecord opt = Shape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
-                EscherProperty prop = Shape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
+                EscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
+                EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
                 if(prop != null)
                     shape = new Freeform(spContainer, parent);
                 else {

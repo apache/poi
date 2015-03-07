@@ -17,20 +17,9 @@
 
 package org.apache.poi.sl.usermodel;
 
-import java.awt.geom.Rectangle2D;
 
-import org.apache.poi.sl.draw.geom.CustomGeometry;
-
-public interface Shape extends PlaceableShape {
-    CustomGeometry getGeometry();
-    
-	ShapeType getShapeType();
-
-	void setAnchor(Rectangle2D anchor);
-
+public interface Shape {
 	ShapeContainer getParent();
-	
-	boolean isPlaceholder();
 	
     /**
     *
@@ -38,42 +27,6 @@ public interface Shape extends PlaceableShape {
     */
    Sheet getSheet();
 	
-    /**
-     * Rotate this shape.
-     * <p>
-     * Positive angles are clockwise (i.e., towards the positive y axis);
-     * negative angles are counter-clockwise (i.e., towards the negative y axis).
-     * </p>
-     *
-     * @param theta the rotation angle in degrees.
-     */
-    void setRotation(double theta);
-
-    /**
-     * @param flip whether the shape is horizontally flipped
-     */
-    void setFlipHorizontal(boolean flip);
-
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @param flip whether the shape is vertically flipped
-     */
-    void setFlipVertical(boolean flip);
-
-    /**
-     * Whether the shape is horizontally flipped
-     *
-     * @return whether the shape is horizontally flipped
-     */
-    boolean getFlipHorizontal();
-
-    /**
-     * Whether the shape is vertically flipped
-     *
-     * @return whether the shape is vertically flipped
-     */
-    boolean getFlipVertical();
 
 	
 }

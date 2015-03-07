@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.model;
 
-import org.apache.poi.xslf.usermodel.XSLFSimpleShape;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 
@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
  */
 public abstract class TextBodyPropertyFetcher<T> extends PropertyFetcher<T> {
 
-    public boolean fetch(XSLFSimpleShape shape) {
+    public boolean fetch(XSLFShape shape) {
 
         XmlObject[] o = shape.getXmlObject().selectPath(
                 "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +

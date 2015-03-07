@@ -57,7 +57,7 @@ import org.apache.poi.util.POILogger;
  * @author Yegor Kozlov
  */
 
-public abstract class Sheet implements ShapeContainer<Shape> {
+public abstract class Sheet implements ShapeContainer<HSLFShape> {
 	private static POILogger logger = POILogFactory.getLogger(Sheet.class);
 
     /**
@@ -272,9 +272,9 @@ public abstract class Sheet implements ShapeContainer<Shape> {
      *
      * @return all shapes contained in this Sheet (Slide or Notes)
      */
-    public Shape[] getShapes() {
-        List<Shape> shapeList = getShapeList();
-        return shapeList.toArray(new Shape[shapeList.size()]);
+    public HSLFShape[] getShapes() {
+        List<HSLFShape> shapeList = getShapeList();
+        return shapeList.toArray(new HSLFShape[shapeList.size()]);
     }
 
     /**
@@ -282,11 +282,11 @@ public abstract class Sheet implements ShapeContainer<Shape> {
      *
      * @param shape - the Shape to add
      */
-    public void addShape(Shape shape) {
+    public void addShape(HSLFShape shape) {
         PPDrawing ppdrawing = getPPDrawing();
 
         EscherContainerRecord dgContainer = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
-        EscherContainerRecord spgr = (EscherContainerRecord) Shape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
+        EscherContainerRecord spgr = (EscherContainerRecord) HSLFShape.getEscherChild(dgContainer, EscherContainerRecord.SPGR_CONTAINER);
         spgr.addChildRecord(shape.getSpContainer());
 
         shape.setSheet(this);
@@ -339,7 +339,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
      * @param shape shape to be removed from this sheet, if present.
      * @return <tt>true</tt> if the shape was deleted.
      */
-    public boolean removeShape(Shape shape) {
+    public boolean removeShape(HSLFShape shape) {
         PPDrawing ppdrawing = getPPDrawing();
 
         EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
@@ -427,7 +427,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
      * @return  <code>TextShape</code> or <code>null</code>
      */
     public TextShape getPlaceholderByTextType(int type){
-        Shape[] shape = getShapes();
+        HSLFShape[] shape = getShapes();
         for (int i = 0; i < shape.length; i++) {
             if(shape[i] instanceof TextShape){
                 TextShape tx = (TextShape)shape[i];
@@ -447,7 +447,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
      * @return  <code>TextShape</code> or <code>null</code>
      */
     public TextShape getPlaceholder(int type){
-        Shape[] shape = getShapes();
+        HSLFShape[] shape = getShapes();
         for (int i = 0; i < shape.length; i++) {
             if(shape[i] instanceof TextShape){
                 TextShape tx = (TextShape)shape[i];
@@ -497,7 +497,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
 
     }
 
-    public Iterator<Shape> iterator() {
+    public Iterator<HSLFShape> iterator() {
         return getShapeList().iterator();
     }
 
@@ -507,7 +507,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
      *
      * @return all shapes contained in this Sheet (Slide or Notes)
      */
-    protected List<Shape> getShapeList() {
+    protected List<HSLFShape> getShapeList() {
         PPDrawing ppdrawing = getPPDrawing();
 
         EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
@@ -524,7 +524,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
             throw new IllegalStateException("spgr not found");
         }
 
-        List<Shape> shapeList = new ArrayList<Shape>();
+        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
         Iterator<EscherRecord> it = spgr.getChildIterator();
         if (it.hasNext()) {
             // skip first item
@@ -532,7 +532,7 @@ public abstract class Sheet implements ShapeContainer<Shape> {
         }
         for (; it.hasNext();) {
             EscherContainerRecord sp = (EscherContainerRecord) it.next();
-            Shape sh = ShapeFactory.createShape(sp, null);
+            HSLFShape sh = ShapeFactory.createShape(sp, null);
             sh.setSheet(this);
             shapeList.add(sh);
         }

@@ -20,11 +20,17 @@ package org.apache.poi.sl.usermodel;
 import java.awt.geom.Rectangle2D;
 
 public interface PlaceableShape {
+    /**
+     * @return the position of this shape within the drawing canvas.
+     *         The coordinates are expressed in points
+     */
     Rectangle2D getAnchor();
 
-    FillStyle getFillStyle();
-    
-    StrokeStyle getStrokeStyle();
+    /**
+     * @param anchor the position of this shape within the drawing canvas.
+     *               The coordinates are expressed in points
+     */
+    void setAnchor(Rectangle2D anchor);
 
     /**
      * Rotation angle in degrees
@@ -36,4 +42,41 @@ public interface PlaceableShape {
      * @return rotation angle in degrees
      */
     double getRotation();
+
+    /**
+     * Rotate this shape.
+     * <p>
+     * Positive angles are clockwise (i.e., towards the positive y axis);
+     * negative angles are counter-clockwise (i.e., towards the negative y axis).
+     * </p>
+     *
+     * @param theta the rotation angle in degrees.
+     */
+    void setRotation(double theta);
+
+    /**
+     * @param flip whether the shape is horizontally flipped
+     */
+    void setFlipHorizontal(boolean flip);
+
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @param flip whether the shape is vertically flipped
+     */
+    void setFlipVertical(boolean flip);
+
+    /**
+     * Whether the shape is horizontally flipped
+     *
+     * @return whether the shape is horizontally flipped
+     */
+    boolean getFlipHorizontal();
+
+    /**
+     * Whether the shape is vertically flipped
+     *
+     * @return whether the shape is vertically flipped
+     */
+    boolean getFlipVertical();
 }

@@ -45,7 +45,7 @@ import java.awt.geom.Rectangle2D;
   *
   * @author Yegor Kozlov
  */
-public abstract class Shape implements org.apache.poi.sl.usermodel.Shape<Shape> {
+public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSLFShape> {
 
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
@@ -85,7 +85,7 @@ public abstract class Shape implements org.apache.poi.sl.usermodel.Shape<Shape> 
      * Parent of this shape.
      * <code>null</code> for the topmost shapes.
      */
-    protected ShapeContainer<Shape> _parent;
+    protected ShapeContainer<HSLFShape> _parent;
 
     /**
      * The <code>Sheet</code> this shape belongs to
@@ -103,7 +103,7 @@ public abstract class Shape implements org.apache.poi.sl.usermodel.Shape<Shape> 
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent             the parent of this Shape
      */
-      protected Shape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+      protected HSLFShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         _escherContainer = escherRecord;
         _parent = parent;
      }
@@ -116,7 +116,7 @@ public abstract class Shape implements org.apache.poi.sl.usermodel.Shape<Shape> 
     /**
      *  @return the parent of this shape
      */
-    public ShapeContainer<Shape> getParent(){
+    public ShapeContainer<HSLFShape> getParent(){
         return _parent;
     }
 

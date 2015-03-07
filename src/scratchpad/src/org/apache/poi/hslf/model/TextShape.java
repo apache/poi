@@ -111,7 +111,7 @@ public abstract class TextShape extends SimpleShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TextShape(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+   protected TextShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -122,9 +122,9 @@ public abstract class TextShape extends SimpleShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TextShape(ShapeContainer<Shape> parent){
+    public TextShape(ShapeContainer<HSLFShape> parent){
         super(null, parent);
-        _escherContainer = createSpContainer(parent instanceof ShapeGroup);
+        _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
 
     /**

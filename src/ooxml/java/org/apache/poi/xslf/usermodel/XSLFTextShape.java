@@ -19,17 +19,13 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.sl.draw.DrawFactory;
-import org.apache.poi.sl.draw.geom.Guide;
+import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
@@ -40,17 +36,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * Represents a shape that can hold text.
- *
- * @author Yegor Kozlov
  */
 @Beta
-public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape {
+public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape<XSLFTextParagraph> {
     private final List<XSLFTextParagraph> _paragraphs;
-
-    /**
-     * whether the text was broken into lines.
-     */
-    private boolean _isTextBroken;
 
     @SuppressWarnings("deprecation")
     /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
@@ -66,7 +55,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
     }
 
     public Iterator<XSLFTextParagraph> iterator(){
-        return _paragraphs.iterator();
+        return getTextParagraphs().iterator();
     }
 
     /**
@@ -408,22 +397,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
         return textBody == null ? null : textBody.getBodyPr();
     }
 
-
     protected abstract CTTextBody getTextBody(boolean create);
 
 
     public Placeholder getTextType(){
-        CTPlaceholder ph;
-        XmlObject[] obj = getXmlObject().selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr/p:ph");
-        if(obj.length == 1){
-            ph = (CTPlaceholder)obj[0];
-            int val = ph.getType().intValue();
-            return Placeholder.values()[val - 1];
-        }
-        else {
-            return null;
-        }
+        CTPlaceholder ph = getCTPlaceholder();
+        if (ph == null) return null;
+
+        int val = ph.getType().intValue();
+        return Placeholder.values()[val - 1];
     }
 
 
@@ -437,10 +419,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
      * @param placeholder
      */
     public void setPlaceholder(Placeholder placeholder){
-        CTShape sh =  (CTShape)getXmlObject();
-        CTApplicationNonVisualDrawingProps nv = sh.getNvSpPr().getNvPr();
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr";
+        CTApplicationNonVisualDrawingProps nv = selectProperty(CTApplicationNonVisualDrawingProps.class, xquery);
+        if (nv == null) return;
         if(placeholder == null) {
-            if(nv.isSetPh()) nv.unsetPh();
+            if (nv.isSetPh()) nv.unsetPh();
         } else {
             nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
         }
@@ -450,14 +433,9 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
      * Compute the cumulative height occupied by the text
      */
     public double getTextHeight(){
-        // dry-run in a 1x1 image and return the vertical advance
-        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics = img.createGraphics();
-        DrawFactory fact = DrawFactory.getInstance(graphics);
-        fact.getDrawable(this);
-        
-        breakText(graphics);
-        return drawParagraphs(graphics, 0, 0);
+        DrawFactory drawFact = DrawFactory.getInstance(null);
+        DrawTextShape<XSLFTextShape> dts = drawFact.getDrawable(this);
+        return dts.getTextHeight();
     }
 
     /**
@@ -520,20 +498,5 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
             p2.copy(p1);
         }
 
-    }
-
-    public LineDecoration getLineDecoration() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public FillStyle getFillStyle() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public Guide getAdjustValue(String name) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

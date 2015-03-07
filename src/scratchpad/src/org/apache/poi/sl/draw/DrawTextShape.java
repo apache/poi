@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 import org.apache.poi.sl.usermodel.*;
 
-public class DrawTextShape<T extends TextShape> extends DrawSimpleShape<T> {
+public class DrawTextShape<T extends TextShape<? extends TextParagraph>> extends DrawSimpleShape<T> {
 
     public DrawTextShape(T shape) {
         super(shape);
@@ -84,7 +84,7 @@ public class DrawTextShape<T extends TextShape> extends DrawSimpleShape<T> {
         Insets2D shapePadding = shape.getInsets();
 
         double y0 = y;
-        Iterator<TextParagraph> paragraphs = shape.iterator();
+        Iterator<? extends TextParagraph> paragraphs = shape.iterator();
         
         boolean isFirstLine = true;
         while (paragraphs.hasNext()){
@@ -129,12 +129,10 @@ public class DrawTextShape<T extends TextShape> extends DrawSimpleShape<T> {
     /**
      * Compute the cumulative height occupied by the text
      */
-    protected double getTextHeight(){
+    public double getTextHeight(){
         // dry-run in a 1x1 image and return the vertical advance
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = img.createGraphics();
         return drawParagraphs(graphics, 0, 0);
     }
-
-    
 }

@@ -38,7 +38,7 @@ public class TextBox extends TextShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TextBox(EscherContainerRecord escherRecord, ShapeContainer<Shape> parent){
+   protected TextBox(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -49,7 +49,7 @@ public class TextBox extends TextShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TextBox(ShapeContainer<Shape> parent){
+    public TextBox(ShapeContainer<HSLFShape> parent){
         super(parent);
     }
 

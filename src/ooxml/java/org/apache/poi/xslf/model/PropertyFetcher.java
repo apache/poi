@@ -36,7 +36,7 @@ public abstract class PropertyFetcher<T> {
      * @param shape the shape being examined
      * @return true if the desired property was fetched
      */
-    public abstract boolean fetch(XSLFShape shape) ;
+    public abstract boolean fetch(XSLFShape shape);
 
     public T getValue(){
         return _value;

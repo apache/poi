@@ -89,7 +89,7 @@ public final class TestTextShape {
 
         List<String> lst1 = new ArrayList<String>();
         Slide slide = ppt.getSlides()[0];
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
             assertTrue("Expected TextShape but found " + shape[i].getClass().getName(), shape[i] instanceof TextShape);
             TextShape tx = (TextShape)shape[i];
@@ -157,7 +157,7 @@ public final class TestTextShape {
 
         ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
         slide = ppt.getSlides()[0];
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
 
         assertTrue(shape[0] instanceof TextShape);
         shape1 = (TextShape)shape[0];
@@ -177,7 +177,7 @@ public final class TestTextShape {
         Slide slide = ppt.getSlides()[0];
 
         Map<String,TextShape> map = new HashMap<String,TextShape>();
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
             if(shape[i] instanceof TextShape){
                 TextShape tx = (TextShape)shape[i];
@@ -188,28 +188,28 @@ public final class TestTextShape {
         TextShape tx;
 
         tx = map.get("TEST1");
-        assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.39, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
 
         tx = map.get("TEST2");
-        assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.39, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
 
         tx = map.get("TEST3");
-        assertEquals(0.39, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.1, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
 
         tx = map.get("TEST4");
-        assertEquals(0.1, tx.getMarginLeft()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.39, tx.getMarginRight()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginTop()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginBottom()*Shape.EMU_PER_POINT/Shape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
     }
 
     @Test
@@ -217,7 +217,7 @@ public final class TestTextShape {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("52599.ppt"));
 
         Slide slide = ppt.getSlides()[0];
-        Shape[] sh = slide.getShapes();
+        HSLFShape[] sh = slide.getShapes();
         assertEquals(3, sh.length);
 
         TextShape sh0 = (TextShape)sh[0];

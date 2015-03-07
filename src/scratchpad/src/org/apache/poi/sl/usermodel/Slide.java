@@ -17,9 +17,9 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface Slide extends Sheet {
-	public Notes getNotes();
-	public void setNotes(Notes notes);
+public interface Slide<T extends Shape> extends Sheet<T> {
+	public Notes<T> getNotes();
+	public void setNotes(Notes<T> notes);
 
 	public boolean getFollowMasterBackground();
 	public void setFollowMasterBackground(boolean follow);

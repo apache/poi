@@ -149,7 +149,7 @@ public final class Slide extends Sheet {
         //initialize drawing group id
         EscherDggRecord dgg = getSlideShow().getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
         EscherContainerRecord dgContainer = (EscherContainerRecord)getSheetContainer().getPPDrawing().getEscherRecords()[0];
-        EscherDgRecord dg = (EscherDgRecord) Shape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
+        EscherDgRecord dg = (EscherDgRecord) HSLFShape.getEscherChild(dgContainer, EscherDgRecord.RECORD_ID);
         int dgId = dgg.getMaxDrawingGroupId() + 1;
         dg.setOptions((short)(dgId << 4));
         dgg.setDrawingsSaved(dgg.getDrawingsSaved() + 1);
@@ -428,7 +428,7 @@ public final class Slide extends Sheet {
         if(bg != null)bg.draw(graphics);
 
         if(getFollowMasterObjects()){
-            Shape[] sh = master.getShapes();
+            HSLFShape[] sh = master.getShapes();
             for (int i = 0; i < sh.length; i++) {
                 if(MasterSheet.isPlaceholder(sh[i])) continue;
 
@@ -436,7 +436,7 @@ public final class Slide extends Sheet {
             }
         }
 
-        Shape[] sh = getShapes();
+        HSLFShape[] sh = getShapes();
         for (int i = 0; i < sh.length; i++) {
             sh[i].draw(graphics);
         }

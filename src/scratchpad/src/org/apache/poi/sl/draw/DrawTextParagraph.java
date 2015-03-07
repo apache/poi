@@ -13,8 +13,8 @@ import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 
-public class DrawTextParagraph implements Drawable {
-    protected TextParagraph paragraph;
+public class DrawTextParagraph<T extends TextRun> implements Drawable {
+    protected TextParagraph<T> paragraph;
     double x, y;
     protected Insets2D insets = new Insets2D(0,0,0,0);
     protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
@@ -26,7 +26,7 @@ public class DrawTextParagraph implements Drawable {
      */
     protected double maxLineHeight;
 
-    public DrawTextParagraph(TextParagraph paragraph) {
+    public DrawTextParagraph(TextParagraph<T> paragraph) {
         this.paragraph = paragraph;
     }
 
@@ -275,7 +275,7 @@ public class DrawTextParagraph implements Drawable {
         double indent = paragraph.getIndent();
 
         double width;
-        TextShape ts = paragraph.getParentShape();
+        TextShape<? extends TextParagraph<T>> ts = paragraph.getParentShape();
         if (!ts.getWordWrap()) {
             // if wordWrap == false then we return the advance to the right border of the sheet
             width = ts.getSheet().getSlideShow().getPageSize().getWidth() - anchor.getX();

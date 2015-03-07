@@ -51,8 +51,8 @@ import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.model.MasterSheet;
 import org.apache.poi.hslf.model.Notes;
 import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.model.ShapeGroup;
+import org.apache.poi.hslf.model.HSLFShape;
+import org.apache.poi.hslf.model.HSLFGroupShape;
 import org.apache.poi.hslf.model.Slide;
 import org.apache.poi.hslf.model.SlideMaster;
 import org.apache.poi.hslf.model.TextBox;
@@ -165,11 +165,11 @@ public final class TestBugs {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42485.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
-        Shape[] shape = ppt.getSlides()[0].getShapes();
+        HSLFShape[] shape = ppt.getSlides()[0].getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof ShapeGroup){
-                ShapeGroup  group = (ShapeGroup)shape[i];
-                Shape[] sh = group.getShapes();
+            if(shape[i] instanceof HSLFGroupShape){
+                HSLFGroupShape  group = (HSLFGroupShape)shape[i];
+                HSLFShape[] sh = group.getShapes();
                 for (int j = 0; j < sh.length; j++) {
                     if( sh[j] instanceof TextBox){
                         TextBox txt = (TextBox)sh[j];
@@ -188,12 +188,12 @@ public final class TestBugs {
         HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42485.ppt"));
 
         SlideShow ppt = new SlideShow(hslf);
-        Shape[] shape = ppt.getSlides()[0].getShapes();
+        HSLFShape[] shape = ppt.getSlides()[0].getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof ShapeGroup){
-                ShapeGroup  group = (ShapeGroup)shape[i];
+            if(shape[i] instanceof HSLFGroupShape){
+                HSLFGroupShape  group = (HSLFGroupShape)shape[i];
                 assertNotNull(group.getAnchor());
-                Shape[] sh = group.getShapes();
+                HSLFShape[] sh = group.getShapes();
                 for (int j = 0; j < sh.length; j++) {
                     assertNotNull(sh[j].getAnchor());
                 }
@@ -233,7 +233,7 @@ public final class TestBugs {
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             @SuppressWarnings("unused")
-            Shape[] shape = slide[i].getShapes();
+            HSLFShape[] shape = slide[i].getShapes();
         }
         assertTrue("No Exceptions while reading file", true);
 
@@ -250,12 +250,12 @@ public final class TestBugs {
         //walk down the tree and see if there were no errors while reading
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
+            HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
                 assertNotNull(shape[j].getShapeName());
-                if (shape[j] instanceof ShapeGroup){
-                    ShapeGroup group = (ShapeGroup)shape[j];
-                    Shape[] comps = group.getShapes();
+                if (shape[j] instanceof HSLFGroupShape){
+                    HSLFGroupShape group = (HSLFGroupShape)shape[j];
+                    HSLFShape[] comps = group.getShapes();
                     for (int k = 0; k < comps.length; k++) {
                         assertNotNull(comps[k].getShapeName());
                    }
@@ -277,20 +277,20 @@ public final class TestBugs {
         SlideShow ppt = new SlideShow(hslf);
 
         //test case from the bug report
-        ShapeGroup shapeGroup = (ShapeGroup)ppt.getSlides()[11].getShapes()[10];
+        HSLFGroupShape shapeGroup = (HSLFGroupShape)ppt.getSlides()[11].getShapes()[10];
         Picture picture = (Picture)shapeGroup.getShapes()[0];
         picture.getPictureData();
 
         //walk down the tree and see if there were no errors while reading
         Slide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
-            Shape[] shape = slide[i].getShapes();
+            HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
-              if (shape[j] instanceof ShapeGroup){
-                    ShapeGroup group = (ShapeGroup)shape[j];
-                    Shape[] comps = group.getShapes();
+              if (shape[j] instanceof HSLFGroupShape){
+                    HSLFGroupShape group = (HSLFGroupShape)shape[j];
+                    HSLFShape[] comps = group.getShapes();
                     for (int k = 0; k < comps.length; k++) {
-                        Shape comp = comps[k];
+                        HSLFShape comp = comps[k];
                         if (comp instanceof Picture){
                             @SuppressWarnings("unused")
                             PictureData pict = ((Picture)comp).getPictureData();
@@ -355,7 +355,7 @@ public final class TestBugs {
 
         // Check the shape based text runs
         List<TextRun> lst = new ArrayList<TextRun>();
-        Shape[] shape = slide.getShapes();
+        HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
             if( shape[i] instanceof TextShape){
                 TextRun textRun = ((TextShape)shape[i]).getTextRun();
@@ -413,7 +413,7 @@ public final class TestBugs {
         SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("41071.ppt"));
 
         Slide slide = ppt.getSlides()[0];
-        Shape[] sh = slide.getShapes();
+        HSLFShape[] sh = slide.getShapes();
         assertEquals(1, sh.length);
         assertTrue(sh[0] instanceof TextShape);
         TextShape tx = (TextShape)sh[0];
@@ -492,7 +492,7 @@ public final class TestBugs {
 
         // get slides
         for (Slide slide : ppt.getSlides()) {
-            for (Shape shape : slide.getShapes()) {
+            for (HSLFShape shape : slide.getShapes()) {
                 if (!(shape instanceof TextBox)) continue;
                 TextBox tb = (TextBox) shape;
                 // work with TextBox
@@ -595,7 +595,7 @@ public final class TestBugs {
         try {
             SlideShow slideShow = new SlideShow(inputStream);
             Slide slide = slideShow.getSlides()[0];
-            ShapeGroup sg = (ShapeGroup)slide.getShapes()[0];
+            HSLFGroupShape sg = (HSLFGroupShape)slide.getShapes()[0];
             TextBox tb = (TextBox)sg.getShapes()[0];
             String text = StringUtil.mapMsCodepointString(tb.getText());
             assertEquals("\u226575 years", text);
@@ -640,7 +640,7 @@ public final class TestBugs {
             SlideShow slideShow = new SlideShow(inputStream);
             AutoShape as = (AutoShape)slideShow.getSlides()[0].getShapes()[0];
             EscherOptRecord opt = as.getEscherOptRecord();
-            EscherArrayProperty ep = Shape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
+            EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
             double exp[][] = {
                 // r, g, b, position
                 { 94, 158, 255, 0 },

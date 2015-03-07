@@ -20,9 +20,10 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-import org.apache.poi.sl.usermodel.Background;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 
 /**
@@ -42,48 +43,14 @@ public class XSLFBackground extends XSLFSimpleShape implements Background {
         return new Rectangle2D.Double(0, 0, pg.getWidth(), pg.getHeight());
     }
 
-    public void draw(Graphics2D graphics) {
-        Rectangle2D anchor = getAnchor();
-
-        Paint fill = getPaint(graphics);
-        if(fill != null) {
-            graphics.setPaint(fill);
-            graphics.fill(anchor);
-        }
-    }
-
-    /**
-     * @return the Paint object to fill
-     */
-    Paint getPaint(Graphics2D graphics){
-        RenderableShape rShape = new RenderableShape(this);
-
-        Paint fill = null;
-        CTBackground bg = (CTBackground)getXmlObject();
-        if(bg.isSetBgPr()){
-            XmlObject spPr = bg.getBgPr();
-            fill = rShape.getPaint(graphics, spPr, null);
-        } else if (bg.isSetBgRef()){
-            CTStyleMatrixReference bgRef= bg.getBgRef();
-            CTSchemeColor phClr = bgRef.getSchemeClr();
-
-            int idx = (int)bgRef.getIdx() - 1001;
-            XSLFTheme theme = getSheet().getTheme();
-            CTBackgroundFillStyleList bgStyles =
-                    theme.getXmlObject().getThemeElements().getFmtScheme().getBgFillStyleLst();
-
-            XmlObject bgStyle = bgStyles.selectPath("*")[idx];
-            fill = rShape.selectPaint(graphics, bgStyle, phClr, theme.getPackagePart());
-        }
-
-        return fill;
-    }
-
     @Override
     public Color getFillColor(){
-        Paint p = getPaint(null);
-        if(p instanceof Color){
-            return (Color)p;
+        FillStyle fs = getFillStyle();
+        PaintStyle ps = fs.getPaint();
+        if (ps instanceof SolidPaint) {
+            SolidPaint sp = (SolidPaint)ps;
+            ColorStyle cs = sp.getSolidColor();
+            return DrawPaint.applyColorTransform(cs);
         }
         return null;
     }
@@ -95,7 +62,7 @@ public class XSLFBackground extends XSLFSimpleShape implements Background {
      * @return  dummy  CTTransform2D bean
      */
     @Override
-    CTTransform2D getXfrm() {
+    protected CTTransform2D getXfrm() {
         return CTTransform2D.Factory.newInstance();
     }
 }

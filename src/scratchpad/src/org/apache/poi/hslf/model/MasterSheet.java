@@ -46,7 +46,7 @@ public abstract class MasterSheet extends Sheet {
      *
      * @return true if the shape is a placeholder
      */
-    public static boolean isPlaceholder(Shape shape){
+    public static boolean isPlaceholder(HSLFShape shape){
         if(!(shape instanceof TextShape)) return false;
 
         TextShape tx = (TextShape)shape;

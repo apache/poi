@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Graphics2D;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
@@ -26,21 +25,11 @@ import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTCommonSlideData;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlide;
-import org.openxmlformats.schemas.presentationml.x2006.main.SldDocument;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 @Beta
-public final class XSLFSlide extends XSLFSheet implements Slide {
+public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape> {
    private final CTSlide _slide;
    private XSLFSlideLayout _layout;
    private XSLFComments _comments;
@@ -219,17 +208,6 @@ public final class XSLFSlide extends XSLFSheet implements Slide {
     public void setFollowMasterObjects(boolean follow) {
         setFollowMasterGraphics(follow);
     }
-
-    
-    @Override
-    public void draw(Graphics2D graphics){
-
-        XSLFBackground bg = getBackground();
-        if(bg != null) bg.draw(graphics);
-
-        super.draw(graphics);
-    }
-
 
     @Override
     public XSLFSlide importContent(XSLFSheet src){
