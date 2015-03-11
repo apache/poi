@@ -2186,4 +2186,80 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             wb.removeSheetAt(sn);
         }
     }
+
+    /**
+     * Sums 2 plus the cell at the left, indirectly to avoid reference
+     * problems when deleting columns, conditionally to stop recursion
+     */
+    private static final String FORMULA1 =
+            "IF( INDIRECT( ADDRESS( ROW(), COLUMN()-1 ) ) = 0, 0,"
+                    + "INDIRECT( ADDRESS( ROW(), COLUMN()-1 ) ) ) + 2";
+
+    /**
+     * Sums 2 plus the upper cell, indirectly to avoid reference
+     * problems when deleting rows, conditionally to stop recursion
+     */
+    private static final String FORMULA2 =
+            "IF( INDIRECT( ADDRESS( ROW()-1, COLUMN() ) ) = 0, 0,"
+                    + "INDIRECT( ADDRESS( ROW()-1, COLUMN() ) ) ) + 2";
+
+    /**
+     * Expected:
+
+     * [  0][  2][  4]
+     * @throws IOException
+     */
+    @Test
+    public void testBug56820_Formula1() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        try {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Sheet sh = wb.createSheet();
+
+            sh.createRow(0).createCell(0).setCellValue(0.0d);
+            Cell formulaCell1 = sh.getRow(0).createCell(1);
+            Cell formulaCell2 = sh.getRow(0).createCell(2);
+            formulaCell1.setCellFormula(FORMULA1);
+            formulaCell2.setCellFormula(FORMULA1);
+
+            double A1 = evaluator.evaluate(formulaCell1).getNumberValue();
+            double A2 = evaluator.evaluate(formulaCell2).getNumberValue();
+
+            assertEquals(2, A1, 0);
+            assertEquals(4, A2, 0);  //<-- FAILS EXPECTATIONS
+        } finally {
+            wb.close();
+        }
+    }
+
+    /**
+     * Expected:
+
+     * [  0] <- number
+     * [  2] <- formula
+     * [  4] <- formula
+     * @throws IOException
+     */
+    @Test
+    public void testBug56820_Formula2() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        try {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Sheet sh = wb.createSheet();
+
+            sh.createRow(0).createCell(0).setCellValue(0.0d);
+            Cell formulaCell1 = sh.createRow(1).createCell(0);
+            Cell formulaCell2 = sh.createRow(2).createCell(0);
+            formulaCell1.setCellFormula(FORMULA2);
+            formulaCell2.setCellFormula(FORMULA2);
+
+            double A1 = evaluator.evaluate(formulaCell1).getNumberValue();
+            double A2 = evaluator.evaluate(formulaCell2).getNumberValue(); //<-- FAILS EVALUATION
+
+            assertEquals(2, A1, 0);
+            assertEquals(4, A2, 0);
+        } finally {
+            wb.close();
+        }
+    }
 }
