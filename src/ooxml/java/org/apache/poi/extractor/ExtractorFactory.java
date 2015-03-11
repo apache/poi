@@ -68,6 +68,8 @@ import org.apache.xmlbeans.XmlException;
 public class ExtractorFactory {
 	public static final String CORE_DOCUMENT_REL =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+	public static final String VISIO_DOCUMENT_REL =
+	    "http://schemas.microsoft.com/visio/2010/relationships/document";
 
 
 	/** Should this thread prefer event based over usermodel based extractors? */
@@ -158,12 +160,25 @@ public class ExtractorFactory {
 	}
 
 	public static POIXMLTextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
+	   // Check for the normal Office core document
        PackageRelationshipCollection core =
             pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
-       if(core.size() != 1) {
-          throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
+       
+       // If nothing was found, try some of the other OOXML-based core types
+       if (core.size() == 0) {
+           // Could it be a visio one?
+           PackageRelationshipCollection visio =
+                   pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
+           if (visio.size() == 1) {
+               throw new IllegalArgumentException("Text extraction not supported for Visio OOXML files");
+           }
+       }
+       // Should just be a single core document, complain if not
+       if (core.size() != 1) {
+           throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
        }
 
+       // Grab the core document part, and try to identify from that
        PackagePart corePart = pkg.getPart(core.getRelationship(0));
 
        // Is it XSSF?

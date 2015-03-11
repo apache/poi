@@ -71,6 +71,7 @@ public class TestExtractorFactory extends TestCase {
    private File msgEmbMsg;
    
    private File vsd;
+   private File vsdx;
    
    private File pub;
 
@@ -109,6 +110,7 @@ public class TestExtractorFactory extends TestCase {
 
       POIDataSamples dgTests = POIDataSamples.getDiagramInstance();
       vsd = getFileAndCheck(dgTests, "Test_Visio-Some_Random_Text.vsd");
+      vsdx = getFileAndCheck(dgTests, "test.vsdx");
       
       POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
       pub = getFileAndCheck(pubTests, "Simple.pub");
@@ -230,7 +232,7 @@ public class TestExtractorFactory extends TestCase {
       );
       extractor.close();
 
-      // Visio
+      // Visio - binary
       assertTrue(
             ExtractorFactory.createExtractor(vsd)
             instanceof VisioTextExtractor
@@ -238,6 +240,13 @@ public class TestExtractorFactory extends TestCase {
       assertTrue(
             ExtractorFactory.createExtractor(vsd).getText().length() > 50
       );
+      // Visio - vsdx
+      try {
+          ExtractorFactory.createExtractor(vsdx);
+          fail();
+      } catch(IllegalArgumentException e) {
+          // Good
+      }
       
       // Publisher
       assertTrue(
@@ -342,6 +351,13 @@ public class TestExtractorFactory extends TestCase {
 		assertTrue(
 				ExtractorFactory.createExtractor(new FileInputStream(vsd)).getText().length() > 50
 		);
+	      // Visio - vsdx
+	      try {
+	          ExtractorFactory.createExtractor(new FileInputStream(vsdx));
+	          fail();
+	      } catch(IllegalArgumentException e) {
+	          // Good
+	      }
 		
       // Publisher
       assertTrue(
