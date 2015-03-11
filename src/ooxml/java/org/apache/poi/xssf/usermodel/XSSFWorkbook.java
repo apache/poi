@@ -576,13 +576,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             // copy drawing contents
             clonedDg.getCTDrawing().set(dg.getCTDrawing());
 
+            clonedDg = clonedSheet.createDrawingPatriarch();
+            
             // Clone drawing relations
             List<POIXMLDocumentPart> srcRels = srcSheet.createDrawingPatriarch().getRelations();
             for (POIXMLDocumentPart rel : srcRels) {
                 PackageRelationship relation = rel.getPackageRelationship();
-                clonedSheet
-                        .createDrawingPatriarch()
-                        .getPackagePart()
+
+                clonedDg.addRelation(relation.getId(), rel);
+                
+                clonedDg
+						.getPackagePart()
                         .addRelationship(relation.getTargetURI(), relation.getTargetMode(),
                                 relation.getRelationshipType(), relation.getId());
             }
