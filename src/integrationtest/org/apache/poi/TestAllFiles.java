@@ -98,8 +98,16 @@ public class TestAllFiles {
         // Publisher
         HANDLERS.put(".pub", new HPBFFileHandler());
 
-        // Visio
+        // Visio - binary
         HANDLERS.put(".vsd", new HDGFFileHandler());
+        
+        // Visio - ooxml (currently unsupported)
+        HANDLERS.put(".vsdm", new NullFileHandler());
+        HANDLERS.put(".vsdx", new NullFileHandler());
+        HANDLERS.put(".vssm", new NullFileHandler());
+        HANDLERS.put(".vssx", new NullFileHandler());
+        HANDLERS.put(".vstm", new NullFileHandler());
+        HANDLERS.put(".vstx", new NullFileHandler());
 
         // POIFS
         HANDLERS.put(".ole2", new POIFSFileHandler());
