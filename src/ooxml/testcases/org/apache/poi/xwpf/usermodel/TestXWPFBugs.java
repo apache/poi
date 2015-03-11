@@ -16,10 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
 import org.junit.Test;
@@ -76,5 +80,12 @@ public class TestXWPFBugs {
                 }
             } 
         }
+    }
+
+    
+    @Test
+    public void test56392() throws IOException, OpenXML4JException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("56392.docx");
+    	assertNotNull(doc);
     }
 }
