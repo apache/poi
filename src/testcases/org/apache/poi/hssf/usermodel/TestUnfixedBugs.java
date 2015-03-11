@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 
 import junit.framework.AssertionFailedError;
