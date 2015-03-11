@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
 
@@ -2260,6 +2261,33 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(4, A2, 0);
         } finally {
             wb.close();
+        }
+    }
+    
+    @Test
+    public void test56467() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("picture.xlsx");
+        try {
+            Sheet orig = wb.getSheetAt(0);
+            assertNotNull(orig);
+            
+            Sheet sheet = wb.cloneSheet(0);
+            Drawing drawing = sheet.createDrawingPatriarch();
+            for (XSSFShape shape : ((XSSFDrawing) drawing).getShapes()) {
+                if (shape instanceof XSSFPicture) {
+                    XSSFPictureData pictureData = ((XSSFPicture) shape).getPictureData();
+                    assertNotNull(pictureData);
+                }
+            }
+            
+//            OutputStream out = new FileOutputStream("/tmp/56467.xls");
+//            try {
+//            	wb.write(out);
+//            } finally {
+//            	out.close();
+//            }
+        } finally {
+        	wb.close();
         }
     }
 }
