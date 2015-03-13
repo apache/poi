@@ -19,12 +19,8 @@ package org.apache.poi.openxml4j.opc;
 
 /**
  * Relationship types.
- *
- * @author Julien Chable
- * @version 0.2
  */
 public interface PackageRelationshipTypes {
-
 	/**
 	 * Core properties relationship type.
      *
@@ -70,15 +66,25 @@ public interface PackageRelationshipTypes {
 	 */
 	String EXTENDED_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties";
 
+    /**
+     * Extended properties relationship type for strict ooxml.
+     */
+    String STRICT_EXTENDED_PROPERTIES = "http://purl.oclc.org/ooxml/officeDocument/relationships/extendedProperties";
+
 	/**
 	 * Custom properties relationship type.
 	 */
 	String CUSTOM_PROPERTIES = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties";
 	
 	/**
-	 * Core properties relationship type.
+	 * Core document relationship type.
 	 */
 	String CORE_DOCUMENT = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
+
+    /**
+     * Core document relationship type for strict ooxml.
+     */
+    String STRICT_CORE_DOCUMENT = "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument";
 
 	/**
 	 * Custom XML relationship type.
@@ -104,4 +110,9 @@ public interface PackageRelationshipTypes {
 	 * External Link to another Document
 	 */
 	String EXTERNAL_LINK_PATH = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath";
+
+	/**
+	 * Visio 2010 VSDX equivalent of package {@link #CORE_DOCUMENT}
+	 */
+	String VISIO_CORE_DOCUMENT = "http://schemas.microsoft.com/visio/2010/relationships/document";
 }
