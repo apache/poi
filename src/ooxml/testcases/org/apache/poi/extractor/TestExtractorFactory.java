@@ -51,6 +51,7 @@ public class TestExtractorFactory extends TestCase {
 
     private File xls;
     private File xlsx;
+    private File xlsxStrict;
     private File xltx;
     private File xlsEmb;
 
@@ -90,6 +91,7 @@ public class TestExtractorFactory extends TestCase {
         POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
         xls = getFileAndCheck(ssTests, "SampleSS.xls");
         xlsx = getFileAndCheck(ssTests, "SampleSS.xlsx");
+        xlsxStrict = getFileAndCheck(ssTests, "SampleSS.strict.xlsx");
         xltx = getFileAndCheck(ssTests, "test.xltx");
         xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
 
@@ -158,6 +160,20 @@ public class TestExtractorFactory extends TestCase {
                 extractor.getText().contains("test")
         );
         extractor.close();
+
+        // TODO Support OOXML-Strict, see bug #57699
+//        extractor = ExtractorFactory.createExtractor(xlsxStrict);
+//        assertTrue(
+//                extractor
+//                instanceof XSSFExcelExtractor
+//        );
+//        extractor.close();
+//
+//        extractor = ExtractorFactory.createExtractor(xlsxStrict);
+//        assertTrue(
+//                extractor.getText().contains("test")
+//        );
+//        extractor.close();
 
 
         // Word

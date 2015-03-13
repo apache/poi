@@ -2290,4 +2290,16 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         	wb.close();
         }
     }
+    
+    /**
+     * OOXML-Strict files
+     */
+    @Test
+    @Ignore
+    public void test57699() throws Exception {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.strict.xlsx");
+        assertEquals(3, wb.getNumberOfSheets());
+        
+        // TODO Check the rest
+    }
 }
