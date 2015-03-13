@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -37,19 +38,22 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public final class TestCloneSheet extends TestCase {
 
-	public void testCloneSheetBasic(){
+	public void testCloneSheetBasic() throws IOException{
 		HSSFWorkbook b = new HSSFWorkbook();
 		HSSFSheet s = b.createSheet("Test");
 		s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1));
 		HSSFSheet clonedSheet = b.cloneSheet(0);
 
 		assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
+		
+		b.close();
 	}
 
 	/**
 	 * Ensures that pagebreak cloning works properly
+	 * @throws IOException 
 	 */
-	public void testPageBreakClones() {
+	public void testPageBreakClones() throws IOException {
 		HSSFWorkbook b = new HSSFWorkbook();
 		HSSFSheet s = b.createSheet("Test");
 		s.setRowBreak(3);
@@ -62,6 +66,8 @@ public final class TestCloneSheet extends TestCase {
 		s.removeRowBreak(3);
 
 		assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
+		
+		b.close();
 	}
     
     public void testCloneSheetWithoutDrawings(){
@@ -121,16 +127,32 @@ public final class TestCloneSheet extends TestCase {
         HSSFSheet sh2 = wb.cloneSheet(0);
         HSSFPatriarch p2 = sh2.getDrawingPatriarch();
         HSSFComment c2 = (HSSFComment) p2.getChildren().get(0);
+
+        assertEquals(c.getString(), c2.getString());
+        assertEquals(c.getRow(), c2.getRow());
+        assertEquals(c.getColumn(), c2.getColumn());
+
+        // The ShapeId is not equal? 
+        // assertEquals(c.getNoteRecord().getShapeId(), c2.getNoteRecord().getShapeId());
         
         assertArrayEquals(c2.getTextObjectRecord().serialize(), c.getTextObjectRecord().serialize());
-        assertArrayEquals(c2.getObjRecord().serialize(), c.getObjRecord().serialize());
-        assertArrayEquals(c2.getNoteRecord().serialize(), c.getNoteRecord().serialize());
+        
+        // ShapeId is different
+        CommonObjectDataSubRecord subRecord = (CommonObjectDataSubRecord) c2.getObjRecord().getSubRecords().get(0);
+        subRecord.setObjectId(1025);
 
+        assertArrayEquals(c2.getObjRecord().serialize(), c.getObjRecord().serialize());
+
+        // ShapeId is different
+        c2.getNoteRecord().setShapeId(1025);
+        assertArrayEquals(c2.getNoteRecord().serialize(), c.getNoteRecord().serialize());
 
         //everything except spRecord.shapeId must be the same
         assertFalse(Arrays.equals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize()));
         EscherSpRecord sp = (EscherSpRecord) c2.getEscherContainer().getChild(0);
         sp.setShapeId(1025);
         assertArrayEquals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize());
+        
+        wb.close();
     }
 }
