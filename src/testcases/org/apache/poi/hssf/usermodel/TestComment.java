@@ -17,23 +17,30 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.IOException;
+
 import junit.framework.TestCase;
+
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.CommentShape;
 import org.apache.poi.hssf.model.HSSFTestModelHelper;
-import org.apache.poi.hssf.record.*;
-
-import java.io.*;
-import java.util.Arrays;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.NoteRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 
 /**
  * @author Evgeniy Berlog
  * @date 26.06.12
  */
+@SuppressWarnings("deprecation")
 public class TestComment extends TestCase {
 
-    public void testResultEqualsToAbstractShape() {
+	public void testResultEqualsToAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -53,33 +60,34 @@ public class TestComment extends TestCase {
         byte[] actual = comment.getEscherContainer().getChild(0).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = commentShape.getSpContainer().getChild(2).serialize();
         actual = comment.getEscherContainer().getChild(2).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = commentShape.getSpContainer().getChild(3).serialize();
         actual = comment.getEscherContainer().getChild(3).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         expected = commentShape.getSpContainer().getChild(4).serialize();
         actual = comment.getEscherContainer().getChild(4).serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         ObjRecord obj = comment.getObjRecord();
         ObjRecord objShape = commentShape.getObjRecord();
-        /**shapeId = 1025 % 1024**/
-        ((CommonObjectDataSubRecord)objShape.getSubRecords().get(0)).setObjectId(1);
 
         expected = obj.serialize();
         actual = objShape.serialize();
+
+        assertEquals(expected.length, actual.length);
+        //assertArrayEquals(expected, actual);
 
         TextObjectRecord tor = comment.getTextObjectRecord();
         TextObjectRecord torShape = commentShape.getTextObjectRecord();
@@ -88,20 +96,21 @@ public class TestComment extends TestCase {
         actual = torShape.serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
 
         NoteRecord note = comment.getNoteRecord();
         NoteRecord noteShape = commentShape.getNoteRecord();
-        noteShape.setShapeId(1);
 
         expected = note.serialize();
         actual = noteShape.serialize();
 
         assertEquals(expected.length, actual.length);
-        assertTrue(Arrays.equals(expected, actual));
+        assertArrayEquals(expected, actual);
+
+        wb.close();
     }
 
-    public void testAddToExistingFile() {
+    public void testAddToExistingFile() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -118,8 +127,8 @@ public class TestComment extends TestCase {
 
         assertEquals(patriarch.getChildren().size(), 2);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sh = wbBack.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         comment = (HSSFComment) patriarch.getChildren().get(1);
@@ -132,8 +141,8 @@ public class TestComment extends TestCase {
         comment.setString(new HSSFRichTextString("comment3"));
 
         assertEquals(patriarch.getChildren().size(), 3);
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack);
+        sh = wbBack2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
         comment = (HSSFComment) patriarch.getChildren().get(1);
         assertEquals(comment.getBackgroundImageId(), 0);
@@ -141,6 +150,10 @@ public class TestComment extends TestCase {
         assertEquals(((HSSFComment) patriarch.getChildren().get(0)).getString().getString(), "comment1");
         assertEquals(((HSSFComment) patriarch.getChildren().get(1)).getString().getString(), "comment2");
         assertEquals(((HSSFComment) patriarch.getChildren().get(2)).getString().getString(), "comment3");
+        
+        wb.close();
+        wbBack.close();
+        wbBack2.close();
     }
 
     public void testSetGetProperties() throws IOException {
@@ -164,8 +177,8 @@ public class TestComment extends TestCase {
         comment.setVisible(false);
         assertEquals(comment.isVisible(), false);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sh = wbBack.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
 
         comment = (HSSFComment) patriarch.getChildren().get(0);
@@ -182,8 +195,8 @@ public class TestComment extends TestCase {
         comment.setRow(42);
         comment.setVisible(true);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wbBack2 = HSSFTestDataSamples.writeOutAndReadBack(wbBack);
+        sh = wbBack2.getSheetAt(0);
         patriarch = sh.getDrawingPatriarch();
         comment = (HSSFComment) patriarch.getChildren().get(0);
 
@@ -192,6 +205,10 @@ public class TestComment extends TestCase {
         assertEquals(comment.getColumn(), 32);
         assertEquals(comment.getRow(), 42);
         assertEquals(comment.isVisible(), true);
+        
+        wb.close();
+        wbBack.close();
+        wbBack2.close();
     }
 
     public void testExistingFileWithComment(){
@@ -206,7 +223,7 @@ public class TestComment extends TestCase {
         assertEquals(comment.getRow(), 2);
     }
 
-    public void testFindComments(){
+    public void testFindComments() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -221,14 +238,17 @@ public class TestComment extends TestCase {
         assertNotNull(sh.findCellComment(5, 4));
         assertNull(sh.findCellComment(5, 5));
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        sh = wb.getSheetAt(0);
+        HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        sh = wbBack.getSheetAt(0);
 
         assertNotNull(sh.findCellComment(5, 4));
         assertNull(sh.findCellComment(5, 5));
+        
+        wb.close();
+        wbBack.close();
     }
 
-    public void testInitState(){
+    public void testInitState() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -240,11 +260,14 @@ public class TestComment extends TestCase {
         assertEquals(agg.getTailRecords().size(), 1);
 
         HSSFSimpleShape shape = patriarch.createSimpleShape(new HSSFClientAnchor());
+        assertNotNull(shape);
 
         assertEquals(comment.getOptRecord().getEscherProperties().size(), 10);
+        
+        wb.close();
     }
 
-    public void testShapeId(){
+    public void testShapeId() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch patriarch = sh.createDrawingPatriarch();
@@ -252,20 +275,17 @@ public class TestComment extends TestCase {
         HSSFComment comment = patriarch.createCellComment(new HSSFClientAnchor());
 
         comment.setShapeId(2024);
-        /**
-         * SpRecord.id == shapeId
-         * ObjRecord.id == shapeId % 1024
-         * NoteRecord.id == ObjectRecord.id == shapeId % 1024
-         */
 
         assertEquals(comment.getShapeId(), 2024);
 
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) comment.getObjRecord().getSubRecords().get(0);
-        assertEquals(cod.getObjectId(), 1000);
+        assertEquals(2024, cod.getObjectId());
         EscherSpRecord spRecord = (EscherSpRecord) comment.getEscherContainer().getChild(0);
-        assertEquals(spRecord.getShapeId(), 2024);
-        assertEquals(comment.getShapeId(), 2024);
-        assertEquals(comment.getNoteRecord().getShapeId(), 1000);
+        assertEquals(2024, spRecord.getShapeId(), 2024);
+        assertEquals(2024, comment.getShapeId(), 2024);
+        assertEquals(2024, comment.getNoteRecord().getShapeId());
+        
+        wb.close();
     }
     
     public void testAttemptToSave2CommentsWithSameCoordinates(){
