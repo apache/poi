@@ -94,6 +94,15 @@ public class POIXMLDocumentPart {
      */
     public POIXMLDocumentPart(OPCPackage pkg) {
         PackageRelationship coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
+        if (coreRel == null) {
+            coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
+            if (coreRel != null) {
+                throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
+            }
+        }
+        if (coreRel == null) {
+            throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
+        }
 
         this.packagePart = pkg.getPart(coreRel);
         this.packageRel = coreRel;

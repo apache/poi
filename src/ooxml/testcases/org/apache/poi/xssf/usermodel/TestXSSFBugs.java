@@ -2293,13 +2293,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     
     /**
      * OOXML-Strict files
+     * Not currently working - namespace mis-match from XMLBeans
      */
     @Test
-    @Ignore
+    @Ignore("XMLBeans namespace mis-match on ooxml-strict files")
     public void test57699() throws Exception {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.strict.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.strict.xlsx");
         assertEquals(3, wb.getNumberOfSheets());
+        // TODO Check sheet contents
+        // TODO Check formula evaluation
         
-        // TODO Check the rest
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(3, wbBack.getNumberOfSheets());
+        // TODO Re-check sheet contents
+        // TODO Re-check formula evaluation
     }
 }

@@ -47,6 +47,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -66,10 +67,9 @@ import org.apache.xmlbeans.XmlException;
  *  document, and returns it.
  */
 public class ExtractorFactory {
-	public static final String CORE_DOCUMENT_REL =
-		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument";
-	public static final String VISIO_DOCUMENT_REL =
-	    "http://schemas.microsoft.com/visio/2010/relationships/document";
+	public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
+	protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
+	protected static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
 
 
 	/** Should this thread prefer event based over usermodel based extractors? */
@@ -166,6 +166,10 @@ public class ExtractorFactory {
        
        // If nothing was found, try some of the other OOXML-based core types
        if (core.size() == 0) {
+           // Could it be an OOXML-Strict one?
+           core = pkg.getRelationshipsByType(STRICT_DOCUMENT_REL);
+       }
+       if (core.size() == 0) {
            // Could it be a visio one?
            PackageRelationshipCollection visio =
                    pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
@@ -173,6 +177,7 @@ public class ExtractorFactory {
                throw new IllegalArgumentException("Text extraction not supported for Visio OOXML files");
            }
        }
+       
        // Should just be a single core document, complain if not
        if (core.size() != 1) {
            throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
