@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
@@ -162,6 +163,12 @@ public class TestExtractorFactory extends TestCase {
         extractor.close();
 
         // TODO Support OOXML-Strict, see bug #57699
+        try {
+            extractor = ExtractorFactory.createExtractor(xlsxStrict);
+            fail("OOXML-Strict isn't yet supported");
+        } catch (POIXMLException e) {
+            // Expected, for now
+        }
 //        extractor = ExtractorFactory.createExtractor(xlsxStrict);
 //        assertTrue(
 //                extractor
@@ -307,6 +314,14 @@ public class TestExtractorFactory extends TestCase {
         assertTrue(
                 ExtractorFactory.createExtractor(new FileInputStream(xlsx)).getText().length() > 200
         );
+        // TODO Support OOXML-Strict, see bug #57699
+//        assertTrue(
+//                ExtractorFactory.createExtractor(new FileInputStream(xlsxStrict))
+//                instanceof XSSFExcelExtractor
+//        );
+//        assertTrue(
+//                ExtractorFactory.createExtractor(new FileInputStream(xlsxStrict)).getText().length() > 200
+//        );
 
         // Word
         assertTrue(
