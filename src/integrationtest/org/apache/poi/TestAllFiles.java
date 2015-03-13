@@ -227,6 +227,11 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
+        
+        // OOXML Strict is not yet supported, see bug #57699
+        EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/SimpleStrict.xlsx");
+        EXPECTED_FAILURES.add("spreadsheet/sample.strict.xlsx");
 
         // non-TNEF files
         EXPECTED_FAILURES.add("ddf/Container.dat");
