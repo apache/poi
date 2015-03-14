@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -71,6 +72,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -2525,6 +2527,33 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(0, wb.getNumberOfSheets());
+    }
+
+    @Test
+    public void bug56325a() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("56325a.xls");
+        
+        HSSFSheet sheet = wb.cloneSheet(2);
+        wb.setSheetName(3, "Clone 1");
+        sheet.setRepeatingRows(CellRangeAddress.valueOf("2:3"));
+        wb.setPrintArea(3, "$A$4:$C$10");
+        
+        sheet = wb.cloneSheet(2);
+        wb.setSheetName(4, "Clone 2");
+        sheet.setRepeatingRows(CellRangeAddress.valueOf("2:3"));
+        wb.setPrintArea(4, "$A$4:$C$10");
+        
+        wb.removeSheetAt(2);
+
+        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertEquals(4, wbBack.getNumberOfSheets());
+        
+//        OutputStream fOut = new FileOutputStream("/tmp/56325a.xls");
+//        try {
+//        	wb.write(fOut);
+//        } finally {
+//        	fOut.close();
+//        }
     }
     
     /**
