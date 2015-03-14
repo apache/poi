@@ -38,7 +38,11 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         try {
             InputStream is =
                     XMLSlideShow.class.getResourceAsStream("presetShapeDefinitions.xml");
-            read(is);
+            try {
+            	read(is);
+            } finally {
+            	is.close();
+            }
         } catch (Exception e){
             throw new RuntimeException(e);
         }

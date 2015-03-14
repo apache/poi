@@ -1409,8 +1409,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		} catch (FileNotFoundException e) {
 			throw new IOException(e.getLocalizedMessage());
 		}
-		this.save(fos);
-		fos.close();
+		try {
+			this.save(fos);
+		} finally {
+			fos.close();
+		}
 	}
 
 	/**
