@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -82,6 +84,9 @@ public class TestXSSFCellStyle extends TestCase {
 		stylesTable.putCellStyleXf(cellStyleXf);
 		stylesTable.putCellXf(cellXf);
 		cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
+
+		assertNotNull(stylesTable.getFillAt(1).getCTFill().getPatternFill());
+		assertEquals(STPatternType.INT_DARK_GRAY, stylesTable.getFillAt(1).getCTFill().getPatternFill().getPatternType().intValue());
 	}
 
 	public void testGetSetBorderBottom() {
@@ -551,7 +556,7 @@ public class TestXSSFCellStyle extends TestCase {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
 	}
 
-	public void testDefaultStyles() {
+	public void testDefaultStyles() throws IOException {
 
 		XSSFWorkbook wb1 = new XSSFWorkbook();
 
@@ -577,6 +582,7 @@ public class TestXSSFCellStyle extends TestCase {
         assertEquals(style2.getBorderLeft(), style1.getBorderLeft());
         assertEquals(style2.getBorderRight(), style1.getBorderRight());
         assertEquals(style2.getBorderTop(), style1.getBorderTop());
+        wb2.close();
 	}
 
 
@@ -618,7 +624,7 @@ public class TestXSSFCellStyle extends TestCase {
 
 	public void testGetFillPattern() {
 
-        assertEquals(CellStyle.NO_FILL, cellStyle.getFillPattern());
+        assertEquals(STPatternType.INT_DARK_GRAY-1, cellStyle.getFillPattern());
 
         int num = stylesTable.getFills().size();
         cellStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
