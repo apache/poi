@@ -19,13 +19,12 @@ package org.apache.poi.xssf.dev;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
@@ -40,7 +39,11 @@ public final class XSSFDump {
         for (int i = 0; i < args.length; i++) {
             System.out.println("Dumping " + args[i]);
             ZipFile zip = new ZipFile(args[i]);
-            dump(zip);
+            try {
+            	dump(zip);
+            } finally {
+            	zip.close();
+            }
         }
     }
 
@@ -49,6 +52,7 @@ public final class XSSFDump {
         int sep = zipname.lastIndexOf('.');
         File root = new File(zipname.substring(0, sep));
         root.mkdir();
+        System.out.println("Dupming to directory " + root);
 
         Enumeration<? extends ZipEntry> en = zip.entries();
         while(en.hasMoreElements()){
@@ -61,30 +65,24 @@ public final class XSSFDump {
             }
 
             File f = new File(root, entry.getName());
-            FileOutputStream out = new FileOutputStream(f);
-
-            if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
-                try {
-                    XmlObject xml = XmlObject.Factory.parse(zip.getInputStream(entry));
-                    XmlOptions options = new XmlOptions();
-                    options.setSavePrettyPrint();
-                    xml.save(out, options);
-                } catch (Exception e){
-                    System.err.println("Failed to parse " + entry.getName() + ", dumping raw content");
-                    dump(zip.getInputStream(entry), out);
+            OutputStream out = new FileOutputStream(f);
+            try {
+                if(entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")){
+                    try {
+                        XmlObject xml = XmlObject.Factory.parse(zip.getInputStream(entry));
+                        XmlOptions options = new XmlOptions();
+                        options.setSavePrettyPrint();
+                        xml.save(out, options);
+                    } catch (Exception e){
+                        System.err.println("Failed to parse " + entry.getName() + ", dumping raw content");
+                        IOUtils.copy(zip.getInputStream(entry), out);
+                    }
+                } else {
+                    IOUtils.copy(zip.getInputStream(entry), out);
                 }
-            } else {
-                dump(zip.getInputStream(entry), out);
+            } finally {
+            	out.close();
             }
-            out.close();
-
         }
-    }
-
-    protected static void dump(InputStream is, OutputStream out) throws IOException{
-        int pos;
-        byte[] chunk = new byte[2048];
-        while((pos = is.read(chunk)) > 0) out.write(chunk, 0, pos);
-
     }
 }

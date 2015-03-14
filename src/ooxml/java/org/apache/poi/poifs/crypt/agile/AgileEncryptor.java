@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -242,12 +243,15 @@ public class AgileEncryptor extends Encryptor {
         LittleEndian.putLong(buf, 0, oleStreamSize);
         integrityMD.update(buf, 0, LittleEndian.LONG_SIZE);
         
-        FileInputStream fis = new FileInputStream(tmpFile);
-        int readBytes;
-        while ((readBytes = fis.read(buf)) != -1) {
-            integrityMD.update(buf, 0, readBytes);
+        InputStream fis = new FileInputStream(tmpFile);
+        try {
+            int readBytes;
+            while ((readBytes = fis.read(buf)) != -1) {
+                integrityMD.update(buf, 0, readBytes);
+            }
+        } finally {
+        	fis.close();
         }
-        fis.close();
         
         byte hmacValue[] = integrityMD.doFinal();
         

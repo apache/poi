@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 
 /**
@@ -49,8 +50,8 @@ public class POIFSDump {
 
 
     public static void dump(DirectoryEntry root, File parent) throws IOException {
-        for(Iterator it = root.getEntries(); it.hasNext();){
-            Entry entry = (Entry)it.next();
+        for(Iterator<Entry> it = root.getEntries(); it.hasNext();){
+            Entry entry = it.next();
             if(entry instanceof DocumentNode){
                 DocumentNode node = (DocumentNode)entry;
                 DocumentInputStream is = new DocumentInputStream(node);
@@ -58,9 +59,12 @@ public class POIFSDump {
                 is.read(bytes);
                 is.close();
 
-                FileOutputStream out = new FileOutputStream(new File(parent, node.getName().trim()));
-                out.write(bytes);
-                out.close();
+                OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()));
+                try {
+                	out.write(bytes);
+                } finally {
+                	out.close();
+                }
             } else if (entry instanceof DirectoryEntry){
                 DirectoryEntry dir = (DirectoryEntry)entry;
                 File file = new File(parent, entry.getName());
