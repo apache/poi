@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
@@ -2308,4 +2309,60 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // TODO Re-check sheet contents
         // TODO Re-check formula evaluation
     }
+
+    @Test
+    public void testBug56295_MergeXlslsWithStyles() throws IOException {
+        XSSFWorkbook xlsToAppendWorkbook = XSSFTestDataSamples.openSampleWorkbook("56295.xlsx");
+        XSSFSheet sheet = xlsToAppendWorkbook.getSheetAt(0);
+        XSSFRow srcRow = sheet.getRow(0);
+        XSSFCell oldCell = srcRow.getCell(0);
+        XSSFCellStyle cellStyle = oldCell.getCellStyle();
+        
+        checkStyle(cellStyle);
+        
+//        StylesTable table = xlsToAppendWorkbook.getStylesSource();
+//        List<XSSFCellFill> fills = table.getFills();
+//        System.out.println("Having " + fills.size() + " fills");
+//        for(XSSFCellFill fill : fills) {
+//        	System.out.println("Fill: " + fill.getFillBackgroundColor() + "/" + fill.getFillForegroundColor());
+//        }        
+        
+        XSSFWorkbook targetWorkbook = new XSSFWorkbook();
+        XSSFSheet newSheet = targetWorkbook.createSheet(sheet.getSheetName());
+        XSSFRow destRow = newSheet.createRow(0);
+        XSSFCell newCell = destRow.createCell(0);
+
+		//newCell.getCellStyle().cloneStyleFrom(cellStyle);
+        CellStyle newCellStyle = targetWorkbook.createCellStyle();
+        newCellStyle.cloneStyleFrom(cellStyle);
+        newCell.setCellStyle(newCellStyle);
+		checkStyle(newCell.getCellStyle());
+        newCell.setCellValue(oldCell.getStringCellValue());
+
+//        OutputStream os = new FileOutputStream("output.xlsm");
+//        try {
+//        	targetWorkbook.write(os);
+//        } finally {
+//        	os.close();
+//        }
+        
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(targetWorkbook);
+        XSSFCellStyle styleBack = wbBack.getSheetAt(0).getRow(0).getCell(0).getCellStyle();
+        checkStyle(styleBack);
+    }
+
+	private void checkStyle(XSSFCellStyle cellStyle) {
+		assertNotNull(cellStyle);
+        assertEquals(0, cellStyle.getFillForegroundColor());
+        assertNotNull(cellStyle.getFillForegroundXSSFColor());
+        XSSFColor fgColor = cellStyle.getFillForegroundColorColor();
+		assertNotNull(fgColor);
+		assertEquals("FF00FFFF", fgColor.getARGBHex());
+
+        assertEquals(0, cellStyle.getFillBackgroundColor());
+        assertNotNull(cellStyle.getFillBackgroundXSSFColor());
+        XSSFColor bgColor = cellStyle.getFillBackgroundColorColor();
+		assertNotNull(bgColor);
+		assertEquals("FF00FFFF", fgColor.getARGBHex());
+	}
 }

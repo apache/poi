@@ -154,6 +154,13 @@ public class XSSFCellStyle implements CellStyle {
                   _cellXf = CTXf.Factory.parse(
                         src.getCoreXf().toString()
                   );
+                  
+                  // bug 56295: ensure that the fills is available and set correctly
+                  CTFill fill = CTFill.Factory.parse(
+                		  src.getCTFill().toString()
+                		  );
+                  addFill(fill);
+                  
                   // Swap it over
                   _stylesSource.replaceCellXfAt(_cellXfId, _cellXf);
                } catch(XmlException e) {
@@ -186,6 +193,13 @@ public class XSSFCellStyle implements CellStyle {
             throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
         }
     }
+
+	private void addFill(CTFill fill) {
+		int idx = _stylesSource.putFill(new XSSFCellFill(fill));
+
+		_cellXf.setFillId(idx);
+		_cellXf.setApplyFill(true);
+	}
 
     /**
      * Get the type of horizontal alignment for the cell
@@ -444,7 +458,8 @@ public class XSSFCellStyle implements CellStyle {
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
     public XSSFColor getFillBackgroundXSSFColor() {
-        if(!_cellXf.getApplyFill()) return null;
+    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
         int fillIndex = (int)_cellXf.getFillId();
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
@@ -480,7 +495,8 @@ public class XSSFCellStyle implements CellStyle {
      * @return XSSFColor - fill color or <code>null</code> if not set
      */
     public XSSFColor getFillForegroundXSSFColor() {
-        if(!_cellXf.getApplyFill()) return null;
+    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return null;
 
         int fillIndex = (int)_cellXf.getFillId();
         XSSFCellFill fg = _stylesSource.getFillAt(fillIndex);
@@ -515,7 +531,8 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.ss.usermodel.CellStyle#DIAMONDS
      */
     public short getFillPattern() {
-        if(!_cellXf.getApplyFill()) return 0;
+    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        if(_cellXf.isSetApplyFill() && !_cellXf.getApplyFill()) return 0;
 
         int fillIndex = (int)_cellXf.getFillId();
         XSSFCellFill fill = _stylesSource.getFillAt(fillIndex);
@@ -996,10 +1013,7 @@ public class XSSFCellStyle implements CellStyle {
             ptrn.setBgColor(color.getCTColor());
         }
 
-        int idx = _stylesSource.putFill(new XSSFCellFill(ct));
-
-        _cellXf.setFillId(idx);
-        _cellXf.setApplyFill(true);
+        addFill(ct);
     }
 
     /**
@@ -1052,10 +1066,7 @@ public class XSSFCellStyle implements CellStyle {
             ptrn.setFgColor(color.getCTColor());
         }
 
-        int idx = _stylesSource.putFill(new XSSFCellFill(ct));
-
-        _cellXf.setFillId(idx);
-        _cellXf.setApplyFill(true);
+        addFill(ct);
     }
 
     /**
@@ -1076,7 +1087,8 @@ public class XSSFCellStyle implements CellStyle {
      */
     private CTFill getCTFill(){
         CTFill ct;
-        if(_cellXf.getApplyFill()) {
+    	// bug 56295: handle missing applyFill attribute as "true" because Excel does as well
+        if(!_cellXf.isSetApplyFill() || _cellXf.getApplyFill()) {
             int fillIndex = (int)_cellXf.getFillId();
             XSSFCellFill cf = _stylesSource.getFillAt(fillIndex);
 
@@ -1135,10 +1147,7 @@ public class XSSFCellStyle implements CellStyle {
         if(fp == NO_FILL && ptrn.isSetPatternType()) ptrn.unsetPatternType();
         else ptrn.setPatternType(STPatternType.Enum.forInt(fp + 1));
 
-        int idx = _stylesSource.putFill(new XSSFCellFill(ct));
-
-        _cellXf.setFillId(idx);
-        _cellXf.setApplyFill(true);
+        addFill(ct);
     }
 
     /**
