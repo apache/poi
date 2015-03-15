@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -44,11 +43,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         // TODO - support shifting of page breaks
     }
 
-    @Override
-	public void testShiftWithComments() { // disabled test from superclass
-        // TODO - support shifting of comments.
-    }
-
 	public void testBug54524() throws IOException {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("54524.xlsx");
         XSSFSheet sheet = workbook.getSheetAt(0);
@@ -61,7 +55,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 		cell = CellUtil.getCell(sheet.getRow(3), 0);
 		assertEquals("X", cell.getStringCellValue());
 	}
-	
 
 	public void testBug53798() throws IOException {
 		// NOTE that for HSSF (.xls) negative shifts combined with positive ones do work as expected  
@@ -187,19 +180,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-	}
-
-	public void testBug55280() throws IOException {
-        Workbook w = new XSSFWorkbook();
-        try {
-            Sheet s = w.createSheet();
-            for (int row = 0; row < 5000; ++row)
-                s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
-
-            s.shiftRows(0, 4999, 1);        // takes a long time...
-        } finally {
-            w.close();
-        }
 	}
 
     public void test57171() throws Exception {

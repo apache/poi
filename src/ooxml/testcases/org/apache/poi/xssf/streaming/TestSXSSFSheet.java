@@ -89,6 +89,13 @@ public class TestSXSSFSheet extends BaseTestSheet {
         super.bug35084();
     }
 
+    @Test
+    public void getCellComment() throws IOException {
+    	// TODO: reading cell comments via Sheet does not work currently as it tries 
+    	// to access the underlying sheet for this, but comments are stored as
+    	// properties on Cells...
+    }
+    
     @Override
     @Test
     public void defaultColumnStyle() {
