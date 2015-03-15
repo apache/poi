@@ -145,9 +145,17 @@ public class XSSFComment implements Comment {
 		_comment.setRef(newRef);
       _comments.referenceUpdated(oldRef, _comment);
       
-        if(_vmlShape != null) _vmlShape.getClientDataArray(0).setRowArray(0, new BigInteger(String.valueOf(row)));
+        if(_vmlShape != null) {
+        	_vmlShape.getClientDataArray(0).setRowArray(0, 
+        			new BigInteger(String.valueOf(row)));
+        	
+            // There is a very odd xmlbeans bug when changing the row
+            //  arrays which can lead to corrupt pointer
+            // This call seems to fix them again... See bug #50795
+            _vmlShape.getClientDataList().toString();
+        }
     }
-	
+    
     /**
      * @return the rich text string of the comment
      */
