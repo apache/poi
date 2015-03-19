@@ -19,7 +19,9 @@ package org.apache.poi.hslf.usermodel;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.*;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.ParentAwareRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
@@ -34,13 +36,13 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestRecordSetup extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
-	private HSLFSlideShow hss;
+	private HSLFSlideShow ss;
+	private HSLFSlideShowImpl hss;
 
 	public TestRecordSetup() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testHandleParentAwareRecords() {

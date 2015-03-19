@@ -18,9 +18,9 @@
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.HSLFSlideShow;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
@@ -36,15 +36,15 @@ public final class TestSetBoldItalic extends TestCase {
      * and set some of the style attributes
      */
     public void testTextBoxWrite() throws Exception {
-        SlideShow ppt = new SlideShow();
-        Slide sl = ppt.createSlide();
-        RichTextRun rt;
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide sl = ppt.createSlide();
+        HSLFTextRun rt;
 
         String val = "Hello, World!";
 
         // Create a new textbox, and give it lots of properties
-        TextBox txtbox = new TextBox();
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        HSLFTextBox txtbox = new HSLFTextBox();
+        rt = txtbox.getTextParagraph().getRichTextRuns()[0];
         txtbox.setText(val);
         rt.setFontSize(42);
         rt.setBold(true);
@@ -53,7 +53,7 @@ public final class TestSetBoldItalic extends TestCase {
         sl.addShape(txtbox);
 
         // Check it before save
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        rt = txtbox.getTextParagraph().getRichTextRuns()[0];
         assertEquals(val, rt.getText());
         assertEquals(42, rt.getFontSize());
         assertTrue(rt.isBold());
@@ -64,11 +64,11 @@ public final class TestSetBoldItalic extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         sl = ppt.getSlides()[0];
 
-        txtbox = (TextBox)sl.getShapes()[0];
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        txtbox = (HSLFTextBox)sl.getShapes()[0];
+        rt = txtbox.getTextParagraph().getRichTextRuns()[0];
 
         // Check after save
         assertEquals(val, rt.getText());

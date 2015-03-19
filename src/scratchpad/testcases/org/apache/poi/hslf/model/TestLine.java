@@ -21,7 +21,7 @@ import java.awt.Color;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Test Line shape.
@@ -31,9 +31,9 @@ import org.apache.poi.hslf.usermodel.SlideShow;
 public final class TestLine extends TestCase {
 
     public void testCreateLines() {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         slide.addTitle().setText("Lines tester");
 

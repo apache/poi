@@ -23,8 +23,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.HSLFSlide;
+import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -46,15 +46,15 @@ public final class TestNumberedList extends TestCase {
 	}
 
 	public void testNumberedList() throws Exception {
-		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("numbers.ppt"));
+		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final Slide[] slides = ppt.getSlides();
+		final HSLFSlide[] slides = ppt.getSlides();
 		assertEquals(2, slides.length);
 		checkSlide0(slides[0]);
 		checkSlide1(slides[1]);
 	}
-	private void checkSlide0(final Slide s) {
+	private void checkSlide0(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(1, numberedListArray.length);//Just one text box here
@@ -70,10 +70,10 @@ public final class TestNumberedList extends TestCase {
 		assertNull(autoNumbers[1].getAutoNumberScheme());
 		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaLcParenRight == autoNumbers[2].getAutoNumberScheme());
 			
-		TextRun[] textRuns = s.getTextRuns();
+		HSLFTextParagraph[] textRuns = s.getTextRuns();
 		assertEquals(2, textRuns.length);
 
-		RichTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
 		assertEquals("titTe", textRun.getRawText());
 		assertEquals(1, textRuns[0].getRichTextRuns().length);
 		assertFalse(textRun.isBullet());
@@ -90,7 +90,7 @@ public final class TestNumberedList extends TestCase {
 		assertEquals(34, props[1].getCharactersCovered());
 		assertEquals(68, props[2].getCharactersCovered());
 	}
-	private void checkSlide1(final Slide s) {
+	private void checkSlide1(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(1, numberedListArray.length);//Just one text box here
@@ -106,10 +106,10 @@ public final class TestNumberedList extends TestCase {
 		assertNull(autoNumbers[1].getAutoNumberScheme());
 		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaUcPeriod == autoNumbers[2].getAutoNumberScheme());
 
-		final TextRun[] textRuns = s.getTextRuns();
+		final HSLFTextParagraph[] textRuns = s.getTextRuns();
 		assertEquals(2, textRuns.length);
 
-		RichTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
 		assertEquals("Second Slide Title", textRun.getRawText());
 		assertEquals(1, textRuns[0].getRichTextRuns().length);
 		assertFalse(textRun.isBullet());

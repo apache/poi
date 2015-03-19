@@ -19,14 +19,11 @@ package org.apache.poi.sl.usermodel;
 
 
 public interface Shape {
-	ShapeContainer getParent();
+	ShapeContainer<? extends Shape> getParent();
 	
     /**
     *
     * @return the sheet this shape belongs to
     */
-   Sheet getSheet();
-	
-
-	
+   Sheet<? extends Shape, ? extends SlideShow> getSheet();
 }

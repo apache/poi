@@ -17,14 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
+import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.util.PngUtils;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.exceptions.HSLFException;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 /**
  * Represents a PNG picture data in a PPT file
@@ -52,10 +46,10 @@ public final class PNG extends Bitmap {
 
     /**
      * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.Picture#PNG
+     * @see  org.apache.poi.hslf.model.HSLFPictureShape#PNG
      */
     public int getType(){
-        return Picture.PNG;
+        return HSLFPictureShape.PNG;
     }
 
     /**
@@ -65,5 +59,9 @@ public final class PNG extends Bitmap {
      */
     public int getSignature(){
         return 0x6E00;
+    }
+
+    public String getContentType() {
+        return "image/png";
     }
 }

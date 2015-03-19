@@ -45,7 +45,7 @@ public class DrawFactory {
         boolean isHint = false;
         if (graphics != null) {
             factory = (DrawFactory)graphics.getRenderingHint(DRAW_FACTORY);
-            isHint = true;
+            isHint = (factory != null);
         }
         // secondly try the thread local default
         if (factory == null) {
@@ -76,25 +76,25 @@ public class DrawFactory {
         } else if (shape instanceof Background) {
             return getDrawable((Background)shape);
         } else if (shape instanceof Slide) {
-            return getDrawable((Slide<? extends Shape>)shape);
+            return getDrawable((Slide<? extends Shape, ? extends SlideShow>)shape);
         } else if (shape instanceof MasterSheet) {
-            return getDrawable((MasterSheet<? extends Shape>)shape);
+            return getDrawable((MasterSheet<? extends Shape, ? extends SlideShow>)shape);
         } else if (shape instanceof Sheet) {
-            return getDrawable((Sheet<? extends Shape>)shape);
+            return getDrawable((Sheet<? extends Shape, ? extends SlideShow>)shape);
         }
 
         throw new IllegalArgumentException("Unsupported shape type: "+shape.getClass());
     }
 
-    public <T extends Slide<? extends Shape>> DrawSlide<T> getDrawable(T sheet) {
+    public <T extends Slide<? extends Shape, ? extends SlideShow>> DrawSlide<T> getDrawable(T sheet) {
         return new DrawSlide<T>(sheet);
     }
 
-    public <T extends Sheet<? extends Shape>> DrawSheet<T> getDrawable(T sheet) {
+    public <T extends Sheet<? extends Shape, ? extends SlideShow>> DrawSheet<T> getDrawable(T sheet) {
         return new DrawSheet<T>(sheet);
     }
 
-    public <T extends MasterSheet<? extends Shape>> DrawMasterSheet<T> getDrawable(T sheet) {
+    public <T extends MasterSheet<? extends Shape, ? extends SlideShow>> DrawMasterSheet<T> getDrawable(T sheet) {
         return new DrawMasterSheet<T>(sheet);
     }
 

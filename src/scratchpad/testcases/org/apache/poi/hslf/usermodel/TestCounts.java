@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.POIDataSamples;
@@ -30,16 +31,16 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestCounts extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
 	public TestCounts() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testSheetsCount() {
-		Slide[] slides = ss.getSlides();
+		HSLFSlide[] slides = ss.getSlides();
 		// Two sheets - master sheet is separate
 		assertEquals(2, slides.length);
 
@@ -57,7 +58,7 @@ public final class TestCounts extends TestCase {
 	}
 
 	public void testNotesCount() {
-		Notes[] notes = ss.getNotes();
+		HSLFNotes[] notes = ss.getNotes();
 		// Two sheets -> two notes
 		// Note: there are also notes on the slide master
 		//assertEquals(3, notes.length); // When we do slide masters

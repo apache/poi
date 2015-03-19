@@ -4,8 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.text.*;
 
-import org.apache.poi.xslf.usermodel.XSLFRenderingHint;
-
 public class DrawTextFragment implements Drawable  {
     final TextLayout layout;
     final AttributedString str;
@@ -29,8 +27,8 @@ public class DrawTextFragment implements Drawable  {
 
         double yBaseline = y + layout.getAscent();
 
-        Integer textMode = (Integer)graphics.getRenderingHint(XSLFRenderingHint.TEXT_RENDERING_MODE);
-        if(textMode != null && textMode == XSLFRenderingHint.TEXT_AS_SHAPES){
+        Integer textMode = (Integer)graphics.getRenderingHint(Drawable.TEXT_RENDERING_MODE);
+        if(textMode != null && textMode == Drawable.TEXT_AS_SHAPES){
             layout.draw(graphics, (float)x, (float)yBaseline);
         } else {
             graphics.drawString(str.getIterator(), (float)x, (float)yBaseline );
@@ -38,13 +36,9 @@ public class DrawTextFragment implements Drawable  {
     }
 
     public void applyTransform(Graphics2D graphics) {
-        // TODO Auto-generated method stub
-        
     }
 
     public void drawContent(Graphics2D graphics) {
-        // TODO Auto-generated method stub
-        
     }
     
     public TextLayout getLayout() {

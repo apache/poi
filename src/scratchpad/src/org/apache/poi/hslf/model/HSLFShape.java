@@ -17,17 +17,15 @@
 
 package org.apache.poi.hslf.model;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.Units;
-
-import java.util.*;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.util.*;
 
 /**
  *  <p>
@@ -45,7 +43,7 @@ import java.awt.geom.Rectangle2D;
   *
   * @author Yegor Kozlov
  */
-public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSLFShape> {
+public abstract class HSLFShape implements Shape {
 
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
@@ -90,12 +88,12 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
     /**
      * The <code>Sheet</code> this shape belongs to
      */
-    protected Sheet _sheet;
+    protected HSLFSheet _sheet;
 
     /**
      * Fill
      */
-    protected Fill _fill;
+    protected HSLFFill _fill;
 
     /**
      * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
@@ -336,7 +334,7 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
      *
      * @param sh - owning shape
      */
-    protected void afterInsert(Sheet sh){
+    protected void afterInsert(HSLFSheet sh){
         if(_fill != null) {
             _fill.afterInsert(sh);
         }
@@ -345,7 +343,7 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
     /**
      *  @return the <code>SlideShow</code> this shape belongs to
      */
-    public Sheet getSheet(){
+    public HSLFSheet getSheet(){
         return _sheet;
     }
 
@@ -354,7 +352,7 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
      *
      * @param sheet owner of this shape
      */
-    public void setSheet(Sheet sheet){
+    public void setSheet(HSLFSheet sheet){
         _sheet = sheet;
     }
 
@@ -375,7 +373,7 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
         
         int rgb[] = ecr.getRGB();
 
-        Sheet sheet = getSheet();
+        HSLFSheet sheet = getSheet();
         if (fSchemeIndex && sheet != null) {
             //red is the index to the color scheme
             ColorSchemeAtom ca = sheet.getColorScheme();
@@ -394,13 +392,18 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
             //TODO
         }
 
+        double alpha = getAlpha(opacityProperty);
+        return new Color(rgb[0], rgb[1], rgb[2], (int)(alpha*255.0));
+    }
+
+    double getAlpha(short opacityProperty) {
+        EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty op = getEscherProperty(opt, opacityProperty);
         int defaultOpacity = 0x00010000;
         int opacity = (op == null) ? defaultOpacity : op.getPropertyValue();
-        double alpha = Units.fixedPointToDouble(opacity)*255.0;
-        return new Color(rgb[0], rgb[1], rgb[2], (int)alpha);
+        return Units.fixedPointToDouble(opacity);
     }
-
+    
     Color toRGB(int val){
         int a = (val >> 24) & 0xFF;
         int b = (val >> 16) & 0xFF;
@@ -446,11 +449,16 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
      *
      * @return fill properties of this shape
      */
-    public Fill getFill(){
-        if(_fill == null) _fill = new Fill(this);
+    public HSLFFill getFill(){
+        if(_fill == null) {
+            _fill = new HSLFFill(this);
+        }
         return _fill;
     }
 
+    public FillStyle getFillStyle() {
+        return getFill().getFillStyle();
+    }
 
     /**
      * Returns the hyperlink assigned to this shape
@@ -479,46 +487,39 @@ public abstract class HSLFShape implements org.apache.poi.sl.usermodel.Shape<HSL
         return getEscherChild(EscherOptRecord.RECORD_ID);
     }
     
-    @Override
     public boolean getFlipHorizontal(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPHORIZ) != 0;
     }
      
-    @Override
     public void setFlipHorizontal(boolean flip) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ;
         spRecord.setFlags(flag);
     }
 
-    @Override
     public boolean getFlipVertical(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return (spRecord.getFlags()& EscherSpRecord.FLAG_FLIPVERT) != 0;
     }
     
-    @Override
     public void setFlipVertical(boolean flip) {
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flag = spRecord.getFlags() | EscherSpRecord.FLAG_FLIPVERT;
         spRecord.setFlags(flag);
     }
 
-    @Override
     public double getRotation(){
         int rot = getEscherProperty(EscherProperties.TRANSFORM__ROTATION);
         double angle = Units.fixedPointToDouble(rot) % 360.0;
         return angle;
     }
     
-    @Override
     public void setRotation(double theta){
         int rot = Units.doubleToFixedPoint(theta % 360.0);
         setEscherProperty(EscherProperties.TRANSFORM__ROTATION, rot);
     }
 
-    @Override
     public boolean isPlaceholder() {
         return false;
     }

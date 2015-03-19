@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.POIDataSamples;
@@ -30,16 +31,16 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestNotesText extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
 	public TestNotesText() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testNotesOne() {
-		Notes notes = ss.getNotes()[0];
+		HSLFNotes notes = ss.getNotes()[0];
 
 		String[] expectText = new String[] {"These are the notes for page 1"};
 		assertEquals(expectText.length, notes.getTextRuns().length);
@@ -49,7 +50,7 @@ public final class TestNotesText extends TestCase {
 	}
 
 	public void testNotesTwo() {
-		Notes notes = ss.getNotes()[1];
+		HSLFNotes notes = ss.getNotes()[1];
 		String[] expectText = new String[] {"These are the notes on page two, again lacking formatting"};
 		assertEquals(expectText.length, notes.getTextRuns().length);
 		for(int i=0; i<expectText.length; i++) {

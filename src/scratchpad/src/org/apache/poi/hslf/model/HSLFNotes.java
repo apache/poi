@@ -17,6 +17,12 @@
 
 package org.apache.poi.hslf.model;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.Notes;
+
 /**
  * This class represents a slide's notes in a PowerPoint Document. It
  *  allows access to the text within, and the layout. For now, it only
@@ -25,42 +31,45 @@ package org.apache.poi.hslf.model;
  * @author Nick Burch
  */
 
-public final class Notes extends Sheet
-{
-  private TextRun[] _runs;
+public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFSlideShow> {
+    private HSLFTextParagraph[] _runs;
 
-  /**
-   * Constructs a Notes Sheet from the given Notes record.
-   * Initialises TextRuns, to provide easier access to the text
-   *
-   * @param notes the Notes record to read from
-   */
-  public Notes (org.apache.poi.hslf.record.Notes notes) {
-      super(notes, notes.getNotesAtom().getSlideID());
+    /**
+     * Constructs a Notes Sheet from the given Notes record.
+     * Initialises TextRuns, to provide easier access to the text
+     * 
+     * @param notes the Notes record to read from
+     */
+    public HSLFNotes(org.apache.poi.hslf.record.Notes notes) {
+        super(notes, notes.getNotesAtom().getSlideID());
 
-	// Now, build up TextRuns from pairs of TextHeaderAtom and
-	//  one of TextBytesAtom or TextCharsAtom, found inside
-	//  EscherTextboxWrapper's in the PPDrawing
-	_runs = findTextRuns(getPPDrawing());
+        // Now, build up TextRuns from pairs of TextHeaderAtom and
+        // one of TextBytesAtom or TextCharsAtom, found inside
+        // EscherTextboxWrapper's in the PPDrawing
+        _runs = findTextRuns(getPPDrawing());
 
-	// Set the sheet on each TextRun
-	for (int i = 0; i < _runs.length; i++)
-		_runs[i].setSheet(this);
-  }
+        // Set the sheet on each TextRun
+        for (HSLFTextParagraph tp : _runs) {
+            tp.supplySheet(this);
+        }
+    }
 
+    /**
+     * Returns an array of all the TextRuns found
+     */
+    public HSLFTextParagraph[] getTextRuns() {
+        return _runs;
+    }
 
-  // Accesser methods follow
-
-  /**
-   * Returns an array of all the TextRuns found
-   */
-  public TextRun[] getTextRuns() { return _runs; }
-
+    @Override
+    public List<HSLFTextParagraph> getTextParagraphs() {
+        return Arrays.asList(_runs);
+    }
+    
     /**
      * Return <code>null</code> - Notes Masters are not yet supported
      */
-    public MasterSheet getMasterSheet() {
+    public HSLFMasterSheet getMasterSheet() {
         return null;
     }
-
 }

@@ -17,6 +17,7 @@
 
 package org.apache.poi.sl.draw;
 
+import static org.apache.poi.sl.usermodel.PaintStyle.TRANSPARENT_PAINT;
 import java.awt.*;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
 import java.awt.MultipleGradientPaint.CycleMethod;
@@ -35,13 +36,28 @@ import org.apache.poi.util.POILogger;
 
 
 public class DrawPaint {
-    public final static Color NO_PAINT = new Color(0xFF, 0xFF, 0xFF, 0);
+    
     private final static POILogger LOG = POILogFactory.getLogger(DrawPaint.class);
 
     protected PlaceableShape shape;
     
     public DrawPaint(PlaceableShape shape) {
         this.shape = shape;
+    }
+
+    public static SolidPaint createSolidPaint(final Color color) {
+        return new SolidPaint() {
+            public ColorStyle getSolidColor() {
+                return new ColorStyle(){
+                    public Color getColor() { return color; }
+                    public int getAlpha() { return -1; }
+                    public int getLumOff() { return -1; }
+                    public int getLumMod() { return -1; }
+                    public int getShade() { return -1; }
+                    public int getTint() { return -1; }
+                };
+            }
+        };
     }
     
     public Paint getPaint(Graphics2D graphics, PaintStyle paint) {
@@ -74,7 +90,7 @@ public class DrawPaint {
 
     protected Paint getTexturePaint(TexturePaint fill, Graphics2D graphics) {
         InputStream is = fill.getImageData();
-        if (is == null) return NO_PAINT;
+        if (is == null) return TRANSPARENT_PAINT.getSolidColor().getColor();
         assert(graphics != null);
         
         ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
@@ -84,7 +100,7 @@ public class DrawPaint {
             renderer.loadImage(fill.getImageData(), fill.getContentType());
         } catch (IOException e) {
             LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
-            return NO_PAINT;
+            return TRANSPARENT_PAINT.getSolidColor().getColor();
         }
 
         int alpha = fill.getAlpha();
@@ -105,7 +121,9 @@ public class DrawPaint {
     public static Color applyColorTransform(ColorStyle color){
         Color result = color.getColor();
 
-        if (result == null || color.getAlpha() == 100) return NO_PAINT;
+        if (result == null || color.getAlpha() == 100) {
+            return TRANSPARENT_PAINT.getSolidColor().getColor();
+        }
         
         result = applyAlpha(result, color);
         result = applyLuminanace(result, color);

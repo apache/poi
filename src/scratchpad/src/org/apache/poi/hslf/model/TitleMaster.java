@@ -25,8 +25,8 @@ import org.apache.poi.hslf.record.*;
  *
  * @author Yegor Kozlov
  */
-public final class TitleMaster extends MasterSheet {
-    private TextRun[] _runs;
+public final class TitleMaster extends HSLFMasterSheet {
+    private HSLFTextParagraph[] _runs;
 
     /**
      * Constructs a TitleMaster
@@ -42,7 +42,7 @@ public final class TitleMaster extends MasterSheet {
     /**
      * Returns an array of all the TextRuns found
      */
-    public TextRun[] getTextRuns() {
+    public HSLFTextParagraph[] getTextRuns() {
         return _runs;
     }
 
@@ -50,14 +50,14 @@ public final class TitleMaster extends MasterSheet {
      * Delegate the call to the underlying slide master.
      */
     public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
-        MasterSheet master = getMasterSheet();
+        HSLFMasterSheet master = getMasterSheet();
         return master == null ? null : master.getStyleAttribute(txtype, level, name, isCharacter);
     }
 
     /**
      * Returns the slide master for this title master.
      */
-    public MasterSheet getMasterSheet(){
+    public HSLFMasterSheet getMasterSheet(){
         SlideMaster[] master = getSlideShow().getSlidesMasters();
         SlideAtom sa = ((org.apache.poi.hslf.record.Slide)getSheetContainer()).getSlideAtom();
         int masterId = sa.getMasterID();

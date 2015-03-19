@@ -20,17 +20,11 @@ import java.awt.Color;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.sl.usermodel.LineCap;
-import org.apache.poi.sl.usermodel.LineDash;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleList;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**
  * @author Yegor Kozlov

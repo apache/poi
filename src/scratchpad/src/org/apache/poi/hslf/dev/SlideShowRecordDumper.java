@@ -19,10 +19,9 @@ package org.apache.poi.hslf.dev;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
 import java.util.Iterator;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
@@ -44,7 +43,7 @@ import org.apache.poi.hslf.record.StyleTextPropAtom;
 public final class SlideShowRecordDumper {
   private boolean optVerbose;
   private boolean optEscher;
-  private HSLFSlideShow doc;
+  private HSLFSlideShowImpl doc;
 
   /**
    *  right now this function takes one parameter: a ppt file, and outputs
@@ -103,7 +102,7 @@ public final class SlideShowRecordDumper {
   {
 	optVerbose = verbose;
   	optEscher = escher;
-	doc = new HSLFSlideShow(fileName);
+	doc = new HSLFSlideShowImpl(fileName);
   }
 
 

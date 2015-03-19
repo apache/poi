@@ -18,34 +18,12 @@
 package org.apache.poi.hslf.model;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.hslf.record.CString;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.MasterTextPropAtom;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
-import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
-import org.apache.poi.hslf.record.SheetContainer;
-import org.apache.poi.hslf.record.StyleTextProp9Atom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextBytesAtom;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.record.TextRulerAtom;
-import org.apache.poi.hslf.record.TextSpecInfoAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -57,18 +35,18 @@ import org.apache.poi.util.POILogger;
  * @author Yegor Kozlov
  */
 
-public abstract class Sheet implements ShapeContainer<HSLFShape> {
-	private static POILogger logger = POILogFactory.getLogger(Sheet.class);
+public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
+	private static POILogger logger = POILogFactory.getLogger(HSLFSheet.class);
 
     /**
      * The <code>SlideShow</code> we belong to
      */
-    private SlideShow _slideShow;
+    private HSLFSlideShow _slideShow;
 
     /**
      * Sheet background
      */
-    private Background _background;
+    private HSLFBackground _background;
 
     /**
      * Record container that holds sheet data.
@@ -80,7 +58,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
 
     private int _sheetNo;
 
-    public Sheet(SheetContainer container, int sheetNo) {
+    public HSLFSheet(SheetContainer container, int sheetNo) {
         _container = container;
         _sheetNo = sheetNo;
     }
@@ -88,7 +66,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
     /**
      * Returns an array of all the TextRuns in the sheet.
      */
-    public abstract TextRun[] getTextRuns();
+    public abstract HSLFTextParagraph[] getTextRuns();
 
     /**
      * Returns the (internal, RefID based) sheet number, as used
@@ -116,7 +94,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
     /**
      * Fetch the SlideShow we're attached to
      */
-    public SlideShow getSlideShow() {
+    public HSLFSlideShow getSlideShow() {
         return _slideShow;
     }
 
@@ -131,13 +109,12 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      * Set the SlideShow we're attached to.
      * Also passes it on to our child RichTextRuns
      */
-    public void setSlideShow(SlideShow ss) {
+    public void setSlideShow(HSLFSlideShow ss) {
         _slideShow = ss;
-        TextRun[] trs = getTextRuns();
-        if (trs != null) {
-            for (int i = 0; i < trs.length; i++) {
-                trs[i].supplySlideShow(_slideShow);
-            }
+        HSLFTextParagraph[] trs = getTextRuns();
+        if (trs == null) return;
+        for (HSLFTextParagraph tp : trs) {
+            tp.supplySheet(this);
         }
     }
 
@@ -145,8 +122,8 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
     /**
      * For a given PPDrawing, grab all the TextRuns
      */
-    public static TextRun[] findTextRuns(PPDrawing ppdrawing) {
-        final List<TextRun> runsV = new ArrayList<TextRun>();
+    public static HSLFTextParagraph[] findTextRuns(PPDrawing ppdrawing) {
+        final List<HSLFTextParagraph> runsV = new ArrayList<HSLFTextParagraph>();
         final EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
         for (int i = 0; i < wrappers.length; i++) {
             int s1 = runsV.size();
@@ -156,11 +133,11 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
             findTextRuns(wrappers[i], runsV);
             int s2 = runsV.size();
             if (s2 != s1){
-                TextRun t = runsV.get(runsV.size()-1);
+                HSLFTextParagraph t = runsV.get(runsV.size()-1);
                 t.setShapeId(wrappers[i].getShapeId());
             }
         }
-        return runsV.toArray(new TextRun[runsV.size()]);
+        return runsV.toArray(new HSLFTextParagraph[runsV.size()]);
     }
     /**
      * Scans through the supplied record array, looking for
@@ -170,7 +147,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      * @param records the records to build from
      * @param found   vector to add any found to
      */
-    protected static void findTextRuns(final Record[] records, final List<TextRun> found) {
+    protected static void findTextParagraphs(final Record[] records, final List<HSLFTextParagraph> found) {
     	findTextRuns(records, found, null); 
     }
     /**
@@ -181,7 +158,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      * @param wrapper an EscherTextboxWrapper
      * @param found   vector to add any found to
      */
-    protected static void findTextRuns(final EscherTextboxWrapper wrapper, final List<TextRun> found) {
+    protected static void findTextRuns(final EscherTextboxWrapper wrapper, final List<HSLFTextParagraph> found) {
     	findTextRuns(wrapper.getChildRecords(), found, wrapper.getStyleTextProp9Atom());
     }
     /**
@@ -193,12 +170,12 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      * @param found   vector to add any found to
      * @param styleTextProp9Atom a StyleTextProp9Atom with numbered lists info
      */
-    protected static void findTextRuns(final Record[] records, final List<TextRun> found, final StyleTextProp9Atom styleTextProp9Atom) {
+    protected static void findTextRuns(final Record[] records, final List<HSLFTextParagraph> found, final StyleTextProp9Atom styleTextProp9Atom) {
         for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
             if (records[i] instanceof TextHeaderAtom) {
                 TextHeaderAtom tha = (TextHeaderAtom) records[i];
                 StyleTextPropAtom stpa = null;
-                TextRun trun = null;
+                HSLFTextParagraph trun = null;
                 Record next = null;
                 Record subs = null;
                 
@@ -231,10 +208,10 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
                 // Now, check if the next record is one to record
                 if (next instanceof TextCharsAtom) {
                     TextCharsAtom tca = (TextCharsAtom)next;
-                    trun = new TextRun(tha, tca, stpa);
+                    trun = new HSLFTextParagraph(tha, tca, stpa);
                 } else if (next instanceof TextBytesAtom) {
                     TextBytesAtom tba = (TextBytesAtom)next;
-                    trun = new TextRun(tha, tba, stpa);
+                    trun = new HSLFTextParagraph(tha, tba, stpa);
                 } else if (next instanceof StyleTextPropAtom) {
                     stpa = (StyleTextPropAtom)next;
                 } else if (next instanceof TextHeaderAtom) {
@@ -372,7 +349,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
     /**
      * Return the master sheet .
      */
-    public abstract MasterSheet getMasterSheet();
+    public abstract HSLFMasterSheet getMasterSheet();
 
     /**
      * Color scheme for this sheet.
@@ -386,7 +363,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      *
      * @return the background shape for this sheet.
      */
-    public Background getBackground() {
+    public HSLFBackground getBackground() {
         if (_background == null) {
             PPDrawing ppdrawing = getPPDrawing();
 
@@ -400,7 +377,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
                     break;
                 }
             }
-            _background = new Background(spContainer, null);
+            _background = new HSLFBackground(spContainer, null);
             _background.setSheet(this);
         }
         return _background;
@@ -416,7 +393,7 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      *
      * @param shape
      */
-    protected void onAddTextShape(TextShape shape) {
+    protected void onAddTextShape(HSLFTextShape shape) {
 
     }
 
@@ -426,12 +403,12 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      * @param type  type of text, See {@link org.apache.poi.hslf.record.TextHeaderAtom}
      * @return  <code>TextShape</code> or <code>null</code>
      */
-    public TextShape getPlaceholderByTextType(int type){
+    public HSLFTextShape getPlaceholderByTextType(int type){
         HSLFShape[] shape = getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof TextShape){
-                TextShape tx = (TextShape)shape[i];
-                TextRun run = tx.getTextRun();
+            if(shape[i] instanceof HSLFTextShape){
+                HSLFTextShape tx = (HSLFTextShape)shape[i];
+                HSLFTextParagraph run = tx.getTextParagraph();
                 if(run != null && run.getRunType() == type){
                     return tx;
                 }
@@ -446,11 +423,11 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
      * @param type  type of placeholder to search. See {@link org.apache.poi.hslf.record.OEPlaceholderAtom}
      * @return  <code>TextShape</code> or <code>null</code>
      */
-    public TextShape getPlaceholder(int type){
+    public HSLFTextShape getPlaceholder(int type){
         HSLFShape[] shape = getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof TextShape){
-                TextShape tx = (TextShape)shape[i];
+            if(shape[i] instanceof HSLFTextShape){
+                HSLFTextShape tx = (HSLFTextShape)shape[i];
                 int placeholderId = 0;
                 OEPlaceholderAtom oep = tx.getPlaceholderAtom();
                 if(oep != null) {
@@ -539,5 +516,15 @@ public abstract class Sheet implements ShapeContainer<HSLFShape> {
 
         return shapeList;
     }
+
+    /**
+     * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.
+     * Sheets that support the notion of master (slide, slideLayout) should override it and
+     * check this setting
+     */
+    public boolean getFollowMasterGraphics() {
+        return false;
+    }
+
 
 }

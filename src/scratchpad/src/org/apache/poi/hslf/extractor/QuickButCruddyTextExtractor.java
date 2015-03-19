@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
@@ -175,17 +175,17 @@ public final class QuickButCruddyTextExtractor {
 
 		// Otherwise, check the type to see if it's text
 		long type = LittleEndian.getUShort(pptContents,startPos+2);
-		TextRun trun = null;
+		HSLFTextParagraph trun = null;
 
 		// TextBytesAtom
 		if(type == RecordTypes.TextBytesAtom.typeID) {
 			TextBytesAtom tba = (TextBytesAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
-			trun = new TextRun((TextHeaderAtom)null,tba,(StyleTextPropAtom)null);
+			trun = new HSLFTextParagraph((TextHeaderAtom)null,tba,(StyleTextPropAtom)null);
 		}
 		// TextCharsAtom
 		if(type == RecordTypes.TextCharsAtom.typeID) {
 			TextCharsAtom tca = (TextCharsAtom)Record.createRecordForType(type, pptContents, startPos, len+8);
-			trun = new TextRun((TextHeaderAtom)null,tca,(StyleTextPropAtom)null);
+			trun = new HSLFTextParagraph((TextHeaderAtom)null,tca,(StyleTextPropAtom)null);
 		}
 
 		// CString (doesn't go via a TextRun)

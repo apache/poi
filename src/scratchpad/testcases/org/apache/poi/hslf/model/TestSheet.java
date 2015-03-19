@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -42,7 +42,7 @@ public final class TestSheet extends TestCase {
         String[] tests = {"SampleShow.ppt", "backgrounds.ppt", "text_shapes.ppt", "pictures.ppt"};
         for (String file : tests) {
             try {
-                SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
+                HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream(file));
                 doSlideShow(ppt);
             } catch (EncryptedPowerPointFileException e){
                 ; //skip encrypted ppt
@@ -50,21 +50,21 @@ public final class TestSheet extends TestCase {
         }
     }
 
-    private void doSlideShow(SlideShow ppt) {
-        Slide[] slide = ppt.getSlides();
+    private void doSlideShow(HSLFSlideShow ppt) {
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             verify(slide[i]);
 
-            Notes notes = slide[i].getNotesSheet();
+            HSLFNotes notes = slide[i].getNotesSheet();
             if(notes != null) verify(notes);
 
-            MasterSheet master = slide[i].getMasterSheet();
+            HSLFMasterSheet master = slide[i].getMasterSheet();
             assertNotNull(master);
             verify(master);
         }
     }
 
-    private void verify(Sheet sheet){
+    private void verify(HSLFSheet sheet){
         assertNotNull(sheet.getSlideShow());
 
         ColorSchemeAtom colorscheme = sheet.getColorScheme();
@@ -73,13 +73,13 @@ public final class TestSheet extends TestCase {
         PPDrawing ppdrawing = sheet.getPPDrawing();
         assertNotNull(ppdrawing);
 
-        Background background = sheet.getBackground();
+        HSLFBackground background = sheet.getBackground();
         assertNotNull(background);
 
         assertTrue(sheet._getSheetNumber() != 0);
         assertTrue(sheet._getSheetRefId() != 0);
 
-        TextRun[] txt = sheet.getTextRuns();
+        HSLFTextParagraph[] txt = sheet.getTextRuns();
         if (txt == null) {
             throw new AssertionFailedError("no text runs");
         }

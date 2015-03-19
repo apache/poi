@@ -18,7 +18,9 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.SheetContainer;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.sl.usermodel.MasterSheet;
 
 /**
  * The superclass of all master sheets - Slide masters, Notes masters, etc.
@@ -27,8 +29,8 @@ import org.apache.poi.hslf.model.textproperties.TextProp;
  *
  * @author Yegor Kozlov
  */
-public abstract class MasterSheet extends Sheet {
-    public MasterSheet(SheetContainer container, int sheetNo){
+public abstract class HSLFMasterSheet extends HSLFSheet implements MasterSheet<HSLFShape,HSLFSlideShow> {
+    public HSLFMasterSheet(SheetContainer container, int sheetNo){
         super(container, sheetNo);
     }
 
@@ -47,9 +49,9 @@ public abstract class MasterSheet extends Sheet {
      * @return true if the shape is a placeholder
      */
     public static boolean isPlaceholder(HSLFShape shape){
-        if(!(shape instanceof TextShape)) return false;
+        if(!(shape instanceof HSLFTextShape)) return false;
 
-        TextShape tx = (TextShape)shape;
+        HSLFTextShape tx = (HSLFTextShape)shape;
         return tx.getPlaceholderAtom() != null;
     }
 }

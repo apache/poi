@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import java.io.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 import junit.framework.TestCase;
@@ -33,7 +33,7 @@ public final class TestHeadersFooters extends TestCase
 
     public void testRead() throws Exception
     {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("headers_footers.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("headers_footers.ppt"));
 
         HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
         assertTrue(slideHdd.isFooterVisible());
@@ -53,7 +53,7 @@ public final class TestHeadersFooters extends TestCase
         assertTrue(notesHdd.isUserDateVisible());
         assertNull(notesHdd.getDateTimeText());
 
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         //the first slide uses presentation-scope headers / footers
         HeadersFooters hd1 = slide[0].getHeadersFooters();
         assertEquals(slideHdd.isFooterVisible(), hd1.isFooterVisible());
@@ -77,7 +77,7 @@ public final class TestHeadersFooters extends TestCase
      */
     public void testReadNoHeadersFooters() throws Exception
     {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
         HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
         assertFalse(slideHdd.isFooterVisible());
@@ -97,7 +97,7 @@ public final class TestHeadersFooters extends TestCase
         assertFalse(notesHdd.isUserDateVisible());
         assertNull(notesHdd.getDateTimeText());
 
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for(int i=0 ; i < slide.length; i++){
             HeadersFooters hd1 = slide[i].getHeadersFooters();
             assertFalse(hd1.isFooterVisible());
@@ -114,7 +114,7 @@ public final class TestHeadersFooters extends TestCase
      */
     public void testRead2007() throws Exception
     {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("headers_footers_2007.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("headers_footers_2007.ppt"));
 
         HeadersFooters slideHdd = ppt.getSlideHeadersFooters();
         assertTrue(slideHdd.isFooterVisible());
@@ -137,7 +137,7 @@ public final class TestHeadersFooters extends TestCase
         //assertEquals("08/12/08", notesHdd.getDateTimeText());
 
         //per-slide headers / footers
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         //the first slide uses presentation-scope headers / footers
         HeadersFooters hd1 = slide[0].getHeadersFooters();
         assertTrue(hd1.isFooterVisible());
@@ -174,7 +174,7 @@ public final class TestHeadersFooters extends TestCase
 
     public void testCreateSlideFooters() throws Exception
     {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
         HeadersFooters hdd = ppt.getSlideHeadersFooters();
         hdd.setFootersText("My slide footer");
         hdd.setSlideNumberVisible(true);
@@ -183,7 +183,7 @@ public final class TestHeadersFooters extends TestCase
         ppt.write(out);
         byte[] b = out.toByteArray();
 
-        SlideShow ppt2 = new SlideShow(new ByteArrayInputStream(b));
+        HSLFSlideShow ppt2 = new HSLFSlideShow(new ByteArrayInputStream(b));
         HeadersFooters hdd2 = ppt2.getSlideHeadersFooters();
         assertTrue(hdd2.isSlideNumberVisible());
         assertTrue(hdd2.isFooterVisible());
@@ -192,7 +192,7 @@ public final class TestHeadersFooters extends TestCase
 
     public void testCreateNotesFooters() throws Exception
     {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
         HeadersFooters hdd = ppt.getNotesHeadersFooters();
         hdd.setFootersText("My notes footer");
         hdd.setHeaderText("My notes header");
@@ -202,7 +202,7 @@ public final class TestHeadersFooters extends TestCase
         ppt.write(out);
         byte[] b = out.toByteArray();
 
-        SlideShow ppt2 = new SlideShow(new ByteArrayInputStream(b));
+        HSLFSlideShow ppt2 = new HSLFSlideShow(new ByteArrayInputStream(b));
         HeadersFooters hdd2 = ppt2.getNotesHeadersFooters();
         assertTrue(hdd2.isSlideNumberVisible());
         assertTrue(hdd2.isFooterVisible());

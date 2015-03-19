@@ -37,9 +37,9 @@ public final class TestSoundData extends TestCase{
         //read the reference sound file
         byte[] ref_data = slTests.readFile("ringin.wav");
 
-        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("sound.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
 
-        SoundData[] sound = ppt.getSoundData();
+        HSLFSoundData[] sound = ppt.getSoundData();
         assertEquals("Expected 1 sound", 1, sound.length);
 
         assertArrayEquals(ref_data, sound[0].getData());

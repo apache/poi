@@ -177,7 +177,7 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
     public void addShape(HSLFShape shape){
         _escherContainer.addChildRecord(shape.getSpContainer());
 
-        Sheet sheet = getSheet();
+        HSLFSheet sheet = getSheet();
         shape.setSheet(sheet);
         shape.setShapeId(sheet.allocateShapeId());
         shape.afterInsert(sheet);

@@ -18,9 +18,10 @@ package org.apache.poi.xslf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.sl.usermodel.TextAlign;
-import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.TextShape.TextAutofit;
+import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;

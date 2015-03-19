@@ -19,7 +19,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.usermodel.DummyGraphics2d;
 import org.junit.Test;
 
@@ -27,22 +27,22 @@ import org.junit.Test;
 public class TextPainterTest {
     @Test
     public void testTextPainter() {
-        TextShape shape = new Polygon();
+        HSLFTextShape shape = new Polygon();
         TextPainter painter = new TextPainter(shape);
-        painter.getAttributedString(new TextRun(null, new TextCharsAtom(), null));
+        painter.getAttributedString(new HSLFTextParagraph(null, new TextCharsAtom(), null));
         painter.paint(new DummyGraphics2d());
         painter.getTextElements((float)1.0, null);
     }
 
     @Test
     public void testTextPainterWithText() {
-        TextShape shape = new Polygon();
+        HSLFTextShape shape = new Polygon();
         TextPainter painter = new TextPainter(shape);
         TextCharsAtom tca = new TextCharsAtom();
         tca.setText("some text to read");
-        TextRun txrun = new TextRun(new TextHeaderAtom(), tca, new StyleTextPropAtom(10));
-        Slide sheet = new Slide(1, 1, 1);
-        sheet.setSlideShow(new SlideShow());
+        HSLFTextParagraph txrun = new HSLFTextParagraph(new TextHeaderAtom(), tca, new StyleTextPropAtom(10));
+        HSLFSlide sheet = new HSLFSlide(1, 1, 1);
+        sheet.setSlideShow(new HSLFSlideShow());
         txrun.setSheet(sheet);
 
         painter.getAttributedString(txrun, new DummyGraphics2d());

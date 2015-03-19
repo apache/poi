@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hslf.record.TextRulerAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -57,27 +57,27 @@ public final class TextPainter {
      */
     protected static final char DEFAULT_BULLET_CHAR = '\u25a0';
 
-    protected TextShape _shape;
+    protected HSLFTextShape _shape;
 
-    public TextPainter(TextShape shape){
+    public TextPainter(HSLFTextShape shape){
         _shape = shape;
     }
 
-    public AttributedString getAttributedString(TextRun txrun) {
+    public AttributedString getAttributedString(HSLFTextParagraph txrun) {
         return getAttributedString(txrun, null);
     }
     
     /**
      * Convert the underlying set of rich text runs into java.text.AttributedString
      */
-    public AttributedString getAttributedString(TextRun txrun, Graphics2D graphics){
+    public AttributedString getAttributedString(HSLFTextParagraph txrun, Graphics2D graphics){
         String text = txrun.getText();
         //TODO: properly process tabs
         text = text.replace('\t', ' ');
         text = text.replace((char)160, ' ');
 
         AttributedString at = new AttributedString(text);
-        RichTextRun[] rt = txrun.getRichTextRuns();
+        HSLFTextRun[] rt = txrun.getRichTextRuns();
         for (int i = 0; i < rt.length; i++) {
             int start = rt[i].getStartIndex();
             int end = rt[i].getEndIndex();
@@ -157,15 +157,15 @@ public final class TextPainter {
         int valign = _shape.getVerticalAlignment();
         double y0 = anchor.getY();
         switch (valign){
-            case TextShape.AnchorTopBaseline:
-            case TextShape.AnchorTop:
+            case HSLFTextShape.AnchorTopBaseline:
+            case HSLFTextShape.AnchorTop:
                 y0 += _shape.getMarginTop();
                 break;
-            case TextShape.AnchorBottom:
+            case HSLFTextShape.AnchorBottom:
                 y0 += anchor.getHeight() - textHeight - _shape.getMarginBottom();
                 break;
             default:
-            case TextShape.AnchorMiddle:
+            case HSLFTextShape.AnchorMiddle:
                 float delta =  (float)anchor.getHeight() - textHeight - _shape.getMarginTop() - _shape.getMarginBottom();
                 y0 += _shape.getMarginTop()  + delta/2;
                 break;
@@ -205,14 +205,14 @@ public final class TextPainter {
             pen.y = y0;
             switch (elem[i]._align) {
                 default:
-                case TextShape.AlignLeft:
+                case HSLFTextShape.AlignLeft:
                     pen.x = anchor.getX() + _shape.getMarginLeft();
                     break;
-                case TextShape.AlignCenter:
+                case HSLFTextShape.AlignCenter:
                     pen.x = anchor.getX() + _shape.getMarginLeft() +
                             (anchor.getWidth() - elem[i].advance - _shape.getMarginLeft() - _shape.getMarginRight()) / 2;
                     break;
-                case TextShape.AlignRight:
+                case HSLFTextShape.AlignRight:
                     pen.x = anchor.getX() + _shape.getMarginLeft() +
                             (anchor.getWidth() - elem[i].advance - _shape.getMarginLeft() - _shape.getMarginRight());
                     break;
@@ -235,7 +235,7 @@ public final class TextPainter {
     }
     
     public TextElement[] getTextElements(float textWidth, FontRenderContext frc, Graphics2D graphics){
-        TextRun run = _shape.getTextRun();
+        HSLFTextParagraph run = _shape.getTextParagraph();
         if (run == null) return null;
 
         String text = run.getText();
@@ -257,7 +257,7 @@ public final class TextPainter {
             boolean prStart = text.charAt(startIndex) == '\n';
             if(prStart) measurer.setPosition(startIndex++);
 
-            RichTextRun rt = run.getRichTextRunAt(startIndex == text.length() ? (startIndex-1) : startIndex);
+            HSLFTextRun rt = run.getRichTextRunAt(startIndex == text.length() ? (startIndex-1) : startIndex);
             if(rt == null) {
                 logger.log(POILogger.WARN,  "RichTextRun not found at pos" + startIndex + "; text.length: " + text.length());
                 break;
@@ -283,7 +283,7 @@ public final class TextPainter {
 
             if(bulletOffset > 0 || prStart || startIndex == 0) wrappingWidth -= textOffset;
 
-            if (_shape.getWordWrap() == TextShape.WrapNone) {
+            if (_shape.getWordWrap() == HSLFTextShape.WrapNone) {
                 wrappingWidth = _shape.getSheet().getSlideShow().getPageSize().width;
             }
 

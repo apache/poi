@@ -45,7 +45,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
 
     @SuppressWarnings("unused")
     public void init(InputStream is) throws XMLStreamException, JAXBException {
-        Reader xml = new InputStreamReader( is, Charset.forName("UTF-8") );
+        // Reader xml = new InputStreamReader( is, Charset.forName("UTF-8") );
         
 
         // StAX:
@@ -58,7 +58,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         
         long cntElem = 0;
         XMLInputFactory staxFactory = XMLInputFactory.newInstance();
-        XMLEventReader staxReader = staxFactory.createXMLEventReader(xml);
+        XMLEventReader staxReader = staxFactory.createXMLEventReader(is);
         XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
         // ignore StartElement:
         XMLEvent evDoc = staxFiltRd.nextEvent();

@@ -37,19 +37,9 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hpsf.ClassID;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.Hyperlink;
-import org.apache.poi.hslf.model.MovieShape;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.PPFont;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.HSLFShape;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.SlideMaster;
-import org.apache.poi.hslf.model.TitleMaster;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.DocumentAtom;
 import org.apache.poi.hslf.record.ExAviMovie;
@@ -79,6 +69,7 @@ import org.apache.poi.hslf.record.SlidePersistAtom;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -91,9 +82,9 @@ import org.apache.poi.util.POILogger;
  * @author Nick Burch
  * @author Yegor kozlov
  */
-public final class SlideShow {
+public final class HSLFSlideShow implements SlideShow {
 	// What we're based on
-	private HSLFSlideShow _hslfSlideShow;
+	private HSLFSlideShowImpl _hslfSlideShow;
 
 	// Pointers to the most recent versions of the core records
 	// (Document, Notes, Slide etc)
@@ -108,8 +99,8 @@ public final class SlideShow {
 	// Friendly objects for people to deal with
 	private SlideMaster[] _masters;
 	private TitleMaster[] _titleMasters;
-	private Slide[] _slides;
-	private Notes[] _notes;
+	private HSLFSlide[] _slides;
+	private HSLFNotes[] _notes;
 	private FontCollection _fonts;
 
 	// For logging
@@ -128,7 +119,7 @@ public final class SlideShow {
 	 *
 	 * @param hslfSlideShow the HSLFSlideShow to base on
 	 */
-	public SlideShow(HSLFSlideShow hslfSlideShow) {
+	public HSLFSlideShow(HSLFSlideShowImpl hslfSlideShow) {
 	    // Get useful things from our base slideshow
 	    _hslfSlideShow = hslfSlideShow;
 
@@ -149,15 +140,15 @@ public final class SlideShow {
 	/**
 	 * Constructs a new, empty, Powerpoint document.
 	 */
-	public SlideShow() {
-		this(HSLFSlideShow.create());
+	public HSLFSlideShow() {
+		this(HSLFSlideShowImpl.create());
 	}
 
 	/**
 	 * Constructs a Powerpoint document from an input stream.
 	 */
-	public SlideShow(InputStream inputStream) throws IOException {
-		this(new HSLFSlideShow(inputStream));
+	public HSLFSlideShow(InputStream inputStream) throws IOException {
+		this(new HSLFSlideShowImpl(inputStream));
 	}
 
 	/**
@@ -417,21 +408,21 @@ public final class SlideShow {
 
 		// Finally, generate model objects for everything
 		// Notes first
-		_notes = new Notes[notesRecords.length];
+		_notes = new HSLFNotes[notesRecords.length];
 		for (int i = 0; i < _notes.length; i++) {
 		    if (notesRecords[i] != null) {
-    		    _notes[i] = new Notes(notesRecords[i]);
+    		    _notes[i] = new HSLFNotes(notesRecords[i]);
     			_notes[i].setSlideShow(this);
 		    }
 		}
 		// Then slides
-		_slides = new Slide[slidesRecords.length];
+		_slides = new HSLFSlide[slidesRecords.length];
 		for (int i = 0; i < _slides.length; i++) {
 			SlideAtomsSet sas = slidesSets[i];
 			int slideIdentifier = sas.getSlidePersistAtom().getSlideIdentifier();
 
 			// Do we have a notes for this?
-			Notes notes = null;
+			HSLFNotes notes = null;
 			// Slide.SlideAtom.notesId references the corresponding notes slide.
 			// 0 if slide has no notes.
 			int noteId = slidesRecords[i].getSlideAtom().getNotesID();
@@ -445,7 +436,7 @@ public final class SlideShow {
 			}
 
 			// Now, build our slide
-			_slides[i] = new Slide(slidesRecords[i], notes, sas, slideIdentifier, (i + 1));
+			_slides[i] = new HSLFSlide(slidesRecords[i], notes, sas, slideIdentifier, (i + 1));
 			_slides[i].setSlideShow(this);
 		}
 	}
@@ -481,14 +472,14 @@ public final class SlideShow {
 	/**
 	 * Returns an array of all the normal Slides found in the slideshow
 	 */
-	public Slide[] getSlides() {
+	public HSLFSlide[] getSlides() {
 		return _slides;
 	}
 
 	/**
 	 * Returns an array of all the normal Notes found in the slideshow
 	 */
-	public Notes[] getNotes() {
+	public HSLFNotes[] getNotes() {
 		return _notes;
 	}
 
@@ -509,22 +500,22 @@ public final class SlideShow {
 	/**
 	 * Returns the data of all the pictures attached to the SlideShow
 	 */
-	public PictureData[] getPictureData() {
+	public HSLFPictureData[] getPictureData() {
 		return _hslfSlideShow.getPictures();
 	}
 
 	/**
 	 * Returns the data of all the embedded OLE object in the SlideShow
 	 */
-	public ObjectData[] getEmbeddedObjects() {
+	public HSLFObjectData[] getEmbeddedObjects() {
 		return _hslfSlideShow.getEmbeddedObjects();
 	}
 
 	/**
 	 * Returns the data of all the embedded sounds in the SlideShow
 	 */
-	public SoundData[] getSoundData() {
-		return SoundData.find(_documentRecord);
+	public HSLFSoundData[] getSoundData() {
+		return HSLFSoundData.find(_documentRecord);
 	}
 
 	/**
@@ -621,7 +612,7 @@ public final class SlideShow {
 	 *            the index of the slide to remove (0-based)
 	 * @return the slide that was removed from the slide show.
 	 */
-	public Slide removeSlide(int index) {
+	public HSLFSlide removeSlide(int index) {
 		int lastSlideIdx = _slides.length - 1;
 		if (index < 0 || index > lastSlideIdx) {
 			throw new IllegalArgumentException("Slide index (" + index + ") is out of range (0.."
@@ -631,13 +622,13 @@ public final class SlideShow {
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
-		Slide removedSlide = null;
+		HSLFSlide removedSlide = null;
 		ArrayList<Record> records = new ArrayList<Record>();
 		ArrayList<SlideAtomsSet> sa = new ArrayList<SlideAtomsSet>();
-		ArrayList<Slide> sl = new ArrayList<Slide>();
+		ArrayList<HSLFSlide> sl = new ArrayList<HSLFSlide>();
 
-		ArrayList<Notes> nt = new ArrayList<Notes>();
-		for (Notes notes : getNotes())
+		ArrayList<HSLFNotes> nt = new ArrayList<HSLFNotes>();
+		for (HSLFNotes notes : getNotes())
 			nt.add(notes);
 
 		for (int i = 0, num = 0; i < _slides.length; i++) {
@@ -658,7 +649,7 @@ public final class SlideShow {
 			slwt.setSlideAtomsSets(sa.toArray(new SlideAtomsSet[sa.size()]));
 			slwt.setChildRecord(records.toArray(new Record[records.size()]));
 		}
-		_slides = sl.toArray(new Slide[sl.size()]);
+		_slides = sl.toArray(new HSLFSlide[sl.size()]);
 
 		// if the removed slide had notes - remove references to them too
 
@@ -685,7 +676,7 @@ public final class SlideShow {
 
 			}
 		}
-		_notes = nt.toArray(new Notes[nt.size()]);
+		_notes = nt.toArray(new HSLFNotes[nt.size()]);
 
 		return removedSlide;
 	}
@@ -701,7 +692,7 @@ public final class SlideShow {
 	 *
 	 * @return the created <code>Slide</code>
 	 */
-	public Slide createSlide() {
+	public HSLFSlide createSlide() {
 		SlideListWithText slist = null;
 
 		// We need to add the records to the SLWT that deals
@@ -745,12 +736,12 @@ public final class SlideShow {
 		slist.addSlidePersistAtom(sp);
 
 		// Create a new Slide
-		Slide slide = new Slide(sp.getSlideIdentifier(), sp.getRefID(), _slides.length + 1);
+		HSLFSlide slide = new HSLFSlide(sp.getSlideIdentifier(), sp.getRefID(), _slides.length + 1);
 		slide.setSlideShow(this);
 		slide.onCreate();
 
 		// Add in to the list of Slides
-		Slide[] s = new Slide[_slides.length + 1];
+		HSLFSlide[] s = new HSLFSlide[_slides.length + 1];
 		System.arraycopy(_slides, 0, s, 0, _slides.length);
 		s[_slides.length] = slide;
 		_slides = s;
@@ -779,7 +770,7 @@ public final class SlideShow {
 	 * @return the index to this picture (1 based).
 	 */
 	public int addPicture(byte[] data, int format) throws IOException {
-		byte[] uid = PictureData.getChecksum(data);
+		byte[] uid = HSLFPictureData.getChecksum(data);
 
 		EscherContainerRecord bstore;
 
@@ -801,7 +792,7 @@ public final class SlideShow {
 			}
 		}
 
-		PictureData pict = PictureData.create(format);
+		HSLFPictureData pict = HSLFPictureData.create(format);
 		pict.setData(data);
 
 		int offset = _hslfSlideShow.addPicture(pict);
@@ -815,12 +806,12 @@ public final class SlideShow {
 		bse.setBlipTypeMacOS((byte) format);
 		bse.setBlipTypeWin32((byte) format);
 
-		if (format == Picture.EMF)
-			bse.setBlipTypeMacOS((byte) Picture.PICT);
-		else if (format == Picture.WMF)
-			bse.setBlipTypeMacOS((byte) Picture.PICT);
-		else if (format == Picture.PICT)
-			bse.setBlipTypeWin32((byte) Picture.WMF);
+		if (format == HSLFPictureShape.EMF)
+			bse.setBlipTypeMacOS((byte) HSLFPictureShape.PICT);
+		else if (format == HSLFPictureShape.WMF)
+			bse.setBlipTypeMacOS((byte) HSLFPictureShape.PICT);
+		else if (format == HSLFPictureShape.PICT)
+			bse.setBlipTypeWin32((byte) HSLFPictureShape.WMF);
 
 		bse.setRef(0);
 		bse.setOffset(offset);
@@ -1134,7 +1125,7 @@ public final class SlideShow {
     }
 
     protected int addPersistentObject(PositionDependentRecord slideRecord) {
-    	slideRecord.setLastOnDiskOffset(HSLFSlideShow.UNSET_OFFSET);
+    	slideRecord.setLastOnDiskOffset(HSLFSlideShowImpl.UNSET_OFFSET);
 		_hslfSlideShow.appendRootLevelRecord((Record)slideRecord);
 
         // For position dependent records, hold where they were and now are

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf;
+package org.apache.poi.hslf.model;
 
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
@@ -49,7 +49,7 @@ import org.apache.poi.util.LittleEndian;
  * This class provides helper functions for encrypted PowerPoint documents.
  */
 @Internal
-public class EncryptedSlideShow {
+public class HSLFSlideShowEncrypted {
     DocumentEncryptionAtom dea;
     CryptoAPIEncryptor enc = null;
     CryptoAPIDecryptor dec = null;
@@ -58,11 +58,11 @@ public class EncryptedSlideShow {
 
     private static final BitField fieldRecInst = new BitField(0xFFF0);
     
-    protected EncryptedSlideShow(DocumentEncryptionAtom dea) {
+    protected HSLFSlideShowEncrypted(DocumentEncryptionAtom dea) {
         this.dea = dea;
     }
 
-    protected EncryptedSlideShow(byte[] docstream, NavigableMap<Integer,Record> recordMap) {
+    protected HSLFSlideShowEncrypted(byte[] docstream, NavigableMap<Integer,Record> recordMap) {
         // check for DocumentEncryptionAtom, which would be at the last offset
         // need to ignore already set UserEdit and PersistAtoms
         UserEditAtom userEditAtomWithEncryption = null;
@@ -362,7 +362,7 @@ public class EncryptedSlideShow {
     /**
      * remove duplicated UserEditAtoms and merge PersistPtrHolder.
      * Before this method is called, make sure that the offsets are correct,
-     * i.e. call {@link HSLFSlideShow#updateAndWriteDependantRecords(OutputStream, Map)}
+     * i.e. call {@link HSLFSlideShowImpl#updateAndWriteDependantRecords(OutputStream, Map)}
      */
     protected static Record[] normalizeRecords(Record records[]) {
         // http://msdn.microsoft.com/en-us/library/office/gg615594(v=office.14).aspx

@@ -45,7 +45,7 @@ import org.apache.poi.util.StringUtil;
  * TODO: finish
  * @author Yegor Kozlov
  */
-public final class ActiveXShape extends Picture {
+public final class ActiveXShape extends HSLFPictureShape {
     public static final int DEFAULT_ACTIVEX_THUMBNAIL = -1;
 
     /**
@@ -108,7 +108,7 @@ public final class ActiveXShape extends Picture {
     /**
      * Assign a control to this shape
      *
-     * @see org.apache.poi.hslf.usermodel.SlideShow#addMovie(String, int)
+     * @see org.apache.poi.hslf.usermodel.HSLFSlideShow#addMovie(String, int)
      * @param idx  the index of the movie
      */
     public void setActiveXIndex(int idx){
@@ -164,7 +164,7 @@ public final class ActiveXShape extends Picture {
         return ctrl;
     }
 
-    protected void afterInsert(Sheet sheet){
+    protected void afterInsert(HSLFSheet sheet){
         ExControl ctrl = getExControl();
         ctrl.getExControlAtom().setSlideId(sheet._getSheetNumber());
 

@@ -32,10 +32,10 @@ import java.util.List;
  */
 public class SoundFinder {
     public static void main(String[] args) throws Exception {
-        SlideShow ppt = new SlideShow(new FileInputStream(args[0]));
-        SoundData[] sounds = ppt.getSoundData();
+        HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(args[0]));
+        HSLFSoundData[] sounds = ppt.getSoundData();
 
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {

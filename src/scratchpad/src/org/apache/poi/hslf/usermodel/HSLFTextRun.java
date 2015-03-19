@@ -19,16 +19,14 @@ package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 
-import org.apache.poi.hslf.model.MasterSheet;
-import org.apache.poi.hslf.model.HSLFShape;
-import org.apache.poi.hslf.model.Sheet;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -37,13 +35,13 @@ import org.apache.poi.util.POILogger;
  * Represents a run of text, all with the same style
  *
  */
-public final class RichTextRun {
+public final class HSLFTextRun implements TextRun {
 	protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
 	/** The TextRun we belong to */
-	private TextRun parentRun;
+	private HSLFTextParagraph parentParagraph;
 	/** The SlideShow we belong to */
-	private SlideShow slideShow;
+	// private SlideShow slideShow;
 
 	/** Where in the parent TextRun we start from */
 	private int startPos;
@@ -68,7 +66,7 @@ public final class RichTextRun {
 	 * @param startAt
 	 * @param len
 	 */
-	public RichTextRun(TextRun parent, int startAt, int len) {
+	public HSLFTextRun(HSLFTextParagraph parent, int startAt, int len) {
 		this(parent, startAt, len, null, null, false, false);
 	}
 	/**
@@ -81,10 +79,10 @@ public final class RichTextRun {
 	 * @param pShared The paragraph styles are shared with other runs
 	 * @param cShared The character styles are shared with other runs
 	 */
-	public RichTextRun(TextRun parent, int startAt, int len,
+	public HSLFTextRun(HSLFTextParagraph parent, int startAt, int len,
 	TextPropCollection pStyle,  TextPropCollection cStyle,
 	boolean pShared, boolean cShared) {
-		parentRun = parent;
+		parentParagraph = parent;
 		startPos = startAt;
 		length = len;
 		paragraphStyle = pStyle;
@@ -109,8 +107,7 @@ public final class RichTextRun {
 	/**
 	 * Supply the SlideShow we belong to
 	 */
-	public void supplySlideShow(SlideShow ss) {
-		slideShow = ss;
+	public void updateSheet() {
 		if (_fontname != null) {
 			setFontName(_fontname);
 			_fontname = null;
@@ -146,20 +143,20 @@ public final class RichTextRun {
 	 * Fetch the text, in output suitable form
 	 */
 	public String getText() {
-		return parentRun.getText().substring(startPos, startPos+length);
+		return parentParagraph.getText().substring(startPos, startPos+length);
 	}
 	/**
 	 * Fetch the text, in raw storage form
 	 */
 	public String getRawText() {
-		return parentRun.getRawText().substring(startPos, startPos+length);
+		return parentParagraph.getRawText().substring(startPos, startPos+length);
 	}
 
 	/**
 	 * Change the text
 	 */
 	public void setText(String text) {
-		String s = parentRun.normalize(text);
+		String s = parentParagraph.normalize(text);
 		setRawText(s);
 	}
 
@@ -168,7 +165,7 @@ public final class RichTextRun {
 	 */
 	public void setRawText(String text) {
 		length = text.length();
-		parentRun.changeTextInRichTextRun(this,text);
+		parentParagraph.changeTextInRichTextRun(this,text);
 	}
 
 	/**
@@ -207,10 +204,10 @@ public final class RichTextRun {
 			prop = (BitMaskTextProp)props.findByName(propname);
 		}
 		if (prop == null){
-			Sheet sheet = parentRun.getSheet();
+			HSLFSheet sheet = parentParagraph.getSheet();
 			if(sheet != null){
-				int txtype = parentRun.getRunType();
-				MasterSheet master = sheet.getMasterSheet();
+				int txtype = parentParagraph.getRunType();
+				HSLFMasterSheet master = sheet.getMasterSheet();
 				if (master != null){
 					prop = (BitMaskTextProp)master.getStyleAttribute(txtype, getIndentLevel(), propname, isCharacter);
 				}
@@ -243,7 +240,7 @@ public final class RichTextRun {
 
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(props == null) {
-			parentRun.ensureStyleAtomPresent();
+			parentParagraph.ensureStyleAtomPresent();
 			props = isCharacter ? characterStyle : paragraphStyle;
 		}
 
@@ -279,9 +276,9 @@ public final class RichTextRun {
 		}
 
 		if (prop == null){
-			Sheet sheet = parentRun.getSheet();
-			int txtype = parentRun.getRunType();
-			MasterSheet master = sheet.getMasterSheet();
+			HSLFSheet sheet = parentParagraph.getSheet();
+			int txtype = parentParagraph.getRunType();
+			HSLFMasterSheet master = sheet.getMasterSheet();
 			if (master != null)
 				prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, true);
 		}
@@ -303,9 +300,9 @@ public final class RichTextRun {
 			hardAttribute = maskProp != null && maskProp.getValue() == 0;
 		}
 		if (prop == null && !hardAttribute){
-			Sheet sheet = parentRun.getSheet();
-			int txtype = parentRun.getRunType();
-			MasterSheet master = sheet.getMasterSheet();
+			HSLFSheet sheet = parentParagraph.getSheet();
+			int txtype = parentParagraph.getRunType();
+			HSLFMasterSheet master = sheet.getMasterSheet();
 			if (master != null)
 				prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
 		}
@@ -321,7 +318,7 @@ public final class RichTextRun {
 	public void setParaTextPropVal(String propName, int val) {
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(paragraphStyle == null) {
-			parentRun.ensureStyleAtomPresent();
+			parentParagraph.ensureStyleAtomPresent();
 			// paragraphStyle will now be defined
 		}
 
@@ -337,7 +334,7 @@ public final class RichTextRun {
 	public void setCharTextPropVal(String propName, int val) {
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(characterStyle == null) {
-			parentRun.ensureStyleAtomPresent();
+			parentParagraph.ensureStyleAtomPresent();
 			// characterStyle will now be defined
 		}
 
@@ -380,14 +377,14 @@ public final class RichTextRun {
 	/**
 	 * Is the text underlined?
 	 */
-	public boolean isUnderlined() {
+	public boolean isUnderline() {
 		return isCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX);
 	}
 
 	/**
 	 * Is the text underlined?
 	 */
-	public void setUnderlined(boolean underlined) {
+	public void setUnderline(boolean underlined) {
 		setCharFlagsTextPropVal(CharFlagsTextProp.UNDERLINE_IDX, underlined);
 	}
 
@@ -486,21 +483,25 @@ public final class RichTextRun {
 	 * Sets the font name to use
 	 */
 	public void setFontName(String fontName) {
-		if (slideShow == null) {
+	    HSLFSheet sheet = parentParagraph.getSheet();
+	    HSLFSlideShowImpl slideShow = (sheet == null) ? null : sheet.getSlideShow();
+		if (sheet == null || slideShow == null) {
 			//we can't set font since slideshow is not assigned yet
 			_fontname = fontName;
-		} else {
-			// Get the index for this font (adding if needed)
-			int fontIdx = slideShow.getFontCollection().addFont(fontName);
-			setCharTextPropVal("font.index", fontIdx);
+			return;
 		}
+		// Get the index for this font (adding if needed)
+		int fontIdx = slideShow.getFontCollection().addFont(fontName);
+		setCharTextPropVal("font.index", fontIdx);
 	}
 
 	/**
 	 * Gets the font name
 	 */
 	public String getFontName() {
-		if (slideShow == null) {
+        HSLFSheet sheet = parentParagraph.getSheet();
+        HSLFSlideShowImpl slideShow = (sheet == null) ? null : sheet.getSlideShow();
+		if (sheet == null || slideShow == null) {
 			return _fontname;
 		}
 		int fontIdx = getCharTextPropVal("font.index");
@@ -517,7 +518,7 @@ public final class RichTextRun {
 
 		int cidx = rgb >> 24;
 		if (rgb % 0x1000000 == 0){
-			ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
+			ColorSchemeAtom ca = parentParagraph.getSheet().getColorScheme();
 			if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
 		}
 		Color tmp = new Color(rgb, true);
@@ -673,7 +674,7 @@ public final class RichTextRun {
 
 		int cidx = rgb >> 24;
 		if (rgb % 0x1000000 == 0){
-			ColorSchemeAtom ca = parentRun.getSheet().getColorScheme();
+			ColorSchemeAtom ca = parentParagraph.getSheet().getColorScheme();
 			if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
 		}
 		Color tmp = new Color(rgb, true);

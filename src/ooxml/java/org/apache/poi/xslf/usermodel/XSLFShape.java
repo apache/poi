@@ -19,7 +19,6 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -28,7 +27,6 @@ import java.util.Comparator;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
@@ -56,19 +54,6 @@ public abstract class XSLFShape implements Shape {
     private CTNonVisualDrawingProps _nvPr;
     private CTPlaceholder _ph;
 
-    protected static final SolidPaint TRANSPARENT_PAINT = new SolidPaint() {
-        public ColorStyle getSolidColor() {
-            return new ColorStyle(){
-                public Color getColor() { return DrawPaint.NO_PAINT; }
-                public int getAlpha() { return -1; }
-                public int getLumOff() { return -1; }
-                public int getLumMod() { return -1; }
-                public int getShade() { return -1; }
-                public int getTint() { return -1; }
-            };
-        }
-    };
-    
     protected XSLFShape(XmlObject shape, XSLFSheet sheet) {
         _shape = shape;
         _sheet = sheet;
@@ -146,7 +131,7 @@ public abstract class XSLFShape implements Shape {
                 try {
                     pr = shape.getSpPr();
                     if (((CTShapeProperties)pr).isSetNoFill()) {
-                        setValue(TRANSPARENT_PAINT);
+                        setValue(PaintStyle.TRANSPARENT_PAINT);
                         return true;
                     }                    
                 } catch (IllegalStateException e) {}
@@ -158,7 +143,7 @@ public abstract class XSLFShape implements Shape {
                     pr = shape.getGrpSpPr();
                 }
                 if (pr == null) {
-                    setValue(TRANSPARENT_PAINT);
+                    setValue(PaintStyle.TRANSPARENT_PAINT);
                     return true;
                 }
                 
@@ -190,7 +175,7 @@ public abstract class XSLFShape implements Shape {
             fillRef = getBgRef();
         }
         if (fillRef == null) {
-            return TRANSPARENT_PAINT;
+            return PaintStyle.TRANSPARENT_PAINT;
         }
 
         // The idx attribute refers to the index of a fill style or
@@ -213,21 +198,21 @@ public abstract class XSLFShape implements Shape {
             paint = selectPaint(fillProps, phClr, sheet.getPackagePart());
         }
 
-        return paint == null ? TRANSPARENT_PAINT : paint;
+        return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
     }
 
     protected CTBackgroundProperties getBgPr() {
-        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:bgPr";
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:bgPr";
         return selectProperty(CTBackgroundProperties.class, xquery);
     }
     
     protected CTStyleMatrixReference getBgRef() {
-        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:bgRef";
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:bgRef";
         return selectProperty(CTStyleMatrixReference.class, xquery);
     }
     
     protected CTGroupShapeProperties getGrpSpPr() {
-        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:grpSpPr";
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:grpSpPr";
         return selectProperty(CTGroupShapeProperties.class, xquery);
     }
     
@@ -241,7 +226,7 @@ public abstract class XSLFShape implements Shape {
 
     protected CTShapeProperties getSpPr() {
         if (_spPr == null) {
-            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:spPr";
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:spPr";
             _spPr = selectProperty(CTShapeProperties.class, xquery);
         }
         if (_spPr == null) {
@@ -252,7 +237,7 @@ public abstract class XSLFShape implements Shape {
 
     protected CTShapeStyle getSpStyle() {
         if (_spStyle == null) {
-            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:style";
+            String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' p:style";
             _spStyle = selectProperty(CTShapeStyle.class, xquery);
         }
         return _spStyle;
@@ -348,7 +333,7 @@ public abstract class XSLFShape implements Shape {
             paint = selectPaint(obj, phClr, pp);
             if(paint != null) break;
         }
-        return paint == null ? TRANSPARENT_PAINT : paint;
+        return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
     }    
     
     /**
@@ -373,7 +358,7 @@ public abstract class XSLFShape implements Shape {
      */
     protected PaintStyle selectPaint(XmlObject obj, final CTSchemeColor phClr, final PackagePart parentPart) {
         if (obj instanceof CTNoFillProperties) {
-            return TRANSPARENT_PAINT;
+            return PaintStyle.TRANSPARENT_PAINT;
         } else if (obj instanceof CTSolidColorFillProperties) {
             return selectPaint((CTSolidColorFillProperties)obj, phClr, parentPart);
         } else if (obj instanceof CTBlipFillProperties) {

@@ -33,27 +33,75 @@ public interface StrokeStyle {
      * with actual line width
      */
     enum LineDash {
-        SOLID(1),
-        DOT(1,1),
-        DASH(3,4),
-        LG_DASH(8,3),
-        DASH_DOT(4,3,1,3),
-        LG_DASH_DOT(8,3,1,3),
-        LG_DASH_DOT_DOT(8,3,1,3,1,3),
-        SYS_DASH(2,2),
-        SYS_DOT(1,1),
-        SYS_DASH_DOT,
-        SYS_DASH_DOT_DOT;
+        /** Solid (continuous) pen - native 1 */
+        SOLID(1, 1),
+        /** square dot style - native 6 */
+        DOT(6, 1,1),
+        /** dash style - native 7 */
+        DASH(7, 3,4),
+        /** dash short dash - native 9*/
+        DASH_DOT(9, 4,3,1,3),
+        /** long dash style - native 8 */
+        LG_DASH(8, 8,3),
+        /** long dash short dash - native 10 */
+        LG_DASH_DOT(10, 8,3,1,3),
+        /** long dash short dash short dash - native 11 */
+        LG_DASH_DOT_DOT(11, 8,3,1,3,1,3),
+        /** PS_DASH system dash style - native 2 */
+        SYS_DASH(2, 2,2),
+        /** PS_DOT system dash style - native 3 */
+        SYS_DOT(3, 1,1),
+        /** PS_DASHDOT system dash style - native 4 */
+        SYS_DASH_DOT(4, 2,2,1,1),
+        /** PS_DASHDOTDOT system dash style / native 5 */
+        SYS_DASH_DOT_DOT(5, 2,2,1,1,1,1);
 
-        public int pattern[];
-        
-        LineDash(int... pattern) {
+        public final int pattern[];
+        public final int nativeId;
+
+        LineDash(int nativeId, int... pattern) {
+            this.nativeId = nativeId;
             this.pattern = (pattern == null || pattern.length == 0) ? new int[]{1} : pattern;
         }
+
+        public static LineDash fromNativeId(int nativeId) {
+            for (LineDash ld : values()) {
+                if (ld.nativeId == nativeId) return ld;
+            }
+            return null;
+        }
     }
-    
+
+    enum LineCompound {
+        /** Single line (of width lineWidth) - native 0 / ooxml default */
+        SINGLE(0),
+        /** Double lines of equal width - native 1 / ooxml "dbl" */
+        DOUBLE(1),
+        /** Double lines, one thick, one thin - native 2 / ooxml "thickThin" */
+        THICK_THIN(2),
+        /** Double lines, reverse order - native 3 / ooxml "thinThick" */
+        THIN_THICK(3),
+        /** Three lines, thin, thick, thin - native 4 / ooxml "tri" */
+        TRIPLE(4);
+        
+        public final int nativeId;
+        
+        LineCompound(int nativeId) {
+            this.nativeId = nativeId;
+        }
+
+        public static LineCompound fromNativeId(int nativeId) {
+            for (LineCompound lc : values()) {
+                if (lc.nativeId == nativeId) return lc;
+            }
+            return null;
+        }
+    }
+
+
     PaintStyle getPaint();
     LineCap getLineCap();
     LineDash getLineDash();
+    LineCompound getLineCompound();
     double getLineWidth();
 }

@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
 
@@ -48,14 +48,14 @@ public final class TestTextShape {
 
     @Test
     public void createAutoShape(){
-        TextShape shape = new AutoShape(ShapeType.TRAPEZOID);
-        assertNull(shape.getTextRun());
+        HSLFTextShape shape = new HSLFAutoShape(ShapeType.TRAPEZOID);
+        assertNull(shape.getTextParagraph());
         assertNull(shape.getText());
         assertNull(shape.getEscherTextboxWrapper());
 
-        TextRun run = shape.createTextRun();
+        HSLFTextParagraph run = shape.createTextRun();
         assertNotNull(run);
-        assertNotNull(shape.getTextRun());
+        assertNotNull(shape.getTextParagraph());
         assertNotNull(shape.getEscherTextboxWrapper());
         assertEquals("", shape.getText());
         assertSame(run, shape.createTextRun());
@@ -64,14 +64,14 @@ public final class TestTextShape {
 
     @Test
     public void createTextBox(){
-        TextShape shape = new TextBox();
-        TextRun run = shape.getTextRun();
+        HSLFTextShape shape = new HSLFTextBox();
+        HSLFTextParagraph run = shape.getTextParagraph();
         assertNotNull(run);
         assertNotNull(shape.getText());
         assertNotNull(shape.getEscherTextboxWrapper());
 
         assertSame(run, shape.createTextRun());
-        assertNotNull(shape.getTextRun());
+        assertNotNull(shape.getTextParagraph());
         assertNotNull(shape.getEscherTextboxWrapper());
         assertEquals("", shape.getText());
 
@@ -85,15 +85,15 @@ public final class TestTextShape {
      */
     @Test
     public void read() throws IOException {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("text_shapes.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("text_shapes.ppt"));
 
         List<String> lst1 = new ArrayList<String>();
-        Slide slide = ppt.getSlides()[0];
+        HSLFSlide slide = ppt.getSlides()[0];
         HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
-            assertTrue("Expected TextShape but found " + shape[i].getClass().getName(), shape[i] instanceof TextShape);
-            TextShape tx = (TextShape)shape[i];
-            TextRun run = tx.getTextRun();
+            assertTrue("Expected TextShape but found " + shape[i].getClass().getName(), shape[i] instanceof HSLFTextShape);
+            HSLFTextShape tx = (HSLFTextShape)shape[i];
+            HSLFTextParagraph run = tx.getTextParagraph();
             assertNotNull(run);
             int runType = run.getRunType();
 
@@ -125,7 +125,7 @@ public final class TestTextShape {
         }
 
         List<String> lst2 = new ArrayList<String>();
-        TextRun[] run = slide.getTextRuns();
+        HSLFTextParagraph[] run = slide.getTextRuns();
         for (int i = 0; i < run.length; i++) {
             lst2.add(run[i].getText());
         }
@@ -135,18 +135,18 @@ public final class TestTextShape {
 
     @Test
     public void readWrite() throws IOException {
-        SlideShow ppt = new SlideShow();
-        Slide slide =  ppt.createSlide();
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide =  ppt.createSlide();
 
-        TextShape shape1 = new TextBox();
-        TextRun run1 = shape1.createTextRun();
+        HSLFTextShape shape1 = new HSLFTextBox();
+        HSLFTextParagraph run1 = shape1.createTextRun();
         run1.setText("Hello, World!");
         slide.addShape(shape1);
 
         shape1.moveTo(100, 100);
 
-        TextShape shape2 = new AutoShape(ShapeType.RIGHT_ARROW);
-        TextRun run2 = shape2.createTextRun();
+        HSLFTextShape shape2 = new HSLFAutoShape(ShapeType.RIGHT_ARROW);
+        HSLFTextParagraph run2 = shape2.createTextRun();
         run2.setText("Testing TextShape");
         slide.addShape(shape2);
         shape2.moveTo(300, 300);
@@ -155,37 +155,37 @@ public final class TestTextShape {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
         slide = ppt.getSlides()[0];
         HSLFShape[] shape = slide.getShapes();
 
-        assertTrue(shape[0] instanceof TextShape);
-        shape1 = (TextShape)shape[0];
+        assertTrue(shape[0] instanceof HSLFTextShape);
+        shape1 = (HSLFTextShape)shape[0];
         assertEquals(ShapeType.TEXT_BOX, shape1.getShapeType());
-        assertEquals("Hello, World!", shape1.getTextRun().getText());
+        assertEquals("Hello, World!", shape1.getTextParagraph().getText());
 
-        assertTrue(shape[1] instanceof TextShape);
-        shape1 = (TextShape)shape[1];
+        assertTrue(shape[1] instanceof HSLFTextShape);
+        shape1 = (HSLFTextShape)shape[1];
         assertEquals(ShapeType.RIGHT_ARROW, shape1.getShapeType());
-        assertEquals("Testing TextShape", shape1.getTextRun().getText());
+        assertEquals("Testing TextShape", shape1.getTextParagraph().getText());
     }
 
     @Test
     public void margins() throws IOException {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("text-margins.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("text-margins.ppt"));
 
-        Slide slide = ppt.getSlides()[0];
+        HSLFSlide slide = ppt.getSlides()[0];
 
-        Map<String,TextShape> map = new HashMap<String,TextShape>();
+        Map<String,HSLFTextShape> map = new HashMap<String,HSLFTextShape>();
         HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof TextShape){
-                TextShape tx = (TextShape)shape[i];
+            if(shape[i] instanceof HSLFTextShape){
+                HSLFTextShape tx = (HSLFTextShape)shape[i];
                 map.put(tx.getText(), tx);
             }
         }
 
-        TextShape tx;
+        HSLFTextShape tx;
 
         tx = map.get("TEST1");
         assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
@@ -214,22 +214,22 @@ public final class TestTextShape {
 
     @Test
     public void bug52599() throws IOException {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("52599.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("52599.ppt"));
 
-        Slide slide = ppt.getSlides()[0];
+        HSLFSlide slide = ppt.getSlides()[0];
         HSLFShape[] sh = slide.getShapes();
         assertEquals(3, sh.length);
 
-        TextShape sh0 = (TextShape)sh[0];
+        HSLFTextShape sh0 = (HSLFTextShape)sh[0];
         assertEquals(null, sh0.getText());
-        assertEquals(null, sh0.getTextRun());
+        assertEquals(null, sh0.getTextParagraph());
 
-        TextShape sh1 = (TextShape)sh[1];
+        HSLFTextShape sh1 = (HSLFTextShape)sh[1];
         assertEquals(null, sh1.getText());
-        assertEquals(null, sh1.getTextRun());
+        assertEquals(null, sh1.getTextParagraph());
 
-        TextShape sh2 = (TextShape)sh[2];
+        HSLFTextShape sh2 = (HSLFTextShape)sh[2];
         assertEquals("this box should be shown just once", sh2.getText());
-        assertEquals(-1, sh2.getTextRun().getIndex());
+        assertEquals(-1, sh2.getTextParagraph().getIndex());
     }
 }

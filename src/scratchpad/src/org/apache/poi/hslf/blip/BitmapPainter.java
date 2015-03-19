@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
 
@@ -56,7 +56,7 @@ import java.io.ByteArrayInputStream;
 public final class BitmapPainter implements ImagePainter {
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
-    public void paint(Graphics2D graphics, PictureData pict, Picture parent) {
+    public void paint(Graphics2D graphics, HSLFPictureData pict, HSLFPictureShape parent) {
         BufferedImage img;
         try {
             img = ImageIO.read(new ByteArrayInputStream(pict.getData()));

@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Test <code>Table</code> object.
@@ -36,16 +36,16 @@ public final class TestTable extends TestCase {
      * Test that ShapeFactory works properly and returns <code>Table</code>
      */
     public void testShapeFactory() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         Table tbl = new Table(2, 5);
         slide.addShape(tbl);
 
         TableCell cell = tbl.getCell(0, 0);
         //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
-        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextRun().getRunType());
+        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraph().getRunType());
 
         assertTrue(slide.getShapes()[0] instanceof Table);
         Table tbl2 = (Table)slide.getShapes()[0];
@@ -56,7 +56,7 @@ public final class TestTable extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
         slide = ppt.getSlides()[0];
         assertTrue(slide.getShapes()[0] instanceof Table);
         Table tbl3 = (Table)slide.getShapes()[0];
@@ -68,8 +68,8 @@ public final class TestTable extends TestCase {
      * Error constructing Table when rownum=1
      */
     public void test45889(){
-        SlideShow ppt = new SlideShow();
-        Slide slide = ppt.createSlide();
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
         HSLFShape[] shapes;
         Table tbl1 = new Table(1, 5);
         assertEquals(5, tbl1.getNumberOfColumns());

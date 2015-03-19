@@ -19,8 +19,11 @@ package org.apache.poi.hslf;
 
 
 import junit.framework.TestCase;
+
 import java.io.*;
 import java.util.*;
+
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
@@ -33,14 +36,14 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestReWriteSanity extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private HSLFSlideShowImpl ss;
 	// POIFS primed on the test data
 	private POIFSFileSystem pfs;
 
     public TestReWriteSanity() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShow(pfs);
+		ss = new HSLFSlideShowImpl(pfs);
     }
 
 	public void testUserEditAtomsRight() throws Exception {
@@ -52,7 +55,7 @@ public final class TestReWriteSanity extends TestCase {
 		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
 		// Create a new one from that
-		HSLFSlideShow wss = new HSLFSlideShow(bais);
+		HSLFSlideShowImpl wss = new HSLFSlideShowImpl(bais);
 
 		// Find the location of the PersistPtrIncrementalBlocks and
 		// UserEditAtoms

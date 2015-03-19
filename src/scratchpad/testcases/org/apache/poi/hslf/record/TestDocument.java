@@ -19,7 +19,7 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
 
@@ -30,14 +30,14 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestDocument extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private HSLFSlideShowImpl ss;
 	// POIFS primed on the test data
 	private POIFSFileSystem pfs;
 
 	public TestDocument() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new HSLFSlideShow(pfs);
+		ss = new HSLFSlideShowImpl(pfs);
 	}
 
 	private Document getDocRecord() {

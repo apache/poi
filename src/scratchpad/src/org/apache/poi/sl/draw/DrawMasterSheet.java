@@ -3,7 +3,7 @@ package org.apache.poi.sl.draw;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawMasterSheet<T extends MasterSheet<? extends Shape>> extends DrawSheet<T> {
+public class DrawMasterSheet<T extends MasterSheet<? extends Shape, ? extends SlideShow>> extends DrawSheet<T> {
 
     public DrawMasterSheet(T sheet) {
         super(sheet);

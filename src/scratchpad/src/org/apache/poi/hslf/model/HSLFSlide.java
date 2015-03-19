@@ -37,7 +37,9 @@ import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.Slide;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows
@@ -48,11 +50,11 @@ import org.apache.poi.sl.usermodel.ShapeType;
  * @author Yegor Kozlov
  */
 
-public final class Slide extends Sheet {
+public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSlideShow> {
 	private int _slideNo;
 	private SlideAtomsSet _atomSet;
-	private TextRun[] _runs;
-	private Notes _notes; // usermodel needs to set this
+	private HSLFTextParagraph[] _runs;
+	private HSLFNotes _notes; // usermodel needs to set this
 
 	/**
 	 * Constructs a Slide from the Slide record, and the SlideAtomsSet
@@ -63,7 +65,7 @@ public final class Slide extends Sheet {
 	 * @param notes the Notes sheet attached to us
 	 * @param atomSet the SlideAtomsSet to get the text from
 	 */
-	public Slide(org.apache.poi.hslf.record.Slide slide, Notes notes, SlideAtomsSet atomSet, int slideIdentifier, int slideNumber) {
+	public HSLFSlide(org.apache.poi.hslf.record.Slide slide, HSLFNotes notes, SlideAtomsSet atomSet, int slideIdentifier, int slideNumber) {
         super(slide, slideIdentifier);
 
 		_notes = notes;
@@ -71,31 +73,31 @@ public final class Slide extends Sheet {
 		_slideNo = slideNumber;
 
  		// Grab the TextRuns from the PPDrawing
-		TextRun[] _otherRuns = findTextRuns(getPPDrawing());
+		HSLFTextParagraph[] _otherRuns = findTextRuns(getPPDrawing());
 
 		// For the text coming in from the SlideAtomsSet:
 		// Build up TextRuns from pairs of TextHeaderAtom and
 		//  one of TextBytesAtom or TextCharsAtom
-		final List<TextRun> textRuns = new LinkedList<TextRun>();
+		final List<HSLFTextParagraph> textParagraphs = new LinkedList<HSLFTextParagraph>();
 		if(_atomSet != null) {
-			findTextRuns(_atomSet.getSlideRecords(),textRuns);
+			findTextParagraphs(_atomSet.getSlideRecords(),textParagraphs);
 		} else {
 			// No text on the slide, must just be pictures
 		}
 
 		// Build an array, more useful than a vector
-		_runs = new TextRun[textRuns.size()+_otherRuns.length];
+		_runs = new HSLFTextParagraph[textParagraphs.size()+_otherRuns.length];
 		// Grab text from SlideListWithTexts entries
 		int i=0;
-		for(i=0; i<textRuns.size(); i++) {
-			_runs[i] = textRuns.get(i);
-            _runs[i].setSheet(this);
+		for(HSLFTextParagraph tp : textParagraphs) {
+		    _runs[i++] = tp;
+			tp.supplySheet(this);
 		}
 		// Grab text from slide's PPDrawing
-		for(int k=0; k<_otherRuns.length; i++, k++) {
-			_runs[i] = _otherRuns[k];
-            _runs[i].setSheet(this);
-            _runs[i].setIndex(-1); // runs found in PPDrawing are not linked with SlideListWithTexts
+		for(HSLFTextParagraph tp : _otherRuns) {
+			_runs[i++] = tp;
+			tp.supplySheet(this);
+            tp.setIndex(-1); // runs found in PPDrawing are not linked with SlideListWithTexts
 		}
 	}
 
@@ -104,7 +106,7 @@ public final class Slide extends Sheet {
 	* @param sheetNumber The internal number of the sheet, as used by PersistPtrHolder
 	* @param slideNumber The user facing number of the sheet
 	*/
-	public Slide(int sheetNumber, int sheetRefId, int slideNumber){
+	public HSLFSlide(int sheetNumber, int sheetRefId, int slideNumber){
 		super(new org.apache.poi.hslf.record.Slide(), sheetNumber);
 		_slideNo = slideNumber;
         getSheetContainer().setSheetId(sheetRefId);
@@ -114,7 +116,7 @@ public final class Slide extends Sheet {
 	 * Sets the Notes that are associated with this. Updates the
 	 *  references in the records to point to the new ID
 	 */
-	public void setNotes(Notes notes) {
+	public void setNotes(HSLFNotes notes) {
 		_notes = notes;
 
 		// Update the Slide Atom's ID of where to point to
@@ -131,7 +133,7 @@ public final class Slide extends Sheet {
 
 	/**
 	* Changes the Slide's (external facing) page number.
-	* @see org.apache.poi.hslf.usermodel.SlideShow#reorderSlide(int, int)
+	* @see org.apache.poi.hslf.usermodel.HSLFSlideShow#reorderSlide(int, int)
 	*/
 	public void setSlideNumber(int newSlideNumber) {
 		_slideNo = newSlideNumber;
@@ -178,10 +180,10 @@ public final class Slide extends Sheet {
 	 *
 	 * @return <code>TextBox</code> object that represents the slide's title.
 	 */
-	public TextBox addTitle() {
+	public HSLFTextBox addTitle() {
 		Placeholder pl = new Placeholder();
 		pl.setShapeType(ShapeType.RECT);
-		pl.getTextRun().setRunType(TextHeaderAtom.TITLE_TYPE);
+		pl.getTextParagraph().setRunType(TextHeaderAtom.TITLE_TYPE);
 		pl.setText("Click to edit title");
 		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
 		addShape(pl);
@@ -203,7 +205,7 @@ public final class Slide extends Sheet {
 	 * @return title of this slide
 	 */
 	public String getTitle(){
-		TextRun[] txt = getTextRuns();
+		HSLFTextParagraph[] txt = getTextRuns();
 		for (int i = 0; i < txt.length; i++) {
 			int type = txt[i].getRunType();
 			if (type == TextHeaderAtom.CENTER_TITLE_TYPE ||
@@ -220,7 +222,7 @@ public final class Slide extends Sheet {
 	/**
 	 * Returns an array of all the TextRuns found
 	 */
-	public TextRun[] getTextRuns() { return _runs; }
+	public HSLFTextParagraph[] getTextRuns() { return _runs; }
 
 	/**
 	 * Returns the (public facing) page number of this slide
@@ -237,7 +239,7 @@ public final class Slide extends Sheet {
 	/**
 	 * Returns the Notes Sheet for this slide, or null if there isn't one
 	 */
-	public Notes getNotesSheet() { return _notes; }
+	public HSLFNotes getNotesSheet() { return _notes; }
 
 	/**
 	 * @return set of records inside <code>SlideListWithtext</code> container
@@ -251,11 +253,11 @@ public final class Slide extends Sheet {
      *
      * @return the master sheet associated with this slide.
      */
-     public MasterSheet getMasterSheet(){
+     public HSLFMasterSheet getMasterSheet(){
         SlideMaster[] master = getSlideShow().getSlidesMasters();
         SlideAtom sa = getSlideRecord().getSlideAtom();
         int masterId = sa.getMasterID();
-        MasterSheet sheet = null;
+        HSLFMasterSheet sheet = null;
         for (int i = 0; i < master.length; i++) {
             if (masterId == master[i]._getSheetNumber()) {
                 sheet = master[i];
@@ -277,7 +279,7 @@ public final class Slide extends Sheet {
     /**
      * Change Master of this slide.
      */
-    public void setMasterSheet(MasterSheet master){
+    public void setMasterSheet(HSLFMasterSheet master){
         SlideAtom sa = getSlideRecord().getSlideAtom();
         int sheetNo = master._getSheetNumber();
         sa.setMasterID(sheetNo);
@@ -352,7 +354,7 @@ public final class Slide extends Sheet {
     /**
      * Background for this slide.
      */
-     public Background getBackground() {
+     public HSLFBackground getBackground() {
         if(getFollowMasterBackground()) {
             return getMasterSheet().getBackground();
         }
@@ -423,14 +425,14 @@ public final class Slide extends Sheet {
     }
 
     public void draw(Graphics2D graphics){
-        MasterSheet master = getMasterSheet();
-        Background bg = getBackground();
+        HSLFMasterSheet master = getMasterSheet();
+        HSLFBackground bg = getBackground();
         if(bg != null)bg.draw(graphics);
 
         if(getFollowMasterObjects()){
             HSLFShape[] sh = master.getShapes();
             for (int i = 0; i < sh.length; i++) {
-                if(MasterSheet.isPlaceholder(sh[i])) continue;
+                if(HSLFMasterSheet.isPlaceholder(sh[i])) continue;
 
                 sh[i].draw(graphics);
             }
@@ -469,12 +471,12 @@ public final class Slide extends Sheet {
         return new HeadersFooters(hdd, this, newRecord, ppt2007);
     }
 
-    protected void onAddTextShape(TextShape shape) {
-        TextRun run = shape.getTextRun();
+    protected void onAddTextShape(HSLFTextShape shape) {
+        HSLFTextParagraph run = shape.getTextParagraph();
 
-        if(_runs == null) _runs = new TextRun[]{run};
+        if(_runs == null) _runs = new HSLFTextParagraph[]{run};
         else {
-            TextRun[] tmp = new TextRun[_runs.length + 1];
+            HSLFTextParagraph[] tmp = new HSLFTextParagraph[_runs.length + 1];
             System.arraycopy(_runs, 0, tmp, 0, _runs.length);
             tmp[tmp.length-1] = run;
             _runs = tmp;

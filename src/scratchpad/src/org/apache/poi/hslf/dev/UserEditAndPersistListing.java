@@ -20,7 +20,7 @@ package org.apache.poi.hslf.dev;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.CurrentUserAtom;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
@@ -44,7 +44,7 @@ public final class UserEditAndPersistListing {
 
 
 		// Create the slideshow object, for normal working with
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 		fileContents = ss.getUnderlyingBytes();
 		System.out.println("");
 

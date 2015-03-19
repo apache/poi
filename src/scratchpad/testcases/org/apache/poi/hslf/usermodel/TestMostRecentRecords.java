@@ -19,7 +19,9 @@ package org.apache.poi.hslf.usermodel;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.*;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.POIDataSamples;
 
@@ -30,14 +32,14 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestMostRecentRecords extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow hss;
+	private HSLFSlideShowImpl hss;
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
 	public TestMostRecentRecords() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testCount() {

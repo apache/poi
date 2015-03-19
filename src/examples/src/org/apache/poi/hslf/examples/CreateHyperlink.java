@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.model.*;
 
 import java.io.FileOutputStream;
@@ -31,14 +31,14 @@ import java.awt.*;
 public final class CreateHyperlink {
 
     public static void main(String[] args) throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slideA = ppt.createSlide();
-        Slide slideB = ppt.createSlide();
-        Slide slideC = ppt.createSlide();
+        HSLFSlide slideA = ppt.createSlide();
+        HSLFSlide slideB = ppt.createSlide();
+        HSLFSlide slideC = ppt.createSlide();
 
         // link to a URL
-        TextBox textBox1 = new TextBox();
+        HSLFTextBox textBox1 = new HSLFTextBox();
         textBox1.setText("Apache POI");
         textBox1.setAnchor(new Rectangle(100, 100, 200, 50));
 
@@ -54,7 +54,7 @@ public final class CreateHyperlink {
         slideA.addShape(textBox1);
 
         // link to another slide
-        TextBox textBox2 = new TextBox();
+        HSLFTextBox textBox2 = new HSLFTextBox();
         textBox2.setText("Go to slide #3");
         textBox2.setAnchor(new Rectangle(100, 300, 200, 50));
 

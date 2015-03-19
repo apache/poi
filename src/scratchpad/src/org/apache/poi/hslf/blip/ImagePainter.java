@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.model.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
 
 import java.awt.*;
 
@@ -68,5 +68,5 @@ public interface ImagePainter {
      * @param pict      the data to paint
      * @param parent    the shapes that owns the picture data
      */
-    public void paint(Graphics2D graphics, PictureData pict, Picture parent);
+    public void paint(Graphics2D graphics, HSLFPictureData pict, HSLFPictureShape parent);
 }

@@ -30,7 +30,7 @@ import org.apache.poi.sl.usermodel.ShapeType;
  *
  * @author Yegor Kozlov
  */
-public final class TableCell extends TextBox {
+public final class TableCell extends HSLFTextBox {
     protected static final int DEFAULT_WIDTH = 100;
     protected static final int DEFAULT_HEIGHT = 40;
 

@@ -30,7 +30,7 @@ import org.apache.poi.hslf.blip.JPEG;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.LittleEndian;
@@ -42,7 +42,7 @@ import org.apache.poi.util.POILogger;
  *
  *  @author Yegor Kozlov
  */
-public abstract class PictureData {
+public abstract class HSLFPictureData {
 
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
@@ -68,6 +68,14 @@ public abstract class PictureData {
      */
     public abstract int getType();
 
+
+    /**
+     * Returns content type (mime type) of this picture.
+     *
+     * @return content type of this picture.
+     */
+    public abstract String getContentType();
+    
     /**
      * Returns the binary data of this Picture
      * @return picture data
@@ -86,9 +94,9 @@ public abstract class PictureData {
 
     protected static final ImagePainter[] painters = new ImagePainter[8];
     static {
-        PictureData.setImagePainter(Picture.PNG, new BitmapPainter());
-        PictureData.setImagePainter(Picture.JPEG, new BitmapPainter());
-        PictureData.setImagePainter(Picture.DIB, new BitmapPainter());
+        HSLFPictureData.setImagePainter(HSLFPictureShape.PNG, new BitmapPainter());
+        HSLFPictureData.setImagePainter(HSLFPictureShape.JPEG, new BitmapPainter());
+        HSLFPictureData.setImagePainter(HSLFPictureShape.DIB, new BitmapPainter());
     }
 
     /**
@@ -173,25 +181,25 @@ public abstract class PictureData {
      * Must be one of the static constants defined in the <code>Picture<code> class.
      * @return concrete instance of <code>PictureData</code>
      */
-     public static PictureData create(int type){
-        PictureData pict;
+     public static HSLFPictureData create(int type){
+        HSLFPictureData pict;
         switch (type){
-            case Picture.EMF:
+            case HSLFPictureShape.EMF:
                 pict = new EMF();
                 break;
-            case Picture.WMF:
+            case HSLFPictureShape.WMF:
                 pict = new WMF();
                 break;
-            case Picture.PICT:
+            case HSLFPictureShape.PICT:
                 pict = new PICT();
                 break;
-            case Picture.JPEG:
+            case HSLFPictureShape.JPEG:
                 pict = new JPEG();
                 break;
-            case Picture.PNG:
+            case HSLFPictureShape.PNG:
                 pict = new PNG();
                 break;
-            case Picture.DIB:
+            case HSLFPictureShape.DIB:
                 pict = new DIB();
                 break;
             default:
@@ -227,7 +235,7 @@ public abstract class PictureData {
         return getData().length;
     }
 
-    public void draw(Graphics2D graphics, Picture parent){
+    public void draw(Graphics2D graphics, HSLFPictureShape parent){
         ImagePainter painter = painters[getType()];
         if(painter != null) painter.paint(graphics, this, parent);
         else logger.log(POILogger.WARN, "Rendering is not supported: " + getClass().getName());

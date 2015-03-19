@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
@@ -95,7 +95,7 @@ public final class Hyperlink {
         return address;
     }
 
-    public void setAddress(Slide slide) {
+    public void setAddress(HSLFSlide slide) {
         String href = slide._getSheetNumber() + ","+slide.getSlideNumber()+",Slide " + slide.getSlideNumber();
         setAddress(href);;
         setTitle("Slide " + slide.getSlideNumber());
@@ -151,9 +151,9 @@ public final class Hyperlink {
      * @param run  <code>TextRun</code> to lookup hyperlinks in
      * @return found hyperlinks or <code>null</code> if not found
      */
-    protected static Hyperlink[] find(TextRun run){
+    protected static Hyperlink[] find(HSLFTextParagraph run){
         List<Hyperlink> lst = new ArrayList<Hyperlink>();
-        SlideShow ppt = run.getSheet().getSlideShow();
+        HSLFSlideShow ppt = run.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
         if (exobj == null) {
@@ -178,7 +178,7 @@ public final class Hyperlink {
      */
     protected static Hyperlink find(HSLFShape shape){
         List<Hyperlink> lst = new ArrayList<Hyperlink>();
-        SlideShow ppt = shape.getSheet().getSlideShow();
+        HSLFSlideShow ppt = shape.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
         if (exobj == null) {

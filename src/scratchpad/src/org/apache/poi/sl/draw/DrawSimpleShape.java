@@ -18,7 +18,7 @@ import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
-import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
+import org.apache.poi.sl.usermodel.StrokeStyle.*;
 import org.apache.poi.util.Units;
 
 
@@ -223,15 +223,22 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
         if (lineWidth == 0.0f) lineWidth = 0.25f; // Both PowerPoint and OOo draw zero-length lines as 0.25pt
 
         LineDash lineDash = strokeStyle.getLineDash();
+        if (lineDash == null) {
+        	lineDash = LineDash.SOLID;
+        	lineWidth = 0.0f;
+        }
+
         int dashPatI[] = lineDash.pattern;
         float[] dashPatF = new float[dashPatI.length];
         final float dash_phase = 0;
         for (int i=0; i<dashPatI.length; i++) {
-            dashPatF[i] = dashPatI[i]*lineWidth;
+            dashPatF[i] = dashPatI[i]*Math.max(1, lineWidth);
         }
 
+        LineCap lineCapE = strokeStyle.getLineCap();
+        if (lineCapE == null) lineCapE = LineCap.FLAT;
         int lineCap;
-        switch (strokeStyle.getLineCap()) {
+        switch (lineCapE) {
             case ROUND:
                 lineCap = BasicStroke.CAP_ROUND;
                 break;
@@ -246,7 +253,7 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
 
         int lineJoin = BasicStroke.JOIN_ROUND;
 
-        return new BasicStroke(lineWidth, lineCap, lineJoin, Math.max(1, lineWidth), dashPatF, dash_phase);
+        return new BasicStroke(lineWidth, lineCap, lineJoin, lineWidth, dashPatF, dash_phase);
     }
 
     protected void drawShadow(
