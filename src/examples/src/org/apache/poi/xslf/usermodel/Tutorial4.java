@@ -19,12 +19,12 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.sl.usermodel.TextAlign;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 
 /**
  * PPTX Tables

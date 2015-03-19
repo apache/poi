@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Header / Footer settings.
@@ -31,19 +31,19 @@ public final class HeadersFooters {
 
     private HeadersFootersContainer _container;
     private boolean _newRecord;
-    private SlideShow _ppt;
-    private Sheet _sheet;
+    private HSLFSlideShow _ppt;
+    private HSLFSheet _sheet;
     private boolean _ppt2007;
 
 
-    public HeadersFooters(HeadersFootersContainer rec, SlideShow ppt, boolean newRecord, boolean isPpt2007){
+    public HeadersFooters(HeadersFootersContainer rec, HSLFSlideShow ppt, boolean newRecord, boolean isPpt2007){
         _container = rec;
         _newRecord = newRecord;
         _ppt = ppt;
         _ppt2007 = isPpt2007;
     }
 
-    public HeadersFooters(HeadersFootersContainer rec, Sheet sheet, boolean newRecord, boolean isPpt2007){
+    public HeadersFooters(HeadersFootersContainer rec, HSLFSheet sheet, boolean newRecord, boolean isPpt2007){
         _container = rec;
         _newRecord = newRecord;
         _sheet = sheet;
@@ -240,8 +240,8 @@ public final class HeadersFooters {
     private boolean isVisible(int flag, int placeholderId){
         boolean visible;
         if(_ppt2007){
-            Sheet master = _sheet != null ? _sheet : _ppt.getSlidesMasters()[0];
-            TextShape placeholder = master.getPlaceholder(placeholderId);
+            HSLFSheet master = _sheet != null ? _sheet : _ppt.getSlidesMasters()[0];
+            HSLFTextShape placeholder = master.getPlaceholder(placeholderId);
             visible = placeholder != null && placeholder.getText() != null;
         } else {
             visible = _container.getHeadersFootersAtom().getFlag(flag);
@@ -252,8 +252,8 @@ public final class HeadersFooters {
     private String getPlaceholderText(int placeholderId, CString cs){
         String text = null;
         if(_ppt2007){
-            Sheet master = _sheet != null ? _sheet : _ppt.getSlidesMasters()[0];
-            TextShape placeholder = master.getPlaceholder(placeholderId);
+            HSLFSheet master = _sheet != null ? _sheet : _ppt.getSlidesMasters()[0];
+            HSLFTextShape placeholder = master.getPlaceholder(placeholderId);
             if(placeholder != null) text = placeholder.getText();
 
             //default text in master placeholders is not visible

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 
 /**
@@ -36,10 +36,10 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Yegor Kozlov
  */
 public final class TestTxMasterStyleAtom extends TestCase {
-    protected SlideShow _ppt;
+    protected HSLFSlideShow _ppt;
 
     public void setUp() {
-        _ppt = new SlideShow();
+        _ppt = new HSLFSlideShow();
     }
 
     public void testDefaultStyles()  {

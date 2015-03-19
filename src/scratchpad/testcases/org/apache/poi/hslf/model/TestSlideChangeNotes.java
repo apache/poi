@@ -20,9 +20,8 @@ package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.record.SlideAtom;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -32,16 +31,16 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestSlideChangeNotes extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
 	public TestSlideChangeNotes() throws Exception {
         POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testSetToNone() {
-		Slide slideOne = ss.getSlides()[0];
+		HSLFSlide slideOne = ss.getSlides()[0];
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(null);
@@ -50,8 +49,8 @@ public final class TestSlideChangeNotes extends TestCase {
 	}
 
 	public void testSetToSomething() {
-		Slide slideOne = ss.getSlides()[0];
-		Notes notesOne = ss.getNotes()[1];
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFNotes notesOne = ss.getNotes()[1];
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(notesOne);

@@ -19,19 +19,21 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.sl.usermodel.PaintStyle.TRANSPARENT_PAINT;
+
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
@@ -208,8 +210,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         PaintStyle ps = getLinePaint();
         if (ps == null || ps == TRANSPARENT_PAINT) return null;
         if (ps instanceof SolidPaint) {
-            Color col = ((SolidPaint)ps).getSolidColor().getColor();
-            return (col == DrawPaint.NO_PAINT) ? null : col;
+            return ((SolidPaint)ps).getSolidColor().getColor();
         }
         return null;
     }
@@ -273,7 +274,6 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
     }
 
     /**
-     *
      * @return line width in points. <code>0</code> means no line.
      */
     public double getLineWidth() {
@@ -308,6 +308,54 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         }
 
         return lineWidth;
+    }
+
+    /**
+     * @return the line compound
+     */
+    public LineCompound getLineCompound() {
+        PropertyFetcher<Integer> fetcher = new PropertyFetcher<Integer>() {
+            public boolean fetch(XSLFShape shape) {
+                CTShapeProperties spPr = shape.getSpPr();
+                CTLineProperties ln = spPr.getLn();
+                if (ln != null) {
+                    STCompoundLine.Enum stCmpd = ln.getCmpd();
+                    if (stCmpd != null) {
+                        setValue(stCmpd.intValue());
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+
+        Integer cmpd = fetcher.getValue();
+        if (cmpd == null) {
+            CTLineProperties defaultLn = getDefaultLineProperties();
+            if (defaultLn != null) {
+                STCompoundLine.Enum stCmpd = defaultLn.getCmpd();
+                if (stCmpd != null) {
+                    cmpd = stCmpd.intValue();
+                }
+            }
+        }
+        
+        if (cmpd == null) return null;
+
+        switch (cmpd) {
+        default:
+        case STCompoundLine.INT_SNG:
+            return LineCompound.SINGLE;
+        case STCompoundLine.INT_DBL:
+            return LineCompound.DOUBLE;
+        case STCompoundLine.INT_THICK_THIN:
+            return LineCompound.THICK_THIN;
+        case STCompoundLine.INT_THIN_THICK:
+            return LineCompound.THIN_THICK;
+        case STCompoundLine.INT_TRI:
+            return LineCompound.TRIPLE;
+        }
     }
 
     /**
@@ -453,8 +501,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         PaintStyle ps = getFillPaint();
         if (ps == null || ps == TRANSPARENT_PAINT) return null;
         if (ps instanceof SolidPaint) {
-            Color col = ((SolidPaint)ps).getSolidColor().getColor();
-            return (col == DrawPaint.NO_PAINT) ? null : col;
+            return ((SolidPaint)ps).getSolidColor().getColor();
         }
         return null;
     }
@@ -768,6 +815,10 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
 
             public double getLineWidth() {
                 return XSLFSimpleShape.this.getLineWidth();
+            }
+
+            public LineCompound getLineCompound() {
+                return XSLFSimpleShape.this.getLineCompound();
             }
             
         };

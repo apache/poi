@@ -17,6 +17,6 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface MasterSheet<T extends Shape> extends Sheet<T> {
+public interface MasterSheet<T extends Shape, SS extends SlideShow> extends Sheet<T,SS> {
 
 }

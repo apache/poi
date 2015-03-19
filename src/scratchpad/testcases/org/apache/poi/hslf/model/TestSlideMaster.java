@@ -22,12 +22,11 @@ import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.record.Environment;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -43,7 +42,7 @@ public final class TestSlideMaster extends TestCase{
      * Check we can read their attributes.
      */
     public void testSlideMaster() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
 
         Environment env = ppt.getDocumentRecord().getEnvironment();
 
@@ -83,7 +82,7 @@ public final class TestSlideMaster extends TestCase{
      * Test we can read default text attributes for a title master sheet
      */
     public void testTitleMasterTextAttributes() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         TitleMaster[] master = ppt.getTitleMasters();
         assertEquals(1, master.length);
 
@@ -104,14 +103,14 @@ public final class TestSlideMaster extends TestCase{
      * Slide 3 has title layout and follows the TitleMaster. Verify that.
      */
     public void testTitleMaster() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
-        Slide slide = ppt.getSlides()[2];
-        MasterSheet masterSheet = slide.getMasterSheet();
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        HSLFSlide slide = ppt.getSlides()[2];
+        HSLFMasterSheet masterSheet = slide.getMasterSheet();
         assertTrue(masterSheet instanceof TitleMaster);
 
-        TextRun[] txt = slide.getTextRuns();
+        HSLFTextParagraph[] txt = slide.getTextRuns();
         for (int i = 0; i < txt.length; i++) {
-            RichTextRun rt = txt[i].getRichTextRuns()[0];
+            HSLFTextRun rt = txt[i].getRichTextRuns()[0];
             switch(txt[i].getRunType()){
                 case TextHeaderAtom.CENTER_TITLE_TYPE:
                     assertEquals("Arial", rt.getFontName());
@@ -133,20 +132,20 @@ public final class TestSlideMaster extends TestCase{
      * If a style attribute is not set ensure it is read from the master
      */
     public void testMasterAttributes() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
-        Slide[] slide = ppt.getSlides();
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        HSLFSlide[] slide = ppt.getSlides();
         assertEquals(3, slide.length);
-        TextRun[] trun;
+        HSLFTextParagraph[] trun;
 
         trun = slide[0].getTextRuns();
         for (int i = 0; i < trun.length; i++) {
             if (trun[i].getRunType() == TextHeaderAtom.TITLE_TYPE){
-                RichTextRun rt = trun[i].getRichTextRuns()[0];
+                HSLFTextRun rt = trun[i].getRichTextRuns()[0];
                 assertEquals(40, rt.getFontSize());
                 assertEquals(true, rt.isUnderlined());
                 assertEquals("Arial", rt.getFontName());
             } else if (trun[i].getRunType() == TextHeaderAtom.BODY_TYPE){
-                RichTextRun rt;
+                HSLFTextRun rt;
                 rt = trun[i].getRichTextRuns()[0];
                 assertEquals(0, rt.getIndentLevel());
                 assertEquals(32, rt.getFontSize());
@@ -163,12 +162,12 @@ public final class TestSlideMaster extends TestCase{
         trun = slide[1].getTextRuns();
         for (int i = 0; i < trun.length; i++) {
             if (trun[i].getRunType() == TextHeaderAtom.TITLE_TYPE){
-                RichTextRun rt = trun[i].getRichTextRuns()[0];
+                HSLFTextRun rt = trun[i].getRichTextRuns()[0];
                 assertEquals(48, rt.getFontSize());
                 assertEquals(true, rt.isItalic());
                 assertEquals("Georgia", rt.getFontName());
             } else if (trun[i].getRunType() == TextHeaderAtom.BODY_TYPE){
-                RichTextRun rt;
+                HSLFTextRun rt;
                 rt = trun[i].getRichTextRuns()[0];
                 assertEquals(0, rt.getIndentLevel());
                 assertEquals(32, rt.getFontSize());
@@ -182,9 +181,9 @@ public final class TestSlideMaster extends TestCase{
      * Check we can dynamically assign a slide master to a slide.
      */
     public void testChangeSlideMaster() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         SlideMaster[] master = ppt.getSlidesMasters();
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         int sheetNo;
 
         //each slide uses its own master
@@ -203,7 +202,7 @@ public final class TestSlideMaster extends TestCase{
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         master = ppt.getSlidesMasters();
         slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
@@ -216,19 +215,19 @@ public final class TestSlideMaster extends TestCase{
      * (typical for the "bullted body" placeholder)
      */
     public void testIndentation() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
-        Slide slide = ppt.getSlides()[0];
-        TextRun[] trun;
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        HSLFSlide slide = ppt.getSlides()[0];
+        HSLFTextParagraph[] trun;
 
         trun = slide.getTextRuns();
         for (int i = 0; i < trun.length; i++) {
             if (trun[i].getRunType() == TextHeaderAtom.TITLE_TYPE){
-                RichTextRun rt = trun[i].getRichTextRuns()[0];
+                HSLFTextRun rt = trun[i].getRichTextRuns()[0];
                 assertEquals(40, rt.getFontSize());
                 assertEquals(true, rt.isUnderlined());
                 assertEquals("Arial", rt.getFontName());
             } else if (trun[i].getRunType() == TextHeaderAtom.BODY_TYPE){
-                RichTextRun[] rt = trun[i].getRichTextRuns();
+                HSLFTextRun[] rt = trun[i].getRichTextRuns();
                 for (int j = 0; j < rt.length; j++) {
                     int indent = rt[j].getIndentLevel();
                     switch (indent){

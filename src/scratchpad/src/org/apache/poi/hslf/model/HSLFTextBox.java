@@ -30,7 +30,7 @@ import org.apache.poi.sl.usermodel.ShapeType;
  *
  * @author Yegor Kozlov
  */
-public class TextBox extends TextShape {
+public class HSLFTextBox extends HSLFTextShape {
 
     /**
      * Create a TextBox object and initialize it from the supplied Record container.
@@ -38,7 +38,7 @@ public class TextBox extends TextShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TextBox(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFTextBox(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -49,7 +49,7 @@ public class TextBox extends TextShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TextBox(ShapeContainer<HSLFShape> parent){
+    public HSLFTextBox(ShapeContainer<HSLFShape> parent){
         super(parent);
     }
 
@@ -57,7 +57,7 @@ public class TextBox extends TextShape {
      * Create a new TextBox. This constructor is used when a new shape is created.
      *
      */
-    public TextBox(){
+    public HSLFTextBox(){
         this(null);
     }
 
@@ -84,8 +84,8 @@ public class TextBox extends TextShape {
         return _escherContainer;
     }
 
-    protected void setDefaultTextProperties(TextRun _txtrun){
-        setVerticalAlignment(TextBox.AnchorTop);
+    protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
+        setVerticalAlignment(HSLFTextBox.AnchorTop);
         setEscherProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20002);
     }
 

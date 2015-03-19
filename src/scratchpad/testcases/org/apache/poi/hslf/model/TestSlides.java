@@ -18,8 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 import java.io.ByteArrayOutputStream;
@@ -39,10 +39,10 @@ public final class TestSlides extends TestCase {
      * @throws Exception
      */
     public void testAddSlides1() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
+        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
         assertTrue(ppt.getSlides().length == 0);
 
-        Slide s1 = ppt.createSlide();
+        HSLFSlide s1 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 1);
         assertEquals(3, s1._getSheetRefId());
         assertEquals(256, s1._getSheetNumber());
@@ -53,7 +53,7 @@ public final class TestSlides extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         assertTrue(ppt.getSlides().length == 1);
     }
 
@@ -62,16 +62,16 @@ public final class TestSlides extends TestCase {
      * @throws Exception
      */
     public void testAddSlides2() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
+        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
         assertTrue(ppt.getSlides().length == 0);
 
-        Slide s1 = ppt.createSlide();
+        HSLFSlide s1 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 1);
         assertEquals(3, s1._getSheetRefId());
         assertEquals(256, s1._getSheetNumber());
         assertEquals(1, s1.getSlideNumber());
 
-        Slide s2 = ppt.createSlide();
+        HSLFSlide s2 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 2);
         assertEquals(4, s2._getSheetRefId());
         assertEquals(257, s2._getSheetNumber());
@@ -82,7 +82,7 @@ public final class TestSlides extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         assertTrue(ppt.getSlides().length == 2);
     }
 
@@ -91,22 +91,22 @@ public final class TestSlides extends TestCase {
      * @throws Exception
      */
     public void testAddSlides3() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
+        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl( TestSlides.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt") ));
         assertTrue(ppt.getSlides().length == 0);
 
-        Slide s1 = ppt.createSlide();
+        HSLFSlide s1 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 1);
         assertEquals(3, s1._getSheetRefId());
         assertEquals(256, s1._getSheetNumber());
         assertEquals(1, s1.getSlideNumber());
 
-        Slide s2 = ppt.createSlide();
+        HSLFSlide s2 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 2);
         assertEquals(4, s2._getSheetRefId());
         assertEquals(257, s2._getSheetNumber());
         assertEquals(2, s2.getSlideNumber());
 
-        Slide s3 = ppt.createSlide();
+        HSLFSlide s3 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 3);
         assertEquals(5, s3._getSheetRefId());
         assertEquals(258, s3._getSheetNumber());
@@ -118,7 +118,7 @@ public final class TestSlides extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         assertTrue(ppt.getSlides().length == 3);
 
         // Check IDs are still right
@@ -139,22 +139,22 @@ public final class TestSlides extends TestCase {
      */
     public void testAddSlides2to3() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-        SlideShow ppt = new SlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
         assertTrue(ppt.getSlides().length == 2);
 
         // First slide is 256 / 4
-        Slide s1 = ppt.getSlides()[0];
+        HSLFSlide s1 = ppt.getSlides()[0];
         assertEquals(256, s1._getSheetNumber());
         assertEquals(4, s1._getSheetRefId());
 
         // Last slide is 257 / 6
-        Slide s2 = ppt.getSlides()[1];
+        HSLFSlide s2 = ppt.getSlides()[1];
         assertEquals(257, s2._getSheetNumber());
         assertEquals(6, s2._getSheetRefId());
 
         // Add another slide, goes in at the end
-        Slide s3 = ppt.createSlide();
+        HSLFSlide s3 = ppt.createSlide();
         assertTrue(ppt.getSlides().length == 3);
         assertEquals(258, s3._getSheetNumber());
         assertEquals(8, s3._getSheetRefId());
@@ -165,7 +165,7 @@ public final class TestSlides extends TestCase {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         assertTrue(ppt.getSlides().length == 3);
 
 

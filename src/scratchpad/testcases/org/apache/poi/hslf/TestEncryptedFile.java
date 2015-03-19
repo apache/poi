@@ -21,6 +21,7 @@ package org.apache.poi.hslf;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -32,28 +33,28 @@ public final class TestEncryptedFile extends TestCase {
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 	public void testLoadNonEncrypted() throws Exception {
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		assertNotNull(hss);
 	}
 
 	public void testLoadEncrypted() throws Exception {
 		try {
-            new HSLFSlideShow(slTests.openResourceAsStream("Password_Protected-hello.ppt"));
+            new HSLFSlideShowImpl(slTests.openResourceAsStream("Password_Protected-hello.ppt"));
 			fail();
 		} catch(EncryptedPowerPointFileException e) {
 			// Good
 		}
 
 		try {
-            new HSLFSlideShow(slTests.openResourceAsStream("Password_Protected-np-hello.ppt"));
+            new HSLFSlideShowImpl(slTests.openResourceAsStream("Password_Protected-np-hello.ppt"));
 			fail();
 		} catch(EncryptedPowerPointFileException e) {
 			// Good
 		}
 
 		try {
-            new HSLFSlideShow(slTests.openResourceAsStream("Password_Protected-56-hello.ppt"));
+            new HSLFSlideShowImpl(slTests.openResourceAsStream("Password_Protected-56-hello.ppt"));
 			fail();
 		} catch(EncryptedPowerPointFileException e) {
 			// Good

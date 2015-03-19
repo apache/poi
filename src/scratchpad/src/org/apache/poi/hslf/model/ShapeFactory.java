@@ -89,7 +89,7 @@ public final class ShapeFactory {
         ShapeType type = ShapeType.forId(spRecord.getShapeType(), false);
         switch (type){
             case TEXT_BOX:
-                shape = new TextBox(spContainer, parent);
+                shape = new HSLFTextBox(spContainer, parent);
                 break;
             case HOST_CONTROL:
             case FRAME: {
@@ -110,7 +110,7 @@ public final class ShapeFactory {
                     shape = new OLEShape(spContainer, parent);
                 }
 
-                if(shape == null) shape = new Picture(spContainer, parent);
+                if(shape == null) shape = new HSLFPictureShape(spContainer, parent);
                 break;
             }
             case LINE:
@@ -120,16 +120,16 @@ public final class ShapeFactory {
                 EscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
                 if(prop != null)
-                    shape = new Freeform(spContainer, parent);
+                    shape = new HSLFFreeformShape(spContainer, parent);
                 else {
 
                     logger.log(POILogger.WARN, "Creating AutoShape for a NotPrimitive shape");
-                    shape = new AutoShape(spContainer, parent);
+                    shape = new HSLFAutoShape(spContainer, parent);
                 }
                 break;
             }
             default:
-                shape = new AutoShape(spContainer, parent);
+                shape = new HSLFAutoShape(spContainer, parent);
                 break;
         }
         return shape;

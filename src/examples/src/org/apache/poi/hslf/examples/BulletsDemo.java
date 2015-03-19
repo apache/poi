@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextBox;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.model.HSLFSlide;
+import org.apache.poi.hslf.model.HSLFTextBox;
 
 import java.io.FileOutputStream;
 
@@ -34,12 +34,12 @@ public final class BulletsDemo {
 
     public static void main(String[] args) throws Exception {
 
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox shape = new TextBox();
-        RichTextRun rt = shape.getTextRun().getRichTextRuns()[0];
+        HSLFTextBox shape = new HSLFTextBox();
+        HSLFTextRun rt = shape.getTextParagraph().getRichTextRuns()[0];
         shape.setText(
                 "January\r" +
                 "February\r" +

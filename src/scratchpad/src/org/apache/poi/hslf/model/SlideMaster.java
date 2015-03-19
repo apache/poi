@@ -20,7 +20,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
@@ -29,8 +29,8 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  *
  * @author Yegor Kozlov
  */
-public final class SlideMaster extends MasterSheet {
-    private TextRun[] _runs;
+public final class SlideMaster extends HSLFMasterSheet {
+    private HSLFTextParagraph[] _runs;
 
     /**
      * all TxMasterStyleAtoms available in this master
@@ -51,14 +51,14 @@ public final class SlideMaster extends MasterSheet {
     /**
      * Returns an array of all the TextRuns found
      */
-    public TextRun[] getTextRuns() {
+    public HSLFTextParagraph[] getTextRuns() {
         return _runs;
     }
 
     /**
      * Returns <code>null</code> since SlideMasters doen't have master sheet.
      */
-    public MasterSheet getMasterSheet() {
+    public HSLFMasterSheet getMasterSheet() {
         return null;
     }
 
@@ -112,7 +112,7 @@ public final class SlideMaster extends MasterSheet {
      * Assign SlideShow for this slide master.
      * (Used interanlly)
      */
-    public void setSlideShow(SlideShow ss) {
+    public void setSlideShow(HSLFSlideShow ss) {
         super.setSlideShow(ss);
 
         //after the slide show is assigned collect all available style records
@@ -130,12 +130,12 @@ public final class SlideMaster extends MasterSheet {
         }
     }
 
-    protected void onAddTextShape(TextShape shape) {
-        TextRun run = shape.getTextRun();
+    protected void onAddTextShape(HSLFTextShape shape) {
+        HSLFTextParagraph run = shape.getTextParagraph();
 
-        if(_runs == null) _runs = new TextRun[]{run};
+        if(_runs == null) _runs = new HSLFTextParagraph[]{run};
         else {
-            TextRun[] tmp = new TextRun[_runs.length + 1];
+            HSLFTextParagraph[] tmp = new HSLFTextParagraph[_runs.length + 1];
             System.arraycopy(_runs, 0, tmp, 0, _runs.length);
             tmp[tmp.length-1] = run;
             _runs = tmp;

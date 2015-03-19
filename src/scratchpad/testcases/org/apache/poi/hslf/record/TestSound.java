@@ -22,7 +22,7 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
@@ -34,7 +34,7 @@ public final class TestSound extends TestCase {
 	public void testRealFile() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-		SlideShow ppt = new SlideShow(slTests.openResourceAsStream("sound.ppt"));
+		HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
 
 		// Get the document
 		Document doc = ppt.getDocumentRecord();

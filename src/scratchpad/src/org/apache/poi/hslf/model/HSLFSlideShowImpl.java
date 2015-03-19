@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf;
+package org.apache.poi.hslf.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,8 +45,8 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
-import org.apache.poi.hslf.usermodel.ObjectData;
-import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -64,7 +64,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Nick Burch
  */
-public final class HSLFSlideShow extends POIDocument {
+public final class HSLFSlideShowImpl extends POIDocument {
     public static final int UNSET_OFFSET = -1;
     
     // For logging
@@ -80,10 +80,10 @@ public final class HSLFSlideShow extends POIDocument {
 	private Record[] _records;
 
 	// Raw Pictures contained in the pictures stream
-	private List<PictureData> _pictures;
+	private List<HSLFPictureData> _pictures;
 
     // Embedded objects stored in storage records in the document stream, lazily populated.
-    private ObjectData[] _objects;
+    private HSLFObjectData[] _objects;
     
     /**
 	 * Returns the underlying POIFSFileSystem for the document
@@ -108,7 +108,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 * @param fileName The name of the file to read.
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(String fileName) throws IOException
+	public HSLFSlideShowImpl(String fileName) throws IOException
 	{
 		this(new FileInputStream(fileName));
 	}
@@ -120,7 +120,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 * @param inputStream the source of the data
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(InputStream inputStream) throws IOException {
+	public HSLFSlideShowImpl(InputStream inputStream) throws IOException {
 		//do Ole stuff
 		this(new POIFSFileSystem(inputStream));
 	}
@@ -132,7 +132,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 * @param filesystem the POIFS FileSystem to read from
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(POIFSFileSystem filesystem) throws IOException
+	public HSLFSlideShowImpl(POIFSFileSystem filesystem) throws IOException
 	{
 		this(filesystem.getRoot());
 	}
@@ -144,7 +144,7 @@ public final class HSLFSlideShow extends POIDocument {
     * @param filesystem the POIFS FileSystem to read from
     * @throws IOException if there is a problem while parsing the document.
     */
-   public HSLFSlideShow(NPOIFSFileSystem filesystem) throws IOException
+   public HSLFSlideShowImpl(NPOIFSFileSystem filesystem) throws IOException
    {
       this(filesystem.getRoot());
    }
@@ -160,7 +160,7 @@ public final class HSLFSlideShow extends POIDocument {
     * @throws IOException if there is a problem while parsing the document.
     */
 	@Deprecated
-   public HSLFSlideShow(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
+   public HSLFSlideShowImpl(DirectoryNode dir, POIFSFileSystem filesystem) throws IOException
    {
       this(dir);
    }
@@ -173,7 +173,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 * @param dir the POIFS directory to read from
 	 * @throws IOException if there is a problem while parsing the document.
 	 */
-	public HSLFSlideShow(DirectoryNode dir) throws IOException {
+	public HSLFSlideShowImpl(DirectoryNode dir) throws IOException {
 		super(handleDualStorage(dir));
 
 		// First up, grab the "Current User" stream
@@ -202,13 +202,13 @@ public final class HSLFSlideShow extends POIDocument {
 	/**
 	 * Constructs a new, empty, Powerpoint document.
 	 */
-	public static final HSLFSlideShow create() {
-		InputStream is = HSLFSlideShow.class.getResourceAsStream("data/empty.ppt");
+	public static final HSLFSlideShowImpl create() {
+		InputStream is = HSLFSlideShowImpl.class.getResourceAsStream("data/empty.ppt");
 		if (is == null) {
 			throw new RuntimeException("Missing resource 'empty.ppt'");
 		}
 		try {
-			return new HSLFSlideShow(is);
+			return new HSLFSlideShowImpl(is);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -279,7 +279,7 @@ public final class HSLFSlideShow extends POIDocument {
 	    NavigableMap<Integer,Record> records = new TreeMap<Integer,Record>(); // offset -> record
         Map<Integer,Integer> persistIds = new HashMap<Integer,Integer>(); // offset -> persistId
         initRecordOffsets(docstream, usrOffset, records, persistIds);
-        EncryptedSlideShow decryptData = new EncryptedSlideShow(docstream, records);
+        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(docstream, records);
         
         for (Map.Entry<Integer,Record> entry : records.entrySet()) {
             Integer offset = entry.getKey();
@@ -373,12 +373,12 @@ public final class HSLFSlideShow extends POIDocument {
 	 */
     @SuppressWarnings("unused")
 	private void readPictures() throws IOException {
-        _pictures = new ArrayList<PictureData>();
+        _pictures = new ArrayList<HSLFPictureData>();
 
         // if the presentation doesn't contain pictures - will use a null set instead
         if (!directory.hasEntry("Pictures")) return;
 
-        EncryptedSlideShow decryptData = new EncryptedSlideShow(getDocumentEncryptionAtom());
+        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
         
 		DocumentEntry entry = (DocumentEntry)directory.getEntry("Pictures");
 		byte[] pictstream = new byte[entry.getSize()];
@@ -423,7 +423,7 @@ public final class HSLFSlideShow extends POIDocument {
 			} else {
 				// Build the PictureData object from the data
 				try {
-					PictureData pict = PictureData.create(type - 0xF018);
+					HSLFPictureData pict = HSLFPictureData.create(type - 0xF018);
 
                     // Copy the data, ready to pass to PictureData
                     byte[] imgdata = new byte[imgsize];
@@ -451,7 +451,7 @@ public final class HSLFSlideShow extends POIDocument {
         } catch (IOException e) {
             throw new CorruptPowerPointFileException(e);
         }
-        _records = EncryptedSlideShow.normalizeRecords(_records);
+        _records = HSLFSlideShowEncrypted.normalizeRecords(_records);
     }
    
     
@@ -517,7 +517,7 @@ public final class HSLFSlideShow extends POIDocument {
             persistIds.put(oldToNewPositions.get(entry.getValue()), entry.getKey());
         }
         
-        EncryptedSlideShow encData = new EncryptedSlideShow(getDocumentEncryptionAtom());
+        HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
 	    
 	    for (Record record : _records) {
             assert(record instanceof PositionDependentRecord);
@@ -580,7 +580,7 @@ public final class HSLFSlideShow extends POIDocument {
         getDocumentSummaryInformation();
 
         // set new encryption settings
-        EncryptedSlideShow encryptedSS = new EncryptedSlideShow(getDocumentEncryptionAtom());
+        HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
         _records = encryptedSS.updateEncryptionRecord(_records);
 
         // Get a new Filesystem to write into
@@ -615,7 +615,7 @@ public final class HSLFSlideShow extends POIDocument {
 
         if (_pictures.size() > 0) {
             BufAccessBAOS pict = new BufAccessBAOS();
-            for (PictureData p : _pictures) {
+            for (HSLFPictureData p : _pictures) {
                 int offset = pict.size();
                 p.write(pict);
                 encryptedSS.encryptPicture(pict.getBuf(), offset);
@@ -704,7 +704,7 @@ public final class HSLFSlideShow extends POIDocument {
      *
      * @return offset of this picture in the Pictures stream
 	 */
-	public int addPicture(PictureData img) {
+	public int addPicture(HSLFPictureData img) {
 	   // Process any existing pictures if we haven't yet
 	   if(_pictures == null) {
          try {
@@ -717,7 +717,7 @@ public final class HSLFSlideShow extends POIDocument {
 	   // Add the new picture in
       int offset = 0;
 	   if(_pictures.size() > 0) {
-	      PictureData prev = _pictures.get(_pictures.size() - 1);
+	      HSLFPictureData prev = _pictures.get(_pictures.size() - 1);
 	      offset = prev.getOffset() + prev.getRawData().length + 8;
 	   }
 	   img.setOffset(offset);
@@ -750,7 +750,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 *  @return array with the read pictures or <code>null</code> if the
 	 *  presentation doesn't contain pictures.
 	 */
-	public PictureData[] getPictures() {
+	public HSLFPictureData[] getPictures() {
 	   if(_pictures == null) {
 	      try {
 	         readPictures();
@@ -759,7 +759,7 @@ public final class HSLFSlideShow extends POIDocument {
 	      }
 	   }
 	   
-		return _pictures.toArray(new PictureData[_pictures.size()]);
+		return _pictures.toArray(new HSLFPictureData[_pictures.size()]);
 	}
 
     /**
@@ -767,15 +767,15 @@ public final class HSLFSlideShow extends POIDocument {
      *
      * @return the embedded objects.
      */
-    public ObjectData[] getEmbeddedObjects() {
+    public HSLFObjectData[] getEmbeddedObjects() {
         if (_objects == null) {
-            List<ObjectData> objects = new ArrayList<ObjectData>();
+            List<HSLFObjectData> objects = new ArrayList<HSLFObjectData>();
             for (Record r : _records) {
                 if (r instanceof ExOleObjStg) {
-                    objects.add(new ObjectData((ExOleObjStg)r));
+                    objects.add(new HSLFObjectData((ExOleObjStg)r));
                 }
             }
-            _objects = objects.toArray(new ObjectData[objects.size()]);
+            _objects = objects.toArray(new HSLFObjectData[objects.size()]);
         }
         return _objects;
     }

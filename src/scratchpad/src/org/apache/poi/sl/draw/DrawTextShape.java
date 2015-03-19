@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 import org.apache.poi.sl.usermodel.*;
 
-public class DrawTextShape<T extends TextShape<? extends TextParagraph>> extends DrawSimpleShape<T> {
+public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends TextRun>>> extends DrawSimpleShape<T> {
 
     public DrawTextShape(T shape) {
         super(shape);
@@ -26,7 +26,7 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph>> extends
 
         // Transform of text in flipped shapes is special.
         // At this point the flip and rotation transform is already applied
-        // (see XSLFShape#applyTransform ), but we need to restore it to avoid painting "upside down".
+        // (see DrawShape#applyTransform ), but we need to restore it to avoid painting "upside down".
         // See Bugzilla 54210.
 
         if(shape.getFlipVertical()){
@@ -84,12 +84,12 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph>> extends
         Insets2D shapePadding = shape.getInsets();
 
         double y0 = y;
-        Iterator<? extends TextParagraph> paragraphs = shape.iterator();
+        Iterator<? extends TextParagraph<? extends TextRun>> paragraphs = shape.iterator();
         
         boolean isFirstLine = true;
         while (paragraphs.hasNext()){
-            TextParagraph p = paragraphs.next();
-            DrawTextParagraph dp = fact.getDrawable(p);
+            TextParagraph<? extends TextRun> p = paragraphs.next();
+            DrawTextParagraph<? extends TextRun> dp = fact.getDrawable(p);
             dp.setInsets(shapePadding);
             dp.breakText(graphics);
 

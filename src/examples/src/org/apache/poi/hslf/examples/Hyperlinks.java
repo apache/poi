@@ -17,9 +17,9 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.model.HSLFSlide;
+import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.model.Hyperlink;
 import org.apache.poi.hslf.model.HSLFShape;
 
@@ -35,16 +35,16 @@ public final class Hyperlinks {
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {
             FileInputStream is = new FileInputStream(args[i]);
-            SlideShow ppt = new SlideShow(is);
+            HSLFSlideShow ppt = new HSLFSlideShow(is);
             is.close();
 
-            Slide[] slide = ppt.getSlides();
+            HSLFSlide[] slide = ppt.getSlides();
             for (int j = 0; j < slide.length; j++) {
                 System.out.println("slide " + slide[j].getSlideNumber());
 
                 //read hyperlinks from the slide's text runs
                 System.out.println("reading hyperlinks from the text runs");
-                TextRun[] txt = slide[j].getTextRuns();
+                HSLFTextParagraph[] txt = slide[j].getTextRuns();
                 for (int k = 0; k < txt.length; k++) {
                     String text = txt[k].getText();
                     Hyperlink[] links = txt[k].getHyperlinks();

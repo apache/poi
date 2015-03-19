@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 import java.awt.Color;
@@ -99,10 +100,11 @@ public class TestXSLFTable extends TestCase {
         XSLFTableCell cell0 = row0.addCell();
         assertNotNull(cell0.getXmlObject());
         // by default table cell has no borders
-        assertTrue(cell0.getXmlObject().getTcPr().getLnB().isSetNoFill());
-        assertTrue(cell0.getXmlObject().getTcPr().getLnT().isSetNoFill());
-        assertTrue(cell0.getXmlObject().getTcPr().getLnL().isSetNoFill());
-        assertTrue(cell0.getXmlObject().getTcPr().getLnR().isSetNoFill());
+        CTTableCell tc = (CTTableCell)cell0.getXmlObject();
+        assertTrue(tc.getTcPr().getLnB().isSetNoFill());
+        assertTrue(tc.getTcPr().getLnT().isSetNoFill());
+        assertTrue(tc.getTcPr().getLnL().isSetNoFill());
+        assertTrue(tc.getTcPr().getLnR().isSetNoFill());
 
         assertSame(cell0, row0.getCells().get(0));
         assertEquals(1, tbl.getNumberOfColumns());

@@ -22,9 +22,9 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.model.HSLFShape;
-import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.HSLFSlide;
 import org.apache.poi.hslf.model.Table;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.POIDataSamples;
 
 
@@ -40,18 +40,18 @@ public final class TestTable extends TestCase {
 	}
 
 	public void testTable() throws Exception {
-		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("54111.ppt"));
+		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("54111.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final Slide[] slides = ppt.getSlides();
+		final HSLFSlide[] slides = ppt.getSlides();
 		assertEquals(1, slides.length);
 		checkSlide(slides[0]);
 	}
-	private void checkSlide(final Slide s) {
-		TextRun[] textRuns = s.getTextRuns();
+	private void checkSlide(final HSLFSlide s) {
+		HSLFTextParagraph[] textRuns = s.getTextRuns();
 		assertEquals(2, textRuns.length);
 
-		RichTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
 		assertEquals("Table sample", textRun.getRawText().trim());
 		assertEquals(1, textRuns[0].getRichTextRuns().length);
 		assertFalse(textRun.isBullet());
@@ -66,7 +66,7 @@ public final class TestTable extends TestCase {
 		assertEquals(4, table.getNumberOfColumns());
 		assertEquals(6, table.getNumberOfRows());
 		for (int x = 0; x < 4; x ++) {
-			assertEquals("TH Cell " + (x + 1), table.getCell(0, x).getTextRun().getRawText());
+			assertEquals("TH Cell " + (x + 1), table.getCell(0, x).getTextParagraph().getRawText());
 			for (int y = 1; y < 6; y++) {
 				assertEquals("Row " + y + ", Cell " + (x + 1), table.getCell(y, x).getText());
 			}

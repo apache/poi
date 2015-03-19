@@ -22,14 +22,14 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.Record;
 import org.junit.Test;
 
 public class HSLFFileHandler extends POIFSFileHandler {
 	@Override
 	public void handleFile(InputStream stream) throws Exception {
-		HSLFSlideShow slide = new HSLFSlideShow(stream);
+		HSLFSlideShowImpl slide = new HSLFSlideShowImpl(stream);
 		assertNotNull(slide.getCurrentUserAtom());
 		assertNotNull(slide.getEmbeddedObjects());
 		assertNotNull(slide.getUnderlyingBytes());

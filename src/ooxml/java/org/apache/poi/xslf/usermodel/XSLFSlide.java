@@ -29,7 +29,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 @Beta
-public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape> {
+public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSlideShow> {
    private final CTSlide _slide;
    private XSLFSlideLayout _layout;
    private XSLFComments _comments;
@@ -245,7 +245,7 @@ public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape> {
         throw new UnsupportedOperationException();
     }
 
-    public void setNotes(Notes<XSLFShape> notes) {
+    public void setNotes(Notes<XSLFShape,XMLSlideShow> notes) {
         // TODO Auto-generated method stub
         
     }

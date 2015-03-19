@@ -34,7 +34,7 @@ import java.awt.*;
 public final class ApacheconEU08 {
 
     public static void main(String[] args) throws IOException {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
         ppt.setPageSize(new Dimension(720, 540));
 
         slide1(ppt);
@@ -56,27 +56,27 @@ public final class ApacheconEU08 {
 
     }
 
-    public static void slide1(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide1(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.CENTER_TITLE_TYPE);
         tr1.setText("POI-HSLF");
         box1.setAnchor(new Rectangle(54, 78, 612, 115));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.CENTRE_BODY_TYPE);
         tr2.setText("Java API To Access Microsoft PowerPoint Format Files");
         box2.setAnchor(new Rectangle(108, 204, 504, 138));
         slide.addShape(box2);
 
-        TextBox box3 = new TextBox();
-        TextRun tr3 = box3.getTextRun();
+        HSLFTextBox box3 = new HSLFTextBox();
+        HSLFTextParagraph tr3 = box3.getTextParagraph();
         tr3.getRichTextRuns()[0].setFontSize(32);
-        box3.setHorizontalAlignment(TextBox.AlignCenter);
+        box3.setHorizontalAlignment(HSLFTextBox.AlignCenter);
         tr3.setText(
                 "Yegor Kozlov\r" +
                 "yegor - apache - org");
@@ -84,18 +84,18 @@ public final class ApacheconEU08 {
         slide.addShape(box3);
     }
 
-    public static void slide2(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide2(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("What is HSLF?");
         box1.setAnchor(new Rectangle(36, 21, 648, 90));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText("HorribleSLideshowFormat is the POI Project's pure Java implementation " +
                 "of the Powerpoint binary file format. \r" +
@@ -107,18 +107,18 @@ public final class ApacheconEU08 {
 
     }
 
-    public static void slide3(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide3(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in a Nutshell");
         box1.setAnchor(new Rectangle(36, 15, 648, 65));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText(
                 "HSLF provides a way to read, create and modify MS PowerPoint presentations\r" +
@@ -128,8 +128,8 @@ public final class ApacheconEU08 {
         box2.setAnchor(new Rectangle(36, 80, 648, 200));
         slide.addShape(box2);
 
-        TextBox box3 = new TextBox();
-        TextRun tr3 = box3.getTextRun();
+        HSLFTextBox box3 = new HSLFTextBox();
+        HSLFTextParagraph tr3 = box3.getTextParagraph();
         tr3.setRunType(TextHeaderAtom.BODY_TYPE);
         tr3.setText(
                 "Rich text\r" +
@@ -142,16 +142,16 @@ public final class ApacheconEU08 {
         box3.setAnchor(new Rectangle(36, 265, 648, 150));
         slide.addShape(box3);
 
-        TextBox box4 = new TextBox();
-        TextRun tr4 = box4.getTextRun();
+        HSLFTextBox box4 = new HSLFTextBox();
+        HSLFTextParagraph tr4 = box4.getTextParagraph();
         tr4.setRunType(TextHeaderAtom.BODY_TYPE);
         tr4.setText("Access to low level data structures");
         box4.setAnchor(new Rectangle(36, 430, 648, 50));
         slide.addShape(box4);
     }
 
-    public static void slide4(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide4(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
         String[][] txt1 = {
             {"Note"},
@@ -162,8 +162,8 @@ public final class ApacheconEU08 {
             for (int j = 0; j < txt1[i].length; j++) {
                 TableCell cell = table1.getCell(i, j);
                 cell.setText(txt1[i][j]);
-                cell.getTextRun().getRichTextRuns()[0].setFontSize(10);
-                RichTextRun rt = cell.getTextRun().getRichTextRuns()[0];
+                cell.getTextParagraph().getRichTextRuns()[0].setFontSize(10);
+                HSLFTextRun rt = cell.getTextParagraph().getRichTextRuns()[0];
                 rt.setFontName("Arial");
                 rt.setBold(true);
                 if(i == 0){
@@ -174,7 +174,7 @@ public final class ApacheconEU08 {
                     rt.setFontSize(28);
                     cell.getFill().setForegroundColor(new Color(235, 239, 241));
                 }
-                cell.setVerticalAlignment(TextBox.AnchorMiddle);
+                cell.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
             }
         }
 
@@ -195,30 +195,30 @@ public final class ApacheconEU08 {
 
         table1.moveTo(100, 100);
 
-        TextBox box1 = new TextBox();
-        box1.setHorizontalAlignment(TextBox.AlignCenter);
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        box1.setHorizontalAlignment(HSLFTextBox.AlignCenter);
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setText("The source code is available at\r" +
                 "http://people.apache.org/~yegor/apachecon_eu08/");
-        RichTextRun rt = tr1.getRichTextRuns()[0];
+        HSLFTextRun rt = tr1.getRichTextRuns()[0];
         rt.setFontSize(24);
         box1.setAnchor(new Rectangle(80, 356, 553, 65));
         slide.addShape(box1);
 
     }
 
-    public static void slide5(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide5(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in Action - 1\rData Extraction");
         box1.setAnchor(new Rectangle(36, 21, 648, 100));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText(
                 "Text from slides and notes\r" +
@@ -230,26 +230,26 @@ public final class ApacheconEU08 {
 
     }
 
-    public static void slide6(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide6(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in Action - 2");
         box1.setAnchor(new Rectangle(36, 20, 648, 90));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.getRichTextRuns()[0].setFontSize(18);
         tr2.setText("Creating a simple presentation from scratch");
         box2.setAnchor(new Rectangle(170, 100, 364, 30));
         slide.addShape(box2);
 
-        TextBox box3 = new TextBox();
-        TextRun tr3 = box3.getTextRun();
-        RichTextRun rt3 = tr3.getRichTextRuns()[0];
+        HSLFTextBox box3 = new HSLFTextBox();
+        HSLFTextParagraph tr3 = box3.getTextParagraph();
+        HSLFTextRun rt3 = tr3.getRichTextRuns()[0];
         rt3.setFontName("Courier New");
         rt3.setFontSize(8);
         tr3.setText(
@@ -290,30 +290,30 @@ public final class ApacheconEU08 {
         slide.addShape(box3);
     }
 
-    public static void slide7(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide7(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box2 = new TextBox();
-        box2.setHorizontalAlignment(TextBox.AlignCenter);
-        box2.setVerticalAlignment(TextBox.AnchorMiddle);
-        box2.getTextRun().setText("Java Code");
+        HSLFTextBox box2 = new HSLFTextBox();
+        box2.setHorizontalAlignment(HSLFTextBox.AlignCenter);
+        box2.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
+        box2.getTextParagraph().setText("Java Code");
         box2.getFill().setForegroundColor(new Color(187, 224, 227));
         box2.setLineColor(Color.black);
         box2.setLineWidth(0.75);
         box2.setAnchor(new Rectangle(66, 243, 170, 170));
         slide.addShape(box2);
 
-        TextBox box3 = new TextBox();
-        box3.setHorizontalAlignment(TextBox.AlignCenter);
-        box3.setVerticalAlignment(TextBox.AnchorMiddle);
-        box3.getTextRun().setText("*.ppt file");
+        HSLFTextBox box3 = new HSLFTextBox();
+        box3.setHorizontalAlignment(HSLFTextBox.AlignCenter);
+        box3.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
+        box3.getTextParagraph().setText("*.ppt file");
         box3.setLineWidth(0.75);
         box3.setLineColor(Color.black);
         box3.getFill().setForegroundColor(new Color(187, 224, 227));
         box3.setAnchor(new Rectangle(473, 243, 170, 170));
         slide.addShape(box3);
 
-        AutoShape box4 = new AutoShape(ShapeType.RIGHT_ARROW);
+        HSLFAutoShape box4 = new HSLFAutoShape(ShapeType.RIGHT_ARROW);
         box4.getFill().setForegroundColor(new Color(187, 224, 227));
         box4.setLineWidth(0.75);
         box4.setLineColor(Color.black);
@@ -321,18 +321,18 @@ public final class ApacheconEU08 {
         slide.addShape(box4);
     }
 
-    public static void slide8(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide8(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("Wait, there is more!");
         box1.setAnchor(new Rectangle(36, 21, 648, 90));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText(
                 "Rich text\r" +
@@ -343,26 +343,26 @@ public final class ApacheconEU08 {
         slide.addShape(box2);
     }
 
-    public static void slide9(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide9(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in Action - 3");
         box1.setAnchor(new Rectangle(36, 20, 648, 50));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.getRichTextRuns()[0].setFontSize(18);
         tr2.setText("PPGraphics2D: PowerPoint Graphics2D driver");
         box2.setAnchor(new Rectangle(178, 70, 387, 30));
         slide.addShape(box2);
 
-        TextBox box3 = new TextBox();
-        TextRun tr3 = box3.getTextRun();
-        RichTextRun rt3 = tr3.getRichTextRuns()[0];
+        HSLFTextBox box3 = new HSLFTextBox();
+        HSLFTextParagraph tr3 = box3.getTextParagraph();
+        HSLFTextRun rt3 = tr3.getRichTextRuns()[0];
         rt3.setFontName("Courier New");
         rt3.setFontSize(8);
         tr3.setText(
@@ -408,7 +408,7 @@ public final class ApacheconEU08 {
         slide.addShape(box3);
     }
 
-    public static void slide10(SlideShow ppt) throws IOException {
+    public static void slide10(HSLFSlideShow ppt) throws IOException {
         //bar chart data. The first value is the bar color, the second is the width
         Object[] def = new Object[]{
             Color.yellow, new Integer(100),
@@ -417,7 +417,7 @@ public final class ApacheconEU08 {
             Color.red, new Integer(200),
         };
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         HSLFGroupShape group = new HSLFGroupShape();
         //define position of the drawing in the slide
@@ -445,18 +445,18 @@ public final class ApacheconEU08 {
 
     }
 
-    public static void slide11(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide11(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF Development Plans");
         box1.setAnchor(new Rectangle(36, 21, 648, 90));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.getRichTextRuns()[0].setFontSize(32);
         tr2.setText(
@@ -465,8 +465,8 @@ public final class ApacheconEU08 {
         box2.setAnchor(new Rectangle(36, 126, 648, 100));
         slide.addShape(box2);
 
-        TextBox box3 = new TextBox();
-        TextRun tr3 = box3.getTextRun();
+        HSLFTextBox box3 = new HSLFTextBox();
+        HSLFTextParagraph tr3 = box3.getTextParagraph();
         tr3.setRunType(TextHeaderAtom.BODY_TYPE);
         tr3.getRichTextRuns()[0].setIndentLevel(1);
         tr3.setText(
@@ -474,8 +474,8 @@ public final class ApacheconEU08 {
         box3.setAnchor(new Rectangle(36, 220, 648, 70));
         slide.addShape(box3);
 
-        TextBox box4 = new TextBox();
-        TextRun tr4 = box4.getTextRun();
+        HSLFTextBox box4 = new HSLFTextBox();
+        HSLFTextParagraph tr4 = box4.getTextParagraph();
         tr4.setRunType(TextHeaderAtom.BODY_TYPE);
         tr4.getRichTextRuns()[0].setFontSize(32);
         tr4.setText(
@@ -483,8 +483,8 @@ public final class ApacheconEU08 {
         box4.setAnchor(new Rectangle(36, 290, 648, 90));
         slide.addShape(box4);
 
-        TextBox box5 = new TextBox();
-        TextRun tr5 = box5.getTextRun();
+        HSLFTextBox box5 = new HSLFTextBox();
+        HSLFTextParagraph tr5 = box5.getTextParagraph();
         tr5.setRunType(TextHeaderAtom.BODY_TYPE);
         tr5.getRichTextRuns()[0].setIndentLevel(1);
         tr5.setText(
@@ -494,18 +494,18 @@ public final class ApacheconEU08 {
         slide.addShape(box5);
     }
 
-    public static void slide12(SlideShow ppt) throws IOException {
-        Slide slide = ppt.createSlide();
+    public static void slide12(HSLFSlideShow ppt) throws IOException {
+        HSLFSlide slide = ppt.createSlide();
 
-        TextBox box1 = new TextBox();
-        TextRun tr1 = box1.getTextRun();
+        HSLFTextBox box1 = new HSLFTextBox();
+        HSLFTextParagraph tr1 = box1.getTextParagraph();
         tr1.setRunType(TextHeaderAtom.CENTER_TITLE_TYPE);
         tr1.setText("Questions?");
         box1.setAnchor(new Rectangle(54, 167, 612, 115));
         slide.addShape(box1);
 
-        TextBox box2 = new TextBox();
-        TextRun tr2 = box2.getTextRun();
+        HSLFTextBox box2 = new HSLFTextBox();
+        HSLFTextParagraph tr2 = box2.getTextParagraph();
         tr2.setRunType(TextHeaderAtom.CENTRE_BODY_TYPE);
         tr2.setText(
                 "http://poi.apache.org/hslf/\r" +

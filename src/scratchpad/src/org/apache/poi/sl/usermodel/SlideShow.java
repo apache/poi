@@ -21,11 +21,11 @@ import java.awt.Dimension;
 import java.io.IOException;
 
 public interface SlideShow {
-	Slide createSlide() throws IOException;
-	MasterSheet createMasterSheet() throws IOException;
+	Slide<? extends Shape, ? extends SlideShow> createSlide() throws IOException;
+	MasterSheet<? extends Shape, ? extends SlideShow> createMasterSheet() throws IOException;
 
-	Slide[] getSlides();
-	MasterSheet[] getMasterSheet();
+	Slide<? extends Shape, ? extends SlideShow>[] getSlides();
+	MasterSheet<? extends Shape, ? extends SlideShow>[] getMasterSheet();
 
 	Resources getResources();
 

@@ -18,12 +18,11 @@
 package org.apache.poi.hslf.model;
 
 import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
+
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 import java.awt.*;
-import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 
@@ -34,10 +33,10 @@ import java.io.ByteArrayInputStream;
  */
 public final class TestPPGraphics2D extends TestCase {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-    private SlideShow ppt;
+    private HSLFSlideShow ppt;
 
     protected void setUp() throws Exception {
-		ppt = new SlideShow(_slTests.openResourceAsStream("empty.ppt"));
+		ppt = new HSLFSlideShow(_slTests.openResourceAsStream("empty.ppt"));
     }
 
     public void testGraphics() throws Exception {
@@ -45,7 +44,7 @@ public final class TestPPGraphics2D extends TestCase {
     	assertEquals(0, ppt.getSlides().length);
 
     	// Add a slide
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
     	assertEquals(1, ppt.getSlides().length);
 
     	// Add some stuff into it
@@ -73,7 +72,7 @@ public final class TestPPGraphics2D extends TestCase {
         out.close();
 
         // And read it back in
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         assertEquals(1, ppt.getSlides().length);
 
         slide = ppt.getSlides()[0];

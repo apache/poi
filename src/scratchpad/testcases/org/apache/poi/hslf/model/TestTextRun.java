@@ -30,8 +30,8 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -43,24 +43,24 @@ public final class TestTextRun extends TestCase {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
 	// SlideShow primed on the test data
-	private SlideShow ss;
-	private SlideShow ssRich;
+	private HSLFSlideShow ss;
+	private HSLFSlideShow ssRich;
 
 	protected void setUp() throws IOException {
 
 		// Basic (non rich) test file
-		ss = new SlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 
 		// Rich test file
-		ssRich = new SlideShow(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
+		ssRich = new HSLFSlideShow(_slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
 	}
 
 	/**
 	 * Test to ensure that getting the text works correctly
 	 */
 	public void testGetText() {
-		Slide slideOne = ss.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
 
 		assertEquals(2, textRuns.length);
 
@@ -74,8 +74,8 @@ public final class TestTextRun extends TestCase {
 
 
 		// Now check on a rich text run
-		Slide slideOneR = ssRich.getSlides()[0];
-		TextRun[] textRunsR = slideOneR.getTextRuns();
+		HSLFSlide slideOneR = ssRich.getSlides()[0];
+		HSLFTextParagraph[] textRunsR = slideOneR.getTextRuns();
 
 		assertEquals(2, textRunsR.length);
 		assertEquals("This is a title, it\u2019s in black", textRunsR[0].getText());
@@ -88,9 +88,9 @@ public final class TestTextRun extends TestCase {
 	 * Test to ensure changing non rich text bytes->bytes works correctly
 	 */
 	public void testSetText() {
-		Slide slideOne = ss.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
-		TextRun run = textRuns[0];
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
+		HSLFTextParagraph run = textRuns[0];
 
 		// Check current text
 		assertEquals("This is a test title", run.getText());
@@ -110,8 +110,8 @@ public final class TestTextRun extends TestCase {
 	 *  chars works correctly
 	 */
 	public void testAdvancedSetText() {
-		Slide slideOne = ss.getSlides()[0];
-		TextRun run = slideOne.getTextRuns()[0];
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFTextParagraph run = slideOne.getTextRuns()[0];
 
 		TextHeaderAtom tha = run._headerAtom;
 		TextBytesAtom tba = run._byteAtom;
@@ -171,19 +171,19 @@ public final class TestTextRun extends TestCase {
 	 *  set up for it
 	 */
 	public void testGetRichTextNonRich() {
-		Slide slideOne = ss.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
 
 		assertEquals(2, textRuns.length);
 
-		TextRun trA = textRuns[0];
-		TextRun trB = textRuns[1];
+		HSLFTextParagraph trA = textRuns[0];
+		HSLFTextParagraph trB = textRuns[1];
 
 		assertEquals(1, trA.getRichTextRuns().length);
 		assertEquals(1, trB.getRichTextRuns().length);
 
-		RichTextRun rtrA = trA.getRichTextRuns()[0];
-		RichTextRun rtrB = trB.getRichTextRuns()[0];
+		HSLFTextRun rtrA = trA.getRichTextRuns()[0];
+		HSLFTextRun rtrB = trB.getRichTextRuns()[0];
 
 		assertEquals(trA.getText(), rtrA.getText());
 		assertEquals(trB.getText(), rtrB.getText());
@@ -198,21 +198,21 @@ public final class TestTextRun extends TestCase {
 	 * Tests to ensure that the rich text runs are built up correctly
 	 */
 	public void testGetRichText() {
-		Slide slideOne = ssRich.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
+		HSLFSlide slideOne = ssRich.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
 
 		assertEquals(2, textRuns.length);
 
-		TextRun trA = textRuns[0];
-		TextRun trB = textRuns[1];
+		HSLFTextParagraph trA = textRuns[0];
+		HSLFTextParagraph trB = textRuns[1];
 
 		assertEquals(1, trA.getRichTextRuns().length);
 		assertEquals(3, trB.getRichTextRuns().length);
 
-		RichTextRun rtrA = trA.getRichTextRuns()[0];
-		RichTextRun rtrB = trB.getRichTextRuns()[0];
-		RichTextRun rtrC = trB.getRichTextRuns()[1];
-		RichTextRun rtrD = trB.getRichTextRuns()[2];
+		HSLFTextRun rtrA = trA.getRichTextRuns()[0];
+		HSLFTextRun rtrB = trB.getRichTextRuns()[0];
+		HSLFTextRun rtrC = trB.getRichTextRuns()[1];
+		HSLFTextRun rtrD = trB.getRichTextRuns()[2];
 
 		assertEquals(trA.getText(), rtrA.getText());
 
@@ -244,12 +244,12 @@ public final class TestTextRun extends TestCase {
 	 *  ensuring that everything stays with the same default styling
 	 */
 	public void testSetTextWhereNotRich() {
-		Slide slideOne = ss.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
-		TextRun trB = textRuns[1];
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
+		HSLFTextParagraph trB = textRuns[1];
 		assertEquals(1, trB.getRichTextRuns().length);
 
-		RichTextRun rtrB = trB.getRichTextRuns()[0];
+		HSLFTextRun rtrB = trB.getRichTextRuns()[0];
 		assertEquals(trB.getText(), rtrB.getText());
 		assertNull(rtrB._getRawCharacterStyle());
 		assertNull(rtrB._getRawParagraphStyle());
@@ -268,14 +268,14 @@ public final class TestTextRun extends TestCase {
 	 *  sets everything to the same styling
 	 */
 	public void testSetTextWhereRich() {
-		Slide slideOne = ssRich.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
-		TextRun trB = textRuns[1];
+		HSLFSlide slideOne = ssRich.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
+		HSLFTextParagraph trB = textRuns[1];
 		assertEquals(3, trB.getRichTextRuns().length);
 
-		RichTextRun rtrB = trB.getRichTextRuns()[0];
-		RichTextRun rtrC = trB.getRichTextRuns()[1];
-		RichTextRun rtrD = trB.getRichTextRuns()[2];
+		HSLFTextRun rtrB = trB.getRichTextRuns()[0];
+		HSLFTextRun rtrC = trB.getRichTextRuns()[1];
+		HSLFTextRun rtrD = trB.getRichTextRuns()[2];
 		TextPropCollection tpBP = rtrB._getRawParagraphStyle();
 		TextPropCollection tpBC = rtrB._getRawCharacterStyle();
 		TextPropCollection tpCP = rtrC._getRawParagraphStyle();
@@ -316,12 +316,12 @@ public final class TestTextRun extends TestCase {
 	 *  in a rich text run, that doesn't happen to actually be rich
 	 */
 	public void testChangeTextInRichTextRunNonRich() {
-		Slide slideOne = ss.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
-		TextRun trB = textRuns[1];
+		HSLFSlide slideOne = ss.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
+		HSLFTextParagraph trB = textRuns[1];
 		assertEquals(1, trB.getRichTextRuns().length);
 
-		RichTextRun rtrB = trB.getRichTextRuns()[0];
+		HSLFTextRun rtrB = trB.getRichTextRuns()[0];
 		assertEquals(trB.getText(), rtrB.getText());
 		assertNull(rtrB._getRawCharacterStyle());
 		assertNull(rtrB._getRawParagraphStyle());
@@ -341,16 +341,16 @@ public final class TestTextRun extends TestCase {
 	 *  correctly
 	 */
 	public void testChangeTextInRichTextRun() {
-		Slide slideOne = ssRich.getSlides()[0];
-		TextRun[] textRuns = slideOne.getTextRuns();
-		TextRun trB = textRuns[1];
+		HSLFSlide slideOne = ssRich.getSlides()[0];
+		HSLFTextParagraph[] textRuns = slideOne.getTextRuns();
+		HSLFTextParagraph trB = textRuns[1];
 		assertEquals(3, trB.getRichTextRuns().length);
 
 		// We start with 3 text runs, each with their own set of styles,
 		//  but all sharing the same paragraph styles
-		RichTextRun rtrB = trB.getRichTextRuns()[0];
-		RichTextRun rtrC = trB.getRichTextRuns()[1];
-		RichTextRun rtrD = trB.getRichTextRuns()[2];
+		HSLFTextRun rtrB = trB.getRichTextRuns()[0];
+		HSLFTextRun rtrC = trB.getRichTextRuns()[1];
+		HSLFTextRun rtrD = trB.getRichTextRuns()[2];
 		TextPropCollection tpBP = rtrB._getRawParagraphStyle();
 		TextPropCollection tpBC = rtrB._getRawCharacterStyle();
 		TextPropCollection tpCP = rtrC._getRawParagraphStyle();
@@ -421,11 +421,11 @@ public final class TestTextRun extends TestCase {
 	 *
 	 */
 	public void testBug41015() throws IOException {
-		RichTextRun[] rt;
+		HSLFTextRun[] rt;
 
-		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("bug-41015.ppt"));
-		Slide sl = ppt.getSlides()[0];
-		TextRun[] txt = sl.getTextRuns();
+		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug-41015.ppt"));
+		HSLFSlide sl = ppt.getSlides()[0];
+		HSLFTextParagraph[] txt = sl.getTextRuns();
 		assertEquals(2, txt.length);
 
 		rt = txt[0].getRichTextRuns();
@@ -448,24 +448,24 @@ public final class TestTextRun extends TestCase {
 	 * Test creation of TextRun objects.
 	 */
 	public void testAddTextRun() {
-		SlideShow ppt = new SlideShow();
-		Slide slide = ppt.createSlide();
+		HSLFSlideShow ppt = new HSLFSlideShow();
+		HSLFSlide slide = ppt.createSlide();
 
 		assertNull(slide.getTextRuns());
 
-		TextBox shape1 = new TextBox();
-		TextRun run1 = shape1.getTextRun();
+		HSLFTextBox shape1 = new HSLFTextBox();
+		HSLFTextParagraph run1 = shape1.getTextParagraph();
 		assertSame(run1, shape1.createTextRun());
 		run1.setText("Text 1");
 		slide.addShape(shape1);
 
 		//The array of Slide's text runs must be updated when new text shapes are added.
-		TextRun[] runs = slide.getTextRuns();
+		HSLFTextParagraph[] runs = slide.getTextRuns();
 		assertNotNull(runs);
 		assertSame(run1, runs[0]);
 
-		TextBox shape2 = new TextBox();
-		TextRun run2 = shape2.getTextRun();
+		HSLFTextBox shape2 = new HSLFTextBox();
+		HSLFTextParagraph run2 = shape2.getTextParagraph();
 		assertSame(run2, shape2.createTextRun());
 		run2.setText("Text 2");
 		slide.addShape(shape2);
@@ -479,14 +479,14 @@ public final class TestTextRun extends TestCase {
 		//as getShapes()
 		HSLFShape[] sh = slide.getShapes();
 		assertEquals(2, sh.length);
-		assertTrue(sh[0] instanceof TextBox);
-		TextBox box1 = (TextBox)sh[0];
-		assertSame(run1, box1.getTextRun());
-		TextBox box2 = (TextBox)sh[1];
-		assertSame(run2, box2.getTextRun());
+		assertTrue(sh[0] instanceof HSLFTextBox);
+		HSLFTextBox box1 = (HSLFTextBox)sh[0];
+		assertSame(run1, box1.getTextParagraph());
+		HSLFTextBox box2 = (HSLFTextBox)sh[1];
+		assertSame(run2, box2.getTextParagraph());
 
 		//test Table - a complex group of shapes containing text objects
-		Slide slide2 = ppt.createSlide();
+		HSLFSlide slide2 = ppt.createSlide();
 		assertNull(slide2.getTextRuns());
 		Table table = new Table(2, 2);
 		slide2.addShape(table);
@@ -496,12 +496,12 @@ public final class TestTextRun extends TestCase {
 	}
 
     public void test48916() throws IOException {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
-        for(Slide slide : ppt.getSlides()){
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
+        for(HSLFSlide slide : ppt.getSlides()){
             for(HSLFShape sh : slide.getShapes()){
-                if(sh instanceof TextShape){
-                    TextShape tx = (TextShape)sh;
-                    TextRun run = tx.getTextRun();
+                if(sh instanceof HSLFTextShape){
+                    HSLFTextShape tx = (HSLFTextShape)sh;
+                    HSLFTextParagraph run = tx.getTextParagraph();
                     //verify that records cached in  TextRun and EscherTextboxWrapper are the same
                     Record[] runChildren = run.getRecords();
                     Record[] txboxChildren = tx.getEscherTextboxWrapper().getChildRecords();
@@ -517,13 +517,13 @@ public final class TestTextRun extends TestCase {
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ppt.write(out);
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
-        for(Slide slide : ppt.getSlides()){
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
+        for(HSLFSlide slide : ppt.getSlides()){
             for(HSLFShape sh : slide.getShapes()){
-                if(sh instanceof TextShape){
-                    TextShape tx = (TextShape)sh;
-                    TextRun run = tx.getTextRun();
-                    RichTextRun rt = run.getRichTextRuns()[0];
+                if(sh instanceof HSLFTextShape){
+                    HSLFTextShape tx = (HSLFTextShape)sh;
+                    HSLFTextParagraph run = tx.getTextParagraph();
+                    HSLFTextRun rt = run.getRichTextRuns()[0];
                     assertTrue(rt.isBold());
                     assertEquals(rt.getFontColor(), Color.RED);
                 }
@@ -533,9 +533,9 @@ public final class TestTextRun extends TestCase {
     }
 
     public void test52244() throws IOException {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("52244.ppt"));
-        Slide slide = ppt.getSlides()[0];
-        TextRun[] runs = slide.getTextRuns();
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("52244.ppt"));
+        HSLFSlide slide = ppt.getSlides()[0];
+        HSLFTextParagraph[] runs = slide.getTextRuns();
 
         assertEquals("Arial", runs[0].getRichTextRuns()[0].getFontName());
         assertEquals(36, runs[0].getRichTextRuns()[0].getFontSize());

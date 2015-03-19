@@ -18,17 +18,17 @@
 package org.apache.poi.hslf.model;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public final class Fill {
+public final class HSLFFill {
     // For logging
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
@@ -106,10 +106,55 @@ public final class Fill {
      *
      * @param shape the shape this background applies to
      */
-    public Fill(HSLFShape shape){
+    public HSLFFill(HSLFShape shape){
         this.shape = shape;
     }
 
+
+    public FillStyle getFillStyle() {
+        return new FillStyle() {
+            public PaintStyle getPaint() {
+                switch (getFillType()) {
+                    case FILL_SOLID: {
+                        return new SolidPaint() {
+                            public ColorStyle getSolidColor() {
+                                return new ColorStyle() {
+                                    public Color getColor() { return getForegroundColor(); }
+                                    public int getAlpha() { return -1; }
+                                    public int getLumOff() { return -1; }
+                                    public int getLumMod() { return -1; }
+                                    public int getShade()  { return -1; }
+                                    public int getTint()  { return -1; }
+                                };
+                            }
+                        };
+                    }
+                    case FILL_PICTURE: {
+                        return new TexturePaint() {
+                            final HSLFPictureData pd = getPictureData();
+                            
+                            public InputStream getImageData() {
+                                return new ByteArrayInputStream(pd.getData());
+                            }
+
+                            public String getContentType() {
+                                return pd.getContentType();
+                            }
+
+                            public int getAlpha() {
+                                return (int)(shape.getAlpha(EscherProperties.FILL__FILLOPACITY)*100000.0);
+                            }
+                        };
+                    }
+                    default:
+                        logger.log(POILogger.WARN, "unsuported fill type: " + getFillType());
+                        break;
+                }
+                return PaintStyle.TRANSPARENT_PAINT;
+            }
+        };
+    }
+    
     /**
      * Returns fill type.
      * Must be one of the <code>FILL_*</code> constants defined in this class.
@@ -124,7 +169,7 @@ public final class Fill {
 
     /**
      */
-    protected void afterInsert(Sheet sh){
+    protected void afterInsert(HSLFSheet sh){
         EscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
@@ -135,12 +180,12 @@ public final class Fill {
     }
 
     protected EscherBSERecord getEscherBSERecord(int idx){
-        Sheet sheet = shape.getSheet();
+        HSLFSheet sheet = shape.getSheet();
         if(sheet == null) {
             logger.log(POILogger.DEBUG, "Fill has not yet been assigned to a sheet");
             return null;
         }
-        SlideShow ppt = sheet.getSlideShow();
+        HSLFSlideShow ppt = sheet.getSlideShow();
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
@@ -220,13 +265,13 @@ public final class Fill {
     /**
      * <code>PictureData</code> object used in a texture, pattern of picture fill.
      */
-    public PictureData getPictureData(){
+    public HSLFPictureData getPictureData(){
         EscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if (p == null) return null;
 
-        SlideShow ppt = shape.getSheet().getSlideShow();
-        PictureData[] pict = ppt.getPictureData();
+        HSLFSlideShow ppt = shape.getSheet().getSlideShow();
+        HSLFPictureData[] pict = ppt.getPictureData();
         Document doc = ppt.getDocumentRecord();
 
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();

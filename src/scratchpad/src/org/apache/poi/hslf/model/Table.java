@@ -115,7 +115,7 @@ public final class Table extends HSLFGroupShape {
         return cells.length;
     }
 
-    protected void afterInsert(Sheet sh){
+    protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
@@ -165,7 +165,7 @@ public final class Table extends HSLFGroupShape {
         List<List<HSLFShape>> lst = new ArrayList<List<HSLFShape>>();
         List<HSLFShape> row = null;
         for (HSLFShape sh : shapeList) {
-            if(sh instanceof TextShape){
+            if(sh instanceof HSLFTextShape){
                 Rectangle anchor = sh.getAnchor();
                 if(anchor.y != y0){
                     y0 = anchor.y;
@@ -180,7 +180,7 @@ public final class Table extends HSLFGroupShape {
         for (int i = 0; i < lst.size(); i++) {
             row = lst.get(i);
             for (int j = 0; j < row.size(); j++) {
-                TextShape tx = (TextShape)row.get(j);
+                HSLFTextShape tx = (HSLFTextShape)row.get(j);
                 cells[i][j] = new TableCell(tx.getSpContainer(), getParent());
                 cells[i][j].setSheet(tx.getSheet());
             }
@@ -192,7 +192,7 @@ public final class Table extends HSLFGroupShape {
      *
      * @param sheet owner of this shape
      */
-    public void setSheet(Sheet sheet){
+    public void setSheet(HSLFSheet sheet){
         super.setSheet(sheet);
         if(cells == null) initTable();
     }

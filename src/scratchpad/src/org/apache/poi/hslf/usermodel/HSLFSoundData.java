@@ -26,7 +26,7 @@ import java.util.ArrayList;
  *
  * @author Yegor Kozlov
  */
-public final class SoundData {
+public final class HSLFSoundData {
     /**
      * The record that contains the object data.
      */
@@ -37,7 +37,7 @@ public final class SoundData {
      *
      * @param container the record that contains the sound data.
      */
-    public SoundData(Sound container) {
+    public HSLFSoundData(Sound container) {
         this._container = container;
     }
 
@@ -74,8 +74,8 @@ public final class SoundData {
      * @param document the document to find in
      * @return the array with the sound data
      */
-    public static SoundData[] find(Document document){
-        ArrayList<SoundData> lst = new ArrayList<SoundData>();
+    public static HSLFSoundData[] find(Document document){
+        ArrayList<HSLFSoundData> lst = new ArrayList<HSLFSoundData>();
         Record[] ch = document.getChildRecords();
         for (int i = 0; i < ch.length; i++) {
             if(ch[i].getRecordType() == RecordTypes.SoundCollection.typeID){
@@ -83,12 +83,12 @@ public final class SoundData {
                 Record[] sr = col.getChildRecords();
                 for (int j = 0; j < sr.length; j++) {
                     if(sr[j] instanceof Sound){
-                        lst.add(new SoundData((Sound)sr[j]));
+                        lst.add(new HSLFSoundData((Sound)sr[j]));
                     }
                 }
             }
 
         }
-        return lst.toArray(new SoundData[lst.size()]);
+        return lst.toArray(new HSLFSoundData[lst.size()]);
     }
 }

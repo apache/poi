@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.hslf.model.HSLFShape;
 
 /**
@@ -102,10 +102,10 @@ public final class PICT extends Metafile {
     }
 
     /**
-     * @see org.apache.poi.hslf.model.Picture#PICT
+     * @see org.apache.poi.hslf.model.HSLFPictureShape#PICT
      */
     public int getType(){
-        return Picture.PICT;
+        return HSLFPictureShape.PICT;
     }
 
     /**
@@ -115,6 +115,10 @@ public final class PICT extends Metafile {
      */
     public int getSignature(){
         return 0x5430;
+    }
+
+    public String getContentType() {
+        return "image/x-pict";
     }
 
 }

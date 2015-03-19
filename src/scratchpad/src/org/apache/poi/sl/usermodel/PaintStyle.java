@@ -17,7 +17,10 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Color;
 import java.io.InputStream;
+
+import org.apache.poi.sl.draw.DrawPaint;
 
 
 
@@ -55,4 +58,6 @@ public interface PaintStyle {
          */
         int getAlpha();
     }
+
+    SolidPaint TRANSPARENT_PAINT = DrawPaint.createSolidPaint(new Color(0xFF, 0xFF, 0xFF, 0));
 }

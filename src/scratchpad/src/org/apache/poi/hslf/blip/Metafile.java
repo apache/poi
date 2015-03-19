@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.blip;
 
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hslf.usermodel.PictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
 
 import java.awt.*;
 import java.io.*;
@@ -30,7 +30,7 @@ import java.util.zip.DeflaterOutputStream;
  *
  * @author Yegor Kozlov
  */
-public abstract class Metafile extends PictureData {
+public abstract class Metafile extends HSLFPictureData {
 
     /**
      *  A structure which represents a 34-byte header preceeding the compressed metafile data

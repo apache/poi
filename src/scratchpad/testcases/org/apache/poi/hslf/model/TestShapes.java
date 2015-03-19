@@ -38,9 +38,8 @@ import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,17 +52,17 @@ import org.junit.Test;
 public final class TestShapes {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-    private SlideShow ppt;
-    private SlideShow pptB;
+    private HSLFSlideShow ppt;
+    private HSLFSlideShow pptB;
 
     @Before
     public void setUp() throws Exception {
         InputStream is1 = null, is2 = null;
         try {
             is1 = _slTests.openResourceAsStream("empty.ppt");
-            ppt = new SlideShow(is1);
+            ppt = new HSLFSlideShow(is1);
             is2 = _slTests.openResourceAsStream("empty_textbox.ppt");
-            pptB = new SlideShow(is2);
+            pptB = new HSLFSlideShow(is2);
         } finally {
             is1.close();
             is2.close();
@@ -72,7 +71,7 @@ public final class TestShapes {
 
     @Test
     public void graphics() throws Exception {
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         Line line = new Line();
         java.awt.Rectangle lineAnchor = new java.awt.Rectangle(100, 200, 50, 60);
@@ -82,7 +81,7 @@ public final class TestShapes {
         line.setLineColor(Color.red);
         slide.addShape(line);
 
-        AutoShape ellipse = new AutoShape(ShapeType.ELLIPSE);
+        HSLFAutoShape ellipse = new HSLFAutoShape(ShapeType.ELLIPSE);
         java.awt.Rectangle ellipseAnchor = new Rectangle(320, 154, 55, 111);
         ellipse.setAnchor(ellipseAnchor);
         ellipse.setLineWidth(2);
@@ -97,7 +96,7 @@ public final class TestShapes {
 
         //read ppt from byte array
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         assertEquals(1, ppt.getSlides().length);
 
         slide = ppt.getSlides()[0];
@@ -107,7 +106,7 @@ public final class TestShapes {
         assertTrue(shape[0] instanceof Line); //group shape
         assertEquals(lineAnchor, shape[0].getAnchor()); //group shape
 
-        assertTrue(shape[1] instanceof AutoShape); //group shape
+        assertTrue(shape[1] instanceof HSLFAutoShape); //group shape
         assertEquals(ellipseAnchor, shape[1].getAnchor()); //group shape
     }
 
@@ -117,17 +116,17 @@ public final class TestShapes {
      */
     @Test
     public void textBoxRead() throws Exception {
-        ppt = new SlideShow(_slTests.openResourceAsStream("with_textbox.ppt"));
-        Slide sl = ppt.getSlides()[0];
+        ppt = new HSLFSlideShow(_slTests.openResourceAsStream("with_textbox.ppt"));
+        HSLFSlide sl = ppt.getSlides()[0];
         HSLFShape[] sh = sl.getShapes();
         for (int i = 0; i < sh.length; i++) {
-            assertTrue(sh[i] instanceof TextBox);
-            TextBox txtbox = (TextBox)sh[i];
+            assertTrue(sh[i] instanceof HSLFTextBox);
+            HSLFTextBox txtbox = (HSLFTextBox)sh[i];
             String text = txtbox.getText();
             assertNotNull(text);
 
-            assertEquals(txtbox.getTextRun().getRichTextRuns().length, 1);
-            RichTextRun rt = txtbox.getTextRun().getRichTextRuns()[0];
+            assertEquals(txtbox.getTextParagraph().getRichTextRuns().length, 1);
+            HSLFTextRun rt = txtbox.getTextParagraph().getRichTextRuns()[0];
 
             if (text.equals("Hello, World!!!")){
                 assertEquals(32, rt.getFontSize());
@@ -153,15 +152,15 @@ public final class TestShapes {
      */
     @Test
     public void textBoxWriteBytes() throws Exception {
-        ppt = new SlideShow();
-        Slide sl = ppt.createSlide();
-        RichTextRun rt;
+        ppt = new HSLFSlideShow();
+        HSLFSlide sl = ppt.createSlide();
+        HSLFTextRun rt;
 
         String val = "Hello, World!";
 
         // Create a new textbox, and give it lots of properties
-        TextBox txtbox = new TextBox();
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        HSLFTextBox txtbox = new HSLFTextBox();
+        rt = txtbox.getTextParagraph().getRichTextRuns()[0];
         txtbox.setText(val);
         rt.setFontName("Arial");
         rt.setFontSize(42);
@@ -172,7 +171,7 @@ public final class TestShapes {
         sl.addShape(txtbox);
 
         // Check it before save
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        rt = txtbox.getTextParagraph().getRichTextRuns()[0];
         assertEquals(val, rt.getText());
         assertEquals(42, rt.getFontSize());
         assertTrue(rt.isBold());
@@ -186,11 +185,11 @@ public final class TestShapes {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
         sl = ppt.getSlides()[0];
 
-        txtbox = (TextBox)sl.getShapes()[0];
-        rt = txtbox.getTextRun().getRichTextRuns()[0];
+        txtbox = (HSLFTextBox)sl.getShapes()[0];
+        rt = txtbox.getTextParagraph().getRichTextRuns()[0];
 
         // Check after save
         assertEquals(val, rt.getText());
@@ -208,8 +207,8 @@ public final class TestShapes {
     @Test
     public void emptyTextBox() {
     	assertEquals(2, pptB.getSlides().length);
-    	Slide s1 = pptB.getSlides()[0];
-    	Slide s2 = pptB.getSlides()[1];
+    	HSLFSlide s1 = pptB.getSlides()[0];
+    	HSLFSlide s2 = pptB.getSlides()[1];
 
     	// Check we can get the shapes count
     	assertEquals(2, s1.getShapes().length);
@@ -231,11 +230,11 @@ public final class TestShapes {
     }
 
     private void textBoxSet(String filename) throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(filename));
-        Slide[] sl = ppt.getSlides();
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream(filename));
+        HSLFSlide[] sl = ppt.getSlides();
         for (int k = 0; k < sl.length; k++) {
             ArrayList<String> lst1 = new ArrayList<String>();
-            TextRun[] txt = sl[k].getTextRuns();
+            HSLFTextParagraph[] txt = sl[k].getTextRuns();
             for (int i = 0; i < txt.length; i++) {
                 lst1.add(txt[i].getText());
             }
@@ -243,8 +242,8 @@ public final class TestShapes {
             ArrayList<String> lst2 = new ArrayList<String>();
             HSLFShape[] sh = sl[k].getShapes();
             for (int i = 0; i < sh.length; i++) {
-                if (sh[i] instanceof TextShape){
-                    TextShape tbox = (TextShape)sh[i];
+                if (sh[i] instanceof HSLFTextShape){
+                    HSLFTextShape tbox = (HSLFTextShape)sh[i];
                     lst2.add(tbox.getText());
                 }
             }
@@ -258,9 +257,9 @@ public final class TestShapes {
      */
     @Test
     public void shapeGroup() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
         Dimension pgsize = ppt.getPageSize();
 
         HSLFGroupShape group = new HSLFGroupShape();
@@ -268,8 +267,8 @@ public final class TestShapes {
         group.setAnchor(new Rectangle(0, 0, (int)pgsize.getWidth(), (int)pgsize.getHeight()));
         slide.addShape(group);
 
-        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), Picture.JPEG);
-        Picture pict = new Picture(idx, group);
+        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), HSLFPictureShape.JPEG);
+        HSLFPictureShape pict = new HSLFPictureShape(idx, group);
         pict.setAnchor(new Rectangle(0, 0, 200, 200));
         group.addShape(pict);
 
@@ -283,7 +282,7 @@ public final class TestShapes {
         out.close();
 
         ByteArrayInputStream is = new ByteArrayInputStream(out.toByteArray());
-        ppt = new SlideShow(is);
+        ppt = new HSLFSlideShow(is);
         is.close();
 
         slide = ppt.getSlides()[0];
@@ -295,10 +294,10 @@ public final class TestShapes {
         group = (HSLFGroupShape)shape[0];
         HSLFShape[] grshape = group.getShapes();
         assertEquals(2, grshape.length);
-        assertTrue(grshape[0] instanceof Picture);
+        assertTrue(grshape[0] instanceof HSLFPictureShape);
         assertTrue(grshape[1] instanceof Line);
 
-        pict = (Picture)grshape[0];
+        pict = (HSLFPictureShape)grshape[0];
         assertEquals(new Rectangle(0, 0, 200, 200), pict.getAnchor());
 
         line = (Line)grshape[1];
@@ -311,8 +310,8 @@ public final class TestShapes {
     @Test
     public void removeShapes() throws IOException {
         String file = "with_textbox.ppt";
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream(file));
-        Slide sl = ppt.getSlides()[0];
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream(file));
+        HSLFSlide sl = ppt.getSlides()[0];
         HSLFShape[] sh = sl.getShapes();
         assertEquals("expected four shaped in " + file, 4, sh.length);
         //remove all
@@ -328,30 +327,30 @@ public final class TestShapes {
         ppt.write(out);
         out.close();
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
         sl = ppt.getSlides()[0];
         assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().length);
     }
 
     @Test
     public void lineWidth() {
-        SimpleShape sh = new AutoShape(ShapeType.RT_TRIANGLE);
+        HSLFSimpleShape sh = new HSLFAutoShape(ShapeType.RT_TRIANGLE);
 
         EscherOptRecord opt = sh.getEscherOptRecord();
-        EscherSimpleProperty prop = SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        EscherSimpleProperty prop = HSLFSimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         assertNull(prop);
-        assertEquals(SimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth(), 0);
+        assertEquals(HSLFSimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth(), 0);
 
         sh.setLineWidth(1.0);
-        prop = SimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        prop = HSLFSimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
         assertNotNull(prop);
         assertEquals(1.0, sh.getLineWidth(), 0);
     }
 
     @Test
     public void shapeId() {
-        SlideShow ppt = new SlideShow();
-        Slide slide = ppt.createSlide();
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
         HSLFShape shape = null;
 
         //EscherDgg is a document-level record which keeps track of the drawing groups
@@ -400,25 +399,25 @@ public final class TestShapes {
 
     @Test
     public void lineColor() throws IOException {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("51731.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("51731.ppt"));
         HSLFShape[] shape = ppt.getSlides()[0].getShapes();
 
         assertEquals(4, shape.length);
 
-        TextShape sh1 = (TextShape)shape[0];
+        HSLFTextShape sh1 = (HSLFTextShape)shape[0];
         assertEquals("Hello Apache POI", sh1.getText());
         assertNull(sh1.getLineColor());
 
-        TextShape sh2 = (TextShape)shape[1];
+        HSLFTextShape sh2 = (HSLFTextShape)shape[1];
         assertEquals("Why are you showing this border?", sh2.getText());
         assertNull(sh2.getLineColor());
 
-        TextShape sh3 = (TextShape)shape[2];
+        HSLFTextShape sh3 = (HSLFTextShape)shape[2];
         assertEquals("Text in a black border", sh3.getText());
         assertEquals(Color.black, sh3.getLineColor());
         assertEquals(0.75, sh3.getLineWidth(), 0);
 
-        TextShape sh4 = (TextShape)shape[3];
+        HSLFTextShape sh4 = (HSLFTextShape)shape[3];
         assertEquals("Border width is 5 pt", sh4.getText());
         assertEquals(Color.black, sh4.getLineColor());
         assertEquals(5.0, sh4.getLineWidth(), 0);

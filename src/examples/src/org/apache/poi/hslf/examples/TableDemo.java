@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.model.*;
 
 import java.awt.*;
@@ -43,9 +43,9 @@ public final class TableDemo {
             {"Total PO History Spend", "$10,172,038"}
         };
 
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         //six rows, two columns
         Table table1 = new Table(6, 2);
@@ -53,7 +53,7 @@ public final class TableDemo {
             for (int j = 0; j < txt1[i].length; j++) {
                 TableCell cell = table1.getCell(i, j);
                 cell.setText(txt1[i][j]);
-                RichTextRun rt = cell.getTextRun().getRichTextRuns()[0];
+                HSLFTextRun rt = cell.getTextParagraph().getRichTextRuns()[0];
                 rt.setFontName("Arial");
                 rt.setFontSize(10);
                 if(i == 0){
@@ -61,8 +61,8 @@ public final class TableDemo {
                 } else {
                     rt.setBold(true);
                 }
-                cell.setVerticalAlignment(TextBox.AnchorMiddle);
-                cell.setHorizontalAlignment(TextBox.AlignCenter);
+                cell.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
+                cell.setHorizontalAlignment(HSLFTextBox.AlignCenter);
             }
         }
 
@@ -92,7 +92,7 @@ public final class TableDemo {
             for (int j = 0; j < txt2[i].length; j++) {
                 TableCell cell = table2.getCell(i, j);
                 cell.setText(txt2[i][j]);
-                RichTextRun rt = cell.getTextRun().getRichTextRuns()[0];
+                HSLFTextRun rt = cell.getTextParagraph().getRichTextRuns()[0];
                 rt.setFontSize(10);
                 rt.setFontName("Arial");
                 if(i == 0){
@@ -100,13 +100,13 @@ public final class TableDemo {
                     rt.setFontColor(Color.white);
                     rt.setBold(true);
                     rt.setFontSize(14);
-                    cell.setHorizontalAlignment(TextBox.AlignCenter);
+                    cell.setHorizontalAlignment(HSLFTextBox.AlignCenter);
                 } else {
                     rt.setBullet(true);
                     rt.setFontSize(12);
-                    cell.setHorizontalAlignment(TextBox.AlignLeft);
+                    cell.setHorizontalAlignment(HSLFTextBox.AlignLeft);
                 }
-                cell.setVerticalAlignment(TextBox.AnchorMiddle);
+                cell.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
             }
         }
         table2.setColumnWidth(0, 300);

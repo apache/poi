@@ -47,7 +47,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
  * @author Yegor Kozlov
 */
 @Beta
- public class XSLFNotesMaster extends XSLFSheet implements MasterSheet<XSLFShape> {
+ public class XSLFNotesMaster extends XSLFSheet implements MasterSheet<XSLFShape,XMLSlideShow> {
 	 private CTNotesMaster _slide;
      private XSLFTheme _theme;
 
@@ -94,7 +94,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
     }
 
     @Override
-    public MasterSheet getMasterSheet() {
+    public MasterSheet<XSLFShape,XMLSlideShow> getMasterSheet() {
         return null;
     }
     

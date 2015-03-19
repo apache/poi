@@ -19,7 +19,7 @@ package org.apache.poi.hslf.blip;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
@@ -95,7 +95,7 @@ public final class WMF extends Metafile {
      * We are of type <code>Picture.WMF</code>
      */
     public int getType(){
-        return Picture.WMF;
+        return HSLFPictureShape.WMF;
     }
 
     /**
@@ -186,6 +186,11 @@ public final class WMF extends Metafile {
         public int getSize(){
             return 22;
         }
+    }
+
+
+    public String getContentType() {
+        return "image/x-wmf";
     }
 
 }

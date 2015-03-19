@@ -43,7 +43,7 @@ public final class TestFreeform extends TestCase {
         path1.lineTo(100, 200);
         path1.closePath();
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
 
         java.awt.Shape path2 = p.getOutline();
@@ -54,7 +54,7 @@ public final class TestFreeform extends TestCase {
 
         GeneralPath path1 = new GeneralPath(new Line2D.Double(100, 100, 200, 100));
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
 
         java.awt.Shape path2 = p.getOutline();
@@ -65,7 +65,7 @@ public final class TestFreeform extends TestCase {
 
         GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(100, 100, 200, 50));
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
 
         java.awt.Shape path2 = p.getOutline();
@@ -78,7 +78,7 @@ public final class TestFreeform extends TestCase {
      */
     public void test54188() {
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         GeneralPath path = (GeneralPath)p.getOutline();
         GeneralPath emptyPath = new GeneralPath();
         assertEquals(emptyPath.getBounds2D(), path.getBounds2D());

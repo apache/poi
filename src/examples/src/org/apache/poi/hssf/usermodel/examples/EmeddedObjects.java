@@ -21,8 +21,8 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 import java.io.FileInputStream;
 import java.util.Iterator;
@@ -47,7 +47,7 @@ public class EmeddedObjects {
                 //System.out.println(entry.getName() + ": " + embeddedWordDocument.getRange().text());
             }  else if (oleName.equals("Presentation")) {
                 DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                SlideShow embeddedPowerPointDocument = new SlideShow(new HSLFSlideShow(dn));
+                HSLFSlideShow embeddedPowerPointDocument = new HSLFSlideShow(new HSLFSlideShowImpl(dn));
                 //System.out.println(entry.getName() + ": " + embeddedPowerPointDocument.getSlides().length);
             } else {
                 if(obj.hasDirectoryEntry()){

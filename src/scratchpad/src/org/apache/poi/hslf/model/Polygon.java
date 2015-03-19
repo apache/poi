@@ -29,7 +29,7 @@ import java.awt.geom.Point2D;
  *
  * @author Yegor Kozlov
  */
-public final class Polygon extends AutoShape {
+public final class Polygon extends HSLFAutoShape {
     /**
      * Create a Polygon object and initialize it from the supplied Record container.
      *

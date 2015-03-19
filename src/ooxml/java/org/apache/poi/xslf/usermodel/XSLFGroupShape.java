@@ -19,25 +19,19 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.sl.usermodel.ShapeGroup;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * Represents a group shape that consists of many shapes grouped together.
@@ -45,7 +39,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, PlaceableShape {
+public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, ShapeGroup<XSLFShape> {
     private final List<XSLFShape> _shapes;
     private final CTGroupShapeProperties _grpSpPr;
     private XSLFDrawing _drawing;

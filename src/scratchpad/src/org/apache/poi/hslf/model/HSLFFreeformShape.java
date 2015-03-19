@@ -45,7 +45,7 @@ import org.apache.poi.util.POILogger;
  * </p>
  * @author Yegor Kozlov
  */
-public final class Freeform extends AutoShape {
+public final class HSLFFreeformShape extends HSLFAutoShape {
 
     public static final byte[] SEGMENTINFO_MOVETO   = new byte[]{0x00, 0x40};
     public static final byte[] SEGMENTINFO_LINETO   = new byte[]{0x00, (byte)0xAC};
@@ -62,7 +62,7 @@ public final class Freeform extends AutoShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected Freeform(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFFreeformShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -73,7 +73,7 @@ public final class Freeform extends AutoShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public Freeform(ShapeContainer<HSLFShape> parent){
+    public HSLFFreeformShape(ShapeContainer<HSLFShape> parent){
         super((EscherContainerRecord)null, parent);
         _escherContainer = createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
@@ -82,7 +82,7 @@ public final class Freeform extends AutoShape {
      * Create a new Freeform. This constructor is used when a new shape is created.
      *
      */
-    public Freeform(){
+    public HSLFFreeformShape(){
         this(null);
     }
 

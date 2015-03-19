@@ -88,7 +88,7 @@ public class XSLFShadow extends XSLFShape implements Shadow {
      */
     public Color getFillColor() {
         SolidPaint ps = getFillStyle();
-        if (ps == TRANSPARENT_PAINT) return null;
+        if (ps == PaintStyle.TRANSPARENT_PAINT) return null;
         Color col = DrawPaint.applyColorTransform(ps.getSolidColor());
         return col;
     }
@@ -97,7 +97,7 @@ public class XSLFShadow extends XSLFShape implements Shadow {
     public SolidPaint getFillStyle() {
         XSLFTheme theme = getSheet().getTheme();
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
-        if(ct == null) return TRANSPARENT_PAINT;
+        if(ct == null) return PaintStyle.TRANSPARENT_PAINT;
             
         CTSchemeColor phClr = ct.getSchemeClr();
         final XSLFColor xc = new XSLFColor(ct, theme, phClr);

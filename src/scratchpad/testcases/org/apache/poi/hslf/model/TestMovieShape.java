@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -36,13 +36,13 @@ public final class TestMovieShape extends TestCase {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     public void testCreate() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         String path = "/test-movie.mpg";
         int movieIdx = ppt.addMovie(path, MovieShape.MOVIE_MPEG);
-        int thumbnailIdx = ppt.addPicture(_slTests.readFile("tomcat.png"), Picture.PNG);
+        int thumbnailIdx = ppt.addPicture(_slTests.readFile("tomcat.png"), HSLFPictureShape.PNG);
 
         MovieShape shape = new MovieShape(movieIdx, thumbnailIdx);
         shape.setAnchor(new Rectangle2D.Float(300,225,120,90));
@@ -56,7 +56,7 @@ public final class TestMovieShape extends TestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ppt.write(out);
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
         slide = ppt.getSlides()[0];
         shape = (MovieShape)slide.getShapes()[0];
         assertEquals(path, shape.getPath());

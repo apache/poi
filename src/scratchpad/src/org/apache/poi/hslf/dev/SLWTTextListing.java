@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.*;
 
 /**
@@ -32,7 +33,7 @@ public final class SLWTTextListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 
 		// Find the documents, and then their SLWT
 		Record[] records = ss.getRecords();

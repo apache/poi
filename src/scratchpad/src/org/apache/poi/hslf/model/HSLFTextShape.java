@@ -47,7 +47,7 @@ import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
-import org.apache.poi.hslf.usermodel.RichTextRun;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.POILogger;
 
@@ -56,7 +56,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public abstract class TextShape extends SimpleShape {
+public abstract class HSLFTextShape extends HSLFSimpleShape {
 
     /**
      * How to anchor the text
@@ -92,7 +92,7 @@ public abstract class TextShape extends SimpleShape {
     /**
      * TextRun object which holds actual text and format data
      */
-    protected TextRun _txtrun;
+    protected HSLFTextParagraph _txtrun;
 
     /**
      * Escher container which holds text attributes such as
@@ -111,7 +111,7 @@ public abstract class TextShape extends SimpleShape {
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TextShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFTextShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
 
     }
@@ -122,7 +122,7 @@ public abstract class TextShape extends SimpleShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TextShape(ShapeContainer<HSLFShape> parent){
+    public HSLFTextShape(ShapeContainer<HSLFShape> parent){
         super(null, parent);
         _escherContainer = createSpContainer(parent instanceof HSLFGroupShape);
     }
@@ -131,15 +131,15 @@ public abstract class TextShape extends SimpleShape {
      * Create a new TextBox. This constructor is used when a new shape is created.
      *
      */
-    public TextShape(){
+    public HSLFTextShape(){
         this(null);
     }
 
-    public TextRun createTextRun(){
+    public HSLFTextParagraph createTextRun(){
         _txtbox = getEscherTextboxWrapper();
         if(_txtbox == null) _txtbox = new EscherTextboxWrapper();
 
-        _txtrun = getTextRun();
+        _txtrun = getTextParagraph();
         if(_txtrun == null){
             TextHeaderAtom tha = new TextHeaderAtom();
             tha.setParentRecord(_txtbox);
@@ -151,7 +151,7 @@ public abstract class TextShape extends SimpleShape {
             StyleTextPropAtom sta = new StyleTextPropAtom(0);
             _txtbox.appendChildRecord(sta);
 
-            _txtrun = new TextRun(tha,tca,sta);
+            _txtrun = new HSLFTextParagraph(tha,tca,sta);
             _txtrun._records = new Record[]{tha, tca, sta};
             _txtrun.setText("");
 
@@ -170,7 +170,7 @@ public abstract class TextShape extends SimpleShape {
      *   AutoShape: align=center, valign=middle
      *
      */
-    protected void setDefaultTextProperties(TextRun _txtrun){
+    protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
 
     }
 
@@ -180,7 +180,7 @@ public abstract class TextShape extends SimpleShape {
      * @return the text string for this textbox.
      */
      public String getText(){
-        TextRun tx = getTextRun();
+        HSLFTextParagraph tx = getTextParagraph();
         return tx == null ? null : tx.getText();
     }
 
@@ -190,7 +190,7 @@ public abstract class TextShape extends SimpleShape {
      * @param text the text string used by this object.
      */
     public void setText(String text){
-        TextRun tx = getTextRun();
+        HSLFTextParagraph tx = getTextParagraph();
         if(tx == null){
             tx = createTextRun();
         }
@@ -204,7 +204,7 @@ public abstract class TextShape extends SimpleShape {
      *
      * @param sh the sheet we are adding to
      */
-    protected void afterInsert(Sheet sh){
+    protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
         EscherTextboxWrapper _txtbox = getEscherTextboxWrapper();
@@ -241,7 +241,7 @@ public abstract class TextShape extends SimpleShape {
         String txt = getText();
         if(txt == null || txt.length() == 0) return new Rectangle2D.Float();
 
-        RichTextRun rt = getTextRun().getRichTextRuns()[0];
+        HSLFTextRun rt = getTextParagraph().getRichTextRuns()[0];
         int size = rt.getFontSize();
         int style = 0;
         if (rt.isBold()) style |= Font.BOLD;
@@ -284,26 +284,26 @@ public abstract class TextShape extends SimpleShape {
     public int getVerticalAlignment(){
         EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
-        int valign = TextShape.AnchorTop;
+        int valign = HSLFTextShape.AnchorTop;
         if (prop == null){
             /**
              * If vertical alignment was not found in the shape properties then try to
              * fetch the master shape and search for the align property there.
              */
-            int type = getTextRun().getRunType();
-            MasterSheet master = getSheet().getMasterSheet();
+            int type = getTextParagraph().getRunType();
+            HSLFMasterSheet master = getSheet().getMasterSheet();
             if(master != null){
-                TextShape masterShape = master.getPlaceholderByTextType(type);
+                HSLFTextShape masterShape = master.getPlaceholderByTextType(type);
                 if(masterShape != null) valign = masterShape.getVerticalAlignment();
             } else {
                 //not found in the master sheet. Use the hardcoded defaults.
                 switch (type){
                      case TextHeaderAtom.TITLE_TYPE:
                      case TextHeaderAtom.CENTER_TITLE_TYPE:
-                         valign = TextShape.AnchorMiddle;
+                         valign = HSLFTextShape.AnchorMiddle;
                          break;
                      default:
-                         valign = TextShape.AnchorTop;
+                         valign = HSLFTextShape.AnchorTop;
                          break;
                  }
             }
@@ -330,7 +330,7 @@ public abstract class TextShape extends SimpleShape {
      * @param align - the type of horizontal alignment
      */
     public void setHorizontalAlignment(int align){
-        TextRun tx = getTextRun();
+        HSLFTextParagraph tx = getTextParagraph();
         if(tx != null) tx.getRichTextRuns()[0].setAlignment(align);
     }
 
@@ -341,7 +341,7 @@ public abstract class TextShape extends SimpleShape {
      * @return align - the type of horizontal alignment
      */
     public int getHorizontalAlignment(){
-        TextRun tx = getTextRun();
+        HSLFTextParagraph tx = getTextParagraph();
         return tx == null ? -1 : tx.getRichTextRuns()[0].getAlignment();
     }
 
@@ -487,7 +487,7 @@ public abstract class TextShape extends SimpleShape {
     /**
       * @return the TextRun object for this text box
       */
-    public TextRun getTextRun(){
+    public HSLFTextParagraph getTextParagraph(){
        if (null == this._txtrun) initTextRun();
        if (null == this._txtrun && null != this._txtbox) {
           TextHeaderAtom    tha = null; 
@@ -507,36 +507,31 @@ public abstract class TextShape extends SimpleShape {
              }
           }
           if (tba != null) {
-             this._txtrun = new TextRun(tha, tba, sta);
+             this._txtrun = new HSLFTextParagraph(tha, tba, sta);
           } else if (tca != null) {
-             this._txtrun = new TextRun(tha, tca, sta);
+             this._txtrun = new HSLFTextParagraph(tha, tca, sta);
           }
        }
        return _txtrun;
     }
 
-    public void setSheet(Sheet sheet) {
+    public void setSheet(HSLFSheet sheet) {
         _sheet = sheet;
 
         // Initialize _txtrun object.
         // (We can't do it in the constructor because the sheet
         //  is not assigned then, it's only built once we have
         //  all the records)
-        TextRun tx = getTextRun();
+        HSLFTextParagraph tx = getTextParagraph();
         if (tx != null) {
             // Supply the sheet to our child RichTextRuns
-            tx.setSheet(_sheet);
-            RichTextRun[] rt = tx.getRichTextRuns();
-            for (int i = 0; i < rt.length; i++) {
-                rt[i].supplySlideShow(_sheet.getSlideShow());
-            }
+            tx.supplySheet(_sheet);
         }
-
     }
 
     protected void initTextRun(){
         EscherTextboxWrapper txtbox = getEscherTextboxWrapper();
-        Sheet sheet = getSheet();
+        HSLFSheet sheet = getSheet();
 
         if(sheet == null || txtbox == null) return;
 
@@ -550,7 +545,7 @@ public abstract class TextShape extends SimpleShape {
             }
         }
 
-        TextRun[] runs = _sheet.getTextRuns();
+        HSLFTextParagraph[] runs = _sheet.getTextRuns();
         if (ota != null) {
             int idx = ota.getTextIndex();
             for (int i = 0; i < runs.length; i++) {
@@ -572,11 +567,14 @@ public abstract class TextShape extends SimpleShape {
                 }
             }
         }
+        
         // ensure the same references child records of TextRun
-        if(_txtrun != null) for (int i = 0; i < child.length; i++) {
-            for (Record r : _txtrun.getRecords()) {
-                if (child[i].getRecordType() == r.getRecordType()) {
-                    child[i] = r;
+        if(_txtrun != null) {
+            for (int i = 0; i < child.length; i++) {
+                for (Record r : _txtrun.getRecords()) {
+                    if (child[i].getRecordType() == r.getRecordType()) {
+                        child[i] = r;
+                    }
                 }
             }
         }
@@ -605,7 +603,7 @@ public abstract class TextShape extends SimpleShape {
      * @param linkId    id of the hyperlink, @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
      * @param      beginIndex   the beginning index, inclusive.
      * @param      endIndex     the ending index, exclusive.
-     * @see org.apache.poi.hslf.usermodel.SlideShow#addHyperlink(Hyperlink)
+     * @see org.apache.poi.hslf.usermodel.HSLFSlideShow#addHyperlink(Hyperlink)
      */
     public void setHyperlink(int linkId, int beginIndex, int endIndex){
         //TODO validate beginIndex and endIndex and throw IllegalArgumentException

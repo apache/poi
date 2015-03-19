@@ -18,8 +18,8 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.ObjectData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFObjectData;
 import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.ExEmbed;
@@ -34,7 +34,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public final class OLEShape extends Picture {
+public final class OLEShape extends HSLFPictureShape {
     protected ExEmbed _exEmbed;
 
     /**
@@ -117,13 +117,13 @@ public final class OLEShape extends Picture {
      *
      * @return the unique identifier for the OLE object
      */
-    public ObjectData getObjectData(){
-        SlideShow ppt = getSheet().getSlideShow();
-        ObjectData[] ole = ppt.getEmbeddedObjects();
+    public HSLFObjectData getObjectData(){
+        HSLFSlideShow ppt = getSheet().getSlideShow();
+        HSLFObjectData[] ole = ppt.getEmbeddedObjects();
 
         //persist reference
         ExEmbed exEmbed = getExEmbed();
-        ObjectData data = null;
+        HSLFObjectData data = null;
         if(exEmbed != null) {
             int ref = exEmbed.getExOleObjAtom().getObjStgDataRef();
 
@@ -156,7 +156,7 @@ public final class OLEShape extends Picture {
      */
     public ExEmbed getExEmbed(){
         if(_exEmbed == null){
-            SlideShow ppt = getSheet().getSlideShow();
+            HSLFSlideShow ppt = getSheet().getSlideShow();
 
             ExObjList lst = ppt.getDocumentRecord().getExObjList();
             if(lst == null){

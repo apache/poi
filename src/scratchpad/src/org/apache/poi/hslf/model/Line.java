@@ -29,74 +29,7 @@ import java.awt.geom.Line2D;
  *
  *  @author Yegor Kozlov
  */
-public final class Line extends SimpleShape {
-    /**
-    * Solid (continuous) pen
-    */
-    public static final int PEN_SOLID = 1;
-    /**
-     *  PS_DASH system   dash style
-     */
-    public static final int PEN_PS_DASH = 2;
-    /**
-     *  PS_DOT system   dash style
-     */
-    public static final int PEN_DOT = 3;
-    /**
-     * PS_DASHDOT system dash style
-     */
-    public static final int PEN_DASHDOT = 4;
-    /**
-     * PS_DASHDOTDOT system dash style
-     */
-    public static final int PEN_DASHDOTDOT = 5;
-    /**
-     *  square dot style
-     */
-    public static final int PEN_DOTGEL = 6;
-    /**
-     *  dash style
-     */
-    public static final int PEN_DASH = 7;
-    /**
-     *  long dash style
-     */
-    public static final int PEN_LONGDASHGEL = 8;
-    /**
-     * dash short dash
-     */
-    public static final int PEN_DASHDOTGEL = 9;
-    /**
-     * long dash short dash
-     */
-    public static final int PEN_LONGDASHDOTGEL = 10;
-    /**
-     * long dash short dash short dash
-     */
-    public static final int PEN_LONGDASHDOTDOTGEL = 11;
-
-    /**
-     *  Single line (of width lineWidth)
-     */
-    public static final int LINE_SIMPLE = 0;
-    /**
-     * Double lines of equal width
-     */
-    public static final int LINE_DOUBLE = 1;
-    /**
-     * Double lines, one thick, one thin
-     */
-    public static final int LINE_THICKTHIN = 2;
-    /**
-     *  Double lines, reverse order
-     */
-    public static final int LINE_THINTHICK = 3;
-    /**
-     * Three lines, thin, thick, thin
-     */
-    public static final int LINE_TRIPLE = 4;
-
-
+public final class Line extends HSLFSimpleShape {
     protected Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }

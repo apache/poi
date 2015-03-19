@@ -37,7 +37,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelations
 import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 @Beta
-public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet<XSLFShape> {
+public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeContainer, Sheet<XSLFShape, XMLSlideShow> {
     private XSLFCommonSlideData _commonSlideData;
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
@@ -516,25 +516,26 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * Import a package part into this sheet.
      */
     PackagePart importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
-
-        OPCPackage pkg = getPackagePart().getPackage();
-        if(!pkg.containPart(srcPafrt.getPartName())){
-            PackageRelationship rel = getPackagePart().addRelationship(
-                    srcPafrt.getPartName(), TargetMode.INTERNAL, srcRel.getRelationshipType());
-
-            PackagePart part = pkg.createPart(srcPafrt.getPartName(), srcPafrt.getContentType());
-            OutputStream out = part.getOutputStream();
-            try {
-                InputStream is = srcPafrt.getInputStream();
-                IOUtils.copy(is, out);
-                out.close();
-            } catch (IOException e){
-                throw new POIXMLException(e);
-            }
-            return part;
-        }  else {
+        PackagePart destPP = getPackagePart();
+        PackagePartName srcPPName = srcPafrt.getPartName();
+        
+        OPCPackage pkg = destPP.getPackage();
+        if(pkg.containPart(srcPPName)){
             // already exists
-            return pkg.getPart(srcPafrt.getPartName());
+            return pkg.getPart(srcPPName);
+        }            
+            
+        destPP.addRelationship(srcPPName, TargetMode.INTERNAL, srcRel.getRelationshipType());
+
+        PackagePart part = pkg.createPart(srcPPName, srcPafrt.getContentType());
+        OutputStream out = part.getOutputStream();
+        try {
+            InputStream is = srcPafrt.getInputStream();
+            IOUtils.copy(is, out);
+            out.close();
+        } catch (IOException e){
+            throw new POIXMLException(e);
         }
+        return part;
     }
 }

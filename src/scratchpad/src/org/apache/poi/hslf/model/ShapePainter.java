@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 public final class ShapePainter {
     protected static final POILogger logger = POILogFactory.getLogger(ShapePainter.class);
 
-    public static void paint(SimpleShape shape, Graphics2D graphics){
+    public static void paint(HSLFSimpleShape shape, Graphics2D graphics){
         Rectangle2D anchor = shape.getLogicalAnchor2D();
         java.awt.Shape outline = shape.getOutline();
 

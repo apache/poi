@@ -7,17 +7,12 @@ import java.awt.geom.Rectangle2D;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawShapeGroup<T extends ShapeGroup<? extends Shape>> implements Drawable {
+public class DrawShapeGroup<T extends ShapeGroup<? extends Shape>> extends DrawShape<T> implements Drawable {
 
-    protected final T shape;
-    
     public DrawShapeGroup(T shape) {
-        this.shape = shape;
+        super(shape);
     }
     
-    public void applyTransform(Graphics2D context) {
-    }
-
     public void draw(Graphics2D graphics) {
 
         // the coordinate system of this group of shape
@@ -53,8 +48,5 @@ public class DrawShapeGroup<T extends ShapeGroup<? extends Shape>> implements Dr
 
         graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, tx0);
         
-    }
-
-    public void drawContent(Graphics2D context) {
     }
 }

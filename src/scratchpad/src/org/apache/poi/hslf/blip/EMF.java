@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
+import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.hslf.model.HSLFShape;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
@@ -80,7 +80,7 @@ public final class EMF extends Metafile {
     }
 
     public int getType(){
-        return Picture.EMF;
+        return HSLFPictureShape.EMF;
     }
 
     /**
@@ -90,5 +90,9 @@ public final class EMF extends Metafile {
      */
     public int getSignature(){
         return 0x3D40;
+    }
+
+    public String getContentType() {
+        return "image/x-emf";
     }
 }

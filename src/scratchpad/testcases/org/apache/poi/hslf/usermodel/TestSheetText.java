@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.POIDataSamples;
@@ -30,16 +31,16 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestSheetText extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
 	public TestSheetText() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
 
 	public void testSheetOne() {
-		Sheet slideOne = ss.getSlides()[0];
+		HSLFSheet slideOne = ss.getSlides()[0];
 
 		String[] expectText = new String[] {"This is a test title","This is a test subtitle\nThis is on page 1"};
 		assertEquals(expectText.length, slideOne.getTextRuns().length);
@@ -49,7 +50,7 @@ public final class TestSheetText extends TestCase {
 	}
 
 	public void testSheetTwo() {
-		Sheet slideTwo = ss.getSlides()[1];
+		HSLFSheet slideTwo = ss.getSlides()[1];
 		String[] expectText = new String[] {"This is the title on page 2","This is page two\nIt has several blocks of text\nNone of them have formatting"};
 		assertEquals(expectText.length, slideTwo.getTextRuns().length);
 		for(int i=0; i<expectText.length; i++) {
@@ -64,15 +65,15 @@ public final class TestSheetText extends TestCase {
 	 */
 	public void testWithShortTextPropData() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("iisd_report.ppt"));
-		SlideShow sss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("iisd_report.ppt"));
+		HSLFSlideShow sss = new HSLFSlideShow(hss);
 
 		// Should come out with 10 slides, no notes
 		assertEquals(10, sss.getSlides().length);
 		assertEquals(0, sss.getNotes().length);
 
 		// Check text on first slide
-		Slide s = sss.getSlides()[0];
+		HSLFSlide s = sss.getSlides()[0];
 		String exp =
 			"Realizing the Development Dividend:\n" +
 			"Community Capacity Building and CDM.\n" +

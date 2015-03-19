@@ -26,7 +26,7 @@ import org.apache.poi.hslf.record.ExOleObjStg;
  *
  * @author Daniel Noll
  */
-public class ObjectData {
+public class HSLFObjectData {
     /**
      * The record that contains the object data.
      */
@@ -37,7 +37,7 @@ public class ObjectData {
      *
      * @param storage the record that contains the object data.
      */
-    public ObjectData(ExOleObjStg storage) {
+    public HSLFObjectData(ExOleObjStg storage) {
         this.storage = storage;
     }
 

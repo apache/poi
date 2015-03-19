@@ -41,24 +41,9 @@ import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
-import org.apache.poi.hslf.model.AutoShape;
-import org.apache.poi.hslf.model.Background;
-import org.apache.poi.hslf.model.Fill;
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.MasterSheet;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.HSLFShape;
-import org.apache.poi.hslf.model.HSLFGroupShape;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.SlideMaster;
-import org.apache.poi.hslf.model.TextBox;
-import org.apache.poi.hslf.model.TextRun;
-import org.apache.poi.hslf.model.TextShape;
-import org.apache.poi.hslf.model.TitleMaster;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
@@ -83,17 +68,17 @@ public final class TestBugs {
      */
     @Test
     public void bug41384() throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("41384.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("41384.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
 
         assertEquals(1, ppt.getSlides().length);
 
-        PictureData[] pict = ppt.getPictureData();
+        HSLFPictureData[] pict = ppt.getPictureData();
         assertEquals(2, pict.length);
-        assertEquals(Picture.JPEG, pict[0].getType());
-        assertEquals(Picture.JPEG, pict[1].getType());
+        assertEquals(HSLFPictureShape.JPEG, pict[0].getType());
+        assertEquals(HSLFPictureShape.JPEG, pict[1].getType());
     }
 
     /**
@@ -102,14 +87,14 @@ public final class TestBugs {
      */
     @Test
     public void bug42474_1() throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42474-1.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42474-1.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
         assertEquals(2, ppt.getSlides().length);
 
-        TextRun txrun;
-        Notes notes;
+        HSLFTextParagraph txrun;
+        HSLFNotes notes;
 
         notes = ppt.getSlides()[0].getNotesSheet();
         assertNotNull(notes);
@@ -131,9 +116,9 @@ public final class TestBugs {
      */
     @Test
     public void bug42474_2() throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42474-2.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42474-2.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
 
         //map slide number and starting phrase of its notes
         Map<Integer, String> notesMap = new HashMap<Integer, String>();
@@ -143,10 +128,10 @@ public final class TestBugs {
         notesMap.put(Integer.valueOf(7), "Although multiply and square root are easier");
         notesMap.put(Integer.valueOf(8), "The bus Z is split into Z_H and Z_L");
 
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             Integer slideNumber = Integer.valueOf(slide[i].getSlideNumber());
-            Notes notes = slide[i].getNotesSheet();
+            HSLFNotes notes = slide[i].getNotesSheet();
             if (notesMap.containsKey(slideNumber)){
                 assertNotNull(notes);
                 String text = notes.getTextRuns()[0].getRawText();
@@ -162,18 +147,18 @@ public final class TestBugs {
      */
     @Test
     public void bug42485 () throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42485.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42485.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         HSLFShape[] shape = ppt.getSlides()[0].getShapes();
         for (int i = 0; i < shape.length; i++) {
             if(shape[i] instanceof HSLFGroupShape){
                 HSLFGroupShape  group = (HSLFGroupShape)shape[i];
                 HSLFShape[] sh = group.getShapes();
                 for (int j = 0; j < sh.length; j++) {
-                    if( sh[j] instanceof TextBox){
-                        TextBox txt = (TextBox)sh[j];
-                        assertNotNull(txt.getTextRun());
+                    if( sh[j] instanceof HSLFTextBox){
+                        HSLFTextBox txt = (HSLFTextBox)sh[j];
+                        assertNotNull(txt.getTextParagraph());
                     }
                 }
             }
@@ -185,9 +170,9 @@ public final class TestBugs {
      */
     @Test
     public void bug42484 () throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42485.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42485.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         HSLFShape[] shape = ppt.getSlides()[0].getShapes();
         for (int i = 0; i < shape.length; i++) {
             if(shape[i] instanceof HSLFGroupShape){
@@ -207,16 +192,16 @@ public final class TestBugs {
      */
     @Test
     public void bug41381() throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("alterman_security.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("alterman_security.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
 
         assertEquals(1, ppt.getSlidesMasters().length);
         assertEquals(1, ppt.getTitleMasters().length);
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
-            MasterSheet master = slide[i].getMasterSheet();
+            HSLFMasterSheet master = slide[i].getMasterSheet();
             if (i == 0) assertTrue(master instanceof TitleMaster); //the first slide follows TitleMaster
             else assertTrue(master instanceof SlideMaster);
         }
@@ -227,10 +212,10 @@ public final class TestBugs {
      */
     @Test
     public void bug42486 () throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42486.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42486.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
-        Slide[] slide = ppt.getSlides();
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             @SuppressWarnings("unused")
             HSLFShape[] shape = slide[i].getShapes();
@@ -244,11 +229,11 @@ public final class TestBugs {
      */
     @Test
     public void bug42524 () throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42486.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42486.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         //walk down the tree and see if there were no errors while reading
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
@@ -272,17 +257,17 @@ public final class TestBugs {
      */
     @Test
     public void bug42520 () throws Exception {
-        HSLFSlideShow hslf = new HSLFSlideShow(_slTests.openResourceAsStream("42520.ppt"));
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42520.ppt"));
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
 
         //test case from the bug report
         HSLFGroupShape shapeGroup = (HSLFGroupShape)ppt.getSlides()[11].getShapes()[10];
-        Picture picture = (Picture)shapeGroup.getShapes()[0];
+        HSLFPictureShape picture = (HSLFPictureShape)shapeGroup.getShapes()[0];
         picture.getPictureData();
 
         //walk down the tree and see if there were no errors while reading
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
@@ -291,9 +276,9 @@ public final class TestBugs {
                     HSLFShape[] comps = group.getShapes();
                     for (int k = 0; k < comps.length; k++) {
                         HSLFShape comp = comps[k];
-                        if (comp instanceof Picture){
+                        if (comp instanceof HSLFPictureShape){
                             @SuppressWarnings("unused")
-                            PictureData pict = ((Picture)comp).getPictureData();
+                            HSLFPictureData pict = ((HSLFPictureShape)comp).getPictureData();
                         }
                     }
                 }
@@ -310,13 +295,13 @@ public final class TestBugs {
      */
     @Test
     public void bug38256 () throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("38256.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("38256.ppt"));
 
         assertTrue("No Exceptions while reading file", true);
 
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         assertEquals(1, slide.length);
-        TextRun[] runs = slide[0].getTextRuns();
+        HSLFTextParagraph[] runs = slide[0].getTextRuns();
         assertEquals(4, runs.length);
 
         Set<String> txt = new HashSet<String>();
@@ -338,13 +323,13 @@ public final class TestBugs {
      */
     @Test
     public void bug43781 () throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("43781.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("43781.ppt"));
 
         assertTrue("No Exceptions while reading file", true);
 
         // Check the first slide
-        Slide slide = ppt.getSlides()[0];
-        TextRun[] slTr = slide.getTextRuns();
+        HSLFSlide slide = ppt.getSlides()[0];
+        HSLFTextParagraph[] slTr = slide.getTextRuns();
         
         // Has two text runs, one from slide text, one from drawing
         assertEquals(2, slTr.length);
@@ -354,11 +339,11 @@ public final class TestBugs {
         assertEquals("Second run", slTr[1].getText());
 
         // Check the shape based text runs
-        List<TextRun> lst = new ArrayList<TextRun>();
+        List<HSLFTextParagraph> lst = new ArrayList<HSLFTextParagraph>();
         HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
-            if( shape[i] instanceof TextShape){
-                TextRun textRun = ((TextShape)shape[i]).getTextRun();
+            if( shape[i] instanceof HSLFTextShape){
+                HSLFTextParagraph textRun = ((HSLFTextShape)shape[i]).getTextParagraph();
                 if(textRun != null) {
                     lst.add(textRun);
                 }
@@ -377,17 +362,17 @@ public final class TestBugs {
      */
     @Test
     public void bug44296  () throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("44296.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("44296.ppt"));
 
-        Slide slide = ppt.getSlides()[0];
+        HSLFSlide slide = ppt.getSlides()[0];
 
-        Background b = slide.getBackground();
-        Fill f = b.getFill();
-        assertEquals(Fill.FILL_PICTURE, f.getFillType());
+        HSLFBackground b = slide.getBackground();
+        HSLFFill f = b.getFill();
+        assertEquals(HSLFFill.FILL_PICTURE, f.getFillType());
 
-        PictureData pict = f.getPictureData();
+        HSLFPictureData pict = f.getPictureData();
         assertNotNull(pict);
-        assertEquals(Picture.JPEG, pict.getType());
+        assertEquals(HSLFPictureShape.JPEG, pict.getType());
     }
 
     /**
@@ -396,7 +381,7 @@ public final class TestBugs {
     @Test
     public void bug44770() throws Exception {
         try {
-             new SlideShow(_slTests.openResourceAsStream("44770.ppt"));
+             new HSLFSlideShow(_slTests.openResourceAsStream("44770.ppt"));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("Couldn't instantiate the class for type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing")) {
                 throw new AssertionFailedError("Identified bug 44770");
@@ -410,16 +395,16 @@ public final class TestBugs {
      */
     @Test
     public void bug41071() throws Exception {
-        SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("41071.ppt"));
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("41071.ppt"));
 
-        Slide slide = ppt.getSlides()[0];
+        HSLFSlide slide = ppt.getSlides()[0];
         HSLFShape[] sh = slide.getShapes();
         assertEquals(1, sh.length);
-        assertTrue(sh[0] instanceof TextShape);
-        TextShape tx = (TextShape)sh[0];
-        assertEquals("Fundera, planera och involvera.", tx.getTextRun().getText());
+        assertTrue(sh[0] instanceof HSLFTextShape);
+        HSLFTextShape tx = (HSLFTextShape)sh[0];
+        assertEquals("Fundera, planera och involvera.", tx.getTextParagraph().getText());
 
-        TextRun[] run = slide.getTextRuns();
+        HSLFTextParagraph[] run = slide.getTextRuns();
         assertEquals(1, run.length);
         assertEquals("Fundera, planera och involvera.", run[0].getText());
     }
@@ -431,10 +416,10 @@ public final class TestBugs {
     @Test(expected=OldPowerPointFormatException.class)
     public void bug41711() throws Exception {
     	// New file is fine
-        new SlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
+        new HSLFSlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
 
         // PowerPoint 95 gives an old format exception
-    	new SlideShow(_slTests.openResourceAsStream("PPT95.ppt"));
+    	new HSLFSlideShow(_slTests.openResourceAsStream("PPT95.ppt"));
     }
     
     /**
@@ -442,9 +427,9 @@ public final class TestBugs {
      */
     @Test
     public void bug49648() throws Exception {
-       SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("49648.ppt"));
-       for(Slide slide : ppt.getSlides()) {
-          for(TextRun run : slide.getTextRuns()) {
+       HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("49648.ppt"));
+       for(HSLFSlide slide : ppt.getSlides()) {
+          for(HSLFTextParagraph run : slide.getTextRuns()) {
              String text = run.getRawText();
              text.replace("{txtTot}", "With \u0123\u1234\u5678 unicode");
              run.setRawText(text);
@@ -458,10 +443,10 @@ public final class TestBugs {
     @Test
     public void bug41246a() throws Exception {
         InputStream fis = _slTests.openResourceAsStream("41246-1.ppt");
-        HSLFSlideShow hslf = new HSLFSlideShow(fis);
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(fis);
         fis.close();
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
 
         ppt = HSLFTestDataSamples.writeOutAndReadBack(ppt);
@@ -471,10 +456,10 @@ public final class TestBugs {
     @Test
     public void bug41246b() throws Exception {
         InputStream fis = _slTests.openResourceAsStream("41246-2.ppt");
-        HSLFSlideShow hslf = new HSLFSlideShow(fis);
+        HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(fis);
         fis.close();
 
-        SlideShow ppt = new SlideShow(hslf);
+        HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
 
         ppt = HSLFTestDataSamples.writeOutAndReadBack(ppt);
@@ -487,14 +472,14 @@ public final class TestBugs {
     @Test
     public void bug45776() throws Exception {
         InputStream is = _slTests.openResourceAsStream("45776.ppt");
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(is));
+        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl(is));
         is.close();
 
         // get slides
-        for (Slide slide : ppt.getSlides()) {
+        for (HSLFSlide slide : ppt.getSlides()) {
             for (HSLFShape shape : slide.getShapes()) {
-                if (!(shape instanceof TextBox)) continue;
-                TextBox tb = (TextBox) shape;
+                if (!(shape instanceof HSLFTextBox)) continue;
+                HSLFTextBox tb = (HSLFTextBox) shape;
                 // work with TextBox
                 String str = tb.getText();
 
@@ -502,7 +487,7 @@ public final class TestBugs {
                 str = str.replace("$$DATE$$", new Date().toString());
                 tb.setText(str);
                 
-                TextRun tr = tb.getTextRun();
+                HSLFTextParagraph tr = tb.getTextParagraph();
                 assertEquals(str.length()+1,tr.getStyleTextPropAtom().getParagraphStyles().getFirst().getCharactersCovered());
                 assertEquals(str.length()+1,tr.getStyleTextPropAtom().getCharacterStyles().getFirst().getCharactersCovered());
             }
@@ -513,12 +498,12 @@ public final class TestBugs {
     public void bug55732() throws Exception {
         File file = _slTests.getFile("bug55732.ppt");
         
-        HSLFSlideShow ss = new HSLFSlideShow(file.getAbsolutePath());
-        SlideShow _show = new SlideShow(ss);
-        Slide[] _slides = _show.getSlides();
+        HSLFSlideShowImpl ss = new HSLFSlideShowImpl(file.getAbsolutePath());
+        HSLFSlideShow _show = new HSLFSlideShow(ss);
+        HSLFSlide[] _slides = _show.getSlides();
 
         /* Iterate over slides and extract text */
-        for( Slide slide : _slides ) {
+        for( HSLFSlide slide : _slides ) {
             HeadersFooters hf = slide.getHeadersFooters();
             /*boolean visible =*/ hf.isHeaderVisible(); // exception happens here
         }
@@ -529,9 +514,9 @@ public final class TestBugs {
     public void bug56260() throws Exception {
         File file = _slTests.getFile("56260.ppt");
         
-        HSLFSlideShow ss = new HSLFSlideShow(file.getAbsolutePath());
-        SlideShow _show = new SlideShow(ss);
-        Slide[] _slides = _show.getSlides();
+        HSLFSlideShowImpl ss = new HSLFSlideShowImpl(file.getAbsolutePath());
+        HSLFSlideShow _show = new HSLFSlideShow(ss);
+        HSLFSlide[] _slides = _show.getSlides();
         assertEquals(13, _slides.length);
         
         // Check the number of TextHeaderAtoms on Slide 1
@@ -553,7 +538,7 @@ public final class TestBugs {
         // Check the number of text runs based on the slide (not textbox)
         // Will have skipped the empty one
         int str = 0;
-        for (TextRun tr : _slides[0].getTextRuns()) {
+        for (HSLFTextParagraph tr : _slides[0].getTextRuns()) {
             if (! tr.isDrawingBased()) str++;
         }
         assertEquals(1, str);
@@ -563,10 +548,10 @@ public final class TestBugs {
     public void bug37625() throws IOException {
         InputStream inputStream = new FileInputStream(_slTests.getFile("37625.ppt"));
         try {
-            SlideShow slideShow = new SlideShow(inputStream);
+            HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
             assertEquals(29, slideShow.getSlides().length);
             
-            SlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+            HSLFSlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
             assertNotNull(slideBack);
             assertEquals(29, slideBack.getSlides().length);
         } finally {
@@ -578,10 +563,10 @@ public final class TestBugs {
     public void bug57272() throws Exception {
         InputStream inputStream = new FileInputStream(_slTests.getFile("57272_corrupted_usereditatom.ppt"));
         try {
-            SlideShow slideShow = new SlideShow(inputStream);
+            HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
             assertEquals(6, slideShow.getSlides().length);
 
-            SlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
+            HSLFSlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
             assertNotNull(slideBack);
             assertEquals(6, slideBack.getSlides().length);
         } finally {
@@ -593,10 +578,10 @@ public final class TestBugs {
     public void bug49541() throws Exception {
         InputStream inputStream = new FileInputStream(_slTests.getFile("49541_symbol_map.ppt"));
         try {
-            SlideShow slideShow = new SlideShow(inputStream);
-            Slide slide = slideShow.getSlides()[0];
+            HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
+            HSLFSlide slide = slideShow.getSlides()[0];
             HSLFGroupShape sg = (HSLFGroupShape)slide.getShapes()[0];
-            TextBox tb = (TextBox)sg.getShapes()[0];
+            HSLFTextBox tb = (HSLFTextBox)sg.getShapes()[0];
             String text = StringUtil.mapMsCodepointString(tb.getText());
             assertEquals("\u226575 years", text);
         } finally {
@@ -608,7 +593,7 @@ public final class TestBugs {
     public void bug47261() throws Exception {
         InputStream inputStream = new FileInputStream(_slTests.getFile("bug47261.ppt"));
         try {
-            SlideShow slideShow = new SlideShow(inputStream);
+            HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
             slideShow.removeSlide(0);
             slideShow.createSlide();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -622,7 +607,7 @@ public final class TestBugs {
     public void bug56240() throws Exception {
         InputStream inputStream = new FileInputStream(_slTests.getFile("bug56240.ppt"));
         try {
-            SlideShow slideShow = new SlideShow(inputStream);
+            HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
             int slideCnt = slideShow.getSlides().length;
             assertEquals(105, slideCnt);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -637,8 +622,8 @@ public final class TestBugs {
     public void bug46441() throws Exception {
         InputStream inputStream = new FileInputStream(_slTests.getFile("bug46441.ppt"));
         try {
-            SlideShow slideShow = new SlideShow(inputStream);
-            AutoShape as = (AutoShape)slideShow.getSlides()[0].getShapes()[0];
+            HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
+            HSLFAutoShape as = (HSLFAutoShape)slideShow.getSlides()[0].getShapes()[0];
             EscherOptRecord opt = as.getEscherOptRecord();
             EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
             double exp[][] = {

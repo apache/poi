@@ -39,7 +39,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.HSLFSlide;
 import org.apache.poi.hslf.model.TextPainter;
 import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
@@ -82,12 +82,12 @@ public class TestFontRendering {
         }
         
         InputStream is = slTests.openResourceAsStream("bug55902-mixedFontChineseCharacters.ppt");
-        SlideShow ss = new SlideShow(is);
+        HSLFSlideShow ss = new HSLFSlideShow(is);
         is.close();
         
         Dimension pgsize = ss.getPageSize();
         
-        Slide slide = ss.getSlides()[0];
+        HSLFSlide slide = ss.getSlides()[0];
         
         // render it
         double zoom = 1;

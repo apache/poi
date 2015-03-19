@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawSheet<T extends Sheet<? extends Shape>> implements Drawable {
+public class DrawSheet<T extends Sheet<? extends Shape, ? extends SlideShow>> implements Drawable {
 
     protected final T sheet;
     
@@ -14,14 +14,9 @@ public class DrawSheet<T extends Sheet<? extends Shape>> implements Drawable {
         this.sheet = sheet;
     }
     
-    public void applyTransform(Graphics2D context) {
-        // TODO Auto-generated method stub
-        
-    }
-
     public void draw(Graphics2D graphics) {
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
-        MasterSheet<? extends Shape> master = sheet.getMasterSheet();
+        MasterSheet<? extends Shape, ? extends SlideShow> master = sheet.getMasterSheet();
         
         if(sheet.getFollowMasterGraphics() && master != null) {
             Drawable drawer = drawFact.getDrawable(master);
@@ -53,9 +48,10 @@ public class DrawSheet<T extends Sheet<? extends Shape>> implements Drawable {
         }
     }
 
+    public void applyTransform(Graphics2D context) {
+    }
+
     public void drawContent(Graphics2D context) {
-        // TODO Auto-generated method stub
-        
     }
 
     /**

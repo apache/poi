@@ -23,8 +23,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.model.HSLFSlide;
+import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -49,15 +49,15 @@ public final class TestNumberedList3 extends TestCase {
 	}
 
 	public void testNumberedList() throws Exception {
-		SlideShow ppt = new SlideShow(_slTests.openResourceAsStream("numbers3.ppt"));
+		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers3.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final Slide[] slides = ppt.getSlides();
+		final HSLFSlide[] slides = ppt.getSlides();
 		assertEquals(1, slides.length);
-		final Slide slide = slides[0];
+		final HSLFSlide slide = slides[0];
 		checkSlide(slide);
 	}
-	private void checkSlide(final Slide s) {
+	private void checkSlide(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(1, numberedListArray.length);
@@ -68,7 +68,7 @@ public final class TestNumberedList3 extends TestCase {
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
-		final TextRun[] textRuns = s.getTextRuns();
+		final HSLFTextParagraph[] textRuns = s.getTextRuns();
 		assertEquals(3, textRuns.length);
 		assertEquals("Bulleted list\rMore bullets\rNo bullets here", textRuns[0].getRawText());
 		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", textRuns[1].getRawText());
@@ -91,7 +91,7 @@ public final class TestNumberedList3 extends TestCase {
 		assertEquals(67, textProp.getCharactersCovered());
 		
 		
-		RichTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
 		assertTrue(textRun.isBullet());
 
 		

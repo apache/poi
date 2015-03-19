@@ -37,8 +37,8 @@ import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.blip.Bitmap;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogger;
@@ -51,7 +51,7 @@ import org.apache.poi.util.Units;
  *
  * @author Yegor Kozlov
  */
-public class Picture extends SimpleShape {
+public class HSLFPictureShape extends HSLFSimpleShape {
 
     /**
     *  Windows Enhanced Metafile (EMF)
@@ -88,7 +88,7 @@ public class Picture extends SimpleShape {
      *
     * @param idx the index of the picture
      */
-    public Picture(int idx){
+    public HSLFPictureShape(int idx){
         this(idx, null);
     }
 
@@ -98,7 +98,7 @@ public class Picture extends SimpleShape {
      * @param idx the index of the picture
      * @param parent the parent shape
      */
-    public Picture(int idx, ShapeContainer<HSLFShape> parent) {
+    public HSLFPictureShape(int idx, ShapeContainer<HSLFShape> parent) {
         super(null, parent);
         _escherContainer = createSpContainer(idx, parent instanceof HSLFGroupShape);
     }
@@ -110,7 +110,7 @@ public class Picture extends SimpleShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected Picture(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+     protected HSLFPictureShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -156,7 +156,7 @@ public class Picture extends SimpleShape {
      * for other types sets the default size of 200x200 pixels.
      */
     public void setDefaultSize(){
-        PictureData pict = getPictureData();
+        HSLFPictureData pict = getPictureData();
         if (pict  instanceof Bitmap){
             BufferedImage img = null;
             try {
@@ -183,9 +183,9 @@ public class Picture extends SimpleShape {
      *
      * @return the picture data for this picture.
      */
-    public PictureData getPictureData(){
-        SlideShow ppt = getSheet().getSlideShow();
-        PictureData[] pict = ppt.getPictureData();
+    public HSLFPictureData getPictureData(){
+        HSLFSlideShow ppt = getSheet().getSlideShow();
+        HSLFPictureData[] pict = ppt.getPictureData();
 
         EscherBSERecord bse = getEscherBSERecord();
         if (bse == null){
@@ -202,7 +202,7 @@ public class Picture extends SimpleShape {
     }
 
     protected EscherBSERecord getEscherBSERecord(){
-        SlideShow ppt = getSheet().getSlideShow();
+        HSLFSlideShow ppt = getSheet().getSlideShow();
         Document doc = ppt.getDocumentRecord();
         EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
         EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
@@ -247,7 +247,7 @@ public class Picture extends SimpleShape {
     /**
      * By default set the orininal image size
      */
-    protected void afterInsert(Sheet sh){
+    protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
         EscherBSERecord bse = getEscherBSERecord();
@@ -263,7 +263,7 @@ public class Picture extends SimpleShape {
         AffineTransform at = graphics.getTransform();
         ShapePainter.paint(this, graphics);
 
-        PictureData data = getPictureData();
+        HSLFPictureData data = getPictureData();
         if(data != null) data.draw(graphics, this);
 
         graphics.setTransform(at);

@@ -54,7 +54,7 @@ import java.util.Map;
  * @author Yegor Kozlov
 */
 @Beta
- public class XSLFSlideMaster extends XSLFSheet implements MasterSheet<XSLFShape> {
+ public class XSLFSlideMaster extends XSLFSheet implements MasterSheet<XSLFShape, XMLSlideShow> {
 	private CTSlideMaster _slide;
     private Map<String, XSLFSlideLayout> _layouts;
     private XSLFTheme _theme;
@@ -83,7 +83,7 @@ import java.util.Map;
     }
 
     @Override
-    public MasterSheet getMasterSheet() {
+    public MasterSheet<XSLFShape, XMLSlideShow> getMasterSheet() {
         return null;
     }
 

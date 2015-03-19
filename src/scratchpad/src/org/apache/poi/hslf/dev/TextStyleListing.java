@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.model.textproperties.BitMaskTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
@@ -36,7 +37,7 @@ public final class TextStyleListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 
 		// Find the documents, and then their SLWT
 		Record[] records = ss.getRecords();

@@ -62,14 +62,14 @@ public final class PPT2PNG {
         }
 
         FileInputStream is = new FileInputStream(file);
-        SlideShow ppt = new SlideShow(is);
+        HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
 
         Dimension pgsize = ppt.getPageSize();
         int width = (int)(pgsize.width*scale);
         int height = (int)(pgsize.height*scale);
 
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             if (slidenum != -1 && slidenum != (i+1)) continue;
 

@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -39,9 +38,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @author Nick Burch
  */
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
-   private HSLFSlideShow _hslfshow;
-   private SlideShow _show;
-   private Slide[] _slides;
+   private HSLFSlideShowImpl _hslfshow;
+   private HSLFSlideShow _show;
+   private HSLFSlide[] _slides;
 
    private boolean _slidesByDefault = true;
    private boolean _notesByDefault = false;
@@ -120,7 +119,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
     * @param dir the POIFS Directory containing the PowerPoint document
     */
    public PowerPointExtractor(DirectoryNode dir) throws IOException {
-      this(new HSLFSlideShow(dir));
+      this(new HSLFSlideShowImpl(dir));
    }
 
    /**
@@ -128,7 +127,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
     */
    @Deprecated
 	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HSLFSlideShow(dir, fs));
+		this(new HSLFSlideShowImpl(dir, fs));
 	}
 
 	/**
@@ -136,10 +135,10 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 *
 	 * @param ss the HSLFSlideShow to extract text from
 	 */
-	public PowerPointExtractor(HSLFSlideShow ss) {
+	public PowerPointExtractor(HSLFSlideShowImpl ss) {
 		super(ss);
 		_hslfshow = ss;
-		_show = new SlideShow(_hslfshow);
+		_show = new HSLFSlideShow(_hslfshow);
 		_slides = _show.getSlides();
 	}
 
@@ -190,7 +189,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		List<OLEShape> list = new ArrayList<OLEShape>();
 
 		for (int i = 0; i < _slides.length; i++) {
-			Slide slide = _slides[i];
+			HSLFSlide slide = _slides[i];
 
 			HSLFShape[] shapes = slide.getShapes();
 			for (int j = 0; j < shapes.length; j++) {
@@ -222,14 +221,14 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
             if (getMasterText) {
                 for (SlideMaster master : _show.getSlidesMasters()) {
                     for(HSLFShape sh : master.getShapes()){
-                        if(sh instanceof TextShape){
-                            if(MasterSheet.isPlaceholder(sh)) {
+                        if(sh instanceof HSLFTextShape){
+                            if(HSLFMasterSheet.isPlaceholder(sh)) {
                                 // don't bother about boiler
                                 // plate text on master
                                 // sheets
                                 continue;
                             }
-                            TextShape tsh = (TextShape)sh;
+                            HSLFTextShape tsh = (HSLFTextShape)sh;
                             String text = tsh.getText();
                             if (text != null){
                                 ret.append(text);
@@ -243,7 +242,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
             }
 
             for (int i = 0; i < _slides.length; i++) {
-				Slide slide = _slides[i];
+				HSLFSlide slide = _slides[i];
 
 				// Slide header, if set
 				HeadersFooters hf = slide.getHeadersFooters();
@@ -286,7 +285,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 			HeadersFooters hf = _show.getNotesHeadersFooters();
 
 			for (int i = 0; i < _slides.length; i++) {
-				Notes notes = _slides[i].getNotesSheet();
+				HSLFNotes notes = _slides[i].getNotesSheet();
 				if (notes == null) {
 					continue;
 				}
@@ -331,13 +330,13 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
             ret.append('\n');
         }
     }
-    private void textRunsToText(StringBuffer ret, TextRun[] runs) {
+    private void textRunsToText(StringBuffer ret, HSLFTextParagraph[] runs) {
         if (runs==null) {
             return;
         }
 
         for (int j = 0; j < runs.length; j++) {
-            TextRun run = runs[j];
+            HSLFTextParagraph run = runs[j];
             if (run != null) {
                 String text = run.getText();
                 ret.append(text);

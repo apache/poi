@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.model.*;
 
 import java.awt.*;
@@ -34,7 +34,7 @@ public final class Graphics2DDemo {
      * A simple bar chart demo
      */
     public static void main(String[] args) throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
         //bar chart data. The first value is the bar color, the second is the width
         Object[] def = new Object[]{
@@ -44,7 +44,7 @@ public final class Graphics2DDemo {
             Color.red, new Integer(80),
         };
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         HSLFGroupShape group = new HSLFGroupShape();
         //define position of the drawing in the slide

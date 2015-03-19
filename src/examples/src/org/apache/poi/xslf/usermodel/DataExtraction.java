@@ -76,7 +76,6 @@ public final class DataExtraction {
         Dimension pageSize = ppt.getPageSize();  // size of the canvas in points
         for(XSLFSlide slide : ppt.getSlides()) {
             for(XSLFShape shape : slide){
-                Rectangle2D anchor = shape.getAnchor();  // position on the canvas
                 if(shape instanceof XSLFTextShape) {
                     XSLFTextShape txShape = (XSLFTextShape)shape;
                     System.out.println(txShape.getText());

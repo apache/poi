@@ -15,10 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.sl.usermodel;
+package org.apache.poi.hslf.model;
 
-import java.util.List;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.sl.usermodel.Background;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 
-public interface Notes<T extends Shape, SS extends SlideShow> extends Sheet<T,SS> {
-	List<? extends TextParagraph<? extends TextRun>> getTextParagraphs();
+/**
+ * Background shape
+ *
+ * @author Yegor Kozlov
+ */
+public final class HSLFBackground extends HSLFShape implements Background {
+
+    protected HSLFBackground(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
+        super(escherRecord, parent);
+    }
+
+    protected EscherContainerRecord createSpContainer(boolean isChild) {
+        return null;
+    }
 }

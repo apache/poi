@@ -20,8 +20,8 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
 
 /**
@@ -32,8 +32,8 @@ import org.apache.poi.POIDataSamples;
 public class TestExObjList extends TestCase {
 	public void testRealFile() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-		HSLFSlideShow hss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
-		SlideShow ss = new SlideShow(hss);
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("WithLinks.ppt"));
+		HSLFSlideShow ss = new HSLFSlideShow(hss);
 
 		// Get the document
 		Document doc = ss.getDocumentRecord();

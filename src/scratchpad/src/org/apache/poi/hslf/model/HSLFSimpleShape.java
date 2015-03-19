@@ -38,8 +38,10 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.Record;
-import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.StrokeStyle.*;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Units;
 
 /**
  *  An abstract simple (non-group) shape.
@@ -47,7 +49,7 @@ import org.apache.poi.util.LittleEndian;
  *
  *  @author Yegor Kozlov
  */
-public abstract class SimpleShape extends HSLFShape {
+public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
 
@@ -63,7 +65,7 @@ public abstract class SimpleShape extends HSLFShape {
      * @param escherRecord    <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-    protected SimpleShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected HSLFSimpleShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -112,7 +114,7 @@ public abstract class SimpleShape extends HSLFShape {
     public double getLineWidth(){
         EscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
-        double width = prop == null ? DEFAULT_LINE_WIDTH : (double)prop.getPropertyValue()/EMU_PER_POINT;
+        double width = (prop == null) ? DEFAULT_LINE_WIDTH : Units.toPoints(prop.getPropertyValue());
         return width;
     }
 
@@ -122,7 +124,7 @@ public abstract class SimpleShape extends HSLFShape {
      */
     public void setLineWidth(double width){
         EscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH, (int)(width*EMU_PER_POINT));
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH, Units.toEMU(width));
     }
 
     /**
@@ -155,36 +157,45 @@ public abstract class SimpleShape extends HSLFShape {
     }
 
     /**
-     * Gets line dashing. One of the PEN_* constants defined in this class.
+     * Gets line dashing.
      *
      * @return dashing of the line.
      */
-    public int getLineDashing(){
+    public LineDash getLineDashing(){
         EscherOptRecord opt = getEscherOptRecord();
-
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
-        return prop == null ? Line.PEN_SOLID : prop.getPropertyValue();
+        return (prop == null) ? LineDash.SOLID : LineDash.fromNativeId(prop.getPropertyValue());
     }
 
     /**
-     * Sets line dashing. One of the PEN_* constants defined in this class.
+     * Sets line dashing.
      *
      * @param pen new style of the line.
      */
-    public void setLineDashing(int pen){
+    public void setLineDashing(LineDash pen){
         EscherOptRecord opt = getEscherOptRecord();
-
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING, pen == Line.PEN_SOLID ? -1 : pen);
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING, pen == LineDash.SOLID ? -1 : pen.nativeId);
     }
 
     /**
-     * Sets line style. One of the constants defined in this class.
+     * Gets the line compound style
      *
-     * @param style new style of the line.
+     * @return the compound style of the line.
      */
-    public void setLineStyle(int style){
+    public LineCompound getLineCompound() {
         EscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE, style == Line.LINE_SIMPLE ? -1 : style);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
+        return (prop == null) ? LineCompound.SINGLE : LineCompound.fromNativeId(prop.getPropertyValue());
+    }
+    
+    /**
+     * Sets the line compound style
+     *
+     * @param style new compound style of the line.
+     */
+    public void setLineCompound(LineCompound style){
+        EscherOptRecord opt = getEscherOptRecord();
+        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE, style == LineCompound.SINGLE ? -1 : style.nativeId);
     }
 
     /**
@@ -192,10 +203,29 @@ public abstract class SimpleShape extends HSLFShape {
      *
      * @return style of the line.
      */
-    public int getStrokeStyle(){
-        EscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
-        return prop == null ? Line.LINE_SIMPLE : prop.getPropertyValue();
+    public StrokeStyle getStrokeStyle(){
+        return new StrokeStyle() {
+            public PaintStyle getPaint() {
+                return null;
+            }
+
+            public LineCap getLineCap() {
+                return null;
+            }
+
+            public LineDash getLineDash() {
+                return null;
+            }
+
+            public LineCompound getLineCompound() {
+                return null;
+            }
+
+            public double getLineWidth() {
+                return 0;
+            }
+            
+        };
     }
 
     /**

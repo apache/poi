@@ -18,11 +18,13 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.draw.geom.CustomGeometry;
+import org.apache.poi.sl.draw.geom.Guide;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.util.POILogger;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 
 /**
  * Represents an AutoShape.
@@ -33,18 +35,18 @@ import java.awt.geom.Rectangle2D;
  *
  *  @author Yegor Kozlov
  */
-public class AutoShape extends TextShape {
+public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFTextParagraph> {
 
-    protected AutoShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    protected HSLFAutoShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
-    public AutoShape(ShapeType type, ShapeContainer<HSLFShape> parent){
+    public HSLFAutoShape(ShapeType type, ShapeContainer<HSLFShape> parent){
         super(null, parent);
         _escherContainer = createSpContainer(type, parent instanceof HSLFGroupShape);
     }
 
-    public AutoShape(ShapeType type){
+    public HSLFAutoShape(ShapeType type){
         this(type, null);
     }
 
@@ -66,10 +68,10 @@ public class AutoShape extends TextShape {
         return _escherContainer;
     }
 
-    protected void setDefaultTextProperties(TextRun _txtrun){
-        setVerticalAlignment(TextBox.AnchorMiddle);
-        setHorizontalAlignment(TextBox.AlignCenter);
-        setWordWrap(TextBox.WrapNone);
+    protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
+        setVerticalAlignment(HSLFTextBox.AnchorMiddle);
+        setHorizontalAlignment(HSLFTextBox.AlignCenter);
+        setWordWrap(HSLFTextBox.WrapNone);
     }
 
     /**
@@ -118,5 +120,4 @@ public class AutoShape extends TextShape {
         java.awt.Shape shape = outline.getOutline(this);
         return AutoShapes.transform(shape, anchor);
     }
-
 }

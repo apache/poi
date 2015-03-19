@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.POIDataSamples;
@@ -31,16 +32,16 @@ public final class TestSlideOrdering extends TestCase {
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 	// Simple slideshow, record order matches slide order
-	private SlideShow ssA;
+	private HSLFSlideShow ssA;
 	// Complex slideshow, record order doesn't match slide order
-	private SlideShow ssB;
+	private HSLFSlideShow ssB;
 
 	public TestSlideOrdering() throws Exception {
-		HSLFSlideShow hssA = new HSLFSlideShow(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
-		ssA = new SlideShow(hssA);
+		HSLFSlideShowImpl hssA = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ssA = new HSLFSlideShow(hssA);
 
-		HSLFSlideShow hssB = new HSLFSlideShow(slTests.openResourceAsStream("incorrect_slide_order.ppt"));
-		ssB = new SlideShow(hssB);
+		HSLFSlideShowImpl hssB = new HSLFSlideShowImpl(slTests.openResourceAsStream("incorrect_slide_order.ppt"));
+		ssB = new HSLFSlideShow(hssB);
 	}
 
 	/**
@@ -49,8 +50,8 @@ public final class TestSlideOrdering extends TestCase {
 	public void testSimpleCase() {
 		assertEquals(2, ssA.getSlides().length);
 
-		Slide s1 = ssA.getSlides()[0];
-		Slide s2 = ssA.getSlides()[1];
+		HSLFSlide s1 = ssA.getSlides()[0];
+		HSLFSlide s2 = ssA.getSlides()[1];
 
 		String[] firstTRs = new String[] { "This is a test title", "This is the title on page 2" };
 
@@ -64,9 +65,9 @@ public final class TestSlideOrdering extends TestCase {
 	public void testComplexCase() {
 		assertEquals(3, ssB.getSlides().length);
 
-		Slide s1 = ssB.getSlides()[0];
-		Slide s2 = ssB.getSlides()[1];
-		Slide s3 = ssB.getSlides()[2];
+		HSLFSlide s1 = ssB.getSlides()[0];
+		HSLFSlide s2 = ssB.getSlides()[1];
+		HSLFSlide s3 = ssB.getSlides()[2];
 
 		String[] firstTRs = new String[] { "Slide 1", "Slide 2", "Slide 3" };
 
@@ -86,8 +87,8 @@ public final class TestSlideOrdering extends TestCase {
 	protected void assertSlideOrdering(String filename, String[] titles) throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-        SlideShow ppt = new SlideShow(slTests.openResourceAsStream(filename));
-		Slide[] slide = ppt.getSlides();
+        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream(filename));
+		HSLFSlide[] slide = ppt.getSlides();
 
 		assertEquals(titles.length, slide.length);
 		for (int i = 0; i < slide.length; i++) {

@@ -36,9 +36,8 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.JvmBugs;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -58,16 +57,16 @@ public final class TestPicture {
      */
     @Test
     public void multiplePictures() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide s = ppt.createSlide();
-        Slide s2 = ppt.createSlide();
-        Slide s3 = ppt.createSlide();
+        HSLFSlide s = ppt.createSlide();
+        HSLFSlide s2 = ppt.createSlide();
+        HSLFSlide s3 = ppt.createSlide();
 
-        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), Picture.JPEG);
-        Picture pict = new Picture(idx);
-        Picture pict2 = new Picture(idx);
-        Picture pict3 = new Picture(idx);
+        int idx = ppt.addPicture(_slTests.readFile("clock.jpg"), HSLFPictureShape.JPEG);
+        HSLFPictureShape pict = new HSLFPictureShape(idx);
+        HSLFPictureShape pict2 = new HSLFPictureShape(idx);
+        HSLFPictureShape pict3 = new HSLFPictureShape(idx);
 
         pict.setAnchor(new Rectangle(10,10,100,100));
         s.addShape(pict);
@@ -93,12 +92,12 @@ public final class TestPicture {
      */
     @Test
     public void bug46122() {
-        SlideShow ppt = new SlideShow();
-        Slide slide = ppt.createSlide();
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
 
-        Picture pict = new Picture(-1); //index to non-existing picture data
+        HSLFPictureShape pict = new HSLFPictureShape(-1); //index to non-existing picture data
         pict.setSheet(slide);
-        PictureData data = pict.getPictureData();
+        HSLFPictureData data = pict.getPictureData();
         assertNull(data);
 
         BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
@@ -108,9 +107,9 @@ public final class TestPicture {
 
     @Test
     public void macImages() throws Exception {
-        HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("53446.ppt"));
+        HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("53446.ppt"));
 
-        PictureData[] pictures = hss.getPictures();
+        HSLFPictureData[] pictures = hss.getPictures();
         assertEquals(15, pictures.length);
 
         int[][] expectedSizes = {
@@ -134,7 +133,7 @@ public final class TestPicture {
         for (int i = 0; i < pictures.length; i++) {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(pictures[i].getData()));
 
-            if (pictures[i].getType() != Picture.WMF && pictures[i].getType() != Picture.EMF) {
+            if (pictures[i].getType() != HSLFPictureShape.WMF && pictures[i].getType() != HSLFPictureShape.EMF) {
                 assertNotNull(image);
 
                 int[] dimensions = expectedSizes[i];
@@ -163,12 +162,12 @@ public final class TestPicture {
 //        System.out.println("########################");
         
         InputStream is = _slTests.openResourceAsStream("54541_cropped_bitmap.ppt");
-        SlideShow ss = new SlideShow(is);
+        HSLFSlideShow ss = new HSLFSlideShow(is);
         is.close();
         
         Dimension pg = ss.getPageSize();
         int i=1;
-        for(Slide slide : ss.getSlides()) {
+        for(HSLFSlide slide : ss.getSlides()) {
             BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
             fixFonts(graphics);

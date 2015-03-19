@@ -41,11 +41,11 @@ public final class DataExtraction {
         }
 
         FileInputStream is = new FileInputStream(args[0]);
-        SlideShow ppt = new SlideShow(is);
+        HSLFSlideShow ppt = new HSLFSlideShow(is);
         is.close();
 
         //extract all sound files embedded in this presentation
-        SoundData[] sound = ppt.getSoundData();
+        HSLFSoundData[] sound = ppt.getSoundData();
         for (int i = 0; i < sound.length; i++) {
             String type = sound[i].getSoundType();  //*.wav
             String name = sound[i].getSoundName();  //typically file name
@@ -58,13 +58,13 @@ public final class DataExtraction {
         }
 
         //extract embedded OLE documents
-        Slide[] slide = ppt.getSlides();
+        HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
                 if (shape[j] instanceof OLEShape) {
                     OLEShape ole = (OLEShape) shape[j];
-                    ObjectData data = ole.getObjectData();
+                    HSLFObjectData data = ole.getObjectData();
                     String name = ole.getInstanceName();
                     if ("Worksheet".equals(name)) {
 
@@ -104,29 +104,29 @@ public final class DataExtraction {
         for (int i = 0; i < slide.length; i++) {
             HSLFShape[] shape = slide[i].getShapes();
             for (int j = 0; j < shape.length; j++) {
-                if (shape[j] instanceof Picture) {
-                    Picture p = (Picture) shape[j];
-                    PictureData data = p.getPictureData();
+                if (shape[j] instanceof HSLFPictureShape) {
+                    HSLFPictureShape p = (HSLFPictureShape) shape[j];
+                    HSLFPictureData data = p.getPictureData();
                     String name = p.getPictureName();
                     int type = data.getType();
                     String ext;
                     switch (type) {
-                        case Picture.JPEG:
+                        case HSLFPictureShape.JPEG:
                             ext = ".jpg";
                             break;
-                        case Picture.PNG:
+                        case HSLFPictureShape.PNG:
                             ext = ".png";
                             break;
-                        case Picture.WMF:
+                        case HSLFPictureShape.WMF:
                             ext = ".wmf";
                             break;
-                        case Picture.EMF:
+                        case HSLFPictureShape.EMF:
                             ext = ".emf";
                             break;
-                        case Picture.PICT:
+                        case HSLFPictureShape.PICT:
                             ext = ".pict";
                             break;
-                        case Picture.DIB:
+                        case HSLFPictureShape.DIB:
                             ext = ".dib";
                             break;
                         default:

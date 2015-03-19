@@ -19,11 +19,11 @@ package org.apache.poi.hslf.model;
 
 
 import junit.framework.TestCase;
+
 import java.io.*;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
 
@@ -36,9 +36,9 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestTextRunReWrite extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow hss;
+	private HSLFSlideShowImpl hss;
 	// HSLFSlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 	// POIFS primed on the test data
 	private POIFSFileSystem pfs;
 
@@ -49,14 +49,14 @@ public final class TestTextRunReWrite extends TestCase {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		String filename = "Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream(filename));
-		hss = new HSLFSlideShow(pfs);
-		ss = new SlideShow(hss);
+		hss = new HSLFSlideShowImpl(pfs);
+		ss = new HSLFSlideShow(hss);
     }
 
     public void testWritesOutTheSameNonRich() throws Exception {
     	// Grab the first text run on the first sheet
-    	TextRun tr1 = ss.getSlides()[0].getTextRuns()[0];
-    	TextRun tr2 = ss.getSlides()[0].getTextRuns()[1];
+    	HSLFTextParagraph tr1 = ss.getSlides()[0].getTextRuns()[0];
+    	HSLFTextParagraph tr2 = ss.getSlides()[0].getTextRuns()[1];
 
     	// Ensure the text lengths are as we'd expect to start with
     	assertEquals(1, ss.getSlides().length);
@@ -112,10 +112,10 @@ public final class TestTextRunReWrite extends TestCase {
 
     public void testWritesOutTheSameRich() throws Exception {
     	// Grab the first text run on the first sheet
-    	TextRun tr1 = ss.getSlides()[0].getTextRuns()[0];
+    	HSLFTextParagraph tr1 = ss.getSlides()[0].getTextRuns()[0];
 
     	// Get the first rich text run
-    	RichTextRun rtr1 = tr1.getRichTextRuns()[0];
+    	HSLFTextRun rtr1 = tr1.getRichTextRuns()[0];
 
 
     	// Check that the text sizes are as expected

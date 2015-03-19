@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.model.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 public class HSLFTestDataSamples {
 
@@ -45,12 +46,12 @@ public class HSLFTestDataSamples {
 	 * from a <tt>ByteArrayInputStream</tt>.<p/>
 	 * Useful for verifying that the serialisation round trip
 	 */
-	public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {
+	public static HSLFSlideShowImpl writeOutAndReadBack(HSLFSlideShowImpl original) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
 			original.write(baos);
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			return new HSLFSlideShow(bais);
+			return new HSLFSlideShowImpl(bais);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -61,12 +62,12 @@ public class HSLFTestDataSamples {
 	 * from a <tt>ByteArrayInputStream</tt>.<p/>
 	 * Useful for verifying that the serialisation round trip
 	 */
-	public static SlideShow writeOutAndReadBack(SlideShow original) {
+	public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
 			original.write(baos);
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			return new SlideShow(bais);
+			return new HSLFSlideShow(bais);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
