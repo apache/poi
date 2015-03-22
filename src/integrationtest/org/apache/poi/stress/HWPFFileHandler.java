@@ -63,12 +63,10 @@ public class HWPFFileHandler extends POIFSFileHandler {
         docTextWriter.close();
 	}
 
-
-
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		File file = new File("test-data/document/51921-Word-Crash067.doc");
+		File file = new File("test-data/document/52117.doc");
 
 		InputStream stream = new FileInputStream(file);
 		try {
@@ -90,5 +88,11 @@ public class HWPFFileHandler extends POIFSFileHandler {
 		} finally {
 			stream.close();
 		}
+	}
+
+	@Test
+	public void testExtractingOld() throws Exception {
+		File file = new File("test-data/document/52117.doc");
+		handleExtracting(file);
 	}
 }

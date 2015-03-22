@@ -28,8 +28,10 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.xmlbeans.XmlException;
@@ -89,6 +91,19 @@ public abstract class AbstractFileHandler implements FileHandler {
             assertEquals("File should not be modified by extractor", modified, file.lastModified());
             
             handleExtractingAsStream(file);
+            
+            if(extractor instanceof POIOLE2TextExtractor) {
+            	HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor((POIOLE2TextExtractor)extractor);
+            	try {
+                	assertNotNull(hpsfExtractor.getDocumentSummaryInformationText());
+                	assertNotNull(hpsfExtractor.getSummaryInformationText());
+                	String text = hpsfExtractor.getText();
+                	//System.out.println(text);
+                	assertNotNull(text);
+            	} finally {
+            		hpsfExtractor.close();
+            	}
+            }
         } catch (IllegalArgumentException e) {
             if(!EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
                 throw new Exception("While handling " + file, e);
