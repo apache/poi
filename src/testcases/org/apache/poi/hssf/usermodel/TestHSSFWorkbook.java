@@ -28,6 +28,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1106,4 +1107,36 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	private void expectName(HSSFWorkbook wb, String name, String expect) {
 		assertEquals(expect, wb.getName(name).getRefersToFormula());
 	}
+
+	@Test
+	public void test49423() throws Exception
+    {
+		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("49423.xls");
+		
+		boolean found = false;
+        int numSheets = workbook.getNumberOfSheets();
+        for (int i = 0; i < numSheets; i++) {
+            HSSFSheet sheet = workbook.getSheetAt(i);
+            List<HSSFShape> shapes = sheet.getDrawingPatriarch().getChildren();
+            for(HSSFShape shape : shapes){
+                HSSFAnchor anchor = shape.getAnchor();
+    
+                if(anchor instanceof HSSFClientAnchor){
+                    // absolute coordinates
+                    HSSFClientAnchor clientAnchor = (HSSFClientAnchor)anchor;
+                    assertNotNull(clientAnchor);
+                    //System.out.println(clientAnchor.getRow1() + "," + clientAnchor.getRow2());
+                    found = true;
+                } else if (anchor instanceof HSSFChildAnchor){
+                    // shape is grouped and the anchor is expressed in the coordinate system of the group 
+                    HSSFChildAnchor childAnchor = (HSSFChildAnchor)anchor;
+                    assertNotNull(childAnchor);
+                    //System.out.println(childAnchor.getDy1() + "," + childAnchor.getDy2());
+                    found = true;
+                }
+            }
+        }
+        
+        assertTrue("Should find some images via Client or Child anchors, but did not find any at all", found);
+    }
 }
