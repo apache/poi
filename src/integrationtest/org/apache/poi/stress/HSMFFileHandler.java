@@ -22,6 +22,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.hsmf.MAPIMessage;
+import org.apache.poi.hsmf.datatypes.AttachmentChunks;
+import org.apache.poi.hsmf.datatypes.DirectoryChunk;
 import org.junit.Test;
 
 public class HSMFFileHandler extends POIFSFileHandler {
@@ -31,6 +33,19 @@ public class HSMFFileHandler extends POIFSFileHandler {
 		assertNotNull(mapi.getAttachmentFiles());
 		assertNotNull(mapi.getDisplayBCC());
 		assertNotNull(mapi.getMessageDate());
+
+		AttachmentChunks[] attachments = mapi.getAttachmentFiles();
+
+		for(AttachmentChunks attachment : attachments) {
+
+		   DirectoryChunk chunkDirectory = attachment.attachmentDirectory;
+		   if(chunkDirectory != null) {
+			   MAPIMessage attachmentMSG = chunkDirectory.getAsEmbededMessage();
+			   assertNotNull(attachmentMSG);
+			   String body = attachmentMSG.getTextBody();
+			   assertNotNull(body);
+		   }
+		}
 
 		/* => Writing isn't yet supported...
 		// write out the file
