@@ -177,7 +177,7 @@ public final class WordDocument {
       }
       else
       {
-	String sText = new String(_header, start, end-start);
+	String sText = new String(_header, start, end-start, "windows-1252");
 	out.write(sText);
       }
     }
