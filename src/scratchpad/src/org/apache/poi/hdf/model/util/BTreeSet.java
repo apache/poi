@@ -36,14 +36,14 @@ import org.apache.poi.hdf.model.hdftypes.PropertyNode;
  *
 */
 @Deprecated
-public final class BTreeSet extends AbstractSet
+public final class BTreeSet extends AbstractSet<PropertyNode>
 {
 
     /*
      * Instance Variables
     */
     public BTreeNode root;
-    private Comparator comparator = null;
+    private Comparator<PropertyNode> comparator = null;
     private int order;
     int size = 0;
 
@@ -59,7 +59,7 @@ public final class BTreeSet extends AbstractSet
         this(6);           // Default order for a BTreeSet is 32
     }
 
-    public BTreeSet(Collection c)
+    public BTreeSet(Collection<PropertyNode> c)
     {
         this(6);           // Default order for a BTreeSet is 32
         addAll(c);
@@ -70,7 +70,7 @@ public final class BTreeSet extends AbstractSet
         this(order, null);
     }
 
-    public BTreeSet(int order, Comparator comparator)
+    public BTreeSet(int order, Comparator<PropertyNode> comparator)
     {
         this.order = order;
         this.comparator = comparator;
@@ -81,18 +81,18 @@ public final class BTreeSet extends AbstractSet
     /*
      * Public Methods
     */
-    public boolean add(Object x) throws IllegalArgumentException
+    public boolean add(PropertyNode x) throws IllegalArgumentException
     {
         if (x == null) throw new IllegalArgumentException();
         return root.insert(x, -1);
     }
 
-    public boolean contains(Object x)
+    public boolean contains(PropertyNode x)
     {
         return root.includes(x);
     }
 
-    public boolean remove(Object x)
+    public boolean remove(PropertyNode x)
     {
         if (x == null) return false;
         return root.delete(x, -1);
@@ -109,14 +109,14 @@ public final class BTreeSet extends AbstractSet
         size = 0;
     }
 
-    public java.util.Iterator iterator()
+	public java.util.Iterator<PropertyNode> iterator()
     {
         return new Iterator();
     }
 
-    public static ArrayList findProperties(int start, int end, BTreeSet.BTreeNode root)
+    public static List<PropertyNode> findProperties(int start, int end, BTreeSet.BTreeNode root)
     {
-      ArrayList results = new ArrayList();
+      List<PropertyNode> results = new ArrayList<PropertyNode>();
       BTreeSet.Entry[] entries = root.entries;
 
       for(int x = 0; x < entries.length; x++)
@@ -124,7 +124,7 @@ public final class BTreeSet extends AbstractSet
         if(entries[x] != null)
         {
           BTreeSet.BTreeNode child = entries[x].child;
-          PropertyNode xNode = (PropertyNode)entries[x].element;
+          PropertyNode xNode = entries[x].element;
           if(xNode != null)
           {
             int xStart = xNode.getStart();
@@ -135,7 +135,7 @@ public final class BTreeSet extends AbstractSet
               {
                 if(child != null)
                 {
-                  ArrayList beforeItems = findProperties(start, end, child);
+                  List<PropertyNode> beforeItems = findProperties(start, end, child);
                   results.addAll(beforeItems);
                 }
                 results.add(xNode);
@@ -150,7 +150,7 @@ public final class BTreeSet extends AbstractSet
             {
               if(child != null)
               {
-                ArrayList beforeItems = findProperties(start, end, child);
+                List<PropertyNode> beforeItems = findProperties(start, end, child);
                 results.addAll(beforeItems);
               }
               break;
@@ -158,7 +158,7 @@ public final class BTreeSet extends AbstractSet
           }
           else if(child != null)
           {
-            ArrayList afterItems = findProperties(start, end, child);
+            List<PropertyNode> afterItems = findProperties(start, end, child);
             results.addAll(afterItems);
           }
         }
@@ -172,9 +172,9 @@ public final class BTreeSet extends AbstractSet
     /*
      * Private methods
     */
-    int compare(Object x, Object y)
+    int compare(PropertyNode x, PropertyNode y)
     {
-        return (comparator == null ? ((Comparable)x).compareTo(y) : comparator.compare(x, y));
+        return (comparator == null ? x.compareTo(y) : comparator.compare(x, y));
     }
 
 
@@ -192,12 +192,12 @@ public final class BTreeSet extends AbstractSet
      * chance of receiving a NullPointerException. The Iterator.delete method is supported.
     */
 
-    private class Iterator implements java.util.Iterator
+    private class Iterator implements java.util.Iterator<PropertyNode>
     {
         private int index = 0;
-        private Stack parentIndex = new Stack(); // Contains all parentIndicies for currentNode
-        private Object lastReturned = null;
-        private Object next;
+        private Stack<Integer> parentIndex = new Stack<Integer>(); // Contains all parentIndicies for currentNode
+        private PropertyNode lastReturned = null;
+        private PropertyNode next;
         private BTreeNode currentNode;
 
         Iterator()
@@ -211,7 +211,7 @@ public final class BTreeSet extends AbstractSet
             return next != null;
         }
 
-        public Object next()
+        public PropertyNode next()
         {
             if (next == null) throw new NoSuchElementException();
 
@@ -241,7 +241,7 @@ public final class BTreeSet extends AbstractSet
             return temp;
         }
 
-        private Object nextElement()
+        private PropertyNode nextElement()
         {
             if (currentNode.isLeaf())
             {
@@ -250,13 +250,13 @@ public final class BTreeSet extends AbstractSet
                 else if (!parentIndex.empty())
                 { //All elements have been returned, return successor of lastReturned if it exists
                     currentNode = currentNode.parent;
-                    index = ((Integer)parentIndex.pop()).intValue();
+                    index = parentIndex.pop().intValue();
 
                     while (index == currentNode.nrElements)
                     {
                         if (parentIndex.empty()) break;
                         currentNode = currentNode.parent;
-                        index = ((Integer)parentIndex.pop()).intValue();
+                        index = parentIndex.pop().intValue();
                     }
 
                     if (index == currentNode.nrElements) return null; //Reached root and he has no more children
@@ -289,7 +289,7 @@ public final class BTreeSet extends AbstractSet
     public static class Entry
     {
 
-        public Object element;
+        public PropertyNode element;
         public BTreeNode child;
     }
 
@@ -309,11 +309,11 @@ public final class BTreeSet extends AbstractSet
             entries[0] = new Entry();
         }
 
-        boolean insert(Object x, int parentIndex)
+        boolean insert(PropertyNode x, int parentIndex)
         {
             if (isFull())
             { // If full, you must split and promote splitNode before inserting
-                Object splitNode = entries[nrElements / 2].element;
+            	PropertyNode splitNode = entries[nrElements / 2].element;
                 BTreeNode rightSibling = split();
 
                 if (isRoot())
@@ -354,7 +354,7 @@ public final class BTreeSet extends AbstractSet
             return false;
         }
 
-        boolean includes(Object x)
+        boolean includes(PropertyNode x)
         {
             int index = childToInsertAt(x, true);
             if (index == -1) return true;
@@ -362,7 +362,7 @@ public final class BTreeSet extends AbstractSet
             return entries[index].child.includes(x);
         }
 
-        boolean delete(Object x, int parentIndex)
+        boolean delete(PropertyNode x, int parentIndex)
         {
             int i = childToInsertAt(x, true);
             int priorParentIndex = parentIndex;
@@ -438,7 +438,7 @@ public final class BTreeSet extends AbstractSet
          * Creates a new BTreeSet.root which contains only the splitNode and pointers
          * to it's left and right child.
         */
-        private void splitRoot(Object splitNode, BTreeNode left, BTreeNode right)
+        private void splitRoot(PropertyNode splitNode, BTreeNode left, BTreeNode right)
         {
             BTreeNode newRoot = new BTreeNode(null);
             newRoot.entries[0].element = splitNode;
@@ -450,7 +450,7 @@ public final class BTreeSet extends AbstractSet
             BTreeSet.this.root = newRoot;
         }
 
-        private void insertSplitNode(Object splitNode, BTreeNode left, BTreeNode right, int insertAt)
+        private void insertSplitNode(PropertyNode splitNode, BTreeNode left, BTreeNode right, int insertAt)
         {
             for (int i = nrElements; i >= insertAt; i--) entries[i + 1] = entries[i];
 
@@ -462,7 +462,7 @@ public final class BTreeSet extends AbstractSet
             nrElements++;
         }
 
-        private void insertNewElement(Object x, int insertAt)
+        private void insertNewElement(PropertyNode x, int insertAt)
         {
 
             for (int i = nrElements; i > insertAt; i--) entries[i] = entries[i - 1];
@@ -482,7 +482,7 @@ public final class BTreeSet extends AbstractSet
          * element is contained in the calling BTreeNode than the position of the element
          * in entries[] is returned.
         */
-        private int childToInsertAt(Object x, boolean position)
+        private int childToInsertAt(PropertyNode x, boolean position)
         {
             int index = nrElements / 2;
 
@@ -509,7 +509,7 @@ public final class BTreeSet extends AbstractSet
         }
 
 
-        private void deleteElement(Object x)
+        private void deleteElement(PropertyNode x)
         {
             int index = childToInsertAt(x, false);
             for (; index < (nrElements - 1); index++) entries[index] = entries[index + 1];
@@ -568,12 +568,12 @@ public final class BTreeSet extends AbstractSet
             }
         }
 
-        private void switchWithSuccessor(Object x)
+        private void switchWithSuccessor(PropertyNode x)
         {
             int index = childToInsertAt(x, false);
             BTreeNode temp = entries[index + 1].child;
             while (temp.entries[0] != null && temp.entries[0].child != null) temp = temp.entries[0].child;
-            Object successor = temp.entries[0].element;
+            PropertyNode successor = temp.entries[0].element;
             temp.entries[0].element = entries[index].element;
             entries[index].element = successor;
         }

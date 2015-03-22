@@ -21,10 +21,10 @@ package org.apache.poi.hdf.event;
 import org.apache.poi.hdf.model.util.BTreeSet;
 import org.apache.poi.hdf.model.util.NumberFormatter;
 import org.apache.poi.hdf.model.hdftypes.*;
-
 import org.apache.poi.util.LittleEndian;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Deprecated
 public final class EventBridge implements HDFLowLevelParsingListener
@@ -71,11 +71,11 @@ public final class EventBridge implements HDFLowLevelParsingListener
   BTreeSet _hdrCharacterRuns = new BTreeSet();
 
   int _sectionCounter = 1;
-  ArrayList _hdrs = new ArrayList();
+  List<HeaderFooter[]> _hdrs = new ArrayList<HeaderFooter[]>();
 
   private boolean _holdParagraph = false;
   private int _endHoldIndex = -1;
-  private ArrayList _onHold;
+  private List<PropertyNode> _onHold;
 
   public EventBridge(HDFParsingListener listener)
   {
@@ -119,7 +119,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
   {
     for (int x = 1; x < _sectionCounter; x++)
     {
-      HeaderFooter[] hdrArray = (HeaderFooter[])_hdrs.get(x-1);
+      HeaderFooter[] hdrArray = _hdrs.get(x-1);
       HeaderFooter hf = null;
 
       if (!hdrArray[HeaderFooter.HEADER_EVEN - 1].isEmpty())
@@ -210,7 +210,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
         _holdParagraph = false;
         _endHoldIndex = -1;
         flushHeldParagraph();
-        _onHold = new ArrayList();
+        _onHold = new ArrayList<PropertyNode>();
       }
     }
 
@@ -219,7 +219,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
 
     CharacterProperties chp = (CharacterProperties)StyleSheet.uncompressProperty(byteChpx, _currentStd.getCHP(), _stsh);
 
-    ArrayList textList = BTreeSet.findProperties(start, end, _text.root);
+    List<PropertyNode> textList = BTreeSet.findProperties(start, end, _text.root);
     String text = getTextFromNodes(textList, start, end);
 
     _listener.characterRun(chp, text, start - _fcMin, end - _fcMin);
@@ -241,7 +241,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
   }
   private void flushHeaderProps(int start, int end)
   {
-    ArrayList list = BTreeSet.findProperties(start, end, _hdrSections.root);
+    List<PropertyNode> list = BTreeSet.findProperties(start, end, _hdrSections.root);
     int size = list.size();
 
     for (int x = 0; x < size; x++)
@@ -253,7 +253,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
       //SepxNode node = new SepxNode(-1, secStart, secEnd, oldNode.getSepx());
       //bodySection(node);
 
-      ArrayList parList = BTreeSet.findProperties(secStart, secEnd, _hdrParagraphs.root);
+      List<PropertyNode> parList = BTreeSet.findProperties(secStart, secEnd, _hdrParagraphs.root);
       int parSize = parList.size();
 
       for (int y = 0; y < parSize; y++)
@@ -265,7 +265,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
         PapxNode parNode = new PapxNode(parStart, parEnd, oldParNode.getPapx());
         paragraph(parNode);
 
-        ArrayList charList = BTreeSet.findProperties(parStart, parEnd, _hdrCharacterRuns.root);
+        List<PropertyNode> charList = BTreeSet.findProperties(parStart, parEnd, _hdrCharacterRuns.root);
         int charSize = charList.size();
 
         for (int z = 0; z < charSize; z++)
@@ -282,7 +282,7 @@ public final class EventBridge implements HDFLowLevelParsingListener
     }
 
   }
-  private String getTextFromNodes(ArrayList list, int start, int end)
+  private String getTextFromNodes(List<PropertyNode> list, int start, int end)
   {
     int size = list.size();
 

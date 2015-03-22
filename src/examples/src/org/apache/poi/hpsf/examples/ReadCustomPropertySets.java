@@ -93,12 +93,12 @@ public class ReadCustomPropertySets
             out("   No. of sections: " + sectionCount);
 
             /* Print the list of sections: */
-            List sections = ps.getSections();
+            List<Section> sections = ps.getSections();
             int nr = 0;
-            for (Iterator i = sections.iterator(); i.hasNext();)
+            for (Iterator<Section> i = sections.iterator(); i.hasNext();)
             {
                 /* Print a single section: */
-                Section sec = (Section) i.next();
+                Section sec = i.next();
                 out("   Section " + nr++ + ":");
                 String s = hex(sec.getFormatID().getBytes());
                 s = s.substring(0, s.length() - 1);
