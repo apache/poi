@@ -16,8 +16,10 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.Test;
@@ -36,12 +38,16 @@ public class XWPFFileHandler extends AbstractFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/document/footnotes.docx");
+		File file = new File("test-data/document/51921-Word-Crash067.docx");
+
+		InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000);
 		try {
 			handleFile(stream);
 		} finally {
 			stream.close();
 		}
+		
+		handleExtracting(file);
 	}
 	
 }
