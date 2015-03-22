@@ -68,7 +68,7 @@ public class HWPFFileHandler extends POIFSFileHandler {
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		File file = new File("test-data/document/47304.doc");
+		File file = new File("test-data/document/51921-Word-Crash067.doc");
 
 		InputStream stream = new FileInputStream(file);
 		try {
