@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.stress.*;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.Test;
@@ -162,6 +163,20 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
     }
 
+    // Old Word Documents where we can at least extract some text
+    private static final Set<String> OLD_FILES = new HashSet<String>();
+    static {
+        OLD_FILES.add("document/Bug49933.doc");
+        OLD_FILES.add("document/Bug51944.doc");
+        OLD_FILES.add("document/Word6.doc");
+        OLD_FILES.add("document/Word6_sections.doc");
+        OLD_FILES.add("document/Word6_sections2.doc");
+        OLD_FILES.add("document/Word95.doc");
+        OLD_FILES.add("document/word95err.doc");
+        OLD_FILES.add("hpsf/TestMickey.doc");
+        OLD_FILES.add("document/52117.doc");
+    }
+
     private static final Set<String> EXPECTED_FAILURES = new HashSet<String>();
     static {
         // password protected files
@@ -202,15 +217,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/43493.xls");
         EXPECTED_FAILURES.add("spreadsheet/46904.xls");
         EXPECTED_FAILURES.add("document/56880.doc");
-        EXPECTED_FAILURES.add("document/Bug49933.doc");
         EXPECTED_FAILURES.add("document/Bug50955.doc");
-        EXPECTED_FAILURES.add("document/Bug51944.doc");
-        EXPECTED_FAILURES.add("document/Word6.doc");
-        EXPECTED_FAILURES.add("document/Word6_sections.doc");
-        EXPECTED_FAILURES.add("document/Word6_sections2.doc");
-        EXPECTED_FAILURES.add("document/Word95.doc");
-        EXPECTED_FAILURES.add("document/word95err.doc");
-        EXPECTED_FAILURES.add("hpsf/TestMickey.doc");
         EXPECTED_FAILURES.add("slideshow/PPT95.ppt");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx");
         EXPECTED_FAILURES.add("openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx");
@@ -269,17 +276,29 @@ public class TestAllFiles {
         File inputFile = new File(ROOT_DIR, file);
 
         try {
-            InputStream stream = new BufferedInputStream(new FileInputStream(inputFile),100);
+            InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024);
             try {
                 handler.handleFile(stream);
 
                 assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
                         EXPECTED_FAILURES.contains(file));
+                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
+                        OLD_FILES.contains(file));
             } finally {
                 stream.close();
             }
 
             handler.handleExtracting(inputFile);
+        } catch (OldWordFileFormatException e) {
+            // for old word files we should still support extracting text
+            if(OLD_FILES.contains(file)) {
+                handler.handleExtracting(inputFile);
+            } else {
+                // check if we expect failure for this file
+                if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                    throw new Exception("While handling " + file, e);
+                }
+            }
         } catch (Exception e) {
             // check if we expect failure for this file
             if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
