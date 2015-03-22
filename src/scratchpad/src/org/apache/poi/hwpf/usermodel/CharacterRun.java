@@ -570,7 +570,7 @@ public final class CharacterRun extends Range
     cp._props.setDttmDispFldRMark((DateAndTime)_props.getDttmDispFldRMark().
                                   clone());
     cp._props.setXstDispFldRMark(_props.getXstDispFldRMark().clone());
-    cp._props.setShd((ShadingDescriptor)_props.getShd().clone());
+    cp._props.setShd(_props.getShd().clone());
 
     return cp;
   }

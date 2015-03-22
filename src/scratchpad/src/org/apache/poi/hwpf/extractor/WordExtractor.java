@@ -68,7 +68,6 @@ public final class WordExtractor extends POIOLE2TextExtractor
      * @deprecated Use {@link #WordExtractor(DirectoryNode)} instead
      */
     @Deprecated
-    @SuppressWarnings( "unused" )
     public WordExtractor( DirectoryNode dir, POIFSFileSystem fs )
             throws IOException
     {
@@ -109,7 +108,11 @@ public final class WordExtractor extends POIOLE2TextExtractor
         // Process the first argument as a file
         FileInputStream fin = new FileInputStream( args[0] );
         WordExtractor extractor = new WordExtractor( fin );
-        System.out.println( extractor.getText() );
+        try {
+        	System.out.println( extractor.getText() );
+        } finally {
+        	extractor.close();
+        }
     }
 
     /**

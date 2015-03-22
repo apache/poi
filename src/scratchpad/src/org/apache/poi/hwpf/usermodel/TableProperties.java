@@ -71,7 +71,7 @@ public final class TableProperties extends TAPAbstractType implements Cloneable
         tap.setRgshd( new ShadingDescriptor[getRgshd().length] );
         for ( int x = 0; x < getRgshd().length; x++ )
         {
-            tap.getRgshd()[x] = (ShadingDescriptor) getRgshd()[x].clone();
+            tap.getRgshd()[x] = getRgshd()[x].clone();
         }
 
         tap.setBrcBottom( (BorderCode) getBrcBottom().clone() );
@@ -81,7 +81,7 @@ public final class TableProperties extends TAPAbstractType implements Cloneable
         tap.setBrcTop( (BorderCode) getBrcTop().clone() );
         tap.setBrcVertical( (BorderCode) getBrcVertical().clone() );
 
-        tap.setShdTable( (ShadingDescriptor) getShdTable().clone() );
+        tap.setShdTable( getShdTable().clone() );
 
         tap.setRgbrcInsideDefault_0( (BorderCode) getRgbrcInsideDefault_0()
                 .clone() );

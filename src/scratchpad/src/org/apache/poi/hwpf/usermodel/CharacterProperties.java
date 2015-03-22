@@ -382,7 +382,7 @@ public final class CharacterProperties
             cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
             cp.setDttmDispFldRMark( (DateAndTime) getDttmDispFldRMark().clone() );
             cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
-            cp.setShd( (ShadingDescriptor) getShd().clone() );
+            cp.setShd( getShd().clone() );
             cp.setBrc( (BorderCode) getBrc().clone() );
 
             return cp;
