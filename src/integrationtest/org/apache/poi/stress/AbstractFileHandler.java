@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.ZipException;
 
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
+import org.apache.poi.dev.OOXMLPrettyPrint;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -68,6 +70,14 @@ public abstract class AbstractFileHandler implements FileHandler {
         } finally {
             ExtractorFactory.setThreadPrefersEventExtractors(before);
         }
+        
+        /* Did fail for some documents with special XML contents...
+        try {
+            OOXMLPrettyPrint.main(new String[] { file.getAbsolutePath(), 
+            		"/tmp/pretty-" + file.getName() });
+        } catch (ZipException e) {
+        	// ignore, not a Zip/OOXML file
+        }*/
     }
 
     private void handleExtractingInternal(File file) throws Exception {
