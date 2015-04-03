@@ -346,6 +346,11 @@ public final class XSSFCell implements Cell {
             setCellType(Cell.CELL_TYPE_BLANK);
             return;
         }
+
+        if(str.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
+            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
+        }
+
         int cellType = getCellType();
         switch(cellType){
             case Cell.CELL_TYPE_FORMULA:
