@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * Common superclass for testing implementations of
@@ -695,4 +696,75 @@ public abstract class BaseTestCell extends TestCase {
         
         wb.close();
     }
+
+	public void test57008() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+		Sheet sheet = wb.createSheet();
+		
+		Row row0 = sheet.createRow(0);
+		Cell cell0 = row0.createCell(0);
+		cell0.setCellValue("row 0, cell 0 _x0046_ without changes");
+		
+		Cell cell1 = row0.createCell(1);
+		cell1.setCellValue("row 0, cell 1 _x005fx0046_ with changes");
+		
+		Cell cell2 = row0.createCell(2);
+		cell2.setCellValue("hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*");
+
+		checkUnicodeValues(wb);
+		
+//		String fname = "/tmp/Test_xNNNN_inCell" + (wb instanceof HSSFWorkbook ? ".xls" : ".xlsx");
+//		FileOutputStream out = new FileOutputStream(fname);
+//		try {
+//			wb.write(out);
+//		} finally {
+//			out.close();
+//		}
+		
+		Workbook wbBack = _testDataProvider.writeOutAndReadBack(wb);
+		checkUnicodeValues(wbBack);
+	}
+
+	private void checkUnicodeValues(Workbook wb) {
+		assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 0 _x0046_ without changes" : "row 0, cell 0 F without changes"), 
+				wb.getSheetAt(0).getRow(0).getCell(0).toString());
+		assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 1 _x005fx0046_ with changes" : "row 0, cell 1 _x005fx0046_ with changes"), 
+				wb.getSheetAt(0).getRow(0).getCell(1).toString());
+		assertEquals((wb instanceof HSSFWorkbook ? "hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*" : "hghA**\u0100*\u0101*\u0190*\u0200*\u0300*\u0427*"), 
+				wb.getSheetAt(0).getRow(0).getCell(2).toString());
+	}
+
+	/**
+	 *  The maximum length of cell contents (text) is 32,767 characters.
+	 * @throws IOException 
+	 */
+	public void testMaxTextLength() throws IOException{
+		Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+		Cell cell = sheet.createRow(0).createCell(0);
+
+		int maxlen = wb instanceof HSSFWorkbook ? 
+				SpreadsheetVersion.EXCEL97.getMaxTextLength()
+				: SpreadsheetVersion.EXCEL2007.getMaxTextLength();
+		assertEquals(32767, maxlen);
+
+		StringBuffer b = new StringBuffer() ;
+
+		// 32767 is okay
+		for( int i = 0 ; i < maxlen ; i++ )
+		{
+			b.append( "X" ) ;
+		}
+		cell.setCellValue(b.toString());
+
+		b.append("X");
+		// 32768 produces an invalid XLS file
+		try {
+			cell.setCellValue(b.toString());
+			fail("Expected exception");
+		} catch (IllegalArgumentException e){
+			assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
+		}
+		wb.close();
+	}
 }
