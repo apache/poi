@@ -2716,4 +2716,14 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Workbook wb = openSample("57456.xls");
         wb.close();
     }
+    
+    @Test
+    public void test57163() throws IOException {
+        Workbook wb = openSample("57163.xls");
+        
+        while (wb.getNumberOfSheets() > 1) {
+            wb.removeSheetAt(1);
+        }
+        wb.close();
+    }
 }
