@@ -159,7 +159,7 @@ public final class Table extends ShapeGroup {
                 return delta;
             }
         });
-        int y0 = -1;
+        int y0 = (sh.length > 0) ? sh[0].getAnchor().y - 1 : -1;
         int maxrowlen = 0;
         ArrayList lst = new ArrayList();
         ArrayList row = null;
