@@ -19,11 +19,16 @@ package org.apache.poi.hslf.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.SlideShow;
+import org.junit.Test;
 
 /**
  * Test <code>Table</code> object.
@@ -31,6 +36,7 @@ import org.apache.poi.hslf.usermodel.SlideShow;
  * @author Yegor Kozlov
  */
 public final class TestTable extends TestCase {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Test that ShapeFactory works properly and returns <code>Table</code>
@@ -99,5 +105,31 @@ public final class TestTable extends TestCase {
         } catch (IllegalArgumentException e){
 
         }
+    }
+    
+    /**
+     * Bug 57820: initTable throws NullPointerException
+     * when the table is positioned with its top at -1
+     */
+    @Test
+    public void test57820() throws Exception {
+        SlideShow ppt = new SlideShow(new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt")));
+
+        Slide[] slides = ppt.getSlides();
+        assertEquals(1, slides.length);
+
+        Shape[] shapes = slides[0].getShapes(); //throws NullPointerException
+
+        Table tbl = null;
+        for(int idx = 0; idx < shapes.length; idx++) {
+            if(shapes[idx] instanceof Table) {
+                tbl = (Table)shapes[idx];
+                break;
+            }
+        }
+
+        assertNotNull(tbl);
+
+        assertEquals(-1, tbl.getAnchor().y);
     }
 }
