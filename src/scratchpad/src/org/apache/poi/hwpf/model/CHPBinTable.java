@@ -53,7 +53,7 @@ public class CHPBinTable
             .getLogger( CHPBinTable.class );
 
   /** List of character properties.*/
-  protected ArrayList<CHPX> _textRuns = new ArrayList<CHPX>();
+  protected List<CHPX> _textRuns = new ArrayList<CHPX>();
 
   public CHPBinTable()
   {
@@ -498,7 +498,7 @@ public class CHPBinTable
         int endingFc = translator.getByteIndex( _textRuns.get(
                 _textRuns.size() - 1 ).getEnd() );
 
-    ArrayList<CHPX> overflow = _textRuns;
+    List<CHPX> overflow = _textRuns;
     do
     {
       CHPX startingProp = overflow.get(0);

@@ -17,7 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -62,7 +62,7 @@ public final class TestRange extends TestCase
         HWPFDocument hwpfDocument = new HWPFDocument( POIDataSamples
                 .getDocumentInstance().openResourceAsStream( "Bug46817.doc" ) );
 
-        final ArrayList<SEPX> sections = hwpfDocument.getSectionTable()
+        final List<SEPX> sections = hwpfDocument.getSectionTable()
                 .getSections();
         assertEquals( sections.size(), 1 );
 

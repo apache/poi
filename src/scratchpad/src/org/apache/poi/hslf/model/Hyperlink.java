@@ -152,7 +152,7 @@ public final class Hyperlink {
      * @return found hyperlinks or <code>null</code> if not found
      */
     protected static Hyperlink[] find(TextRun run){
-        ArrayList lst = new ArrayList();
+        List<Hyperlink> lst = new ArrayList<Hyperlink>();
         SlideShow ppt = run.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
@@ -177,7 +177,7 @@ public final class Hyperlink {
      * @return found hyperlink or <code>null</code>
      */
     protected static Hyperlink find(Shape shape){
-        ArrayList lst = new ArrayList();
+        List<Hyperlink> lst = new ArrayList<Hyperlink>();
         SlideShow ppt = shape.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
@@ -195,10 +195,10 @@ public final class Hyperlink {
             }
         }
 
-        return lst.size() == 1 ? (Hyperlink)lst.get(0) : null;
+        return lst.size() == 1 ? lst.get(0) : null;
     }
 
-    private static void find(Record[] records, ExObjList exobj, List out){
+    private static void find(Record[] records, ExObjList exobj, List<Hyperlink> out){
         for (int i = 0; i < records.length; i++) {
             //see if we have InteractiveInfo in the textrun's records
             if( records[i] instanceof InteractiveInfo){
