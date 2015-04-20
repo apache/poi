@@ -142,7 +142,7 @@ public final class TestSmallDocumentBlock extends TestCase {
     {
         for (int j = 0; j <= 8; j++)
         {
-            List foo = new ArrayList();
+            List<Object> foo = new ArrayList<Object>();
 
             for (int k = 0; k < j; k++)
             {
