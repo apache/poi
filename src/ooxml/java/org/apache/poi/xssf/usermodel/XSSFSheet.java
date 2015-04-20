@@ -2596,11 +2596,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<XSSFComment, Integer>(new Comparator<XSSFComment>() {
 			public int compare(XSSFComment o1, XSSFComment o2) {
-				int row1 = new CellReference(o1.getCTComment().getRef()).getRow();
-				int row2 = new CellReference(o2.getCTComment().getRef()).getRow();
+				int row1 = o1.getRow();
+				int row2 = o2.getRow();
 				
 				if(row1 == row2) {
-					return 0;
+					// ordering is not important when row is equal, but don't return zero to still 
+					// get multiple comments per row into the map
+					return o1.hashCode() - o2.hashCode();
 				}
 
 				// when shifting down, sort higher row-values first
