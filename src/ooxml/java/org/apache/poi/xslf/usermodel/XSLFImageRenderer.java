@@ -99,6 +99,10 @@ public class XSLFImageRenderer {
         } catch (Exception e) {
             return false;
         }
+        
+        if(img == null) {
+        	return false;
+        }
 
         int iw = img.getWidth();
 		int ih = img.getHeight();
