@@ -850,7 +850,7 @@ public abstract class AbstractWordConverter
             String[] values = cr.getDropDownListValues();
             Integer defIndex = cr.getDropDownListDefaultItemIndex();
 
-            if ( values != null )
+            if ( values != null && values.length > 0 )
             {
                 processDropDownList( currentBlock, cr, values,
                         defIndex == null ? -1 : defIndex.intValue() );
