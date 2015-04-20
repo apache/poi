@@ -167,6 +167,7 @@ class RenderableShape {
         return paint;
     }
 
+    @SuppressWarnings("unchecked")
     private Paint createLinearGradientPaint(
             Graphics2D graphics,
             CTGradientFillProperties gradFill, Rectangle2D anchor,
@@ -224,10 +225,12 @@ class RenderableShape {
         // Trick to return GradientPaint on JDK 1.5 and LinearGradientPaint on JDK 1.6+
         Paint paint;
         try {
-            Class clz = Class.forName("java.awt.LinearGradientPaint");
-            Class clzCycleMethod = Class.forName("java.awt.MultipleGradientPaint$CycleMethod");
-            Class clzColorSpaceType = Class.forName("java.awt.MultipleGradientPaint$ColorSpaceType");
-            Constructor c =
+            Class<?> clz = Class.forName("java.awt.LinearGradientPaint");
+            @SuppressWarnings("rawtypes")
+			Class clzCycleMethod = Class.forName("java.awt.MultipleGradientPaint$CycleMethod");
+            @SuppressWarnings("rawtypes")
+			Class clzColorSpaceType = Class.forName("java.awt.MultipleGradientPaint$ColorSpaceType");
+            Constructor<?> c =
                     clz.getConstructor(Point2D.class, Point2D.class, float[].class, Color[].class,
                             clzCycleMethod, clzColorSpaceType, AffineTransform.class);
             paint = (Paint) c.newInstance(p1, p2, fractions, colors,
@@ -298,8 +301,8 @@ class RenderableShape {
         // Trick to return GradientPaint on JDK 1.5 and RadialGradientPaint on JDK 1.6+
         Paint paint;
         try {
-            Class clz = Class.forName("java.awt.RadialGradientPaint");
-            Constructor c =
+            Class<?> clz = Class.forName("java.awt.RadialGradientPaint");
+            Constructor<?> c =
                     clz.getConstructor(Point2D.class, float.class,
                             float[].class, Color[].class);
             paint = (Paint) c.newInstance(pCenter, radius, fractions, colors);
