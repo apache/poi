@@ -332,4 +332,38 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             wb.removeSheetAt(sn);
         }
     }
+
+    public void testBug57828_OnlyOneCommentShiftedInRow() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx");
+        XSSFSheet sheet = wb.getSheetAt(0);
+
+        Comment comment1 = sheet.getCellComment(2, 1);
+        assertNotNull(comment1);
+
+        Comment comment2 = sheet.getCellComment(2, 2);
+        assertNotNull(comment2);
+
+        Comment comment3 = sheet.getCellComment(1, 1);
+        assertNull("NO comment in (1,1) and it should be null", comment3);
+
+        sheet.shiftRows(2, 2, -1);
+
+        comment3 = sheet.getCellComment(1, 1);
+        assertNotNull("Comment in (2,1) moved to (1,1) so its not null now.", comment3);
+
+        comment1 = sheet.getCellComment(2, 1);
+        assertNull("No comment currently in (2,1) and hence it is null", comment1);
+
+        comment2 = sheet.getCellComment(1, 2);
+        assertNotNull("Comment in (2,2) should have moved as well because of shift rows. But its not", comment2);
+        
+//        OutputStream stream = new FileOutputStream("/tmp/57828.xlsx");
+//        try {
+//        	wb.write(stream);
+//        } finally {
+//        	stream.close();
+//        }
+        
+        wb.close();
+    }
 }
