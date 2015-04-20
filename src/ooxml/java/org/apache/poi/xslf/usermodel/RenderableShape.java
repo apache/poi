@@ -576,7 +576,7 @@ class RenderableShape {
 
                 public Guide getAdjustValue(String name) {
                     CTPresetGeometry2D prst = _shape.getSpPr().getPrstGeom();
-                    if (prst.isSetAvLst()) {
+                    if (prst != null && prst.isSetAvLst()) {
                         for (CTGeomGuide g : prst.getAvLst().getGdArray()) {
                             if (g.getName().equals(name)) {
                                 return new Guide(g);
