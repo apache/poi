@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -1542,7 +1543,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.write(bos);
         byte secondSave[] = bos.toByteArray();
         
-        assertArrayEquals(firstSave, secondSave);
+        assertArrayEquals("Had: \n" + Arrays.toString(firstSave) + " and \n" + Arrays.toString(secondSave),  
+                firstSave, secondSave);
         
         wb.close();
     }
