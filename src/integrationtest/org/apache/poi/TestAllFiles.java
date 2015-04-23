@@ -234,6 +234,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
+        EXPECTED_FAILURES.add("poifs/unknown_properties.msg"); // POIFS properties corrupted
         
         // OOXML Strict is not yet supported, see bug #57699
         EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
@@ -296,12 +297,14 @@ public class TestAllFiles {
             } else {
                 // check if we expect failure for this file
                 if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                    System.out.println("Failed: " + file);
                     throw new Exception("While handling " + file, e);
                 }
             }
         } catch (Exception e) {
             // check if we expect failure for this file
             if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                System.out.println("Failed: " + file);
                 throw new Exception("While handling " + file, e);
             }
         }
