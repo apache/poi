@@ -34,33 +34,45 @@ public final class TestFileSystemBugs extends TestCase {
     public void testNotesOLE2Files() throws Exception {
         POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 
-        // Open the file up
-        POIFSFileSystem fs = new POIFSFileSystem(
-                _samples.openResourceAsStream("Notes.ole2")
-                );
+        // Open the file up with the two FileSystems
+        @SuppressWarnings("resource")
+        DirectoryNode[] roots = new DirectoryNode[] {
+                new POIFSFileSystem(
+                        _samples.openResourceAsStream("Notes.ole2")
+                ).getRoot(),
+                new NPOIFSFileSystem(
+                        _samples.openResourceAsStream("Notes.ole2")
+                ).getRoot()
+        };
 
         // Check the contents
-        assertEquals(1, fs.getRoot().getEntryCount());
+        for (DirectoryNode root : roots) {
+            assertEquals(1, root.getEntryCount());
 
-        Entry entry = fs.getRoot().getEntries().next();
-        assertTrue(entry.isDirectoryEntry());
-        assertTrue(entry instanceof DirectoryEntry);
+            Entry entry = root.getEntries().next();
+            assertTrue(entry.isDirectoryEntry());
+            assertTrue(entry instanceof DirectoryEntry);
 
-        // The directory lacks a name!
-        DirectoryEntry dir = (DirectoryEntry)entry;
-        assertEquals("", dir.getName());
+            // The directory lacks a name!
+            DirectoryEntry dir = (DirectoryEntry)entry;
+            assertEquals("", dir.getName());
 
-        // Has two children
-        assertEquals(2, dir.getEntryCount());
+            // Has two children
+            assertEquals(2, dir.getEntryCount());
 
-        // Check them
-        Iterator<Entry> it = dir.getEntries();
-        entry = it.next();
-        assertEquals(true, entry.isDocumentEntry());
-        assertEquals("\u0001Ole10Native", entry.getName());
+            // Check them
+            Iterator<Entry> it = dir.getEntries();
+            entry = it.next();
+            assertEquals(true, entry.isDocumentEntry());
+            assertEquals("\u0001Ole10Native", entry.getName());
 
-        entry = it.next();
-        assertEquals(true, entry.isDocumentEntry());
-        assertEquals("\u0001CompObj", entry.getName());
+            entry = it.next();
+            assertEquals(true, entry.isDocumentEntry());
+            assertEquals("\u0001CompObj", entry.getName());
+            
+            // Tidy
+            if (root.getNFileSystem() != null)
+                root.getNFileSystem().close();
+        }
     }
 }
