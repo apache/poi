@@ -17,7 +17,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -27,26 +29,40 @@ import org.apache.poi.POIDataSamples;
  * Tests bugs across both POIFSFileSystem and NPOIFSFileSystem
  */
 public final class TestFileSystemBugs extends TestCase {
+    protected static POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+    
+    protected List<NPOIFSFileSystem> openedFSs;
+    protected void tearDown() throws Exception {
+        if (openedFSs != null && !openedFSs.isEmpty()) {
+            for (NPOIFSFileSystem fs : openedFSs) {
+                try {
+                    fs.close();
+                } catch (Exception e) {
+                    System.err.println("Error closing FS: " + e);
+                }
+            }
+        }
+        openedFSs = null;
+    }
+    protected DirectoryNode[] openSample(String name) throws Exception {
+        POIFSFileSystem ofs = new POIFSFileSystem(
+                _samples.openResourceAsStream(name));
+        NPOIFSFileSystem nfs = new NPOIFSFileSystem(
+                _samples.openResourceAsStream(name));
+        
+        if (openedFSs == null) openedFSs = new ArrayList<NPOIFSFileSystem>();
+        openedFSs.add(nfs);
+        
+        return new DirectoryNode[] { ofs.getRoot(), nfs.getRoot() };
+    }
+
     /**
      * Test that we can open files that come via Lotus notes.
      * These have a top level directory without a name....
      */
     public void testNotesOLE2Files() throws Exception {
-        POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-
-        // Open the file up with the two FileSystems
-        @SuppressWarnings("resource")
-        DirectoryNode[] roots = new DirectoryNode[] {
-                new POIFSFileSystem(
-                        _samples.openResourceAsStream("Notes.ole2")
-                ).getRoot(),
-                new NPOIFSFileSystem(
-                        _samples.openResourceAsStream("Notes.ole2")
-                ).getRoot()
-        };
-
         // Check the contents
-        for (DirectoryNode root : roots) {
+        for (DirectoryNode root : openSample("Notes.ole2")) {
             assertEquals(1, root.getEntryCount());
 
             Entry entry = root.getEntries().next();
@@ -69,10 +85,6 @@ public final class TestFileSystemBugs extends TestCase {
             entry = it.next();
             assertEquals(true, entry.isDocumentEntry());
             assertEquals("\u0001CompObj", entry.getName());
-            
-            // Tidy
-            if (root.getNFileSystem() != null)
-                root.getNFileSystem().close();
         }
     }
 }
