@@ -44,15 +44,22 @@ public final class TestFileSystemBugs extends TestCase {
         }
         openedFSs = null;
     }
-    protected DirectoryNode[] openSample(String name) throws Exception {
-        POIFSFileSystem ofs = new POIFSFileSystem(
-                _samples.openResourceAsStream(name));
+    protected DirectoryNode[] openSample(String name, boolean oldFails) throws Exception {
         NPOIFSFileSystem nfs = new NPOIFSFileSystem(
                 _samples.openResourceAsStream(name));
-        
         if (openedFSs == null) openedFSs = new ArrayList<NPOIFSFileSystem>();
         openedFSs.add(nfs);
         
+        POIFSFileSystem ofs = null;
+        try {
+            ofs = new POIFSFileSystem(
+                _samples.openResourceAsStream(name));
+            if (oldFails) fail("POIFSFileSystem should have failed but didn't");
+        } catch (Exception e) {
+            if (!oldFails) throw e;
+        }
+
+        if (ofs == null) return new DirectoryNode[] { nfs.getRoot() };
         return new DirectoryNode[] { ofs.getRoot(), nfs.getRoot() };
     }
 
@@ -62,7 +69,7 @@ public final class TestFileSystemBugs extends TestCase {
      */
     public void testNotesOLE2Files() throws Exception {
         // Check the contents
-        for (DirectoryNode root : openSample("Notes.ole2")) {
+        for (DirectoryNode root : openSample("Notes.ole2", false)) {
             assertEquals(1, root.getEntryCount());
 
             Entry entry = root.getEntries().next();
@@ -85,6 +92,19 @@ public final class TestFileSystemBugs extends TestCase {
             entry = it.next();
             assertEquals(true, entry.isDocumentEntry());
             assertEquals("\u0001CompObj", entry.getName());
+        }
+    }
+    
+    /**
+     * Ensure that a file with a corrupted property in the
+     *  properties table can still be loaded, and the remaining
+     *  properties used
+     * Note - only works for NPOIFSFileSystem, POIFSFileSystem
+     *  can't cope with this level of corruption
+     */
+    public void testCorruptedProperties() throws Exception {
+        for (DirectoryNode root : openSample("unknown_properties.msg", true)) {
+            assertEquals(42, root.getEntryCount());
         }
     }
 }
