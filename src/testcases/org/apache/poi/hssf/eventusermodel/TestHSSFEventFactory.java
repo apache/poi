@@ -22,15 +22,19 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.FeatHdrRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * 
@@ -136,5 +140,64 @@ public final class TestHSSFEventFactory extends TestCase {
         fs = new POIFSFileSystem(openSample("WORKBOOK_in_capitals.xls"));
         factory = new HSSFEventFactory();
         factory.processWorkbookEvents(req, fs);
+	}
+	
+	public void testWithPasswordProtectedWorkbooks() throws Exception {
+        HSSFRequest req = new HSSFRequest();
+        MockHSSFListener mockListen = new MockHSSFListener();
+        req.addListenerForAllRecords(mockListen);
+        
+	    // Without a password, can't be read
+        Biff8EncryptionKey.setCurrentUserPassword(null);
+        POIFSFileSystem fs = new POIFSFileSystem(openSample("xor-encryption-abc.xls"));
+
+        HSSFEventFactory factory = new HSSFEventFactory();
+        try {
+            factory.processWorkbookEvents(req, fs);
+            fail("Shouldn't be able to process protected workbook without the password");
+        } catch (EncryptedDocumentException e) {}
+        
+        
+        // With the password, is properly processed
+        Biff8EncryptionKey.setCurrentUserPassword("abc");
+        
+        req = new HSSFRequest();
+        mockListen = new MockHSSFListener();
+        req.addListenerForAllRecords(mockListen);
+        factory.processWorkbookEvents(req, fs);
+        
+        // Check we got the sheet and the contents
+        Record[] recs = mockListen.getRecords();
+        assertTrue( recs.length > 50 );
+        
+        // Has one sheet, with values 1,2,3 in column A rows 1-3
+        boolean hasSheet=false, hasA1=false, hasA2=false, hasA3=false;
+        for (Record r : recs) {
+            if (r instanceof BoundSheetRecord) {
+                BoundSheetRecord bsr = (BoundSheetRecord)r;
+                assertEquals("Sheet1", bsr.getSheetname());
+                hasSheet = true;
+            }
+            if (r instanceof NumberRecord) {
+                NumberRecord nr = (NumberRecord)r;
+                if (nr.getColumn() == 0 && nr.getRow() == 0) {
+                    assertEquals(1, (int)nr.getValue());
+                    hasA1 = true;
+                }
+                if (nr.getColumn() == 0 && nr.getRow() == 1) {
+                    assertEquals(2, (int)nr.getValue());
+                    hasA2 = true;
+                }
+                if (nr.getColumn() == 0 && nr.getRow() == 2) {
+                    assertEquals(3, (int)nr.getValue());
+                    hasA3 = true;
+                }
+            }
+        }
+        
+        assertTrue("Sheet record not found", hasSheet);
+        assertTrue("Numeric record for A1 not found", hasA1);
+        assertTrue("Numeric record for A2 not found", hasA2);
+        assertTrue("Numeric record for A3 not found", hasA3);
 	}
 }	
