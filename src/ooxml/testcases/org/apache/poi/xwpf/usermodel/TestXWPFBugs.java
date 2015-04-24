@@ -88,4 +88,19 @@ public class TestXWPFBugs {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("56392.docx");
     	assertNotNull(doc);
     }
+    
+    /**
+     * Removing a run needs to remove it from both Runs and IRuns
+     */
+    @Test
+    public void test57829() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+        assertNotNull(doc);
+        assertEquals(3, doc.getParagraphs().size());
+        
+        for (XWPFParagraph paragraph : doc.getParagraphs()) {
+            paragraph.removeRun(0);
+            assertNotNull(paragraph.getText());
+        }
+    }
 }

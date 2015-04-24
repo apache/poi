@@ -1369,8 +1369,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public boolean removeRun(int pos){
         if (pos >= 0 && pos < paragraph.sizeOfRArray()) {
-            getCTP().removeR(pos);
+            // Remove the run from our high level lists
+            XWPFRun run = runs.get(pos);
             runs.remove(pos);
+            iruns.remove(run);
+            // Remove the run from the low-level XML
+            getCTP().removeR(pos);
             return true;
         }
         return false;
