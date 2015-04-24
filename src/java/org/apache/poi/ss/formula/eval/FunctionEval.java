@@ -154,6 +154,7 @@ public final class FunctionEval {
 
         retval[124] = TextFunction.FIND;
 
+        retval[126] = LogicalFunction.ISERR;
         retval[127] = LogicalFunction.ISTEXT;
         retval[128] = LogicalFunction.ISNUMBER;
         retval[129] = LogicalFunction.ISBLANK;

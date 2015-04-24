@@ -90,6 +90,27 @@ public abstract class LogicalFunction extends Fixed1ArgFunction {
 		}
 	};
 
+    /**
+     * Implementation of Excel <tt>ISERR()</tt> function.<p/>
+     *
+     * <b>Syntax</b>:<br/>
+     * <b>ISERR</b>(<b>value</b>)<p/>
+     *
+     * <b>value</b>  The value to be tested<p/>
+     *
+     * Returns the logical value <tt>TRUE</tt> if value refers to any error value except
+     * <tt>'#N/A'</tt>; otherwise, it returns <tt>FALSE</tt>.
+     */
+    public static final Function ISERR = new LogicalFunction() {
+        @Override
+        protected boolean evaluate(ValueEval arg) {
+            if (arg instanceof ErrorEval) {
+                return arg != ErrorEval.NA;
+            }
+            return false;
+        }
+    };
+
 	/**
 	 * Implementation for Excel ISNA() function.<p/>
 	 *
