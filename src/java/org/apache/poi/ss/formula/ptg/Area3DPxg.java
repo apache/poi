@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * <p>This is XSSF only, as it stores the sheet / book references
  *  in String form. The HSSF equivalent using indexes is {@link Area3DPtg}</p>
  */
-public final class Area3DPxg extends AreaPtgBase implements Pxg {
+public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
     private int externalWorkbookNumber = -1;
     private String firstSheetName;
     private String lastSheetName;
