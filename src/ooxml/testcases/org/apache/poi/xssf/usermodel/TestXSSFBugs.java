@@ -2367,4 +2367,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 		assertNotNull(bgColor);
 		assertEquals("FF00FFFF", fgColor.getARGBHex());
 	}
+
+    @Test
+    public void bug57642() throws Exception {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet s = wb.createSheet("TestSheet");
+        XSSFCell c = s.createRow(0).createCell(0);
+        c.setCellFormula("ISERROR(TestSheet!A1)");
+        c = s.createRow(1).createCell(1);
+        c.setCellFormula("ISERROR(B2)");
+
+        wb.setSheetName(0, "CSN");
+        c = s.getRow(0).getCell(0);
+        assertEquals("ISERROR(CSN!A1)", c.getCellFormula());
+        c = s.getRow(1).getCell(1);
+        assertEquals("ISERROR(B2)", c.getCellFormula());
+    }
 }
