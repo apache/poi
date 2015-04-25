@@ -1595,7 +1595,7 @@ under the License.
 
     <target name="osgi" depends="mvn-install">
        <echo message="Building OSGi bundle via Maven" />
-       <mvn:mvn pom="osgi/build.xml">
+       <mvn:mvn pom="osgi/pom.xml">
           <arg value="-Dpoi.version=${version.id}" />
           <arg value="install" />
        </mvn:mvn>
