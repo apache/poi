@@ -37,6 +37,10 @@
   </description>
   <url>http://poi.apache.org/</url>
   <version>${poi.version}</version>
+<!--
+  <version>3.12-beta2</version>
+  <version>@VERSION@</version>
+-->
 
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -107,7 +111,7 @@
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>5.0.0</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
@@ -134,7 +138,6 @@
             <Export-Package>
               org.apache.poi.*
             </Export-Package>
-<!--
             <Import-Package>
               !org.junit,
               *,
@@ -143,6 +146,7 @@
               org.bouncycastle.cert;resolution:=optional,
               org.bouncycastle.cert.ocsp;resolution:=optional,
               org.bouncycastle.cms.bc;resolution:=optional,
+              org.bouncycastle.cert.jcajce;resolution:=optional,
               org.bouncycastle.operator;resolution:=optional,
               org.bouncycastle.operator.bc;resolution:=optional,
               org.bouncycastle.tsp;resolution:=optional,
@@ -151,7 +155,6 @@
               schemasMicrosoftComOfficePowerpoint;resolution:=optional,
               schemasMicrosoftComOfficeWord;resolution:=optional,
             </Import-Package>
--->
           </instructions>
         </configuration>
       </plugin>
