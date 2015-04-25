@@ -1593,6 +1593,14 @@ under the License.
         <echo>Use ${dist.dir}/multisign.sh to create md5 checksums and GPG signatures</echo>
     </target>
 
+    <target name="osgi" depends="mvn-install">
+       <echo message="Building OSGi bundle via Maven" />
+       <mvn:mvn pom="osgi/build.xml">
+          <arg value="-Dpoi.version=${version.id}" />
+          <arg value="install" />
+       </mvn:mvn>
+    </target>
+
     <target name="dist" depends="clean, compile-all, test-all, site, jar, release-notes, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
