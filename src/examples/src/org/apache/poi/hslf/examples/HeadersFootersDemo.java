@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hslf.examples;
 
+import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.HSLFSlide;
 
 import java.io.FileOutputStream;
 

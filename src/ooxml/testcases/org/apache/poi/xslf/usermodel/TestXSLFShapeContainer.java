@@ -18,35 +18,40 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * test common operations on containers of shapes (sheets and groups of shapes)
  *
  * @author Yegor Kozlov
  */
-public class TestXSLFShapeContainer extends TestCase {
+public class TestXSLFShapeContainer {
 
+    @SuppressWarnings("unused")
+    @Test
     public void verifyContainer(XSLFShapeContainer container) {
         container.clear();
-        assertEquals(0, container.getShapes().length);
+        assertEquals(0, container.getShapes().size());
 
         XSLFGroupShape shape1 = container.createGroup();
-        assertEquals(1, container.getShapes().length);
+        assertEquals(1, container.getShapes().size());
 
         XSLFTextBox shape2 = container.createTextBox();
-        assertEquals(2, container.getShapes().length);
+        assertEquals(2, container.getShapes().size());
 
         XSLFAutoShape shape3 = container.createAutoShape();
-        assertEquals(3, container.getShapes().length);
+        assertEquals(3, container.getShapes().size());
 
         XSLFConnectorShape shape4 = container.createConnector();
-        assertEquals(4, container.getShapes().length);
+        assertEquals(4, container.getShapes().size());
 
         container.clear();
-        assertEquals(0, container.getShapes().length);
+        assertEquals(0, container.getShapes().size());
     }
 
+    @Test
     public void testSheet() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSheet sheet = ppt.createSlide();

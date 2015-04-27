@@ -23,8 +23,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.HSLFSlide;
-import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -75,12 +73,12 @@ public final class TestNumberedList2 extends TestCase {
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox1[0].getAutoNumberScheme());
 
 		
-		HSLFTextParagraph[] textRuns = s.getTextRuns();
+		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
 		assertEquals(2, textRuns.length);
 
-		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
 		assertEquals("List Item One\rList Item Two\rList Item Three", textRun.getRawText());
-		assertEquals(1, textRuns[0].getRichTextRuns().length);
+		assertEquals(1, textRuns[0].getTextRuns().length);
 		assertTrue(textRun.isBullet());
 
 		assertEquals("A numbered list may start at any number \rThis would be used as a continuation list on another page\rThis list should start with #6", textRuns[1].getRawText());
@@ -101,12 +99,12 @@ public final class TestNumberedList2 extends TestCase {
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getAutoNumberStartNumber());//Default value = 1 will be used 
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox[0].getAutoNumberScheme());
 			
-		HSLFTextParagraph[] textRuns = s.getTextRuns();
+		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
 		assertEquals(3, textRuns.length);
 
-		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
 		assertEquals("Bulleted list\rMore bullets", textRun.getRawText());
-		assertEquals(1, textRuns[0].getRichTextRuns().length);
+		assertEquals(1, textRuns[0].getTextRuns().length);
 		assertTrue(textRun.isBullet());
 
 		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", textRuns[1].getRawText());

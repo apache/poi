@@ -242,14 +242,14 @@ public class TestXSLFTextParagraph {
     @Test
     public void testThemeInheritance(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("prProps.pptx");
-        XSLFShape[] shapes = ppt.getSlides()[0].getShapes();
-        XSLFTextShape sh1 = (XSLFTextShape)shapes[0];
+        List<XSLFShape> shapes = ppt.getSlides().get(0).getShapes();
+        XSLFTextShape sh1 = (XSLFTextShape)shapes.get(0);
         assertEquals("Apache", sh1.getText());
         assertEquals(TextAlign.CENTER, sh1.getTextParagraphs().get(0).getTextAlign());
-        XSLFTextShape sh2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape sh2 = (XSLFTextShape)shapes.get(1);
         assertEquals("Software", sh2.getText());
         assertEquals(TextAlign.CENTER, sh2.getTextParagraphs().get(0).getTextAlign());
-        XSLFTextShape sh3 = (XSLFTextShape)shapes[2];
+        XSLFTextShape sh3 = (XSLFTextShape)shapes.get(2);
         assertEquals("Foundation", sh3.getText());
         assertEquals(TextAlign.CENTER, sh3.getTextParagraphs().get(0).getTextAlign());
     }
@@ -350,7 +350,7 @@ public class TestXSLFTextParagraph {
         XSLFTextRun r1 = p.addNewTextRun();
         r1.setText("Hello,");
         XSLFTextRun r2 = p.addLineBreak();
-        assertEquals("\n", r2.getText());
+        assertEquals("\n", r2.getRawText());
         r2.setFontSize(10.0);
         assertEquals(10.0, r2.getFontSize(), 0);
         XSLFTextRun r3 = p.addNewTextRun();

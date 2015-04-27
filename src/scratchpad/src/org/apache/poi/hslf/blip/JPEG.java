@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 
 /**
  * Represents a JPEG picture data in a PPT file
@@ -28,7 +28,7 @@ public final class JPEG extends Bitmap {
 
     /**
      * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.HSLFPictureShape#JPEG
+     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#JPEG
      */
     public int getType(){
         return HSLFPictureShape.JPEG;

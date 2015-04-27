@@ -25,12 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -69,7 +64,7 @@ import org.apache.poi.hslf.record.SlidePersistAtom;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -97,10 +92,10 @@ public final class HSLFSlideShow implements SlideShow {
 	private Document _documentRecord;
 
 	// Friendly objects for people to deal with
-	private SlideMaster[] _masters;
-	private TitleMaster[] _titleMasters;
-	private HSLFSlide[] _slides;
-	private HSLFNotes[] _notes;
+	private final List<HSLFSlideMaster> _masters = new ArrayList<HSLFSlideMaster>();
+	private final List<HSLFTitleMaster> _titleMasters = new ArrayList<HSLFTitleMaster>();
+	private final List<HSLFSlide> _slides = new ArrayList<HSLFSlide>();
+	private final List<HSLFNotes> _notes = new ArrayList<HSLFNotes>();
 	private FontCollection _fonts;
 
 	// For logging
@@ -310,27 +305,21 @@ public final class HSLFSlideShow implements SlideShow {
 		if (masterSLWT != null) {
 			masterSets = masterSLWT.getSlideAtomsSets();
 
-			ArrayList<SlideMaster> mmr = new ArrayList<SlideMaster>();
-			ArrayList<TitleMaster> tmr = new ArrayList<TitleMaster>();
-
 			for (SlideAtomsSet sas : masterSets) {
 				Record r = getCoreRecordForSAS(sas);
 				int sheetNo = sas.getSlidePersistAtom().getSlideIdentifier();
 				if (r instanceof org.apache.poi.hslf.record.Slide) {
-					TitleMaster master = new TitleMaster((org.apache.poi.hslf.record.Slide) r,
+					HSLFTitleMaster master = new HSLFTitleMaster((org.apache.poi.hslf.record.Slide) r,
 							sheetNo);
 					master.setSlideShow(this);
-					tmr.add(master);
+					_titleMasters.add(master);
 				} else if (r instanceof org.apache.poi.hslf.record.MainMaster) {
-					SlideMaster master = new SlideMaster((org.apache.poi.hslf.record.MainMaster) r,
+					HSLFSlideMaster master = new HSLFSlideMaster((org.apache.poi.hslf.record.MainMaster) r,
 							sheetNo);
 					master.setSlideShow(this);
-					mmr.add(master);
+					_masters.add(master);
 				}
 			}
-
-			_masters = mmr.toArray(new SlideMaster[mmr.size()]);
-			_titleMasters = tmr.toArray(new TitleMaster[tmr.size()]);
 		}
 
 		// Having sorted out the masters, that leaves the notes and slides
@@ -408,16 +397,14 @@ public final class HSLFSlideShow implements SlideShow {
 
 		// Finally, generate model objects for everything
 		// Notes first
-		_notes = new HSLFNotes[notesRecords.length];
-		for (int i = 0; i < _notes.length; i++) {
-		    if (notesRecords[i] != null) {
-    		    _notes[i] = new HSLFNotes(notesRecords[i]);
-    			_notes[i].setSlideShow(this);
-		    }
+		for (org.apache.poi.hslf.record.Notes n : notesRecords) {
+		    if (n == null) continue;
+		    HSLFNotes hn = new HSLFNotes(n);
+		    hn.setSlideShow(this);
+		    _notes.add(hn);
 		}
 		// Then slides
-		_slides = new HSLFSlide[slidesRecords.length];
-		for (int i = 0; i < _slides.length; i++) {
+		for (int i = 0; i < slidesRecords.length; i++) {
 			SlideAtomsSet sas = slidesSets[i];
 			int slideIdentifier = sas.getSlidePersistAtom().getSlideIdentifier();
 
@@ -429,15 +416,16 @@ public final class HSLFSlideShow implements SlideShow {
 			if (noteId != 0) {
 				Integer notesPos = slideIdToNotes.get(noteId);
 				if (notesPos != null) {
-					notes = _notes[notesPos];
+					notes = _notes.get(notesPos);
 				} else {
 					logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
 				}
 			}
 
 			// Now, build our slide
-			_slides[i] = new HSLFSlide(slidesRecords[i], notes, sas, slideIdentifier, (i + 1));
-			_slides[i].setSlideShow(this);
+			HSLFSlide hs = new HSLFSlide(slidesRecords[i], notes, sas, slideIdentifier, (i + 1));
+			hs.setSlideShow(this);
+			_slides.add(hs);
 		}
 	}
 
@@ -472,28 +460,30 @@ public final class HSLFSlideShow implements SlideShow {
 	/**
 	 * Returns an array of all the normal Slides found in the slideshow
 	 */
-	public HSLFSlide[] getSlides() {
+	@Override
+	public List<HSLFSlide> getSlides() {
 		return _slides;
 	}
 
 	/**
 	 * Returns an array of all the normal Notes found in the slideshow
 	 */
-	public HSLFNotes[] getNotes() {
+	public List<HSLFNotes> getNotes() {
 		return _notes;
 	}
 
 	/**
 	 * Returns an array of all the normal Slide Masters found in the slideshow
 	 */
-	public SlideMaster[] getSlidesMasters() {
+	@Override
+	public List<HSLFSlideMaster> getSlideMasters() {
 		return _masters;
 	}
-
+	
 	/**
 	 * Returns an array of all the normal Title Masters found in the slideshow
 	 */
-	public TitleMaster[] getTitleMasters() {
+	public List<HSLFTitleMaster> getTitleMasters() {
 		return _titleMasters;
 	}
 
@@ -573,12 +563,16 @@ public final class HSLFSlideShow implements SlideShow {
 		if (oldSlideNumber < 1 || newSlideNumber < 1) {
 			throw new IllegalArgumentException("Old and new slide numbers must be greater than 0");
 		}
-		if (oldSlideNumber > _slides.length || newSlideNumber > _slides.length) {
+		if (oldSlideNumber > _slides.size() || newSlideNumber > _slides.size()) {
 			throw new IllegalArgumentException(
 					"Old and new slide numbers must not exceed the number of slides ("
-							+ _slides.length + ")");
+							+ _slides.size() + ")");
 		}
 
+		_slides.get(newSlideNumber).setSlideNumber(oldSlideNumber);
+		_slides.get(oldSlideNumber).setSlideNumber(newSlideNumber);
+		Collections.swap(_slides, oldSlideNumber-1, newSlideNumber-1);
+		
 		// The order of slides is defined by the order of slide atom sets in the
 		// SlideListWithText container.
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
@@ -589,13 +583,9 @@ public final class HSLFSlideShow implements SlideShow {
 		sas[newSlideNumber - 1] = tmp;
 
 		ArrayList<Record> lst = new ArrayList<Record>();
-		for (int i = 0; i < sas.length; i++) {
-			lst.add(sas[i].getSlidePersistAtom());
-			Record[] r = sas[i].getSlideRecords();
-			for (int j = 0; j < r.length; j++) {
-				lst.add(r[j]);
-			}
-			_slides[i].setSlideNumber(i + 1);
+		for (SlideAtomsSet s : sas) {
+			lst.add(s.getSlidePersistAtom());
+			lst.addAll(Arrays.asList(s.getSlideRecords()));
 		}
 		Record[] r = lst.toArray(new Record[lst.size()]);
 		slwt.setChildRecord(r);
@@ -613,7 +603,7 @@ public final class HSLFSlideShow implements SlideShow {
 	 * @return the slide that was removed from the slide show.
 	 */
 	public HSLFSlide removeSlide(int index) {
-		int lastSlideIdx = _slides.length - 1;
+		int lastSlideIdx = _slides.size() - 1;
 		if (index < 0 || index > lastSlideIdx) {
 			throw new IllegalArgumentException("Slide index (" + index + ") is out of range (0.."
 					+ lastSlideIdx + ")");
@@ -622,26 +612,19 @@ public final class HSLFSlideShow implements SlideShow {
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
-		HSLFSlide removedSlide = null;
-		ArrayList<Record> records = new ArrayList<Record>();
-		ArrayList<SlideAtomsSet> sa = new ArrayList<SlideAtomsSet>();
-		ArrayList<HSLFSlide> sl = new ArrayList<HSLFSlide>();
+		List<Record> records = new ArrayList<Record>();
+		List<SlideAtomsSet> sa = Arrays.asList(sas);
 
-		ArrayList<HSLFNotes> nt = new ArrayList<HSLFNotes>();
-		for (HSLFNotes notes : getNotes())
-			nt.add(notes);
-
-		for (int i = 0, num = 0; i < _slides.length; i++) {
-			if (i != index) {
-				sl.add(_slides[i]);
-				sa.add(sas[i]);
-				_slides[i].setSlideNumber(num++);
-				records.add(sas[i].getSlidePersistAtom());
-				records.addAll(Arrays.asList(sas[i].getSlideRecords()));
-			} else {
-				removedSlide = _slides[i];
-				nt.remove(_slides[i].getNotesSheet());
-			}
+		HSLFSlide removedSlide = _slides.remove(index);
+		_notes.remove(removedSlide.getNotes());
+		sa.remove(index);
+		
+		int i=0;
+		for (HSLFSlide s : _slides) s.setSlideNumber(i++);
+		
+		for (SlideAtomsSet s : sa) {
+            records.add(s.getSlidePersistAtom());
+            records.addAll(Arrays.asList(s.getSlideRecords()));
 		}
 		if (sa.size() == 0) {
 			_documentRecord.removeSlideListWithText(slwt);
@@ -649,34 +632,29 @@ public final class HSLFSlideShow implements SlideShow {
 			slwt.setSlideAtomsSets(sa.toArray(new SlideAtomsSet[sa.size()]));
 			slwt.setChildRecord(records.toArray(new Record[records.size()]));
 		}
-		_slides = sl.toArray(new HSLFSlide[sl.size()]);
 
 		// if the removed slide had notes - remove references to them too
 
-		if (removedSlide != null) {
-			int notesId = removedSlide.getSlideRecord().getSlideAtom().getNotesID();
-			if (notesId != 0) {
-				SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
-				records = new ArrayList<Record>();
-				ArrayList<SlideAtomsSet> na = new ArrayList<SlideAtomsSet>();
-				for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
-					if (ns.getSlidePersistAtom().getSlideIdentifier() != notesId) {
-						na.add(ns);
-						records.add(ns.getSlidePersistAtom());
-						if (ns.getSlideRecords() != null)
-							records.addAll(Arrays.asList(ns.getSlideRecords()));
-					}
+        int notesId = (removedSlide != null) ? removedSlide.getSlideRecord().getSlideAtom().getNotesID() : 0;
+		if (notesId != 0) {
+			SlideListWithText nslwt = _documentRecord.getNotesSlideListWithText();
+			records = new ArrayList<Record>();
+			ArrayList<SlideAtomsSet> na = new ArrayList<SlideAtomsSet>();
+			for (SlideAtomsSet ns : nslwt.getSlideAtomsSets()) {
+				if (ns.getSlidePersistAtom().getSlideIdentifier() == notesId) continue;
+				na.add(ns);
+				records.add(ns.getSlidePersistAtom());
+				if (ns.getSlideRecords() != null) {
+					records.addAll(Arrays.asList(ns.getSlideRecords()));
 				}
-				if (na.size() == 0) {
-					_documentRecord.removeSlideListWithText(nslwt);
-				} else {
-					nslwt.setSlideAtomsSets(na.toArray(new SlideAtomsSet[na.size()]));
-					nslwt.setChildRecord(records.toArray(new Record[records.size()]));
-				}
-
+			}
+			if (na.isEmpty()) {
+				_documentRecord.removeSlideListWithText(nslwt);
+			} else {
+				nslwt.setSlideAtomsSets(na.toArray(new SlideAtomsSet[na.size()]));
+				nslwt.setChildRecord(records.toArray(new Record[records.size()]));
 			}
 		}
-		_notes = nt.toArray(new HSLFNotes[nt.size()]);
 
 		return removedSlide;
 	}
@@ -736,16 +714,13 @@ public final class HSLFSlideShow implements SlideShow {
 		slist.addSlidePersistAtom(sp);
 
 		// Create a new Slide
-		HSLFSlide slide = new HSLFSlide(sp.getSlideIdentifier(), sp.getRefID(), _slides.length + 1);
+		HSLFSlide slide = new HSLFSlide(sp.getSlideIdentifier(), sp.getRefID(), _slides.size() + 1);
 		slide.setSlideShow(this);
 		slide.onCreate();
 
 		// Add in to the list of Slides
-		HSLFSlide[] s = new HSLFSlide[_slides.length + 1];
-		System.arraycopy(_slides, 0, s, 0, _slides.length);
-		s[_slides.length] = slide;
-		_slides = s;
-		logger.log(POILogger.INFO, "Added slide " + _slides.length + " with ref " + sp.getRefID()
+		_slides.add(slide);
+		logger.log(POILogger.INFO, "Added slide " + _slides.size() + " with ref " + sp.getRefID()
 				+ " and identifier " + sp.getSlideIdentifier());
 
 		// Add the core records for this new Slide to the record tree
@@ -754,7 +729,7 @@ public final class HSLFSlideShow implements SlideShow {
 		sp.setRefID(psrId);
 		slideRecord.setSheetId(psrId);
 		
-		slide.setMasterSheet(_masters[0]);
+		slide.setMasterSheet(_masters.get(0));
 		// All done and added
 		return slide;
 	}
@@ -901,7 +876,7 @@ public final class HSLFSlideShow implements SlideShow {
 	 */
 	public HeadersFooters getSlideHeadersFooters() {
 		// detect if this ppt was saved in Office2007
-		String tag = getSlidesMasters()[0].getProgrammableTag();
+		String tag = getSlideMasters().get(0).getProgrammableTag();
 		boolean ppt2007 = "___PPT12".equals(tag);
 
 		HeadersFootersContainer hdd = null;
@@ -927,7 +902,7 @@ public final class HSLFSlideShow implements SlideShow {
 	 */
 	public HeadersFooters getNotesHeadersFooters() {
 		// detect if this ppt was saved in Office2007
-		String tag = getSlidesMasters()[0].getProgrammableTag();
+		String tag = getSlideMasters().get(0).getProgrammableTag();
 		boolean ppt2007 = "___PPT12".equals(tag);
 
 		HeadersFootersContainer hdd = null;
@@ -943,8 +918,8 @@ public final class HSLFSlideShow implements SlideShow {
 			hdd = new HeadersFootersContainer(HeadersFootersContainer.NotesHeadersFootersContainer);
 			newRecord = true;
 		}
-		if (ppt2007 && _notes.length > 0) {
-			return new HeadersFooters(hdd, _notes[0], newRecord, ppt2007);
+		if (ppt2007 && !_notes.isEmpty()) {
+			return new HeadersFooters(hdd, _notes.get(0), newRecord, ppt2007);
 		}
 		return new HeadersFooters(hdd, this, newRecord, ppt2007);
 	}
@@ -1010,10 +985,10 @@ public final class HSLFSlideShow implements SlideShow {
 	 *
 	 * @return 0-based index of the hyperlink
 	 */
-	public int addHyperlink(Hyperlink link) {
+	public int addHyperlink(HSLFHyperlink link) {
 		ExHyperlink ctrl = new ExHyperlink();
 		ExHyperlinkAtom obj = ctrl.getExHyperlinkAtom();
-        if(link.getType() == Hyperlink.LINK_SLIDENUMBER) {
+        if(link.getType() == HSLFHyperlink.LINK_SLIDENUMBER) {
             ctrl.setLinkURL(link.getAddress(), 0x30);
         } else {
             ctrl.setLinkURL(link.getAddress());
@@ -1159,5 +1134,16 @@ public final class HSLFSlideShow implements SlideShow {
 		logger.log(POILogger.INFO, "New slide/object ended up at " + slideOffset);
 
 		return psrId;
+    }
+
+    public MasterSheet<? extends Shape, ? extends SlideShow> createMasterSheet()
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Resources getResources() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

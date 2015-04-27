@@ -199,8 +199,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      *
      * @return an array of all shapes in this sheet
      */
-    public XSLFShape[] getShapes(){
-        return getShapeList().toArray(new XSLFShape[_shapes.size()]);
+    public List<XSLFShape> getShapes(){
+        return getShapeList();
     }
 
     /**
@@ -301,6 +301,9 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
         _spTree = null;
         _placeholders = null;
 
+        // fix-me: wth would this ever happen to work ...
+        
+        
         // first copy the source xml
         getSpTree().set(src.getSpTree());
 

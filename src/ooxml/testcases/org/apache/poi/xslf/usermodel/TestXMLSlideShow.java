@@ -16,23 +16,25 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
+import org.junit.Before;
+import org.junit.Test;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
-public class TestXMLSlideShow extends TestCase {
+public class TestXMLSlideShow {
    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
    private OPCPackage pack;
 
-   protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
       pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
    }
 
+   @Test
    public void testContainsMainContentType() throws Exception {
       boolean found = false;
       for(PackagePart part : pack.getParts()) {
@@ -43,6 +45,7 @@ public class TestXMLSlideShow extends TestCase {
       assertTrue(found);
    }
 
+   @Test
    public void testOpen() throws Exception {
       XMLSlideShow xml;
 
@@ -52,22 +55,20 @@ public class TestXMLSlideShow extends TestCase {
       assertNotNull(xml.getCTPresentation());
 
       // Check it has some slides
-      assertNotNull(xml.getSlides().length);
-      assertTrue(xml.getSlides().length > 0);
-
-      assertNotNull(xml.getSlideMasters().length);
-      assertTrue(xml.getSlideMasters().length > 0);
+      assertFalse(xml.getSlides().isEmpty());
+      assertFalse(xml.getSlideMasters().isEmpty());
    }
 
+   @Test
    @SuppressWarnings("deprecation")
    public void testSlideBasics() throws Exception {
       XMLSlideShow xml = new XMLSlideShow(pack);
 
       // Should have 1 master
-      assertEquals(1, xml.getSlideMasters().length);
+      assertEquals(1, xml.getSlideMasters().size());
 
       // Should have two sheets
-      assertEquals(2, xml.getSlides().length);
+      assertEquals(2, xml.getSlides().size());
 
       // Check they're as expected
       CTSlideIdListEntry[] slides = xml.getCTPresentation().getSldIdLst().getSldIdArray();
@@ -78,19 +79,19 @@ public class TestXMLSlideShow extends TestCase {
       assertEquals("rId3", slides[1].getId2());
 
       // Now get those objects
-      assertNotNull(xml.getSlides()[0]);
-      assertNotNull(xml.getSlides()[1]);
+      assertNotNull(xml.getSlides().get(0));
+      assertNotNull(xml.getSlides().get(1));
 
       // And check they have notes as expected
-      assertNotNull(xml.getSlides()[0].getNotes());
-      assertNotNull(xml.getSlides()[1].getNotes());
+      assertNotNull(xml.getSlides().get(0).getNotes());
+      assertNotNull(xml.getSlides().get(1).getNotes());
 
       // Next up look for the slide master
       CTSlideMasterIdListEntry[] masters = xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdArray();
 
       assertEquals(2147483648l, masters[0].getId());
       assertEquals("rId1", masters[0].getId2());
-      assertNotNull(xml.getSlideMasters()[0]);
+      assertNotNull(xml.getSlideMasters().get(0));
 
       // Finally look for the notes master
       CTNotesMasterIdListEntry notesMaster =
@@ -100,6 +101,7 @@ public class TestXMLSlideShow extends TestCase {
       assertNotNull(xml.getNotesMaster());
    }
 	
+   @Test
    public void testMetadataBasics() throws Exception {
       XMLSlideShow xml = new XMLSlideShow(pack);
 
@@ -114,6 +116,7 @@ public class TestXMLSlideShow extends TestCase {
       assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
    }
    
+   @Test
    public void testComments() throws Exception {
       // Default sample file has none
       XMLSlideShow xml = new XMLSlideShow(pack);
@@ -134,8 +137,9 @@ public class TestXMLSlideShow extends TestCase {
       assertEquals("XPVMWARE01", xmlComments.getCommentAuthors().getAuthorById(0).getName());
       
       // First two slides have comments
-      for (int i=0; i<xmlComments.getSlides().length; i++) {
-         XSLFSlide slide = xmlComments.getSlides()[i];
+      int i = -1;
+      for (XSLFSlide slide : xmlComments.getSlides()) {
+         i++;
          
          if(i == 0) {
             assertNotNull(slide.getComments());

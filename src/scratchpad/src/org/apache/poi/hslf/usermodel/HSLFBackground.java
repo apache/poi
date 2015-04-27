@@ -15,14 +15,24 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
+
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.sl.usermodel.Background;
+import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
- * Date: Apr 17, 2008
+ * Background shape
  *
  * @author Yegor Kozlov
  */
-public interface ShapeOutline {
-    java.awt.Shape getOutline(HSLFShape shape);
+public final class HSLFBackground extends HSLFShape implements Background {
 
+    protected HSLFBackground(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
+        super(escherRecord, parent);
+    }
+
+    protected EscherContainerRecord createSpContainer(boolean isChild) {
+        return null;
+    }
 }

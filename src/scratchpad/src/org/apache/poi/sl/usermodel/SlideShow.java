@@ -19,13 +19,20 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.List;
 
 public interface SlideShow {
-	Slide<? extends Shape, ? extends SlideShow> createSlide() throws IOException;
-	MasterSheet<? extends Shape, ? extends SlideShow> createMasterSheet() throws IOException;
+	Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>> createSlide() throws IOException;
 
-	Slide<? extends Shape, ? extends SlideShow>[] getSlides();
-	MasterSheet<? extends Shape, ? extends SlideShow>[] getMasterSheet();
+	List<? extends Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>> getSlides();
+
+    MasterSheet<? extends Shape, ? extends SlideShow> createMasterSheet() throws IOException;
+
+	/**
+     * Returns all slide masters.
+     * This doesn't include notes master and other arbitrary masters.
+     */
+	List<? extends MasterSheet<? extends Shape, ? extends SlideShow>> getSlideMasters();
 
 	Resources getResources();
 

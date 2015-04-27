@@ -15,21 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.apache.poi.ddf.EscherChildAnchorRecord;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.ddf.EscherSpgrRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
@@ -61,13 +52,9 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
         super(escherRecord, parent);
     }
 
-    /**
-     * @return the shapes contained in this group container
-     */
-    public HSLFShape[] getShapes() {
-        List<HSLFShape> shapeList = getShapeList();
-        HSLFShape[] shapes = shapeList.toArray(new HSLFShape[shapeList.size()]);
-        return shapes;
+    @Override
+    public List<HSLFShape> getShapes() {
+        return getShapeList();
     }
 
     /**
@@ -196,11 +183,11 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
         anchor.translate(dx, dy);
         setAnchor(anchor);
 
-        HSLFShape[] shape = getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            java.awt.Rectangle chanchor = shape[i].getAnchor();
+        
+        for (HSLFShape shape : getShapes()) {
+            java.awt.Rectangle chanchor = shape.getAnchor();
             chanchor.translate(dx, dy);
-            shape[i].setAnchor(chanchor);
+            shape.setAnchor(chanchor);
         }
     }
 
@@ -249,20 +236,8 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
      *
      * @return <code>null</code>.
      */
-     public Hyperlink getHyperlink(){
+     public HSLFHyperlink getHyperlink(){
         return null;
-    }
-
-    public void draw(Graphics2D graphics){
-
-        AffineTransform at = graphics.getTransform();
-
-        HSLFShape[] sh = getShapes();
-        for (int i = 0; i < sh.length; i++) {
-            sh[i].draw(graphics);
-        }
-
-        graphics.setTransform(at);
     }
 
     @Override
@@ -298,7 +273,7 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
             if(r instanceof EscherContainerRecord) {
                 // Create the Shape for it
                 EscherContainerRecord container = (EscherContainerRecord)r;
-                HSLFShape shape = ShapeFactory.createShape(container, this);
+                HSLFShape shape = HSLFShapeFactory.createShape(container, this);
                 shape.setSheet(getSheet());
                 shapeList.add( shape );
             } else {

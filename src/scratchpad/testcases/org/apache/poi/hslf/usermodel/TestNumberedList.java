@@ -23,8 +23,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.HSLFSlide;
-import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -70,12 +68,12 @@ public final class TestNumberedList extends TestCase {
 		assertNull(autoNumbers[1].getAutoNumberScheme());
 		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaLcParenRight == autoNumbers[2].getAutoNumberScheme());
 			
-		HSLFTextParagraph[] textRuns = s.getTextRuns();
+		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
 		assertEquals(2, textRuns.length);
 
-		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
 		assertEquals("titTe", textRun.getRawText());
-		assertEquals(1, textRuns[0].getRichTextRuns().length);
+		assertEquals(1, textRuns[0].getTextRuns().length);
 		assertFalse(textRun.isBullet());
 
 		assertEquals("This is a text placeholder that \rfollows the design pattern\rJust a test\rWithout any paragraph\rSecond paragraph first line c) ;\rSecond paragraph second line d) . \r", textRuns[1].getRawText());
@@ -106,12 +104,12 @@ public final class TestNumberedList extends TestCase {
 		assertNull(autoNumbers[1].getAutoNumberScheme());
 		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaUcPeriod == autoNumbers[2].getAutoNumberScheme());
 
-		final HSLFTextParagraph[] textRuns = s.getTextRuns();
+		final HSLFTextParagraph[] textRuns = s.getTextParagraphs();
 		assertEquals(2, textRuns.length);
 
-		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
 		assertEquals("Second Slide Title", textRun.getRawText());
-		assertEquals(1, textRuns[0].getRichTextRuns().length);
+		assertEquals(1, textRuns[0].getTextRuns().length);
 		assertFalse(textRun.isBullet());
 
 		assertEquals("This is a text placeholder that \rfollows the design pattern\rJust a test\rWithout any paragraph\rSecond paragraph first line c) ;\rSecond paragraph second line d) . \r", textRuns[1].getRawText());

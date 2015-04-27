@@ -21,10 +21,7 @@ package org.apache.poi.hslf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.HSLFShape;
-import org.apache.poi.hslf.model.HSLFSlide;
 import org.apache.poi.hslf.model.Table;
-import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.POIDataSamples;
 
 
@@ -48,12 +45,12 @@ public final class TestTable extends TestCase {
 		checkSlide(slides[0]);
 	}
 	private void checkSlide(final HSLFSlide s) {
-		HSLFTextParagraph[] textRuns = s.getTextRuns();
+		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
 		assertEquals(2, textRuns.length);
 
-		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
 		assertEquals("Table sample", textRun.getRawText().trim());
-		assertEquals(1, textRuns[0].getRichTextRuns().length);
+		assertEquals(1, textRuns[0].getTextRuns().length);
 		assertFalse(textRun.isBullet());
 
 		assertEquals("Dummy text", textRuns[1].getRawText());
@@ -66,7 +63,7 @@ public final class TestTable extends TestCase {
 		assertEquals(4, table.getNumberOfColumns());
 		assertEquals(6, table.getNumberOfRows());
 		for (int x = 0; x < 4; x ++) {
-			assertEquals("TH Cell " + (x + 1), table.getCell(0, x).getTextParagraph().getRawText());
+			assertEquals("TH Cell " + (x + 1), table.getCell(0, x).getTextParagraphs().getRawText());
 			for (int y = 1; y < 6; y++) {
 				assertEquals("Row " + y + ", Cell " + (x + 1), table.getCell(y, x).getText());
 			}

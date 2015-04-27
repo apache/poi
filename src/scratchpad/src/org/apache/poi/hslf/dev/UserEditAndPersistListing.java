@@ -20,12 +20,12 @@ package org.apache.poi.hslf.dev;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.CurrentUserAtom;
 import org.apache.poi.hslf.record.PersistPtrHolder;
 import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.util.LittleEndian;
 
 /**

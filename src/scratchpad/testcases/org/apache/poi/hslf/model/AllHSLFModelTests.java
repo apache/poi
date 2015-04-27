@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.model;
 
+import org.apache.poi.hslf.usermodel.TestTextRun;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

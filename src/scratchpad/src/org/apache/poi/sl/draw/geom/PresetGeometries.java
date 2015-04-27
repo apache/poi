@@ -19,8 +19,7 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 
 import javax.xml.bind.*;

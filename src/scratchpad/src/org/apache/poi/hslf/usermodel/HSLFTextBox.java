@@ -15,11 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.*;
 
 /**
  * Represents a TextFrame shape in PowerPoint.
@@ -79,13 +78,14 @@ public class HSLFTextBox extends HSLFTextShape {
         setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
         setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
 
-        _txtrun = createTextRun();
+        // init paragraphs
+        getTextParagraphs();
 
         return _escherContainer;
     }
 
     protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
-        setVerticalAlignment(HSLFTextBox.AnchorTop);
+        setVerticalAlignment(VerticalAlignment.TOP);
         setEscherProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20002);
     }
 

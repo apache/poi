@@ -16,8 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
 import java.util.List;
@@ -25,17 +27,18 @@ import java.util.List;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFShape extends TestCase {
+public class TestXSLFShape {
 
+    @Test
     public void testReadTextShapes() {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
-        XSLFSlide[] slides = ppt.getSlides();
+        List<XSLFSlide> slides = ppt.getSlides();
 
-        XSLFSlide slide1 = slides[0];
-        XSLFShape[] shapes1 = slide1.getShapes();
-        assertEquals(7, shapes1.length);
-        assertEquals("TextBox 3", shapes1[0].getShapeName());
-        XSLFAutoShape sh0 = (XSLFAutoShape) shapes1[0];
+        XSLFSlide slide1 = slides.get(0);
+        List<XSLFShape> shapes1 = slide1.getShapes();
+        assertEquals(7, shapes1.size());
+        assertEquals("TextBox 3", shapes1.get(0).getShapeName());
+        XSLFAutoShape sh0 = (XSLFAutoShape) shapes1.get(0);
         assertEquals("Learning PPTX", sh0.getText());
         List<XSLFTextParagraph> paragraphs0 = sh0.getTextParagraphs();
         assertEquals(1, paragraphs0.size());
@@ -43,28 +46,28 @@ public class TestXSLFShape extends TestCase {
         assertEquals("Learning PPTX", p0.getText());
         assertEquals(1, p0.getTextRuns().size());
         XSLFTextRun r0 = p0.getTextRuns().get(0);
-        assertEquals("Learning PPTX", r0.getText());
+        assertEquals("Learning PPTX", r0.getRawText());
 
-        XSLFSlide slide2 = slides[1];
-        XSLFShape[] shapes2 = slide2.getShapes();
-        assertTrue(shapes2[0] instanceof XSLFAutoShape);
-        assertEquals("PPTX Title", ((XSLFAutoShape) shapes2[0]).getText());
-        XSLFAutoShape sh1 = (XSLFAutoShape) shapes2[0];
+        XSLFSlide slide2 = slides.get(1);
+        List<XSLFShape> shapes2 = slide2.getShapes();
+        assertTrue(shapes2.get(0) instanceof XSLFAutoShape);
+        assertEquals("PPTX Title", ((XSLFAutoShape) shapes2.get(0)).getText());
+        XSLFAutoShape sh1 = (XSLFAutoShape) shapes2.get(0);
         List<XSLFTextParagraph> paragraphs1 = sh1.getTextParagraphs();
         assertEquals(1, paragraphs1.size());
         XSLFTextParagraph p1 = paragraphs1.get(0);
         assertEquals("PPTX Title", p1.getText());
         List<XSLFTextRun> r2 = paragraphs1.get(0).getTextRuns();
         assertEquals(2, r2.size());
-        assertEquals("PPTX ", r2.get(0).getText());
-        assertEquals("Title", r2.get(1).getText());
+        assertEquals("PPTX ", r2.get(0).getRawText());
+        assertEquals("Title", r2.get(1).getRawText());
         // Title is underlined
         assertEquals(STTextUnderlineType.SNG, r2.get(1).getXmlObject().getRPr().getU());
 
 
-        assertTrue(shapes2[1] instanceof XSLFAutoShape);
-        assertEquals("Subtitle\nAnd second line", ((XSLFAutoShape) shapes2[1]).getText());
-        XSLFAutoShape sh2 = (XSLFAutoShape) shapes2[1];
+        assertTrue(shapes2.get(1) instanceof XSLFAutoShape);
+        assertEquals("Subtitle\nAnd second line", ((XSLFAutoShape) shapes2.get(1)).getText());
+        XSLFAutoShape sh2 = (XSLFAutoShape) shapes2.get(1);
         List<XSLFTextParagraph> paragraphs2 = sh2.getTextParagraphs();
         assertEquals(2, paragraphs2.size());
         assertEquals("Subtitle", paragraphs2.get(0).getText());
@@ -73,20 +76,20 @@ public class TestXSLFShape extends TestCase {
         assertEquals(1, paragraphs2.get(0).getTextRuns().size());
         assertEquals(1, paragraphs2.get(1).getTextRuns().size());
 
-        assertEquals("Subtitle", paragraphs2.get(0).getTextRuns().get(0).getText());
+        assertEquals("Subtitle", paragraphs2.get(0).getTextRuns().get(0).getRawText());
         assertTrue(paragraphs2.get(0).getTextRuns().get(0).getXmlObject().getRPr().getB());
-        assertEquals("And second line", paragraphs2.get(1).getTextRuns().get(0).getText());
+        assertEquals("And second line", paragraphs2.get(1).getTextRuns().get(0).getRawText());
     }
 
     public void testCreateShapes() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
-        assertEquals(0, slide.getShapes().length);
+        assertTrue(slide.getShapes().isEmpty());
 
         XSLFTextBox textBox = slide.createTextBox();
 
-        assertEquals(1, slide.getShapes().length);
-        assertSame(textBox, slide.getShapes()[0]);
+        assertEquals(1, slide.getShapes().size());
+        assertSame(textBox, slide.getShapes().get(0));
 
         assertEquals("", textBox.getText());
         assertEquals(0, textBox.getTextParagraphs().size());

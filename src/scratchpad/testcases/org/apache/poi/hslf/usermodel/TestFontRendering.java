@@ -39,7 +39,6 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.model.HSLFSlide;
 import org.apache.poi.hslf.model.TextPainter;
 import org.apache.poi.util.TempFile;
 import org.junit.Ignore;

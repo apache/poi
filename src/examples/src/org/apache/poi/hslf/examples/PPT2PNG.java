@@ -21,6 +21,7 @@ import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.model.*;
 
 import javax.imageio.ImageIO;
+
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.awt.*;

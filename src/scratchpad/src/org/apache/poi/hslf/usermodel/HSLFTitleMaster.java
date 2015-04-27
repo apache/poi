@@ -15,34 +15,36 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.SlideAtom;
 
 /**
  * Title masters define the design template for slides with a Title Slide layout.
  *
  * @author Yegor Kozlov
  */
-public final class TitleMaster extends HSLFMasterSheet {
-    private HSLFTextParagraph[] _runs;
+public final class HSLFTitleMaster extends HSLFMasterSheet {
+    private final List<List<HSLFTextParagraph>> _runs = new ArrayList<List<HSLFTextParagraph>>();
 
     /**
      * Constructs a TitleMaster
      *
      */
-    public TitleMaster(org.apache.poi.hslf.record.Slide record, int sheetNo) {
+    public HSLFTitleMaster(org.apache.poi.hslf.record.Slide record, int sheetNo) {
         super(record, sheetNo);
 
-        _runs = findTextRuns(getPPDrawing());
-        for (int i = 0; i < _runs.length; i++) _runs[i].setSheet(this);
+        _runs.addAll(HSLFTextParagraph.findTextParagraphs(getPPDrawing()));
     }
 
     /**
      * Returns an array of all the TextRuns found
      */
-    public HSLFTextParagraph[] getTextRuns() {
+    public List<List<HSLFTextParagraph>> getTextParagraphs() {
         return _runs;
     }
 
@@ -58,11 +60,11 @@ public final class TitleMaster extends HSLFMasterSheet {
      * Returns the slide master for this title master.
      */
     public HSLFMasterSheet getMasterSheet(){
-        SlideMaster[] master = getSlideShow().getSlidesMasters();
+        List<HSLFSlideMaster> master = getSlideShow().getSlideMasters();
         SlideAtom sa = ((org.apache.poi.hslf.record.Slide)getSheetContainer()).getSlideAtom();
         int masterId = sa.getMasterID();
-        for (int i = 0; i < master.length; i++) {
-            if (masterId == master[i]._getSheetNumber()) return master[i];
+        for (HSLFSlideMaster sm : master) {
+            if (masterId == sm._getSheetNumber()) return sm;
         }
         return null;
     }

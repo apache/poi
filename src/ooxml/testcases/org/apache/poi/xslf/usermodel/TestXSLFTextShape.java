@@ -16,9 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Color;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import java.awt.Color;
+import java.util.List;
 
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
@@ -30,28 +31,28 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTextShape extends TestCase {
+public class TestXSLFTextShape {
 
     public void testLayouts(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
 
-        XSLFSlide[] slide = ppt.getSlides();
+        List<XSLFSlide> slide = ppt.getSlides();
 
-        verifySlide1(slide[0]);
-        verifySlide2(slide[1]);
-        verifySlide3(slide[2]);
-        verifySlide4(slide[3]);
-        verifySlide7(slide[6]);
-        verifySlide8(slide[7]);
-        verifySlide10(slide[9]);
+        verifySlide1(slide.get(0));
+        verifySlide2(slide.get(1));
+        verifySlide3(slide.get(2));
+        verifySlide4(slide.get(3));
+        verifySlide7(slide.get(6));
+        verifySlide8(slide.get(7));
+        verifySlide10(slide.get(9));
     }
 
     void verifySlide1(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         assertEquals("Title Slide",layout.getName());
 
-        XSLFTextShape shape1 = (XSLFTextShape)shapes[0];
+        XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getCTPlaceholder();
         assertEquals(STPlaceholderType.CTR_TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -68,20 +69,20 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape1.getRightInset()); // 0.1"
-        assertEquals(3.6, shape1.getTopInset());  // 0.05"
-        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape1.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
         assertEquals("Centered Title", shape1.getText());
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(44.0, r1.getFontSize());
+        assertEquals(44.0, r1.getFontSize(), 0);
         assertEquals(Color.black, r1.getFontColor());
 
-        XSLFTextShape shape2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getCTPlaceholder();
         assertEquals(STPlaceholderType.SUB_TITLE, ph2.getType());
         // anchor is not defined in the shape
@@ -98,26 +99,26 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape2.getRightInset()); // 0.1"
-        assertEquals(3.6, shape2.getTopInset());  // 0.05"
-        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape2.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         assertEquals("subtitle", shape2.getText());
         XSLFTextRun r2 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r2.getFontFamily());
-        assertEquals(32.0, r2.getFontSize());
+        assertEquals(32.0, r2.getFontSize(), 0);
         // TODO fix calculation of tint
         //assertEquals(new Color(137, 137, 137), r2.getFontColor());
     }
 
     void verifySlide2(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         assertEquals("Title and Content",layout.getName());
 
-        XSLFTextShape shape1 = (XSLFTextShape)shapes[0];
+        XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getCTPlaceholder();
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -137,20 +138,20 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape1.getRightInset()); // 0.1"
-        assertEquals(3.6, shape1.getTopInset());  // 0.05"
-        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape1.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
         assertEquals("Title", shape1.getText());
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(44.0, r1.getFontSize());
+        assertEquals(44.0, r1.getFontSize(), 0);
         assertEquals(Color.black, r1.getFontColor());
 
-        XSLFTextShape shape2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getCTPlaceholder();
         assertFalse(ph2.isSetType()); // <p:ph idx="1"/>
         assertTrue(ph2.isSetIdx());
@@ -172,54 +173,54 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape2.getRightInset()); // 0.1"
-        assertEquals(3.6, shape2.getTopInset());  // 0.05"
-        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape2.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(0, pr1.getParentParagraph().getLevel());
-        assertEquals("Content", pr1.getText());
+        assertEquals("Content", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
-        assertEquals(32.0, pr1.getFontSize());
-        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin()); 
+        assertEquals(32.0, pr1.getFontSize(), 0);
+        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin(), 0); 
         assertEquals("\u2022", pr1.getParentParagraph().getBulletCharacter()); 
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr2 = shape2.getTextParagraphs().get(1).getTextRuns().get(0);
         assertEquals(1, pr2.getParentParagraph().getLevel());
-        assertEquals("Level 2", pr2.getText());
+        assertEquals("Level 2", pr2.getRawText());
         assertEquals("Calibri", pr2.getFontFamily());
-        assertEquals(28.0, pr2.getFontSize());
-        assertEquals(58.5, pr2.getParentParagraph().getLeftMargin());
+        assertEquals(28.0, pr2.getFontSize(), 0);
+        assertEquals(58.5, pr2.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2013", pr2.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr2.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr3 = shape2.getTextParagraphs().get(2).getTextRuns().get(0);
         assertEquals(2, pr3.getParentParagraph().getLevel());
-        assertEquals("Level 3", pr3.getText());
+        assertEquals("Level 3", pr3.getRawText());
         assertEquals("Calibri", pr3.getFontFamily());
-        assertEquals(24.0, pr3.getFontSize());
-        assertEquals(90.0, pr3.getParentParagraph().getLeftMargin());
+        assertEquals(24.0, pr3.getFontSize(), 0);
+        assertEquals(90.0, pr3.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2022", pr3.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr3.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr4 = shape2.getTextParagraphs().get(3).getTextRuns().get(0);
         assertEquals(3, pr4.getParentParagraph().getLevel());
-        assertEquals("Level 4", pr4.getText());
+        assertEquals("Level 4", pr4.getRawText());
         assertEquals("Calibri", pr4.getFontFamily());
-        assertEquals(20.0, pr4.getFontSize());
-        assertEquals(126.0, pr4.getParentParagraph().getLeftMargin());
+        assertEquals(20.0, pr4.getFontSize(), 0);
+        assertEquals(126.0, pr4.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2013", pr4.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr4.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr5 = shape2.getTextParagraphs().get(4).getTextRuns().get(0);
         assertEquals(4, pr5.getParentParagraph().getLevel());
-        assertEquals("Level 5", pr5.getText());
+        assertEquals("Level 5", pr5.getRawText());
         assertEquals("Calibri", pr5.getFontFamily());
-        assertEquals(20.0, pr5.getFontSize());
-        assertEquals(162.0, pr5.getParentParagraph().getLeftMargin());
+        assertEquals(20.0, pr5.getFontSize(), 0);
+        assertEquals(162.0, pr5.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u00bb", pr5.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr5.getParentParagraph().getBulletFont());
 
@@ -227,10 +228,10 @@ public class TestXSLFTextShape extends TestCase {
 
     void verifySlide3(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         assertEquals("Section Header",layout.getName());
 
-        XSLFTextShape shape1 = (XSLFTextShape)shapes[0];
+        XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getCTPlaceholder();
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -247,10 +248,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape1.getRightInset()); // 0.1"
-        assertEquals(3.6, shape1.getTopInset());  // 0.05"
-        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape1.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -258,13 +259,13 @@ public class TestXSLFTextShape extends TestCase {
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(TextAlign.LEFT, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(40.0, r1.getFontSize());
+        assertEquals(40.0, r1.getFontSize(), 0);
         assertEquals(Color.black, r1.getFontColor());
         assertTrue(r1.isBold());
         assertFalse(r1.isItalic());
-        assertFalse(r1.isUnderline());
+        assertFalse(r1.isUnderlined());
 
-        XSLFTextShape shape2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getCTPlaceholder();
         assertEquals(STPlaceholderType.BODY, ph2.getType());
         // anchor is not defined in the shape
@@ -281,27 +282,27 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape2.getRightInset()); // 0.1"
-        assertEquals(3.6, shape2.getTopInset());  // 0.05"
-        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape2.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.BOTTOM, shape2.getVerticalAlignment());
 
         assertEquals("Section Header", shape2.getText());
         XSLFTextRun r2 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(TextAlign.LEFT, r2.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r2.getFontFamily());
-        assertEquals(20.0, r2.getFontSize());
+        assertEquals(20.0, r2.getFontSize(), 0);
         // TODO fix calculation of tint
         //assertEquals(new Color(137, 137, 137), r2.getFontColor());
     }
 
     void verifySlide4(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         assertEquals("Two Content",layout.getName());
 
-        XSLFTextShape shape1 = (XSLFTextShape)shapes[0];
+        XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getCTPlaceholder();
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -321,10 +322,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape1.getRightInset()); // 0.1"
-        assertEquals(3.6, shape1.getTopInset());  // 0.05"
-        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape1.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -332,10 +333,10 @@ public class TestXSLFTextShape extends TestCase {
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(44.0, r1.getFontSize());
+        assertEquals(44.0, r1.getFontSize(), 0);
         assertEquals(Color.black, r1.getFontColor());
 
-        XSLFTextShape shape2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getCTPlaceholder();
         assertFalse(ph2.isSetType());
         assertTrue(ph2.isSetIdx());
@@ -354,18 +355,18 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape2.getRightInset()); // 0.1"
-        assertEquals(3.6, shape2.getTopInset());  // 0.05"
-        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape2.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(0, pr1.getParentParagraph().getLevel());
-        assertEquals("Left", pr1.getText());
+        assertEquals("Left", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
-        assertEquals(28.0, pr1.getFontSize());
-        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin());
+        assertEquals(28.0, pr1.getFontSize(), 0);
+        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2022", pr1.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
@@ -373,8 +374,8 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(1, pr2.getParentParagraph().getLevel());
         assertEquals("Level 2", pr2.getParentParagraph().getText());
         assertEquals("Calibri", pr2.getFontFamily());
-        assertEquals(24.0, pr2.getFontSize());
-        assertEquals(58.5, pr2.getParentParagraph().getLeftMargin());
+        assertEquals(24.0, pr2.getFontSize(), 0);
+        assertEquals(58.5, pr2.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2013", pr2.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr2.getParentParagraph().getBulletFont());
 
@@ -382,8 +383,8 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(2, pr3.getParentParagraph().getLevel());
         assertEquals("Level 3", pr3.getParentParagraph().getText());
         assertEquals("Calibri", pr3.getFontFamily());
-        assertEquals(20.0, pr3.getFontSize());
-        assertEquals(90.0, pr3.getParentParagraph().getLeftMargin());
+        assertEquals(20.0, pr3.getFontSize(), 0);
+        assertEquals(90.0, pr3.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2022", pr3.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr3.getParentParagraph().getBulletFont());
 
@@ -391,31 +392,32 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(3, pr4.getParentParagraph().getLevel());
         assertEquals("Level 4", pr4.getParentParagraph().getText());
         assertEquals("Calibri", pr4.getFontFamily());
-        assertEquals(18.0, pr4.getFontSize());
-        assertEquals(126.0, pr4.getParentParagraph().getLeftMargin());
+        assertEquals(18.0, pr4.getFontSize(), 0);
+        assertEquals(126.0, pr4.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2013", pr4.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr4.getParentParagraph().getBulletFont());
 
-        XSLFTextShape shape3 = (XSLFTextShape)shapes[2];
+        XSLFTextShape shape3 = (XSLFTextShape)shapes.get(2);
         XSLFTextRun pr5 = shape3.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(0, pr5.getParentParagraph().getLevel());
-        assertEquals("Right", pr5.getText());
+        assertEquals("Right", pr5.getRawText());
         assertEquals("Calibri", pr5.getFontFamily());
         assertEquals(Color.black, pr5.getFontColor());
     }
 
+    @SuppressWarnings("unused")
     void verifySlide5(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         // TODO
     }    
 
     void verifySlide7(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         assertEquals("Blank",layout.getName());
 
-        XSLFTextShape shape1 = (XSLFTextShape)shapes[0];
+        XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getCTPlaceholder();
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -428,10 +430,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape1.getRightInset()); // 0.1"
-        assertEquals(3.6, shape1.getTopInset());  // 0.05"
-        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape1.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -439,11 +441,11 @@ public class TestXSLFTextShape extends TestCase {
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(44.0, r1.getFontSize());
+        assertEquals(44.0, r1.getFontSize(), 0);
         assertEquals(Color.black, r1.getFontColor());
         assertFalse(r1.isBold());
 
-        XSLFTextShape shape2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
 
         CTTextBodyProperties bodyPr2 = shape2.getTextBodyPr();
         // none of the following properties are set in the shapes and fetched from the master shape
@@ -452,19 +454,19 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape2.getRightInset()); // 0.1"
-        assertEquals(3.6, shape2.getTopInset());  // 0.05"
-        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape2.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(0, pr1.getParentParagraph().getLevel());
-        assertEquals("Default Text", pr1.getText());
+        assertEquals("Default Text", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
-        assertEquals(18.0, pr1.getFontSize());
+        assertEquals(18.0, pr1.getFontSize(), 0);
 
-        XSLFTextShape shape3 = (XSLFTextShape)shapes[2];
+        XSLFTextShape shape3 = (XSLFTextShape)shapes.get(2);
         assertEquals("Default", shape3.getTextParagraphs().get(0).getText());
         assertEquals("Text with levels", shape3.getTextParagraphs().get(1).getText());
         assertEquals("Level 1", shape3.getTextParagraphs().get(2).getText());
@@ -474,16 +476,16 @@ public class TestXSLFTextShape extends TestCase {
         for(int p = 0; p < 5; p++) {
             XSLFTextParagraph pr = shape3.getTextParagraphs().get(p);
             assertEquals("Calibri", pr.getTextRuns().get(0).getFontFamily());
-            assertEquals(18.0, pr.getTextRuns().get(0).getFontSize());
+            assertEquals(18.0, pr.getTextRuns().get(0).getFontSize(), 0);
         }
     }
 
     void verifySlide8(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
-        XSLFShape[] shapes = slide.getShapes();
+        List<XSLFShape> shapes = slide.getShapes();
         assertEquals("Content with Caption",layout.getName());
 
-        XSLFTextShape shape1 = (XSLFTextShape)shapes[0];
+        XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
         CTPlaceholder ph1 = shape1.getCTPlaceholder();
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -501,10 +503,10 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr1.isSetBIns() && !bodyPr1.isSetTIns() &&
                 !bodyPr1.isSetAnchor()
         );
-        assertEquals(7.2, shape1.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape1.getRightInset()); // 0.1"
-        assertEquals(3.6, shape1.getTopInset());  // 0.05"
-        assertEquals(3.6, shape1.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape1.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape1.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.BOTTOM, shape1.getVerticalAlignment());
 
         // now check text properties
@@ -512,11 +514,11 @@ public class TestXSLFTextShape extends TestCase {
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(TextAlign.LEFT, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(20.0, r1.getFontSize());
+        assertEquals(20.0, r1.getFontSize(), 0);
         assertEquals(Color.black, r1.getFontColor());
         assertTrue(r1.isBold());
 
-        XSLFTextShape shape2 = (XSLFTextShape)shapes[1];
+        XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getCTPlaceholder();
         assertFalse(ph2.isSetType());
         assertTrue(ph2.isSetIdx());
@@ -535,18 +537,18 @@ public class TestXSLFTextShape extends TestCase {
                 !bodyPr2.isSetBIns() && !bodyPr2.isSetTIns() &&
                 !bodyPr2.isSetAnchor()
         );
-        assertEquals(7.2, shape2.getLeftInset());  // 0.1"
-        assertEquals(7.2, shape2.getRightInset()); // 0.1"
-        assertEquals(3.6, shape2.getTopInset());  // 0.05"
-        assertEquals(3.6, shape2.getBottomInset()); // 0.05"
+        assertEquals(7.2, shape2.getLeftInset(), 0);  // 0.1"
+        assertEquals(7.2, shape2.getRightInset(), 0); // 0.1"
+        assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
+        assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(0, pr1.getParentParagraph().getLevel());
-        assertEquals("Level 1", pr1.getText());
+        assertEquals("Level 1", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
-        assertEquals(32.0, pr1.getFontSize());
-        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin());
+        assertEquals(32.0, pr1.getFontSize(), 0);
+        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2022", pr1.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
@@ -554,8 +556,8 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(1, pr2.getParentParagraph().getLevel());
         assertEquals("Level 2", pr2.getParentParagraph().getText());
         assertEquals("Calibri", pr2.getFontFamily());
-        assertEquals(28.0, pr2.getFontSize());
-        assertEquals(58.5, pr2.getParentParagraph().getLeftMargin());
+        assertEquals(28.0, pr2.getFontSize(), 0);
+        assertEquals(58.5, pr2.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2013", pr2.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr2.getParentParagraph().getBulletFont());
 
@@ -563,8 +565,8 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(2, pr3.getParentParagraph().getLevel());
         assertEquals("Level 3", pr3.getParentParagraph().getText());
         assertEquals("Calibri", pr3.getFontFamily());
-        assertEquals(24.0, pr3.getFontSize());
-        assertEquals(90.0, pr3.getParentParagraph().getLeftMargin());
+        assertEquals(24.0, pr3.getFontSize(), 0);
+        assertEquals(90.0, pr3.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2022", pr3.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr3.getParentParagraph().getBulletFont());
 
@@ -572,20 +574,20 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(3, pr4.getParentParagraph().getLevel());
         assertEquals("Level 4", pr4.getParentParagraph().getText());
         assertEquals("Calibri", pr4.getFontFamily());
-        assertEquals(20.0, pr4.getFontSize());
-        assertEquals(126.0, pr4.getParentParagraph().getLeftMargin());
+        assertEquals(20.0, pr4.getFontSize(), 0);
+        assertEquals(126.0, pr4.getParentParagraph().getLeftMargin(), 0);
         assertEquals("\u2013", pr4.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr4.getParentParagraph().getBulletFont());
 
-        XSLFTextShape shape3 = (XSLFTextShape)shapes[2];
+        XSLFTextShape shape3 = (XSLFTextShape)shapes.get(2);
         assertEquals(VerticalAlignment.TOP, shape3.getVerticalAlignment());
         assertEquals("Content with caption", shape3.getText());
 
         pr1 = shape3.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(0, pr1.getParentParagraph().getLevel());
-        assertEquals("Content with caption", pr1.getText());
+        assertEquals("Content with caption", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
-        assertEquals(14.0, pr1.getFontSize());
+        assertEquals(14.0, pr1.getFontSize(), 0);
 
     }
 
@@ -599,7 +601,7 @@ public class TestXSLFTextShape extends TestCase {
         XSLFTextRun r1 = footer.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
-        assertEquals(12.0, r1.getFontSize());
+        assertEquals(12.0, r1.getFontSize(), 0);
         // TODO calculation of tint is incorrect
         assertEquals(new Color(64,64,64), r1.getFontColor());
 
@@ -614,14 +616,14 @@ public class TestXSLFTextShape extends TestCase {
     public void testTitleStyles(){
         XMLSlideShow ppt = new XMLSlideShow();
 
-        XSLFSlideMaster master = ppt.getSlideMasters()[0];
+        XSLFSlideMaster master = ppt.getSlideMasters().get(0);
         XSLFTheme theme = master.getTheme();
         XSLFSlideLayout layout = master.getLayout(SlideLayout.TITLE);
         XSLFSlide slide = ppt.createSlide(layout) ;
         assertSame(layout, slide.getSlideLayout());
         assertSame(master, slide.getSlideMaster());
 
-        XSLFTextShape titleShape = (XSLFTextShape)slide.getPlaceholder(0);
+        XSLFTextShape titleShape = slide.getPlaceholder(0);
         titleShape.setText("Apache POI");
         XSLFTextParagraph paragraph = titleShape.getTextParagraphs().get(0);
         XSLFTextRun textRun = paragraph.getTextRuns().get(0);
@@ -631,12 +633,12 @@ public class TestXSLFTextShape extends TestCase {
         CTTextParagraphProperties lv1PPr = master.getXmlObject().getTxStyles().getTitleStyle().getLvl1PPr();
         CTTextCharacterProperties lv1CPr = lv1PPr.getDefRPr();
         assertEquals(4400, lv1CPr.getSz());
-        assertEquals(44.0, textRun.getFontSize());
+        assertEquals(44.0, textRun.getFontSize(), 0);
         assertEquals("+mj-lt", lv1CPr.getLatin().getTypeface());
         assertEquals("Calibri", theme.getMajorFont());
         assertEquals("Calibri", textRun.getFontFamily());
         lv1CPr.setSz(3200);
-        assertEquals(32.0, textRun.getFontSize());
+        assertEquals(32.0, textRun.getFontSize(), 0);
         lv1CPr.getLatin().setTypeface("Arial");
         assertEquals("Arial", textRun.getFontFamily());
         assertEquals(STTextAlignType.CTR, lv1PPr.getAlgn());
@@ -650,7 +652,7 @@ public class TestXSLFTextShape extends TestCase {
         CTTextParagraphProperties lv2PPr = tx2.getTextBody(true).getLstStyle().addNewLvl1PPr();
         CTTextCharacterProperties lv2CPr = lv2PPr.addNewDefRPr();
         lv2CPr.setSz(3300);
-        assertEquals(33.0, textRun.getFontSize());
+        assertEquals(33.0, textRun.getFontSize(), 0);
         lv2CPr.addNewLatin().setTypeface("Times");
         assertEquals("Times", textRun.getFontFamily());
         lv2PPr.setAlgn(STTextAlignType.R);
@@ -663,7 +665,7 @@ public class TestXSLFTextShape extends TestCase {
         CTTextParagraphProperties lv3PPr = tx3.getTextBody(true).getLstStyle().addNewLvl1PPr();
         CTTextCharacterProperties lv3CPr = lv3PPr.addNewDefRPr();
         lv3CPr.setSz(3400);
-        assertEquals(34.0, textRun.getFontSize());
+        assertEquals(34.0, textRun.getFontSize(), 0);
         lv3CPr.addNewLatin().setTypeface("Courier New");
         assertEquals("Courier New", textRun.getFontFamily());
         lv3PPr.setAlgn(STTextAlignType.CTR);
@@ -674,7 +676,7 @@ public class TestXSLFTextShape extends TestCase {
         CTTextParagraphProperties lv4PPr = titleShape.getTextBody(true).getLstStyle().addNewLvl1PPr();
         CTTextCharacterProperties lv4CPr = lv4PPr.addNewDefRPr();
         lv4CPr.setSz(3500);
-        assertEquals(35.0, textRun.getFontSize());
+        assertEquals(35.0, textRun.getFontSize(), 0);
         lv4CPr.addNewLatin().setTypeface("Arial");
         assertEquals("Arial", textRun.getFontFamily());
         lv4PPr.setAlgn(STTextAlignType.L);
@@ -684,7 +686,7 @@ public class TestXSLFTextShape extends TestCase {
         CTTextParagraphProperties lv5PPr = paragraph.getXmlObject().addNewPPr();
         CTTextCharacterProperties lv5CPr = textRun.getXmlObject().getRPr();
         lv5CPr.setSz(3600);
-        assertEquals(36.0, textRun.getFontSize());
+        assertEquals(36.0, textRun.getFontSize(), 0);
         lv5CPr.addNewLatin().setTypeface("Calibri");
         assertEquals("Calibri", textRun.getFontFamily());
         lv5PPr.setAlgn(STTextAlignType.CTR);
@@ -694,14 +696,14 @@ public class TestXSLFTextShape extends TestCase {
     public void testBodyStyles(){
         XMLSlideShow ppt = new XMLSlideShow();
 
-        XSLFSlideMaster master = ppt.getSlideMasters()[0];
+        XSLFSlideMaster master = ppt.getSlideMasters().get(0);
         XSLFTheme theme = master.getTheme();
         XSLFSlideLayout layout = master.getLayout(SlideLayout.TITLE_AND_CONTENT);
         XSLFSlide slide = ppt.createSlide(layout) ;
         assertSame(layout, slide.getSlideLayout());
         assertSame(master, slide.getSlideMaster());
 
-        XSLFTextShape tx1 = (XSLFTextShape)slide.getPlaceholder(1);
+        XSLFTextShape tx1 = slide.getPlaceholder(1);
         tx1.clearText();
 
         XSLFTextParagraph p1 = tx1.addNewTextParagraph();
@@ -731,12 +733,12 @@ public class TestXSLFTextShape extends TestCase {
         CTTextCharacterProperties lv3CPr = lv3PPr.getDefRPr();
         // lv1
         assertEquals(3200, lv1CPr.getSz());
-        assertEquals(32.0, r1.getFontSize());
+        assertEquals(32.0, r1.getFontSize(), 0);
         assertEquals("+mn-lt", lv1CPr.getLatin().getTypeface());
         assertEquals("Calibri", theme.getMinorFont());
         assertEquals("Calibri", r1.getFontFamily());
         lv1CPr.setSz(3300);
-        assertEquals(33.0, r1.getFontSize());
+        assertEquals(33.0, r1.getFontSize(), 0);
         lv1CPr.getLatin().setTypeface("Arial");
         assertEquals("Arial", r1.getFontFamily());
         assertEquals(STTextAlignType.L, lv1PPr.getAlgn());
@@ -745,9 +747,9 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(TextAlign.RIGHT, p1.getTextAlign());
         //lv2
         assertEquals(2800, lv2CPr.getSz());
-        assertEquals(28.0, r2.getFontSize());
+        assertEquals(28.0, r2.getFontSize(), 0);
         lv2CPr.setSz(3300);
-        assertEquals(33.0, r2.getFontSize());
+        assertEquals(33.0, r2.getFontSize(), 0);
         lv2CPr.getLatin().setTypeface("Times");
         assertEquals("Times", r2.getFontFamily());
         assertEquals(STTextAlignType.L, lv2PPr.getAlgn());
@@ -756,9 +758,9 @@ public class TestXSLFTextShape extends TestCase {
         assertEquals(TextAlign.RIGHT, p2.getTextAlign());
         //lv3
         assertEquals(2400, lv3CPr.getSz());
-        assertEquals(24.0, r3.getFontSize());
+        assertEquals(24.0, r3.getFontSize(), 0);
         lv3CPr.setSz(2500);
-        assertEquals(25.0, r3.getFontSize());
+        assertEquals(25.0, r3.getFontSize(), 0);
         lv3CPr.getLatin().setTypeface("Courier New");
         assertEquals("Courier New", r3.getFontFamily());
         assertEquals(STTextAlignType.L, lv3PPr.getAlgn());
@@ -780,21 +782,21 @@ public class TestXSLFTextShape extends TestCase {
         lv3CPr = lv3PPr.addNewDefRPr();
 
         lv1CPr.setSz(3300);
-        assertEquals(33.0, r1.getFontSize());
+        assertEquals(33.0, r1.getFontSize(), 0);
         lv1CPr.addNewLatin().setTypeface("Times");
         assertEquals("Times", r1.getFontFamily());
         lv1PPr.setAlgn(STTextAlignType.L);
         assertEquals(TextAlign.LEFT, p1.getTextAlign());
 
         lv2CPr.setSz(3300);
-        assertEquals(33.0, r2.getFontSize());
+        assertEquals(33.0, r2.getFontSize(), 0);
         lv2CPr.addNewLatin().setTypeface("Times");
         assertEquals("Times", r2.getFontFamily());
         lv2PPr.setAlgn(STTextAlignType.L);
         assertEquals(TextAlign.LEFT, p2.getTextAlign());
 
         lv3CPr.setSz(3300);
-        assertEquals(33.0, r3.getFontSize());
+        assertEquals(33.0, r3.getFontSize(), 0);
         lv3CPr.addNewLatin().setTypeface("Times");
         assertEquals("Times", r3.getFontFamily());
         lv3PPr.setAlgn(STTextAlignType.L);
@@ -812,21 +814,21 @@ public class TestXSLFTextShape extends TestCase {
         lv3CPr = lv3PPr.addNewDefRPr();
 
         lv1CPr.setSz(3400);
-        assertEquals(34.0, r1.getFontSize());
+        assertEquals(34.0, r1.getFontSize(), 0);
         lv1CPr.addNewLatin().setTypeface("Courier New");
         assertEquals("Courier New", r1.getFontFamily());
         lv1PPr.setAlgn(STTextAlignType.CTR);
         assertEquals(TextAlign.CENTER, p1.getTextAlign());
 
         lv2CPr.setSz(3400);
-        assertEquals(34.0, r2.getFontSize());
+        assertEquals(34.0, r2.getFontSize(), 0);
         lv2CPr.addNewLatin().setTypeface("Courier New");
         assertEquals("Courier New", r2.getFontFamily());
         lv2PPr.setAlgn(STTextAlignType.CTR);
         assertEquals(TextAlign.CENTER, p2.getTextAlign());
 
         lv3CPr.setSz(3400);
-        assertEquals(34.0, r3.getFontSize());
+        assertEquals(34.0, r3.getFontSize(), 0);
         lv3CPr.addNewLatin().setTypeface("Courier New");
         assertEquals("Courier New", r3.getFontFamily());
         lv3PPr.setAlgn(STTextAlignType.CTR);
@@ -842,21 +844,21 @@ public class TestXSLFTextShape extends TestCase {
         lv3CPr = lv3PPr.addNewDefRPr();
 
         lv1CPr.setSz(3500);
-        assertEquals(35.0, r1.getFontSize());
+        assertEquals(35.0, r1.getFontSize(), 0);
         lv1CPr.addNewLatin().setTypeface("Arial");
         assertEquals("Arial", r1.getFontFamily());
         lv1PPr.setAlgn(STTextAlignType.L);
         assertEquals(TextAlign.LEFT, p1.getTextAlign());
 
         lv2CPr.setSz(3500);
-        assertEquals(35.0, r2.getFontSize());
+        assertEquals(35.0, r2.getFontSize(), 0);
         lv2CPr.addNewLatin().setTypeface("Arial");
         assertEquals("Arial", r2.getFontFamily());
         lv2PPr.setAlgn(STTextAlignType.L);
         assertEquals(TextAlign.LEFT, p2.getTextAlign());
 
         lv3CPr.setSz(3500);
-        assertEquals(35.0, r3.getFontSize());
+        assertEquals(35.0, r3.getFontSize(), 0);
         lv3CPr.addNewLatin().setTypeface("Arial");
         assertEquals("Arial", r3.getFontFamily());
         lv3PPr.setAlgn(STTextAlignType.L);
@@ -871,21 +873,21 @@ public class TestXSLFTextShape extends TestCase {
         lv3CPr = r3.getXmlObject().getRPr();
 
         lv1CPr.setSz(3600);
-        assertEquals(36.0, r1.getFontSize());
+        assertEquals(36.0, r1.getFontSize(), 0);
         lv1CPr.addNewLatin().setTypeface("Calibri");
         assertEquals("Calibri", r1.getFontFamily());
         lv1PPr.setAlgn(STTextAlignType.CTR);
         assertEquals(TextAlign.CENTER, p1.getTextAlign());
 
         lv2CPr.setSz(3600);
-        assertEquals(36.0, r2.getFontSize());
+        assertEquals(36.0, r2.getFontSize(), 0);
         lv2CPr.addNewLatin().setTypeface("Calibri");
         assertEquals("Calibri", r2.getFontFamily());
         lv2PPr.setAlgn(STTextAlignType.CTR);
         assertEquals(TextAlign.CENTER, p2.getTextAlign());
 
         lv3CPr.setSz(3600);
-        assertEquals(36.0, r3.getFontSize());
+        assertEquals(36.0, r3.getFontSize(), 0);
         lv3CPr.addNewLatin().setTypeface("Calibri");
         assertEquals("Calibri", r3.getFontFamily());
         lv3PPr.setAlgn(STTextAlignType.CTR);

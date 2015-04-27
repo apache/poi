@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
@@ -32,6 +31,7 @@ import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 /**
  * This class provides a way to view the contents of a powerpoint file.

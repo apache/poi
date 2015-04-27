@@ -55,8 +55,8 @@ public class TestXSLFBugs {
     public void bug51187() throws Exception {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("51187.pptx");
        
-       assertEquals(1, ss.getSlides().length);
-       XSLFSlide slide = ss.getSlides()[0];
+       assertEquals(1, ss.getSlides().size());
+       XSLFSlide slide = ss.getSlides().get(0);
        
        // Check the relations on it
        // Note - rId3 is a self reference
@@ -71,7 +71,7 @@ public class TestXSLFBugs {
        
        // Save and re-load
        ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
-       assertEquals(1, ss.getSlides().length);
+       assertEquals(1, ss.getSlides().size());
        
        slidePart = ss._getXSLFSlideShow().getSlidePart(
              ss._getXSLFSlideShow().getSlideReferences().getSldIdArray(0)
@@ -92,8 +92,8 @@ public class TestXSLFBugs {
        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("with_japanese.pptx");
        
        // Should have one slide
-       assertEquals(1, ss.getSlides().length);
-       XSLFSlide slide = ss.getSlides()[0];
+       assertEquals(1, ss.getSlides().size());
+       XSLFSlide slide = ss.getSlides().get(0);
        
        // Check the relations from this
        List<POIXMLDocumentPart> rels = slide.getRelations();
@@ -142,20 +142,20 @@ public class TestXSLFBugs {
         XSLFSlide slide; 
         
         // Should find 4 slides
-        assertEquals(4, ss.getSlides().length);
+        assertEquals(4, ss.getSlides().size());
         
         // Check the text, to see we got them in order
-        slide = ss.getSlides()[0];
+        slide = ss.getSlides().get(0);
         assertContains("POI cannot read this", getSlideText(slide));
         
-        slide = ss.getSlides()[1];
+        slide = ss.getSlides().get(1);
         assertContains("POI can read this", getSlideText(slide));
         assertContains("Has a relationship to another slide", getSlideText(slide));
         
-        slide = ss.getSlides()[2];
+        slide = ss.getSlides().get(2);
         assertContains("POI can read this", getSlideText(slide));
         
-        slide = ss.getSlides()[3];
+        slide = ss.getSlides().get(3);
         assertContains("POI can read this", getSlideText(slide));
     }
     
@@ -196,13 +196,13 @@ public class TestXSLFBugs {
     }
 
     @Test
-    @Ignore("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
+    // @Ignore("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
     public void bug54542() throws Exception {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("54542_cropped_bitmap.pptx");
         
         Dimension pgsize = ss.getPageSize();
         
-        XSLFSlide slide = ss.getSlides()[0];
+        XSLFSlide slide = ss.getSlides().get(0);
         
         // render it
         double zoom = 1;
@@ -265,10 +265,10 @@ public class TestXSLFBugs {
             ss = XSLFTestDataSamples.writeOutAndReadBack(ss);
         }
 
-        assertEquals(slideTexts.length, ss.getSlides().length);
+        assertEquals(slideTexts.length, ss.getSlides().size());
 
         for (int i = 0; i < slideTexts.length; i++) {
-            XSLFSlide slide = ss.getSlides()[i];
+            XSLFSlide slide = ss.getSlides().get(i);
             assertContains(getSlideText(slide), slideTexts[i]);
         }
     }

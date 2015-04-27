@@ -21,7 +21,7 @@ package org.apache.poi.hslf;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
 
 /**

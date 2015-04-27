@@ -17,10 +17,7 @@
 
 package org.apache.poi.hslf.extractor;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.model.HSLFPictureShape;
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.*;
 
 import java.io.IOException;
 import java.io.FileOutputStream;

@@ -24,7 +24,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 
 /**
@@ -67,7 +67,7 @@ public final class MovieShape extends HSLFPictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected MovieShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    public MovieShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 

@@ -60,22 +60,22 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.CENTER_TITLE_TYPE);
         tr1.setText("POI-HSLF");
         box1.setAnchor(new Rectangle(54, 78, 612, 115));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.CENTRE_BODY_TYPE);
         tr2.setText("Java API To Access Microsoft PowerPoint Format Files");
         box2.setAnchor(new Rectangle(108, 204, 504, 138));
         slide.addShape(box2);
 
         HSLFTextBox box3 = new HSLFTextBox();
-        HSLFTextParagraph tr3 = box3.getTextParagraph();
-        tr3.getRichTextRuns()[0].setFontSize(32);
+        HSLFTextParagraph tr3 = box3.getTextParagraphs();
+        tr3.getTextRuns()[0].setFontSize(32);
         box3.setHorizontalAlignment(HSLFTextBox.AlignCenter);
         tr3.setText(
                 "Yegor Kozlov\r" +
@@ -88,14 +88,14 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("What is HSLF?");
         box1.setAnchor(new Rectangle(36, 21, 648, 90));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText("HorribleSLideshowFormat is the POI Project's pure Java implementation " +
                 "of the Powerpoint binary file format. \r" +
@@ -111,25 +111,25 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in a Nutshell");
         box1.setAnchor(new Rectangle(36, 15, 648, 65));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText(
                 "HSLF provides a way to read, create and modify MS PowerPoint presentations\r" +
                 "Pure Java API - you don't need PowerPoint to read and write *.ppt files\r" +
                 "Comprehensive support of PowerPoint objects");
-        tr2.getRichTextRuns()[0].setFontSize(28);
+        tr2.getTextRuns()[0].setFontSize(28);
         box2.setAnchor(new Rectangle(36, 80, 648, 200));
         slide.addShape(box2);
 
         HSLFTextBox box3 = new HSLFTextBox();
-        HSLFTextParagraph tr3 = box3.getTextParagraph();
+        HSLFTextParagraph tr3 = box3.getTextParagraphs();
         tr3.setRunType(TextHeaderAtom.BODY_TYPE);
         tr3.setText(
                 "Rich text\r" +
@@ -137,13 +137,13 @@ public final class ApacheconEU08 {
                 "Shapes\r" +
                 "Pictures\r" +
                 "Master slides");
-        tr3.getRichTextRuns()[0].setFontSize(24);
-        tr3.getRichTextRuns()[0].setIndentLevel(1);
+        tr3.getTextRuns()[0].setFontSize(24);
+        tr3.getTextRuns()[0].setIndentLevel(1);
         box3.setAnchor(new Rectangle(36, 265, 648, 150));
         slide.addShape(box3);
 
         HSLFTextBox box4 = new HSLFTextBox();
-        HSLFTextParagraph tr4 = box4.getTextParagraph();
+        HSLFTextParagraph tr4 = box4.getTextParagraphs();
         tr4.setRunType(TextHeaderAtom.BODY_TYPE);
         tr4.setText("Access to low level data structures");
         box4.setAnchor(new Rectangle(36, 430, 648, 50));
@@ -162,8 +162,8 @@ public final class ApacheconEU08 {
             for (int j = 0; j < txt1[i].length; j++) {
                 TableCell cell = table1.getCell(i, j);
                 cell.setText(txt1[i][j]);
-                cell.getTextParagraph().getRichTextRuns()[0].setFontSize(10);
-                HSLFTextRun rt = cell.getTextParagraph().getRichTextRuns()[0];
+                cell.getTextParagraphs().getTextRuns()[0].setFontSize(10);
+                HSLFTextRun rt = cell.getTextParagraphs().getTextRuns()[0];
                 rt.setFontName("Arial");
                 rt.setBold(true);
                 if(i == 0){
@@ -197,10 +197,10 @@ public final class ApacheconEU08 {
 
         HSLFTextBox box1 = new HSLFTextBox();
         box1.setHorizontalAlignment(HSLFTextBox.AlignCenter);
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setText("The source code is available at\r" +
                 "http://people.apache.org/~yegor/apachecon_eu08/");
-        HSLFTextRun rt = tr1.getRichTextRuns()[0];
+        HSLFTextRun rt = tr1.getTextRuns()[0];
         rt.setFontSize(24);
         box1.setAnchor(new Rectangle(80, 356, 553, 65));
         slide.addShape(box1);
@@ -211,14 +211,14 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in Action - 1\rData Extraction");
         box1.setAnchor(new Rectangle(36, 21, 648, 100));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText(
                 "Text from slides and notes\r" +
@@ -234,22 +234,22 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in Action - 2");
         box1.setAnchor(new Rectangle(36, 20, 648, 90));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
-        tr2.getRichTextRuns()[0].setFontSize(18);
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
+        tr2.getTextRuns()[0].setFontSize(18);
         tr2.setText("Creating a simple presentation from scratch");
         box2.setAnchor(new Rectangle(170, 100, 364, 30));
         slide.addShape(box2);
 
         HSLFTextBox box3 = new HSLFTextBox();
-        HSLFTextParagraph tr3 = box3.getTextParagraph();
-        HSLFTextRun rt3 = tr3.getRichTextRuns()[0];
+        HSLFTextParagraph tr3 = box3.getTextParagraphs();
+        HSLFTextRun rt3 = tr3.getTextRuns()[0];
         rt3.setFontName("Courier New");
         rt3.setFontSize(8);
         tr3.setText(
@@ -296,7 +296,7 @@ public final class ApacheconEU08 {
         HSLFTextBox box2 = new HSLFTextBox();
         box2.setHorizontalAlignment(HSLFTextBox.AlignCenter);
         box2.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
-        box2.getTextParagraph().setText("Java Code");
+        box2.getTextParagraphs().setText("Java Code");
         box2.getFill().setForegroundColor(new Color(187, 224, 227));
         box2.setLineColor(Color.black);
         box2.setLineWidth(0.75);
@@ -306,7 +306,7 @@ public final class ApacheconEU08 {
         HSLFTextBox box3 = new HSLFTextBox();
         box3.setHorizontalAlignment(HSLFTextBox.AlignCenter);
         box3.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
-        box3.getTextParagraph().setText("*.ppt file");
+        box3.getTextParagraphs().setText("*.ppt file");
         box3.setLineWidth(0.75);
         box3.setLineColor(Color.black);
         box3.getFill().setForegroundColor(new Color(187, 224, 227));
@@ -325,14 +325,14 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("Wait, there is more!");
         box1.setAnchor(new Rectangle(36, 21, 648, 90));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
         tr2.setText(
                 "Rich text\r" +
@@ -347,22 +347,22 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF in Action - 3");
         box1.setAnchor(new Rectangle(36, 20, 648, 50));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
-        tr2.getRichTextRuns()[0].setFontSize(18);
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
+        tr2.getTextRuns()[0].setFontSize(18);
         tr2.setText("PPGraphics2D: PowerPoint Graphics2D driver");
         box2.setAnchor(new Rectangle(178, 70, 387, 30));
         slide.addShape(box2);
 
         HSLFTextBox box3 = new HSLFTextBox();
-        HSLFTextParagraph tr3 = box3.getTextParagraph();
-        HSLFTextRun rt3 = tr3.getRichTextRuns()[0];
+        HSLFTextParagraph tr3 = box3.getTextParagraphs();
+        HSLFTextRun rt3 = tr3.getTextRuns()[0];
         rt3.setFontName("Courier New");
         rt3.setFontSize(8);
         tr3.setText(
@@ -449,16 +449,16 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.TITLE_TYPE);
         tr1.setText("HSLF Development Plans");
         box1.setAnchor(new Rectangle(36, 21, 648, 90));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.BODY_TYPE);
-        tr2.getRichTextRuns()[0].setFontSize(32);
+        tr2.getTextRuns()[0].setFontSize(32);
         tr2.setText(
                 "Support for more PowerPoint functionality\r" +
                 "Rendering slides into java.awt.Graphics2D");
@@ -466,27 +466,27 @@ public final class ApacheconEU08 {
         slide.addShape(box2);
 
         HSLFTextBox box3 = new HSLFTextBox();
-        HSLFTextParagraph tr3 = box3.getTextParagraph();
+        HSLFTextParagraph tr3 = box3.getTextParagraphs();
         tr3.setRunType(TextHeaderAtom.BODY_TYPE);
-        tr3.getRichTextRuns()[0].setIndentLevel(1);
+        tr3.getTextRuns()[0].setIndentLevel(1);
         tr3.setText(
                 "A way to export slides into images or other formats");
         box3.setAnchor(new Rectangle(36, 220, 648, 70));
         slide.addShape(box3);
 
         HSLFTextBox box4 = new HSLFTextBox();
-        HSLFTextParagraph tr4 = box4.getTextParagraph();
+        HSLFTextParagraph tr4 = box4.getTextParagraphs();
         tr4.setRunType(TextHeaderAtom.BODY_TYPE);
-        tr4.getRichTextRuns()[0].setFontSize(32);
+        tr4.getTextRuns()[0].setFontSize(32);
         tr4.setText(
                 "Integration with Apache FOP - Formatting Objects Processor");
         box4.setAnchor(new Rectangle(36, 290, 648, 90));
         slide.addShape(box4);
 
         HSLFTextBox box5 = new HSLFTextBox();
-        HSLFTextParagraph tr5 = box5.getTextParagraph();
+        HSLFTextParagraph tr5 = box5.getTextParagraphs();
         tr5.setRunType(TextHeaderAtom.BODY_TYPE);
-        tr5.getRichTextRuns()[0].setIndentLevel(1);
+        tr5.getTextRuns()[0].setIndentLevel(1);
         tr5.setText(
                 "Transformation of XSL-FO into PPT\r" +
                 "PPT2PDF transcoder");
@@ -498,14 +498,14 @@ public final class ApacheconEU08 {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox box1 = new HSLFTextBox();
-        HSLFTextParagraph tr1 = box1.getTextParagraph();
+        HSLFTextParagraph tr1 = box1.getTextParagraphs();
         tr1.setRunType(TextHeaderAtom.CENTER_TITLE_TYPE);
         tr1.setText("Questions?");
         box1.setAnchor(new Rectangle(54, 167, 612, 115));
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        HSLFTextParagraph tr2 = box2.getTextParagraph();
+        HSLFTextParagraph tr2 = box2.getTextParagraphs();
         tr2.setRunType(TextHeaderAtom.CENTRE_BODY_TYPE);
         tr2.setText(
                 "http://poi.apache.org/hslf/\r" +

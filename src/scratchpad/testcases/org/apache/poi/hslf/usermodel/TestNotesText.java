@@ -43,18 +43,18 @@ public final class TestNotesText extends TestCase {
 		HSLFNotes notes = ss.getNotes()[0];
 
 		String[] expectText = new String[] {"These are the notes for page 1"};
-		assertEquals(expectText.length, notes.getTextRuns().length);
+		assertEquals(expectText.length, notes.getTextParagraphs().length);
 		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], notes.getTextRuns()[i].getText());
+			assertEquals(expectText[i], notes.getTextParagraphs()[i].getRawText());
 		}
 	}
 
 	public void testNotesTwo() {
 		HSLFNotes notes = ss.getNotes()[1];
 		String[] expectText = new String[] {"These are the notes on page two, again lacking formatting"};
-		assertEquals(expectText.length, notes.getTextRuns().length);
+		assertEquals(expectText.length, notes.getTextParagraphs().length);
 		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], notes.getTextRuns()[i].getText());
+			assertEquals(expectText[i], notes.getTextParagraphs()[i].getRawText());
 		}
 	}
 }

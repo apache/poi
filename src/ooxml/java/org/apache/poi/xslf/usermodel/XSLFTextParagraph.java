@@ -68,7 +68,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     public String getText(){
         StringBuilder out = new StringBuilder();
         for (XSLFTextRun r : _runs) {
-            out.append(r.getText());
+            out.append(r.getRawText());
         }
         return out.toString();
     }
@@ -171,6 +171,39 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         }
     }
 
+    @Override
+    public FontAlign getFontAlign(){
+        ParagraphPropertyFetcher<FontAlign> fetcher = new ParagraphPropertyFetcher<FontAlign>(getLevel()){
+            public boolean fetch(CTTextParagraphProperties props){
+                if(props.isSetFontAlgn()){
+                    FontAlign val = FontAlign.values()[props.getFontAlgn().intValue() - 1];
+                    setValue(val);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue() == null ? FontAlign.AUTO : fetcher.getValue();
+    }
+
+    /**
+     * Specifies the font alignment that is to be applied to the paragraph.
+     * Possible values for this include auto, top, center, baseline and bottom.
+     * see {@link org.apache.poi.sl.usermodel.TextParagraph.FontAlign}.
+     *
+     * @param align font align
+     */
+    public void setFontAlign(FontAlign align){
+        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
+        if(align == null) {
+            if(pr.isSetFontAlgn()) pr.unsetFontAlgn();
+        } else {
+            pr.setFontAlgn(STTextFontAlignType.Enum.forInt(align.ordinal() + 1));
+        }
+    }
+
+    
 
     /**
      * @return the font to be used on bullet characters within a given paragraph
@@ -306,6 +339,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      *
      * @param value the indent in points. 
      */
+    @Override
     public void setIndent(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         if(value == -1) {
@@ -319,6 +353,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      *
      * @return the indent applied to the first line of text in the paragraph.
      */
+    @Override
     public double getIndent(){
 
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
@@ -340,8 +375,9 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      * inset and applies only to this text paragraph. That is the text body Inset and the LeftMargin
      * attributes are additive with respect to the text position.
      *
-     * @param value the left margin of the paragraph
+     * @param value the left margin (in points) of the paragraph
      */
+    @Override
     public void setLeftMargin(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         if(value == -1) {
@@ -353,9 +389,9 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     }
 
     /**
-     *
-     * @return the left margin of the paragraph
+     * @return the left margin (in points) of the paragraph
      */
+    @Override
     public double getLeftMargin(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -373,9 +409,27 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     }
 
     /**
+     * Specifies the right margin of the paragraph. This is specified in addition to the text body
+     * inset and applies only to this text paragraph. That is the text body Inset and the RightMargin
+     * attributes are additive with respect to the text position.
+     *
+     * @param value the right margin (in points) of the paragraph
+     */
+    @Override
+    public void setRightMargin(double value){
+        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
+        if(value == -1) {
+            if(pr.isSetMarR()) pr.unsetMarR();
+        } else {
+            pr.setMarR(Units.toEMU(value));
+        }
+    }
+
+    /**
      *
      * @return the right margin of the paragraph
      */
+    @Override
     public double getRightMargin(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -834,11 +888,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         }
     }
 
+    @Override
     public double getDefaultFontSize() {
         CTTextCharacterProperties endPr = _p.getEndParaRPr();
         return (endPr == null || !endPr.isSetSz()) ? 12 : (endPr.getSz() / 100);
     }
 
+    @Override
     public String getDefaultFontFamily() {
         return (_runs.isEmpty() ? "Arial" : _runs.get(0).getFontFamily());
     }

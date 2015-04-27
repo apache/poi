@@ -18,8 +18,8 @@
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 
 /**

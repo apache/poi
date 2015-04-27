@@ -25,7 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hslf.model.TextPainter;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.JvmBugs;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
@@ -56,10 +56,10 @@ public class TestPPTX2PNG {
     @SuppressWarnings("unchecked")
     private void fixFonts(Graphics2D graphics) {
         if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(TextPainter.KEY_FONTMAP);
+        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
         if (fontMap == null) fontMap = new HashMap<String,String>();
         fontMap.put("Calibri", "Lucida Sans");
         fontMap.put("Cambria", "Lucida Bright");
-        graphics.setRenderingHint(TextPainter.KEY_FONTMAP, fontMap);        
+        graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);        
     }
 }

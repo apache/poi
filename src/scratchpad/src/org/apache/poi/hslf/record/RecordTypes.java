@@ -273,8 +273,8 @@ public final class RecordTypes {
 	 *  offers methods to get either back out.
 	 */
 	public static class Type {
-		public int typeID;
-		public Class<? extends Record> handlingClass;
+		public final int typeID;
+		public final Class<? extends Record> handlingClass;
 		public Type(int typeID, Class<? extends Record> handlingClass) {
 			this.typeID = typeID;
 			this.handlingClass = handlingClass;

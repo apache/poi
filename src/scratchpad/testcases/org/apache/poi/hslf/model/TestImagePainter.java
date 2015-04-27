@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hslf.blip.BitmapPainter;
 import org.apache.poi.hslf.blip.ImagePainter;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 
 /**
  * Test Picture shape.

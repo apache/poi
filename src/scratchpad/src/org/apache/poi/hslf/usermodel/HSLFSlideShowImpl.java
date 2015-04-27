@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,8 +45,6 @@ import org.apache.poi.hslf.record.PositionDependentRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
-import org.apache.poi.hslf.usermodel.HSLFObjectData;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
@@ -203,7 +201,7 @@ public final class HSLFSlideShowImpl extends POIDocument {
 	 * Constructs a new, empty, Powerpoint document.
 	 */
 	public static final HSLFSlideShowImpl create() {
-		InputStream is = HSLFSlideShowImpl.class.getResourceAsStream("data/empty.ppt");
+		InputStream is = HSLFSlideShowImpl.class.getResourceAsStream("/org/apache/poi/hslf/data/empty.ppt");
 		if (is == null) {
 			throw new RuntimeException("Missing resource 'empty.ppt'");
 		}

@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+
 
 
 public interface TextShape<T extends TextParagraph<? extends TextRun>> extends SimpleShape, Iterable<T>  {
@@ -103,6 +105,16 @@ public interface TextShape<T extends TextParagraph<? extends TextRun>> extends S
      * @return the type of vertical alignment
      */
     VerticalAlignment getVerticalAlignment();
+    
+    /**
+     * Returns if the text is centered.
+     * If true and if the individual paragraph settings allow it,
+     * the whole text block will be displayed centered, i.e. its left and right
+     * margin will be maximized while still keeping the alignment of the paragraphs
+     *
+     * @return true, if the text anchor is horizontal centered 
+     */
+    boolean isHorizontalCentered();
     
     /**
      * @return whether to wrap words within the bounding rectangle

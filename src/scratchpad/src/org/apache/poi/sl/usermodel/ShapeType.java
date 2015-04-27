@@ -285,6 +285,25 @@ public enum ShapeType {
         this.nativeName = nativeName;
     }
 
+    /** name of the presetShapeDefinit(i)on entry */
+    public String getOoxmlName() {
+        if (this == SEAL) return STAR_16.getOoxmlName();
+        if (ooxmlId == -1) return null;
+        
+        StringBuilder sb = new StringBuilder();
+        boolean toLower = true;
+        for (char ch : name().toCharArray()) {
+            if (ch == '_') {
+                toLower = false;
+                continue;
+            }
+            sb.append(toLower ? Character.toLowerCase(ch) : Character.toUpperCase(ch));
+            toLower = true;
+        }
+        
+        return sb.toString();
+    }
+    
     public static ShapeType forId(int id, boolean isOoxmlId){
         for(ShapeType t : values()){
             if((isOoxmlId && t.ooxmlId == id) ||

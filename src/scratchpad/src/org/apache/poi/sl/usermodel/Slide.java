@@ -17,16 +17,16 @@
 
 package org.apache.poi.sl.usermodel;
 
-public interface Slide<T extends Shape, SS extends SlideShow> extends Sheet<T, SS> {
-	public Notes<T,SS> getNotes();
-	public void setNotes(Notes<T,SS> notes);
+public interface Slide<T extends Shape, SS extends SlideShow, N extends Notes<T,SS>> extends Sheet<T, SS> {
+	N getNotes();
+	void setNotes(N notes);
 
-	public boolean getFollowMasterBackground();
-	public void setFollowMasterBackground(boolean follow);
+	boolean getFollowMasterBackground();
+	void setFollowMasterBackground(boolean follow);
 
-	public boolean getFollowMasterColourScheme();
-	public void setFollowMasterColourScheme(boolean follow);
+	boolean getFollowMasterColourScheme();
+	void setFollowMasterColourScheme(boolean follow);
 
-	public boolean getFollowMasterObjects();
-	public void setFollowMasterObjects(boolean follow);
+	boolean getFollowMasterObjects();
+	void setFollowMasterObjects(boolean follow);
 }

@@ -31,7 +31,7 @@ public interface TextRun {
         ALL
     }
     
-    public String getText();
+    public String getRawText();
 	public void setText(String text);
 
 	TextCap getTextCap();
@@ -42,7 +42,7 @@ public interface TextRun {
 	
 	boolean isBold();
 	boolean isItalic();
-	boolean isUnderline();
+	boolean isUnderlined();
 	boolean isStrikethrough();
 	boolean isSubscript();
 	boolean isSuperscript();

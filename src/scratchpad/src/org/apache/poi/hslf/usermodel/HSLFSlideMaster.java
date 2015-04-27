@@ -15,12 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 
 /**
  * SlideMaster determines the graphics, layout, and formatting for all the slides in a given presentation.
@@ -29,8 +31,8 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
  *
  * @author Yegor Kozlov
  */
-public final class SlideMaster extends HSLFMasterSheet {
-    private HSLFTextParagraph[] _runs;
+public final class HSLFSlideMaster extends HSLFMasterSheet {
+    private final List<List<HSLFTextParagraph>> _runs = new ArrayList<List<HSLFTextParagraph>>();
 
     /**
      * all TxMasterStyleAtoms available in this master
@@ -41,17 +43,21 @@ public final class SlideMaster extends HSLFMasterSheet {
      * Constructs a SlideMaster from the MainMaster record,
      *
      */
-    public SlideMaster(MainMaster record, int sheetNo) {
+    public HSLFSlideMaster(MainMaster record, int sheetNo) {
         super(record, sheetNo);
 
-        _runs = findTextRuns(getPPDrawing());
-        for (int i = 0; i < _runs.length; i++) _runs[i].setSheet(this);
+        _runs.addAll(HSLFTextParagraph.findTextParagraphs(getPPDrawing()));
+        for (List<HSLFTextParagraph> p : _runs) {
+            for (HSLFTextParagraph htp : p) {
+                htp.supplySheet(this);
+            }
+        }
     }
 
     /**
      * Returns an array of all the TextRuns found
      */
-    public HSLFTextParagraph[] getTextRuns() {
+    public List<List<HSLFTextParagraph>> getTextParagraphs() {
         return _runs;
     }
 
@@ -131,15 +137,8 @@ public final class SlideMaster extends HSLFMasterSheet {
     }
 
     protected void onAddTextShape(HSLFTextShape shape) {
-        HSLFTextParagraph run = shape.getTextParagraph();
-
-        if(_runs == null) _runs = new HSLFTextParagraph[]{run};
-        else {
-            HSLFTextParagraph[] tmp = new HSLFTextParagraph[_runs.length + 1];
-            System.arraycopy(_runs, 0, tmp, 0, _runs.length);
-            tmp[tmp.length-1] = run;
-            _runs = tmp;
-        }
+        List<HSLFTextParagraph> runs = shape.getTextParagraphs();
+        _runs.add(runs);
     }
 
     public TxMasterStyleAtom[] getTxMasterStyleAtoms(){

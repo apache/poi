@@ -18,8 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.record.ExObjList;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.ExEmbed;
@@ -63,7 +62,7 @@ public final class OLEShape extends HSLFPictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-     protected OLEShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    public OLEShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 

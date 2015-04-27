@@ -34,10 +34,7 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.model.HSLFSlide;
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -147,7 +144,7 @@ public class TestDocumentEncryption {
         HSLFSlideShow ss = new HSLFSlideShow(hss);
         
         HSLFSlide slide = ss.getSlides()[0];
-        assertEquals("Dominic Salemno", slide.getTextRuns()[0].getText());
+        assertEquals("Dominic Salemno", slide.getTextParagraphs()[0].getRawText());
 
         String picCmp[][] = {
             {"0","nKsDTKqxTCR8LFkVVWlP9GSTvZ0="},

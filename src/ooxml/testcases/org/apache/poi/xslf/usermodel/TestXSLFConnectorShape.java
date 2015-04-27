@@ -16,28 +16,31 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.awt.Color;
 import java.awt.Rectangle;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.*;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFConnectorShape extends TestCase {
+public class TestXSLFConnectorShape {
 
+    @Test
     public void testLineDecorations() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
         XSLFConnectorShape shape = slide.createConnector();
-        assertEquals(1, slide.getShapes().length);
+        assertEquals(1, slide.getShapes().size());
 
         assertFalse(shape.getSpPr().getLn().isSetHeadEnd());
         assertFalse(shape.getSpPr().getLn().isSetTailEnd());
@@ -112,6 +115,7 @@ public class TestXSLFConnectorShape extends TestCase {
 
     }
 
+    @Test
     public void testAddConnector(){
         XMLSlideShow pptx = new XMLSlideShow();
         XSLFSlide slide = pptx.createSlide();

@@ -17,10 +17,7 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFTextRun;
-import org.apache.poi.hslf.model.HSLFSlide;
-import org.apache.poi.hslf.model.HSLFTextBox;
+import org.apache.poi.hslf.usermodel.*;
 
 import java.io.FileOutputStream;
 
@@ -39,7 +36,7 @@ public final class BulletsDemo {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox shape = new HSLFTextBox();
-        HSLFTextRun rt = shape.getTextParagraph().getRichTextRuns()[0];
+        HSLFTextRun rt = shape.getTextParagraphs().getTextRuns()[0];
         shape.setText(
                 "January\r" +
                 "February\r" +

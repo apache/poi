@@ -59,7 +59,7 @@ public class XSLFTextRun implements TextRun {
         return _p;
     }
 
-    public String getText(){
+    public String getRawText(){
         return _r.getT();
     }
 
@@ -479,7 +479,7 @@ public class XSLFTextRun implements TextRun {
     /**
      * @return whether this run of text is formatted as underlined text
      */
-    public boolean isUnderline(){
+    public boolean isUnderlined(){
         CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getLevel()){
             public boolean fetch(CTTextCharacterProperties props){
                 if(props.isSetU()){
@@ -499,7 +499,7 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public String toString(){
-        return "[" + getClass() + "]" + getText();
+        return "[" + getClass() + "]" + getRawText();
     }
 
     public XSLFHyperlink createHyperlink(){
@@ -568,8 +568,8 @@ public class XSLFTextRun implements TextRun {
         boolean italic = r.isItalic();
         if(italic != isItalic()) setItalic(italic);
 
-        boolean underline = r.isUnderline();
-        if(underline != isUnderline()) setUnderline(underline);
+        boolean underline = r.isUnderlined();
+        if(underline != isUnderlined()) setUnderline(underline);
 
         boolean strike = r.isStrikethrough();
         if(strike != isStrikethrough()) setStrikethrough(strike);

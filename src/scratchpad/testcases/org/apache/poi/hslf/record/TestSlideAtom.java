@@ -78,7 +78,7 @@ public final class TestSlideAtom extends TestCase {
 	
 	public void testSSSlideInfoAtom() throws Exception {
 		HSLFSlideShow ss = new HSLFSlideShow();
-		org.apache.poi.hslf.model.HSLFSlide	slide1 = ss.createSlide(), slide2 = ss.createSlide();
+		org.apache.poi.hslf.usermodel.HSLFSlide	slide1 = ss.createSlide(), slide2 = ss.createSlide();
 		slide2.setHidden(true);
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(4096);

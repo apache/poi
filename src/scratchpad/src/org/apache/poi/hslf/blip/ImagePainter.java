@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 
 import java.awt.*;
 

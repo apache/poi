@@ -27,8 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.ShapeGroup;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Units;
+import org.apache.poi.util.*;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.*;
@@ -40,6 +39,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.*;
  */
 @Beta
 public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, ShapeGroup<XSLFShape> {
+    private static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
+    
     private final List<XSLFShape> _shapes;
     private final CTGroupShapeProperties _grpSpPr;
     private XSLFDrawing _drawing;
@@ -135,8 +136,9 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Sha
      *
      * @return child shapes contained witin this group
      */
-    public XSLFShape[] getShapes(){
-        return _shapes.toArray(new XSLFShape[_shapes.size()]);
+    @Override
+    public List<XSLFShape> getShapes(){
+        return _shapes;
     }
 
     /**
@@ -246,6 +248,13 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Sha
         return sh;
     }
 
+    public XSLFTable createTable(){
+        XSLFTable sh = getDrawing().createTable();
+        _shapes.add(sh);
+        sh.setParent(this);
+        return sh;
+    }
+    
     @Override
     public void setFlipHorizontal(boolean flip){
         getSafeXfrm().setFlipH(flip);
@@ -282,14 +291,36 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Sha
     @Override
     void copy(XSLFShape src){
         XSLFGroupShape gr = (XSLFGroupShape)src;
+        
+        // clear shapes
+        clear();
+        
         // recursively update each shape
-        XSLFShape[] tgtShapes = getShapes();
-        XSLFShape[] srcShapes = gr.getShapes();
-        for(int i = 0; i < tgtShapes.length; i++){
-            XSLFShape s1 = srcShapes[i];
-            XSLFShape s2 = tgtShapes[i];
+        for(XSLFShape shape : gr.getShapes()) {
+            XSLFShape newShape = null;
+            if (shape instanceof XSLFTextBox) {
+                newShape = createTextBox();
+            } else if (shape instanceof XSLFAutoShape) {
+                newShape = createAutoShape();
+            } else if (shape instanceof XSLFConnectorShape) {
+                newShape = createConnector();
+            } else if (shape instanceof XSLFFreeformShape) {
+                newShape = createFreeform();
+            } else if (shape instanceof XSLFPictureShape) {
+                XSLFPictureShape p = (XSLFPictureShape)shape;
+                XSLFPictureData pd = p.getPictureData();
+                int picId = getSheet().getSlideShow().addPicture(pd.getData(), pd.getPictureType());
+                newShape = createPicture(picId);
+            } else if (shape instanceof XSLFGroupShape) {
+                newShape = createGroup();
+            } else if (shape instanceof XSLFTable) {
+                newShape = createTable();
+            } else {
+                _logger.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
+                continue;
+            }
 
-            s2.copy(s1);
+            newShape.copy(shape);
         }
     }
 

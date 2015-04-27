@@ -34,7 +34,7 @@ import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
 
@@ -49,13 +49,13 @@ public final class TestTextShape {
     @Test
     public void createAutoShape(){
         HSLFTextShape shape = new HSLFAutoShape(ShapeType.TRAPEZOID);
-        assertNull(shape.getTextParagraph());
+        assertNull(shape.getTextParagraphs());
         assertNull(shape.getText());
         assertNull(shape.getEscherTextboxWrapper());
 
         HSLFTextParagraph run = shape.createTextRun();
         assertNotNull(run);
-        assertNotNull(shape.getTextParagraph());
+        assertNotNull(shape.getTextParagraphs());
         assertNotNull(shape.getEscherTextboxWrapper());
         assertEquals("", shape.getText());
         assertSame(run, shape.createTextRun());
@@ -65,13 +65,13 @@ public final class TestTextShape {
     @Test
     public void createTextBox(){
         HSLFTextShape shape = new HSLFTextBox();
-        HSLFTextParagraph run = shape.getTextParagraph();
+        HSLFTextParagraph run = shape.getTextParagraphs();
         assertNotNull(run);
         assertNotNull(shape.getText());
         assertNotNull(shape.getEscherTextboxWrapper());
 
         assertSame(run, shape.createTextRun());
-        assertNotNull(shape.getTextParagraph());
+        assertNotNull(shape.getTextParagraphs());
         assertNotNull(shape.getEscherTextboxWrapper());
         assertEquals("", shape.getText());
 
@@ -93,41 +93,41 @@ public final class TestTextShape {
         for (int i = 0; i < shape.length; i++) {
             assertTrue("Expected TextShape but found " + shape[i].getClass().getName(), shape[i] instanceof HSLFTextShape);
             HSLFTextShape tx = (HSLFTextShape)shape[i];
-            HSLFTextParagraph run = tx.getTextParagraph();
+            HSLFTextParagraph run = tx.getTextParagraphs();
             assertNotNull(run);
             int runType = run.getRunType();
 
             ShapeType type = shape[i].getShapeType();
             switch (type){
                 case TEXT_BOX:
-                    assertEquals("Text in a TextBox", run.getText());
+                    assertEquals("Text in a TextBox", run.getRawText());
                     break;
                 case RECT:
                     if(runType == TextHeaderAtom.OTHER_TYPE)
-                        assertEquals("Rectangle", run.getText());
+                        assertEquals("Rectangle", run.getRawText());
                     else if(runType == TextHeaderAtom.TITLE_TYPE)
-                        assertEquals("Title Placeholder", run.getText());
+                        assertEquals("Title Placeholder", run.getRawText());
                     break;
                 case OCTAGON:
-                    assertEquals("Octagon", run.getText());
+                    assertEquals("Octagon", run.getRawText());
                     break;
                 case ELLIPSE:
-                    assertEquals("Ellipse", run.getText());
+                    assertEquals("Ellipse", run.getRawText());
                     break;
                 case ROUND_RECT:
-                    assertEquals("RoundRectangle", run.getText());
+                    assertEquals("RoundRectangle", run.getRawText());
                     break;
                 default:
                     fail("Unexpected shape: " + shape[i].getShapeName());
 
             }
-            lst1.add(run.getText());
+            lst1.add(run.getRawText());
         }
 
         List<String> lst2 = new ArrayList<String>();
-        HSLFTextParagraph[] run = slide.getTextRuns();
+        HSLFTextParagraph[] run = slide.getTextParagraphs();
         for (int i = 0; i < run.length; i++) {
-            lst2.add(run[i].getText());
+            lst2.add(run[i].getRawText());
         }
 
         assertTrue(lst1.containsAll(lst2));
@@ -162,12 +162,12 @@ public final class TestTextShape {
         assertTrue(shape[0] instanceof HSLFTextShape);
         shape1 = (HSLFTextShape)shape[0];
         assertEquals(ShapeType.TEXT_BOX, shape1.getShapeType());
-        assertEquals("Hello, World!", shape1.getTextParagraph().getText());
+        assertEquals("Hello, World!", shape1.getTextParagraphs().getRawText());
 
         assertTrue(shape[1] instanceof HSLFTextShape);
         shape1 = (HSLFTextShape)shape[1];
         assertEquals(ShapeType.RIGHT_ARROW, shape1.getShapeType());
-        assertEquals("Testing TextShape", shape1.getTextParagraph().getText());
+        assertEquals("Testing TextShape", shape1.getTextParagraphs().getRawText());
     }
 
     @Test
@@ -188,28 +188,28 @@ public final class TestTextShape {
         HSLFTextShape tx;
 
         tx = map.get("TEST1");
-        assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.1, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.39, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getLeftInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getRightInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getTopInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getBottomInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
 
         tx = map.get("TEST2");
-        assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.1, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.39, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getLeftInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getRightInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getTopInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getBottomInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
 
         tx = map.get("TEST3");
-        assertEquals(0.39, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.1, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getLeftInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getRightInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getTopInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getBottomInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
 
         tx = map.get("TEST4");
-        assertEquals(0.1, tx.getMarginLeft()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.39, tx.getMarginRight()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginTop()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
-        assertEquals(0.05, tx.getMarginBottom()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.1, tx.getLeftInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.39, tx.getRightInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getTopInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
+        assertEquals(0.05, tx.getBottomInset()*HSLFShape.EMU_PER_POINT/HSLFShape.EMU_PER_INCH, 0.01);
     }
 
     @Test
@@ -222,14 +222,14 @@ public final class TestTextShape {
 
         HSLFTextShape sh0 = (HSLFTextShape)sh[0];
         assertEquals(null, sh0.getText());
-        assertEquals(null, sh0.getTextParagraph());
+        assertEquals(null, sh0.getTextParagraphs());
 
         HSLFTextShape sh1 = (HSLFTextShape)sh[1];
         assertEquals(null, sh1.getText());
-        assertEquals(null, sh1.getTextParagraph());
+        assertEquals(null, sh1.getTextParagraphs());
 
         HSLFTextShape sh2 = (HSLFTextShape)sh[2];
         assertEquals("this box should be shown just once", sh2.getText());
-        assertEquals(-1, sh2.getTextParagraph().getIndex());
+        assertEquals(-1, sh2.getTextParagraphs().getIndex());
     }
 }
