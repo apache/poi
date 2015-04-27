@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 
 /**
  * Header / Footer settings.
@@ -240,7 +240,7 @@ public final class HeadersFooters {
     private boolean isVisible(int flag, int placeholderId){
         boolean visible;
         if(_ppt2007){
-            HSLFSheet master = _sheet != null ? _sheet : _ppt.getSlidesMasters()[0];
+            HSLFSheet master = _sheet != null ? _sheet : _ppt.getSlideMasters().get(0);
             HSLFTextShape placeholder = master.getPlaceholder(placeholderId);
             visible = placeholder != null && placeholder.getText() != null;
         } else {
@@ -252,7 +252,7 @@ public final class HeadersFooters {
     private String getPlaceholderText(int placeholderId, CString cs){
         String text = null;
         if(_ppt2007){
-            HSLFSheet master = _sheet != null ? _sheet : _ppt.getSlidesMasters()[0];
+            HSLFSheet master = _sheet != null ? _sheet : _ppt.getSlideMasters().get(0);
             HSLFTextShape placeholder = master.getPlaceholder(placeholderId);
             if(placeholder != null) text = placeholder.getText();
 

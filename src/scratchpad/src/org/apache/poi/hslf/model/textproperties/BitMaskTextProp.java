@@ -24,7 +24,7 @@ package org.apache.poi.hslf.model.textproperties;
  *  of the property is itself a mask, encoding several different
  *  (but related) properties
  */
-public class BitMaskTextProp extends TextProp implements Cloneable {
+public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	private String[] subPropNames;
 	private int[] subPropMasks;
 	private boolean[] subPropMatches;
@@ -91,7 +91,8 @@ public class BitMaskTextProp extends TextProp implements Cloneable {
 		subPropMatches[idx] = value;
 	}
 	
-	public Object clone(){
+	@Override
+	public BitMaskTextProp clone(){
 		BitMaskTextProp newObj = (BitMaskTextProp)super.clone();
 		
 		// Don't carry over matches, but keep everything 

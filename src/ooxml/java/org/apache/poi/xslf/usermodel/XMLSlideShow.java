@@ -17,52 +17,20 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Dimension;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.*;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.Resources;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.PackageHelper;
-import org.apache.poi.util.Units;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.util.*;
 import org.apache.poi.xslf.XSLFSlideShow;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.officeDocument.x2006.relationships.STRelationshipId;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdList;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideSize;
-import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import com.sun.org.apache.xml.internal.utils.UnImplNode;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 /**
  * High level representation of a ooxml slideshow.
@@ -334,7 +302,7 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
         
         XSLFTheme theme = (XSLFTheme) createRelationship(XSLFRelation.THEME, 
                 XSLFFactory.getInstance(), themeIndex);
-        theme.importTheme(getSlides()[0].getTheme());
+        theme.importTheme(getSlides().get(0).getTheme());
         
         _notesMaster.addRelation(theme.getPackageRelationship().getId(), theme);
         PackagePartName themePackagePartName = theme.getPackagePart().getPartName();
@@ -350,15 +318,16 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
         return _notesMaster; 
     }
 
-    public XSLFSlideMaster[] getSlideMasters() {
-        return _masters.values().toArray(new XSLFSlideMaster[_masters.size()]);
+    @Override
+    public List<XSLFSlideMaster> getSlideMasters() {
+        return new ArrayList<XSLFSlideMaster>(_masters.values());
     }
 
     /**
      * Return all the slides in the slideshow
      */
-    public XSLFSlide[] getSlides() {
-        return _slides.toArray(new XSLFSlide[_slides.size()]);
+    public List<XSLFSlide> getSlides() {
+        return _slides;
     }
     
     /**
@@ -494,10 +463,6 @@ public class XMLSlideShow extends POIXMLDocument implements SlideShow {
             return (CTTextParagraphProperties)o[0];
         }
         return null;
-    }
-
-    public XSLFSlideMaster[] getMasterSheet() {
-        return getSlideMasters();
     }
 
     public MasterSheet createMasterSheet() throws IOException {

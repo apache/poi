@@ -22,11 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
 
-import org.apache.poi.hslf.model.textproperties.AlignmentTextProp;
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -51,7 +47,7 @@ import org.apache.poi.util.POILogger;
 public final class StyleTextPropAtom extends RecordAtom
 {
     private byte[] _header;
-    private static long _type = 4001l;
+    private static final long _type = RecordTypes.StyleTextPropAtom.typeID;
     private byte[] reserved;
 
     private byte[] rawContents; // Holds the contents between write-outs
@@ -118,7 +114,9 @@ public final class StyleTextPropAtom extends RecordAtom
     }
 
     /** All the different kinds of paragraph properties we might handle */
-    public static final TextProp[] paragraphTextPropTypes = new TextProp[] {
+    public static final TextProp[] paragraphTextPropTypes = {
+        // TextProp order is according to 2.9.20 TextPFException,
+        // bitmask order can be different
         new TextProp(0, 0x1, "hasBullet"),
         new TextProp(0, 0x2, "hasBulletFont"),
         new TextProp(0, 0x4, "hasBulletColor"),
@@ -129,16 +127,22 @@ public final class StyleTextPropAtom extends RecordAtom
         new TextProp(2, 0x40, "bullet.size"),
         new TextProp(4, 0x20, "bullet.color"),
         new AlignmentTextProp(),
-        new TextProp(2, 0x100, "text.offset"),
-        new TextProp(2, 0x400, "bullet.offset"),
         new TextProp(2, 0x1000, "linespacing"),
         new TextProp(2, 0x2000, "spacebefore"),
         new TextProp(2, 0x4000, "spaceafter"),
+        new TextProp(2, 0x100, "text.offset"), // left margin
+        // 0x200 - Undefined and MUST be ignored
+        new TextProp(2, 0x400, "bullet.offset"), // indent
         new TextProp(2, 0x8000, "defaultTabSize"),
-        new TextProp(2, 0x100000, "tabStops"),
+        new TabStopPropCollection(), // tabstops size is variable!
         new TextProp(2, 0x10000, "fontAlign"),
-        new TextProp(2, 0xA0000, "wrapFlags"),
-        new TextProp(2, 0x200000, "textDirection")
+        new TextProp(2, 0xE0000, "wrapFlags"), // charWrap | wordWrap | overflow
+        new TextProp(2, 0x200000, "textDirection"),
+        // 0x400000 MUST be zero and MUST be ignored
+        new TextProp(0, 0x800000, "bullet.blip"), // TODO: check size
+        new TextProp(0, 0x1000000, "bullet.scheme"), // TODO: check size
+        new TextProp(0, 0x2000000, "hasBulletScheme"), // TODO: check size
+        // 0xFC000000 MUST be zero and MUST be ignored
     };
     /** All the different kinds of character properties we might handle */
     public static final TextProp[] characterTextPropTypes = new TextProp[] {
@@ -391,6 +395,14 @@ public final class StyleTextPropAtom extends RecordAtom
         initialised = false;
     }
 
+    /**
+     * Clear styles, so new collections can be added
+     */
+    public void clearStyles() {
+        paragraphStyles.clear();
+        charStyles.clear();
+    }
+    
     /**
      * Create a new Paragraph TextPropCollection, and add it to the list
      * @param charactersCovered The number of characters this TextPropCollection will cover

@@ -32,7 +32,7 @@ import java.io.OutputStream;
 public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecord
 {
 	private byte[] _header;
-	private static long _type = 3999l;
+	private static long _type = RecordTypes.TextHeaderAtom.typeID;
 	private RecordContainer parentRecord;
 
 	public static final int TITLE_TYPE = 0;
@@ -46,9 +46,21 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 
 	/** The kind of text it is */
 	private int textType;
+	/** position in the owning SlideListWithText */
+	private int index = -1;
 
 	public int getTextType() { return textType; }
 	public void setTextType(int type) { textType = type; }
+	
+    /**
+     * @return  0-based index of the text run in the SLWT container
+     */
+	public int getIndex() { return index; }
+
+    /**
+     *  @param id 0-based index of the text run in the SLWT container
+     */
+	public void setIndex(int index) { this.index = index; }
 
 	public RecordContainer getParentRecord() { return parentRecord; }
 	public void setParentRecord(RecordContainer record) { this.parentRecord = record; }

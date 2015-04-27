@@ -22,8 +22,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.junit.Test;
 
 public class HSLFFileHandler extends POIFSFileHandler {

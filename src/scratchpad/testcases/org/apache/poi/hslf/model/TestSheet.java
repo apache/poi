@@ -17,14 +17,17 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.PPDrawing;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Test;
 
 /**
  * Test common functionality of the <code>Sheet</code> object.
@@ -32,12 +35,13 @@ import org.apache.poi.POIDataSamples;
  *
  * @author Yegor Kozlov
  */
-public final class TestSheet extends TestCase {
+public final class TestSheet {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * For each ppt in the test directory check that all sheets are properly initialized
      */
+    @Test
     public void testSheet() throws Exception {
         String[] tests = {"SampleShow.ppt", "backgrounds.ppt", "text_shapes.ppt", "pictures.ppt"};
         for (String file : tests) {
@@ -51,14 +55,13 @@ public final class TestSheet extends TestCase {
     }
 
     private void doSlideShow(HSLFSlideShow ppt) {
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            verify(slide[i]);
+        for (HSLFSlide slide : ppt.getSlides()) {
+            verify(slide);
 
-            HSLFNotes notes = slide[i].getNotesSheet();
+            HSLFNotes notes = slide.getNotes();
             if(notes != null) verify(notes);
 
-            HSLFMasterSheet master = slide[i].getMasterSheet();
+            HSLFMasterSheet master = slide.getMasterSheet();
             assertNotNull(master);
             verify(master);
         }
@@ -79,23 +82,19 @@ public final class TestSheet extends TestCase {
         assertTrue(sheet._getSheetNumber() != 0);
         assertTrue(sheet._getSheetRefId() != 0);
 
-        HSLFTextParagraph[] txt = sheet.getTextRuns();
-        if (txt == null) {
-            throw new AssertionFailedError("no text runs");
-        }
-        for (int i = 0; i < txt.length; i++) {
-            assertNotNull(txt[i].getSheet());
+        List<HSLFTextParagraph> txt = sheet.getTextParagraphs();
+        assertTrue("no text runs", txt != null && !txt.isEmpty());
+        for (HSLFTextParagraph t : txt) {
+            assertNotNull(t.getSheet());
         }
 
-        HSLFShape[] shape = sheet.getShapes();
-        if (shape == null) {
-            throw new AssertionFailedError("no shapes");
-        }
-        for (int i = 0; i < shape.length; i++) {
-            assertNotNull(shape[i].getSpContainer());
-            assertNotNull(shape[i].getSheet());
-            assertNotNull(shape[i].getShapeName());
-            assertNotNull(shape[i].getAnchor());
+        List<HSLFShape> shape = sheet.getShapes();
+        assertTrue("no shapes", shape != null && !shape.isEmpty());
+        for (HSLFShape s : shape) {
+            assertNotNull(s.getSpContainer());
+            assertNotNull(s.getSheet());
+            assertNotNull(s.getShapeName());
+            assertNotNull(s.getAnchor());
         }
     }
 }

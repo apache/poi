@@ -91,12 +91,12 @@ public final class XSLFNotes extends XSLFSheet implements Notes<XSLFShape,XMLSli
     }
 
     @Override
-    public List<XSLFTextParagraph> getTextParagraphs() {
-        List<XSLFTextParagraph> tp = new ArrayList<XSLFTextParagraph>();
+    public List<List<XSLFTextParagraph>> getTextParagraphs() {
+        List<List<XSLFTextParagraph>> tp = new ArrayList<List<XSLFTextParagraph>>();
         for (XSLFShape sh : super.getShapes()) {
             if (sh instanceof XSLFTextShape) {
                 XSLFTextShape txt = (XSLFTextShape)sh;
-                tp.addAll(txt.getTextParagraphs());
+                tp.add(txt.getTextParagraphs());
             }
         }
         return tp;

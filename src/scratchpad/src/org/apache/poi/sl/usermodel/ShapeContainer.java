@@ -17,18 +17,20 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.util.List;
+
 
 public interface ShapeContainer<T extends Shape> extends Iterable<T> {
     /**
-     * Returns an array containing all of the elements in this container in proper
+     * Returns an list containing all of the elements in this container in proper
      * sequence (from first to last element).
      *
-     * @return an array containing all of the elements in this container in proper
+     * @return an list containing all of the elements in this container in proper
      *         sequence
      */
-	public T[] getShapes();
+	List<T> getShapes();
 
-	public void addShape(T shape);
+	void addShape(T shape);
 
     /**
      * Removes the specified shape from this sheet, if it is present
@@ -40,5 +42,5 @@ public interface ShapeContainer<T extends Shape> extends Iterable<T> {
      * @throws IllegalArgumentException if the type of the specified shape
      *         is incompatible with this sheet (optional)
      */
-	public boolean removeShape(T shape);
+	boolean removeShape(T shape);
 }

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.HSLFPictureShape;
-import org.apache.poi.hslf.model.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.exceptions.HSLFException;
 
 import java.io.ByteArrayOutputStream;

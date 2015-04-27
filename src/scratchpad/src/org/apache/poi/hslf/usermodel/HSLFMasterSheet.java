@@ -15,10 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.hslf.record.SheetContainer;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.sl.usermodel.MasterSheet;
 

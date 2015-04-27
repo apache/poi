@@ -98,16 +98,16 @@ public final class TestBugs {
 
         notes = ppt.getSlides()[0].getNotesSheet();
         assertNotNull(notes);
-        txrun = notes.getTextRuns()[0];
+        txrun = notes.getTextParagraphs()[0];
         assertEquals("Notes-1", txrun.getRawText());
-        assertEquals(false, txrun.getRichTextRuns()[0].isBold());
+        assertEquals(false, txrun.getTextRuns()[0].isBold());
 
         //notes for the second slide are in bold
         notes = ppt.getSlides()[1].getNotesSheet();
         assertNotNull(notes);
-        txrun = notes.getTextRuns()[0];
+        txrun = notes.getTextParagraphs()[0];
         assertEquals("Notes-2", txrun.getRawText());
-        assertEquals(true, txrun.getRichTextRuns()[0].isBold());
+        assertEquals(true, txrun.getTextRuns()[0].isBold());
 
     }
 
@@ -134,7 +134,7 @@ public final class TestBugs {
             HSLFNotes notes = slide[i].getNotesSheet();
             if (notesMap.containsKey(slideNumber)){
                 assertNotNull(notes);
-                String text = notes.getTextRuns()[0].getRawText();
+                String text = notes.getTextParagraphs()[0].getRawText();
                 String startingPhrase = notesMap.get(slideNumber);
                 assertTrue("Notes for slide " + slideNumber + " must start with " +
                         startingPhrase , text.startsWith(startingPhrase));
@@ -158,7 +158,7 @@ public final class TestBugs {
                 for (int j = 0; j < sh.length; j++) {
                     if( sh[j] instanceof HSLFTextBox){
                         HSLFTextBox txt = (HSLFTextBox)sh[j];
-                        assertNotNull(txt.getTextParagraph());
+                        assertNotNull(txt.getTextParagraphs());
                     }
                 }
             }
@@ -202,8 +202,8 @@ public final class TestBugs {
         HSLFSlide[] slide = ppt.getSlides();
         for (int i = 0; i < slide.length; i++) {
             HSLFMasterSheet master = slide[i].getMasterSheet();
-            if (i == 0) assertTrue(master instanceof TitleMaster); //the first slide follows TitleMaster
-            else assertTrue(master instanceof SlideMaster);
+            if (i == 0) assertTrue(master instanceof HSLFTitleMaster); //the first slide follows TitleMaster
+            else assertTrue(master instanceof HSLFSlideMaster);
         }
     }
 
@@ -301,7 +301,7 @@ public final class TestBugs {
 
         HSLFSlide[] slide = ppt.getSlides();
         assertEquals(1, slide.length);
-        HSLFTextParagraph[] runs = slide[0].getTextRuns();
+        HSLFTextParagraph[] runs = slide[0].getTextParagraphs();
         assertEquals(4, runs.length);
 
         Set<String> txt = new HashSet<String>();
@@ -329,21 +329,21 @@ public final class TestBugs {
 
         // Check the first slide
         HSLFSlide slide = ppt.getSlides()[0];
-        HSLFTextParagraph[] slTr = slide.getTextRuns();
+        HSLFTextParagraph[] slTr = slide.getTextParagraphs();
         
         // Has two text runs, one from slide text, one from drawing
         assertEquals(2, slTr.length);
         assertEquals(false, slTr[0].isDrawingBased());
         assertEquals(true, slTr[1].isDrawingBased());
-        assertEquals("First run", slTr[0].getText());
-        assertEquals("Second run", slTr[1].getText());
+        assertEquals("First run", slTr[0].getRawText());
+        assertEquals("Second run", slTr[1].getRawText());
 
         // Check the shape based text runs
         List<HSLFTextParagraph> lst = new ArrayList<HSLFTextParagraph>();
         HSLFShape[] shape = slide.getShapes();
         for (int i = 0; i < shape.length; i++) {
             if( shape[i] instanceof HSLFTextShape){
-                HSLFTextParagraph textRun = ((HSLFTextShape)shape[i]).getTextParagraph();
+                HSLFTextParagraph textRun = ((HSLFTextShape)shape[i]).getTextParagraphs();
                 if(textRun != null) {
                     lst.add(textRun);
                 }
@@ -354,7 +354,7 @@ public final class TestBugs {
         assertEquals(1, lst.size());
         
         // And it should be the second one
-        assertEquals("Second run", lst.get(0).getText());
+        assertEquals("Second run", lst.get(0).getRawText());
     }
 
     /**
@@ -402,11 +402,11 @@ public final class TestBugs {
         assertEquals(1, sh.length);
         assertTrue(sh[0] instanceof HSLFTextShape);
         HSLFTextShape tx = (HSLFTextShape)sh[0];
-        assertEquals("Fundera, planera och involvera.", tx.getTextParagraph().getText());
+        assertEquals("Fundera, planera och involvera.", tx.getTextParagraphs().getRawText());
 
-        HSLFTextParagraph[] run = slide.getTextRuns();
+        HSLFTextParagraph[] run = slide.getTextParagraphs();
         assertEquals(1, run.length);
-        assertEquals("Fundera, planera och involvera.", run[0].getText());
+        assertEquals("Fundera, planera och involvera.", run[0].getRawText());
     }
 
     /**
@@ -429,7 +429,7 @@ public final class TestBugs {
     public void bug49648() throws Exception {
        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("49648.ppt"));
        for(HSLFSlide slide : ppt.getSlides()) {
-          for(HSLFTextParagraph run : slide.getTextRuns()) {
+          for(HSLFTextParagraph run : slide.getTextParagraphs()) {
              String text = run.getRawText();
              text.replace("{txtTot}", "With \u0123\u1234\u5678 unicode");
              run.setRawText(text);
@@ -487,7 +487,7 @@ public final class TestBugs {
                 str = str.replace("$$DATE$$", new Date().toString());
                 tb.setText(str);
                 
-                HSLFTextParagraph tr = tb.getTextParagraph();
+                HSLFTextParagraph tr = tb.getTextParagraphs();
                 assertEquals(str.length()+1,tr.getStyleTextPropAtom().getParagraphStyles().getFirst().getCharactersCovered());
                 assertEquals(str.length()+1,tr.getStyleTextPropAtom().getCharacterStyles().getFirst().getCharactersCovered());
             }
@@ -538,7 +538,7 @@ public final class TestBugs {
         // Check the number of text runs based on the slide (not textbox)
         // Will have skipped the empty one
         int str = 0;
-        for (HSLFTextParagraph tr : _slides[0].getTextRuns()) {
+        for (HSLFTextParagraph tr : _slides[0].getTextParagraphs()) {
             if (! tr.isDrawingBased()) str++;
         }
         assertEquals(1, str);

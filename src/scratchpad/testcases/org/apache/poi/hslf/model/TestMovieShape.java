@@ -17,24 +17,26 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.*;
+
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Test;
 
 /**
  * Test <code>MovieShape</code> object.
  *
  * @author Yegor Kozlov
  */
-public final class TestMovieShape extends TestCase {
+public final class TestMovieShape {
 
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
+    @Test
     public void testCreate() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
@@ -57,8 +59,8 @@ public final class TestMovieShape extends TestCase {
         ppt.write(out);
 
         ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-        slide = ppt.getSlides()[0];
-        shape = (MovieShape)slide.getShapes()[0];
+        slide = ppt.getSlides().get(0);
+        shape = (MovieShape)slide.getShapes().get(0);
         assertEquals(path, shape.getPath());
         assertFalse(shape.isAutoPlay());
     }

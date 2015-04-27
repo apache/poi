@@ -16,30 +16,34 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import java.awt.Color;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import java.awt.Color;
+import java.util.List;
 
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCap;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFSimpleShape extends TestCase {
+public class TestXSLFSimpleShape {
+    
+    @Test
     public void testLineStyles() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
         XSLFSimpleShape shape = slide.createAutoShape();
-        assertEquals(1, slide.getShapes().length);
+        assertEquals(1, slide.getShapes().size());
         // line properties are not set by default
         assertFalse(shape.getSpPr().isSetLn());
 
-        assertEquals(0., shape.getLineWidth());
+        assertEquals(0., shape.getLineWidth(), 0);
         assertEquals(null, shape.getLineColor());
         assertEquals(null, shape.getLineDash());
         assertEquals(null, shape.getLineCap());
@@ -54,10 +58,10 @@ public class TestXSLFSimpleShape extends TestCase {
 
         // line width
         shape.setLineWidth(1.0);
-        assertEquals(1.0, shape.getLineWidth());
+        assertEquals(1.0, shape.getLineWidth(), 0);
         assertEquals(Units.EMU_PER_POINT, shape.getSpPr().getLn().getW());
         shape.setLineWidth(5.5);
-        assertEquals(5.5, shape.getLineWidth());
+        assertEquals(5.5, shape.getLineWidth(), 0);
         assertEquals(Units.toEMU(5.5), shape.getSpPr().getLn().getW());
         shape.setLineWidth(0.0);
         // setting line width to zero unsets the W attribute
@@ -108,17 +112,18 @@ public class TestXSLFSimpleShape extends TestCase {
         ln2.setLineDash(LineDash.DOT);
         assertEquals(LineDash.DOT, ln2.getLineDash());
         ln2.setLineWidth(0.);
-        assertEquals(0., ln2.getLineWidth());
+        assertEquals(0., ln2.getLineWidth(), 0);
 
         XSLFSimpleShape ln3 = slide.createAutoShape();
         ln3.setLineWidth(1.);
-        assertEquals(1., ln3.getLineWidth());
+        assertEquals(1., ln3.getLineWidth(), 0);
         ln3.setLineDash(null);
         assertEquals(null, ln3.getLineDash());
         ln3.setLineCap(null);
         assertEquals(null, ln3.getLineDash());
     }
 
+    @Test
     public void testFill() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -143,29 +148,30 @@ public class TestXSLFSimpleShape extends TestCase {
         assertFalse(shape.getSpPr().isSetSolidFill());
     }
 
+    @Test
     public void testDefaultProperties() {
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
-        XSLFSlide slide6 = ppt.getSlides()[5];
-        XSLFShape[] shapes = slide6.getShapes();
-        for(int i = 1; i < shapes.length; i++){
-            XSLFSimpleShape s = (XSLFSimpleShape) shapes[i];
+        XSLFSlide slide6 = ppt.getSlides().get(5);
+        List<XSLFShape> shapes = slide6.getShapes();
+        for(XSLFShape xs : shapes){
+            XSLFSimpleShape s = (XSLFSimpleShape)xs;
             // all shapes have a theme color="accent1"
             assertEquals("accent1", s.getSpStyle().getFillRef().getSchemeClr().getVal().toString());
-            assertEquals(2.0, s.getLineWidth());
+            assertEquals(2.0, s.getLineWidth(), 0);
             assertEquals(LineCap.FLAT, s.getLineCap());
             // YK: calculated color is slightly different from PowerPoint
             assertEquals(new Color(39, 64, 94), s.getLineColor());
         }
 
-        XSLFSimpleShape s0 = (XSLFSimpleShape) shapes[0];
+        XSLFSimpleShape s0 = (XSLFSimpleShape) shapes.get(0);
         // fill is not set
         assertNull(s0.getSpPr().getSolidFill());
         //assertEquals(slide6.getTheme().getColor("accent1").getColor(), s0.getFillColor());
         assertEquals(new Color(79, 129, 189), s0.getFillColor());
 
         // lighter 80%
-        XSLFSimpleShape s1 = (XSLFSimpleShape)shapes[1];
+        XSLFSimpleShape s1 = (XSLFSimpleShape)shapes.get(1);
         CTSchemeColor ref1 = s1.getSpPr().getSolidFill().getSchemeClr();
         assertEquals(1, ref1.sizeOfLumModArray());
         assertEquals(1, ref1.sizeOfLumOffArray());
@@ -175,7 +181,7 @@ public class TestXSLFSimpleShape extends TestCase {
         assertEquals(new Color(220, 230, 242), s1.getFillColor());
 
         // lighter 60%
-        XSLFSimpleShape s2 = (XSLFSimpleShape)shapes[2];
+        XSLFSimpleShape s2 = (XSLFSimpleShape)shapes.get(2);
         CTSchemeColor ref2 = s2.getSpPr().getSolidFill().getSchemeClr();
         assertEquals(1, ref2.sizeOfLumModArray());
         assertEquals(1, ref2.sizeOfLumOffArray());
@@ -185,7 +191,7 @@ public class TestXSLFSimpleShape extends TestCase {
         assertEquals(new Color(185, 205, 229), s2.getFillColor());
 
         // lighter 40%
-        XSLFSimpleShape s3 = (XSLFSimpleShape)shapes[3];
+        XSLFSimpleShape s3 = (XSLFSimpleShape)shapes.get(3);
         CTSchemeColor ref3 = s3.getSpPr().getSolidFill().getSchemeClr();
         assertEquals(1, ref3.sizeOfLumModArray());
         assertEquals(1, ref3.sizeOfLumOffArray());
@@ -195,7 +201,7 @@ public class TestXSLFSimpleShape extends TestCase {
         assertEquals(new Color(149, 179, 215), s3.getFillColor());
 
         // darker 25%
-        XSLFSimpleShape s4 = (XSLFSimpleShape)shapes[4];
+        XSLFSimpleShape s4 = (XSLFSimpleShape)shapes.get(4);
         CTSchemeColor ref4 = s4.getSpPr().getSolidFill().getSchemeClr();
         assertEquals(1, ref4.sizeOfLumModArray());
         assertEquals(0, ref4.sizeOfLumOffArray());
@@ -204,7 +210,7 @@ public class TestXSLFSimpleShape extends TestCase {
         // YK: calculated color is slightly different from PowerPoint
         assertEquals(new Color(59, 97, 142), s4.getFillColor());
 
-        XSLFSimpleShape s5 = (XSLFSimpleShape)shapes[5];
+        XSLFSimpleShape s5 = (XSLFSimpleShape)shapes.get(5);
         CTSchemeColor ref5 = s5.getSpPr().getSolidFill().getSchemeClr();
         assertEquals(1, ref5.sizeOfLumModArray());
         assertEquals(0, ref5.sizeOfLumOffArray());
@@ -214,26 +220,27 @@ public class TestXSLFSimpleShape extends TestCase {
         assertEquals(new Color(40, 65, 95), s5.getFillColor());
     }
 
+    @Test
     public void testAnchor(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
-        XSLFSlide[] slide = ppt.getSlides();
+        List<XSLFSlide> slide = ppt.getSlides();
 
-        XSLFSlide slide2 = slide[1];
+        XSLFSlide slide2 = slide.get(1);
         XSLFSlideLayout layout2 = slide2.getSlideLayout();
-        XSLFShape[] shapes2 = slide2.getShapes();
-        XSLFTextShape sh1 = (XSLFTextShape)shapes2[0];
+        List<XSLFShape> shapes2 = slide2.getShapes();
+        XSLFTextShape sh1 = (XSLFTextShape)shapes2.get(0);
         assertEquals(Placeholder.CENTERED_TITLE, sh1.getTextType());
         assertEquals("PPTX Title", sh1.getText());
         assertNull(sh1.getSpPr().getXfrm()); // xfrm is not set, the query is delegated to the slide layout
         assertEquals(sh1.getAnchor(), layout2.getTextShapeByType(Placeholder.CENTERED_TITLE).getAnchor());
 
-        XSLFTextShape sh2 = (XSLFTextShape)shapes2[1];
+        XSLFTextShape sh2 = (XSLFTextShape)shapes2.get(1);
         assertEquals("Subtitle\nAnd second line", sh2.getText());
         assertEquals(Placeholder.SUBTITLE, sh2.getTextType());
         assertNull(sh2.getSpPr().getXfrm()); // xfrm is not set, the query is delegated to the slide layout
         assertEquals(sh2.getAnchor(), layout2.getTextShapeByType(Placeholder.SUBTITLE).getAnchor());
 
-        XSLFSlide slide5 = slide[4];
+        XSLFSlide slide5 = slide.get(4);
         XSLFSlideLayout layout5 = slide5.getSlideLayout();
         XSLFTextShape shTitle = slide5.getTextShapeByType(Placeholder.TITLE);
         assertEquals("Hyperlinks", shTitle.getText());
@@ -247,6 +254,7 @@ public class TestXSLFSimpleShape extends TestCase {
     }
 
     @SuppressWarnings({ "deprecation", "unused" })
+    @Test
     public void testShadowEffects(){
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();

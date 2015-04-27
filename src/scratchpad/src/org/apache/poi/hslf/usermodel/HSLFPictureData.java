@@ -30,7 +30,6 @@ import org.apache.poi.hslf.blip.JPEG;
 import org.apache.poi.hslf.blip.PICT;
 import org.apache.poi.hslf.blip.PNG;
 import org.apache.poi.hslf.blip.WMF;
-import org.apache.poi.hslf.model.HSLFPictureShape;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.LittleEndian;

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -466,8 +466,8 @@ public abstract class HSLFShape implements Shape {
      * @return the hyperlink assigned to this shape
      * or <code>null</code> if not found.
      */
-    public Hyperlink getHyperlink(){
-        return Hyperlink.find(this);
+    public HSLFHyperlink getHyperlink(){
+        return HSLFHyperlink.find(this);
     }
 
     public void draw(Graphics2D graphics){

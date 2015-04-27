@@ -20,7 +20,7 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
 
 /**

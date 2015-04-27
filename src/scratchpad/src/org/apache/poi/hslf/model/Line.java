@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 
@@ -30,7 +31,7 @@ import java.awt.geom.Line2D;
  *  @author Yegor Kozlov
  */
 public final class Line extends HSLFSimpleShape {
-    protected Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+    public Line(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 

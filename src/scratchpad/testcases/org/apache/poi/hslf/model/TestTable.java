@@ -17,24 +17,27 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Test;
 
 /**
  * Test <code>Table</code> object.
  *
  * @author Yegor Kozlov
  */
-public final class TestTable extends TestCase {
+public final class TestTable {
 
     /**
      * Test that ShapeFactory works properly and returns <code>Table</code>
      */
+    @Test
     public void testShapeFactory() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow();
 
@@ -45,10 +48,10 @@ public final class TestTable extends TestCase {
 
         TableCell cell = tbl.getCell(0, 0);
         //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
-        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraph().getRunType());
+        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraphs().get(0).getRunType());
 
-        assertTrue(slide.getShapes()[0] instanceof Table);
-        Table tbl2 = (Table)slide.getShapes()[0];
+        assertTrue(slide.getShapes().get(0) instanceof Table);
+        Table tbl2 = (Table)slide.getShapes().get(0);
         assertEquals(tbl.getNumberOfColumns(), tbl2.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl2.getNumberOfRows());
 
@@ -57,9 +60,9 @@ public final class TestTable extends TestCase {
         out.close();
 
         ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-        slide = ppt.getSlides()[0];
-        assertTrue(slide.getShapes()[0] instanceof Table);
-        Table tbl3 = (Table)slide.getShapes()[0];
+        slide = ppt.getSlides().get(0);
+        assertTrue(slide.getShapes().get(0) instanceof Table);
+        Table tbl3 = (Table)slide.getShapes().get(0);
         assertEquals(tbl.getNumberOfColumns(), tbl3.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl3.getNumberOfRows());
     }
@@ -67,25 +70,27 @@ public final class TestTable extends TestCase {
     /**
      * Error constructing Table when rownum=1
      */
+    @Test
     public void test45889(){
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
-        HSLFShape[] shapes;
+        List<HSLFShape> shapes;
         Table tbl1 = new Table(1, 5);
         assertEquals(5, tbl1.getNumberOfColumns());
         assertEquals(1, tbl1.getNumberOfRows());
         slide.addShape(tbl1);
 
         shapes = slide.getShapes();
-        assertEquals(1, shapes.length);
+        assertEquals(1, shapes.size());
 
-        Table tbl2 = (Table)shapes[0];
+        Table tbl2 = (Table)shapes.get(0);
         assertSame(tbl1.getSpContainer(), tbl2.getSpContainer());
 
         assertEquals(tbl1.getNumberOfColumns(), tbl2.getNumberOfColumns());
         assertEquals(tbl1.getNumberOfRows(), tbl2.getNumberOfRows());
     }
 
+    @Test
     public void testIllegalCOnstruction(){
         try {
             new Table(0, 5);

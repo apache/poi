@@ -19,19 +19,20 @@ package org.apache.poi.hslf.model;
 
 
 import java.awt.*;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
-import java.awt.font.TextLayout;
+import java.awt.font.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.awt.image.renderable.RenderableImage;
-import java.awt.geom.*;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
-import org.apache.poi.hslf.usermodel.HSLFTextRun;
+
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.sl.usermodel.StrokeStyle;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Translates Graphics2D calls into PowerPoint.
@@ -251,10 +252,10 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
      */
     public void drawString(String s, float x, float y) {
         HSLFTextBox txt = new HSLFTextBox(_group);
-        txt.getTextParagraph().supplySheet(_group.getSheet());
+        txt.getTextParagraphs().get(0).supplySheet(_group.getSheet());
         txt.setText(s);
 
-        HSLFTextRun rt = txt.getTextParagraph().getRichTextRuns()[0];
+        HSLFTextRun rt = txt.getTextParagraphs().get(0).getTextRuns().get(0);
         rt.setFontSize(_font.getSize());
         rt.setFontName(_font.getFamily());
 
@@ -262,13 +263,13 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         if (_font.isBold()) rt.setBold(true);
         if (_font.isItalic()) rt.setItalic(true);
 
-        txt.setMarginBottom(0);
-        txt.setMarginTop(0);
-        txt.setMarginLeft(0);
-        txt.setMarginRight(0);
+        txt.setBottomInset(0);
+        txt.setTopInset(0);
+        txt.setLeftInset(0);
+        txt.setRightInset(0);
         txt.setWordWrap(HSLFTextBox.WrapNone);
-        txt.setHorizontalAlignment(HSLFTextBox.AlignLeft);
-        txt.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
+        txt.setHorizontalCentered(false);
+        txt.setVerticalAlignment(VerticalAlignment.MIDDLE);
 
 
         TextLayout layout = new TextLayout(s, _font, getFontRenderContext());
@@ -1794,7 +1795,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
             float[] dash = bs.getDashArray();
             if (dash != null) {
                 //TODO: implement more dashing styles
-                shape.setLineDashing(Line.PEN_DASH);
+                shape.setLineDashing(StrokeStyle.LineDash.DASH);
             }
         }
     }

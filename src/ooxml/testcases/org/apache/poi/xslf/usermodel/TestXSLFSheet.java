@@ -16,50 +16,56 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import java.util.List;
+
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 
 /**
  * test common properties for sheets (slides, masters, layouts, etc.)
  *
  * @author Yegor Kozlov
  */
-public class TestXSLFSheet extends TestCase {
+public class TestXSLFSheet {
+    
+    @Test
     public void testCreateShapes(){
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
-        assertEquals(0, slide.getShapes().length);
+        assertTrue(slide.getShapes().isEmpty());
 
         XSLFSimpleShape shape1 = slide.createAutoShape();
-        assertEquals(1, slide.getShapes().length);
-        assertSame(shape1, slide.getShapes()[0]);
+        assertEquals(1, slide.getShapes().size());
+        assertSame(shape1, slide.getShapes().get(0));
 
         XSLFTextBox shape2 = slide.createTextBox();
-        assertEquals(2, slide.getShapes().length);
-        assertSame(shape1, slide.getShapes()[0]);
-        assertSame(shape2, slide.getShapes()[1]);
+        assertEquals(2, slide.getShapes().size());
+        assertSame(shape1, slide.getShapes().get(0));
+        assertSame(shape2, slide.getShapes().get(1));
 
         XSLFConnectorShape shape3 = slide.createConnector();
-        assertEquals(3, slide.getShapes().length);
-        assertSame(shape1, slide.getShapes()[0]);
-        assertSame(shape2, slide.getShapes()[1]);
-        assertSame(shape3, slide.getShapes()[2]);
+        assertEquals(3, slide.getShapes().size());
+        assertSame(shape1, slide.getShapes().get(0));
+        assertSame(shape2, slide.getShapes().get(1));
+        assertSame(shape3, slide.getShapes().get(2));
 
         XSLFGroupShape shape4 = slide.createGroup();
-        assertEquals(4, slide.getShapes().length);
-        assertSame(shape1, slide.getShapes()[0]);
-        assertSame(shape2, slide.getShapes()[1]);
-        assertSame(shape3, slide.getShapes()[2]);
-        assertSame(shape4, slide.getShapes()[3]);
+        assertEquals(4, slide.getShapes().size());
+        assertSame(shape1, slide.getShapes().get(0));
+        assertSame(shape2, slide.getShapes().get(1));
+        assertSame(shape3, slide.getShapes().get(2));
+        assertSame(shape4, slide.getShapes().get(3));
 
         ppt = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        slide = ppt.getSlides()[0];
-        XSLFShape[] shapes = slide.getShapes();
-        assertEquals(4, shapes.length);
+        slide = ppt.getSlides().get(0);
+        List<XSLFShape> shapes = slide.getShapes();
+        assertEquals(4, shapes.size());
 
-        assertTrue(shapes[0] instanceof XSLFAutoShape);
-        assertTrue(shapes[1] instanceof XSLFTextBox);
-        assertTrue(shapes[2] instanceof XSLFConnectorShape);
-        assertTrue(shapes[3] instanceof XSLFGroupShape);
+        assertTrue(shapes.get(0) instanceof XSLFAutoShape);
+        assertTrue(shapes.get(1) instanceof XSLFTextBox);
+        assertTrue(shapes.get(2) instanceof XSLFConnectorShape);
+        assertTrue(shapes.get(3) instanceof XSLFGroupShape);
     }
 }

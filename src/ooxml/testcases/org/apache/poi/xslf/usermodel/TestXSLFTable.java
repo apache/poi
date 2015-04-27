@@ -16,10 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
@@ -29,16 +30,16 @@ import java.util.List;
 /**
  * @author Yegor Kozlov
  */
-public class TestXSLFTable extends TestCase {
-
+public class TestXSLFTable {
+    @Test
     public void testRead(){
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
-        XSLFSlide slide = ppt.getSlides()[3];
-        XSLFShape[] shapes = slide.getShapes();
-        assertEquals(1, shapes.length);
-        assertTrue(shapes[0] instanceof XSLFTable);
-        XSLFTable tbl = (XSLFTable)shapes[0];
+        XSLFSlide slide = ppt.getSlides().get(3);
+        List<XSLFShape> shapes = slide.getShapes();
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSLFTable);
+        XSLFTable tbl = (XSLFTable)shapes.get(0);
         assertEquals(3, tbl.getNumberOfColumns());
         assertEquals(6, tbl.getNumberOfRows());
         assertNotNull(tbl.getCTTable());
@@ -46,13 +47,13 @@ public class TestXSLFTable extends TestCase {
         List<XSLFTableRow> rows = tbl.getRows();
         assertEquals(6, rows.size());
 
-        assertEquals(90.0, tbl.getColumnWidth(0));
-        assertEquals(240.0, tbl.getColumnWidth(1));
-        assertEquals(150.0, tbl.getColumnWidth(2));
+        assertEquals(90.0, tbl.getColumnWidth(0), 0);
+        assertEquals(240.0, tbl.getColumnWidth(1), 0);
+        assertEquals(150.0, tbl.getColumnWidth(2), 0);
 
         for(XSLFTableRow row : tbl){
             // all rows have the same height
-            assertEquals(29.2, row.getHeight());
+            assertEquals(29.2, row.getHeight(), 0);
         }
 
         XSLFTableRow row0 = rows.get(0);
@@ -70,6 +71,7 @@ public class TestXSLFTable extends TestCase {
         assertEquals("C1", cells1.get(2).getText());
     }
 
+    @Test
     public void testCreate() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -92,9 +94,9 @@ public class TestXSLFTable extends TestCase {
         assertNotNull(row0.getXmlObject());
         assertEquals(1, tbl.getNumberOfRows());
         assertSame(row0, tbl.getRows().get(0));
-        assertEquals(20.0, row0.getHeight());
+        assertEquals(20.0, row0.getHeight(), 0);
         row0.setHeight(30.0);
-        assertEquals(30.0, row0.getHeight());
+        assertEquals(30.0, row0.getHeight(), 0);
 
         assertEquals(0, row0.getCells().size());
         XSLFTableCell cell0 = row0.addCell();
@@ -108,41 +110,41 @@ public class TestXSLFTable extends TestCase {
 
         assertSame(cell0, row0.getCells().get(0));
         assertEquals(1, tbl.getNumberOfColumns());
-        assertEquals(100.0, tbl.getColumnWidth(0));
+        assertEquals(100.0, tbl.getColumnWidth(0), 0);
         cell0.addNewTextParagraph().addNewTextRun().setText("POI");
         assertEquals("POI", cell0.getText());
 
         XSLFTableCell cell1 = row0.addCell();
         assertSame(cell1, row0.getCells().get(1));
         assertEquals(2, tbl.getNumberOfColumns());
-        assertEquals(100.0, tbl.getColumnWidth(1));
+        assertEquals(100.0, tbl.getColumnWidth(1), 0);
         cell1.addNewTextParagraph().addNewTextRun().setText("Apache");
         assertEquals("Apache", cell1.getText());
 
-        assertEquals(1.0, cell1.getBorderBottom());
+        assertEquals(1.0, cell1.getBorderBottom(), 0);
         cell1.setBorderBottom(2.0);
-        assertEquals(2.0, cell1.getBorderBottom());
+        assertEquals(2.0, cell1.getBorderBottom(), 0);
         assertNull(cell1.getBorderBottomColor());
         cell1.setBorderBottomColor(Color.yellow);
         assertEquals(Color.yellow, cell1.getBorderBottomColor());
 
-        assertEquals(1.0, cell1.getBorderTop());
+        assertEquals(1.0, cell1.getBorderTop(), 0);
         cell1.setBorderTop(2.0);
-        assertEquals(2.0, cell1.getBorderTop());
+        assertEquals(2.0, cell1.getBorderTop(), 0);
         assertNull(cell1.getBorderTopColor());
         cell1.setBorderTopColor(Color.yellow);
         assertEquals(Color.yellow, cell1.getBorderTopColor());
 
-        assertEquals(1.0, cell1.getBorderLeft());
+        assertEquals(1.0, cell1.getBorderLeft(), 0);
         cell1.setBorderLeft(2.0);
-        assertEquals(2.0, cell1.getBorderLeft());
+        assertEquals(2.0, cell1.getBorderLeft(), 0);
         assertNull(cell1.getBorderLeftColor());
         cell1.setBorderLeftColor(Color.yellow);
         assertEquals(Color.yellow, cell1.getBorderLeftColor());
 
-        assertEquals(1.0, cell1.getBorderRight());
+        assertEquals(1.0, cell1.getBorderRight(), 0);
         cell1.setBorderRight(2.0);
-        assertEquals(2.0, cell1.getBorderRight());
+        assertEquals(2.0, cell1.getBorderRight(), 0);
         assertNull(cell1.getBorderRightColor());
         cell1.setBorderRightColor(Color.yellow);
         assertEquals(Color.yellow, cell1.getBorderRightColor());

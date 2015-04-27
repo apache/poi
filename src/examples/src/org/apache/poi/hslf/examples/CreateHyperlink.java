@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.model.*;
 
 import java.io.FileOutputStream;
@@ -43,7 +43,7 @@ public final class CreateHyperlink {
         textBox1.setAnchor(new Rectangle(100, 100, 200, 50));
 
         String text = textBox1.getText();
-        Hyperlink link = new Hyperlink();
+        HSLFHyperlink link = new HSLFHyperlink();
         link.setAddress("http://www.apache.org");
         link.setTitle(textBox1.getText());
         int linkId = ppt.addHyperlink(link);
@@ -58,7 +58,7 @@ public final class CreateHyperlink {
         textBox2.setText("Go to slide #3");
         textBox2.setAnchor(new Rectangle(100, 300, 200, 50));
 
-        Hyperlink link2 = new Hyperlink();
+        HSLFHyperlink link2 = new HSLFHyperlink();
         link2.setAddress(slideC);
         ppt.addHyperlink(link2);
 

@@ -17,11 +17,7 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.model.HSLFSlide;
-import org.apache.poi.hslf.model.HSLFTextParagraph;
-import org.apache.poi.hslf.model.Hyperlink;
-import org.apache.poi.hslf.model.HSLFShape;
+import org.apache.poi.hslf.usermodel.*;
 
 import java.io.FileInputStream;
 
@@ -44,12 +40,12 @@ public final class Hyperlinks {
 
                 //read hyperlinks from the slide's text runs
                 System.out.println("reading hyperlinks from the text runs");
-                HSLFTextParagraph[] txt = slide[j].getTextRuns();
+                HSLFTextParagraph[] txt = slide[j].getTextParagraphs();
                 for (int k = 0; k < txt.length; k++) {
-                    String text = txt[k].getText();
-                    Hyperlink[] links = txt[k].getHyperlinks();
+                    String text = txt[k].getRawText();
+                    HSLFHyperlink[] links = txt[k].getHyperlinks();
                     if(links != null) for (int l = 0; l < links.length; l++) {
-                        Hyperlink link = links[l];
+                        HSLFHyperlink link = links[l];
                         String title = link.getTitle();
                         String address = link.getAddress();
                         System.out.println("  " + title);
@@ -65,7 +61,7 @@ public final class Hyperlinks {
                 System.out.println("  reading hyperlinks from the slide's shapes");
                 HSLFShape[] sh = slide[j].getShapes();
                 for (int k = 0; k < sh.length; k++) {
-                    Hyperlink link = sh[k].getHyperlink();
+                    HSLFHyperlink link = sh[k].getHyperlink();
                     if(link != null)  {
                         String title = link.getTitle();
                         String address = link.getAddress();

@@ -112,7 +112,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
      * Sets the type of vertical alignment for the text.
      *
      * @param anchor - the type of alignment.
-     * A <code>null</code> values unsets this property.
+     * A {@code null} values unsets this property.
      */
     public void setVerticalAlignment(VerticalAlignment anchor){
         CTTextBodyProperties bodyPr = getTextBodyPr();
@@ -145,6 +145,40 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
         return fetcher.getValue() == null ? VerticalAlignment.TOP : fetcher.getValue();
     }
 
+    /**
+     * Sets if the paragraphs are horizontal centered
+     *
+     * @param isCentered true, if the paragraphs are horizontal centered
+     * A {@code null} values unsets this property.
+     * 
+     * @see TextShape#isHorizontalCentered()
+     */
+    public void setHorizontalCentered(Boolean isCentered){
+        CTTextBodyProperties bodyPr = getTextBodyPr();
+        if (bodyPr != null) {
+             if (isCentered == null) {
+                if (bodyPr.isSetAnchorCtr()) bodyPr.unsetAnchorCtr();
+            } else {
+                bodyPr.setAnchorCtr(isCentered);
+            }
+        }
+    }
+
+    @Override
+    public boolean isHorizontalCentered(){
+        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+            public boolean fetch(CTTextBodyProperties props){
+                if(props.isSetAnchorCtr()){
+                    setValue(props.getAnchorCtr());
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchShapeProperty(fetcher);
+        return fetcher.getValue() == null ? false : fetcher.getValue();
+    }
+    
     /**
      *
      * @param orientation vertical orientation of the text
@@ -266,7 +300,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
     }
 
     /**
-     * Sets the botom margin.
+     * Sets the bottom margin.
      * @see #getBottomInset()
      *
      * @param margin    the bottom margin
@@ -429,9 +463,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
         }
     }
 
-    /**
-     * Compute the cumulative height occupied by the text
-     */
+    @Override
     public double getTextHeight(){
         DrawFactory drawFact = DrawFactory.getInstance(null);
         DrawTextShape<XSLFTextShape> dts = drawFact.getDrawable(this);

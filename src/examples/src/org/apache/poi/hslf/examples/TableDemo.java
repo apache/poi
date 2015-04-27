@@ -17,8 +17,7 @@
 
 package org.apache.poi.hslf.examples;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.model.*;
 
 import java.awt.*;
@@ -53,7 +52,7 @@ public final class TableDemo {
             for (int j = 0; j < txt1[i].length; j++) {
                 TableCell cell = table1.getCell(i, j);
                 cell.setText(txt1[i][j]);
-                HSLFTextRun rt = cell.getTextParagraph().getRichTextRuns()[0];
+                HSLFTextRun rt = cell.getTextParagraphs().getTextRuns()[0];
                 rt.setFontName("Arial");
                 rt.setFontSize(10);
                 if(i == 0){
@@ -92,7 +91,7 @@ public final class TableDemo {
             for (int j = 0; j < txt2[i].length; j++) {
                 TableCell cell = table2.getCell(i, j);
                 cell.setText(txt2[i][j]);
-                HSLFTextRun rt = cell.getTextParagraph().getRichTextRuns()[0];
+                HSLFTextRun rt = cell.getTextParagraphs().getTextRuns()[0];
                 rt.setFontSize(10);
                 rt.setFontName("Arial");
                 if(i == 0){

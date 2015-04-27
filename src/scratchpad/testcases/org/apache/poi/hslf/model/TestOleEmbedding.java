@@ -18,32 +18,28 @@
 package org.apache.poi.hslf.model;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-
-import junit.framework.TestCase;
+import java.io.*;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.HSLFObjectData;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.junit.Test;
 
-public final class TestOleEmbedding extends TestCase {
+public final class TestOleEmbedding {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     /**
      * Tests support for OLE objects.
      *
      * @throws Exception if an error occurs.
      */
+    @Test
     public void testOleEmbedding2003() throws Exception {
         HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
         // Placeholder EMFs for clients that don't support the OLE components.
@@ -59,16 +55,16 @@ public final class TestOleEmbedding extends TestCase {
         //assertDigestEquals("Wrong data for object 2", "b323604b2003a7299c77c2693b641495", objects[1].getData());
     }
 
+    @Test
     public void testOLEShape() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
 
-        HSLFSlide slide = ppt.getSlides()[0];
-        HSLFShape[] sh = slide.getShapes();
+        HSLFSlide slide = ppt.getSlides().get(0);
         int cnt = 0;
-        for (int i = 0; i < sh.length; i++) {
-            if(sh[i] instanceof OLEShape){
+        for (HSLFShape sh : slide.getShapes()) {
+            if(sh instanceof OLEShape){
                 cnt++;
-                OLEShape ole = (OLEShape)sh[i];
+                OLEShape ole = (OLEShape)sh;
                 HSLFObjectData data = ole.getObjectData();
                 if("Worksheet".equals(ole.getInstanceName())){
                     //Voila! we created a workbook from the embedded OLE data
@@ -80,6 +76,7 @@ public final class TestOleEmbedding extends TestCase {
                     assertEquals(2, sheet.getRow(2).getCell(0).getNumericCellValue(), 0);
                     assertEquals(3, sheet.getRow(3).getCell(0).getNumericCellValue(), 0);
                     assertEquals(8, sheet.getRow(5).getCell(0).getNumericCellValue(), 0);
+                    wb.close();
                 } else if ("Document".equals(ole.getInstanceName())){
                     //creating a HWPF document
                     HWPFDocument doc = new HWPFDocument(data.getData());
@@ -92,6 +89,7 @@ public final class TestOleEmbedding extends TestCase {
         assertEquals("Expected 2 OLE shapes", 2, cnt);
     }
     
+    @Test
     public void testEmbedding() throws Exception {
     	HSLFSlideShowImpl _hslfSlideShow = HSLFSlideShowImpl.create();
     	HSLFSlideShow ppt = new HSLFSlideShow(_hslfSlideShow);
@@ -129,7 +127,7 @@ public final class TestOleEmbedding extends TestCase {
     	ppt.write(bos);
     	
     	ppt = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
-    	OLEShape comp = (OLEShape)ppt.getSlides()[0].getShapes()[0];
+    	OLEShape comp = (OLEShape)ppt.getSlides().get(0).getShapes().get(0);
     	byte compData[] = IOUtils.toByteArray(comp.getObjectData().getData());
     	
     	bos.reset();

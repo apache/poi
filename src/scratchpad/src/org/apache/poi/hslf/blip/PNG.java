@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.PngUtils;
 
 /**
@@ -46,7 +46,7 @@ public final class PNG extends Bitmap {
 
     /**
      * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.HSLFPictureShape#PNG
+     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#PNG
      */
     public int getType(){
         return HSLFPictureShape.PNG;

@@ -15,16 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.sl.draw.geom.CustomGeometry;
-import org.apache.poi.sl.draw.geom.Guide;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.util.POILogger;
-
-import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
+import org.apache.poi.ss.usermodel.ShapeTypes;
 
 /**
  * Represents an AutoShape.
@@ -69,8 +65,8 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFTextPa
     }
 
     protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
-        setVerticalAlignment(HSLFTextBox.AnchorMiddle);
-        setHorizontalAlignment(HSLFTextBox.AlignCenter);
+        setVerticalAlignment(VerticalAlignment.MIDDLE);
+        setHorizontalCentered(true);
         setWordWrap(HSLFTextBox.WrapNone);
     }
 
@@ -108,16 +104,5 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFTextPa
         if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
 
         setEscherProperty((short)(EscherProperties.GEOMETRY__ADJUSTVALUE + idx), val);
-    }
-
-    public java.awt.Shape getOutline(){
-        ShapeOutline outline = AutoShapes.getShapeOutline(getShapeType());
-        Rectangle2D anchor = getLogicalAnchor2D();
-        if(outline == null){
-            logger.log(POILogger.WARN, "Outline not found for " + getShapeType().nativeName);
-            return anchor;
-        }
-        java.awt.Shape shape = outline.getOutline(this);
-        return AutoShapes.transform(shape, anchor);
     }
 }

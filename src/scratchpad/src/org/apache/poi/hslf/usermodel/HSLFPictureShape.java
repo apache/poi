@@ -15,11 +15,9 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
-import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,23 +25,12 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.ddf.EscherComplexProperty;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.blip.Bitmap;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.Units;
+import org.apache.poi.util.*;
 
 
 /**
@@ -257,16 +244,6 @@ public class HSLFPictureShape extends HSLFSimpleShape {
         if (anchor.equals(new java.awt.Rectangle())){
             setDefaultSize();
         }
-    }
-
-    public void draw(Graphics2D graphics){
-        AffineTransform at = graphics.getTransform();
-        ShapePainter.paint(this, graphics);
-
-        HSLFPictureData data = getPictureData();
-        if(data != null) data.draw(graphics, this);
-
-        graphics.setTransform(at);
     }
 
     /**

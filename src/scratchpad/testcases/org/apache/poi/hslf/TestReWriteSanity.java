@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 import java.io.*;
 import java.util.*;
 
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
 

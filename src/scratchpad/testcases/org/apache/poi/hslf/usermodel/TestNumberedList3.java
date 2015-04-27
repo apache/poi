@@ -23,8 +23,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.HSLFSlide;
-import org.apache.poi.hslf.model.HSLFTextParagraph;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -68,14 +66,14 @@ public final class TestNumberedList3 extends TestCase {
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
-		final HSLFTextParagraph[] textRuns = s.getTextRuns();
+		final HSLFTextParagraph[] textRuns = s.getTextParagraphs();
 		assertEquals(3, textRuns.length);
 		assertEquals("Bulleted list\rMore bullets\rNo bullets here", textRuns[0].getRawText());
 		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", textRuns[1].getRawText());
 		assertEquals("Second bulleted list \u2013 should appear after numbered list\rMore bullets", textRuns[2].getRawText());
-		assertEquals(2, textRuns[0].getRichTextRuns().length);
-		assertEquals(1, textRuns[1].getRichTextRuns().length);
-		assertEquals(1, textRuns[2].getRichTextRuns().length);
+		assertEquals(2, textRuns[0].getTextRuns().length);
+		assertEquals(1, textRuns[1].getTextRuns().length);
+		assertEquals(1, textRuns[2].getTextRuns().length);
 		assertNull(textRuns[0].getStyleTextProp9Atom());
 		assertNotNull(textRuns[1].getStyleTextProp9Atom());
 		assertNull(textRuns[2].getStyleTextProp9Atom());
@@ -91,7 +89,7 @@ public final class TestNumberedList3 extends TestCase {
 		assertEquals(67, textProp.getCharactersCovered());
 		
 		
-		HSLFTextRun textRun = textRuns[0].getRichTextRuns()[0];
+		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
 		assertTrue(textRun.isBullet());
 
 		

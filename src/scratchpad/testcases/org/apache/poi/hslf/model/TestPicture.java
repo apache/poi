@@ -36,8 +36,7 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.util.JvmBugs;
 import org.junit.Ignore;
 import org.junit.Test;

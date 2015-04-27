@@ -21,7 +21,6 @@ package org.apache.poi.hslf.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.record.ParentAwareRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;

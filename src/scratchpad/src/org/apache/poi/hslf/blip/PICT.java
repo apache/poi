@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.HSLFPictureShape;
-import org.apache.poi.hslf.model.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
 
 /**
  * Represents Macintosh PICT picture data.
@@ -102,7 +102,7 @@ public final class PICT extends Metafile {
     }
 
     /**
-     * @see org.apache.poi.hslf.model.HSLFPictureShape#PICT
+     * @see org.apache.poi.hslf.usermodel.HSLFPictureShape#PICT
      */
     public int getType(){
         return HSLFPictureShape.PICT;

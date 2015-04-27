@@ -15,13 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.Notes;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class represents a slide's notes in a PowerPoint Document. It
@@ -32,7 +33,9 @@ import org.apache.poi.sl.usermodel.Notes;
  */
 
 public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFSlideShow> {
-    private HSLFTextParagraph[] _runs;
+    protected static POILogger logger = POILogFactory.getLogger(HSLFNotes.class);
+    
+    private List<List<HSLFTextParagraph>> _runs;
 
     /**
      * Constructs a Notes Sheet from the given Notes record.
@@ -46,26 +49,27 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFS
         // Now, build up TextRuns from pairs of TextHeaderAtom and
         // one of TextBytesAtom or TextCharsAtom, found inside
         // EscherTextboxWrapper's in the PPDrawing
-        _runs = findTextRuns(getPPDrawing());
+        _runs = HSLFTextParagraph.findTextParagraphs(getPPDrawing());
+        if (_runs.isEmpty()) {
+            logger.log(POILogger.WARN, "No text records found for notes sheet");
+        }
 
         // Set the sheet on each TextRun
-        for (HSLFTextParagraph tp : _runs) {
-            tp.supplySheet(this);
+        for (List<HSLFTextParagraph> ltp : _runs) {
+            for (HSLFTextParagraph tp : ltp) {
+                tp.supplySheet(this);
+            }
         }
     }
 
     /**
-     * Returns an array of all the TextRuns found
+     * Returns an array of all the TextParagraphs found
      */
-    public HSLFTextParagraph[] getTextRuns() {
+    @Override
+    public List<List<HSLFTextParagraph>> getTextParagraphs() {
         return _runs;
     }
 
-    @Override
-    public List<HSLFTextParagraph> getTextParagraphs() {
-        return Arrays.asList(_runs);
-    }
-    
     /**
      * Return <code>null</code> - Notes Masters are not yet supported
      */

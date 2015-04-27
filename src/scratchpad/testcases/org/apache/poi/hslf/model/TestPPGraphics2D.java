@@ -17,35 +17,41 @@
 
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.POIDataSamples;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.*;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test drawing shapes via Graphics2D
  *
  * @author Yegor Kozlov
  */
-public final class TestPPGraphics2D extends TestCase {
+public final class TestPPGraphics2D {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
     private HSLFSlideShow ppt;
 
+    @Before
     protected void setUp() throws Exception {
 		ppt = new HSLFSlideShow(_slTests.openResourceAsStream("empty.ppt"));
     }
 
+    @Test
     public void testGraphics() throws Exception {
     	// Starts off empty
-    	assertEquals(0, ppt.getSlides().length);
+    	assertTrue(ppt.getSlides().isEmpty());
 
     	// Add a slide
         HSLFSlide slide = ppt.createSlide();
-    	assertEquals(1, ppt.getSlides().length);
+    	assertEquals(1, ppt.getSlides().size());
 
     	// Add some stuff into it
         HSLFGroupShape group = new HSLFGroupShape();
@@ -73,17 +79,17 @@ public final class TestPPGraphics2D extends TestCase {
 
         // And read it back in
         ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
-        assertEquals(1, ppt.getSlides().length);
+        assertEquals(1, ppt.getSlides().size());
 
-        slide = ppt.getSlides()[0];
-        HSLFShape[] shape = slide.getShapes();
-        assertEquals(shape.length, 1); //group shape
+        slide = ppt.getSlides().get(0);
+        List<HSLFShape> shape = slide.getShapes();
+        assertEquals(shape.size(), 1); //group shape
 
-        assertTrue(shape[0] instanceof HSLFGroupShape); //group shape
+        assertTrue(shape.get(0) instanceof HSLFGroupShape); //group shape
 
-        group = (HSLFGroupShape)shape[0];
+        group = (HSLFGroupShape)shape.get(0);
         shape = group.getShapes();
-        assertEquals(shape.length, 3);
+        assertEquals(shape.size(), 3);
     }
 
 }

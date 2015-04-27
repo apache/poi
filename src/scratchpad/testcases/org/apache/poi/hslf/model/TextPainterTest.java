@@ -19,7 +19,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hssf.usermodel.DummyGraphics2d;
 import org.junit.Test;
 

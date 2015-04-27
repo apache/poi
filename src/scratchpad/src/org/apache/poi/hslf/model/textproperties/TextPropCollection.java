@@ -19,7 +19,7 @@ package org.apache.poi.hslf.model.textproperties;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedList;
+import java.util.*;
 
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.util.LittleEndian;
@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndian;
 public class TextPropCollection {
 	private int charactersCovered;
 	private short reservedField;
-	private LinkedList<TextProp> textPropList;
+	private List<TextProp> textPropList;
     private int maskSpecial = 0;
     
     public int getSpecialMask() { return maskSpecial; }
@@ -41,7 +41,7 @@ public class TextPropCollection {
 	/** Fetch the number of characters this styling applies to */
 	public int getCharactersCovered() { return charactersCovered; }
 	/** Fetch the TextProps that define this styling */
-	public LinkedList<TextProp> getTextPropList() { return textPropList; }
+	public List<TextProp> getTextPropList() { return textPropList; }
 	
 	/** Fetch the TextProp with this name, or null if it isn't present */
 	public TextProp findByName(String textPropName) {
@@ -73,7 +73,7 @@ public class TextPropCollection {
 		}
 		
 		// Add a copy of this property, in the right place to the list
-		TextProp textProp = (TextProp)base.clone();
+		TextProp textProp = base.clone();
 		int pos = 0;
 		for(int i=0; i<textPropList.size(); i++) {
 			TextProp curProp = textPropList.get(i);
@@ -95,28 +95,30 @@ public class TextPropCollection {
 
 		// For each possible entry, see if we match the mask
 		// If we do, decode that, save it, and shuffle on
-		for(int i=0; i<potentialProperties.length; i++) {
+		for(TextProp tp : potentialProperties) {
 			// Check there's still data left to read
 
 			// Check if this property is found in the mask
-			if((containsField & potentialProperties[i].getMask()) != 0) {
+			if((containsField & tp.getMask()) != 0) {
                 if(dataOffset+bytesPassed >= data.length) {
                     // Out of data, can't be any more properties to go
                     // remember the mask and return
-                    maskSpecial |= potentialProperties[i].getMask();
+                    maskSpecial |= tp.getMask();
                     return bytesPassed;
                 }
 
 				// Bingo, data contains this property
-				TextProp prop = (TextProp)potentialProperties[i].clone();
+				TextProp prop = tp.clone();
 				int val = 0;
-				if(prop.getSize() == 2) {
+				if (prop instanceof TabStopPropCollection) {
+				    ((TabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
+				} else if (prop.getSize() == 2) {
 					val = LittleEndian.getShort(data,dataOffset+bytesPassed);
-				} else if(prop.getSize() == 4){
+				} else if(prop.getSize() == 4) {
 					val = LittleEndian.getInt(data,dataOffset+bytesPassed);
-				} else if (prop.getSize() == 0){
+				} else if (prop.getSize() == 0) {
                     //remember "special" bits.
-                    maskSpecial |= potentialProperties[i].getMask();
+                    maskSpecial |= tp.getMask();
                     continue;
                 }
 				prop.setValue(val);
@@ -137,7 +139,7 @@ public class TextPropCollection {
 	public TextPropCollection(int charactersCovered, short reservedField) {
 		this.charactersCovered = charactersCovered;
 		this.reservedField = reservedField;
-		textPropList = new LinkedList<TextProp>();
+		textPropList = new ArrayList<TextProp>();
 	}
 
 	/**
@@ -147,7 +149,27 @@ public class TextPropCollection {
 	public TextPropCollection(int textSize) {
 		charactersCovered = textSize;
 		reservedField = -1;
-		textPropList = new LinkedList<TextProp>();
+		textPropList = new ArrayList<TextProp>();
+	}
+	
+    /**
+     * Clones the given text properties
+     */
+	public void copy(TextPropCollection other) {
+        this.charactersCovered = other.charactersCovered;
+        this.reservedField = other.reservedField;
+        this.textPropList.clear();
+        for (TextProp tp : other.textPropList) {
+            TextProp tpCopy = tp.clone();
+            if (tpCopy instanceof BitMaskTextProp) {
+                BitMaskTextProp bmt = (BitMaskTextProp)tpCopy;
+                boolean matches[] = ((BitMaskTextProp)tp).getSubPropMatches();
+                for (int i=0; i<matches.length; i++) {
+                    bmt.setSubValue(matches[i], i);
+                }
+            }
+            this.textPropList.add(tpCopy);
+        }
 	}
 	
 	/**
@@ -173,7 +195,7 @@ public class TextPropCollection {
 		// Then the mask field
 		int mask = maskSpecial;
 		for(int i=0; i<textPropList.size(); i++) {
-			TextProp textProp = (TextProp)textPropList.get(i);
+			TextProp textProp = textPropList.get(i);
             //sometimes header indicates that the bitmask is present but its value is 0
 
             if (textProp instanceof BitMaskTextProp) {
@@ -204,4 +226,44 @@ public class TextPropCollection {
     public void setReservedField(short val){
         reservedField = val;
     }
+    
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + charactersCovered;
+        result = prime * result + maskSpecial;
+        result = prime * result + reservedField;
+        result = prime * result + ((textPropList == null) ? 0 : textPropList.hashCode());
+        return result;
+    }
+    /**
+     * compares most properties apart of the covered characters length
+     */
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+        if (getClass() != other.getClass()) return false;
+        
+        TextPropCollection o = (TextPropCollection)other;
+        if (o.maskSpecial != this.maskSpecial || o.reservedField != this.reservedField) {
+            return false;
+        }
+
+        if (textPropList == null) {
+            return (o.textPropList == null);
+        }        
+        
+        Map<String,TextProp> m = new HashMap<String,TextProp>();
+        for (TextProp tp : o.textPropList) {
+            m.put(tp.getName(), tp);
+        }
+        
+        for (TextProp tp : this.textPropList) {
+            TextProp otp = m.get(tp.getName());
+            if (!tp.equals(otp)) return false;
+        }
+        
+        return true;
+    }
+
 }

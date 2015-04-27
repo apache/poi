@@ -76,7 +76,7 @@ public class DrawFactory {
         } else if (shape instanceof Background) {
             return getDrawable((Background)shape);
         } else if (shape instanceof Slide) {
-            return getDrawable((Slide<? extends Shape, ? extends SlideShow>)shape);
+            return getDrawable((Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>)shape);
         } else if (shape instanceof MasterSheet) {
             return getDrawable((MasterSheet<? extends Shape, ? extends SlideShow>)shape);
         } else if (shape instanceof Sheet) {
@@ -86,7 +86,7 @@ public class DrawFactory {
         throw new IllegalArgumentException("Unsupported shape type: "+shape.getClass());
     }
 
-    public <T extends Slide<? extends Shape, ? extends SlideShow>> DrawSlide<T> getDrawable(T sheet) {
+    public <T extends Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>> DrawSlide<T> getDrawable(T sheet) {
         return new DrawSlide<T>(sheet);
     }
 

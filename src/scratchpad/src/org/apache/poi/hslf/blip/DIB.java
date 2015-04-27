@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.HSLFPictureShape;
+import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public final class DIB extends Bitmap {
 
     /**
      * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.HSLFPictureShape#DIB
+     * @see  org.apache.poi.hslf.usermodel.HSLFPictureShape#DIB
      */
     public int getType(){
         return HSLFPictureShape.DIB;

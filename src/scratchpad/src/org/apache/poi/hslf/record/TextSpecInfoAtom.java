@@ -30,6 +30,8 @@ import java.util.ArrayList;
  * @author Yegor Kozlov
  */
 public final class TextSpecInfoAtom extends RecordAtom {
+    private static final long _type = RecordTypes.TextSpecInfoAtom.typeID;
+    
     /**
      * Record header.
      */
@@ -62,7 +64,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
      * Gets the record type.
      * @return the record type.
      */
-    public long getRecordType() { return RecordTypes.TextSpecInfoAtom.typeID; }
+    public long getRecordType() { return _type; }
 
     /**
      * Write the contents of the record back, so it can be written

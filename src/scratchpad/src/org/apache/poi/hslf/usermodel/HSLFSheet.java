@@ -15,14 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import java.awt.Graphics2D;
 import java.util.*;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -66,7 +65,7 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
     /**
      * Returns an array of all the TextRuns in the sheet.
      */
-    public abstract HSLFTextParagraph[] getTextRuns();
+    public abstract List<List<HSLFTextParagraph>> getTextParagraphs();
 
     /**
      * Returns the (internal, RefID based) sheet number, as used
@@ -87,7 +86,7 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
     /**
      * Fetch the PPDrawing from the underlying record
      */
-    protected PPDrawing getPPDrawing() {
+    public PPDrawing getPPDrawing() {
         return _container.getPPDrawing();
     }
 
@@ -111,147 +110,24 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
      */
     public void setSlideShow(HSLFSlideShow ss) {
         _slideShow = ss;
-        HSLFTextParagraph[] trs = getTextRuns();
+        List<List<HSLFTextParagraph>> trs = getTextParagraphs();
         if (trs == null) return;
-        for (HSLFTextParagraph tp : trs) {
-            tp.supplySheet(this);
-        }
-    }
-
-
-    /**
-     * For a given PPDrawing, grab all the TextRuns
-     */
-    public static HSLFTextParagraph[] findTextRuns(PPDrawing ppdrawing) {
-        final List<HSLFTextParagraph> runsV = new ArrayList<HSLFTextParagraph>();
-        final EscherTextboxWrapper[] wrappers = ppdrawing.getTextboxWrappers();
-        for (int i = 0; i < wrappers.length; i++) {
-            int s1 = runsV.size();
-
-            // propagate parents to parent-aware records
-            RecordContainer.handleParentAwareRecords(wrappers[i]);
-            findTextRuns(wrappers[i], runsV);
-            int s2 = runsV.size();
-            if (s2 != s1){
-                HSLFTextParagraph t = runsV.get(runsV.size()-1);
-                t.setShapeId(wrappers[i].getShapeId());
-            }
-        }
-        return runsV.toArray(new HSLFTextParagraph[runsV.size()]);
-    }
-    /**
-     * Scans through the supplied record array, looking for
-     * a TextHeaderAtom followed by one of a TextBytesAtom or
-     * a TextCharsAtom. Builds up TextRuns from these
-     *
-     * @param records the records to build from
-     * @param found   vector to add any found to
-     */
-    protected static void findTextParagraphs(final Record[] records, final List<HSLFTextParagraph> found) {
-    	findTextRuns(records, found, null); 
-    }
-    /**
-     * Scans through the supplied record array, looking for
-     * a TextHeaderAtom followed by one of a TextBytesAtom or
-     * a TextCharsAtom. Builds up TextRuns from these
-     *
-     * @param wrapper an EscherTextboxWrapper
-     * @param found   vector to add any found to
-     */
-    protected static void findTextRuns(final EscherTextboxWrapper wrapper, final List<HSLFTextParagraph> found) {
-    	findTextRuns(wrapper.getChildRecords(), found, wrapper.getStyleTextProp9Atom());
-    }
-    /**
-     * Scans through the supplied record array, looking for
-     * a TextHeaderAtom followed by one of a TextBytesAtom or
-     * a TextCharsAtom. Builds up TextRuns from these
-     *
-     * @param records the records to build from
-     * @param found   vector to add any found to
-     * @param styleTextProp9Atom a StyleTextProp9Atom with numbered lists info
-     */
-    protected static void findTextRuns(final Record[] records, final List<HSLFTextParagraph> found, final StyleTextProp9Atom styleTextProp9Atom) {
-        for (int i = 0, slwtIndex=0; i < (records.length - 1); i++) {
-            if (records[i] instanceof TextHeaderAtom) {
-                TextHeaderAtom tha = (TextHeaderAtom) records[i];
-                StyleTextPropAtom stpa = null;
-                HSLFTextParagraph trun = null;
-                Record next = null;
-                Record subs = null;
-                
-                // See what follows the TextHeaderAtom
-                next = records[i+1];
-                if (i < records.length - 2) {
-                    subs = records[i+2];
-                }
-                
-                // Is the next record one we need to skip over?
-                if (subs != null) {
-                    if (next instanceof TextRulerAtom ||
-                        next instanceof MasterTextPropAtom ||
-                        next instanceof TextSpecInfoAtom) {
-                        // Ignore this one, check the one after
-                        next = subs;
-                        if (i < records.length - 3) {
-                            subs = records[i+3];
-                        } else {
-                            subs = null;
-                        }
-                    }
-                }
-                
-                // Is the subsequent record a style one?
-                if (subs != null && subs instanceof StyleTextPropAtom) {
-                    stpa = (StyleTextPropAtom)subs;
-                }
-                
-                // Now, check if the next record is one to record
-                if (next instanceof TextCharsAtom) {
-                    TextCharsAtom tca = (TextCharsAtom)next;
-                    trun = new HSLFTextParagraph(tha, tca, stpa);
-                } else if (next instanceof TextBytesAtom) {
-                    TextBytesAtom tba = (TextBytesAtom)next;
-                    trun = new HSLFTextParagraph(tha, tba, stpa);
-                } else if (next instanceof StyleTextPropAtom) {
-                    stpa = (StyleTextPropAtom)next;
-                } else if (next instanceof TextHeaderAtom) {
-                    // Seems to be a mostly, but not completely deleted block of
-                    //  text. Only the header remains, which isn't useful alone 
-                    // Skip on to the next TextHeaderAtom
-                    continue;
-                } else {
-                    logger.log(POILogger.ERROR, "Found a TextHeaderAtom not followed by a TextBytesAtom or TextCharsAtom: Followed by " + next.getRecordType());
-                }
-
-                if (trun != null) {
-                    List<Record> lst = new ArrayList<Record>();
-                    for (int j = i; j < records.length; j++) {
-                        if(j > i && records[j] instanceof TextHeaderAtom) break;
-                        lst.add(records[j]);
-                    }
-                    Record[] recs = new Record[lst.size()];
-                    lst.toArray(recs);
-                    trun._records = recs;
-                    trun.setIndex(slwtIndex);
-                    trun.setStyleTextProp9Atom(styleTextProp9Atom);
-                    found.add(trun);
-                    i++;
-                } else {
-                    // Not a valid one, so skip on to next and look again
-                }
-                slwtIndex++;
+        for (List<HSLFTextParagraph> ltp : trs) {
+            for (HSLFTextParagraph tp : ltp) {
+                tp.supplySheet(this);
             }
         }
     }
+
 
     /**
      * Returns all shapes contained in this Sheet
      *
      * @return all shapes contained in this Sheet (Slide or Notes)
      */
-    public HSLFShape[] getShapes() {
-        List<HSLFShape> shapeList = getShapeList();
-        return shapeList.toArray(new HSLFShape[shapeList.size()]);
+    @Override
+    public List<HSLFShape> getShapes() {
+        return getShapeList();
     }
 
     /**
@@ -404,12 +280,10 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
      * @return  <code>TextShape</code> or <code>null</code>
      */
     public HSLFTextShape getPlaceholderByTextType(int type){
-        HSLFShape[] shape = getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof HSLFTextShape){
-                HSLFTextShape tx = (HSLFTextShape)shape[i];
-                HSLFTextParagraph run = tx.getTextParagraph();
-                if(run != null && run.getRunType() == type){
+        for (HSLFShape shape : getShapes()) {
+            if(shape instanceof HSLFTextShape){
+                HSLFTextShape tx = (HSLFTextShape)shape;
+                if (tx != null && tx.getRunType() == type) {
                     return tx;
                 }
             }
@@ -424,10 +298,9 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
      * @return  <code>TextShape</code> or <code>null</code>
      */
     public HSLFTextShape getPlaceholder(int type){
-        HSLFShape[] shape = getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof HSLFTextShape){
-                HSLFTextShape tx = (HSLFTextShape)shape[i];
+        for (HSLFShape shape : getShapes()) {
+            if(shape instanceof HSLFTextShape){
+                HSLFTextShape tx = (HSLFTextShape)shape;
                 int placeholderId = 0;
                 OEPlaceholderAtom oep = tx.getPlaceholderAtom();
                 if(oep != null) {
@@ -509,7 +382,7 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
         }
         for (; it.hasNext();) {
             EscherContainerRecord sp = (EscherContainerRecord) it.next();
-            HSLFShape sh = ShapeFactory.createShape(sp, null);
+            HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
             sh.setSheet(this);
             shapeList.add(sh);
         }

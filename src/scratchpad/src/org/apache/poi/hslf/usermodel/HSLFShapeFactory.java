@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import java.util.Iterator;
 import java.util.List;
@@ -29,11 +29,13 @@ import org.apache.poi.ddf.EscherPropertyFactory;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.InteractiveInfo;
 import org.apache.poi.hslf.record.InteractiveInfoAtom;
 import org.apache.poi.hslf.record.OEShapeAtom;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogFactory;
@@ -44,9 +46,9 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public final class ShapeFactory {
+public final class HSLFShapeFactory {
     // For logging
-    protected static final POILogger logger = POILogFactory.getLogger(ShapeFactory.class);
+    protected static final POILogger logger = POILogFactory.getLogger(HSLFShapeFactory.class);
 
     /**
      * Create a new shape from the data provided.
@@ -55,7 +57,7 @@ public final class ShapeFactory {
         if (spContainer.getRecordId() == EscherContainerRecord.SPGR_CONTAINER){
             return createShapeGroup(spContainer, parent);
         }
-        return createSimpeShape(spContainer, parent);
+        return createSimpleShape(spContainer, parent);
     }
 
     public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape> parent){
@@ -82,7 +84,7 @@ public final class ShapeFactory {
         return group;
      }
 
-    public static HSLFShape createSimpeShape(EscherContainerRecord spContainer, ShapeContainer<HSLFShape> parent){
+    public static HSLFShape createSimpleShape(EscherContainerRecord spContainer, ShapeContainer<HSLFShape> parent){
         HSLFShape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
 

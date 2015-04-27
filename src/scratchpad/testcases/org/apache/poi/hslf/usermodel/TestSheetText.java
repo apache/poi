@@ -43,18 +43,18 @@ public final class TestSheetText extends TestCase {
 		HSLFSheet slideOne = ss.getSlides()[0];
 
 		String[] expectText = new String[] {"This is a test title","This is a test subtitle\nThis is on page 1"};
-		assertEquals(expectText.length, slideOne.getTextRuns().length);
+		assertEquals(expectText.length, slideOne.getTextParagraphs().length);
 		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], slideOne.getTextRuns()[i].getText());
+			assertEquals(expectText[i], slideOne.getTextParagraphs()[i].getRawText());
 		}
 	}
 
 	public void testSheetTwo() {
 		HSLFSheet slideTwo = ss.getSlides()[1];
 		String[] expectText = new String[] {"This is the title on page 2","This is page two\nIt has several blocks of text\nNone of them have formatting"};
-		assertEquals(expectText.length, slideTwo.getTextRuns().length);
+		assertEquals(expectText.length, slideTwo.getTextParagraphs().length);
 		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], slideTwo.getTextRuns()[i].getText());
+			assertEquals(expectText[i], slideTwo.getTextParagraphs()[i].getRawText());
 		}
 	}
 
@@ -83,7 +83,7 @@ public final class TestSheetText extends TestCase {
 			"COP 11 \u2013 MOP 1\n" + // special long hyphen
 			"December 5, 2005\n";
 
-		assertEquals(1, s.getTextRuns().length);
-		assertEquals(exp, s.getTextRuns()[0].getText());
+		assertEquals(1, s.getTextParagraphs().length);
+		assertEquals(exp, s.getTextParagraphs()[0].getRawText());
 	}
 }

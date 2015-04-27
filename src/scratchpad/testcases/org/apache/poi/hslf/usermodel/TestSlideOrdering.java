@@ -55,8 +55,8 @@ public final class TestSlideOrdering extends TestCase {
 
 		String[] firstTRs = new String[] { "This is a test title", "This is the title on page 2" };
 
-		assertEquals(firstTRs[0], s1.getTextRuns()[0].getText());
-		assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
+		assertEquals(firstTRs[0], s1.getTextParagraphs()[0].getRawText());
+		assertEquals(firstTRs[1], s2.getTextParagraphs()[0].getRawText());
 	}
 
 	/**
@@ -71,9 +71,9 @@ public final class TestSlideOrdering extends TestCase {
 
 		String[] firstTRs = new String[] { "Slide 1", "Slide 2", "Slide 3" };
 
-		assertEquals(firstTRs[0], s1.getTextRuns()[0].getText());
-		assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
-		assertEquals(firstTRs[2], s3.getTextRuns()[0].getText());
+		assertEquals(firstTRs[0], s1.getTextParagraphs()[0].getRawText());
+		assertEquals(firstTRs[1], s2.getTextParagraphs()[0].getRawText());
+		assertEquals(firstTRs[2], s3.getTextParagraphs()[0].getRawText());
 	}
 
 	/**

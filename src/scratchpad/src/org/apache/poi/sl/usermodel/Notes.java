@@ -20,5 +20,5 @@ package org.apache.poi.sl.usermodel;
 import java.util.List;
 
 public interface Notes<T extends Shape, SS extends SlideShow> extends Sheet<T,SS> {
-	List<? extends TextParagraph<? extends TextRun>> getTextParagraphs();
+	List<? extends List<? extends TextParagraph<? extends TextRun>>> getTextParagraphs();
 }

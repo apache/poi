@@ -19,6 +19,8 @@ package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 

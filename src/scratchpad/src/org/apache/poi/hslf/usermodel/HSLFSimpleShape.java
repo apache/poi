@@ -15,31 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherChildAnchorRecord;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
-import org.apache.poi.ddf.EscherClientDataRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
-import org.apache.poi.sl.usermodel.StrokeStyle.*;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.Units;
 
@@ -299,12 +289,6 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
         return anchor;
     }
 
-    public void draw(Graphics2D graphics){
-        AffineTransform at = graphics.getTransform();
-        ShapePainter.paint(this, graphics);
-        graphics.setTransform(at);
-    }
-
     /**
      *  Find a record in the underlying EscherClientDataRecord
      *
@@ -360,7 +344,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
         }
     }
 
-    public void setHyperlink(Hyperlink link){
+    public void setHyperlink(HSLFHyperlink link){
         if(link.getId() == -1){
             throw new HSLFException("You must call SlideShow.addHyperlink(Hyperlink link) first");
         }
@@ -373,32 +357,32 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
         InteractiveInfoAtom infoAtom = info.getInteractiveInfoAtom();
 
         switch(link.getType()){
-            case Hyperlink.LINK_FIRSTSLIDE:
+            case HSLFHyperlink.LINK_FIRSTSLIDE:
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_FIRSTSLIDE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_FirstSlide);
                 break;
-            case Hyperlink.LINK_LASTSLIDE:
+            case HSLFHyperlink.LINK_LASTSLIDE:
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_LASTSLIDE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_LastSlide);
                 break;
-            case Hyperlink.LINK_NEXTSLIDE:
+            case HSLFHyperlink.LINK_NEXTSLIDE:
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_NEXTSLIDE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_NextSlide);
                 break;
-            case Hyperlink.LINK_PREVIOUSSLIDE:
+            case HSLFHyperlink.LINK_PREVIOUSSLIDE:
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_JUMP);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_PREVIOUSSLIDE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_PreviousSlide);
                 break;
-            case Hyperlink.LINK_URL:
+            case HSLFHyperlink.LINK_URL:
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_Url);
                 break;
-            case Hyperlink.LINK_SLIDENUMBER:
+            case HSLFHyperlink.LINK_SLIDENUMBER:
                 infoAtom.setAction(InteractiveInfoAtom.ACTION_HYPERLINK);
                 infoAtom.setJump(InteractiveInfoAtom.JUMP_NONE);
                 infoAtom.setHyperlinkType(InteractiveInfoAtom.LINK_SlideNumber);
@@ -417,4 +401,52 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
 
     }
 
+    public Guide getAdjustValue(String name) {
+        if (name == null || !name.matches("adj([1-9]|10)")) {
+            throw new IllegalArgumentException("Adjust value '"+name+"' not supported.");
+        }
+        short escherProp;
+        switch (Integer.parseInt(name.substring(3))) {
+            case 1: escherProp = EscherProperties.GEOMETRY__ADJUSTVALUE; break;
+            case 2: escherProp = EscherProperties.GEOMETRY__ADJUST2VALUE; break;
+            case 3: escherProp = EscherProperties.GEOMETRY__ADJUST3VALUE; break;
+            case 4: escherProp = EscherProperties.GEOMETRY__ADJUST4VALUE; break;
+            case 5: escherProp = EscherProperties.GEOMETRY__ADJUST5VALUE; break;
+            case 6: escherProp = EscherProperties.GEOMETRY__ADJUST6VALUE; break;
+            case 7: escherProp = EscherProperties.GEOMETRY__ADJUST7VALUE; break;
+            case 8: escherProp = EscherProperties.GEOMETRY__ADJUST8VALUE; break;
+            case 9: escherProp = EscherProperties.GEOMETRY__ADJUST9VALUE; break;
+            case 10: escherProp = EscherProperties.GEOMETRY__ADJUST10VALUE; break;
+            default: throw new RuntimeException();
+        }
+        
+        int adjval = getEscherProperty(escherProp, -1);
+        return (adjval == -1) ? null : new Guide(name, "val "+adjval);
+    }
+
+    public LineDecoration getLineDecoration() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public CustomGeometry getGeometry() {
+        ShapeType st = getShapeType();
+        String name = st.getOoxmlName();
+        
+        PresetGeometries dict = PresetGeometries.getInstance();
+        CustomGeometry geom = dict.get(name);
+        if(geom == null) {
+            throw new IllegalStateException("Unknown shape geometry: " + name);
+        }
+        
+        return geom;
+    }
+
+    public Shadow getShadow() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    
+    
 }

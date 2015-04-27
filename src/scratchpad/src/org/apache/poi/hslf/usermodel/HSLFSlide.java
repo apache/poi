@@ -15,29 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
-import java.awt.Graphics2D;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.Comment2000;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.HeadersFootersContainer;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.SSSlideInfoAtom;
-import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.model.*;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.hslf.record.StyleTextProp9Atom;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 
@@ -50,10 +36,10 @@ import org.apache.poi.sl.usermodel.Slide;
  * @author Yegor Kozlov
  */
 
-public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSlideShow> {
+public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSlideShow,HSLFNotes> {
 	private int _slideNo;
 	private SlideAtomsSet _atomSet;
-	private HSLFTextParagraph[] _runs;
+	private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
 	private HSLFNotes _notes; // usermodel needs to set this
 
 	/**
@@ -72,33 +58,36 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 		_atomSet = atomSet;
 		_slideNo = slideNumber;
 
- 		// Grab the TextRuns from the PPDrawing
-		HSLFTextParagraph[] _otherRuns = findTextRuns(getPPDrawing());
-
 		// For the text coming in from the SlideAtomsSet:
 		// Build up TextRuns from pairs of TextHeaderAtom and
 		//  one of TextBytesAtom or TextCharsAtom
-		final List<HSLFTextParagraph> textParagraphs = new LinkedList<HSLFTextParagraph>();
-		if(_atomSet != null) {
-			findTextParagraphs(_atomSet.getSlideRecords(),textParagraphs);
+		if (_atomSet != null && _atomSet.getSlideRecords().length > 0) {
+		    List<List<HSLFTextParagraph>> llhtp = HSLFTextParagraph.findTextParagraphs(_atomSet.getSlideRecords());
+		    _paragraphs.addAll(llhtp);
+	        if (_paragraphs.isEmpty()) {
+	            throw new RuntimeException("No text records found for slide");
+	        }
 		} else {
 			// No text on the slide, must just be pictures
 		}
 
-		// Build an array, more useful than a vector
-		_runs = new HSLFTextParagraph[textParagraphs.size()+_otherRuns.length];
 		// Grab text from SlideListWithTexts entries
-		int i=0;
-		for(HSLFTextParagraph tp : textParagraphs) {
-		    _runs[i++] = tp;
-			tp.supplySheet(this);
+		for(List<HSLFTextParagraph> ltp : _paragraphs) {
+		    for (HSLFTextParagraph tp : ltp) {
+		        tp.supplySheet(this);
+		    }
 		}
-		// Grab text from slide's PPDrawing
-		for(HSLFTextParagraph tp : _otherRuns) {
-			_runs[i++] = tp;
-			tp.supplySheet(this);
-            tp.setIndex(-1); // runs found in PPDrawing are not linked with SlideListWithTexts
+
+        // Grab the TextRuns from the PPDrawing
+		List<List<HSLFTextParagraph>> llOtherRuns = HSLFTextParagraph.findTextParagraphs(getPPDrawing());
+		for (List<HSLFTextParagraph> otherRuns : llOtherRuns) {
+	        // Grab text from slide's PPDrawing
+	        for(HSLFTextParagraph tp : otherRuns) {
+	            tp.supplySheet(this);
+	            tp.setIndex(-1); // runs found in PPDrawing are not linked with SlideListWithTexts
+	        }
 		}
+        _paragraphs.addAll(llOtherRuns);
 	}
 
 	/**
@@ -112,22 +101,31 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
         getSheetContainer().setSheetId(sheetRefId);
 	}
 
+    /**
+     * Returns the Notes Sheet for this slide, or null if there isn't one
+     */
+    @Override
+    public HSLFNotes getNotes() {
+        return _notes;
+    }
+
 	/**
 	 * Sets the Notes that are associated with this. Updates the
 	 *  references in the records to point to the new ID
 	 */
+	@Override
 	public void setNotes(HSLFNotes notes) {
 		_notes = notes;
 
 		// Update the Slide Atom's ID of where to point to
 		SlideAtom sa = getSlideRecord().getSlideAtom();
 
-		if(notes == null) {
+		if(_notes == null) {
 			// Set to 0
 			sa.setNotesID(0);
 		} else {
 			// Set to the value from the notes' sheet id
-			sa.setNotesID(notes._getSheetNumber());
+			sa.setNotesID(_notes._getSheetNumber());
 		}
 	}
 
@@ -183,7 +181,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 	public HSLFTextBox addTitle() {
 		Placeholder pl = new Placeholder();
 		pl.setShapeType(ShapeType.RECT);
-		pl.getTextParagraph().setRunType(TextHeaderAtom.TITLE_TYPE);
+		pl.setRunType(TextHeaderAtom.TITLE_TYPE);
 		pl.setText("Click to edit title");
 		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
 		addShape(pl);
@@ -205,13 +203,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 	 * @return title of this slide
 	 */
 	public String getTitle(){
-		HSLFTextParagraph[] txt = getTextRuns();
-		for (int i = 0; i < txt.length; i++) {
-			int type = txt[i].getRunType();
-			if (type == TextHeaderAtom.CENTER_TITLE_TYPE ||
-			type == TextHeaderAtom.TITLE_TYPE ){
-				String title = txt[i].getText();
-				return title;
+		for (List<HSLFTextParagraph> tp : getTextParagraphs()) {
+		    if (tp.isEmpty()) continue;
+			int type = tp.get(0).getRunType();
+			switch (type) {
+    			case TextHeaderAtom.CENTER_TITLE_TYPE:
+    			case TextHeaderAtom.TITLE_TYPE:
+    			    String str = HSLFTextParagraph.getRawText(tp);
+    			    return HSLFTextParagraph.toExternalString(str, type);
 			}
 		}
 		return null;
@@ -222,7 +221,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 	/**
 	 * Returns an array of all the TextRuns found
 	 */
-	public HSLFTextParagraph[] getTextRuns() { return _runs; }
+	public List<List<HSLFTextParagraph>> getTextParagraphs() { return _paragraphs; }
 
 	/**
 	 * Returns the (public facing) page number of this slide
@@ -237,11 +236,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
     }
 
 	/**
-	 * Returns the Notes Sheet for this slide, or null if there isn't one
-	 */
-	public HSLFNotes getNotesSheet() { return _notes; }
-
-	/**
 	 * @return set of records inside <code>SlideListWithtext</code> container
 	 *  which hold text data for this slide (typically for placeholders).
 	 */
@@ -254,26 +248,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
      * @return the master sheet associated with this slide.
      */
      public HSLFMasterSheet getMasterSheet(){
-        SlideMaster[] master = getSlideShow().getSlidesMasters();
-        SlideAtom sa = getSlideRecord().getSlideAtom();
-        int masterId = sa.getMasterID();
-        HSLFMasterSheet sheet = null;
-        for (int i = 0; i < master.length; i++) {
-            if (masterId == master[i]._getSheetNumber()) {
-                sheet = master[i];
-                break;
-            }
+        int masterId = getSlideRecord().getSlideAtom().getMasterID();
+        for (HSLFSlideMaster sm : getSlideShow().getSlideMasters()) {
+            if (masterId == sm._getSheetNumber()) return sm;
         }
-        if (sheet == null){
-            TitleMaster[] titleMaster = getSlideShow().getTitleMasters();
-            if(titleMaster != null) for (int i = 0; i < titleMaster.length; i++) {
-                if (masterId == titleMaster[i]._getSheetNumber()) {
-                    sheet = titleMaster[i];
-                    break;
-                }
-            }
+        for (HSLFTitleMaster tm : getSlideShow().getTitleMasters()) {
+            if (masterId == tm._getSheetNumber()) return tm;
         }
-        return sheet;
+        return null;
     }
 
     /**
@@ -424,26 +406,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
     	return new Comment[0];
     }
 
-    public void draw(Graphics2D graphics){
-        HSLFMasterSheet master = getMasterSheet();
-        HSLFBackground bg = getBackground();
-        if(bg != null)bg.draw(graphics);
-
-        if(getFollowMasterObjects()){
-            HSLFShape[] sh = master.getShapes();
-            for (int i = 0; i < sh.length; i++) {
-                if(HSLFMasterSheet.isPlaceholder(sh[i])) continue;
-
-                sh[i].draw(graphics);
-            }
-        }
-
-        HSLFShape[] sh = getShapes();
-        for (int i = 0; i < sh.length; i++) {
-            sh[i].draw(graphics);
-        }
-    }
-
     /**
      * Header / Footer settings for this slide.
      *
@@ -472,15 +434,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
     }
 
     protected void onAddTextShape(HSLFTextShape shape) {
-        HSLFTextParagraph run = shape.getTextParagraph();
-
-        if(_runs == null) _runs = new HSLFTextParagraph[]{run};
-        else {
-            HSLFTextParagraph[] tmp = new HSLFTextParagraph[_runs.length + 1];
-            System.arraycopy(_runs, 0, tmp, 0, _runs.length);
-            tmp[tmp.length-1] = run;
-            _runs = tmp;
-        }
+        List<HSLFTextParagraph> newParas = shape.getTextParagraphs();
+        _paragraphs.add(newParas);
     }
 
     /** This will return an atom per TextBox, so if the page has two text boxes the method should return two atoms. */
@@ -512,4 +467,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 			? false
 			: slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
 	}
+
+    public boolean getFollowMasterColourScheme() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public void setFollowMasterColourScheme(boolean follow) {
+        // TODO Auto-generated method stub
+        
+    }
 }

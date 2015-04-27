@@ -237,7 +237,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     protected String getRenderableText(TextRun tr) {
         StringBuilder buf = new StringBuilder();
         TextCap cap = tr.getTextCap();
-        for (char c : tr.getText().toCharArray()) {
+        for (char c : tr.getRawText().toCharArray()) {
             if(c == '\t') {
                 // TODO: finish support for tabs
                 buf.append("  ");
@@ -346,7 +346,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             if(run.isItalic()) {
                 attList.add(new AttributedStringData(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, beginIndex, endIndex));
             }
-            if(run.isUnderline()) {
+            if(run.isUnderlined()) {
                 attList.add(new AttributedStringData(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, beginIndex, endIndex));
                 attList.add(new AttributedStringData(TextAttribute.INPUT_METHOD_UNDERLINE, TextAttribute.UNDERLINE_LOW_TWO_PIXEL, beginIndex, endIndex));
             }

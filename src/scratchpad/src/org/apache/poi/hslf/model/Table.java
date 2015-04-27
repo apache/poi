@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.LittleEndian;
 
@@ -319,9 +320,9 @@ public final class Table extends HSLFGroupShape {
     private Line cloneBorder(Line line){
         Line border = createBorder();
         border.setLineWidth(line.getLineWidth());
-        border.setLineStyle(line.getStrokeStyle());
         border.setLineDashing(line.getLineDashing());
         border.setLineColor(line.getLineColor());
+        border.setLineCompound(line.getLineCompound());
         return border;
     }
 

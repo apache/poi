@@ -21,8 +21,8 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hslf.model.HSLFSlideShowImpl;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 import java.io.FileInputStream;
 import java.util.Iterator;

@@ -22,7 +22,7 @@ import java.awt.Color;
 
 public interface TextParagraph<T extends TextRun> extends Iterable<T> {
     /**
-     * Specified a list of text alignment types
+     * Specifies a list of text alignment types
      */
     public enum TextAlign {
         /**
@@ -50,6 +50,13 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
         THAI_DIST
     }
 
+    /**
+     * 
+     */
+    public enum FontAlign {
+        AUTO, TOP, CENTER, BASELINE, BOTTOM; 
+    }
+    
     public interface BulletStyle {
         String getBulletCharacter();
         String getBulletFont();
@@ -87,15 +94,31 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
     double getLeftMargin();
 
     /**
+     * @param leftMargin the left margin (in points) 
+     */
+    void setLeftMargin(double leftMargin);
+    
+    
+    /**
      * @return the right margin (in points) of the paragraph
      */
     double getRightMargin();
 
     /**
-     * @return the indent applied (in points) to the first line of text in the paragraph.
+     * @param rightMargin the right margin (in points) of the paragraph
+     */
+    void setRightMargin(double rightMargin);
+    
+    /**
+     * @return the indent (in points) applied to the first line of text in the paragraph.
      */
     double getIndent();
 
+    /**
+     * @param indent the indent (in points) applied to the first line of text in the paragraph
+     */
+    void setIndent(double indent);
+    
     /**
      * Returns the vertical line spacing that is to be used within a paragraph.
      * This may be specified in two different ways, percentage spacing and font point spacing:
@@ -122,6 +145,15 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * @return ??? alignment that is applied to the paragraph
      */
     TextAlign getTextAlign();
+    
+    
+    /**
+     * Returns the font alignment that is applied to the paragraph.
+     *
+     * If this attribute is omitted, then a value of auto (~ left) is implied.
+     * @return ??? alignment that is applied to the paragraph
+     */
+    FontAlign getFontAlign();
     
     /**
      * @return the bullet style of the paragraph, if {@code null} then no bullets are used 

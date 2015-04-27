@@ -18,19 +18,19 @@
  */
 package org.apache.poi.xslf.geom;
 
-import junit.framework.TestCase;
-import org.apache.poi.xslf.model.geom.Context;
-import org.apache.poi.xslf.model.geom.CustomGeometry;
-import org.apache.poi.xslf.model.geom.Formula;
-import org.apache.poi.xslf.model.geom.Guide;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
+import static org.junit.Assert.assertEquals;
+
+import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
+import org.apache.poi.sl.draw.geom.*;
+import org.junit.Test;
 
 /**
  * Date: 10/24/11
  *
  * @author Yegor Kozlov
  */
-public class TestFormulaParser extends TestCase {
+public class TestFormulaParser {
+    @Test
     public void testParse(){
 
         Formula[] ops = {
@@ -44,18 +44,18 @@ public class TestFormulaParser extends TestCase {
             new Guide("a5", "abs -2"),
         };
 
-        CustomGeometry geom = new CustomGeometry(CTCustomGeometry2D.Factory.newInstance());
+        CustomGeometry geom = new CustomGeometry(new CTCustomGeometry2D());
         Context ctx = new Context(geom, null, null);
         for(Formula fmla : ops) {
             ctx.evaluate(fmla);
         }
 
-        assertEquals(100.0, ctx.getValue("adj1"));
-        assertEquals(200.0, ctx.getValue("adj2"));
-        assertEquals(1.0, ctx.getValue("a1"));
-        assertEquals(101.0, ctx.getValue("a2"));
-        assertEquals(1.5, ctx.getValue("a3"));
-        assertEquals(200.0, ctx.getValue("a4"));
-        assertEquals(2.0, ctx.getValue("a5"));
+        assertEquals(100.0, ctx.getValue("adj1"), 0.0);
+        assertEquals(200.0, ctx.getValue("adj2"), 0.0);
+        assertEquals(1.0, ctx.getValue("a1"), 0.0);
+        assertEquals(101.0, ctx.getValue("a2"), 0.0);
+        assertEquals(1.5, ctx.getValue("a3"), 0.0);
+        assertEquals(200.0, ctx.getValue("a4"), 0.0);
+        assertEquals(2.0, ctx.getValue("a5"), 0.0);
     }
 }

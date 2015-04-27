@@ -17,12 +17,13 @@
 
 package org.apache.poi.hslf.model;
 
-import java.awt.geom.Area;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.awt.geom.*;
+
+import org.apache.poi.hslf.usermodel.HSLFFreeformShape;
+import org.junit.Test;
 
 /**
  * Test Freeform object.
@@ -32,8 +33,9 @@ import junit.framework.TestCase;
  *
  * @author Yegor Kozlov
  */
-public final class TestFreeform extends TestCase {
+public final class TestFreeform {
 
+    @Test
     public void testClosedPath() {
 
         GeneralPath path1 = new GeneralPath();
@@ -50,6 +52,7 @@ public final class TestFreeform extends TestCase {
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
+    @Test
     public void testLine() {
 
         GeneralPath path1 = new GeneralPath(new Line2D.Double(100, 100, 200, 100));
@@ -61,6 +64,7 @@ public final class TestFreeform extends TestCase {
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
+    @Test
     public void testRectangle() {
 
         GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(100, 100, 200, 50));
@@ -76,6 +80,7 @@ public final class TestFreeform extends TestCase {
      * Avoid NPE in  Freeform.getOutline() if either GEOMETRY__VERTICES or
      * GEOMETRY__SEGMENTINFO is missing, see Bugzilla 54188
      */
+    @Test
     public void test54188() {
 
         HSLFFreeformShape p = new HSLFFreeformShape();
