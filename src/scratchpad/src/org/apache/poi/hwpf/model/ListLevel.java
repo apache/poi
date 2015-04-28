@@ -174,6 +174,41 @@ public final class ListLevel
         return _lvlf.getIxchFollow();
     }
 
+    /**
+     * An unsigned integer that specifies the first (most-significant) zero-based level after which the number sequence of this level does not restart. The number sequence of this level does restart after any level that is more significant than the specified level. This MUST be less than or equal to the zero-based level of the list to which this LVLF corresponds.
+     * <p>see [MS-DOC], v20140721, 2.9.150</p>
+     * 
+     * @return the first ({@code 0} is the most significant) level after which
+     * the numbering does not restart or {@code -1} if no restart is applicable
+     */
+    public short getRestart() {    	
+    	return _lvlf.isFNoRestart() ? _lvlf.getIlvlRestartLim() : -1;
+    }
+    
+    /**
+     * Determines if the number formatting shall be overridden by
+     * {@code msonfcArabic}; unless it originally was {@code msonfcArabicLZ}
+     * in which case it is preserved.
+     * <p>see [MS-DOC], v20140721, 2.9.150 and [MS-OSHARED], v20140721, 2.2.1.3</p>
+     * 
+     * @return {@code true} if the level numbering of this and all more
+     * significant levels must be overridden; {@code false} otherwise
+     */
+    public boolean isLegalNumbering() {
+    	return _lvlf.isFLegal();
+    }
+    
+    /**
+     * Array which specifies the character offsets of the level numbers in a
+     * level numbering string.
+     * <p>see [MS-DOC], v20140721, 2.9.150</p>
+     * 
+     * @return {@code 0}-terminated array, unless it is full 
+     */
+    public byte[] getLevelNumberingPlaceholderOffsets() {    	
+    	return _lvlf.getRgbxchNums();
+    }
+
     int read( final byte[] data, final int startOffset )
     {
         int offset = startOffset;
