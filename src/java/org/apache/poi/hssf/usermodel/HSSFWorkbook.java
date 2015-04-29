@@ -65,6 +65,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.EntryUtils;
@@ -248,7 +249,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         
         // check for an encrypted .xlsx file - they get OLE2 wrapped
         try {
-        	directory.getEntry("EncryptedPackage");
+        	directory.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
         	throw new EncryptedDocumentException("The supplied spreadsheet seems to be an Encrypted .xlsx file. " +
         			"It must be decrypted before use by XSSF, it cannot be used by HSSF");
         } catch (FileNotFoundException e) {

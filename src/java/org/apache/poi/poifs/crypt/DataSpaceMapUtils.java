@@ -36,7 +36,7 @@ public class DataSpaceMapUtils {
     public static void addDefaultDataSpace(DirectoryEntry dir) throws IOException {
         DataSpaceMapEntry dsme = new DataSpaceMapEntry(
                 new int[]{ 0 }
-              , new String[]{ "EncryptedPackage" }
+              , new String[]{ Decryptor.DEFAULT_POIFS_ENTRY }
               , "StrongEncryptionDataSpace"
           );
           DataSpaceMap dsm = new DataSpaceMap(new DataSpaceMapEntry[]{dsme});
