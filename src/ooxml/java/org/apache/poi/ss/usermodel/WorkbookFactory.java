@@ -21,12 +21,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.security.GeneralSecurityException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLDocument;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -53,7 +58,50 @@ public class WorkbookFactory {
      *  Workbook should be closed after use.
      */
     public static Workbook create(NPOIFSFileSystem fs) throws IOException {
-        return new HSSFWorkbook(fs.getRoot(), true);
+        try {
+            return create(fs, null);
+        } catch (InvalidFormatException e) {
+            // Special case of OOXML-in-POIFS which is broken
+            throw new IOException(e);
+        }
+    }
+    
+    /**
+     * Creates a Workbook from the given NPOIFSFileSystem, which may
+     *  be password protected
+     */
+    private static Workbook create(NPOIFSFileSystem fs, String password) throws IOException, InvalidFormatException {
+        DirectoryNode root = fs.getRoot();
+        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
+            if (password == null) {
+                throw new EncryptedDocumentException("The supplied spreadsheet is protected, but no password was supplied");
+            } else {
+                EncryptionInfo info = new EncryptionInfo(fs);
+                Decryptor d = Decryptor.getInstance(info);
+                
+                boolean passwordCorrect = false;
+                InputStream stream = null;
+                try {
+                    if (d.verifyPassword(password)) {
+                        passwordCorrect = true;
+                        stream = d.getDataStream(root);
+                    }
+                } catch (GeneralSecurityException e) {}
+                
+                if (! passwordCorrect) 
+                    throw new EncryptedDocumentException("Password incorrect");
+                
+                OPCPackage pkg = OPCPackage.open(stream);
+                return create(pkg);
+            }
+        }
+        
+        if (password != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+        }
+        Workbook wb = new HSSFWorkbook(root, true);
+        Biff8EncryptionKey.setCurrentUserPassword(null);
+        return wb;
     }
     
     /**
@@ -77,13 +125,29 @@ public class WorkbookFactory {
      * @throws EncryptedDocumentException If the workbook given is password protected
      */
     public static Workbook create(InputStream inp) throws IOException, InvalidFormatException, EncryptedDocumentException {
+        return create(inp, null);
+    }
+    
+    /**
+     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
+     *  the given InputStream, which may be password protected.
+     * <p>Your input stream MUST either support mark/reset, or
+     *  be wrapped as a {@link PushbackInputStream}! Note that 
+     *  using an {@link InputStream} has a higher memory footprint 
+     *  than using a {@link File}.</p> 
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
+     * @throws EncryptedDocumentException If the wrong password is given for a protected file
+     */
+    public static Workbook create(InputStream inp, String password) throws IOException, InvalidFormatException, EncryptedDocumentException {
         // If clearly doesn't do mark/reset, wrap up
         if (! inp.markSupported()) {
             inp = new PushbackInputStream(inp, 8);
         }
 
         if (POIFSFileSystem.hasPOIFSHeader(inp)) {
-            return new HSSFWorkbook(inp);
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
+            return create(fs, password);
         }
         if (POIXMLDocument.hasOOXMLHeader(inp)) {
             return new XSSFWorkbook(OPCPackage.open(inp));
@@ -91,6 +155,7 @@ public class WorkbookFactory {
         throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
     }
     
+    // TODO file+password
     /**
      * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
      *  the given File, which must exist and be readable.

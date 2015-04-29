@@ -19,6 +19,7 @@ package org.apache.poi.ss;
 
 import java.io.InputStream;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -32,11 +33,15 @@ import junit.framework.TestCase;
 public final class TestWorkbookFactory extends TestCase {
 	private String xls;
 	private String xlsx;
+    private String[] xls_prot;
+    private String[] xlsx_prot;
 	private String txt;
 
 	protected void setUp() {
 		xls = "SampleSS.xls";
 		xlsx = "SampleSS.xlsx";
+		xls_prot = new String[] {"password.xls", "password"};
+		xlsx_prot = new String[]{"protected_passtika.xlsx", "tika"};
 		txt = "SampleSS.txt";
 	}
 
@@ -114,4 +119,81 @@ public final class TestWorkbookFactory extends TestCase {
 			// Good
 		}
 	}
+	
+	/**
+	 * Check that the overloaded stream methods which take passwords work properly
+	 */
+	public void testCreateWithPasswordFromStream() throws Exception {
+        Workbook wb;
+
+        
+	    // Unprotected, no password given, opens normally
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.openSampleFileStream(xls), null
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+	    
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.openSampleFileStream(xlsx), null
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+        
+        
+        // Unprotected, wrong password, opens normally
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.openSampleFileStream(xls), "wrong"
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+        
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.openSampleFileStream(xlsx), "wrong"
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+        
+        
+        // Protected, correct password, opens fine
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.openSampleFileStream(xls_prot[0]), xls_prot[1]
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+        
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.openSampleFileStream(xlsx_prot[0]), xlsx_prot[1]
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+        
+        
+        // Protected, wrong password, throws Exception
+        try {
+            wb = WorkbookFactory.create(
+                    HSSFTestDataSamples.openSampleFileStream(xls_prot[0]), "wrong"
+            );
+            fail("Shouldn't be able to open with the wrong password");
+        } catch (EncryptedDocumentException e) {}
+
+        try {
+            wb = WorkbookFactory.create(
+                    HSSFTestDataSamples.openSampleFileStream(xlsx_prot[0]), "wrong"
+            );
+            fail("Shouldn't be able to open with the wrong password");
+        } catch (EncryptedDocumentException e) {}
+	}
+	
+    /**
+     * Check that the overloaded file methods which take passwords work properly
+     */
+    public void testCreateWithPasswordFromFile() throws Exception {
+        Workbook wb;
+        
+        // TODO
+    }
 }
