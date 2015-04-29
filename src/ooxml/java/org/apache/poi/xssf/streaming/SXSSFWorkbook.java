@@ -709,9 +709,16 @@ public class SXSSFWorkbook implements Workbook
     @Override
     public void removeSheetAt(int index)
     {
-        XSSFSheet xSheet=_wb.getSheetAt(index);
+        // Get the sheet to be removed
+        XSSFSheet xSheet = _wb.getSheetAt(index);
+        SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
+        
+        // De-register it
         _wb.removeSheetAt(index);
         deregisterSheetMapping(xSheet);
+        
+        // Clean up temporary resources
+        sxSheet.dispose();
     }
 
     /**
