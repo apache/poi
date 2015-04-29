@@ -27,8 +27,11 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.usermodel.*;
-import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
+import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
+import org.apache.poi.sl.usermodel.TextParagraph.FontAlign;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.junit.Before;
 import org.junit.Test;
 

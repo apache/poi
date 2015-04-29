@@ -21,21 +21,26 @@ import java.awt.Color;
 
 
 public interface TextParagraph<T extends TextRun> extends Iterable<T> {
+
     /**
      * Specifies a list of text alignment types
      */
     public enum TextAlign {
         /**
-         * Align text to the left margin.
+         * For horizontal text, left aligned.
+         * For vertical text, top aligned.
          */
         LEFT,
+
         /**
-         * Align text in the center.
+         * For horizontal text, centered.
+         * For vertical text, middle aligned.
          */
         CENTER,
 
         /**
-         * Align text to the right margin.
+         * For horizontal text, right aligned.
+         * For vertical text, bottom aligned.
          */
         RIGHT,
 
@@ -43,10 +48,25 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
          * Align text so that it is justified across the whole line. It
          * is smart in the sense that it will not justify sentences
          * which are short
+         * 
+         * For horizontal text, flush left and right.
+         * For vertical text, flush top and bottom.
          */
         JUSTIFY,
+        
+        /**
+         * Kashida justify low.
+         */    
         JUSTIFY_LOW,
+
+        /**
+         * Distribute space between characters.
+         */
         DIST,
+        
+        /**
+         * Thai distribution justification.
+         */
         THAI_DIST
     }
 
@@ -54,7 +74,31 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * 
      */
     public enum FontAlign {
-        AUTO, TOP, CENTER, BASELINE, BOTTOM; 
+        AUTO,
+        
+        /**
+         * Characters hang from top of line height.
+         * Also known as "Hanging"
+         */
+        TOP,
+        
+        /**
+         * Characters centered within line height.
+         */
+        CENTER,
+        
+        /**
+         * Place characters on font baseline.
+         * Also known as "Roman" 
+         */
+        BASELINE,
+        
+        /**
+         * Characters are anchored to the very bottom of a single line.
+         * This is different than BASELINE because of letters such as "g", "q", and "y".
+         * Also known as "UpholdFixed"
+         */
+        BOTTOM; 
     }
     
     public interface BulletStyle {
