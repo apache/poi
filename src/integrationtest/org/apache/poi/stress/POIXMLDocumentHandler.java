@@ -27,6 +27,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public final class POIXMLDocumentHandler {
     protected static boolean isEncrypted(InputStream stream) throws IOException {
         if (POIFSFileSystem.hasPOIFSHeader(stream)) {
             POIFSFileSystem poifs = new POIFSFileSystem(stream);
-            if (poifs.getRoot().hasEntry("EncryptedPackage")) {
+            if (poifs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
                 return true;
             }
             throw new IOException("wrong file format or file extension for OO XML file");

@@ -111,7 +111,7 @@ public class TestEncryptor {
         long decPackLenExpected = decExpected.getLength();
         assertEquals(decPackLenExpected, payloadExpected.length);
 
-        is = nfs.getRoot().createDocumentInputStream("EncryptedPackage");
+        is = nfs.getRoot().createDocumentInputStream(Decryptor.DEFAULT_POIFS_ENTRY);
         is = new BoundedInputStream(is, is.available()-16); // ignore padding block
         byte encPackExpected[] = IOUtils.toByteArray(is);
         is.close();
@@ -163,7 +163,7 @@ public class TestEncryptor {
         
         long decPackLenActual = decActual.getLength();
         
-        is = nfs.getRoot().createDocumentInputStream("EncryptedPackage");
+        is = nfs.getRoot().createDocumentInputStream(Decryptor.DEFAULT_POIFS_ENTRY);
         is = new BoundedInputStream(is, is.available()-16); // ignore padding block
         byte encPackActual[] = IOUtils.toByteArray(is);
         is.close();

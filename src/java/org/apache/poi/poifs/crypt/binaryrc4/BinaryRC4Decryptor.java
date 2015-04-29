@@ -118,7 +118,7 @@ public class BinaryRC4Decryptor extends Decryptor {
 
     public InputStream getDataStream(DirectoryNode dir) throws IOException,
             GeneralSecurityException {
-        DocumentInputStream dis = dir.createDocumentInputStream("EncryptedPackage");
+        DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
         _length = dis.readLong();
         BinaryRC4CipherInputStream cipherStream = new BinaryRC4CipherInputStream(dis, _length);
         return cipherStream;

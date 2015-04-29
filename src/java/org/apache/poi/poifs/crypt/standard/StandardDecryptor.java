@@ -123,7 +123,7 @@ public class StandardDecryptor extends Decryptor {
     }
 
     public InputStream getDataStream(DirectoryNode dir) throws IOException {
-        DocumentInputStream dis = dir.createDocumentInputStream("EncryptedPackage");
+        DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
 
         _length = dis.readLong();
 
