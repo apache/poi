@@ -181,6 +181,7 @@ public class TestAllFiles {
     static {
         // password protected files
         EXPECTED_FAILURES.add("spreadsheet/password.xls");
+        EXPECTED_FAILURES.add("spreadsheet/protected_passtika.xlsx");
         EXPECTED_FAILURES.add("spreadsheet/51832.xls");
         EXPECTED_FAILURES.add("document/PasswordProtected.doc");
         EXPECTED_FAILURES.add("slideshow/Password_Protected-hello.ppt");
@@ -213,7 +214,7 @@ public class TestAllFiles {
         // This is actually a spreadsheet!
         EXPECTED_FAILURES.add("hpsf/TestRobert_Flaherty.doc");
 
-        // some files that are broken, Excel 5.0/95, Word 95, ...
+        // some files that are broken, eg Word 95, ...
         EXPECTED_FAILURES.add("spreadsheet/43493.xls");
         EXPECTED_FAILURES.add("spreadsheet/46904.xls");
         EXPECTED_FAILURES.add("document/56880.doc");
@@ -229,12 +230,14 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/54764-2.xlsx");   // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/Simple.xlsb");
+        EXPECTED_FAILURES.add("poifs/unknown_properties.msg"); // POIFS properties corrupted
+        
+        // old Excel files, which we only support simple text extraction of
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_2.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_3.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_4.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_5.xls");
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_95.xls");
-        EXPECTED_FAILURES.add("poifs/unknown_properties.msg"); // POIFS properties corrupted
         
         // OOXML Strict is not yet supported, see bug #57699
         EXPECTED_FAILURES.add("spreadsheet/SampleSS.strict.xlsx");
