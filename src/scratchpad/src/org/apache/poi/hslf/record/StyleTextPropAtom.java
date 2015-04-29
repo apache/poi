@@ -126,7 +126,7 @@ public final class StyleTextPropAtom extends RecordAtom
         new TextProp(2, 0x10, "bullet.font"),
         new TextProp(2, 0x40, "bullet.size"),
         new TextProp(4, 0x20, "bullet.color"),
-        new AlignmentTextProp(),
+        new TextAlignmentProp(),
         new TextProp(2, 0x1000, "linespacing"),
         new TextProp(2, 0x2000, "spacebefore"),
         new TextProp(2, 0x4000, "spaceafter"),
@@ -135,7 +135,7 @@ public final class StyleTextPropAtom extends RecordAtom
         new TextProp(2, 0x400, "bullet.offset"), // indent
         new TextProp(2, 0x8000, "defaultTabSize"),
         new TabStopPropCollection(), // tabstops size is variable!
-        new TextProp(2, 0x10000, "fontAlign"),
+        new FontAlignmentProp(),
         new TextProp(2, 0xE0000, "wrapFlags"), // charWrap | wordWrap | overflow
         new TextProp(2, 0x200000, "textDirection"),
         // 0x400000 MUST be zero and MUST be ignored

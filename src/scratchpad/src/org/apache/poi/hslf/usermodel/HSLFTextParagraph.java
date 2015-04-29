@@ -20,6 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import java.awt.Color;
 import java.util.*;
 
+import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.sl.usermodel.TextParagraph;
@@ -367,13 +368,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         int alignInt;
         switch (align) {
         default:
-        case LEFT: alignInt = AlignmentTextProp.LEFT; break;
-        case CENTER: alignInt = AlignmentTextProp.CENTER; break;
-        case RIGHT: alignInt = AlignmentTextProp.RIGHT; break;
-        case DIST: // TODO: DIST doesn't not exist within hslf, check mapping
-        case JUSTIFY: alignInt = AlignmentTextProp.JUSTIFY; break;
-        case JUSTIFY_LOW: alignInt = AlignmentTextProp.JUSTIFYLOW; break;
-        case THAI_DIST: alignInt = AlignmentTextProp.THAIDISTRIBUTED; break;
+        case LEFT: alignInt = TextAlignmentProp.LEFT; break;
+        case CENTER: alignInt = TextAlignmentProp.CENTER; break;
+        case RIGHT: alignInt = TextAlignmentProp.RIGHT; break;
+        case DIST: alignInt = TextAlignmentProp.DISTRIBUTED; break;
+        case JUSTIFY: alignInt = TextAlignmentProp.JUSTIFY; break;
+        case JUSTIFY_LOW: alignInt = TextAlignmentProp.JUSTIFYLOW; break;
+        case THAI_DIST: alignInt = TextAlignmentProp.THAIDISTRIBUTED; break;
         }
         setParaTextPropVal("alignment", alignInt);
     }
@@ -382,23 +383,53 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     public org.apache.poi.sl.usermodel.TextParagraph.TextAlign getTextAlign() {
         switch (getParaTextPropVal("alignment")) {
             default:
-            case AlignmentTextProp.LEFT: return TextAlign.LEFT;
-            case AlignmentTextProp.CENTER: return TextAlign.CENTER;
-            case AlignmentTextProp.RIGHT: return TextAlign.RIGHT;
-            case AlignmentTextProp.JUSTIFY: return TextAlign.JUSTIFY;
-            case AlignmentTextProp.JUSTIFYLOW: return TextAlign.JUSTIFY_LOW;
-            case AlignmentTextProp.THAIDISTRIBUTED: return TextAlign.THAI_DIST;
+            case TextAlignmentProp.LEFT: return TextAlign.LEFT;
+            case TextAlignmentProp.CENTER: return TextAlign.CENTER;
+            case TextAlignmentProp.RIGHT: return TextAlign.RIGHT;
+            case TextAlignmentProp.JUSTIFY: return TextAlign.JUSTIFY;
+            case TextAlignmentProp.JUSTIFYLOW: return TextAlign.JUSTIFY_LOW;
+            case TextAlignmentProp.DISTRIBUTED: return TextAlign.DIST;
+            case TextAlignmentProp.THAIDISTRIBUTED: return TextAlign.THAI_DIST;
         }
     }
 
-    public org.apache.poi.sl.usermodel.TextParagraph.FontAlign getFontAlign() {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    public FontAlign getFontAlign() {
+        switch(getParaTextPropVal("fontAlign")) {
+            default:
+            case -1: return FontAlign.AUTO;
+            case FontAlignmentProp.BASELINE: return FontAlign.BASELINE;
+            case FontAlignmentProp.TOP: return FontAlign.TOP;
+            case FontAlignmentProp.CENTER: return FontAlign.CENTER;
+            case FontAlignmentProp.BOTTOM: return FontAlign.BOTTOM;
+        }
     }
 
-    public org.apache.poi.sl.usermodel.TextParagraph.BulletStyle getBulletStyle() {
-        // TODO Auto-generated method stub
-        return null;
+    @Override
+    public BulletStyle getBulletStyle() {
+        if (getBulletChar() == 0) return null;
+        
+        return new BulletStyle() {
+            public String getBulletCharacter() {
+                char chr =  HSLFTextParagraph.this.getBulletChar();
+                return (chr == 0 ? "" : ""+chr);
+            }
+
+            public String getBulletFont() {
+                int fontIdx = HSLFTextParagraph.this.getBulletFont();
+                if (fontIdx == -1) return getDefaultFontFamily();
+                PPFont ppFont = getSheet().getSlideShow().getFont(fontIdx);
+                return ppFont.getFontName();
+            }
+
+            public double getBulletFontSize() {
+                return HSLFTextParagraph.this.getBulletSize();
+            }
+
+            public Color getBulletFontColor() {
+                return HSLFTextParagraph.this.getBulletColor();
+            }
+        };
     }
 
     @Override
@@ -460,7 +491,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * Returns the bullet character
     */
    public char getBulletChar() {
-       return (char)getParaTextPropVal("bullet.char");
+       int val = getParaTextPropVal("bullet.char");
+       return (char)(val == -1 ? 0 : val);
    }
 
    /**
