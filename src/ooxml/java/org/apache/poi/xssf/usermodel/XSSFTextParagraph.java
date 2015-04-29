@@ -709,13 +709,19 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public boolean isBullet() {
         ParagraphPropertyFetcher<Boolean> fetcher = new ParagraphPropertyFetcher<Boolean>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuNone()) {
+                if (props.isSetBuNone()) {
                     setValue(false);
                     return true;
                 }
-                if(props.isSetBuFont() || props.isSetBuChar() || props.isSetBuAutoNum()){
-                    setValue(true);
-                    return true;
+                if (props.isSetBuFont()) {
+                    if (props.isSetBuChar() || props.isSetBuAutoNum()) {
+                        setValue(true);
+                        return true;
+                    } else {
+                        // Excel treats text with buFont but no char/autonum
+                        //  as not bulleted
+                        // Possibly the font is just used if bullets turned on again?
+                    }
                 }
                 return false;
             }

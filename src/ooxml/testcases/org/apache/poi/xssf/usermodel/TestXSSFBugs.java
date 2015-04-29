@@ -2369,6 +2369,34 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         checkStyle(styleBack);
     }
 
+    /**
+     * Paragraph with property BuFont but none of the properties 
+     *  BuNone, BuChar, and BuAutoNum, used to trigger a NPE
+     * Excel treats this as not-bulleted, so now do we
+     */
+    @Test
+    public void testBug57826() {
+        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57826.xlsx");
+
+        assertTrue("no sheets in workbook", workbook.getNumberOfSheets() >= 1);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+        XSSFDrawing drawing = sheet.getDrawingPatriarch();
+        assertNotNull(drawing);
+
+        List<XSSFShape> shapes = drawing.getShapes();
+        assertEquals(1, shapes.size());
+        assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+
+        XSSFSimpleShape shape = (XSSFSimpleShape)shapes.get(0);
+
+        // Used to throw a NPE
+        String text = shape.getText();
+
+        // No bulleting info included
+        assertEquals("test ok", text);
+    }
+
 	private void checkStyle(XSSFCellStyle cellStyle) {
 		assertNotNull(cellStyle);
         assertEquals(0, cellStyle.getFillForegroundColor());
