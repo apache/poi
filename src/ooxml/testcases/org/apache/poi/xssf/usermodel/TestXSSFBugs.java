@@ -1488,27 +1488,33 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     
     /**
      * Password Protected .xlsx files should give a helpful
-     *  error message when called via WorkbookFactory.
-     * (You need to supply a password explicitly for them)
+     *  error message when called via WorkbookFactory with no password
      */
-    @Test(expected=EncryptedDocumentException.class)
-    public void bug55692_stream() throws Exception {
-        // Directly on a Stream
-        WorkbookFactory.create(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
-    }
-    
     @Test(expected=EncryptedDocumentException.class)
     public void bug55692_poifs() throws Exception {
         // Via a POIFSFileSystem
-        POIFSFileSystem fsP = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+        POIFSFileSystem fsP = new POIFSFileSystem(
+                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
         WorkbookFactory.create(fsP);
     }
     
-    @Test(expected=EncryptedDocumentException.class)
+    public void bug55692_stream() throws Exception {
+        // Directly on a Stream, will go via NPOIFS and spot it's
+        //  actually a .xlsx file encrypted with the default password, and open
+        Workbook wb = WorkbookFactory.create(
+                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+        assertNotNull(wb);
+        assertEquals(3, wb.getNumberOfSheets());
+    }
+    
     public void bug55692_npoifs() throws Exception {
-        // Via a NPOIFSFileSystem
-        NPOIFSFileSystem fsNP = new NPOIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
-        WorkbookFactory.create(fsNP);
+        // Via a NPOIFSFileSystem, will spot it's actually a .xlsx file
+        //  encrypted with the default password, and open
+        NPOIFSFileSystem fsNP = new NPOIFSFileSystem(
+                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
+        Workbook wb = WorkbookFactory.create(fsNP);
+        assertNotNull(wb);
+        assertEquals(3, wb.getNumberOfSheets());
     }
 
     @Test

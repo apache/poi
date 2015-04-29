@@ -72,30 +72,41 @@ public class WorkbookFactory {
      */
     private static Workbook create(NPOIFSFileSystem fs, String password) throws IOException, InvalidFormatException {
         DirectoryNode root = fs.getRoot();
+        
+        // Encrypted OOXML files go inside OLE2 containers, is this one?
         if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
-            if (password == null) {
-                throw new EncryptedDocumentException("The supplied spreadsheet is protected, but no password was supplied");
-            } else {
-                EncryptionInfo info = new EncryptionInfo(fs);
-                Decryptor d = Decryptor.getInstance(info);
-                
-                boolean passwordCorrect = false;
-                InputStream stream = null;
-                try {
-                    if (d.verifyPassword(password)) {
-                        passwordCorrect = true;
-                        stream = d.getDataStream(root);
-                    }
-                } catch (GeneralSecurityException e) {}
-                
-                if (! passwordCorrect) 
-                    throw new EncryptedDocumentException("Password incorrect");
-                
-                OPCPackage pkg = OPCPackage.open(stream);
-                return create(pkg);
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            
+            boolean passwordCorrect = false;
+            InputStream stream = null;
+            try {
+                if (password != null && d.verifyPassword(password)) {
+                    passwordCorrect = true;
+                }
+                if (!passwordCorrect && d.verifyPassword(Decryptor.DEFAULT_PASSWORD)) {
+                    passwordCorrect = true;
+                }
+                if (passwordCorrect) {
+                    stream = d.getDataStream(root);
+                }
+            } catch (GeneralSecurityException e) {
+                throw new IOException(e);
             }
+            
+            if (! passwordCorrect) {
+                if (password != null)
+                    throw new EncryptedDocumentException("Password incorrect");
+                else
+                    throw new EncryptedDocumentException("The supplied spreadsheet is protected, but no password was supplied");
+            }
+            
+            OPCPackage pkg = OPCPackage.open(stream);
+            return create(pkg);
         }
         
+        // If we get here, it isn't an encrypted XLSX file
+        // So, treat it as a regular HSSF XLS one
         if (password != null) {
             Biff8EncryptionKey.setCurrentUserPassword(password);
         }
