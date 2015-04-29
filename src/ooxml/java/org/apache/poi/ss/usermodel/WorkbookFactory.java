@@ -121,7 +121,9 @@ public class WorkbookFactory {
      *  using an {@link InputStream} has a higher memory footprint 
      *  than using a {@link File}.</p> 
      * <p>Note that in order to properly release resources the 
-     *  Workbook should be closed after use.
+     *  Workbook should be closed after use. Note also that loading
+     *  from an InputStream requires more memory than loading
+     *  from a File, so prefer {@link #create(File)} where possible. 
      * @throws EncryptedDocumentException If the workbook given is password protected
      */
     public static Workbook create(InputStream inp) throws IOException, InvalidFormatException, EncryptedDocumentException {
@@ -136,7 +138,9 @@ public class WorkbookFactory {
      *  using an {@link InputStream} has a higher memory footprint 
      *  than using a {@link File}.</p> 
      * <p>Note that in order to properly release resources the 
-     *  Workbook should be closed after use.
+     *  Workbook should be closed after use. Note also that loading
+     *  from an InputStream requires more memory than loading
+     *  from a File, so prefer {@link #create(File)} where possible.
      * @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
     public static Workbook create(InputStream inp, String password) throws IOException, InvalidFormatException, EncryptedDocumentException {
@@ -155,7 +159,6 @@ public class WorkbookFactory {
         throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
     }
     
-    // TODO file+password
     /**
      * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
      *  the given File, which must exist and be readable.
@@ -164,14 +167,24 @@ public class WorkbookFactory {
      * @throws EncryptedDocumentException If the workbook given is password protected
      */
     public static Workbook create(File file) throws IOException, InvalidFormatException, EncryptedDocumentException {
+        return create(file, null);
+    }
+    /**
+     * Creates the appropriate HSSFWorkbook / XSSFWorkbook from
+     *  the given File, which must exist and be readable, and
+     *  may be password protected
+     * <p>Note that in order to properly release resources the 
+     *  Workbook should be closed after use.
+     * @throws EncryptedDocumentException If the wrong password is given for a protected file
+     */
+    public static Workbook create(File file, String password) throws IOException, InvalidFormatException, EncryptedDocumentException {
         if (! file.exists()) {
             throw new FileNotFoundException(file.toString());
         }
 
         try {
-            @SuppressWarnings("resource")
             NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
-            return new HSSFWorkbook(fs.getRoot(), true);
+            return create(fs, password);
         } catch(OfficeXmlFileException e) {
             // opening as .xls failed => try opening as .xlsx
             OPCPackage pkg = OPCPackage.open(file);

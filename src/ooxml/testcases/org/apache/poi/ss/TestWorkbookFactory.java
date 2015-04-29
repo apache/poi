@@ -194,6 +194,64 @@ public final class TestWorkbookFactory extends TestCase {
     public void testCreateWithPasswordFromFile() throws Exception {
         Workbook wb;
 
-        // TODO
+        // Unprotected, no password given, opens normally
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.getSampleFile(xls), null
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.getSampleFile(xlsx), null
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+
+
+        // Unprotected, wrong password, opens normally
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.getSampleFile(xls), "wrong"
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.getSampleFile(xlsx), "wrong"
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+
+
+        // Protected, correct password, opens fine
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.getSampleFile(xls_prot[0]), xls_prot[1]
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+
+        wb = WorkbookFactory.create(
+                HSSFTestDataSamples.getSampleFile(xlsx_prot[0]), xlsx_prot[1]
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+
+
+        // Protected, wrong password, throws Exception
+        try {
+            wb = WorkbookFactory.create(
+                    HSSFTestDataSamples.getSampleFile(xls_prot[0]), "wrong"
+            );
+            fail("Shouldn't be able to open with the wrong password");
+        } catch (EncryptedDocumentException e) {}
+
+        try {
+            wb = WorkbookFactory.create(
+                    HSSFTestDataSamples.getSampleFile(xlsx_prot[0]), "wrong"
+            );
+            fail("Shouldn't be able to open with the wrong password");
+        } catch (EncryptedDocumentException e) {}
     }
 }
