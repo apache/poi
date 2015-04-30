@@ -285,14 +285,15 @@ public class TestAllFiles {
                 handler.handleFile(stream);
 
                 assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-                        EXPECTED_FAILURES.contains(file));
-                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
                         OLD_FILES.contains(file));
             } finally {
                 stream.close();
             }
 
             handler.handleExtracting(inputFile);
+
+            assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
+                    EXPECTED_FAILURES.contains(file));
         } catch (OldWordFileFormatException e) {
             // for old word files we should still support extracting text
             if(OLD_FILES.contains(file)) {
