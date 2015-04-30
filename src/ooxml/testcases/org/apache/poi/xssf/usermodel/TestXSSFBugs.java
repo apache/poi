@@ -554,8 +554,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         );
 
         // Save and check
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        wb.close();
+        s = wbBack.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
         assertEquals(" with spaces ", c.getRichStringCellValue().toString());
@@ -574,7 +575,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         );
 
         // Apply a font
-        XSSFFont f = wb.createFont();
+        XSSFFont f = wbBack.createFont();
         f.setBold(true);
         c.getRichStringCellValue().applyFont(0, 5, f);
         assertEquals("hello world", c.getRichStringCellValue().toString());
@@ -594,12 +595,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         );
 
         // Save and check
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
+        wbBack = XSSFTestDataSamples.writeOutAndReadBack(wbBack);
+        s = wbBack.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
         assertEquals("hello world", c.getRichStringCellValue().toString());
-        wb.close();
+        wbBack.close();
     }
 
     /**
@@ -956,8 +957,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(text, cell.getStringCellValue());
 
         // Save the file and re-read it
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        wb.close();
+        sheet = wbBack.getSheetAt(0);
         row = sheet.getRow(2);
         cell = row.getCell(2);
         assertEquals(text, cell.getStringCellValue());
@@ -974,12 +976,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("line.\n", r3.substring(r3.length()-6));
 
         // Save and re-check
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb.getSheetAt(0);
+        wbBack = XSSFTestDataSamples.writeOutAndReadBack(wbBack);
+        sheet = wbBack.getSheetAt(0);
         row = sheet.getRow(2);
         cell = row.getCell(2);
         assertEquals(text, cell.getStringCellValue());
-        wb.close();
+        wbBack.close();
         
         // FileOutputStream out = new FileOutputStream("/tmp/test48877.xlsx");
         // wb.write(out);
@@ -1214,16 +1216,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
         // Save, re-load and re-check 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        s = wb.getSheetAt(0);
-        defaultStyle = wb.getCellStyleAt(defaultStyle.getIndex());
-        blueStyle = wb.getCellStyleAt(blueStyle.getIndex());
-        pinkStyle = wb.getCellStyleAt(pinkStyle.getIndex());
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        wb.close();
+        s = wbBack.getSheetAt(0);
+        defaultStyle = wbBack.getCellStyleAt(defaultStyle.getIndex());
+        blueStyle = wbBack.getCellStyleAt(blueStyle.getIndex());
+        pinkStyle = wbBack.getCellStyleAt(pinkStyle.getIndex());
 
         assertEquals(pinkStyle, s.getColumnStyle(0));
         assertEquals(defaultStyle, s.getColumnStyle(2));
         assertEquals(blueStyle, s.getColumnStyle(3));
-        wb.close();
+        wbBack.close();
     }
 
     /**
@@ -2090,6 +2093,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * A .xlsx file with no Shared Strings table should open fine
      *  in read-only mode
      */
+    @SuppressWarnings("resource")
     @Test
     public void bug57482() throws Exception {
         for (PackageAccess access : new PackageAccess[] {
@@ -2432,5 +2436,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("ISERROR(CSN!A1)", c.getCellFormula());
         c = s.getRow(1).getCell(1);
         assertEquals("ISERROR(B2)", c.getCellFormula());
+        
+        wb.close();
     }
 }
