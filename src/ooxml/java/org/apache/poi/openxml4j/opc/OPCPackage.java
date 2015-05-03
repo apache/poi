@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -581,6 +582,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			if (part.getContentType().equals(contentType))
 				retArr.add(part);
 		}
+		Collections.sort(retArr);
 		return retArr;
 	}
 
@@ -604,22 +606,31 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			    retArr.add(part);
 			}
 		}
+		Collections.sort(retArr);
 		return retArr;
 	}
 
+	/**
+	 * Retrieve parts by name
+	 *
+	 * @param namePattern
+	 *            The pattern for matching the names
+	 * @return All parts associated to the specified content type, sorted
+	 * in alphanumerically by the part-name
+	 */
 	public List<PackagePart> getPartsByName(final Pattern namePattern) {
 	    if (namePattern == null) {
 	        throw new IllegalArgumentException("name pattern must not be null");
 	    }
+	    Matcher matcher = namePattern.matcher("");
 	    ArrayList<PackagePart> result = new ArrayList<PackagePart>();
 	    for (PackagePart part : partList.values()) {
 	        PackagePartName partName = part.getPartName();
-	        String name = partName.getName();
-	        Matcher matcher = namePattern.matcher(name);
-	        if (matcher.matches()) {
+	        if (matcher.reset(partName.getName()).matches()) {
 	            result.add(part);
 	        }
 	    }
+	    Collections.sort(result);
 	    return result;
 	}
 
@@ -727,7 +738,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				}
 			}
 		}
-		return new ArrayList<PackagePart>(partList.values());
+		ArrayList<PackagePart> result = new ArrayList<PackagePart>(partList.values());
+		java.util.Collections.sort(result);
+		return result;
 	}
 
 	/**
