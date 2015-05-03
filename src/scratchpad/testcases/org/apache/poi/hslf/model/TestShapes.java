@@ -20,6 +20,8 @@ package org.apache.poi.hslf.model;
 import static org.junit.Assert.*;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +138,48 @@ public final class TestShapes {
         }
     }
 
+    @Test
+    public void testParagraphs() throws Exception {
+        HSLFSlideShow ppt = new HSLFSlideShow();
+        HSLFSlide slide = ppt.createSlide();
+        HSLFTextBox shape = new HSLFTextBox();
+        HSLFTextRun p1r1 = shape.setText("para 1 run 1. ");
+        HSLFTextRun p1r2 = shape.appendText("para 1 run 2.", false);
+        HSLFTextRun p2r1 = shape.appendText("para 2 run 1. ", true);
+        HSLFTextRun p2r2 = shape.appendText("para 2 run 2. ", false);
+        p1r1.setFontColor(Color.black);
+        p1r2.setFontColor(Color.red);
+        p2r1.setFontColor(Color.yellow);
+        p2r2.setStrikethrough(true);
+        // run 3 has same text properties as run 2 and will be merged when saving
+        HSLFTextRun p2r3 = shape.appendText("para 2 run 3.", false);
+        shape.setAnchor(new Rectangle2D.Double(100,100,100,10));
+        slide.addShape(shape);
+        shape.resizeToFitText();
+        
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ppt.write(bos);
+        
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
+        slide = ppt.getSlides().get(0);
+        HSLFTextBox tb = (HSLFTextBox)slide.getShapes().get(0);
+        List<HSLFTextParagraph> para = tb.getTextParagraphs();
+        HSLFTextRun tr = para.get(0).getTextRuns().get(0);
+        assertEquals("para 1 run 1. ", tr.getRawText());
+        assertEquals(Color.black, tr.getFontColor());
+        tr = para.get(0).getTextRuns().get(1);
+        assertEquals("para 1 run 2.\r",  tr.getRawText());
+        assertEquals(Color.red, tr.getFontColor());
+        tr = para.get(1).getTextRuns().get(0);
+        assertEquals("para 2 run 1. ", tr.getRawText());
+        assertEquals(Color.yellow, tr.getFontColor());
+        tr = para.get(1).getTextRuns().get(1);
+        assertEquals("para 2 run 2. para 2 run 3.", tr.getRawText());
+        assertEquals(Color.black, tr.getFontColor());
+        assertTrue(tr.isStrikethrough());
+    }
+        
+    
     /**
      * Verify that we can add TextBox shapes to a slide
      * and set some of the style attributes
@@ -235,7 +279,11 @@ public final class TestShapes {
             for (HSLFShape sh : sld.getShapes()) {
                 if (sh instanceof HSLFTextShape){
                     HSLFTextShape tbox = (HSLFTextShape)sh;
-                    lst2.add(tbox.getText());
+                    for (HSLFTextParagraph p : tbox.getTextParagraphs()) {
+                        for (HSLFTextRun r : p) {
+                            lst2.add(r.getRawText());
+                        }
+                    }
                 }
             }
             assertTrue(lst1.containsAll(lst2));

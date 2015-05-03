@@ -270,7 +270,6 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
      * @param shape
      */
     protected void onAddTextShape(HSLFTextShape shape) {
-
     }
 
     /**

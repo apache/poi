@@ -160,14 +160,9 @@ public class TextPropCollection {
         this.reservedField = other.reservedField;
         this.textPropList.clear();
         for (TextProp tp : other.textPropList) {
-            TextProp tpCopy = tp.clone();
-            if (tpCopy instanceof BitMaskTextProp) {
-                BitMaskTextProp bmt = (BitMaskTextProp)tpCopy;
-                boolean matches[] = ((BitMaskTextProp)tp).getSubPropMatches();
-                for (int i=0; i<matches.length; i++) {
-                    bmt.setSubValue(matches[i], i);
-                }
-            }
+            TextProp tpCopy = (tp instanceof BitMaskTextProp)
+                ? ((BitMaskTextProp)tp).cloneAll()
+                : tp.clone();
             this.textPropList.add(tpCopy);
         }
 	}
@@ -183,7 +178,7 @@ public class TextPropCollection {
 	/**
 	 * Writes out to disk the header, and then all the properties
 	 */
-	public void writeOut(OutputStream o) throws IOException {
+	public void writeOut(OutputStream o, TextProp[] potentialProperties) throws IOException {
 		// First goes the number of characters we affect
 		StyleTextPropAtom.writeLittleEndian(charactersCovered,o);
 
@@ -194,10 +189,8 @@ public class TextPropCollection {
 
 		// Then the mask field
 		int mask = maskSpecial;
-		for(int i=0; i<textPropList.size(); i++) {
-			TextProp textProp = textPropList.get(i);
+		for(TextProp textProp : textPropList) {
             //sometimes header indicates that the bitmask is present but its value is 0
-
             if (textProp instanceof BitMaskTextProp) {
                 if(mask == 0) mask |=  textProp.getWriteMask();
             }
@@ -208,14 +201,19 @@ public class TextPropCollection {
 		StyleTextPropAtom.writeLittleEndian(mask,o);
 
 		// Then the contents of all the properties
-		for(int i=0; i<textPropList.size(); i++) {
-			TextProp textProp = textPropList.get(i);
-			int val = textProp.getValue();
-			if(textProp.getSize() == 2) {
-				StyleTextPropAtom.writeLittleEndian((short)val,o);
-			} else if(textProp.getSize() == 4){
-				StyleTextPropAtom.writeLittleEndian(val,o);
-			}
+		for (TextProp potProp : potentialProperties) {
+    		for(TextProp textProp : textPropList) {
+    		    if (!textProp.getName().equals(potProp.getName())) continue;
+                int val = textProp.getValue();
+                if (textProp instanceof BitMaskTextProp && val == 0) {
+                    // don't add empty properties, as they can't be recognized while reading
+                    continue;
+                } else if (textProp.getSize() == 2) {
+    				StyleTextPropAtom.writeLittleEndian((short)val,o);
+    			} else if (textProp.getSize() == 4) {
+    				StyleTextPropAtom.writeLittleEndian(val,o);
+    			}
+    		}
 		}
 	}
 
