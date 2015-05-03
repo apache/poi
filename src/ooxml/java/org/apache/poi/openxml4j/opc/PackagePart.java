@@ -30,11 +30,8 @@ import org.apache.poi.openxml4j.opc.internal.ContentType;
 
 /**
  * Provides a base class for parts stored in a Package.
- *
- * @author Julien Chable
- * @version 0.9
  */
-public abstract class PackagePart implements RelationshipSource {
+public abstract class PackagePart implements RelationshipSource, Comparable<PackagePart> {
 
 	/**
 	 * This part's container.
@@ -648,6 +645,19 @@ public abstract class PackagePart implements RelationshipSource {
 	public String toString() {
 		return "Name: " + this._partName + " - Content Type: "
 				+ this._contentType.toString();
+	}
+
+	/**
+	 * Compare based on the package part name, using a natural sort order
+	 */
+	@Override
+	public int compareTo(PackagePart other)
+	{
+	    // NOTE could also throw a NullPointerException() if desired
+	    if (other == null)
+	        return -1;
+
+	    return PackagePartName.compare(this._partName, other._partName);
 	}
 
 	/*-------------- Abstract methods ------------- */

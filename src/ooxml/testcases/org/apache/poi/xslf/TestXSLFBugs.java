@@ -265,7 +265,6 @@ public class TestXSLFBugs {
      *  that image10.foo isn't between image1.foo and image2.foo
      */
     @Test
-    @Ignore
     public void test57552() throws Exception {
         XMLSlideShow ss = new XMLSlideShow();
         for (String s : new String[]{"Slide1","Slide2"}) {
