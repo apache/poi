@@ -378,10 +378,12 @@ public class StylesTable extends POIXMLDocumentPart {
         // Formats
         CTNumFmts formats = CTNumFmts.Factory.newInstance();
         formats.setCount(numberFormats.size());
-        for (Entry<Integer, String> fmt : numberFormats.entrySet()) {
-            CTNumFmt ctFmt = formats.addNewNumFmt();
-            ctFmt.setNumFmtId(fmt.getKey());
-            ctFmt.setFormatCode(fmt.getValue());
+        for (int fmtId=0; fmtId<usedNumberFormats.length; fmtId++) {
+            if (usedNumberFormats[fmtId]) {
+                CTNumFmt ctFmt = formats.addNewNumFmt();
+                ctFmt.setNumFmtId(fmtId);
+                ctFmt.setFormatCode(numberFormats.get(fmtId));
+            }
         }
         styleSheet.setNumFmts(formats);
 
