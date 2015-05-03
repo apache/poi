@@ -22,14 +22,11 @@ import static org.apache.poi.hslf.record.RecordTypes.*;
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.poi.POIXMLException;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
@@ -139,8 +136,12 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
     protected void afterInsert(HSLFSheet sh){
         super.afterInsert(sh);
 
+        storeText();
+        
         EscherTextboxWrapper _txtbox = getEscherTextboxWrapper();
         if(_txtbox != null){
+            _escherContainer.addChildRecord(_txtbox.getEscherRecord());
+            
             PPDrawing ppdrawing = sh.getPPDrawing();
             ppdrawing.addTextboxWrapper(_txtbox);
             // Ensure the escher layer knows about the added records
@@ -712,10 +713,10 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
        * 
        * @param text the text string used by this object.
        */
-      public void appendText(String text, boolean newParagraph) {
+      public HSLFTextRun appendText(String text, boolean newParagraph) {
           // init paragraphs
           List<HSLFTextParagraph> paras = getTextParagraphs();
-          HSLFTextParagraph.appendText(paras, text, newParagraph);
+          return HSLFTextParagraph.appendText(paras, text, newParagraph);
       }
 
       /**
@@ -723,12 +724,15 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
        * Uses the properties of the first paragraph / textrun
        * 
        * @param text the text string used by this object.
+       * 
+       * @return the last text run of the splitted text
        */
-      public void setText(String text) {
+      public HSLFTextRun setText(String text) {
           // init paragraphs
           List<HSLFTextParagraph> paras = getTextParagraphs();
-          HSLFTextParagraph.setText(paras, text);
+          HSLFTextRun htr = HSLFTextParagraph.setText(paras, text);
           setTextId(text.hashCode());
+          return htr;
       }
       
       /**

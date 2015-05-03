@@ -82,13 +82,9 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 * Set the true/false status of the subproperty with the given index
 	 */
 	public void setSubValue(boolean value, int idx) {
-		if(subPropMatches[idx] == value) { return; }
-		if(value) {
-			dataValue += subPropMasks[idx];
-		} else {
-			dataValue -= subPropMasks[idx];
-		}
-		subPropMatches[idx] = value;
+		if (subPropMatches[idx] == value) return; 
+        subPropMatches[idx] = value;
+		dataValue ^= subPropMasks[idx];
 	}
 	
 	@Override
@@ -101,4 +97,8 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 		
 		return newObj;
 	}
+	
+    public BitMaskTextProp cloneAll(){
+        return (BitMaskTextProp)super.clone();
+    }	
 }

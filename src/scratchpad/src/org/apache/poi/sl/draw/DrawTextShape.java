@@ -104,8 +104,8 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
                     // negative value means the absolute spacing in points
                     y += -spaceBefore;
                 }
-                isFirstLine = false;
             }
+            isFirstLine = false;
             
             dp.setPosition(x, y);
             dp.draw(graphics);

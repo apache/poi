@@ -553,30 +553,22 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
        return getParaTextPropVal("bullet.font");
    }
 
-   /**
-    * Sets the line spacing.
-    * <p>
-    * If linespacing >= 0, then linespacing is a percentage of normal line height.
-    * If linespacing < 0, the absolute value of linespacing is the spacing in master coordinates.
-    * </p>
-    */
-   public void setLineSpacing(int val) {
-       setParaTextPropVal("linespacing", val);
+   @Override
+   public void setLineSpacing(double lineSpacing) {
+       // if lineSpacing < 0, we need to convert points (common interface) to master units (hslf)
+       if (lineSpacing < 0) {
+           lineSpacing = (lineSpacing*HSLFShape.MASTER_DPI/HSLFShape.POINT_DPI);
+       }
+       setParaTextPropVal("linespacing", (int)lineSpacing);
    }
 
-   /**
-    * Returns the line spacing
-    * <p>
-    * If linespacing >= 0, then linespacing is a percentage of normal line height.
-    * If linespacing < 0, the absolute value of linespacing is the spacing in master coordinates.
-    * </p>
-    *
-    * @return the spacing between lines
-    */
    @Override
    public double getLineSpacing() {
-       int val = getParaTextPropVal("linespacing");
-       return val == -1 ? 0 : val;
+       double val = getParaTextPropVal("linespacing");
+       // if lineSpacing < 0, we need to convert master units (hslf) to points (common interface)
+       if (val == -1) return 0;
+       if (val < -1) val *= HSLFShape.POINT_DPI/((double)HSLFShape.MASTER_DPI);
+       return val;
    }
 
    /**
@@ -722,6 +714,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
                throw new RuntimeException("child record not found - malformed container record");
            }
            cr[idx] = newRecord;
+           
+           if (newRecord == byteAtom) {
+               charAtom = null;
+           } else {
+               byteAtom = null;
+           }
        }
 
        // Ensure a StyleTextPropAtom is present, adding if required
@@ -750,6 +748,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
            }
            for (HSLFTextRun tr : para.getTextRuns()) {
                TextPropCollection rtpc = tr.getCharacterStyle();
+               rtpc.updateTextSize(0);
                if (!rtpc.equals(lastRTPC)) {
                    lastRTPC = styleAtom.addCharacterTextPropCollection(0);
                    lastRTPC.copy(rtpc);
@@ -783,19 +782,43 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * 
     * @param text the text string used by this object.
     */
-   protected static void appendText(List<HSLFTextParagraph> paragraphs, String text, boolean newParagraph) {
+   protected static HSLFTextRun appendText(List<HSLFTextParagraph> paragraphs, String text, boolean newParagraph) {
        text = toInternalString(text);
+
+       // check paragraphs
+       assert(!paragraphs.isEmpty() && !paragraphs.get(0).getTextRuns().isEmpty());
        
-       // init paragraphs
-       assert(!paragraphs.isEmpty());
+       HSLFTextParagraph htp = paragraphs.get(paragraphs.size()-1);
+       HSLFTextRun htr = htp.getTextRuns().get(htp.getTextRuns().size()-1);
+
+       if (newParagraph) {
+           htr.setText(htr.getRawText()+"\n");
+       }
        
-       HSLFTextParagraph lastHTP = paragraphs.get(paragraphs.size()-1);
-       HSLFTextRun lastHTR = lastHTP.getTextRuns().get(lastHTP.getTextRuns().size()-1);
-       HSLFTextParagraph htp = (newParagraph) ? new HSLFTextParagraph(lastHTP) : lastHTP;
-       HSLFTextRun htr = new HSLFTextRun(htp);
-       htr.setText(text);
-       htr.getCharacterStyle().copy(lastHTR.getCharacterStyle());
-       htp.addTextRun(htr);
+       boolean isFirst = !newParagraph;
+       for (String rawText : text.split("(?<=\r)")) {
+           if (!isFirst) {
+               TextPropCollection tpc = htp.getParagraphStyle();
+               HSLFTextParagraph prevHtp = htp;
+               htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom, htp._styleAtom);
+               htp.getParagraphStyle().copy(tpc);
+               htp.setParentShape(prevHtp.getParentShape());
+               htp.setShapeId(prevHtp.getShapeId());
+               htp.supplySheet(prevHtp.getSheet());
+               paragraphs.add(htp);
+               isFirst = false;
+           }
+           TextPropCollection tpc = htr.getCharacterStyle();
+           // special case, last text run is empty, we will reuse it
+           if (htr.getLength() > 0) {
+               htr = new HSLFTextRun(htp);
+               htr.getCharacterStyle().copy(tpc);
+               htp.addTextRun(htr);
+           }
+           htr.setText(rawText);
+       }
+       
+       return htr;
    }
    
    /**
@@ -804,29 +827,30 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * 
     * @param text the text string used by this object.
     */
-   public static void setText(List<HSLFTextParagraph> paragraphs, String text) {
+   public static HSLFTextRun setText(List<HSLFTextParagraph> paragraphs, String text) {
        text = HSLFTextParagraph.toInternalString(text);
        
-       // init paragraphs
-       assert(!paragraphs.isEmpty());
+       // check paragraphs
+       assert(!paragraphs.isEmpty() && !paragraphs.get(0).getTextRuns().isEmpty());
 
        Iterator<HSLFTextParagraph> paraIter = paragraphs.iterator();
-       HSLFTextParagraph firstHTP = paraIter.next(); // keep first
-       assert(firstHTP != null);
+       HSLFTextParagraph htp = paraIter.next(); // keep first
+       assert(htp != null);
        while (paraIter.hasNext()) {
            paraIter.next();
            paraIter.remove();
        }
        
-       Iterator<HSLFTextRun> runIter = firstHTP.getTextRuns().iterator();
-       HSLFTextRun firstHTR = runIter.next();
-       assert(firstHTR != null);
+       Iterator<HSLFTextRun> runIter = htp.getTextRuns().iterator();
+       HSLFTextRun htr = runIter.next();
+       htr.setText("");
+       assert(htr != null);
        while (runIter.hasNext()) {
            runIter.next();
            runIter.remove();
        }
        
-       firstHTR.setText(text);
+       return appendText(paragraphs, text, false);
    }
    
    public static String getRawText(List<HSLFTextParagraph> paragraphs) {
@@ -835,9 +859,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
            for (HSLFTextRun r : p.getTextRuns()) {
                sb.append(r.getRawText());
            }
-           sb.append("\r");
        }
-       sb.deleteCharAt(sb.length()-1); // remove last line break
        return sb.toString();        
    }
    
@@ -947,7 +969,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             return paragraphCollection;
         }
         
-        for (int slwtIndex = 0; recordIdx < records.length-2; slwtIndex++) {
+        for (int slwtIndex = 0; recordIdx < records.length; slwtIndex++) {
             List<HSLFTextParagraph> paragraphs = new ArrayList<HSLFTextParagraph>();
             paragraphCollection.add(paragraphs);
             
@@ -985,12 +1007,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             
             if (tbytes == null && tchars == null) {
                 tbytes = new TextBytesAtom();
+                header.getParentRecord().addChildAfter(tbytes, header);
                 logger.log(POILogger.INFO, "bytes nor chars atom doesn't exist. Creating dummy record for later saving.");
             }
         
             String rawText = (tchars != null) ? tchars.getText() : tbytes.getText();
         
-            for (String para : rawText.split("\r")) {
+            // split, but keep delimiter
+            for (String para : rawText.split("(?<=\r)")) {
                 HSLFTextParagraph tpara = new HSLFTextParagraph(header, tbytes, tchars, styles);
                 paragraphs.add(tpara);
                 tpara.setStyleTextProp9Atom(styleTextProp9Atom);
@@ -1021,29 +1045,21 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
     protected static void applyCharacterStyles(List<HSLFTextParagraph> paragraphs, List<TextPropCollection> charStyles) {
         int paraIdx = 0, runIdx = 0;
-        for (TextPropCollection p : charStyles) {
+        HSLFTextRun trun;
+        
+        for (int csIdx=0; csIdx<charStyles.size(); csIdx++) {
+            TextPropCollection p = charStyles.get(csIdx);
             for (int ccRun = 0, ccStyle = p.getCharactersCovered(); ccRun < ccStyle; ) {
                 HSLFTextParagraph para = paragraphs.get(paraIdx);
                 List<HSLFTextRun> runs = para.getTextRuns();
-                HSLFTextRun trun = runs.get(runIdx);
+                trun = runs.get(runIdx);
                 int len = trun.getLength();
                 
-                if (runIdx+1 >= runs.size()) {
-                    // need to add +1 to the last run of the paragraph
-                    len++;
-                }
-                
-                TextPropCollection pCopy = new TextPropCollection(1);
-                pCopy.copy(p);
                 if (ccRun+len <= ccStyle) {
-                    trun.setCharacterStyle(pCopy);
-                    pCopy.updateTextSize(len);
                     ccRun += len;
                 } else {
                     String text = trun.getRawText();
                     trun.setText(text.substring(0,ccStyle-ccRun));
-                    pCopy.updateTextSize(ccStyle-ccRun);
-                    trun.setCharacterStyle(pCopy);
                     
                     HSLFTextRun nextRun = new HSLFTextRun(para);
                     nextRun.setText(text.substring(ccStyle-ccRun));
@@ -1052,8 +1068,27 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
                     ccRun += ccStyle-ccRun;
                 }
 
-                // need to compare it again, in case a run has been added afer
-                if (++runIdx >= runs.size()) {
+                TextPropCollection pCopy = new TextPropCollection(0);
+                pCopy.copy(p);
+                trun.setCharacterStyle(pCopy);
+
+                len = trun.getLength();
+                if (paraIdx == paragraphs.size()-1 && runIdx == runs.size()-1) {
+                    if (csIdx < charStyles.size()-1) {
+                        // special case, empty trailing text run
+                        HSLFTextRun nextRun = new HSLFTextRun(para);
+                        nextRun.setText("");
+                        runs.add(nextRun);
+                    } else {
+                        // need to add +1 to the last run of the last paragraph
+                        len++;
+                        ccRun++;
+                    }
+                }
+                pCopy.updateTextSize(len);
+                
+                // need to compare it again, in case a run has been added after
+                if (++runIdx == runs.size()) {
                     paraIdx++;
                     runIdx = 0;
                 }
@@ -1065,16 +1100,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         int paraIdx = 0;
         for (TextPropCollection p : paraStyles) {
             for (int ccPara = 0, ccStyle = p.getCharactersCovered(); ccPara < ccStyle; paraIdx++) {
-                HSLFTextParagraph para = paragraphs.get(paraIdx);
-                TextPropCollection pCopy = new TextPropCollection(1);
+                if (paraIdx >= paragraphs.size() || ccPara >= ccStyle-1) return;
+                HSLFTextParagraph htp = paragraphs.get(paraIdx);
+                TextPropCollection pCopy = new TextPropCollection(0);
                 pCopy.copy(p);
+                htp.setParagraphStyle(pCopy);
                 int len = 0;
-                for (HSLFTextRun trun : para.getTextRuns()) {
+                for (HSLFTextRun trun : htp.getTextRuns()) {
                     len += trun.getLength();
                 }
-                pCopy.updateTextSize(len+1);
-                para.setParagraphStyle(pCopy);
-                ccPara += len+1;
+                if (paraIdx == paragraphs.size()-1) len++;
+                pCopy.updateTextSize(len);
+                ccPara += len;
             }
         }
     }
@@ -1101,15 +1138,28 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         tha.setParentRecord(wrapper);
         wrapper.appendChildRecord(tha);
     
-        TextCharsAtom tca = new TextCharsAtom();
-        wrapper.appendChildRecord(tca);
+        TextBytesAtom tba = new TextBytesAtom();
+        tba.setText("\r".getBytes());
+        wrapper.appendChildRecord(tba);
     
-        StyleTextPropAtom sta = new StyleTextPropAtom(0);
+        StyleTextPropAtom sta = new StyleTextPropAtom(1);
+        TextPropCollection paraStyle = sta.addParagraphTextPropCollection(1);
+        TextPropCollection charStyle = sta.addCharacterTextPropCollection(1);
         wrapper.appendChildRecord(sta);
     
-        HSLFTextParagraph htp = new HSLFTextParagraph(tha, null, tca, sta);
+        HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null, sta);
+        htp.setParagraphStyle(paraStyle);
         htp._records = new Record[0];
+        htp.setBullet(false);
+        htp.setLineSpacing(100);
+        htp.setLeftMargin(0);
+        htp.setIndent(0);
+        // set wrap flags
+        
         HSLFTextRun htr = new HSLFTextRun(htp);
+        htr.setCharacterStyle(charStyle);
+        htr.setText("\r");
+        htr.setFontColor(Color.black);
         htp.addTextRun(htr);
         
         return Arrays.asList(htp);

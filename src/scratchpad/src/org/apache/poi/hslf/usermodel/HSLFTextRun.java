@@ -37,14 +37,14 @@ public final class HSLFTextRun implements TextRun {
 
 	/** The TextRun we belong to */
 	private HSLFTextParagraph parentParagraph;
-	private String _runText = "\r";
+	private String _runText = "";
 	private String _fontname;
 	
 	/**
 	 * Our paragraph and character style.
 	 * Note - we may share these styles with other RichTextRuns
 	 */
-	private TextPropCollection characterStyle = new TextPropCollection(1);
+	private TextPropCollection characterStyle = new TextPropCollection(0);
 
 	/**
 	 * Create a new wrapper around a rich text string

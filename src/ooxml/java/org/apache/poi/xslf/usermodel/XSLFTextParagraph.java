@@ -490,27 +490,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         tabStops.addNewTab().setPos(Units.toEMU(value));
     }
 
-    /**
-     * This element specifies the vertical line spacing that is to be used within a paragraph.
-     * This may be specified in two different ways, percentage spacing and font point spacing:
-     * <p>
-     * If linespacing >= 0, then linespacing is a percentage of normal line height
-     * If linespacing < 0, the absolute value of linespacing is the spacing in points
-     * </p>
-     * Examples:
-     * <pre><code>
-     *      // spacing will be 120% of the size of the largest text on each line
-     *      paragraph.setLineSpacing(120);
-     *
-     *      // spacing will be 200% of the size of the largest text on each line
-     *      paragraph.setLineSpacing(200);
-     *
-     *      // spacing will be 48 points
-     *      paragraph.setLineSpacing(-48.0);
-     * </code></pre>
-     * 
-     * @param linespacing the vertical line spacing
-     */
+    @Override
     public void setLineSpacing(double linespacing){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
@@ -519,16 +499,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         pr.setLnSpc(spc);
     }
 
-    /**
-     * Returns the vertical line spacing that is to be used within a paragraph.
-     * This may be specified in two different ways, percentage spacing and font point spacing:
-     * <p>
-     * If linespacing >= 0, then linespacing is a percentage of normal line height.
-     * If linespacing < 0, the absolute value of linespacing is the spacing in points
-     * </p>
-     *
-     * @return the vertical line spacing.
-     */
+    @Override
     public double getLineSpacing(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){

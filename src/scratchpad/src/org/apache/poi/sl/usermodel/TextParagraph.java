@@ -113,7 +113,7 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * This may be specified in two different ways, percentage spacing and font point spacing:
      * <p>
      * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+     * If spaceBefore < 0, the absolute value in points
      * </p>
      *
      * @return the vertical white space before the paragraph
@@ -174,6 +174,29 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * @return the vertical line spacing.
      */
     double getLineSpacing();
+    
+    /**
+     * This element specifies the vertical line spacing that is to be used within a paragraph.
+     * This may be specified in two different ways, percentage spacing and font point spacing:
+     * <p>
+     * If linespacing >= 0, then linespacing is a percentage of normal line height
+     * If linespacing < 0, the absolute value of linespacing is the spacing in points
+     * </p>
+     * Examples:
+     * <pre><code>
+     *      // spacing will be 120% of the size of the largest text on each line
+     *      paragraph.setLineSpacing(120);
+     *
+     *      // spacing will be 200% of the size of the largest text on each line
+     *      paragraph.setLineSpacing(200);
+     *
+     *      // spacing will be 48 points
+     *      paragraph.setLineSpacing(-48.0);
+     * </code></pre>
+     * 
+     * @param linespacing the vertical line spacing
+     */
+    void setLineSpacing(double lineSpacing);
 
     String getDefaultFontFamily();
     
