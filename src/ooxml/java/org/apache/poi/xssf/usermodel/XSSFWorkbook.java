@@ -843,6 +843,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     @Override
     public XSSFCellStyle getCellStyleAt(short idx) {
+        return getCellStyleAt(idx&0xffff);
+    }
+    /**
+     * Get the cell style object at the given index
+     *
+     * @param idx  index within the set of styles
+     * @return XSSFCellStyle object at the index
+     */
+    public XSSFCellStyle getCellStyleAt(int idx) {
         return stylesSource.getStyleAt(idx);
     }
 

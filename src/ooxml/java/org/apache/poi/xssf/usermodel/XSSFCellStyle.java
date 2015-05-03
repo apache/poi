@@ -603,6 +603,9 @@ public class XSSFCellStyle implements CellStyle {
     public short getIndex() {
         return (short)this._cellXfId;
     }
+    protected int getUIndex() {
+        return this._cellXfId;
+    }
 
     /**
      * Get the color to use for the left border
@@ -974,6 +977,15 @@ public class XSSFCellStyle implements CellStyle {
      * @param fmt the index of a data format
      */
     public void setDataFormat(short fmt) {
+        // XSSF supports >32,767 formats
+        setDataFormat(fmt&0xffff);
+    }
+    /**
+     * Set the index of a data format
+     *
+     * @param fmt the index of a data format
+     */
+    public void setDataFormat(int fmt) {
         _cellXf.setApplyNumberFormat(true);
         _cellXf.setNumFmtId(fmt);
     }

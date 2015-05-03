@@ -2439,4 +2439,39 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         wb.close();
     }
+    
+    /**
+     * .xlsx supports 64000 cell styles, the style indexes after
+     *  32,767 must not be -32,768, then -32,767, -32,766
+     */
+    @Test
+    public void bug57880() throws Exception {
+        int numStyles = 33000;
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet s = wb.createSheet("TestSheet");
+        XSSFDataFormat fmt = wb.getCreationHelper().createDataFormat();
+        for (int i=1; i<numStyles; i++) {
+            short df = fmt.getFormat("test"+i);
+            // Format indexes will be wrapped beyond 32,676
+            assertEquals(164+i, df&0xffff);
+            // Create a style and use it
+            XSSFCellStyle style = wb.createCellStyle();
+            assertEquals(i, style.getUIndex());
+            style.setDataFormat(df);
+            XSSFCell c = s.createRow(i).createCell(0, Cell.CELL_TYPE_NUMERIC);
+            c.setCellStyle(style);
+            c.setCellValue(i);
+        }
+        
+        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        fmt = wb.getCreationHelper().createDataFormat();
+        s = wb.getSheetAt(0);
+        for (int i=1; i<numStyles; i++) {
+            XSSFCellStyle style = wb.getCellStyleAt((short)i);
+            assertNotNull(style);
+            assertEquals(i, style.getUIndex());
+            assertEquals(164+i, style.getDataFormat()&0xffff);
+            assertEquals("test"+i, style.getDataFormatString());
+        }
+    }
 }
