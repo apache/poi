@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
@@ -59,11 +60,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.StyleSheetDocument;
 
 /**
  * Table of styles shared across all sheets in a workbook.
- *
- * @author ugo
  */
 public class StylesTable extends POIXMLDocumentPart {
-	private final Map<Integer, String> numberFormats = new LinkedHashMap<Integer,String>();
+	private final Map<Integer, String> numberFormats = new HashMap<Integer,String>();
+	private final boolean[] usedNumberFormats = new boolean[SpreadsheetVersion.EXCEL2007.getMaxCellStyles()];
 	private final List<XSSFFont> fonts = new ArrayList<XSSFFont>();
 	private final List<XSSFCellFill> fills = new ArrayList<XSSFCellFill>();
 	private final List<XSSFCellBorder> borders = new ArrayList<XSSFCellBorder>();
@@ -76,6 +76,7 @@ public class StylesTable extends POIXMLDocumentPart {
 	 * The first style id available for use as a custom style
 	 */
 	public static final int FIRST_CUSTOM_STYLE_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX + 1;
+	private static final int MAXIMUM_STYLE_ID = SpreadsheetVersion.EXCEL2007.getMaxCellStyles();
 
 	private StyleSheetDocument doc;
 	private ThemesTable theme;
@@ -130,7 +131,9 @@ public class StylesTable extends POIXMLDocumentPart {
 			CTNumFmts ctfmts = styleSheet.getNumFmts();
             if( ctfmts != null){
                 for (CTNumFmt nfmt : ctfmts.getNumFmtArray()) {
-                    numberFormats.put((int)nfmt.getNumFmtId(), nfmt.getFormatCode());
+                    int formatId = (int)nfmt.getNumFmtId();
+                    numberFormats.put(formatId, nfmt.getFormatCode());
+                    usedNumberFormats[formatId] = true;
                 }
             }
 
@@ -183,21 +186,24 @@ public class StylesTable extends POIXMLDocumentPart {
 	public int putNumberFormat(String fmt) {
 		if (numberFormats.containsValue(fmt)) {
 			// Find the key, and return that
-			for(Integer key : numberFormats.keySet() ) {
-				if(numberFormats.get(key).equals(fmt)) {
-					return key;
+			for (Entry<Integer,String> numFmt : numberFormats.entrySet()) {
+				if(numFmt.getValue().equals(fmt)) {
+					return numFmt.getKey();
 				}
 			}
 			throw new IllegalStateException("Found the format, but couldn't figure out where - should never happen!");
 		}
 
 		// Find a spare key, and add that
-		int newKey = FIRST_CUSTOM_STYLE_ID;
-		while(numberFormats.containsKey(newKey)) {
-			newKey++;
+		for (int i=FIRST_CUSTOM_STYLE_ID; i<usedNumberFormats.length; i++) {
+		    if (!usedNumberFormats[i]) {
+                usedNumberFormats[i] = true;
+		        numberFormats.put(i, fmt);
+		        return i;
+		    }
 		}
-		numberFormats.put(newKey, fmt);
-		return newKey;
+		throw new IllegalStateException("The maximum number of Data Formats was exceeded. " +
+              "You can define up to " + usedNumberFormats.length + " formats in a .xlsx Workbook");
 	}
 
 	public XSSFFont getFontAt(int idx) {
@@ -532,13 +538,17 @@ public class StylesTable extends POIXMLDocumentPart {
 	}
 
 	public XSSFCellStyle createCellStyle() {
+        int xfSize = styleXfs.size();
+        if (xfSize > MAXIMUM_STYLE_ID)
+            throw new IllegalStateException("The maximum number of Cell Styles was exceeded. " +
+                      "You can define up to " + MAXIMUM_STYLE_ID + " style in a .xlsx Workbook");
+        
 		CTXf xf = CTXf.Factory.newInstance();
 		xf.setNumFmtId(0);
 		xf.setFontId(0);
 		xf.setFillId(0);
 		xf.setBorderId(0);
 		xf.setXfId(0);
-		int xfSize = styleXfs.size();
 		int indexXf = putCellXf(xf);
 		return new XSSFCellStyle(indexXf - 1, xfSize - 1, this, theme);
 	}
