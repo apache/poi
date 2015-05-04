@@ -22,10 +22,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
+
+import org.apache.poi.EmptyFileException;
 
 public final class IOUtils {
 
@@ -34,6 +37,34 @@ public final class IOUtils {
 
 	private IOUtils() {
 		// no instances of this class
+	}
+	
+	/**
+	 * Peeks at the first 8 bytes of the stream. Returns those bytes, but
+	 *  with the stream unaffected. Requires a stream that supports mark/reset,
+	 *  or a PushbackInputStream. If the stream has &gt;0 but &lt;8 bytes, 
+	 *  remaining bytes will be zero.
+	 * @throws EmptyFileException if the stream is empty
+	 */
+	public static byte[] peekFirst8Bytes(InputStream stream) throws IOException, EmptyFileException {
+        // We want to peek at the first 8 bytes
+	    stream.mark(8);
+
+        byte[] header = new byte[8];
+        int read = IOUtils.readFully(stream, header);
+        
+        if (read < 1)
+            throw new EmptyFileException();
+
+        // Wind back those 8 bytes
+        if(stream instanceof PushbackInputStream) {
+            PushbackInputStream pin = (PushbackInputStream)stream;
+            pin.unread(header);
+        } else {
+            stream.reset();
+        }
+        
+        return header;
 	}
 
 	/**

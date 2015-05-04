@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.security.GeneralSecurityException;
 
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
@@ -35,6 +36,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -153,14 +155,19 @@ public class WorkbookFactory {
      *  from an InputStream requires more memory than loading
      *  from a File, so prefer {@link #create(File)} where possible.
      * @throws EncryptedDocumentException If the wrong password is given for a protected file
+     * @throws EmptyFileException If an empty stream is given
      */
     public static Workbook create(InputStream inp, String password) throws IOException, InvalidFormatException, EncryptedDocumentException {
         // If clearly doesn't do mark/reset, wrap up
         if (! inp.markSupported()) {
             inp = new PushbackInputStream(inp, 8);
         }
+        
+        // Ensure that there is at least some data there
+        byte[] header8 = IOUtils.peekFirst8Bytes(inp);
 
-        if (POIFSFileSystem.hasPOIFSHeader(inp)) {
+        // Try to create
+        if (POIFSFileSystem.hasPOIFSHeader(header8)) {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
             return create(fs, password);
         }
@@ -187,6 +194,7 @@ public class WorkbookFactory {
      * <p>Note that in order to properly release resources the 
      *  Workbook should be closed after use.
      * @throws EncryptedDocumentException If the wrong password is given for a protected file
+     * @throws EmptyFileException If an empty stream is given
      */
     public static Workbook create(File file, String password) throws IOException, InvalidFormatException, EncryptedDocumentException {
         if (! file.exists()) {

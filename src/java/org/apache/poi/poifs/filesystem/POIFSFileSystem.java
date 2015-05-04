@@ -25,7 +25,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -37,7 +36,17 @@ import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.poi.poifs.storage.*;
+import org.apache.poi.poifs.storage.BATBlock;
+import org.apache.poi.poifs.storage.BlockAllocationTableReader;
+import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
+import org.apache.poi.poifs.storage.BlockList;
+import org.apache.poi.poifs.storage.BlockWritable;
+import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.poifs.storage.HeaderBlockConstants;
+import org.apache.poi.poifs.storage.HeaderBlockWriter;
+import org.apache.poi.poifs.storage.RawDataBlockList;
+import org.apache.poi.poifs.storage.SmallBlockTableReader;
+import org.apache.poi.poifs.storage.SmallBlockTableWriter;
 import org.apache.poi.util.CloseIgnoringInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LongField;
@@ -201,19 +210,15 @@ public class POIFSFileSystem
      */
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
         // We want to peek at the first 8 bytes
-        inp.mark(8);
-
-        byte[] header = new byte[8];
-        IOUtils.readFully(inp, header);
-        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header);
-
-        // Wind back those 8 bytes
-        if(inp instanceof PushbackInputStream) {
-            PushbackInputStream pin = (PushbackInputStream)inp;
-            pin.unread(header);
-        } else {
-            inp.reset();
-        }
+        byte[] header = IOUtils.peekFirst8Bytes(inp);
+        return hasPOIFSHeader(header);
+    }
+    /**
+     * Checks if the supplied first 8 bytes of a stream / file
+     *  has a POIFS (OLE2) header.
+     */
+    public static boolean hasPOIFSHeader(byte[] header8Bytes) {
+        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header8Bytes);
 
         // Did it match the signature?
         return (signature.get() == HeaderBlockConstants._signature);

@@ -17,14 +17,18 @@
 
 package org.apache.poi.ss;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 
@@ -253,5 +257,26 @@ public final class TestWorkbookFactory extends TestCase {
             );
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {}
+    }
+    
+    /**
+     * Check that a helpful exception is given on an empty file / stream
+     */
+    public void testEmptyFile() throws Exception {
+        InputStream emptyStream = new ByteArrayInputStream(new byte[0]);
+        File emptyFile = TempFile.createTempFile("empty", ".poi");
+        
+        try {
+            WorkbookFactory.create(emptyStream);
+            fail("Shouldn't be able to create for an empty stream");
+        } catch (EmptyFileException e) {
+        }
+        
+        try {
+            WorkbookFactory.create(emptyFile);
+            fail("Shouldn't be able to create for an empty file");
+        } catch (EmptyFileException e) {
+        }
+        emptyFile.delete();
     }
 }
