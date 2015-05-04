@@ -16,19 +16,13 @@
 ==================================================================== */
 package org.apache.poi;
 
-public class EncryptedDocumentException extends IllegalStateException
-{
-    private static final long serialVersionUID = 7276950444540469193L;
-    
-	public EncryptedDocumentException(String s) {
-		super(s);
+/**
+ * Exception thrown if an Empty (zero byte) file is supplied
+ */
+public class EmptyFileException extends IllegalArgumentException {
+    private static final long serialVersionUID = 1536449292174360166L;
+
+    public EmptyFileException() {
+		super("The supplied file was empty (zero bytes long)");
 	}
-
-    public EncryptedDocumentException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public EncryptedDocumentException(Throwable cause) {
-        super(cause);
-    }
 }
