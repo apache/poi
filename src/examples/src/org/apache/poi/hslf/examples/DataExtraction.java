@@ -57,13 +57,13 @@ public final class DataExtraction {
             out.close();
         }
 
-        //extract embedded OLE documents
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            HSLFShape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-                if (shape[j] instanceof OLEShape) {
-                    OLEShape ole = (OLEShape) shape[j];
+        int oleIdx=-1, picIdx=-1;
+        for (HSLFSlide slide : ppt.getSlides()) {
+            //extract embedded OLE documents
+            for (HSLFShape shape : slide.getShapes()) {
+                if (shape instanceof OLEShape) {
+                    oleIdx++;
+                    OLEShape ole = (OLEShape) shape;
                     HSLFObjectData data = ole.getObjectData();
                     String name = ole.getInstanceName();
                     if ("Worksheet".equals(name)) {
@@ -81,11 +81,11 @@ public final class DataExtraction {
                          }
 
                         //save on disk
-                        FileOutputStream out = new FileOutputStream(name + "-("+(j)+").doc");
+                        FileOutputStream out = new FileOutputStream(name + "-("+(oleIdx)+").doc");
                         doc.write(out);
                         out.close();
                      }  else {
-                        FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(j+1)+".dat");
+                        FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(oleIdx+1)+".dat");
                         InputStream dis = data.getData();
                         byte[] chunk = new byte[2048];
                         int count;
@@ -96,16 +96,11 @@ public final class DataExtraction {
                         out.close();
                     }
                 }
-
-            }
-        }
-
-        //Pictures
-        for (int i = 0; i < slide.length; i++) {
-            HSLFShape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-                if (shape[j] instanceof HSLFPictureShape) {
-                    HSLFPictureShape p = (HSLFPictureShape) shape[j];
+                
+                //Pictures
+                else if (shape instanceof HSLFPictureShape) {
+                    picIdx++;
+                    HSLFPictureShape p = (HSLFPictureShape) shape;
                     HSLFPictureData data = p.getPictureData();
                     String name = p.getPictureName();
                     int type = data.getType();
@@ -132,14 +127,13 @@ public final class DataExtraction {
                         default:
                             continue;
                     }
-                    FileOutputStream out = new FileOutputStream("pict-" + j + ext);
+                    FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext);
                     out.write(data.getData());
                     out.close();
                 }
-
             }
-        }
 
+        }
     }
 
     private static void usage(){

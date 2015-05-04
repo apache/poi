@@ -230,8 +230,8 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
              * fetch the master shape and search for the align property there.
              */
             int type = getRunType();
-            HSLFMasterSheet master = getSheet().getMasterSheet();
-            if(master != null){
+            if(getSheet() != null && getSheet().getMasterSheet() != null){
+                HSLFMasterSheet master = getSheet().getMasterSheet();
                 HSLFTextShape masterShape = master.getPlaceholderByTextType(type);
                 if(masterShape != null) align = masterShape.getAlignment();
             } else {

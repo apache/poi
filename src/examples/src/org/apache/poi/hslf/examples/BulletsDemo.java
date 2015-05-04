@@ -36,17 +36,17 @@ public final class BulletsDemo {
         HSLFSlide slide = ppt.createSlide();
 
         HSLFTextBox shape = new HSLFTextBox();
-        HSLFTextRun rt = shape.getTextParagraphs().getTextRuns()[0];
+        HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
+        rt.getTextRuns().get(0).setFontSize(42);
+        rt.setBullet(true);
+        rt.setIndent(0);  //bullet offset
+        rt.setLeftMargin(50);   //text offset (should be greater than bullet offset)
+        rt.setBulletChar('\u263A'); //bullet character
         shape.setText(
                 "January\r" +
                 "February\r" +
                 "March\r" +
                 "April");
-        rt.setFontSize(42);
-        rt.setBullet(true);
-        rt.setBulletOffset(0);  //bullet offset
-        rt.setTextOffset(50);   //text offset (should be greater than bullet offset)
-        rt.setBulletChar('\u263A'); //bullet character
         slide.addShape(shape);
 
         shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));  //position of the text box in the slide
