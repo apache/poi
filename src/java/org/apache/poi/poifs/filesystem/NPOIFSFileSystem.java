@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
@@ -210,6 +211,9 @@ public class NPOIFSFileSystem extends BlockStore
        try {
           // Initialize the datasource
           if (srcFile != null) {
+              if (srcFile.length() == 0)
+                  throw new EmptyFileException();
+              
               FileBackedDataSource d = new FileBackedDataSource(srcFile, readOnly);
               channel = d.getChannel();
               _data = d;
@@ -236,7 +240,10 @@ public class NPOIFSFileSystem extends BlockStore
           // TODO Decide if we can handle these better whilst
           //  still sticking to the iterator contract
           if(closeChannelOnError) {
-             channel.close();
+              if (channel != null) {
+                  channel.close();
+                  channel = null;
+              }
           }
           throw e;
        }
