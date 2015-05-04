@@ -78,7 +78,7 @@ public final class Table extends HSLFGroupShape {
         EscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId((short)0xF122);
         opt.addEscherProperty(new EscherSimpleProperty((short)0x39F, 1));
-        EscherArrayProperty p = new EscherArrayProperty((short)0x43A0, false, null);
+        EscherArrayProperty p = new EscherArrayProperty((short)(0x4000 | 0x3A0), false, null);
         p.setSizeOfElements(0x0004);
         p.setNumberOfElementsInArray(numrows);
         p.setNumberOfElementsInMemory(numrows);
@@ -122,7 +122,7 @@ public final class Table extends HSLFGroupShape {
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         List<EscherRecord> lst = spCont.getChildRecords();
         EscherOptRecord opt = (EscherOptRecord)lst.get(lst.size()-2);
-        EscherArrayProperty p = (EscherArrayProperty)opt.getEscherProperty(1);
+        EscherArrayProperty p = opt.lookup(0x3A0); 
         for (int i = 0; i < cells.length; i++) {
             TableCell cell = cells[i][0];
             int rowHeight = cell.getAnchor().height*MASTER_DPI/POINT_DPI;

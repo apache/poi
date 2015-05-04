@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.util.*;
 
@@ -484,7 +485,11 @@ public abstract class HSLFShape implements Shape {
     }
     
     public EscherOptRecord getEscherOptRecord() {
-        return getEscherChild(EscherOptRecord.RECORD_ID);
+        EscherOptRecord opt = getEscherChild(EscherOptRecord.RECORD_ID);
+        if (opt == null) {
+            opt = getEscherChild(RecordTypes.EscherUserDefined);
+        }
+        return opt;
     }
     
     public boolean getFlipHorizontal(){
