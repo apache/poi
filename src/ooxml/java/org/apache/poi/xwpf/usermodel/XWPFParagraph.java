@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.Paragraph;
@@ -28,11 +27,14 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLvl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPBdr;
@@ -284,13 +286,97 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                         break;
                     }
                 }
-                if(level != null)
+                if(level != null && level.getNumFmt() != null
+                    && level.getNumFmt().getVal() != null)
                     return level.getNumFmt().getVal().toString();
             }
         }
         return null;
     }
 
+    /**
+     * Returns the text that should be used around the paragraph level numbers.
+     *
+     * @return a string (e.g. "%1.") or null if the value is not found.
+     */
+    public String getNumLevelText() {
+        BigInteger numID = getNumID();
+        XWPFNumbering numbering = document.getNumbering();
+        if(numID != null && numbering != null) {
+            XWPFNum num = numbering.getNum(numID);
+            if(num != null) {
+                BigInteger ilvl = getNumIlvl();
+                CTNum ctNum = num.getCTNum();
+                if (ctNum == null)
+                    return null;
+
+                CTDecimalNumber ctDecimalNumber = ctNum.getAbstractNumId();
+                if (ctDecimalNumber == null)
+                    return null;
+
+                BigInteger abstractNumId = ctDecimalNumber.getVal();
+                if (abstractNumId == null)
+                    return null;
+
+                XWPFAbstractNum xwpfAbstractNum = numbering.getAbstractNum(abstractNumId);
+
+                if (xwpfAbstractNum == null)
+                    return null;
+
+                CTAbstractNum anum = xwpfAbstractNum.getCTAbstractNum();
+
+                if (anum == null)
+                    return null;
+
+                CTLvl level = null;
+                for(int i = 0; i < anum.sizeOfLvlArray(); i++) {
+                    CTLvl lvl = anum.getLvlArray(i);
+                    if(lvl != null && lvl.getIlvl() != null && lvl.getIlvl().equals(ilvl)) {
+                        level = lvl;
+                        break;
+                    }
+                }
+                if(level != null && level.getLvlText() != null
+                    && level.getLvlText().getVal() != null)
+                    return level.getLvlText().getVal().toString();
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Gets the numstartOverride for the paragraph numbering for this paragraph.
+     * @return returns the overridden start number or null if there is no override for this paragraph.
+     */
+    public BigInteger getNumStartOverride() {
+        BigInteger numID = getNumID();
+        XWPFNumbering numbering = document.getNumbering();
+        if(numID != null && numbering != null) {
+            XWPFNum num = numbering.getNum(numID);
+
+            if(num != null) {
+                CTNum ctNum = num.getCTNum();
+                if (ctNum == null) {
+                    return null;
+                }
+                BigInteger ilvl = getNumIlvl();
+                CTNumLvl level = null;
+                for(int i = 0; i < ctNum.sizeOfLvlOverrideArray(); i++) {
+                    CTNumLvl ctNumLvl = ctNum.getLvlOverrideArray(i);
+                    if(ctNumLvl != null && ctNumLvl.getIlvl() != null &&
+                        ctNumLvl.getIlvl().equals(ilvl)) {
+                        level = ctNumLvl;
+                        break;
+                    }
+                }
+                if(level != null && level.getStartOverride() != null) {
+                    return level.getStartOverride().getVal();
+                }
+            }
+        }
+        return null;
+    }
     /**
      * setNumID of Paragraph
      * @param numPos
