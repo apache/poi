@@ -26,7 +26,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 public class TestXWPFNumbering extends TestCase {
 	
-	public void testCompareAbstractNum() throws IOException{
+	public void testCompareAbstractNum() throws IOException {
 		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
 		XWPFNumbering numbering = doc.getNumbering();
 		BigInteger numId = BigInteger.valueOf(1);
@@ -74,4 +74,36 @@ public class TestXWPFNumbering extends TestCase {
 		assertEquals("lowerLetter", doc.getParagraphs().get(5).getNumFmt());
 		assertEquals("lowerRoman", doc.getParagraphs().get(6).getNumFmt());
   }
+
+	public void testLvlText() throws IOException {
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+
+		assertEquals("%1.%2.%3.", doc.getParagraphs().get(12).getNumLevelText());
+
+		assertEquals("NEW-%1-FORMAT", doc.getParagraphs().get(14).getNumLevelText());
+
+		XWPFParagraph p = doc.getParagraphs().get(18);
+		assertEquals("%1.", p.getNumLevelText());
+		//test that null doesn't throw NPE
+		assertNull(p.getNumFmt());
+	}
+
+	public void testOverrideList() throws IOException {
+		//TODO: for now the try/catch block ensures loading/inclusion of CTNumLevel
+		//for down stream processing.
+		//Ideally, we should find files that actually use overrides and test against those.
+		//Use XWPFParagraph's getNumStartOverride() in the actual tests
+
+		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+		XWPFParagraph p = doc.getParagraphs().get(18);XWPFNumbering numbering = doc.getNumbering();
+		boolean ex = false;
+		assertNull(p.getNumStartOverride());
+		try {
+			numbering.getNum(p.getNumID()).getCTNum().getLvlOverrideArray(1);
+		} catch (IndexOutOfBoundsException e) {
+			ex = true;
+		}
+		assertTrue(ex);
+	}
+
 }
