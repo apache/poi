@@ -1561,12 +1561,28 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         cell.setCellValue("Hi");
         sheet.setRepeatingRows(new CellRangeAddress(0, 0, 0, 0));
         
+        // small hack to try to make this test stable, previously it failed whenever the two written ZIP files had different file-creation
+        // dates stored.
+        // We try to do a loop until the current second changes in order to avoid problems with some date information that is written to the ZIP and thus
+        // causes differences
+        long start = System.currentTimeMillis()/1000;
+        while(System.currentTimeMillis()/1000 == start) {
+            Thread.sleep(10);
+        }
+        
         ByteArrayOutputStream bos = new ByteArrayOutputStream(8096);
         wb.write(bos);
         byte firstSave[] = bos.toByteArray();
         bos.reset();
         wb.write(bos);
         byte secondSave[] = bos.toByteArray();
+        
+        /*OutputStream stream = new FileOutputStream("C:\\temp\\poi.xlsx");
+        try {
+            wb.write(stream);
+        } finally {
+            stream.close();
+        }*/
         
         assertArrayEquals("Had: \n" + Arrays.toString(firstSave) + " and \n" + Arrays.toString(secondSave),  
                 firstSave, secondSave);
@@ -2439,7 +2455,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         
         wb.close();
     }
-    
+
     /**
      * .xlsx supports 64000 cell styles, the style indexes after
      *  32,767 must not be -32,768, then -32,767, -32,766
@@ -2463,7 +2479,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             c.setCellValue(i);
         }
         
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        // using temp file instead of ByteArrayOutputStream because of OOM in gump run
+        File tmp = TempFile.createTempFile("poi-test", ".bug57880");
+        FileOutputStream fos = new FileOutputStream(tmp);
+        wb.write(fos);
+        fos.close();
+        
+        wb.close();
+        fmt = null; s = null; wb = null;
+        // System.gc();
+        
+        wb = new XSSFWorkbook(tmp);
         fmt = wb.getCreationHelper().createDataFormat();
         s = wb.getSheetAt(0);
         for (int i=1; i<numStyles; i++) {
@@ -2473,5 +2499,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(164+i, style.getDataFormat()&0xffff);
             assertEquals("test"+i, style.getDataFormatString());
         }
+        wb.close();
+        tmp.delete();
     }
 }
