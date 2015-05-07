@@ -14,41 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xwpf.usermodel;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 
-public class XWPFLatentStyles {
-	private CTLatentStyles latentStyles;
-	protected XWPFStyles styles; //LatentStyle shall know styles
-	
-	protected XWPFLatentStyles(){
-	}
-	
-	protected XWPFLatentStyles(CTLatentStyles latentStyles){
-		this(latentStyles,null);
-	}
-	
-	protected XWPFLatentStyles(CTLatentStyles latentStyles, XWPFStyles styles) {
-		this.latentStyles=latentStyles;
-		this.styles=styles;
-	}
-	
-	public int getNumberOfStyles() {
-	    return latentStyles.sizeOfLsdExceptionArray();
-	}
-	
-	/**
-	 * checks whether specific LatentStyleID is a latentStyle
-	*/
-    @SuppressWarnings("deprecation")
-	protected boolean isLatentStyle(String latentStyleID){	
-		for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
-			if(lsd.getName().equals(latentStyleID)) {
-				return true;
-			}
-		}
-		return false;		
-	}
+/**
+ * Default Character Run style, from which other styles will override
+ * TODO Share logic with {@link XWPFRun} which also uses CTRPr
+ */
+public class XWPFDefaultRunStyle {
+    private CTRPr rpr;
+    
+    public XWPFDefaultRunStyle(CTRPr rpr) {
+        this.rpr = rpr;
+    }
+    
+    public int getFontSize() {
+        if (rpr.isSetSz())
+            return rpr.getSz().getVal().intValue() / 2;
+        return -1;
+    }
 }
