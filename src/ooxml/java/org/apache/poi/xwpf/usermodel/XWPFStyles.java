@@ -34,6 +34,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPrDefault;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
@@ -49,9 +50,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
  *  information stored in the {@link XWPFRun}
  */
 public class XWPFStyles extends POIXMLDocumentPart{
-    private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
     private CTStyles ctStyles;
-    XWPFLatentStyles latentStyles;
+    private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
+    
+    private XWPFLatentStyles latentStyles;
+    private XWPFDefaultRunStyle defaultRunStyle;
+    private XWPFDefaultParagraphStyle defaultParaStyle;
 
     /**
      * Construct XWPFStyles from a package part
@@ -104,7 +108,23 @@ public class XWPFStyles extends POIXMLDocumentPart{
     }
 
     protected void ensureDocDefaults() {
-        // TODO Refactor from elsewhere
+        if (! ctStyles.isSetDocDefaults()) {
+            ctStyles.addNewDocDefaults();
+        }
+        
+        CTDocDefaults docDefaults = ctStyles.getDocDefaults();
+        if (! docDefaults.isSetPPrDefault())
+            docDefaults.addNewPPrDefault();
+        if (! docDefaults.isSetRPrDefault())
+            docDefaults.addNewRPrDefault();
+        
+        CTPPrDefault pprd = docDefaults.getPPrDefault();
+        CTRPrDefault rprd = docDefaults.getRPrDefault();
+        if (!pprd.isSetPPr()) pprd.addNewPPr();
+        if (!rprd.isSetRPr()) rprd.addNewRPr();
+        
+        defaultRunStyle = new XWPFDefaultRunStyle(rprd.getRPr());
+        defaultParaStyle = new XWPFDefaultParagraphStyle(pprd.getPPr());
     }
 
     /**
@@ -118,6 +138,17 @@ public class XWPFStyles extends POIXMLDocumentPart{
         // Build up all the style objects
         for(CTStyle style : ctStyles.getStyleArray()) {
             listStyle.add(new XWPFStyle(style, this));
+        }
+        if (ctStyles.isSetDocDefaults()) {
+            CTDocDefaults docDefaults = ctStyles.getDocDefaults();
+            if (docDefaults.isSetRPrDefault() && docDefaults.getRPrDefault().isSetRPr()) {
+                defaultRunStyle = new XWPFDefaultRunStyle(
+                        docDefaults.getRPrDefault().getRPr());
+            }
+            if (docDefaults.isSetPPrDefault() && docDefaults.getPPrDefault().isSetPPr()) {
+                defaultParaStyle = new XWPFDefaultParagraphStyle(
+                        docDefaults.getPPrDefault().getPPr());
+            }
         }
     }
 
@@ -205,33 +236,20 @@ public class XWPFStyles extends POIXMLDocumentPart{
      * @param strSpellingLanguage
      */
     public void setSpellingLanguage(String strSpellingLanguage) {
-        CTDocDefaults docDefaults = null;
-        CTRPr runProps = null;
+        ensureDocDefaults();
+        
         CTLanguage lang = null;
-
-        // Just making sure we use the members that have already been defined
-        if(ctStyles.isSetDocDefaults()) {
-            docDefaults = ctStyles.getDocDefaults();
-            if(docDefaults.isSetRPrDefault()) {
-                CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
-                if(RPrDefault.isSetRPr()) {
-                    runProps = RPrDefault.getRPr();
-                    if(runProps.isSetLang())
-                        lang = runProps.getLang();
-                }
-            }
+        if (defaultRunStyle.getRPr().isSetLang()) {
+            lang = defaultRunStyle.getRPr().getLang();
+        } else {
+            lang = defaultRunStyle.getRPr().addNewLang();
         }
-
-        if(docDefaults == null)
-            docDefaults = ctStyles.addNewDocDefaults();
-        if(runProps == null)
-            runProps = docDefaults.addNewRPrDefault().addNewRPr();
-        if(lang == null)
-            lang = runProps.addNewLang();
 
         lang.setVal(strSpellingLanguage);
         lang.setBidi(strSpellingLanguage);
     }
+    
+    // TODO Refactor the others like this
 
     /**
      * Sets the default East Asia spelling language on ctStyles DocDefaults parameter
@@ -306,10 +324,19 @@ public class XWPFStyles extends POIXMLDocumentPart{
     }
 
     /**
+     * Get the default style which applies text runs in the document
+     */
+    public XWPFDefaultRunStyle getDefaultRunStyle() {
+        ensureDocDefaults();
+        return defaultRunStyle;
+    }
+
+    /**
      * Get the default paragraph style which applies to the document
      */
     public XWPFDefaultParagraphStyle getDefaultParagraphStyle() {
-        return null; // TODO
+        ensureDocDefaults();
+        return defaultParaStyle;
     }
 
     /**
