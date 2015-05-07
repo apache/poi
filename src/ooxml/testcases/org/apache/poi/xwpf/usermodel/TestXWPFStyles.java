@@ -188,6 +188,10 @@ public class TestXWPFStyles extends TestCase {
         assertEquals(137, styles.getLatentStyles().getNumberOfStyles());
         
         // Check the default styles
-        // TODO
+        assertNotNull(styles.getDefaultRunStyle());
+        assertNotNull(styles.getDefaultParagraphStyle());
+        
+        assertEquals(11, styles.getDefaultRunStyle().getFontSize());
+        assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
     }
 }

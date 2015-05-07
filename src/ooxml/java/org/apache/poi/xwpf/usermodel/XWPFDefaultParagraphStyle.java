@@ -30,6 +30,10 @@ public class XWPFDefaultParagraphStyle {
         this.ppr = ppr;
     }
     
+    protected CTPPr getPPr() {
+        return ppr;
+    }
+    
     public int getSpacingAfter() {
         if (ppr.isSetSpacing())
             return ppr.getSpacing().getAfter().intValue();

@@ -30,6 +30,10 @@ public class XWPFDefaultRunStyle {
         this.rpr = rpr;
     }
     
+    protected CTRPr getRPr() {
+        return rpr;
+    }
+    
     public int getFontSize() {
         if (rpr.isSetSz())
             return rpr.getSz().getVal().intValue() / 2;
