@@ -49,7 +49,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
  *  information stored in the {@link XWPFRun}
  */
 public class XWPFStyles extends POIXMLDocumentPart{
-    
     private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
     private CTStyles ctStyles;
     XWPFLatentStyles latentStyles;
@@ -103,6 +102,10 @@ public class XWPFStyles extends POIXMLDocumentPart{
       OutputStream out = part.getOutputStream();
       ctStyles.save(out, xmlOptions);
       out.close();
+   }
+   
+   protected void ensureDocDefaults() {
+       // TODO Refactor from elsewhere
    }
 	
     /**
@@ -290,14 +293,6 @@ public class XWPFStyles extends POIXMLDocumentPart{
 		runProps.setRFonts(fonts);
 	}
 	
-	
-	/**
-	 * get latentstyles
-	 */
-	public XWPFLatentStyles getLatentStyles() {
-		return latentStyles;
-	}
-	
 	/**
 	 * get the style with the same name
 	 * if this style is not existing, return null
@@ -309,6 +304,19 @@ public class XWPFStyles extends POIXMLDocumentPart{
 			}	
 		}
 		return null;
-		
 	}
-}//end class
+	
+	/**
+	 * Get the default paragraph style which applies to the document
+	 */
+	public XWPFDefaultParagraphStyle getDefaultParagraphStyle() {
+	    return null; // TODO
+	}
+    
+    /**
+     * Get the definition of all the Latent Styles
+     */
+    public XWPFLatentStyles getLatentStyles() {
+        return latentStyles;
+    }
+}

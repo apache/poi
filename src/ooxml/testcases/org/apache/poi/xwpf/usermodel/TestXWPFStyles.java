@@ -184,6 +184,10 @@ public class TestXWPFStyles extends TestCase {
         assertNotNull(styles.getStyle("TableNormal"));
         assertNotNull(styles.getStyle("NoList"));
         
-        // TODO Check latent and default
+        // We can't do much yet with latent styles
+        assertEquals(137, styles.getLatentStyles().getNumberOfStyles());
+        
+        // Check the default styles
+        // TODO
     }
 }
