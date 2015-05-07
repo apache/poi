@@ -43,8 +43,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
 /**
- * @author Philipp Epp
- *
+ * Holds details of built-in, default and user styles, which
+ *  apply to tables / paragraphs / lists etc.
+ * Text within one of those with custom stylings has the style
+ *  information stored in the {@link XWPFRun}
  */
 public class XWPFStyles extends POIXMLDocumentPart{
     
@@ -83,8 +85,6 @@ public class XWPFStyles extends POIXMLDocumentPart{
       } catch (XmlException e) {
          throw new POIXMLException("Unable to read styles", e);
       }
-      
-      
    }
 	
    @Override
@@ -153,6 +153,9 @@ public class XWPFStyles extends POIXMLDocumentPart{
 				return style;		
 		}
 		return null;
+	}
+	public int getNumberOfStyles() {
+	    return listStyle.size();
 	}
 
 	/**
