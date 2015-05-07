@@ -231,11 +231,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
         return usedStyleList;
     }
 
-    /**
-     * Sets the default spelling language on ctStyles DocDefaults parameter
-     * @param strSpellingLanguage
-     */
-    public void setSpellingLanguage(String strSpellingLanguage) {
+    protected CTLanguage getCTLanguage() {
         ensureDocDefaults();
         
         CTLanguage lang = null;
@@ -244,69 +240,38 @@ public class XWPFStyles extends POIXMLDocumentPart{
         } else {
             lang = defaultRunStyle.getRPr().addNewLang();
         }
-
+        
+        return lang;
+    }
+    
+    /**
+     * Sets the default spelling language on ctStyles DocDefaults parameter
+     * @param strSpellingLanguage
+     */
+    public void setSpellingLanguage(String strSpellingLanguage) {
+        CTLanguage lang = getCTLanguage();
         lang.setVal(strSpellingLanguage);
         lang.setBidi(strSpellingLanguage);
     }
     
-    // TODO Refactor the others like this
-
     /**
      * Sets the default East Asia spelling language on ctStyles DocDefaults parameter
      * @param strEastAsia
      */
     public void setEastAsia(String strEastAsia) {
-        CTDocDefaults docDefaults = null;
-        CTRPr runProps = null;
-        CTLanguage lang = null;
-
-        // Just making sure we use the members that have already been defined
-        if(ctStyles.isSetDocDefaults()) {
-            docDefaults = ctStyles.getDocDefaults();
-            if(docDefaults.isSetRPrDefault()) {
-                CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
-                if(RPrDefault.isSetRPr()) {
-                    runProps = RPrDefault.getRPr();
-                    if(runProps.isSetLang())
-                        lang = runProps.getLang();
-                }
-            }
-        }
-
-        if(docDefaults == null)
-            docDefaults = ctStyles.addNewDocDefaults();
-        if(runProps == null)
-            runProps = docDefaults.addNewRPrDefault().addNewRPr();
-        if(lang == null)
-            lang = runProps.addNewLang();
-
+        CTLanguage lang = getCTLanguage();
         lang.setEastAsia(strEastAsia);
     }
 
     /**
      * Sets the default font on ctStyles DocDefaults parameter
-     * @param fonts
+     * TODO Replace this with specific setters for each type, possibly
+     *  on XWPFDefaultRunStyle
      */
     public void setDefaultFonts(CTFonts fonts) {
-        CTDocDefaults docDefaults = null;
-        CTRPr runProps = null;
-
-        // Just making sure we use the members that have already been defined
-        if(ctStyles.isSetDocDefaults()) {
-            docDefaults = ctStyles.getDocDefaults();
-            if(docDefaults.isSetRPrDefault()) {
-                CTRPrDefault RPrDefault = docDefaults.getRPrDefault();
-                if(RPrDefault.isSetRPr()) {
-                    runProps = RPrDefault.getRPr();
-                }
-            }
-        }
-
-        if(docDefaults == null)
-            docDefaults = ctStyles.addNewDocDefaults();
-        if(runProps == null)
-            runProps = docDefaults.addNewRPrDefault().addNewRPr();
-
+        ensureDocDefaults();
+        
+        CTRPr runProps = defaultRunStyle.getRPr();
         runProps.setRFonts(fonts);
     }
 
