@@ -21,20 +21,47 @@
     <category rdf:resource="http://projects.apache.org/category/library" />
     <release>
       <Version>
+        <name>Apache POI 3.11</name>
+        <created>2014-12-21</created>
+        <revision>3.11</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 3.10.1</name>
+        <created>2014-08-18</created>
+        <revision>3.10.1</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
+        <name>Apache POI 3.10</name>
+        <created>2014-02-08</created>
+        <revision>3.10</revision>
+      </Version>
+    </release>
+    <release>
+      <Version>
         <name>Apache POI 3.9</name>
         <created>2012-12-03</created>
         <revision>3.9</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache POI 3.8</name>
         <created>2012-03-26</created>
         <revision>3.8</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache POI 3.7</name>
         <created>2010-10-29</created>
         <revision>3.7</revision>
       </Version>
+    </release>
+    <release>
       <Version>
         <name>Apache POI 3.6</name>
         <created>2009-12-14</created>
