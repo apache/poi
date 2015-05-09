@@ -138,4 +138,60 @@ public class TestXWPFStyles extends TestCase {
         styles = docIn.getStyles();
         assertTrue(styles.styleExist(strStyleId));
     }
+    
+    public void testEasyAccessToStyles() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        XWPFStyles styles = doc.getStyles();
+        assertNotNull(styles);
+        
+        // Has 3 paragraphs on page one, a break, and 3 on page 2
+        assertEquals(7, doc.getParagraphs().size());
+        
+        // Check the first three have no run styles, just default paragraph style
+        for (int i=0; i<3; i++) {
+            XWPFParagraph p = doc.getParagraphs().get(i);
+            assertEquals(null, p.getStyle());
+            assertEquals(null, p.getStyleID());
+            assertEquals(1, p.getRuns().size());
+            
+            XWPFRun r = p.getRuns().get(0);
+            assertEquals(null, r.getColor());
+            assertEquals(null, r.getFontFamily());
+            assertEquals(null, r.getFontName());
+            assertEquals(-1, r.getFontSize());
+        }
+        
+        // On page two, has explicit styles, but on runs not on
+        //  the paragraph itself
+        for (int i=4; i<7; i++) {
+            XWPFParagraph p = doc.getParagraphs().get(i);
+            assertEquals(null, p.getStyle());
+            assertEquals(null, p.getStyleID());
+            assertEquals(1, p.getRuns().size());
+            
+            XWPFRun r = p.getRuns().get(0);
+            assertEquals("Arial Black", r.getFontFamily());
+            assertEquals("Arial Black", r.getFontName());
+            assertEquals(16, r.getFontSize());
+            assertEquals("548DD4", r.getColor());
+        }
+        
+        // Check the document styles
+        // Should have a style defined for each type
+        assertEquals(4, styles.getNumberOfStyles());
+        assertNotNull(styles.getStyle("Normal"));
+        assertNotNull(styles.getStyle("DefaultParagraphFont"));
+        assertNotNull(styles.getStyle("TableNormal"));
+        assertNotNull(styles.getStyle("NoList"));
+        
+        // We can't do much yet with latent styles
+        assertEquals(137, styles.getLatentStyles().getNumberOfStyles());
+        
+        // Check the default styles
+        assertNotNull(styles.getDefaultRunStyle());
+        assertNotNull(styles.getDefaultParagraphStyle());
+        
+        assertEquals(11, styles.getDefaultRunStyle().getFontSize());
+        assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
+    }
 }

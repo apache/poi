@@ -20,31 +20,35 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 
 public class XWPFLatentStyles {
-	private CTLatentStyles latentStyles;
-	protected XWPFStyles styles; //LatentStyle shall know styles
-	
-	protected XWPFLatentStyles(){
-	}
-	
-	protected XWPFLatentStyles(CTLatentStyles latentStyles){
-		this(latentStyles,null);
-	}
-	
-	protected XWPFLatentStyles(CTLatentStyles latentStyles, XWPFStyles styles) {
-		this.latentStyles=latentStyles;
-		this.styles=styles;
-	}
-	
-	/**
-	 * checks wheter specific LatentStyleID is a latentStyle
-	*/
+    private CTLatentStyles latentStyles;
+    protected XWPFStyles styles; //LatentStyle shall know styles
+
+    protected XWPFLatentStyles(){
+    }
+
+    protected XWPFLatentStyles(CTLatentStyles latentStyles){
+        this(latentStyles,null);
+    }
+
+    protected XWPFLatentStyles(CTLatentStyles latentStyles, XWPFStyles styles) {
+        this.latentStyles=latentStyles;
+        this.styles=styles;
+    }
+
+    public int getNumberOfStyles() {
+        return latentStyles.sizeOfLsdExceptionArray();
+    }
+
+    /**
+     * checks whether specific LatentStyleID is a latentStyle
+     */
     @SuppressWarnings("deprecation")
-	protected boolean isLatentStyle(String latentStyleID){	
-		for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
-			if(lsd.getName().equals(latentStyleID)) {
-				return true;
-			}
-		}
-		return false;		
-	}
+    protected boolean isLatentStyle(String latentStyleID){	
+        for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
+            if(lsd.getName().equals(latentStyleID)) {
+                return true;
+            }
+        }
+        return false;		
+    }
 }

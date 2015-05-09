@@ -406,6 +406,7 @@ under the License.
     	<!-- remove previous versions of third-party jars to prevent them from lingering around, 
     		we often had hard-to-find build/CI-problems because of these! -->
 		<mkdir dir="${main.lib}"/>
+		<mkdir dir="${compile.lib}"/>
 		<delete verbose="true">
 			<fileset dir="${main.lib}">
 	    		<include name="ant-1.8*"/>
@@ -1245,7 +1246,7 @@ under the License.
             description="Generates the API documentation">
         <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
                  windowtitle="POI API Documentation" use="true" version="true" 
-                 maxmemory="384M" additionalparam="-notimestamp" 
+                 maxmemory="384M" additionalparam="-notimestamp" locale="en_US" 
                  classpathref="javadoc.classpath">
             <packageset dir="${main.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
@@ -1473,7 +1474,7 @@ under the License.
         <mkdir dir="${build.maven.javadocs}"/>
         <javadoc verbose="false" author="false" destdir="${build.maven.javadocs}"
                  windowtitle="POI API Documentation" use="false" version="false" 
-                 maxmemory="384M" additionalparam="-notimestamp -quiet"
+                 maxmemory="384M" additionalparam="-notimestamp -quiet" locale="en_US"
                  classpathref="javadoc.classpath">
             <packageset dir="${srcfolder}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
