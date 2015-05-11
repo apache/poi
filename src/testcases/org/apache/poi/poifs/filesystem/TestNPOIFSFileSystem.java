@@ -41,6 +41,7 @@ import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1304,6 +1305,66 @@ public final class TestNPOIFSFileSystem {
 
        normDoc = (DocumentEntry)testDir.getEntry("Normal4106");
        assertContentsMatches(main4106, normDoc);
+   }
+   
+   @Ignore
+   @Test
+   public void writeZeroLengthEntries() throws Exception {
+       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+       DirectoryNode testDir = fs.getRoot();
+       DocumentEntry miniDoc;
+       DocumentEntry normDoc;
+       DocumentEntry emptyDoc;
+       
+       // Add mini and normal sized entries to start
+       byte[] mini2 = new byte[] { -42, 0, -1, -2, -3, -4, -42 };
+       testDir.createDocument("Mini2", new ByteArrayInputStream(mini2));
+       
+       // Add to the main stream
+       byte[] main4106 = new byte[4106];
+       main4106[0] = 41;
+       main4106[4105] = 42;
+       testDir.createDocument("Normal4106", new ByteArrayInputStream(main4106));
+       
+       // Now add some empty ones
+       byte[] empty = new byte[0];
+       testDir.createDocument("empty-1", new ByteArrayInputStream(empty));
+       testDir.createDocument("empty-2", new ByteArrayInputStream(empty));
+       testDir.createDocument("empty-3", new ByteArrayInputStream(empty));
+       
+       // Check
+       miniDoc = (DocumentEntry)testDir.getEntry("Mini2");
+       assertContentsMatches(mini2, miniDoc);
+
+       normDoc = (DocumentEntry)testDir.getEntry("Normal4106");
+       assertContentsMatches(main4106, normDoc);
+       
+       emptyDoc = (DocumentEntry)testDir.getEntry("empty-1");
+       assertContentsMatches(empty, emptyDoc);
+       
+       emptyDoc = (DocumentEntry)testDir.getEntry("empty-2");
+       assertContentsMatches(empty, emptyDoc);
+       
+       emptyDoc = (DocumentEntry)testDir.getEntry("empty-3");
+       assertContentsMatches(empty, emptyDoc);
+       
+       // Save and re-check
+       fs = writeOutAndReadBack(fs);
+       
+       miniDoc = (DocumentEntry)testDir.getEntry("Mini2");
+       assertContentsMatches(mini2, miniDoc);
+
+       normDoc = (DocumentEntry)testDir.getEntry("Normal4106");
+       assertContentsMatches(main4106, normDoc);
+       
+       emptyDoc = (DocumentEntry)testDir.getEntry("empty-1");
+       assertContentsMatches(empty, emptyDoc);
+       
+       emptyDoc = (DocumentEntry)testDir.getEntry("empty-2");
+       assertContentsMatches(empty, emptyDoc);
+       
+       emptyDoc = (DocumentEntry)testDir.getEntry("empty-3");
+       assertContentsMatches(empty, emptyDoc);
    }
 
    /**
