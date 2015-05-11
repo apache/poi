@@ -19,7 +19,7 @@ package org.apache.poi.hslf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -87,23 +87,15 @@ public final class HSLFSlideShow extends POIDocument {
     private ObjectData[] _objects;
     
     /**
-	 * Returns the underlying POIFSFileSystem for the document
-	 *  that is open.
-	 */
-	protected POIFSFileSystem getPOIFSFileSystem() {
-		return directory.getFileSystem();
-	}
-
-   /**
-    * Returns the directory in the underlying POIFSFileSystem for the 
-    *  document that is open.
-    */
-   protected DirectoryNode getPOIFSDirectory() {
-      return directory;
-   }
+     * Returns the directory in the underlying POIFSFileSystem for the 
+     *  document that is open.
+     */
+    protected DirectoryNode getPOIFSDirectory() {
+        return directory;
+    }
 
 	/**
-	 * Constructs a Powerpoint document from fileName. Parses the document
+	 * Constructs a PowerPoint document from fileName. Parses the document
 	 * and places all the important stuff into data structures.
 	 *
 	 * @param fileName The name of the file to read.
@@ -111,7 +103,7 @@ public final class HSLFSlideShow extends POIDocument {
 	 */
 	public HSLFSlideShow(String fileName) throws IOException
 	{
-		this(new FileInputStream(fileName));
+		this(new NPOIFSFileSystem(new File(fileName)));
 	}
 
 	/**
