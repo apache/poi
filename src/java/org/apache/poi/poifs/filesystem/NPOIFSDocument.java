@@ -143,8 +143,12 @@ public final class NPOIFSDocument implements POIFSViewable {
            os.write(buf, 0, readBytes);
        }
        
-       os.close();
+       // If this is an empty document, write a single byte
+       //  to force a block allocation for this document
+       if (length == 0) os.write(0);
        
+       // Tidy and return the length
+       os.close();
        return length;
    }
    

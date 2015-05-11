@@ -41,7 +41,6 @@ import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1307,7 +1306,6 @@ public final class TestNPOIFSFileSystem {
        assertContentsMatches(main4106, normDoc);
    }
    
-   @Ignore
    @Test
    public void writeZeroLengthEntries() throws Exception {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
@@ -1350,6 +1348,7 @@ public final class TestNPOIFSFileSystem {
        
        // Save and re-check
        fs = writeOutAndReadBack(fs);
+       testDir = fs.getRoot();
        
        miniDoc = (DocumentEntry)testDir.getEntry("Mini2");
        assertContentsMatches(mini2, miniDoc);
