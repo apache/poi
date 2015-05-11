@@ -176,7 +176,7 @@ public class OPOIFSFileSystem
      * @param stream the stream to be closed
      * @param success <code>false</code> if an exception is currently being thrown in the calling method
      */
-    private void closeInputStream(InputStream stream, boolean success) {
+    protected void closeInputStream(InputStream stream, boolean success) {
 
         if(stream.markSupported() && !(stream instanceof ByteArrayInputStream)) {
             String msg = "POIFS is closing the supplied input stream of type ("
