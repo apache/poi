@@ -20,7 +20,6 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Common Parent for OLE2 based Text Extractors
@@ -80,18 +79,5 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
     public DirectoryEntry getRoot()
     {
         return document.directory;
-    }
-
-    /**
-     * Return the underlying POIFS FileSystem of this document.
-     * 
-     * @return the POIFSFileSystem that is associated with the POIDocument of this extractor. 
-     *
-     * @deprecated Use {@link #getRoot()} instead
-     */
-    @Deprecated
-    public POIFSFileSystem getFileSystem()
-    {
-        return document.directory.getFileSystem();
     }
 }

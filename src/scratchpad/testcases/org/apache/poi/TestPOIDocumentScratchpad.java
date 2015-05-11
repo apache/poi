@@ -74,7 +74,7 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 
 	public void testWriteProperties() throws Exception {
 		// Just check we can write them back out into a filesystem
-		POIFSFileSystem outFS = new POIFSFileSystem();
+		NPOIFSFileSystem outFS = new NPOIFSFileSystem();
 		doc.writeProperties(outFS);
 
 		// Should now hold them
@@ -86,7 +86,7 @@ public final class TestPOIDocumentScratchpad extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     	// Write them out
-    	POIFSFileSystem outFS = new POIFSFileSystem();
+    	NPOIFSFileSystem outFS = new NPOIFSFileSystem();
     	doc.writeProperties(outFS);
     	outFS.writeFilesystem(baos);
 

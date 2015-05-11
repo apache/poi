@@ -52,6 +52,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.EntryUtils;
+import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
@@ -584,7 +585,7 @@ public final class HSLFSlideShow extends POIDocument {
         _records = encryptedSS.updateEncryptionRecord(_records);
 
         // Get a new Filesystem to write into
-        POIFSFileSystem outFS = new POIFSFileSystem();
+        NPOIFSFileSystem outFS = new NPOIFSFileSystem();
 
         // The list of entries we've written out
         List<String> writtenEntries = new ArrayList<String>(1);
@@ -628,7 +629,9 @@ public final class HSLFSlideShow extends POIDocument {
 
         // If requested, write out any other streams we spot
         if(preserveNodes) {
-            EntryUtils.copyNodes(directory.getFileSystem(), outFS, writtenEntries);
+            FilteringDirectoryNode sNode = new FilteringDirectoryNode(directory, writtenEntries);
+            FilteringDirectoryNode dNode = new FilteringDirectoryNode(outFS.getRoot(), writtenEntries);
+            EntryUtils.copyNodes(sNode, dNode);
         }
 
         // Send the POIFSFileSystem object out to the underlying stream
@@ -651,13 +654,14 @@ public final class HSLFSlideShow extends POIDocument {
 
     /**
      * Writes out the standard Documment Information Properties (HPSF)
-     * @param outFS the POIFSFileSystem to write the properties into
+     * @param outFS the NPOIFSFileSystem to write the properties into
      * @param writtenEntries a list of POIFS entries to add the property names too
      * 
      * @throws IOException if an error when writing to the 
      *      {@link POIFSFileSystem} occurs
      */
-    protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+    @Override
+    protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         super.writeProperties(outFS, writtenEntries);
         DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
         if (dea != null) {
