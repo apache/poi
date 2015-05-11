@@ -25,7 +25,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.property.RootProperty;
 
@@ -37,43 +37,43 @@ import org.apache.poi.poifs.property.RootProperty;
 public final class TestSmallBlockTableWriter extends TestCase {
 
     public void testWritingConstructor() throws IOException {
-        List<POIFSDocument> documents = new ArrayList<POIFSDocument>();
+        List<OPOIFSDocument> documents = new ArrayList<OPOIFSDocument>();
 
         documents.add(
-            new POIFSDocument(
+            new OPOIFSDocument(
                 "doc340", new ByteArrayInputStream(new byte[ 340 ])));
         documents.add(
-            new POIFSDocument(
+            new OPOIFSDocument(
                 "doc5000", new ByteArrayInputStream(new byte[ 5000 ])));
         documents
-            .add(new POIFSDocument("doc0",
+            .add(new OPOIFSDocument("doc0",
                                    new ByteArrayInputStream(new byte[ 0 ])));
         documents
-            .add(new POIFSDocument("doc1",
+            .add(new OPOIFSDocument("doc1",
                                    new ByteArrayInputStream(new byte[ 1 ])));
         documents
-            .add(new POIFSDocument("doc2",
+            .add(new OPOIFSDocument("doc2",
                                    new ByteArrayInputStream(new byte[ 2 ])));
         documents
-            .add(new POIFSDocument("doc3",
+            .add(new OPOIFSDocument("doc3",
                                    new ByteArrayInputStream(new byte[ 3 ])));
         documents
-            .add(new POIFSDocument("doc4",
+            .add(new OPOIFSDocument("doc4",
                                    new ByteArrayInputStream(new byte[ 4 ])));
         documents
-            .add(new POIFSDocument("doc5",
+            .add(new OPOIFSDocument("doc5",
                                    new ByteArrayInputStream(new byte[ 5 ])));
         documents
-            .add(new POIFSDocument("doc6",
+            .add(new OPOIFSDocument("doc6",
                                    new ByteArrayInputStream(new byte[ 6 ])));
         documents
-            .add(new POIFSDocument("doc7",
+            .add(new OPOIFSDocument("doc7",
                                    new ByteArrayInputStream(new byte[ 7 ])));
         documents
-            .add(new POIFSDocument("doc8",
+            .add(new OPOIFSDocument("doc8",
                                    new ByteArrayInputStream(new byte[ 8 ])));
         documents
-            .add(new POIFSDocument("doc9",
+            .add(new OPOIFSDocument("doc9",
                                    new ByteArrayInputStream(new byte[ 9 ])));
         
         HeaderBlock              header = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);

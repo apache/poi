@@ -23,9 +23,7 @@ import org.apache.poi.poifs.storage.DataInputBlock;
 
 /**
  * This class provides methods to read a DocumentEntry managed by a
- * {@link POIFSFileSystem} instance.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * {@link OPOIFSFileSystem} instance.
  */
 public final class ODocumentInputStream extends DocumentInputStream {
 	/** current offset into the Document */
@@ -41,7 +39,7 @@ public final class ODocumentInputStream extends DocumentInputStream {
 	private boolean _closed;
 
 	/** the actual Document */
-	private POIFSDocument _document;
+	private OPOIFSDocument _document;
 
 	/** the data block containing the current stream pointer */
 	private DataInputBlock _currentBlock;
@@ -59,7 +57,7 @@ public final class ODocumentInputStream extends DocumentInputStream {
 			throw new IOException("Cannot open internal document storage");
 		}
 		DocumentNode documentNode = (DocumentNode)document;
-		if(documentNode.getDocument() == null) {
+		if (documentNode.getDocument() == null) {
          throw new IOException("Cannot open internal document storage");
 		}
 		      
@@ -76,7 +74,7 @@ public final class ODocumentInputStream extends DocumentInputStream {
 	 * 
 	 * @param document the Document to be read
 	 */
-	public ODocumentInputStream(POIFSDocument document) {
+	public ODocumentInputStream(OPOIFSDocument document) {
 		_current_offset = 0;
 		_marked_offset = 0;
 		_document_size = document.getSize();

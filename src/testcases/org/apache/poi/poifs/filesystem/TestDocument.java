@@ -28,27 +28,25 @@ import org.apache.poi.poifs.storage.RawDataBlock;
 import org.apache.poi.poifs.storage.SmallDocumentBlock;
 
 /**
- * Class to test POIFSDocument functionality
- *
- * @author Marc Johnson
+ * Class to test OPOIFSDocument functionality
  */
 public final class TestDocument extends TestCase {
 
     /**
      * Integration test -- really about all we can do
      */
-    public void testPOIFSDocument() throws IOException {
+    public void testOPOIFSDocument() throws IOException {
 
         // verify correct number of blocks get created for document
         // that is exact multituple of block size
-        POIFSDocument document;
+        OPOIFSDocument document;
         byte[]        array = new byte[ 4096 ];
 
         for (int j = 0; j < array.length; j++)
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("foo", new SlowInputStream(new ByteArrayInputStream(array)));
+        document = new OPOIFSDocument("foo", new SlowInputStream(new ByteArrayInputStream(array)));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document
@@ -58,7 +56,7 @@ public final class TestDocument extends TestCase {
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("bar", new ByteArrayInputStream(array));
+        document = new OPOIFSDocument("bar", new ByteArrayInputStream(array));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document
@@ -68,7 +66,7 @@ public final class TestDocument extends TestCase {
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("_bar", new ByteArrayInputStream(array));
+        document = new OPOIFSDocument("_bar", new ByteArrayInputStream(array));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document
@@ -78,7 +76,7 @@ public final class TestDocument extends TestCase {
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("_bar2",
+        document = new OPOIFSDocument("_bar2",
                                      new ByteArrayInputStream(array));
         checkDocument(document, array);
 
@@ -88,7 +86,7 @@ public final class TestDocument extends TestCase {
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("foobar",
+        document = new OPOIFSDocument("foobar",
                                      new ByteArrayInputStream(array));
         checkDocument(document, array);
         document.setStartBlock(0x12345678);   // what a big file!!
@@ -135,9 +133,9 @@ public final class TestDocument extends TestCase {
         }
     }
 
-    private static POIFSDocument makeCopy(POIFSDocument document, byte[] input, byte[] data)
+    private static OPOIFSDocument makeCopy(OPOIFSDocument document, byte[] input, byte[] data)
             throws IOException {
-        POIFSDocument copy = null;
+        OPOIFSDocument copy = null;
 
         if (input.length >= 4096)
         {
@@ -156,12 +154,12 @@ public final class TestDocument extends TestCase {
                 }
                 blocks[ index++ ] = block;
             }
-            copy = new POIFSDocument("test" + input.length, blocks,
+            copy = new OPOIFSDocument("test" + input.length, blocks,
                                      input.length);
         }
         else
         {
-            copy = new POIFSDocument(
+            copy = new OPOIFSDocument(
                 "test" + input.length,
                 ( SmallDocumentBlock [] ) document.getSmallBlocks(),
                 input.length);
@@ -169,7 +167,7 @@ public final class TestDocument extends TestCase {
         return copy;
     }
 
-    private static void checkDocument(final POIFSDocument document, final byte[] input)
+    private static void checkDocument(final OPOIFSDocument document, final byte[] input)
             throws IOException {
         int big_blocks   = 0;
         int small_blocks = 0;
@@ -195,7 +193,7 @@ public final class TestDocument extends TestCase {
     }
 
     private static byte[] checkValues(int big_blocks, int small_blocks, int total_output,
-            POIFSDocument document, byte[] input) throws IOException {
+            OPOIFSDocument document, byte[] input) throws IOException {
         assertEquals(document, document.getDocumentProperty().getDocument());
         int increment = ( int ) Math.sqrt(input.length);
 

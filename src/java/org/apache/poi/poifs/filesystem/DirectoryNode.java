@@ -217,7 +217,7 @@ public class DirectoryNode
      *
      * @exception IOException
      */
-    DocumentEntry createDocument(final POIFSDocument document)
+    DocumentEntry createDocument(final OPOIFSDocument document)
         throws IOException
     {
         DocumentProperty property = document.getDocumentProperty();
@@ -418,7 +418,7 @@ public class DirectoryNode
         if(_nfilesystem != null) {
            return createDocument(new NPOIFSDocument(name, _nfilesystem, stream));
         } else {
-           return createDocument(new POIFSDocument(name, stream));
+           return createDocument(new OPOIFSDocument(name, stream));
         }
     }
 
@@ -441,7 +441,7 @@ public class DirectoryNode
         if(_nfilesystem != null) {
             return createDocument(new NPOIFSDocument(name, size, _nfilesystem, writer));
          } else {
-            return createDocument(new POIFSDocument(name, size, _path, writer));
+            return createDocument(new OPOIFSDocument(name, size, _path, writer));
          }
     }
 

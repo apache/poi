@@ -445,7 +445,7 @@ public class OPOIFSFileSystem
      * @param document the POIFSDocument being added
      */
 
-    void addDocument(final POIFSDocument document)
+    void addDocument(final OPOIFSDocument document)
     {
         _documents.add(document);
         _property_table.addProperty(document.getDocumentProperty());
@@ -508,21 +508,21 @@ public class OPOIFSFileSystem
             {
                 int           startBlock = property.getStartBlock();
                 int           size       = property.getSize();
-                POIFSDocument document   = null;
+                OPOIFSDocument document  = null;
 
                 if (property.shouldUseSmallBlocks())
                 {
                     document =
-                        new POIFSDocument(name,
-                                          small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
-                                          size);
+                        new OPOIFSDocument(name,
+                                           small_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
+                                           size);
                 }
                 else
                 {
                     document =
-                        new POIFSDocument(name,
-                                          big_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
-                                          size);
+                        new OPOIFSDocument(name,
+                                           big_blocks.fetchBlocks(startBlock, headerPropertiesStartAt),
+                                           size);
                 }
                 parent.createDocument(document);
             }
