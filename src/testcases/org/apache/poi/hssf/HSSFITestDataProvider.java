@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf;
 
+import java.io.InputStream;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -37,6 +39,9 @@ public final class HSSFITestDataProvider implements ITestDataProvider {
     
     public HSSFWorkbook openSampleWorkbook(String sampleFileName) {
         return HSSFTestDataSamples.openSampleWorkbook(sampleFileName);
+    }
+    public InputStream openWorkbookStream(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
     }
     
     public HSSFWorkbook writeOutAndReadBack(Workbook original) {

@@ -58,6 +58,7 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
@@ -1566,15 +1567,30 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * (is an excel 95 file though)
      */
     @Test
-    public void bug46904() {
+    public void bug46904() throws Exception {
         try {
-            openSample("46904.xls");
+            OPOIFSFileSystem fs = new OPOIFSFileSystem(
+                    HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
+            new HSSFWorkbook(fs.getRoot(), false);
             fail();
         } catch(OldExcelFormatException e) {
             assertTrue(e.getMessage().startsWith(
                     "The supplied spreadsheet seems to be Excel"
             ));
         }
+        // TODO Fix this to work with NPOIFS as well
+/*
+        try {
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(
+                    HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
+            new HSSFWorkbook(fs.getRoot(), false);
+            fail();
+        } catch(OldExcelFormatException e) {
+            assertTrue(e.getMessage().startsWith(
+                    "The supplied spreadsheet seems to be Excel"
+            ));
+        }
+*/
     }
 
     /**

@@ -58,7 +58,7 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 
 	   if(documentNode.getDocument() != null) {
 	      delegate = new ODocumentInputStream(document);
-	   } else if(parentNode.getFileSystem() != null) {
+	   } else if(parentNode.getOFileSystem() != null) {
 	      delegate = new ODocumentInputStream(document);
 	   } else if(parentNode.getNFileSystem() != null) {
 	      delegate = new NDocumentInputStream(document);

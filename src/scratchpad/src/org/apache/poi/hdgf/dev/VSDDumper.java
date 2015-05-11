@@ -17,7 +17,7 @@
 
 package org.apache.poi.hdgf.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
 
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.chunks.Chunk;
@@ -26,7 +26,7 @@ import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.streams.ChunkStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.Stream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * Developer helper class to dump out the pointer+stream structure
@@ -41,7 +41,7 @@ public final class VSDDumper {
 		}
 
 		HDGFDiagram hdgf = new HDGFDiagram(
-				new POIFSFileSystem(new FileInputStream(args[0]))
+				new NPOIFSFileSystem(new File(args[0]))
 		);
 
 		System.out.println("Opened " + args[0]);

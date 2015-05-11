@@ -51,18 +51,9 @@ public final class HPBFDocument extends POIDocument {
 	   this(fs.getRoot());
 	}
 	public HPBFDocument(InputStream inp) throws IOException {
-	   this(new POIFSFileSystem(inp));
+	   this(new NPOIFSFileSystem(inp));
 	}
 
-	/**
-	 * Opens an embedded publisher document,
-	 *  at the given directory.
-	 * @deprecated Use {@link #HPBFDocument(DirectoryNode)} instead
-	 */
-	@Deprecated
-	public HPBFDocument(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-	   this(dir);
-	}
 	/**
 	 * Opens an embedded publisher document,
 	 *  at the given directory.

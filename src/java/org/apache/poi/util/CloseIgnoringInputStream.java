@@ -20,8 +20,6 @@ package org.apache.poi.util;
 import java.io.FilterInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
 /**
  * A wrapper around an {@link InputStream}, which 
  *  ignores close requests made to it.

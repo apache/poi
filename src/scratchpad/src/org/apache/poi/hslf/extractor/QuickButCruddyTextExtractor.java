@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.extractor;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -52,11 +52,9 @@ import org.apache.poi.util.LittleEndian;
  * Almost everyone will want to use @see PowerPointExtractor instead. There
  *  are only a very small number of cases (eg some performance sensitive
  *  lucene indexers) that would ever want to use this!
- *
- * @author Nick Burch
  */
 public final class QuickButCruddyTextExtractor {
-	private POIFSFileSystem fs;
+	private NPOIFSFileSystem fs;
 	private InputStream is;
 	private byte[] pptContents;
 
@@ -84,7 +82,7 @@ public final class QuickButCruddyTextExtractor {
 	 * @param fileName
 	 */
 	public QuickButCruddyTextExtractor(String fileName) throws IOException {
-		this(new FileInputStream(fileName));
+		this(new NPOIFSFileSystem(new File(fileName)));
 	}
 
 	/**
@@ -92,7 +90,7 @@ public final class QuickButCruddyTextExtractor {
 	 * @param iStream
 	 */
 	public QuickButCruddyTextExtractor(InputStream iStream) throws IOException {
-		this(new POIFSFileSystem(iStream));
+		this(new NPOIFSFileSystem(iStream));
 		is = iStream;
 	}
 
@@ -100,7 +98,7 @@ public final class QuickButCruddyTextExtractor {
 	 * Creates an extractor from a POIFS Filesystem
 	 * @param poifs
 	 */
-	public QuickButCruddyTextExtractor(POIFSFileSystem poifs) throws IOException {
+	public QuickButCruddyTextExtractor(NPOIFSFileSystem poifs) throws IOException {
 		fs = poifs;
 
 		// Find the PowerPoint bit, and get out the bytes

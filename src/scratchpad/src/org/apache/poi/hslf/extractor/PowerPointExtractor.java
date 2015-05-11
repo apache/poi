@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.extractor;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +84,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param fileName The name of the file to extract from
 	 */
 	public PowerPointExtractor(String fileName) throws IOException {
-		this(new FileInputStream(fileName));
+		this(new NPOIFSFileSystem(new File(fileName)));
 	}
 
 	/**
@@ -92,7 +93,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param iStream The input stream containing the PowerPoint document
 	 */
 	public PowerPointExtractor(InputStream iStream) throws IOException {
-		this(new POIFSFileSystem(iStream));
+		this(new NPOIFSFileSystem(iStream));
 	}
 
 	/**
@@ -122,14 +123,6 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
    public PowerPointExtractor(DirectoryNode dir) throws IOException {
       this(new HSLFSlideShow(dir));
    }
-
-   /**
-    * @deprecated Use {@link #PowerPointExtractor(DirectoryNode)} instead
-    */
-   @Deprecated
-	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HSLFSlideShow(dir, fs));
-	}
 
 	/**
 	 * Creates a PowerPointExtractor, from a HSLFSlideShow

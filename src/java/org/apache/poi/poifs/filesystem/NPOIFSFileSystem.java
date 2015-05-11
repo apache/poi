@@ -377,6 +377,15 @@ public class NPOIFSFileSystem extends BlockStore
     }
     
     /**
+     * Checks if the supplied first 8 bytes of a stream / file
+     *  has a POIFS (OLE2) header.
+     */
+    public static boolean hasPOIFSHeader(byte[] header8Bytes) {
+        LongField signature = new LongField(HeaderBlockConstants._signature_offset, header8Bytes);
+        return (signature.get() == HeaderBlockConstants._signature);
+    }
+    
+    /**
      * Read and process the PropertiesTable and the
      *  FAT / XFAT blocks, so that we're ready to
      *  work with the file

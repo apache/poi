@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -72,6 +73,12 @@ public class EncryptionInfo {
      * Opens for decryption
      */
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
+       this(fs.getRoot());
+    }
+    /**
+     * Opens for decryption
+     */
+    public EncryptionInfo(OPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
     /**

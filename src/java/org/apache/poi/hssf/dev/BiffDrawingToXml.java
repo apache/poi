@@ -34,7 +34,7 @@ import org.apache.poi.hssf.record.DrawingGroupRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * Utility for representing drawings contained in a binary Excel file as a XML tree
@@ -138,7 +138,7 @@ public class BiffDrawingToXml {
     }
 
     public static void writeToFile(OutputStream fos, InputStream xlsWorkbook, boolean excludeWorkbookRecords, String[] params) throws IOException {
-        POIFSFileSystem fs = new POIFSFileSystem(xlsWorkbook);
+        NPOIFSFileSystem fs = new NPOIFSFileSystem(xlsWorkbook);
         HSSFWorkbook workbook = new HSSFWorkbook(fs);
         InternalWorkbook internalWorkbook = getInternalWorkbook(workbook);
         DrawingGroupRecord r = (DrawingGroupRecord) internalWorkbook.findFirstRecordBySid(DrawingGroupRecord.sid);

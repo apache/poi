@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 
 /**
  * Tests that POIDocument correctly loads and saves the common
@@ -97,7 +97,7 @@ public final class TestPOIDocumentMain extends TestCase {
 
 		// Create a new version
 		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		POIFSFileSystem inFS = new POIFSFileSystem(bais);
+		OPOIFSFileSystem inFS = new OPOIFSFileSystem(bais);
 
 		// Check they're still there
 		doc.directory = inFS.getRoot();

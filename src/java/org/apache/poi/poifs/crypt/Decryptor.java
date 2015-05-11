@@ -25,6 +25,7 @@ import javax.crypto.SecretKey;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public abstract class Decryptor {
@@ -84,7 +85,9 @@ public abstract class Decryptor {
     public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
-
+    public InputStream getDataStream(OPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
+        return getDataStream(fs.getRoot());
+    }
     public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }

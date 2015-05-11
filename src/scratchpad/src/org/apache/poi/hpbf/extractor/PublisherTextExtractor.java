@@ -53,10 +53,6 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
    public PublisherTextExtractor(InputStream is) throws IOException {
       this(new POIFSFileSystem(is));
    }
-   @Deprecated
-   public PublisherTextExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-      this(new HPBFDocument(dir, fs));
-   }
 
 	/**
 	 * Should a call to getText() return hyperlinks inline
