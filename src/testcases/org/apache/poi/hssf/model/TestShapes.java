@@ -20,6 +20,7 @@
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFComment;
@@ -37,7 +38,8 @@ public final class TestShapes extends TestCase {
      *
      * See Bug 51332
      */
-    public void testShapeId(){
+    @SuppressWarnings("deprecation")
+	public void testShapeId(){
 
         HSSFClientAnchor anchor = new HSSFClientAnchor();
         AbstractShape shape;
