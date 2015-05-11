@@ -46,7 +46,7 @@ public final class TestDocumentNode extends TestCase {
         {
             rawBlocks[ j ] = new RawDataBlock(stream);
         }
-        POIFSDocument    document  = new POIFSDocument("document", rawBlocks,
+        OPOIFSDocument   document  = new OPOIFSDocument("document", rawBlocks,
                                          2000);
         DocumentProperty property2 = document.getDocumentProperty();
         DirectoryNode    parent    = new DirectoryNode(property1, (POIFSFileSystem)null, null);

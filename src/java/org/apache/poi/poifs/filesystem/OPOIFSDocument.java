@@ -40,11 +40,10 @@ import org.apache.poi.poifs.storage.SmallDocumentBlock;
 import org.apache.poi.util.HexDump;
 
 /**
- * This class manages a document in the POIFS filesystem.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * This class manages a document in a old-style 
+ *  OPOIFS filesystem.
  */
-public final class POIFSDocument implements BATManaged, BlockWritable, POIFSViewable  {
+public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSViewable  {
 	private static final DocumentBlock[] EMPTY_BIG_BLOCK_ARRAY = { };
 	private static final SmallDocumentBlock[] EMPTY_SMALL_BLOCK_ARRAY = { };
 	private DocumentProperty _property;
@@ -63,7 +62,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @param blocks the big blocks making up the POIFSDocument
 	 * @param length the actual length of the POIFSDocument
 	 */
-	public POIFSDocument(String name, RawDataBlock[] blocks, int length) throws IOException {
+	public OPOIFSDocument(String name, RawDataBlock[] blocks, int length) throws IOException {
 		_size = length;
 		if(blocks.length == 0) {
 		   _bigBigBlockSize = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
@@ -104,7 +103,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @param blocks the small blocks making up the POIFSDocument
 	 * @param length the actual length of the POIFSDocument
 	 */
-	public POIFSDocument(String name, SmallDocumentBlock[] blocks, int length) {
+	public OPOIFSDocument(String name, SmallDocumentBlock[] blocks, int length) {
 		_size = length;
 		
 		if(blocks.length == 0) {
@@ -126,7 +125,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @param blocks the small blocks making up the POIFSDocument
 	 * @param length the actual length of the POIFSDocument
 	 */
-	public POIFSDocument(String name, POIFSBigBlockSize bigBlockSize, ListManagedBlock[] blocks, int length) throws IOException {
+	public OPOIFSDocument(String name, POIFSBigBlockSize bigBlockSize, ListManagedBlock[] blocks, int length) throws IOException {
 		_size = length;
 		_bigBigBlockSize = bigBlockSize;
 		_property = new DocumentProperty(name, _size);
@@ -139,7 +138,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 			_small_store = new SmallBlockStore(bigBlockSize,EMPTY_SMALL_BLOCK_ARRAY);
 		}
 	}
-	public POIFSDocument(String name, ListManagedBlock[] blocks, int length) throws IOException {
+	public OPOIFSDocument(String name, ListManagedBlock[] blocks, int length) throws IOException {
 	   this(name, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, blocks, length);
 	}
 
@@ -149,7 +148,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @param name the name of the POIFSDocument
 	 * @param stream the InputStream we read data from
 	 */
-	public POIFSDocument(String name, POIFSBigBlockSize bigBlockSize, InputStream stream) throws IOException {
+	public OPOIFSDocument(String name, POIFSBigBlockSize bigBlockSize, InputStream stream) throws IOException {
 		List<DocumentBlock> blocks = new ArrayList<DocumentBlock>();
 
 		_size = 0;
@@ -178,7 +177,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 			_small_store = new SmallBlockStore(bigBlockSize,EMPTY_SMALL_BLOCK_ARRAY);
 		}
 	}
-	public POIFSDocument(String name, InputStream stream) throws IOException {
+	public OPOIFSDocument(String name, InputStream stream) throws IOException {
 	   this(name, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, stream);
 	}
 
@@ -190,7 +189,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 	 * @param path the path of the POIFSDocument
 	 * @param writer the writer who will eventually write the document contents
 	 */
-	public POIFSDocument(String name, int size, POIFSBigBlockSize bigBlockSize, POIFSDocumentPath path, POIFSWriterListener writer) {
+	public OPOIFSDocument(String name, int size, POIFSBigBlockSize bigBlockSize, POIFSDocumentPath path, POIFSWriterListener writer) {
 		_size = size;
 		_bigBigBlockSize = bigBlockSize;
 		_property = new DocumentProperty(name, _size);
@@ -203,7 +202,7 @@ public final class POIFSDocument implements BATManaged, BlockWritable, POIFSView
 			_big_store = new BigBlockStore(_bigBigBlockSize, path, name, size, writer);
 		}
 	}
-	public POIFSDocument(String name, int size, POIFSDocumentPath path, POIFSWriterListener writer) {
+	public OPOIFSDocument(String name, int size, POIFSDocumentPath path, POIFSWriterListener writer) {
 	   this(name, size, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, path, writer);
 	}
 

@@ -72,7 +72,7 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 	 * 
 	 * @param document the Document to be read
 	 */
-	public DocumentInputStream(POIFSDocument document) {
+	public DocumentInputStream(OPOIFSDocument document) {
 	   delegate = new ODocumentInputStream(document);
 	}
 

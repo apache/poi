@@ -22,7 +22,7 @@ package org.apache.poi.poifs.storage;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 import org.apache.poi.poifs.property.RootProperty;
 
 import java.util.*;
@@ -62,7 +62,7 @@ public class SmallBlockTableWriter
 
         while (iter.hasNext())
         {
-            POIFSDocument   doc    = ( POIFSDocument ) iter.next();
+            OPOIFSDocument   doc    = ( OPOIFSDocument ) iter.next();
             BlockWritable[] blocks = doc.getSmallBlocks();
 
             if (blocks.length != 0)

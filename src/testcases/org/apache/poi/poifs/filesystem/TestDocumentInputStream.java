@@ -64,8 +64,8 @@ public final class TestDocumentInputStream extends TestCase {
         {
             rawBlocks[ j ] = new RawDataBlock(stream);
         }
-        POIFSDocument document = new POIFSDocument("Workbook", rawBlocks,
-                                                   _workbook_size);
+        OPOIFSDocument document = new OPOIFSDocument("Workbook", rawBlocks,
+                                                     _workbook_size);
 
         _workbook_o = new DocumentNode(
             document.getDocumentProperty(),
