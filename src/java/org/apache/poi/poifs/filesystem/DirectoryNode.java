@@ -37,8 +37,6 @@ import org.apache.poi.poifs.property.Property;
 
 /**
  * Simple implementation of DirectoryEntry
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 public class DirectoryNode
     extends EntryNode
@@ -50,9 +48,9 @@ public class DirectoryNode
     // Our list of entries, kept sorted to preserve order
     private ArrayList<Entry> _entries;
 
-   // Only one of these two will exist
-    // the POIFSFileSystem we belong to
-    private POIFSFileSystem   _ofilesystem;
+    // Only one of these two will exist
+    // the OPOIFSFileSystem we belong to
+    private OPOIFSFileSystem   _ofilesystem;
     // the NPOIFSFileSytem we belong to
     private NPOIFSFileSystem  _nfilesystem;
 
@@ -64,11 +62,11 @@ public class DirectoryNode
      * is intended strictly for the internal use of this package
      *
      * @param property the DirectoryProperty for this DirectoryEntry
-     * @param filesystem the POIFSFileSystem we belong to
+     * @param filesystem the OPOIFSFileSystem we belong to
      * @param parent the parent of this entry
      */
     DirectoryNode(final DirectoryProperty property,
-                  final POIFSFileSystem filesystem,
+                  final OPOIFSFileSystem filesystem,
                   final DirectoryNode parent)
     {
        this(property, parent, filesystem, (NPOIFSFileSystem)null);
@@ -86,12 +84,12 @@ public class DirectoryNode
                   final NPOIFSFileSystem nfilesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent, (POIFSFileSystem)null, nfilesystem);
+       this(property, parent, (OPOIFSFileSystem)null, nfilesystem);
     }
 
     private DirectoryNode(final DirectoryProperty property,
                           final DirectoryNode parent,
-                          final POIFSFileSystem ofilesystem,
+                          final OPOIFSFileSystem ofilesystem,
                           final NPOIFSFileSystem nfilesystem)
     {
         super(property, parent);
@@ -147,8 +145,17 @@ public class DirectoryNode
 
     /**
      * @return the filesystem that this belongs to
+     * TODO Temporary workaround during #56791
      */
     public POIFSFileSystem getFileSystem()
+    {
+        return (POIFSFileSystem)_ofilesystem;
+    }
+
+    /**
+     * @return the filesystem that this belongs to
+     */
+    public OPOIFSFileSystem getOFileSystem()
     {
         return _ofilesystem;
     }
