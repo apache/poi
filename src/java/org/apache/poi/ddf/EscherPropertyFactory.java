@@ -84,12 +84,12 @@ public final class EscherPropertyFactory {
                     byte[] complexData = ((EscherComplexProperty)p).getComplexData();
 
                     int leftover = data.length-pos;
-					if(leftover < complexData.length){
-                    	throw new IllegalStateException("Could not read complex escher property, lenght was " + complexData.length + ", but had only " +
-                    			leftover + " bytes left");
+                    if(leftover < complexData.length){
+                        throw new IllegalStateException("Could not read complex escher property, lenght was " + complexData.length + ", but had only " +
+                                leftover + " bytes left");
                     }
 
-					System.arraycopy(data, pos, complexData, 0, complexData.length);
+                    System.arraycopy(data, pos, complexData, 0, complexData.length);
                     pos += complexData.length;
                 }
             }
