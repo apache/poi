@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -331,5 +332,52 @@ public final class TestNPOIFSMiniStore extends TestCase {
       }
       
       fs.close();
+   }
+   
+   public void testCreateMiniStoreFirst() throws Exception {
+       NPOIFSFileSystem fs = new NPOIFSFileSystem();
+       NPOIFSMiniStore ministore = fs.getMiniStore();
+
+       // Initially has BAT + Properties but nothing else
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+       // Ministore has no blocks, so can't iterate until used
+       try {
+           ministore.getNextBlock(0);
+       } catch (IndexOutOfBoundsException e) {}
+       
+       // Write a very small new document, will populate the ministore for us
+       byte[] data = new byte[8];
+       for (int i=0; i<data.length; i++) {
+           data[i] = (byte)(i+42);
+       }
+       fs.getRoot().createDocument("mini", new ByteArrayInputStream(data));
+       
+       // Should now have a mini-fat and a mini-stream
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(4));
+       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(0));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(1));
+       
+       // Re-fetch the mini store, and add it a second time
+       ministore = fs.getMiniStore();
+       fs.getRoot().createDocument("mini2", new ByteArrayInputStream(data));
+       
+       // Main unchanged, ministore has a second
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(4));
+       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(2));
+
+       // Done
+       fs.close();
    }
 }
