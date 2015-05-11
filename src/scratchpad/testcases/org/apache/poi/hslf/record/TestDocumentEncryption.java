@@ -143,8 +143,9 @@ public class TestDocumentEncryption {
         HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs);
         HSLFSlideShow ss = new HSLFSlideShow(hss);
         
-        HSLFSlide slide = ss.getSlides()[0];
-        assertEquals("Dominic Salemno", slide.getTextParagraphs()[0].getRawText());
+        HSLFSlide slide = ss.getSlides().get(0);
+        String rawText = HSLFTextParagraph.getRawText(slide.getTextParagraphs().get(0));
+        assertEquals("Dominic Salemno", rawText);
 
         String picCmp[][] = {
             {"0","nKsDTKqxTCR8LFkVVWlP9GSTvZ0="},

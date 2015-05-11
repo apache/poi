@@ -21,13 +21,11 @@ import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
-import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.util.HexDump;
 
 /**
@@ -188,7 +186,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         stpb.setParentTextSize(data_b_text_len);
 
         // 54 chars, 21 + 17 + 16
-        LinkedList<TextPropCollection> a_ch_l = stpa.getCharacterStyles();
+        List<TextPropCollection> a_ch_l = stpa.getCharacterStyles();
         TextPropCollection a_ch_1 = a_ch_l.get(0);
         TextPropCollection a_ch_2 = a_ch_l.get(1);
         TextPropCollection a_ch_3 = a_ch_l.get(2);
@@ -197,7 +195,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         assertEquals(16, a_ch_3.getCharactersCovered());
 
         // 179 chars, 30 + 28 + 25
-        LinkedList<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
+        List<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
         TextPropCollection b_ch_1 = b_ch_l.get(0);
         TextPropCollection b_ch_2 = b_ch_l.get(1);
         TextPropCollection b_ch_3 = b_ch_l.get(2);
@@ -213,7 +211,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
-        LinkedList<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
+        List<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
         TextPropCollection b_ch_1 = b_ch_l.get(0);
         TextPropCollection b_ch_2 = b_ch_l.get(1);
         TextPropCollection b_ch_3 = b_ch_l.get(2);
@@ -260,7 +258,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
-        LinkedList<TextPropCollection> b_p_l = stpb.getParagraphStyles();
+        List<TextPropCollection> b_p_l = stpb.getParagraphStyles();
         TextPropCollection b_p_1 = b_p_l.get(0);
         TextPropCollection b_p_2 = b_p_l.get(1);
         TextPropCollection b_p_3 = b_p_l.get(2);
@@ -304,7 +302,7 @@ public final class TestStyleTextPropAtom extends TestCase {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
-        LinkedList<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
+        List<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
         TextPropCollection b_ch_1 = b_ch_l.get(0);
         TextPropCollection b_ch_2 = b_ch_l.get(1);
         TextPropCollection b_ch_3 = b_ch_l.get(2);
@@ -375,13 +373,13 @@ public final class TestStyleTextPropAtom extends TestCase {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
 
-        LinkedList<TextPropCollection> b_p_l = stpb.getParagraphStyles();
+        List<TextPropCollection> b_p_l = stpb.getParagraphStyles();
         TextPropCollection b_p_1 = b_p_l.get(0);
         TextPropCollection b_p_2 = b_p_l.get(1);
         TextPropCollection b_p_3 = b_p_l.get(2);
         TextPropCollection b_p_4 = b_p_l.get(3);
 
-        LinkedList<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
+        List<TextPropCollection> b_ch_l = stpb.getCharacterStyles();
         TextPropCollection b_ch_1 = b_ch_l.get(0);
         TextPropCollection b_ch_2 = b_ch_l.get(1);
         TextPropCollection b_ch_3 = b_ch_l.get(2);
@@ -431,7 +429,7 @@ public final class TestStyleTextPropAtom extends TestCase {
 
         // Don't need to touch the paragraph styles
         // Add two more character styles
-        LinkedList<TextPropCollection> cs = stpa.getCharacterStyles();
+        List<TextPropCollection> cs = stpa.getCharacterStyles();
 
         // First char style is boring, and 21 long
         TextPropCollection tpca = cs.get(0);
@@ -468,7 +466,7 @@ public final class TestStyleTextPropAtom extends TestCase {
 
 
         // Need 4 paragraph styles
-        LinkedList<TextPropCollection> ps = stpa.getParagraphStyles();
+        List<TextPropCollection> ps = stpa.getParagraphStyles();
 
         // First is 30 long, left aligned, normal spacing
         TextPropCollection tppa = ps.get(0);
@@ -503,7 +501,7 @@ public final class TestStyleTextPropAtom extends TestCase {
 
 
         // Now do 4 character styles
-        LinkedList<TextPropCollection> cs = stpa.getCharacterStyles();
+        List<TextPropCollection> cs = stpa.getCharacterStyles();
 
         // First is 30 long, bold and font size
         TextPropCollection tpca = cs.get(0);
@@ -568,16 +566,16 @@ public final class TestStyleTextPropAtom extends TestCase {
         // Compare in detail to b
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
-        LinkedList<TextPropCollection> psb = stpb.getParagraphStyles();
-        LinkedList<TextPropCollection> csb = stpb.getCharacterStyles();
+        List<TextPropCollection> psb = stpb.getParagraphStyles();
+        List<TextPropCollection> csb = stpb.getCharacterStyles();
 
         assertEquals(psb.size(), ps.size());
         assertEquals(csb.size(), cs.size());
 
         // Ensure Paragraph Character styles match
         for(int z=0; z<2; z++) {
-            LinkedList<TextPropCollection> lla = cs;
-            LinkedList<TextPropCollection> llb = csb;
+            List<TextPropCollection> lla = cs;
+            List<TextPropCollection> llb = csb;
             int upto = 5;
             if(z == 1) {
                 lla = ps;
@@ -605,8 +603,8 @@ public final class TestStyleTextPropAtom extends TestCase {
                 ByteArrayOutputStream ba = new ByteArrayOutputStream();
                 ByteArrayOutputStream bb = new ByteArrayOutputStream();
 
-                ca.writeOut(ba);
-                cb.writeOut(bb);
+                ca.writeOut(ba, StyleTextPropAtom.characterTextPropTypes);
+                cb.writeOut(bb, StyleTextPropAtom.characterTextPropTypes);
                 byte[] cab = ba.toByteArray();
                 byte[] cbb = bb.toByteArray();
 
@@ -695,12 +693,12 @@ public final class TestStyleTextPropAtom extends TestCase {
         StyleTextPropAtom atom = new StyleTextPropAtom(data_d, 0, data_d.length);
         atom.setParentTextSize(data_d_text_len);
 
-        TextPropCollection prprops = atom.getParagraphStyles().getFirst();
+        TextPropCollection prprops = atom.getParagraphStyles().get(0);
         assertEquals(data_d_text_len+1, prprops.getCharactersCovered());
         assertEquals(1, prprops.getTextPropList().size()); //1 property found
         assertEquals(1, prprops.findByName("alignment").getValue());
 
-        TextPropCollection chprops = atom.getCharacterStyles().getFirst();
+        TextPropCollection chprops = atom.getCharacterStyles().get(0);
         assertEquals(data_d_text_len+1, chprops.getCharactersCovered());
         assertEquals(5, chprops.getTextPropList().size()); //5 properties found
         assertEquals(1, chprops.findByName("char_flags").getValue());

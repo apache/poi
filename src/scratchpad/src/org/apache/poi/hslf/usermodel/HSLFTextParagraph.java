@@ -669,10 +669,32 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
    }
 
    /**
+    * Check and add linebreaks to text runs leading other paragraphs
+    *
+    * @param paragraphs
+    */
+   protected static void fixLineEndings(List<HSLFTextParagraph> paragraphs) {
+       HSLFTextRun lastRun = null;
+       for (HSLFTextParagraph p : paragraphs) {
+           if (lastRun != null && !lastRun.getRawText().endsWith("\r")) {
+               lastRun.setText(lastRun.getRawText()+"\r");
+           }
+           List<HSLFTextRun> ltr = p.getTextRuns();
+           if (ltr.isEmpty()) {
+               throw new RuntimeException("paragraph without textruns found");
+           }
+           lastRun = ltr.get(ltr.size()-1);
+           assert(lastRun.getRawText() != null);
+       }       
+   }
+   
+   /**
     * Saves the modified paragraphs/textrun to the records.
     * Also updates the styles to the correct text length.
     */
    protected static void storeText(List<HSLFTextParagraph> paragraphs) {
+       fixLineEndings(paragraphs);
+       
        String rawText = toInternalString(getRawText(paragraphs));
 
        // Will it fit in a 8 bit atom?
@@ -738,16 +760,16 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
        
        styleAtom.clearStyles();
        
-       TextPropCollection lastPTPC = null, lastRTPC = null;
+       TextPropCollection lastPTPC = null, lastRTPC = null, ptpc = null, rtpc = null;
        for (HSLFTextParagraph para : paragraphs) {
-           TextPropCollection ptpc = para.getParagraphStyle();
+           ptpc = para.getParagraphStyle();
            ptpc.updateTextSize(0);
            if (!ptpc.equals(lastPTPC)) {
                lastPTPC = styleAtom.addParagraphTextPropCollection(0);
                lastPTPC.copy(ptpc);
            }
            for (HSLFTextRun tr : para.getTextRuns()) {
-               TextPropCollection rtpc = tr.getCharacterStyle();
+               rtpc = tr.getCharacterStyle();
                rtpc.updateTextSize(0);
                if (!rtpc.equals(lastRTPC)) {
                    lastRTPC = styleAtom.addCharacterTextPropCollection(0);
@@ -761,7 +783,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
            }
        }
        
-       assert(lastPTPC != null && lastRTPC != null);
+       assert(lastPTPC != null && lastRTPC != null && ptpc != null && rtpc != null);
+       ptpc.updateTextSize(ptpc.getCharactersCovered()+1);
+       rtpc.updateTextSize(rtpc.getCharactersCovered()+1);
        lastPTPC.updateTextSize(lastPTPC.getCharactersCovered()+1);
        lastRTPC.updateTextSize(lastRTPC.getCharactersCovered()+1);
        
@@ -817,6 +841,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
            }
            htr.setText(rawText);
        }
+
+       storeText(paragraphs);
        
        return htr;
    }
@@ -909,16 +935,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
    public static List<List<HSLFTextParagraph>> findTextParagraphs(PPDrawing ppdrawing) {
        List<List<HSLFTextParagraph>> runsV = new ArrayList<List<HSLFTextParagraph>>();
        for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
-           // propagate parents to parent-aware records
-           RecordContainer.handleParentAwareRecords(wrapper);
-           int shapeId = wrapper.getShapeId();
-           List<List<HSLFTextParagraph>> rv = findTextParagraphs(wrapper);
-           for (List<HSLFTextParagraph> htpList : rv) {
-               for (HSLFTextParagraph htp : htpList) {
-                   htp.setShapeId(shapeId);
-               }
-           }
-           runsV.addAll(rv);
+           runsV.addAll(findTextParagraphs(wrapper));
        }
        return runsV;
    }
@@ -940,8 +957,17 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     *
     * @param wrapper an EscherTextboxWrapper
     */
-   protected static List<List<HSLFTextParagraph>> findTextParagraphs(final EscherTextboxWrapper wrapper) {
-       return findTextParagraphs(wrapper.getChildRecords(), wrapper.getStyleTextProp9Atom());
+   protected static List<List<HSLFTextParagraph>> findTextParagraphs(EscherTextboxWrapper wrapper) {
+       // propagate parents to parent-aware records
+       RecordContainer.handleParentAwareRecords(wrapper);
+       int shapeId = wrapper.getShapeId();
+       List<List<HSLFTextParagraph>> rv = findTextParagraphs(wrapper.getChildRecords(), wrapper.getStyleTextProp9Atom());
+       for (List<HSLFTextParagraph> htpList : rv) {
+           for (HSLFTextParagraph htp : htpList) {
+               htp.setShapeId(shapeId);
+           }
+       }
+       return rv;
    }
 
    /**
@@ -999,7 +1025,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             }
         
             assert(header != null);
-            if (header.getIndex() == -1) {
+            if (header.getParentRecord() instanceof SlideListWithText) {
+                // runs found in PPDrawing are not linked with SlideListWithTexts
                 header.setIndex(slwtIndex);
             }
             

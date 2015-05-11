@@ -19,6 +19,8 @@ package org.apache.poi.hslf.examples;
 
 import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.hslf.model.*;
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.VerticalAlignment;
 
 import java.awt.*;
 import java.io.FileOutputStream;
@@ -51,8 +53,7 @@ public final class TableDemo {
         for (int i = 0; i < txt1.length; i++) {
             for (int j = 0; j < txt1[i].length; j++) {
                 TableCell cell = table1.getCell(i, j);
-                cell.setText(txt1[i][j]);
-                HSLFTextRun rt = cell.getTextParagraphs().getTextRuns()[0];
+                HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontName("Arial");
                 rt.setFontSize(10);
                 if(i == 0){
@@ -60,8 +61,9 @@ public final class TableDemo {
                 } else {
                     rt.setBold(true);
                 }
-                cell.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
-                cell.setHorizontalAlignment(HSLFTextBox.AlignCenter);
+                cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                cell.setHorizontalCentered(true);
+                cell.setText(txt1[i][j]);
             }
         }
 
@@ -90,8 +92,7 @@ public final class TableDemo {
         for (int i = 0; i < txt2.length; i++) {
             for (int j = 0; j < txt2[i].length; j++) {
                 TableCell cell = table2.getCell(i, j);
-                cell.setText(txt2[i][j]);
-                HSLFTextRun rt = cell.getTextParagraphs().getTextRuns()[0];
+                HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontSize(10);
                 rt.setFontName("Arial");
                 if(i == 0){
@@ -99,13 +100,15 @@ public final class TableDemo {
                     rt.setFontColor(Color.white);
                     rt.setBold(true);
                     rt.setFontSize(14);
-                    cell.setHorizontalAlignment(HSLFTextBox.AlignCenter);
+                    cell.setHorizontalCentered(true);
                 } else {
-                    rt.setBullet(true);
+                    rt.getTextParagraph().setBullet(true);
                     rt.setFontSize(12);
-                    cell.setHorizontalAlignment(HSLFTextBox.AlignLeft);
+                    rt.getTextParagraph().setAlignment(TextAlign.LEFT);
+                    cell.setHorizontalCentered(false);
                 }
-                cell.setVerticalAlignment(HSLFTextBox.AnchorMiddle);
+                cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
+                cell.setText(txt2[i][j]);
             }
         }
         table2.setColumnWidth(0, 300);

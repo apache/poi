@@ -15,16 +15,13 @@
    limitations under the License.
 ==================================================================== */
 package org.apache.poi.hslf.examples;
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.usermodel.*;
-
 import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.*;
 
 /**
  * For each slide iterate over shapes and found associated sound data.
@@ -36,16 +33,15 @@ public class SoundFinder {
         HSLFSlideShow ppt = new HSLFSlideShow(new FileInputStream(args[0]));
         HSLFSoundData[] sounds = ppt.getSoundData();
 
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            HSLFShape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-                int soundRef = getSoundReference(shape[j]);
-                if(soundRef != -1) {
-                    System.out.println("Slide["+i+"], shape["+j+"], soundRef: "+soundRef);
-                    System.out.println("  " + sounds[soundRef].getSoundName());
-                    System.out.println("  " + sounds[soundRef].getSoundType());
-                }
+        for (HSLFSlide slide : ppt.getSlides()) {
+            for (HSLFShape shape : slide.getShapes()) {
+                int soundRef = getSoundReference(shape);
+                if(soundRef == -1) continue;
+
+                
+                System.out.println("Slide["+slide.getSlideNumber()+"], shape["+shape.getShapeId()+"], soundRef: "+soundRef);
+                System.out.println("  " + sounds[soundRef].getSoundName());
+                System.out.println("  " + sounds[soundRef].getSoundType());
             }
         }
     }

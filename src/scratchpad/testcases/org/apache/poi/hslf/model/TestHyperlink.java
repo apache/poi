@@ -53,17 +53,17 @@ public final class TestHyperlink {
             "In addition, its notes has one link";
         assertEquals(expected, rawText);
         
-        HSLFHyperlink[] links = HSLFHyperlink.find(para.get(1));
+        List<HSLFHyperlink> links = HSLFHyperlink.find(para);
         assertNotNull(links);
-        assertEquals(2, links.length);
+        assertEquals(2, links.size());
 
-        assertEquals("http://jakarta.apache.org/poi/", links[0].getTitle());
-        assertEquals("http://jakarta.apache.org/poi/", links[0].getAddress());
-        assertEquals("http://jakarta.apache.org/poi/", rawText.substring(links[0].getStartIndex(), links[0].getEndIndex()-1));
+        assertEquals("http://jakarta.apache.org/poi/", links.get(0).getTitle());
+        assertEquals("http://jakarta.apache.org/poi/", links.get(0).getAddress());
+        assertEquals("http://jakarta.apache.org/poi/", rawText.substring(links.get(0).getStartIndex(), links.get(0).getEndIndex()-1));
 
-        assertEquals("http://slashdot.org/", links[1].getTitle());
-        assertEquals("http://slashdot.org/", links[1].getAddress());
-        assertEquals("http://slashdot.org/", rawText.substring(links[1].getStartIndex(), links[1].getEndIndex()-1));
+        assertEquals("http://slashdot.org/", links.get(1).getTitle());
+        assertEquals("http://slashdot.org/", links.get(1).getAddress());
+        assertEquals("http://slashdot.org/", rawText.substring(links.get(1).getStartIndex(), links.get(1).getEndIndex()-1));
 
         slide = ppt.getSlides().get(1);
         para = slide.getTextParagraphs().get(1);
@@ -73,12 +73,12 @@ public final class TestHyperlink {
             "Jakarta HSSF";
         assertEquals(expected, rawText);
 
-        links = HSLFHyperlink.find(para.get(1));
+        links = HSLFHyperlink.find(para);
         assertNotNull(links);
-        assertEquals(1, links.length);
+        assertEquals(1, links.size());
 
-        assertEquals("http://jakarta.apache.org/poi/hssf/", links[0].getTitle());
-        assertEquals("http://jakarta.apache.org/poi/hssf/", links[0].getAddress());
-        assertEquals("Jakarta HSSF", rawText.substring(links[0].getStartIndex(), links[0].getEndIndex()-1));
+        assertEquals("http://jakarta.apache.org/poi/hssf/", links.get(0).getTitle());
+        assertEquals("http://jakarta.apache.org/poi/hssf/", links.get(0).getAddress());
+        assertEquals("Jakarta HSSF", rawText.substring(links.get(0).getStartIndex(), links.get(0).getEndIndex()-1));
     }
 }

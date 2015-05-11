@@ -146,50 +146,31 @@ public final class HSLFHyperlink {
      * @param shape  <code>TextRun</code> to lookup hyperlinks in
      * @return found hyperlinks or <code>null</code> if not found
      */
-    public static HSLFHyperlink[] find(HSLFTextShape shape){
-        List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
-        HSLFSlideShow ppt = shape.getSheet().getSlideShow();
-        //document-level container which stores info about all links in a presentation
-        ExObjList exobj = ppt.getDocumentRecord().getExObjList();
-        if (exobj == null) {
-            return null;
-        }
-        
-        Record[] records = shape.getClientRecords();
-        find(records, exobj, lst);
-
-        HSLFHyperlink[] links = null;
-        if (lst.size() > 0){
-            links = new HSLFHyperlink[lst.size()];
-            lst.toArray(links);
-        }
-        return links;
+    public static List<HSLFHyperlink> find(HSLFTextShape shape){
+        return find(shape.getTextParagraphs());
     }
 
     /**
      * Find hyperlinks in a text paragraph
      *
-     * @param paragraph  <code>TextParagraph</code> to lookup hyperlinks in
-     * @return found hyperlinks or <code>null</code> if not found
+     * @param paragraphs  List of <code>TextParagraph</code> to lookup hyperlinks
+     * @return found hyperlinks
      */
-    public static HSLFHyperlink[] find(HSLFTextParagraph paragraph){
+    public static List<HSLFHyperlink> find(List<HSLFTextParagraph> paragraphs){
         List<HSLFHyperlink> lst = new ArrayList<HSLFHyperlink>();
-        HSLFSlideShow ppt = paragraph.getSheet().getSlideShow();
+        if (paragraphs == null || paragraphs.isEmpty()) return lst;
+
+        HSLFTextParagraph firstPara = paragraphs.get(0);
+        
+        HSLFSlideShow ppt = firstPara.getSheet().getSlideShow();
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList();
-        if (exobj == null) {
-            return null;
-        }
+        if (exobj == null) return lst;
         
-        Record[] records = paragraph.getRecords();
+        Record[] records = firstPara.getRecords();
         find(records, exobj, lst);
 
-        HSLFHyperlink[] links = null;
-        if (lst.size() > 0){
-            links = new HSLFHyperlink[lst.size()];
-            lst.toArray(links);
-        }
-        return links;
+        return lst;
     }
 
     /**
@@ -224,24 +205,24 @@ public final class HSLFHyperlink {
         if (records == null) return;
         for (int i = 0; i < records.length; i++) {
             //see if we have InteractiveInfo in the textrun's records
-            if( records[i] instanceof InteractiveInfo){
-                InteractiveInfo hldr = (InteractiveInfo)records[i];
-                InteractiveInfoAtom info = hldr.getInteractiveInfoAtom();
-                int id = info.getHyperlinkID();
-                ExHyperlink linkRecord = exobj.get(id);
-                if (linkRecord != null){
-                    HSLFHyperlink link = new HSLFHyperlink();
-                    link.title = linkRecord.getLinkTitle();
-                    link.address = linkRecord.getLinkURL();
-                    link.type = info.getAction();
+            if(!(records[i] instanceof InteractiveInfo)) continue;
+            
+            InteractiveInfo hldr = (InteractiveInfo)records[i];
+            InteractiveInfoAtom info = hldr.getInteractiveInfoAtom();
+            int id = info.getHyperlinkID();
+            ExHyperlink linkRecord = exobj.get(id);
+            if (linkRecord == null) continue;
+            
+            HSLFHyperlink link = new HSLFHyperlink();
+            link.title = linkRecord.getLinkTitle();
+            link.address = linkRecord.getLinkURL();
+            link.type = info.getAction();
+            out.add(link);
 
-                    if (++i < records.length && records[i] instanceof TxInteractiveInfoAtom){
-                        TxInteractiveInfoAtom txinfo = (TxInteractiveInfoAtom)records[i];
-                        link.startIndex = txinfo.getStartIndex();
-                        link.endIndex = txinfo.getEndIndex();
-                    }
-                    out.add(link);
-                }
+            if (i+1 < records.length && records[i+1] instanceof TxInteractiveInfoAtom){
+                TxInteractiveInfoAtom txinfo = (TxInteractiveInfoAtom)records[++i];
+                link.startIndex = txinfo.getStartIndex();
+                link.endIndex = txinfo.getEndIndex();
             }
         }
     }

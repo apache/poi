@@ -62,8 +62,8 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 		// Build up TextRuns from pairs of TextHeaderAtom and
 		//  one of TextBytesAtom or TextCharsAtom
 		if (_atomSet != null && _atomSet.getSlideRecords().length > 0) {
-		    List<List<HSLFTextParagraph>> llhtp = HSLFTextParagraph.findTextParagraphs(_atomSet.getSlideRecords());
-		    _paragraphs.addAll(llhtp);
+		    // Grab text from SlideListWithTexts entries
+		    _paragraphs.addAll(HSLFTextParagraph.findTextParagraphs(_atomSet.getSlideRecords()));
 	        if (_paragraphs.isEmpty()) {
 	            throw new RuntimeException("No text records found for slide");
 	        }
@@ -71,23 +71,14 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 			// No text on the slide, must just be pictures
 		}
 
-		// Grab text from SlideListWithTexts entries
-		for(List<HSLFTextParagraph> ltp : _paragraphs) {
-		    for (HSLFTextParagraph tp : ltp) {
-		        tp.supplySheet(this);
-		    }
-		}
+		// Grab text from slide's PPDrawing
+		_paragraphs.addAll(HSLFTextParagraph.findTextParagraphs(getPPDrawing()));
 
-        // Grab the TextRuns from the PPDrawing
-		List<List<HSLFTextParagraph>> llOtherRuns = HSLFTextParagraph.findTextParagraphs(getPPDrawing());
-		for (List<HSLFTextParagraph> otherRuns : llOtherRuns) {
-	        // Grab text from slide's PPDrawing
-	        for(HSLFTextParagraph tp : otherRuns) {
-	            tp.supplySheet(this);
-	            tp.setIndex(-1); // runs found in PPDrawing are not linked with SlideListWithTexts
-	        }
-		}
-        _paragraphs.addAll(llOtherRuns);
+        for(List<HSLFTextParagraph> ltp : _paragraphs) {
+            for (HSLFTextParagraph tp : ltp) {
+                tp.supplySheet(this);
+            }
+        }
 	}
 
 	/**
@@ -449,19 +440,19 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 
 	public void setHidden(boolean hidden) {
 		org.apache.poi.hslf.record.Slide cont =	getSlideRecord();
-		
-		SSSlideInfoAtom slideInfo = 
+
+		SSSlideInfoAtom slideInfo =
 			(SSSlideInfoAtom)cont.findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
 		if (slideInfo == null) {
 			slideInfo = new SSSlideInfoAtom();
 			cont.addChildAfter(slideInfo, cont.findFirstOfType(RecordTypes.SlideAtom.typeID));
 		}
-		
+
 		slideInfo.setEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT, hidden);
 	}
-	
+
 	public boolean getHidden() {
-		SSSlideInfoAtom slideInfo = 
+		SSSlideInfoAtom slideInfo =
 			(SSSlideInfoAtom)getSlideRecord().findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
 		return (slideInfo == null)
 			? false
@@ -475,6 +466,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 
     public void setFollowMasterColourScheme(boolean follow) {
         // TODO Auto-generated method stub
-        
+
     }
 }

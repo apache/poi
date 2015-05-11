@@ -37,7 +37,7 @@ public class Tutorial1 {
         /*XSLFSlide blankSlide =*/ ppt.createSlide();
 
         
-        XSLFSlideMaster master = ppt.getSlideMasters()[0];
+        XSLFSlideMaster master = ppt.getSlideMasters().get(0);
 
         XSLFSlideLayout layout1 = master.getLayout(SlideLayout.TITLE);
         XSLFSlide slide1 = ppt.createSlide(layout1) ;

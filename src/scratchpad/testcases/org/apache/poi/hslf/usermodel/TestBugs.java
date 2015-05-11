@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -73,7 +73,7 @@ public final class TestBugs {
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
 
-        assertEquals(1, ppt.getSlides().length);
+        assertEquals(1, ppt.getSlides().size());
 
         HSLFPictureData[] pict = ppt.getPictureData();
         assertEquals(2, pict.length);
@@ -91,23 +91,23 @@ public final class TestBugs {
 
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
-        assertEquals(2, ppt.getSlides().length);
+        assertEquals(2, ppt.getSlides().size());
 
-        HSLFTextParagraph txrun;
+        List<HSLFTextParagraph> txrun;
         HSLFNotes notes;
 
-        notes = ppt.getSlides()[0].getNotesSheet();
+        notes = ppt.getSlides().get(0).getNotes();
         assertNotNull(notes);
-        txrun = notes.getTextParagraphs()[0];
-        assertEquals("Notes-1", txrun.getRawText());
-        assertEquals(false, txrun.getTextRuns()[0].isBold());
+        txrun = notes.getTextParagraphs().get(0);
+        assertEquals("Notes-1", HSLFTextParagraph.getRawText(txrun));
+        assertEquals(false, txrun.get(0).getTextRuns().get(0).isBold());
 
         //notes for the second slide are in bold
-        notes = ppt.getSlides()[1].getNotesSheet();
+        notes = ppt.getSlides().get(1).getNotes();
         assertNotNull(notes);
-        txrun = notes.getTextParagraphs()[0];
-        assertEquals("Notes-2", txrun.getRawText());
-        assertEquals(true, txrun.getTextRuns()[0].isBold());
+        txrun = notes.getTextParagraphs().get(0);
+        assertEquals("Notes-2", HSLFTextParagraph.getRawText(txrun));
+        assertEquals(true, txrun.get(0).getTextRuns().get(0).isBold());
 
     }
 
@@ -128,13 +128,12 @@ public final class TestBugs {
         notesMap.put(Integer.valueOf(7), "Although multiply and square root are easier");
         notesMap.put(Integer.valueOf(8), "The bus Z is split into Z_H and Z_L");
 
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            Integer slideNumber = Integer.valueOf(slide[i].getSlideNumber());
-            HSLFNotes notes = slide[i].getNotesSheet();
+        for (HSLFSlide slide : ppt.getSlides()) {
+            Integer slideNumber = Integer.valueOf(slide.getSlideNumber());
+            HSLFNotes notes = slide.getNotes();
             if (notesMap.containsKey(slideNumber)){
                 assertNotNull(notes);
-                String text = notes.getTextParagraphs()[0].getRawText();
+                String text = HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(0));
                 String startingPhrase = notesMap.get(slideNumber);
                 assertTrue("Notes for slide " + slideNumber + " must start with " +
                         startingPhrase , text.startsWith(startingPhrase));
@@ -150,14 +149,12 @@ public final class TestBugs {
         HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42485.ppt"));
 
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
-        HSLFShape[] shape = ppt.getSlides()[0].getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof HSLFGroupShape){
-                HSLFGroupShape  group = (HSLFGroupShape)shape[i];
-                HSLFShape[] sh = group.getShapes();
-                for (int j = 0; j < sh.length; j++) {
-                    if( sh[j] instanceof HSLFTextBox){
-                        HSLFTextBox txt = (HSLFTextBox)sh[j];
+        for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
+            if(shape instanceof HSLFGroupShape){
+                HSLFGroupShape group = (HSLFGroupShape)shape;
+                for (HSLFShape sh : group.getShapes()) {
+                    if(sh instanceof HSLFTextBox){
+                        HSLFTextBox txt = (HSLFTextBox)sh;
                         assertNotNull(txt.getTextParagraphs());
                     }
                 }
@@ -173,14 +170,12 @@ public final class TestBugs {
         HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42485.ppt"));
 
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
-        HSLFShape[] shape = ppt.getSlides()[0].getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            if(shape[i] instanceof HSLFGroupShape){
-                HSLFGroupShape  group = (HSLFGroupShape)shape[i];
+        for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
+            if(shape instanceof HSLFGroupShape){
+                HSLFGroupShape  group = (HSLFGroupShape)shape;
                 assertNotNull(group.getAnchor());
-                HSLFShape[] sh = group.getShapes();
-                for (int j = 0; j < sh.length; j++) {
-                    assertNotNull(sh[j].getAnchor());
+                for (HSLFShape sh : group.getShapes()) {
+                    assertNotNull(sh.getAnchor());
                 }
             }
         }
@@ -197,28 +192,28 @@ public final class TestBugs {
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         assertTrue("No Exceptions while reading file", true);
 
-        assertEquals(1, ppt.getSlidesMasters().length);
-        assertEquals(1, ppt.getTitleMasters().length);
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            HSLFMasterSheet master = slide[i].getMasterSheet();
-            if (i == 0) assertTrue(master instanceof HSLFTitleMaster); //the first slide follows TitleMaster
-            else assertTrue(master instanceof HSLFSlideMaster);
+        assertEquals(1, ppt.getSlideMasters().size());
+        assertEquals(1, ppt.getTitleMasters().size());
+        boolean isFirst = true;
+        for (HSLFSlide slide : ppt.getSlides()) {
+            HSLFMasterSheet master = slide.getMasterSheet();
+            // the first slide follows TitleMaster
+            assertTrue(isFirst ? master instanceof HSLFTitleMaster : master instanceof HSLFSlideMaster);
+            isFirst = false;
         }
     }
 
     /**
      * Bug 42486:  Failure parsing a seemingly valid PPT
      */
+    @SuppressWarnings("unused")
     @Test
     public void bug42486 () throws Exception {
         HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42486.ppt"));
 
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            @SuppressWarnings("unused")
-            HSLFShape[] shape = slide[i].getShapes();
+        for (HSLFSlide slide : ppt.getSlides()) {
+            List<HSLFShape> shape = slide.getShapes();
         }
         assertTrue("No Exceptions while reading file", true);
 
@@ -233,16 +228,13 @@ public final class TestBugs {
 
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
         //walk down the tree and see if there were no errors while reading
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            HSLFShape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-                assertNotNull(shape[j].getShapeName());
-                if (shape[j] instanceof HSLFGroupShape){
-                    HSLFGroupShape group = (HSLFGroupShape)shape[j];
-                    HSLFShape[] comps = group.getShapes();
-                    for (int k = 0; k < comps.length; k++) {
-                        assertNotNull(comps[k].getShapeName());
+        for (HSLFSlide slide : ppt.getSlides()) {
+            for (HSLFShape shape : slide.getShapes()) {
+                assertNotNull(shape.getShapeName());
+                if (shape instanceof HSLFGroupShape){
+                    HSLFGroupShape group = (HSLFGroupShape)shape;
+                    for (HSLFShape comps : group.getShapes()) {
+                        assertNotNull(comps.getShapeName());
                    }
                 }
             }
@@ -255,6 +247,7 @@ public final class TestBugs {
     /**
      * Bug 42520:  NPE in Picture.getPictureData()
      */
+    @SuppressWarnings("unused")
     @Test
     public void bug42520 () throws Exception {
         HSLFSlideShowImpl hslf = new HSLFSlideShowImpl(_slTests.openResourceAsStream("42520.ppt"));
@@ -262,22 +255,17 @@ public final class TestBugs {
         HSLFSlideShow ppt = new HSLFSlideShow(hslf);
 
         //test case from the bug report
-        HSLFGroupShape shapeGroup = (HSLFGroupShape)ppt.getSlides()[11].getShapes()[10];
-        HSLFPictureShape picture = (HSLFPictureShape)shapeGroup.getShapes()[0];
+        HSLFGroupShape shapeGroup = (HSLFGroupShape)ppt.getSlides().get(11).getShapes().get(10);
+        HSLFPictureShape picture = (HSLFPictureShape)shapeGroup.getShapes().get(0);
         picture.getPictureData();
 
         //walk down the tree and see if there were no errors while reading
-        HSLFSlide[] slide = ppt.getSlides();
-        for (int i = 0; i < slide.length; i++) {
-            HSLFShape[] shape = slide[i].getShapes();
-            for (int j = 0; j < shape.length; j++) {
-              if (shape[j] instanceof HSLFGroupShape){
-                    HSLFGroupShape group = (HSLFGroupShape)shape[j];
-                    HSLFShape[] comps = group.getShapes();
-                    for (int k = 0; k < comps.length; k++) {
-                        HSLFShape comp = comps[k];
+        for (HSLFSlide slide : ppt.getSlides()) {
+            for (HSLFShape shape : slide.getShapes()) {
+              if (shape instanceof HSLFGroupShape){
+                    HSLFGroupShape group = (HSLFGroupShape)shape;
+                    for (HSLFShape comp : group.getShapes()) {
                         if (comp instanceof HSLFPictureShape){
-                            @SuppressWarnings("unused")
                             HSLFPictureData pict = ((HSLFPictureShape)comp).getPictureData();
                         }
                     }
@@ -299,10 +287,10 @@ public final class TestBugs {
 
         assertTrue("No Exceptions while reading file", true);
 
-        HSLFSlide[] slide = ppt.getSlides();
-        assertEquals(1, slide.length);
-        HSLFTextParagraph[] runs = slide[0].getTextParagraphs();
-        assertEquals(4, runs.length);
+        List<HSLFSlide> slide = ppt.getSlides();
+        assertEquals(1, slide.size());
+        List<List<HSLFTextParagraph>> paras = slide.get(0).getTextParagraphs();
+        assertEquals(4, paras.size());
 
         Set<String> txt = new HashSet<String>();
         txt.add("\u201CHAPPY BIRTHDAY SCOTT\u201D");
@@ -310,8 +298,8 @@ public final class TestBugs {
         txt.add("PS Nobody is allowed to hassle Scott TODAY\u2026");
         txt.add("Drinks will be in the Boardroom at 5pm today to celebrate Scott\u2019s B\u2019Day\u2026  See you all there!");
 
-        for (int i = 0; i < runs.length; i++) {
-            String text = runs[i].getRawText();
+        for (List<HSLFTextParagraph> para : paras) {
+            String text = HSLFTextParagraph.getRawText(para);
             assertTrue(text, txt.contains(text));
         }
 
@@ -322,39 +310,37 @@ public final class TestBugs {
      * ( also fixed followup: getTextRuns() returns no text )
      */
     @Test
-    public void bug43781 () throws Exception {
+    public void bug43781() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("43781.ppt"));
 
         assertTrue("No Exceptions while reading file", true);
 
         // Check the first slide
-        HSLFSlide slide = ppt.getSlides()[0];
-        HSLFTextParagraph[] slTr = slide.getTextParagraphs();
+        HSLFSlide slide = ppt.getSlides().get(0);
+        List<List<HSLFTextParagraph>> slTr = slide.getTextParagraphs();
         
-        // Has two text runs, one from slide text, one from drawing
-        assertEquals(2, slTr.length);
-        assertEquals(false, slTr[0].isDrawingBased());
-        assertEquals(true, slTr[1].isDrawingBased());
-        assertEquals("First run", slTr[0].getRawText());
-        assertEquals("Second run", slTr[1].getRawText());
+        // Has 3 text paragraphs, two from slide text (empty title / filled body), one from drawing
+        assertEquals(3, slTr.size());
+        assertFalse(slTr.get(0).get(0).isDrawingBased());
+        assertFalse(slTr.get(1).get(0).isDrawingBased());
+        assertTrue(slTr.get(2).get(0).isDrawingBased());
+        assertEquals("", HSLFTextParagraph.getRawText(slTr.get(0)));
+        assertEquals("First run", HSLFTextParagraph.getRawText(slTr.get(1)));
+        assertEquals("Second run", HSLFTextParagraph.getRawText(slTr.get(2)));
 
         // Check the shape based text runs
         List<HSLFTextParagraph> lst = new ArrayList<HSLFTextParagraph>();
-        HSLFShape[] shape = slide.getShapes();
-        for (int i = 0; i < shape.length; i++) {
-            if( shape[i] instanceof HSLFTextShape){
-                HSLFTextParagraph textRun = ((HSLFTextShape)shape[i]).getTextParagraphs();
-                if(textRun != null) {
-                    lst.add(textRun);
-                }
+        for (HSLFShape shape : slide.getShapes()) {
+            if (shape instanceof HSLFTextShape){
+                List<HSLFTextParagraph> textRun = ((HSLFTextShape)shape).getTextParagraphs();
+                lst.addAll(textRun);
             }
 
         }
-        // There should be only one shape based one found
-        assertEquals(1, lst.size());
         
-        // And it should be the second one
-        assertEquals("Second run", lst.get(0).getRawText());
+        // There are two shapes in the ppt
+        assertEquals(2, lst.size());
+        assertEquals("First runSecond run", HSLFTextParagraph.getRawText(lst));
     }
 
     /**
@@ -364,7 +350,7 @@ public final class TestBugs {
     public void bug44296  () throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("44296.ppt"));
 
-        HSLFSlide slide = ppt.getSlides()[0];
+        HSLFSlide slide = ppt.getSlides().get(0);
 
         HSLFBackground b = slide.getBackground();
         HSLFFill f = b.getFill();
@@ -397,16 +383,16 @@ public final class TestBugs {
     public void bug41071() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("41071.ppt"));
 
-        HSLFSlide slide = ppt.getSlides()[0];
-        HSLFShape[] sh = slide.getShapes();
-        assertEquals(1, sh.length);
-        assertTrue(sh[0] instanceof HSLFTextShape);
-        HSLFTextShape tx = (HSLFTextShape)sh[0];
-        assertEquals("Fundera, planera och involvera.", tx.getTextParagraphs().getRawText());
+        HSLFSlide slide = ppt.getSlides().get(0);
+        List<HSLFShape> sh = slide.getShapes();
+        assertEquals(1, sh.size());
+        assertTrue(sh.get(0) instanceof HSLFTextShape);
+        HSLFTextShape tx = (HSLFTextShape)sh.get(0);
+        assertEquals("Fundera, planera och involvera.", HSLFTextParagraph.getRawText(tx.getTextParagraphs()));
 
-        HSLFTextParagraph[] run = slide.getTextParagraphs();
-        assertEquals(1, run.length);
-        assertEquals("Fundera, planera och involvera.", run[0].getRawText());
+        List<List<HSLFTextParagraph>> run = slide.getTextParagraphs();
+        assertEquals(3, run.size());
+        assertEquals("Fundera, planera och involvera.", HSLFTextParagraph.getRawText(run.get(2)));
     }
 
     /**
@@ -429,10 +415,10 @@ public final class TestBugs {
     public void bug49648() throws Exception {
        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("49648.ppt"));
        for(HSLFSlide slide : ppt.getSlides()) {
-          for(HSLFTextParagraph run : slide.getTextParagraphs()) {
-             String text = run.getRawText();
+          for(List<HSLFTextParagraph> run : slide.getTextParagraphs()) {
+             String text = HSLFTextParagraph.getRawText(run);
              text.replace("{txtTot}", "With \u0123\u1234\u5678 unicode");
-             run.setRawText(text);
+             HSLFTextParagraph.setText(run, text);
           }
        }
     }
@@ -487,9 +473,9 @@ public final class TestBugs {
                 str = str.replace("$$DATE$$", new Date().toString());
                 tb.setText(str);
                 
-                HSLFTextParagraph tr = tb.getTextParagraphs();
-                assertEquals(str.length()+1,tr.getStyleTextPropAtom().getParagraphStyles().getFirst().getCharactersCovered());
-                assertEquals(str.length()+1,tr.getStyleTextPropAtom().getCharacterStyles().getFirst().getCharactersCovered());
+                List<HSLFTextParagraph> tr = tb.getTextParagraphs();
+                assertEquals(str.length()+1,tr.get(0).getParagraphStyle().getCharactersCovered());
+                assertEquals(str.length()+1,tr.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
             }
         }
     }
@@ -500,7 +486,7 @@ public final class TestBugs {
         
         HSLFSlideShowImpl ss = new HSLFSlideShowImpl(file.getAbsolutePath());
         HSLFSlideShow _show = new HSLFSlideShow(ss);
-        HSLFSlide[] _slides = _show.getSlides();
+        List<HSLFSlide> _slides = _show.getSlides();
 
         /* Iterate over slides and extract text */
         for( HSLFSlide slide : _slides ) {
@@ -516,8 +502,8 @@ public final class TestBugs {
         
         HSLFSlideShowImpl ss = new HSLFSlideShowImpl(file.getAbsolutePath());
         HSLFSlideShow _show = new HSLFSlideShow(ss);
-        HSLFSlide[] _slides = _show.getSlides();
-        assertEquals(13, _slides.length);
+        List<HSLFSlide> _slides = _show.getSlides();
+        assertEquals(13, _slides.size());
         
         // Check the number of TextHeaderAtoms on Slide 1
         Document dr = _show.getDocumentRecord();
@@ -538,8 +524,8 @@ public final class TestBugs {
         // Check the number of text runs based on the slide (not textbox)
         // Will have skipped the empty one
         int str = 0;
-        for (HSLFTextParagraph tr : _slides[0].getTextParagraphs()) {
-            if (! tr.isDrawingBased()) str++;
+        for (List<HSLFTextParagraph> tr : _slides.get(0).getTextParagraphs()) {
+            if (! tr.get(0).isDrawingBased()) str++;
         }
         assertEquals(1, str);
     }
@@ -549,11 +535,11 @@ public final class TestBugs {
         InputStream inputStream = new FileInputStream(_slTests.getFile("37625.ppt"));
         try {
             HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
-            assertEquals(29, slideShow.getSlides().length);
+            assertEquals(29, slideShow.getSlides().size());
             
             HSLFSlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
             assertNotNull(slideBack);
-            assertEquals(29, slideBack.getSlides().length);
+            assertEquals(29, slideBack.getSlides().size());
         } finally {
             inputStream.close();
         }
@@ -564,11 +550,11 @@ public final class TestBugs {
         InputStream inputStream = new FileInputStream(_slTests.getFile("57272_corrupted_usereditatom.ppt"));
         try {
             HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
-            assertEquals(6, slideShow.getSlides().length);
+            assertEquals(6, slideShow.getSlides().size());
 
             HSLFSlideShow slideBack = HSLFTestDataSamples.writeOutAndReadBack(slideShow);
             assertNotNull(slideBack);
-            assertEquals(6, slideBack.getSlides().length);
+            assertEquals(6, slideBack.getSlides().size());
         } finally {
             inputStream.close();
         }
@@ -579,9 +565,9 @@ public final class TestBugs {
         InputStream inputStream = new FileInputStream(_slTests.getFile("49541_symbol_map.ppt"));
         try {
             HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
-            HSLFSlide slide = slideShow.getSlides()[0];
-            HSLFGroupShape sg = (HSLFGroupShape)slide.getShapes()[0];
-            HSLFTextBox tb = (HSLFTextBox)sg.getShapes()[0];
+            HSLFSlide slide = slideShow.getSlides().get(0);
+            HSLFGroupShape sg = (HSLFGroupShape)slide.getShapes().get(0);
+            HSLFTextBox tb = (HSLFTextBox)sg.getShapes().get(0);
             String text = StringUtil.mapMsCodepointString(tb.getText());
             assertEquals("\u226575 years", text);
         } finally {
@@ -608,7 +594,7 @@ public final class TestBugs {
         InputStream inputStream = new FileInputStream(_slTests.getFile("bug56240.ppt"));
         try {
             HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
-            int slideCnt = slideShow.getSlides().length;
+            int slideCnt = slideShow.getSlides().size();
             assertEquals(105, slideCnt);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             slideShow.write(bos);
@@ -623,7 +609,7 @@ public final class TestBugs {
         InputStream inputStream = new FileInputStream(_slTests.getFile("bug46441.ppt"));
         try {
             HSLFSlideShow slideShow = new HSLFSlideShow(inputStream);
-            HSLFAutoShape as = (HSLFAutoShape)slideShow.getSlides()[0].getShapes()[0];
+            HSLFAutoShape as = (HSLFAutoShape)slideShow.getSlides().get(0).getShapes().get(0);
             EscherOptRecord opt = as.getEscherOptRecord();
             EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
             double exp[][] = {
