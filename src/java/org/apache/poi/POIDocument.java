@@ -182,7 +182,7 @@ public abstract class POIDocument {
         if (encryptionInfo != null) {
             try {
                 InputStream is = encryptionInfo.getDecryptor().getDataStream(directory);
-                POIFSFileSystem poifs = new POIFSFileSystem(is);
+                NPOIFSFileSystem poifs = new NPOIFSFileSystem(is);
                 is.close();
                 dirNode = poifs.getRoot();
             } catch (Exception e) {
