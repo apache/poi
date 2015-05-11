@@ -54,18 +54,16 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * This is the main class of the POIFS system; it manages the entire
- * life cycle of the filesystem.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * <p>This is the main class of the POIFS system; it manages the entire
+ * life cycle of the filesystem.</p>
+ * <p>This is the older version, which uses more memory, and doesn't
+ *  support in-place writes.</p>
  */
-
-public class POIFSFileSystem
-    extends OPOIFSFileSystem // TODO Temporary workaround during #56791
+public class OPOIFSFileSystem
     implements POIFSViewable
 {
 	private static final POILogger _logger =
-		POILogFactory.getLogger(POIFSFileSystem.class);
+		POILogFactory.getLogger(OPOIFSFileSystem.class);
 
     /**
      * Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
@@ -88,7 +86,7 @@ public class POIFSFileSystem
     /**
      * Constructor, intended for writing
      */
-    public POIFSFileSystem()
+    public OPOIFSFileSystem()
     {
         HeaderBlock header_block = new HeaderBlock(bigBlockSize);
         _property_table = new PropertyTable(header_block);
@@ -97,7 +95,7 @@ public class POIFSFileSystem
     }
 
     /**
-     * Create a POIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
+     * Create a OPOIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
      * EOF.  The stream is always closed.<p/>
      *
      * Some streams are usable after reaching EOF (typically those that return <code>true</code>
@@ -106,7 +104,7 @@ public class POIFSFileSystem
      * stream in order to trap the <tt>close()</tt> call.  A convenience method (
      * <tt>createNonClosingInputStream()</tt>) has been provided for this purpose:
      * <pre>
-     * InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(is);
+     * InputStream wrappedStream = OPOIFSFileSystem.createNonClosingInputStream(is);
      * HSSFWorkbook wb = new HSSFWorkbook(wrappedStream);
      * is.reset();
      * doSomethingElse(is);
@@ -125,7 +123,7 @@ public class POIFSFileSystem
      * @exception IOException on errors reading, or on invalid data
      */
 
-    public POIFSFileSystem(InputStream stream)
+    public OPOIFSFileSystem(InputStream stream)
         throws IOException
     {
         this();
@@ -403,7 +401,7 @@ public class POIFSFileSystem
         FileInputStream  istream = new FileInputStream(args[ 0 ]);
         FileOutputStream ostream = new FileOutputStream(args[ 1 ]);
 
-        new POIFSFileSystem(istream).writeFilesystem(ostream);
+        new OPOIFSFileSystem(istream).writeFilesystem(ostream);
         istream.close();
         ostream.close();
     }
@@ -605,5 +603,5 @@ public class POIFSFileSystem
     }
 
     /* **********  END  begin implementation of POIFSViewable ********** */
-}   // end public class POIFSFileSystem
+}   // end public class OPOIFSFileSystem
 
