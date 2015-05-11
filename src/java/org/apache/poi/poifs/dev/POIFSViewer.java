@@ -19,12 +19,12 @@
 
 package org.apache.poi.poifs.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * A simple viewer for POIFS files
@@ -76,10 +76,10 @@ public class POIFSViewer
         try
         {
             POIFSViewable fs      =
-                new POIFSFileSystem(new FileInputStream(filename));
-            List<String>          strings = POIFSViewEngine.inspectViewable(fs, true,
+                new NPOIFSFileSystem(new File(filename));
+            List<String>  strings = POIFSViewEngine.inspectViewable(fs, true,
                                         0, "  ");
-            Iterator<String>      iter    = strings.iterator();
+            Iterator<String> iter = strings.iterator();
 
             while (iter.hasNext())
             {

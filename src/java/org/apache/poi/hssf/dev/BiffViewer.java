@@ -17,13 +17,63 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
-import org.apache.poi.hssf.record.chart.*;
+import org.apache.poi.hssf.record.chart.AreaFormatRecord;
+import org.apache.poi.hssf.record.chart.AreaRecord;
+import org.apache.poi.hssf.record.chart.AxisLineFormatRecord;
+import org.apache.poi.hssf.record.chart.AxisOptionsRecord;
+import org.apache.poi.hssf.record.chart.AxisParentRecord;
+import org.apache.poi.hssf.record.chart.AxisRecord;
+import org.apache.poi.hssf.record.chart.AxisUsedRecord;
+import org.apache.poi.hssf.record.chart.BarRecord;
+import org.apache.poi.hssf.record.chart.BeginRecord;
+import org.apache.poi.hssf.record.chart.CatLabRecord;
+import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
+import org.apache.poi.hssf.record.chart.ChartEndBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartEndObjectRecord;
+import org.apache.poi.hssf.record.chart.ChartFRTInfoRecord;
+import org.apache.poi.hssf.record.chart.ChartFormatRecord;
+import org.apache.poi.hssf.record.chart.ChartRecord;
+import org.apache.poi.hssf.record.chart.ChartStartBlockRecord;
+import org.apache.poi.hssf.record.chart.ChartStartObjectRecord;
+import org.apache.poi.hssf.record.chart.DatRecord;
+import org.apache.poi.hssf.record.chart.DataFormatRecord;
+import org.apache.poi.hssf.record.chart.DefaultDataLabelTextPropertiesRecord;
+import org.apache.poi.hssf.record.chart.EndRecord;
+import org.apache.poi.hssf.record.chart.FontBasisRecord;
+import org.apache.poi.hssf.record.chart.FontIndexRecord;
+import org.apache.poi.hssf.record.chart.FrameRecord;
+import org.apache.poi.hssf.record.chart.LegendRecord;
+import org.apache.poi.hssf.record.chart.LineFormatRecord;
+import org.apache.poi.hssf.record.chart.LinkedDataRecord;
+import org.apache.poi.hssf.record.chart.ObjectLinkRecord;
+import org.apache.poi.hssf.record.chart.PlotAreaRecord;
+import org.apache.poi.hssf.record.chart.PlotGrowthRecord;
+import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
+import org.apache.poi.hssf.record.chart.SeriesListRecord;
+import org.apache.poi.hssf.record.chart.SeriesRecord;
+import org.apache.poi.hssf.record.chart.SeriesTextRecord;
+import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
+import org.apache.poi.hssf.record.chart.SheetPropertiesRecord;
+import org.apache.poi.hssf.record.chart.TextRecord;
+import org.apache.poi.hssf.record.chart.TickRecord;
+import org.apache.poi.hssf.record.chart.UnitsRecord;
+import org.apache.poi.hssf.record.chart.ValueRangeRecord;
 import org.apache.poi.hssf.record.pivottable.DataItemRecord;
 import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.PageItemRecord;
@@ -32,7 +82,7 @@ import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
@@ -420,7 +470,7 @@ public final class BiffViewer {
 
 	protected static InputStream getPOIFSInputStream(File file)
 			throws IOException, FileNotFoundException {
-		POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+		NPOIFSFileSystem fs = new NPOIFSFileSystem(new FileInputStream(file));
 		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
 		return fs.createDocumentInputStream(workbookName);
 	}

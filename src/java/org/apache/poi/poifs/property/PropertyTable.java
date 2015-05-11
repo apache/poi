@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.storage.BlockWritable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.PropertyBlock;

@@ -17,14 +17,17 @@
 
 package org.apache.poi.hslf.dev;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.RecordTypes;
-
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -38,12 +41,9 @@ import org.apache.poi.util.LittleEndian;
  * To peek inside PPDrawings, which hold Escher drawings, we use the
  *  DDF package from POI (but we can fake it by using the Escher listings
  *  from hslf.record.RecordTypes also)
- *
- * @author Nick Burch
  */
 public final class SlideShowDumper {
-  private InputStream istream;
-  private POIFSFileSystem filesystem;
+  private NPOIFSFileSystem filesystem;
 
   private byte[] _docstream;
 
@@ -92,7 +92,7 @@ public final class SlideShowDumper {
    */
   public SlideShowDumper(String fileName) throws IOException
   {
-  	this(new FileInputStream(fileName));
+  	this(new NPOIFSFileSystem(new File(fileName)));
   }
 
   /**
@@ -105,8 +105,7 @@ public final class SlideShowDumper {
   public SlideShowDumper(InputStream inputStream) throws IOException
   {
 	//do Ole stuff
-	this(new POIFSFileSystem(inputStream));
-	istream = inputStream;
+	this(new NPOIFSFileSystem(inputStream));
   }
 
   /**
@@ -116,7 +115,7 @@ public final class SlideShowDumper {
    * @param filesystem the POIFS FileSystem to read from
    * @throws IOException if there is a problem while parsing the document.
    */
-  public SlideShowDumper(POIFSFileSystem filesystem) throws IOException
+  public SlideShowDumper(NPOIFSFileSystem filesystem) throws IOException
   {
 	this.filesystem = filesystem;
 
@@ -153,10 +152,7 @@ public final class SlideShowDumper {
    */
   public void close() throws IOException
   {
-	if(istream != null) {
-		istream.close();
-	}
-	filesystem = null;
+	filesystem.close();
   }
 
 

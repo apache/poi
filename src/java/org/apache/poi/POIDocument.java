@@ -33,6 +33,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -65,13 +66,24 @@ public abstract class POIDocument {
     	this.directory = dir;
     }
 
-    protected POIDocument(POIFSFileSystem fs) {
+    /**
+     * Constructs from an old-style OPOIFS
+     */
+    protected POIDocument(OPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
-    
+    /**
+     * Constructs from an old-style OPOIFS
+     */
     protected POIDocument(NPOIFSFileSystem fs) {
        this(fs.getRoot());
     }
+    /**
+     * Constructs from the default POIFS
+     */
+    protected POIDocument(POIFSFileSystem fs) {
+        this(fs.getRoot());
+     }
 
     /**
      * Fetch the Document Summary Information of the document

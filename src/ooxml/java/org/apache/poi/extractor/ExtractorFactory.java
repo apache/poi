@@ -18,7 +18,6 @@ package org.apache.poi.extractor;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +50,10 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NotOLE2FileException;
+import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xslf.XSLFSlideShow;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
@@ -128,16 +131,14 @@ public class ExtractorFactory {
 	public static POITextExtractor createExtractor(File f) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
 		InputStream inp = null;
         try {
-            inp = new PushbackInputStream(
-                new FileInputStream(f), 8);
-
-            if(POIFSFileSystem.hasPOIFSHeader(inp)) {
-                return createExtractor(new POIFSFileSystem(inp));
-            }
-            if(POIXMLDocument.hasOOXMLHeader(inp)) {
+            try {
+                NPOIFSFileSystem fs = new NPOIFSFileSystem(f);
+                return createExtractor(fs);
+            } catch (OfficeXmlFileException e) {
                 return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
+            } catch (NotOLE2FileException ne) {
+                throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
             }
-            throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
         } finally {
             if(inp != null) inp.close();
         }
@@ -150,8 +151,8 @@ public class ExtractorFactory {
 			inp = new PushbackInputStream(inp, 8);
 		}
 
-		if(POIFSFileSystem.hasPOIFSHeader(inp)) {
-			return createExtractor(new POIFSFileSystem(inp));
+		if(NPOIFSFileSystem.hasPOIFSHeader(inp)) {
+			return createExtractor(new NPOIFSFileSystem(inp));
 		}
 		if(POIXMLDocument.hasOOXMLHeader(inp)) {
 			return createExtractor(OPCPackage.open(inp));
@@ -226,16 +227,14 @@ public class ExtractorFactory {
 	   // Only ever an OLE2 one from the root of the FS
 		return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
 	}
-
-    /**
-     * @deprecated Use {@link #createExtractor(DirectoryNode)} instead
-     */
-    @Deprecated
-    public static POITextExtractor createExtractor(DirectoryNode poifsDir, POIFSFileSystem fs)
-            throws IOException, InvalidFormatException, OpenXML4JException, XmlException
-    {
-        return createExtractor(poifsDir);
-    }
+    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+        // Only ever an OLE2 one from the root of the FS
+         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+     }
+    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+        // Only ever an OLE2 one from the root of the FS
+         return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+     }
 
     public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException,
             InvalidFormatException, OpenXML4JException, XmlException

@@ -25,7 +25,7 @@ import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -35,12 +35,12 @@ import org.apache.poi.util.StringUtil;
  *  constructed.
  */
 public final class HPBFDumper {
-	private POIFSFileSystem fs;
-	public HPBFDumper(POIFSFileSystem fs) {
+	private NPOIFSFileSystem fs;
+	public HPBFDumper(NPOIFSFileSystem fs) {
 		this.fs = fs;
 	}
 	public HPBFDumper(InputStream inp) throws IOException {
-		this(new POIFSFileSystem(inp));
+		this(new NPOIFSFileSystem(inp));
 	}
 
 	private static byte[] getData(DirectoryNode dir, String name) throws IOException {

@@ -167,7 +167,7 @@ public class WorkbookFactory {
         byte[] header8 = IOUtils.peekFirst8Bytes(inp);
 
         // Try to create
-        if (POIFSFileSystem.hasPOIFSHeader(header8)) {
+        if (NPOIFSFileSystem.hasPOIFSHeader(header8)) {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(inp);
             return create(fs, password);
         }

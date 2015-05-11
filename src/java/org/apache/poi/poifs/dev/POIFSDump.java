@@ -26,10 +26,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 
 /**
- *
  * Dump internal structure of a OLE2 file into file system
- *
- * @author Yegor Kozlov
  */
 public class POIFSDump {
 
@@ -37,7 +34,7 @@ public class POIFSDump {
         for (int i = 0; i < args.length; i++) {
             System.out.println("Dumping " + args[i]);
             FileInputStream is = new FileInputStream(args[i]);
-            POIFSFileSystem fs = new POIFSFileSystem(is);
+            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             is.close();
 
             DirectoryEntry root = fs.getRoot();
