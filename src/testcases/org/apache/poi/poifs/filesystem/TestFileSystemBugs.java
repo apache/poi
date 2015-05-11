@@ -21,8 +21,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -125,9 +127,11 @@ public final class TestFileSystemBugs extends TestCase {
     /**
      * With heavily nested documents, ensure we still re-write the same
      */
-    public void IGNOREDtestHeavilyNestedReWrite() throws Exception {
+    public void testHeavilyNestedReWrite() throws Exception {
         for (DirectoryNode root : openSSSample("ex42570-20305.xls", false)) {
-            // TODO Record the structure
+            // Record the structure
+            Map<String,Integer> entries = new HashMap<String, Integer>();
+            fetchSizes("/", root, entries);
             
             // Prepare to copy
             DirectoryNode dest;
@@ -150,7 +154,33 @@ public final class TestFileSystemBugs extends TestCase {
             NPOIFSFileSystem read = new NPOIFSFileSystem(
                     new ByteArrayInputStream(baos.toByteArray()));
             
-            // TODO Check the structure matches
+            // Check the structure matches
+            checkSizes("/", read.getRoot(), entries);
+        }
+    }
+    private void fetchSizes(String path, DirectoryNode dir, Map<String,Integer> entries) {
+        for (Entry entry : dir) {
+            if (entry instanceof DirectoryNode) {
+                String ourPath = path + entry.getName() + "/";
+                entries.put(ourPath, -1);
+                fetchSizes(ourPath, (DirectoryNode)entry, entries);
+            } else {
+                DocumentNode doc = (DocumentNode)entry;
+                entries.put(path+entry.getName(), doc.getSize());
+            }
+        }
+    }
+    private void checkSizes(String path, DirectoryNode dir, Map<String,Integer> entries) {
+        for (Entry entry : dir) {
+            if (entry instanceof DirectoryNode) {
+                String ourPath = path + entry.getName() + "/";
+                assertTrue(entries.containsKey(ourPath));
+                assertEquals(-1, entries.get(ourPath).intValue());
+                checkSizes(ourPath, (DirectoryNode)entry, entries);
+            } else {
+                DocumentNode doc = (DocumentNode)entry;
+                assertEquals(entries.get(path+entry.getName()).intValue(), doc.getSize());
+            }
         }
     }
 }
