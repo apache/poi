@@ -750,7 +750,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      * @return the array of all hyperlinks in this text run or <code>null</code>
      *         if not found.
      */
-    public HSLFHyperlink[] getHyperlinks() {
+    public List<HSLFHyperlink> getHyperlinks() {
         return HSLFHyperlink.find(this);
     }
 

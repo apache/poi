@@ -85,8 +85,8 @@ public final class TestSlideAtom extends TestCase {
 		ss.write(bos);
 		ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
 		ss = new HSLFSlideShow(bis);
-		slide1 = ss.getSlides()[0];
-		slide2 = ss.getSlides()[1];
+		slide1 = ss.getSlides().get(0);
+		slide2 = ss.getSlides().get(1);
 		assertFalse(slide1.getHidden());
 		assertTrue(slide2.getHidden());
 	}

@@ -49,7 +49,7 @@ public class Step2 {
         // blank slide
         /*XSLFSlide blankSlide =*/ ppt.createSlide();
 
-        XSLFSlideMaster defaultMaster = ppt.getSlideMasters()[0];
+        XSLFSlideMaster defaultMaster = ppt.getSlideMasters().get(0);
 
         // title slide
         XSLFSlideLayout titleLayout = defaultMaster.getLayout(SlideLayout.TITLE);

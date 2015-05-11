@@ -383,6 +383,10 @@ public final class HSLFTextRun implements TextRun {
         prop.setSubValue(value, index);
     }
 
+    public HSLFTextParagraph getTextParagraph() {
+        return parentParagraph;
+    }
+    
     public TextCap getTextCap() {
         return TextCap.NONE;
     }

@@ -20,16 +20,12 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.record.UserEditAtom;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.model.*;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.*;
 
 /**
  * Tests that SlideShow adds additional sheets properly
@@ -70,7 +66,7 @@ public final class TestAddingSlides extends TestCase {
 	 */
 	public void testAddSlideToEmpty() throws Exception {
 		// Doesn't have any slides
-		assertEquals(0, ss_empty.getSlides().length);
+		assertEquals(0, ss_empty.getSlides().size());
 
 		// Should only have a master SLWT
 		assertEquals(1, ss_empty.getDocumentRecord().getSlideListWithTexts().length);
@@ -88,7 +84,7 @@ public final class TestAddingSlides extends TestCase {
 
 		// Add one
 		HSLFSlide slide = ss_empty.createSlide();
-		assertEquals(1, ss_empty.getSlides().length);
+		assertEquals(1, ss_empty.getSlides().size());
 		assertEquals(256, slide._getSheetNumber());
 		assertEquals(3, slide._getSheetRefId());
 		assertEquals(1, slide.getSlideNumber());
@@ -103,13 +99,13 @@ public final class TestAddingSlides extends TestCase {
 		HSLFSlideShow ss_read = new HSLFSlideShow(hss_read);
 
 		// Check it now has a slide
-		assertEquals(1, ss_read.getSlides().length);
+		assertEquals(1, ss_read.getSlides().size());
 
 		// Check it now has two SLWTs
 		assertEquals(2, ss_empty.getDocumentRecord().getSlideListWithTexts().length);
 
 		// And check it's as expected
-		slide = ss_read.getSlides()[0];
+		slide = ss_read.getSlides().get(0);
 		assertEquals(256, slide._getSheetNumber());
 		assertEquals(3, slide._getSheetRefId());
 		assertEquals(1, slide.getSlideNumber());
@@ -120,8 +116,8 @@ public final class TestAddingSlides extends TestCase {
 	 */
 	public void testAddSlideToExisting() throws Exception {
 		// Has one slide
-		assertEquals(1, ss_one.getSlides().length);
-		HSLFSlide s1 = ss_one.getSlides()[0];
+		assertEquals(1, ss_one.getSlides().size());
+		HSLFSlide s1 = ss_one.getSlides().get(0);
 
 		// Should have two SLTWs
 		assertEquals(2, ss_one.getDocumentRecord().getSlideListWithTexts().length);
@@ -133,7 +129,7 @@ public final class TestAddingSlides extends TestCase {
 
 		// Add a second one
 		HSLFSlide s2 = ss_one.createSlide();
-		assertEquals(2, ss_one.getSlides().length);
+		assertEquals(2, ss_one.getSlides().size());
 		assertEquals(257, s2._getSheetNumber());
 		assertEquals(4, s2._getSheetRefId());
 		assertEquals(2, s2.getSlideNumber());
@@ -147,14 +143,14 @@ public final class TestAddingSlides extends TestCase {
 		HSLFSlideShow ss_read = new HSLFSlideShow(hss_read);
 
 		// Check it now has two slides
-		assertEquals(2, ss_read.getSlides().length);
+		assertEquals(2, ss_read.getSlides().size());
 
 		// Should still have two SLTWs
 		assertEquals(2, ss_read.getDocumentRecord().getSlideListWithTexts().length);
 
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
-		s2 = ss_read.getSlides()[1];
+		s1 = ss_read.getSlides().get(0);
+		s2 = ss_read.getSlides().get(1);
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
@@ -167,7 +163,8 @@ public final class TestAddingSlides extends TestCase {
 	 * Test adding a slide to an existing slideshow,
 	 *  with two slides already
 	 */
-	public void testAddSlideToExisting2() throws Exception {
+	@SuppressWarnings("unused")
+    public void testAddSlideToExisting2() throws Exception {
         //grab UserEditAtom
         UserEditAtom usredit = null;
         Record[] _records = hss_two.getRecords();
@@ -180,9 +177,9 @@ public final class TestAddingSlides extends TestCase {
        assertNotNull(usredit);
 
 		// Has two slides
-		assertEquals(2, ss_two.getSlides().length);
-		HSLFSlide s1 = ss_two.getSlides()[0];
-		HSLFSlide s2 = ss_two.getSlides()[1];
+		assertEquals(2, ss_two.getSlides().size());
+		HSLFSlide s1 = ss_two.getSlides().get(0);
+		HSLFSlide s2 = ss_two.getSlides().get(1);
 
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
@@ -195,7 +192,7 @@ public final class TestAddingSlides extends TestCase {
 
 		// Add a third one
 		HSLFSlide s3 = ss_two.createSlide();
-		assertEquals(3, ss_two.getSlides().length);
+		assertEquals(3, ss_two.getSlides().size());
 		assertEquals(258, s3._getSheetNumber());
 		assertEquals(8, s3._getSheetRefId()); // lots of notes before us
 		assertEquals(3, s3.getSlideNumber());
@@ -210,12 +207,12 @@ public final class TestAddingSlides extends TestCase {
 		HSLFSlideShow ss_read = new HSLFSlideShow(hss_read);
 
 		// Check it now has three slides
-		assertEquals(3, ss_read.getSlides().length);
+		assertEquals(3, ss_read.getSlides().size());
 
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
-		s2 = ss_read.getSlides()[1];
-		s3 = ss_read.getSlides()[2];
+		s1 = ss_read.getSlides().get(0);
+		s2 = ss_read.getSlides().get(1);
+		s3 = ss_read.getSlides().get(2);
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(4, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
@@ -235,8 +232,8 @@ public final class TestAddingSlides extends TestCase {
         HSLFSlide slide1 = ppt.createSlide();
         HSLFSlide slide2 = ppt.createSlide();
 
-        HSLFSlide[] s1 = ppt.getSlides();
-        assertEquals(2, s1.length);
+        List<HSLFSlide> s1 = ppt.getSlides();
+        assertEquals(2, s1.size());
         try {
             ppt.removeSlide(-1);
             fail("expected exception");
@@ -254,10 +251,10 @@ public final class TestAddingSlides extends TestCase {
         assertEquals(1, slide1.getSlideNumber());
 
         HSLFSlide removedSlide = ppt.removeSlide(0);
-        HSLFSlide[] s2 = ppt.getSlides();
-        assertEquals(1, s2.length);
+        List<HSLFSlide> s2 = ppt.getSlides();
+        assertEquals(1, s2.size());
         assertSame(slide1, removedSlide);
-        assertSame(slide2, s2[0]);
+        assertSame(slide2, s2.get(0));
 
         assertEquals(0, slide2.getSlideNumber());
 
@@ -266,29 +263,29 @@ public final class TestAddingSlides extends TestCase {
 
         ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
 
-        HSLFSlide[] s3 = ppt.getSlides();
-        assertEquals(1, s3.length);
+        List<HSLFSlide> s3 = ppt.getSlides();
+        assertEquals(1, s3.size());
     }
 
 
     public void test47261() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
         HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("47261.ppt"));
-        HSLFSlide[] slides = ppt.getSlides();
+        List<HSLFSlide> slides = ppt.getSlides();
         Document doc = ppt.getDocumentRecord();
         assertNotNull(doc.getSlideSlideListWithText());
-        assertEquals(14, ppt.getSlides().length);
-        int notesId = slides[0].getSlideRecord().getSlideAtom().getNotesID();
+        assertEquals(14, ppt.getSlides().size());
+        int notesId = slides.get(0).getSlideRecord().getSlideAtom().getNotesID();
         assertTrue(notesId > 0);
         assertNotNull(doc.getNotesSlideListWithText());
         assertEquals(14, doc.getNotesSlideListWithText().getSlideAtomsSets().length);
 
         //remove all slides, corresponding notes should be removed too
-        for (int i = 0; i < slides.length; i++) {
+        for (int i = 0; i < slides.size(); i++) {
             ppt.removeSlide(0);
         }
-        assertEquals(0, ppt.getSlides().length);
-        assertEquals(0, ppt.getNotes().length);
+        assertEquals(0, ppt.getSlides().size());
+        assertEquals(0, ppt.getNotes().size());
         assertNull(doc.getSlideSlideListWithText());
         assertNull(doc.getNotesSlideListWithText());
 

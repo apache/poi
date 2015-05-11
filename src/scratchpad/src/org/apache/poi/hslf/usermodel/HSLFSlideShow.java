@@ -613,7 +613,7 @@ public final class HSLFSlideShow implements SlideShow {
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
 		List<Record> records = new ArrayList<Record>();
-		List<SlideAtomsSet> sa = Arrays.asList(sas);
+		List<SlideAtomsSet> sa = new ArrayList<SlideAtomsSet>(Arrays.asList(sas));
 
 		HSLFSlide removedSlide = _slides.remove(index);
 		_notes.remove(removedSlide.getNotes());
