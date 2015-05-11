@@ -44,7 +44,7 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
      * Write out, with any properties changes, but nothing else
      */
     public void write(OutputStream out) throws IOException {
-        POIFSFileSystem fs = new POIFSFileSystem();
+        NPOIFSFileSystem fs = new NPOIFSFileSystem();
 
         // For tracking what we've written out, so far
         List<String> excepts = new ArrayList<String>(1);

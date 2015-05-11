@@ -67,9 +67,9 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Internal;
-
 
 /**
  *
@@ -924,7 +924,7 @@ public final class HWPFDocument extends HWPFDocumentCore
     }
 
         // create new document preserving order of entries
-        POIFSFileSystem pfs = new POIFSFileSystem();
+        NPOIFSFileSystem pfs = new NPOIFSFileSystem();
         boolean docWritten = false;
         boolean dataWritten = false;
         boolean objectPoolWritten = false;

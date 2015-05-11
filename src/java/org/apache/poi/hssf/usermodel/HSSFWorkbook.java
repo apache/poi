@@ -1277,7 +1277,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             throws IOException
     {
         byte[] bytes = getBytes();
-        POIFSFileSystem fs = new POIFSFileSystem();
+        NPOIFSFileSystem fs = new NPOIFSFileSystem();
 
         // For tracking what we've written out, used if we're
         //  going to be preserving nodes

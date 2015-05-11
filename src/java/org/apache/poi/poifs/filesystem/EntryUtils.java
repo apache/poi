@@ -124,8 +124,21 @@ public class EntryUtils
      * @param target
      *            is the target POIFS to copy to
      */
-    public static void copyNodes( POIFSFileSystem source,
-            POIFSFileSystem target ) throws IOException
+    public static void copyNodes( OPOIFSFileSystem source,
+            OPOIFSFileSystem target ) throws IOException
+    {
+        copyNodes( source.getRoot(), target.getRoot() );
+    }
+    /**
+     * Copies all nodes from one POIFS to the other
+     * 
+     * @param source
+     *            is the source POIFS to copy from
+     * @param target
+     *            is the target POIFS to copy to
+     */
+    public static void copyNodes( NPOIFSFileSystem source,
+            NPOIFSFileSystem target ) throws IOException
     {
         copyNodes( source.getRoot(), target.getRoot() );
     }
@@ -140,8 +153,26 @@ public class EntryUtils
      * @param target is the target POIFS to copy to
      * @param excepts is a list of Entry Names to be excluded from the copy
      */
-    public static void copyNodes( POIFSFileSystem source,
-            POIFSFileSystem target, List<String> excepts ) throws IOException
+    public static void copyNodes( OPOIFSFileSystem source,
+            OPOIFSFileSystem target, List<String> excepts ) throws IOException
+    {
+        copyNodes(
+              new FilteringDirectoryNode(source.getRoot(), excepts),
+              new FilteringDirectoryNode(target.getRoot(), excepts)
+        );
+    }
+    /**
+     * Copies nodes from one POIFS to the other, minus the excepts.
+     * This delegates the filtering work to {@link FilteringDirectoryNode},
+     *  so excepts can be of the form "NodeToExclude" or
+     *  "FilteringDirectory/ExcludedChildNode"
+     * 
+     * @param source is the source POIFS to copy from
+     * @param target is the target POIFS to copy to
+     * @param excepts is a list of Entry Names to be excluded from the copy
+     */
+    public static void copyNodes( NPOIFSFileSystem source,
+            NPOIFSFileSystem target, List<String> excepts ) throws IOException
     {
         copyNodes(
               new FilteringDirectoryNode(source.getRoot(), excepts),

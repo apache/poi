@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -72,7 +73,7 @@ public final class TestPOIDocumentMain extends TestCase {
 
 	public void testWriteProperties() throws Exception {
 		// Just check we can write them back out into a filesystem
-		POIFSFileSystem outFS = new POIFSFileSystem();
+		NPOIFSFileSystem outFS = new NPOIFSFileSystem();
 		doc.readProperties();
 		doc.writeProperties(outFS);
 
@@ -89,7 +90,7 @@ public final class TestPOIDocumentMain extends TestCase {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		// Write them out
-		POIFSFileSystem outFS = new POIFSFileSystem();
+		NPOIFSFileSystem outFS = new NPOIFSFileSystem();
 		doc.readProperties();
 		doc.writeProperties(outFS);
 		outFS.writeFilesystem(baos);
