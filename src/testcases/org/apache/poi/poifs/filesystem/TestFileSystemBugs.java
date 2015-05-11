@@ -17,6 +17,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +33,7 @@ import org.apache.poi.POIDataSamples;
  */
 public final class TestFileSystemBugs extends TestCase {
     protected static POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+    protected static POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
     
     protected List<NPOIFSFileSystem> openedFSs;
     protected void tearDown() throws Exception {
@@ -45,15 +49,25 @@ public final class TestFileSystemBugs extends TestCase {
         openedFSs = null;
     }
     protected DirectoryNode[] openSample(String name, boolean oldFails) throws Exception {
-        NPOIFSFileSystem nfs = new NPOIFSFileSystem(
-                _samples.openResourceAsStream(name));
+        return openSamples(new InputStream[] {
+                _samples.openResourceAsStream(name),
+                _samples.openResourceAsStream(name)
+        }, oldFails);
+    }
+    protected DirectoryNode[] openSSSample(String name, boolean oldFails) throws Exception {
+        return openSamples(new InputStream[] {
+                _ssSamples.openResourceAsStream(name),
+                _ssSamples.openResourceAsStream(name)
+        }, oldFails);
+    }
+    protected DirectoryNode[] openSamples(InputStream[] inps, boolean oldFails) throws Exception {
+        NPOIFSFileSystem nfs = new NPOIFSFileSystem(inps[0]);
         if (openedFSs == null) openedFSs = new ArrayList<NPOIFSFileSystem>();
         openedFSs.add(nfs);
         
         POIFSFileSystem ofs = null;
         try {
-            ofs = new POIFSFileSystem(
-                _samples.openResourceAsStream(name));
+            ofs = new POIFSFileSystem(inps[1]);
             if (oldFails) fail("POIFSFileSystem should have failed but didn't");
         } catch (Exception e) {
             if (!oldFails) throw e;
@@ -105,6 +119,38 @@ public final class TestFileSystemBugs extends TestCase {
     public void testCorruptedProperties() throws Exception {
         for (DirectoryNode root : openSample("unknown_properties.msg", true)) {
             assertEquals(42, root.getEntryCount());
+        }
+    }
+    
+    /**
+     * With heavily nested documents, ensure we still re-write the same
+     */
+    public void IGNOREDtestHeavilyNestedReWrite() throws Exception {
+        for (DirectoryNode root : openSSSample("ex42570-20305.xls", false)) {
+            // TODO Record the structure
+            
+            // Prepare to copy
+            DirectoryNode dest;
+            if (root.getNFileSystem() != null) {
+                dest = (new NPOIFSFileSystem()).getRoot();
+            } else {
+                dest = (new OPOIFSFileSystem()).getRoot();
+            }
+            
+            // Copy over
+            EntryUtils.copyNodes(root, dest);
+            
+            // Re-load, always as NPOIFS
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if (root.getNFileSystem() != null) {
+                root.getNFileSystem().writeFilesystem(baos);
+            } else {
+                root.getOFileSystem().writeFilesystem(baos);
+            }
+            NPOIFSFileSystem read = new NPOIFSFileSystem(
+                    new ByteArrayInputStream(baos.toByteArray()));
+            
+            // TODO Check the structure matches
         }
     }
 }
