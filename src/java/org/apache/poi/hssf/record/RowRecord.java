@@ -64,6 +64,9 @@ public final class RowRecord extends StandardRecord {
     // bit 15 is unused
 
     public RowRecord(int rowNumber) {
+    	if(rowNumber < 0) {
+    		throw new IllegalArgumentException("Invalid row number " + rowNumber + " specified");
+    	}
         field_1_row_number = rowNumber;
         field_4_height = (short)0xFF;
         field_5_optimize = ( short ) 0;
@@ -76,6 +79,9 @@ public final class RowRecord extends StandardRecord {
 
     public RowRecord(RecordInputStream in) {
         field_1_row_number   = in.readUShort();
+    	if(field_1_row_number < 0) {
+    		throw new IllegalArgumentException("Invalid row number " + field_1_row_number + " found in InputStream");
+    	}
         field_2_first_col    = in.readShort();
         field_3_last_col     = in.readShort();
         field_4_height       = in.readShort();
