@@ -29,13 +29,6 @@ import java.util.Map;
  * Factory class for producing Excel Shapes from Escher records
  */
 public class HSSFShapeFactory {
-
-    private final static short       OBJECT_TYPE_LINE               = 1;
-    private final static short       OBJECT_TYPE_RECTANGLE          = 2;
-    private final static short       OBJECT_TYPE_OVAL               = 3;
-    private final static short       OBJECT_TYPE_ARC                = 4;
-    private final static short       OBJECT_TYPE_PICTURE            = 8;
-
     /**
      * build shape tree from escher container
      * @param container root escher container from which escher records must be taken
@@ -81,7 +74,7 @@ public class HSSFShapeFactory {
                 return;
             }
             CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
-            HSSFShape shape;
+            final HSSFShape shape;
             switch (cmo.getObjectType()) {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE:
                     shape = new HSSFPicture(container, objRecord);
@@ -97,11 +90,15 @@ public class HSSFShapeFactory {
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING:
                     EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
-                    EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
-                    if (null != property) {
-                        shape = new HSSFPolygon(container, objRecord, txtRecord);
+                    if(optRecord == null) {
+                    	shape = new HSSFSimpleShape(container, objRecord, txtRecord);
                     } else {
-                        shape = new HSSFSimpleShape(container, objRecord, txtRecord);
+                        EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+                        if (null != property) {
+                            shape = new HSSFPolygon(container, objRecord, txtRecord);
+                        } else {
+                            shape = new HSSFSimpleShape(container, objRecord, txtRecord);
+                        }
                     }
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_TEXT:

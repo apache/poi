@@ -363,4 +363,10 @@ public final class TestExcelExtractor extends TestCase {
 
 		assertTrue(text.contains("ZIP"));
 	}
+
+	public void testNullPointerException() {
+		ExcelExtractor extractor = createExtractor("ar.org.apsme.www_Form%20Inscripcion%20Curso%20NO%20Socios.xls");
+		assertNotNull(extractor);
+		assertNotNull(extractor.getText());
+	}
 }
