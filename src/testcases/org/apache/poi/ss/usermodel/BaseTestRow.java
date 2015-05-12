@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -138,7 +139,7 @@ public abstract class BaseTestRow extends TestCase {
         } catch (IllegalArgumentException e) {
             // expected during successful test
             assertTrue("Did not find expected error message, had: " + e, 
-                    e.getMessage().startsWith("Invalid row number -1"));
+                    e.getMessage().startsWith("Invalid row number (-1)"));
         }
 
         //Test high row bound
@@ -285,7 +286,7 @@ public abstract class BaseTestRow extends TestCase {
         assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
     }
 
-    public void testRowHeight() {
+    public void testRowHeight() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         Row row1 = sheet.createRow(0);
