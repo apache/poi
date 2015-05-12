@@ -65,7 +65,7 @@ public final class RowRecord extends StandardRecord {
 
     public RowRecord(int rowNumber) {
     	if(rowNumber < 0) {
-    		throw new IllegalArgumentException("Invalid row number " + rowNumber + " specified");
+    		throw new IllegalArgumentException("Invalid row number (" + rowNumber + ")");
     	}
         field_1_row_number = rowNumber;
         field_4_height = (short)0xFF;
