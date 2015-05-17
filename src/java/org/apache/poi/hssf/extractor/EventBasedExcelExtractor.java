@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -75,7 +76,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
 
     public EventBasedExcelExtractor( DirectoryNode dir )
     {
-        super( null );
+        super( (POIDocument)null );
         _dir = dir;
     }
 
