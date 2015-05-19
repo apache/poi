@@ -18,9 +18,12 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -637,7 +640,7 @@ public abstract class BaseTestBugzillaIssues {
         // Next up, SEARCH on its own
         cf.setCellFormula("SEARCH(\"am\", A1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        assertEquals(FormulaError.VALUE.getCode(), cf.getErrorCellValue());
         
         cf.setCellFormula("SEARCH(\"am\", B1)");
         cf = evaluateCell(wb, cf);
@@ -645,11 +648,11 @@ public abstract class BaseTestBugzillaIssues {
         
         cf.setCellFormula("SEARCH(\"am\", C1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        assertEquals(FormulaError.VALUE.getCode(), cf.getErrorCellValue());
         
         cf.setCellFormula("SEARCH(\"am\", D1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(ErrorConstants.ERROR_VALUE, cf.getErrorCellValue());
+        assertEquals(FormulaError.VALUE.getCode(), cf.getErrorCellValue());
         
         
         // Finally, bring it all together
@@ -756,5 +759,51 @@ public abstract class BaseTestBugzillaIssues {
         
         assertEquals(otherCellText, c1.getStringCellValue());
         assertEquals(otherCellText, c2.getStringCellValue());
+    }
+
+    @Test
+    public void test56574OverwriteExistingRow() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        
+        { // create the Formula-Cell
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("A2");
+        }
+        
+        { // check that it is there now
+            Row row = sheet.getRow(0);
+            
+           /* CTCell[] cArray = ((XSSFRow)row).getCTRow().getCArray();
+            assertEquals(1, cArray.length);*/
+
+            Cell cell = row.getCell(0);
+            assertEquals(Cell.CELL_TYPE_FORMULA, cell.getCellType());
+        }
+        
+        { // overwrite the row
+            Row row = sheet.createRow(0);
+            assertNotNull(row);
+        }
+        
+        { // creating a row in place of another should remove the existing data,
+            // check that the cell is gone now
+            Row row = sheet.getRow(0);
+            
+            /*CTCell[] cArray = ((XSSFRow)row).getCTRow().getCArray();
+            assertEquals(0, cArray.length);*/
+
+            Cell cell = row.getCell(0);
+            assertNull(cell);
+        }
+        
+        // the calculation chain in XSSF is empty in a newly created workbook, so we cannot check if it is correctly updated
+        /*assertNull(((XSSFWorkbook)wb).getCalculationChain());
+        assertNotNull(((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain());
+        assertNotNull(((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain().getCArray());
+        assertEquals(0, ((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain().getCArray().length);*/
+
+        wb.close();
     }
 }

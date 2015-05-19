@@ -34,6 +34,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
@@ -87,6 +90,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
@@ -2502,4 +2506,98 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.close();
         tmp.delete();
     }
+
+    @Test
+    public void test56574() throws IOException {
+        runTest56574(false);
+        runTest56574(true);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void runTest56574(boolean createRow) throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56574.xlsx");
+
+        Sheet sheet = wb.getSheet("Func");
+        assertNotNull(sheet);
+
+        Map<String, Object[]> data;
+        data = new TreeMap<String, Object[]>();
+        data.put("1", new Object[] {"ID", "NAME", "LASTNAME"});
+        data.put("2", new Object[] {2, "Amit", "Shukla"});
+        data.put("3", new Object[] {1, "Lokesh", "Gupta"});
+        data.put("4", new Object[] {4, "John", "Adwards"});
+        data.put("5", new Object[] {2, "Brian", "Schultz"});
+        
+        Set<String> keyset = data.keySet();
+        int rownum = 1;
+        for (String key : keyset)
+        {
+            final Row row;
+            if(createRow) {
+                row = sheet.createRow(rownum++);
+            } else {
+                row = sheet.getRow(rownum++);
+            }
+            assertNotNull(row);
+
+            Object [] objArr = data.get(key);
+            int cellnum = 0;
+            for (Object obj : objArr)
+            {
+                Cell cell = row.getCell(cellnum);
+                if(cell == null){
+                    cell = row.createCell(cellnum);
+                } else {
+                    if(cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+                        cell.setCellFormula(null);
+                        cell.getCellStyle().setDataFormat((short) 0);
+                    }
+                }
+               if(obj instanceof String) {
+                    cell.setCellValue((String)obj);
+               } else if(obj instanceof Integer) {
+                    cell.setCellValue((Integer)obj);
+               }
+               cellnum++;
+            }
+        }
+
+        XSSFFormulaEvaluator.evaluateAllFormulaCells((XSSFWorkbook) wb);
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+        CalculationChain chain = ((XSSFWorkbook)wb).getCalculationChain();
+        CTCalcCell[] cArray = chain.getCTCalcChain().getCArray();
+        for(CTCalcCell calc : cArray) {
+            // A2 to A6 should be gone
+            assertFalse(calc.getR().equals("A2"));
+            assertFalse(calc.getR().equals("A3"));
+            assertFalse(calc.getR().equals("A4"));
+            assertFalse(calc.getR().equals("A5"));
+            assertFalse(calc.getR().equals("A6"));
+        }
+        
+        /*FileOutputStream out = new FileOutputStream(new File("C:\\temp\\56574.xlsx"));
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+        
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        Sheet sheetBack = wbBack.getSheet("Func");
+        assertNotNull(sheetBack);
+
+        chain = ((XSSFWorkbook)wbBack).getCalculationChain();
+        cArray = chain.getCTCalcChain().getCArray();
+        for(CTCalcCell calc : cArray) {
+            // A2 to A6 should be gone
+            assertFalse(calc.getR().equals("A2"));
+            assertFalse(calc.getR().equals("A3"));
+            assertFalse(calc.getR().equals("A4"));
+            assertFalse(calc.getR().equals("A5"));
+            assertFalse(calc.getR().equals("A6"));
+        }
+        
+        wb.close();
+    }    
 }
