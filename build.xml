@@ -173,8 +173,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 	
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.2.201409121644.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.2.201409121644/jacoco-0.7.2.201409121644.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.4.201502262128.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.4.201502262128/jacoco-0.7.4.201502262128.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.0.3.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.0.3/asm-all-5.0.3.jar"/>
 	
@@ -415,6 +415,7 @@ under the License.
 				<include name="commons-logging-1.1.jar"/>
 				<include name="jacoco-0.6*"/>
 				<include name="jacoco-0.7.1*"/>
+				<include name="jacoco-0.7.2*"/>
 				<include name="log4j-1.2.13*"/>
 				<include name="org.jacoco.*-0.6.*"/>
 				<include name="org.jacoco.*-0.7.1*"/>
@@ -942,7 +943,7 @@ under the License.
             <xml destfile="${coverage.dir}/coverage.xml"/>
         </jacoco:report>        
         
-        <echo message="Coverage results are available at coverage\index.html, coverage/coverage.xml" />
+        <echo message="Coverage results are available at ${coverage.dir}/index.html, ${coverage.dir}/coverage.xml" />
     </target>
 
     <target name="-test-main-check">
