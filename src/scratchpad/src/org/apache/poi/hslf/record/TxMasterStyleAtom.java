@@ -182,14 +182,14 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
             head = LittleEndian.getInt(_data, pos);
             pos += LittleEndian.INT_SIZE;
-            TextPropCollection prprops = new TextPropCollection(0);
-            pos += prprops.buildTextPropList( head, getParagraphProps(type, j), _data, pos);
+            TextPropCollection prprops = new TextPropCollection(0, getParagraphProps(type, j));
+            pos += prprops.buildTextPropList( head, _data, pos);
             prstyles[j] = prprops;
 
             head = LittleEndian.getInt(_data, pos);
             pos += LittleEndian.INT_SIZE;
-            TextPropCollection chprops = new TextPropCollection(0);
-            pos += chprops.buildTextPropList( head, getCharacterProps(type, j), _data, pos);
+            TextPropCollection chprops = new TextPropCollection(0, getCharacterProps(type, j));
+            pos += chprops.buildTextPropList( head, _data, pos);
             chstyles[j] = chprops;
         }
 
