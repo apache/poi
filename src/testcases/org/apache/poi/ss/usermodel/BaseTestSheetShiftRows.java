@@ -417,4 +417,13 @@ public abstract class BaseTestSheetShiftRows extends TestCase {
         }
 	}
 
+    public void test47169() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        sheet.createRow(30);
+        sheet.shiftRows(29, 29, 1, true, true);
+        sheet.createRow(30);
+
+        wb.close();
+    }
 }
