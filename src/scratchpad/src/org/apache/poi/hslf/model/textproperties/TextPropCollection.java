@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -33,8 +33,9 @@ import org.apache.poi.util.LittleEndian;
 public class TextPropCollection {
 	private int charactersCovered;
 	private short reservedField;
-	private List<TextProp> textPropList;
+	private final List<TextProp> textPropList = new ArrayList<TextProp>();
     private int maskSpecial = 0;
+    private final TextProp[] potentialPropList;
     
     public int getSpecialMask() { return maskSpecial; }
 
@@ -45,8 +46,7 @@ public class TextPropCollection {
 	
 	/** Fetch the TextProp with this name, or null if it isn't present */
 	public TextProp findByName(String textPropName) {
-		for(int i=0; i<textPropList.size(); i++) {
-			TextProp prop = textPropList.get(i);
+		for(TextProp prop : textPropList) {
 			if(prop.getName().equals(textPropName)) {
 				return prop;
 			}
@@ -57,32 +57,60 @@ public class TextPropCollection {
 	/** Add the TextProp with this name to the list */
 	public TextProp addWithName(String name) {
 		// Find the base TextProp to base on
+		TextProp existing = findByName(name);
+		if (existing != null) return existing;
+		
 		TextProp base = null;
-		for(int i=0; i < StyleTextPropAtom.characterTextPropTypes.length; i++) {
-			if(StyleTextPropAtom.characterTextPropTypes[i].getName().equals(name)) {
-				base = StyleTextPropAtom.characterTextPropTypes[i];
-			}
+		for (TextProp tp : potentialPropList) {
+		    if (tp.getName().equals(name)) {
+		        base = tp;
+		        break;
+		    }
 		}
-		for(int i=0; i < StyleTextPropAtom.paragraphTextPropTypes.length; i++) {
-			if(StyleTextPropAtom.paragraphTextPropTypes[i].getName().equals(name)) {
-				base = StyleTextPropAtom.paragraphTextPropTypes[i];
-			}
-		}
+		
 		if(base == null) {
-			throw new IllegalArgumentException("No TextProp with name " + name + " is defined to add from");
+			throw new IllegalArgumentException("No TextProp with name " + name + " is defined to add from. "
+		        + "Character and paragraphs have their own properties/names.");
 		}
 		
 		// Add a copy of this property, in the right place to the list
 		TextProp textProp = base.clone();
-		int pos = 0;
-		for(int i=0; i<textPropList.size(); i++) {
-			TextProp curProp = textPropList.get(i);
-			if(textProp.getMask() > curProp.getMask()) {
-				pos++;
-			}
-		}
-		textPropList.add(pos, textProp);
+		addProp(textProp);
 		return textProp;
+	}
+	
+	/**
+	 * Add the property at the correct position. Replaces an existing property with the same name.
+	 *
+	 * @param textProp the property to be added
+	 */
+	public void addProp(TextProp textProp) {
+	    assert(textProp != null);
+	    
+        int pos = 0;
+        boolean found = false;
+        for (TextProp curProp : potentialPropList) {
+            String potName = curProp.getName();
+            if (pos == textPropList.size() || potName.equals(textProp.getName())) {
+                if (textPropList.size() > pos && potName.equals(textPropList.get(pos).getName())) {
+                    // replace existing prop (with same name)
+                    textPropList.set(pos, textProp);
+                } else {
+                    textPropList.add(pos, textProp);
+                }
+                found = true;
+                break;
+            }
+            
+            if (potName.equals(textPropList.get(pos).getName())) {
+                pos++;
+            }
+        }
+
+        if(!found) {
+            String err = "TextProp with name " + textProp.getName() + " doesn't belong to this collection.";
+            throw new IllegalArgumentException(err);
+        }
 	}
 
 	/**
@@ -90,12 +118,12 @@ public class TextPropCollection {
 	 *  properties coded for in a given run of properties.
 	 * @return the number of bytes that were used encoding the properties list
 	 */
-	public int buildTextPropList(int containsField, TextProp[] potentialProperties, byte[] data, int dataOffset) {
+	public int buildTextPropList(int containsField, byte[] data, int dataOffset) {
 		int bytesPassed = 0;
 
 		// For each possible entry, see if we match the mask
 		// If we do, decode that, save it, and shuffle on
-		for(TextProp tp : potentialProperties) {
+		for(TextProp tp : potentialPropList) {
 			// Check there's still data left to read
 
 			// Check if this property is found in the mask
@@ -123,7 +151,7 @@ public class TextPropCollection {
                 }
 				prop.setValue(val);
 				bytesPassed += prop.getSize();
-				textPropList.add(prop);
+				addProp(prop);
 			}
 		}
 
@@ -136,20 +164,18 @@ public class TextPropCollection {
 	 *  or character) which will be groked via a subsequent call to
 	 *  buildTextPropList().
 	 */
-	public TextPropCollection(int charactersCovered, short reservedField) {
+	public TextPropCollection(int charactersCovered, short reservedField, TextProp[] potentialPropList) {
 		this.charactersCovered = charactersCovered;
 		this.reservedField = reservedField;
-		textPropList = new ArrayList<TextProp>();
+		this.potentialPropList = potentialPropList;
 	}
 
 	/**
 	 * Create a new collection of text properties (be they paragraph
 	 *  or character) for a run of text without any
 	 */
-	public TextPropCollection(int textSize) {
-		charactersCovered = textSize;
-		reservedField = -1;
-		textPropList = new ArrayList<TextProp>();
+	public TextPropCollection(int textSize, TextProp[] potentialPropList) {
+	    this(textSize, (short)-1, potentialPropList);
 	}
 	
     /**
@@ -158,12 +184,13 @@ public class TextPropCollection {
 	public void copy(TextPropCollection other) {
         this.charactersCovered = other.charactersCovered;
         this.reservedField = other.reservedField;
+        this.maskSpecial = other.maskSpecial;
         this.textPropList.clear();
         for (TextProp tp : other.textPropList) {
             TextProp tpCopy = (tp instanceof BitMaskTextProp)
                 ? ((BitMaskTextProp)tp).cloneAll()
                 : tp.clone();
-            this.textPropList.add(tpCopy);
+            addProp(tpCopy);
         }
 	}
 	
@@ -178,7 +205,7 @@ public class TextPropCollection {
 	/**
 	 * Writes out to disk the header, and then all the properties
 	 */
-	public void writeOut(OutputStream o, TextProp[] potentialProperties) throws IOException {
+	public void writeOut(OutputStream o) throws IOException {
 		// First goes the number of characters we affect
 		StyleTextPropAtom.writeLittleEndian(charactersCovered,o);
 
@@ -201,12 +228,17 @@ public class TextPropCollection {
 		StyleTextPropAtom.writeLittleEndian(mask,o);
 
 		// Then the contents of all the properties
-		for (TextProp potProp : potentialProperties) {
+		for (TextProp potProp : potentialPropList) {
     		for(TextProp textProp : textPropList) {
     		    if (!textProp.getName().equals(potProp.getName())) continue;
                 int val = textProp.getValue();
-                if (textProp instanceof BitMaskTextProp && val == 0) {
+                if (textProp instanceof BitMaskTextProp && val == 0
+                    && !(textProp instanceof ParagraphFlagsTextProp)
+//                    && !(textProp instanceof CharFlagsTextProp)
+                ) {
                     // don't add empty properties, as they can't be recognized while reading
+                    // strangely this doesn't apply for ParagraphFlagsTextProp in contrast
+                    // to the documentation in 2.9.20 TextPFException
                     continue;
                 } else if (textProp.getSize() == 2) {
     				StyleTextPropAtom.writeLittleEndian((short)val,o);
@@ -264,4 +296,26 @@ public class TextPropCollection {
         return true;
     }
 
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        out.append("  chars covered: " + getCharactersCovered());
+        out.append("  special mask flags: 0x" + HexDump.toHex(getSpecialMask()) + "\n");
+        for(TextProp p : getTextPropList()) {
+            out.append("    " + p.getName() + " = " + p.getValue() );
+            out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
+        }
+
+        out.append("  bytes that would be written: \n");
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            writeOut(baos);
+            byte[] b = baos.toByteArray();
+            out.append(HexDump.dump(b, 0, 0));
+        } catch (Exception e ) {
+            e.printStackTrace();
+        }
+        
+        return out.toString();
+    }
 }

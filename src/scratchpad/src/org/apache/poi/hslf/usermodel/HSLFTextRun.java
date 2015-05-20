@@ -23,6 +23,7 @@ import java.awt.Color;
 
 import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -44,7 +45,7 @@ public final class HSLFTextRun implements TextRun {
 	 * Our paragraph and character style.
 	 * Note - we may share these styles with other RichTextRuns
 	 */
-	private TextPropCollection characterStyle = new TextPropCollection(0);
+	private TextPropCollection characterStyle = new TextPropCollection(0, StyleTextPropAtom.characterTextPropTypes);
 
 	/**
 	 * Create a new wrapper around a rich text string
@@ -163,7 +164,7 @@ public final class HSLFTextRun implements TextRun {
 	public void setCharTextPropVal(String propName, int val) {
 		// Ensure we have the StyleTextProp atom we're going to need
 		if(characterStyle == null) {
-		    characterStyle = new TextPropCollection(1);
+		    characterStyle = new TextPropCollection(1, StyleTextPropAtom.characterTextPropTypes);
 			// characterStyle will now be defined
 		}
 
@@ -376,7 +377,7 @@ public final class HSLFTextRun implements TextRun {
     protected void setFlag(int index, boolean value) {
         // Ensure we have the StyleTextProp atom we're going to need
         if (characterStyle == null) {
-            characterStyle = new TextPropCollection(1);
+            characterStyle = new TextPropCollection(1, StyleTextPropAtom.characterTextPropTypes);
         }
 
         BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(characterStyle, CharFlagsTextProp.NAME);
