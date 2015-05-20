@@ -567,7 +567,7 @@ public class DateUtil {
 
     private static int daysInPriorYears(int yr, boolean use1904windowing)
     {
-        if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1900)) {
+        if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1904)) {
             throw new IllegalArgumentException("'year' must be 1900 or greater");
         }
 
