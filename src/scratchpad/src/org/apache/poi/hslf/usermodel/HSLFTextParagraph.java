@@ -18,12 +18,11 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.*;
@@ -54,7 +53,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 	private TextBytesAtom  _byteAtom;
 	private TextCharsAtom  _charAtom;
 	private StyleTextPropAtom _styleAtom;
-	private TextPropCollection _paragraphStyle = new TextPropCollection(1, StyleTextPropAtom.paragraphTextPropTypes);
+	private TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
 
     protected TextRulerAtom _ruler;
 	protected List<HSLFTextRun> _runs = new ArrayList<HSLFTextRun>();
@@ -407,7 +406,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * @return indentation level
     */
    public int getIndentLevel() {
-       return _paragraphStyle == null ? 0 : _paragraphStyle.getReservedField();
+       return _paragraphStyle == null ? 0 : _paragraphStyle.getIndentLevel();
    }
 
    /**
@@ -416,7 +415,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * @param level indentation level. Must be in the range [0, 4]
     */
    public void setIndentLevel(int level) {
-       if( _paragraphStyle != null ) _paragraphStyle.setReservedField((short)level);
+       if( _paragraphStyle != null ) _paragraphStyle.setIndentLevel((short)level);
    }
 
    /**
@@ -591,11 +590,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     */
     protected static TextProp fetchOrAddTextProp(TextPropCollection textPropCol, String textPropName) {
         // Fetch / Add the TextProp
-        TextProp tp = textPropCol.findByName(textPropName);
-        if (tp == null) {
-            tp = textPropCol.addWithName(textPropName);
-        }
-        return tp;
+        return textPropCol.addWithName(textPropName);
     }
 
     protected boolean getFlag(int index) {
@@ -621,7 +616,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
    protected void setFlag(int index, boolean value) {
        // Ensure we have the StyleTextProp atom we're going to need
        if(_paragraphStyle == null) {
-           _paragraphStyle = new TextPropCollection(1, StyleTextPropAtom.paragraphTextPropTypes);
+           _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
        }
 
        BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(_paragraphStyle, ParagraphFlagsTextProp.NAME);
@@ -747,9 +742,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
        
        for (HSLFTextParagraph p : paragraphs) {
            if (newRecord == byteAtom) {
+               p._byteAtom = byteAtom;
                p._charAtom = null;
            } else {
                p._byteAtom = null;
+               p._charAtom = charAtom;
            }
        }
        
@@ -825,8 +822,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
                htp.setShapeId(prevHtp.getShapeId());
                htp.supplySheet(prevHtp.getSheet());
                paragraphs.add(htp);
-               isFirst = false;
            }
+           isFirst = false;
            
            TextPropCollection tpc = htr.getCharacterStyle();
            // special case, last text run is empty, we will reuse it
@@ -1083,7 +1080,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
                     ccRun += ccStyle-ccRun;
                 }
 
-                TextPropCollection pCopy = new TextPropCollection(0, StyleTextPropAtom.characterTextPropTypes);
+                TextPropCollection pCopy = new TextPropCollection(0, TextPropType.character);
                 pCopy.copy(p);
                 trun.setCharacterStyle(pCopy);
 
@@ -1117,7 +1114,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             for (int ccPara = 0, ccStyle = p.getCharactersCovered(); ccPara < ccStyle; paraIdx++) {
                 if (paraIdx >= paragraphs.size() || ccPara >= ccStyle-1) return;
                 HSLFTextParagraph htp = paragraphs.get(paraIdx);
-                TextPropCollection pCopy = new TextPropCollection(0, StyleTextPropAtom.paragraphTextPropTypes);
+                TextPropCollection pCopy = new TextPropCollection(0, TextPropType.paragraph);
                 pCopy.copy(p);
                 htp.setParagraphStyle(pCopy);
                 int len = 0;
@@ -1165,16 +1162,16 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null, sta);
         htp.setParagraphStyle(paraStyle);
         htp._records = new Record[0];
-        htp.setBullet(false);
-        htp.setLineSpacing(100);
-        htp.setLeftMargin(0);
-        htp.setIndent(0);
+//        htp.setBullet(false);
+//        htp.setLineSpacing(100);
+//        htp.setLeftMargin(0);
+//        htp.setIndent(0);
         // set wrap flags
 
         HSLFTextRun htr = new HSLFTextRun(htp);
         htr.setCharacterStyle(charStyle);
         htr.setText("\r");
-        htr.setFontColor(Color.black);
+//        htr.setFontColor(Color.black);
         htp.addTextRun(htr);
 
         return Arrays.asList(htp);

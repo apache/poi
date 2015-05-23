@@ -48,26 +48,42 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	}
 	
 	/**
-	 * As we're purely mask based, just set flags for stuff
-	 *  that is set
+	 * Calculate mask from the subPropMatches.
 	 */
 	public int getWriteMask() {
-		return dataValue;
+	    /*
+	     * The dataValue can't be taken as a mask, as sometimes certain properties
+	     * are explicitly set to false, i.e. the mask says the property is defined
+	     * but in the actually nibble the property is set to false
+	     */ 
+	    int mask = 0, i = 0;
+	    for (int subMask : subPropMasks) {
+	        if (subPropMatches[i++]) mask |= subMask;
+	    }
+		return mask;
+	}
+
+	public void setWriteMask(int containsField) {
+        int i = 0;
+        for (int subMask : subPropMasks) {
+            if ((containsField & subMask) != 0) subPropMatches[i] = true;
+            i++;
+        }
 	}
 	
 	/**
 	 * Set the value of the text property, and recompute the sub
-	 *  properties based on it
+	 * properties based on it, i.e. all unset subvalues won't be saved.
+	 * Use {@link #setSubValue(boolean, int)} to explicitly set subvalues to {@code false}. 
 	 */
+	@Override
 	public void setValue(int val) { 
 		dataValue = val;
 
 		// Figure out the values of the sub properties
-		for(int i=0; i< subPropMatches.length; i++) {
-			subPropMatches[i] = false;
-			if((dataValue & subPropMasks[i]) != 0) {
-				subPropMatches[i] = true;
-			}
+		int i = 0;
+		for(int mask : subPropMasks) {
+		    subPropMatches[i++] = ((val & mask) != 0);
 		}
 	}
 
@@ -75,16 +91,19 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	 * Fetch the true/false status of the subproperty with the given index
 	 */
 	public boolean getSubValue(int idx) {
-		return subPropMatches[idx];
+		return (dataValue & subPropMasks[idx]) != 0;
 	}
 
 	/**
 	 * Set the true/false status of the subproperty with the given index
 	 */
 	public void setSubValue(boolean value, int idx) {
-		if (subPropMatches[idx] == value) return; 
-        subPropMatches[idx] = value;
-		dataValue ^= subPropMasks[idx];
+        subPropMatches[idx] = true;
+        if (value) {
+            dataValue |= subPropMasks[idx];
+        } else {
+            dataValue &= ~subPropMasks[idx];
+        }
 	}
 	
 	@Override
