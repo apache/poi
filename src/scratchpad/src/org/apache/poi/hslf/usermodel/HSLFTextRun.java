@@ -22,8 +22,8 @@ import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.fetchOrAddTextProp
 import java.awt.Color;
 
 import org.apache.poi.hslf.model.textproperties.*;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -45,7 +45,7 @@ public final class HSLFTextRun implements TextRun {
 	 * Our paragraph and character style.
 	 * Note - we may share these styles with other RichTextRuns
 	 */
-	private TextPropCollection characterStyle = new TextPropCollection(0, StyleTextPropAtom.characterTextPropTypes);
+	private TextPropCollection characterStyle = new TextPropCollection(1, TextPropType.character);
 
 	/**
 	 * Create a new wrapper around a rich text string
@@ -60,6 +60,7 @@ public final class HSLFTextRun implements TextRun {
 	}
 
 	public void setCharacterStyle(TextPropCollection characterStyle) {
+	    assert(characterStyle != null);
 	    this.characterStyle = characterStyle;
 	}
 	
@@ -162,12 +163,6 @@ public final class HSLFTextRun implements TextRun {
 	 * @param val The value to set for the TextProp
 	 */
 	public void setCharTextPropVal(String propName, int val) {
-		// Ensure we have the StyleTextProp atom we're going to need
-		if(characterStyle == null) {
-		    characterStyle = new TextPropCollection(1, StyleTextPropAtom.characterTextPropTypes);
-			// characterStyle will now be defined
-		}
-
 		TextProp tp = fetchOrAddTextProp(characterStyle, propName);
 		tp.setValue(val);
 	}
@@ -375,11 +370,6 @@ public final class HSLFTextRun implements TextRun {
 	}
 
     protected void setFlag(int index, boolean value) {
-        // Ensure we have the StyleTextProp atom we're going to need
-        if (characterStyle == null) {
-            characterStyle = new TextPropCollection(1, StyleTextPropAtom.characterTextPropTypes);
-        }
-
         BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(characterStyle, CharFlagsTextProp.NAME);
         prop.setSubValue(value, index);
     }

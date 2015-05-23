@@ -76,9 +76,9 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
 
         TextProp prop = null;
         for (int i = level; i >= 0; i--) {
-            TextPropCollection[] styles =
+            List<TextPropCollection> styles =
                     isCharacter ? _txmaster[txtype].getCharacterStyles() : _txmaster[txtype].getParagraphStyles();
-            if (i < styles.length) prop = styles[i].findByName(name);
+            if (i < styles.size()) prop = styles.get(i).findByName(name);
             if (prop != null) break;
         }
         if (prop == null) {

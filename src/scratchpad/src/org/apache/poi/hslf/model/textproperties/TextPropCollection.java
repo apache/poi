@@ -28,15 +28,128 @@ import org.apache.poi.util.LittleEndian;
  * For a given run of characters, holds the properties (which could
  *  be paragraph properties or character properties).
  * Used to hold the number of characters affected, the list of active
- *  properties, and the random reserved field if required.
+ *  properties, and the indent level if required.
  */
 public class TextPropCollection {
-	private int charactersCovered;
-	private short reservedField;
+    /*
+    private static TextProp paragraphSpecialPropTypes[] = {
+        new ParagraphFlagsTextProp(),
+        new TextProp(2, 0x80, "bullet.char"),
+        new TextProp(2, 0x10, "bullet.font"),
+        new TextProp(2, 0x40, "bullet.size"),
+        new TextProp(4, 0x20, "bullet.color"),
+        new TextProp(2, 0xD00, "alignment"),
+        new TextProp(2, 0x1000, "linespacing"),
+        new TextProp(2, 0x2000, "spacebefore"),
+        new TextProp(2, 0x4000, "spaceafter"),
+        new TextProp(2, 0x8000, "text.offset"),
+        new TextProp(2, 0x10000, "bullet.offset"),
+        new TextProp(2, 0x20000, "defaulttab"),
+        new TextProp(2, 0x40000, "para_unknown_2"),
+        new TextProp(2, 0x80000, "para_unknown_3"),
+        new TextProp(2, 0x100000, "para_unknown_4"),
+        new TextProp(2, 0x200000, "para_unknown_5")
+    };
+
+    private static TextProp characterSpecialPropTypes[] = {
+        new CharFlagsTextProp(),
+        new TextProp(2, 0x10000, "font.index"),
+        new TextProp(2, 0x20000, "char_unknown_1"),
+        new TextProp(4, 0x40000, "char_unknown_2"),
+        new TextProp(2, 0x80000, "font.size"),
+        new TextProp(2, 0x100000, "char_unknown_3"),
+        new TextProp(4, 0x200000, "font.color"),
+        new TextProp(2, 0x800000, "char_unknown_4")
+    };
+*/    
+
+    
+    /** All the different kinds of paragraph properties we might handle */
+    public static final TextProp[] paragraphTextPropTypes = {
+        // TextProp order is according to 2.9.20 TextPFException,
+        // bitmask order can be different
+//        new TextProp(0, 0x1, "hasBullet"),
+//        new TextProp(0, 0x2, "hasBulletFont"),
+//        new TextProp(0, 0x4, "hasBulletColor"),
+//        new TextProp(0, 0x8, "hasBulletSize"),
+        new ParagraphFlagsTextProp(),
+        new TextProp(2, 0x80, "bullet.char"),
+        new TextProp(2, 0x10, "bullet.font"),
+        new TextProp(2, 0x40, "bullet.size"),
+        new TextProp(4, 0x20, "bullet.color"),
+        new TextAlignmentProp(),
+        new TextProp(2, 0x1000, "linespacing"),
+        new TextProp(2, 0x2000, "spacebefore"),
+        new TextProp(2, 0x4000, "spaceafter"),
+        new TextProp(2, 0x100, "text.offset"), // left margin
+        // 0x200 - Undefined and MUST be ignored
+        new TextProp(2, 0x400, "bullet.offset"), // indent
+        new TextProp(2, 0x8000, "defaultTabSize"),
+        new TabStopPropCollection(), // tabstops size is variable!
+        new FontAlignmentProp(),
+        new TextProp(2, 0xE0000, "wrapFlags"), // charWrap | wordWrap | overflow
+        new TextProp(2, 0x200000, "textDirection"),
+        // 0x400000 MUST be zero and MUST be ignored
+        new TextProp(0, 0x800000, "bullet.blip"), // TODO: check size
+        new TextProp(0, 0x1000000, "bullet.scheme"), // TODO: check size
+        new TextProp(0, 0x2000000, "hasBulletScheme"), // TODO: check size
+        // 0xFC000000 MUST be zero and MUST be ignored
+    };
+    /** All the different kinds of character properties we might handle */
+    public static final TextProp[] characterTextPropTypes = new TextProp[] {
+//        new TextProp(0, 0x1, "bold"),
+//        new TextProp(0, 0x2, "italic"),
+//        new TextProp(0, 0x4, "underline"),
+//        new TextProp(0, 0x8, "unused1"),
+//        new TextProp(0, 0x10, "shadow"),
+//        new TextProp(0, 0x20, "fehint"),
+//        new TextProp(0, 0x40, "unused2"),
+//        new TextProp(0, 0x80, "kumi"),
+//        new TextProp(0, 0x100, "strikethrough"),
+//        new TextProp(0, 0x200, "emboss"),
+//        new TextProp(0, 0x400, "nibble1"),
+//        new TextProp(0, 0x800, "nibble2"),
+//        new TextProp(0, 0x1000, "nibble3"),
+//        new TextProp(0, 0x2000, "nibble4"),
+//        new TextProp(0, 0x4000, "unused4"),
+//        new TextProp(0, 0x8000, "unused5"),
+        new TextProp(0, 0x100000, "pp10ext"),
+        new TextProp(0, 0x1000000, "newAsian.font.index"), // A bit that specifies whether the newEAFontRef field of the TextCFException10 structure that contains this CFMasks exists.
+        new TextProp(0, 0x2000000, "cs.font.index"), // A bit that specifies whether the csFontRef field of the TextCFException10 structure that contains this CFMasks exists.
+        new TextProp(0, 0x4000000, "pp11ext"), // A bit that specifies whether the pp11ext field of the TextCFException10 structure that contains this CFMasks exists.
+        new CharFlagsTextProp(),
+        new TextProp(2, 0x10000, "font.index"),
+        new TextProp(2, 0x200000, "asian.font.index"),
+        new TextProp(2, 0x400000, "ansi.font.index"),
+        new TextProp(2, 0x800000, "symbol.font.index"),
+        new TextProp(2, 0x20000, "font.size"),
+        new TextProp(4, 0x40000, "font.color"),
+        new TextProp(2, 0x80000, "superscript")
+    };
+
+    public enum TextPropType {
+        paragraph, character;
+    }
+    
+    private int charactersCovered;
+	
+    // indentLevel is only valid for paragraph collection
+    // if it's set to -1, it must be omitted - see 2.9.36 TextMasterStyleLevel
+    private short indentLevel = 0;
 	private final List<TextProp> textPropList = new ArrayList<TextProp>();
     private int maskSpecial = 0;
-    private final TextProp[] potentialPropList;
+    private final TextPropType textPropType;
     
+    /**
+     * Create a new collection of text properties (be they paragraph
+     *  or character) which will be groked via a subsequent call to
+     *  buildTextPropList().
+     */
+    public TextPropCollection(int charactersCovered, TextPropType textPropType) {
+        this.charactersCovered = charactersCovered;
+        this.textPropType = textPropType;
+    }
+
     public int getSpecialMask() { return maskSpecial; }
 
 	/** Fetch the number of characters this styling applies to */
@@ -61,7 +174,7 @@ public class TextPropCollection {
 		if (existing != null) return existing;
 		
 		TextProp base = null;
-		for (TextProp tp : potentialPropList) {
+		for (TextProp tp : getPotentialProperties()) {
 		    if (tp.getName().equals(name)) {
 		        base = tp;
 		        break;
@@ -78,6 +191,10 @@ public class TextPropCollection {
 		addProp(textProp);
 		return textProp;
 	}
+
+	private TextProp[] getPotentialProperties() {
+	    return (textPropType == TextPropType.paragraph) ? paragraphTextPropTypes : characterTextPropTypes;
+	}
 	
 	/**
 	 * Add the property at the correct position. Replaces an existing property with the same name.
@@ -89,7 +206,7 @@ public class TextPropCollection {
 	    
         int pos = 0;
         boolean found = false;
-        for (TextProp curProp : potentialPropList) {
+        for (TextProp curProp : getPotentialProperties()) {
             String potName = curProp.getName();
             if (pos == textPropList.size() || potName.equals(textProp.getName())) {
                 if (textPropList.size() > pos && potName.equals(textPropList.get(pos).getName())) {
@@ -123,7 +240,7 @@ public class TextPropCollection {
 
 		// For each possible entry, see if we match the mask
 		// If we do, decode that, save it, and shuffle on
-		for(TextProp tp : potentialPropList) {
+		for(TextProp tp : getPotentialProperties()) {
 			// Check there's still data left to read
 
 			// Check if this property is found in the mask
@@ -150,6 +267,9 @@ public class TextPropCollection {
                     continue;
                 }
 				prop.setValue(val);
+				if (prop instanceof BitMaskTextProp) {
+				    ((BitMaskTextProp)prop).setWriteMask(containsField);
+				}
 				bytesPassed += prop.getSize();
 				addProp(prop);
 			}
@@ -159,31 +279,12 @@ public class TextPropCollection {
 		return bytesPassed;
 	}
 
-	/**
-	 * Create a new collection of text properties (be they paragraph
-	 *  or character) which will be groked via a subsequent call to
-	 *  buildTextPropList().
-	 */
-	public TextPropCollection(int charactersCovered, short reservedField, TextProp[] potentialPropList) {
-		this.charactersCovered = charactersCovered;
-		this.reservedField = reservedField;
-		this.potentialPropList = potentialPropList;
-	}
-
-	/**
-	 * Create a new collection of text properties (be they paragraph
-	 *  or character) for a run of text without any
-	 */
-	public TextPropCollection(int textSize, TextProp[] potentialPropList) {
-	    this(textSize, (short)-1, potentialPropList);
-	}
-	
     /**
      * Clones the given text properties
      */
 	public void copy(TextPropCollection other) {
         this.charactersCovered = other.charactersCovered;
-        this.reservedField = other.reservedField;
+        this.indentLevel = other.indentLevel;
         this.maskSpecial = other.maskSpecial;
         this.textPropList.clear();
         for (TextProp tp : other.textPropList) {
@@ -209,17 +310,17 @@ public class TextPropCollection {
 		// First goes the number of characters we affect
 		StyleTextPropAtom.writeLittleEndian(charactersCovered,o);
 
-		// Then we have the reserved field if required
-		if(reservedField > -1) {
-			StyleTextPropAtom.writeLittleEndian(reservedField,o);
+		// Then we have the indentLevel field if it's a paragraph collection
+		if (textPropType == TextPropType.paragraph && indentLevel > -1) {
+			StyleTextPropAtom.writeLittleEndian(indentLevel, o);
 		}
 
 		// Then the mask field
 		int mask = maskSpecial;
-		for(TextProp textProp : textPropList) {
-            //sometimes header indicates that the bitmask is present but its value is 0
+		for (TextProp textProp : textPropList) {
+            // sometimes header indicates that the bitmask is present but its value is 0
             if (textProp instanceof BitMaskTextProp) {
-                if(mask == 0) mask |=  textProp.getWriteMask();
+                if (mask == 0) mask |= textProp.getWriteMask();
             }
             else {
                 mask |= textProp.getWriteMask();
@@ -228,17 +329,12 @@ public class TextPropCollection {
 		StyleTextPropAtom.writeLittleEndian(mask,o);
 
 		// Then the contents of all the properties
-		for (TextProp potProp : potentialPropList) {
+		for (TextProp potProp : getPotentialProperties()) {
     		for(TextProp textProp : textPropList) {
     		    if (!textProp.getName().equals(potProp.getName())) continue;
                 int val = textProp.getValue();
-                if (textProp instanceof BitMaskTextProp && val == 0
-                    && !(textProp instanceof ParagraphFlagsTextProp)
-//                    && !(textProp instanceof CharFlagsTextProp)
-                ) {
+                if (textProp instanceof BitMaskTextProp && textProp.getWriteMask() == 0) {
                     // don't add empty properties, as they can't be recognized while reading
-                    // strangely this doesn't apply for ParagraphFlagsTextProp in contrast
-                    // to the documentation in 2.9.20 TextPFException
                     continue;
                 } else if (textProp.getSize() == 2) {
     				StyleTextPropAtom.writeLittleEndian((short)val,o);
@@ -249,12 +345,15 @@ public class TextPropCollection {
 		}
 	}
 
-    public short getReservedField(){
-        return reservedField;
+    public short getIndentLevel(){
+        return indentLevel;
     }
 
-    public void setReservedField(short val){
-        reservedField = val;
+    public void setIndentLevel(short indentLevel) {
+        if (textPropType == TextPropType.character) {
+            throw new RuntimeException("trying to set an indent on a character collection.");
+        }
+        this.indentLevel = indentLevel;
     }
     
     public int hashCode() {
@@ -262,7 +361,7 @@ public class TextPropCollection {
         int result = 1;
         result = prime * result + charactersCovered;
         result = prime * result + maskSpecial;
-        result = prime * result + reservedField;
+        result = prime * result + indentLevel;
         result = prime * result + ((textPropList == null) ? 0 : textPropList.hashCode());
         return result;
     }
@@ -275,7 +374,7 @@ public class TextPropCollection {
         if (getClass() != other.getClass()) return false;
         
         TextPropCollection o = (TextPropCollection)other;
-        if (o.maskSpecial != this.maskSpecial || o.reservedField != this.reservedField) {
+        if (o.maskSpecial != this.maskSpecial || o.indentLevel != this.indentLevel) {
             return false;
         }
 
@@ -303,6 +402,16 @@ public class TextPropCollection {
         for(TextProp p : getTextPropList()) {
             out.append("    " + p.getName() + " = " + p.getValue() );
             out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
+            if (p instanceof BitMaskTextProp) {
+                BitMaskTextProp bm = (BitMaskTextProp)p;
+                int i = 0;
+                for (String s : bm.getSubPropNames()) {
+                    if (bm.getSubPropMatches()[i]) {
+                        out.append("          " + s + " = " + bm.getSubValue(i) + "\n");
+                    }
+                    i++;
+                }
+            }
         }
 
         out.append("  bytes that would be written: \n");

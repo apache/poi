@@ -20,6 +20,7 @@ package org.apache.poi.hslf.examples;
 import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.TextHeaderAtom;
@@ -113,33 +114,29 @@ public final class ApacheconEU08 {
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(28);
         box2.setRunType(TextHeaderAtom.BODY_TYPE);
         box2.setText(
-                "HSLF provides a way to read, create and modify MS PowerPoint presentations\r" +
-                "Pure Java API - you don't need PowerPoint to read and write *.ppt files\r" +
-                "Comprehensive support of PowerPoint objects");
-        box2.setAnchor(new Rectangle(36, 80, 648, 200));
-        slide.addShape(box2);
-
-        HSLFTextBox box3 = new HSLFTextBox();
-        box2.getTextParagraphs().get(0).setIndentLevel(1);
-        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(24);
-        box3.setRunType(TextHeaderAtom.BODY_TYPE);
-        box3.setText(
+            "HSLF provides a way to read, create and modify MS PowerPoint presentations\r" +
+            "Pure Java API - you don't need PowerPoint to read and write *.ppt files\r" +
+            "Comprehensive support of PowerPoint objects\r" +
                 "Rich text\r" +
                 "Tables\r" +
                 "Shapes\r" +
                 "Pictures\r" +
-                "Master slides");
-        box3.setAnchor(new Rectangle(36, 265, 648, 150));
-        slide.addShape(box3);
+                "Master slides\r" +
+            "Access to low level data structures"
+        );
 
-        HSLFTextBox box4 = new HSLFTextBox();
-        box4.setRunType(TextHeaderAtom.BODY_TYPE);
-        box4.setText("Access to low level data structures");
-        box4.setAnchor(new Rectangle(36, 430, 648, 50));
-        slide.addShape(box4);
+        List<HSLFTextParagraph> tp = box2.getTextParagraphs();
+        for (int i : new byte[]{0,1,2,8}) {
+            tp.get(i).getTextRuns().get(0).setFontSize(28);
+        }
+        for (int i : new byte[]{3,4,5,6,7}) {
+            tp.get(i).getTextRuns().get(0).setFontSize(24);
+            tp.get(i).setIndentLevel(1);
+        }
+        box2.setAnchor(new Rectangle(36, 80, 648, 400));
+        slide.addShape(box2);
     }
 
     public static void slide4(HSLFSlideShow ppt) throws IOException {
@@ -238,40 +235,41 @@ public final class ApacheconEU08 {
         rt3.setFontName("Courier New");
         rt3.setFontSize(8);
         box3.setText(
-                "        SlideShow ppt = new SlideShow();\r" +
-                "        Slide slide = ppt.createSlide();\r" +
-                "\r" +
-                "        TextBox box2 = new TextBox();\r" +
-                "        box2.setHorizontalAlignment(TextBox.AlignCenter);\r" +
-                "        box2.setVerticalAlignment(TextBox.AnchorMiddle);\r" +
-                "        box2.getTextRun().setText(\"Java Code\");\r" +
-                "        box2.getFill().setForegroundColor(new Color(187, 224, 227));\r" +
-                "        box2.setLineColor(Color.black);\r" +
-                "        box2.setLineWidth(0.75);\r" +
-                "        box2.setAnchor(new Rectangle(66, 243, 170, 170));\r" +
-                "        slide.addShape(box2);\r" +
-                "\r" +
-                "        TextBox box3 = new TextBox();\r" +
-                "        box3.setHorizontalAlignment(TextBox.AlignCenter);\r" +
-                "        box3.setVerticalAlignment(TextBox.AnchorMiddle);\r" +
-                "        box3.getTextRun().setText(\"*.ppt file\");\r" +
-                "        box3.setLineWidth(0.75);\r" +
-                "        box3.setLineColor(Color.black);\r" +
-                "        box3.getFill().setForegroundColor(new Color(187, 224, 227));\r" +
-                "        box3.setAnchor(new Rectangle(473, 243, 170, 170));\r" +
-                "        slide.addShape(box3);\r" +
-                "\r" +
-                "        AutoShape box4 = new AutoShape(ShapeTypes.Arrow);\r" +
-                "        box4.getFill().setForegroundColor(new Color(187, 224, 227));\r" +
-                "        box4.setLineWidth(0.75);\r" +
-                "        box4.setLineColor(Color.black);\r" +
-                "        box4.setAnchor(new Rectangle(253, 288, 198, 85));\r" +
-                "        slide.addShape(box4);\r" +
-                "\r" +
-                "        FileOutputStream out = new FileOutputStream(\"hslf-demo.ppt\");\r" +
-                "        ppt.write(out);\r" +
-                "        out.close();");
+                "SlideShow ppt = new SlideShow();\u000b" +
+                "Slide slide = ppt.createSlide();\u000b" +
+                "\u000b" +
+                "TextBox box2 = new TextBox();\u000b" +
+                "box2.setHorizontalAlignment(TextBox.AlignCenter);\u000b" +
+                "box2.setVerticalAlignment(TextBox.AnchorMiddle);\u000b" +
+                "box2.getTextRun().setText(\"Java Code\");\u000b" +
+                "box2.getFill().setForegroundColor(new Color(187, 224, 227));\u000b" +
+                "box2.setLineColor(Color.black);\u000b" +
+                "box2.setLineWidth(0.75);\u000b" +
+                "box2.setAnchor(new Rectangle(66, 243, 170, 170));\u000b" +
+                "slide.addShape(box2);\u000b" +
+                "\u000b" +
+                "TextBox box3 = new TextBox();\u000b" +
+                "box3.setHorizontalAlignment(TextBox.AlignCenter);\u000b" +
+                "box3.setVerticalAlignment(TextBox.AnchorMiddle);\u000b" +
+                "box3.getTextRun().setText(\"*.ppt file\");\u000b" +
+                "box3.setLineWidth(0.75);\u000b" +
+                "box3.setLineColor(Color.black);\u000b" +
+                "box3.getFill().setForegroundColor(new Color(187, 224, 227));\u000b" +
+                "box3.setAnchor(new Rectangle(473, 243, 170, 170));\u000b" +
+                "slide.addShape(box3);\u000b" +
+                "\u000b" +
+                "AutoShape box4 = new AutoShape(ShapeTypes.Arrow);\u000b" +
+                "box4.getFill().setForegroundColor(new Color(187, 224, 227));\u000b" +
+                "box4.setLineWidth(0.75);\u000b" +
+                "box4.setLineColor(Color.black);\u000b" +
+                "box4.setAnchor(new Rectangle(253, 288, 198, 85));\u000b" +
+                "slide.addShape(box4);\u000b" +
+                "\u000b" +
+                "FileOutputStream out = new FileOutputStream(\"hslf-demo.ppt\");\u000b" +
+                "ppt.write(out);\u000b" +
+                "out.close();");
         box3.setAnchor(new Rectangle(30, 150, 618, 411));
+        box3.setHorizontalCentered(true);
         slide.addShape(box3);
     }
 
@@ -346,45 +344,46 @@ public final class ApacheconEU08 {
         rt3.setFontName("Courier New");
         rt3.setFontSize(8);
         box3.setText(
-                "        //bar chart data. The first value is the bar color, the second is the width\r" +
-                "        Object[] def = new Object[]{\r" +
-                "            Color.yellow, new Integer(100),\r" +
-                "            Color.green, new Integer(150),\r" +
-                "            Color.gray, new Integer(75),\r" +
-                "            Color.red, new Integer(200),\r" +
-                "        };\r" +
-                "\r" +
-                "        SlideShow ppt = new SlideShow();\r" +
-                "        Slide slide = ppt.createSlide();\r" +
-                "\r" +
-                "        ShapeGroup group = new ShapeGroup();\r" +
-                "        //define position of the drawing in the slide\r" +
-                "        Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);\r" +
-                "        group.setAnchor(bounds);\r" +
-                "        slide.addShape(group);\r" +
-                "        Graphics2D graphics = new PPGraphics2D(group);\r" +
-                "\r" +
-                "        //draw a simple bar graph\r" +
-                "        int x = bounds.x + 50, y = bounds.y + 50;\r" +
-                "        graphics.setFont(new Font(\"Arial\", Font.BOLD, 10));\r" +
-                "        for (int i = 0, idx = 1; i < def.length; i+=2, idx++) {\r" +
-                "            graphics.setColor(Color.black);\r" +
-                "            int width = ((Integer)def[i+1]).intValue();\r" +
-                "            graphics.drawString(\"Q\" + idx, x-20, y+20);\r" +
-                "            graphics.drawString(width + \"%\", x + width + 10, y + 20);\r" +
-                "            graphics.setColor((Color)def[i]);\r" +
-                "            graphics.fill(new Rectangle(x, y, width, 30));\r" +
-                "            y += 40;\r" +
-                "        }\r" +
-                "        graphics.setColor(Color.black);\r" +
-                "        graphics.setFont(new Font(\"Arial\", Font.BOLD, 14));\r" +
-                "        graphics.draw(bounds);\r" +
-                "        graphics.drawString(\"Performance\", x + 70, y + 40);\r" +
-                "\r" +
-                "        FileOutputStream out = new FileOutputStream(\"hslf-demo.ppt\");\r" +
-                "        ppt.write(out);\r" +
-                "        out.close();");
+                "//bar chart data. The first value is the bar color, the second is the width\u000b" +
+                "Object[] def = new Object[]{\u000b" +
+                "    Color.yellow, new Integer(100),\u000b" +
+                "    Color.green, new Integer(150),\u000b" +
+                "    Color.gray, new Integer(75),\u000b" +
+                "    Color.red, new Integer(200),\u000b" +
+                "};\u000b" +
+                "\u000b" +
+                "SlideShow ppt = new SlideShow();\u000b" +
+                "Slide slide = ppt.createSlide();\u000b" +
+                "\u000b" +
+                "ShapeGroup group = new ShapeGroup();\u000b" +
+                "//define position of the drawing in the slide\u000b" +
+                "Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);\u000b" +
+                "group.setAnchor(bounds);\u000b" +
+                "slide.addShape(group);\u000b" +
+                "Graphics2D graphics = new PPGraphics2D(group);\u000b" +
+                "\u000b" +
+                "//draw a simple bar graph\u000b" +
+                "int x = bounds.x + 50, y = bounds.y + 50;\u000b" +
+                "graphics.setFont(new Font(\"Arial\", Font.BOLD, 10));\u000b" +
+                "for (int i = 0, idx = 1; i < def.length; i+=2, idx++) {\u000b" +
+                "    graphics.setColor(Color.black);\u000b" +
+                "    int width = ((Integer)def[i+1]).intValue();\u000b" +
+                "    graphics.drawString(\"Q\" + idx, x-20, y+20);\u000b" +
+                "    graphics.drawString(width + \"%\", x + width + 10, y + 20);\u000b" +
+                "    graphics.setColor((Color)def[i]);\u000b" +
+                "    graphics.fill(new Rectangle(x, y, width, 30));\u000b" +
+                "    y += 40;\u000b" +
+                "}\u000b" +
+                "graphics.setColor(Color.black);\u000b" +
+                "graphics.setFont(new Font(\"Arial\", Font.BOLD, 14));\u000b" +
+                "graphics.draw(bounds);\u000b" +
+                "graphics.drawString(\"Performance\", x + 70, y + 40);\u000b" +
+                "\u000b" +
+                "FileOutputStream out = new FileOutputStream(\"hslf-demo.ppt\");\u000b" +
+                "ppt.write(out);\u000b" +
+                "out.close();");
         box3.setAnchor(new Rectangle(96, 110, 499, 378));
+        box3.setHorizontalCentered(true);
         slide.addShape(box3);
     }
 
@@ -435,38 +434,27 @@ public final class ApacheconEU08 {
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(32);
         box2.setRunType(TextHeaderAtom.BODY_TYPE);
         box2.setText(
-                "Support for more PowerPoint functionality\r" +
-                "Rendering slides into java.awt.Graphics2D");
-        box2.setAnchor(new Rectangle(36, 126, 648, 100));
-        slide.addShape(box2);
-
-        HSLFTextBox box3 = new HSLFTextBox();
-        box3.getTextParagraphs().get(0).setIndentLevel(1);
-        box3.setRunType(TextHeaderAtom.BODY_TYPE);
-        box3.setText(
-                "A way to export slides into images or other formats");
-        box3.setAnchor(new Rectangle(36, 220, 648, 70));
-        slide.addShape(box3);
-
-        HSLFTextBox box4 = new HSLFTextBox();
-        box4.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(32);
-        box4.setRunType(TextHeaderAtom.BODY_TYPE);
-        box4.setText(
-                "Integration with Apache FOP - Formatting Objects Processor");
-        box4.setAnchor(new Rectangle(36, 290, 648, 90));
-        slide.addShape(box4);
-
-        HSLFTextBox box5 = new HSLFTextBox();
-        box5.getTextParagraphs().get(0).setIndentLevel(1);
-        box5.setRunType(TextHeaderAtom.BODY_TYPE);
-        box5.setText(
+            "Support for more PowerPoint functionality\r" +
+            "Rendering slides into java.awt.Graphics2D\r" +
+                "A way to export slides into images or other formats\r" +
+            "Integration with Apache FOP - Formatting Objects Processor\r" +
                 "Transformation of XSL-FO into PPT\r" +
-                "PPT2PDF transcoder");
-        box5.setAnchor(new Rectangle(36, 380, 648, 100));
-        slide.addShape(box5);
+                "PPT2PDF transcoder"
+        );
+
+        List<HSLFTextParagraph> tp = box2.getTextParagraphs();
+        for (int i : new byte[]{0,1,3}) {
+            tp.get(i).getTextRuns().get(0).setFontSize(28);
+        }
+        for (int i : new byte[]{2,4,5}) {
+            tp.get(i).getTextRuns().get(0).setFontSize(24);
+            tp.get(i).setIndentLevel(1);
+        }
+        
+        box2.setAnchor(new Rectangle(36, 126, 648, 400));
+        slide.addShape(box2);
     }
 
     public static void slide12(HSLFSlideShow ppt) throws IOException {

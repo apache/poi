@@ -19,11 +19,11 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.ParagraphFlagsTextProp;
-import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -48,43 +48,12 @@ public final class TxMasterStyleAtom extends RecordAtom {
      */
     public static final int MAX_INDENT = 5;
 
-/*
-    private static TextProp paragraphSpecialPropTypes[] = {
-        new ParagraphFlagsTextProp(),
-        new TextProp(2, 0x80, "bullet.char"),
-        new TextProp(2, 0x10, "bullet.font"),
-        new TextProp(2, 0x40, "bullet.size"),
-        new TextProp(4, 0x20, "bullet.color"),
-        new TextProp(2, 0xD00, "alignment"),
-        new TextProp(2, 0x1000, "linespacing"),
-        new TextProp(2, 0x2000, "spacebefore"),
-        new TextProp(2, 0x4000, "spaceafter"),
-        new TextProp(2, 0x8000, "text.offset"),
-        new TextProp(2, 0x10000, "bullet.offset"),
-        new TextProp(2, 0x20000, "defaulttab"),
-        new TextProp(2, 0x40000, "para_unknown_2"),
-        new TextProp(2, 0x80000, "para_unknown_3"),
-        new TextProp(2, 0x100000, "para_unknown_4"),
-        new TextProp(2, 0x200000, "para_unknown_5")
-    };
-
-    private static TextProp characterSpecialPropTypes[] = {
-        new CharFlagsTextProp(),
-        new TextProp(2, 0x10000, "font.index"),
-        new TextProp(2, 0x20000, "char_unknown_1"),
-        new TextProp(4, 0x40000, "char_unknown_2"),
-        new TextProp(2, 0x80000, "font.size"),
-        new TextProp(2, 0x100000, "char_unknown_3"),
-        new TextProp(4, 0x200000, "font.color"),
-        new TextProp(2, 0x800000, "char_unknown_4")
-    };
-*/    
     private byte[] _header;
     private static long _type = 4003;
     private byte[] _data;
 
-    private TextPropCollection[] prstyles;
-    private TextPropCollection[] chstyles;
+    private List<TextPropCollection> paragraphStyles;
+    private List<TextPropCollection> charStylesyles;
 
     protected TxMasterStyleAtom(byte[] source, int start, int len) {
         _header = new byte[8];
@@ -129,8 +98,8 @@ public final class TxMasterStyleAtom extends RecordAtom {
      *
      * @return character styles defined in this record
      */
-    public TextPropCollection[] getCharacterStyles(){
-        return chstyles;
+    public List<TextPropCollection> getCharacterStyles(){
+        return charStylesyles;
     }
 
     /**
@@ -138,8 +107,8 @@ public final class TxMasterStyleAtom extends RecordAtom {
      *
      * @return paragraph styles defined in this record
      */
-    public TextPropCollection[] getParagraphStyles(){
-        return prstyles;
+    public List<TextPropCollection> getParagraphStyles(){
+        return paragraphStyles;
     }
 
     /**
@@ -157,7 +126,6 @@ public final class TxMasterStyleAtom extends RecordAtom {
     /**
      * parse the record data and initialize styles
      */
-    @SuppressWarnings("unused")
     protected void init(){
         //type of the text
         int type = getTextType();
@@ -169,28 +137,31 @@ public final class TxMasterStyleAtom extends RecordAtom {
         short levels = LittleEndian.getShort(_data, 0);
         pos += LittleEndian.SHORT_SIZE;
 
-        prstyles = new TextPropCollection[levels];
-        chstyles = new TextPropCollection[levels];
+        paragraphStyles = new ArrayList<TextPropCollection>(levels);
+        charStylesyles = new ArrayList<TextPropCollection>(levels);
 
         for(short j = 0; j < levels; j++) {
-
+            TextPropCollection prprops = new TextPropCollection(0, TextPropType.paragraph); //  getParagraphProps(type, j)
             if (type >= TextHeaderAtom.CENTRE_BODY_TYPE) {
                 // Fetch the 2 byte value, that is safe to ignore for some types of text
-                short val = LittleEndian.getShort(_data, pos);
+                short indentLevel = LittleEndian.getShort(_data, pos);
+                prprops.setIndentLevel(indentLevel);
                 pos += LittleEndian.SHORT_SIZE;
+            } else {
+                prprops.setIndentLevel((short)-1);
             }
 
             head = LittleEndian.getInt(_data, pos);
             pos += LittleEndian.INT_SIZE;
-            TextPropCollection prprops = new TextPropCollection(0, getParagraphProps(type, j));
+            
             pos += prprops.buildTextPropList( head, _data, pos);
-            prstyles[j] = prprops;
+            paragraphStyles.add(prprops);
 
             head = LittleEndian.getInt(_data, pos);
             pos += LittleEndian.INT_SIZE;
-            TextPropCollection chprops = new TextPropCollection(0, getCharacterProps(type, j));
+            TextPropCollection chprops = new TextPropCollection(0, TextPropType.character); //  getCharacterProps(type, j)
             pos += chprops.buildTextPropList( head, _data, pos);
-            chstyles[j] = chprops;
+            charStylesyles.add(chprops);
         }
 
     }
@@ -201,12 +172,12 @@ public final class TxMasterStyleAtom extends RecordAtom {
      * Depending on the level and type, it may be our special
      *  ones, or the standard StyleTextPropAtom ones
      */
-    protected TextProp[] getParagraphProps(int type, int level){
-        return StyleTextPropAtom.paragraphTextPropTypes;
+//    protected TextProp[] getParagraphProps(int type, int level){
+//        return StyleTextPropAtom.paragraphTextPropTypes;
 //        return (level != 0 || type >= MAX_INDENT)
 //            ? StyleTextPropAtom.paragraphTextPropTypes
 //            : paragraphSpecialPropTypes;
-    }
+//    }
 
     /**
      * Character properties for the specified text type and
@@ -214,10 +185,10 @@ public final class TxMasterStyleAtom extends RecordAtom {
      * Depending on the level and type, it may be our special
      *  ones, or the standard StyleTextPropAtom ones
      */
-    protected TextProp[] getCharacterProps(int type, int level){
-        return StyleTextPropAtom.characterTextPropTypes;
+//    protected TextProp[] getCharacterProps(int type, int level){
+//        return StyleTextPropAtom.characterTextPropTypes;
 //        return (level != 0 || type >= MAX_INDENT) 
 //            ? StyleTextPropAtom.characterTextPropTypes
 //            : characterSpecialPropTypes;
-    }
+//    }
 }
