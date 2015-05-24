@@ -17,6 +17,10 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /** 
  * Definition of a special kind of property of some text, or its 
  *  paragraph. For these properties, a flag in the "contains" header 
@@ -25,7 +29,9 @@ package org.apache.poi.hslf.model.textproperties;
  *  (but related) properties
  */
 public abstract class BitMaskTextProp extends TextProp implements Cloneable {
-	private String[] subPropNames;
+    protected static final POILogger logger = POILogFactory.getLogger(BitMaskTextProp.class);
+    
+    private String[] subPropNames;
 	private int[] subPropMasks;
 	private boolean[] subPropMatches;
 
@@ -34,22 +40,25 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	/** Fetch the list of if the sub properties match or not */
 	public boolean[] getSubPropMatches() { return subPropMatches; }
 
-	public BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String overallName, String[] subPropNames) {
+	protected BitMaskTextProp(int sizeOfDataBlock, int maskInHeader, String overallName, String... subPropNames) {
 		super(sizeOfDataBlock,maskInHeader,"bitmask");
 		this.subPropNames = subPropNames;
 		this.propName = overallName;
 		subPropMasks = new int[subPropNames.length];
 		subPropMatches = new boolean[subPropNames.length];
 		
+		int LSB = Integer.lowestOneBit(maskInHeader);
+		
 		// Initialise the masks list
 		for(int i=0; i<subPropMasks.length; i++) {
-			subPropMasks[i] = (1 << i);
+			subPropMasks[i] = (LSB << i);
 		}
 	}
 	
 	/**
 	 * Calculate mask from the subPropMatches.
 	 */
+	@Override
 	public int getWriteMask() {
 	    /*
 	     * The dataValue can't be taken as a mask, as sometimes certain properties
@@ -63,17 +72,39 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 		return mask;
 	}
 
-	public void setWriteMask(int containsField) {
+	/**
+	 * Sets the write mask, i.e. which defines the text properties to be considered
+	 *
+	 * @param writeMask the mask, bit values outside the property mask range will be ignored
+	 */
+	public void setWriteMask(int writeMask) {
         int i = 0;
         for (int subMask : subPropMasks) {
-            if ((containsField & subMask) != 0) subPropMatches[i] = true;
-            i++;
+            subPropMatches[i++] = ((writeMask & subMask) != 0);
         }
 	}
+
+	/**
+	 * Return the text property value.
+	 * Clears all bits of the value, which are marked as unset.
+	 * 
+	 * @return the text property value.
+	 */
+	@Override
+	public int getValue() {
+	    int val = dataValue, i = 0;;
+	    for (int mask : subPropMasks) {
+	        if (!subPropMatches[i++]) {
+	            val &= ~mask;
+	        }
+	    }
+	    return val;
+	}
+	
 	
 	/**
 	 * Set the value of the text property, and recompute the sub
-	 * properties based on it, i.e. all unset subvalues won't be saved.
+	 * properties based on it, i.e. all unset subvalues will be cleared.
 	 * Use {@link #setSubValue(boolean, int)} to explicitly set subvalues to {@code false}. 
 	 */
 	@Override
@@ -88,10 +119,36 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	}
 
 	/**
+	 * Convenience method to set a value with mask, without splitting it into the subvalues
+	 *
+	 * @param val
+	 * @param writeMask
+	 */
+	public void setValueWithMask(int val, int writeMask) {
+	    setWriteMask(writeMask);
+	    dataValue = val;
+	    dataValue = getValue();
+	    if (val != dataValue) {
+	        logger.log(POILogger.WARN, "Style properties of '"+getName()+"' don't match mask - output will be sanitized");
+	        if (logger.check(POILogger.DEBUG)) {
+	            StringBuilder sb = new StringBuilder("The following style attributes of the '"+getName()+"' property will be ignored:\n");
+	            int i=0;
+	            for (int mask : subPropMasks) {
+	                if (!subPropMatches[i] && (val & mask) != 0) {
+	                    sb.append(subPropNames[i]+",");
+	                }
+	                i++;
+	            }
+	            logger.log(POILogger.DEBUG, sb.toString());
+	        }
+	    }
+	}
+	
+	/**
 	 * Fetch the true/false status of the subproperty with the given index
 	 */
 	public boolean getSubValue(int idx) {
-		return (dataValue & subPropMasks[idx]) != 0;
+		return subPropMatches[idx] && ((dataValue & subPropMasks[idx]) != 0);
 	}
 
 	/**

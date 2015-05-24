@@ -310,15 +310,11 @@ public final class StyleTextPropAtom extends RecordAtom
     
             // First up, we need to serialise the paragraph properties
             for(TextPropCollection tpc : paragraphStyles) {
-                // ensure, that the paragraphs flags exist, no matter if anthing is set
-                tpc.addWithName(ParagraphFlagsTextProp.NAME);
                 tpc.writeOut(baos);
             }
     
             // Now, we do the character ones
             for(TextPropCollection tpc : charStyles) {
-                // ditto for the char flags
-                // tpc.addWithName(CharFlagsTextProp.NAME);
                 tpc.writeOut(baos);
             }
     

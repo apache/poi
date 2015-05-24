@@ -31,11 +31,11 @@ public final class ParagraphFlagsTextProp extends BitMaskTextProp {
     public static final String NAME = "paragraph_flags";
 
 	public ParagraphFlagsTextProp() {
-		super(2,  0xF, NAME, new String[] {
-					"bullet",
-                    "bullet.hardfont",
-					"bullet.hardcolor",
-                    "bullet.hardsize"}
+		super(2,  0xF, NAME,
+			"bullet",
+            "bullet.hardfont",
+			"bullet.hardcolor",
+            "bullet.hardsize"
 		);
 	}
 }
