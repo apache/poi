@@ -398,9 +398,11 @@ public final class HSLFSlideShow implements SlideShow {
 		// Finally, generate model objects for everything
 		// Notes first
 		for (org.apache.poi.hslf.record.Notes n : notesRecords) {
-		    if (n == null) continue;
-		    HSLFNotes hn = new HSLFNotes(n);
-		    hn.setSlideShow(this);
+		    HSLFNotes hn = null;
+		    if (n != null) {
+    		    hn = new HSLFNotes(n);
+    		    hn.setSlideShow(this);
+		    }
 		    _notes.add(hn);
 		}
 		// Then slides

@@ -87,7 +87,7 @@ public class TextPropCollection {
         new TextProp(2, 0x8000, "defaultTabSize"),
         new TabStopPropCollection(), // tabstops size is variable!
         new FontAlignmentProp(),
-        new TextProp(2, 0xE0000, "wrapFlags"), // charWrap | wordWrap | overflow
+        new WrapFlagsTextProp(),
         new TextProp(2, 0x200000, "textDirection"),
         // 0x400000 MUST be zero and MUST be ignored
         new TextProp(0, 0x800000, "bullet.blip"), // TODO: check size
@@ -266,9 +266,11 @@ public class TextPropCollection {
                     maskSpecial |= tp.getMask();
                     continue;
                 }
-				prop.setValue(val);
+				
 				if (prop instanceof BitMaskTextProp) {
-				    ((BitMaskTextProp)prop).setWriteMask(containsField);
+				    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
+				} else {
+				    prop.setValue(val);
 				}
 				bytesPassed += prop.getSize();
 				addProp(prop);
@@ -318,13 +320,7 @@ public class TextPropCollection {
 		// Then the mask field
 		int mask = maskSpecial;
 		for (TextProp textProp : textPropList) {
-            // sometimes header indicates that the bitmask is present but its value is 0
-            if (textProp instanceof BitMaskTextProp) {
-                if (mask == 0) mask |= textProp.getWriteMask();
-            }
-            else {
-                mask |= textProp.getWriteMask();
-            }
+            mask |= textProp.getWriteMask();
         }
 		StyleTextPropAtom.writeLittleEndian(mask,o);
 
@@ -399,6 +395,9 @@ public class TextPropCollection {
         StringBuilder out = new StringBuilder();
         out.append("  chars covered: " + getCharactersCovered());
         out.append("  special mask flags: 0x" + HexDump.toHex(getSpecialMask()) + "\n");
+        if (textPropType == TextPropType.paragraph) {
+            out.append("  indent level: "+getIndentLevel()+"\n");
+        }
         for(TextProp p : getTextPropList()) {
             out.append("    " + p.getName() + " = " + p.getValue() );
             out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");

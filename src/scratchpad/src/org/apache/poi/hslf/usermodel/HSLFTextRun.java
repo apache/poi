@@ -112,9 +112,9 @@ public final class HSLFTextRun implements TextRun {
 		BitMaskTextProp prop = (BitMaskTextProp)characterStyle.findByName(CharFlagsTextProp.NAME);
 
 		if (prop == null){
+            int txtype = parentParagraph.getRunType();
 			HSLFSheet sheet = parentParagraph.getSheet();
-			if(sheet != null){
-				int txtype = parentParagraph.getParentShape().getRunType();
+			if (sheet != null) {
 				HSLFMasterSheet master = sheet.getMasterSheet();
 				if (master != null){
 					prop = (BitMaskTextProp)master.getStyleAttribute(txtype, parentParagraph.getIndentLevel(), CharFlagsTextProp.NAME, true);
