@@ -1336,8 +1336,6 @@ public final class TestNPOIFSFileSystem {
        }
    }
    
-   // TODO Should these have a mini-sbat entry or not?
-   // TODO Is the reading of zero-length properties exactly correct?
    @Test
    public void writeZeroLengthEntries() throws Exception {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
@@ -1377,6 +1375,37 @@ public final class TestNPOIFSFileSystem {
        
        emptyDoc = (DocumentEntry)testDir.getEntry("empty-3");
        assertContentsMatches(empty, emptyDoc);
+       
+       // Look at the properties entry, and check the empty ones
+       //  have zero size and no start block
+       NPropertyTable props = fs._get_property_table();
+       Iterator<Property> propsIt = props.getRoot().getChildren();
+       
+       Property prop = propsIt.next();
+       assertEquals("Mini2", prop.getName());
+       assertEquals(0, prop.getStartBlock());
+       assertEquals(7, prop.getSize());
+       
+       prop = propsIt.next();
+       assertEquals("Normal4106", prop.getName());
+       assertEquals(4, prop.getStartBlock()); // BAT, Props, SBAT, MIni
+       assertEquals(4106, prop.getSize());
+       
+       prop = propsIt.next();
+       assertEquals("empty-1", prop.getName());
+       assertEquals(POIFSConstants.END_OF_CHAIN, prop.getStartBlock());
+       assertEquals(0, prop.getSize());
+       
+       prop = propsIt.next();
+       assertEquals("empty-2", prop.getName());
+       assertEquals(POIFSConstants.END_OF_CHAIN, prop.getStartBlock());
+       assertEquals(0, prop.getSize());
+       
+       prop = propsIt.next();
+       assertEquals("empty-3", prop.getName());
+       assertEquals(POIFSConstants.END_OF_CHAIN, prop.getStartBlock());
+       assertEquals(0, prop.getSize());
+       
        
        // Save and re-check
        fs = writeOutAndReadBack(fs);
