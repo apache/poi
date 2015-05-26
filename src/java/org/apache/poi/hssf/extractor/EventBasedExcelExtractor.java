@@ -85,16 +85,6 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
    }
 
    /**
-    * Return the underlying POIFS FileSystem of
-    *  this document.
-    *
-    * @deprecated Use {@link #getRoot()} instead
-    */
-   public POIFSFileSystem getFileSystem() {
-      return _dir.getFileSystem();
-   }
-
-   /**
     * Would return the document information metadata for the document,
     *  if we supported it
     */
