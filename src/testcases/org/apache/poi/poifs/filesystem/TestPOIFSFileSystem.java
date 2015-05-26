@@ -35,7 +35,7 @@ import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
- * Tests for POIFSFileSystem
+ * Tests for the older OPOIFS-based POIFSFileSystem
  */
 public final class TestPOIFSFileSystem extends TestCase {
    private POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
@@ -104,7 +104,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		// Normal case - read until EOF and close
 		testIS = new TestIS(openSampleStream("13224.xls"), -1);
 		try {
-			new POIFSFileSystem(testIS);
+			new OPOIFSFileSystem(testIS);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -113,7 +113,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		// intended to crash after reading 10000 bytes
 		testIS = new TestIS(openSampleStream("13224.xls"), 10000);
 		try {
-			new POIFSFileSystem(testIS);
+			new OPOIFSFileSystem(testIS);
 			fail("ex should have been thrown");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -141,7 +141,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 
 		for(int i=0; i<files.length; i++) {
 			// Open the file up
-			POIFSFileSystem fs = new POIFSFileSystem(
+			OPOIFSFileSystem fs = new OPOIFSFileSystem(
 			    _samples.openResourceAsStream(files[i])
 			);
 
@@ -163,7 +163,7 @@ public final class TestPOIFSFileSystem extends TestCase {
         try {
             InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp");
             try {
-                new POIFSFileSystem(stream);
+                new OPOIFSFileSystem(stream);
                 fail("File is corrupt and shouldn't have been opened");
             } finally {
                 stream.close();
@@ -182,7 +182,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 */
 	public void testBATandXBAT() throws Exception {
 	   byte[] hugeStream = new byte[8*1024*1024];
-	   POIFSFileSystem fs = new POIFSFileSystem();
+	   OPOIFSFileSystem fs = new OPOIFSFileSystem();
 	   fs.getRoot().createDocument(
 	         "BIG", new ByteArrayInputStream(hugeStream)
 	   );
@@ -226,7 +226,7 @@ public final class TestPOIFSFileSystem extends TestCase {
       
 	   // Now load it and check
 	   fs = null;
-	   fs = new POIFSFileSystem(
+	   fs = new OPOIFSFileSystem(
 	         new ByteArrayInputStream(fsData)
 	   );
 	   
@@ -260,7 +260,7 @@ public final class TestPOIFSFileSystem extends TestCase {
             assertEquals(15, data_blocks.blockCount());
 
             // Now try and open properly
-            POIFSFileSystem fs = new POIFSFileSystem(
+            OPOIFSFileSystem fs = new OPOIFSFileSystem(
                     _samples.openResourceAsStream("BlockSize4096.zvi"));
             assertTrue(fs.getRoot().getEntryCount() > 3);
 
@@ -268,7 +268,7 @@ public final class TestPOIFSFileSystem extends TestCase {
             checkAllDirectoryContents(fs.getRoot());
 
             // Finally, check we can do a similar 512byte one too
-            fs = new POIFSFileSystem(
+            fs = new OPOIFSFileSystem(
                     _samples.openResourceAsStream("BlockSize512.zvi"));
             assertTrue(fs.getRoot().getEntryCount() > 3);
             checkAllDirectoryContents(fs.getRoot());
