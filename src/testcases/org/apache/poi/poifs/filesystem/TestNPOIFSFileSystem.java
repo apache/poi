@@ -21,6 +21,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -41,6 +42,7 @@ import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1306,6 +1308,36 @@ public final class TestNPOIFSFileSystem {
        assertContentsMatches(main4106, normDoc);
    }
    
+   @Test
+   public void readZeroLengthEntries() throws Exception {
+       NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("only-zero-byte-streams.ole2"));
+       DirectoryNode testDir = fs.getRoot();
+       assertEquals(3, testDir.getEntryCount());
+       DocumentEntry entry;
+       
+       entry = (DocumentEntry)testDir.getEntry("test-zero-1");
+       assertNotNull(entry);
+       assertEquals(0, entry.getSize());
+       
+       entry = (DocumentEntry)testDir.getEntry("test-zero-2");
+       assertNotNull(entry);
+       assertEquals(0, entry.getSize());
+       
+       entry = (DocumentEntry)testDir.getEntry("test-zero-3");
+       assertNotNull(entry);
+       assertEquals(0, entry.getSize());
+       
+       // Check properties, all have zero length, no blocks
+       NPropertyTable props = fs._get_property_table();
+       assertEquals(POIFSConstants.END_OF_CHAIN, props.getRoot().getStartBlock());
+       for (Property prop : props.getRoot()) {
+           assertEquals("test-zero-", prop.getName().substring(0, 10));
+           assertEquals(POIFSConstants.END_OF_CHAIN, prop.getStartBlock());
+       }
+   }
+   
+   // TODO Should these have a mini-sbat entry or not?
+   // TODO Is the reading of zero-length properties exactly correct?
    @Test
    public void writeZeroLengthEntries() throws Exception {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
