@@ -436,7 +436,7 @@ public class NPOIFSFileSystem extends BlockStore
        List<BATBlock> sbats = new ArrayList<BATBlock>();
        _mini_store     = new NPOIFSMiniStore(this, _property_table.getRoot(), sbats, _header);
        nextAt = _header.getSBATStart();
-       for(int i=0; i<_header.getSBATCount(); i++) {
+       for(int i=0; i<_header.getSBATCount() && nextAt != POIFSConstants.END_OF_CHAIN; i++) {
           loopDetector.claim(nextAt);
           ByteBuffer fatData = getBlockAt(nextAt);
           sfat = BATBlock.createBATBlock(bigBlockSize, fatData);

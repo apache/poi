@@ -1578,8 +1578,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                     "The supplied spreadsheet seems to be Excel"
             ));
         }
-        // TODO Fix this to work with NPOIFS as well
-/*
         try {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(
                     HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
@@ -1590,7 +1588,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                     "The supplied spreadsheet seems to be Excel"
             ));
         }
-*/
     }
 
     /**
