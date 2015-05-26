@@ -67,9 +67,9 @@ public final class TestFileSystemBugs extends TestCase {
         if (openedFSs == null) openedFSs = new ArrayList<NPOIFSFileSystem>();
         openedFSs.add(nfs);
         
-        POIFSFileSystem ofs = null;
+        OPOIFSFileSystem ofs = null;
         try {
-            ofs = new POIFSFileSystem(inps[1]);
+            ofs = new OPOIFSFileSystem(inps[1]);
             if (oldFails) fail("POIFSFileSystem should have failed but didn't");
         } catch (Exception e) {
             if (!oldFails) throw e;
