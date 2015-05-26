@@ -20,8 +20,8 @@ package org.apache.poi.poifs.filesystem;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -42,7 +42,6 @@ import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -1306,6 +1305,9 @@ public final class TestNPOIFSFileSystem {
 
        normDoc = (DocumentEntry)testDir.getEntry("Normal4106");
        assertContentsMatches(main4106, normDoc);
+       
+       // All done
+       fs.close();
    }
    
    @Test
@@ -1334,6 +1336,9 @@ public final class TestNPOIFSFileSystem {
            assertEquals("test-zero-", prop.getName().substring(0, 10));
            assertEquals(POIFSConstants.END_OF_CHAIN, prop.getStartBlock());
        }
+       
+       // All done
+       fs.close();
    }
    
    @Test
@@ -1425,6 +1430,9 @@ public final class TestNPOIFSFileSystem {
        
        emptyDoc = (DocumentEntry)testDir.getEntry("empty-3");
        assertContentsMatches(empty, emptyDoc);
+       
+       // All done
+       fs.close();
    }
 
    /**
