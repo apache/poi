@@ -145,14 +145,15 @@ public class DirectoryNode
 
     /**
      * @return the filesystem that this belongs to
-     * TODO Temporary workaround during #56791
      */
-    public POIFSFileSystem getFileSystem()
+    public NPOIFSFileSystem getFileSystem()
     {
-        return (POIFSFileSystem)_ofilesystem;
+        return _nfilesystem;
     }
 
     /**
+     * If this is OPOIFS based, return the NPOIFSFileSystem
+     *  that this belong to, otherwise Null if NPOIFS based
      * @return the filesystem that this belongs to
      */
     public OPOIFSFileSystem getOFileSystem()
@@ -161,6 +162,8 @@ public class DirectoryNode
     }
 
     /**
+     * If this is NPOIFS based, return the NPOIFSFileSystem
+     *  that this belong to, otherwise Null if OPOIFS based
      * @return the filesystem that this belongs to
      */
     public NPOIFSFileSystem getNFileSystem()

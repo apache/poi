@@ -32,7 +32,7 @@ import org.apache.poi.util.CloseIgnoringInputStream;
  */
 
 public class POIFSFileSystem
-    extends OPOIFSFileSystem // TODO Temporary workaround during #56791
+    extends NPOIFSFileSystem // TODO Temporary workaround during #56791
     implements POIFSViewable
 {
     /**
@@ -95,14 +95,14 @@ public class POIFSFileSystem
      * @param inp An InputStream which supports either mark/reset, or is a PushbackInputStream
      */
     public static boolean hasPOIFSHeader(InputStream inp) throws IOException {
-        return OPOIFSFileSystem.hasPOIFSHeader(inp);
+        return NPOIFSFileSystem.hasPOIFSHeader(inp);
     }
     /**
      * Checks if the supplied first 8 bytes of a stream / file
      *  has a POIFS (OLE2) header.
      */
     public static boolean hasPOIFSHeader(byte[] header8Bytes) {
-        return OPOIFSFileSystem.hasPOIFSHeader(header8Bytes);
+        return NPOIFSFileSystem.hasPOIFSHeader(header8Bytes);
     }
 
     /**
