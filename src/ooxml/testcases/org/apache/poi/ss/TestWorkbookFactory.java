@@ -70,6 +70,22 @@ public final class TestWorkbookFactory extends TestCase {
         // TODO: this re-writes the sample-file?! wb.close();
     }
 
+    public void testCreateReadOnly() throws Exception {
+        Workbook wb;
+
+        // POIFS -> hssf
+        wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xls), null, true);
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        wb.close();
+
+        // Package -> xssf
+        wb = WorkbookFactory.create(HSSFTestDataSamples.getSampleFile(xlsx), null, true);
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+        wb.close();
+    }
+
     /**
      * Creates the appropriate kind of Workbook, but
      *  checking the mime magic at the start of the
