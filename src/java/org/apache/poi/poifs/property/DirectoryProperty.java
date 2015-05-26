@@ -28,10 +28,8 @@ import java.util.Set;
 
 /**
  * Directory property
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
-public class DirectoryProperty extends Property implements Parent { // TODO - fix instantiable superclass
+public class DirectoryProperty extends Property implements Parent, Iterable<Property> { // TODO - fix instantiable superclass
 
     /** List of Property instances */
     private List<Property> _children;
@@ -240,6 +238,13 @@ public class DirectoryProperty extends Property implements Parent { // TODO - fi
     public Iterator<Property> getChildren()
     {
         return _children.iterator();
+    }
+    /**
+     * Get an iterator over the children of this Parent, alias for
+     *  {@link #getChildren()} which supports foreach use
+     */
+    public Iterator<Property> iterator() {
+        return getChildren();
     }
 
     /**
