@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +38,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.impl.common.SystemCache;
 
-public abstract class POIXMLDocument extends POIXMLDocumentPart{
+public abstract class POIXMLDocument extends POIXMLDocumentPart implements Closeable {
     public static final String DOCUMENT_CREATOR = "Apache POI";
 
     // OLE embeddings relation name
@@ -171,7 +172,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart{
      * Closes the underlying {@link OPCPackage} from which this
      *  document was read, if there is one
      */
-    protected void close() throws IOException {
+    public void close() throws IOException {
         if (pkg != null) {
             if (pkg.getPackageAccess() == PackageAccess.READ) {
                 pkg.revert();
