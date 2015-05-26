@@ -231,6 +231,7 @@ public class TestAllFiles {
         EXPECTED_FAILURES.add("spreadsheet/54764.xlsx");     // see TestXSSFBugs.bug54764()
         EXPECTED_FAILURES.add("spreadsheet/Simple.xlsb");
         EXPECTED_FAILURES.add("poifs/unknown_properties.msg"); // POIFS properties corrupted
+        EXPECTED_FAILURES.add("poifs/only-zero-byte-streams.ole2"); // No actual contents
         
         // old Excel files, which we only support simple text extraction of
         EXPECTED_FAILURES.add("spreadsheet/testEXCEL_2.xls");
