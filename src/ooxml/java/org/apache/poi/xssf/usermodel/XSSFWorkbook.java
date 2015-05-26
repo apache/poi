@@ -1549,16 +1549,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
     
     /**
-     * Closes the underlying {@link OPCPackage} from which
-     *  the Workbook was read, if any. Has no effect on newly 
-     *  created Workbooks.
-     */
-    @Override
-    public void close() throws IOException {
-        super.close();
-    }
-
-    /**
      * Returns SharedStringsTable - tha cache of string for this workbook
      *
      * @return the shared string table
