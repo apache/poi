@@ -731,7 +731,7 @@ public class DataFormatter {
      * @see #formatCellValue(Cell)
      */
     public String formatRawCellContents(double value, int formatIndex, String formatString) {
-       return formatRawCellContents(value, formatIndex, formatString, false);
+        return formatRawCellContents(value, formatIndex, formatString, false);
     }
     /**
      * Formats the given raw cell value, based on the supplied
@@ -744,28 +744,28 @@ public class DataFormatter {
             if(DateUtil.isValidExcelDate(value)) {
                 Format dateFormat = getFormat(value, formatIndex, formatString);
                 if(dateFormat instanceof ExcelStyleDateFormatter) {
-                   // Hint about the raw excel value
-                   ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
+                    // Hint about the raw excel value
+                    ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(value);
                 }
                 Date d = DateUtil.getJavaDate(value, use1904Windowing);
                 return performDateFormatting(d, dateFormat);
             }
-             // RK: Invalid dates are 255 #s.
-             if (emulateCsv) {
-                 return invalidDateTimeString;
-             }
+            // RK: Invalid dates are 255 #s.
+            if (emulateCsv) {
+                return invalidDateTimeString;
+            }
         }
         // else Number
-            Format numberFormat = getFormat(value, formatIndex, formatString);
-            if (numberFormat == null) {
-                return String.valueOf(value);
-            }
-            // RK: This hack handles scientific notation by adding the missing + back.
-            String result = numberFormat.format(new Double(value));
-            if (result.contains("E") && !result.contains("E-")) {
-                result = result.replaceFirst("E", "E+");
-            }
-            return result;
+        Format numberFormat = getFormat(value, formatIndex, formatString);
+        if (numberFormat == null) {
+            return String.valueOf(value);
+        }
+        // RK: This hack handles scientific notation by adding the missing + back.
+        String result = numberFormat.format(new Double(value));
+        if (result.contains("E") && !result.contains("E-")) {
+            result = result.replaceFirst("E", "E+");
+        }
+        return result;
     }
 
     /**
