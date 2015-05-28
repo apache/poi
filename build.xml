@@ -261,11 +261,11 @@ under the License.
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
-        <!-- See #57963 We should probably remove this -->
-        <pathelement location="${scratchpad.output.dir}"/>
         <pathelement location="${ooxml.security.jar}"/>
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
+        <!-- Used only for ExtractorFactory, see #57963 -->
+        <pathelement location="${scratchpad.output.dir}"/>
     </path>
 
     <path id="test.classpath">
