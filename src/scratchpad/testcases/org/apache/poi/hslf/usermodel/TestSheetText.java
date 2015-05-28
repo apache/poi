@@ -17,45 +17,50 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.List;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
 import org.apache.poi.POIDataSamples;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that SlideShow returns Sheets which have the right text in them
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestSheetText extends TestCase {
+public final class TestSheetText {
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 
-	public TestSheetText() throws Exception {
+	@Before
+	public void init() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(hss);
 	}
 
+	@Test
 	public void testSheetOne() {
-		HSLFSheet slideOne = ss.getSlides()[0];
+		HSLFSheet slideOne = ss.getSlides().get(0);
 
-		String[] expectText = new String[] {"This is a test title","This is a test subtitle\nThis is on page 1"};
-		assertEquals(expectText.length, slideOne.getTextParagraphs().length);
-		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], slideOne.getTextParagraphs()[i].getRawText());
+		String[] expectText = new String[] {"This is a test title","This is a test subtitle\rThis is on page 1"};
+		assertEquals(expectText.length, slideOne.getTextParagraphs().size());
+		int i = 0;
+		for(List<HSLFTextParagraph> textParas : slideOne.getTextParagraphs()) {
+			assertEquals(expectText[i++], HSLFTextParagraph.getRawText(textParas));
 		}
 	}
 
 	public void testSheetTwo() {
-		HSLFSheet slideTwo = ss.getSlides()[1];
-		String[] expectText = new String[] {"This is the title on page 2","This is page two\nIt has several blocks of text\nNone of them have formatting"};
-		assertEquals(expectText.length, slideTwo.getTextParagraphs().length);
-		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], slideTwo.getTextParagraphs()[i].getRawText());
-		}
+		HSLFSheet slideTwo = ss.getSlides().get(1);
+		String[] expectText = new String[] {"This is the title on page 2","This is page two\rIt has several blocks of text\rNone of them have formatting"};
+		assertEquals(expectText.length, slideTwo.getTextParagraphs().size());
+        int i = 0;
+        for(List<HSLFTextParagraph> textParas : slideTwo.getTextParagraphs()) {
+            assertEquals(expectText[i++], HSLFTextParagraph.getRawText(textParas));
+        }
 	}
 
 	/**
@@ -69,11 +74,11 @@ public final class TestSheetText extends TestCase {
 		HSLFSlideShow sss = new HSLFSlideShow(hss);
 
 		// Should come out with 10 slides, no notes
-		assertEquals(10, sss.getSlides().length);
-		assertEquals(0, sss.getNotes().length);
+		assertEquals(10, sss.getSlides().size());
+		assertEquals(0, sss.getNotes().size());
 
 		// Check text on first slide
-		HSLFSlide s = sss.getSlides()[0];
+		HSLFSlide s = sss.getSlides().get(0);
 		String exp =
 			"Realizing the Development Dividend:\n" +
 			"Community Capacity Building and CDM.\n" +
@@ -83,7 +88,7 @@ public final class TestSheetText extends TestCase {
 			"COP 11 \u2013 MOP 1\n" + // special long hyphen
 			"December 5, 2005\n";
 
-		assertEquals(1, s.getTextParagraphs().length);
-		assertEquals(exp, s.getTextParagraphs()[0].getRawText());
+		assertEquals(1, s.getTextParagraphs().size());
+		assertEquals(exp, HSLFTextParagraph.getRawText(s.getTextParagraphs().get(0)));
 	}
 }

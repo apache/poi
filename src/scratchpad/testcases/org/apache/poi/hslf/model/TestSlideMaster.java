@@ -113,10 +113,9 @@ public final class TestSlideMaster {
         HSLFMasterSheet masterSheet = slide.getMasterSheet();
         assertTrue(masterSheet instanceof HSLFTitleMaster);
 
-        List<HSLFTextParagraph> txt = slide.getTextParagraphs();
-        for (int i = 0; i < txt.size(); i++) {
-            HSLFTextRun rt = txt.get(i).getTextRuns().get(0);
-            switch(txt.get(i).getRunType()){
+        for (List<HSLFTextParagraph> txt : slide.getTextParagraphs()) {
+            HSLFTextRun rt = txt.get(0).getTextRuns().get(0);
+            switch(txt.get(0).getRunType()){
                 case TextHeaderAtom.CENTER_TITLE_TYPE:
                     assertEquals("Arial", rt.getFontFamily());
                     assertEquals(32, rt.getFontSize(), 0);
@@ -141,20 +140,22 @@ public final class TestSlideMaster {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         List<HSLFSlide> slide = ppt.getSlides();
         assertEquals(3, slide.size());
-        for (HSLFTextParagraph trun : slide.get(0).getTextParagraphs()) {
-            if (trun.getRunType() == TextHeaderAtom.TITLE_TYPE){
-                HSLFTextRun rt = trun.getTextRuns().get(0);
+        for (List<HSLFTextParagraph> tparas : slide.get(0).getTextParagraphs()) {
+            HSLFTextParagraph tpara = tparas.get(0);
+            if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
+                HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(40, rt.getFontSize(), 0);
                 assertEquals(true, rt.isUnderlined());
                 assertEquals("Arial", rt.getFontFamily());
-            } else if (trun.getRunType() == TextHeaderAtom.BODY_TYPE){
-                HSLFTextRun rt = trun.getTextRuns().get(0);
-                assertEquals(0, trun.getIndentLevel());
+            } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
+                HSLFTextRun rt = tpara.getTextRuns().get(0);
+                assertEquals(0, tpara.getIndentLevel());
                 assertEquals(32, rt.getFontSize(), 0);
                 assertEquals("Arial", rt.getFontFamily());
 
-                rt = trun.getTextRuns().get(1);
-                assertEquals(1, trun.getIndentLevel());
+                tpara = tparas.get(1);
+                rt = tpara.getTextRuns().get(0);
+                assertEquals(1, tpara.getIndentLevel());
                 assertEquals(28, rt.getFontSize(), 0);
                 assertEquals("Arial", rt.getFontFamily());
 
@@ -162,16 +163,17 @@ public final class TestSlideMaster {
         }
 
         ;
-        for (HSLFTextParagraph trun : slide.get(1).getTextParagraphs()) {
-            if (trun.getRunType() == TextHeaderAtom.TITLE_TYPE){
-                HSLFTextRun rt = trun.getTextRuns().get(0);
+        for (List<HSLFTextParagraph> tparas : slide.get(1).getTextParagraphs()) {
+            HSLFTextParagraph tpara = tparas.get(0);
+            if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
+                HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(48, rt.getFontSize(), 0);
                 assertEquals(true, rt.isItalic());
                 assertEquals("Georgia", rt.getFontFamily());
-            } else if (trun.getRunType() == TextHeaderAtom.BODY_TYPE){
+            } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
                 HSLFTextRun rt;
-                rt = trun.getTextRuns().get(0);
-                assertEquals(0, trun.getIndentLevel());
+                rt = tpara.getTextRuns().get(0);
+                assertEquals(0, tpara.getIndentLevel());
                 assertEquals(32, rt.getFontSize(), 0);
                 assertEquals("Courier New", rt.getFontFamily());
             }
@@ -222,16 +224,17 @@ public final class TestSlideMaster {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         HSLFSlide slide = ppt.getSlides().get(0);
         
-        for (HSLFTextParagraph trun : slide.getTextParagraphs()) {
-            if (trun.getRunType() == TextHeaderAtom.TITLE_TYPE){
-                HSLFTextRun rt = trun.getTextRuns().get(0);
+        for (List<HSLFTextParagraph> tparas : slide.getTextParagraphs()) {
+            HSLFTextParagraph tpara = tparas.get(0);
+            if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
+                HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(40, rt.getFontSize(), 0);
                 assertEquals(true, rt.isUnderlined());
                 assertEquals("Arial", rt.getFontFamily());
-            } else if (trun.getRunType() == TextHeaderAtom.BODY_TYPE){
+            } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
                 int indents[] = { 32, 28, 24 };
-                for (HSLFTextRun rt : trun.getTextRuns()) {
-                    int indent = trun.getIndentLevel();
+                for (HSLFTextRun rt : tpara.getTextRuns()) {
+                    int indent = tpara.getIndentLevel();
                     assertEquals(indents[indent], rt.getFontSize(), 0);
                 }
             }

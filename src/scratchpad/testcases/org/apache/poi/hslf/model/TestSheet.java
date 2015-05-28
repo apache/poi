@@ -82,10 +82,13 @@ public final class TestSheet {
         assertTrue(sheet._getSheetNumber() != 0);
         assertTrue(sheet._getSheetRefId() != 0);
 
-        List<HSLFTextParagraph> txt = sheet.getTextParagraphs();
-        assertTrue("no text runs", txt != null && !txt.isEmpty());
-        for (HSLFTextParagraph t : txt) {
-            assertNotNull(t.getSheet());
+        List<List<HSLFTextParagraph>> txt = sheet.getTextParagraphs();
+        // assertTrue("no text runs", txt != null && !txt.isEmpty());
+        // backgrounds.ppt has no texts
+        for (List<HSLFTextParagraph> t : txt) {
+            for (HSLFTextParagraph tp : t) {
+                assertNotNull(tp.getSheet());
+            }
         }
 
         List<HSLFShape> shape = sheet.getShapes();

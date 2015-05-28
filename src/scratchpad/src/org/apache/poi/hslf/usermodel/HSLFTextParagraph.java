@@ -241,8 +241,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             hardAttribute = maskProp != null && maskProp.getValue() == 0;
         }
         if (prop == null && !hardAttribute){
-            HSLFSheet sheet = _parentShape.getSheet();
-            int txtype = _parentShape.getRunType();
+            HSLFSheet sheet = getSheet();
+            int txtype = getRunType();
             HSLFMasterSheet master = sheet.getMasterSheet();
             if (master != null)
                 prop = master.getStyleAttribute(txtype, getIndentLevel(), propName, false);
@@ -600,7 +600,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
         if (prop == null) {
             if (_sheet != null) {
-                int txtype = getParentShape().getRunType();
+                int txtype = getRunType();
                 HSLFMasterSheet master = _sheet.getMasterSheet();
                 if (master != null) {
                     prop = (BitMaskTextProp) master.getStyleAttribute(txtype, getIndentLevel(), ParagraphFlagsTextProp.NAME, false);
@@ -789,10 +789,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         * If TextSpecInfoAtom is present, we must update the text size in it,
         * otherwise the ppt will be corrupted
         */
-       TextSpecInfoAtom specAtom = (TextSpecInfoAtom)_txtbox.findFirstOfType(RecordTypes.TextSpecInfoAtom.typeID);
-       int len = rawText.length() + 1;
-       if(specAtom != null && len != specAtom.getCharactersCovered()) {
-           specAtom.reset(len);
+       for (Record r : paragraphs.get(0)._records) {
+           if (r instanceof TextSpecInfoAtom) {
+               ((TextSpecInfoAtom)r).setParentSize(rawText.length()+1);
+               break;
+           }
        }
    }
 
@@ -870,6 +871,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
        return appendText(paragraphs, text, false);
    }
 
+   public static String getText(List<HSLFTextParagraph> paragraphs) {
+       assert(!paragraphs.isEmpty());
+       String rawText = getRawText(paragraphs);
+       return toExternalString(rawText, paragraphs.get(0).getRunType());
+   }
+   
    public static String getRawText(List<HSLFTextParagraph> paragraphs) {
        StringBuilder sb = new StringBuilder();
        for (HSLFTextParagraph p : paragraphs) {
@@ -1151,7 +1158,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         wrapper.appendChildRecord(tha);
 
         TextBytesAtom tba = new TextBytesAtom();
-        tba.setText("\r".getBytes());
+        tba.setText("".getBytes());
         wrapper.appendChildRecord(tba);
 
         StyleTextPropAtom sta = new StyleTextPropAtom(1);
@@ -1162,16 +1169,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null, sta);
         htp.setParagraphStyle(paraStyle);
         htp._records = new Record[0];
-//        htp.setBullet(false);
-//        htp.setLineSpacing(100);
-//        htp.setLeftMargin(0);
-//        htp.setIndent(0);
-        // set wrap flags
 
         HSLFTextRun htr = new HSLFTextRun(htp);
         htr.setCharacterStyle(charStyle);
-        htr.setText("\r");
-//        htr.setFontColor(Color.black);
+        htr.setText("");
         htp.addTextRun(htr);
 
         return Arrays.asList(htp);

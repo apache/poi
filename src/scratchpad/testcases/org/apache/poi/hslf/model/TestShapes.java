@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +28,8 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.usermodel.*;
-import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
-import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
-import org.apache.poi.sl.usermodel.TextParagraph.FontAlign;
-import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -138,6 +134,7 @@ public final class TestShapes {
         }
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void testParagraphs() throws Exception {
         HSLFSlideShow ppt = new HSLFSlideShow();
@@ -196,7 +193,7 @@ public final class TestShapes {
         HSLFTextBox txtbox = new HSLFTextBox();
         rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
         txtbox.setText(val);
-        rt.setFontName("Arial");
+        rt.setFontFamily("Arial");
         rt.setFontSize(42);
         rt.setBold(true);
         rt.setItalic(true);

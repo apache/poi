@@ -170,49 +170,41 @@ public class HexDump {
      * @return output string
      */
 
-    public static String dump(final byte [] data, final long offset,
-                            final int index) {
-        StringBuffer buffer;
-        if ((index < 0) || (index >= data.length))
+    public static String dump(final byte [] data, final long offset, final int index) {
+        if ((index < 0) || (index > data.length))
         {
             throw new ArrayIndexOutOfBoundsException(
                 "illegal index: " + index + " into array of length "
                 + data.length);
         }
-        long         display_offset = offset + index;
-        buffer         = new StringBuffer(74);
+        long  display_offset = offset + index;
+        StringBuilder buffer = new StringBuilder(74);
 
-        for (int j = index; j < data.length; j += 16)
-        {
+        for (int j = index; j <= data.length; j += 16) {
             int chars_read = data.length - j;
 
-            if (chars_read > 16)
-            {
+            if (chars_read > 16) {
                 chars_read = 16;
             }
+            
             buffer.append(dump(display_offset)).append(' ');
-            for (int k = 0; k < 16; k++)
-            {
-                if (k < chars_read)
-                {
-                    buffer.append(dump(data[ k + j ]));
-                }
-                else
-                {
-                    buffer.append("  ");
-                }
+            for (int k = 0; k < 16; k++) {
+                String hexDmp = (k < chars_read) ? dump(data[ k + j ]) : "  ";
+                buffer.append(hexDmp);
                 buffer.append(' ');
             }
-            for (int k = 0; k < chars_read; k++)
-            {
-                if ((data[ k + j ] >= ' ') && (data[ k + j ] < 127))
-                {
-                    buffer.append(( char ) data[ k + j ]);
+            for (int k = 0; k < chars_read; k++) {
+                byte dataB = data[ k + j ];
+                char charB = (char)(dataB & 0xFF);
+                switch (charB) {
+                case 127: case 128: case 129: case 141: case 142: case 143: case 144: case 157: case 158:
+                    charB = '.';
+                    break;
+                default:
+                    if (charB < ' ') charB = '.';
+                    break;
                 }
-                else
-                {
-                    buffer.append('.');
-                }
+                buffer.append(charB);
             }
             buffer.append(EOL);
             display_offset += chars_read;

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.*;
@@ -58,34 +59,37 @@ public final class TestTextRunReWrite {
 
     @Test
 	public void testWritesOutTheSameNonRich() throws Exception {
-    	// Grab the first text run on the first sheet
-    	HSLFTextParagraph tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
-    	HSLFTextParagraph tr2 = ss.getSlides().get(0).getTextParagraphs().get(1);
-
     	// Ensure the text lengths are as we'd expect to start with
-    	assertEquals(1, ss.getSlides().length);
-    	assertEquals(2, ss.getSlides().get(0).getTextParagraphs().length);
-    	assertEquals(30, tr1.getRawText().length());
-    	assertEquals(179, tr2.getRawText().length());
+    	assertEquals(1, ss.getSlides().size());
+    	assertEquals(2, ss.getSlides().get(0).getTextParagraphs().size());
 
-    	assertEquals(1, tr1.getTextRuns().length);
-    	assertEquals(30, tr1.getTextRuns().get(0).getLength());
-    	assertEquals(30, tr1.getTextRuns().get(0).getRawText().length());
-    	assertEquals(31, tr1.getTextRuns().get(0)._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, tr1.getTextRuns().get(0)._getRawParagraphStyle().getCharactersCovered());
+        // Grab the first text run on the first sheet
+        List<HSLFTextParagraph> tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
+        List<HSLFTextParagraph> tr2 = ss.getSlides().get(0).getTextParagraphs().get(1);
+    	
+    	
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(179, HSLFTextParagraph.getRawText(tr2).length());
+
+    	assertEquals(1, tr1.size());
+    	assertEquals(30, HSLFTextParagraph.getText(tr1).length());
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(31, tr1.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
+    	assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
 
     	// Set the text to be as it is now
-    	tr1.setText( tr1.getRawText() );
+    	HSLFTextParagraph.setText(tr1, HSLFTextParagraph.getRawText(tr1));
+    	tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
 
     	// Check the text lengths are still right
-    	assertEquals(30, tr1.getRawText().length());
-    	assertEquals(179, tr2.getRawText().length());
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(179, HSLFTextParagraph.getRawText(tr2).length());
 
-    	assertEquals(1, tr1.getTextRuns().length);
-    	assertEquals(30, tr1.getTextRuns().get(0).getLength());
-    	assertEquals(30, tr1.getTextRuns().get(0).getRawText().length());
-    	assertEquals(31, tr1.getTextRuns().get(0)._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, tr1.getTextRuns().get(0)._getRawParagraphStyle().getCharactersCovered());
+        assertEquals(1, tr1.size());
+        assertEquals(30, HSLFTextParagraph.getText(tr1).length());
+        assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+        assertEquals(31, tr1.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
+        assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
 
 
 		// Write the slideshow out to a byte array
@@ -117,33 +121,32 @@ public final class TestTextRunReWrite {
     @Test
     public void testWritesOutTheSameRich() throws Exception {
     	// Grab the first text run on the first sheet
-    	HSLFTextParagraph tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
+    	List<HSLFTextParagraph> tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
 
     	// Get the first rich text run
-    	HSLFTextRun rtr1 = tr1.getTextRuns().get(0);
+    	HSLFTextRun rtr1 = tr1.get(0).getTextRuns().get(0);
 
 
     	// Check that the text sizes are as expected
-    	assertEquals(1, tr1.getTextRuns().length);
-    	assertEquals(30, tr1.getRawText().length());
-    	assertEquals(30, tr1.getTextRuns().get(0).getRawText().length());
+    	assertEquals(1, tr1.get(0).getTextRuns().size());
+        assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
     	assertEquals(30, rtr1.getLength());
     	assertEquals(30, rtr1.getRawText().length());
-    	assertEquals(31, rtr1._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, rtr1._getRawParagraphStyle().getCharactersCovered());
+    	assertEquals(31, rtr1.getCharacterStyle().getCharactersCovered());
+    	assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
 
     	// Set the text to be as it is now
     	rtr1.setText( rtr1.getRawText() );
-    	rtr1 = tr1.getTextRuns().get(0);
+    	rtr1 = tr1.get(0).getTextRuns().get(0);
 
     	// Check that the text sizes are still as expected
-    	assertEquals(1, tr1.getTextRuns().length);
-    	assertEquals(30, tr1.getRawText().length());
-    	assertEquals(30, tr1.getTextRuns().get(0).getRawText().length());
+    	assertEquals(1, tr1.get(0).getTextRuns().size());
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(30, tr1.get(0).getTextRuns().get(0).getRawText().length());
     	assertEquals(30, rtr1.getLength());
     	assertEquals(30, rtr1.getRawText().length());
-    	assertEquals(31, rtr1._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, rtr1._getRawParagraphStyle().getCharactersCovered());
+    	assertEquals(31, rtr1.getCharacterStyle().getCharactersCovered());
+    	assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
 
 
 		// Write the slideshow out to a byte array

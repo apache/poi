@@ -84,13 +84,13 @@ public final class TestTxMasterStyleAtom extends TestCase {
         TextProp prop;
 
         //paragraph styles
-        props = txmaster.getParagraphStyles()[0];
+        props = txmaster.getParagraphStyles().get(0);
 
         prop = props.findByName("alignment");
         assertEquals(1, prop.getValue()); //title has center alignment
 
         //character styles
-        props = txmaster.getCharacterStyles()[0];
+        props = txmaster.getCharacterStyles().get(0);
 
         prop = props.findByName("font.color");
         assertEquals(0x3000000, prop.getValue());
@@ -110,27 +110,27 @@ public final class TestTxMasterStyleAtom extends TestCase {
         TextPropCollection props;
         TextProp prop;
 
-        TextPropCollection[] prstyles = txmaster.getParagraphStyles();
-        TextPropCollection[] chstyles = txmaster.getCharacterStyles();
+        List<TextPropCollection> prstyles = txmaster.getParagraphStyles();
+        List<TextPropCollection> chstyles = txmaster.getCharacterStyles();
         assertEquals("TxMasterStyleAtom for TextHeaderAtom.BODY_TYPE " +
-                "must contain styles for 5 indentation levels", 5, prstyles.length);
+                "must contain styles for 5 indentation levels", 5, prstyles.size());
         assertEquals("TxMasterStyleAtom for TextHeaderAtom.BODY_TYPE " +
-                "must contain styles for 5 indentation levels", 5, chstyles.length);
+                "must contain styles for 5 indentation levels", 5, chstyles.size());
 
         //paragraph styles
-        props = prstyles[0];
+        props = prstyles.get(0);
 
         prop = props.findByName("alignment");
         assertEquals(0, prop.getValue());
 
 
-        for (int i = 0; i < prstyles.length; i++) {
-            assertNotNull("text.offset is null for indentation level " + i, prstyles[i].findByName("text.offset"));
-            assertNotNull("bullet.offset is null for indentation level " + i, prstyles[i].findByName("bullet.offset"));
+        for (int i = 0; i < prstyles.size(); i++) {
+            assertNotNull("text.offset is null for indentation level " + i, prstyles.get(i).findByName("text.offset"));
+            assertNotNull("bullet.offset is null for indentation level " + i, prstyles.get(i).findByName("bullet.offset"));
         }
 
         //character styles
-        props = chstyles[0];
+        props = chstyles.get(0);
 
         prop = props.findByName("font.color");
         assertEquals(0x1000000, prop.getValue());
@@ -150,13 +150,13 @@ public final class TestTxMasterStyleAtom extends TestCase {
         TextProp prop;
 
         //paragraph styles
-        props = txmaster.getParagraphStyles()[0];
+        props = txmaster.getParagraphStyles().get(0);
 
         prop = props.findByName("alignment");
         assertEquals(0, prop.getValue());
 
         //character styles
-        props = txmaster.getCharacterStyles()[0];
+        props = txmaster.getCharacterStyles().get(0);
 
         prop = props.findByName("font.color");
         assertEquals(0x1000000, prop.getValue());
@@ -176,13 +176,13 @@ public final class TestTxMasterStyleAtom extends TestCase {
         TextProp prop;
 
         //paragraph styles
-        props = txmaster.getParagraphStyles()[0];
+        props = txmaster.getParagraphStyles().get(0);
 
         prop = props.findByName("alignment");
         assertEquals(0, prop.getValue()); //title has center alignment
 
         //character styles
-        props = txmaster.getCharacterStyles()[0];
+        props = txmaster.getCharacterStyles().get(0);
 
         prop = props.findByName("font.color");
         assertEquals(0x1000000, prop.getValue());

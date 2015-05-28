@@ -19,17 +19,15 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.StyleTextProp9Atom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextAutoNumberSchemeEnum;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.*;
+import org.junit.Test;
 
 
 /**
@@ -37,22 +35,21 @@ import org.apache.poi.POIDataSamples;
  * 
  * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
-public final class TestNumberedList extends TestCase {
+public final class TestNumberedList {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-	protected void setUp() throws Exception {
-	}
-
-	public void testNumberedList() throws Exception {
+    @Test
+    public void testNumberedList() throws Exception {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final HSLFSlide[] slides = ppt.getSlides();
-		assertEquals(2, slides.length);
-		checkSlide0(slides[0]);
-		checkSlide1(slides[1]);
+		final List<HSLFSlide> slides = ppt.getSlides();
+		assertEquals(2, slides.size());
+		checkSlide0(slides.get(0));
+		checkSlide1(slides.get(1));
 	}
-	private void checkSlide0(final HSLFSlide s) {
+
+    private void checkSlide0(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(1, numberedListArray.length);//Just one text box here
@@ -68,27 +65,33 @@ public final class TestNumberedList extends TestCase {
 		assertNull(autoNumbers[1].getAutoNumberScheme());
 		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaLcParenRight == autoNumbers[2].getAutoNumberScheme());
 			
-		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
-		assertEquals(2, textRuns.length);
+		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
+		assertEquals(2, textParass.size());
 
-		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
-		assertEquals("titTe", textRun.getRawText());
-		assertEquals(1, textRuns[0].getTextRuns().length);
-		assertFalse(textRun.isBullet());
+		List<HSLFTextParagraph> textParas = textParass.get(0);
+		assertEquals("titTe", HSLFTextParagraph.getRawText(textParas));
+		assertEquals(1, textParas.size());
+		assertFalse(textParas.get(0).isBullet());
 
-		assertEquals("This is a text placeholder that \rfollows the design pattern\rJust a test\rWithout any paragraph\rSecond paragraph first line c) ;\rSecond paragraph second line d) . \r", textRuns[1].getRawText());
+		String expected =
+	        "This is a text placeholder that \r" +
+	        "follows the design pattern\r" +
+	        "Just a test\rWithout any paragraph\r" +
+	        "Second paragraph first line c) ;\r" +
+	        "Second paragraph second line d) . \r";
+		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(1)));
 		
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
-		assertEquals(textRuns.length, styleAtoms.length);
+		assertEquals(textParass.size(), styleAtoms.length);
 		final EscherTextboxWrapper wrapper =  styleAtoms[1];
 		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
 		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();
-		final TextPropCollection[] props = (TextPropCollection[]) textProps.toArray(new TextPropCollection[textProps.size()]);
-		assertEquals(60, props[0].getCharactersCovered());
-		assertEquals(34, props[1].getCharactersCovered());
-		assertEquals(68, props[2].getCharactersCovered());
+		assertEquals(60, textProps.get(0).getCharactersCovered());
+		assertEquals(34, textProps.get(1).getCharactersCovered());
+		assertEquals(68, textProps.get(2).getCharactersCovered());
 	}
-	private void checkSlide1(final HSLFSlide s) {
+
+    private void checkSlide1(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
 		assertEquals(1, numberedListArray.length);//Just one text box here
@@ -104,25 +107,30 @@ public final class TestNumberedList extends TestCase {
 		assertNull(autoNumbers[1].getAutoNumberScheme());
 		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaUcPeriod == autoNumbers[2].getAutoNumberScheme());
 
-		final HSLFTextParagraph[] textRuns = s.getTextParagraphs();
-		assertEquals(2, textRuns.length);
+		final List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
+		assertEquals(2, textParass.size());
 
-		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
-		assertEquals("Second Slide Title", textRun.getRawText());
-		assertEquals(1, textRuns[0].getTextRuns().length);
-		assertFalse(textRun.isBullet());
+		List<HSLFTextParagraph> textParas = textParass.get(0);
+		assertEquals("Second Slide Title", HSLFTextParagraph.getRawText(textParas));
+		assertEquals(1, textParas.size());
+		assertFalse(textParas.get(0).isBullet());
 
-		assertEquals("This is a text placeholder that \rfollows the design pattern\rJust a test\rWithout any paragraph\rSecond paragraph first line c) ;\rSecond paragraph second line d) . \r", textRuns[1].getRawText());
+		String expected =
+	        "This is a text placeholder that \r" +
+	        "follows the design pattern\r" +
+	        "Just a test\rWithout any paragraph\r" +
+	        "Second paragraph first line c) ;\r" +
+	        "Second paragraph second line d) . \r";		        
+		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(1)));
 		
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
-		assertEquals(textRuns.length, styleAtoms.length);
+		assertEquals(textParass.size(), styleAtoms.length);
 		final EscherTextboxWrapper wrapper =  styleAtoms[1];
 		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
 		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();
 		
-		final TextPropCollection[] props = (TextPropCollection[]) textProps.toArray(new TextPropCollection[textProps.size()]);
-		assertEquals(33, props[0].getCharactersCovered());
-		assertEquals(61, props[1].getCharactersCovered());
-		assertEquals(68, props[2].getCharactersCovered());
+		assertEquals(33, textProps.get(0).getCharactersCovered());
+		assertEquals(61, textProps.get(1).getCharactersCovered());
+		assertEquals(68, textProps.get(2).getCharactersCovered());
 	}
 }

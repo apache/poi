@@ -42,14 +42,14 @@ public final class TestTextSpecInfoAtom extends TestCase {
 
     public void testRead() {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
-        TextSpecInfoAtom.TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
+        TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
         assertEquals(5, run.length);
 
-        assertEquals(10, run[0].length());
-        assertEquals(1, run[1].length());
-        assertEquals(70, run[2].length());
-        assertEquals(9, run[3].length());
-        assertEquals(32, run[4].length());
+        assertEquals(10, run[0].getLength());
+        assertEquals(1, run[1].getLength());
+        assertEquals(70, run[2].getLength());
+        assertEquals(9, run[3].getLength());
+        assertEquals(32, run[4].getLength());
 
     }
 
@@ -66,10 +66,10 @@ public final class TestTextSpecInfoAtom extends TestCase {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         spec.reset(32);  //length of the parent text
 
-        TextSpecInfoAtom.TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
+        TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
         assertEquals(1, run.length);
 
-        assertEquals(32, run[0].length());
+        assertEquals(32, run[0].getLength());
 
         //serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -77,9 +77,9 @@ public final class TestTextSpecInfoAtom extends TestCase {
 
         byte[] result = out.toByteArray();
         TextSpecInfoAtom spec2 = new TextSpecInfoAtom(result, 0, result.length);
-        TextSpecInfoAtom.TextSpecInfoRun[] run2 = spec2.getTextSpecInfoRuns();
+        TextSpecInfoRun[] run2 = spec2.getTextSpecInfoRuns();
         assertEquals(1, run2.length);
 
-        assertEquals(32, run2[0].length());
+        assertEquals(32, run2[0].getLength());
     }
 }

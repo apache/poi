@@ -37,7 +37,10 @@ import org.junit.runners.Suite;
     TestSheetText.class,
     TestSlideOrdering.class,
     TestSoundData.class,
-    TestFontRendering.class
+    TestFontRendering.class,
+    TestPicture.class,
+    TestTextRun.class,
+    TestTextShape.class
 })
 public class AllHSLFUserModelTests {
 }
