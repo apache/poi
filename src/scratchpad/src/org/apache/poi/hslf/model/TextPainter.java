@@ -20,7 +20,6 @@ package org.apache.poi.hslf.model;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -41,13 +40,8 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Paint text into java.awt.Graphics2D
- *
- * @author Yegor Kozlov
  */
-public final class TextPainter {
-    public static final Key KEY_FONTFALLBACK = new Key(50, "Font fallback map");
-    public static final Key KEY_FONTMAP = new Key(51, "Font map");
-    
+public final class TextPainter implements org.apache.poi.sl.usermodel.TextPainter {
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
     /**
@@ -382,37 +376,5 @@ public final class TextPainter {
         //finally draw the text fragments
         TextElement[] elems = new TextElement[lines.size()];
         return lines.toArray(elems);
-    }
-
-    public static class TextElement {
-        public AttributedString _text;
-        public int _textOffset;
-        public AttributedString _bullet;
-        public int _bulletOffset;
-        public int _align;
-        public float ascent, descent;
-        public float advance;
-        public int textStartIndex, textEndIndex;
-    }
-
-    public static class Key extends RenderingHints.Key {
-      String description;
-
-      public Key(int paramInt, String paramString) {
-        super(paramInt);
-        this.description = paramString;
-      }
-
-      public final int getIndex() {
-        return intKey();
-      }
-
-      public final String toString() {
-        return this.description;
-      }
-
-      public boolean isCompatibleValue(Object paramObject) {
-        return true;
-      }
     }
 }
