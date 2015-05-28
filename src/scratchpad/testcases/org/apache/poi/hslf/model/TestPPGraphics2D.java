@@ -40,7 +40,7 @@ public final class TestPPGraphics2D {
     private HSLFSlideShow ppt;
 
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
 		ppt = new HSLFSlideShow(_slTests.openResourceAsStream("empty.ppt"));
     }
 

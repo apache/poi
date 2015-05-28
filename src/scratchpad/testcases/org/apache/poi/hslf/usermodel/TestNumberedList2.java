@@ -19,17 +19,15 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.StyleTextProp9Atom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
-import org.apache.poi.hslf.record.TextAutoNumberSchemeEnum;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.*;
+import org.junit.Test;
 
 
 /**
@@ -40,20 +38,18 @@ import org.apache.poi.POIDataSamples;
  * 
  * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
-public final class TestNumberedList2 extends TestCase {
+public final class TestNumberedList2 {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-	protected void setUp() throws Exception {
-	}
-
+    @Test
 	public void testNumberedList() throws Exception {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers2.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final HSLFSlide[] slides = ppt.getSlides();
-		assertEquals(2, slides.length);
-		checkSlide0(slides[0]);
-		checkSlide1(slides[1]);
+		final List<HSLFSlide> slides = ppt.getSlides();
+		assertEquals(2, slides.size());
+		checkSlide0(slides.get(0));
+		checkSlide1(slides.get(1));
 	}
 	private void checkSlide0(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
@@ -73,18 +69,22 @@ public final class TestNumberedList2 extends TestCase {
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox1[0].getAutoNumberScheme());
 
 		
-		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
-		assertEquals(2, textRuns.length);
+		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
+		assertEquals(2, textParass.size());
 
-		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
-		assertEquals("List Item One\rList Item Two\rList Item Three", textRun.getRawText());
-		assertEquals(1, textRuns[0].getTextRuns().length);
-		assertTrue(textRun.isBullet());
+		List<HSLFTextParagraph> textParas = textParass.get(0);
+		assertEquals("List Item One\rList Item Two\rList Item Three", HSLFTextParagraph.getRawText(textParas));
+		assertEquals(3, textParas.size());
+		assertTrue(textParas.get(0).isBullet());
 
-		assertEquals("A numbered list may start at any number \rThis would be used as a continuation list on another page\rThis list should start with #6", textRuns[1].getRawText());
+		String expected =
+	        "A numbered list may start at any number \r" +
+	        "This would be used as a continuation list on another page\r" +
+            "This list should start with #6";
+		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(1)));
 		
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
-		assertEquals(textRuns.length, styleAtoms.length);
+		assertEquals(textParass.size(), styleAtoms.length);
 		checkSingleRunWrapper(44, styleAtoms[0]);
 		checkSingleRunWrapper(130, styleAtoms[1]);
 	}
@@ -99,19 +99,21 @@ public final class TestNumberedList2 extends TestCase {
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getAutoNumberStartNumber());//Default value = 1 will be used 
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox[0].getAutoNumberScheme());
 			
-		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
-		assertEquals(3, textRuns.length);
+		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
+		assertEquals(3, textParass.size());
 
-		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
-		assertEquals("Bulleted list\rMore bullets", textRun.getRawText());
-		assertEquals(1, textRuns[0].getTextRuns().length);
-		assertTrue(textRun.isBullet());
+		List<HSLFTextParagraph> textParas = textParass.get(0);
+		assertEquals("Bulleted list\rMore bullets", HSLFTextParagraph.getRawText(textParas));
+		assertEquals(2, textParas.size());
+		assertTrue(textParas.get(0).isBullet());
 
-		assertEquals("Numbered list between two bulleted lists\rSecond numbered list item", textRuns[1].getRawText());
-		assertEquals("Second bulleted list \u2013 should appear after numbered list\rMore bullets", textRuns[2].getRawText());
+		String expected = "Numbered list between two bulleted lists\rSecond numbered list item";
+		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(1)));
+		expected = "Second bulleted list \u2013 should appear after numbered list\rMore bullets";
+		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(2)));
 		
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
-		assertEquals(textRuns.length, styleAtoms.length);
+		assertEquals(textParass.size(), styleAtoms.length);
 		checkSingleRunWrapper(27, styleAtoms[0]);
 		checkSingleRunWrapper(67, styleAtoms[1]);
 		checkSingleRunWrapper(70, styleAtoms[2]);
@@ -120,7 +122,6 @@ public final class TestNumberedList2 extends TestCase {
 		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
 		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();
 		assertEquals(1, textProps.size());
-		final TextPropCollection[] props = (TextPropCollection[]) textProps.toArray(new TextPropCollection[textProps.size()]);
-		assertEquals(exceptedLength, props[0].getCharactersCovered());
+		assertEquals(exceptedLength, textProps.get(0).getCharactersCovered());
 	}
 }

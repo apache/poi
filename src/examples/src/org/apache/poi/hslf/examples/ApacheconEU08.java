@@ -153,7 +153,7 @@ public final class ApacheconEU08 {
                 cell.setText(txt1[i][j]);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontSize(10);
-                rt.setFontName("Arial");
+                rt.setFontFamily("Arial");
                 rt.setBold(true);
                 if(i == 0){
                     rt.setFontSize(32);
@@ -232,7 +232,7 @@ public final class ApacheconEU08 {
 
         HSLFTextBox box3 = new HSLFTextBox();
         HSLFTextRun rt3 = box3.getTextParagraphs().get(0).getTextRuns().get(0);
-        rt3.setFontName("Courier New");
+        rt3.setFontFamily("Courier New");
         rt3.setFontSize(8);
         box3.setText(
                 "SlideShow ppt = new SlideShow();\u000b" +
@@ -341,7 +341,7 @@ public final class ApacheconEU08 {
 
         HSLFTextBox box3 = new HSLFTextBox();
         HSLFTextRun rt3 = box3.getTextParagraphs().get(0).getTextRuns().get(0);
-        rt3.setFontName("Courier New");
+        rt3.setFontFamily("Courier New");
         rt3.setFontSize(8);
         box3.setText(
                 "//bar chart data. The first value is the bar color, the second is the width\u000b" +

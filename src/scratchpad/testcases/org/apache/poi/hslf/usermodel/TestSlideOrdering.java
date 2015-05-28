@@ -17,18 +17,20 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
+import java.util.List;
+
 import org.apache.poi.POIDataSamples;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that SlideShow returns Sheets in the right order
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestSlideOrdering extends TestCase {
+public final class TestSlideOrdering {
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 	// Simple slideshow, record order matches slide order
@@ -36,7 +38,8 @@ public final class TestSlideOrdering extends TestCase {
 	// Complex slideshow, record order doesn't match slide order
 	private HSLFSlideShow ssB;
 
-	public TestSlideOrdering() throws Exception {
+	@Before
+	public void init() throws Exception {
 		HSLFSlideShowImpl hssA = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ssA = new HSLFSlideShow(hssA);
 
@@ -47,33 +50,29 @@ public final class TestSlideOrdering extends TestCase {
 	/**
 	 * Test the simple case - record order matches slide order
 	 */
+	@Test
 	public void testSimpleCase() {
-		assertEquals(2, ssA.getSlides().length);
+		assertEquals(2, ssA.getSlides().size());
 
-		HSLFSlide s1 = ssA.getSlides()[0];
-		HSLFSlide s2 = ssA.getSlides()[1];
+		HSLFSlide s1 = ssA.getSlides().get(0);
+		HSLFSlide s2 = ssA.getSlides().get(1);
 
 		String[] firstTRs = new String[] { "This is a test title", "This is the title on page 2" };
 
-		assertEquals(firstTRs[0], s1.getTextParagraphs()[0].getRawText());
-		assertEquals(firstTRs[1], s2.getTextParagraphs()[0].getRawText());
+		assertEquals(firstTRs[0], HSLFTextParagraph.getRawText(s1.getTextParagraphs().get(0)));
+		assertEquals(firstTRs[1], HSLFTextParagraph.getRawText(s2.getTextParagraphs().get(0)));
 	}
 
 	/**
 	 * Test the complex case - record order differs from slide order
 	 */
+    @Test
 	public void testComplexCase() {
-		assertEquals(3, ssB.getSlides().length);
-
-		HSLFSlide s1 = ssB.getSlides()[0];
-		HSLFSlide s2 = ssB.getSlides()[1];
-		HSLFSlide s3 = ssB.getSlides()[2];
-
-		String[] firstTRs = new String[] { "Slide 1", "Slide 2", "Slide 3" };
-
-		assertEquals(firstTRs[0], s1.getTextParagraphs()[0].getRawText());
-		assertEquals(firstTRs[1], s2.getTextParagraphs()[0].getRawText());
-		assertEquals(firstTRs[2], s3.getTextParagraphs()[0].getRawText());
+		assertEquals(3, ssB.getSlides().size());
+		int i=1;
+		for (HSLFSlide s : ssB.getSlides()) {
+		    assertEquals("Slide "+(i++), HSLFTextParagraph.getRawText(s.getTextParagraphs().get(0)));
+		}
 	}
 
 	/**
@@ -88,15 +87,16 @@ public final class TestSlideOrdering extends TestCase {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
         HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream(filename));
-		HSLFSlide[] slide = ppt.getSlides();
+		List<HSLFSlide> slide = ppt.getSlides();
 
-		assertEquals(titles.length, slide.length);
-		for (int i = 0; i < slide.length; i++) {
-			String title = slide[i].getTitle();
+		assertEquals(titles.length, slide.size());
+		for (int i = 0; i < slide.size(); i++) {
+			String title = slide.get(i).getTitle();
 			assertEquals("Wrong slide title in " + filename, titles[i], title);
 		}
 	}
 
+    @Test
 	public void testTitles() throws Exception {
 		assertSlideOrdering("basic_test_ppt_file.ppt", new String[] {
 				"This is a test title", "This is the title on page 2" });

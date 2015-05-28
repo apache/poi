@@ -127,7 +127,36 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
      */
     @Override
     public List<HSLFShape> getShapes() {
-        return getShapeList();
+        PPDrawing ppdrawing = getPPDrawing();
+
+        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
+        EscherContainerRecord spgr = null;
+
+        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
+            EscherRecord rec = it.next();
+            if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
+                spgr = (EscherContainerRecord) rec;
+                break;
+            }
+        }
+        if (spgr == null) {
+            throw new IllegalStateException("spgr not found");
+        }
+
+        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
+        Iterator<EscherRecord> it = spgr.getChildIterator();
+        if (it.hasNext()) {
+            // skip first item
+            it.next();
+        }
+        for (; it.hasNext();) {
+            EscherContainerRecord sp = (EscherContainerRecord) it.next();
+            HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
+            sh.setSheet(this);
+            shapeList.add(sh);
+        }
+
+        return shapeList;
     }
 
     /**
@@ -347,47 +376,9 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
     }
 
     public Iterator<HSLFShape> iterator() {
-        return getShapeList().iterator();
+        return getShapes().iterator();
     }
 
-
-    /**
-     * Returns all shapes contained in this Sheet
-     *
-     * @return all shapes contained in this Sheet (Slide or Notes)
-     */
-    protected List<HSLFShape> getShapeList() {
-        PPDrawing ppdrawing = getPPDrawing();
-
-        EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
-        EscherContainerRecord spgr = null;
-
-        for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
-            EscherRecord rec = it.next();
-            if (rec.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
-                spgr = (EscherContainerRecord) rec;
-                break;
-            }
-        }
-        if (spgr == null) {
-            throw new IllegalStateException("spgr not found");
-        }
-
-        List<HSLFShape> shapeList = new ArrayList<HSLFShape>();
-        Iterator<EscherRecord> it = spgr.getChildIterator();
-        if (it.hasNext()) {
-            // skip first item
-            it.next();
-        }
-        for (; it.hasNext();) {
-            EscherContainerRecord sp = (EscherContainerRecord) it.next();
-            HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
-            sh.setSheet(this);
-            shapeList.add(sh);
-        }
-
-        return shapeList;
-    }
 
     /**
      * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.

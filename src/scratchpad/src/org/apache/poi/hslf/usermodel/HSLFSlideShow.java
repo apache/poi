@@ -571,10 +571,6 @@ public final class HSLFSlideShow implements SlideShow {
 							+ _slides.size() + ")");
 		}
 
-		_slides.get(newSlideNumber).setSlideNumber(oldSlideNumber);
-		_slides.get(oldSlideNumber).setSlideNumber(newSlideNumber);
-		Collections.swap(_slides, oldSlideNumber-1, newSlideNumber-1);
-		
 		// The order of slides is defined by the order of slide atom sets in the
 		// SlideListWithText container.
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
@@ -584,11 +580,16 @@ public final class HSLFSlideShow implements SlideShow {
 		sas[oldSlideNumber - 1] = sas[newSlideNumber - 1];
 		sas[newSlideNumber - 1] = tmp;
 
+		Collections.swap(_slides, oldSlideNumber - 1, newSlideNumber - 1);
+		_slides.get(newSlideNumber - 1).setSlideNumber(newSlideNumber);
+		_slides.get(oldSlideNumber - 1).setSlideNumber(oldSlideNumber);
+		
 		ArrayList<Record> lst = new ArrayList<Record>();
 		for (SlideAtomsSet s : sas) {
 			lst.add(s.getSlidePersistAtom());
 			lst.addAll(Arrays.asList(s.getSlideRecords()));
 		}
+		
 		Record[] r = lst.toArray(new Record[lst.size()]);
 		slwt.setChildRecord(r);
 	}
@@ -628,7 +629,7 @@ public final class HSLFSlideShow implements SlideShow {
             records.add(s.getSlidePersistAtom());
             records.addAll(Arrays.asList(s.getSlideRecords()));
 		}
-		if (sa.size() == 0) {
+		if (sa.isEmpty()) {
 			_documentRecord.removeSlideListWithText(slwt);
 		} else {
 			slwt.setSlideAtomsSets(sa.toArray(new SlideAtomsSet[sa.size()]));

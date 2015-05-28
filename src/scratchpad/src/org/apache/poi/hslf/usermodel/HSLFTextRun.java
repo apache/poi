@@ -39,7 +39,7 @@ public final class HSLFTextRun implements TextRun {
 	/** The TextRun we belong to */
 	private HSLFTextParagraph parentParagraph;
 	private String _runText = "";
-	private String _fontname;
+	private String _fontFamily;
 	
 	/**
 	 * Our paragraph and character style.
@@ -68,9 +68,9 @@ public final class HSLFTextRun implements TextRun {
 	 * Supply the SlideShow we belong to
 	 */
 	public void updateSheet() {
-		if (_fontname != null) {
-			setFontName(_fontname);
-			_fontname = null;
+		if (_fontFamily != null) {
+			setFontFamily(_fontFamily);
+			_fontFamily = null;
 		}
 	}
 
@@ -149,7 +149,7 @@ public final class HSLFTextRun implements TextRun {
 
 		if (prop == null){
 			HSLFSheet sheet = parentParagraph.getSheet();
-			int txtype = parentParagraph.getParentShape().getRunType();
+			int txtype = parentParagraph.getRunType();
 			HSLFMasterSheet master = sheet.getMasterSheet();
 			if (master != null)
 				prop = master.getStyleAttribute(txtype, parentParagraph.getIndentLevel(), propName, true);
@@ -306,16 +306,16 @@ public final class HSLFTextRun implements TextRun {
 	/**
 	 * Sets the font name to use
 	 */
-	public void setFontName(String fontName) {
+	public void setFontFamily(String fontFamily) {
 	    HSLFSheet sheet = parentParagraph.getSheet();
 	    HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
 		if (sheet == null || slideShow == null) {
 			//we can't set font since slideshow is not assigned yet
-			_fontname = fontName;
+			_fontFamily = fontFamily;
 			return;
 		}
 		// Get the index for this font (adding if needed)
-		int fontIdx = slideShow.getFontCollection().addFont(fontName);
+		int fontIdx = slideShow.getFontCollection().addFont(fontFamily);
 		setCharTextPropVal("font.index", fontIdx);
 	}
 
@@ -327,7 +327,7 @@ public final class HSLFTextRun implements TextRun {
         HSLFSheet sheet = parentParagraph.getSheet();
         HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
 		if (sheet == null || slideShow == null) {
-			return _fontname;
+			return _fontFamily;
 		}
 		int fontIdx = getCharTextPropVal("font.index");
 		if(fontIdx == -1) { return null; }

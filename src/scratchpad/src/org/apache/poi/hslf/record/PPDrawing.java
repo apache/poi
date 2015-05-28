@@ -247,14 +247,14 @@ public final class PPDrawing extends RecordAtom {
 	 */
 	public void writeOut(OutputStream out) throws IOException {
 		// Ensure the escher layer reflects the text changes
-		for(int i=0; i<textboxWrappers.length; i++) {
-			textboxWrappers[i].writeOut(null);
+		for (EscherTextboxWrapper w : textboxWrappers) {
+			w.writeOut(null);
 		}
 
 		// Find the new size of the escher children;
 		int newSize = 0;
-		for(int i=0; i<childRecords.length; i++) {
-			newSize += childRecords[i].getRecordSize();
+		for(EscherRecord er : childRecords) {
+			newSize += er.getRecordSize();
 		}
 
 		// Update the size (header bytes 5-8)
