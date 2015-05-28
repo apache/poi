@@ -25,7 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.sl.model.TextPainter;
+import org.apache.poi.sl.usermodel.TextPainter;
 import org.apache.poi.util.JvmBugs;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
