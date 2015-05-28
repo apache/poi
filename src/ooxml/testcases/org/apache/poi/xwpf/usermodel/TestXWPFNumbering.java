@@ -23,6 +23,8 @@ import java.math.BigInteger;
 import junit.framework.TestCase;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 
 public class TestXWPFNumbering extends TestCase {
 	
@@ -89,21 +91,13 @@ public class TestXWPFNumbering extends TestCase {
 	}
 
 	public void testOverrideList() throws IOException {
-		//TODO: for now the try/catch block ensures loading/inclusion of CTNumLevel
-		//for down stream processing.
-		//Ideally, we should find files that actually use overrides and test against those.
-		//Use XWPFParagraph's getNumStartOverride() in the actual tests
-
-		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
-		XWPFParagraph p = doc.getParagraphs().get(18);XWPFNumbering numbering = doc.getNumbering();
-		boolean ex = false;
-		assertNull(p.getNumStartOverride());
-		try {
-			numbering.getNum(p.getNumID()).getCTNum().getLvlOverrideArray(1);
-		} catch (IndexOutOfBoundsException e) {
-			ex = true;
-		}
-		assertTrue(ex);
+          XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWOverrides.docx");
+          XWPFParagraph p = doc.getParagraphs().get(4);
+          XWPFNumbering numbering = doc.getNumbering();
+          CTNum ctNum = numbering.getNum(p.getNumID()).getCTNum();
+          assertEquals(9, ctNum.sizeOfLvlOverrideArray());
+          CTNumLvl ctNumLvl = ctNum.getLvlOverrideArray(0);
+          assertEquals("upperLetter", ctNumLvl.getLvl().getNumFmt().getVal().toString());
 	}
 
 }
