@@ -25,15 +25,15 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
  */
 public class XWPFDefaultRunStyle {
     private CTRPr rpr;
-    
+
     public XWPFDefaultRunStyle(CTRPr rpr) {
         this.rpr = rpr;
     }
-    
+
     protected CTRPr getRPr() {
         return rpr;
     }
-    
+
     public int getFontSize() {
         if (rpr.isSetSz())
             return rpr.getSz().getVal().intValue() / 2;

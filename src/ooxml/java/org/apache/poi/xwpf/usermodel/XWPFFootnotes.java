@@ -34,18 +34,17 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFootnotes;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
 
 /**
  * Looks after the collection of Footnotes for a document
  */
 public class XWPFFootnotes extends POIXMLDocumentPart {
+    protected XWPFDocument document;
     private List<XWPFFootnote> listFootnote = new ArrayList<XWPFFootnote>();
     private CTFootnotes ctFootnotes;
-
-    protected XWPFDocument document;
 
     /**
      * Construct XWPFFootnotes from a package part
@@ -53,7 +52,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      * @param part the package part holding the data of the footnotes,
      * @param rel  the package relationship of type "http://schemas.openxmlformats.org/officeDocument/2006/relationships/footnotes"
      */
-    public XWPFFootnotes(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException{
+    public XWPFFootnotes(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
         super(part, rel);
     }
 
@@ -68,7 +67,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      */
     @Override
     @SuppressWarnings("deprecation")
-    protected void onDocumentRead () throws IOException {
+    protected void onDocumentRead() throws IOException {
         FootnotesDocument notesDoc;
         try {
             InputStream is = getPackagePart().getInputStream();
@@ -79,7 +78,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
         }
 
         // Find our footnotes
-        for(CTFtnEdn note : ctFootnotes.getFootnoteArray()) {
+        for (CTFtnEdn note : ctFootnotes.getFootnoteArray()) {
             listFootnote.add(new XWPFFootnote(note, this));
         }
     }
@@ -88,7 +87,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTFootnotes.type.getName().getNamespaceURI(), "footnotes"));
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
         map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
         xmlOptions.setSaveSuggestedPrefixes(map);
@@ -103,8 +102,8 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
     }
 
     public XWPFFootnote getFootnoteById(int id) {
-        for(XWPFFootnote note : listFootnote) {
-            if(note.getCTFtnEdn().getId().intValue() == id)
+        for (XWPFFootnote note : listFootnote) {
+            if (note.getCTFtnEdn().getId().intValue() == id)
                 return note;
         }
         return null;
@@ -112,6 +111,7 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
 
     /**
      * Sets the ctFootnotes
+     *
      * @param footnotes
      */
     public void setFootnotes(CTFootnotes footnotes) {
@@ -120,20 +120,22 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
 
     /**
      * add an XWPFFootnote to the document
+     *
      * @param footnote
-     * @throws IOException		 
+     * @throws IOException
      */
-    public void addFootnote(XWPFFootnote footnote){
+    public void addFootnote(XWPFFootnote footnote) {
         listFootnote.add(footnote);
         ctFootnotes.addNewFootnote().set(footnote.getCTFtnEdn());
     }
 
     /**
      * add a footnote to the document
+     *
      * @param note
-     * @throws IOException		 
+     * @throws IOException
      */
-    public XWPFFootnote addFootnote(CTFtnEdn note){
+    public XWPFFootnote addFootnote(CTFtnEdn note) {
         CTFtnEdn newNote = ctFootnotes.addNewFootnote();
         newNote.set(note);
         XWPFFootnote xNote = new XWPFFootnote(newNote, this);
@@ -141,18 +143,18 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
         return xNote;
     }
 
-    public void setXWPFDocument(XWPFDocument doc) {
-        document = doc;
-    }
-
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
     public XWPFDocument getXWPFDocument() {
-        if ( document != null) {
+        if (document != null) {
             return document;
         } else {
-            return (XWPFDocument)getParent();
+            return (XWPFDocument) getParent();
         }
+    }
+
+    public void setXWPFDocument(XWPFDocument doc) {
+        document = doc;
     }
 }

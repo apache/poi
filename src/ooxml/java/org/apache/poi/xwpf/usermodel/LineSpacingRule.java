@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Specifies the logic which shall be used to calculate the line spacing of the
  * parent object when it is displayed in the document.
- * 
+ *
  * @author Gisella Bronzetti
  */
 public enum LineSpacingRule {
@@ -48,28 +48,29 @@ public enum LineSpacingRule {
      */
     AT_LEAST(3);
 
-    
+
+    private static Map<Integer, LineSpacingRule> imap = new HashMap<Integer, LineSpacingRule>();
+
+    static {
+        for (LineSpacingRule p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
+    }
+
     private final int value;
 
     private LineSpacingRule(int val) {
-       value = val;
-    }
-
-    public int getValue() {
-       return value;
-    }
-
-    private static Map<Integer, LineSpacingRule> imap = new HashMap<Integer, LineSpacingRule>();
-    static {
-       for (LineSpacingRule p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+        value = val;
     }
 
     public static LineSpacingRule valueOf(int type) {
-       LineSpacingRule lineType = imap.get(new Integer(type));
-       if (lineType == null)
-          throw new IllegalArgumentException("Unknown line type: " + type);
-       return lineType;
+        LineSpacingRule lineType = imap.get(new Integer(type));
+        if (lineType == null)
+            throw new IllegalArgumentException("Unknown line type: " + type);
+        return lineType;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

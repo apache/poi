@@ -20,7 +20,6 @@ package org.apache.poi.xwpf;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.opc.PackageProperties;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -30,23 +29,22 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * submitted because even though the
  * {@link PackageProperties#getKeywordsProperty()} had been present before, the
  * {@link CoreProperties#getKeywords()} had been missing.
- * 
+ * <p/>
  * The author of this has added {@link CoreProperties#getKeywords()} and
  * {@link CoreProperties#setKeywords(String)} and this test is supposed to test
  * them.
- * 
+ *
  * @author Antoni Mylka
- * 
  */
 public final class TestPackageCorePropertiesGetKeywords extends TestCase {
-	public void testGetSetKeywords() throws IOException {
-		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx");
-		String keywords = doc.getProperties().getCoreProperties().getKeywords();
-		assertEquals("extractor, test, rdf", keywords);
-		
-		doc.getProperties().getCoreProperties().setKeywords("test, keywords");
-		doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-		keywords = doc.getProperties().getCoreProperties().getKeywords();
-		assertEquals("test, keywords",keywords);
-	}
+    public void testGetSetKeywords() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx");
+        String keywords = doc.getProperties().getCoreProperties().getKeywords();
+        assertEquals("extractor, test, rdf", keywords);
+
+        doc.getProperties().getCoreProperties().setKeywords("test, keywords");
+        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        keywords = doc.getProperties().getCoreProperties().getKeywords();
+        assertEquals("test, keywords", keywords);
+    }
 }

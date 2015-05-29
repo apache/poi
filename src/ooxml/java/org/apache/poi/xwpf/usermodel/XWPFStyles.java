@@ -34,25 +34,26 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPrDefault;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPrDefault;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPrDefault;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocDefaults;
+
 /**
  * Holds details of built-in, default and user styles, which
- *  apply to tables / paragraphs / lists etc.
+ * apply to tables / paragraphs / lists etc.
  * Text within one of those with custom stylings has the style
- *  information stored in the {@link XWPFRun}
+ * information stored in the {@link XWPFRun}
  */
-public class XWPFStyles extends POIXMLDocumentPart{
+public class XWPFStyles extends POIXMLDocumentPart {
     private CTStyles ctStyles;
     private List<XWPFStyle> listStyle = new ArrayList<XWPFStyle>();
-    
+
     private XWPFLatentStyles latentStyles;
     private XWPFDefaultRunStyle defaultRunStyle;
     private XWPFDefaultParagraphStyle defaultParaStyle;
@@ -63,7 +64,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
      * @param part the package part holding the data of the styles,
      * @param rel  the package relationship of type "http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"
      */
-    public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException{
+    public XWPFStyles(PackagePart part, PackageRelationship rel) throws IOException, OpenXML4JException {
         super(part, rel);
     }
 
@@ -77,7 +78,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
      * Read document
      */
     @Override
-    protected void onDocumentRead() throws IOException{
+    protected void onDocumentRead() throws IOException {
         StylesDocument stylesDoc;
         try {
             InputStream is = getPackagePart().getInputStream();
@@ -97,7 +98,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTStyles.type.getName().getNamespaceURI(), "styles"));
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
         map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
         xmlOptions.setSaveSuggestedPrefixes(map);
@@ -108,27 +109,28 @@ public class XWPFStyles extends POIXMLDocumentPart{
     }
 
     protected void ensureDocDefaults() {
-        if (! ctStyles.isSetDocDefaults()) {
+        if (!ctStyles.isSetDocDefaults()) {
             ctStyles.addNewDocDefaults();
         }
-        
+
         CTDocDefaults docDefaults = ctStyles.getDocDefaults();
-        if (! docDefaults.isSetPPrDefault())
+        if (!docDefaults.isSetPPrDefault())
             docDefaults.addNewPPrDefault();
-        if (! docDefaults.isSetRPrDefault())
+        if (!docDefaults.isSetRPrDefault())
             docDefaults.addNewRPrDefault();
-        
+
         CTPPrDefault pprd = docDefaults.getPPrDefault();
         CTRPrDefault rprd = docDefaults.getRPrDefault();
         if (!pprd.isSetPPr()) pprd.addNewPPr();
         if (!rprd.isSetRPr()) rprd.addNewRPr();
-        
+
         defaultRunStyle = new XWPFDefaultRunStyle(rprd.getRPr());
         defaultParaStyle = new XWPFDefaultParagraphStyle(pprd.getPPr());
     }
 
     /**
      * Sets the ctStyles
+     *
      * @param styles
      */
     @SuppressWarnings("deprecation")
@@ -136,7 +138,7 @@ public class XWPFStyles extends POIXMLDocumentPart{
         ctStyles = styles;
 
         // Build up all the style objects
-        for(CTStyle style : ctStyles.getStyleArray()) {
+        for (CTStyle style : ctStyles.getStyleArray()) {
             listStyle.add(new XWPFStyle(style, this));
         }
         if (ctStyles.isSetDocDefaults()) {
@@ -154,98 +156,107 @@ public class XWPFStyles extends POIXMLDocumentPart{
 
     /**
      * checks whether style with styleID exist
-     * @param styleID		styleID of the Style in the style-Document
-     * @return				true if style exist, false if style not exist
+     *
+     * @param styleID styleID of the Style in the style-Document
+     * @return true if style exist, false if style not exist
      */
-    public boolean styleExist(String styleID){
+    public boolean styleExist(String styleID) {
         for (XWPFStyle style : listStyle) {
             if (style.getStyleId().equals(styleID))
                 return true;
         }
         return false;
     }
+
     /**
      * add a style to the document
-     * @param style				
-     * @throws IOException		 
+     *
+     * @param style
+     * @throws IOException
      */
-    public void addStyle(XWPFStyle style){
+    public void addStyle(XWPFStyle style) {
         listStyle.add(style);
         ctStyles.addNewStyle();
         int pos = ctStyles.sizeOfStyleArray() - 1;
         ctStyles.setStyleArray(pos, style.getCTStyle());
     }
+
     /**
-     * Get style by a styleID 
-     * @param styleID	styleID of the searched style
+     * Get style by a styleID
+     *
+     * @param styleID styleID of the searched style
      * @return style
      */
-    public XWPFStyle getStyle(String styleID){
+    public XWPFStyle getStyle(String styleID) {
         for (XWPFStyle style : listStyle) {
-            if(style.getStyleId().equals(styleID))
-                return style;		
+            if (style.getStyleId().equals(styleID))
+                return style;
         }
         return null;
     }
+
     public int getNumberOfStyles() {
         return listStyle.size();
     }
 
     /**
      * get the styles which are related to the parameter style and their relatives
-     * this method can be used to copy all styles from one document to another document 
+     * this method can be used to copy all styles from one document to another document
+     *
      * @param style
-     * @return a list of all styles which were used by this method 
+     * @return a list of all styles which were used by this method
      */
-    public List<XWPFStyle> getUsedStyleList(XWPFStyle style){
+    public List<XWPFStyle> getUsedStyleList(XWPFStyle style) {
         List<XWPFStyle> usedStyleList = new ArrayList<XWPFStyle>();
         usedStyleList.add(style);
         return getUsedStyleList(style, usedStyleList);
     }
 
-    /** 
+    /**
      * get the styles which are related to parameter style
+     *
      * @param style
      * @return all Styles of the parameterList
      */
-    private List<XWPFStyle> getUsedStyleList(XWPFStyle style, List<XWPFStyle> usedStyleList){
-        String basisStyleID  = style.getBasisStyleID();
+    private List<XWPFStyle> getUsedStyleList(XWPFStyle style, List<XWPFStyle> usedStyleList) {
+        String basisStyleID = style.getBasisStyleID();
         XWPFStyle basisStyle = getStyle(basisStyleID);
-        if((basisStyle!=null)&&(!usedStyleList.contains(basisStyle))){
+        if ((basisStyle != null) && (!usedStyleList.contains(basisStyle))) {
             usedStyleList.add(basisStyle);
             getUsedStyleList(basisStyle, usedStyleList);
-        }		
+        }
         String linkStyleID = style.getLinkStyleID();
         XWPFStyle linkStyle = getStyle(linkStyleID);
-        if((linkStyle!=null)&&(!usedStyleList.contains(linkStyle))){
+        if ((linkStyle != null) && (!usedStyleList.contains(linkStyle))) {
             usedStyleList.add(linkStyle);
             getUsedStyleList(linkStyle, usedStyleList);
         }
 
         String nextStyleID = style.getNextStyleID();
         XWPFStyle nextStyle = getStyle(nextStyleID);
-        if((nextStyle!=null)&&(!usedStyleList.contains(nextStyle))){
+        if ((nextStyle != null) && (!usedStyleList.contains(nextStyle))) {
             usedStyleList.add(linkStyle);
             getUsedStyleList(linkStyle, usedStyleList);
-        }		
+        }
         return usedStyleList;
     }
 
     protected CTLanguage getCTLanguage() {
         ensureDocDefaults();
-        
+
         CTLanguage lang = null;
         if (defaultRunStyle.getRPr().isSetLang()) {
             lang = defaultRunStyle.getRPr().getLang();
         } else {
             lang = defaultRunStyle.getRPr().addNewLang();
         }
-        
+
         return lang;
     }
-    
+
     /**
      * Sets the default spelling language on ctStyles DocDefaults parameter
+     *
      * @param strSpellingLanguage
      */
     public void setSpellingLanguage(String strSpellingLanguage) {
@@ -253,9 +264,10 @@ public class XWPFStyles extends POIXMLDocumentPart{
         lang.setVal(strSpellingLanguage);
         lang.setBidi(strSpellingLanguage);
     }
-    
+
     /**
      * Sets the default East Asia spelling language on ctStyles DocDefaults parameter
+     *
      * @param strEastAsia
      */
     public void setEastAsia(String strEastAsia) {
@@ -266,11 +278,11 @@ public class XWPFStyles extends POIXMLDocumentPart{
     /**
      * Sets the default font on ctStyles DocDefaults parameter
      * TODO Replace this with specific setters for each type, possibly
-     *  on XWPFDefaultRunStyle
+     * on XWPFDefaultRunStyle
      */
     public void setDefaultFonts(CTFonts fonts) {
         ensureDocDefaults();
-        
+
         CTRPr runProps = defaultRunStyle.getRPr();
         runProps.setRFonts(fonts);
     }
@@ -279,11 +291,11 @@ public class XWPFStyles extends POIXMLDocumentPart{
      * get the style with the same name
      * if this style is not existing, return null
      */
-    public XWPFStyle getStyleWithSameName(XWPFStyle style){
+    public XWPFStyle getStyleWithSameName(XWPFStyle style) {
         for (XWPFStyle ownStyle : listStyle) {
-            if(ownStyle.hasSameName(style)){
+            if (ownStyle.hasSameName(style)) {
                 return ownStyle;
-            }	
+            }
         }
         return null;
     }

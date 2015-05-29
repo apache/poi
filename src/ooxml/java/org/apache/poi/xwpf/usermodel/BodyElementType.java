@@ -24,12 +24,11 @@ package org.apache.poi.xwpf.usermodel;
  * <p>
  * // TODO insert Javadoc here!
  * </p>
- * @author epp
  *
+ * @author epp
  */
 public enum BodyElementType {
-   CONTENTCONTROL,
-   PARAGRAPH,
-	TABLE,
-	
+    CONTENTCONTROL,
+    PARAGRAPH,
+    TABLE,
 }

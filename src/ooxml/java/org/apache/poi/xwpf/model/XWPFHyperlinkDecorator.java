@@ -23,50 +23,49 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 
 /**
- * Decorator class for XWPFParagraph allowing to add hyperlinks 
- *  found in paragraph to its text.
- *  
+ * Decorator class for XWPFParagraph allowing to add hyperlinks
+ * found in paragraph to its text.
+ * <p/>
  * Note - adds the hyperlink at the end, not in the right place...
- *  
+ *
  * @deprecated Use {@link XWPFHyperlinkRun} instead
  */
 @Deprecated
 public class XWPFHyperlinkDecorator extends XWPFParagraphDecorator {
-	private StringBuffer hyperlinkText;
-	
-	/**
-	 * @param nextDecorator The next decorator to use
-	 * @param outputHyperlinkUrls Should we output the links too, or just the link text?
-	 */
-	public XWPFHyperlinkDecorator(XWPFParagraphDecorator nextDecorator, boolean outputHyperlinkUrls) {
-		this(nextDecorator.paragraph, nextDecorator, outputHyperlinkUrls);
-	}
-	
-	/**
-	 * @param prgrph The paragraph of text to work on
-	 * @param outputHyperlinkUrls Should we output the links too, or just the link text?
-	 */
-	public XWPFHyperlinkDecorator(XWPFParagraph prgrph, XWPFParagraphDecorator nextDecorator, boolean outputHyperlinkUrls) {
-		super(prgrph, nextDecorator);
-		
-		hyperlinkText = new StringBuffer();
-		
-		// loop over hyperlink anchors
-		for(CTHyperlink link : paragraph.getCTP().getHyperlinkArray()){
-			for (CTR r : link.getRArray()) {
-				// Loop over text runs
-				for (CTText text : r.getTArray()){
-					hyperlinkText.append(text.getStringValue());
-				}
-			}
-			if(outputHyperlinkUrls && paragraph.getDocument().getHyperlinkByID(link.getId()) != null) {
-				hyperlinkText.append(" <"+paragraph.getDocument().getHyperlinkByID(link.getId()).getURL()+">");
-			}
-		}
-	}
-	
-	public String getText()
-	{
-		return super.getText() + hyperlinkText;
-	}
+    private StringBuffer hyperlinkText;
+
+    /**
+     * @param nextDecorator       The next decorator to use
+     * @param outputHyperlinkUrls Should we output the links too, or just the link text?
+     */
+    public XWPFHyperlinkDecorator(XWPFParagraphDecorator nextDecorator, boolean outputHyperlinkUrls) {
+        this(nextDecorator.paragraph, nextDecorator, outputHyperlinkUrls);
+    }
+
+    /**
+     * @param prgrph              The paragraph of text to work on
+     * @param outputHyperlinkUrls Should we output the links too, or just the link text?
+     */
+    public XWPFHyperlinkDecorator(XWPFParagraph prgrph, XWPFParagraphDecorator nextDecorator, boolean outputHyperlinkUrls) {
+        super(prgrph, nextDecorator);
+
+        hyperlinkText = new StringBuffer();
+
+        // loop over hyperlink anchors
+        for (CTHyperlink link : paragraph.getCTP().getHyperlinkArray()) {
+            for (CTR r : link.getRArray()) {
+                // Loop over text runs
+                for (CTText text : r.getTArray()) {
+                    hyperlinkText.append(text.getStringValue());
+                }
+            }
+            if (outputHyperlinkUrls && paragraph.getDocument().getHyperlinkByID(link.getId()) != null) {
+                hyperlinkText.append(" <" + paragraph.getDocument().getHyperlinkByID(link.getId()).getURL() + ">");
+            }
+        }
+    }
+
+    public String getText() {
+        return super.getText() + hyperlinkText;
+    }
 }

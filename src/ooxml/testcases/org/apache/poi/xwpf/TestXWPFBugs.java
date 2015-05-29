@@ -40,7 +40,7 @@ import org.junit.Test;
 public class TestXWPFBugs {
     /**
      * A word document that's encrypted with non-standard
-     *  Encryption options, and no cspname section. See bug 53475
+     * Encryption options, and no cspname section. See bug 53475
      */
     @Test
     public void bug53475NoCSPName() throws Exception {
@@ -54,7 +54,7 @@ public class TestXWPFBugs {
         assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
 
         // Check it can be decoded
-        Decryptor d = Decryptor.getInstance(info);		
+        Decryptor d = Decryptor.getInstance(info);
         assertTrue("Unable to process: document is encrypted", d.verifyPassword("solrcell"));
 
         // Check we can read the word document in that
@@ -66,7 +66,7 @@ public class TestXWPFBugs {
         assertNotNull(text);
         assertEquals("This is password protected Word document.", text.trim());
         ex.close();
-        
+
         filesystem.close();
     }
 
@@ -90,7 +90,7 @@ public class TestXWPFBugs {
         assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithmEx());
 
         // Check it can be decoded
-        Decryptor d = Decryptor.getInstance(info);		
+        Decryptor d = Decryptor.getInstance(info);
         assertTrue("Unable to process: document is encrypted", d.verifyPassword("pass"));
 
         // Check we can read the word document in that
@@ -103,7 +103,7 @@ public class TestXWPFBugs {
         // I know ... a stupid typo, maybe next time ...
         assertEquals("The is a password protected document.", text.trim());
         ex.close();
-        
+
         filesystem.close();
     }
 }

@@ -20,33 +20,42 @@
 package org.apache.poi.xwpf.usermodel;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 public class TestXWPFTableCell extends TestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	public void testSetGetVertAlignment() throws Exception {
-    	// instantiate the following classes so they'll get picked up by
-    	// the XmlBean process and added to the jar file. they are required
-    	// for the following XWPFTableCell methods.
-		CTShd ctShd = CTShd.Factory.newInstance();
-		assertNotNull(ctShd);
-		CTVerticalJc ctVjc = CTVerticalJc.Factory.newInstance();
-		assertNotNull(ctVjc);
-		STShd stShd = STShd.Factory.newInstance();
-		assertNotNull(stShd);
-		STVerticalJc stVjc = STVerticalJc.Factory.newInstance();
-		assertNotNull(stVjc);
+    public void testSetGetVertAlignment() throws Exception {
+        // instantiate the following classes so they'll get picked up by
+        // the XmlBean process and added to the jar file. they are required
+        // for the following XWPFTableCell methods.
+        CTShd ctShd = CTShd.Factory.newInstance();
+        assertNotNull(ctShd);
+        CTVerticalJc ctVjc = CTVerticalJc.Factory.newInstance();
+        assertNotNull(ctVjc);
+        STShd stShd = STShd.Factory.newInstance();
+        assertNotNull(stShd);
+        STVerticalJc stVjc = STVerticalJc.Factory.newInstance();
+        assertNotNull(stVjc);
 
-    	// create a table
+        // create a table
         XWPFDocument doc = new XWPFDocument();
-    	CTTbl ctTable = CTTbl.Factory.newInstance();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
         // table has a single row by default; grab it
         XWPFTableRow tr = table.getRow(0);
@@ -57,12 +66,12 @@ public class TestXWPFTableCell extends TestCase {
         cell.setVerticalAlignment(XWPFVertAlign.BOTH);
         XWPFVertAlign al = cell.getVerticalAlignment();
         assertEquals(XWPFVertAlign.BOTH, al);
-	}
+    }
 
-	public void testSetGetColor() throws Exception {
-    	// create a table
+    public void testSetGetColor() throws Exception {
+        // create a table
         XWPFDocument doc = new XWPFDocument();
-    	CTTbl ctTable = CTTbl.Factory.newInstance();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
         // table has a single row by default; grab it
         XWPFTableRow tr = table.getRow(0);
@@ -73,12 +82,12 @@ public class TestXWPFTableCell extends TestCase {
         cell.setColor("F0000F");
         String clr = cell.getColor();
         assertEquals("F0000F", clr);
-	}
+    }
 
     /**
      * ensure that CTHMerge & CTTcBorders go in poi-ooxml.jar
      */
-	public void test54099(){
+    public void test54099() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);

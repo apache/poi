@@ -20,19 +20,19 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 
 public class XWPFLatentStyles {
-    private CTLatentStyles latentStyles;
     protected XWPFStyles styles; //LatentStyle shall know styles
+    private CTLatentStyles latentStyles;
 
-    protected XWPFLatentStyles(){
+    protected XWPFLatentStyles() {
     }
 
-    protected XWPFLatentStyles(CTLatentStyles latentStyles){
-        this(latentStyles,null);
+    protected XWPFLatentStyles(CTLatentStyles latentStyles) {
+        this(latentStyles, null);
     }
 
     protected XWPFLatentStyles(CTLatentStyles latentStyles, XWPFStyles styles) {
-        this.latentStyles=latentStyles;
-        this.styles=styles;
+        this.latentStyles = latentStyles;
+        this.styles = styles;
     }
 
     public int getNumberOfStyles() {
@@ -43,12 +43,12 @@ public class XWPFLatentStyles {
      * checks whether specific LatentStyleID is a latentStyle
      */
     @SuppressWarnings("deprecation")
-    protected boolean isLatentStyle(String latentStyleID){	
-        for ( CTLsdException lsd: latentStyles.getLsdExceptionArray()) {
-            if(lsd.getName().equals(latentStyleID)) {
+    protected boolean isLatentStyle(String latentStyleID) {
+        for (CTLsdException lsd : latentStyles.getLsdExceptionArray()) {
+            if (lsd.getName().equals(latentStyleID)) {
                 return true;
             }
         }
-        return false;		
+        return false;
     }
 }

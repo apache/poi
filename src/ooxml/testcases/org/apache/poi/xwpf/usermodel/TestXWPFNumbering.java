@@ -21,83 +21,82 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 
 public class TestXWPFNumbering extends TestCase {
-	
-	public void testCompareAbstractNum() throws IOException {
-		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
-		XWPFNumbering numbering = doc.getNumbering();
-		BigInteger numId = BigInteger.valueOf(1);
-		assertTrue(numbering.numExist(numId));
-		XWPFNum num = numbering.getNum(numId);
-		BigInteger abstrNumId = num.getCTNum().getAbstractNumId().getVal();
-		XWPFAbstractNum abstractNum = numbering.getAbstractNum(abstrNumId);
-		BigInteger compareAbstractNum = numbering.getIdOfAbstractNum(abstractNum);
-		assertEquals(abstrNumId, compareAbstractNum);
-	}
 
-	public void testAddNumberingToDoc() throws IOException{
-		BigInteger abstractNumId = BigInteger.valueOf(1);
-		BigInteger numId = BigInteger.valueOf(1);
+    public void testCompareAbstractNum() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+        XWPFNumbering numbering = doc.getNumbering();
+        BigInteger numId = BigInteger.valueOf(1);
+        assertTrue(numbering.numExist(numId));
+        XWPFNum num = numbering.getNum(numId);
+        BigInteger abstrNumId = num.getCTNum().getAbstractNumId().getVal();
+        XWPFAbstractNum abstractNum = numbering.getAbstractNum(abstrNumId);
+        BigInteger compareAbstractNum = numbering.getIdOfAbstractNum(abstractNum);
+        assertEquals(abstrNumId, compareAbstractNum);
+    }
 
-		XWPFDocument docOut = new XWPFDocument();
-		XWPFNumbering numbering = docOut.createNumbering();
-		numId = numbering.addNum(abstractNumId);
-		
-		XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+    public void testAddNumberingToDoc() throws IOException {
+        BigInteger abstractNumId = BigInteger.valueOf(1);
+        BigInteger numId = BigInteger.valueOf(1);
 
-		numbering = docIn.getNumbering();
-		assertTrue(numbering.numExist(numId));
-		XWPFNum num = numbering.getNum(numId);
+        XWPFDocument docOut = new XWPFDocument();
+        XWPFNumbering numbering = docOut.createNumbering();
+        numId = numbering.addNum(abstractNumId);
 
-		BigInteger compareAbstractNum = num.getCTNum().getAbstractNumId().getVal();
-		assertEquals(abstractNumId, compareAbstractNum);
-	}
+        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
-	public void testGetNumIlvl() throws IOException{
-		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
-		BigInteger numIlvl = BigInteger.valueOf(0);
-		assertEquals(numIlvl, doc.getParagraphs().get(0).getNumIlvl());
-		numIlvl = BigInteger.valueOf(1);
-      assertEquals(numIlvl, doc.getParagraphs().get(5).getNumIlvl());
-	}
+        numbering = docIn.getNumbering();
+        assertTrue(numbering.numExist(numId));
+        XWPFNum num = numbering.getNum(numId);
 
-	public void testGetNumFmt() throws IOException{
-		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
-		assertEquals("bullet", doc.getParagraphs().get(0).getNumFmt());
-		assertEquals("bullet", doc.getParagraphs().get(1).getNumFmt());
-		assertEquals("bullet", doc.getParagraphs().get(2).getNumFmt());
-		assertEquals("bullet", doc.getParagraphs().get(3).getNumFmt());
-		assertEquals("decimal", doc.getParagraphs().get(4).getNumFmt());
-		assertEquals("lowerLetter", doc.getParagraphs().get(5).getNumFmt());
-		assertEquals("lowerRoman", doc.getParagraphs().get(6).getNumFmt());
-  }
+        BigInteger compareAbstractNum = num.getCTNum().getAbstractNumId().getVal();
+        assertEquals(abstractNumId, compareAbstractNum);
+    }
 
-	public void testLvlText() throws IOException {
-		XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+    public void testGetNumIlvl() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+        BigInteger numIlvl = BigInteger.valueOf(0);
+        assertEquals(numIlvl, doc.getParagraphs().get(0).getNumIlvl());
+        numIlvl = BigInteger.valueOf(1);
+        assertEquals(numIlvl, doc.getParagraphs().get(5).getNumIlvl());
+    }
 
-		assertEquals("%1.%2.%3.", doc.getParagraphs().get(12).getNumLevelText());
+    public void testGetNumFmt() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
+        assertEquals("bullet", doc.getParagraphs().get(0).getNumFmt());
+        assertEquals("bullet", doc.getParagraphs().get(1).getNumFmt());
+        assertEquals("bullet", doc.getParagraphs().get(2).getNumFmt());
+        assertEquals("bullet", doc.getParagraphs().get(3).getNumFmt());
+        assertEquals("decimal", doc.getParagraphs().get(4).getNumFmt());
+        assertEquals("lowerLetter", doc.getParagraphs().get(5).getNumFmt());
+        assertEquals("lowerRoman", doc.getParagraphs().get(6).getNumFmt());
+    }
 
-		assertEquals("NEW-%1-FORMAT", doc.getParagraphs().get(14).getNumLevelText());
+    public void testLvlText() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx");
 
-		XWPFParagraph p = doc.getParagraphs().get(18);
-		assertEquals("%1.", p.getNumLevelText());
-		//test that null doesn't throw NPE
-		assertNull(p.getNumFmt());
-	}
+        assertEquals("%1.%2.%3.", doc.getParagraphs().get(12).getNumLevelText());
 
-	public void testOverrideList() throws IOException {
-          XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWOverrides.docx");
-          XWPFParagraph p = doc.getParagraphs().get(4);
-          XWPFNumbering numbering = doc.getNumbering();
-          CTNum ctNum = numbering.getNum(p.getNumID()).getCTNum();
-          assertEquals(9, ctNum.sizeOfLvlOverrideArray());
-          CTNumLvl ctNumLvl = ctNum.getLvlOverrideArray(0);
-          assertEquals("upperLetter", ctNumLvl.getLvl().getNumFmt().getVal().toString());
-	}
+        assertEquals("NEW-%1-FORMAT", doc.getParagraphs().get(14).getNumLevelText());
+
+        XWPFParagraph p = doc.getParagraphs().get(18);
+        assertEquals("%1.", p.getNumLevelText());
+        //test that null doesn't throw NPE
+        assertNull(p.getNumFmt());
+    }
+
+    public void testOverrideList() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWOverrides.docx");
+        XWPFParagraph p = doc.getParagraphs().get(4);
+        XWPFNumbering numbering = doc.getNumbering();
+        CTNum ctNum = numbering.getNum(p.getNumID()).getCTNum();
+        assertEquals(9, ctNum.sizeOfLvlOverrideArray());
+        CTNumLvl ctNumLvl = ctNum.getLvlOverrideArray(0);
+        assertEquals("upperLetter", ctNumLvl.getLvl().getNumFmt().getVal().toString());
+    }
 
 }

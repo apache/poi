@@ -20,11 +20,10 @@ import org.apache.poi.wp.usermodel.CharacterRun;
 
 /**
  * Common interface for things that can occur
- *  where a run (text with common stylings) can,
- *  eg {@link XWPFRun} or {@link XWPFSDT}.
+ * where a run (text with common stylings) can,
+ * eg {@link XWPFRun} or {@link XWPFSDT}.
  * TODO More methods to follow shortly!
- * 
+ * <p/>
  * TODO Make this based on {@link CharacterRun}
  */
-public interface IRunElement {
-}
+public interface IRunElement {}

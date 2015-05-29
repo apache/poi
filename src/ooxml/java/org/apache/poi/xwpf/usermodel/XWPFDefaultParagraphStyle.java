@@ -25,15 +25,15 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
  */
 public class XWPFDefaultParagraphStyle {
     private CTPPr ppr;
-    
+
     public XWPFDefaultParagraphStyle(CTPPr ppr) {
         this.ppr = ppr;
     }
-    
+
     protected CTPPr getPPr() {
         return ppr;
     }
-    
+
     public int getSpacingAfter() {
         if (ppr.isSetSpacing())
             return ppr.getSpacing().getAfter().intValue();
