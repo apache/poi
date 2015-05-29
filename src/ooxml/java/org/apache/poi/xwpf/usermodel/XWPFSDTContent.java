@@ -19,25 +19,22 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 
 /**
- * Experimental class to offer rudimentary read-only processing of 
- *  of the contentblock of an SDT/ContentControl.
- *  
- *
- *
+ * Experimental class to offer rudimentary read-only processing of
+ * of the contentblock of an SDT/ContentControl.
+ * <p/>
+ * <p/>
+ * <p/>
  * WARNING - APIs expected to change rapidly
- * 
  */
 public class XWPFSDTContent implements ISDTContent {
 
@@ -49,14 +46,15 @@ public class XWPFSDTContent implements ISDTContent {
     private List<XWPFSDT> contentControls = new ArrayList<XWPFSDT>();
     private List<ISDTContents> bodyElements = new ArrayList<ISDTContents>();
 
-    public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent){
-        for (CTR ctr : sdtRun.getRArray()){
+    public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent) {
+        for (CTR ctr : sdtRun.getRArray()) {
             XWPFRun run = new XWPFRun(ctr, parent);
             runs.add(run);
             bodyElements.add(run);
         }
     }
-    public XWPFSDTContent(CTSdtContentBlock block, IBody part, IRunBody parent){
+
+    public XWPFSDTContent(CTSdtContentBlock block, IBody part, IRunBody parent) {
         XmlCursor cursor = block.newCursor();
         cursor.selectPath("./*");
         while (cursor.toNextSelection()) {
@@ -69,8 +67,8 @@ public class XWPFSDTContent implements ISDTContent {
                 XWPFTable t = new XWPFTable((CTTbl) o, part);
                 bodyElements.add(t);
                 tables.add(t);
-            } else if (o instanceof CTSdtBlock){
-                XWPFSDT c = new XWPFSDT(((CTSdtBlock)o), part);
+            } else if (o instanceof CTSdtBlock) {
+                XWPFSDT c = new XWPFSDT(((CTSdtBlock) o), part);
                 bodyElements.add(c);
                 contentControls.add(c);
             } else if (o instanceof CTR) {
@@ -81,25 +79,25 @@ public class XWPFSDTContent implements ISDTContent {
         }
     }
 
-    public String getText(){
+    public String getText() {
         StringBuilder text = new StringBuilder();
         boolean addNewLine = false;
-        for (int i = 0; i < bodyElements.size(); i++){
+        for (int i = 0; i < bodyElements.size(); i++) {
             Object o = bodyElements.get(i);
-            if (o instanceof XWPFParagraph){
-                appendParagraph((XWPFParagraph)o, text);
+            if (o instanceof XWPFParagraph) {
+                appendParagraph((XWPFParagraph) o, text);
                 addNewLine = true;
-            } else if (o instanceof XWPFTable){
-                appendTable((XWPFTable)o, text);
+            } else if (o instanceof XWPFTable) {
+                appendTable((XWPFTable) o, text);
                 addNewLine = true;
-            } else if (o instanceof XWPFSDT){
-                text.append(((XWPFSDT)o).getContent().getText());
+            } else if (o instanceof XWPFSDT) {
+                text.append(((XWPFSDT) o).getContent().getText());
                 addNewLine = true;
-            } else if (o instanceof XWPFRun){
-                text.append(((XWPFRun)o).toString());
+            } else if (o instanceof XWPFRun) {
+                text.append(((XWPFRun) o).toString());
                 addNewLine = false;
             }
-            if (addNewLine == true && i < bodyElements.size()-1){
+            if (addNewLine == true && i < bodyElements.size() - 1) {
                 text.append("\n");
             }
         }
@@ -113,25 +111,25 @@ public class XWPFSDTContent implements ISDTContent {
             for (int i = 0; i < cells.size(); i++) {
                 ICell cell = cells.get(i);
                 if (cell instanceof XWPFTableCell) {
-                    text.append(((XWPFTableCell)cell).getTextRecursively());
+                    text.append(((XWPFTableCell) cell).getTextRecursively());
                 } else if (cell instanceof XWPFSDTCell) {
-                    text.append(((XWPFSDTCell)cell).getContent().getText());
+                    text.append(((XWPFSDTCell) cell).getContent().getText());
                 }
-                if (i < cells.size()-1) {
+                if (i < cells.size() - 1) {
                     text.append("\t");
                 }
             }
             text.append('\n');
         }
     }
-    
+
     private void appendParagraph(XWPFParagraph paragraph, StringBuilder text) {
-        for(IRunElement run : paragraph.getRuns()) {
+        for (IRunElement run : paragraph.getRuns()) {
             text.append(run.toString());
         }
     }
-    
-    public String toString(){
+
+    public String toString() {
         return getText();
     }
 }

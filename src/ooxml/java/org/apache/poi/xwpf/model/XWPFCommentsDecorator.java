@@ -21,38 +21,36 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTMarkupRange;
 
 /**
- * Decorator class for XWPFParagraph allowing to add comments 
+ * Decorator class for XWPFParagraph allowing to add comments
  * found in paragraph to its text
  *
  * @author Yury Batrakov (batrakov at gmail.com)
- * 
  */
 public class XWPFCommentsDecorator extends XWPFParagraphDecorator {
-	private StringBuffer commentText;
-	
-	public XWPFCommentsDecorator(XWPFParagraphDecorator nextDecorator) {
-		this(nextDecorator.paragraph, nextDecorator);
-	}
+    private StringBuffer commentText;
 
-	@SuppressWarnings("deprecation")
-	public XWPFCommentsDecorator(XWPFParagraph paragraph, XWPFParagraphDecorator nextDecorator) {
-		super(paragraph, nextDecorator);
+    public XWPFCommentsDecorator(XWPFParagraphDecorator nextDecorator) {
+        this(nextDecorator.paragraph, nextDecorator);
+    }
 
-		XWPFComment comment;
-		commentText = new StringBuffer();
+    @SuppressWarnings("deprecation")
+    public XWPFCommentsDecorator(XWPFParagraph paragraph, XWPFParagraphDecorator nextDecorator) {
+        super(paragraph, nextDecorator);
 
-		for(CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartArray())
-		{
-			if((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null)
-				commentText.append("\tComment by " + comment.getAuthor()+": "+comment.getText());
-		}
-	}
+        XWPFComment comment;
+        commentText = new StringBuffer();
 
-	public String getCommentText() {
-	   return commentText.toString();
-	}
-	
-	public String getText() {
-		return super.getText() + commentText;
-	}
+        for (CTMarkupRange anchor : paragraph.getCTP().getCommentRangeStartArray()) {
+            if ((comment = paragraph.getDocument().getCommentByID(anchor.getId().toString())) != null)
+                commentText.append("\tComment by " + comment.getAuthor() + ": " + comment.getText());
+        }
+    }
+
+    public String getCommentText() {
+        return commentText.toString();
+    }
+
+    public String getText() {
+        return super.getText() + commentText;
+    }
 }

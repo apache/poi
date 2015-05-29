@@ -20,19 +20,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Specifies all types of vertical alignment which are available to be applied to of all text 
+ * Specifies all types of vertical alignment which are available to be applied to of all text
  * on each line displayed within a paragraph.
- * 
+ *
  * @author Gisella Bronzetti
  */
 public enum TextAlignment {
     /**
-     * Specifies that all text in the parent object shall be 
+     * Specifies that all text in the parent object shall be
      * aligned to the top of each character when displayed
      */
     TOP(1),
     /**
-     * Specifies that all text in the parent object shall be 
+     * Specifies that all text in the parent object shall be
      * aligned to the center of each character when displayed.
      */
     CENTER(2),
@@ -47,31 +47,32 @@ public enum TextAlignment {
      */
     BOTTOM(4),
     /**
-     * Specifies that all text in the parent object shall be 
+     * Specifies that all text in the parent object shall be
      * aligned automatically when displayed.
      */
     AUTO(5);
 
+    private static Map<Integer, TextAlignment> imap = new HashMap<Integer, TextAlignment>();
+
+    static {
+        for (TextAlignment p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
+    }
+
     private final int value;
 
-    private TextAlignment(int val){
-	value = val;
+    private TextAlignment(int val) {
+        value = val;
     }
 
-    public int getValue(){
-       return value;
+    public static TextAlignment valueOf(int type) {
+        TextAlignment align = imap.get(new Integer(type));
+        if (align == null) throw new IllegalArgumentException("Unknown text alignment: " + type);
+        return align;
     }
 
-    private static Map<Integer, TextAlignment> imap = new HashMap<Integer, TextAlignment>();
-    static{
-       for (TextAlignment p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
-    }
-
-    public static TextAlignment valueOf(int type){
-       TextAlignment align = imap.get(new Integer(type));
-       if(align == null) throw new IllegalArgumentException("Unknown text alignment: " + type);
-       return align;
+    public int getValue() {
+        return value;
     }
 }

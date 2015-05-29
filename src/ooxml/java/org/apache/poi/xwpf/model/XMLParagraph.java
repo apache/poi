@@ -22,16 +22,15 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
  * Base class for XWPF paragraphs
  *
  * @author Yury Batrakov (batrakov at gmail.com)
- * 
  */
 public class XMLParagraph {
-	protected CTP paragraph;
-	
-	public XMLParagraph(CTP paragraph) {
-		this.paragraph = paragraph;
-	}
+    protected CTP paragraph;
 
-	public CTP getCTP() {
-		return paragraph;
-	}
+    public XMLParagraph(CTP paragraph) {
+        this.paragraph = paragraph;
+    }
+
+    public CTP getCTP() {
+        return paragraph;
+    }
 }

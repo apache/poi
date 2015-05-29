@@ -45,7 +45,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr.Enum;
-
 import schemasMicrosoftComOfficeOffice.CTLock;
 import schemasMicrosoftComOfficeOffice.STConnectType;
 import schemasMicrosoftComVml.CTFormulas;
@@ -61,10 +60,10 @@ import schemasMicrosoftComVml.STTrueFalse;
 
 /**
  * A .docx file can have no headers/footers, the same header/footer
- *  on each page, odd/even page footers, and optionally also 
- *  a different header/footer on the first page.
+ * on each page, odd/even page footers, and optionally also
+ * a different header/footer on the first page.
  * This class handles sorting out what there is, and giving you
- *  the right headers and footers for the document.
+ * the right headers and footers for the document.
  */
 public class XWPFHeaderFooterPolicy {
     public static final Enum DEFAULT = STHdrFtr.DEFAULT;
@@ -84,8 +83,8 @@ public class XWPFHeaderFooterPolicy {
 
     /**
      * Figures out the policy for the given document,
-     *  and creates any header and footer objects
-     *  as required.
+     * and creates any header and footer objects
+     * as required.
      */
     public XWPFHeaderFooterPolicy(XWPFDocument doc) throws IOException, XmlException {
         this(doc, doc.getDocument().getBody().getSectPr());
@@ -93,8 +92,8 @@ public class XWPFHeaderFooterPolicy {
 
     /**
      * Figures out the policy for the given document,
-     *  and creates any header and footer objects
-     *  as required.
+     * and creates any header and footer objects
+     * as required.
      */
     public XWPFHeaderFooterPolicy(XWPFDocument doc, CTSectPr sectPr) throws IOException, XmlException {
         // Grab what headers and footers have been defined
@@ -102,7 +101,7 @@ public class XWPFHeaderFooterPolicy {
         //  doesn't seem that .docx properly supports that
         //  feature of the file format yet
         this.doc = doc;
-        for(int i=0; i<sectPr.sizeOfHeaderReferenceArray(); i++) {
+        for (int i = 0; i < sectPr.sizeOfHeaderReferenceArray(); i++) {
             // Get the header
             CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
@@ -114,13 +113,12 @@ public class XWPFHeaderFooterPolicy {
             Enum type = ref.getType();
             assignHeader(hdr, type);
         }
-        for(int i=0; i<sectPr.sizeOfFooterReferenceArray(); i++) {
+        for (int i = 0; i < sectPr.sizeOfFooterReferenceArray(); i++) {
             // Get the footer
             CTHdrFtrRef ref = sectPr.getFooterReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFFooter ftr = null;
-            if (relatedPart != null && relatedPart instanceof XWPFFooter)
-            {
+            if (relatedPart != null && relatedPart instanceof XWPFFooter) {
                 ftr = (XWPFFooter) relatedPart;
             }
             // Assign it
@@ -130,9 +128,9 @@ public class XWPFHeaderFooterPolicy {
     }
 
     private void assignFooter(XWPFFooter ftr, Enum type) {
-        if(type == STHdrFtr.FIRST) {
+        if (type == STHdrFtr.FIRST) {
             firstPageFooter = ftr;
-        } else if(type == STHdrFtr.EVEN) {
+        } else if (type == STHdrFtr.EVEN) {
             evenPageFooter = ftr;
         } else {
             defaultFooter = ftr;
@@ -140,9 +138,9 @@ public class XWPFHeaderFooterPolicy {
     }
 
     private void assignHeader(XWPFHeader hdr, Enum type) {
-        if(type == STHdrFtr.FIRST) {
+        if (type == STHdrFtr.FIRST) {
             firstPageHeader = hdr;
-        } else if(type == STHdrFtr.EVEN) {
+        } else if (type == STHdrFtr.EVEN) {
             evenPageHeader = hdr;
         } else {
             defaultHeader = hdr;
@@ -159,15 +157,15 @@ public class XWPFHeaderFooterPolicy {
 
     /**
      * Creates a new header of the specified type, to which the
-     *  supplied (and previously unattached!) paragraphs are
-     *  added to.
+     * supplied (and previously unattached!) paragraphs are
+     * added to.
      */
     public XWPFHeader createHeader(Enum type, XWPFParagraph[] pars) throws IOException {
         XWPFRelation relation = XWPFRelation.HEADER;
         String pStyle = "Header";
         int i = getRelationIndex(relation);
         HdrDocument hdrDoc = HdrDocument.Factory.newInstance();
-        XWPFHeader wrapper = (XWPFHeader)doc.createRelationship(relation, XWPFFactory.getInstance(), i);
+        XWPFHeader wrapper = (XWPFHeader) doc.createRelationship(relation, XWPFFactory.getInstance(), i);
 
         CTHdrFtr hdr = buildHdr(type, pStyle, wrapper, pars);
         wrapper.setHeaderFooter(hdr);
@@ -193,15 +191,15 @@ public class XWPFHeaderFooterPolicy {
 
     /**
      * Creates a new footer of the specified type, to which the
-     *  supplied (and previously unattached!) paragraphs are
-     *  added to.
+     * supplied (and previously unattached!) paragraphs are
+     * added to.
      */
     public XWPFFooter createFooter(Enum type, XWPFParagraph[] pars) throws IOException {
         XWPFRelation relation = XWPFRelation.FOOTER;
         String pStyle = "Footer";
         int i = getRelationIndex(relation);
         FtrDocument ftrDoc = FtrDocument.Factory.newInstance();
-        XWPFFooter wrapper = (XWPFFooter)doc.createRelationship(relation, XWPFFactory.getInstance(), i);
+        XWPFFooter wrapper = (XWPFFooter) doc.createRelationship(relation, XWPFFactory.getInstance(), i);
 
         CTHdrFtr ftr = buildFtr(type, pStyle, wrapper, pars);
         wrapper.setHeaderFooter(ftr);
@@ -220,10 +218,10 @@ public class XWPFHeaderFooterPolicy {
     private int getRelationIndex(XWPFRelation relation) {
         List<POIXMLDocumentPart> relations = doc.getRelations();
         int i = 1;
-        for (Iterator<POIXMLDocumentPart> it = relations.iterator(); it.hasNext() ; ) {
+        for (Iterator<POIXMLDocumentPart> it = relations.iterator(); it.hasNext(); ) {
             POIXMLDocumentPart item = it.next();
             if (item.getPackageRelationship().getRelationshipType().equals(relation.getRelation())) {
-                i++;	
+                i++;
             }
         }
         return i;
@@ -231,14 +229,14 @@ public class XWPFHeaderFooterPolicy {
 
     private CTHdrFtr buildFtr(Enum type, String pStyle, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
         //CTHdrFtr ftr = buildHdrFtr(pStyle, pars);				// MB 24 May 2010
-        CTHdrFtr ftr = buildHdrFtr(pStyle, pars, wrapper);		// MB 24 May 2010
+        CTHdrFtr ftr = buildHdrFtr(pStyle, pars, wrapper);        // MB 24 May 2010
         setFooterReference(type, wrapper);
         return ftr;
     }
 
     private CTHdrFtr buildHdr(Enum type, String pStyle, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
         //CTHdrFtr hdr = buildHdrFtr(pStyle, pars);				// MB 24 May 2010
-        CTHdrFtr hdr = buildHdrFtr(pStyle, pars, wrapper);		// MB 24 May 2010
+        CTHdrFtr hdr = buildHdrFtr(pStyle, pars, wrapper);        // MB 24 May 2010
         setHeaderReference(type, wrapper);
         return hdr;
     }
@@ -246,13 +244,12 @@ public class XWPFHeaderFooterPolicy {
     private CTHdrFtr buildHdrFtr(String pStyle, XWPFParagraph[] paragraphs) {
         CTHdrFtr ftr = CTHdrFtr.Factory.newInstance();
         if (paragraphs != null) {
-            for (int i = 0 ; i < paragraphs.length ; i++) {
+            for (int i = 0; i < paragraphs.length; i++) {
                 CTP p = ftr.addNewP();
                 //ftr.setPArray(0, paragraphs[i].getCTP());		// MB 23 May 2010
-                ftr.setPArray(i, paragraphs[i].getCTP());   	// MB 23 May 2010
+                ftr.setPArray(i, paragraphs[i].getCTP());    // MB 23 May 2010
             }
-        }
-        else {
+        } else {
             CTP p = ftr.addNewP();
             byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
             byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
@@ -270,21 +267,20 @@ public class XWPFHeaderFooterPolicy {
      * and createFooter(int, XWPFParagraph[]) methods or the getXXXXXHeader/Footer methods where
      * headers or footers had been added to a document since it had been created/opened, returned
      * an object that contained no XWPFParagraph objects even if the header/footer itself did contain
-     * text. The reason was that this line of code; CTHdrFtr ftr = CTHdrFtr.Factory.newInstance(); 
+     * text. The reason was that this line of code; CTHdrFtr ftr = CTHdrFtr.Factory.newInstance();
      * created a brand new instance of the CTHDRFtr class which was then populated with data when
      * it should have recovered the CTHdrFtr object encapsulated within the XWPFHeaderFooter object
-     * that had previoulsy been instantiated in the createHeader(int, XWPFParagraph[]) or 
+     * that had previoulsy been instantiated in the createHeader(int, XWPFParagraph[]) or
      * createFooter(int, XWPFParagraph[]) methods.
      */
     private CTHdrFtr buildHdrFtr(String pStyle, XWPFParagraph[] paragraphs, XWPFHeaderFooter wrapper) {
         CTHdrFtr ftr = wrapper._getHdrFtr();
         if (paragraphs != null) {
-            for (int i = 0 ; i < paragraphs.length ; i++) {
+            for (int i = 0; i < paragraphs.length; i++) {
                 CTP p = ftr.addNewP();
                 ftr.setPArray(i, paragraphs[i].getCTP());
             }
-        }
-        else {
+        } else {
             CTP p = ftr.addNewP();
             byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
             byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
@@ -330,60 +326,70 @@ public class XWPFHeaderFooterPolicy {
     public XWPFHeader getFirstPageHeader() {
         return firstPageHeader;
     }
+
     public XWPFFooter getFirstPageFooter() {
         return firstPageFooter;
     }
+
     /**
      * Returns the odd page header. This is
-     *  also the same as the default one...
+     * also the same as the default one...
      */
     public XWPFHeader getOddPageHeader() {
         return defaultHeader;
     }
+
     /**
      * Returns the odd page footer. This is
-     *  also the same as the default one...
+     * also the same as the default one...
      */
     public XWPFFooter getOddPageFooter() {
         return defaultFooter;
     }
+
     public XWPFHeader getEvenPageHeader() {
         return evenPageHeader;
     }
+
     public XWPFFooter getEvenPageFooter() {
         return evenPageFooter;
     }
+
     public XWPFHeader getDefaultHeader() {
         return defaultHeader;
     }
+
     public XWPFFooter getDefaultFooter() {
         return defaultFooter;
     }
 
     /**
      * Get the header that applies to the given
-     *  (1 based) page.
+     * (1 based) page.
+     *
      * @param pageNumber The one based page number
      */
     public XWPFHeader getHeader(int pageNumber) {
-        if(pageNumber == 1 && firstPageHeader != null) {
+        if (pageNumber == 1 && firstPageHeader != null) {
             return firstPageHeader;
         }
-        if(pageNumber % 2 == 0 && evenPageHeader != null) {
+        if (pageNumber % 2 == 0 && evenPageHeader != null) {
             return evenPageHeader;
         }
         return defaultHeader;
     }
+
     /**
      * Get the footer that applies to the given
-     *  (1 based) page.
+     * (1 based) page.
+     *
      * @param pageNumber The one based page number
      */
     public XWPFFooter getFooter(int pageNumber) {
-        if(pageNumber == 1 && firstPageFooter != null) {
+        if (pageNumber == 1 && firstPageFooter != null) {
             return firstPageFooter;
         }
-        if(pageNumber % 2 == 0 && evenPageFooter != null) {
+        if (pageNumber % 2 == 0 && evenPageFooter != null) {
             return evenPageFooter;
         }
         return defaultFooter;
@@ -459,7 +465,7 @@ public class XWPFHeaderFooterPolicy {
         lock.setExt(STExt.EDIT);
         CTShape shape = group.addNewShape();
         shape.setId("PowerPlusWaterMarkObject" + idx);
-        shape.setSpid("_x0000_s102" + (4+idx));
+        shape.setSpid("_x0000_s102" + (4 + idx));
         shape.setType("#_x0000_t136");
         shape.setStyle("position:absolute;margin-left:0;margin-top:0;width:415pt;height:207.5pt;z-index:-251654144;mso-wrap-edited:f;mso-position-horizontal:center;mso-position-horizontal-relative:margin;mso-position-vertical:center;mso-position-vertical-relative:margin");
         shape.setWrapcoords("616 5068 390 16297 39 16921 -39 17155 7265 17545 7186 17467 -39 17467 18904 17467 10507 17467 8710 17545 18904 17077 18787 16843 18358 16297 18279 12554 19178 12476 20701 11774 20779 11228 21131 10059 21248 8811 21248 7563 20975 6316 20935 5380 19490 5146 14022 5068 2616 5068");

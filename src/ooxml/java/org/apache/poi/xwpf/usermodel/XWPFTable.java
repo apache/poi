@@ -44,18 +44,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
  * of paragraphs (and other block-level content) arranged in rows and columns.</p>
  */
 public class XWPFTable implements IBodyElement, ISDTContents {
-    protected StringBuffer text = new StringBuffer();
-    private CTTbl ctTbl;
-    protected List<XWPFTableRow> tableRows;
-    protected List<String> styleIDs;
-
-    // Create a map from this XWPF-level enum to the STBorder.Enum values
-    public static enum XWPFBorderType { NIL, NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED, DOT_DASH };
     private static EnumMap<XWPFBorderType, STBorder.Enum> xwpfBorderTypeMap;
     // Create a map from the STBorder.Enum values to the XWPF-level enums
     private static HashMap<Integer, XWPFBorderType> stBorderTypeMap;
-
-    protected IBody part;
 
     static {
         // populate enum maps
@@ -77,9 +68,17 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         stBorderTypeMap.put(STBorder.INT_DOUBLE, XWPFBorderType.DOUBLE);
         stBorderTypeMap.put(STBorder.INT_DOTTED, XWPFBorderType.DOTTED);
         stBorderTypeMap.put(STBorder.INT_DASHED, XWPFBorderType.DASHED);
-        stBorderTypeMap.put(STBorder.INT_DOT_DASH, XWPFBorderType.DOT_DASH); 
+        stBorderTypeMap.put(STBorder.INT_DOT_DASH, XWPFBorderType.DOT_DASH);
     }
-    
+
+    protected StringBuffer text = new StringBuffer();
+    protected List<XWPFTableRow> tableRows;
+
+    ;
+    protected List<String> styleIDs;
+    protected IBody part;
+    private CTTbl ctTbl;
+
     public XWPFTable(CTTbl table, IBody part, int row, int col) {
         this(table, part);
 
@@ -94,7 +93,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     @SuppressWarnings("deprecation")
-    public XWPFTable(CTTbl table, IBody part){
+    public XWPFTable(CTTbl table, IBody part) {
         this.part = part;
         this.ctTbl = table;
 
@@ -163,9 +162,9 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * Convenience method to extract text in cells.  This
      * does not extract text recursively in cells, and it does not
      * currently include text in SDT (form) components.
-     * <p>
+     * <p/>
      * To get all text within a table, see XWPFWordExtractor's appendTableText
-     * as an example. 
+     * as an example.
      *
      * @return text
      */
@@ -216,6 +215,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return null;
     }
 
+    /**
+     * @return width value
+     */
+    public int getWidth() {
+        CTTblPr tblPr = getTrPr();
+        return tblPr.isSetTblW() ? tblPr.getTblW().getW().intValue() : -1;
+    }
 
     /**
      * @param width
@@ -224,14 +230,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         CTTblPr tblPr = getTrPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
         tblWidth.setW(new BigInteger("" + width));
-    }
-
-    /**
-     * @return width value
-     */
-    public int getWidth() {
-        CTTblPr tblPr = getTrPr();
-        return tblPr.isSetTblW() ? tblPr.getTblW().getW().intValue() : -1;
     }
 
     /**
@@ -253,12 +251,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             }
         }
     }
-    
+
     /**
      * get the StyleID of the table
-     * @return	style-ID of the table
+     *
+     * @return style-ID of the table
      */
-    public String getStyleID(){
+    public String getStyleID() {
         String styleId = null;
         CTTblPr tblPr = ctTbl.getTblPr();
         if (tblPr != null) {
@@ -273,6 +272,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     /**
      * Set the table style. If the style is not defined in the document, MS Word
      * will set the table style to "Normal".
+     *
      * @param styleName - the style name to apply to this table
      */
     public void setStyleID(String styleName) {
@@ -523,24 +523,25 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * add a new Row to the table
-     * 
-     * @param row	the row which should be added
+     *
+     * @param row the row which should be added
      */
-    public void addRow(XWPFTableRow row){
+    public void addRow(XWPFTableRow row) {
         ctTbl.addNewTr();
-        ctTbl.setTrArray(getNumberOfRows()-1, row.getCtRow());
+        ctTbl.setTrArray(getNumberOfRows() - 1, row.getCtRow());
         tableRows.add(row);
     }
 
     /**
      * add a new Row to the table
      * at position pos
-     * @param row	the row which should be added
+     *
+     * @param row the row which should be added
      */
-    public boolean addRow(XWPFTableRow row, int pos){
-        if(pos >= 0 && pos <= tableRows.size()){
+    public boolean addRow(XWPFTableRow row, int pos) {
+        if (pos >= 0 && pos <= tableRows.size()) {
             ctTbl.insertNewTr(pos);
-            ctTbl.setTrArray(pos,row.getCtRow());
+            ctTbl.setTrArray(pos, row.getCtRow());
             tableRows.add(pos, row);
             return true;
         }
@@ -548,12 +549,13 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * inserts a new tablerow 
+     * inserts a new tablerow
+     *
      * @param pos
-     * @return  the inserted row
+     * @return the inserted row
      */
-    public XWPFTableRow insertNewTableRow(int pos){
-        if(pos >= 0 && pos <= tableRows.size()){
+    public XWPFTableRow insertNewTableRow(int pos) {
+        if (pos >= 0 && pos <= tableRows.size()) {
             CTRow row = ctTbl.insertNewTr(pos);
             XWPFTableRow tableRow = new XWPFTableRow(row, this);
             tableRows.add(pos, tableRow);
@@ -562,10 +564,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return null;
     }
 
-
     /**
      * Remove a row at position pos from the table
-     * @param pos	position the Row in the Table
+     *
+     * @param pos position the Row in the Table
      */
     public boolean removeRow(int pos) throws IndexOutOfBoundsException {
         if (pos >= 0 && pos < tableRows.size()) {
@@ -582,9 +584,9 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return tableRows;
     }
 
-
     /**
      * returns the type of the BodyElement Table
+     *
      * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
      */
     public BodyElementType getElementType() {
@@ -597,10 +599,11 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * returns the part of the bodyElement
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
     public POIXMLDocumentPart getPart() {
-        if(part != null){
+        if (part != null) {
             return part.getPart();
         }
         return null;
@@ -608,6 +611,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * returns the partType of the bodyPart which owns the bodyElement
+     *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
     public BodyType getPartType() {
@@ -619,9 +623,14 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * if this row is not existing in the table null will be returned
      */
     public XWPFTableRow getRow(CTRow row) {
-        for(int i=0; i<getRows().size(); i++){
-            if(getRows().get(i).getCtRow()== row) return getRow(i); 
+        for (int i = 0; i < getRows().size(); i++) {
+            if (getRows().get(i).getCtRow() == row) return getRow(i);
         }
         return null;
+    }
+
+    // Create a map from this XWPF-level enum to the STBorder.Enum values
+    public static enum XWPFBorderType {
+        NIL, NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED, DOT_DASH
     }
 }

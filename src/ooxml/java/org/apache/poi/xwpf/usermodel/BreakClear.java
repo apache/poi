@@ -23,7 +23,7 @@ import java.util.Map;
  * Specifies the set of possible restart locations which may be used as to
  * determine the next available line when a break's type attribute has a value
  * of textWrapping.
- * 
+ *
  * @author Gisella Bronzetti
  */
 public enum BreakClear {
@@ -33,7 +33,7 @@ public enum BreakClear {
      * line in the WordprocessingML document, regardless of its position left to
      * right or the presence of any floating objects which intersect with the
      * line,
-     * 
+     * <p/>
      * This is the setting for a typical line break in a document.
      */
 
@@ -83,28 +83,29 @@ public enum BreakClear {
      */
     ALL(4);
 
+    private static Map<Integer, BreakClear> imap = new HashMap<Integer, BreakClear>();
+
+    static {
+        for (BreakClear p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
+    }
+
     private final int value;
 
     private BreakClear(int val) {
-       value = val;
-    }
-
-    public int getValue() {
-       return value;
-    }
-
-    private static Map<Integer, BreakClear> imap = new HashMap<Integer, BreakClear>();
-    static {
-       for (BreakClear p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+        value = val;
     }
 
     public static BreakClear valueOf(int type) {
-       BreakClear bType = imap.get(new Integer(type));
-       if (bType == null)
-          throw new IllegalArgumentException("Unknown break clear type: "
-                + type);
-       return bType;
+        BreakClear bType = imap.get(new Integer(type));
+        if (bType == null)
+            throw new IllegalArgumentException("Unknown break clear type: "
+                    + type);
+        return bType;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

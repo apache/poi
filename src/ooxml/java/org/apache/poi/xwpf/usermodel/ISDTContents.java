@@ -18,8 +18,8 @@ package org.apache.poi.xwpf.usermodel;
 
 /**
  * Interface for anything that can be within an SDT:
- *  {@link XWPFRun}, {@link XWPFTable}, {@link XWPFParagraph},
- *  {@link XWPFSDT} etc
+ * {@link XWPFRun}, {@link XWPFTable}, {@link XWPFParagraph},
+ * {@link XWPFSDT} etc
  */
 public interface ISDTContents {
 }

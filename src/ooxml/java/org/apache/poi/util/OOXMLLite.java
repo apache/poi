@@ -35,11 +35,9 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.junit.internal.TextListener;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
+import org.junit.runner.JUnitCore;import org.junit.runner.Result;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar

@@ -31,24 +31,23 @@ import org.apache.poi.util.POILogger;
 /**
  * @author Yegor Kozlov
  */
-public final class XWPFFactory extends POIXMLFactory  {
+public final class XWPFFactory extends POIXMLFactory {
 
     private static final POILogger logger = POILogFactory.getLogger(XWPFFactory.class);
+    private static final XWPFFactory inst = new XWPFFactory();
 
-    private XWPFFactory(){
+    private XWPFFactory() {
 
     }
 
-    private static final XWPFFactory inst = new XWPFFactory();
-
-    public static XWPFFactory getInstance(){
+    public static XWPFFactory getInstance() {
         return inst;
     }
 
     @Override
-    public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part){
+    public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackageRelationship rel, PackagePart part) {
         POIXMLRelation descriptor = XWPFRelation.getInstance(rel.getRelationshipType());
-        if(descriptor == null || descriptor.getRelationClass() == null){
+        if (descriptor == null || descriptor.getRelationClass() == null) {
             logger.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
             return new POIXMLDocumentPart(part, rel);
         }
@@ -62,18 +61,18 @@ public final class XWPFFactory extends POIXMLFactory  {
                 Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(PackagePart.class, PackageRelationship.class);
                 return constructor.newInstance(part, rel);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new POIXMLException(e);
         }
     }
 
     @Override
-    public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor){
+    public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor) {
         try {
             Class<? extends POIXMLDocumentPart> cls = descriptor.getRelationClass();
             Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor();
             return constructor.newInstance();
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new POIXMLException(e);
         }
     }

@@ -20,28 +20,27 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 
 /**
- * Experimental class to offer rudimentary read-only processing of 
- *  of StructuredDocumentTags/ContentControl
- *
+ * Experimental class to offer rudimentary read-only processing of
+ * of StructuredDocumentTags/ContentControl
+ * <p/>
  * WARNING - APIs expected to change rapidly
- * 
  */
 public class XWPFSDT extends AbstractXWPFSDT
-    implements IBodyElement, IRunBody, ISDTContents, IRunElement {
-   private final ISDTContent content;
+        implements IBodyElement, IRunBody, ISDTContents, IRunElement {
+    private final ISDTContent content;
 
-   public XWPFSDT(CTSdtRun sdtRun, IBody part){
-       super(sdtRun.getSdtPr(), part);
-       this.content = new XWPFSDTContent(sdtRun.getSdtContent(), part, this);
-   }
-   
-   public XWPFSDT(CTSdtBlock block, IBody part){
-      super(block.getSdtPr(), part);
-      this.content = new XWPFSDTContent( block.getSdtContent(), part, this);
-   }
+    public XWPFSDT(CTSdtRun sdtRun, IBody part) {
+        super(sdtRun.getSdtPr(), part);
+        this.content = new XWPFSDTContent(sdtRun.getSdtContent(), part, this);
+    }
 
-   public ISDTContent getContent(){
-      return content;
-   }
+    public XWPFSDT(CTSdtBlock block, IBody part) {
+        super(block.getSdtPr(), part);
+        this.content = new XWPFSDTContent(block.getSdtContent(), part, this);
+    }
+
+    public ISDTContent getContent() {
+        return content;
+    }
 
 }

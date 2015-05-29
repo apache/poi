@@ -30,7 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
  * can contain collections of Paragraphs and Tables. It provides a
  * common way to work with these and their contents.</p>
  * <p>Typically, this is something like a XWPFDocument, or one of
- *  the parts in it like XWPFHeader, XWPFFooter, XWPFTableCell
+ * the parts in it like XWPFHeader, XWPFFooter, XWPFTableCell
  * </p>
  */
 public interface IBody {
@@ -38,50 +38,54 @@ public interface IBody {
      * returns the Part, to which the body belongs, which you need for adding relationship to other parts
      * Actually it is needed of the class XWPFTableCell. Because you have to know to which part the tableCell
      * belongs.
+     *
      * @return the Part, to which the body belongs
      */
     public POIXMLDocumentPart getPart();
 
     /**
      * get the PartType of the body, for example
-     * DOCUMENT, HEADER, FOOTER, FOOTNOTE, 
+     * DOCUMENT, HEADER, FOOTER, FOOTNOTE,
+     *
      * @return the PartType of the body
      */
     public BodyType getPartType();
 
     /**
-     * Returns an Iterator with paragraphs and tables, 
-     *  in the order that they occur in the text.
+     * Returns an Iterator with paragraphs and tables,
+     * in the order that they occur in the text.
      */
     public List<IBodyElement> getBodyElements();
 
     /**
      * Returns the paragraph(s) that holds
-     *  the text of the header or footer.
+     * the text of the header or footer.
      */
     public List<XWPFParagraph> getParagraphs();
 
     /**
      * Return the table(s) that holds the text
-     *  of the IBodyPart, for complex cases
-     *  where a paragraph isn't used.
+     * of the IBodyPart, for complex cases
+     * where a paragraph isn't used.
      */
     public List<XWPFTable> getTables();
 
     /**
      * if there is a corresponding {@link XWPFParagraph} of the parameter ctTable in the paragraphList of this header or footer
      * the method will return this paragraph
-     * if there is no corresponding {@link XWPFParagraph} the method will return null 
+     * if there is no corresponding {@link XWPFParagraph} the method will return null
+     *
      * @param p is instance of CTP and is searching for an XWPFParagraph
      * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this header or footer
-     * 		   XWPFParagraph with the correspondig CTP p
+     * XWPFParagraph with the correspondig CTP p
      */
     public XWPFParagraph getParagraph(CTP p);
 
     /**
      * if there is a corresponding {@link XWPFTable} of the parameter ctTable in the tableList of this header
      * the method will return this table
-     * if there is no corresponding {@link XWPFTable} the method will return null 
+     * if there is no corresponding {@link XWPFTable} the method will return null
+     *
      * @param ctTable
      */
     public XWPFTable getTable(CTTbl ctTable);
@@ -97,19 +101,22 @@ public interface IBody {
     public XWPFTable getTableArray(int pos);
 
     /**
-     *inserts a new paragraph at position of the cursor
+     * inserts a new paragraph at position of the cursor
+     *
      * @param cursor
      */
     public XWPFParagraph insertNewParagraph(XmlCursor cursor);
 
     /**
      * inserts a new Table at the cursor position.
+     *
      * @param cursor
      */
     public XWPFTable insertNewTbl(XmlCursor cursor);
 
     /**
      * inserts a new Table at position pos
+     *
      * @param pos
      * @param table
      */
@@ -117,6 +124,7 @@ public interface IBody {
 
     /**
      * returns the TableCell to which the Table belongs
+     *
      * @param cell
      */
     public XWPFTableCell getTableCell(CTTc cell);

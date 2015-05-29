@@ -20,46 +20,44 @@ package org.apache.poi.xwpf.usermodel;
 
 /**
  * postion of a character in a paragrapho
-* 1st RunPositon
-* 2nd TextPosition
-* 3rd CharacterPosition 
-* 
-*
-*/
+ * 1st RunPositon
+ * 2nd TextPosition
+ * 3rd CharacterPosition
+ */
 public class PositionInParagraph {
-	private int posRun = 0, posText = 0, posChar = 0;
+    private int posRun = 0, posText = 0, posChar = 0;
 
-	public PositionInParagraph(){
-	}
-	
-	public PositionInParagraph(int posRun, int posText, int posChar){
-		this.posRun=posRun;
-		this.posChar=posChar;
-		this.posText= posText;
-	}
-	
-	public int getRun() {
-		return posRun;
-	}
+    public PositionInParagraph() {
+    }
 
-	public void setRun(int beginRun) {
-		this.posRun = beginRun;
-	}
+    public PositionInParagraph(int posRun, int posText, int posChar) {
+        this.posRun = posRun;
+        this.posChar = posChar;
+        this.posText = posText;
+    }
 
-	public int getText() {
-		return posText;
-	}
+    public int getRun() {
+        return posRun;
+    }
 
-	public void setText(int beginText) {
-		this.posText = beginText;
-	}
+    public void setRun(int beginRun) {
+        this.posRun = beginRun;
+    }
 
-	public int getChar() {
-		return posChar;
-	}
+    public int getText() {
+        return posText;
+    }
 
-	public void setChar(int beginChar) {
-		this.posChar = beginChar;
-	}
+    public void setText(int beginText) {
+        this.posText = beginText;
+    }
+
+    public int getChar() {
+        return posChar;
+    }
+
+    public void setChar(int beginChar) {
+        this.posChar = beginChar;
+    }
 
 }

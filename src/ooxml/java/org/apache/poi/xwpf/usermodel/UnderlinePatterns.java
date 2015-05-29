@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Specifies the types of patterns which may be used to create the underline
  * applied beneath the text in a run.
- * 
+ *
  * @author Gisella Bronzetti
  */
 public enum UnderlinePatterns {
@@ -135,28 +135,29 @@ public enum UnderlinePatterns {
      */
     NONE(18);
 
+    private static Map<Integer, UnderlinePatterns> imap = new HashMap<Integer, UnderlinePatterns>();
+
+    static {
+        for (UnderlinePatterns p : values()) {
+            imap.put(new Integer(p.getValue()), p);
+        }
+    }
+
     private final int value;
 
     private UnderlinePatterns(int val) {
-       value = val;
-    }
-
-    public int getValue() {
-       return value;
-    }
-
-    private static Map<Integer, UnderlinePatterns> imap = new HashMap<Integer, UnderlinePatterns>();
-    static {
-       for (UnderlinePatterns p : values()) {
-          imap.put(new Integer(p.getValue()), p);
-       }
+        value = val;
     }
 
     public static UnderlinePatterns valueOf(int type) {
-       UnderlinePatterns align = imap.get(new Integer(type));
-       if (align == null)
-          throw new IllegalArgumentException("Unknown underline pattern: "
-                + type);
-       return align;
+        UnderlinePatterns align = imap.get(new Integer(type));
+        if (align == null)
+            throw new IllegalArgumentException("Unknown underline pattern: "
+                    + type);
+        return align;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

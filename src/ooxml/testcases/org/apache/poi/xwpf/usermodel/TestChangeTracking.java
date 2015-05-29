@@ -44,7 +44,7 @@ public class TestChangeTracking {
         assertFalse(document.isTrackRevisions());
 
         document.setTrackRevisions(true);
-        
+
         assertTrue(document.isTrackRevisions());
     }
 

@@ -21,17 +21,14 @@ import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
-
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentCell;
 
 
-
 /**
- * Experimental class to offer rudimentary read-only processing of 
- *  of the XWPFSDTCellContent.  
-
+ * Experimental class to offer rudimentary read-only processing of
+ * of the XWPFSDTCellContent.
+ * <p/>
  * WARNING - APIs expected to change rapidly
- * 
  */
 public class XWPFSDTContentCell implements ISDTContent {
 
@@ -44,8 +41,9 @@ public class XWPFSDTContentCell implements ISDTContent {
     //private List<ICell> cells = new ArrayList<ICell>().
 
     private String text = "";
-    public XWPFSDTContentCell(CTSdtContentCell sdtContentCell, 
-            XWPFTableRow xwpfTableRow, IBody part){
+
+    public XWPFSDTContentCell(CTSdtContentCell sdtContentCell,
+                              XWPFTableRow xwpfTableRow, IBody part) {
         super();
         StringBuilder sb = new StringBuilder();
         XmlCursor cursor = sdtContentCell.newCursor();
@@ -53,7 +51,7 @@ public class XWPFSDTContentCell implements ISDTContent {
         //keep track of the following,
         //and add "\n" only before the start of a body
         //element if it is not the first body element.
-        
+
         //index of cell in row
         int tcCnt = 0;
         //count of body objects
@@ -62,7 +60,7 @@ public class XWPFSDTContentCell implements ISDTContent {
 
         while (cursor.hasNextToken() && depth > 0) {
             TokenType t = cursor.toNextToken();
-            if (t.isText()){
+            if (t.isText()) {
                 sb.append(cursor.getTextValue());
             } else if (isStartToken(cursor, "tr")) {
                 tcCnt = 0;
@@ -80,9 +78,9 @@ public class XWPFSDTContentCell implements ISDTContent {
                 }
                 iBodyCnt++;
             }
-            if (cursor.isStart()){
+            if (cursor.isStart()) {
                 depth++;
-            } else if (cursor.isEnd()){
+            } else if (cursor.isEnd()) {
                 depth--;
             }
         }
@@ -90,9 +88,8 @@ public class XWPFSDTContentCell implements ISDTContent {
     }
 
 
-
     private boolean isStartToken(XmlCursor cursor, String string) {
-        if (! cursor.isStart()) {
+        if (!cursor.isStart()) {
             return false;
         }
         QName qName = cursor.getName();
@@ -104,11 +101,11 @@ public class XWPFSDTContentCell implements ISDTContent {
     }
 
 
-    public String getText(){
+    public String getText() {
         return text;
     }
 
-    public String toString(){
+    public String toString() {
         return getText();
     }
 }

@@ -31,7 +31,7 @@ public class XWPFPicture {
     private String description;
     private XWPFRun run;
 
-    public XWPFPicture(CTPicture ctPic, XWPFRun run){
+    public XWPFPicture(CTPicture ctPic, XWPFRun run) {
         this.run = run;
         this.ctPic = ctPic;
         description = ctPic.getNvPicPr().getCNvPr().getDescr();
@@ -39,9 +39,10 @@ public class XWPFPicture {
 
     /**
      * Link Picture with PictureData
+     *
      * @param rel
      */
-    public void setPictureReference(PackageRelationship rel){
+    public void setPictureReference(PackageRelationship rel) {
         ctPic.getBlipFill().getBlip().setEmbed(rel.getId());
     }
 
@@ -50,7 +51,7 @@ public class XWPFPicture {
      *
      * @return the underlying CTPicture bean
      */
-    public CTPicture getCTPicture(){
+    public CTPicture getCTPicture() {
         return ctPic;
     }
 
@@ -58,18 +59,17 @@ public class XWPFPicture {
      * Get the PictureData of the Picture, if present.
      * Note - not all kinds of picture have data
      */
-    public XWPFPictureData getPictureData(){
+    public XWPFPictureData getPictureData() {
         CTBlipFillProperties blipProps = ctPic.getBlipFill();
 
-        if(blipProps == null || !blipProps.isSetBlip()) {
+        if (blipProps == null || !blipProps.isSetBlip()) {
             // return null if Blip data is missing
             return null;
         }
 
         String blipId = blipProps.getBlip().getEmbed();
         POIXMLDocumentPart part = run.getParent().getPart();
-        if (part != null)
-        {
+        if (part != null) {
             POIXMLDocumentPart relatedPart = part.getRelationById(blipId);
             if (relatedPart instanceof XWPFPictureData) {
                 return (XWPFPictureData) relatedPart;

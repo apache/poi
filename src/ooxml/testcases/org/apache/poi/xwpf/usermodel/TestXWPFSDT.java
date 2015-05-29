@@ -18,33 +18,31 @@
 package org.apache.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 
 public final class TestXWPFSDT extends TestCase {
 
     /**
      * Test simple tag and title extraction from SDT
+     *
      * @throws Exception
      */
     public void testTagTitle() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
         String tag = null;
-        String title= null;
+        String title = null;
         List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
-        for (AbstractXWPFSDT sdt :sdts){
-            if (sdt.getContent().toString().equals("Rich_text")){
+        for (AbstractXWPFSDT sdt : sdts) {
+            if (sdt.getContent().toString().equals("Rich_text")) {
                 tag = "MyTag";
                 title = "MyTitle";
                 break;
             }
-            
+
         }
         assertEquals("controls size", 13, sdts.size());
 
@@ -53,7 +51,7 @@ public final class TestXWPFSDT extends TestCase {
     }
 
 
-    public void testGetSDTs() throws Exception{
+    public void testGetSDTs() throws Exception {
         String[] contents = new String[]{
                 "header_rich_text",
                 "Rich_text",
@@ -75,11 +73,12 @@ public final class TestXWPFSDT extends TestCase {
 
         assertEquals("number of sdts", contents.length, sdts.size());
 
-        for (int i = 0; i < contents.length; i++){
+        for (int i = 0; i < contents.length; i++) {
             AbstractXWPFSDT sdt = sdts.get(i);
-            assertEquals(i+ ": " + contents[i], contents[i], sdt.getContent().toString());
-        } 
+            assertEquals(i + ": " + contents[i], contents[i], sdt.getContent().toString());
+        }
     }
+
     /**
      * POI-54771 and TIKA-1317
      */
@@ -89,7 +88,7 @@ public final class TestXWPFSDT extends TestCase {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
         List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
         String text = sdts.get(0).getContent().getText();
-        assertEquals(2, sdts.size()); 
+        assertEquals(2, sdts.size());
         assertTrue(text.indexOf("Test") > -1);
 
         text = sdts.get(1).getContent().getText();
@@ -99,80 +98,80 @@ public final class TestXWPFSDT extends TestCase {
 
         doc = XWPFTestDataSamples.openSampleDocument("Bug54771b.docx");
         sdts = extractAllSDTs(doc);
-        assertEquals(3, sdts.size()); 
+        assertEquals(3, sdts.size());
         assertTrue(sdts.get(0).getContent().getText().indexOf("Test") > -1);
 
         assertTrue(sdts.get(1).getContent().getText().indexOf("Test Subtitle") > -1);
         assertTrue(sdts.get(2).getContent().getText().indexOf("Test User") > -1);
 
     }
-    
+
     /**
      * POI-55142 and Tika 1130
      */
-    public void testNewLinesBetweenRuns() throws Exception{
-       XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
-       List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
-       List<String> targs = new ArrayList<String>();
-       //these test newlines and tabs in paragraphs/body elements
-       targs.add("Rich-text1 abcdefghi");
-       targs.add("Rich-text2 abcd\t\tefgh");
-       targs.add("Rich-text3 abcd\nefg");
-       targs.add("Rich-text4 abcdefg");
-       targs.add("Rich-text5 abcdefg\nhijk");
-       targs.add("Plain-text1 abcdefg");
-       targs.add("Plain-text2 abcdefg\nhijk\nlmnop");
-       //this tests consecutive runs within a cell (not a paragraph)
-       //this test case was triggered by Tika-1130
-       targs.add("sdt_incell2 abcdefg");
-       
-       for (int i = 0; i < sdts.size(); i++){
-          AbstractXWPFSDT sdt = sdts.get(i);
-          assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
-       }
+    public void testNewLinesBetweenRuns() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
+        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
+        List<String> targs = new ArrayList<String>();
+        //these test newlines and tabs in paragraphs/body elements
+        targs.add("Rich-text1 abcdefghi");
+        targs.add("Rich-text2 abcd\t\tefgh");
+        targs.add("Rich-text3 abcd\nefg");
+        targs.add("Rich-text4 abcdefg");
+        targs.add("Rich-text5 abcdefg\nhijk");
+        targs.add("Plain-text1 abcdefg");
+        targs.add("Plain-text2 abcdefg\nhijk\nlmnop");
+        //this tests consecutive runs within a cell (not a paragraph)
+        //this test case was triggered by Tika-1130
+        targs.add("sdt_incell2 abcdefg");
+
+        for (int i = 0; i < sdts.size(); i++) {
+            AbstractXWPFSDT sdt = sdts.get(i);
+            assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
+        }
     }
 
-    private List<AbstractXWPFSDT> extractAllSDTs(XWPFDocument doc){
-        
+    private List<AbstractXWPFSDT> extractAllSDTs(XWPFDocument doc) {
+
         List<AbstractXWPFSDT> sdts = new ArrayList<AbstractXWPFSDT>();
 
         List<XWPFHeader> headers = doc.getHeaderList();
-        for (XWPFHeader header : headers){
+        for (XWPFHeader header : headers) {
             sdts.addAll(extractSDTsFromBodyElements(header.getBodyElements()));
         }
         sdts.addAll(extractSDTsFromBodyElements(doc.getBodyElements()));
 
         List<XWPFFooter> footers = doc.getFooterList();
-        for (XWPFFooter footer : footers){
+        for (XWPFFooter footer : footers) {
             sdts.addAll(extractSDTsFromBodyElements(footer.getBodyElements()));
         }
 
-        for (XWPFFootnote footnote : doc.getFootnotes()){
+        for (XWPFFootnote footnote : doc.getFootnotes()) {
             sdts.addAll(extractSDTsFromBodyElements(footnote.getBodyElements()));
         }
-        for (Map.Entry<Integer, XWPFFootnote> e : doc.endnotes.entrySet()){
+        for (Map.Entry<Integer, XWPFFootnote> e : doc.endnotes.entrySet()) {
             sdts.addAll(extractSDTsFromBodyElements(e.getValue().getBodyElements()));
         }
         return sdts;
     }
 
-    private List<AbstractXWPFSDT> extractSDTsFromBodyElements(List<IBodyElement> elements){
+    private List<AbstractXWPFSDT> extractSDTsFromBodyElements(List<IBodyElement> elements) {
         List<AbstractXWPFSDT> sdts = new ArrayList<AbstractXWPFSDT>();
-        for (IBodyElement e : elements){
-            if (e instanceof XWPFSDT){
-                XWPFSDT sdt = (XWPFSDT)e;
+        for (IBodyElement e : elements) {
+            if (e instanceof XWPFSDT) {
+                XWPFSDT sdt = (XWPFSDT) e;
                 sdts.add(sdt);
-            } else if (e instanceof XWPFParagraph){
+            } else if (e instanceof XWPFParagraph) {
 
-                XWPFParagraph p = (XWPFParagraph)e;
-                for (IRunElement e2 : p.getIRuns()){
-                    if (e2 instanceof XWPFSDT){
-                        XWPFSDT sdt = (XWPFSDT)e2;
+                XWPFParagraph p = (XWPFParagraph) e;
+                for (IRunElement e2 : p.getIRuns()) {
+                    if (e2 instanceof XWPFSDT) {
+                        XWPFSDT sdt = (XWPFSDT) e2;
                         sdts.add(sdt);
                     }
                 }
-            } else if (e instanceof XWPFTable){
-                XWPFTable table = (XWPFTable)e;
+            } else if (e instanceof XWPFTable) {
+                XWPFTable table = (XWPFTable) e;
                 sdts.addAll(extractSDTsFromTable(table));
             }
         }
@@ -185,9 +184,9 @@ public final class TestXWPFSDT extends TestCase {
         for (XWPFTableRow r : table.getRows()) {
             for (ICell c : r.getTableICells()) {
                 if (c instanceof XWPFSDTCell) {
-                    sdts.add((XWPFSDTCell)c);
+                    sdts.add((XWPFSDTCell) c);
                 } else if (c instanceof XWPFTableCell) {
-                    sdts.addAll(extractSDTsFromBodyElements(((XWPFTableCell)c).getBodyElements()));
+                    sdts.addAll(extractSDTsFromBodyElements(((XWPFTableCell) c).getBodyElements()));
                 }
             }
         }

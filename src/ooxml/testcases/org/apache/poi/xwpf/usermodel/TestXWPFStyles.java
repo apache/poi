@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
@@ -36,63 +35,63 @@ public class TestXWPFStyles extends TestCase {
 //	protected void setUp() throws Exception {
 //		super.setUp();
 //	}
-	
-	public void testGetUsedStyles() throws IOException{
-		XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx");
-		List<XWPFStyle> testUsedStyleList = new ArrayList<XWPFStyle>();
-		XWPFStyles styles = sampleDoc.getStyles();
-		XWPFStyle style = styles.getStyle("berschrift1");
-		testUsedStyleList.add(style);
-		testUsedStyleList.add(styles.getStyle("Standard"));
-		testUsedStyleList.add(styles.getStyle("berschrift1Zchn"));
-		testUsedStyleList.add(styles.getStyle("Absatz-Standardschriftart"));
-		style.hasSameName(style);
-		
-		List<XWPFStyle> usedStyleList = styles.getUsedStyleList(style);
-		assertEquals(usedStyleList, testUsedStyleList);
-		
-		
-	}
 
-	public void testAddStylesToDocument() throws IOException{
-		XWPFDocument docOut = new XWPFDocument();
-		XWPFStyles styles = docOut.createStyles();
+    public void testGetUsedStyles() throws IOException {
+        XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx");
+        List<XWPFStyle> testUsedStyleList = new ArrayList<XWPFStyle>();
+        XWPFStyles styles = sampleDoc.getStyles();
+        XWPFStyle style = styles.getStyle("berschrift1");
+        testUsedStyleList.add(style);
+        testUsedStyleList.add(styles.getStyle("Standard"));
+        testUsedStyleList.add(styles.getStyle("berschrift1Zchn"));
+        testUsedStyleList.add(styles.getStyle("Absatz-Standardschriftart"));
+        style.hasSameName(style);
 
-		String strStyleId = "headline1";
-		CTStyle ctStyle = CTStyle.Factory.newInstance();
+        List<XWPFStyle> usedStyleList = styles.getUsedStyleList(style);
+        assertEquals(usedStyleList, testUsedStyleList);
 
-		ctStyle.setStyleId(strStyleId);
-		XWPFStyle s = new XWPFStyle(ctStyle);
-		styles.addStyle(s);
-		
-		assertTrue(styles.styleExist(strStyleId));
 
-    	XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+    }
 
-		styles = docIn.getStyles();
-		assertTrue(styles.styleExist(strStyleId));
-	}
+    public void testAddStylesToDocument() throws IOException {
+        XWPFDocument docOut = new XWPFDocument();
+        XWPFStyles styles = docOut.createStyles();
 
-	/**
-	 * Bug #52449 - We should be able to write a file containing
-	 *  both regular and glossary styles without error
-	 */
-	public void test52449() throws Exception {
-      XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52449.docx");
-      XWPFStyles styles = doc.getStyles();
-      assertNotNull(styles);
-      
-      XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(doc);
-      styles = docIn.getStyles();
-      assertNotNull(styles);
-	}
+        String strStyleId = "headline1";
+        CTStyle ctStyle = CTStyle.Factory.newInstance();
+
+        ctStyle.setStyleId(strStyleId);
+        XWPFStyle s = new XWPFStyle(ctStyle);
+        styles.addStyle(s);
+
+        assertTrue(styles.styleExist(strStyleId));
+
+        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+
+        styles = docIn.getStyles();
+        assertTrue(styles.styleExist(strStyleId));
+    }
+
+    /**
+     * Bug #52449 - We should be able to write a file containing
+     * both regular and glossary styles without error
+     */
+    public void test52449() throws Exception {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("52449.docx");
+        XWPFStyles styles = doc.getStyles();
+        assertNotNull(styles);
+
+        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        styles = docIn.getStyles();
+        assertNotNull(styles);
+    }
 
 
     /**
      * YK: tests below don't make much sense,
      * they exist only to copy xml beans to pi-ooxml-schemas.jar
      */
-    public void testLanguages(){
+    public void testLanguages() {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
         styles.setEastAsia("Chinese");
@@ -119,7 +118,7 @@ public class TestXWPFStyles extends TestCase {
         assertEquals(true, ls.isLatentStyle("ex1"));
         assertEquals(false, ls.isLatentStyle("notex1"));
     }
-    
+
     public void testSetStyles_Bug57254() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
         XWPFStyles styles = docOut.createStyles();
@@ -130,7 +129,7 @@ public class TestXWPFStyles extends TestCase {
 
         ctStyle.setStyleId(strStyleId);
         styles.setStyles(ctStyles);
-        
+
         assertTrue(styles.styleExist(strStyleId));
 
         XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
@@ -138,44 +137,44 @@ public class TestXWPFStyles extends TestCase {
         styles = docIn.getStyles();
         assertTrue(styles.styleExist(strStyleId));
     }
-    
+
     public void testEasyAccessToStyles() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         XWPFStyles styles = doc.getStyles();
         assertNotNull(styles);
-        
+
         // Has 3 paragraphs on page one, a break, and 3 on page 2
         assertEquals(7, doc.getParagraphs().size());
-        
+
         // Check the first three have no run styles, just default paragraph style
-        for (int i=0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             XWPFParagraph p = doc.getParagraphs().get(i);
             assertEquals(null, p.getStyle());
             assertEquals(null, p.getStyleID());
             assertEquals(1, p.getRuns().size());
-            
+
             XWPFRun r = p.getRuns().get(0);
             assertEquals(null, r.getColor());
             assertEquals(null, r.getFontFamily());
             assertEquals(null, r.getFontName());
             assertEquals(-1, r.getFontSize());
         }
-        
+
         // On page two, has explicit styles, but on runs not on
         //  the paragraph itself
-        for (int i=4; i<7; i++) {
+        for (int i = 4; i < 7; i++) {
             XWPFParagraph p = doc.getParagraphs().get(i);
             assertEquals(null, p.getStyle());
             assertEquals(null, p.getStyleID());
             assertEquals(1, p.getRuns().size());
-            
+
             XWPFRun r = p.getRuns().get(0);
             assertEquals("Arial Black", r.getFontFamily());
             assertEquals("Arial Black", r.getFontName());
             assertEquals(16, r.getFontSize());
             assertEquals("548DD4", r.getColor());
         }
-        
+
         // Check the document styles
         // Should have a style defined for each type
         assertEquals(4, styles.getNumberOfStyles());
@@ -183,14 +182,14 @@ public class TestXWPFStyles extends TestCase {
         assertNotNull(styles.getStyle("DefaultParagraphFont"));
         assertNotNull(styles.getStyle("TableNormal"));
         assertNotNull(styles.getStyle("NoList"));
-        
+
         // We can't do much yet with latent styles
         assertEquals(137, styles.getLatentStyles().getNumberOfStyles());
-        
+
         // Check the default styles
         assertNotNull(styles.getDefaultRunStyle());
         assertNotNull(styles.getDefaultParagraphStyle());
-        
+
         assertEquals(11, styles.getDefaultRunStyle().getFontSize());
         assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
     }
