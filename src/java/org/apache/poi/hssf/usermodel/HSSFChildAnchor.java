@@ -17,28 +17,29 @@
 
 package org.apache.poi.hssf.usermodel;
 
-
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherRecord;
 
 public final class HSSFChildAnchor extends HSSFAnchor {
 
-    private EscherChildAnchorRecord _escherChildAnchor;
+    private EscherChildAnchorRecord escherChildAnchor;
 
     /**
-     * create anchor from existing file
+     * Creates an anchor from existing file.
+     *
      * @param escherChildAnchorRecord
      */
     public HSSFChildAnchor(EscherChildAnchorRecord escherChildAnchorRecord) {
-        this._escherChildAnchor = escherChildAnchorRecord;
+        this.escherChildAnchor = escherChildAnchorRecord;
     }
 
     public HSSFChildAnchor() {
-        _escherChildAnchor = new EscherChildAnchorRecord();
+        escherChildAnchor = new EscherChildAnchorRecord();
     }
 
     /**
-     * create anchor from scratch
+     * Creates an anchor from scratch.
+     *
      * @param dx1 x coordinate of the left up corner
      * @param dy1 y coordinate of the left up corner
      * @param dx2 x coordinate of the right down corner
@@ -46,52 +47,52 @@ public final class HSSFChildAnchor extends HSSFAnchor {
      */
     public HSSFChildAnchor(int dx1, int dy1, int dx2, int dy2) {
         super(Math.min(dx1, dx2), Math.min(dy1, dy2), Math.max(dx1, dx2), Math.max(dy1, dy2));
-        if (dx1 > dx2){
+        if (dx1 > dx2) {
             _isHorizontallyFlipped = true;
         }
-        if (dy1 > dy2){
+        if (dy1 > dy2) {
             _isVerticallyFlipped = true;
         }
     }
 
     @Override
     public int getDx1() {
-        return _escherChildAnchor.getDx1();
+        return escherChildAnchor.getDx1();
     }
 
     @Override
     public void setDx1(int dx1) {
-        _escherChildAnchor.setDx1(dx1);
+        escherChildAnchor.setDx1(dx1);
     }
 
     @Override
     public int getDy1() {
-        return _escherChildAnchor.getDy1();
+        return escherChildAnchor.getDy1();
     }
 
     @Override
     public void setDy1(int dy1) {
-        _escherChildAnchor.setDy1(dy1);
+        escherChildAnchor.setDy1(dy1);
     }
 
     @Override
     public int getDy2() {
-        return _escherChildAnchor.getDy2();
+        return escherChildAnchor.getDy2();
     }
 
     @Override
     public void setDy2(int dy2) {
-        _escherChildAnchor.setDy2(dy2);
+        escherChildAnchor.setDy2(dy2);
     }
 
     @Override
     public int getDx2() {
-        return _escherChildAnchor.getDx2();
+        return escherChildAnchor.getDx2();
     }
 
     @Override
     public void setDx2(int dx2) {
-        _escherChildAnchor.setDx2(dx2);
+        escherChildAnchor.setDx2(dx2);
     }
 
     /**
@@ -107,11 +108,9 @@ public final class HSSFChildAnchor extends HSSFAnchor {
         setDy2(Math.max(dy1, dy2));
     }
 
-
     public boolean isHorizontallyFlipped() {
         return _isHorizontallyFlipped;
     }
-
 
     public boolean isVerticallyFlipped() {
         return _isVerticallyFlipped;
@@ -119,12 +118,12 @@ public final class HSSFChildAnchor extends HSSFAnchor {
 
     @Override
     protected EscherRecord getEscherAnchor() {
-        return _escherChildAnchor;
+        return escherChildAnchor;
     }
 
     @Override
     protected void createEscherAnchor() {
-        _escherChildAnchor = new EscherChildAnchorRecord();
+        escherChildAnchor = new EscherChildAnchorRecord();
     }
 
     @Override
@@ -135,10 +134,11 @@ public final class HSSFChildAnchor extends HSSFAnchor {
             return true;
         if (obj.getClass() != getClass())
             return false;
+
         HSSFChildAnchor anchor = (HSSFChildAnchor) obj;
 
-        return anchor.getDx1() == getDx1() && anchor.getDx2() == getDx2() && anchor.getDy1() == getDy1()
-                && anchor.getDy2() == getDy2();
+        return anchor.getDx1() == getDx1() && anchor.getDx2() == getDx2() &&
+                anchor.getDy1() == getDy1() && anchor.getDy2() == getDy2();
     }
 
     @Override

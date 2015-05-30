@@ -47,7 +47,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
         Field f;
         try {
-            f = HSSFName.class.getDeclaredField("_definedNameRec");
+            f = HSSFName.class.getDeclaredField("definedNameRec");
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }

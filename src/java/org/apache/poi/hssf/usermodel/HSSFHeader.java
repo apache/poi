@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.Header;
 
 /**
  * Class to read and manipulate the header.
- * <P>
+ * <p/>
  * The header works by having a left, center, and right side.  The total cannot
  * be more that 255 bytes long.  One uses this class by getting the HSSFHeader
  * from HSSFSheet and then getting or setting the left, center, and right side.
@@ -33,28 +33,28 @@ import org.apache.poi.ss.usermodel.Header;
  */
 public final class HSSFHeader extends HeaderFooter implements Header {
 
-	private final PageSettingsBlock _psb;
+    private final PageSettingsBlock psb;
 
-	protected HSSFHeader(PageSettingsBlock psb) {
-		_psb = psb;
-	}
+    protected HSSFHeader(PageSettingsBlock psb) {
+        this.psb = psb;
+    }
 
-	protected String getRawText() {
-		HeaderRecord hf = _psb.getHeader();
-		if (hf == null) {
-			return "";
-		}
-		return hf.getText();
-	}
+    protected String getRawText() {
+        HeaderRecord hf = psb.getHeader();
+        if (hf == null) {
+            return "";
+        }
+        return hf.getText();
+    }
 
-	@Override
-	protected void setHeaderFooterText(String text) {
-		HeaderRecord hfr = _psb.getHeader();
-		if (hfr == null) {
-			hfr = new HeaderRecord(text);
-			_psb.setHeader(hfr);
-		} else {
-			hfr.setText(text);
-		}
-	}
+    @Override
+    protected void setHeaderFooterText(String text) {
+        HeaderRecord hfr = psb.getHeader();
+        if (hfr == null) {
+            hfr = new HeaderRecord(text);
+            psb.setHeader(hfr);
+        } else {
+            hfr.setText(text);
+        }
+    }
 }

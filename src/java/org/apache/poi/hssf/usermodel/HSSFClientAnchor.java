@@ -22,15 +22,15 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 
 /**
- * A client anchor is attached to an excel worksheet.  It anchors against a
- * top-left and buttom-right cell.
+ * A client anchor is attached to an excel worksheet.
+ * It anchors against a top-left and buttom-right cell.
  */
 public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
-    private EscherClientAnchorRecord _escherClientAnchor;
+    private EscherClientAnchorRecord escherClientAnchor;
 
     public HSSFClientAnchor(EscherClientAnchorRecord escherClientAnchorRecord) {
-        this._escherClientAnchor = escherClientAnchorRecord;
+        this.escherClientAnchor = escherClientAnchorRecord;
     }
 
     /**
@@ -42,19 +42,19 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     /**
      * Creates a new client anchor and sets the top-left and bottom-right
      * coordinates of the anchor.
-     * 
-     * Note: Microsoft Excel seems to sometimes disallow 
-     * higher y1 than y2 or higher x1 than x2, you might need to 
-     * reverse them and draw shapes vertically or horizontally flipped! 
+     * <p/>
+     * Note: Microsoft Excel seems to sometimes disallow
+     * higher y1 than y2 or higher x1 than x2, you might need to
+     * reverse them and draw shapes vertically or horizontally flipped!
      *
-     * @param dx1  the x coordinate within the first cell.
-     * @param dy1  the y coordinate within the first cell.
-     * @param dx2  the x coordinate within the second cell.
-     * @param dy2  the y coordinate within the second cell.
-     * @param col1 the column (0 based) of the first cell.
-     * @param row1 the row (0 based) of the first cell.
-     * @param col2 the column (0 based) of the second cell.
-     * @param row2 the row (0 based) of the second cell.
+     * @param dx1  the x coordinate within the first cell
+     * @param dy1  the y coordinate within the first cell
+     * @param dx2  the x coordinate within the second cell
+     * @param dy2  the y coordinate within the second cell
+     * @param col1 the column (0 based) of the first cell
+     * @param row1 the row (0 based) of the first cell
+     * @param col2 the column (0 based) of the second cell
+     * @param row2 the row (0 based) of the second cell
      */
     public HSSFClientAnchor(int dx1, int dy1, int dx2, int dy2, short col1, int row1, short col2, int row2) {
         super(dx1, dy1, dx2, dy2);
@@ -73,10 +73,10 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
         setRow1((short) Math.min(row1, row2));
         setRow2((short) Math.max(row1, row2));
 
-        if (col1 > col2){
+        if (col1 > col2) {
             _isHorizontallyFlipped = true;
         }
-        if (row1 > row2){
+        if (row1 > row2) {
             _isVerticallyFlipped = true;
         }
     }
@@ -85,7 +85,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      * Calculates the height of a client anchor in points.
      *
      * @param sheet the sheet the anchor will be attached to
-     * @return the shape height.
+     * @return the shape height
      */
     public float getAnchorHeightInPoints(HSSFSheet sheet) {
         int y1 = getDy1();
@@ -116,95 +116,94 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     }
 
     /**
-     * @return the column(0 based) of the first cell.
+     * @return the column(0 based) of the first cell
      */
     public short getCol1() {
-        return _escherClientAnchor.getCol1();
+        return escherClientAnchor.getCol1();
     }
 
     /**
-     * @param col1 the column(0 based) of the first cell.
+     * @param col1 the column(0 based) of the first cell
      */
     public void setCol1(short col1) {
         checkRange(col1, 0, 255, "col1");
-        _escherClientAnchor.setCol1(col1);
+        escherClientAnchor.setCol1(col1);
     }
 
     /**
-     * @param col1 0-based column of the first cell.
+     * @param col1 0-based column of the first cell
      */
     public void setCol1(int col1) {
         setCol1((short) col1);
     }
 
     /**
-     * @return the column(0 based) of the first cell.
+     * @return the column(0 based) of the first cell
      */
     public short getCol2() {
-        return _escherClientAnchor.getCol2();
+        return escherClientAnchor.getCol2();
     }
 
     /**
-     * @param col2 the column(0 based) of the second cell.
+     * @param col2 the column(0 based) of the second cell
      */
     public void setCol2(short col2) {
         checkRange(col2, 0, 255, "col2");
-        _escherClientAnchor.setCol2(col2);
+        escherClientAnchor.setCol2(col2);
     }
 
     /**
-     * @param col2 the column(0 based) of the second cell.
+     * @param col2 the column(0 based) of the second cell
      */
     public void setCol2(int col2) {
         setCol2((short) col2);
     }
 
     /**
-     * @return the row(0 based) of the first cell.
+     * @return the row(0 based) of the first cell
      */
     public int getRow1() {
-        return _escherClientAnchor.getRow1();
+        return escherClientAnchor.getRow1();
     }
 
     /**
-     * @param row1 0-based row of the first cell.
+     * @param row1 0-based row of the first cell
      */
     public void setRow1(int row1) {
         checkRange(row1, 0, 256 * 256, "row1");
-        _escherClientAnchor.setRow1(Integer.valueOf(row1).shortValue());
+        escherClientAnchor.setRow1(Integer.valueOf(row1).shortValue());
     }
 
     /**
-     * @return the row(0 based) of the second cell.
+     * @return the row(0 based) of the second cell
      */
     public int getRow2() {
-        return _escherClientAnchor.getRow2();
+        return escherClientAnchor.getRow2();
     }
 
     /**
-     * @param row2 the row(0 based) of the second cell.
+     * @param row2 the row(0 based) of the second cell
      */
     public void setRow2(int row2) {
         checkRange(row2, 0, 256 * 256, "row2");
-        _escherClientAnchor.setRow2(Integer.valueOf(row2).shortValue());
+        escherClientAnchor.setRow2(Integer.valueOf(row2).shortValue());
     }
 
     /**
-     * Sets the top-left and bottom-right coordinates of 
-     * the anchor.
-     * 
-     * Note: Microsoft Excel seems to sometimes disallow 
-     * higher y1 than y2 or higher x1 than x2, you might need to 
-     * reverse them and draw shapes vertically or horizontally flipped! 
+     * Sets the top-left and bottom-right coordinates of the anchor.
+     * <p/>
+     * Note: Microsoft Excel seems to sometimes disallow
+     * higher y1 than y2 or higher x1 than x2, you might need to
+     * reverse them and draw shapes vertically or horizontally flipped!
      *
-     * @param x1   the x coordinate within the first cell.
-     * @param y1   the y coordinate within the first cell.
-     * @param x2   the x coordinate within the second cell.
-     * @param y2   the y coordinate within the second cell.
-     * @param col1 the column (0 based) of the first cell.
-     * @param row1 the row (0 based) of the first cell.
-     * @param col2 the column (0 based) of the second cell.
-     * @param row2 the row (0 based) of the second cell.
+     * @param x1   the x coordinate within the first cell
+     * @param y1   the y coordinate within the first cell
+     * @param x2   the x coordinate within the second cell
+     * @param y2   the y coordinate within the second cell
+     * @param col1 the column (0 based) of the first cell
+     * @param row1 the row (0 based) of the first cell
+     * @param col2 the column (0 based) of the second cell
+     * @param row2 the row (0 based) of the second cell
      */
     public void setAnchor(short col1, int row1, int x1, int y1, short col2, int row2, int x2, int y2) {
         checkRange(getDx1(), 0, 1023, "dx1");
@@ -236,30 +235,30 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     @Override
     protected EscherRecord getEscherAnchor() {
-        return _escherClientAnchor;
+        return escherClientAnchor;
     }
 
     @Override
     protected void createEscherAnchor() {
-        _escherClientAnchor = new EscherClientAnchorRecord();
+        escherClientAnchor = new EscherClientAnchorRecord();
     }
 
     /**
-     * Gets the anchor type
+     * Gets the anchor type.
      * <p/>
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
      */
     public int getAnchorType() {
-        return _escherClientAnchor.getFlag();
+        return escherClientAnchor.getFlag();
     }
 
     /**
-     * Sets the anchor type
+     * Sets the anchor type.
      * <p/>
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
      */
     public void setAnchorType(int anchorType) {
-        _escherClientAnchor.setFlag(Integer.valueOf(anchorType).shortValue());
+        escherClientAnchor.setFlag(Integer.valueOf(anchorType).shortValue());
     }
 
     private void checkRange(int value, int minRange, int maxRange, String varName) {
@@ -286,45 +285,45 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     public int hashCode() {
         assert false : "hashCode not designed";
         return 42; // any arbitrary constant will do
-      }
+    }
 
     @Override
     public int getDx1() {
-        return _escherClientAnchor.getDx1();
+        return escherClientAnchor.getDx1();
     }
 
     @Override
     public void setDx1(int dx1) {
-        _escherClientAnchor.setDx1(Integer.valueOf(dx1).shortValue());
+        escherClientAnchor.setDx1(Integer.valueOf(dx1).shortValue());
     }
 
     @Override
     public int getDy1() {
-        return _escherClientAnchor.getDy1();
+        return escherClientAnchor.getDy1();
     }
 
     @Override
     public void setDy1(int dy1) {
-        _escherClientAnchor.setDy1(Integer.valueOf(dy1).shortValue());
+        escherClientAnchor.setDy1(Integer.valueOf(dy1).shortValue());
     }
 
     @Override
     public int getDy2() {
-        return _escherClientAnchor.getDy2();
+        return escherClientAnchor.getDy2();
     }
 
     @Override
     public void setDy2(int dy2) {
-        _escherClientAnchor.setDy2(Integer.valueOf(dy2).shortValue());
+        escherClientAnchor.setDy2(Integer.valueOf(dy2).shortValue());
     }
 
     @Override
     public int getDx2() {
-        return _escherClientAnchor.getDx2();
+        return escherClientAnchor.getDx2();
     }
 
     @Override
     public void setDx2(int dx2) {
-        _escherClientAnchor.setDx2(Integer.valueOf(dx2).shortValue());
+        escherClientAnchor.setDx2(Integer.valueOf(dx2).shortValue());
     }
 }

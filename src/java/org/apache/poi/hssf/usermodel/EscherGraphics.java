@@ -30,7 +30,7 @@ import java.text.AttributedCharacterIterator;
  * many features are not supported and some just aren't implemented yet.  If
  * in doubt test the specific calls you wish to make. Graphics calls are
  * always performed into an EscherGroup so one will need to be created.
- * <p>
+ * <p/>
  * <b>Important:</b>
  * <blockquote>
  * One important concept worth considering is that of font size.  One of the
@@ -41,25 +41,24 @@ import java.text.AttributedCharacterIterator;
  * measuring.  Presumably this is due to the fact that the Excel will be
  * using different fonts on different platforms or even within the same
  * platform.
- * <p>
+ * <p/>
  * Because of this constraint we've had to calculate the
  * verticalPointsPerPixel.  This the amount the font should be scaled by when
  * you issue commands such as drawString().  A good way to calculate this
  * is to use the follow formula:
- * <p>
+ * <p/>
  * <pre>
  *      multipler = groupHeightInPoints / heightOfGroup
  * </pre>
- * <p>
+ * <p/>
  * The height of the group is calculated fairly simply by calculating the
  * difference between the y coordinates of the bounding box of the shape.  The
  * height of the group can be calculated by using a convenience called
  * <code>HSSFClientAnchor.getAnchorHeightInPoints()</code>.
  * </blockquote>
  */
-public class EscherGraphics
-        extends Graphics
-{
+public class EscherGraphics extends Graphics {
+
     private HSSFShapeGroup escherGroup;
     private HSSFWorkbook workbook;
     private float verticalPointsPerPixel = 1.0f;
@@ -72,13 +71,12 @@ public class EscherGraphics
     /**
      * Construct an escher graphics object.
      *
-     * @param escherGroup           The escher group to write the graphics calls into.
-     * @param workbook              The workbook we are using.
-     * @param forecolor             The foreground color to use as default.
-     * @param verticalPointsPerPixel    The font multiplier.  (See class description for information on how this works.).
+     * @param escherGroup            the escher group to write the graphics calls into
+     * @param workbook               the workbook we are using
+     * @param forecolor              the foreground color to use as default
+     * @param verticalPointsPerPixel the font multiplier (See class description for information on how this works.)
      */
-    public EscherGraphics(HSSFShapeGroup escherGroup, HSSFWorkbook workbook, Color forecolor, float verticalPointsPerPixel )
-    {
+    public EscherGraphics(HSSFShapeGroup escherGroup, HSSFWorkbook workbook, Color forecolor, float verticalPointsPerPixel) {
         this.escherGroup = escherGroup;
         this.workbook = workbook;
         this.verticalPointsPerPixel = verticalPointsPerPixel;
@@ -91,14 +89,13 @@ public class EscherGraphics
     /**
      * Constructs an escher graphics object.
      *
-     * @param escherGroup           The escher group to write the graphics calls into.
-     * @param workbook              The workbook we are using.
-     * @param foreground            The foreground color to use as default.
-     * @param verticalPointsPerPixel    The font multiplier.  (See class description for information on how this works.).
-     * @param font                  The font to use.
+     * @param escherGroup            the escher group to write the graphics calls into
+     * @param workbook               the workbook we are using
+     * @param foreground             the foreground color to use as default
+     * @param verticalPointsPerPixel the font multiplier (See class description for information on how this works.)
+     * @param font                   the font to use
      */
-    EscherGraphics( HSSFShapeGroup escherGroup, HSSFWorkbook workbook, Color foreground, Font font, float verticalPointsPerPixel )
-    {
+    EscherGraphics(HSSFShapeGroup escherGroup, HSSFWorkbook workbook, Color foreground, Font font, float verticalPointsPerPixel) {
         this.escherGroup = escherGroup;
         this.workbook = workbook;
         this.foreground = foreground;
@@ -111,126 +108,108 @@ public class EscherGraphics
 //    /**
 //     * Constructs an escher graphics object.
 //     *
-//     * @param escherGroup           The escher group to write the graphics calls into.
-//     * @param workbook              The workbook we are using.
-//     * @param forecolor             The default foreground color.
+//     * @param escherGroup           the escher group to write the graphics calls into
+//     * @param workbook              the workbook we are using
+//     * @param forecolor             the default foreground color
 //     */
 //    public EscherGraphics( HSSFShapeGroup escherGroup, HSSFWorkbook workbook, Color forecolor)
 //    {
 //        this(escherGroup, workbook, forecolor, 1.0f);
 //    }
 
-
-    public void clearRect(int x, int y, int width, int height)
-    {
+    public void clearRect(int x, int y, int width, int height) {
         Color color = foreground;
         setColor(background);
-        fillRect(x,y,width,height);
+        fillRect(x, y, width, height);
         setColor(color);
     }
 
-    public void clipRect(int x, int y, int width, int height)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"clipRect not supported");
+    public void clipRect(int x, int y, int width, int height) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "clipRect not supported");
     }
 
-    public void copyArea(int x, int y, int width, int height, int dx, int dy)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"copyArea not supported");
+    public void copyArea(int x, int y, int width, int height, int dx, int dy) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "copyArea not supported");
     }
 
-    public Graphics create()
-    {
+    public Graphics create() {
         EscherGraphics g = new EscherGraphics(escherGroup, workbook,
-                foreground, font, verticalPointsPerPixel );
+                foreground, font, verticalPointsPerPixel);
         return g;
     }
 
-    public void dispose()
-    {
+    public void dispose() {
     }
 
     public void drawArc(int x, int y, int width, int height,
-				 int startAngle, int arcAngle)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawArc not supported");
+                        int startAngle, int arcAngle) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawArc not supported");
     }
 
     public boolean drawImage(Image img,
-				      int dx1, int dy1, int dx2, int dy2,
-				      int sx1, int sy1, int sx2, int sy2,
-				      Color bgcolor,
-				      ImageObserver observer)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage not supported");
+                             int dx1, int dy1, int dx2, int dy2,
+                             int sx1, int sy1, int sx2, int sy2,
+                             Color bgcolor,
+                             ImageObserver observer) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawImage not supported");
 
         return true;
     }
 
     public boolean drawImage(Image img,
-				      int dx1, int dy1, int dx2, int dy2,
-				      int sx1, int sy1, int sx2, int sy2,
-				      ImageObserver observer)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage not supported");
+                             int dx1, int dy1, int dx2, int dy2,
+                             int sx1, int sy1, int sx2, int sy2,
+                             ImageObserver observer) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawImage not supported");
         return true;
     }
 
-    public boolean drawImage(Image image, int i, int j, int k, int l, Color color, ImageObserver imageobserver)
-    {
+    public boolean drawImage(Image image, int i, int j, int k, int l, Color color, ImageObserver imageobserver) {
         return drawImage(image, i, j, i + k, j + l, 0, 0, image.getWidth(imageobserver), image.getHeight(imageobserver), color, imageobserver);
     }
 
-    public boolean drawImage(Image image, int i, int j, int k, int l, ImageObserver imageobserver)
-    {
+    public boolean drawImage(Image image, int i, int j, int k, int l, ImageObserver imageobserver) {
         return drawImage(image, i, j, i + k, j + l, 0, 0, image.getWidth(imageobserver), image.getHeight(imageobserver), imageobserver);
     }
 
-    public boolean drawImage(Image image, int i, int j, Color color, ImageObserver imageobserver)
-    {
+    public boolean drawImage(Image image, int i, int j, Color color, ImageObserver imageobserver) {
         return drawImage(image, i, j, image.getWidth(imageobserver), image.getHeight(imageobserver), color, imageobserver);
     }
 
-    public boolean drawImage(Image image, int i, int j, ImageObserver imageobserver)
-    {
+    public boolean drawImage(Image image, int i, int j, ImageObserver imageobserver) {
         return drawImage(image, i, j, image.getWidth(imageobserver), image.getHeight(imageobserver), imageobserver);
     }
 
-    public void drawLine(int x1, int y1, int x2, int y2)
-    {
-        drawLine(x1,y1,x2,y2,0);
+    public void drawLine(int x1, int y1, int x2, int y2) {
+        drawLine(x1, y1, x2, y2, 0);
     }
 
-    public void drawLine(int x1, int y1, int x2, int y2, int width)
-    {
-        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x1, y1, x2, y2) );
+    public void drawLine(int x1, int y1, int x2, int y2, int width) {
+        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x1, y1, x2, y2));
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
         shape.setLineWidth(width);
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
     }
 
-    public void drawOval(int x, int y, int width, int height)
-    {
-        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x,y,x+width,y+height) );
+    public void drawOval(int x, int y, int width, int height) {
+        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x, y, x + width, y + height));
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
         shape.setLineWidth(0);
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
         shape.setNoFill(true);
     }
 
-    public void drawPolygon(int xPoints[], int yPoints[],
-				     int nPoints)
-    {
-        int right  = findBiggest(xPoints);
+    public void drawPolygon(int xPoints[], int yPoints[], int nPoints) {
+        int right = findBiggest(xPoints);
         int bottom = findBiggest(yPoints);
-        int left   = findSmallest(xPoints);
-        int top    = findSmallest(yPoints);
-        HSSFPolygon shape = escherGroup.createPolygon(new HSSFChildAnchor(left,top,right,bottom) );
+        int left = findSmallest(xPoints);
+        int top = findSmallest(yPoints);
+        HSSFPolygon shape = escherGroup.createPolygon(new HSSFChildAnchor(left, top, right, bottom));
         shape.setPolygonDrawArea(right - left, bottom - top);
         shape.setPoints(addToAll(xPoints, -left), addToAll(yPoints, -top));
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
@@ -238,83 +217,73 @@ public class EscherGraphics
         shape.setNoFill(true);
     }
 
-    private int[] addToAll( int[] values, int amount )
-    {
+    private int[] addToAll(int[] values, int amount) {
         int[] result = new int[values.length];
-        for ( int i = 0; i < values.length; i++ )
+        for (int i = 0; i < values.length; i++)
             result[i] = values[i] + amount;
         return result;
     }
 
     public void drawPolyline(int xPoints[], int yPoints[],
-				      int nPoints)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawPolyline not supported");
+                             int nPoints) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawPolyline not supported");
     }
 
-    public void drawRect(int x, int y, int width, int height)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawRect not supported");
+    public void drawRect(int x, int y, int width, int height) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawRect not supported");
     }
 
     public void drawRoundRect(int x, int y, int width, int height,
-				       int arcWidth, int arcHeight)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawRoundRect not supported");
+                              int arcWidth, int arcHeight) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawRoundRect not supported");
     }
 
-    public void drawString(String str, int x, int y)
-    {
+    public void drawString(String str, int x, int y) {
         if (str == null || str.equals(""))
             return;
 
         Font excelFont = font;
-        if ( font.getName().equals( "SansSerif" ) )
-        {
-            excelFont = new Font( "Arial", font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ) );
+        if (font.getName().equals("SansSerif")) {
+            excelFont = new Font("Arial", font.getStyle(), (int) (font.getSize() / verticalPixelsPerPoint));
+        } else {
+            excelFont = new Font(font.getName(), font.getStyle(), (int) (font.getSize() / verticalPixelsPerPoint));
         }
-        else
-        {
-            excelFont = new Font( font.getName(), font.getStyle(), (int) ( font.getSize() / verticalPixelsPerPoint ));
-        }
-        FontDetails d = StaticFontMetrics.getFontDetails( excelFont );
-        int width = d.getStringWidth( str ) * 8  + 12;
-        int height = (int) ( ( font.getSize() / verticalPixelsPerPoint ) + 6 ) * 2;
-        y -= ( font.getSize() / verticalPixelsPerPoint ) + 2 * verticalPixelsPerPoint;    // we want to draw the shape from the top-left
-        HSSFTextbox textbox = escherGroup.createTextbox( new HSSFChildAnchor( x, y, x + width, y + height ) );
-        textbox.setNoFill( true );
-        textbox.setLineStyle( HSSFShape.LINESTYLE_NONE );
-        HSSFRichTextString s = new HSSFRichTextString( str );
-        HSSFFont hssfFont = matchFont( excelFont );
-        s.applyFont( hssfFont );
-        textbox.setString( s );
+        FontDetails d = StaticFontMetrics.getFontDetails(excelFont);
+        int width = d.getStringWidth(str) * 8 + 12;
+        int height = (int) ((font.getSize() / verticalPixelsPerPoint) + 6) * 2;
+        y -= (font.getSize() / verticalPixelsPerPoint) + 2 * verticalPixelsPerPoint;    // we want to draw the shape from the top-left
+        HSSFTextbox textbox = escherGroup.createTextbox(new HSSFChildAnchor(x, y, x + width, y + height));
+        textbox.setNoFill(true);
+        textbox.setLineStyle(HSSFShape.LINESTYLE_NONE);
+        HSSFRichTextString s = new HSSFRichTextString(str);
+        HSSFFont hssfFont = matchFont(excelFont);
+        s.applyFont(hssfFont);
+        textbox.setString(s);
     }
 
-    private HSSFFont matchFont( Font font )
-    {
+    private HSSFFont matchFont(Font font) {
         HSSFColor hssfColor = workbook.getCustomPalette()
-                .findColor((byte)foreground.getRed(), (byte)foreground.getGreen(), (byte)foreground.getBlue());
+                .findColor((byte) foreground.getRed(), (byte) foreground.getGreen(), (byte) foreground.getBlue());
         if (hssfColor == null)
-            hssfColor = workbook.getCustomPalette().findSimilarColor((byte)foreground.getRed(), (byte)foreground.getGreen(), (byte)foreground.getBlue());
+            hssfColor = workbook.getCustomPalette().findSimilarColor((byte) foreground.getRed(), (byte) foreground.getGreen(), (byte) foreground.getBlue());
         boolean bold = (font.getStyle() & Font.BOLD) != 0;
         boolean italic = (font.getStyle() & Font.ITALIC) != 0;
         HSSFFont hssfFont = workbook.findFont(bold ? HSSFFont.BOLDWEIGHT_BOLD : 0,
-                    hssfColor.getIndex(),
-                    (short)(font.getSize() * 20),
-                    font.getName(),
-                    italic,
-                    false,
-                    (short)0,
-                    (byte)0);
-        if (hssfFont == null)
-        {
+                hssfColor.getIndex(),
+                (short) (font.getSize() * 20),
+                font.getName(),
+                italic,
+                false,
+                (short) 0,
+                (byte) 0);
+        if (hssfFont == null) {
             hssfFont = workbook.createFont();
             hssfFont.setBoldweight(bold ? HSSFFont.BOLDWEIGHT_BOLD : 0);
             hssfFont.setColor(hssfColor.getIndex());
-            hssfFont.setFontHeight((short)(font.getSize() * 20));
+            hssfFont.setFontHeight((short) (font.getSize() * 20));
             hssfFont.setFontName(font.getName());
             hssfFont.setItalic(italic);
             hssfFont.setStrikeout(false);
@@ -325,24 +294,18 @@ public class EscherGraphics
         return hssfFont;
     }
 
-
-    public void drawString(AttributedCharacterIterator iterator,
-                                    int x, int y)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawString not supported");
+    public void drawString(AttributedCharacterIterator iterator, int x, int y) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "drawString not supported");
     }
 
-    public void fillArc(int x, int y, int width, int height,
-				 int startAngle, int arcAngle)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"fillArc not supported");
+    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "fillArc not supported");
     }
 
-    public void fillOval(int x, int y, int width, int height)
-    {
-        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor( x, y, x + width, y + height ) );
+    public void fillOval(int x, int y, int width, int height) {
+        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x, y, x + width, y + height));
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_OVAL);
         shape.setLineStyle(HSSFShape.LINESTYLE_NONE);
         shape.setFillColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
@@ -352,62 +315,57 @@ public class EscherGraphics
 
     /**
      * Fills a (closed) polygon, as defined by a pair of arrays, which
-     *  hold the <i>x</i> and <i>y</i> coordinates.
-     * <p>
+     * hold the <i>x</i> and <i>y</i> coordinates.
+     * <p/>
      * This draws the polygon, with <code>nPoint</code> line segments.
      * The first <code>nPoint&nbsp;-&nbsp;1</code> line segments are
-     *  drawn between sequential points
-     *  (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
+     * drawn between sequential points
+     * (<code>xPoints[i],yPoints[i],xPoints[i+1],yPoints[i+1]</code>).
      * The final line segment is a closing one, from the last point to
-     *  the first (assuming they are different).
-     * <p>
+     * the first (assuming they are different).
+     * <p/>
      * The area inside of the polygon is defined by using an
-     *  even-odd fill rule (also known as the alternating rule), and
-     *  the area inside of it is filled.
+     * even-odd fill rule (also known as the alternating rule), and
+     * the area inside of it is filled.
+     *
      * @param xPoints array of the <code>x</code> coordinates.
      * @param yPoints array of the <code>y</code> coordinates.
      * @param nPoints the total number of points in the polygon.
-     * @see   java.awt.Graphics#drawPolygon(int[], int[], int)
+     * @see java.awt.Graphics#drawPolygon(int[], int[], int)
      */
     public void fillPolygon(int xPoints[], int yPoints[],
-				     int nPoints)
-    {
-        int right  = findBiggest(xPoints);
+                            int nPoints) {
+        int right = findBiggest(xPoints);
         int bottom = findBiggest(yPoints);
-        int left   = findSmallest(xPoints);
-        int top    = findSmallest(yPoints);
-        HSSFPolygon shape = escherGroup.createPolygon(new HSSFChildAnchor(left,top,right,bottom) );
+        int left = findSmallest(xPoints);
+        int top = findSmallest(yPoints);
+        HSSFPolygon shape = escherGroup.createPolygon(new HSSFChildAnchor(left, top, right, bottom));
         shape.setPolygonDrawArea(right - left, bottom - top);
         shape.setPoints(addToAll(xPoints, -left), addToAll(yPoints, -top));
         shape.setLineStyleColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
         shape.setFillColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
     }
 
-    private int findBiggest( int[] values )
-    {
+    private int findBiggest(int[] values) {
         int result = Integer.MIN_VALUE;
-        for ( int i = 0; i < values.length; i++ )
-        {
+        for (int i = 0; i < values.length; i++) {
             if (values[i] > result)
                 result = values[i];
         }
         return result;
     }
 
-    private int findSmallest( int[] values )
-    {
+    private int findSmallest(int[] values) {
         int result = Integer.MAX_VALUE;
-        for ( int i = 0; i < values.length; i++ )
-        {
+        for (int i = 0; i < values.length; i++) {
             if (values[i] < result)
                 result = values[i];
         }
         return result;
     }
 
-    public void fillRect(int x, int y, int width, int height)
-    {
-        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor( x, y, x + width, y + height ) );
+    public void fillRect(int x, int y, int width, int height) {
+        HSSFSimpleShape shape = escherGroup.createShape(new HSSFChildAnchor(x, y, x + width, y + height));
         shape.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
         shape.setLineStyle(HSSFShape.LINESTYLE_NONE);
         shape.setFillColor(foreground.getRed(), foreground.getGreen(), foreground.getBlue());
@@ -415,94 +373,76 @@ public class EscherGraphics
     }
 
     public void fillRoundRect(int x, int y, int width, int height,
-				       int arcWidth, int arcHeight)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"fillRoundRect not supported");
+                              int arcWidth, int arcHeight) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "fillRoundRect not supported");
     }
 
-    public Shape getClip()
-    {
+    public Shape getClip() {
         return getClipBounds();
     }
 
-    public Rectangle getClipBounds()
-    {
+    public Rectangle getClipBounds() {
         return null;
     }
 
-    public Rectangle getClipRect()
-    {
+    public Rectangle getClipRect() {
         return getClipBounds();
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return foreground;
     }
 
-    public Font getFont()
-    {
+    public Font getFont() {
         return font;
     }
 
     @SuppressWarnings("deprecation")
-    public FontMetrics getFontMetrics(Font f)
-    {
+    public FontMetrics getFontMetrics(Font f) {
         return Toolkit.getDefaultToolkit().getFontMetrics(f);
     }
 
-    public void setClip(int x, int y, int width, int height)
-    {
-        setClip(new Rectangle(x,y,width,height));
+    public void setClip(int x, int y, int width, int height) {
+        setClip(new Rectangle(x, y, width, height));
     }
 
-    public void setClip(Shape shape)
-    {
+    public void setClip(Shape shape) {
         // ignore... not implemented
     }
 
-    public void setColor(Color color)
-    {
+    public void setColor(Color color) {
         foreground = color;
     }
 
-    public void setFont(Font f)
-    {
+    public void setFont(Font f) {
         font = f;
     }
 
-    public void setPaintMode()
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"setPaintMode not supported");
+    public void setPaintMode() {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "setPaintMode not supported");
     }
 
-    public void setXORMode(Color color)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"setXORMode not supported");
+    public void setXORMode(Color color) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "setXORMode not supported");
     }
 
-    public void translate(int x, int y)
-    {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"translate not supported");
+    public void translate(int x, int y) {
+        if (logger.check(POILogger.WARN))
+            logger.log(POILogger.WARN, "translate not supported");
     }
 
-    public Color getBackground()
-    {
+    public Color getBackground() {
         return background;
     }
 
-    public void setBackground( Color background )
-    {
+    public void setBackground(Color background) {
         this.background = background;
     }
 
-    HSSFShapeGroup getEscherGraphics()
-    {
+    HSSFShapeGroup getEscherGraphics() {
         return escherGroup;
     }
 }
-

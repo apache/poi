@@ -29,12 +29,14 @@ import java.util.Map;
  * Factory class for producing Excel Shapes from Escher records
  */
 public class HSSFShapeFactory {
+
     /**
      * build shape tree from escher container
+     *
      * @param container root escher container from which escher records must be taken
-     * @param agg - EscherAggregate
-     * @param out - shape container to which shapes must be added
-     * @param root - node to create HSSFObjectData shapes
+     * @param agg       EscherAggregate
+     * @param out       shape container to which shapes must be added
+     * @param root      node to create HSSFObjectData shapes
      */
     public static void createShapeTree(EscherContainerRecord container, EscherAggregate agg, HSSFShapeContainer out, DirectoryNode root) {
         if (container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
@@ -90,8 +92,8 @@ public class HSSFShapeFactory {
                     break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING:
                     EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
-                    if(optRecord == null) {
-                    	shape = new HSSFSimpleShape(container, objRecord, txtRecord);
+                    if (optRecord == null) {
+                        shape = new HSSFSimpleShape(container, objRecord, txtRecord);
                     } else {
                         EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
                         if (null != property) {

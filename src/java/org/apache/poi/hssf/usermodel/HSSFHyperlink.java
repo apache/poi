@@ -55,15 +55,14 @@ public class HSSFHyperlink implements Hyperlink {
     protected int link_type;
 
     /**
-     * Construct a new hyperlink
+     * Constructs a new hyperlink.
      *
      * @param type the type of hyperlink to create
      */
-    public HSSFHyperlink( int type )
-    {
+    public HSSFHyperlink(int type) {
         this.link_type = type;
         record = new HyperlinkRecord();
-        switch(type){
+        switch (type) {
             case LINK_URL:
             case LINK_EMAIL:
                 record.newUrlLink();
@@ -78,110 +77,109 @@ public class HSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Initialize the hyperlink by a <code>HyperlinkRecord</code> record
+     * Initializes the hyperlink by a <code>HyperlinkRecord</code> record.
      *
      * @param record
      */
-    protected HSSFHyperlink( HyperlinkRecord record )
-    {
+    protected HSSFHyperlink(HyperlinkRecord record) {
         this.record = record;
-        
+
         // Figure out the type
-        if(record.isFileLink()) {
-           link_type = LINK_FILE;
-        } else if(record.isDocumentLink()) {
-           link_type = LINK_DOCUMENT;
+        if (record.isFileLink()) {
+            link_type = LINK_FILE;
+        } else if (record.isDocumentLink()) {
+            link_type = LINK_DOCUMENT;
         } else {
-           if(record.getAddress() != null &&
-                 record.getAddress().startsWith("mailto:")) {
-              link_type = LINK_EMAIL;
-           } else {
-              link_type = LINK_URL;
-           }
+            if (record.getAddress() != null && record.getAddress().startsWith("mailto:")) {
+                link_type = LINK_EMAIL;
+            } else {
+                link_type = LINK_URL;
+            }
         }
     }
 
     /**
-     * Return the row of the first cell that contains the hyperlink
+     * Returns the row of the first cell that contains the hyperlink.
      *
      * @return the 0-based row of the cell that contains the hyperlink
      */
-    public int getFirstRow(){
+    public int getFirstRow() {
         return record.getFirstRow();
     }
 
     /**
-     * Set the row of the first cell that contains the hyperlink
+     * Sets the row of the first cell that contains the hyperlink.
      *
      * @param row the 0-based row of the first cell that contains the hyperlink
      */
-    public void setFirstRow(int row){
+    public void setFirstRow(int row) {
         record.setFirstRow(row);
     }
 
     /**
-     * Return the row of the last cell that contains the hyperlink
+     * Returns the row of the last cell that contains the hyperlink.
      *
      * @return the 0-based row of the last cell that contains the hyperlink
      */
-    public int getLastRow(){
+    public int getLastRow() {
         return record.getLastRow();
     }
 
     /**
-     * Set the row of the last cell that contains the hyperlink
+     * Sets the row of the last cell that contains the hyperlink.
      *
      * @param row the 0-based row of the last cell that contains the hyperlink
      */
-    public void setLastRow(int row){
+    public void setLastRow(int row) {
         record.setLastRow(row);
     }
 
     /**
-     * Return the column of the first cell that contains the hyperlink
+     * Returns the column of the first cell that contains the hyperlink.
      *
      * @return the 0-based column of the first cell that contains the hyperlink
      */
-    public int getFirstColumn(){
+    public int getFirstColumn() {
         return record.getFirstColumn();
     }
 
     /**
-     * Set the column of the first cell that contains the hyperlink
+     * Sets the column of the first cell that contains the hyperlink.
      *
      * @param col the 0-based column of the first cell that contains the hyperlink
      */
-    public void setFirstColumn(int col){
-        record.setFirstColumn((short)col);
+    public void setFirstColumn(int col) {
+        record.setFirstColumn((short) col);
     }
 
     /**
-     * Return the column of the last cell that contains the hyperlink
+     * Returns the column of the last cell that contains the hyperlink.
      *
      * @return the 0-based column of the last cell that contains the hyperlink
      */
-    public int getLastColumn(){
+    public int getLastColumn() {
         return record.getLastColumn();
     }
 
     /**
-     * Set the column of the last cell that contains the hyperlink
+     * Sets the column of the last cell that contains the hyperlink.
      *
      * @param col the 0-based column of the last cell that contains the hyperlink
      */
-    public void setLastColumn(int col){
-        record.setLastColumn((short)col);
+    public void setLastColumn(int col) {
+        record.setLastColumn((short) col);
     }
 
     /**
      * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
-     * @return  the address of this hyperlink
+     * @return the address of this hyperlink
      */
-    public String getAddress(){
+    public String getAddress() {
         return record.getAddress();
     }
-    public String getTextMark(){
+
+    public String getTextMark() {
         return record.getTextMark();
     }
 
@@ -193,9 +191,11 @@ public class HSSFHyperlink implements Hyperlink {
     public void setTextMark(String textMark) {
         record.setTextMark(textMark);
     }
-    public String getShortFilename(){
+
+    public String getShortFilename() {
         return record.getShortFilename();
     }
+
     /**
      * Convenience method equivalent to {@link #setAddress(String)}
      *
@@ -208,36 +208,36 @@ public class HSSFHyperlink implements Hyperlink {
     /**
      * Hyperlink address. Depending on the hyperlink type it can be URL, e-mail, path to a file, etc.
      *
-     * @param address  the address of this hyperlink
+     * @param address the address of this hyperlink
      */
-    public void setAddress(String address){
+    public void setAddress(String address) {
         record.setAddress(address);
     }
 
     /**
-     * Return text label for this hyperlink
+     * Returns text label for this hyperlink.
      *
-     * @return  text to display
+     * @return text to display
      */
-    public String getLabel(){
+    public String getLabel() {
         return record.getLabel();
     }
 
     /**
-     * Sets text label for this hyperlink
+     * Sets text label for this hyperlink.
      *
      * @param label text label for this hyperlink
      */
-    public void setLabel(String label){
+    public void setLabel(String label) {
         record.setLabel(label);
     }
 
     /**
-     * Return the type of this hyperlink
+     * Returns the type of this hyperlink.
      *
      * @return the type of this hyperlink
      */
-    public int getType(){
+    public int getType() {
         return link_type;
     }
 }

@@ -35,90 +35,95 @@ import java.util.Properties;
  * font. Use a multiplier for other sizes.
  */
 final class StaticFontMetrics {
-	/** The font metrics property file we're using */
-	private static Properties fontMetricsProps;
-	/** Our cache of font details we've already looked up */
-	private static Map<String, FontDetails> fontDetailsMap = new HashMap<String, FontDetails>();
 
-	/**
-	 * Retrieves the fake font details for a given font.
-	 *
-	 * @param font
-	 *            the font to lookup.
-	 * @return the fake font.
-	 */
-	public static FontDetails getFontDetails(Font font) {
-		// If we haven't already identified out font metrics file,
-		// figure out which one to use and load it
-		if (fontMetricsProps == null) {
-			InputStream metricsIn = null;
-			try {
-				fontMetricsProps = new Properties();
+    /**
+     * The font metrics property file we're using
+     */
+    private static Properties fontMetricsProps;
 
-				// Check to see if the font metric file was specified
-				// as a system property
-				String propFileName = null;
-				try {
-					propFileName = System.getProperty("font.metrics.filename");
-				} catch (SecurityException e) {
-				}
+    /**
+     * Our cache of font details we've already looked up
+     */
+    private static Map<String, FontDetails> fontDetailsMap = new HashMap<String, FontDetails>();
 
-				if (propFileName != null) {
-					File file = new File(propFileName);
-					if (!file.exists())
-						throw new FileNotFoundException(
-								"font_metrics.properties not found at path "
-										+ file.getAbsolutePath());
-					metricsIn = new FileInputStream(file);
-				} else {
-					// Use the built-in font metrics file off the classpath
-					metricsIn = FontDetails.class.getResourceAsStream("/font_metrics.properties");
-					if (metricsIn == null)
-						throw new FileNotFoundException(
-								"font_metrics.properties not found in classpath");
-				}
-				fontMetricsProps.load(metricsIn);
-			} catch (IOException e) {
-				throw new RuntimeException("Could not load font metrics: " + e.getMessage());
-			} finally {
-				if (metricsIn != null) {
-					try {
-						metricsIn.close();
-					} catch (IOException ignore) {
-					}
-				}
-			}
-		}
+    /**
+     * Retrieves the fake font details for a given font.
+     *
+     * @param font the font to lookup
+     * @return the fake font
+     */
+    public static FontDetails getFontDetails(Font font) {
+        // If we haven't already identified out font metrics file,
+        // figure out which one to use and load it
+        if (fontMetricsProps == null) {
+            InputStream metricsIn = null;
+            try {
+                fontMetricsProps = new Properties();
 
-		// Grab the base name of the font they've asked about
-		String fontName = font.getName();
+                // Check to see if the font metric file was specified
+                // as a system property
+                String propFileName = null;
+                try {
+                    propFileName = System.getProperty("font.metrics.filename");
+                } catch (SecurityException e) {
+                }
 
-		// Some fonts support plain/bold/italic/bolditalic variants
-		// Others have different font instances for bold etc
-		// (eg font.dialog.plain.* vs font.Californian FB Bold.*)
-		String fontStyle = "";
-		if (font.isPlain())
-			fontStyle += "plain";
-		if (font.isBold())
-			fontStyle += "bold";
-		if (font.isItalic())
-			fontStyle += "italic";
+                if (propFileName != null) {
+                    File file = new File(propFileName);
+                    if (!file.exists())
+                        throw new FileNotFoundException(
+                                "font_metrics.properties not found at path "
+                                        + file.getAbsolutePath());
+                    metricsIn = new FileInputStream(file);
+                } else {
+                    // Use the built-in font metrics file off the classpath
+                    metricsIn = FontDetails.class.getResourceAsStream("/font_metrics.properties");
+                    if (metricsIn == null)
+                        throw new FileNotFoundException(
+                                "font_metrics.properties not found in classpath");
+                }
+                fontMetricsProps.load(metricsIn);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not load font metrics: " + e.getMessage());
+            } finally {
+                if (metricsIn != null) {
+                    try {
+                        metricsIn.close();
+                    } catch (IOException ignore) {
+                    }
+                }
+            }
+        }
 
-		// Do we have a definition for this font with just the name?
-		// If not, check with the font style added
-		if (fontMetricsProps.get(FontDetails.buildFontHeightProperty(fontName)) == null
-				&& fontMetricsProps.get(FontDetails.buildFontHeightProperty(fontName + "."
-						+ fontStyle)) != null) {
-			// Need to add on the style to the font name
-			fontName += "." + fontStyle;
-		}
+        // Grab the base name of the font they've asked about
+        String fontName = font.getName();
 
-		// Get the details on this font
-		if (fontDetailsMap.get(fontName) == null) {
-			FontDetails fontDetails = FontDetails.create(fontName, fontMetricsProps);
-			fontDetailsMap.put(fontName, fontDetails);
-			return fontDetails;
-		}
-		return fontDetailsMap.get(fontName);
-	}
+        // Some fonts support plain/bold/italic/bolditalic variants
+        // Others have different font instances for bold etc
+        // (eg font.dialog.plain.* vs font.Californian FB Bold.*)
+        String fontStyle = "";
+        if (font.isPlain())
+            fontStyle += "plain";
+        if (font.isBold())
+            fontStyle += "bold";
+        if (font.isItalic())
+            fontStyle += "italic";
+
+        // Do we have a definition for this font with just the name?
+        // If not, check with the font style added
+        if (fontMetricsProps.get(FontDetails.buildFontHeightProperty(fontName)) == null
+                && fontMetricsProps.get(FontDetails.buildFontHeightProperty(fontName + "."
+                + fontStyle)) != null) {
+            // Need to add on the style to the font name
+            fontName += "." + fontStyle;
+        }
+
+        // Get the details on this font
+        if (fontDetailsMap.get(fontName) == null) {
+            FontDetails fontDetails = FontDetails.create(fontName, fontMetricsProps);
+            fontDetailsMap.put(fontName, fontDetails);
+            return fontDetails;
+        }
+        return fontDetailsMap.get(fontName);
+    }
 }

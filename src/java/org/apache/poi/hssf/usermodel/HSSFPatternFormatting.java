@@ -23,82 +23,71 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
 /**
  * High level representation for Conditional Formatting settings
  */
-public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.PatternFormatting
-{
-	private final CFRuleRecord cfRuleRecord;
-	private final PatternFormatting patternFormatting;
-	
-	protected HSSFPatternFormatting(CFRuleRecord cfRuleRecord)
-	{
-		this.cfRuleRecord = cfRuleRecord; 
-		this.patternFormatting = cfRuleRecord.getPatternFormatting();
-	}
+public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.PatternFormatting {
 
-	protected PatternFormatting getPatternFormattingBlock()
-	{
-		return patternFormatting;
-	}
+    private final CFRuleRecord cfRuleRecord;
+    private final PatternFormatting patternFormatting;
 
-	/**
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillBackgroundColor()
-	 */
-	public short getFillBackgroundColor()
-	{
-		return (short)patternFormatting.getFillBackgroundColor();
-	}
+    protected HSSFPatternFormatting(CFRuleRecord cfRuleRecord) {
+        this.cfRuleRecord = cfRuleRecord;
+        this.patternFormatting = cfRuleRecord.getPatternFormatting();
+    }
 
-	/**
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillForegroundColor()
-	 */
-	public short getFillForegroundColor()
-	{
-		return (short)patternFormatting.getFillForegroundColor();
-	}
+    protected PatternFormatting getPatternFormattingBlock() {
+        return patternFormatting;
+    }
 
-	/**
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillPattern()
-	 */
-	public short getFillPattern()
-	{
-		return (short)patternFormatting.getFillPattern();
-	}
+    /**
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillBackgroundColor()
+     */
+    public short getFillBackgroundColor() {
+        return (short) patternFormatting.getFillBackgroundColor();
+    }
 
-	/**
-	 * @param bg
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(int)
-	 */
-	public void setFillBackgroundColor(short bg)
-	{
-		patternFormatting.setFillBackgroundColor(bg);
-		if( bg != 0)
-		{
-			cfRuleRecord.setPatternBackgroundColorModified(true);
-		}
-	}
+    /**
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillForegroundColor()
+     */
+    public short getFillForegroundColor() {
+        return (short) patternFormatting.getFillForegroundColor();
+    }
 
-	/**
-	 * @param fg
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillForegroundColor(int)
-	 */
-	public void setFillForegroundColor(short fg)
-	{
-		patternFormatting.setFillForegroundColor(fg);
-		if( fg != 0)
-		{
-			cfRuleRecord.setPatternColorModified(true);
-		}
-	}
+    /**
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillPattern()
+     */
+    public short getFillPattern() {
+        return (short) patternFormatting.getFillPattern();
+    }
 
-	/**
-	 * @param fp
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillPattern(int)
-	 */
-	public void setFillPattern(short fp)
-	{
-		patternFormatting.setFillPattern(fp);
-		if( fp != 0)
-		{
-			cfRuleRecord.setPatternStyleModified(true);
-		}
-	}
+    /**
+     * @param bg
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(int)
+     */
+    public void setFillBackgroundColor(short bg) {
+        patternFormatting.setFillBackgroundColor(bg);
+        if (bg != 0) {
+            cfRuleRecord.setPatternBackgroundColorModified(true);
+        }
+    }
+
+    /**
+     * @param fg
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillForegroundColor(int)
+     */
+    public void setFillForegroundColor(short fg) {
+        patternFormatting.setFillForegroundColor(fg);
+        if (fg != 0) {
+            cfRuleRecord.setPatternColorModified(true);
+        }
+    }
+
+    /**
+     * @param fp
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillPattern(int)
+     */
+    public void setFillPattern(short fp) {
+        patternFormatting.setFillPattern(fp);
+        if (fp != 0) {
+            cfRuleRecord.setPatternStyleModified(true);
+        }
+    }
 }

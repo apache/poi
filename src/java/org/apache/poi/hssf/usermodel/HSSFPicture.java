@@ -44,9 +44,10 @@ import org.apache.poi.util.StringUtil;
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
-	@SuppressWarnings("unused")
+
+    @SuppressWarnings("unused")
     private static POILogger logger = POILogFactory.getLogger(HSSFPicture.class);
-	
+
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
     public static final int PICTURE_TYPE_PICT = HSSFWorkbook.PICTURE_TYPE_PICT;              // Macintosh PICT
@@ -61,26 +62,23 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     /**
      * Constructs a picture object.
      */
-    public HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
-    {
-        super( parent, anchor );
+    public HSSFPicture(HSSFShape parent, HSSFAnchor anchor) {
+        super(parent, anchor);
         super.setShapeType(OBJECT_TYPE_PICTURE);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE);
     }
 
-    public int getPictureIndex()
-    {
+    public int getPictureIndex() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
-        if (null == property){
+        if (null == property) {
             return -1;
         }
         return property.getPropertyValue();
     }
 
-    public void setPictureIndex( int pictureIndex )
-    {
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
+    public void setPictureIndex(int pictureIndex) {
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
     }
 
     @Override
@@ -94,15 +92,13 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     }
 
     /**
-     * Reset the image to the dimension of the embedded image
-     * 
-     * <p>
+     * Resets the image to the dimension of the embedded image.
+     * <p/>
      * Please note, that this method works correctly only for workbooks
      * with default font size (Arial 10pt for .xls).
      * If the default font is changed the resized image can be streched vertically or horizontally.
-     * </p>
      */
-    public void resize(){
+    public void resize() {
         resize(Double.MAX_VALUE);
     }
 
@@ -112,11 +108,11 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * @see #resize(double, double)
      */
     public void resize(double scale) {
-        resize(scale,scale);
+        resize(scale, scale);
     }
-    
+
     /**
-     * Resize the image
+     * Resizes the image.
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with default font size (Arial 10pt for .xls).
@@ -126,7 +122,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * <code>resize(1.0,1.0)</code> keeps the original size,<br/>
      * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br/>
      * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br/>
-     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image.
      * </p>
      *
      * @param scaleX the amount by which the image width is multiplied relative to the original width.
@@ -136,12 +132,12 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
         HSSFClientAnchor anchor = getClientAnchor();
         anchor.setAnchorType(2);
 
-        HSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
+        HSSFClientAnchor pref = getPreferredSize(scaleX, scaleY);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
 
-        anchor.setCol2((short)col2);
+        anchor.setCol2((short) col2);
         // anchor.setDx1(0);
         anchor.setDx2(pref.getDx2());
 
@@ -151,85 +147,84 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     }
 
     /**
-     * Calculate the preferred size for this picture.
+     * Calculates the preferred size for this picture.
      *
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.0.2
      */
-    public HSSFClientAnchor getPreferredSize(){
+    public HSSFClientAnchor getPreferredSize() {
         return getPreferredSize(1.0);
     }
 
     /**
-     * Calculate the preferred size for this picture.
+     * Calculates the preferred size for this picture.
      *
      * @param scale the amount by which image dimensions are multiplied relative to the original size.
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.0.2
      */
-    public HSSFClientAnchor getPreferredSize(double scale){
+    public HSSFClientAnchor getPreferredSize(double scale) {
         return getPreferredSize(scale, scale);
     }
-    
+
     /**
-     * Calculate the preferred size for this picture.
+     * Calculates the preferred size for this picture.
      *
      * @param scaleX the amount by which image width is multiplied relative to the original width.
      * @param scaleY the amount by which image height is multiplied relative to the original height.
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.11
      */
-    public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
+    public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY) {
         ImageUtils.setPreferredSize(this, scaleX, scaleY);
         return getClientAnchor();
     }
 
     /**
-     * Return the dimension of the embedded image in pixel
+     * Returns the dimension of the embedded image in pixel.
      *
      * @return image dimension in pixels
      */
-    public Dimension getImageDimension(){
+    public Dimension getImageDimension() {
         InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
         return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
     }
-    
+
     /**
-     * Return picture data for this shape
+     * Returns picture data for this shape.
      *
      * @return picture data for this shape
      */
-    public HSSFPictureData getPictureData(){
+    public HSSFPictureData getPictureData() {
         InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
-    	EscherBlipRecord blipRecord = bse.getBlipRecord();
-    	return new HSSFPictureData(blipRecord);
+        EscherBlipRecord blipRecord = bse.getBlipRecord();
+        return new HSSFPictureData(blipRecord);
     }
 
     @Override
     void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch._getBoundAggregate();
         agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
-        EscherBSERecord bse =
-                patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+        EscherBSERecord bse = patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
         bse.setRef(bse.getRef() + 1);
     }
 
     /**
-     * The filename of the embedded image
+     * Retrieves the filename of the embedded image.
      */
     public String getFileName() {
         EscherComplexProperty propFile = (EscherComplexProperty) getOptRecord().lookup(
-                      EscherProperties.BLIP__BLIPFILENAME);
+                EscherProperties.BLIP__BLIPFILENAME);
         return (null == propFile)
-            ? ""
-            : StringUtil.getFromUnicodeLE(propFile.getComplexData()).trim();
+                ? ""
+                : StringUtil.getFromUnicodeLE(propFile.getComplexData()).trim();
     }
-    
-    public void setFileName(String data){
+
+    public void setFileName(String data) {
         // TODO: add trailing \u0000? 
         byte bytes[] = StringUtil.getToUnicodeLE(data);
         EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, bytes);
@@ -238,28 +233,27 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     @Override
     public void setShapeType(int shapeType) {
-        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+        throw new IllegalStateException("Shape type can not be changed in " + this.getClass().getSimpleName());
     }
 
     @Override
     protected HSSFShape cloneShape() {
         EscherContainerRecord spContainer = new EscherContainerRecord();
-        byte [] inSp = getEscherContainer().serialize();
+        byte[] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         return new HSSFPicture(spContainer, obj);
     }
-    
+
     /**
-     * @return the anchor that is used by this picture.
+     * @return the anchor that is used by this picture
      */
     @Override
     public HSSFClientAnchor getClientAnchor() {
         HSSFAnchor a = getAnchor();
-        return (a instanceof HSSFClientAnchor) ? (HSSFClientAnchor)a : null;
+        return (a instanceof HSSFClientAnchor) ? (HSSFClientAnchor) a : null;
     }
 
-    
     /**
      * @return the sheet which contains the picture shape
      */

@@ -15,7 +15,6 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.EscherBitmapBlip;
@@ -28,15 +27,16 @@ import org.apache.poi.util.PngUtils;
 /**
  * Represents binary data stored in the file.  Eg. A GIF, JPEG etc...
  */
-public class HSSFPictureData implements PictureData
-{
+public class HSSFPictureData implements PictureData {
+
     // MSOBI constants for various formats.
-    public static final short MSOBI_WMF   = 0x2160;
-    public static final short MSOBI_EMF   = 0x3D40;
-    public static final short MSOBI_PICT  = 0x5420;
-    public static final short MSOBI_PNG   = 0x6E00;
-    public static final short MSOBI_JPEG  = 0x46A0;
-    public static final short MSOBI_DIB   = 0x7A80;
+    public static final short MSOBI_WMF  = 0x2160;
+    public static final short MSOBI_EMF  = 0x3D40;
+    public static final short MSOBI_PICT = 0x5420;
+    public static final short MSOBI_PNG  = 0x6E00;
+    public static final short MSOBI_JPEG = 0x46A0;
+    public static final short MSOBI_DIB  = 0x7A80;
+
     // Mask of the bits in the options used to store the image format.
     public static final short FORMAT_MASK = (short) 0xFFF0;
 
@@ -50,23 +50,20 @@ public class HSSFPictureData implements PictureData
      *
      * @param blip the underlying blip record containing the bitmap data.
      */
-    public HSSFPictureData( EscherBlipRecord blip )
-    {
+    public HSSFPictureData(EscherBlipRecord blip) {
         this.blip = blip;
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.hssf.usermodel.PictureData#getData()
      */
-    public byte[] getData()
-    {
+    public byte[] getData() {
         byte[] pictureData = blip.getPicturedata();
 
-        //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
-        //Just cut it off!.
-        if (PngUtils.matchesPngHeader(pictureData, 16))
-        {
-            byte[] png = new byte[pictureData.length-16];
+        // PNG created on MAC may have a 16-byte prefix which prevents successful reading.
+        // Just cut it off!.
+        if (PngUtils.matchesPngHeader(pictureData, 16)) {
+            byte[] png = new byte[pictureData.length - 16];
             System.arraycopy(pictureData, 16, png, 0, png.length);
             pictureData = png;
         }
@@ -75,7 +72,6 @@ public class HSSFPictureData implements PictureData
     }
 
     /**
-     *
      * @return format of the picture.
      * @see HSSFWorkbook#PICTURE_TYPE_DIB
      * @see HSSFWorkbook#PICTURE_TYPE_WMF
@@ -84,14 +80,14 @@ public class HSSFPictureData implements PictureData
      * @see HSSFWorkbook#PICTURE_TYPE_JPEG
      * @see HSSFWorkbook#PICTURE_TYPE_PICT
      */
-    public int getFormat(){
-        return blip.getRecordId() - (short)0xF018;
+    public int getFormat() {
+        return blip.getRecordId() - (short) 0xF018;
     }
 
     /**
-    * @see #getFormat
-    * @return 'wmf', 'jpeg' etc depending on the format. never <code>null</code>
-    */
+     * @return 'wmf', 'jpeg' etc depending on the format. never <code>null</code>
+     * @see #getFormat
+     */
     public String suggestFileExtension() {
         switch (blip.getRecordId()) {
             case EscherMetafileBlip.RECORD_ID_WMF:
@@ -110,32 +106,31 @@ public class HSSFPictureData implements PictureData
                 return "";
         }
     }
-    
+
     /**
      * Returns the mime type for the image
      */
     public String getMimeType() {
-       switch (blip.getRecordId()) {
-           case EscherMetafileBlip.RECORD_ID_WMF:
-               return "image/x-wmf";
-           case EscherMetafileBlip.RECORD_ID_EMF:
-               return "image/x-emf";
-           case EscherMetafileBlip.RECORD_ID_PICT:
-               return "image/x-pict";
-           case EscherBitmapBlip.RECORD_ID_PNG:
-               return "image/png";
-           case EscherBitmapBlip.RECORD_ID_JPEG:
-               return "image/jpeg";
-           case EscherBitmapBlip.RECORD_ID_DIB:
-               return "image/bmp";
-           default:
-               return "image/unknown";
-       }
+        switch (blip.getRecordId()) {
+            case EscherMetafileBlip.RECORD_ID_WMF:
+                return "image/x-wmf";
+            case EscherMetafileBlip.RECORD_ID_EMF:
+                return "image/x-emf";
+            case EscherMetafileBlip.RECORD_ID_PICT:
+                return "image/x-pict";
+            case EscherBitmapBlip.RECORD_ID_PNG:
+                return "image/png";
+            case EscherBitmapBlip.RECORD_ID_JPEG:
+                return "image/jpeg";
+            case EscherBitmapBlip.RECORD_ID_DIB:
+                return "image/bmp";
+            default:
+                return "image/unknown";
+        }
     }
-    
+
     /**
      * @return the POI internal image type, -1 if not unknown image type
-     *
      * @see Workbook#PICTURE_TYPE_DIB
      * @see Workbook#PICTURE_TYPE_EMF
      * @see Workbook#PICTURE_TYPE_JPEG
@@ -159,6 +154,6 @@ public class HSSFPictureData implements PictureData
                 return Workbook.PICTURE_TYPE_DIB;
             default:
                 return -1;
-        }        
+        }
     }
 }

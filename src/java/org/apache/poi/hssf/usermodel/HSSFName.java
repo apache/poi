@@ -30,74 +30,78 @@ import org.apache.poi.ss.usermodel.Name;
  * 'named range' or name of a user defined function.
  */
 public final class HSSFName implements Name {
-    private HSSFWorkbook _book;
-    private NameRecord _definedNameRec;
-    private NameCommentRecord _commentRec;
 
-    /** 
-     * Creates new HSSFName   - called by HSSFWorkbook to create a name from
-     * scratch.
+    private HSSFWorkbook book;
+    private NameRecord definedNameRec;
+    private NameCommentRecord commentRec;
+
+    /**
+     * Creates a new HSSFName.
+     * Called by HSSFWorkbook to create a name from scratch.
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
      * @param name the Name Record
-     * @param book workbook object associated with the sheet.
-     */
-    /* package */ HSSFName(HSSFWorkbook book, NameRecord name) {
-      this(book, name, null);
-    }
-    /** 
-     * Creates new HSSFName   - called by HSSFWorkbook to create a name from
-     * scratch.
-     *
+     * @param book workbook object associated with the sheet
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
-     * @param name the Name Record
-     * @param comment the Name Comment Record, optional.
-     * @param book workbook object associated with the sheet.
      */
-    /* package */ HSSFName(final HSSFWorkbook book, final NameRecord name, final NameCommentRecord comment) {
-        _book = book;
-        _definedNameRec = name;
-        _commentRec = comment;
+    HSSFName(HSSFWorkbook book, NameRecord name) {
+        this(book, name, null);
     }
 
-    /** Get the sheets name which this named range is referenced to
+    /**
+     * Creates a new HSSFName.
+     * Called by HSSFWorkbook to create a name from scratch.
+     *
+     * @param name    the Name Record
+     * @param comment the Name Comment Record, optional
+     * @param book    workbook object associated with the sheet
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createName()
+     */
+    HSSFName(final HSSFWorkbook book, final NameRecord name, final NameCommentRecord comment) {
+        this.book = book;
+        definedNameRec = name;
+        commentRec = comment;
+    }
+
+    /**
+     * Gets the sheet name which this named range is referenced to.
+     *
      * @return sheet name, which this named range referred to
      */
     public String getSheetName() {
-        int indexToExternSheet = _definedNameRec.getExternSheetNumber();
+        int indexToExternSheet = definedNameRec.getExternSheetNumber();
 
-        return _book.getWorkbook().findSheetFirstNameFromExternSheet(indexToExternSheet);
+        return book.getWorkbook().findSheetFirstNameFromExternSheet(indexToExternSheet);
     }
 
     /**
      * @return text name of this defined name
      */
-    public String getNameName(){
-        return _definedNameRec.getNameText();
+    public String getNameName() {
+        return definedNameRec.getNameText();
     }
 
     /**
-     * Sets the name of the named range
-     *
+     * Sets the name of the named range.
+     * <p/>
      * <p>The following is a list of syntax rules that you need to be aware of when you create and edit names.</p>
      * <ul>
-     *   <li><strong>Valid characters</strong>
-     *   The first character of a name must be a letter, an underscore character (_), or a backslash (\).
-     *   Remaining characters in the name can be letters, numbers, periods, and underscore characters.
-     *   </li>
-     *   <li><strong>Cell references disallowed</strong>
-     *   Names cannot be the same as a cell reference, such as Z$100 or R1C1.</li>
-     *   <li><strong>Spaces are not valid</strong>
-     *   Spaces are not allowed as part of a name. Use the underscore character (_) and period (.) as word separators, such as, Sales_Tax or First.Quarter.
-     *   </li>
-     *   <li><strong>Name length</strong>
-     *    A name can contain up to 255 characters.
-     *   </li>
-     *   <li><strong>Case sensitivity</strong>
-     *   Names can contain uppercase and lowercase letters.
-     *   </li>
+     * <li><strong>Valid characters</strong>
+     * The first character of a name must be a letter, an underscore character (_), or a backslash (\).
+     * Remaining characters in the name can be letters, numbers, periods, and underscore characters.
+     * </li>
+     * <li><strong>Cell references disallowed</strong>
+     * Names cannot be the same as a cell reference, such as Z$100 or R1C1.</li>
+     * <li><strong>Spaces are not valid</strong>
+     * Spaces are not allowed as part of a name. Use the underscore character (_) and period (.) as word separators, such as, Sales_Tax or First.Quarter.
+     * </li>
+     * <li><strong>Name length</strong>
+     * A name can contain up to 255 characters.
+     * </li>
+     * <li><strong>Case sensitivity</strong>
+     * Names can contain uppercase and lowercase letters.
+     * </li>
      * </ul>
-     *
+     * <p/>
      * <p>
      * A name must always be unique within its scope. POI prevents you from defining a name that is not unique
      * within its scope. However you can use the same name in different scopes. Example:
@@ -106,60 +110,59 @@ public final class HSSFName implements Name {
      * HSSFName name;
      * name = workbook.createName();
      * name.setNameName("sales_08");
-     *
+     * <p/>
      * name = workbook.createName();
      * name.setNameName("sales_08"); //will throw an exception: "The workbook already contains this name (case-insensitive)"
-     *
+     * <p/>
      * //create sheet-level name
      * name = workbook.createName();
      * name.setSheetIndex(0); //the scope of the name is the first sheet
      * name.setNameName("sales_08");  //ok
-     *
+     * <p/>
      * name = workbook.createName();
      * name.setSheetIndex(0);
      * name.setNameName("sales_08");  //will throw an exception: "The sheet already contains this name (case-insensitive)"
-     *
+     * <p/>
      * </blockquote></pre>
-    * </p>
+     * </p>
      *
      * @param nameName named range name to set
      * @throws IllegalArgumentException if the name is invalid or the name already exists (case-insensitive)
      */
-    public void setNameName(String nameName){
+    public void setNameName(String nameName) {
         validateName(nameName);
 
-        InternalWorkbook wb = _book.getWorkbook();
-        _definedNameRec.setNameText(nameName);
+        InternalWorkbook wb = book.getWorkbook();
+        definedNameRec.setNameText(nameName);
 
-        int sheetNumber = _definedNameRec.getSheetNumber();
+        int sheetNumber = definedNameRec.getSheetNumber();
 
-        //Check to ensure no other names have the same case-insensitive name
-        for ( int i = wb.getNumNames()-1; i >=0; i-- )
-        {
+        // Check to ensure no other names have the same case-insensitive name
+        for (int i = wb.getNumNames() - 1; i >= 0; i--) {
             NameRecord rec = wb.getNameRecord(i);
-            if (rec != _definedNameRec) {
-                if (rec.getNameText().equalsIgnoreCase(nameName) && sheetNumber == rec.getSheetNumber()){
-                    String msg = "The "+(sheetNumber == 0 ? "workbook" : "sheet")+" already contains this name: " + nameName;
-                    _definedNameRec.setNameText(nameName + "(2)");
+            if (rec != definedNameRec) {
+                if (rec.getNameText().equalsIgnoreCase(nameName) && sheetNumber == rec.getSheetNumber()) {
+                    String msg = "The " + (sheetNumber == 0 ? "workbook" : "sheet") + " already contains this name: " + nameName;
+                    definedNameRec.setNameText(nameName + "(2)");
                     throw new IllegalArgumentException(msg);
                 }
             }
         }
-        
+
         // Update our comment, if there is one
-        if(_commentRec != null) {
-           String oldName = _commentRec.getNameText();
-           _commentRec.setNameText(nameName);
-           _book.getWorkbook().updateNameCommentRecordCache(_commentRec);
+        if (commentRec != null) {
+            String oldName = commentRec.getNameText();
+            commentRec.setNameText(nameName);
+            book.getWorkbook().updateNameCommentRecordCache(commentRec);
         }
     }
 
-    private static void validateName(String name){
-        if(name.length() == 0)  throw new IllegalArgumentException("Name cannot be blank");
+    private static void validateName(String name) {
+        if (name.length() == 0) throw new IllegalArgumentException("Name cannot be blank");
 
         char c = name.charAt(0);
-        if(!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1) {
-            throw new IllegalArgumentException("Invalid name: '"+name+"'; Names must begin with a letter or underscore and not contain spaces");
+        if (!(c == '_' || Character.isLetter(c)) || name.indexOf(' ') != -1) {
+            throw new IllegalArgumentException("Invalid name: '" + name + "'; Names must begin with a letter or underscore and not contain spaces");
         }
     }
 
@@ -177,57 +180,56 @@ public final class HSSFName implements Name {
      *
      * @deprecated (Nov 2008) Misleading name. Use {@link #setRefersToFormula(String)} instead.
      */
-    public void setReference(String ref){
+    public void setReference(String ref) {
         setRefersToFormula(ref);
     }
 
     public void setRefersToFormula(String formulaText) {
-        Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, _book, FormulaType.NAMEDRANGE, getSheetIndex());
-        _definedNameRec.setNameDefinition(ptgs);
+        Ptg[] ptgs = HSSFFormulaParser.parse(formulaText, book, FormulaType.NAMEDRANGE, getSheetIndex());
+        definedNameRec.setNameDefinition(ptgs);
     }
 
     public String getRefersToFormula() {
-        if (_definedNameRec.isFunctionName()) {
+        if (definedNameRec.isFunctionName()) {
             throw new IllegalStateException("Only applicable to named ranges");
         }
-        Ptg[] ptgs = _definedNameRec.getNameDefinition();
+        Ptg[] ptgs = definedNameRec.getNameDefinition();
         if (ptgs.length < 1) {
             // 'refersToFormula' has not been set yet
             return null;
         }
-        return HSSFFormulaParser.toFormulaString(_book, ptgs);
+        return HSSFFormulaParser.toFormulaString(book, ptgs);
     }
 
-
     /**
-     * Sets the NameParsedFormula structure that specifies the formula for the 
+     * Sets the NameParsedFormula structure that specifies the formula for the
      * defined name.
-     * 
+     *
      * @param ptgs the sequence of {@link Ptg}s for the formula.
      */
     void setNameDefinition(Ptg[] ptgs) {
-      _definedNameRec.setNameDefinition(ptgs);
+        definedNameRec.setNameDefinition(ptgs);
     }
 
 
-    public boolean isDeleted(){
-        Ptg[] ptgs = _definedNameRec.getNameDefinition();
+    public boolean isDeleted() {
+        Ptg[] ptgs = definedNameRec.getNameDefinition();
         return Ptg.doesFormulaReferToDeletedCell(ptgs);
     }
 
     /**
-     * Checks if this name is a function name
+     * Checks if this name is a function name.
      *
      * @return true if this name is a function name
      */
     public boolean isFunctionName() {
-        return _definedNameRec.isFunctionName();
+        return definedNameRec.isFunctionName();
     }
 
     public String toString() {
         StringBuffer sb = new StringBuffer(64);
         sb.append(getClass().getName()).append(" [");
-        sb.append(_definedNameRec.getNameText());
+        sb.append(definedNameRec.getNameText());
         sb.append("]");
         return sb.toString();
     }
@@ -236,17 +238,17 @@ public final class HSSFName implements Name {
      * Specifies if the defined name is a local name, and if so, which sheet it is on.
      *
      * @param index if greater than 0, the defined name is a local name and the value MUST be a 0-based index
-     * to the collection of sheets as they appear in the workbook.
+     *              to the collection of sheets as they appear in the workbook.
      * @throws IllegalArgumentException if the sheet index is invalid.
      */
-    public void setSheetIndex(int index){
-        int lastSheetIx = _book.getNumberOfSheets() - 1;
+    public void setSheetIndex(int index) {
+        int lastSheetIx = book.getNumberOfSheets() - 1;
         if (index < -1 || index > lastSheetIx) {
-            throw new IllegalArgumentException("Sheet index (" + index +") is out of range" +
-                    (lastSheetIx == -1 ? "" : (" (0.." +    lastSheetIx + ")")));
+            throw new IllegalArgumentException("Sheet index (" + index + ") is out of range" +
+                    (lastSheetIx == -1 ? "" : (" (0.." + lastSheetIx + ")")));
         }
 
-        _definedNameRec.setSheetNumber(index + 1);
+        definedNameRec.setSheetNumber(index + 1);
     }
 
     /**
@@ -254,8 +256,8 @@ public final class HSSFName implements Name {
      *
      * @return the sheet index this name applies to, -1 if this name applies to the entire workbook
      */
-    public int getSheetIndex(){
-        return _definedNameRec.getSheetNumber() - 1;
+    public int getSheetIndex() {
+        return definedNameRec.getSheetNumber() - 1;
     }
 
     /**
@@ -264,14 +266,14 @@ public final class HSSFName implements Name {
      * @return the user comment for this named range
      */
     public String getComment() {
-        if(_commentRec != null) {
-           // Prefer the comment record if it has text in it
-           if(_commentRec.getCommentText() != null &&
-                 _commentRec.getCommentText().length() > 0) {
-              return _commentRec.getCommentText();
-           }
+        if (commentRec != null) {
+            // Prefer the comment record if it has text in it
+            if (commentRec.getCommentText() != null &&
+                    commentRec.getCommentText().length() > 0) {
+                return commentRec.getCommentText();
+            }
         }
-        return _definedNameRec.getDescriptionText();
+        return definedNameRec.getDescriptionText();
     }
 
     /**
@@ -279,12 +281,12 @@ public final class HSSFName implements Name {
      *
      * @param comment the user comment for this named range
      */
-    public void setComment(String comment){
+    public void setComment(String comment) {
         // Update the main record
-        _definedNameRec.setDescriptionText(comment);
+        definedNameRec.setDescriptionText(comment);
         // If we have a comment record too, update that as well
-        if(_commentRec != null) {
-           _commentRec.setCommentText(comment);
+        if (commentRec != null) {
+            commentRec.setCommentText(comment);
         }
     }
 
@@ -295,6 +297,6 @@ public final class HSSFName implements Name {
      * @param value <code>true</code> indicates the name refers to a function.
      */
     public void setFunction(boolean value) {
-        _definedNameRec.setFunction(value);
+        definedNameRec.setFunction(value);
     }
 }

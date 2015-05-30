@@ -25,36 +25,32 @@ import java.util.StringTokenizer;
 /**
  * Stores width and height details about a font.
  */
-public class FontDetails
-{
-    private String _fontName;
-    private int _height;
+public class FontDetails {
+
+    private final String fontName;
+    private final int height;
     private final Map<Character, Integer> charWidths = new HashMap<Character, Integer>();
 
     /**
-     * Construct the font details with the given name and height.
+     * Constructs the font details with the given name and height.
      *
-     * @param fontName  The font name.
-     * @param height    The height of the font.
+     * @param fontName the font name
+     * @param height   the height of the font
      */
-    public FontDetails( String fontName, int height )
-    {
-        _fontName = fontName;
-        _height = height;
+    public FontDetails(String fontName, int height) {
+        this.fontName = fontName;
+        this.height = height;
     }
 
-    public String getFontName()
-    {
-        return _fontName;
+    public String getFontName() {
+        return fontName;
     }
 
-    public int getHeight()
-    {
-        return _height;
+    public int getHeight() {
+        return height;
     }
 
-    public void addChar( char c, int width )
-    {
+    public void addChar(char c, int width) {
         charWidths.put(Character.valueOf(c), Integer.valueOf(width));
     }
 
@@ -63,8 +59,7 @@ public class FontDetails
      * a particular character are not available it defaults to returning the
      * width for the 'W' character.
      */
-    public int getCharWidth( char c )
-    {
+    public int getCharWidth(char c) {
         Integer widthInteger = charWidths.get(Character.valueOf(c));
         if (widthInteger == null) {
             return 'W' == c ? 0 : getCharWidth('W');
@@ -72,40 +67,40 @@ public class FontDetails
         return widthInteger;
     }
 
-    public void addChars( char[] characters, int[] widths )
-    {
-        for ( int i = 0; i < characters.length; i++ )
-        {
-            charWidths.put( Character.valueOf(characters[i]), Integer.valueOf(widths[i]));
+    public void addChars(char[] characters, int[] widths) {
+        for (int i = 0; i < characters.length; i++) {
+            charWidths.put(Character.valueOf(characters[i]), Integer.valueOf(widths[i]));
         }
     }
 
     protected static String buildFontHeightProperty(String fontName) {
         return "font." + fontName + ".height";
     }
+
     protected static String buildFontWidthsProperty(String fontName) {
         return "font." + fontName + ".widths";
     }
+
     protected static String buildFontCharactersProperty(String fontName) {
         return "font." + fontName + ".characters";
     }
 
     /**
-     * Create an instance of <code>FontDetails</code> by loading them from the
+     * Creates an instance of <code>FontDetails</code> by loading them from the
      * provided property object.
-     * @param fontName          the font name
-     * @param fontMetricsProps  the property object holding the details of this
-     *                          particular font.
-     * @return  a new FontDetails instance.
+     *
+     * @param fontName         the font name
+     * @param fontMetricsProps the property object holding the details of this
+     *                         particular font
+     * @return a new FontDetails instance
      */
-    public static FontDetails create( String fontName, Properties fontMetricsProps )
-    {
-        String heightStr = fontMetricsProps.getProperty( buildFontHeightProperty(fontName) );
-        String widthsStr = fontMetricsProps.getProperty( buildFontWidthsProperty(fontName) );
-        String charactersStr = fontMetricsProps.getProperty( buildFontCharactersProperty(fontName) );
+    public static FontDetails create(String fontName, Properties fontMetricsProps) {
+        String heightStr = fontMetricsProps.getProperty(buildFontHeightProperty(fontName));
+        String widthsStr = fontMetricsProps.getProperty(buildFontWidthsProperty(fontName));
+        String charactersStr = fontMetricsProps.getProperty(buildFontCharactersProperty(fontName));
 
         // Ensure that this is a font we know about
-        if(heightStr == null || widthsStr == null || charactersStr == null) {
+        if (heightStr == null || widthsStr == null || charactersStr == null) {
             // We don't know all we need to about this font
             // Since we don't know its sizes, we can't work with it
             throw new IllegalArgumentException("The supplied FontMetrics doesn't know about the font '" + fontName + "', so we can't use it. Please add it to your font metrics file (see StaticFontMetrics.getFontDetails");
@@ -117,8 +112,7 @@ public class FontDetails
         String[] widthsStrArray = split(widthsStr, ",", -1);
         if (charactersStrArray.length != widthsStrArray.length)
             throw new RuntimeException("Number of characters does not number of widths for font " + fontName);
-        for ( int i = 0; i < widthsStrArray.length; i++ )
-        {
+        for (int i = 0; i < widthsStrArray.length; i++) {
             if (charactersStrArray[i].length() != 0)
                 d.addChar(charactersStrArray[i].charAt(0), Integer.parseInt(widthsStrArray[i]));
         }
@@ -128,39 +122,32 @@ public class FontDetails
     /**
      * Gets the width of all characters in a string.
      *
-     * @param str   The string to measure.
-     * @return      The width of the string for a 10 point font.
+     * @param str the string to measure
+     * @return the width of the string for a 10 point font
      */
-    public int getStringWidth(String str)
-    {
+    public int getStringWidth(String str) {
         int width = 0;
-        for (int i = 0; i < str.length(); i++)
-        {
+        for (int i = 0; i < str.length(); i++) {
             width += getCharWidth(str.charAt(i));
         }
         return width;
     }
 
     /**
-     * Split the given string into an array of strings using the given
-     * delimiter.
+     * Splits the given string into an array of strings using the given delimiter.
      */
-    private static String[] split(String text, String separator, int max)
-    {
+    private static String[] split(String text, String separator, int max) {
         StringTokenizer tok = new StringTokenizer(text, separator);
         int listSize = tok.countTokens();
-        if(max != -1 && listSize > max)
+        if (max != -1 && listSize > max)
             listSize = max;
         String list[] = new String[listSize];
-        for(int i = 0; tok.hasMoreTokens(); i++)
-        {
-            if(max != -1 && i == listSize - 1)
-            {
+        for (int i = 0; tok.hasMoreTokens(); i++) {
+            if (max != -1 && i == listSize - 1) {
                 StringBuffer buf = new StringBuffer((text.length() * (listSize - i)) / listSize);
-                while(tok.hasMoreTokens())
-                {
+                while (tok.hasMoreTokens()) {
                     buf.append(tok.nextToken());
-                    if(tok.hasMoreTokens())
+                    if (tok.hasMoreTokens())
                         buf.append(separator);
                 }
                 list[i] = buf.toString().trim();

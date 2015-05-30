@@ -27,13 +27,14 @@ import java.io.IOException;
 
 /**
  * An abstract shape.
- * 
- * Note: Microsoft Excel seems to sometimes disallow 
- * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to 
+ * <p/>
+ * Note: Microsoft Excel seems to sometimes disallow
+ * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to
  * reverse them and draw shapes vertically or horizontally flipped via
- * setFlipVertical() or setFlipHorizontally(). 
+ * setFlipVertical() or setFlipHorizontally().
  */
 public abstract class HSSFShape {
+
     public static final int LINEWIDTH_ONE_PT = 12700;
     public static final int LINEWIDTH_DEFAULT = 9525;
     public static final int LINESTYLE__COLOR_DEFAULT = 0x08000040;
@@ -58,37 +59,37 @@ public abstract class HSSFShape {
     // TODO - make all these fields private
     private HSSFShape parent;
     HSSFAnchor anchor;
-    private HSSFPatriarch _patriarch;
+    private HSSFPatriarch patriarch;
 
-    private final EscherContainerRecord _escherContainer;
-    private final ObjRecord _objRecord;
-    private final EscherOptRecord _optRecord;
-    
+    private final EscherContainerRecord escherContainer;
+    private final ObjRecord objRecord;
+    private final EscherOptRecord optRecord;
+
     public final static int NO_FILLHITTEST_TRUE = 0x00110000;
     public final static int NO_FILLHITTEST_FALSE = 0x00010000;
 
     /**
-     * creates shapes from existing file
+     * Creates shapes from existing file.
+     *
      * @param spContainer
      * @param objRecord
      */
     public HSSFShape(EscherContainerRecord spContainer, ObjRecord objRecord) {
-        this._escherContainer = spContainer;
-        this._objRecord = objRecord;
-        this._optRecord = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        this.escherContainer = spContainer;
+        this.objRecord = objRecord;
+        this.optRecord = spContainer.getChildById(EscherOptRecord.RECORD_ID);
         this.anchor = HSSFAnchor.createAnchorFromEscher(spContainer);
     }
 
     /**
-     * Create a new shape with the specified parent and anchor.
+     * Creates a new shape with the specified parent and anchor.
      */
     public HSSFShape(HSSFShape parent, HSSFAnchor anchor) {
         this.parent = parent;
         this.anchor = anchor;
-        this._escherContainer = createSpContainer();
-        _optRecord = _escherContainer.getChildById(EscherOptRecord.RECORD_ID);
-        _objRecord = createObjRecord();
-
+        this.escherContainer = createSpContainer();
+        this.optRecord = escherContainer.getChildById(EscherOptRecord.RECORD_ID);
+        this.objRecord = createObjRecord();
     }
 
     protected abstract EscherContainerRecord createSpContainer();
@@ -96,42 +97,43 @@ public abstract class HSSFShape {
     protected abstract ObjRecord createObjRecord();
 
     /**
-     * remove escher container from the patriarch.escherAggregate
+     * Removes escher container from the patriarch.escherAggregate
      * remove obj, textObj and note records if it's necessary
-     * in case of ShapeGroup remove all contained shapes
+     * in case of ShapeGroup remove all contained shapes.
+     *
      * @param patriarch
      */
     protected abstract void afterRemove(HSSFPatriarch patriarch);
 
     /**
-     * @param shapeId - global shapeId which must be set to EscherSpRecord
+     * @param shapeId global shapeId which must be set to EscherSpRecord
      */
-    void setShapeId(int shapeId){
-        EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
+    void setShapeId(int shapeId) {
+        EscherSpRecord spRecord = escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
-        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) _objRecord.getSubRecords().get(0);
-        cod.setObjectId((short) (shapeId%1024));
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) objRecord.getSubRecords().get(0);
+        cod.setObjectId((short) (shapeId % 1024));
     }
 
     /**
      * @return global shapeId(from EscherSpRecord)
      */
-    int getShapeId(){
-        return ((EscherSpRecord)_escherContainer.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
+    int getShapeId() {
+        return ((EscherSpRecord) escherContainer.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
     }
 
     abstract void afterInsert(HSSFPatriarch patriarch);
 
     protected EscherContainerRecord getEscherContainer() {
-        return _escherContainer;
+        return escherContainer;
     }
 
     protected ObjRecord getObjRecord() {
-        return _objRecord;
+        return objRecord;
     }
 
     protected EscherOptRecord getOptRecord() {
-        return _optRecord;
+        return optRecord;
     }
 
     /**
@@ -150,11 +152,11 @@ public abstract class HSSFShape {
 
     /**
      * Sets a particular anchor.  A top-level shape must have an anchor of
-     * HSSFClientAnchor.  A child anchor must have an anchor of HSSFChildAnchor
+     * HSSFClientAnchor.  A child anchor must have an anchor of HSSFChildAnchor.
      *
-     * @param anchor the anchor to use.
+     * @param anchor the anchor to use
      * @throws IllegalArgumentException when the wrong anchor is used for
-     *                                  this particular shape.
+     *                                  this particular shape
      * @see HSSFChildAnchor
      * @see HSSFClientAnchor
      */
@@ -164,57 +166,57 @@ public abstract class HSSFShape {
         if (parent == null) {
             if (anchor instanceof HSSFChildAnchor)
                 throw new IllegalArgumentException("Must use client anchors for shapes directly attached to sheet.");
-            EscherClientAnchorRecord anch = _escherContainer.getChildById(EscherClientAnchorRecord.RECORD_ID);
+            EscherClientAnchorRecord anch = escherContainer.getChildById(EscherClientAnchorRecord.RECORD_ID);
             if (null != anch) {
-                for (i=0; i< _escherContainer.getChildRecords().size(); i++){
-                    if (_escherContainer.getChild(i).getRecordId() == EscherClientAnchorRecord.RECORD_ID){
-                        if (i != _escherContainer.getChildRecords().size() -1){
-                            recordId = _escherContainer.getChild(i+1).getRecordId();
+                for (i = 0; i < escherContainer.getChildRecords().size(); i++) {
+                    if (escherContainer.getChild(i).getRecordId() == EscherClientAnchorRecord.RECORD_ID) {
+                        if (i != escherContainer.getChildRecords().size() - 1) {
+                            recordId = escherContainer.getChild(i + 1).getRecordId();
                         }
                     }
                 }
-                _escherContainer.removeChildRecord(anch);
+                escherContainer.removeChildRecord(anch);
             }
         } else {
             if (anchor instanceof HSSFClientAnchor)
                 throw new IllegalArgumentException("Must use child anchors for shapes attached to groups.");
-            EscherChildAnchorRecord anch = _escherContainer.getChildById(EscherChildAnchorRecord.RECORD_ID);
+            EscherChildAnchorRecord anch = escherContainer.getChildById(EscherChildAnchorRecord.RECORD_ID);
             if (null != anch) {
-                for (i=0; i< _escherContainer.getChildRecords().size(); i++){
-                    if (_escherContainer.getChild(i).getRecordId() == EscherChildAnchorRecord.RECORD_ID){
-                        if (i != _escherContainer.getChildRecords().size() -1){
-                            recordId = _escherContainer.getChild(i+1).getRecordId();
+                for (i = 0; i < escherContainer.getChildRecords().size(); i++) {
+                    if (escherContainer.getChild(i).getRecordId() == EscherChildAnchorRecord.RECORD_ID) {
+                        if (i != escherContainer.getChildRecords().size() - 1) {
+                            recordId = escherContainer.getChild(i + 1).getRecordId();
                         }
                     }
                 }
-                _escherContainer.removeChildRecord(anch);
+                escherContainer.removeChildRecord(anch);
             }
         }
-        if (-1 == recordId){
-            _escherContainer.addChildRecord(anchor.getEscherAnchor());
+        if (-1 == recordId) {
+            escherContainer.addChildRecord(anchor.getEscherAnchor());
         } else {
-            _escherContainer.addChildBefore(anchor.getEscherAnchor(), recordId);
+            escherContainer.addChildBefore(anchor.getEscherAnchor(), recordId);
         }
         this.anchor = anchor;
     }
 
     /**
-     * The color applied to the lines of this shape.
+     * Gets the color applied to the lines of this shape.
      */
     public int getLineStyleColor() {
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.LINESTYLE__COLOR);
+        EscherRGBProperty rgbProperty = optRecord.lookup(EscherProperties.LINESTYLE__COLOR);
         return rgbProperty == null ? LINESTYLE__COLOR_DEFAULT : rgbProperty.getRgbColor();
     }
 
     /**
-     * The color applied to the lines of this shape.
+     * Sets the color applied to the lines of this shape.
      */
     public void setLineStyleColor(int lineStyleColor) {
         setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
     }
 
     /**
-     * The color applied to the lines of this shape.
+     * Sets the color applied to the lines of this shape.
      */
     public void setLineStyleColor(int red, int green, int blue) {
         int lineStyleColor = ((blue) << 16) | ((green) << 8) | red;
@@ -222,22 +224,22 @@ public abstract class HSSFShape {
     }
 
     /**
-     * The color used to fill this shape.
+     * Gets the color used to fill this shape.
      */
     public int getFillColor() {
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.FILL__FILLCOLOR);
+        EscherRGBProperty rgbProperty = optRecord.lookup(EscherProperties.FILL__FILLCOLOR);
         return rgbProperty == null ? FILL__FILLCOLOR_DEFAULT : rgbProperty.getRgbColor();
     }
 
     /**
-     * The color used to fill this shape.
+     * Sets the color used to fill this shape.
      */
     public void setFillColor(int fillColor) {
         setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
     }
 
     /**
-     * The color used to fill this shape.
+     * Sets the color used to fill this shape.
      */
     public void setFillColor(int red, int green, int blue) {
         int fillColor = ((blue) << 16) | ((green) << 8) | red;
@@ -245,17 +247,19 @@ public abstract class HSSFShape {
     }
 
     /**
-     * @return returns with width of the line in EMUs.  12700 = 1 pt.
+     * Gets the width of the line.
+     *
+     * @return width in EMUs (12700 EMUS = 1 pt)
      */
     public int getLineWidth() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEWIDTH);
-        return property == null ? LINEWIDTH_DEFAULT: property.getPropertyValue();
+        EscherSimpleProperty property = optRecord.lookup(EscherProperties.LINESTYLE__LINEWIDTH);
+        return property == null ? LINEWIDTH_DEFAULT : property.getPropertyValue();
     }
 
     /**
-     * Sets the width of the line.  12700 = 1 pt.
+     * Sets the width of the line.
      *
-     * @param lineWidth width in EMU's.  12700EMU's = 1 pt
+     * @param lineWidth width in EMUs (12700 EMUs = 1 pt)
      * @see HSSFShape#LINEWIDTH_ONE_PT
      */
     public void setLineWidth(int lineWidth) {
@@ -263,11 +267,13 @@ public abstract class HSSFShape {
     }
 
     /**
-     * @return One of the constants in LINESTYLE_*
+     * Gets the line style.
+     *
+     * @return one of the constants in LINESTYLE_*
      */
     public int getLineStyle() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEDASHING);
-        if (null == property){
+        EscherSimpleProperty property = optRecord.lookup(EscherProperties.LINESTYLE__LINEDASHING);
+        if (null == property) {
             return LINESTYLE_DEFAULT;
         }
         return property.getPropertyValue();
@@ -276,45 +282,45 @@ public abstract class HSSFShape {
     /**
      * Sets the line style.
      *
-     * @param lineStyle One of the constants in LINESTYLE_*
+     * @param lineStyle one of the constants in LINESTYLE_*
      */
     public void setLineStyle(int lineStyle) {
         setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, lineStyle));
         if (getLineStyle() != HSSFShape.LINESTYLE_SOLID) {
             setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDCAPSTYLE, 0));
-            if (getLineStyle() == HSSFShape.LINESTYLE_NONE){
-                setPropertyValue(new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
+            if (getLineStyle() == HSSFShape.LINESTYLE_NONE) {
+                setPropertyValue(new EscherBoolProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
             } else {
-                setPropertyValue( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+                setPropertyValue(new EscherBoolProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
             }
         }
     }
 
     /**
-     * @return <code>true</code> if this shape is not filled with a color.
+     * @return <code>true</code> if this shape is not filled with a color
      */
     public boolean isNoFill() {
-        EscherBoolProperty property = _optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
+        EscherBoolProperty property = optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
         return property == null ? NO_FILL_DEFAULT : property.getPropertyValue() == NO_FILLHITTEST_TRUE;
     }
 
     /**
-     * @param noFill sets whether this shape is filled or transparent.
+     * @param noFill sets whether this shape is filled or transparent
      */
     public void setNoFill(boolean noFill) {
         setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? NO_FILLHITTEST_TRUE : NO_FILLHITTEST_FALSE));
     }
 
-    protected void setPropertyValue(EscherProperty property){
-        _optRecord.setEscherProperty(property);
+    protected void setPropertyValue(EscherProperty property) {
+        optRecord.setEscherProperty(property);
     }
 
     /**
-     * @param value specifies whether this shape is vertically flipped.
+     * @param value specifies whether this shape is vertically flipped
      */
-    public void setFlipVertical(boolean value){
+    public void setFlipVertical(boolean value) {
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (value){
+        if (value) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         } else {
             sp.setFlags(sp.getFlags() & (Integer.MAX_VALUE - EscherSpRecord.FLAG_FLIPVERT));
@@ -322,11 +328,11 @@ public abstract class HSSFShape {
     }
 
     /**
-     * @param value specifies whether this shape is horizontally flipped.
+     * @param value specifies whether this shape is horizontally flipped
      */
-    public void setFlipHorizontal(boolean value){
+    public void setFlipHorizontal(boolean value) {
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (value){
+        if (value) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         } else {
             sp.setFlags(sp.getFlags() & (Integer.MAX_VALUE - EscherSpRecord.FLAG_FLIPHORIZ));
@@ -334,28 +340,28 @@ public abstract class HSSFShape {
     }
 
     /**
-     * @return whether this shape is vertically flipped.
+     * @return whether this shape is vertically flipped
      */
-    public boolean isFlipVertical(){
+    public boolean isFlipVertical() {
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         return (sp.getFlags() & EscherSpRecord.FLAG_FLIPVERT) != 0;
     }
 
     /**
-     * @return whether this shape is horizontally flipped.
+     * @return whether this shape is horizontally flipped
      */
-    public boolean isFlipHorizontal(){
+    public boolean isFlipHorizontal() {
         EscherSpRecord sp = getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
         return (sp.getFlags() & EscherSpRecord.FLAG_FLIPHORIZ) != 0;
     }
 
     /**
-     * @return the rotation, in degrees, that is applied to a shape.
+     * @return the rotation, in degrees, that is applied to a shape
      */
-    public int getRotationDegree(){
+    public int getRotationDegree() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TRANSFORM__ROTATION);
-        if (null == property){
+        if (null == property) {
             return 0;
         }
         try {
@@ -368,19 +374,20 @@ public abstract class HSSFShape {
     }
 
     /**
-     * specifies the rotation, in degrees, that is applied to a shape.
+     * Specifies the rotation, in degrees, that is applied to a shape.
      * Positive values specify rotation in the clockwise direction.
      * Negative values specify rotation in the counterclockwise direction.
      * Rotation occurs around the center of the shape.
-     * The default value for this property is 0x00000000
+     * The default value for this property is 0x00000000.
+     *
      * @param value
      */
-    public void setRotationDegree(short value){
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION , (value << 16)));
+    public void setRotationDegree(short value) {
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION, (value << 16)));
     }
 
     /**
-     * Count of all children and their children's children.
+     * Gets the count of all children and their children's children.
      */
     public int countOfAllChildren() {
         return 1;
@@ -388,12 +395,12 @@ public abstract class HSSFShape {
 
     protected abstract HSSFShape cloneShape();
 
-    protected void setPatriarch(HSSFPatriarch _patriarch) {
-        this._patriarch = _patriarch;
+    protected void setPatriarch(HSSFPatriarch patriarch) {
+        this.patriarch = patriarch;
     }
 
     public HSSFPatriarch getPatriarch() {
-        return _patriarch;
+        return patriarch;
     }
 
     protected void setParent(HSSFShape parent) {

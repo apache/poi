@@ -22,50 +22,52 @@ import java.util.List;
 /**
  * An interface that indicates whether a class can contain children.
  */
-public interface HSSFShapeContainer extends Iterable<HSSFShape>
-{
+public interface HSSFShapeContainer extends Iterable<HSSFShape> {
+
     /**
-     * @return  Any children contained by this shape.
+     * @return children contained by this shape
      */
     List<HSSFShape> getChildren();
 
     /**
-     * add shape to the list of child records
+     * Adds a shape to the list of child records.
+     *
      * @param shape
      */
-    public void addShape(HSSFShape shape);
+    void addShape(HSSFShape shape);
 
     /**
-     * set coordinates of this group relative to the parent
+     * Set coordinates of this group relative to the parent.
      */
-    void setCoordinates( int x1, int y1, int x2, int y2 );
+    void setCoordinates(int x1, int y1, int x2, int y2);
 
     void clear();
 
     /**
-     *@return The top left x coordinate of this group.
+     * @return the top left x coordinate of this group
      */
-    public int getX1();
+    int getX1();
 
     /**
-     *@return The top left y coordinate of this group.
+     * @return the top left y coordinate of this group
      */
-    public int getY1();
+    int getY1();
 
     /**
-     *@return The bottom right x coordinate of this group.
+     * @return the bottom right x coordinate of this group
      */
-    public int getX2();
+    int getX2();
 
     /**
-     * @return The bottom right y coordinate of this group.
+     * @return the bottom right y coordinate of this group
      */
-    public int getY2();
+    int getY2();
 
     /**
-     * remove first level shapes
+     * Removes first level shape.
+     *
      * @param shape to be removed
-     * @return true if shape is removed else return false
+     * @return true if shape is removed, false otherwise
      */
-    public boolean removeShape(HSSFShape shape);
+    boolean removeShape(HSSFShape shape);
 }

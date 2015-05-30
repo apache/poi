@@ -19,55 +19,67 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+
 /**
- * HSSF wrapper for a cell under evaluation
+ * HSSF wrapper for a cell under evaluation.
  */
 final class HSSFEvaluationCell implements EvaluationCell {
 
-	private final EvaluationSheet _evalSheet;
-	private final HSSFCell _cell;
+    private final EvaluationSheet evaluationSheet;
+    private final HSSFCell cell;
 
-	public HSSFEvaluationCell(HSSFCell cell, EvaluationSheet evalSheet) {
-		_cell = cell;
-		_evalSheet = evalSheet;
-	}
-	public HSSFEvaluationCell(HSSFCell cell) {
-		this(cell, new HSSFEvaluationSheet(cell.getSheet()));
-	}
-	public Object getIdentityKey() {
-		// save memory by just using the cell itself as the identity key
-		// Note - this assumes HSSFCell has not overridden hashCode and equals
-		return _cell;
-	}
+    public HSSFEvaluationCell(HSSFCell cell, EvaluationSheet evaluationSheet) {
+        this.cell = cell;
+        this.evaluationSheet = evaluationSheet;
+    }
 
-	public HSSFCell getHSSFCell() {
-		return _cell;
-	}
-	public boolean getBooleanCellValue() {
-		return _cell.getBooleanCellValue();
-	}
-	public int getCellType() {
-		return _cell.getCellType();
-	}
-	public int getColumnIndex() {
-		return _cell.getColumnIndex();
-	}
-	public int getErrorCellValue() {
-		return _cell.getErrorCellValue();
-	}
-	public double getNumericCellValue() {
-		return _cell.getNumericCellValue();
-	}
-	public int getRowIndex() {
-		return _cell.getRowIndex();
-	}
-	public EvaluationSheet getSheet() {
-		return _evalSheet;
-	}
-	public String getStringCellValue() {
-		return _cell.getRichStringCellValue().getString();
-	}
-	public int getCachedFormulaResultType() {
-		return _cell.getCachedFormulaResultType();
-	}
+    public HSSFEvaluationCell(HSSFCell cell) {
+        this(cell, new HSSFEvaluationSheet(cell.getSheet()));
+    }
+
+    public Object getIdentityKey() {
+        // save memory by just using the cell itself as the identity key
+        // Note - this assumes HSSFCell has not overridden hashCode and equals
+        return cell;
+    }
+
+    public HSSFCell getHSSFCell() {
+        return cell;
+    }
+
+    public boolean getBooleanCellValue() {
+        return cell.getBooleanCellValue();
+    }
+
+    public int getCellType() {
+        return cell.getCellType();
+    }
+
+    public int getColumnIndex() {
+        return cell.getColumnIndex();
+    }
+
+    public int getErrorCellValue() {
+        return cell.getErrorCellValue();
+    }
+
+    public double getNumericCellValue() {
+        return cell.getNumericCellValue();
+    }
+
+    public int getRowIndex() {
+        return cell.getRowIndex();
+    }
+
+    public EvaluationSheet getSheet() {
+        return evaluationSheet;
+    }
+
+    public String getStringCellValue() {
+        return cell.getRichStringCellValue().getString();
+    }
+
+    public int getCachedFormulaResultType() {
+        return cell.getCachedFormulaResultType();
+    }
 }

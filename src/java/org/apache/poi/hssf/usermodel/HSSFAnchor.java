@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -44,11 +43,11 @@ public abstract class HSSFAnchor {
         setDy2(dy2);
     }
 
-    public static HSSFAnchor createAnchorFromEscher(EscherContainerRecord container){
-        if (null != container.getChildById(EscherChildAnchorRecord.RECORD_ID)){
+    public static HSSFAnchor createAnchorFromEscher(EscherContainerRecord container) {
+        if (null != container.getChildById(EscherChildAnchorRecord.RECORD_ID)) {
             return new HSSFChildAnchor((EscherChildAnchorRecord) container.getChildById(EscherChildAnchorRecord.RECORD_ID));
         } else {
-            if (null != container.getChildById(EscherClientAnchorRecord.RECORD_ID)){
+            if (null != container.getChildById(EscherClientAnchorRecord.RECORD_ID)) {
                 return new HSSFClientAnchor((EscherClientAnchorRecord) container.getChildById(EscherClientAnchorRecord.RECORD_ID));
             }
             return null;
@@ -101,7 +100,7 @@ public abstract class HSSFAnchor {
     public abstract boolean isHorizontallyFlipped();
 
     /**
-     * @return  whether this shape is vertically flipped
+     * @return whether this shape is vertically flipped
      */
     public abstract boolean isVerticallyFlipped();
 

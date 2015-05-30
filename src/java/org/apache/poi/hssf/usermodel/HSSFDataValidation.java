@@ -25,182 +25,177 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
 /**
- * Utility class for creating data validation cells
+ * Utility class for creating data validation cells.
  */
 public final class HSSFDataValidation implements DataValidation {
-	private String _prompt_title;
-	private String _prompt_text;
-	private String _error_title;
-	private String _error_text;
 
-	private int _errorStyle = ErrorStyle.STOP;
-	private boolean _emptyCellAllowed = true;
-	private boolean _suppress_dropdown_arrow = false;
-	private boolean _showPromptBox = true;
-	private boolean _showErrorBox = true;
-	private CellRangeAddressList _regions;
-	private DVConstraint _constraint;
+    private String promptTitle;
+    private String promptText;
+    private String errorTitle;
+    private String errorText;
 
-	/**
-	 * Constructor which initializes the cell range on which this object will be
-	 * applied
-	 * @param constraint 
-	 */
-	public HSSFDataValidation(CellRangeAddressList regions, DataValidationConstraint constraint) {
-		_regions = regions;
-		
-		//FIXME: This cast can be avoided.
-		_constraint = (DVConstraint)constraint;
-	}
+    private int errorStyle = ErrorStyle.STOP;
+    private boolean emptyCellAllowed = true;
+    private boolean suppressDropdownArrow = false;
+    private boolean showPromptBox = true;
+    private boolean showErrorBox = true;
+    private CellRangeAddressList regions;
+    private DVConstraint constraint;
 
+    /**
+     * Constructor which initializes the cell range on which this object will be applied.
+     */
+    public HSSFDataValidation(CellRangeAddressList regions, DataValidationConstraint constraint) {
+        this.regions = regions;
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getConstraint()
-	 */
-	public DataValidationConstraint getValidationConstraint() {
-		return _constraint;
-	}
+        //FIXME: This cast can be avoided.
+        this.constraint = (DVConstraint) constraint;
+    }
 
-	public DVConstraint getConstraint() {
-		return _constraint;
-	}
-	
-	public CellRangeAddressList getRegions() {
-		return _regions;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getConstraint()
+     */
+    public DataValidationConstraint getValidationConstraint() {
+        return constraint;
+    }
 
+    public DVConstraint getConstraint() {
+        return constraint;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setErrorStyle(int)
-	 */
-	public void setErrorStyle(int error_style) {
-		_errorStyle = error_style;
-	}
+    public CellRangeAddressList getRegions() {
+        return regions;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorStyle()
-	 */
-	public int getErrorStyle() {
-		return _errorStyle;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#setErrorStyle(int)
+     */
+    public void setErrorStyle(int errorStyle) {
+        this.errorStyle = errorStyle;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setEmptyCellAllowed(boolean)
-	 */
-	public void setEmptyCellAllowed(boolean allowed) {
-		_emptyCellAllowed = allowed;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorStyle()
+     */
+    public int getErrorStyle() {
+        return errorStyle;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getEmptyCellAllowed()
-	 */
-	public boolean getEmptyCellAllowed() {
-		return _emptyCellAllowed;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#setEmptyCellAllowed(boolean)
+     */
+    public void setEmptyCellAllowed(boolean allowed) {
+        emptyCellAllowed = allowed;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
-	 */
-	public void setSuppressDropDownArrow(boolean suppress) {
-		_suppress_dropdown_arrow = suppress;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getEmptyCellAllowed()
+     */
+    public boolean getEmptyCellAllowed() {
+        return emptyCellAllowed;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getSuppressDropDownArrow()
-	 */
-	public boolean getSuppressDropDownArrow() {
-		if (_constraint.getValidationType()==ValidationType.LIST) {
-			return _suppress_dropdown_arrow;
-		}
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#setSuppressDropDownArrow(boolean)
+     */
+    public void setSuppressDropDownArrow(boolean suppress) {
+        suppressDropdownArrow = suppress;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setShowPromptBox(boolean)
-	 */
-	public void setShowPromptBox(boolean show) {
-		_showPromptBox = show;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getSuppressDropDownArrow()
+     */
+    public boolean getSuppressDropDownArrow() {
+        if (constraint.getValidationType() == ValidationType.LIST) {
+            return suppressDropdownArrow;
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getShowPromptBox()
-	 */
-	public boolean getShowPromptBox() {
-		return _showPromptBox;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#setShowPromptBox(boolean)
+     */
+    public void setShowPromptBox(boolean show) {
+        showPromptBox = show;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#setShowErrorBox(boolean)
-	 */
-	public void setShowErrorBox(boolean show) {
-		_showErrorBox = show;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getShowPromptBox()
+     */
+    public boolean getShowPromptBox() {
+        return showPromptBox;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getShowErrorBox()
-	 */
-	public boolean getShowErrorBox() {
-		return _showErrorBox;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#setShowErrorBox(boolean)
+     */
+    public void setShowErrorBox(boolean show) {
+        showErrorBox = show;
+    }
 
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getShowErrorBox()
+     */
+    public boolean getShowErrorBox() {
+        return showErrorBox;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
-	 */
-	public void createPromptBox(String title, String text) {
-		_prompt_title = title;
-		_prompt_text = text;
-		this.setShowPromptBox(true);
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#createPromptBox(java.lang.String, java.lang.String)
+     */
+    public void createPromptBox(String title, String text) {
+        promptTitle = title;
+        promptText = text;
+        this.setShowPromptBox(true);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxTitle()
-	 */
-	public String getPromptBoxTitle() {
-		return _prompt_title;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxTitle()
+     */
+    public String getPromptBoxTitle() {
+        return promptTitle;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxText()
-	 */
-	public String getPromptBoxText() {
-		return _prompt_text;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getPromptBoxText()
+     */
+    public String getPromptBoxText() {
+        return promptText;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
-	 */
-	public void createErrorBox(String title, String text) {
-		_error_title = title;
-		_error_text = text;
-		this.setShowErrorBox(true);
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#createErrorBox(java.lang.String, java.lang.String)
+     */
+    public void createErrorBox(String title, String text) {
+        errorTitle = title;
+        errorText = text;
+        this.setShowErrorBox(true);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxTitle()
-	 */
-	public String getErrorBoxTitle() {
-		return _error_title;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxTitle()
+     */
+    public String getErrorBoxTitle() {
+        return errorTitle;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxText()
-	 */
-	public String getErrorBoxText() {
-		return _error_text;
-	}
+    /* (non-Javadoc)
+     * @see org.apache.poi.hssf.usermodel.DataValidation#getErrorBoxText()
+     */
+    public String getErrorBoxText() {
+        return errorText;
+    }
 
-	public DVRecord createDVRecord(HSSFSheet sheet) {
+    public DVRecord createDVRecord(HSSFSheet sheet) {
+        FormulaPair fp = constraint.createFormulas(sheet);
 
-		FormulaPair fp = _constraint.createFormulas(sheet);
-		
-		return new DVRecord(_constraint.getValidationType(),
-				_constraint.getOperator(),
-				_errorStyle, _emptyCellAllowed, getSuppressDropDownArrow(),
-				_constraint.getValidationType()==ValidationType.LIST && _constraint.getExplicitListValues()!=null,
-				_showPromptBox, _prompt_title, _prompt_text,
-				_showErrorBox, _error_title, _error_text,
-				fp.getFormula1(), fp.getFormula2(),
-				_regions);
-	}
+        return new DVRecord(constraint.getValidationType(),
+                constraint.getOperator(),
+                errorStyle, emptyCellAllowed, getSuppressDropDownArrow(),
+                constraint.getValidationType() == ValidationType.LIST && constraint.getExplicitListValues() != null,
+                showPromptBox, promptTitle, promptText,
+                showErrorBox, errorTitle, errorText,
+                fp.getFormula1(), fp.getFormula2(),
+                regions);
+    }
 }

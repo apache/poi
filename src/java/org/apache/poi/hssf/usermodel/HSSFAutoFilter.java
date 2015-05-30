@@ -16,15 +16,17 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
+
 import org.apache.poi.ss.usermodel.AutoFilter;
 
 /**
  * Represents autofiltering for the specified worksheet.
  */
 public final class HSSFAutoFilter implements AutoFilter {
-    private HSSFSheet _sheet;
 
-    HSSFAutoFilter(HSSFSheet sheet){
-        _sheet = sheet;
+    private final HSSFSheet sheet;
+
+    HSSFAutoFilter(HSSFSheet sheet) {
+        this.sheet = sheet;
     }
 }

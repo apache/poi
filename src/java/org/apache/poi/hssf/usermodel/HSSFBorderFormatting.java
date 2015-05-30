@@ -22,191 +22,153 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
 
 /**
  * High level representation for Border Formatting component
- * of Conditional Formatting settings
+ * of Conditional Formatting settings.
  */
-public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.BorderFormatting
-{
-	private final CFRuleRecord cfRuleRecord;
-	private final BorderFormatting borderFormatting;
-	
-	protected HSSFBorderFormatting(CFRuleRecord cfRuleRecord)
-	{
-		this.cfRuleRecord = cfRuleRecord;
-		this.borderFormatting = cfRuleRecord.getBorderFormatting();
-	}
+public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.BorderFormatting {
 
-	protected BorderFormatting getBorderFormattingBlock()
-	{
-		return borderFormatting;
-	}
+    private final CFRuleRecord cfRuleRecord;
+    private final BorderFormatting borderFormatting;
 
-	public short getBorderBottom()
-	{
-		return (short)borderFormatting.getBorderBottom();
-	}
+    protected HSSFBorderFormatting(CFRuleRecord cfRuleRecord) {
+        this.cfRuleRecord = cfRuleRecord;
+        this.borderFormatting = cfRuleRecord.getBorderFormatting();
+    }
 
-	public short getBorderDiagonal()
-	{
-		return (short)borderFormatting.getBorderDiagonal();
-	}
+    protected BorderFormatting getBorderFormattingBlock() {
+        return borderFormatting;
+    }
 
-	public short getBorderLeft()
-	{
-		return (short)borderFormatting.getBorderLeft();
-	}
+    public short getBorderBottom() {
+        return (short) borderFormatting.getBorderBottom();
+    }
 
-	public short getBorderRight()
-	{
-		return (short)borderFormatting.getBorderRight();
-	}
+    public short getBorderDiagonal() {
+        return (short) borderFormatting.getBorderDiagonal();
+    }
 
-	public short getBorderTop()
-	{
-		return (short)borderFormatting.getBorderTop();
-	}
+    public short getBorderLeft() {
+        return (short) borderFormatting.getBorderLeft();
+    }
 
-	public short getBottomBorderColor()
-	{
-		return (short)borderFormatting.getBottomBorderColor();
-	}
+    public short getBorderRight() {
+        return (short) borderFormatting.getBorderRight();
+    }
 
-	public short getDiagonalBorderColor()
-	{
-		return (short)borderFormatting.getDiagonalBorderColor();
-	}
+    public short getBorderTop() {
+        return (short) borderFormatting.getBorderTop();
+    }
 
-	public short getLeftBorderColor()
-	{
-		return (short)borderFormatting.getLeftBorderColor();
-	}
+    public short getBottomBorderColor() {
+        return (short) borderFormatting.getBottomBorderColor();
+    }
 
-	public short getRightBorderColor()
-	{
-		return (short)borderFormatting.getRightBorderColor();
-	}
+    public short getDiagonalBorderColor() {
+        return (short) borderFormatting.getDiagonalBorderColor();
+    }
 
-	public short getTopBorderColor()
-	{
-		return (short)borderFormatting.getTopBorderColor();
-	}
+    public short getLeftBorderColor() {
+        return (short) borderFormatting.getLeftBorderColor();
+    }
 
-	public boolean isBackwardDiagonalOn()
-	{
-		return borderFormatting.isBackwardDiagonalOn();
-	}
+    public short getRightBorderColor() {
+        return (short) borderFormatting.getRightBorderColor();
+    }
 
-	public boolean isForwardDiagonalOn()
-	{
-		return borderFormatting.isForwardDiagonalOn();
-	}
+    public short getTopBorderColor() {
+        return (short) borderFormatting.getTopBorderColor();
+    }
 
-	public void setBackwardDiagonalOn(boolean on)
-	{
-		borderFormatting.setBackwardDiagonalOn(on);
-		if( on )
-		{
-			cfRuleRecord.setTopLeftBottomRightBorderModified(on);
-		}
-	}
+    public boolean isBackwardDiagonalOn() {
+        return borderFormatting.isBackwardDiagonalOn();
+    }
 
-	public void setBorderBottom(short border)
-	{
-		borderFormatting.setBorderBottom(border);
-		if( border != 0)
-		{
-			cfRuleRecord.setBottomBorderModified(true);
-		}
-	}
+    public boolean isForwardDiagonalOn() {
+        return borderFormatting.isForwardDiagonalOn();
+    }
 
-	public void setBorderDiagonal(short border)
-	{
-		borderFormatting.setBorderDiagonal(border);
-		if( border != 0)
-		{
-			cfRuleRecord.setBottomLeftTopRightBorderModified(true);
-			cfRuleRecord.setTopLeftBottomRightBorderModified(true);
-		}
-	}
+    public void setBackwardDiagonalOn(boolean on) {
+        borderFormatting.setBackwardDiagonalOn(on);
+        if (on) {
+            cfRuleRecord.setTopLeftBottomRightBorderModified(on);
+        }
+    }
 
-	public void setBorderLeft(short border)
-	{
-		borderFormatting.setBorderLeft(border);
-		if( border != 0)
-		{
-			cfRuleRecord.setLeftBorderModified(true);
-		}
-	}
+    public void setBorderBottom(short border) {
+        borderFormatting.setBorderBottom(border);
+        if (border != 0) {
+            cfRuleRecord.setBottomBorderModified(true);
+        }
+    }
 
-	public void setBorderRight(short border)
-	{
-		borderFormatting.setBorderRight(border);
-		if( border != 0)
-		{
-			cfRuleRecord.setRightBorderModified(true);
-		}
-	}
+    public void setBorderDiagonal(short border) {
+        borderFormatting.setBorderDiagonal(border);
+        if (border != 0) {
+            cfRuleRecord.setBottomLeftTopRightBorderModified(true);
+            cfRuleRecord.setTopLeftBottomRightBorderModified(true);
+        }
+    }
 
-	public void setBorderTop(short border)
-	{
-		borderFormatting.setBorderTop(border);
-		if( border != 0)
-		{
-			cfRuleRecord.setTopBorderModified(true);
-		}
-	}
+    public void setBorderLeft(short border) {
+        borderFormatting.setBorderLeft(border);
+        if (border != 0) {
+            cfRuleRecord.setLeftBorderModified(true);
+        }
+    }
 
-	public void setBottomBorderColor(short color)
-	{
-		borderFormatting.setBottomBorderColor(color);
-		if( color != 0)
-		{
-			cfRuleRecord.setBottomBorderModified(true);
-		}
-	}
+    public void setBorderRight(short border) {
+        borderFormatting.setBorderRight(border);
+        if (border != 0) {
+            cfRuleRecord.setRightBorderModified(true);
+        }
+    }
 
-	public void setDiagonalBorderColor(short color)
-	{
-		borderFormatting.setDiagonalBorderColor(color);
-		if( color != 0)
-		{
-			cfRuleRecord.setBottomLeftTopRightBorderModified(true);
-			cfRuleRecord.setTopLeftBottomRightBorderModified(true);
-		}
-	}
+    public void setBorderTop(short border) {
+        borderFormatting.setBorderTop(border);
+        if (border != 0) {
+            cfRuleRecord.setTopBorderModified(true);
+        }
+    }
 
-	public void setForwardDiagonalOn(boolean on)
-	{
-		borderFormatting.setForwardDiagonalOn(on);
-		if( on )
-		{
-			cfRuleRecord.setBottomLeftTopRightBorderModified(on);
-		}
-	}
+    public void setBottomBorderColor(short color) {
+        borderFormatting.setBottomBorderColor(color);
+        if (color != 0) {
+            cfRuleRecord.setBottomBorderModified(true);
+        }
+    }
 
-	public void setLeftBorderColor(short color)
-	{
-		borderFormatting.setLeftBorderColor(color);
-		if( color != 0)
-		{
-			cfRuleRecord.setLeftBorderModified(true);
-		}
-	}
+    public void setDiagonalBorderColor(short color) {
+        borderFormatting.setDiagonalBorderColor(color);
+        if (color != 0) {
+            cfRuleRecord.setBottomLeftTopRightBorderModified(true);
+            cfRuleRecord.setTopLeftBottomRightBorderModified(true);
+        }
+    }
 
-	public void setRightBorderColor(short color)
-	{
-		borderFormatting.setRightBorderColor(color);
-		if( color != 0)
-		{
-			cfRuleRecord.setRightBorderModified(true);
-		}
-	}
+    public void setForwardDiagonalOn(boolean on) {
+        borderFormatting.setForwardDiagonalOn(on);
+        if (on) {
+            cfRuleRecord.setBottomLeftTopRightBorderModified(on);
+        }
+    }
 
-	public void setTopBorderColor(short color)
-	{
-		borderFormatting.setTopBorderColor(color);
-		if( color != 0)
-		{
-			cfRuleRecord.setTopBorderModified(true);
-		}
-	}
+    public void setLeftBorderColor(short color) {
+        borderFormatting.setLeftBorderColor(color);
+        if (color != 0) {
+            cfRuleRecord.setLeftBorderModified(true);
+        }
+    }
+
+    public void setRightBorderColor(short color) {
+        borderFormatting.setRightBorderColor(color);
+        if (color != 0) {
+            cfRuleRecord.setRightBorderModified(true);
+        }
+    }
+
+    public void setTopBorderColor(short color) {
+        borderFormatting.setTopBorderColor(color);
+        if (color != 0) {
+            cfRuleRecord.setTopBorderModified(true);
+        }
+    }
 }

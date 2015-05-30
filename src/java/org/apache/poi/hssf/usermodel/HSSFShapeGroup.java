@@ -26,19 +26,20 @@ import java.util.List;
 import java.util.Iterator;
 
 /**
- * A shape group may contain other shapes.  It was no actual form on the
- * sheet.
+ * A shape group may contain other shapes.
+ * It was no actual form on the sheet.
  */
 public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
+
     private final List<HSSFShape> shapes = new ArrayList<HSSFShape>();
-    private EscherSpgrRecord _spgrRecord;
+    private final EscherSpgrRecord spgrRecord;
 
     public HSSFShapeGroup(EscherContainerRecord spgrContainer, ObjRecord objRecord) {
         super(spgrContainer, objRecord);
 
         // read internal and external coordinates from spgrContainer
         EscherContainerRecord spContainer = spgrContainer.getChildContainers().get(0);
-        _spgrRecord = (EscherSpgrRecord) spContainer.getChild(0);
+        spgrRecord = (EscherSpgrRecord) spContainer.getChild(0);
         for (EscherRecord ch : spContainer.getChildRecords()) {
             switch (ch.getRecordId()) {
                 case EscherSpgrRecord.RECORD_ID:
@@ -55,7 +56,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
     public HSSFShapeGroup(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
-        _spgrRecord = ((EscherContainerRecord)getEscherContainer().getChild(0)).getChildById(EscherSpgrRecord.RECORD_ID);
+        spgrRecord = ((EscherContainerRecord) getEscherContainer().getChild(0)).getChildById(EscherSpgrRecord.RECORD_ID);
     }
 
     @Override
@@ -105,15 +106,18 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
     @Override
     protected ObjRecord createObjRecord() {
-        ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord cmo = new CommonObjectDataSubRecord();
         cmo.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_GROUP);
         cmo.setLocked(true);
         cmo.setPrintable(true);
         cmo.setAutofill(true);
         cmo.setAutoline(true);
+
         GroupMarkerSubRecord gmo = new GroupMarkerSubRecord();
+
         EndSubRecord end = new EndSubRecord();
+
+        ObjRecord obj = new ObjRecord();
         obj.addSubRecord(cmo);
         obj.addSubRecord(gmo);
         obj.addSubRecord(end);
@@ -124,7 +128,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     protected void afterRemove(HSSFPatriarch patriarch) {
         patriarch._getBoundAggregate().removeShapeToObjRecord(getEscherContainer().getChildContainers().get(0)
                 .getChildById(EscherClientDataRecord.RECORD_ID));
-        for ( int i=0; i<shapes.size(); i++ ) {
+        for (int i = 0; i < shapes.size(); i++) {
             HSSFShape shape = shapes.get(i);
             removeShape(shape);
             shape.afterRemove(getPatriarch());
@@ -132,15 +136,15 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         shapes.clear();
     }
 
-    private void onCreate(HSSFShape shape){
-        if(getPatriarch() != null){
+    private void onCreate(HSSFShape shape) {
+        if (getPatriarch() != null) {
             EscherContainerRecord spContainer = shape.getEscherContainer();
             int shapeId = getPatriarch().newShapeId();
             shape.setShapeId(shapeId);
             getEscherContainer().addChildRecord(spContainer);
             shape.afterInsert(getPatriarch());
             EscherSpRecord sp;
-            if (shape instanceof HSSFShapeGroup){
+            if (shape instanceof HSSFShapeGroup) {
                 sp = shape.getEscherContainer().getChildContainers().get(0).getChildById(EscherSpRecord.RECORD_ID);
             } else {
                 sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
@@ -150,9 +154,9 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     /**
-     * Create another group under this group.
+     * Creates another group under this group.
      *
-     * @param anchor the position of the new group.
+     * @param anchor the chield anchor describes how this group is attached to the sheet
      * @return the group
      */
     public HSSFShapeGroup createGroup(HSSFChildAnchor anchor) {
@@ -171,9 +175,9 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     /**
-     * Create a new simple shape under this group.
+     * Creates a new simple shape under this group.
      *
-     * @param anchor the position of the shape.
+     * @param anchor the chield anchor describes how this shape is attached to the sheet
      * @return the shape
      */
     public HSSFSimpleShape createShape(HSSFChildAnchor anchor) {
@@ -183,19 +187,19 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         shapes.add(shape);
         onCreate(shape);
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.getAnchor().isHorizontallyFlipped()){
+        if (shape.getAnchor().isHorizontallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.getAnchor().isVerticallyFlipped()){
+        if (shape.getAnchor().isVerticallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
         return shape;
     }
 
     /**
-     * Create a new textbox under this group.
+     * Creates a new textbox under this group.
      *
-     * @param anchor the position of the shape.
+     * @param anchor the chield anchor describes how this textbox is attached to the sheet
      * @return the textbox
      */
     public HSSFTextbox createTextbox(HSSFChildAnchor anchor) {
@@ -208,11 +212,10 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     /**
-     * Creates a polygon
+     * Creates a polygon.
      *
-     * @param anchor the client anchor describes how this group is attached
-     *               to the sheet.
-     * @return the newly created shape.
+     * @param anchor the chield anchor describes how this polygon is attached to the sheet
+     * @return the polygon
      */
     public HSSFPolygon createPolygon(HSSFChildAnchor anchor) {
         HSSFPolygon shape = new HSSFPolygon(this, anchor);
@@ -226,9 +229,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     /**
      * Creates a picture.
      *
-     * @param anchor the client anchor describes how this group is attached
-     *               to the sheet.
-     * @return the newly created shape.
+     * @param anchor the chield anchor describes how this picture is attached to the sheet
+     * @return the picture
      */
     public HSSFPicture createPicture(HSSFChildAnchor anchor, int pictureIndex) {
         HSSFPicture shape = new HSSFPicture(this, anchor);
@@ -238,36 +240,36 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         shapes.add(shape);
         onCreate(shape);
         EscherSpRecord sp = shape.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
-        if (shape.getAnchor().isHorizontallyFlipped()){
+        if (shape.getAnchor().isHorizontallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPHORIZ);
         }
-        if (shape.getAnchor().isVerticallyFlipped()){
+        if (shape.getAnchor().isVerticallyFlipped()) {
             sp.setFlags(sp.getFlags() | EscherSpRecord.FLAG_FLIPVERT);
         }
         return shape;
     }
 
     /**
-     * Return all children contained by this shape.
+     * Returns all children contained by this shape.
      */
     public List<HSSFShape> getChildren() {
         return Collections.unmodifiableList(shapes);
     }
 
     /**
-     * Sets the coordinate space of this group.  All children are constrained
-     * to these coordinates.
+     * Sets the coordinate space of this group.
+     * All children are constrained to these coordinates.
      */
     public void setCoordinates(int x1, int y1, int x2, int y2) {
-        _spgrRecord.setRectX1(x1);
-        _spgrRecord.setRectX2(x2);
-        _spgrRecord.setRectY1(y1);
-        _spgrRecord.setRectY2(y2);
+        spgrRecord.setRectX1(x1);
+        spgrRecord.setRectX2(x2);
+        spgrRecord.setRectY1(y1);
+        spgrRecord.setRectY2(y2);
     }
 
     public void clear() {
-        ArrayList <HSSFShape> copy = new ArrayList<HSSFShape>(shapes);
-        for (HSSFShape shape: copy){
+        ArrayList<HSSFShape> copy = new ArrayList<HSSFShape>(shapes);
+        for (HSSFShape shape : copy) {
             removeShape(shape);
         }
     }
@@ -276,28 +278,28 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
      * The top left x coordinate of this group.
      */
     public int getX1() {
-        return _spgrRecord.getRectX1();
+        return spgrRecord.getRectX1();
     }
 
     /**
      * The top left y coordinate of this group.
      */
     public int getY1() {
-        return _spgrRecord.getRectY1();
+        return spgrRecord.getRectY1();
     }
 
     /**
      * The bottom right x coordinate of this group.
      */
     public int getX2() {
-        return _spgrRecord.getRectX2();
+        return spgrRecord.getRectX2();
     }
 
     /**
      * The bottom right y coordinate of this group.
      */
     public int getY2() {
-        return _spgrRecord.getRectY2();
+        return spgrRecord.getRectY2();
     }
 
     /**
@@ -313,14 +315,14 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     @Override
-    void afterInsert(HSSFPatriarch patriarch){
+    void afterInsert(HSSFPatriarch patriarch) {
         EscherAggregate agg = patriarch._getBoundAggregate();
         EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         agg.associateShapeToObjRecord(containerRecord.getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
     }
 
     @Override
-    void setShapeId(int shapeId){
+    void setShapeId(int shapeId) {
         EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
         EscherSpRecord spRecord = containerRecord.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setShapeId(shapeId);
@@ -329,9 +331,9 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     @Override
-    int getShapeId(){
+    int getShapeId() {
         EscherContainerRecord containerRecord = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
-        return ((EscherSpRecord)containerRecord.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
+        return ((EscherSpRecord) containerRecord.getChildById(EscherSpRecord.RECORD_ID)).getShapeId();
     }
 
     @Override
@@ -345,22 +347,22 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         spgrContainer.setOptions((short) 0x000F);
         EscherContainerRecord spContainer = new EscherContainerRecord();
         EscherContainerRecord cont = getEscherContainer().getChildById(EscherContainerRecord.SP_CONTAINER);
-        byte [] inSp = cont.serialize();
+        byte[] inSp = cont.serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
 
         spgrContainer.addChildRecord(spContainer);
         ObjRecord obj = null;
-        if (null != getObjRecord()){
+        if (null != getObjRecord()) {
             obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         }
 
         HSSFShapeGroup group = new HSSFShapeGroup(spgrContainer, obj);
         group.setPatriarch(patriarch);
 
-        for (HSSFShape shape: getChildren()){
+        for (HSSFShape shape : getChildren()) {
             HSSFShape newShape;
-            if (shape instanceof HSSFShapeGroup){
-                newShape = ((HSSFShapeGroup)shape).cloneShape(patriarch);
+            if (shape instanceof HSSFShapeGroup) {
+                newShape = ((HSSFShapeGroup) shape).cloneShape(patriarch);
             } else {
                 newShape = shape.cloneShape();
             }
@@ -371,8 +373,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     public boolean removeShape(HSSFShape shape) {
-        boolean  isRemoved = getEscherContainer().removeChildRecord(shape.getEscherContainer());
-        if (isRemoved){
+        boolean isRemoved = getEscherContainer().removeChildRecord(shape.getEscherContainer());
+        if (isRemoved) {
             shape.afterRemove(this.getPatriarch());
             shapes.remove(shape);
         }

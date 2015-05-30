@@ -21,7 +21,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
 
 /**
- * 
+ *
  */
 public class HSSFCombobox extends HSSFSimpleShape {
 
@@ -95,6 +95,6 @@ public class HSSFCombobox extends HSSFSimpleShape {
 
     @Override
     public void setShapeType(int shapeType) {
-        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+        throw new IllegalStateException("Shape type can not be changed in " + this.getClass().getSimpleName());
     }
 }

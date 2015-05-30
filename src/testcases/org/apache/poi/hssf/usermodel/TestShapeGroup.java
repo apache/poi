@@ -230,7 +230,7 @@ public class TestShapeGroup extends TestCase{
     private static EscherSpgrRecord getSpgrRecord(HSSFShapeGroup group) {
         Field spgrField = null;
         try {
-            spgrField = group.getClass().getDeclaredField("_spgrRecord");
+            spgrField = group.getClass().getDeclaredField("spgrRecord");
             spgrField.setAccessible(true);
             return (EscherSpgrRecord) spgrField.get(group);
         } catch (NoSuchFieldException e) {

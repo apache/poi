@@ -27,207 +27,194 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
- * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
+ * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>.
  */
 public final class HSSFSheetConditionalFormatting implements SheetConditionalFormatting {
 
-	private final HSSFSheet _sheet;
-	private final ConditionalFormattingTable _conditionalFormattingTable;
+    private final HSSFSheet sheet;
+    private final ConditionalFormattingTable conditionalFormattingTable;
 
-	/* package */ HSSFSheetConditionalFormatting(HSSFSheet sheet) {
-		_sheet = sheet;
-		_conditionalFormattingTable = sheet.getSheet().getConditionalFormattingTable();
-	}
+    HSSFSheetConditionalFormatting(HSSFSheet sheet) {
+        this.sheet = sheet;
+        this.conditionalFormattingTable = sheet.getSheet().getConditionalFormattingTable();
+    }
 
-	/**
-	 * A factory method allowing to create a conditional formatting rule
-	 * with a cell comparison operator<p/>
-	 * TODO - formulas containing cell references are currently not parsed properly
-	 *
-	 * @param comparisonOperation - a constant value from
-	 *		 <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
-	 * <ul>
-	 *		 <li>BETWEEN</li>
-	 *		 <li>NOT_BETWEEN</li>
-	 *		 <li>EQUAL</li>
-	 *		 <li>NOT_EQUAL</li>
-	 *		 <li>GT</li>
-	 *		 <li>LT</li>
-	 *		 <li>GE</li>
-	 *		 <li>LE</li>
-	 * </ul>
-	 * </p>
-	 * @param formula1 - formula for the valued, compared with the cell
-	 * @param formula2 - second formula (only used with
-	 * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#BETWEEN}) and
-	 * {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#NOT_BETWEEN} operations)
-	 */
-	public HSSFConditionalFormattingRule createConditionalFormattingRule(
-			byte comparisonOperation,
-			String formula1,
-			String formula2) {
-
-		HSSFWorkbook wb = _sheet.getWorkbook();
-		CFRuleRecord rr = CFRuleRecord.create(_sheet, comparisonOperation, formula1, formula2);
-		return new HSSFConditionalFormattingRule(wb, rr);
-	}
-
+    /**
+     * A factory method allowing to create a conditional formatting rule
+     * with a cell comparison operator<p/>
+     * TODO - formulas containing cell references are currently not parsed properly
+     *
+     * @param comparisonOperation a constant value from
+     *                            <tt>{@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator}</tt>: <p>
+     *                            <ul>
+     *                            <li>BETWEEN</li>
+     *                            <li>NOT_BETWEEN</li>
+     *                            <li>EQUAL</li>
+     *                            <li>NOT_EQUAL</li>
+     *                            <li>GT</li>
+     *                            <li>LT</li>
+     *                            <li>GE</li>
+     *                            <li>LE</li>
+     *                            </ul>
+     *                            </p>
+     * @param formula1            formula for the valued, compared with the cell
+     * @param formula2            second formula (only used with
+     *                            {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#BETWEEN}) and
+     *                            {@link org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator#NOT_BETWEEN} operations)
+     */
     public HSSFConditionalFormattingRule createConditionalFormattingRule(
-            byte comparisonOperation,
-            String formula1) {
-
-        HSSFWorkbook wb = _sheet.getWorkbook();
-        CFRuleRecord rr = CFRuleRecord.create(_sheet, comparisonOperation, formula1, null);
+            byte comparisonOperation, String formula1, String formula2) {
+        HSSFWorkbook wb = sheet.getWorkbook();
+        CFRuleRecord rr = CFRuleRecord.create(sheet, comparisonOperation, formula1, formula2);
         return new HSSFConditionalFormattingRule(wb, rr);
     }
 
-	/**
-	 * A factory method allowing to create a conditional formatting rule with a formula.<br>
-	 *
-	 * The formatting rules are applied by Excel when the value of the formula not equal to 0.<p/>
-	 * TODO - formulas containing cell references are currently not parsed properly
-	 * @param formula - formula for the valued, compared with the cell
-	 */
-	public HSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
-		HSSFWorkbook wb = _sheet.getWorkbook();
-		CFRuleRecord rr = CFRuleRecord.create(_sheet, formula);
-		return new HSSFConditionalFormattingRule(wb, rr);
-	}
-
-	/**
-	 * Adds a copy of HSSFConditionalFormatting object to the sheet
-	 * <p>This method could be used to copy HSSFConditionalFormatting object
-	 * from one sheet to another. For example:
-	 * <pre>
-	 * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
-	 * newSheet.addConditionalFormatting(cf);
-	 * </pre>
-	 *
-	 * @param cf HSSFConditionalFormatting object
-	 * @return index of the new Conditional Formatting object
-	 */
-	public int addConditionalFormatting( HSSFConditionalFormatting cf ) {
-		CFRecordsAggregate cfraClone = cf.getCFRecordsAggregate().cloneCFAggregate();
-
-		return _conditionalFormattingTable.add(cfraClone);
-	}
-
-    public int addConditionalFormatting( ConditionalFormatting cf ) {
-        return addConditionalFormatting((HSSFConditionalFormatting)cf);
+    public HSSFConditionalFormattingRule createConditionalFormattingRule(
+            byte comparisonOperation, String formula1) {
+        HSSFWorkbook wb = sheet.getWorkbook();
+        CFRuleRecord rr = CFRuleRecord.create(sheet, comparisonOperation, formula1, null);
+        return new HSSFConditionalFormattingRule(wb, rr);
     }
 
-	/**
-	 * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
-	 */
-	public int addConditionalFormatting(org.apache.poi.ss.util.Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
-		return addConditionalFormatting(org.apache.poi.ss.util.Region.convertRegionsToCellRanges(regions), cfRules);
-	}
-	/**
-	 * Allows to add a new Conditional Formatting set to the sheet.
-	 *
-	 * @param regions - list of rectangular regions to apply conditional formatting rules
-	 * @param cfRules - set of up to three conditional formatting rules
-	 *
-	 * @return index of the newly created Conditional Formatting object
-	 */
-	public int addConditionalFormatting(CellRangeAddress[] regions, HSSFConditionalFormattingRule[] cfRules) {
-		if (regions == null) {
-			throw new IllegalArgumentException("regions must not be null");
-		}
-		for(CellRangeAddress range : regions) range.validate(SpreadsheetVersion.EXCEL97);
+    /**
+     * A factory method allowing to create a conditional formatting rule with a formula.
+     * <p/>
+     * The formatting rules are applied by Excel when the value of the formula not equal to 0.
+     * <p/>
+     * TODO - formulas containing cell references are currently not parsed properly
+     *
+     * @param formula - formula for the valued, compared with the cell
+     */
+    public HSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
+        HSSFWorkbook wb = sheet.getWorkbook();
+        CFRuleRecord rr = CFRuleRecord.create(sheet, formula);
+        return new HSSFConditionalFormattingRule(wb, rr);
+    }
 
-		if (cfRules == null) {
-			throw new IllegalArgumentException("cfRules must not be null");
-		}
-		if (cfRules.length == 0) {
-			throw new IllegalArgumentException("cfRules must not be empty");
-		}
-		if (cfRules.length > 3) {
-			throw new IllegalArgumentException("Number of rules must not exceed 3");
-		}
+    /**
+     * Adds a copy of HSSFConditionalFormatting object to the sheet.
+     * <p>
+     * This method could be used to copy HSSFConditionalFormatting object
+     * from one sheet to another. For example:
+     * <pre>
+     * HSSFConditionalFormatting cf = sheet.getConditionalFormattingAt(index);
+     * newSheet.addConditionalFormatting(cf);
+     * </pre>
+     *
+     * @param cf HSSFConditionalFormatting object
+     * @return index of the new Conditional Formatting object
+     */
+    public int addConditionalFormatting(HSSFConditionalFormatting cf) {
+        CFRecordsAggregate cfraClone = cf.getCFRecordsAggregate().cloneCFAggregate();
+        return conditionalFormattingTable.add(cfraClone);
+    }
 
-		CFRuleRecord[] rules = new CFRuleRecord[cfRules.length];
-		for (int i = 0; i != cfRules.length; i++) {
-			rules[i] = cfRules[i].getCfRuleRecord();
-		}
-		CFRecordsAggregate cfra = new CFRecordsAggregate(regions, rules);
-		return _conditionalFormattingTable.add(cfra);
-	}
+    public int addConditionalFormatting(ConditionalFormatting cf) {
+        return addConditionalFormatting((HSSFConditionalFormatting) cf);
+    }
+
+    /**
+     * @deprecated use <tt>CellRangeAddress</tt> instead of <tt>Region</tt>
+     */
+    public int addConditionalFormatting(org.apache.poi.ss.util.Region[] regions, HSSFConditionalFormattingRule[] cfRules) {
+        return addConditionalFormatting(org.apache.poi.ss.util.Region.convertRegionsToCellRanges(regions), cfRules);
+    }
+
+    /**
+     * Allows to add a new Conditional Formatting set to the sheet.
+     *
+     * @param regions list of rectangular regions to apply conditional formatting rules
+     * @param cfRules set of up to three conditional formatting rules
+     * @return index of the newly created Conditional Formatting object
+     */
+    public int addConditionalFormatting(CellRangeAddress[] regions, HSSFConditionalFormattingRule[] cfRules) {
+        if (regions == null) {
+            throw new IllegalArgumentException("regions must not be null");
+        }
+        for (CellRangeAddress range : regions) range.validate(SpreadsheetVersion.EXCEL97);
+
+        if (cfRules == null) {
+            throw new IllegalArgumentException("cfRules must not be null");
+        }
+        if (cfRules.length == 0) {
+            throw new IllegalArgumentException("cfRules must not be empty");
+        }
+        if (cfRules.length > 3) {
+            throw new IllegalArgumentException("Number of rules must not exceed 3");
+        }
+
+        CFRuleRecord[] rules = new CFRuleRecord[cfRules.length];
+        for (int i = 0; i != cfRules.length; i++) {
+            rules[i] = cfRules[i].getCfRuleRecord();
+        }
+        CFRecordsAggregate cfra = new CFRecordsAggregate(regions, rules);
+        return conditionalFormattingTable.add(cfra);
+    }
 
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         HSSFConditionalFormattingRule[] hfRules;
-        if(cfRules instanceof HSSFConditionalFormattingRule[]) hfRules = (HSSFConditionalFormattingRule[])cfRules;
-        else {
+        if (cfRules instanceof HSSFConditionalFormattingRule[]) {
+            hfRules = (HSSFConditionalFormattingRule[]) cfRules;
+        } else {
             hfRules = new HSSFConditionalFormattingRule[cfRules.length];
             System.arraycopy(cfRules, 0, hfRules, 0, hfRules.length);
         }
         return addConditionalFormatting(regions, hfRules);
     }
 
-	public int addConditionalFormatting(CellRangeAddress[] regions,
-			HSSFConditionalFormattingRule rule1)
-	{
-		return addConditionalFormatting(regions,
-				rule1 == null ? null : new HSSFConditionalFormattingRule[]
-				{
-					rule1
-				});
-	}
-
-    public int addConditionalFormatting(CellRangeAddress[] regions,
-            ConditionalFormattingRule rule1)
-    {
-        return addConditionalFormatting(regions,  (HSSFConditionalFormattingRule)rule1);
-    }
-
-	public int addConditionalFormatting(CellRangeAddress[] regions,
-			HSSFConditionalFormattingRule rule1,
-			HSSFConditionalFormattingRule rule2)
-	{
-		return addConditionalFormatting(regions,
-				new HSSFConditionalFormattingRule[]
-				{
-						rule1, rule2
-				});
-	}
-
-    public int addConditionalFormatting(CellRangeAddress[] regions,
-            ConditionalFormattingRule rule1,
-            ConditionalFormattingRule rule2)
-    {
+    public int addConditionalFormatting(CellRangeAddress[] regions, HSSFConditionalFormattingRule rule1) {
         return addConditionalFormatting(regions,
-                (HSSFConditionalFormattingRule)rule1,
-                (HSSFConditionalFormattingRule)rule2
-                );
+                rule1 == null ? null : new HSSFConditionalFormattingRule[]{rule1});
     }
 
-	/**
-	* gets Conditional Formatting object at a particular index
-	*
-	* @param index
-	*			of the Conditional Formatting object to fetch
-	* @return Conditional Formatting object
-	*/
-	public HSSFConditionalFormatting getConditionalFormattingAt(int index) {
-		CFRecordsAggregate cf = _conditionalFormattingTable.get(index);
-		if (cf == null) {
-			return null;
-		}
-		return new HSSFConditionalFormatting(_sheet.getWorkbook(), cf);
-	}
+    public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule rule1) {
+        return addConditionalFormatting(regions, (HSSFConditionalFormattingRule) rule1);
+    }
 
-	/**
-	* @return number of Conditional Formatting objects of the sheet
-	*/
-	public int getNumConditionalFormattings() {
-		return _conditionalFormattingTable.size();
-	}
+    public int addConditionalFormatting(CellRangeAddress[] regions,
+                                        HSSFConditionalFormattingRule rule1,
+                                        HSSFConditionalFormattingRule rule2) {
 
-	/**
-	* removes a Conditional Formatting object by index
-	* @param index of a Conditional Formatting object to remove
-	*/
-	public void removeConditionalFormatting(int index) {
-		_conditionalFormattingTable.remove(index);
-	}
+        return addConditionalFormatting(regions,
+                new HSSFConditionalFormattingRule[]{rule1, rule2});
+    }
+
+    public int addConditionalFormatting(CellRangeAddress[] regions,
+                                        ConditionalFormattingRule rule1,
+                                        ConditionalFormattingRule rule2) {
+
+        return addConditionalFormatting(regions,
+                (HSSFConditionalFormattingRule) rule1,
+                (HSSFConditionalFormattingRule) rule2);
+    }
+
+    /**
+     * Gets Conditional Formatting object at a particular index.
+     *
+     * @param index of the Conditional Formatting object to fetch
+     * @return Conditional Formatting object
+     */
+    public HSSFConditionalFormatting getConditionalFormattingAt(int index) {
+        CFRecordsAggregate cf = conditionalFormattingTable.get(index);
+        if (cf == null) {
+            return null;
+        }
+        return new HSSFConditionalFormatting(sheet.getWorkbook(), cf);
+    }
+
+    /**
+     * @return number of Conditional Formatting objects of the sheet
+     */
+    public int getNumConditionalFormattings() {
+        return conditionalFormattingTable.size();
+    }
+
+    /**
+     * Removes a Conditional Formatting object by index.
+     *
+     * @param index of a Conditional Formatting object to remove
+     */
+    public void removeConditionalFormatting(int index) {
+        conditionalFormattingTable.remove(index);
+    }
 }

@@ -23,199 +23,181 @@ import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Represents a Font used in a workbook.
- * 
+ *
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
  */
 public final class HSSFFont implements Font {
 
-    /**
-     * Arial font
-     */
-
+    /** Arial font */
     public final static String FONT_ARIAL = "Arial";
 
+    private FontRecord font;
+    private short index;
 
-    private FontRecord         font;
-    private short              index;
-
-    /** Creates a new instance of HSSFFont */
-
-    protected HSSFFont(short index, FontRecord rec)
-    {
-        font       = rec;
+    /**
+     * Creates a new instance of HSSFFont.
+     */
+    protected HSSFFont(short index, FontRecord rec) {
+        font = rec;
         this.index = index;
     }
 
     /**
-     * set the name for the font (i.e. Arial)
-     * @param name  String representing the name of the font to use
+     * Sets the name for the font (i.e. Arial).
+     *
+     * @param name String representing the name of the font to use
      * @see #FONT_ARIAL
      */
-
-    public void setFontName(String name)
-    {
+    public void setFontName(String name) {
         font.setFontName(name);
     }
 
     /**
-     * get the name for the font (i.e. Arial)
+     * Gets the name for the font (i.e. Arial).
+     *
      * @return String representing the name of the font to use
      * @see #FONT_ARIAL
      */
-
-    public String getFontName()
-    {
+    public String getFontName() {
         return font.getFontName();
     }
 
     /**
-     * get the index within the HSSFWorkbook (sequence within the collection of Font objects)
-     * @return unique index number of the underlying record this Font represents (probably you don't care
-     *  unless you're comparing which one is which)
+     * Gets the index within the HSSFWorkbook (sequence within the collection of Font objects).
+     *
+     * @return unique index number of the underlying record this Font represents
+     * (probably you don't care unless you're comparing which one is which)
      */
-
-    public short getIndex()
-    {
+    public short getIndex() {
         return index;
     }
 
     /**
-     * set the font height in unit's of 1/20th of a point.  Maybe you might want to
+     * Sets the font height in unit's of 1/20th of a point.  Maybe you might want to
      * use the setFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
+     *
      * @param height height in 1/20ths of a point
      * @see #setFontHeightInPoints(short)
      */
-
-    public void setFontHeight(short height)
-    {
+    public void setFontHeight(short height) {
         font.setFontHeight(height);
     }
 
     /**
-     * set the font height
+     * Sets the font height.
+     *
      * @param height height in the familiar unit of measure - points
      * @see #setFontHeight(short)
      */
-
-    public void setFontHeightInPoints(short height)
-    {
-        font.setFontHeight(( short ) (height * 20));
+    public void setFontHeightInPoints(short height) {
+        font.setFontHeight((short) (height * 20));
     }
 
     /**
-     * get the font height in unit's of 1/20th of a point.  Maybe you might want to
+     * Gets the font height in unit's of 1/20th of a point.  Maybe you might want to
      * use the getFontHeightInPoints which matches to the familiar 10, 12, 14 etc..
+     *
      * @return short - height in 1/20ths of a point
      * @see #getFontHeightInPoints()
      */
-
-    public short getFontHeight()
-    {
+    public short getFontHeight() {
         return font.getFontHeight();
     }
 
     /**
-     * get the font height
+     * Gets the font height.
+     *
      * @return short - height in the familiar unit of measure - points
      * @see #getFontHeight()
      */
-
-    public short getFontHeightInPoints()
-    {
-        return ( short ) (font.getFontHeight() / 20);
+    public short getFontHeightInPoints() {
+        return (short) (font.getFontHeight() / 20);
     }
 
     /**
-     * set whether to use italics or not
+     * Sets whether to use italics or not.
+     *
      * @param italic italics or not
      */
-
-    public void setItalic(boolean italic)
-    {
+    public void setItalic(boolean italic) {
         font.setItalic(italic);
     }
 
     /**
-     * get whether to use italics or not
+     * Gets whether to use italics or not.
+     *
      * @return italics or not
      */
-
-    public boolean getItalic()
-    {
+    public boolean getItalic() {
         return font.isItalic();
     }
 
     /**
-     * set whether to use a strikeout horizontal line through the text or not
+     * Sets whether to use a strikeout horizontal line through the text or not.
+     *
      * @param strikeout or not
      */
-
-    public void setStrikeout(boolean strikeout)
-    {
+    public void setStrikeout(boolean strikeout) {
         font.setStrikeout(strikeout);
     }
 
     /**
-     * get whether to use a strikeout horizontal line through the text or not
+     * Gets whether to use a strikeout horizontal line through the text or not.
+     *
      * @return strikeout or not
      */
-
-    public boolean getStrikeout()
-    {
+    public boolean getStrikeout() {
         return font.isStruckout();
     }
 
     /**
-     * set the color for the font
+     * Sets the color for the font.
+     *
      * @param color to use
      * @see #COLOR_NORMAL Note: Use this rather than HSSFColor.AUTOMATIC for default font color
      * @see #COLOR_RED
      */
-
-    public void setColor(short color)
-    {
+    public void setColor(short color) {
         font.setColorPaletteIndex(color);
     }
 
     /**
-     * get the color for the font
+     * Gets the color for the font.
+     *
      * @return color to use
      * @see #COLOR_NORMAL
      * @see #COLOR_RED
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
      */
-    public short getColor()
-    {
+    public short getColor() {
         return font.getColorPaletteIndex();
-    }
-    
-    /**
-     * get the color value for the font
-     */
-    public HSSFColor getHSSFColor(HSSFWorkbook wb)
-    {
-       HSSFPalette pallette = wb.getCustomPalette();
-       return pallette.getColor( getColor() );
     }
 
     /**
-     * set the boldness to use
+     * Gets the color value for the font.
+     */
+    public HSSFColor getHSSFColor(HSSFWorkbook wb) {
+        HSSFPalette pallette = wb.getCustomPalette();
+        return pallette.getColor(getColor());
+    }
+
+    /**
+     * Sets the boldness to use.
+     *
      * @param boldweight
      * @see #BOLDWEIGHT_NORMAL
      * @see #BOLDWEIGHT_BOLD
      */
-    public void setBoldweight(short boldweight)
-    {
+    public void setBoldweight(short boldweight) {
         font.setBoldWeight(boldweight);
     }
-    
+
     /**
-     * sets the font to be bold or not
+     * Sets the font to be bold or not.
      */
-    public void setBold(boolean bold)
-    {
+    public void setBold(boolean bold) {
         if (bold)
             font.setBoldWeight(BOLDWEIGHT_BOLD);
         else
@@ -223,52 +205,50 @@ public final class HSSFFont implements Font {
     }
 
     /**
-     * get the boldness to use
+     * Gets the boldness to use.
+     *
      * @return boldweight
      * @see #BOLDWEIGHT_NORMAL
      * @see #BOLDWEIGHT_BOLD
      */
-    public short getBoldweight()
-    {
+    public short getBoldweight() {
         return font.getBoldWeight();
     }
-    
+
     /**
-     * get if the font is bold or not
+     * Gets if the font is bold or not.
      */
-    public boolean getBold()
-    {
+    public boolean getBold() {
         return getBoldweight() == BOLDWEIGHT_BOLD;
     }
 
     /**
-     * set normal,super or subscript.
-     * @param offset type to use (none,super,sub)
+     * Sets normal, super or subscript.
+     *
+     * @param offset type to use (none, super, sub)
      * @see #SS_NONE
      * @see #SS_SUPER
      * @see #SS_SUB
      */
-
-    public void setTypeOffset(short offset)
-    {
+    public void setTypeOffset(short offset) {
         font.setSuperSubScript(offset);
     }
 
     /**
-     * get normal,super or subscript.
-     * @return offset type to use (none,super,sub)
+     * Gets normal, super or subscript.
+     *
+     * @return offset type to use (none, super, sub)
      * @see #SS_NONE
      * @see #SS_SUPER
      * @see #SS_SUB
      */
-
-    public short getTypeOffset()
-    {
+    public short getTypeOffset() {
         return font.getSuperSubScript();
     }
 
     /**
-     * set type of text underlining to use
+     * Sets type of text underlining to use.
+     *
      * @param underline type
      * @see #U_NONE
      * @see #U_SINGLE
@@ -276,14 +256,13 @@ public final class HSSFFont implements Font {
      * @see #U_SINGLE_ACCOUNTING
      * @see #U_DOUBLE_ACCOUNTING
      */
-
-    public void setUnderline(byte underline)
-    {
+    public void setUnderline(byte underline) {
         font.setUnderline(underline);
     }
 
     /**
-     * get type of text underlining to use
+     * Gets type of text underlining to use.
+     *
      * @return underlining type
      * @see #U_NONE
      * @see #U_SINGLE
@@ -291,85 +270,79 @@ public final class HSSFFont implements Font {
      * @see #U_SINGLE_ACCOUNTING
      * @see #U_DOUBLE_ACCOUNTING
      */
-
-    public byte getUnderline()
-    {
+    public byte getUnderline() {
         return font.getUnderline();
     }
 
-
     /**
-     * get character-set to use.
+     * Gets character-set to use.
+     *
      * @return character-set
      * @see #ANSI_CHARSET
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
-    public int getCharSet()
-    {
+    public int getCharSet() {
         byte charset = font.getCharset();
-        if(charset >= 0) {
-           return charset;
+        if (charset >= 0) {
+            return charset;
         } else {
-           return charset + 256;
+            return charset + 256;
         }
     }
 
     /**
-     * set character-set to use.
+     * Sets character-set to use.
+     *
      * @see #ANSI_CHARSET
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
-    public void setCharSet(int charset)
-    {
-        byte cs = (byte)charset;
-        if(charset > 127) {
-           cs = (byte)(charset-256);
+    public void setCharSet(int charset) {
+        byte cs = (byte) charset;
+        if (charset > 127) {
+            cs = (byte) (charset - 256);
         }
         setCharSet(cs);
     }
 
     /**
-     * set character-set to use.
+     * Sets character-set to use.
+     *
      * @see #ANSI_CHARSET
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
-    public void setCharSet(byte charset)
-    {
+    public void setCharSet(byte charset) {
         font.setCharset(charset);
     }
 
-    public String toString()
-    {
-        return "org.apache.poi.hssf.usermodel.HSSFFont{" +
-                 font +
-                "}";
+    public String toString() {
+        return "org.apache.poi.hssf.usermodel.HSSFFont{" + font + "}";
     }
 
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((font == null) ? 0 : font.hashCode());
-		result = prime * result + index;
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((font == null) ? 0 : font.hashCode());
+        result = prime * result + index;
+        return result;
+    }
 
-	public boolean equals(Object obj) {
-		if (this == obj) return true;
-		if (obj == null) return false;
-		if (obj instanceof HSSFFont) {
-			final HSSFFont other = (HSSFFont) obj;
-			if (font == null) {
-				if (other.font != null)
-					return false;
-			} else if (!font.equals(other.font))
-				return false;
-			if (index != other.index)
-				return false;
-			return true;
-		}
-		return false;
-	}
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (obj instanceof HSSFFont) {
+            final HSSFFont other = (HSSFFont) obj;
+            if (font == null) {
+                if (other.font != null)
+                    return false;
+            } else if (!font.equals(other.font))
+                return false;
+            if (index != other.index)
+                return false;
+            return true;
+        }
+        return false;
+    }
 }

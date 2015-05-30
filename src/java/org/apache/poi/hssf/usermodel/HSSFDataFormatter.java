@@ -49,12 +49,13 @@ import org.apache.poi.ss.usermodel.DataFormatter;
  * custom formats are already provided by this class:
  * </p>
  * <pre>
- * <ul><li>SSN "000-00-0000"</li>
+ * <ul>
+ *     <li>SSN "000-00-0000"</li>
  *     <li>Phone Number "(###) ###-####"</li>
  *     <li>Zip plus 4 "00000-0000"</li>
  * </ul>
  * </pre>
- * <p>
+ * <p/>
  * If the Excel format pattern cannot be parsed successfully, then a default
  * format will be used. The default number format will mimic the Excel General
  * format: "#" for whole numbers and "#.##########" for decimal numbers. You
@@ -78,5 +79,4 @@ public final class HSSFDataFormatter extends DataFormatter {
     public HSSFDataFormatter() {
         this(Locale.getDefault());
     }
-
 }

@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
@@ -36,12 +37,12 @@ import org.apache.poi.ss.usermodel.Comment;
  */
 public class HSSFComment extends HSSFTextbox implements Comment {
 
-    private final static int FILL_TYPE_SOLID = 0;
-    private final static int FILL_TYPE_PICTURE = 3;
+    private static final int FILL_TYPE_SOLID = 0;
+    private static final int FILL_TYPE_PICTURE = 3;
 
-    private final static int GROUP_SHAPE_PROPERTY_DEFAULT_VALUE = 655362;
-    private final static int GROUP_SHAPE_HIDDEN_MASK = 0x1000002;
-    private final static int GROUP_SHAPE_NOT_HIDDEN_MASK = 0xFEFFFFFD;
+    private static final int GROUP_SHAPE_PROPERTY_DEFAULT_VALUE = 655362;
+    private static final int GROUP_SHAPE_HIDDEN_MASK = 0x1000002;
+    private static final int GROUP_SHAPE_NOT_HIDDEN_MASK = 0xFEFFFFFD;
 
     /*
       * TODO - make HSSFComment more consistent when created vs read from file.
@@ -52,27 +53,25 @@ public class HSSFComment extends HSSFTextbox implements Comment {
       * fields are supposed to take comments into account, but POI does not do this yet (feb 2009).
       * It seems like HSSFRow should manage a collection of local HSSFComments
       */
+    private NoteRecord note;
 
-    private NoteRecord _note;
-
-    public HSSFComment(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord, NoteRecord _note) {
+    public HSSFComment(EscherContainerRecord spContainer, ObjRecord objRecord, TextObjectRecord textObjectRecord, NoteRecord note) {
         super(spContainer, objRecord, textObjectRecord);
-        this._note = _note;
+        this.note = note;
     }
 
     /**
-     * Construct a new comment with the given parent and anchor.
+     * Constructs a new comment with the given parent and anchor.
      *
      * @param parent
      * @param anchor defines position of this anchor in the sheet
      */
     public HSSFComment(HSSFShape parent, HSSFAnchor anchor) {
         super(parent, anchor);
-        _note = createNoteRecord();
-        //default color for comments
+        note = createNoteRecord();
+        // default color for comments
         setFillColor(0x08000050);
-
-        //by default comments are hidden
+        // by default comments are hidden
         setVisible(false);
         setAuthor("");
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
@@ -81,7 +80,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     protected HSSFComment(NoteRecord note, TextObjectRecord txo) {
         this(null, new HSSFClientAnchor());
-        _note = note;
+        this.note = note;
     }
 
     @Override
@@ -104,7 +103,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     @Override
     protected ObjRecord createObjRecord() {
-        ObjRecord obj = new ObjRecord();
         CommonObjectDataSubRecord c = new CommonObjectDataSubRecord();
         c.setObjectType(OBJECT_TYPE_COMMENT);
         c.setLocked(true);
@@ -113,14 +111,17 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         c.setAutoline(true);
 
         NoteStructureSubRecord u = new NoteStructureSubRecord();
+
         EndSubRecord e = new EndSubRecord();
+
+        ObjRecord obj = new ObjRecord();
         obj.addSubRecord(c);
         obj.addSubRecord(u);
         obj.addSubRecord(e);
         return obj;
     }
 
-    private NoteRecord createNoteRecord(){
+    private NoteRecord createNoteRecord() {
         NoteRecord note = new NoteRecord();
         note.setFlags(NoteRecord.NOTE_HIDDEN);
         note.setAuthor("");
@@ -129,13 +130,13 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     @Override
     void setShapeId(int shapeId) {
-    	if(shapeId > 65535) {
-    		throw new IllegalArgumentException("Cannot add more than " + 65535 + " shapes");
-    	}
+        if (shapeId > 65535) {
+            throw new IllegalArgumentException("Cannot add more than " + 65535 + " shapes");
+        }
         super.setShapeId(shapeId);
         CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
         cod.setObjectId(shapeId);
-        _note.setShapeId(shapeId);
+        note.setShapeId(shapeId);
     }
 
     /**
@@ -144,7 +145,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @param visible <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     public void setVisible(boolean visible) {
-        _note.setFlags(visible ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
+        note.setFlags(visible ? NoteRecord.NOTE_VISIBLE : NoteRecord.NOTE_HIDDEN);
         setHidden(!visible);
     }
 
@@ -154,43 +155,43 @@ public class HSSFComment extends HSSFTextbox implements Comment {
      * @return <code>true</code> if the comment is visible, <code>false</code> otherwise
      */
     public boolean isVisible() {
-        return _note.getFlags() == NoteRecord.NOTE_VISIBLE;
+        return note.getFlags() == NoteRecord.NOTE_VISIBLE;
     }
 
     /**
-     * Return the row of the cell that contains the comment
+     * Returns the row of the cell that contains the comment.
      *
      * @return the 0-based row of the cell that contains the comment
      */
     public int getRow() {
-        return _note.getRow();
+        return note.getRow();
     }
 
     /**
-     * Set the row of the cell that contains the comment
+     * Sets the row of the cell that contains the comment.
      *
      * @param row the 0-based row of the cell that contains the comment
      */
     public void setRow(int row) {
-        _note.setRow(row);
+        note.setRow(row);
     }
 
     /**
-     * Return the column of the cell that contains the comment
+     * Returns the column of the cell that contains the comment.
      *
      * @return the 0-based column of the cell that contains the comment
      */
     public int getColumn() {
-        return _note.getColumn();
+        return note.getColumn();
     }
 
     /**
-     * Set the column of the cell that contains the comment
+     * Sets the column of the cell that contains the comment.
      *
      * @param col the 0-based column of the cell that contains the comment
      */
     public void setColumn(int col) {
-        _note.setColumn(col);
+        note.setColumn(col);
     }
 
     /**
@@ -202,35 +203,35 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
 
     /**
-     * Name of the original comment author
+     * Returns the name of the original comment author.
      *
      * @return the name of the original author of the comment
      */
     public String getAuthor() {
-        return _note.getAuthor();
+        return note.getAuthor();
     }
 
     /**
-     * Name of the original comment author
+     * Sets the name of the original comment author.
      *
      * @param author the name of the original author of the comment
      */
     public void setAuthor(String author) {
-        if (_note != null) _note.setAuthor(author);
+        if (note != null) note.setAuthor(author);
     }
 
     /**
-     * Returns the underlying Note record
+     * Returns the underlying Note record.
      */
     protected NoteRecord getNoteRecord() {
-        return _note;
+        return note;
     }
-    
+
     /**
      * Do we know which cell this comment belongs to?
      */
     public boolean hasPosition() {
-        if (_note == null) return false;
+        if (note == null) return false;
         if (getColumn() < 0 || getRow() < 0) return false;
         return true;
     }
@@ -248,10 +249,10 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     @Override
     public void setShapeType(int shapeType) {
-        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+        throw new IllegalStateException("Shape type can not be changed in " + this.getClass().getSimpleName());
     }
 
-    public void afterRemove(HSSFPatriarch patriarch){
+    public void afterRemove(HSSFPatriarch patriarch) {
         super.afterRemove(patriarch);
         patriarch._getBoundAggregate().removeTailRecord(getNoteRecord());
     }
@@ -260,39 +261,39 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     protected HSSFShape cloneShape() {
         TextObjectRecord txo = (TextObjectRecord) getTextObjectRecord().cloneViaReserialise();
         EscherContainerRecord spContainer = new EscherContainerRecord();
-        byte [] inSp = getEscherContainer().serialize();
+        byte[] inSp = getEscherContainer().serialize();
         spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
         ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
         NoteRecord note = (NoteRecord) getNoteRecord().cloneViaReserialise();
         return new HSSFComment(spContainer, obj, txo, note);
     }
-    
-    public void setBackgroundImage(int pictureIndex){
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__PATTERNTEXTURE, false, true, pictureIndex));
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
+
+    public void setBackgroundImage(int pictureIndex) {
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.FILL__PATTERNTEXTURE, false, true, pictureIndex));
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
         EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
         bse.setRef(bse.getRef() + 1);
     }
-    
-    public void resetBackgroundImage(){
+
+    public void resetBackgroundImage() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
-        if (null != property){
+        if (null != property) {
             EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(property.getPropertyValue());
             bse.setRef(bse.getRef() - 1);
             getOptRecord().removeEscherProperty(EscherProperties.FILL__PATTERNTEXTURE);
         }
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
+        setPropertyValue(new EscherSimpleProperty(EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
     }
-    
-    public int getBackgroundImageId(){
+
+    public int getBackgroundImageId() {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
         return property == null ? 0 : property.getPropertyValue();
     }
 
-    private void setHidden(boolean value){
+    private void setHidden(boolean value) {
         EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GROUPSHAPE__PRINT);
         // see http://msdn.microsoft.com/en-us/library/dd949807(v=office.12).aspx
-        if (value){
+        if (value) {
             setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() | GROUP_SHAPE_HIDDEN_MASK));
         } else {
             setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() & GROUP_SHAPE_NOT_HIDDEN_MASK));

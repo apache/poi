@@ -20,44 +20,45 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.ss.usermodel.CreationHelper;
 
 public class HSSFCreationHelper implements CreationHelper {
-	private HSSFWorkbook workbook;
-	private HSSFDataFormat dataFormat;
 
-	HSSFCreationHelper(HSSFWorkbook wb) {
-		workbook = wb;
+    private final HSSFWorkbook workbook;
+    private final HSSFDataFormat dataFormat;
 
-		// Create the things we only ever need one of
-		dataFormat = new HSSFDataFormat(workbook.getWorkbook());
-	}
+    HSSFCreationHelper(HSSFWorkbook workbook) {
+        this.workbook = workbook;
 
-	public HSSFRichTextString createRichTextString(String text) {
-		return new HSSFRichTextString(text);
-	}
+        // Create the things we only ever need one of
+        dataFormat = new HSSFDataFormat(workbook.getWorkbook());
+    }
 
-	public HSSFDataFormat createDataFormat() {
-		return dataFormat;
-	}
+    public HSSFRichTextString createRichTextString(String text) {
+        return new HSSFRichTextString(text);
+    }
 
-	public HSSFHyperlink createHyperlink(int type) {
-		return new HSSFHyperlink(type);
-	}
+    public HSSFDataFormat createDataFormat() {
+        return dataFormat;
+    }
 
-	/**
-	 * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
-	 *
-	 * @return a HSSFFormulaEvaluator instance
-	 */
-	public HSSFFormulaEvaluator createFormulaEvaluator(){
-		return new HSSFFormulaEvaluator(workbook);
-	}
+    public HSSFHyperlink createHyperlink(int type) {
+        return new HSSFHyperlink(type);
+    }
 
-	/**
-	 * Creates a HSSFClientAnchor. Use this object to position drawing object in a sheet
-	 *
-	 * @return a HSSFClientAnchor instance
-	 * @see org.apache.poi.ss.usermodel.Drawing
-	 */
-	public HSSFClientAnchor createClientAnchor(){
-		return new HSSFClientAnchor();
-	}
+    /**
+     * Creates a HSSFFormulaEvaluator, the object that evaluates formula cells.
+     *
+     * @return a HSSFFormulaEvaluator instance
+     */
+    public HSSFFormulaEvaluator createFormulaEvaluator() {
+        return new HSSFFormulaEvaluator(workbook);
+    }
+
+    /**
+     * Creates a HSSFClientAnchor. Use this object to position drawing objects in a sheet.
+     *
+     * @return a HSSFClientAnchor instance
+     * @see org.apache.poi.ss.usermodel.Drawing
+     */
+    public HSSFClientAnchor createClientAnchor() {
+        return new HSSFClientAnchor();
+    }
 }
