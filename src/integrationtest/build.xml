@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project name="POI Testbuild" default="run" basedir=".">
+
+    <description>Test-Ant file which verifies that the Apache POI distribution build sources can be compiled successfully.</description>
+    
+    <property name="dist" value="../../build/dist"/>
+    <property name="build" value="../../build/distsourcebuild"/>
+    
+    <target name="init" depends="">
+    </target>
+    
+    <target name="run" depends="init">
+        <!-- clean out old stuff in build-dir -->
+        <delete dir="${build}"/>
+        <mkdir dir="${build}"/>
+
+        <!-- select latest biult source zip -->
+        <pathconvert property="srcpackage">
+            <last>
+                <sort>
+                    <date xmlns="antlib:org.apache.tools.ant.types.resources.comparators"/>
+                    <resources>
+                        <fileset dir="${dist}">
+                            <include name="poi-src-*.zip" />
+                        </fileset>
+                    </resources>
+                </sort>
+            </last>
+        </pathconvert>
+
+        <echo message="Found source package at ${srcpackage}"/>
+        <unzip src="${srcpackage}" dest="${build}" failOnEmptyArchive="true"/>
+
+        <!-- look for name of sub-dir, do this dynamically as it changes with every (beta|rc)-release -->
+        <pathconvert property="dirversion">
+            <dirset dir="${build}">
+                <include name="*" />
+            </dirset>
+        </pathconvert>
+
+        <!-- finally call Ant on the extracted source to check if we can build the packages -->
+        <echo message="Building in temporary dir ${dirversion}/"/>
+        <ant dir="${dirversion}" target="jar" inheritAll="false" inheritRefs="false" useNativeBasedir="true"/>
+    </target>
+</project>
