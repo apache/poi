@@ -146,7 +146,7 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Date getJavaDate(double date, TimeZone tz) {
-       return getJavaDate(date, false, tz);
+       return getJavaDate(date, false, tz, false);
     }
     /**
      *  Given an Excel date with using 1900 date windowing, and
@@ -166,9 +166,9 @@ public class DateUtil {
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date) {
-        return getJavaDate(date, (TimeZone)null);
+        return getJavaDate(date, false, null, false);
     }
-    
+
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
@@ -185,7 +185,7 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz) {
-        return getJavaCalendar(date, use1904windowing, tz, false).getTime();
+        return getJavaDate(date, use1904windowing, tz, false);
     }
     
     /**
@@ -205,7 +205,8 @@ public class DateUtil {
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
     public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz, boolean roundSeconds) {
-        return getJavaCalendar(date, use1904windowing, tz, roundSeconds).getTime();
+        Calendar calendar = getJavaCalendar(date, use1904windowing, tz, roundSeconds);
+        return calendar == null ? null : calendar.getTime();
     }
     
     /**
@@ -228,9 +229,8 @@ public class DateUtil {
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date, boolean use1904windowing) {
-        return getJavaCalendar(date, use1904windowing, null, false).getTime();
+        return getJavaDate(date, use1904windowing, null, false);
     }
-
 
     public static void setCalendar(Calendar calendar, int wholeDays,
             int millisecondsInDay, boolean use1904windowing, boolean roundSeconds) {
