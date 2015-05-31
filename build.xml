@@ -359,6 +359,8 @@ under the License.
     - compile     Compile all files from main, ooxml and scratchpad
     - test        Run all unit tests from main, ooxml and scratchpad
     - jar         Produce jar files
+    - jar-src     Produce source-jar files
+    - assemble    Produce the zipped distribution files
     - site        Generate all documentation (Requires Apache Forrest)
     - dist        Create a distribution (Requires Apache Forrest)
         </echo>
@@ -1408,7 +1410,7 @@ under the License.
         </jar>
     </target>
 
-    <target name="jar-src" description="Sources for Maven">
+    <target name="jar-src" depends="compile-all, compile-version, -manifest" description="Sources for Maven">
         <jar destfile="${dist.dir}/${jar.name}-${version.id}-sources-${DSTAMP}.jar"
              manifest="build/poi-manifest.mf">
             <fileset dir="${main.src}"/>
