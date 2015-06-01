@@ -2738,4 +2738,24 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
         wb.close();
     }
+
+    @Test
+    public void test53109() throws IOException {
+        HSSFWorkbook wb = openSample("53109.xls");
+        
+        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        
+        wb.close();
+    }
+    
+    @Test
+    public void test53109a() throws IOException {
+        HSSFWorkbook wb = openSample("com.aida-tour.www_SPO_files_maldives%20august%20october.xls");
+        
+        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        
+        wb.close();
+    }
 }
