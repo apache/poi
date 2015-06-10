@@ -128,9 +128,10 @@ public final class HSLFFill {
                         };
                     }
                     case FILL_PICTURE: {
+                        final HSLFPictureData pd = getPictureData();
+                        if (pd == null) break;
+                        
                         return new TexturePaint() {
-                            final HSLFPictureData pd = getPictureData();
-                            
                             public InputStream getImageData() {
                                 return new ByteArrayInputStream(pd.getData());
                             }

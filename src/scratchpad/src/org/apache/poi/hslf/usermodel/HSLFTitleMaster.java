@@ -29,7 +29,7 @@ import org.apache.poi.hslf.record.SlideAtom;
  * @author Yegor Kozlov
  */
 public final class HSLFTitleMaster extends HSLFMasterSheet {
-    private final List<List<HSLFTextParagraph>> _runs = new ArrayList<List<HSLFTextParagraph>>();
+    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
 
     /**
      * Constructs a TitleMaster
@@ -38,14 +38,16 @@ public final class HSLFTitleMaster extends HSLFMasterSheet {
     public HSLFTitleMaster(org.apache.poi.hslf.record.Slide record, int sheetNo) {
         super(record, sheetNo);
 
-        _runs.addAll(HSLFTextParagraph.findTextParagraphs(getPPDrawing()));
+        for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
+            if (!_paragraphs.contains(l)) _paragraphs.add(l);
+        }
     }
 
     /**
      * Returns an array of all the TextRuns found
      */
     public List<List<HSLFTextParagraph>> getTextParagraphs() {
-        return _runs;
+        return _paragraphs;
     }
 
     /**

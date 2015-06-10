@@ -49,10 +49,10 @@ public final class TableDemo {
         HSLFSlide slide = ppt.createSlide();
 
         //six rows, two columns
-        Table table1 = new Table(6, 2);
+        HSLFTable table1 = new HSLFTable(6, 2);
         for (int i = 0; i < txt1.length; i++) {
             for (int j = 0; j < txt1[i].length; j++) {
-                TableCell cell = table1.getCell(i, j);
+                HSLFTableCell cell = table1.getCell(i, j);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontFamily("Arial");
                 rt.setFontSize(10);
@@ -88,10 +88,10 @@ public final class TableDemo {
         };
 
         //two rows, one column
-        Table table2 = new Table(2, 1);
+        HSLFTable table2 = new HSLFTable(2, 1);
         for (int i = 0; i < txt2.length; i++) {
             for (int j = 0; j < txt2[i].length; j++) {
-                TableCell cell = table2.getCell(i, j);
+                HSLFTableCell cell = table2.getCell(i, j);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontSize(10);
                 rt.setFontFamily("Arial");

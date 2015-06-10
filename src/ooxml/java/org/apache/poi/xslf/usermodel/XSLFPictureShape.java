@@ -169,6 +169,7 @@ public class XSLFPictureShape extends XSLFSimpleShape implements PictureShape {
         return id;
     }
 
+    @Override
     public Insets getClipping(){
         CTPicture ct = (CTPicture)getXmlObject();
         CTRelativeRect r = ct.getBlipFill().getSrcRect();

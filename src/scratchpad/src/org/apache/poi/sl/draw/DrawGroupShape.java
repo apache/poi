@@ -7,9 +7,9 @@ import java.awt.geom.Rectangle2D;
 import org.apache.poi.sl.usermodel.*;
 
 
-public class DrawShapeGroup<T extends ShapeGroup<? extends Shape>> extends DrawShape<T> implements Drawable {
+public class DrawGroupShape<T extends GroupShape<? extends Shape>> extends DrawShape<T> implements Drawable {
 
-    public DrawShapeGroup(T shape) {
+    public DrawGroupShape(T shape) {
         super(shape);
     }
     
@@ -31,6 +31,7 @@ public class DrawShapeGroup<T extends ShapeGroup<? extends Shape>> extends DrawS
         tx.translate(-interior.getX(), -interior.getY());
 
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        AffineTransform at2 = graphics.getTransform();
         
         for (Shape child : shape) {
             // remember the initial transform and restore it after we are done with the drawing
@@ -46,7 +47,7 @@ public class DrawShapeGroup<T extends ShapeGroup<? extends Shape>> extends DrawS
             graphics.setRenderingHint(Drawable.GRESTORE, true);
         }
 
+        graphics.setTransform(at2);
         graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, tx0);
-        
     }
 }

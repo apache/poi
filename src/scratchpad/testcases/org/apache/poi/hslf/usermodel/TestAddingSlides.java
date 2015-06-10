@@ -281,7 +281,7 @@ public final class TestAddingSlides extends TestCase {
         assertEquals(14, doc.getNotesSlideListWithText().getSlideAtomsSets().length);
 
         //remove all slides, corresponding notes should be removed too
-        for (int i = 0; i < slides.size(); i++) {
+        for (int i = slides.size(); i > 0; i--) {
             ppt.removeSlide(0);
         }
         assertEquals(0, ppt.getSlides().size());

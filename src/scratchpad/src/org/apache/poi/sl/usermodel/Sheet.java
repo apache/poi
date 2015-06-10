@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.Graphics2D;
+
 
 /**
  * Common parent of Slides, Notes and Masters
@@ -34,4 +36,11 @@ public interface Sheet<T extends Shape, SS extends SlideShow> extends ShapeConta
 	MasterSheet<T,SS> getMasterSheet();
 
 	Background getBackground();
+	
+	/**
+	 * Convenience method to draw a sheet to a graphics context
+	 *
+	 * @param graphics
+	 */
+	void draw(Graphics2D graphics);
 }

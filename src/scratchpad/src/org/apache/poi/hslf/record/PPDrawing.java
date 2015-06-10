@@ -97,7 +97,7 @@ public final class PPDrawing extends RecordAtom {
 		findEscherChildren(erf, contents, 8, len-8, escherChildren);
 		this.childRecords = escherChildren.toArray(new EscherRecord[escherChildren.size()]);
 
-		if (1 == this.childRecords.length && (short)0xf002 == this.childRecords[0].getRecordId() && this.childRecords[0] instanceof EscherContainerRecord) {
+		if (1 == this.childRecords.length && (short)RecordTypes.EscherDgContainer == this.childRecords[0].getRecordId() && this.childRecords[0] instanceof EscherContainerRecord) {
 			this.textboxWrappers = findInDgContainer((EscherContainerRecord) this.childRecords[0]);
 		} else {
 			// Find and EscherTextboxRecord's, and wrap them up
@@ -106,37 +106,30 @@ public final class PPDrawing extends RecordAtom {
 			this.textboxWrappers = textboxes.toArray(new EscherTextboxWrapper[textboxes.size()]);
 		}
 	}
-	private EscherTextboxWrapper[] findInDgContainer(final EscherContainerRecord escherContainerF002) {
+	private EscherTextboxWrapper[] findInDgContainer(final EscherContainerRecord dgContainer) {
 		final List<EscherTextboxWrapper> found = new LinkedList<EscherTextboxWrapper>();
-		final EscherContainerRecord SpgrContainer = findFirstEscherContainerRecordOfType((short)0xf003, escherContainerF002);
-		final EscherContainerRecord[] escherContainersF004 = findAllEscherContainerRecordOfType((short)0xf004, SpgrContainer);
-		for (EscherContainerRecord spContainer : escherContainersF004) {
+		final EscherContainerRecord spgrContainer = findFirstEscherContainerRecordOfType((short)RecordTypes.EscherSpgrContainer, dgContainer);
+		final EscherContainerRecord[] spContainers = findAllEscherContainerRecordOfType((short)RecordTypes.EscherSpContainer, spgrContainer);
+		for (EscherContainerRecord spContainer : spContainers) {
 			StyleTextProp9Atom nineAtom = findInSpContainer(spContainer);
-			EscherSpRecord sp = null;
-			final EscherRecord escherContainerF00A = findFirstEscherRecordOfType((short)0xf00a, spContainer);
-			if (null != escherContainerF00A) {
-				if (escherContainerF00A instanceof EscherSpRecord) {
-					sp = (EscherSpRecord) escherContainerF00A;
-				}
+			EscherSpRecord sp = (EscherSpRecord)findFirstEscherRecordOfType((short)RecordTypes.EscherSp, spContainer);
+			EscherTextboxRecord clientTextbox = (EscherTextboxRecord)findFirstEscherRecordOfType((short)RecordTypes.EscherClientTextbox, spContainer);
+			if (null == clientTextbox) { continue; }
+
+			EscherTextboxWrapper w = new EscherTextboxWrapper(clientTextbox);
+			w.setStyleTextProp9Atom(nineAtom);
+			if (null != sp) {
+			    w.setShapeId(sp.getShapeId());
 			}
-			final EscherRecord escherContainerF00D = findFirstEscherRecordOfType((short)0xf00d, spContainer);
-			if (null == escherContainerF00D) { continue; }
-			if (escherContainerF00D instanceof EscherTextboxRecord) {
-				EscherTextboxRecord tbr = (EscherTextboxRecord) escherContainerF00D;
-				EscherTextboxWrapper w = new EscherTextboxWrapper(tbr);
-				w.setStyleTextProp9Atom(nineAtom);
-				if (null != sp) {
-					w.setShapeId(sp.getShapeId());
-				}
-				found.add(w);
-			}
+			found.add(w);
 		}
 		return found.toArray(new EscherTextboxWrapper[found.size()]);
 	}
+	
 	private StyleTextProp9Atom findInSpContainer(final EscherContainerRecord spContainer) {
-		final EscherContainerRecord escherContainerF011 = findFirstEscherContainerRecordOfType((short)0xf011, spContainer);
-		if (null == escherContainerF011) { return null; }
-		final EscherContainerRecord escherContainer1388 = findFirstEscherContainerRecordOfType((short)0x1388, escherContainerF011);
+		EscherContainerRecord clientData = findFirstEscherContainerRecordOfType((short)RecordTypes.EscherClientData, spContainer);
+		if (null == clientData) { return null; }
+		final EscherContainerRecord escherContainer1388 = findFirstEscherContainerRecordOfType((short)0x1388, clientData);
 		if (null == escherContainer1388) { return null; }
 		final EscherContainerRecord escherContainer138A = findFirstEscherContainerRecordOfType((short)0x138A, escherContainer1388);
 		if (null == escherContainer138A) { return null; }

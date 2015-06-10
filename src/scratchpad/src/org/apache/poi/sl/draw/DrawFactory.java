@@ -69,8 +69,8 @@ public class DrawFactory {
             return getDrawable((FreeformShape<? extends TextParagraph<? extends TextRun>>)shape);
         } else if (shape instanceof TextShape) {
             return getDrawable((TextShape<? extends TextParagraph<? extends TextRun>>)shape);
-        } else if (shape instanceof ShapeGroup) {
-            return getDrawable((ShapeGroup<? extends Shape>)shape);
+        } else if (shape instanceof GroupShape) {
+            return getDrawable((GroupShape<? extends Shape>)shape);
         } else if (shape instanceof PictureShape) {
             return getDrawable((PictureShape)shape);
         } else if (shape instanceof Background) {
@@ -110,8 +110,8 @@ public class DrawFactory {
         return new DrawTextShape<T>(shape);
     }
 
-    public <T extends ShapeGroup<? extends Shape>> DrawShapeGroup<T> getDrawable(T shape) {
-        return new DrawShapeGroup<T>(shape);
+    public <T extends GroupShape<? extends Shape>> DrawGroupShape<T> getDrawable(T shape) {
+        return new DrawGroupShape<T>(shape);
     }
     
     public <T extends PictureShape> DrawPictureShape<T> getDrawable(T shape) {

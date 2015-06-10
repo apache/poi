@@ -92,7 +92,7 @@ public final class HSLFTextRun implements TextRun {
 	 * Change the text
 	 */
 	public void setText(String text) {
-	    _runText = text;
+	    _runText = HSLFTextParagraph.toInternalString(text);
 	}
 
 	// --------------- Internal helpers on rich text properties -------

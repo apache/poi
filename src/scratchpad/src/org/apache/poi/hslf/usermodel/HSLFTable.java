@@ -15,9 +15,10 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.model.Line;
 import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.LittleEndian;
@@ -31,7 +32,7 @@ import java.awt.*;
  *
  * @author Yegor Kozlov
  */
-public final class Table extends HSLFGroupShape {
+public final class HSLFTable extends HSLFGroupShape {
 
     protected static final int BORDER_TOP = 1;
     protected static final int BORDER_RIGHT = 2;
@@ -44,7 +45,7 @@ public final class Table extends HSLFGroupShape {
     protected static final int BORDERS_NONE = 8;
 
 
-    protected TableCell[][] cells;
+    protected HSLFTableCell[][] cells;
 
     /**
      * Create a new Table of the given number of rows and columns
@@ -52,23 +53,23 @@ public final class Table extends HSLFGroupShape {
      * @param numrows the number of rows
      * @param numcols the number of columns
      */
-    public Table(int numrows, int numcols) {
+    public HSLFTable(int numrows, int numcols) {
         super();
 
         if(numrows < 1) throw new IllegalArgumentException("The number of rows must be greater than 1");
         if(numcols < 1) throw new IllegalArgumentException("The number of columns must be greater than 1");
 
         int x=0, y=0, tblWidth=0, tblHeight=0;
-        cells = new TableCell[numrows][numcols];
+        cells = new HSLFTableCell[numrows][numcols];
         for (int i = 0; i < cells.length; i++) {
             x = 0;
             for (int j = 0; j < cells[i].length; j++) {
-                cells[i][j] = new TableCell(this);
-                Rectangle anchor = new Rectangle(x, y, TableCell.DEFAULT_WIDTH, TableCell.DEFAULT_HEIGHT);
+                cells[i][j] = new HSLFTableCell(this);
+                Rectangle anchor = new Rectangle(x, y, HSLFTableCell.DEFAULT_WIDTH, HSLFTableCell.DEFAULT_HEIGHT);
                 cells[i][j].setAnchor(anchor);
-                x += TableCell.DEFAULT_WIDTH;
+                x += HSLFTableCell.DEFAULT_WIDTH;
             }
-            y += TableCell.DEFAULT_HEIGHT;
+            y += HSLFTableCell.DEFAULT_HEIGHT;
         }
         tblWidth = x;
         tblHeight = y;
@@ -94,7 +95,7 @@ public final class Table extends HSLFGroupShape {
      * @param escherRecord <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent       the parent of the shape
      */
-    public Table(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
+    public HSLFTable(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent) {
         super(escherRecord, parent);
     }
 
@@ -105,7 +106,7 @@ public final class Table extends HSLFGroupShape {
      * @param col the column index (0-based)
      * @return the cell
      */
-    public TableCell getCell(int row, int col) {
+    public HSLFTableCell getCell(int row, int col) {
         return cells[row][col];
     }
 
@@ -124,13 +125,13 @@ public final class Table extends HSLFGroupShape {
         EscherOptRecord opt = (EscherOptRecord)lst.get(lst.size()-2);
         EscherArrayProperty p = opt.lookup(0x3A0); 
         for (int i = 0; i < cells.length; i++) {
-            TableCell cell = cells[i][0];
+            HSLFTableCell cell = cells[i][0];
             int rowHeight = cell.getAnchor().height*MASTER_DPI/POINT_DPI;
             byte[] val = new byte[4];
             LittleEndian.putInt(val, 0, rowHeight);
             p.setElement(i, val);
             for (int j = 0; j < cells[i].length; j++) {
-                TableCell c = cells[i][j];
+                HSLFTableCell c = cells[i][j];
                 addShape(c);
 
                 Line bt = c.getBorderTop();
@@ -177,12 +178,12 @@ public final class Table extends HSLFGroupShape {
                 maxrowlen = Math.max(maxrowlen, row.size());
             }
         }
-        cells = new TableCell[lst.size()][maxrowlen];
+        cells = new HSLFTableCell[lst.size()][maxrowlen];
         for (int i = 0; i < lst.size(); i++) {
             row = lst.get(i);
             for (int j = 0; j < row.size(); j++) {
                 HSLFTextShape tx = (HSLFTextShape)row.get(j);
-                cells[i][j] = new TableCell(tx.getSpContainer(), getParent());
+                cells[i][j] = new HSLFTableCell(tx.getSpContainer(), getParent());
                 cells[i][j].setSheet(tx.getSheet());
             }
         }
@@ -256,7 +257,7 @@ public final class Table extends HSLFGroupShape {
     public void setAllBorders(Line line){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
-                TableCell cell = cells[i][j];
+                HSLFTableCell cell = cells[i][j];
                 cell.setBorderTop(cloneBorder(line));
                 cell.setBorderLeft(cloneBorder(line));
                 if(j == cells[i].length - 1) cell.setBorderRight(cloneBorder(line));
@@ -273,7 +274,7 @@ public final class Table extends HSLFGroupShape {
     public void setOutsideBorders(Line line){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
-                TableCell cell = cells[i][j];
+                HSLFTableCell cell = cells[i][j];
 
                 if(j == 0) cell.setBorderLeft(cloneBorder(line));
                 if(j == cells[i].length - 1) cell.setBorderRight(cloneBorder(line));
@@ -300,7 +301,7 @@ public final class Table extends HSLFGroupShape {
     public void setInsideBorders(Line line){
         for (int i = 0; i < cells.length; i++) {
             for (int j = 0; j < cells[i].length; j++) {
-                TableCell cell = cells[i][j];
+                HSLFTableCell cell = cells[i][j];
 
                 if(j != cells[i].length - 1)
                     cell.setBorderRight(cloneBorder(line));

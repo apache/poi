@@ -22,6 +22,8 @@ import java.util.*;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -288,8 +290,11 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
         return _background;
     }
 
-    public void draw(Graphics2D graphics){
-
+    @Override
+    public void draw(Graphics2D graphics) {
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        Drawable draw = drawFact.getDrawable(this);
+        draw.draw(graphics);
     }
 
     /**

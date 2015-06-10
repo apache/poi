@@ -30,18 +30,35 @@ import javax.imageio.ImageIO;
 /**
  * For now this class renders only images supported by the javax.imageio.ImageIO
  * framework. Subclasses can override this class to support other formats, for
- * example, Use Apache batik to render WMF:
+ * example, use Apache Batik to render WMF, PICT can be rendered using Apple QuickTime API for Java:
  *
  * <pre>
  * <code>
  * public class MyImageRendener extends ImageRendener {
+ *     InputStream data;
  *
  *     public boolean drawImage(Graphics2D graphics,Rectangle2D anchor,Insets clip) {
  *         // draw image
+ *       DataInputStream is = new DataInputStream(data);
+ *       org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore wmfStore =
+ *               new org.apache.batik.transcoder.wmf.tosvg.WMFRecordStore();
+ *       try {
+ *           wmfStore.read(is);
+ *       } catch (IOException e){
+ *           return;
+ *       }
+ *
+ *       float scale = (float)anchor.width/wmfStore.getWidthPixels();
+ *
+ *       org.apache.batik.transcoder.wmf.tosvg.WMFPainter painter =
+ *               new org.apache.batik.transcoder.wmf.tosvg.WMFPainter(wmfStore, 0, 0, scale);
+ *       graphics.translate(anchor.x, anchor.y);
+ *       painter.paint(graphics);
  *     }
  *
  *     public void loadImage(InputStream data, String contentType) throws IOException {
  *         if ("image/wmf".equals(contentType)) {
+ *             this.data = data;
  *             // use Apache Batik to handle WMF
  *         } else {
  *             super.loadImage(data,contentType);
@@ -147,12 +164,14 @@ public class ImageRenderer {
         int iw = img.getWidth();
         int ih = img.getHeight();
 
+        
         double cw = (100000-clip.left-clip.right) / 100000.0;
         double ch = (100000-clip.top-clip.bottom) / 100000.0;
         double sx = anchor.getWidth()/(iw*cw);
         double sy = anchor.getHeight()/(ih*ch);
         double tx = anchor.getX()-(iw*sx*clip.left/100000.0);
         double ty = anchor.getY()-(ih*sy*clip.top/100000.0);
+
         AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
 
         Shape clipOld = graphics.getClip();

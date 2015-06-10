@@ -17,31 +17,22 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 
-import org.apache.poi.hslf.blip.BitmapPainter;
-import org.apache.poi.hslf.blip.DIB;
-import org.apache.poi.hslf.blip.EMF;
-import org.apache.poi.hslf.blip.ImagePainter;
-import org.apache.poi.hslf.blip.JPEG;
-import org.apache.poi.hslf.blip.PICT;
-import org.apache.poi.hslf.blip.PNG;
-import org.apache.poi.hslf.blip.WMF;
+import org.apache.poi.hslf.blip.*;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.util.*;
 
 /**
  * A class that represents image data contained in a slide show.
  *
  *  @author Yegor Kozlov
  */
-public abstract class HSLFPictureData {
+public abstract class HSLFPictureData implements PictureData {
 
     protected POILogger logger = POILogFactory.getLogger(this.getClass());
 
@@ -90,13 +81,6 @@ public abstract class HSLFPictureData {
      * Blip signature.
      */
     protected abstract int getSignature();
-
-    protected static final ImagePainter[] painters = new ImagePainter[8];
-    static {
-        HSLFPictureData.setImagePainter(HSLFPictureShape.PNG, new BitmapPainter());
-        HSLFPictureData.setImagePainter(HSLFPictureShape.JPEG, new BitmapPainter());
-        HSLFPictureData.setImagePainter(HSLFPictureShape.DIB, new BitmapPainter());
-    }
 
     /**
      * Returns the raw binary data of this Picture excluding the first 8 bytes
@@ -233,31 +217,4 @@ public abstract class HSLFPictureData {
     public int getSize(){
         return getData().length;
     }
-
-    public void draw(Graphics2D graphics, HSLFPictureShape parent){
-        ImagePainter painter = painters[getType()];
-        if(painter != null) painter.paint(graphics, this, parent);
-        else logger.log(POILogger.WARN, "Rendering is not supported: " + getClass().getName());
-    }
-
-    /**
-     * Register ImagePainter for the specified image type
-     *
-     * @param type  image type, must be one of the static constants defined in the <code>Picture<code> class.
-     * @param painter
-     */
-    public static void setImagePainter(int type, ImagePainter painter){
-        painters[type] = painter;
-    }
-
-    /**
-     * Return ImagePainter for the specified image type
-     *
-     * @param type blip type, must be one of the static constants defined in the <code>Picture<code> class.
-     * @return ImagePainter for the specified image type
-     */
-    public static ImagePainter getImagePainter(int type){
-        return painters[type];
-    }
-
 }

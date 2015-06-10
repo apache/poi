@@ -165,14 +165,12 @@ public abstract class HSLFShape implements Shape {
     public Rectangle2D getAnchor2D(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         int flags = spRecord.getFlags();
-        Rectangle2D anchor=null;
+        Rectangle2D anchor;
         if ((flags & EscherSpRecord.FLAG_CHILD) != 0){
             EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
-            anchor = new java.awt.Rectangle();
             if(rec == null){
                 logger.log(POILogger.WARN, "EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
                 EscherClientAnchorRecord clrec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
-                anchor = new java.awt.Rectangle();
                 anchor = new Rectangle2D.Float(
                     (float)clrec.getCol1()*POINT_DPI/MASTER_DPI,
                     (float)clrec.getFlag()*POINT_DPI/MASTER_DPI,
@@ -187,10 +185,8 @@ public abstract class HSLFShape implements Shape {
                     (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
                 );
             }
-        }
-        else {
+        } else {
             EscherClientAnchorRecord rec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
-            anchor = new java.awt.Rectangle();
             anchor = new Rectangle2D.Float(
                 (float)rec.getCol1()*POINT_DPI/MASTER_DPI,
                 (float)rec.getFlag()*POINT_DPI/MASTER_DPI,
@@ -199,10 +195,6 @@ public abstract class HSLFShape implements Shape {
             );
         }
         return anchor;
-    }
-
-    public Rectangle2D getLogicalAnchor2D(){
-        return getAnchor2D();
     }
 
     /**
@@ -262,8 +254,9 @@ public abstract class HSLFShape implements Shape {
      * @return escher property or <code>null</code> if not found.
      */
      public static <T extends EscherProperty> T getEscherProperty(EscherOptRecord opt, int propId){
-        return opt.lookup(propId);
-    }
+         if (opt == null) return null;
+         return opt.lookup(propId);
+     }
 
     /**
      * Set an escher property for this shape.
@@ -475,15 +468,6 @@ public abstract class HSLFShape implements Shape {
         logger.log(POILogger.INFO, "Rendering " + getShapeName());
     }
 
-    /**
-     * Return shape outline as a java.awt.Shape object
-     *
-     * @return the shape outline
-     */
-    public java.awt.Shape getOutline(){
-        return getLogicalAnchor2D();
-    }
-    
     public EscherOptRecord getEscherOptRecord() {
         EscherOptRecord opt = getEscherChild(EscherOptRecord.RECORD_ID);
         if (opt == null) {
@@ -516,8 +500,7 @@ public abstract class HSLFShape implements Shape {
 
     public double getRotation(){
         int rot = getEscherProperty(EscherProperties.TRANSFORM__ROTATION);
-        double angle = Units.fixedPointToDouble(rot) % 360.0;
-        return angle;
+        return Units.fixedPointToDouble(rot);
     }
     
     public void setRotation(double theta){

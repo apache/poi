@@ -285,6 +285,7 @@ public class TextPropCollection {
      * Clones the given text properties
      */
 	public void copy(TextPropCollection other) {
+	    if (this == other) return;
         this.charactersCovered = other.charactersCovered;
         this.indentLevel = other.indentLevel;
         this.maskSpecial = other.maskSpecial;
