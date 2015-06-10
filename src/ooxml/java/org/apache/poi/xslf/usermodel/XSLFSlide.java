@@ -21,7 +21,6 @@ import java.io.IOException;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;

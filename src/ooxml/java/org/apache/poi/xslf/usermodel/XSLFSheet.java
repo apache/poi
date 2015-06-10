@@ -481,6 +481,7 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      *
      * @param graphics
      */
+    @Override
     public void draw(Graphics2D graphics){
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
         Drawable draw = drawFact.getDrawable(this);

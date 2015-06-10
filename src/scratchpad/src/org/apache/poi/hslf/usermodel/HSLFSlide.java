@@ -72,7 +72,9 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 		}
 
 		// Grab text from slide's PPDrawing
-		_paragraphs.addAll(HSLFTextParagraph.findTextParagraphs(getPPDrawing()));
+		for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
+		    if (!_paragraphs.contains(l)) _paragraphs.add(l);
+		}
 
         for(List<HSLFTextParagraph> ltp : _paragraphs) {
             for (HSLFTextParagraph tp : ltp) {

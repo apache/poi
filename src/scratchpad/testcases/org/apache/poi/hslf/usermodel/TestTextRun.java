@@ -19,10 +19,12 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
+import java.awt.Color;
+import java.io.*;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,7 +101,7 @@ public final class TestTextRun {
 
 		// Ensure trailing \n's are NOT stripped, it is legal to set a text with a trailing '\r'
 		tr.setText(changeTo + "\n");
-		assertEquals(changeTo + "\n", tr.getRawText());
+		assertEquals(changeTo + "\r", tr.getRawText());
 	}
 
 	/**
@@ -121,7 +123,6 @@ public final class TestTextRun {
 		    else if (r instanceof TextBytesAtom) tba = (TextBytesAtom)r;
 		    else if (r instanceof TextCharsAtom) tca = (TextCharsAtom)r;
 		}
-		
 
 		// Bytes -> Bytes
 		assertNull(tca);
@@ -197,18 +198,13 @@ public final class TestTextRun {
 		List<HSLFTextParagraph> trB = textParass.get(1);
 
 		assertEquals(1, trA.size());
-		assertEquals(1, trB.size());
+		assertEquals(2, trB.size());
 
 		HSLFTextRun rtrA = trA.get(0).getTextRuns().get(0);
 		HSLFTextRun rtrB = trB.get(0).getTextRuns().get(0);
 
 		assertEquals(HSLFTextParagraph.getRawText(trA), rtrA.getRawText());
-		assertEquals(HSLFTextParagraph.getRawText(trB), rtrB.getRawText());
-
-//		assertNull(rtrA._getRawCharacterStyle());
-//		assertNull(rtrA._getRawParagraphStyle());
-//		assertNull(rtrB._getRawCharacterStyle());
-//		assertNull(rtrB._getRawParagraphStyle());
+		assertEquals(HSLFTextParagraph.getRawText(trB.subList(0, 1)), rtrB.getRawText());
 	}
 
 	/**
@@ -284,39 +280,39 @@ public final class TestTextRun {
 		HSLFTextRun rtrB = trB.get(0).getTextRuns().get(0);
 		HSLFTextRun rtrC = trB.get(1).getTextRuns().get(0);
 		HSLFTextRun rtrD = trB.get(2).getTextRuns().get(0);
-//		TextPropCollection tpBP = rtrB._getRawParagraphStyle();
-//		TextPropCollection tpBC = rtrB._getRawCharacterStyle();
-//		TextPropCollection tpCP = rtrC._getRawParagraphStyle();
-//		TextPropCollection tpCC = rtrC._getRawCharacterStyle();
-//		TextPropCollection tpDP = rtrD._getRawParagraphStyle();
-//		TextPropCollection tpDC = rtrD._getRawCharacterStyle();
+		TextPropCollection tpBP = rtrB.getTextParagraph().getParagraphStyle();
+		TextPropCollection tpBC = rtrB.getCharacterStyle();
+		TextPropCollection tpCP = rtrC.getTextParagraph().getParagraphStyle();
+		TextPropCollection tpCC = rtrC.getCharacterStyle();
+		TextPropCollection tpDP = rtrD.getTextParagraph().getParagraphStyle();
+		TextPropCollection tpDC = rtrD.getCharacterStyle();
 
 //		assertEquals(trB.getRawText().substring(0, 30), rtrB.getRawText());
-//		assertNotNull(tpBP);
-//		assertNotNull(tpBC);
-//		assertNotNull(tpCP);
-//		assertNotNull(tpCC);
-//		assertNotNull(tpDP);
-//		assertNotNull(tpDC);
-//		assertTrue(tpBP.equals(tpCP));
-//		assertTrue(tpBP.equals(tpDP));
-//		assertTrue(tpCP.equals(tpDP));
-//		assertFalse(tpBC.equals(tpCC));
-//		assertFalse(tpBC.equals(tpDC));
-//		assertFalse(tpCC.equals(tpDC));
+		assertNotNull(tpBP);
+		assertNotNull(tpBC);
+		assertNotNull(tpCP);
+		assertNotNull(tpCC);
+		assertNotNull(tpDP);
+		assertNotNull(tpDC);
+		assertEquals(tpBP,tpCP);
+		assertEquals(tpBP,tpDP);
+		assertEquals(tpCP,tpDP);
+		assertNotEquals(tpBC,tpCC);
+		assertNotEquals(tpBC,tpDC);
+		assertNotEquals(tpCC,tpDC);
 
 		// Change text via normal
-//		trB.setText("Test Foo Test");
+		HSLFTextParagraph.setText(trB, "Test Foo Test");
 
 		// Ensure now have first style
-//		assertEquals(1, trB.getTextRuns().length);
-//		rtrB = trB.getTextRuns().get(0);
-//		assertEquals("Test Foo Test", trB.getRawText());
-//		assertEquals("Test Foo Test", rtrB.getRawText());
-//		assertNotNull(rtrB._getRawCharacterStyle());
-//		assertNotNull(rtrB._getRawParagraphStyle());
-//		assertEquals( tpBP, rtrB._getRawParagraphStyle() );
-//		assertEquals( tpBC, rtrB._getRawCharacterStyle() );
+		assertEquals(1, trB.get(0).getTextRuns().size());
+		rtrB = trB.get(0).getTextRuns().get(0);
+		assertEquals("Test Foo Test", HSLFTextParagraph.getRawText(trB));
+		assertEquals("Test Foo Test", rtrB.getRawText());
+		assertNotNull(rtrB.getCharacterStyle());
+		assertNotNull(rtrB.getTextParagraph().getParagraphStyle());
+		assertEquals( tpBP, rtrB.getTextParagraph().getParagraphStyle() );
+		assertEquals( tpBC, rtrB.getCharacterStyle() );
 	}
 
 	/**
@@ -328,21 +324,21 @@ public final class TestTextRun {
 		HSLFSlide slideOne = ss.getSlides().get(0);
 		List<List<HSLFTextParagraph>> textRuns = slideOne.getTextParagraphs();
 		List<HSLFTextParagraph> trB = textRuns.get(1);
-//		assertEquals(1, trB.getTextRuns().length);
-//
-//		HSLFTextRun rtrB = trB.getTextRuns().get(0);
-//		assertEquals(trB.getRawText(), rtrB.getRawText());
-//		assertNull(rtrB._getRawCharacterStyle());
-//		assertNull(rtrB._getRawParagraphStyle());
+		assertEquals(1, trB.get(0).getTextRuns().size());
+
+		HSLFTextRun rtrB = trB.get(0).getTextRuns().get(0);
+		assertEquals(HSLFTextParagraph.getRawText(trB.subList(0, 1)), rtrB.getRawText());
+		assertNotNull(rtrB.getCharacterStyle());
+		assertNotNull(rtrB.getTextParagraph().getParagraphStyle());
 
 		// Change text via rich
-//		rtrB.setText("Test Test Test");
-//		assertEquals("Test Test Test", trB.getRawText());
-//		assertEquals("Test Test Test", rtrB.getRawText());
+		rtrB.setText("Test Test Test");
+		assertEquals("Test Test Test", HSLFTextParagraph.getRawText(trB.subList(0, 1)));
+		assertEquals("Test Test Test", rtrB.getRawText());
 
 		// Will now have dummy props
-//		assertNotNull(rtrB._getRawCharacterStyle());
-//		assertNotNull(rtrB._getRawParagraphStyle());
+        assertNotNull(rtrB.getCharacterStyle());
+        assertNotNull(rtrB.getTextParagraph().getParagraphStyle());
 	}
 
 	/**
@@ -357,31 +353,31 @@ public final class TestTextRun {
 		assertEquals(3, trB.size());
 
 		// We start with 3 text runs, each with their own set of styles,
-		//  but all sharing the same paragraph styles
+		// but all sharing the same paragraph styles
 		HSLFTextRun rtrB = trB.get(0).getTextRuns().get(0);
 		HSLFTextRun rtrC = trB.get(1).getTextRuns().get(0);
 		HSLFTextRun rtrD = trB.get(2).getTextRuns().get(0);
-//		TextPropCollection tpBP = rtrB._getRawParagraphStyle();
-//		TextPropCollection tpBC = rtrB._getRawCharacterStyle();
-//		TextPropCollection tpCP = rtrC._getRawParagraphStyle();
-//		TextPropCollection tpCC = rtrC._getRawCharacterStyle();
-//		TextPropCollection tpDP = rtrD._getRawParagraphStyle();
-//		TextPropCollection tpDC = rtrD._getRawCharacterStyle();
+		TextPropCollection tpBP = rtrB.getTextParagraph().getParagraphStyle();
+		TextPropCollection tpBC = rtrB.getCharacterStyle();
+		TextPropCollection tpCP = rtrC.getTextParagraph().getParagraphStyle();
+		TextPropCollection tpCC = rtrC.getCharacterStyle();
+		TextPropCollection tpDP = rtrD.getTextParagraph().getParagraphStyle();
+		TextPropCollection tpDC = rtrD.getCharacterStyle();
 
 		// Check text and stylings
-//		assertEquals(trB.getRawText().substring(0, 30), rtrB.getRawText());
-//		assertNotNull(tpBP);
-//		assertNotNull(tpBC);
-//		assertNotNull(tpCP);
-//		assertNotNull(tpCC);
-//		assertNotNull(tpDP);
-//		assertNotNull(tpDC);
-//		assertTrue(tpBP.equals(tpCP));
-//		assertTrue(tpBP.equals(tpDP));
-//		assertTrue(tpCP.equals(tpDP));
-//		assertFalse(tpBC.equals(tpCC));
-//		assertFalse(tpBC.equals(tpDC));
-//		assertFalse(tpCC.equals(tpDC));
+		assertEquals(HSLFTextParagraph.getRawText(trB).substring(0, 30), rtrB.getRawText());
+		assertNotNull(tpBP);
+		assertNotNull(tpBC);
+		assertNotNull(tpCP);
+		assertNotNull(tpCC);
+		assertNotNull(tpDP);
+		assertNotNull(tpDC);
+		assertEquals(tpBP, tpCP);
+		assertEquals(tpBP, tpDP);
+		assertEquals(tpCP, tpDP);
+		assertNotEquals(tpBC, tpCC);
+		assertNotEquals(tpBC, tpDC);
+		assertNotEquals(tpCC, tpDC);
 
 		// Check text in the rich runs
 		assertEquals("This is the subtitle, in bold\r", rtrB.getRawText());
@@ -394,32 +390,32 @@ public final class TestTextRun {
 		rtrB.setText(newBText);
 		rtrC.setText(newCText);
 		rtrD.setText(newDText);
-		assertEquals(newBText, rtrB.getRawText());
-		assertEquals(newCText, rtrC.getRawText());
-		assertEquals(newDText, rtrD.getRawText());
+		HSLFTextParagraph.storeText(trB);
 
-//		assertEquals(newBText + newCText + newDText, trB.getRawText());
+		assertEquals(newBText.replace('\n','\r'), rtrB.getRawText());
+		assertEquals(newCText.replace('\n','\r'), rtrC.getRawText());
+		assertEquals(newDText.replace('\n','\r'), rtrD.getRawText());
+
+		assertEquals(newBText.replace('\n','\r') + newCText.replace('\n','\r') + newDText.replace('\n','\r'), HSLFTextParagraph.getRawText(trB));
 
 		// The styles should have been updated for the new sizes
-//		assertEquals(newBText.length(), tpBC.getCharactersCovered());
-//		assertEquals(newCText.length(), tpCC.getCharactersCovered());
-//		assertEquals(newDText.length()+1, tpDC.getCharactersCovered()); // Last one is always one larger
+		assertEquals(newBText.length(), tpBC.getCharactersCovered());
+		assertEquals(newCText.length(), tpCC.getCharactersCovered());
+		assertEquals(newDText.length()+1, tpDC.getCharactersCovered()); // Last one is always one larger
 
-//		assertEquals(
-//				newBText.length() + newCText.length() + newDText.length(),
-//				tpBP.getCharactersCovered()
-//		);
-
-		// Paragraph style should be sum of text length
-//		assertEquals(newBText.length() + newCText.length() + newDText.length(), tpBP.getCharactersCovered());
+        // Paragraph style should be sum of text length
+		assertEquals(
+			newBText.length() + newCText.length() + newDText.length() +1,
+			tpBP.getCharactersCovered() + tpCP.getCharactersCovered() + tpDP.getCharactersCovered()
+		);
 
 		// Check stylings still as expected
-//		TextPropCollection ntpBC = rtrB._getRawCharacterStyle();
-//		TextPropCollection ntpCC = rtrC._getRawCharacterStyle();
-//		TextPropCollection ntpDC = rtrD._getRawCharacterStyle();
-//		assertEquals(tpBC.getTextPropList(), ntpBC.getTextPropList());
-//		assertEquals(tpCC.getTextPropList(), ntpCC.getTextPropList());
-//		assertEquals(tpDC.getTextPropList(), ntpDC.getTextPropList());
+		TextPropCollection ntpBC = rtrB.getCharacterStyle();
+		TextPropCollection ntpCC = rtrC.getCharacterStyle();
+		TextPropCollection ntpDC = rtrD.getCharacterStyle();
+		assertEquals(tpBC.getTextPropList(), ntpBC.getTextPropList());
+		assertEquals(tpCC.getTextPropList(), ntpCC.getTextPropList());
+		assertEquals(tpDC.getTextPropList(), ntpDC.getTextPropList());
 	}
 
 
@@ -467,82 +463,86 @@ public final class TestTextRun {
 		assertEquals(0, slide.getTextParagraphs().size());
 
 		HSLFTextBox shape1 = new HSLFTextBox();
-//		HSLFTextParagraph run1 = shape1.getTextParagraphs();
-//		assertSame(run1, shape1.createTextRun());
-//		run1.setText("Text 1");
+		List<HSLFTextParagraph> run1 = shape1.getTextParagraphs();
+		shape1.setText("Text 1");
 		slide.addShape(shape1);
 
 		//The array of Slide's text runs must be updated when new text shapes are added.
-//		HSLFTextParagraph[] runs = slide.getTextParagraphs();
-//		assertNotNull(runs);
-//		assertSame(run1, runs.get(0));
-//
-//		HSLFTextBox shape2 = new HSLFTextBox();
-//		HSLFTextParagraph run2 = shape2.getTextParagraphs();
-//		assertSame(run2, shape2.createTextRun());
-//		run2.setText("Text 2");
-//		slide.addShape(shape2);
-//
-//		runs = slide.getTextParagraphs();
-//		assertEquals(2, runs.length);
-//
-//		assertSame(run1, runs.get(0));
-//		assertSame(run2, runs.get(1));
-//
-//		//as getShapes()
-//		HSLFShape[] sh = slide.getShapes();
-//		assertEquals(2, sh.length);
-//		assertTrue(sh.get(0) instanceof HSLFTextBox);
-//		HSLFTextBox box1 = (HSLFTextBox)sh.get(0);
-//		assertSame(run1, box1.getTextParagraphs());
-//		HSLFTextBox box2 = (HSLFTextBox)sh.get(1);
-//		assertSame(run2, box2.getTextParagraphs());
-//
-//		//test Table - a complex group of shapes containing text objects
-//		HSLFSlide slide2 = ppt.createSlide();
-//		assertNull(slide2.getTextParagraphs());
-//		Table table = new Table(2, 2);
-//		slide2.addShape(table);
-//		runs = slide2.getTextParagraphs();
-//		assertNotNull(runs);
-//		assertEquals(4, runs.length);
+		List<List<HSLFTextParagraph>> runs = slide.getTextParagraphs();
+		assertNotNull(runs);
+		assertSame(run1, runs.get(0));
+
+		HSLFTextBox shape2 = new HSLFTextBox();
+		List<HSLFTextParagraph> run2 = shape2.getTextParagraphs();
+		shape2.setText("Text 2");
+		slide.addShape(shape2);
+
+		runs = slide.getTextParagraphs();
+		assertEquals(2, runs.size());
+
+		assertSame(run1, runs.get(0));
+		assertSame(run2, runs.get(1));
+
+		// as getShapes()
+		List<HSLFShape> sh = slide.getShapes();
+		assertEquals(2, sh.size());
+		assertTrue(sh.get(0) instanceof HSLFTextBox);
+		HSLFTextBox box1 = (HSLFTextBox)sh.get(0);
+		assertSame(run1, box1.getTextParagraphs());
+		HSLFTextBox box2 = (HSLFTextBox)sh.get(1);
+		assertSame(run2, box2.getTextParagraphs());
+
+		// test Table - a complex group of shapes containing text objects
+		HSLFSlide slide2 = ppt.createSlide();
+		assertTrue(slide2.getTextParagraphs().isEmpty());
+		HSLFTable table = new HSLFTable(2, 2);
+		slide2.addShape(table);
+		runs = slide2.getTextParagraphs();
+		assertNotNull(runs);
+		assertEquals(4, runs.size());
 	}
 
 	@Test
 	public void test48916() throws IOException {
-//        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
-//        for(HSLFSlide slide : ppt.getSlides()){
-//            for(HSLFShape sh : slide.getShapes()){
-//                if(sh instanceof HSLFTextShape){
-//                    HSLFTextShape tx = (HSLFTextShape)sh;
-//                    HSLFTextParagraph run = tx.getTextParagraphs();
-//                    //verify that records cached in  TextRun and EscherTextboxWrapper are the same
-//                    Record[] runChildren = run.getRecords();
-//                    Record[] txboxChildren = tx.getEscherTextboxWrapper().getChildRecords();
-//                    assertEquals(runChildren.length, txboxChildren.length);
-//                    for(int i=0; i < txboxChildren.length; i++){
-//                        assertSame(txboxChildren.get(i), runChildren.get(i));
-//                    }
-//                    //caused NPE prior to fix of Bugzilla #48916 
-//                    run.getTextRuns().get(0).setBold(true);
-//                    run.getTextRuns().get(0).setFontColor(Color.RED);
-//                }
-//            }
-//        }
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        ppt.write(out);
-//        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-//        for(HSLFSlide slide : ppt.getSlides()){
-//            for(HSLFShape sh : slide.getShapes()){
-//                if(sh instanceof HSLFTextShape){
-//                    HSLFTextShape tx = (HSLFTextShape)sh;
-//                    HSLFTextParagraph run = tx.getTextParagraphs();
-//                    HSLFTextRun rt = run.getTextRuns().get(0);
-//                    assertTrue(rt.isBold());
-//                    assertEquals(rt.getFontColor(), Color.RED);
-//                }
-//            }
-//        }
+        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("SampleShow.ppt"));
+        List<HSLFSlide> slides = ppt.getSlides();
+        for(HSLFSlide slide : slides){
+            for(HSLFShape sh : slide.getShapes()){
+                if (!(sh instanceof HSLFTextShape)) continue;
+                HSLFTextShape tx = (HSLFTextShape)sh;
+                List<HSLFTextParagraph> paras = tx.getTextParagraphs();
+                //verify that records cached in  TextRun and EscherTextboxWrapper are the same
+                Record[] runChildren = paras.get(0).getRecords();
+                Record[] txboxChildren = tx.getEscherTextboxWrapper().getChildRecords();
+                assertEquals(runChildren.length, txboxChildren.length);
+                for(int i=0; i < txboxChildren.length; i++){
+                    assertSame(txboxChildren[i], runChildren[i]);
+                }
+                // caused NPE prior to fix of Bugzilla #48916
+                for (HSLFTextParagraph p : paras) {
+                    for (HSLFTextRun rt : p.getTextRuns()) {
+                        rt.setBold(true);
+                        rt.setFontColor(Color.RED);
+                    }
+                }
+                tx.storeText();
+            }
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ppt.write(out);
+        
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
+        for(HSLFSlide slide : ppt.getSlides()){
+            for(HSLFShape sh : slide.getShapes()){
+                if(sh instanceof HSLFTextShape){
+                    HSLFTextShape tx = (HSLFTextShape)sh;
+                    List<HSLFTextParagraph> run = tx.getTextParagraphs();
+                    HSLFTextRun rt = run.get(0).getTextRuns().get(0);
+                    assertTrue(rt.isBold());
+                    assertEquals(rt.getFontColor(), Color.RED);
+                }
+            }
+        }
 
     }
 

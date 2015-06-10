@@ -146,10 +146,10 @@ public final class ApacheconEU08 {
             {"Note"},
             {"This presentation was created programmatically using POI HSLF"}
         };
-        Table table1 = new Table(2, 1);
+        HSLFTable table1 = new HSLFTable(2, 1);
         for (int i = 0; i < txt1.length; i++) {
             for (int j = 0; j < txt1[i].length; j++) {
-                TableCell cell = table1.getCell(i, j);
+                HSLFTableCell cell = table1.getCell(i, j);
                 cell.setText(txt1[i][j]);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontSize(10);

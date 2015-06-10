@@ -93,8 +93,6 @@ public final class SlideListWithText extends RecordContainer {
 				}
 
 				int clen = endPos - i - 1;
-				boolean emptySet = false;
-				if(clen == 0) { emptySet = true; }
 
 				// Create a SlideAtomsSets, not caring if they're empty
 				//if(emptySet) { continue; }
@@ -149,7 +147,7 @@ public final class SlideListWithText extends RecordContainer {
 	}
 
 	public void setInstance(int inst){
-		LittleEndian.putShort(_header, (short)((inst << 4) | 0xF));
+		LittleEndian.putShort(_header, 0, (short)((inst << 4) | 0xF));
 	}
 
 	/**

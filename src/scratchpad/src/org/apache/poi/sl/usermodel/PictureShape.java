@@ -20,9 +20,17 @@ package org.apache.poi.sl.usermodel;
 import java.awt.Insets;
 
 public interface PictureShape extends SimpleShape {
-	PictureData getPictureData();
+    /**
+     * Returns the picture data for this picture.
+     *
+     * @return the picture data for this picture.
+     */
+    PictureData getPictureData();
 
 	/**
+	 * Returns the clipping values as percent ratio relatively to the image size.
+	 * The clipping are returned as insets converted/scaled to 100000 (=100%).
+	 * 
 	 * @return the clipping rectangle, which is given in percent in relation to the image width/height
 	 */
 	Insets getClipping();

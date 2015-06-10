@@ -28,8 +28,7 @@ import javax.imageio.ImageIO;
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.blip.Bitmap;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.util.*;
 
 
@@ -38,7 +37,7 @@ import org.apache.poi.util.*;
  *
  * @author Yegor Kozlov
  */
-public class HSLFPictureShape extends HSLFSimpleShape {
+public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape {
 
     /**
     *  Windows Enhanced Metafile (EMF)
@@ -165,11 +164,7 @@ public class HSLFPictureShape extends HSLFSimpleShape {
         }
     }
 
-    /**
-     * Returns the picture data for this picture.
-     *
-     * @return the picture data for this picture.
-     */
+    @Override
     public HSLFPictureData getPictureData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
         HSLFPictureData[] pict = ppt.getPictureData();
@@ -247,13 +242,11 @@ public class HSLFPictureShape extends HSLFSimpleShape {
     }
 
     /**
-     * Returns the clipping values as percent ratio relatively to the image size.
      * The anchor specified by {@link #getLogicalAnchor2D()} is the displayed size,
      * i.e. the size of the already clipped image
-     * 
-     * @return the clipping as insets converted/scaled to 100000 (=100%) 
      */
-    public Insets getBlipClip() {
+    @Override
+    public Insets getClipping() {
         EscherOptRecord opt = getEscherOptRecord();
         
         double top    = getFractProp(opt, EscherProperties.BLIP__CROPFROMTOP);

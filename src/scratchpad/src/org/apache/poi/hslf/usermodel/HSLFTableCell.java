@@ -15,15 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
 
 import java.awt.Rectangle;
 
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.hslf.usermodel.HSLFShape;
-import org.apache.poi.hslf.usermodel.HSLFTextBox;
+import org.apache.poi.hslf.model.Line;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 
@@ -32,7 +31,7 @@ import org.apache.poi.sl.usermodel.ShapeType;
  *
  * @author Yegor Kozlov
  */
-public final class TableCell extends HSLFTextBox {
+public final class HSLFTableCell extends HSLFTextBox {
     protected static final int DEFAULT_WIDTH = 100;
     protected static final int DEFAULT_HEIGHT = 40;
 
@@ -47,7 +46,7 @@ public final class TableCell extends HSLFTextBox {
      * @param escherRecord       {@link EscherSpContainer} container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected TableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
+   protected HSLFTableCell(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape> parent){
         super(escherRecord, parent);
     }
 
@@ -57,7 +56,7 @@ public final class TableCell extends HSLFTextBox {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public TableCell(ShapeContainer<HSLFShape> parent){
+    public HSLFTableCell(ShapeContainer<HSLFShape> parent){
         super(parent);
 
         setShapeType(ShapeType.RECT);
@@ -81,25 +80,25 @@ public final class TableCell extends HSLFTextBox {
         Rectangle cellAnchor = getAnchor();
         Rectangle lineAnchor = new Rectangle();
         switch(type){
-            case Table.BORDER_TOP:
+            case HSLFTable.BORDER_TOP:
                 lineAnchor.x = cellAnchor.x;
                 lineAnchor.y = cellAnchor.y;
                 lineAnchor.width = cellAnchor.width;
                 lineAnchor.height = 0;
                 break;
-            case Table.BORDER_RIGHT:
+            case HSLFTable.BORDER_RIGHT:
                 lineAnchor.x = cellAnchor.x + cellAnchor.width;
                 lineAnchor.y = cellAnchor.y;
                 lineAnchor.width = 0;
                 lineAnchor.height = cellAnchor.height;
                 break;
-            case Table.BORDER_BOTTOM:
+            case HSLFTable.BORDER_BOTTOM:
                 lineAnchor.x = cellAnchor.x;
                 lineAnchor.y = cellAnchor.y + cellAnchor.height;
                 lineAnchor.width = cellAnchor.width;
                 lineAnchor.height = 0;
                 break;
-            case Table.BORDER_LEFT:
+            case HSLFTable.BORDER_LEFT:
                 lineAnchor.x = cellAnchor.x;
                 lineAnchor.y = cellAnchor.y;
                 lineAnchor.width = 0;
@@ -116,7 +115,7 @@ public final class TableCell extends HSLFTextBox {
     }
 
     public void setBorderLeft(Line line) {
-        if(line != null) anchorBorder(Table.BORDER_LEFT, line);
+        if(line != null) anchorBorder(HSLFTable.BORDER_LEFT, line);
         this.borderLeft = line;
     }
 
@@ -125,7 +124,7 @@ public final class TableCell extends HSLFTextBox {
     }
 
     public void setBorderRight(Line line) {
-        if(line != null) anchorBorder(Table.BORDER_RIGHT, line);
+        if(line != null) anchorBorder(HSLFTable.BORDER_RIGHT, line);
         this.borderRight = line;
     }
 
@@ -134,7 +133,7 @@ public final class TableCell extends HSLFTextBox {
     }
 
     public void setBorderTop(Line line) {
-        if(line != null) anchorBorder(Table.BORDER_TOP, line);
+        if(line != null) anchorBorder(HSLFTable.BORDER_TOP, line);
         this.borderTop = line;
     }
 
@@ -143,16 +142,16 @@ public final class TableCell extends HSLFTextBox {
     }
 
     public void setBorderBottom(Line line) {
-        if(line != null) anchorBorder(Table.BORDER_BOTTOM, line);
+        if(line != null) anchorBorder(HSLFTable.BORDER_BOTTOM, line);
         this.borderBottom = line;
     }
 
     public void setAnchor(Rectangle anchor){
         super.setAnchor(anchor);
 
-        if(borderTop != null) anchorBorder(Table.BORDER_TOP, borderTop);
-        if(borderRight != null) anchorBorder(Table.BORDER_RIGHT, borderRight);
-        if(borderBottom != null) anchorBorder(Table.BORDER_BOTTOM, borderBottom);
-        if(borderLeft != null) anchorBorder(Table.BORDER_LEFT, borderLeft);
+        if(borderTop != null) anchorBorder(HSLFTable.BORDER_TOP, borderTop);
+        if(borderRight != null) anchorBorder(HSLFTable.BORDER_RIGHT, borderRight);
+        if(borderBottom != null) anchorBorder(HSLFTable.BORDER_BOTTOM, borderBottom);
+        if(borderLeft != null) anchorBorder(HSLFTable.BORDER_LEFT, borderLeft);
     }
 }

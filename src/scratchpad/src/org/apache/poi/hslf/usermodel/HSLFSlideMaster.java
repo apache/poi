@@ -32,7 +32,7 @@ import org.apache.poi.hslf.record.*;
  * @author Yegor Kozlov
  */
 public final class HSLFSlideMaster extends HSLFMasterSheet {
-    private final List<List<HSLFTextParagraph>> _runs = new ArrayList<List<HSLFTextParagraph>>();
+    private final List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
 
     /**
      * all TxMasterStyleAtoms available in this master
@@ -46,8 +46,11 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
     public HSLFSlideMaster(MainMaster record, int sheetNo) {
         super(record, sheetNo);
 
-        _runs.addAll(HSLFTextParagraph.findTextParagraphs(getPPDrawing()));
-        for (List<HSLFTextParagraph> p : _runs) {
+        for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
+            if (!_paragraphs.contains(l)) _paragraphs.add(l);
+        }
+
+        for (List<HSLFTextParagraph> p : _paragraphs) {
             for (HSLFTextParagraph htp : p) {
                 htp.supplySheet(this);
             }
@@ -58,7 +61,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
      * Returns an array of all the TextRuns found
      */
     public List<List<HSLFTextParagraph>> getTextParagraphs() {
-        return _runs;
+        return _paragraphs;
     }
 
     /**
@@ -138,7 +141,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
 
     protected void onAddTextShape(HSLFTextShape shape) {
         List<HSLFTextParagraph> runs = shape.getTextParagraphs();
-        _runs.add(runs);
+        _paragraphs.add(runs);
     }
 
     public TxMasterStyleAtom[] getTxMasterStyleAtoms(){

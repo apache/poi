@@ -87,9 +87,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
 
 		// Grab the children's data
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for(int i=0; i<_children.length; i++) {
-			_children[i].writeOut(baos);
-		}
+		for (Record r : _children) r.writeOut(baos);
 		byte[] data = baos.toByteArray();
 
 		// Save in the escher layer

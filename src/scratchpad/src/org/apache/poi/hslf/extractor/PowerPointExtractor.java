@@ -247,8 +247,8 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 
                 // Table text
                 for (HSLFShape shape : slide.getShapes()){
-                    if (shape instanceof Table){
-                        extractTableText(ret, (Table)shape);
+                    if (shape instanceof HSLFTable){
+                        extractTableText(ret, (HSLFTable)shape);
                     }
                 }
                 // Slide footer, if set
@@ -305,10 +305,10 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		return ret.toString();
 	}
 
-    private void extractTableText(StringBuffer ret, Table table) {
+    private void extractTableText(StringBuffer ret, HSLFTable table) {
         for (int row = 0; row < table.getNumberOfRows(); row++){
             for (int col = 0; col < table.getNumberOfColumns(); col++){
-                TableCell cell = table.getCell(row, col);
+                HSLFTableCell cell = table.getCell(row, col);
                 //defensive null checks; don't know if they're necessary
                 if (cell != null){
                     String txt = cell.getText();

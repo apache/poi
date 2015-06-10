@@ -19,10 +19,12 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
-import org.apache.poi.hslf.model.Table;
+import java.util.List;
+
 import org.apache.poi.POIDataSamples;
+import org.junit.Test;
 
 
 /**
@@ -30,40 +32,39 @@ import org.apache.poi.POIDataSamples;
  * 
  * @author Alex Nikiforov [mailto:anikif@gmail.com]
  */
-public final class TestTable extends TestCase {
+public class TestTable {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-	protected void setUp() throws Exception {
-	}
-
-	public void testTable() throws Exception {
+    @Test
+    public void testTable() throws Exception {
 		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("54111.ppt"));
 		assertTrue("No Exceptions while reading file", true);
 
-		final HSLFSlide[] slides = ppt.getSlides();
-		assertEquals(1, slides.length);
-		checkSlide(slides[0]);
+		List<HSLFSlide> slides = ppt.getSlides();
+		assertEquals(1, slides.size());
+		checkSlide(slides.get(0));
 	}
+	
 	private void checkSlide(final HSLFSlide s) {
-		HSLFTextParagraph[] textRuns = s.getTextParagraphs();
-		assertEquals(2, textRuns.length);
+		List<List<HSLFTextParagraph>> textRuns = s.getTextParagraphs();
+		assertEquals(2, textRuns.size());
 
-		HSLFTextRun textRun = textRuns[0].getTextRuns()[0];
+		HSLFTextRun textRun = textRuns.get(0).get(0).getTextRuns().get(0);
 		assertEquals("Table sample", textRun.getRawText().trim());
-		assertEquals(1, textRuns[0].getTextRuns().length);
-		assertFalse(textRun.isBullet());
+		assertEquals(1, textRuns.get(0).get(0).getTextRuns().size());
+		assertFalse(textRun.getTextParagraph().isBullet());
 
-		assertEquals("Dummy text", textRuns[1].getRawText());
+		assertEquals("Dummy text", HSLFTextParagraph.getRawText(textRuns.get(1)));
 		
-		final HSLFShape[] shapes = s.getShapes();
+		List<HSLFShape> shapes = s.getShapes();
 		assertNotNull(shapes);
-		assertEquals(3, shapes.length);
-		assertTrue(shapes[2] instanceof Table);
-		final Table table = (Table) shapes[2];
+		assertEquals(3, shapes.size());
+		assertTrue(shapes.get(2) instanceof HSLFTable);
+		final HSLFTable table = (HSLFTable) shapes.get(2);
 		assertEquals(4, table.getNumberOfColumns());
 		assertEquals(6, table.getNumberOfRows());
 		for (int x = 0; x < 4; x ++) {
-			assertEquals("TH Cell " + (x + 1), table.getCell(0, x).getTextParagraphs().getRawText());
+			assertEquals("TH Cell " + (x + 1), HSLFTextParagraph.getRawText(table.getCell(0, x).getTextParagraphs()));
 			for (int y = 1; y < 6; y++) {
 				assertEquals("Row " + y + ", Cell " + (x + 1), table.getCell(y, x).getText());
 			}

@@ -35,7 +35,7 @@ import org.apache.poi.util.POILogger;
 public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFSlideShow> {
     protected static POILogger logger = POILogFactory.getLogger(HSLFNotes.class);
     
-    private List<List<HSLFTextParagraph>> _runs;
+    private List<List<HSLFTextParagraph>> _paragraphs = new ArrayList<List<HSLFTextParagraph>>();
 
     /**
      * Constructs a Notes Sheet from the given Notes record.
@@ -49,13 +49,16 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFS
         // Now, build up TextRuns from pairs of TextHeaderAtom and
         // one of TextBytesAtom or TextCharsAtom, found inside
         // EscherTextboxWrapper's in the PPDrawing
-        _runs = HSLFTextParagraph.findTextParagraphs(getPPDrawing());
-        if (_runs.isEmpty()) {
+        for (List<HSLFTextParagraph> l : HSLFTextParagraph.findTextParagraphs(getPPDrawing(), this)) {
+            if (!_paragraphs.contains(l)) _paragraphs.add(l);
+        }
+        
+        if (_paragraphs.isEmpty()) {
             logger.log(POILogger.WARN, "No text records found for notes sheet");
         }
 
         // Set the sheet on each TextRun
-        for (List<HSLFTextParagraph> ltp : _runs) {
+        for (List<HSLFTextParagraph> ltp : _paragraphs) {
             for (HSLFTextParagraph tp : ltp) {
                 tp.supplySheet(this);
             }
@@ -67,7 +70,7 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape, HSLFS
      */
     @Override
     public List<List<HSLFTextParagraph>> getTextParagraphs() {
-        return _runs;
+        return _paragraphs;
     }
 
     /**

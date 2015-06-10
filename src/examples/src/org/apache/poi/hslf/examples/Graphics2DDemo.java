@@ -50,7 +50,7 @@ public final class Graphics2DDemo {
         //define position of the drawing in the slide
         Rectangle bounds = new java.awt.Rectangle(200, 100, 350, 300);
         group.setAnchor(bounds);
-        group.setCoordinates(new java.awt.Rectangle(0, 0, 100, 100));
+        group.setInteriorAnchor(new java.awt.Rectangle(0, 0, 100, 100));
         slide.addShape(group);
         Graphics2D graphics = new PPGraphics2D(group);
 
@@ -68,7 +68,7 @@ public final class Graphics2DDemo {
         }
         graphics.setColor(Color.black);
         graphics.setFont(new Font("Arial", Font.BOLD, 14));
-        graphics.draw(group.getCoordinates());
+        graphics.draw(group.getInteriorAnchor());
         graphics.drawString("Performance", x + 30, y + 10);
 
         FileOutputStream out = new FileOutputStream("hslf-graphics.ppt");

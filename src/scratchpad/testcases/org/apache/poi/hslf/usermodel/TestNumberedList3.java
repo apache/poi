@@ -79,10 +79,14 @@ public final class TestNumberedList3 {
 		assertEquals(Short.valueOf((short)1), autoNumbers[0].getAutoNumberStartNumber());//Default value = 1 will be used 
 		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
-		final List<TextPropCollection> textProps = textParass.get(1).get(0).getStyleTextPropAtom().getCharacterStyles();
-		assertEquals(1, textProps.size());
-		final TextPropCollection textProp = textProps.get(0);
-		assertEquals(67, textProp.getCharactersCovered());
+		int chCovered = 0;
+		for (HSLFTextParagraph htp : textParass.get(1)) {
+    		for (HSLFTextRun htr : htp.getTextRuns()) {
+    		    TextPropCollection textProp = htr.getCharacterStyle();
+    		    chCovered += textProp.getCharactersCovered();
+    		}
+		}
+		assertEquals(67, chCovered);
 		
 		assertTrue(textParass.get(0).get(0).isBullet());
 		

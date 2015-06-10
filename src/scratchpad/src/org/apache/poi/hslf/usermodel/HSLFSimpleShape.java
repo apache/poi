@@ -18,16 +18,15 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.*;
 import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.util.LittleEndian;
@@ -196,7 +195,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
     public StrokeStyle getStrokeStyle(){
         return new StrokeStyle() {
             public PaintStyle getPaint() {
-                return null;
+                return DrawPaint.createSolidPaint(HSLFSimpleShape.this.getLineColor());
             }
 
             public LineCap getLineCap() {
@@ -204,15 +203,15 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
             }
 
             public LineDash getLineDash() {
-                return null;
+                return HSLFSimpleShape.this.getLineDashing();
             }
 
             public LineCompound getLineCompound() {
-                return null;
+                return HSLFSimpleShape.this.getLineCompound();
             }
 
             public double getLineWidth() {
-                return 0;
+                return HSLFSimpleShape.this.getLineWidth();
             }
             
         };
@@ -232,61 +231,6 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
      */
     public void setFillColor(Color color){
         getFill().setForegroundColor(color);
-    }
-
-    /**
-     *
-     * @return 'absolute' anchor of this shape relative to the parent sheet
-     */
-    public Rectangle2D getLogicalAnchor2D(){
-        Rectangle2D anchor = getAnchor2D();
-
-        //if it is a groupped shape see if we need to transform the coordinates
-        if (getParent() != null){
-            ArrayList<HSLFGroupShape> lst = new ArrayList<HSLFGroupShape>();
-            for (ShapeContainer<HSLFShape> parent=this.getParent();
-                parent instanceof HSLFGroupShape;
-                parent = ((HSLFGroupShape)parent).getParent()) {
-                lst.add(0, (HSLFGroupShape)parent);
-            }
-            
-            AffineTransform tx = new AffineTransform();
-            for(HSLFGroupShape prnt : lst) {
-                Rectangle2D exterior = prnt.getAnchor2D();
-                Rectangle2D interior = prnt.getCoordinates();
-
-                double scaleX =  exterior.getWidth() / interior.getWidth();
-                double scaleY = exterior.getHeight() / interior.getHeight();
-
-                tx.translate(exterior.getX(), exterior.getY());
-                tx.scale(scaleX, scaleY);
-                tx.translate(-interior.getX(), -interior.getY());
-                
-            }
-            anchor = tx.createTransformedShape(anchor).getBounds2D();
-        }
-
-        double angle = getRotation();
-        if(angle != 0.){
-            double centerX = anchor.getX() + anchor.getWidth()/2;
-            double centerY = anchor.getY() + anchor.getHeight()/2;
-
-            AffineTransform trans = new AffineTransform();
-            trans.translate(centerX, centerY);
-            trans.rotate(Math.toRadians(angle));
-            trans.translate(-centerX, -centerY);
-
-            Rectangle2D rect = trans.createTransformedShape(anchor).getBounds2D();
-            if((anchor.getWidth() < anchor.getHeight() && rect.getWidth() > rect.getHeight()) ||
-                (anchor.getWidth() > anchor.getHeight() && rect.getWidth() < rect.getHeight())    ){
-                trans = new AffineTransform();
-                trans.translate(centerX, centerY);
-                trans.rotate(Math.PI/2);
-                trans.translate(-centerX, -centerY);
-                anchor = trans.createTransformedShape(anchor).getBounds2D();
-            }
-        }
-        return anchor;
     }
 
     /**
@@ -424,11 +368,6 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
         return (adjval == -1) ? null : new Guide(name, "val "+adjval);
     }
 
-    public LineDecoration getLineDecoration() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public CustomGeometry getGeometry() {
         ShapeType st = getShapeType();
         String name = st.getOoxmlName();
@@ -442,11 +381,89 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
         return geom;
     }
 
-    public Shadow getShadow() {
-        // TODO Auto-generated method stub
-        return null;
+
+    public double getShadowAngle() {
+        EscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
+        int offX = (prop == null) ? 0 : prop.getPropertyValue();
+        prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETY);
+        int offY = (prop == null) ? 0 : prop.getPropertyValue();
+        return Math.toDegrees(Math.atan2(offY, offX));
+    }
+    
+    public double getShadowDistance() {
+        EscherOptRecord opt = getEscherOptRecord();
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
+        int offX = (prop == null) ? 0 : prop.getPropertyValue();
+        prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETY);
+        int offY = (prop == null) ? 0 : prop.getPropertyValue();
+        return Units.toPoints((long)Math.hypot(offX, offY));
     }
 
+    /**
+     * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
+     */
+    public Color getShadowColor(){
+        Color clr = getColor(EscherProperties.SHADOWSTYLE__COLOR, EscherProperties.SHADOWSTYLE__OPACITY, -1);
+        return clr == null ? Color.black : clr;
+    }    
     
-    
+    public Shadow getShadow() {
+        EscherOptRecord opt = getEscherOptRecord();
+        EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
+        if (shadowType == null) return null;
+        
+        return new Shadow(){
+            public SimpleShape getShadowParent() {
+                return HSLFSimpleShape.this;
+            }
+
+            public double getDistance() {
+                return getShadowDistance();
+            }
+
+            public double getAngle() {
+                return getShadowAngle();
+            }
+
+            public double getBlur() {
+                // TODO Auto-generated method stub
+                return 0;
+            }
+
+            public SolidPaint getFillStyle() {
+                return DrawPaint.createSolidPaint(getShadowColor());
+            }
+            
+        };
+    }
+
+    public LineDecoration getLineDecoration() {
+        return new LineDecoration() {
+
+            public DecorationShape getHeadShape() {
+                return DecorationShape.NONE;
+            }
+
+            public DecorationSize getHeadWidth() {
+                return DecorationSize.MEDIUM;
+            }
+
+            public DecorationSize getHeadLength() {
+                return DecorationSize.MEDIUM;
+            }
+
+            public DecorationShape getTailShape() {
+                return DecorationShape.NONE;
+            }
+
+            public DecorationSize getTailWidth() {
+                return DecorationSize.MEDIUM;
+            }
+
+            public DecorationSize getTailLength() {
+                return DecorationSize.MEDIUM;
+            }
+        };
+    }
 }

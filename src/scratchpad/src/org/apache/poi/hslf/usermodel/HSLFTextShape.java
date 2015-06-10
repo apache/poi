@@ -159,10 +159,29 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
     }
 
     protected EscherTextboxWrapper getEscherTextboxWrapper(){
-        if(_txtbox == null){
-            EscherTextboxRecord textRecord = getEscherChild(EscherTextboxRecord.RECORD_ID);
-            if(textRecord != null) _txtbox = new EscherTextboxWrapper(textRecord);
+        if(_txtbox != null) return _txtbox;
+        
+        EscherTextboxRecord textRecord = getEscherChild(EscherTextboxRecord.RECORD_ID);
+        if (textRecord == null) return null;
+        
+        HSLFSheet sheet = getSheet();
+        if (sheet != null) {
+            PPDrawing drawing = sheet.getPPDrawing();
+            if (drawing != null) {
+                EscherTextboxWrapper wrappers[] = drawing.getTextboxWrappers();
+                if (wrappers != null) {
+                    for (EscherTextboxWrapper w : wrappers) {
+                        // check for object identity
+                        if (textRecord == w.getEscherRecord()) {
+                            _txtbox = w;
+                            return _txtbox;
+                        }
+                    }
+                }
+            }
         }
+        
+        _txtbox = new EscherTextboxWrapper(textRecord);
         return _txtbox;
     }
 
@@ -507,13 +526,17 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
             _paragraphs.addAll(HSLFTextParagraph.createEmptyParagraph());
             _txtbox = _paragraphs.get(0).getTextboxWrapper();
         } else {
-            initParagraphsFromSheetRecords();
-            if (_paragraphs.isEmpty()) {
-                List<List<HSLFTextParagraph>> llhtp = HSLFTextParagraph.findTextParagraphs(_txtbox);
-                if (!llhtp.isEmpty()) {
-                    _paragraphs.addAll(llhtp.get(0));
-                }
+            _paragraphs = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
+            if (_paragraphs == null || _paragraphs.isEmpty()) {
+                throw new RuntimeException("TextRecord didn't contained any text lines");
             }
+//            initParagraphsFromSheetRecords();
+//            if (_paragraphs.isEmpty()) {
+//                List<List<HSLFTextParagraph>> llhtp = HSLFTextParagraph.findTextParagraphs(_txtbox);
+//                if (!llhtp.isEmpty()) {
+//                    _paragraphs.addAll(llhtp.get(0));
+//                }
+//            }
         }
 
         for (HSLFTextParagraph p : _paragraphs) {
@@ -536,57 +559,47 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
         }
     }
 
-    protected void initParagraphsFromSheetRecords(){
-        EscherTextboxWrapper txtbox = getEscherTextboxWrapper();
-        HSLFSheet sheet = getSheet();
-
-        if(sheet == null || txtbox == null) return;
-
-        OutlineTextRefAtom ota = null;
-
-        Record[] child = txtbox.getChildRecords();
-        for (int i = 0; i < child.length; i++) {
-            if (child[i] instanceof OutlineTextRefAtom) {
-                ota = (OutlineTextRefAtom)child[i];
-                break;
-            }
-        }
-
-        List<List<HSLFTextParagraph>> sheetRuns = _sheet.getTextParagraphs();
-        _paragraphs.clear();
-        if (sheetRuns != null) {
-            if (ota != null) {
-                int idx = ota.getTextIndex();
-                for (List<HSLFTextParagraph> r : sheetRuns) {
-                    if (r.isEmpty()) continue;
-                    int ridx = r.get(0).getIndex();
-                    if (ridx > idx) break;
-                    if (ridx == idx) _paragraphs.addAll(r);
-                }
-                if(_paragraphs.isEmpty()) {
-                    logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
-                }
-            } else {
-                int shapeId = getShapeId();
-                for (List<HSLFTextParagraph> r : sheetRuns) {
-                    if (r.isEmpty()) continue;
-                    if (r.get(0).getShapeId() == shapeId) _paragraphs.addAll(r);
-                }
-            }
-        }
-
-        // ensure the same references child records of TextRun
-        // TODO: check the purpose of this ...
-//        if(_txtrun != null) {
-//            for (int i = 0; i < child.length; i++) {
-//                for (Record r : _txtrun.getRecords()) {
-//                    if (child[i].getRecordType() == r.getRecordType()) {
-//                        child[i] = r;
-//                    }
-//                }
+//    protected void initParagraphsFromSheetRecords(){
+//        EscherTextboxWrapper txtbox = getEscherTextboxWrapper();
+//        HSLFSheet sheet = getSheet();
+//
+//        if (sheet == null || txtbox == null) return;
+//        List<List<HSLFTextParagraph>> sheetRuns = _sheet.getTextParagraphs();
+//        if (sheetRuns == null) return;
+//
+//        _paragraphs.clear();
+//        OutlineTextRefAtom ota = (OutlineTextRefAtom)txtbox.findFirstOfType(OutlineTextRefAtom.typeID);
+//
+//        if (ota != null) {
+//            int idx = ota.getTextIndex();
+//            for (List<HSLFTextParagraph> r : sheetRuns) {
+//                if (r.isEmpty()) continue;
+//                int ridx = r.get(0).getIndex();
+//                if (ridx > idx) break;
+//                if (ridx == idx) _paragraphs.addAll(r);
+//            }
+//            if(_paragraphs.isEmpty()) {
+//                logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
+//            }
+//        } else {
+//            int shapeId = getShapeId();
+//            for (List<HSLFTextParagraph> r : sheetRuns) {
+//                if (r.isEmpty()) continue;
+//                if (r.get(0).getShapeId() == shapeId) _paragraphs.addAll(r);
 //            }
 //        }
-    }
+//
+//        // ensure the same references child records of TextRun - see #48916
+////        if(_txtrun != null) {
+////            for (int i = 0; i < child.length; i++) {
+////                for (Record r : _txtrun.getRecords()) {
+////                    if (child[i].getRecordType() == r.getRecordType()) {
+////                        child[i] = r;
+////                    }
+////                }
+////            }
+////        }
+//    }
 
     /*
         // 0xB acts like cariage return in page titles and like blank in the others
@@ -740,7 +753,8 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
        * Also updates the styles to the correct text length.
        */
       protected void storeText() {
-          HSLFTextParagraph.storeText(_paragraphs);
+          List<HSLFTextParagraph> paras = getTextParagraphs();
+          HSLFTextParagraph.storeText(paras);
       }
       // Accesser methods follow
 

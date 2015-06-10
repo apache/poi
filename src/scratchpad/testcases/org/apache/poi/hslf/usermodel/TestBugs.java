@@ -18,14 +18,10 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,14 +40,14 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
-import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.Units;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.*;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -527,7 +523,7 @@ public final class TestBugs {
         for (List<HSLFTextParagraph> tr : _slides.get(0).getTextParagraphs()) {
             if (! tr.get(0).isDrawingBased()) str++;
         }
-        assertEquals(1, str);
+        assertEquals(2, str);
     }
     
     @Test

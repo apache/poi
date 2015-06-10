@@ -69,7 +69,7 @@ public final class HSLFShapeFactory {
                 List<EscherProperty> props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
                 EscherSimpleProperty p = (EscherSimpleProperty)props.get(0);
                 if(p.getPropertyNumber() == 0x39F && p.getPropertyValue() == 1){
-                    group = new Table(spContainer, parent);
+                    group = new HSLFTable(spContainer, parent);
                 } else {
                     group = new HSLFGroupShape(spContainer, parent);
                 }

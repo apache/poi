@@ -43,15 +43,15 @@ public final class TestTable {
 
         HSLFSlide slide = ppt.createSlide();
 
-        Table tbl = new Table(2, 5);
+        HSLFTable tbl = new HSLFTable(2, 5);
         slide.addShape(tbl);
 
-        TableCell cell = tbl.getCell(0, 0);
+        HSLFTableCell cell = tbl.getCell(0, 0);
         //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
         assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraphs().get(0).getRunType());
 
-        assertTrue(slide.getShapes().get(0) instanceof Table);
-        Table tbl2 = (Table)slide.getShapes().get(0);
+        assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
+        HSLFTable tbl2 = (HSLFTable)slide.getShapes().get(0);
         assertEquals(tbl.getNumberOfColumns(), tbl2.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl2.getNumberOfRows());
 
@@ -61,8 +61,8 @@ public final class TestTable {
 
         ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
         slide = ppt.getSlides().get(0);
-        assertTrue(slide.getShapes().get(0) instanceof Table);
-        Table tbl3 = (Table)slide.getShapes().get(0);
+        assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
+        HSLFTable tbl3 = (HSLFTable)slide.getShapes().get(0);
         assertEquals(tbl.getNumberOfColumns(), tbl3.getNumberOfColumns());
         assertEquals(tbl.getNumberOfRows(), tbl3.getNumberOfRows());
     }
@@ -75,7 +75,7 @@ public final class TestTable {
         HSLFSlideShow ppt = new HSLFSlideShow();
         HSLFSlide slide = ppt.createSlide();
         List<HSLFShape> shapes;
-        Table tbl1 = new Table(1, 5);
+        HSLFTable tbl1 = new HSLFTable(1, 5);
         assertEquals(5, tbl1.getNumberOfColumns());
         assertEquals(1, tbl1.getNumberOfRows());
         slide.addShape(tbl1);
@@ -83,7 +83,7 @@ public final class TestTable {
         shapes = slide.getShapes();
         assertEquals(1, shapes.size());
 
-        Table tbl2 = (Table)shapes.get(0);
+        HSLFTable tbl2 = (HSLFTable)shapes.get(0);
         assertSame(tbl1.getSpContainer(), tbl2.getSpContainer());
 
         assertEquals(tbl1.getNumberOfColumns(), tbl2.getNumberOfColumns());
@@ -93,13 +93,13 @@ public final class TestTable {
     @Test
     public void testIllegalCOnstruction(){
         try {
-            new Table(0, 5);
+            new HSLFTable(0, 5);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 
         }
         try {
-            new Table(5, 0);
+            new HSLFTable(5, 0);
             fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
         } catch (IllegalArgumentException e){
 

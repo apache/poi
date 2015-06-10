@@ -29,7 +29,6 @@ import org.junit.runners.Suite;
     TestFreeform.class,
     TestHeadersFooters.class,
     TestHyperlink.class,
-    TestImagePainter.class,
     TestLine.class,
     TestMovieShape.class,
     TestOleEmbedding.class,

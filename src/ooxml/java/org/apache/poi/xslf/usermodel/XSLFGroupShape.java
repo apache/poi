@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.sl.usermodel.PlaceableShape;
-import org.apache.poi.sl.usermodel.ShapeGroup;
+import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.util.*;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
@@ -38,7 +37,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.*;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, ShapeGroup<XSLFShape> {
+public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, GroupShape<XSLFShape> {
     private static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
     
     private final List<XSLFShape> _shapes;
@@ -118,7 +117,7 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Sha
      * used for calculations of grouping, scaling, and rotation
      * behavior of shapes placed within a group.
      */
-    public void setInteriorAnchor(Rectangle2D anchor){
+    public void setInteriorAnchor(Rectangle2D anchor) {
         CTGroupTransform2D xfrm = getSafeXfrm();
         CTPoint2D off = xfrm.isSetChOff() ? xfrm.getChOff() : xfrm.addNewChOff();
         long x = Units.toEMU(anchor.getX());

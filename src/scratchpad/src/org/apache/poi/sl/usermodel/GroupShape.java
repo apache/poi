@@ -19,6 +19,21 @@ package org.apache.poi.sl.usermodel;
 
 import java.awt.geom.Rectangle2D;
 
-public interface ShapeGroup<T extends Shape> extends Shape, ShapeContainer<T>, PlaceableShape {
+public interface GroupShape<T extends Shape> extends Shape, ShapeContainer<T>, PlaceableShape {
+
+    /**
+     * Gets the coordinate space of this group.  All children are constrained
+     * to these coordinates.
+     *
+     * @param anchor the coordinate space of this group
+     */
     Rectangle2D getInteriorAnchor();
+    
+    /**
+     * Sets the coordinate space of this group.  All children are constrained
+     * to these coordinates.
+     *
+     * @param anchor the coordinate space of this group
+     */
+    void setInteriorAnchor(Rectangle2D anchor);
 }

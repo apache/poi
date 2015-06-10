@@ -21,8 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import org.apache.poi.ddf.*;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
@@ -31,7 +30,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor Kozlov
  */
-public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShape> {
+public class HSLFGroupShape extends HSLFShape implements GroupShape<HSLFShape> {
 
     /**
       * Create a new ShapeGroup. This constructor is used when a new shape is created.
@@ -87,13 +86,8 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
         spgr.setRectY2((anchor.y + anchor.height)*MASTER_DPI/POINT_DPI);
     }
 
-    /**
-     * Sets the coordinate space of this group.  All children are constrained
-     * to these coordinates.
-     *
-     * @param anchor the coordinate space of this group
-     */
-    public void setCoordinates(Rectangle2D anchor){
+    @Override
+    public void setInteriorAnchor(Rectangle2D anchor){
         EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
 
         int x1 = (int)Math.round(anchor.getX()*MASTER_DPI/POINT_DPI);
@@ -108,22 +102,14 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
 
     }
 
-    /**
-     * Gets the coordinate space of this group.  All children are constrained
-     * to these coordinates.
-     *
-     * @return the coordinate space of this group
-     */
-    public Rectangle2D getCoordinates(){
-        EscherSpgrRecord spgr = getEscherChild(EscherSpgrRecord.RECORD_ID);
-
-        Rectangle2D.Float anchor = new Rectangle2D.Float();
-        anchor.x = (float)spgr.getRectX1()*POINT_DPI/MASTER_DPI;
-        anchor.y = (float)spgr.getRectY1()*POINT_DPI/MASTER_DPI;
-        anchor.width = (float)(spgr.getRectX2() - spgr.getRectX1())*POINT_DPI/MASTER_DPI;
-        anchor.height = (float)(spgr.getRectY2() - spgr.getRectY1())*POINT_DPI/MASTER_DPI;
-
-        return anchor;
+    @Override
+    public Rectangle2D getInteriorAnchor(){
+        EscherSpgrRecord rec = getEscherChild(EscherSpgrRecord.RECORD_ID);
+        double x = rec.getRectX1()*POINT_DPI/MASTER_DPI;
+        double y = rec.getRectY1()*POINT_DPI/MASTER_DPI;
+        double width = (rec.getRectX2()-rec.getRectX1())*POINT_DPI/MASTER_DPI;
+        double height = (rec.getRectY2()-rec.getRectY1())*POINT_DPI/MASTER_DPI;
+        return new Rectangle2D.Double(x,y,width,height);
     }
 
     /**
@@ -199,21 +185,21 @@ public class HSLFGroupShape extends HSLFShape implements ShapeContainer<HSLFShap
      */
     public Rectangle2D getAnchor2D(){
         EscherClientAnchorRecord clientAnchor = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
-        Rectangle2D.Float anchor = new Rectangle2D.Float();
+        Rectangle2D anchor;
         if(clientAnchor == null){
             logger.log(POILogger.INFO, "EscherClientAnchorRecord was not found for shape group. Searching for EscherChildAnchorRecord.");
             EscherChildAnchorRecord rec = getEscherChild(EscherChildAnchorRecord.RECORD_ID);
-            anchor = new Rectangle2D.Float(
-                (float)rec.getDx1()*POINT_DPI/MASTER_DPI,
-                (float)rec.getDy1()*POINT_DPI/MASTER_DPI,
-                (float)(rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI,
-                (float)(rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI
-            );
+            double x = rec.getDx1()*POINT_DPI/MASTER_DPI;
+            double y = rec.getDy1()*POINT_DPI/MASTER_DPI;
+            double width = (rec.getDx2()-rec.getDx1())*POINT_DPI/MASTER_DPI;
+            double height = (rec.getDy2()-rec.getDy1())*POINT_DPI/MASTER_DPI;
+            anchor = new Rectangle2D.Double(x,y,width,height);
         } else {
-            anchor.x = (float)clientAnchor.getCol1()*POINT_DPI/MASTER_DPI;
-            anchor.y = (float)clientAnchor.getFlag()*POINT_DPI/MASTER_DPI;
-            anchor.width = (float)(clientAnchor.getDx1() - clientAnchor.getCol1())*POINT_DPI/MASTER_DPI ;
-            anchor.height = (float)(clientAnchor.getRow1() - clientAnchor.getFlag())*POINT_DPI/MASTER_DPI;
+            double x = clientAnchor.getCol1()*POINT_DPI/MASTER_DPI;
+            double y = clientAnchor.getFlag()*POINT_DPI/MASTER_DPI;
+            double width = (clientAnchor.getDx1() - clientAnchor.getCol1())*POINT_DPI/MASTER_DPI ;
+            double height = (clientAnchor.getRow1() - clientAnchor.getFlag())*POINT_DPI/MASTER_DPI;
+            anchor = new Rectangle2D.Double(x,y,width,height);
         }
 
         return anchor;

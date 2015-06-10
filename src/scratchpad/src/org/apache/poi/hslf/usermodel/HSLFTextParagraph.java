@@ -17,7 +17,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.poi.hslf.record.RecordTypes.OutlineTextRefAtom;
+
 import java.awt.Color;
+import java.io.IOException;
 import java.util.*;
 
 import org.apache.poi.hslf.model.PPFont;
@@ -52,8 +55,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 	private final TextHeaderAtom _headerAtom;
 	private TextBytesAtom  _byteAtom;
 	private TextCharsAtom  _charAtom;
-	private StyleTextPropAtom _styleAtom;
-	private TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
+	private final TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
 
     protected TextRulerAtom _ruler;
 	protected List<HSLFTextRun> _runs = new ArrayList<HSLFTextRun>();
@@ -61,11 +63,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     private HSLFSheet _sheet;
     private int shapeId;
 
-    /**
-     * all text run records that follow TextHeaderAtom.
-     * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
-     */
-    private Record[] _records;
 	// private StyleTextPropAtom styleTextPropAtom;
 	private StyleTextProp9Atom styleTextProp9Atom;
 
@@ -76,32 +73,30 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * @param tha the TextHeaderAtom that defines what's what
     * @param tba the TextBytesAtom containing the text or null if {@link TextCharsAtom} is provided
     * @param tca the TextCharsAtom containing the text or null if {@link TextBytesAtom} is provided
-    * @param sta the StyleTextPropAtom which defines the character stylings
 	 */
 	/* package */ HSLFTextParagraph(
         TextHeaderAtom tha,
         TextBytesAtom tba,
-        TextCharsAtom tca,
-        StyleTextPropAtom sta
+        TextCharsAtom tca
     ) {
+	    if (tha == null)  {
+	        throw new IllegalArgumentException("TextHeaderAtom must be set.");
+	    }
 		_headerAtom = tha;
-		_styleAtom = sta;
         _byteAtom = tba;
         _charAtom = tca;
 	}
 
     /* package */ HSLFTextParagraph(HSLFTextParagraph other) {
-            _headerAtom = other._headerAtom;
-            _styleAtom = other._styleAtom;
-            _byteAtom = other._byteAtom;
-            _charAtom = other._charAtom;
-            _paragraphStyle = other._paragraphStyle;
-            _parentShape = other._parentShape;
-            _sheet = other._sheet;
-            _ruler = other._ruler; // ????
-            shapeId = other.shapeId;
-            _records = other._records;
-        }
+        _headerAtom = other._headerAtom;
+        _byteAtom = other._byteAtom;
+        _charAtom = other._charAtom;
+        _parentShape = other._parentShape;
+        _sheet = other._sheet;
+        _ruler = other._ruler;
+        shapeId = other.shapeId;
+        _paragraphStyle.copy(other._paragraphStyle);
+    }
 
 	public void addTextRun(HSLFTextRun run) {
 	    _runs.add(run);
@@ -120,7 +115,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 	}
 
 	public void setParagraphStyle(TextPropCollection paragraphStyle) {
-	    _paragraphStyle = paragraphStyle;
+	    _paragraphStyle.copy(paragraphStyle);
 	}
 
 	/**
@@ -196,20 +191,52 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         _ruler = getTextRuler();
         if (_ruler == null) {
             _ruler = TextRulerAtom.getParagraphInstance();
-            _headerAtom.getParentRecord().appendChildRecord(_ruler);
+            Record childAfter = _byteAtom;
+            if (childAfter == null) childAfter = _charAtom;
+            if (childAfter == null) childAfter = _headerAtom;
+            _headerAtom.getParentRecord().addChildAfter(_ruler, childAfter);
         }
         return _ruler;
     }
 
     /**
-     * Returns records that make up this text run
+     * Returns records that make up the list of text paragraphs
+     * (there can be misc InteractiveInfo, TxInteractiveInfo and other records)
      *
      * @return text run records
      */
     public Record[] getRecords(){
-        return _records;
+        Record r[] = _headerAtom.getParentRecord().getChildRecords();
+        return getRecords(r, new int[]{0}, _headerAtom);
     }
 
+    private static Record[] getRecords(Record[] records, int[] startIdx, TextHeaderAtom headerAtom) {
+        if (records == null) {
+            throw new NullPointerException("records need to be set.");
+        }
+        
+        for (; startIdx[0] < records.length; startIdx[0]++) {
+            Record r = records[startIdx[0]];
+            if (r instanceof TextHeaderAtom && (headerAtom == null || r == headerAtom)) break;
+        }
+
+        if (startIdx[0] >= records.length) {
+            logger.log(POILogger.INFO, "header atom wasn't found - container might contain only an OutlineTextRefAtom");
+            return new Record[0];
+        }
+        
+        int length;
+        for (length = 1; startIdx[0]+length < records.length; length++) {
+            if (records[startIdx[0]+length] instanceof TextHeaderAtom) break;
+        }
+        
+        Record result[] = new Record[length];
+        System.arraycopy(records, startIdx[0], result, 0, length);
+        startIdx[0] += length;
+        
+        return result;
+    }
+    
     /** Numbered List info */
 	public void setStyleTextProp9Atom(final StyleTextProp9Atom styleTextProp9Atom) {
 		this.styleTextProp9Atom = styleTextProp9Atom;
@@ -220,11 +247,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 		return this.styleTextProp9Atom;
 	}
 
-    /** Characters covered */
-	public StyleTextPropAtom getStyleTextPropAtom() {
-		return this._styleAtom;
-	}
-
 	/**
      * Fetch the value of the given Paragraph related TextProp.
      * Returns -1 if that TextProp isn't present.
@@ -232,14 +254,9 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
      *  Master Sheet will apply.
      */
     private int getParaTextPropVal(String propName) {
-        TextProp prop = null;
-        boolean hardAttribute = false;
-        if (_paragraphStyle != null){
-            prop = _paragraphStyle.findByName(propName);
-
-            BitMaskTextProp maskProp = (BitMaskTextProp)_paragraphStyle.findByName(ParagraphFlagsTextProp.NAME);
-            hardAttribute = maskProp != null && maskProp.getValue() == 0;
-        }
+        TextProp prop = _paragraphStyle.findByName(propName);
+        BitMaskTextProp maskProp = (BitMaskTextProp)_paragraphStyle.findByName(ParagraphFlagsTextProp.NAME);
+        boolean hardAttribute = (maskProp != null && maskProp.getValue() == 0);
         if (prop == null && !hardAttribute){
             HSLFSheet sheet = getSheet();
             int txtype = getRunType();
@@ -258,11 +275,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
      */
     public void setParaTextPropVal(String propName, int val) {
         // Ensure we have the StyleTextProp atom we're going to need
-        if(_paragraphStyle == null) {
-            _styleAtom = findStyleAtomPresent(_headerAtom, -1);
-            _paragraphStyle = _styleAtom.getParagraphStyles().get(0);
-        }
-
         assert(_paragraphStyle!=null);
         TextProp tp = fetchOrAddTextProp(_paragraphStyle, propName);
         tp.setValue(val);
@@ -615,10 +627,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
    protected void setFlag(int index, boolean value) {
        // Ensure we have the StyleTextProp atom we're going to need
-       if(_paragraphStyle == null) {
-           _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
-       }
-
+       assert(_paragraphStyle!=null);
        BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(_paragraphStyle, ParagraphFlagsTextProp.NAME);
        prop.setSubValue(value,index);
    }
@@ -653,12 +662,13 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
        boolean afterHeader = false;
        StyleTextPropAtom style = null;
        for (Record record : header.getParentRecord().getChildRecords()) {
-           if (afterHeader && record.getRecordType() == RecordTypes.TextHeaderAtom.typeID) {
+           long rt = record.getRecordType();
+           if (afterHeader && rt == RecordTypes.TextHeaderAtom.typeID) {
                // already on the next header, quit searching
                break;
            }
            afterHeader |= (header == record);
-           if (afterHeader && record.getRecordType() == RecordTypes.StyleTextPropAtom.typeID) {
+           if (afterHeader && rt == RecordTypes.StyleTextPropAtom.typeID) {
                // found it
                style = (StyleTextPropAtom)record;
            }
@@ -789,10 +799,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         * If TextSpecInfoAtom is present, we must update the text size in it,
         * otherwise the ppt will be corrupted
         */
-       for (Record r : paragraphs.get(0)._records) {
+       for (Record r : paragraphs.get(0).getRecords()) {
            if (r instanceof TextSpecInfoAtom) {
                ((TextSpecInfoAtom)r).setParentSize(rawText.length()+1);
                break;
+           }
+       }
+       
+       if (_txtbox instanceof EscherTextboxWrapper) {
+           try {
+               ((EscherTextboxWrapper)_txtbox).writeOut(null);
+           } catch (IOException e) {
+               throw new RuntimeException("failed dummy write", e);
            }
        }
    }
@@ -817,7 +835,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
            if (!isFirst) {
                TextPropCollection tpc = htp.getParagraphStyle();
                HSLFTextParagraph prevHtp = htp;
-               htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom, htp._styleAtom);
+               htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom);
                htp.getParagraphStyle().copy(tpc);
                htp.setParentShape(prevHtp.getParentShape());
                htp.setShapeId(prevHtp.getShapeId());
@@ -930,24 +948,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
    /**
     * For a given PPDrawing, grab all the TextRuns
     */
-   public static List<List<HSLFTextParagraph>> findTextParagraphs(PPDrawing ppdrawing) {
+   public static List<List<HSLFTextParagraph>> findTextParagraphs(PPDrawing ppdrawing, HSLFSheet sheet) {
        List<List<HSLFTextParagraph>> runsV = new ArrayList<List<HSLFTextParagraph>>();
        for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
-           runsV.addAll(findTextParagraphs(wrapper));
+           runsV.add(findTextParagraphs(wrapper, sheet));
        }
        return runsV;
    }
-   /**
-    * Scans through the supplied record array, looking for
-    * a TextHeaderAtom followed by one of a TextBytesAtom or
-    * a TextCharsAtom. Builds up TextRuns from these
-    *
-    * @param records the records to build from
-    * @param found   vector to add any found to
-    */
-   protected static List<List<HSLFTextParagraph>> findTextParagraphs(final Record[] records) {
-       return findTextParagraphs(records, null);
-   }
+
    /**
     * Scans through the supplied record array, looking for
     * a TextHeaderAtom followed by one of a TextBytesAtom or
@@ -955,14 +963,73 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     *
     * @param wrapper an EscherTextboxWrapper
     */
-   protected static List<List<HSLFTextParagraph>> findTextParagraphs(EscherTextboxWrapper wrapper) {
+   protected static List<HSLFTextParagraph> findTextParagraphs(EscherTextboxWrapper wrapper, HSLFSheet sheet) {
        // propagate parents to parent-aware records
        RecordContainer.handleParentAwareRecords(wrapper);
        int shapeId = wrapper.getShapeId();
-       List<List<HSLFTextParagraph>> rv = findTextParagraphs(wrapper.getChildRecords(), wrapper.getStyleTextProp9Atom());
-       for (List<HSLFTextParagraph> htpList : rv) {
-           for (HSLFTextParagraph htp : htpList) {
+       List<HSLFTextParagraph> rv = null;
+       
+       OutlineTextRefAtom ota = (OutlineTextRefAtom)wrapper.findFirstOfType(OutlineTextRefAtom.typeID);
+       if (ota != null) {
+           // if we are based on an outline, there are no further records to be parsed from the wrapper
+           if (sheet == null) {
+               throw new RuntimeException("Outline atom reference can't be solved without a sheet record");
+           }
+           
+           List<List<HSLFTextParagraph>> sheetRuns = sheet.getTextParagraphs();
+           assert(sheetRuns != null);
+           
+           int idx = ota.getTextIndex();
+           for (List<HSLFTextParagraph> r : sheetRuns) {
+               if (r.isEmpty()) continue;
+               int ridx = r.get(0).getIndex();
+               if (ridx > idx) break;
+               if (ridx == idx) {
+                   if (rv == null) {
+                       rv = r;
+                   } else {
+                       // create a new container
+                       // TODO: ... is this case really happening?
+                       rv = new ArrayList<HSLFTextParagraph>(rv);
+                       rv.addAll(r);
+                   }
+               }
+           }
+           if(rv == null || rv.isEmpty()) {
+               logger.log(POILogger.WARN, "text run not found for OutlineTextRefAtom.TextIndex=" + idx);
+           }
+       } else {
+           if (sheet != null) {
+               // check sheet runs first, so we get exactly the same paragraph list
+               List<List<HSLFTextParagraph>> sheetRuns = sheet.getTextParagraphs();
+               assert(sheetRuns != null);
+
+               for (List<HSLFTextParagraph> paras : sheetRuns) {
+                   if (!paras.isEmpty() && paras.get(0)._headerAtom.getParentRecord() == wrapper) {
+                       rv = paras;
+                       break;
+                   }
+               }
+           }
+           
+           if (rv == null) {
+               // if we haven't found the wrapper in the sheet runs, create a new paragraph list from its record
+               List<List<HSLFTextParagraph>> rvl = findTextParagraphs(wrapper.getChildRecords());
+               switch (rvl.size()) {
+               case 0: break; // nothing found
+               case 1: rv = rvl.get(0); break; // normal case
+               default:
+                   throw new RuntimeException("TextBox contains more than one list of paragraphs.");
+               }
+           }
+       }
+       
+       if (rv !=  null) {
+           StyleTextProp9Atom styleTextProp9Atom = wrapper.getStyleTextProp9Atom();
+           
+           for (HSLFTextParagraph htp : rv) {
                htp.setShapeId(shapeId);
+               htp.setStyleTextProp9Atom(styleTextProp9Atom);
            }
        }
        return rv;
@@ -974,77 +1041,59 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     * a TextCharsAtom. Builds up TextRuns from these
     *
     * @param records the records to build from
-    * @param styleTextProp9Atom an optional StyleTextProp9Atom with numbered lists info
     */
-    protected static List<List<HSLFTextParagraph>> findTextParagraphs(Record[] records, StyleTextProp9Atom styleTextProp9Atom) {
+    protected static List<List<HSLFTextParagraph>> findTextParagraphs(Record[] records) {
         List<List<HSLFTextParagraph>> paragraphCollection = new ArrayList<List<HSLFTextParagraph>>();
 
-        if (records == null) {
-            throw new NullPointerException("records need to be filled.");
-        }
-
-        int recordIdx;
-        for (recordIdx = 0; recordIdx < records.length; recordIdx++) {
-            if (records[recordIdx] instanceof TextHeaderAtom) break;
-        }
-
-        if (recordIdx == records.length) {
-            logger.log(POILogger.INFO, "No text records found.");
-            return paragraphCollection;
-        }
-
-        for (int slwtIndex = 0; recordIdx < records.length; slwtIndex++) {
-            List<HSLFTextParagraph> paragraphs = new ArrayList<HSLFTextParagraph>();
-            paragraphCollection.add(paragraphs);
-
-            TextHeaderAtom    header = (TextHeaderAtom)records[recordIdx++];
+        int[] recordIdx = {0};
+        
+        for (int slwtIndex = 0; recordIdx[0] < records.length; slwtIndex++) {
+            TextHeaderAtom    header = null;
             TextBytesAtom     tbytes = null;
             TextCharsAtom     tchars = null;
             TextRulerAtom     ruler  = null;
             MasterTextPropAtom indents = null;
 
-            List<Record> otherRecordList = new ArrayList<Record>();
-
-            for (; recordIdx < records.length; recordIdx++) {
-                Record r = records[recordIdx];
+            for (Record r : getRecords(records, recordIdx, null)) {
                 long rt = r.getRecordType();
-                if (RecordTypes.TextHeaderAtom.typeID == rt) break;
-                else if (RecordTypes.TextBytesAtom.typeID == rt) tbytes = (TextBytesAtom)r;
-                else if (RecordTypes.TextCharsAtom.typeID == rt) tchars = (TextCharsAtom)r;
-                // don't search for RecordTypes.StyleTextPropAtom.typeID here ... see findStyleAtomPresent below
-                else if (RecordTypes.TextRulerAtom.typeID == rt) ruler = (TextRulerAtom)r;
-                else if (RecordTypes.MasterTextPropAtom.typeID == rt) {
+                if (RecordTypes.TextHeaderAtom.typeID == rt) {
+                    header = (TextHeaderAtom)r;
+                } else if (RecordTypes.TextBytesAtom.typeID == rt) {
+                    tbytes = (TextBytesAtom)r;
+                } else if (RecordTypes.TextCharsAtom.typeID == rt) {
+                    tchars = (TextCharsAtom)r;
+                } else if (RecordTypes.TextRulerAtom.typeID == rt) {
+                    ruler = (TextRulerAtom)r;
+                } else if (RecordTypes.MasterTextPropAtom.typeID == rt) {
                     indents = (MasterTextPropAtom)r;
-                    otherRecordList.add(indents);
-                } else {
-                    otherRecordList.add(r);
                 }
+                // don't search for RecordTypes.StyleTextPropAtom.typeID here ... see findStyleAtomPresent below
             }
 
-            assert(header != null);
+            if (header == null) break;
+            
             if (header.getParentRecord() instanceof SlideListWithText) {
                 // runs found in PPDrawing are not linked with SlideListWithTexts
                 header.setIndex(slwtIndex);
             }
 
-            Record otherRecords[] = otherRecordList.toArray(new Record[otherRecordList.size()]);
-
             if (tbytes == null && tchars == null) {
                 tbytes = new TextBytesAtom();
-                // header.getParentRecord().addChildAfter(tbytes, header);
+                // don't add record yet - set it in storeText
                 logger.log(POILogger.INFO, "bytes nor chars atom doesn't exist. Creating dummy record for later saving.");
             }
 
             String rawText = (tchars != null) ? tchars.getText() : tbytes.getText();
             StyleTextPropAtom styles = findStyleAtomPresent(header, rawText.length());
 
+            List<HSLFTextParagraph> paragraphs = new ArrayList<HSLFTextParagraph>();
+            paragraphCollection.add(paragraphs);
+            
             // split, but keep delimiter
             for (String para : rawText.split("(?<=\r)")) {
-                HSLFTextParagraph tpara = new HSLFTextParagraph(header, tbytes, tchars, styles);
+                HSLFTextParagraph tpara = new HSLFTextParagraph(header, tbytes, tchars);
                 paragraphs.add(tpara);
-                tpara.setStyleTextProp9Atom(styleTextProp9Atom);
                 tpara._ruler = ruler;
-                tpara._records = otherRecords;
                 tpara.getParagraphStyle().updateTextSize(para.length());
 
                 HSLFTextRun trun = new HSLFTextRun(tpara);
@@ -1059,6 +1108,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             }
         }
 
+        if (paragraphCollection.isEmpty()) {
+            logger.log(POILogger.DEBUG, "No text records found.");
+        }
+        
         return paragraphCollection;
     }
 
@@ -1166,9 +1219,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         TextPropCollection charStyle = sta.addCharacterTextPropCollection(1);
         wrapper.appendChildRecord(sta);
 
-        HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null, sta);
+        HSLFTextParagraph htp = new HSLFTextParagraph(tha, tba, null);
         htp.setParagraphStyle(paraStyle);
-        htp._records = new Record[0];
 
         HSLFTextRun htr = new HSLFTextRun(htp);
         htr.setCharacterStyle(charStyle);
