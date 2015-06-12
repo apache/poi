@@ -47,4 +47,9 @@ public class TestAreaReference extends TestCase {
         assertEquals(1, newStyle.getLastCell().getRow());
     }
 
+    @SuppressWarnings("deprecation") // deliberate test for behaviour if deprecated constructor used.
+    public void testFallbackToExcel97IfVersionNotSupplied() {
+        assertTrue(new AreaReference("A:B").isWholeColumnReference());
+        assertTrue(AreaReference.isWholeColumnReference(null, new CellReference("A$1"), new CellReference("A$" + SpreadsheetVersion.EXCEL97.getMaxRows())));
+    }
 }
