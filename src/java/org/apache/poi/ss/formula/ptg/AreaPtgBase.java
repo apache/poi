@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
@@ -256,7 +257,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 		CellReference topLeft = new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative());
 		CellReference botRight = new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative());
 
-		if(AreaReference.isWholeColumnReference(topLeft, botRight)) {
+		if(AreaReference.isWholeColumnReference(SpreadsheetVersion.EXCEL97, topLeft, botRight)) {
 			return (new AreaReference(topLeft, botRight)).formatAsString();
 		}
 		return topLeft.formatAsString() + ":" + botRight.formatAsString();
