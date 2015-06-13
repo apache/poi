@@ -248,4 +248,10 @@ public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSl
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public int getSlideNumber() {
+        int idx = getSlideShow().getSlides().indexOf(this);
+        return (idx == -1) ? idx : idx+1;
+    }
 }

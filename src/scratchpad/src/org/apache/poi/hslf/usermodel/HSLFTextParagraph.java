@@ -174,6 +174,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         return (_headerAtom != null) ? _headerAtom.getTextType() : -1;
     }
 
+    public void setRunType(int runType) {
+        if (_headerAtom != null) _headerAtom.setTextType(runType);
+    }
+    
+    
     /**
      * Is this Text Run one from a {@link PPDrawing}, or is it
      *  one from the {@link SlideListWithText}?
@@ -1151,6 +1156,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
                         HSLFTextRun nextRun = new HSLFTextRun(para);
                         nextRun.setText("");
                         runs.add(nextRun);
+                        ccRun++;
                     } else {
                         // need to add +1 to the last run of the last paragraph
                         len++;

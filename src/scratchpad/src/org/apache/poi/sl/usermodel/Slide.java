@@ -29,4 +29,9 @@ public interface Slide<T extends Shape, SS extends SlideShow, N extends Notes<T,
 
 	boolean getFollowMasterObjects();
 	void setFollowMasterObjects(boolean follow);
+
+	/**
+	 * @return the 1-based slide no.
+	 */
+	int getSlideNumber();
 }

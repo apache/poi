@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.Shape;
 
 
 public class DrawBackground<T extends Background> extends DrawShape<T> {
@@ -16,6 +17,7 @@ public class DrawBackground<T extends Background> extends DrawShape<T> {
         final Rectangle2D anchor = new Rectangle2D.Double(0, 0, pg.getWidth(), pg.getHeight());
 
         PlaceableShape ps = new PlaceableShape(){
+            public ShapeContainer<? extends Shape> getParent() { return null; }
             public Rectangle2D getAnchor() { return anchor; }
             public void setAnchor(Rectangle2D anchor) {}
             public double getRotation() { return 0; }
