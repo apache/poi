@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Shape;
 
@@ -26,9 +27,8 @@ public class DrawShape<T extends Shape> implements Drawable {
         
         PlaceableShape ps = (PlaceableShape)shape;
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
-        final Rectangle2D anchor = (tx != null)
-            ? tx.createTransformedShape(ps.getAnchor()).getBounds2D()
-            : ps.getAnchor();
+        if (tx == null) tx = new AffineTransform();
+        final Rectangle2D anchor = tx.createTransformedShape(ps.getAnchor()).getBounds2D();
 
         // rotation
         double rotation = ps.getRotation();
@@ -40,9 +40,10 @@ public class DrawShape<T extends Shape> implements Drawable {
             // normalize rotation
             rotation %= 360.;
             if (rotation < 0) rotation += 360.;
+
             int quadrant = (((int)rotation+45)/90)%4;
             double scaleX = 1.0, scaleY = 1.0;
-
+            
             // scale to bounding box (bug #53176)
             if (quadrant == 1 || quadrant == 3) {
                 // In quadrant 1 and 3, which is basically a shape in a more or less portrait orientation 
@@ -54,42 +55,36 @@ public class DrawShape<T extends Shape> implements Drawable {
                 // be already (differently) scaled, so you can paint the shape in its default orientation
                 // and later on, turn it around again to compare it with its original size ...
 
-                // graphics coordinate space
-                AffineTransform txg = new AffineTransform();
-                txg.translate(centerX, centerY);
-                txg.rotate(Math.toRadians(90));
-                txg.translate(-centerX, -centerY);
-
-                boolean oldVariant = true;
-                Rectangle2D anchor2;
-                
-                if (oldVariant) {
-                    // shape coordinate space
-                    AffineTransform txs = new AffineTransform(tx);
-                    txs.translate(centerX, centerY);
-                    txs.rotate(Math.toRadians(90));
-                    txs.translate(-centerX, -centerY);
-                    txg.concatenate(txs);
-                    anchor2 = txg.createTransformedShape(ps.getAnchor()).getBounds2D();
+                AffineTransform txs;
+                if (ps instanceof HSLFShape) {
+                    txs = new AffineTransform(tx);
                 } else {
-                    anchor2 = txg.createTransformedShape(anchor).getBounds2D();
+                    // this handling is only based on try and error ... not sure why xslf is handled differently.
+                    txs = new AffineTransform();
+                    txs.translate(centerX, centerY);
+                    txs.rotate(Math.PI/2.); // actually doesn't matter if +/- 90 degrees
+                    txs.translate(-centerX, -centerY);
+                    txs.concatenate(tx);
                 }
-
+                
+                txs.translate(centerX, centerY);
+                txs.rotate(Math.PI/2.);
+                txs.translate(-centerX, -centerY);
+                
+                Rectangle2D anchor2 = txs.createTransformedShape(ps.getAnchor()).getBounds2D();
+                
                 scaleX = anchor.getWidth() == 0. ? 1.0 : anchor.getWidth() / anchor2.getWidth();
                 scaleY = anchor.getHeight() == 0. ? 1.0 : anchor.getHeight() / anchor2.getHeight();
-                
-                graphics.translate(centerX, centerY);
-                graphics.rotate(Math.toRadians(rotation-quadrant*90.));
-                graphics.scale(scaleX, scaleY);
-                graphics.rotate(Math.toRadians(quadrant*90));
-                graphics.translate(-centerX, -centerY);
             } else {
-                graphics.translate(centerX, centerY);
-                graphics.rotate(Math.toRadians(rotation));
-                graphics.scale(scaleX, scaleY);
-                graphics.translate(-centerX, -centerY);
+                quadrant = 0;
             }
+            
             // transformation is applied reversed ...
+            graphics.translate(centerX, centerY);
+            graphics.rotate(Math.toRadians(rotation-quadrant*90.));
+            graphics.scale(scaleX, scaleY);
+            graphics.rotate(Math.toRadians(quadrant*90));
+            graphics.translate(-centerX, -centerY);
         }
 
         //flip horizontal

@@ -116,8 +116,8 @@ public final class HSLFShapeFactory {
                 break;
             }
             case LINE:
-                shape = new Line(spContainer, parent);
-                break;
+//                shape = new Line(spContainer, parent);
+//                break;
             case NOT_PRIMITIVE: {
                 EscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);

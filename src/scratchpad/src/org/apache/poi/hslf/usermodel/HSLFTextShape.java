@@ -214,9 +214,8 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
     public int getRunType() {
         getEscherTextboxWrapper();
         if (_txtbox == null) return -1;
-        TextHeaderAtom headerAtom = (TextHeaderAtom)_txtbox.findFirstOfType(TextHeaderAtom.typeID);
-        assert(headerAtom != null);
-        return headerAtom.getTextType();
+        List<HSLFTextParagraph> paras = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
+        return (paras.isEmpty()) ? -1 : paras.get(0).getRunType();
     }
 
     /**
@@ -228,9 +227,10 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
     public void setRunType(int type) {
         getEscherTextboxWrapper();
         if (_txtbox == null) return;
-        TextHeaderAtom headerAtom = (TextHeaderAtom)_txtbox.findFirstOfType(TextHeaderAtom.typeID);
-        assert(headerAtom != null);
-        headerAtom.setTextType(type);
+        List<HSLFTextParagraph> paras = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
+        if (!paras.isEmpty()) {
+            paras.get(0).setRunType(type);
+        }
     }
     
     /**
@@ -711,10 +711,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
      */
     public String getText() {
         String rawText = getRawText();
-        TextHeaderAtom _headerAtom = (TextHeaderAtom)_txtbox.findFirstOfType(TextHeaderAtom.typeID);
-        int runType = (_headerAtom == null) ? -1 : _headerAtom.getTextType();
-
-        return HSLFTextParagraph.toExternalString(rawText, runType);
+        return HSLFTextParagraph.toExternalString(rawText, getRunType());
     }
 
     

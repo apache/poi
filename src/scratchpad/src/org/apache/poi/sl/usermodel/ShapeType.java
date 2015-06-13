@@ -288,7 +288,9 @@ public enum ShapeType {
     /** name of the presetShapeDefinit(i)on entry */
     public String getOoxmlName() {
         if (this == SEAL) return STAR_16.getOoxmlName();
-        if (ooxmlId == -1) return null;
+        if (ooxmlId == -1) {
+            return (name().startsWith("TEXT")) ? RECT.getOoxmlName() : null;
+        }
         
         StringBuilder sb = new StringBuilder();
         boolean toLower = true;

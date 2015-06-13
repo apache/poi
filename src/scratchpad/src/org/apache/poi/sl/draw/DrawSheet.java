@@ -1,6 +1,9 @@
 package org.apache.poi.sl.draw;
 
+import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.Graphics2D;
+
 import java.awt.geom.AffineTransform;
 
 import org.apache.poi.sl.usermodel.*;
@@ -15,6 +18,11 @@ public class DrawSheet<T extends Sheet<? extends Shape, ? extends SlideShow>> im
     }
     
     public void draw(Graphics2D graphics) {
+        Dimension dim = sheet.getSlideShow().getPageSize();
+        Color whiteTrans = new Color(1f,1f,1f,0f);
+        graphics.setColor(whiteTrans);
+        graphics.fillRect(0, 0, (int)dim.getWidth(), (int)dim.getHeight());
+        
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
         MasterSheet<? extends Shape, ? extends SlideShow> master = sheet.getMasterSheet();
         

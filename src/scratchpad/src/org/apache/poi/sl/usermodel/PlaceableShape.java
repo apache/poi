@@ -20,6 +20,8 @@ package org.apache.poi.sl.usermodel;
 import java.awt.geom.Rectangle2D;
 
 public interface PlaceableShape {
+    ShapeContainer<? extends Shape> getParent();
+    
     /**
      * @return the position of this shape within the drawing canvas.
      *         The coordinates are expressed in points

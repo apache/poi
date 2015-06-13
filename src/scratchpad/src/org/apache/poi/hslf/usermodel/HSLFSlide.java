@@ -219,6 +219,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 	/**
 	 * Returns the (public facing) page number of this slide
 	 */
+	@Override
 	public int getSlideNumber() { return _slideNo; }
 
 	/**
