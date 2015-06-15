@@ -20,6 +20,7 @@ package org.apache.poi.ss.usermodel;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -261,6 +262,13 @@ public interface Workbook extends Closeable {
      * @param index of the sheet to remove (0-based)
      */
     void removeSheetAt(int index);
+
+    /**
+     * Returns an iterator of the sheets
+     *
+     * @return an iterator of the sheets
+     */
+    Iterator<? extends Sheet> sheetIterator();
 
     /**
      * Sets the repeating rows and columns for a sheet (as found in

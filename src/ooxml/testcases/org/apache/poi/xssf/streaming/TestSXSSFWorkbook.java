@@ -22,6 +22,7 @@ package org.apache.poi.xssf.streaming;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -30,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -55,6 +57,21 @@ public final class TestSXSSFWorkbook extends BaseTestWorkbook {
     @After
     public void tearDown(){
         _testDataProvider.cleanup();
+    }
+
+    @Test
+    public void sheetIterator() {
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
+        xssfWorkbook.createSheet("sheet1");
+        xssfWorkbook.createSheet("sheet2");
+        SXSSFWorkbook wb = new SXSSFWorkbook(xssfWorkbook);
+
+        Iterator<Sheet> it = wb.sheetIterator();
+        assertTrue(it.hasNext());
+        assertSame(wb.getSheetAt(0), it.next());
+        assertTrue(it.hasNext());
+        assertSame(wb.getSheetAt(1), it.next());
+        assertFalse(it.hasNext());
     }
 
     /**

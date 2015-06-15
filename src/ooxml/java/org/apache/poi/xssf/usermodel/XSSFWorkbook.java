@@ -1038,6 +1038,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     }
 
     /**
+     * Returns an iterator of the sheets
+     *
+     * @return an iterator of the sheets
+     */
+    @Override
+    public Iterator<XSSFSheet> sheetIterator() {
+        return sheets.iterator();
+    }
+
+    /**
      * Allows foreach loops:
      * <pre><code>
      * XSSFWorkbook wb = new XSSFWorkbook(package);
@@ -1048,8 +1058,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      */
     @Override
     public Iterator<XSSFSheet> iterator() {
-        return sheets.iterator();
+        return sheetIterator();
     }
+
     /**
      * Are we a normal workbook (.xlsx), or a
      *  macro enabled workbook (.xlsm)?

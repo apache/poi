@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.apache.poi.POITestCase.assertContains;
@@ -33,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
@@ -116,6 +118,20 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.setHidden(false);
         assertEquals(false, wb.isHidden());
         assertEquals(false, w1.getHidden());
+    }
+
+    @Test
+    public void sheetIterator() {
+        HSSFWorkbook b = new HSSFWorkbook();
+        HSSFSheet s1 = b.createSheet("Sheet One");
+        HSSFSheet s2 = b.createSheet("Sheet Two");
+
+        Iterator<HSSFSheet> it = b.sheetIterator();
+        assertTrue(it.hasNext());
+        assertSame(s1, it.next());
+        assertTrue(it.hasNext());
+        assertSame(s2, it.next());
+        assertFalse(it.hasNext());
     }
 
     @Test
