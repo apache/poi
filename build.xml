@@ -419,9 +419,12 @@ under the License.
 				<include name="jacoco-0.6*"/>
 				<include name="jacoco-0.7.1*"/>
 				<include name="jacoco-0.7.2*"/>
+				<include name="jacoco-0.7.3*"/>
 				<include name="log4j-1.2.13*"/>
 				<include name="org.jacoco.*-0.6.*"/>
 				<include name="org.jacoco.*-0.7.1*"/>
+				<include name="org.jacoco.*-0.7.2*"/>
+				<include name="org.jacoco.*-0.7.3*"/>
 				<include name="dom4j*"/>
 				<include name="apache-rat-0.10*"/>
 				<include name="xercesImpl-*.jar"/>
