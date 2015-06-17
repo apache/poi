@@ -123,7 +123,7 @@ public abstract class BaseTestBugzillaIssues {
      * Merged regions were being removed from the parent in cloned sheets
      */
     @Test
-    public final void bug22720() {
+    public void bug22720() {
        Workbook workBook = _testDataProvider.createWorkbook();
        workBook.createSheet("TEST");
        Sheet template = workBook.getSheetAt(0);
@@ -247,7 +247,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug18800() {
+    public void bug18800() {
        Workbook book = _testDataProvider.createWorkbook();
        book.createSheet("TEST");
        Sheet sheet = book.cloneSheet(0);
@@ -276,7 +276,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug43093() {
+    public void bug43093() {
         Workbook xlw = _testDataProvider.createWorkbook();
 
         addNewSheetWithCellsA1toD4(xlw, 1);
@@ -296,7 +296,7 @@ public abstract class BaseTestBugzillaIssues {
     }
 
     @Test
-    public final void bug46729_testMaxFunctionArguments(){
+    public void bug46729_testMaxFunctionArguments(){
         String[] func = {"COUNT", "AVERAGE", "MAX", "MIN", "OR", "SUBTOTAL", "SKEW"};
 
         SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
@@ -534,7 +534,7 @@ public abstract class BaseTestBugzillaIssues {
         assertAlmostEquals(1950, s.getColumnWidth(10), fontAccuracy);
         assertAlmostEquals(2225, s.getColumnWidth(11), fontAccuracy);
     }
-    
+
     /**
      * =ISNUMBER(SEARCH("AM",A1)) evaluation 
      */
@@ -805,5 +805,202 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals(0, ((XSSFWorkbook)wb).getCalculationChain().getCTCalcChain().getCArray().length);*/
 
         wb.close();
+    }
+
+    /**
+     * With HSSF, if you create a font, don't change it, and
+     *  create a 2nd, you really do get two fonts that you 
+     *  can alter as and when you want.
+     * With XSSF, that wasn't the case, but this verfies
+     *  that it now is again
+     */
+    @Test
+    public void bug48718() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        int startingFonts = wb instanceof HSSFWorkbook ? 4 : 1;
+
+        assertEquals(startingFonts, wb.getNumberOfFonts());
+
+        // Get a font, and slightly change it
+        Font a = wb.createFont();
+        assertEquals(startingFonts+1, wb.getNumberOfFonts());
+        a.setFontHeightInPoints((short)23);
+        assertEquals(startingFonts+1, wb.getNumberOfFonts());
+
+        // Get two more, unchanged
+        /*Font b =*/ wb.createFont();
+        assertEquals(startingFonts+2, wb.getNumberOfFonts());
+        /*Font c =*/ wb.createFont();
+        assertEquals(startingFonts+3, wb.getNumberOfFonts());
+    }
+
+    @Test
+    public void bug57430() throws Exception {
+        Workbook wb = _testDataProvider.createWorkbook();
+        try {
+            wb.createSheet("Sheet1");
+
+            Name name1 = wb.createName();
+            name1.setNameName("FMLA");
+            name1.setRefersToFormula("Sheet1!$B$3");
+        } finally {
+            wb.close();
+        }
+    }
+
+    @Test
+    public void bug56981() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        CellStyle vertTop = wb.createCellStyle();
+        vertTop.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+        CellStyle vertBottom = wb.createCellStyle();
+        vertBottom.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
+        Sheet sheet = wb.createSheet("Sheet 1");
+        Row row = sheet.createRow(0);
+        Cell top = row.createCell(0);
+        Cell bottom = row.createCell(1);
+        top.setCellValue("Top");
+        top.setCellStyle(vertTop); // comment this out to get all bottom-aligned
+                                   // cells
+        bottom.setCellValue("Bottom");
+        bottom.setCellStyle(vertBottom);
+        row.setHeightInPoints(85.75f); // make it obvious
+
+        /*FileOutputStream out = new FileOutputStream("c:\\temp\\56981.xlsx");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+        
+        wb.close();
+    }
+
+    @Test
+    public void test57973() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+
+        CreationHelper factory = wb.getCreationHelper();
+
+        Sheet sheet = wb.createSheet();
+        Drawing drawing = sheet.createDrawingPatriarch();
+        ClientAnchor anchor = factory.createClientAnchor();
+        
+        Cell cell0 = sheet.createRow(0).createCell(0);
+        cell0.setCellValue("Cell0");
+
+        Comment comment0 = drawing.createCellComment(anchor);
+        RichTextString str0 = factory.createRichTextString("Hello, World1!");
+        comment0.setString(str0);
+        comment0.setAuthor("Apache POI");
+        cell0.setCellComment(comment0);
+        
+        anchor = factory.createClientAnchor();
+        anchor.setCol1(1);
+        anchor.setCol2(1);
+        anchor.setRow1(1);
+        anchor.setRow2(1);
+        Cell cell1 = sheet.createRow(3).createCell(5);
+        cell1.setCellValue("F4");
+        Comment comment1 = drawing.createCellComment(anchor);
+        RichTextString str1 = factory.createRichTextString("Hello, World2!");
+        comment1.setString(str1);
+        comment1.setAuthor("Apache POI");
+        cell1.setCellComment(comment1);
+
+        Cell cell2 = sheet.createRow(2).createCell(2);
+        cell2.setCellValue("C3");
+
+        anchor = factory.createClientAnchor();
+        anchor.setCol1(2);
+        anchor.setCol2(2);
+        anchor.setRow1(2);
+        anchor.setRow2(2);
+
+        Comment comment2 = drawing.createCellComment(anchor);
+        RichTextString str2 = factory.createRichTextString("XSSF can set cell comments");
+        //apply custom font to the text in the comment
+        Font font = wb.createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short)14);
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setColor(IndexedColors.RED.getIndex());
+        str2.applyFont(font);
+
+        comment2.setString(str2);
+        comment2.setAuthor("Apache POI");
+        comment2.setColumn(2);
+        comment2.setRow(2);
+
+        /*OutputStream out = new FileOutputStream("C:\\temp\\57973.xlsx");
+        try {
+            wb.write(out);
+        } finally {
+            out.close();
+        }*/
+        
+        wb.close();
+    }
+
+    /**
+     * Ensures that XSSF and HSSF agree with each other,
+     *  and with the docs on when fetching the wrong
+     *  kind of value from a Formula cell
+     */
+    @Test
+    public void bug47815() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet s = wb.createSheet();
+        Row r = s.createRow(0);
+
+        // Setup
+        Cell cn = r.createCell(0, Cell.CELL_TYPE_NUMERIC);
+        cn.setCellValue(1.2);
+        Cell cs = r.createCell(1, Cell.CELL_TYPE_STRING);
+        cs.setCellValue("Testing");
+
+        Cell cfn = r.createCell(2, Cell.CELL_TYPE_FORMULA);
+        cfn.setCellFormula("A1");  
+        Cell cfs = r.createCell(3, Cell.CELL_TYPE_FORMULA);
+        cfs.setCellFormula("B1");
+
+        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+        assertEquals(Cell.CELL_TYPE_NUMERIC, fe.evaluate(cfn).getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, fe.evaluate(cfs).getCellType());
+        fe.evaluateFormulaCell(cfn);
+        fe.evaluateFormulaCell(cfs);
+
+        // Now test
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cn.getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, cs.getCellType());
+        assertEquals(Cell.CELL_TYPE_FORMULA, cfn.getCellType());
+        assertEquals(Cell.CELL_TYPE_NUMERIC, cfn.getCachedFormulaResultType());
+        assertEquals(Cell.CELL_TYPE_FORMULA, cfs.getCellType());
+        assertEquals(Cell.CELL_TYPE_STRING, cfs.getCachedFormulaResultType());
+
+        // Different ways of retrieving
+        assertEquals(1.2, cn.getNumericCellValue(), 0);
+        try {
+            cn.getRichStringCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+
+        assertEquals("Testing", cs.getStringCellValue());
+        try {
+            cs.getNumericCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+
+        assertEquals(1.2, cfn.getNumericCellValue(), 0);
+        try {
+            cfn.getRichStringCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
+
+        assertEquals("Testing", cfs.getStringCellValue());
+        try {
+            cfs.getNumericCellValue();
+            fail();
+        } catch(IllegalStateException e) {}
     }
 }
