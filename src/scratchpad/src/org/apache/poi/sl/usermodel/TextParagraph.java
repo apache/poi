@@ -104,10 +104,18 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
     public interface BulletStyle {
         String getBulletCharacter();
         String getBulletFont();
-        double getBulletFontSize();
+        
+        /**
+         * The bullet point font size
+         * If bulletFontSize >= 0, then space is a percentage of normal line height.
+         * If bulletFontSize < 0, the absolute value in points
+         *
+         * @return the bullet point font size
+         */
+        Double getBulletFontSize();
         Color getBulletFontColor();
     }
-    
+
     /**
      * The amount of vertical white space before the paragraph
      * This may be specified in two different ways, percentage spacing and font point spacing:
@@ -116,9 +124,30 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * If spaceBefore < 0, the absolute value in points
      * </p>
      *
-     * @return the vertical white space before the paragraph
+     * @return the vertical white space before the paragraph, or null if unset
      */
-    double getSpaceBefore();
+    Double getSpaceBefore();
+
+    /**
+     * Set the amount of vertical white space that will be present before the paragraph.
+     * This space is specified in either percentage or points:
+     * <p>
+     * If spaceBefore >= 0, then space is a percentage of normal line height.
+     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
+     * </p>
+     * Examples:
+     * <pre><code>
+     *      // The paragraph will be formatted to have a spacing before the paragraph text.
+     *      // The spacing will be 200% of the size of the largest text on each line
+     *      paragraph.setSpaceBefore(200);
+     *
+     *      // The spacing will be a size of 48 points
+     *      paragraph.setSpaceBefore(-48.0);
+     * </code></pre>
+     *
+     * @param spaceBefore the vertical white space before the paragraph, null to unset
+     */
+    void setSpaceBefore(Double spaceBefore);    
     
     /**
      * The amount of vertical white space after the paragraph
@@ -128,40 +157,74 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
      * </p>
      *
-     * @return the vertical white space after the paragraph
+     * @return the vertical white space after the paragraph or null, if unset
      */
-    double getSpaceAfter();    
+    Double getSpaceAfter();    
 
     /**
-     * @return the left margin (in points) of the paragraph
+     * Set the amount of vertical white space that will be present after the paragraph.
+     * This space is specified in either percentage or points:
+     * <p>
+     * If spaceAfter >= 0, then space is a percentage of normal line height.
+     * If spaceAfter < 0, the absolute value of linespacing is the spacing in points
+     * </p>
+     * Examples:
+     * <pre><code>
+     *      // The paragraph will be formatted to have a spacing after the paragraph text.
+     *      // The spacing will be 200% of the size of the largest text on each line
+     *      paragraph.setSpaceAfter(200);
+     *
+     *      // The spacing will be a size of 48 points
+     *      paragraph.setSpaceAfter(-48.0);
+     * </code></pre>
+     *
+     * @param spaceAfter the vertical white space after the paragraph, null to unset
      */
-    double getLeftMargin();
+    public void setSpaceAfter(Double spaceAfter);
+    
+    /**
+     * @return the left margin (in points) of the paragraph or null, if unset
+     */
+    Double getLeftMargin();
 
     /**
-     * @param leftMargin the left margin (in points) 
+     * Specifies the left margin of the paragraph. This is specified in addition to the text body
+     * inset and applies only to this text paragraph. That is the text body Inset and the LeftMargin
+     * attributes are additive with respect to the text position.
+     * 
+     * @param leftMargin the left margin (in points) or null to unset
      */
-    void setLeftMargin(double leftMargin);
+    void setLeftMargin(Double leftMargin);
     
     
     /**
-     * @return the right margin (in points) of the paragraph
+     * Specifies the right margin of the paragraph. This is specified in addition to the text body
+     * inset and applies only to this text paragraph. That is the text body Inset and the RightMargin
+     * attributes are additive with respect to the text position.
+     * 
+     * The right margin is not support and therefore ignored by the HSLF implementation.
+     * 
+     * @return the right margin (in points) of the paragraph or null, if unset
      */
-    double getRightMargin();
+    Double getRightMargin();
 
     /**
      * @param rightMargin the right margin (in points) of the paragraph
      */
-    void setRightMargin(double rightMargin);
+    void setRightMargin(Double rightMargin);
     
     /**
      * @return the indent (in points) applied to the first line of text in the paragraph.
+     *  or null, if unset
      */
-    double getIndent();
+    Double getIndent();
 
     /**
+     * Specifies the indent size that will be applied to the first line of text in the paragraph.   
+     * 
      * @param indent the indent (in points) applied to the first line of text in the paragraph
      */
-    void setIndent(double indent);
+    void setIndent(Double indent);
     
     /**
      * Returns the vertical line spacing that is to be used within a paragraph.
@@ -171,9 +234,9 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * If linespacing < 0, the absolute value of linespacing is the spacing in points
      * </p>
      *
-     * @return the vertical line spacing.
+     * @return the vertical line spacing or null, if unset
      */
-    double getLineSpacing();
+    Double getLineSpacing();
     
     /**
      * This element specifies the vertical line spacing that is to be used within a paragraph.
@@ -196,14 +259,14 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * 
      * @param linespacing the vertical line spacing
      */
-    void setLineSpacing(double lineSpacing);
+    void setLineSpacing(Double lineSpacing);
 
     String getDefaultFontFamily();
     
     /**
-     * @return the default font size, in case its not set in the textrun
+     * @return the default font size, in case its not set in the textrun or null, if unset
      */
-    double getDefaultFontSize();
+    Double getDefaultFontSize();
     
     /**
      * Returns the alignment that is applied to the paragraph.
@@ -217,8 +280,10 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
     /**
      * Returns the font alignment that is applied to the paragraph.
      *
-     * If this attribute is omitted, then a value of auto (~ left) is implied.
-     * @return ??? alignment that is applied to the paragraph
+     * If this attribute is omitted, then null is return,
+     * user code can imply the a value of {@link FontAlign#AUTO}
+     * 
+     * @return alignment that is applied to the paragraph
      */
     FontAlign getFontAlign();
     
@@ -226,6 +291,12 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      * @return the bullet style of the paragraph, if {@code null} then no bullets are used 
      */
     BulletStyle getBulletStyle();
+    
+    /**
+     * @return the default size for a tab character within this paragraph in points, null if unset
+     */
+    Double getDefaultTabSize();
+
     
     TextShape<? extends TextParagraph<T>> getParentShape();
 }

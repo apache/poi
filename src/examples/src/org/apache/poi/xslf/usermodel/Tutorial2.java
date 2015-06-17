@@ -48,8 +48,8 @@ public class Tutorial2 {
         XSLFTextParagraph p2 = shape1.addNewTextParagraph();
         // If spaceBefore >= 0, then space is a percentage of normal line height.
         // If spaceBefore < 0, the absolute value of linespacing is the spacing in points
-        p2.setSpaceBefore(-20); // 20 pt from the previous paragraph
-        p2.setSpaceAfter(300); // 3 lines after the paragraph
+        p2.setSpaceBefore(-20d); // 20 pt from the previous paragraph
+        p2.setSpaceAfter(300d); // 3 lines after the paragraph
         XSLFTextRun r2 = p2.addNewTextRun();
         r2.setText("Paragraph  properties apply to all text residing within the corresponding paragraph.");
         r2.setFontSize(16);
@@ -62,8 +62,8 @@ public class Tutorial2 {
         r3.setFontColor(new Color(85, 142, 213));
 
         XSLFTextParagraph p4 = shape1.addNewTextParagraph();
-        p4.setSpaceBefore(-20); // 20 pt from the previous paragraph
-        p4.setSpaceAfter(300); // 3 lines after the paragraph
+        p4.setSpaceBefore(-20d); // 20 pt from the previous paragraph
+        p4.setSpaceAfter(300d); // 3 lines after the paragraph
         XSLFTextRun r4 = p4.addNewTextRun();
         r4.setFontSize(16);
         r4.setText(

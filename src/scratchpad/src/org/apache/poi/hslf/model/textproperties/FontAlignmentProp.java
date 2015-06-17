@@ -21,12 +21,13 @@ package org.apache.poi.hslf.model.textproperties;
  * Definition for the font alignment property.
  */
 public class FontAlignmentProp extends TextProp {
+    public static final String NAME = "fontAlign";
 	public static final int BASELINE = 0;
 	public static final int TOP = 1;
 	public static final int CENTER = 2;
 	public static final int BOTTOM = 3;
 
 	public FontAlignmentProp() {
-		super(2, 0x10000, "fontAlign");
+		super(2, 0x10000, NAME);
 	}
 }

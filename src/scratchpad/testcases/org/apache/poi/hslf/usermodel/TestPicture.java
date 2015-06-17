@@ -22,8 +22,7 @@ import static org.junit.Assert.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 
@@ -35,7 +34,6 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.JvmBugs;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -142,29 +140,43 @@ public final class TestPicture {
     @Test
     // @Ignore("Just for visual validation - antialiasing is different on various systems")
     public void bug54541() throws Exception {
-        String file = new String[]{
-            "54542_cropped_bitmap.pptx",
-            "54541_cropped_bitmap.ppt",
-            "54541_cropped_bitmap2.ppt",
-            "sample_pptx_grouping_issues.pptx"
-        }[3];
-        InputStream is = _slTests.openResourceAsStream(file);
-        SlideShow ss = file.endsWith("pptx") ? new XMLSlideShow(is) : new HSLFSlideShow(is);
-        is.close();
+        String files[] = {
+//            "sample_pptx_grouping_issues.pptx",
+//            "54542_cropped_bitmap.pptx",
+//            "54541_cropped_bitmap.ppt",
+//            "54541_cropped_bitmap2.ppt",
+//            "alterman_security.ppt",
+            "alterman_security2.pptx",
+        };
         
-        boolean debugOut = false;
-        Dimension pg = ss.getPageSize();
-        int i=1;
-        for(Slide<?,?,?> slide : ss.getSlides()) {
-            if (debugOut) {
-                DummyGraphics2d graphics = new DummyGraphics2d();
-                slide.draw(graphics);
-            } else {
-                BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_RGB);
-                Graphics2D graphics = img.createGraphics();
-                fixFonts(graphics);
-                slide.draw(graphics);
-                ImageIO.write(img, "PNG", new File("test"+(i++)+"hslf.png"));
+        BitSet pages = new BitSet();
+        pages.set(2);
+        
+        for (String file : files) {
+            InputStream is = _slTests.openResourceAsStream(file);
+            SlideShow ss = file.endsWith("pptx") ? new XMLSlideShow(is) : new HSLFSlideShow(is);
+            is.close();
+            
+            boolean debugOut = false;
+            Dimension pg = ss.getPageSize();
+            for (Slide<?,?,?> slide : ss.getSlides()) {
+                int slideNo = slide.getSlideNumber();
+                if (!pages.get(slideNo-1)) {
+                    if (pages.nextSetBit(slideNo-1) == -1) break; else continue;
+                }
+                if (debugOut) {
+                    DummyGraphics2d graphics = new DummyGraphics2d();
+                    slide.draw(graphics);
+                } else {
+                    BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D graphics = img.createGraphics();
+                    fixFonts(graphics);
+                    slide.draw(graphics);
+                    graphics.setColor(Color.BLACK);
+                    graphics.setStroke(new BasicStroke(1));
+                    graphics.drawRect(0, 0, (int)pg.getWidth()-1, (int)pg.getHeight()-1);
+                    ImageIO.write(img, "PNG", new File(file.replaceFirst(".pptx?", "-")+slideNo+".png"));
+                }
             }
         }
     }

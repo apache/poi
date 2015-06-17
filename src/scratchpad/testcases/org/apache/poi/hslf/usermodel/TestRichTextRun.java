@@ -470,7 +470,7 @@ public final class TestRichTextRun {
 		assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(1)));
 		assertEquals(4, txt.get(1).size());
 		rt = txt.get(1).get(0);
-		assertEquals('\u2022', rt.getBulletChar());
+		assertEquals('\u2022', (char)rt.getBulletChar());
 		assertTrue(rt.isBullet());
 
 
@@ -486,7 +486,7 @@ public final class TestRichTextRun {
 		assertEquals(4, txt.get(0).size());
 		rt = txt.get(0).get(0);
 		assertTrue(rt.isBullet());
-		assertEquals('\u2022', rt.getBulletChar());
+		assertEquals('\u2022', (char)rt.getBulletChar());
 
 		expected =
             "I\u2019m a text box with user-defined\r" +
@@ -495,7 +495,7 @@ public final class TestRichTextRun {
 		assertEquals(2, txt.get(1).size());
 		rt = txt.get(1).get(0);
 		assertTrue(rt.isBullet());
-		assertEquals('\u263A', rt.getBulletChar());
+		assertEquals('\u263A', (char)rt.getBulletChar());
 	}
 
     @Test
@@ -513,8 +513,8 @@ public final class TestRichTextRun {
         HSLFTextRun tr = rt.getTextRuns().get(0);
 		tr.setFontSize(42);
 		rt.setBullet(true);
-		rt.setLeftMargin(50);
-		rt.setIndent(0);
+		rt.setLeftMargin(50d);
+		rt.setIndent(0d);
 		rt.setBulletChar('\u263A');
 		slide.addShape(shape);
 
@@ -522,7 +522,7 @@ public final class TestRichTextRun {
 		assertEquals(true, rt.isBullet());
 		assertEquals(50.0, rt.getLeftMargin(), 0);
 		assertEquals(0, rt.getIndent(), 0);
-		assertEquals('\u263A', rt.getBulletChar());
+		assertEquals('\u263A', (char)rt.getBulletChar());
 
 		shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));
 		slide.addShape(shape);
@@ -541,7 +541,7 @@ public final class TestRichTextRun {
 		assertEquals(true, rt.isBullet());
 		assertEquals(50.0, rt.getLeftMargin(), 0);
 		assertEquals(0, rt.getIndent(), 0);
-		assertEquals('\u263A', rt.getBulletChar());
+		assertEquals('\u263A', (char)rt.getBulletChar());
 	}
 
     @Test

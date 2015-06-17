@@ -17,7 +17,8 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.fetchOrAddTextProp;
+import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.setPropVal;
+import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getPropVal;
 
 import java.awt.Color;
 
@@ -132,39 +133,17 @@ public final class HSLFTextRun implements TextRun {
 	 *  it if required.
 	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
-		if(getFlag(index) != value) setFlag(index, value);
+	    // TODO: check if paragraph/chars can be handled the same ...
+		if (getFlag(index) != value) setFlag(index, value);
 	}
 
-	/**
-	 * Fetch the value of the given Character related TextProp.
-	 * Returns -1 if that TextProp isn't present.
-	 * If the TextProp isn't present, the value from the appropriate
-	 *  Master Sheet will apply.
-	 */
-	private int getCharTextPropVal(String propName) {
-		TextProp prop = null;
-		if (characterStyle != null){
-			prop = characterStyle.findByName(propName);
-		}
-
-		if (prop == null){
-			HSLFSheet sheet = parentParagraph.getSheet();
-			int txtype = parentParagraph.getRunType();
-			HSLFMasterSheet master = sheet.getMasterSheet();
-			if (master != null)
-				prop = master.getStyleAttribute(txtype, parentParagraph.getIndentLevel(), propName, true);
-		}
-		return prop == null ? -1 : prop.getValue();
-	}
-	
 	/**
 	 * Sets the value of the given Paragraph TextProp, add if required
 	 * @param propName The name of the Paragraph TextProp
 	 * @param val The value to set for the TextProp
 	 */
 	public void setCharTextPropVal(String propName, int val) {
-		TextProp tp = fetchOrAddTextProp(characterStyle, propName);
-		tp.setValue(val);
+	    setPropVal(characterStyle, propName, val);
 	}
 
 
@@ -260,8 +239,8 @@ public final class HSLFTextRun implements TextRun {
 	 * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
 	 */
 	public int getSuperscript() {
-		int val = getCharTextPropVal("superscript");
-		return val == -1 ? 0 : val;
+		TextProp tp = getPropVal(characterStyle, "superscript", parentParagraph);
+		return tp == null ? 0 : tp.getValue();
 	}
 
 	/**
@@ -270,14 +249,15 @@ public final class HSLFTextRun implements TextRun {
 	 * @param val the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
 	 */
 	public void setSuperscript(int val) {
-		setCharTextPropVal("superscript", val);
+	    setPropVal(characterStyle, "superscript", val);
 	}
 
 	/**
 	 * Gets the font size
 	 */
-	public double getFontSize() {
-		return getCharTextPropVal("font.size");
+	public Double getFontSize() {
+        TextProp tp = getPropVal(characterStyle, "font.size", parentParagraph);
+        return tp == null ? null : (double)tp.getValue();
 	}
 
 
@@ -292,7 +272,8 @@ public final class HSLFTextRun implements TextRun {
 	 * Gets the font index
 	 */
 	public int getFontIndex() {
-		return getCharTextPropVal("font.index");
+        TextProp tp = getPropVal(characterStyle, "font.index", parentParagraph);
+        return tp == null ? -1 : tp.getValue();
 	}
 
 	/**
@@ -329,9 +310,9 @@ public final class HSLFTextRun implements TextRun {
 		if (sheet == null || slideShow == null) {
 			return _fontFamily;
 		}
-		int fontIdx = getCharTextPropVal("font.index");
-		if(fontIdx == -1) { return null; }
-		return slideShow.getFontCollection().getFontWithId(fontIdx);
+        TextProp tp = getPropVal(characterStyle, "font.index", parentParagraph);
+        if (tp == null) { return null; }
+		return slideShow.getFontCollection().getFontWithId(tp.getValue());
 	}
 
 	/**
@@ -339,7 +320,9 @@ public final class HSLFTextRun implements TextRun {
 	 * @see java.awt.Color
 	 */
 	public Color getFontColor() {
-		int rgb = getCharTextPropVal("font.color");
+		TextProp tp = getPropVal(characterStyle, "font.color", parentParagraph);
+		if (tp == null) return null;
+		int rgb = tp.getValue();
 
 		int cidx = rgb >> 24;
 		if (rgb % 0x1000000 == 0){
@@ -370,7 +353,7 @@ public final class HSLFTextRun implements TextRun {
 	}
 
     protected void setFlag(int index, boolean value) {
-        BitMaskTextProp prop = (BitMaskTextProp) fetchOrAddTextProp(characterStyle, CharFlagsTextProp.NAME);
+        BitMaskTextProp prop = (BitMaskTextProp)characterStyle.addWithName(CharFlagsTextProp.NAME);
         prop.setSubValue(value, index);
     }
 

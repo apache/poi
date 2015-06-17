@@ -76,45 +76,31 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
      * This is the "workhorse" which returns the default style attrubutes.
      */
     public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
-
+        if (_txmaster.length <= txtype) return null;
+        TxMasterStyleAtom t = _txmaster[txtype];
+        List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
+        
         TextProp prop = null;
-        for (int i = level; i >= 0; i--) {
-            List<TextPropCollection> styles =
-                    isCharacter ? _txmaster[txtype].getCharacterStyles() : _txmaster[txtype].getParagraphStyles();
-            if (i < styles.size()) prop = styles.get(i).findByName(name);
-            if (prop != null) break;
+        for (int i = Math.min(level, styles.size()-1); prop == null && i >= 0; i--) {
+            prop = styles.get(i).findByName(name);
         }
-        if (prop == null) {
-            if(isCharacter) {
-                switch (txtype) {
-                    case TextHeaderAtom.CENTRE_BODY_TYPE:
-                    case TextHeaderAtom.HALF_BODY_TYPE:
-                    case TextHeaderAtom.QUARTER_BODY_TYPE:
-                        txtype = TextHeaderAtom.BODY_TYPE;
-                        break;
-                    case TextHeaderAtom.CENTER_TITLE_TYPE:
-                        txtype = TextHeaderAtom.TITLE_TYPE;
-                        break;
-                    default:
-                        return null;
-                }
-            } else {
-                switch (txtype) {
-                    case TextHeaderAtom.CENTRE_BODY_TYPE:
-                    case TextHeaderAtom.HALF_BODY_TYPE:
-                    case TextHeaderAtom.QUARTER_BODY_TYPE:
-                        txtype = TextHeaderAtom.BODY_TYPE;
-                        break;
-                    case TextHeaderAtom.CENTER_TITLE_TYPE:
-                        txtype = TextHeaderAtom.TITLE_TYPE;
-                        break;
-                    default:
-                        return null;
-                }
-            }
-            prop = getStyleAttribute(txtype, level, name, isCharacter);
+
+        if (prop != null) return prop;
+        
+        switch (txtype) {
+            case TextHeaderAtom.CENTRE_BODY_TYPE:
+            case TextHeaderAtom.HALF_BODY_TYPE:
+            case TextHeaderAtom.QUARTER_BODY_TYPE:
+                txtype = TextHeaderAtom.BODY_TYPE;
+                break;
+            case TextHeaderAtom.CENTER_TITLE_TYPE:
+                txtype = TextHeaderAtom.TITLE_TYPE;
+                break;
+            default:
+                return null;
         }
-        return prop;
+
+        return getStyleAttribute(txtype, level, name, isCharacter);
     }
 
     /**

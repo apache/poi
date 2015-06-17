@@ -125,7 +125,7 @@ public class TestXSLFAutoShape {
         p.setIndent(2.0);
         assertEquals(2.0, p.getIndent(), 0);
         assertTrue(p.getXmlObject().getPPr().isSetIndent());
-        p.setIndent(-1);
+        p.setIndent(-1d);
         assertEquals(0.0, p.getIndent(), 0);
         assertFalse(p.getXmlObject().getPPr().isSetIndent());
         p.setIndent(10.0);
@@ -149,44 +149,44 @@ public class TestXSLFAutoShape {
 
 
         assertFalse(p.getXmlObject().getPPr().isSetSpcAft());
-        p.setSpaceAfter(200);
+        p.setSpaceAfter(200d);
         assertEquals(200000, p.getXmlObject().getPPr().getSpcAft().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPts());
-        p.setSpaceAfter(100);
+        p.setSpaceAfter(100d);
         assertEquals(100000, p.getXmlObject().getPPr().getSpcAft().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPts());
-        p.setSpaceAfter(-20);
+        p.setSpaceAfter(-20d);
         assertEquals(2000, p.getXmlObject().getPPr().getSpcAft().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPct());
-        p.setSpaceAfter(-10);
+        p.setSpaceAfter(-10d);
         assertEquals(1000, p.getXmlObject().getPPr().getSpcAft().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcAft().isSetSpcPct());
 
         assertFalse(p.getXmlObject().getPPr().isSetSpcBef());
-        p.setSpaceBefore(200);
+        p.setSpaceBefore(200d);
         assertEquals(200000, p.getXmlObject().getPPr().getSpcBef().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPts());
-        p.setSpaceBefore(100);
+        p.setSpaceBefore(100d);
         assertEquals(100000, p.getXmlObject().getPPr().getSpcBef().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPts());
-        p.setSpaceBefore(-20);
+        p.setSpaceBefore(-20d);
         assertEquals(2000, p.getXmlObject().getPPr().getSpcBef().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPct());
-        p.setSpaceBefore(-10);
+        p.setSpaceBefore(-10d);
         assertEquals(1000, p.getXmlObject().getPPr().getSpcBef().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getSpcBef().isSetSpcPct());
 
         assertFalse(p.getXmlObject().getPPr().isSetLnSpc());
-        p.setLineSpacing(200);
+        p.setLineSpacing(200d);
         assertEquals(200000, p.getXmlObject().getPPr().getLnSpc().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPts());
-        p.setLineSpacing(100);
+        p.setLineSpacing(100d);
         assertEquals(100000, p.getXmlObject().getPPr().getLnSpc().getSpcPct().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPts());
-        p.setLineSpacing(-20);
+        p.setLineSpacing(-20d);
         assertEquals(2000, p.getXmlObject().getPPr().getLnSpc().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPct());
-        p.setLineSpacing(-10);
+        p.setLineSpacing(-10d);
         assertEquals(1000, p.getXmlObject().getPPr().getLnSpc().getSpcPts().getVal());
         assertFalse(p.getXmlObject().getPPr().getLnSpc().isSetSpcPct());
 

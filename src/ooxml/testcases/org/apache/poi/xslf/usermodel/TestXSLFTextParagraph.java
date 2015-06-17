@@ -92,7 +92,7 @@ public class TestXSLFTextParagraph {
         assertEquals(expectedWidth, dtp.getWrappingWidth(true, null), 0);
         assertEquals(expectedWidth, dtp.getWrappingWidth(false, null), 0);
 
-        p.setLeftMargin(36); // 0.5"
+        p.setLeftMargin(36d); // 0.5"
         leftMargin = p.getLeftMargin();
         assertEquals(36.0, leftMargin, 0);
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;

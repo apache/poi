@@ -39,8 +39,8 @@ public final class BulletsDemo {
         HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
         rt.getTextRuns().get(0).setFontSize(42);
         rt.setBullet(true);
-        rt.setIndent(0);  //bullet offset
-        rt.setLeftMargin(50);   //text offset (should be greater than bullet offset)
+        rt.setIndent(0d);  //bullet offset
+        rt.setLeftMargin(50d);   //text offset (should be greater than bullet offset)
         rt.setBulletChar('\u263A'); //bullet character
         shape.setText(
                 "January\r" +

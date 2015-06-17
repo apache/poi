@@ -17,26 +17,11 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextAttribute;
-import java.awt.font.TextLayout;
-import java.text.AttributedString;
 
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
@@ -89,28 +74,6 @@ public class XSLFTextRun implements TextRun {
         return buf.toString();
     }
 
-    /**
-     * Replace a tab with the effective number of white spaces.
-     */
-    private String tab2space(){
-        AttributedString string = new AttributedString(" ");
-        // user can pass an object to convert fonts via a rendering hint
-        string.addAttribute(TextAttribute.FAMILY, getFontFamily());
-
-        string.addAttribute(TextAttribute.SIZE, (float)getFontSize());
-        TextLayout l = new TextLayout(string.getIterator(), new FontRenderContext(null, true, true));
-        double wspace = l.getAdvance();
-
-        double tabSz = _p.getDefaultTabSize();
-
-        int numSpaces = (int)Math.ceil(tabSz / wspace);
-        StringBuffer buf = new StringBuffer();
-        for(int i = 0; i < numSpaces; i++) {
-            buf.append(' ');
-        }
-        return buf.toString();
-    }
-    
     public void setText(String text){
         _r.setT(text);
     }
@@ -175,9 +138,10 @@ public class XSLFTextRun implements TextRun {
     }
 
     /**
-     * @return font size in points or -1 if font size is not set.
+     * @return font size in points or null if font size is not set.
      */
-    public double getFontSize(){
+    @Override
+    public Double getFontSize(){
         double scale = 1;
         CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTextBodyPr().getNormAutofit();
         if(afit != null) scale = (double)afit.getFontScale() / 100000;
@@ -192,7 +156,7 @@ public class XSLFTextRun implements TextRun {
             }
         };
         fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? -1 : fetcher.getValue()*scale;
+        return fetcher.getValue() == null ? null : fetcher.getValue()*scale;
     }
 
     /**
@@ -514,7 +478,7 @@ public class XSLFTextRun implements TextRun {
         return new XSLFHyperlink(_r.getRPr().getHlinkClick(), this);
     }
 
-    private boolean fetchCharacterProperty(CharacterPropertyFetcher fetcher){
+    private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){
         boolean ok = false;
 
         if(_r.isSetRPr()) ok = fetcher.fetch(getRPr());

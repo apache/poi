@@ -137,8 +137,10 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     /**
      * Returns the alignment that is applied to the paragraph.
      *
-     * If this attribute is omitted, then a value of left is implied.
-     * @return ??? alignment that is applied to the paragraph
+     * If this attribute is omitted, then null is returned.
+     * User code can imply the value {@link TextAlign#LEFT} then.
+     *
+     * @return alignment that is applied to the paragraph
      */
     public TextAlign getTextAlign(){
         ParagraphPropertyFetcher<TextAlign> fetcher = new ParagraphPropertyFetcher<TextAlign>(getLevel()){
@@ -152,7 +154,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? TextAlign.LEFT : fetcher.getValue();
+        return fetcher.getValue();
     }
 
     /**
@@ -184,7 +186,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? FontAlign.AUTO : fetcher.getValue();
+        return fetcher.getValue();
     }
 
     /**
@@ -294,7 +296,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      *
      * @return the bullet size
      */
-    public double getBulletFontSize(){
+    public Double getBulletFontSize(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuSzPct()){
@@ -309,7 +311,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? 100 : fetcher.getValue();
+        return fetcher.getValue();
     }
 
     /**
@@ -334,27 +336,19 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         }
    }
 
-    /**
-     * Specifies the indent size that will be applied to the first line of text in the paragraph.
-     *
-     * @param value the indent in points. 
-     */
     @Override
-    public void setIndent(double value){
+    public void setIndent(Double indent){
+        if (indent == null && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(value == -1) {
+        if(indent == -1) {
             if(pr.isSetIndent()) pr.unsetIndent();
         } else {
-            pr.setIndent(Units.toEMU(value));
+            pr.setIndent(Units.toEMU(indent));
         }
     }
 
-    /**
-     *
-     * @return the indent applied to the first line of text in the paragraph.
-     */
     @Override
-    public double getIndent(){
+    public Double getIndent() {
 
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -367,32 +361,26 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         };
         fetchParagraphProperty(fetcher);
 
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        return fetcher.getValue();
     }
 
-    /**
-     * Specifies the left margin of the paragraph. This is specified in addition to the text body
-     * inset and applies only to this text paragraph. That is the text body Inset and the LeftMargin
-     * attributes are additive with respect to the text position.
-     *
-     * @param value the left margin (in points) of the paragraph
-     */
     @Override
-    public void setLeftMargin(double value){
+    public void setLeftMargin(Double leftMargin){
+        if (leftMargin == null && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(value == -1) {
+        if (leftMargin == null) {
             if(pr.isSetMarL()) pr.unsetMarL();
         } else {
-            pr.setMarL(Units.toEMU(value));
+            pr.setMarL(Units.toEMU(leftMargin));
         }
 
     }
 
     /**
-     * @return the left margin (in points) of the paragraph
+     * @return the left margin (in points) of the paragraph, null if unset
      */
     @Override
-    public double getLeftMargin(){
+    public Double getLeftMargin(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetMarL()){
@@ -405,32 +393,26 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         };
         fetchParagraphProperty(fetcher);
         // if the marL attribute is omitted, then a value of 347663 is implied
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        return fetcher.getValue();
     }
 
-    /**
-     * Specifies the right margin of the paragraph. This is specified in addition to the text body
-     * inset and applies only to this text paragraph. That is the text body Inset and the RightMargin
-     * attributes are additive with respect to the text position.
-     *
-     * @param value the right margin (in points) of the paragraph
-     */
     @Override
-    public void setRightMargin(double value){
+    public void setRightMargin(Double rightMargin){
+        if (rightMargin == null && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(value == -1) {
+        if(rightMargin == -1) {
             if(pr.isSetMarR()) pr.unsetMarR();
         } else {
-            pr.setMarR(Units.toEMU(value));
+            pr.setMarR(Units.toEMU(rightMargin));
         }
     }
 
     /**
      *
-     * @return the right margin of the paragraph
+     * @return the right margin of the paragraph, null if unset
      */
     @Override
-    public double getRightMargin(){
+    public Double getRightMargin(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetMarR()){
@@ -443,14 +425,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         };
         fetchParagraphProperty(fetcher);
         // if the marL attribute is omitted, then a value of 347663 is implied
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        return fetcher.getValue();
     }
 
-    /**
-     *
-     * @return the default size for a tab character within this paragraph in points
-     */
-    public double getDefaultTabSize(){
+    @Override
+    public Double getDefaultTabSize(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetDefTabSz()){
@@ -462,7 +441,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        return fetcher.getValue();
     }
 
     public double getTabStop(final int idx){
@@ -491,16 +470,25 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     }
 
     @Override
-    public void setLineSpacing(double linespacing){
+    public void setLineSpacing(Double lineSpacing){
+        if (lineSpacing == null && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-        if(linespacing >= 0) spc.addNewSpcPct().setVal((int)(linespacing*1000));
-        else spc.addNewSpcPts().setVal((int)(-linespacing*100));
-        pr.setLnSpc(spc);
+        if(lineSpacing == null) {
+            if (pr.isSetLnSpc()) pr.unsetLnSpc();
+        } else {
+            CTTextSpacing spc = (pr.isSetLnSpc()) ? pr.getLnSpc() : pr.addNewLnSpc();
+            if (lineSpacing >= 0) {
+                (spc.isSetSpcPct() ? spc.getSpcPct() : spc.addNewSpcPct()).setVal((int)(lineSpacing*1000));
+                if (spc.isSetSpcPts()) spc.unsetSpcPts();
+            } else {
+                (spc.isSetSpcPts() ? spc.getSpcPts() : spc.addNewSpcPts()).setVal((int)(-lineSpacing*100));
+                if (spc.isSetSpcPct()) spc.unsetSpcPct();
+            }
+        }
     }
 
     @Override
-    public double getLineSpacing(){
+    public Double getLineSpacing(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetLnSpc()){
@@ -515,8 +503,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         };
         fetchParagraphProperty(fetcher);
 
-        double lnSpc = fetcher.getValue() == null ? 100 : fetcher.getValue();
-        if(lnSpc > 0) {
+        Double lnSpc = fetcher.getValue();
+        if (lnSpc != null && lnSpc > 0) {
             // check if the percentage value is scaled
             CTTextNormalAutofit normAutofit = getParentShape().getTextBodyPr().getNormAutofit();
             if(normAutofit != null) {
@@ -528,26 +516,9 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         return lnSpc;
     }
 
-    /**
-     * Set the amount of vertical white space that will be present before the paragraph.
-     * This space is specified in either percentage or points:
-     * <p>
-     * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
-     * </p>
-     * Examples:
-     * <pre><code>
-     *      // The paragraph will be formatted to have a spacing before the paragraph text.
-     *      // The spacing will be 200% of the size of the largest text on each line
-     *      paragraph.setSpaceBefore(200);
-     *
-     *      // The spacing will be a size of 48 points
-     *      paragraph.setSpaceBefore(-48.0);
-     * </code></pre>
-     *
-     * @param spaceBefore the vertical white space before the paragraph.
-     */
-    public void setSpaceBefore(double spaceBefore){
+    @Override
+    public void setSpaceBefore(Double spaceBefore){
+        if (spaceBefore == null && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
         if(spaceBefore >= 0) spc.addNewSpcPct().setVal((int)(spaceBefore*1000));
@@ -555,17 +526,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         pr.setSpcBef(spc);
     }
 
-    /**
-     * The amount of vertical white space before the paragraph
-     * This may be specified in two different ways, percentage spacing and font point spacing:
-     * <p>
-     * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
-     * </p>
-     *
-     * @return the vertical white space before the paragraph
-     */
-    public double getSpaceBefore(){
+    @Override
+    public Double getSpaceBefore(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetSpcBef()){
@@ -580,30 +542,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         };
         fetchParagraphProperty(fetcher);
 
-        double spcBef = fetcher.getValue() == null ? 0 : fetcher.getValue();
-        return spcBef;
+        return fetcher.getValue();
     }
 
-    /**
-     * Set the amount of vertical white space that will be present after the paragraph.
-     * This space is specified in either percentage or points:
-     * <p>
-     * If spaceAfter >= 0, then space is a percentage of normal line height.
-     * If spaceAfter < 0, the absolute value of linespacing is the spacing in points
-     * </p>
-     * Examples:
-     * <pre><code>
-     *      // The paragraph will be formatted to have a spacing after the paragraph text.
-     *      // The spacing will be 200% of the size of the largest text on each line
-     *      paragraph.setSpaceAfter(200);
-     *
-     *      // The spacing will be a size of 48 points
-     *      paragraph.setSpaceAfter(-48.0);
-     * </code></pre>
-     *
-     * @param spaceAfter the vertical white space after the paragraph.
-     */
-    public void setSpaceAfter(double spaceAfter){
+    @Override
+    public void setSpaceAfter(Double spaceAfter){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
         if(spaceAfter >= 0) spc.addNewSpcPct().setVal((int)(spaceAfter*1000));
@@ -611,17 +554,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         pr.setSpcAft(spc);
     }
 
-    /**
-     * The amount of vertical white space after the paragraph
-     * This may be specified in two different ways, percentage spacing and font point spacing:
-     * <p>
-     * If spaceBefore >= 0, then space is a percentage of normal line height.
-     * If spaceBefore < 0, the absolute value of linespacing is the spacing in points
-     * </p>
-     *
-     * @return the vertical white space after the paragraph
-     */
-    public double getSpaceAfter(){
+    @Override
+    public Double getSpaceAfter(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetSpcAft()){
@@ -635,7 +569,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        return fetcher.getValue();
     }
 
     /**
@@ -647,7 +581,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      */
     public void setLevel(int level){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-
         pr.setLvl(level);
     }
 
@@ -657,10 +590,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
      */
     public int getLevel(){
         CTTextParagraphProperties pr = _p.getPPr();
-        if(pr == null) return 0;
-
-        return pr.getLvl();
-
+        return (pr == null || !pr.isSetLvl()) ? 0 : pr.getLvl();
     }
 
     /**
@@ -721,53 +651,70 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     }
 
 
-    CTTextParagraphProperties getDefaultMasterStyle(){
+    /* package */ CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getCTPlaceholder();
-        String defaultStyleSelector;
-        if(ph == null) defaultStyleSelector = "otherStyle";   // no placeholder means plain text box
-        else {
-            switch(ph.getType().intValue()){
-                case STPlaceholderType.INT_TITLE:
-                case STPlaceholderType.INT_CTR_TITLE:
-                    defaultStyleSelector = "titleStyle";
-                    break;
-                case STPlaceholderType.INT_FTR:
-                case STPlaceholderType.INT_SLD_NUM:
-                case STPlaceholderType.INT_DT:
-                    defaultStyleSelector = "otherStyle";
-                    break;
-                default:
-                    defaultStyleSelector = "bodyStyle";
-                    break;
-            }
+        String defaultStyleSelector;   
+        switch(ph == null ? -1 : ph.getType().intValue()) {
+            case STPlaceholderType.INT_TITLE:
+            case STPlaceholderType.INT_CTR_TITLE:
+                defaultStyleSelector = "titleStyle";
+                break;
+            case -1: // no placeholder means plain text box
+            case STPlaceholderType.INT_FTR:
+            case STPlaceholderType.INT_SLD_NUM:
+            case STPlaceholderType.INT_DT:
+                defaultStyleSelector = "otherStyle";
+                break;
+            default:
+                defaultStyleSelector = "bodyStyle";
+                break;
         }
         int level = getLevel();
 
         // wind up and find the root master sheet which must be slide master
         XSLFSheet masterSheet = _shape.getSheet();
-        while (masterSheet.getMasterSheet() != null){
-            masterSheet = (XSLFSheet)masterSheet.getMasterSheet();
+        for (XSLFSheet m = masterSheet; m != null; m = (XSLFSheet)m.getMasterSheet()) {
+            masterSheet = m;
         }
 
-        XmlObject[] o = masterSheet.getXmlObject().selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
-                ".//p:txStyles/p:" + defaultStyleSelector +"/a:lvl" +(level+1)+ "pPr");
-        if (o.length == 1){
-            return (CTTextParagraphProperties)o[0];
-        } else {
-                o = masterSheet.getXmlObject().selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
-                ".//p:notesStyle/a:lvl" +(level+1)+ "pPr");
-                
-            if (o.length == 1){
+        String nsDecl =
+            "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
+            "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' ";
+        String xpaths[] = {
+            nsDecl+".//p:txStyles/p:" + defaultStyleSelector +"/a:lvl" +(level+1)+ "pPr",
+            nsDecl+".//p:notesStyle/a:lvl" +(level+1)+ "pPr"
+        };
+        XmlObject xo = masterSheet.getXmlObject();
+        for (String xpath : xpaths) {
+            XmlObject[] o = xo.selectPath(xpath);
+            if (o.length == 1) {
                 return (CTTextParagraphProperties)o[0];
             }
-            
-            throw new IllegalArgumentException("Failed to fetch default style for " +
-                    defaultStyleSelector + " and level=" + level);
         }
+        
+//        for (CTTextBody txBody : (CTTextBody[])xo.selectPath(nsDecl+".//p:txBody")) {
+//            CTTextParagraphProperties defaultPr = null, lastPr = null;
+//            boolean hasLvl = false;
+//            for (CTTextParagraph p : txBody.getPArray()) {
+//                CTTextParagraphProperties pr = p.getPPr();
+//                if (pr.isSetLvl()) {
+//                    hasLvl |= true;
+//                    lastPr = pr;
+//                    if (pr.getLvl() == level) return pr;
+//                } else {
+//                    defaultPr = pr;
+//                }
+//            }
+//            if (!hasLvl) continue;
+//            if (level == 0 && defaultPr != null) return defaultPr;
+//            if (lastPr != null) return lastPr;
+//            break;
+//        }
+//           
+//        String err = "Failed to fetch default style for " + defaultStyleSelector + " and level=" + level;
+//        throw new IllegalArgumentException(err);
+        
+        return null;
     }
 
     private <T> boolean fetchParagraphProperty(ParagraphPropertyFetcher<T> visitor){
@@ -860,9 +807,9 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     }
 
     @Override
-    public double getDefaultFontSize() {
+    public Double getDefaultFontSize() {
         CTTextCharacterProperties endPr = _p.getEndParaRPr();
-        return (endPr == null || !endPr.isSetSz()) ? 12 : (endPr.getSz() / 100);
+        return (endPr == null || !endPr.isSetSz()) ? 12 : (endPr.getSz() / 100.);
     }
 
     @Override
@@ -871,6 +818,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     }
 
     public BulletStyle getBulletStyle() {
+        if (!isBullet()) return null;
         return new BulletStyle(){
             public String getBulletCharacter() {
                 return XSLFTextParagraph.this.getBulletCharacter();
@@ -880,7 +828,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
                 return XSLFTextParagraph.this.getBulletFont();
             }
 
-            public double getBulletFontSize() {
+            public Double getBulletFontSize() {
                 return XSLFTextParagraph.this.getBulletFontSize();
             }
 

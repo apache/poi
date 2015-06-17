@@ -55,12 +55,21 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         double rightInset = insets.right;
         double penY = y;
 
-        double leftMargin = paragraph.getLeftMargin();
         boolean firstLine = true;
-        double indent = paragraph.getIndent();
+        Double leftMargin = paragraph.getLeftMargin();
+        Double indent = paragraph.getIndent();
+        if (leftMargin == null) {
+            leftMargin = (indent != null) ? -indent : 0;
+        }
+        if (indent == null) {
+            indent = (leftMargin != null) ? -leftMargin : 0;
+        }
+
 
         //The vertical line spacing
-        double spacing = paragraph.getLineSpacing();
+        Double spacing = paragraph.getLineSpacing();
+        if (spacing == null) spacing = 100d;
+        
         for(DrawTextFragment line : lines){
             double penX = x + leftMargin;
 
@@ -77,7 +86,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
                         bullet.setPosition(penX + indent, penY);
                     } else if(indent > 0){
                         // a positive value means the "First Line" indentation:
-                        // the first line is indented and other lines start at the bullet ofset
+                        // the first line is indented and other lines start at the bullet offset
                         bullet.setPosition(penX, penY);
                         penX += indent;
                     } else {
@@ -96,7 +105,9 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
 
             Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
 
-            switch (paragraph.getTextAlign()) {
+            TextAlign ta = paragraph.getTextAlign();
+            if (ta == null) ta = TextAlign.LEFT;
+            switch (ta) {
                 case CENTER:
                     penX += (anchor.getWidth() - leftMargin - line.getWidth() - leftInset - rightInset) / 2;
                     break;
@@ -219,9 +230,10 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         if (buColor == null) buColor = (Color)firstLineAttr.getAttribute(TextAttribute.FOREGROUND);
 
         float fontSize = (Float)firstLineAttr.getAttribute(TextAttribute.SIZE);
-        float buSz = (float)bulletStyle.getBulletFontSize();
-        if(buSz > 0) fontSize *= buSz* 0.01;
-        else fontSize = -buSz;
+        Double buSz = bulletStyle.getBulletFontSize();
+        if (buSz == null) buSz = 100d; 
+        if (buSz > 0) fontSize *= buSz* 0.01;
+        else fontSize = (float)-buSz;
 
         
         AttributedString str = new AttributedString(buCharacter);
@@ -237,10 +249,13 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     protected String getRenderableText(TextRun tr) {
         StringBuilder buf = new StringBuilder();
         TextCap cap = tr.getTextCap();
+        String tabs = null;
         for (char c : tr.getRawText().toCharArray()) {
             if(c == '\t') {
-                // TODO: finish support for tabs
-                buf.append("  ");
+                if (tabs == null) {
+                    tabs = tab2space(tr);
+                }
+                buf.append(tabs);
                 continue;
             }
 
@@ -255,6 +270,34 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
 
         return buf.toString();
     }
+    
+    /**
+     * Replace a tab with the effective number of white spaces.
+     */
+    private String tab2space(TextRun tr) {
+        AttributedString string = new AttributedString(" ");
+        String typeFace = tr.getFontFamily();
+        if (typeFace == null) typeFace = "Lucida Sans";
+        string.addAttribute(TextAttribute.FAMILY, typeFace);
+
+        Double fs = tr.getFontSize();
+        if (fs == null) fs = 12d;
+        string.addAttribute(TextAttribute.SIZE, fs.floatValue());
+        
+        TextLayout l = new TextLayout(string.getIterator(), new FontRenderContext(null, true, true));
+        double wspace = l.getAdvance();
+
+        Double tabSz = paragraph.getDefaultTabSize();
+        if (tabSz == null) tabSz = wspace*4;
+
+        int numSpaces = (int)Math.ceil(tabSz / wspace);
+        StringBuilder buf = new StringBuilder();
+        for(int i = 0; i < numSpaces; i++) {
+            buf.append(' ');
+        }
+        return buf.toString();
+    }
+    
 
     /**
      * Returns wrapping width to break lines in this paragraph
@@ -271,8 +314,14 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
 
         Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
 
-        double leftMargin = paragraph.getLeftMargin();
-        double indent = paragraph.getIndent();
+        Double leftMargin = paragraph.getLeftMargin();
+        Double indent = paragraph.getIndent();
+        if (leftMargin == null) {
+            leftMargin = (indent != null) ? -indent : 0;
+        }
+        if (indent == null) {
+            indent = (leftMargin != null) ? -leftMargin : 0;
+        }
 
         double width;
         TextShape<? extends TextParagraph<T>> ts = paragraph.getParentShape();
@@ -323,7 +372,9 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             text.append(runText);
             int endIndex = text.length();
 
-            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, run.getFontColor(), beginIndex, endIndex));
+            Color fgColor = run.getFontColor();
+            if (fgColor == null) fgColor = Color.BLACK;
+            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgColor, beginIndex, endIndex));
 
             // user can pass an custom object to convert fonts
             String fontFamily = run.getFontFamily();
@@ -335,10 +386,14 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             if(fontHandler != null) {
                 fontFamily = fontHandler.getRendererableFont(fontFamily, run.getPitchAndFamily());
             }
+            if (fontFamily == null) {
+                fontFamily = paragraph.getDefaultFontFamily();
+            }
             attList.add(new AttributedStringData(TextAttribute.FAMILY, fontFamily, beginIndex, endIndex));
 
-            float fontSz = (float)run.getFontSize();
-            attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz, beginIndex, endIndex));
+            Double fontSz = run.getFontSize();
+            if (fontSz == null) fontSz = paragraph.getDefaultFontSize();
+            attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz.floatValue(), beginIndex, endIndex));
 
             if(run.isBold()) {
                 attList.add(new AttributedStringData(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, beginIndex, endIndex));
@@ -364,9 +419,9 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         // ensure that the paragraph contains at least one character
         // We need this trick to correctly measure text
         if (text.length() == 0) {
-            float fontSz = (float)paragraph.getDefaultFontSize();
+            Double fontSz = paragraph.getDefaultFontSize();
             text.append(" ");
-            attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz, 0, 1));
+            attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz.floatValue(), 0, 1));
         }
 
         AttributedString string = new AttributedString(text.toString());
