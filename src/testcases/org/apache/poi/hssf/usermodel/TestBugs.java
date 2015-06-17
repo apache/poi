@@ -2581,12 +2581,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(4, wbBack.getNumberOfSheets());
         
-        OutputStream fOut = new FileOutputStream("C:\\temp\\56325a.xls");
-        try {
-        	wb.write(fOut);
-        } finally {
-        	fOut.close();
-        }
+//        OutputStream fOut = new FileOutputStream("C:\\temp\\56325a.xls");
+//        try {
+//        	wb.write(fOut);
+//        } finally {
+//        	fOut.close();
+//        }
     }
     
     /**
