@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -291,7 +292,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFCell d1 = w.getSheetAt(0).getRow(3).getCell(0);
         HSSFCell d2 = w.getSheetAt(0).getRow(3).getCell(1);
 
-        if (false) {
+        /*
             // THAI code page
             System.out.println("a1="+unicodeString(a1));
             System.out.println("a2="+unicodeString(a2));
@@ -304,7 +305,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             // US+THAI
             System.out.println("d1="+unicodeString(d1));
             System.out.println("d2="+unicodeString(d2));
-        }
+        */
+
         confirmSameCellText(a1, a2);
         confirmSameCellText(b1, b2);
         confirmSameCellText(c1, c2);
@@ -336,7 +338,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(a.getRichStringCellValue().getString(), b.getRichStringCellValue().getString());
     }
 
-    private static String unicodeString(HSSFCell cell) {
+    /*private static String unicodeString(HSSFCell cell) {
         String ss = cell.getRichStringCellValue().getString();
         char s[] = ss.toCharArray();
         StringBuffer sb = new StringBuffer();
@@ -344,7 +346,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             sb.append("\\u").append(Integer.toHexString(s[x]));
         }
         return sb.toString();
-    }
+    }*/
 
     /** Error in opening wb*/
     @Test
@@ -886,7 +888,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         List<HSSFObjectData> objects = wb.getAllEmbeddedObjects();
         assertEquals(1, objects.size());
 
-        HSSFObjectData obj = (HSSFObjectData)objects.get(0);
+        HSSFObjectData obj = objects.get(0);
         assertNotNull(obj);
 
         // Peek inside the underlying record
@@ -975,9 +977,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     /**
      * Test that fonts get added properly
+     * @throws IOException 
      */
     @Test
-    public void bug45338() {
+    public void bug45338() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         assertEquals(4, wb.getNumberOfFonts());
 
@@ -1056,6 +1059,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                    "Thingy", false, true, (short)2, (byte)2
                )
         );
+        
+        wb.close();
     }
 
     /**
@@ -1200,9 +1205,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * People are all getting confused about the last
      *  row and cell number
+     * @throws IOException 
      */
     @Test
-    public void bug30635() {
+    public void bug30635() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
 
@@ -1245,6 +1251,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(0, r.getFirstCellNum());
         assertEquals(5, r.getLastCellNum()); // last cell # + 1
         assertEquals(3, r.getPhysicalNumberOfCells());
+        
+        wb.close();
     }
 
     /**
@@ -1571,7 +1579,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         try {
             OPOIFSFileSystem fs = new OPOIFSFileSystem(
                     HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
-            new HSSFWorkbook(fs.getRoot(), false);
+            new HSSFWorkbook(fs.getRoot(), false).close();
             fail();
         } catch(OldExcelFormatException e) {
             assertTrue(e.getMessage().startsWith(
@@ -1581,8 +1589,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         try {
             NPOIFSFileSystem fs = new NPOIFSFileSystem(
                     HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
-            new HSSFWorkbook(fs.getRoot(), false);
-            fail();
+            try {
+                new HSSFWorkbook(fs.getRoot(), false).close();
+                fail();
+            } finally {
+                fs.close();
+            }
         } catch(OldExcelFormatException e) {
             assertTrue(e.getMessage().startsWith(
                     "The supplied spreadsheet seems to be Excel"
@@ -2020,9 +2032,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     
     /**
      * Last row number when shifting rows
+     * @throws IOException 
      */
     @Test
-    public void bug50416LastRowNumber() {
+    public void bug50416LastRowNumber() throws IOException {
        // Create the workbook with 1 sheet which contains 3 rows
        HSSFWorkbook workbook = new HSSFWorkbook();
        Sheet sheet = workbook.createSheet("Bug50416");
@@ -2071,6 +2084,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
        assertEquals("Cell A,2", sheet.getRow(0).getCell(0).getStringCellValue());
        assertEquals("Cell A,1", sheet.getRow(1).getCell(0).getStringCellValue());
        assertEquals("Cell A,3", sheet.getRow(2).getCell(0).getStringCellValue());
+       
+       workbook.close();
     }
     
     /**
@@ -2376,6 +2391,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
         PageSettingsBlock psb = (PageSettingsBlock) ish.getRecords().get(13);
         psb.visitContainedRecords(new RecordAggregate.RecordVisitor() {
+            @Override
             public void visitRecord(Record r) {
                 list.add(r.getSid());
             }
@@ -2385,7 +2401,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
     
     @Test
-    public void bug52272(){
+    public void bug52272() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
         HSSFPatriarch p = sh.createDrawingPatriarch();
@@ -2395,14 +2411,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFSheet sh2 = wb.cloneSheet(0);
         assertNotNull(sh2.getDrawingPatriarch());
+        
+        wb.close();
     }
 
     @Test
-    public void bug53432(){
+    public void bug53432() throws IOException{
         Workbook wb = new HSSFWorkbook(); //or new HSSFWorkbook();
         wb.addPicture(new byte[]{123,22}, Workbook.PICTURE_TYPE_JPEG);
         assertEquals(wb.getAllPictures().size(), 1);
 
+        wb.close();
         wb = new HSSFWorkbook();
         wb = writeOutAndReadBack((HSSFWorkbook) wb);
         assertEquals(wb.getAllPictures().size(), 0);
@@ -2411,6 +2430,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         wb = writeOutAndReadBack((HSSFWorkbook) wb);
         assertEquals(wb.getAllPictures().size(), 1);
+        
+        wb.close();
     }
 
     @Test
@@ -2560,12 +2581,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertEquals(4, wbBack.getNumberOfSheets());
         
-//        OutputStream fOut = new FileOutputStream("/tmp/56325a.xls");
-//        try {
-//        	wb.write(fOut);
-//        } finally {
-//        	fOut.close();
-//        }
+        OutputStream fOut = new FileOutputStream("C:\\temp\\56325a.xls");
+        try {
+        	wb.write(fOut);
+        } finally {
+        	fOut.close();
+        }
     }
     
     /**
@@ -2756,6 +2777,41 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertNotNull(wbBack);
         
+        wb.close();
+    }
+    
+    @Test
+    public void test48043() throws IOException {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("56325a.xls");
+        
+        wb.removeSheetAt(2);
+        wb.removeSheetAt(1);
+        
+        //Sheet s = wb.createSheet("sheetname");
+        Sheet s = wb.getSheetAt(0);
+        Row row = s.createRow(0);
+        Cell cell = row.createCell(0);
+
+        cell.setCellFormula(
+                "IF(AND(ISBLANK(A10)," +
+                "ISBLANK(B10)),\"\"," + 
+                "CONCATENATE(A10,\"-\",B10))");
+        
+        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+        
+        eval.evaluateAll();
+        
+        /*OutputStream out = new FileOutputStream("C:\\temp\\48043.xls");
+        try {
+          wb.write(out);
+        } finally {
+          out.close();
+        }*/
+        
+        Workbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+        wbBack.close();
+
         wb.close();
     }
 }

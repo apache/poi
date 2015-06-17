@@ -74,6 +74,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -350,42 +351,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * With HSSF, if you create a font, don't change it, and
-     *  create a 2nd, you really do get two fonts that you 
-     *  can alter as and when you want.
-     * With XSSF, that wasn't the case, but this verfies
-     *  that it now is again
-     */
-    @Test
-    public void bug48718() throws Exception {
-        // Verify the HSSF behaviour
-        // Then ensure the same for XSSF
-        Workbook[] wbs = new Workbook[] {
-                new HSSFWorkbook(),
-                new XSSFWorkbook()
-        };
-        int[] initialFonts = new int[] { 4, 1 };
-        for(int i=0; i<wbs.length; i++) {
-            Workbook wb = wbs[i];
-            int startingFonts = initialFonts[i];
-
-            assertEquals(startingFonts, wb.getNumberOfFonts());
-
-            // Get a font, and slightly change it
-            Font a = wb.createFont();
-            assertEquals(startingFonts+1, wb.getNumberOfFonts());
-            a.setFontHeightInPoints((short)23);
-            assertEquals(startingFonts+1, wb.getNumberOfFonts());
-
-            // Get two more, unchanged
-            /*Font b =*/ wb.createFont();
-            assertEquals(startingFonts+2, wb.getNumberOfFonts());
-            /*Font c =*/ wb.createFont();
-            assertEquals(startingFonts+3, wb.getNumberOfFonts());
-        }
-    }
-
-    /**
      * Ensure General and @ format are working properly
      *  for integers 
      */
@@ -416,73 +381,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("123", df.formatCellValue(r.getCell(2)));
         assertEquals("123", df.formatRawCellContents(123.0, -1, "@"));
         assertEquals("123", df.formatRawCellContents(123.0, -1, "General"));
-    }
-
-    /**
-     * Ensures that XSSF and HSSF agree with each other,
-     *  and with the docs on when fetching the wrong
-     *  kind of value from a Formula cell
-     */
-    @Test
-    public void bug47815() {
-        Workbook[] wbs = new Workbook[] {
-                new HSSFWorkbook(),
-                new XSSFWorkbook()
-        };
-        for(Workbook wb : wbs) {
-            Sheet s = wb.createSheet();
-            Row r = s.createRow(0);
-
-            // Setup
-            Cell cn = r.createCell(0, Cell.CELL_TYPE_NUMERIC);
-            cn.setCellValue(1.2);
-            Cell cs = r.createCell(1, Cell.CELL_TYPE_STRING);
-            cs.setCellValue("Testing");
-
-            Cell cfn = r.createCell(2, Cell.CELL_TYPE_FORMULA);
-            cfn.setCellFormula("A1");  
-            Cell cfs = r.createCell(3, Cell.CELL_TYPE_FORMULA);
-            cfs.setCellFormula("B1");
-
-            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
-            assertEquals(Cell.CELL_TYPE_NUMERIC, fe.evaluate(cfn).getCellType());
-            assertEquals(Cell.CELL_TYPE_STRING, fe.evaluate(cfs).getCellType());
-            fe.evaluateFormulaCell(cfn);
-            fe.evaluateFormulaCell(cfs);
-
-            // Now test
-            assertEquals(Cell.CELL_TYPE_NUMERIC, cn.getCellType());
-            assertEquals(Cell.CELL_TYPE_STRING, cs.getCellType());
-            assertEquals(Cell.CELL_TYPE_FORMULA, cfn.getCellType());
-            assertEquals(Cell.CELL_TYPE_NUMERIC, cfn.getCachedFormulaResultType());
-            assertEquals(Cell.CELL_TYPE_FORMULA, cfs.getCellType());
-            assertEquals(Cell.CELL_TYPE_STRING, cfs.getCachedFormulaResultType());
-
-            // Different ways of retrieving
-            assertEquals(1.2, cn.getNumericCellValue(), 0);
-            try {
-                cn.getRichStringCellValue();
-                fail();
-            } catch(IllegalStateException e) {}
-
-            assertEquals("Testing", cs.getStringCellValue());
-            try {
-                cs.getNumericCellValue();
-                fail();
-            } catch(IllegalStateException e) {}
-
-            assertEquals(1.2, cfn.getNumericCellValue(), 0);
-            try {
-                cfn.getRichStringCellValue();
-                fail();
-            } catch(IllegalStateException e) {}
-
-            assertEquals("Testing", cfs.getStringCellValue());
-            try {
-                cfs.getNumericCellValue();
-                fail();
-            } catch(IllegalStateException e) {}
-        }
     }
 
     /**
@@ -1128,14 +1026,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
         assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
 
-        XSSFPrintSetup ps1 = s1.getPrintSetup();
+        PrintSetup ps1 = s1.getPrintSetup();
         assertEquals(false, ps1.getValidSettings());
         assertEquals(false, ps1.getLandscape());
 
 
         // Had valid print settings before repeating
         XSSFSheet s2 = wb2.createSheet();
-        XSSFPrintSetup ps2 = s2.getPrintSetup();
+        PrintSetup ps2 = s2.getPrintSetup();
         assertEquals(true, s2.getCTWorksheet().isSetPageSetup());
         assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
 
@@ -1380,12 +1278,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug51963() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51963.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+        Sheet sheet = wb.getSheetAt(0);
         assertEquals("Abc,1", sheet.getSheetName());
 
         Name name = wb.getName("Intekon.ProdCodes");
         assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
 
+        @SuppressWarnings("deprecation")
         AreaReference ref = new AreaReference(name.getRefersToFormula());
         assertEquals(0, ref.getFirstCell().getRow());
         assertEquals(0, ref.getFirstCell().getCol());
@@ -1483,6 +1382,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("54436.xlsx");
         if(!WorkbookEvaluator.getSupportedFunctionNames().contains("GETPIVOTDATA")){
             Function func = new Function() {
+                @Override
                 public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
                     return ErrorEval.NA;
                 }
@@ -2095,20 +1995,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
     
-    @Test
-    public void bug57430() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
-            wb.createSheet("Sheet1");
-
-            XSSFName name1 = wb.createName();
-            name1.setNameName("FMLA");
-            name1.setRefersToFormula("Sheet1!$B$3");
-        } finally {
-            wb.close();
-        }
-    }
-    
     /**
      * A .xlsx file with no Shared Strings table should open fine
      *  in read-only mode
@@ -2507,6 +2393,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         tmp.delete();
     }
 
+
     @Test
     public void test56574() throws IOException {
         runTest56574(false);
@@ -2599,5 +2486,5 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
         
         wb.close();
-    }    
+    }
 }
