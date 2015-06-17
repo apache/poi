@@ -95,7 +95,8 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
 
             if (!isFirstLine) {
                 // the amount of vertical white space before the paragraph
-                double spaceBefore = p.getSpaceBefore();
+                Double spaceBefore = p.getSpaceBefore();
+                if (spaceBefore == null) spaceBefore = 0d;
                 if(spaceBefore > 0) {
                     // positive value means percentage spacing of the height of the first line, e.g.
                     // the higher the first line, the bigger the space before the paragraph
@@ -112,7 +113,8 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
             y += dp.getY();
 
             if (paragraphs.hasNext()) {
-                double spaceAfter = p.getSpaceAfter();
+                Double spaceAfter = p.getSpaceAfter();
+                if (spaceAfter == null) spaceAfter = 0d;
                 if(spaceAfter > 0) {
                     // positive value means percentage spacing of the height of the last line, e.g.
                     // the higher the last line, the bigger the space after the paragraph

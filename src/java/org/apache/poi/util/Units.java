@@ -16,12 +16,30 @@
 ==================================================================== */
 package org.apache.poi.util;
 
+import org.apache.poi.hslf.usermodel.HSLFShape;
+
 /**
  * @author Yegor Kozlov
  */
 public class Units {
     public static final int EMU_PER_PIXEL = 9525;
     public static final int EMU_PER_POINT = 12700;
+
+    /**
+     * Master DPI (576 pixels per inch).
+     * Used by the reference coordinate system in PowerPoint (HSLF)
+     */
+    public static final int MASTER_DPI = 576;    
+
+    /**
+     * Pixels DPI (96 pixels per inch)
+     */
+    public static final int PIXEL_DPI = 96;
+
+    /**
+     * Points DPI (72 pixels per inch)
+     */
+    public static final int POINT_DPI = 72;    
 
     /**
      * Converts points to EMUs
@@ -69,5 +87,18 @@ public class Units {
         int f = (int)((floatPoint % 1d)*65536d);
         int fixedPoint = (i << 16) | (f & 0xFFFF);
         return fixedPoint;
+    }
+
+    public static double masterToPoints(int masterDPI) {
+        double points = masterDPI;
+        points *= HSLFShape.POINT_DPI;
+        points /= HSLFShape.MASTER_DPI;
+        return points;
+    }
+    
+    public static int pointsToMaster(double points) {
+        points *= HSLFShape.MASTER_DPI;
+        points /= HSLFShape.POINT_DPI;
+        return (int)points;
     }
 }

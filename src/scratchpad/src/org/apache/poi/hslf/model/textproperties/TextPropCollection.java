@@ -31,47 +31,10 @@ import org.apache.poi.util.LittleEndian;
  *  properties, and the indent level if required.
  */
 public class TextPropCollection {
-    /*
-    private static TextProp paragraphSpecialPropTypes[] = {
-        new ParagraphFlagsTextProp(),
-        new TextProp(2, 0x80, "bullet.char"),
-        new TextProp(2, 0x10, "bullet.font"),
-        new TextProp(2, 0x40, "bullet.size"),
-        new TextProp(4, 0x20, "bullet.color"),
-        new TextProp(2, 0xD00, "alignment"),
-        new TextProp(2, 0x1000, "linespacing"),
-        new TextProp(2, 0x2000, "spacebefore"),
-        new TextProp(2, 0x4000, "spaceafter"),
-        new TextProp(2, 0x8000, "text.offset"),
-        new TextProp(2, 0x10000, "bullet.offset"),
-        new TextProp(2, 0x20000, "defaulttab"),
-        new TextProp(2, 0x40000, "para_unknown_2"),
-        new TextProp(2, 0x80000, "para_unknown_3"),
-        new TextProp(2, 0x100000, "para_unknown_4"),
-        new TextProp(2, 0x200000, "para_unknown_5")
-    };
-
-    private static TextProp characterSpecialPropTypes[] = {
-        new CharFlagsTextProp(),
-        new TextProp(2, 0x10000, "font.index"),
-        new TextProp(2, 0x20000, "char_unknown_1"),
-        new TextProp(4, 0x40000, "char_unknown_2"),
-        new TextProp(2, 0x80000, "font.size"),
-        new TextProp(2, 0x100000, "char_unknown_3"),
-        new TextProp(4, 0x200000, "font.color"),
-        new TextProp(2, 0x800000, "char_unknown_4")
-    };
-*/    
-
-    
     /** All the different kinds of paragraph properties we might handle */
     public static final TextProp[] paragraphTextPropTypes = {
         // TextProp order is according to 2.9.20 TextPFException,
         // bitmask order can be different
-//        new TextProp(0, 0x1, "hasBullet"),
-//        new TextProp(0, 0x2, "hasBulletFont"),
-//        new TextProp(0, 0x4, "hasBulletColor"),
-//        new TextProp(0, 0x8, "hasBulletSize"),
         new ParagraphFlagsTextProp(),
         new TextProp(2, 0x80, "bullet.char"),
         new TextProp(2, 0x10, "bullet.font"),
@@ -95,24 +58,9 @@ public class TextPropCollection {
         new TextProp(0, 0x2000000, "hasBulletScheme"), // TODO: check size
         // 0xFC000000 MUST be zero and MUST be ignored
     };
+    
     /** All the different kinds of character properties we might handle */
     public static final TextProp[] characterTextPropTypes = new TextProp[] {
-//        new TextProp(0, 0x1, "bold"),
-//        new TextProp(0, 0x2, "italic"),
-//        new TextProp(0, 0x4, "underline"),
-//        new TextProp(0, 0x8, "unused1"),
-//        new TextProp(0, 0x10, "shadow"),
-//        new TextProp(0, 0x20, "fehint"),
-//        new TextProp(0, 0x40, "unused2"),
-//        new TextProp(0, 0x80, "kumi"),
-//        new TextProp(0, 0x100, "strikethrough"),
-//        new TextProp(0, 0x200, "emboss"),
-//        new TextProp(0, 0x400, "nibble1"),
-//        new TextProp(0, 0x800, "nibble2"),
-//        new TextProp(0, 0x1000, "nibble3"),
-//        new TextProp(0, 0x2000, "nibble4"),
-//        new TextProp(0, 0x4000, "unused4"),
-//        new TextProp(0, 0x8000, "unused5"),
         new TextProp(0, 0x100000, "pp10ext"),
         new TextProp(0, 0x1000000, "newAsian.font.index"), // A bit that specifies whether the newEAFontRef field of the TextCFException10 structure that contains this CFMasks exists.
         new TextProp(0, 0x2000000, "cs.font.index"), // A bit that specifies whether the csFontRef field of the TextCFException10 structure that contains this CFMasks exists.
@@ -166,6 +114,19 @@ public class TextPropCollection {
 		}
 		return null;
 	}
+
+	public TextProp removeByName(String name) {
+	    Iterator<TextProp> iter = textPropList.iterator();
+	    TextProp tp = null;
+	    while (iter.hasNext()) {
+	        tp = iter.next();
+	        if (tp.getName().equals(name)){
+	            iter.remove();
+	            break;
+	        }
+	    }
+	    return tp;
+	}
 	
 	/** Add the TextProp with this name to the list */
 	public TextProp addWithName(String name) {
@@ -192,6 +153,10 @@ public class TextPropCollection {
 		return textProp;
 	}
 
+	public TextPropType getTextPropType() {
+	    return textPropType;
+	}
+	
 	private TextProp[] getPotentialProperties() {
 	    return (textPropType == TextPropType.paragraph) ? paragraphTextPropTypes : characterTextPropTypes;
 	}

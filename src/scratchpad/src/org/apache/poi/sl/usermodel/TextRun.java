@@ -21,8 +21,6 @@ import java.awt.Color;
 
 /**
  * Some text.
- *
- * TODO - decide on how we do rich text stuff
  */
 public interface TextRun {
     enum TextCap {
@@ -31,13 +29,13 @@ public interface TextRun {
         ALL
     }
     
-    public String getRawText();
-	public void setText(String text);
+    String getRawText();
+	void setText(String text);
 
 	TextCap getTextCap();
 	
 	Color getFontColor();
-	double getFontSize();
+	Double getFontSize();
 	String getFontFamily();
 	
 	boolean isBold();

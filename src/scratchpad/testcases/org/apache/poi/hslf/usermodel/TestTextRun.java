@@ -556,7 +556,7 @@ public final class TestTextRun {
         int i=0;
         for (List<HSLFTextParagraph> textParas : slide.getTextParagraphs()) {
             assertEquals("Arial", textParas.get(0).getTextRuns().get(0).getFontFamily());
-            assertEquals(sizes[i++], (int)textParas.get(0).getTextRuns().get(0).getFontSize());
+            assertEquals(sizes[i++], textParas.get(0).getTextRuns().get(0).getFontSize().intValue());
         }
     }
 

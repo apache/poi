@@ -45,9 +45,9 @@ public class Tutorial7 {
 
         XSLFTextParagraph p2 = shape.addNewTextParagraph();
         // indentation before text
-        p2.setLeftMargin(60);
+        p2.setLeftMargin(60d);
         // the bullet is set 40 pt before the text
-        p2.setIndent(-40);
+        p2.setIndent(-40d);
         p2.setBullet(true);
         // customize bullets
         p2.setBulletFontColor(Color.red);
