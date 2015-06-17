@@ -120,6 +120,8 @@ public class XSSFPrintSetup implements PrintSetup {
     public void setLeftToRight(boolean ltor) {
         if (ltor)
             setPageOrder(PageOrder.OVER_THEN_DOWN);
+        else 
+            setPageOrder(PageOrder.DOWN_THEN_OVER);
     }
 
     /**
@@ -130,6 +132,8 @@ public class XSSFPrintSetup implements PrintSetup {
     public void setLandscape(boolean ls) {
         if (ls)
             setOrientation(PrintOrientation.LANDSCAPE);
+        else 
+            setOrientation(PrintOrientation.PORTRAIT);
     }
 
     /**

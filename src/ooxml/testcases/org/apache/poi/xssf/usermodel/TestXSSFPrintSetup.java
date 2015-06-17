@@ -19,12 +19,18 @@ package org.apache.poi.xssf.usermodel;
 
 import junit.framework.TestCase;
 
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PageOrder;
-import org.apache.poi.ss.usermodel.PrintOrientation;
+import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PrintCellComments;
+import org.apache.poi.ss.usermodel.PrintOrientation;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STOrientation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
 
 /**
  * Tests for {@link XSSFPrintSetup}
@@ -226,10 +232,10 @@ public class TestXSSFPrintSetup extends TestCase {
        assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
        
        // Round trip and check
-       wb = XSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+       XSSFWorkbook wbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(wb);
        
-       s1 = wb.getSheetAt(0);
-       s2 = wb.getSheetAt(1);
+       s1 = wbBack.getSheetAt(0);
+       s2 = wbBack.getSheetAt(1);
        
        assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
        assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
@@ -239,6 +245,8 @@ public class TestXSSFPrintSetup extends TestCase {
        print = s1.getPrintSetup();
        assertEquals(3, print.getCopies());
        assertEquals(true, print.getLandscape());
+       
+       wb.close();
     }
 
     /**
@@ -247,5 +255,31 @@ public class TestXSSFPrintSetup extends TestCase {
      */
     public void testRoundTrip() {
        // TODO
+    }
+
+    @Test
+    public void testSetLandscapeFalse() throws Exception {
+        XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
+        
+        assertFalse(ps.getLandscape());
+        
+        ps.setLandscape(true);
+        assertTrue(ps.getLandscape());
+        
+        ps.setLandscape(false);
+        assertFalse(ps.getLandscape());
+    }
+
+    @Test
+    public void testSetLeftToRight() throws Exception {
+        XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
+        
+        assertFalse(ps.getLeftToRight());
+        
+        ps.setLeftToRight(true);
+        assertTrue(ps.getLeftToRight());
+        
+        ps.setLeftToRight(false);
+        assertFalse(ps.getLeftToRight());
     }
 }
