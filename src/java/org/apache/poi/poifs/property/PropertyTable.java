@@ -27,7 +27,7 @@ import org.apache.poi.poifs.storage.PropertyBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 
 /**
- * This class embodies the Property Table for the {@link POIFSFileSystem}; 
+ * This class embodies the Property Table for the {@link org.apache.poi.poifs.filesystem.POIFSFileSystem}; 
  *  this is basically the directory for all of the documents in the
  * filesystem.
  *
