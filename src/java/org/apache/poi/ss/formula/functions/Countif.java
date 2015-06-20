@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
-import org.apache.poi.ss.usermodel.ErrorConstants;
+import org.apache.poi.ss.usermodel.FormulaError;
 
 /**
  * Implementation for the function COUNTIF
@@ -254,6 +254,7 @@ public final class Countif extends Fixed2ArgFunction {
 					// boolean values when the target(x) is a string
 					return false;
 				}
+				@SuppressWarnings("unused")
 				StringEval se = (StringEval)x;
 				Boolean val = parseBoolean(se.getStringValue());
 				if(val == null) {
@@ -286,7 +287,7 @@ public final class Countif extends Fixed2ArgFunction {
 			return evaluate(testValue - _value);
 		}
 	}
-	private static final class ErrorMatcher extends MatcherBase {
+	public static final class ErrorMatcher extends MatcherBase {
 
 		private final int _value;
 
@@ -296,7 +297,7 @@ public final class Countif extends Fixed2ArgFunction {
 		}
 		@Override
 		protected String getValueText() {
-			return ErrorConstants.getText(_value);
+			return FormulaError.forInt(_value).getString();
 		}
 
 		public boolean matches(ValueEval x) {
@@ -305,6 +306,10 @@ public final class Countif extends Fixed2ArgFunction {
 				return evaluate(testValue - _value);
 			}
 			return false;
+		}
+		
+		public int getValue() {
+		    return _value;
 		}
 	}
 	public static final class StringMatcher extends MatcherBase {

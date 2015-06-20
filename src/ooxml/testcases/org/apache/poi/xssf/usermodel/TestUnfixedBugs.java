@@ -34,7 +34,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -218,68 +217,6 @@ public final class TestUnfixedBugs extends TestCase {
         assertEquals(2, strBack.getIndexOfFormattingRun(1));
         assertEquals(4, strBack.getIndexOfFormattingRun(2));
     }
-
-    @Test
-    public void testBug56655() {
-        XSSFWorkbook wb =  new XSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        
-        setCellFormula(sheet, 0, 0, "#VALUE!");
-        setCellFormula(sheet, 0, 1, "SUMIFS(A:A,A:A,#VALUE!)");
-
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,0).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0,1).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0,1).getErrorCellValue());
-    }
-
-    @Test
-    public void testBug56655a() {
-        XSSFWorkbook wb =  new XSSFWorkbook();
-        Sheet sheet = wb.createSheet();
-        
-        setCellFormula(sheet, 0, 0, "B1*C1");
-        sheet.getRow(0).createCell(1).setCellValue("A");
-        setCellFormula(sheet, 1, 0, "B1*C1");
-        sheet.getRow(1).createCell(1).setCellValue("A");
-        setCellFormula(sheet, 0, 3, "SUMIFS(A:A,A:A,A2)");
-
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 0).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 1, 0).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 1, 0).getErrorCellValue());
-        assertEquals(XSSFCell.CELL_TYPE_ERROR, getCell(sheet, 0, 3).getCachedFormulaResultType());
-        assertEquals(FormulaError.VALUE.getCode(), getCell(sheet, 0, 3).getErrorCellValue());
-    }
-
-    /**
-    * @param row 0-based
-    * @param column 0-based
-    */
-   private void setCellFormula(Sheet sheet, int row, int column, String formula) {
-       Row r = sheet.getRow(row);
-       if (r == null) {
-           r = sheet.createRow(row);
-       }
-       Cell cell = r.getCell(column);
-       if (cell == null) {
-           cell = r.createCell(column);
-       }
-       cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-       cell.setCellFormula(formula);
-   }
-
-   /**
-    * @param rowNo 0-based
-    * @param column 0-based
-    */
-   private Cell getCell(Sheet sheet, int rowNo, int column) {
-       return sheet.getRow(rowNo).getCell(column);
-   }
 
    @Test
    public void testBug55752() throws IOException {
