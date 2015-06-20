@@ -24,7 +24,7 @@ import java.io.InputStream;
  * A wrapper around an {@link InputStream}, which 
  *  ignores close requests made to it.
  *
- * Useful with {@link POIFSFileSystem}, where you want
+ * Useful with {@link org.apache.poi.poifs.filesystem.POIFSFileSystem}, where you want
  *  to control the close yourself.
  */
 public class CloseIgnoringInputStream extends FilterInputStream {
