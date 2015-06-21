@@ -17,14 +17,18 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
+
+import junit.framework.TestCase;
+
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.ArrayPtg;
+import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.util.HexRead;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 /**
  * Tests the NameRecord serializes/deserializes correctly
@@ -60,7 +64,8 @@ public final class TestNameRecord extends TestCase {
 		byte[] data2 = nr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(NameRecord.sid, data, data2);
 	}
-	public void testFormulaRelAbs_bug46174() {
+
+	public void testFormulaRelAbs_bug46174() throws IOException {
 		// perhaps this testcase belongs on TestHSSFName
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFName name = wb.createName();
@@ -68,11 +73,13 @@ public final class TestNameRecord extends TestCase {
 		name.setNameName("test");
 		name.setRefersToFormula("Sheet1!$B$3");
 		if (name.getRefersToFormula().equals("Sheet1!B3")) {
-			throw new AssertionFailedError("Identified bug 46174");
+			fail("Identified bug 46174");
 		}
 		assertEquals("Sheet1!$B$3", name.getRefersToFormula());
+	    wb.close();
 	}
-	public void testFormulaGeneral() {
+
+	public void testFormulaGeneral() throws IOException {
 		// perhaps this testcase belongs on TestHSSFName
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFName name = wb.createName();
@@ -82,6 +89,8 @@ public final class TestNameRecord extends TestCase {
 		assertEquals("Sheet1!A1+Sheet1!A2", name.getRefersToFormula());
 		name.setRefersToFormula("5*6");
 		assertEquals("5*6", name.getRefersToFormula());
+		
+		wb.close();
 	}
 
     /**
@@ -687,4 +696,22 @@ public final class TestNameRecord extends TestCase {
         assertEquals("1.T20.001", vals[0][0]);
         assertEquals("1.T20.010", vals[vals.length - 1][0]);
     }
+
+    public void testBug57923() {
+        NameRecord record = new NameRecord();
+        assertEquals(0, record.getExternSheetNumber());
+        
+        record.setNameDefinition(new Ptg[] {});
+        assertEquals(0, record.getExternSheetNumber());
+        
+        record.setNameDefinition(new Ptg[] {new NamePtg(1)});
+        assertEquals(0, record.getExternSheetNumber());
+
+        record.setNameDefinition(new Ptg[] {new Area3DPtg("area", 1)});
+        assertEquals(1, record.getExternSheetNumber());
+
+        record.setNameDefinition(new Ptg[] {new Ref3DPtg("A1", 1)});
+        assertEquals(1, record.getExternSheetNumber());
+    }
+    
 }
