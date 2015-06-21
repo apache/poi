@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.util;
 
@@ -30,20 +30,18 @@ import java.util.Map;
  * @author Marc Johnson (mjohnson at apache dot org)
  * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
-public class POILogFactory
-{
-
+@Internal
+public final class POILogFactory {
     /**
      * Map of POILogger instances, with classes as keys
      */
-    private static Map<String,POILogger> _loggers = new HashMap<String,POILogger>();;
+    private static Map<String,POILogger> _loggers = new HashMap<String,POILogger>();
 
     /**
      * A common instance of NullLogger, as it does nothing
      *  we only need the one
      */
-    private static POILogger _nullLogger = new NullLogger();
+    private static final POILogger _nullLogger = new NullLogger();
     /**
      * The name of the class to use. Initialised the
      *  first time we need it
@@ -53,9 +51,7 @@ public class POILogFactory
     /**
      * Construct a POILogFactory.
      */
-    private POILogFactory()
-    {
-    }
+    private POILogFactory() {}
 
     /**
      * Get a logger, based on a class name
@@ -64,12 +60,10 @@ public class POILogFactory
      *
      * @return a POILogger for the specified class
      */
-
-    public static POILogger getLogger(final Class<?> theclass)
-    {
+    public static POILogger getLogger(final Class<?> theclass) {
         return getLogger(theclass.getName());
     }
-    
+
     /**
      * Get a logger, based on a String
      *
@@ -77,11 +71,9 @@ public class POILogFactory
      *
      * @return a POILogger for the specified class
      */
-
-    public static POILogger getLogger(final String cat)
-    {
+    public static POILogger getLogger(final String cat) {
         POILogger logger = null;
-        
+
         // If we haven't found out what logger to use yet,
         //  then do so now
         // Don't look it up until we're first asked, so
@@ -91,40 +83,40 @@ public class POILogFactory
         	try {
         		_loggerClassName = System.getProperty("org.apache.poi.util.POILogger");
         	} catch(Exception e) {}
-        	
+
         	// Use the default logger if none specified,
         	//  or none could be fetched
         	if(_loggerClassName == null) {
-        		_loggerClassName = _nullLogger.getClass().getName();
+                _loggerClassName = _nullLogger.getClass().getName();
         	}
         }
-        
+
         // Short circuit for the null logger, which
         //  ignores all categories
         if(_loggerClassName.equals(_nullLogger.getClass().getName())) {
         	return _nullLogger;
         }
 
-        
+
         // Fetch the right logger for them, creating
-        //  it if that's required 
-        if (_loggers.containsKey(cat)) {
-            logger = _loggers.get(cat);
-        } else {
+        //  it if that's required
+        logger = _loggers.get(cat);
+        if (logger == null) {
             try {
-              @SuppressWarnings("unchecked")
-			Class<? extends POILogger> loggerClass = 
-                 (Class<? extends POILogger>)Class.forName(_loggerClassName);
-              logger = loggerClass.newInstance();
-              logger.initialize(cat);
+                @SuppressWarnings("unchecked")
+                Class<? extends POILogger> loggerClass =
+                    (Class<? extends POILogger>) Class.forName(_loggerClassName);
+                logger = loggerClass.newInstance();
+                logger.initialize(cat);
             } catch(Exception e) {
-              // Give up and use the null logger
-              logger = _nullLogger;
+                // Give up and use the null logger
+                logger = _nullLogger;
+                _loggerClassName = _nullLogger.getClass().getName();
             }
-            
+
             // Save for next time
             _loggers.put(cat, logger);
         }
         return logger;
     }
-}   // end public class POILogFactory
+}
