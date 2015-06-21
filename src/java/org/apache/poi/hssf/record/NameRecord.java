@@ -411,11 +411,12 @@ public final class NameRecord extends ContinuableRecord {
 	 * @return extern sheet index
 	 */
 	public int getExternSheetNumber(){
-		if (field_13_name_definition.getEncodedSize() < 1) {
+	    Ptg[] tokens = field_13_name_definition.getTokens();
+		if (tokens.length == 0) {
 			return 0;
 		}
-		Ptg ptg = field_13_name_definition.getTokens()[0];
 
+		Ptg ptg = tokens[0];
 		if (ptg.getClass() == Area3DPtg.class){
 			return ((Area3DPtg) ptg).getExternSheetIndex();
 
