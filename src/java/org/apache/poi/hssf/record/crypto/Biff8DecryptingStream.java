@@ -95,7 +95,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
 
 	public int readUByte() {
-		return _cipher.xorByte(_le.readUByte());
+		return readByte() & 0xFF;
 	}
 	public byte readByte() {
 		return (byte) _cipher.xorByte(_le.readUByte());
@@ -103,7 +103,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
 
 
 	public int readUShort() {
-		return _cipher.xorShort(_le.readUShort());
+		return readShort() & 0xFFFF;
 	}
 	public short readShort() {
 		return (short) _cipher.xorShort(_le.readUShort());
