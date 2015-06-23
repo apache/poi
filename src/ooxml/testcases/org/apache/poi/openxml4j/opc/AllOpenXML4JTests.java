@@ -17,28 +17,24 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.openxml4j.opc.compliance.AllOpenXML4JComplianceTests;
 import org.apache.poi.openxml4j.opc.internal.AllOpenXML4JInternalTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+      TestContentType.class
+    , TestFileHelper.class
+    , TestListParts.class
+    , TestPackage.class
+    , TestPackageCoreProperties.class
+    , TestPackagePartName.class
+    , TestPackageThumbnail.class
+    , TestPackagingURIHelper.class
+    , TestRelationships.class
+    , AllOpenXML4JComplianceTests.class
+    , AllOpenXML4JInternalTests.class
+})
 public final class AllOpenXML4JTests {
-
-	public static Test suite() {
-
-		TestSuite suite = new TestSuite(AllOpenXML4JTests.class.getName());
-		suite.addTestSuite(TestContentType.class);
-		suite.addTestSuite(TestFileHelper.class);
-		suite.addTestSuite(TestListParts.class);
-		suite.addTestSuite(TestPackage.class);
-		suite.addTestSuite(TestPackageCoreProperties.class);
-		suite.addTestSuite(TestPackagePartName.class);
-		suite.addTestSuite(TestPackageThumbnail.class);
-		suite.addTestSuite(TestPackagingURIHelper.class);
-		suite.addTestSuite(TestRelationships.class);
-		suite.addTest(AllOpenXML4JComplianceTests.suite());
-		suite.addTest(AllOpenXML4JInternalTests.suite());
-		return suite;
-	}
 }

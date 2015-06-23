@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
+
 /**
  * Provides a way to get at all the ZipEntries
  *  from a ZipInputStream, as many times as required.
@@ -43,7 +45,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	 * We'll then eat lots of memory, but be able to
 	 *  work with the entries at-will.
 	 */
-	public ZipInputStreamZipEntrySource(ZipInputStream inp) throws IOException {
+	public ZipInputStreamZipEntrySource(ThresholdInputStream inp) throws IOException {
 		zipEntries = new ArrayList<FakeZipEntry>();
 		
 		boolean going = true;
@@ -105,7 +107,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	public static class FakeZipEntry extends ZipEntry {
 		private byte[] data;
 		
-		public FakeZipEntry(ZipEntry entry, ZipInputStream inp) throws IOException {
+		public FakeZipEntry(ZipEntry entry, InputStream inp) throws IOException {
 			super(entry.getName());
 			
 			// Grab the de-compressed contents for later

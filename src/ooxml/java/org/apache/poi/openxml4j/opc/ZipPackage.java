@@ -41,6 +41,8 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
@@ -85,9 +87,9 @@ public final class ZipPackage extends Package {
     @SuppressWarnings("deprecation")
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
     	super(access);
-    	this.zipArchive = new ZipInputStreamZipEntrySource(
-    			new ZipInputStream(in)
-    			);
+    	InputStream zis = new ZipInputStream(in);
+    	ThresholdInputStream tis = ZipSecureFile.addThreshold(zis);
+    	this.zipArchive = new ZipInputStreamZipEntrySource(tis);
     }
 
     /**

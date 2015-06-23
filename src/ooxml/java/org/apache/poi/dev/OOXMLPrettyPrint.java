@@ -39,6 +39,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -82,7 +83,7 @@ public class OOXMLPrettyPrint {
             IOException, TransformerException, ParserConfigurationException {
         System.out.println("Reading zip-file " + file + " and writing pretty-printed XML to " + outFile);
 
-        ZipFile zipFile = new ZipFile(file);
+        ZipFile zipFile = ZipHelper.openZipFile(file);
 		try {
 		    ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)));
 		    try {

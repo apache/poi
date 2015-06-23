@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -38,7 +39,7 @@ public final class XSSFDump {
     public static void main(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {
             System.out.println("Dumping " + args[i]);
-            ZipFile zip = new ZipFile(args[i]);
+            ZipFile zip = ZipHelper.openZipFile(args[i]);
             try {
             	dump(zip);
             } finally {
