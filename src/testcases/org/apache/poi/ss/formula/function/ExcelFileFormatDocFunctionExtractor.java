@@ -516,6 +516,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		ps.println("#Columns: (index, name, minParams, maxParams, returnClass, paramClasses, isVolatile, hasFootnote )");
 		ps.println("");
 		try {
+		    // can't use ZipHelper here, because its in a different module
 			ZipFile zf = new ZipFile(effDocFile);
 			InputStream is = zf.getInputStream(zf.getEntry("content.xml"));
 			extractFunctionData(new FunctionDataCollector(ps), is);

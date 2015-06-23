@@ -29,6 +29,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.ZipPackage;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 
 public final class ZipHelper {
 
@@ -154,7 +155,7 @@ public final class ZipHelper {
          return null;
       }
 
-      return new ZipFile(file);
+      return new ZipSecureFile(file);
    }
 
 	/**
@@ -171,6 +172,6 @@ public final class ZipHelper {
 			return null;
 		}
 
-		return new ZipFile(f);
+		return new ZipSecureFile(f);
 	}
 }
