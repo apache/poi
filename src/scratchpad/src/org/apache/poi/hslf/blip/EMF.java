@@ -84,11 +84,27 @@ public final class EMF extends Metafile {
     }
 
     /**
-     * EMF signature is <code>0x3D40</code>
+     * EMF signature is {@code 0x3D40} or {@code 0x3D50}
      *
-     * @return EMF signature (<code>0x3D40</code>)
+     * @return EMF signature ({@code 0x3D40} or {@code 0x3D50})
      */
-    public int getSignature(){
-        return 0x3D40;
+    public int getSignature() {
+        return (uidInstanceCount == 1 ? 0x3D40 : 0x3D50);
+    }
+    
+    /**
+     * Sets the EMF signature - either {@code 0x3D40} or {@code 0x3D50}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x3D40:
+                uidInstanceCount = 1;
+                break;
+            case 0x3D50:
+                uidInstanceCount = 2;
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for EMF");
+        }        
     }
 }

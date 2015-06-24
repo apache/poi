@@ -55,11 +55,17 @@ public abstract class PictureData {
     * Binary data of the picture
     */
     private byte[] rawdata;
+    
     /**
      * The offset to the picture in the stream
      */
     protected int offset;
-
+    
+    /**
+     * The instance type/signatures defines if one or two UID instances will be included
+     */
+    protected int uidInstanceCount = 1;
+    
     /**
      * Returns type of this picture.
      * Must be one of the static constants defined in the <code>Picture<code> class.
@@ -82,8 +88,17 @@ public abstract class PictureData {
     /**
      * Blip signature.
      */
-    protected abstract int getSignature();
+    public abstract int getSignature();
+    
+    public abstract void setSignature(int signature);
 
+    /**
+     * The instance type/signatures defines if one or two UID instances will be included
+     */
+    protected int getUIDInstanceCount() {
+        return uidInstanceCount;
+    }
+    
     protected static final ImagePainter[] painters = new ImagePainter[8];
     static {
         PictureData.setImagePainter(Picture.PNG, new BitmapPainter());

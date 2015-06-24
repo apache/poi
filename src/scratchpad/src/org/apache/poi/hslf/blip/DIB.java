@@ -31,7 +31,7 @@ public final class DIB extends Bitmap {
     /**
      * Size of the BITMAPFILEHEADER structure preceding the actual DIB bytes
      */
-    public static final int HEADER_SIZE = 14;
+    private static final int HEADER_SIZE = 14;
 
     /**
      * @return type of  this picture
@@ -42,13 +42,29 @@ public final class DIB extends Bitmap {
     }
 
     /**
-     * DIB signature is <code>0x7A80</code>
+     * DIB signature is {@code 0x7A80} or {@code 0x7A90}
      *
-     * @return DIB signature (<code>0x7A80</code>)
+     * @return DIB signature ({@code 0x7A80} or {@code 0x7A90})
      */
     public int getSignature(){
-        return 0x7A80;
+        return (uidInstanceCount == 1 ? 0x7A80 : 0x7A90);
     }
+
+    /**
+     * Sets the DIB signature - either {@code 0x7A80} or {@code 0x7A90}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x7A80:
+                uidInstanceCount = 1;
+                break;
+            case 0x7A90:
+                uidInstanceCount = 2;
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for DIB");
+        }        
+    }    
     
     public byte[] getData(){
         return addBMPHeader ( super.getData() );

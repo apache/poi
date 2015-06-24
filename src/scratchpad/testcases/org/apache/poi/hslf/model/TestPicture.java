@@ -131,17 +131,36 @@ public final class TestPicture {
                 null            // EMF
         };
 
-        for (int i = 0; i < pictures.length; i++) {
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(pictures[i].getData()));
-
-            if (pictures[i].getType() != Picture.WMF && pictures[i].getType() != Picture.EMF) {
-                assertNotNull(image);
-
-                int[] dimensions = expectedSizes[i];
-                assertEquals(dimensions[0], image.getWidth());
-                assertEquals(dimensions[1], image.getHeight());
+        int i=0;
+        for (PictureData pd : pictures) {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(pd.getData()));
+            switch (pd.getType()) {
+                case Picture.WMF:
+                case Picture.EMF:
+                    break;
+                default:
+                    assertNotNull(image);
+                    int[] dimensions = expectedSizes[i];
+                    assertEquals(dimensions[0], image.getWidth());
+                    assertEquals(dimensions[1], image.getHeight());
+                    break;
             }
+            i++;
         }
+    }
+    
+    @Test
+    public void bug54332() throws Exception {
+        HSLFSlideShow hss = new HSLFSlideShow(_slTests.openResourceAsStream("54332a.ppt")); // TIKA-1046
+
+        PictureData[] pictures = hss.getPictures();
+        assertEquals(1, pictures.length);
+        assertEquals(102352, pictures[0].getData().length);
+        
+        hss = new HSLFSlideShow(_slTests.openResourceAsStream("54332b.ppt")); // TIKA-1612
+        pictures = hss.getPictures();
+        assertEquals(1, pictures.length);
+        assertEquals(55830, pictures[0].getData().length);
     }
 
     @Test
