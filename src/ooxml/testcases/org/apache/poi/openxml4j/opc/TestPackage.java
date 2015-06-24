@@ -721,15 +721,9 @@ public final class TestPackage {
                 // depending if this executed via "ant test" or within eclipse
                 // maybe a difference in JDK ...
             } catch (InvalidFormatException e) {
-                if(!e.getMessage().equals("Zip bomb detected! Exiting.")) {
-                    throw new IllegalStateException(e);
-                }
+                checkForZipBombException(e);
             } catch (POIXMLException e) {
-                InvocationTargetException t = (InvocationTargetException)e.getCause();
-                IOException t2 = (IOException)t.getTargetException();
-                if(!t2.getMessage().equals("Zip bomb detected! Exiting.")) {
-                    throw new IllegalStateException(e);
-                }
+                checkForZipBombException(e);
             }
     
             // check max entry size ouf of bounds
@@ -739,20 +733,36 @@ public final class TestPackage {
                 wb = WorkbookFactory.create(file, null, true);
                 wb.close();
             } catch (InvalidFormatException e) {
-                if(!e.getMessage().equals("Zip bomb detected! Exiting.")) {
-                    throw new IllegalStateException(e);
-                }
+                checkForZipBombException(e);
             } catch (POIXMLException e) {
-                InvocationTargetException t = (InvocationTargetException)e.getCause();
-                IOException t2 = (IOException)t.getTargetException();
-                if(!t2.getMessage().equals("Zip bomb detected! Exiting.")) {
-                    throw new IllegalStateException(e);
-                }
+                checkForZipBombException(e);
             }
         } finally {
             // reset otherwise a lot of ooxml tests will fail
             ZipSecureFile.setMinInflateRatio(0.01d);
             ZipSecureFile.setMaxEntrySize(0xFFFFFFFFl);            
         }
+    }
+
+    private void checkForZipBombException(Throwable e) {
+        if(e instanceof InvocationTargetException) {
+            InvocationTargetException t = (InvocationTargetException)e;
+            IOException t2 = (IOException)t.getTargetException();
+            if("Zip bomb detected! Exiting.".equals(t2.getMessage())) {
+                return;
+            }
+        }
+        
+        if ("Zip bomb detected! Exiting.".equals(e.getMessage())) {
+            return;
+        }
+        
+        // recursively check the causes for the message as it can be nested further down in the exception-tree
+        if(e.getCause() != null && e.getCause() != e) {
+            checkForZipBombException(e.getCause());
+            return;
+        }
+
+        throw new IllegalStateException("Expected to catch an Exception because of a detected Zip Bomb, but did not find the related error message in the exception", e);        
     }
 }
