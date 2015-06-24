@@ -712,7 +712,7 @@ public final class TestPackage {
             Workbook wb = WorkbookFactory.create(file);
             wb.close();
     
-            // check ratio ouf of bounds
+            // check ratio out of bounds
             ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
             try {
                 wb = WorkbookFactory.create(file);
@@ -721,11 +721,15 @@ public final class TestPackage {
                 // depending if this executed via "ant test" or within eclipse
                 // maybe a difference in JDK ...
             } catch (InvalidFormatException e) {
-                assertEquals("Zip bomb detected! Exiting.", e.getMessage());
+                if(!e.getMessage().equals("Zip bomb detected! Exiting.")) {
+                    throw new IllegalStateException(e);
+                }
             } catch (POIXMLException e) {
                 InvocationTargetException t = (InvocationTargetException)e.getCause();
                 IOException t2 = (IOException)t.getTargetException();
-                assertEquals("Zip bomb detected! Exiting.", t2.getMessage());
+                if(!t2.getMessage().equals("Zip bomb detected! Exiting.")) {
+                    throw new IllegalStateException(e);
+                }
             }
     
             // check max entry size ouf of bounds
@@ -735,11 +739,15 @@ public final class TestPackage {
                 wb = WorkbookFactory.create(file, null, true);
                 wb.close();
             } catch (InvalidFormatException e) {
-                assertEquals("Zip bomb detected! Exiting.", e.getMessage());
+                if(!e.getMessage().equals("Zip bomb detected! Exiting.")) {
+                    throw new IllegalStateException(e);
+                }
             } catch (POIXMLException e) {
                 InvocationTargetException t = (InvocationTargetException)e.getCause();
                 IOException t2 = (IOException)t.getTargetException();
-                assertEquals("Zip bomb detected! Exiting.", t2.getMessage());
+                if(!t2.getMessage().equals("Zip bomb detected! Exiting.")) {
+                    throw new IllegalStateException(e);
+                }
             }
         } finally {
             // reset otherwise a lot of ooxml tests will fail
