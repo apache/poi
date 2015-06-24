@@ -26,6 +26,10 @@ import org.apache.poi.hslf.model.Picture;
  */
 public final class JPEG extends Bitmap {
 
+    public enum ColorSpace { rgb, cymk };
+    
+    private ColorSpace colorSpace = ColorSpace.rgb;
+    
     /**
      * @return type of  this picture
      * @see  org.apache.poi.hslf.model.Picture#JPEG
@@ -34,12 +38,48 @@ public final class JPEG extends Bitmap {
         return Picture.JPEG;
     }
 
+    public ColorSpace getColorSpace() {
+        return colorSpace;
+    }
+    
+    public void setColorSpace(ColorSpace colorSpace) {
+        this.colorSpace = colorSpace;
+    }
+    
     /**
-     * JPEG signature is <code>0x46A0</code>
+     * JPEG signature is one of {@code 0x46A0, 0x46B0, 0x6E20, 0x6E30} 
      *
-     * @return JPEG signature (<code>0x46A0</code>)
+     * @return JPEG signature ({@code 0x46A0, 0x46B0, 0x6E20, 0x6E30})
      */
     public int getSignature(){
-        return 0x46A0;
+        return (colorSpace == ColorSpace.rgb)
+            ? (uidInstanceCount == 1 ? 0x46A0 :  0x46B0)
+            : (uidInstanceCount == 1 ? 0x6E20 :  0x6E30);
     }
+    
+    /**
+     * Sets the PICT signature - either {@code 0x5420} or {@code 0x5430}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x46A0:
+                uidInstanceCount = 1;
+                colorSpace = ColorSpace.rgb;
+                break;
+            case 0x46B0:
+                uidInstanceCount = 2;
+                colorSpace = ColorSpace.rgb;
+                break;
+            case 0x6E20:
+                uidInstanceCount = 1;
+                colorSpace = ColorSpace.cymk;
+                break;
+            case 0x6E30:
+                uidInstanceCount = 2;
+                colorSpace = ColorSpace.cymk;
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for JPEG");
+        }        
+    }    
 }

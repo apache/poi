@@ -86,8 +86,8 @@ public abstract class Metafile extends PictureData {
 
             zipsize = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
 
-            compression = LittleEndian.getUnsignedByte(data, pos); pos++;
-            filter = LittleEndian.getUnsignedByte(data, pos); pos++;
+            compression = LittleEndian.getUByte(data, pos); pos++;
+            filter = LittleEndian.getUByte(data, pos); pos++;
         }
 
         public void write(OutputStream out) throws IOException {

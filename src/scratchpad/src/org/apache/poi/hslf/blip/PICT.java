@@ -33,10 +33,6 @@ import org.apache.poi.hslf.model.Shape;
  */
 public final class PICT extends Metafile {
 
-    public PICT(){
-        super();
-    }
-
     /**
      * Extract compressed PICT data from a ppt
      */
@@ -46,7 +42,7 @@ public final class PICT extends Metafile {
             byte[] macheader = new byte[512];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(macheader);
-            int pos = CHECKSUM_SIZE;
+            int pos = CHECKSUM_SIZE*uidInstanceCount;
             byte[] pict;
             try {
                 pict = read(rawdata, pos);
@@ -109,12 +105,27 @@ public final class PICT extends Metafile {
     }
 
     /**
-     * PICT signature is <code>0x5430</code>
+     * PICT signature is {@code 0x5420} or {@code 0x5430}
      *
-     * @return PICT signature (<code>0x5430</code>)
+     * @return PICT signature ({@code 0x5420} or {@code 0x5430})
      */
     public int getSignature(){
-        return 0x5430;
+        return (uidInstanceCount == 1 ? 0x5420 : 0x5430);
     }
 
+    /**
+     * Sets the PICT signature - either {@code 0x5420} or {@code 0x5430}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x5420:
+                uidInstanceCount = 1;
+                break;
+            case 0x5430:
+                uidInstanceCount = 2;
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
+        }        
+    }
 }
