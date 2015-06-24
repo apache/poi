@@ -72,24 +72,12 @@ public class ZipSecureFile extends ZipFile {
         MAX_ENTRY_SIZE = maxEntrySize;
     }
 
-    public ZipSecureFile(File file, Charset charset) throws IOException {
-        super(file, charset);
-    }
-
-    public ZipSecureFile(File file, int mode, Charset charset) throws IOException {
-        super(file, mode, charset);
-    }
-
     public ZipSecureFile(File file, int mode) throws IOException {
         super(file, mode);
     }
 
     public ZipSecureFile(File file) throws ZipException, IOException {
         super(file);
-    }
-
-    public ZipSecureFile(String name, Charset charset) throws IOException {
-        super(name, charset);
     }
 
     public ZipSecureFile(String name) throws IOException {
