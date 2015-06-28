@@ -709,13 +709,13 @@ public final class TestPackage {
             // use values close to, but within the limits 
             ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
             ZipSecureFile.setMaxEntrySize(max_size+1);
-            Workbook wb = WorkbookFactory.create(file);
+            Workbook wb = WorkbookFactory.create(file, null, true);
             wb.close();
     
             // check ratio out of bounds
             ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
             try {
-                wb = WorkbookFactory.create(file);
+                wb = WorkbookFactory.create(file, null, true);
                 wb.close();
                 // this is a bit strange, as there will be different exceptions thrown
                 // depending if this executed via "ant test" or within eclipse
