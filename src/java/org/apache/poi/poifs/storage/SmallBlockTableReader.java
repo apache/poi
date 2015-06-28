@@ -25,13 +25,66 @@ import org.apache.poi.poifs.property.RootProperty;
 /**
  * This class implements reading the small document block list from an
  * existing file
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class SmallBlockTableReader {
+    private static BlockList prepareSmallDocumentBlocks(
+            final POIFSBigBlockSize bigBlockSize,
+            final RawDataBlockList blockList, final RootProperty root,
+            final int sbatStart)
+        throws IOException
+    {
+        // Fetch the blocks which hold the Small Blocks stream
+        ListManagedBlock [] smallBlockBlocks = 
+                blockList.fetchBlocks(root.getStartBlock(), -1);
+        
+       // Turn that into a list
+        BlockList list =new SmallDocumentBlockList(
+                SmallDocumentBlock.extract(bigBlockSize, smallBlockBlocks));
+
+        return list;
+    }
+    private static BlockAllocationTableReader prepareReader(
+            final POIFSBigBlockSize bigBlockSize,
+            final RawDataBlockList blockList, final BlockList list, 
+            final RootProperty root, final int sbatStart)
+        throws IOException
+    {
+        // Process the SBAT and blocks
+        return new BlockAllocationTableReader(bigBlockSize,
+                blockList.fetchBlocks(sbatStart, -1),
+                list);
+    }
+            
+    /**
+     * Fetch the small document block reader from an existing file, normally
+     *  needed for debugging and low level dumping. You should typically call
+     *  {@link #getSmallDocumentBlocks(POIFSBigBlockSize, RawDataBlockList, RootProperty, int)}
+     *  instead.
+     *
+     * @param blockList the raw data from which the small block table
+     *                  will be extracted
+     * @param root the root property (which contains the start block
+     *             and small block table size)
+     * @param sbatStart the start block of the SBAT
+     *
+     * @return the small document block reader
+     *
+     * @exception IOException
+     */
+    public static BlockAllocationTableReader _getSmallDocumentBlockReader(
+            final POIFSBigBlockSize bigBlockSize,
+            final RawDataBlockList blockList, final RootProperty root,
+            final int sbatStart)
+        throws IOException
+    {
+       BlockList list = prepareSmallDocumentBlocks(
+                bigBlockSize, blockList, root, sbatStart);
+        return prepareReader(
+                bigBlockSize, blockList, list, root, sbatStart);
+    }
 
     /**
-     * fetch the small document block list from an existing file
+     * Fetch the small document block list from an existing file
      *
      * @param blockList the raw data from which the small block table
      *                  will be extracted
@@ -49,18 +102,9 @@ public final class SmallBlockTableReader {
             final int sbatStart)
         throws IOException
     {
-       // Fetch the blocks which hold the Small Blocks stream
-       ListManagedBlock [] smallBlockBlocks = 
-          blockList.fetchBlocks(root.getStartBlock(), -1);
-        
-       // Turn that into a list
-       BlockList list =new SmallDocumentBlockList(
-             SmallDocumentBlock.extract(bigBlockSize, smallBlockBlocks));
-
-       // Process
-        new BlockAllocationTableReader(bigBlockSize,
-                                       blockList.fetchBlocks(sbatStart, -1),
-                                       list);
+        BlockList list = prepareSmallDocumentBlocks(
+                bigBlockSize, blockList, root, sbatStart);
+        prepareReader(bigBlockSize, blockList, list, root, sbatStart);
         return list;
     }
 }

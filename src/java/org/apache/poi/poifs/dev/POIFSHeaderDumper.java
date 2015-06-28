@@ -24,9 +24,10 @@ import java.lang.reflect.Method;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.property.DirectoryProperty;
+import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
-import org.apache.poi.poifs.storage.BlockList;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.ListManagedBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
@@ -59,6 +60,7 @@ public class POIFSHeaderDumper {
 	}
 
 	public static void viewFile(final String filename) throws Exception {
+	    System.out.println("Dumping headers from: " + filename);
 		InputStream inp = new FileInputStream(filename);
 		
 		// Header
@@ -79,18 +81,22 @@ public class POIFSHeaderDumper {
             header_block.getXBATCount(),
             header_block.getXBATIndex(),
             data_blocks);
-      displayBATReader(batReader);
+      displayBATReader("Big Blocks", batReader);
 
       // Properties Table
       PropertyTable properties =
          new PropertyTable(header_block, data_blocks);
       
       // Mini Fat
-      BlockList sbat = 
-         SmallBlockTableReader.getSmallDocumentBlocks(
+      BlockAllocationTableReader sbatReader = 
+         SmallBlockTableReader._getSmallDocumentBlockReader(
                bigBlockSize, data_blocks, properties.getRoot(),
                header_block.getSBATStart()
          );
+      displayBATReader("Small Blocks", sbatReader);
+    
+      // Summary of the properties
+      displayPropertiesSummary(properties);
    }
 
 	public static void displayHeader(HeaderBlock header_block) throws Exception {
@@ -98,6 +104,8 @@ public class POIFSHeaderDumper {
 	   System.out.println(" Block size: " + header_block.getBigBlockSize().getBigBlockSize());
       System.out.println(" BAT (FAT) header blocks: " + header_block.getBATArray().length);
       System.out.println(" BAT (FAT) block count: " + header_block.getBATCount());
+      if (header_block.getBATCount() > 0) 
+          System.out.println(" BAT (FAT) block 1 at: " + header_block.getBATArray()[0]);
       System.out.println(" XBAT (FAT) block count: " + header_block.getXBATCount());
       System.out.println(" XBAT (FAT) block 1 at: " + header_block.getXBATIndex());
       System.out.println(" SBAT (MiniFAT) block count: " + header_block.getSBATCount());
@@ -125,8 +133,8 @@ public class POIFSHeaderDumper {
       System.out.println("");
    }
    
-   public static void displayBATReader(BlockAllocationTableReader batReader) throws Exception {
-      System.out.println("Sectors, as referenced from the FAT:");
+   public static void displayBATReader(String type, BlockAllocationTableReader batReader) throws Exception {
+      System.out.println("Sectors, as referenced from the "+type+" FAT:");
       Field entriesF = batReader.getClass().getDeclaredField("_entries");
       entriesF.setAccessible(true);
       IntList entries = (IntList)entriesF.get(batReader);
@@ -148,5 +156,25 @@ public class POIFSHeaderDumper {
       }
       
       System.out.println("");
+   }
+   
+   public static void displayPropertiesSummary(PropertyTable properties) {
+       System.out.println("Properties and their block start:");
+       displayProperties(properties.getRoot(), "");
+       System.out.println("");
+   }
+   public static void displayProperties(DirectoryProperty prop, String indent) {
+       indent = indent + "  ";
+       System.out.println(prop.getName());
+       for (Property cp : prop) {
+           if (cp instanceof DirectoryProperty) {
+               displayProperties((DirectoryProperty)cp, indent);
+           } else {
+               // TODO
+               if (cp.shouldUseSmallBlocks()) {
+                   
+               }
+           }
+       }
    }
 }
