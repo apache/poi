@@ -159,21 +159,28 @@ public class POIFSHeaderDumper {
     }
 
     public static void displayPropertiesSummary(PropertyTable properties) {
+        System.out.println("Mini Stream starts at " + properties.getRoot().getStartBlock());
+        System.out.println();
+        
         System.out.println("Properties and their block start:");
         displayProperties(properties.getRoot(), "");
         System.out.println("");
     }
     public static void displayProperties(DirectoryProperty prop, String indent) {
-        indent = indent + "  ";
-        System.out.println(prop.getName());
+        String nextIndent = indent + "  ";
+        System.out.println(indent + "-> " + prop.getName());
         for (Property cp : prop) {
             if (cp instanceof DirectoryProperty) {
-                displayProperties((DirectoryProperty)cp, indent);
+                displayProperties((DirectoryProperty)cp, nextIndent);
             } else {
-                // TODO
+                System.out.println(nextIndent + "=> " + cp.getName());
+                System.out.print(nextIndent + "   " + cp.getSize() + " bytes in ");
                 if (cp.shouldUseSmallBlocks()) {
-
+                    System.out.print("mini");
+                } else {
+                    System.out.print("main");
                 }
+                System.out.println(" stream, starts at " + cp.getStartBlock());
             }
         }
     }
