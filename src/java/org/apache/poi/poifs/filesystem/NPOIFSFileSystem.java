@@ -115,17 +115,18 @@ public class NPOIFSFileSystem extends BlockStore
     {
        this(true);
        
-        // Mark us as having a single empty BAT at offset 0
+        // Reserve block 0 for the start of the Properties Table
+        // Create a single empty BAT, at pop that at offset 1
         _header.setBATCount(1);
-        _header.setBATArray(new int[] { 0 });
+        _header.setBATArray(new int[] { 1 });
         BATBlock bb = BATBlock.createEmptyBATBlock(bigBlockSize, false);
-        bb.setOurBlockIndex(0);
+        bb.setOurBlockIndex(1);
         _bat_blocks.add(bb);
 
-        setNextBlock(0, POIFSConstants.FAT_SECTOR_BLOCK);
-        setNextBlock(1, POIFSConstants.END_OF_CHAIN);
+        setNextBlock(0, POIFSConstants.END_OF_CHAIN);
+        setNextBlock(1, POIFSConstants.FAT_SECTOR_BLOCK);
 
-        _property_table.setStartBlock(POIFSConstants.END_OF_CHAIN);
+        _property_table.setStartBlock(0);
     }
 
     /**
