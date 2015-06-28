@@ -338,10 +338,10 @@ public final class TestNPOIFSMiniStore extends TestCase {
        NPOIFSFileSystem fs = new NPOIFSFileSystem();
        NPOIFSMiniStore ministore = fs.getMiniStore();
 
-       // Initially has BAT + Properties but nothing else
-       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(2));
+       // Initially has Properties + BAT but nothing else
+       assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(2));
        // Ministore has no blocks, so can't iterate until used
        try {
            ministore.getNextBlock(0);
@@ -355,27 +355,27 @@ public final class TestNPOIFSMiniStore extends TestCase {
        fs.getRoot().createDocument("mini", new ByteArrayInputStream(data));
        
        // Should now have a mini-fat and a mini-stream
-       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(4));
-       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(0));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    fs.getNextBlock(0));
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK,fs.getNextBlock(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    fs.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    fs.getNextBlock(3));
+       assertEquals(POIFSConstants.UNUSED_BLOCK,    fs.getNextBlock(4));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    ministore.getNextBlock(0));
+       assertEquals(POIFSConstants.UNUSED_BLOCK,    ministore.getNextBlock(1));
        
        // Re-fetch the mini store, and add it a second time
        ministore = fs.getMiniStore();
        fs.getRoot().createDocument("mini2", new ByteArrayInputStream(data));
        
        // Main unchanged, ministore has a second
-       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(0));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(1));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
-       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(3));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(4));
-       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(0));
-       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(1));
-       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    fs.getNextBlock(0));
+       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK,fs.getNextBlock(1));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    fs.getNextBlock(2));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    fs.getNextBlock(3));
+       assertEquals(POIFSConstants.UNUSED_BLOCK,    fs.getNextBlock(4));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    ministore.getNextBlock(0));
+       assertEquals(POIFSConstants.END_OF_CHAIN,    ministore.getNextBlock(1));
+       assertEquals(POIFSConstants.UNUSED_BLOCK,    ministore.getNextBlock(2));
 
        // Done
        fs.close();
