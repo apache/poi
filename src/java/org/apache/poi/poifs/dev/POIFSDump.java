@@ -16,14 +16,22 @@
 ==================================================================== */
 package org.apache.poi.poifs.dev;
 
-import org.apache.poi.poifs.filesystem.*;
-
-import java.io.FileInputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
+
+import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSStream;
+import org.apache.poi.poifs.storage.HeaderBlock;
 
 /**
  * Dump internal structure of a OLE2 file into file system
@@ -31,7 +39,20 @@ import java.util.Iterator;
 public class POIFSDump {
 
     public static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            System.err.println("Must specify at least one file to dump");
+            System.exit(1);
+        }
+        
+        boolean withProps = false;
         for (int i = 0; i < args.length; i++) {
+            if (args[i].equalsIgnoreCase("-dumprops") ||
+                args[i].equalsIgnoreCase("-dump-props") ||
+                args[i].equalsIgnoreCase("-dump-properties")) {
+                withProps = true;
+                continue;
+            }
+            
             System.out.println("Dumping " + args[i]);
             FileInputStream is = new FileInputStream(args[i]);
             NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
@@ -42,6 +63,13 @@ public class POIFSDump {
             file.mkdir();
 
             dump(root, file);
+            
+            if (withProps) {
+                Field headerF = NPOIFSFileSystem.class.getDeclaredField("_header");
+                headerF.setAccessible(true);
+                HeaderBlock header = (HeaderBlock)headerF.get(fs);
+                dump(fs, header.getPropertyStart(), file);
+            }
         }
    }
 
@@ -71,5 +99,18 @@ public class POIFSDump {
                 System.err.println("Skipping unsupported POIFS entry: " + entry);
             }
         }
+    }
+    public static void dump(NPOIFSFileSystem fs, int startBlock, File parent) throws IOException {
+        File file = new File(parent, "properties");
+        FileOutputStream out = new FileOutputStream(file);
+        NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
+        
+        byte[] b = new byte[fs.getBigBlockSize()];
+        for (ByteBuffer bb : stream) {
+            int len = bb.remaining();
+            bb.get(b);
+            out.write(b, 0, len);
+        }
+        out.close();
     }
 }
