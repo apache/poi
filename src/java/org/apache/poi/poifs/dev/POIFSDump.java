@@ -25,31 +25,39 @@ import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NPOIFSStream;
+import org.apache.poi.poifs.property.NPropertyTable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 
 /**
  * Dump internal structure of a OLE2 file into file system
  */
 public class POIFSDump {
-
     public static void main(String[] args) throws Exception {
         if (args.length == 0) {
             System.err.println("Must specify at least one file to dump");
             System.exit(1);
         }
         
-        boolean withProps = false;
+        boolean dumpProps = false, dumpMini = false;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equalsIgnoreCase("-dumprops") ||
                 args[i].equalsIgnoreCase("-dump-props") ||
                 args[i].equalsIgnoreCase("-dump-properties")) {
-                withProps = true;
+                dumpProps = true;
+                continue;
+            }
+            if (args[i].equalsIgnoreCase("-dumpmini") ||
+                args[i].equalsIgnoreCase("-dump-mini") ||
+                args[i].equalsIgnoreCase("-dump-ministream") ||
+                args[i].equalsIgnoreCase("-dump-mini-stream")) {
+                dumpMini = true;
                 continue;
             }
             
@@ -64,15 +72,34 @@ public class POIFSDump {
 
             dump(root, file);
             
-            if (withProps) {
-                Field headerF = NPOIFSFileSystem.class.getDeclaredField("_header");
-                headerF.setAccessible(true);
-                HeaderBlock header = (HeaderBlock)headerF.get(fs);
-                dump(fs, header.getPropertyStart(), file);
+            if (dumpProps) {
+                HeaderBlock header = getHeaderBlock(fs);
+                dump(fs, header.getPropertyStart(), "properties", file);
+            }
+            if (dumpMini) {
+                NPropertyTable props = getPropertyTable(fs);
+                int startBlock = props.getRoot().getStartBlock(); 
+                if (startBlock == POIFSConstants.END_OF_CHAIN) {
+                    System.err.println("No Mini Stream in file");
+                } else {
+                    dump(fs, startBlock, "mini-stream", file);
+                }
             }
         }
    }
-
+    
+    protected static HeaderBlock getHeaderBlock(NPOIFSFileSystem fs) throws Exception {
+        Field headerF = NPOIFSFileSystem.class.getDeclaredField("_header");
+        headerF.setAccessible(true);
+        HeaderBlock header = (HeaderBlock)headerF.get(fs);
+        return header;
+    }
+    protected static NPropertyTable getPropertyTable(NPOIFSFileSystem fs) throws Exception {
+        Field ptF = NPOIFSFileSystem.class.getDeclaredField("_property_table");
+        ptF.setAccessible(true);
+        NPropertyTable table = (NPropertyTable)ptF.get(fs);
+        return table;
+    }
 
     public static void dump(DirectoryEntry root, File parent) throws IOException {
         for(Iterator<Entry> it = root.getEntries(); it.hasNext();){
@@ -100,8 +127,8 @@ public class POIFSDump {
             }
         }
     }
-    public static void dump(NPOIFSFileSystem fs, int startBlock, File parent) throws IOException {
-        File file = new File(parent, "properties");
+    public static void dump(NPOIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
+        File file = new File(parent, name);
         FileOutputStream out = new FileOutputStream(file);
         NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
         
