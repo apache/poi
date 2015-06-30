@@ -34,6 +34,21 @@ public class POITestCase extends TestCase {
         );
      }
     
+    public static <T> void assertEquals(T[] expected, T[] actual)
+    {
+        assertEquals("Non-matching lengths", expected.length, actual.length);
+        for (int i=0; i<expected.length; i++) {
+            assertEquals("Mis-match at offset " + i, expected[i], actual[i]);
+        }
+    }
+    public static void assertEquals(byte[] expected, byte[] actual)
+    {
+        assertEquals("Non-matching lengths", expected.length, actual.length);
+        for (int i=0; i<expected.length; i++) {
+            assertEquals("Mis-match at offset " + i, expected[i], actual[i]);
+        }
+    }
+    
     public static <T> void assertContains(T needle, T[] haystack)
     {
        // Check
