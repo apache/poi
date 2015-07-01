@@ -431,6 +431,7 @@ public final class TestNPOIFSMiniStore extends POITestCase {
        assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(3)); // Mini
        assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(4));
        
+       // First 2 Mini blocks will be used
        assertEquals(2, ministore.getFreeBlock());
        
        // Add one more mini-stream, and check
@@ -442,6 +443,7 @@ public final class TestNPOIFSMiniStore extends POITestCase {
        assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(3)); // Mini
        assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(4));
        
+       // One more mini-block will be used
        assertEquals(3, ministore.getFreeBlock());
        
        // Check the contents too

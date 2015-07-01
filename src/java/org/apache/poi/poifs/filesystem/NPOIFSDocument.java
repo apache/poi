@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -141,6 +142,15 @@ public final class NPOIFSDocument implements POIFSViewable {
        
        for (int readBytes; (readBytes = bis.read(buf)) != -1; length += readBytes) {
            os.write(buf, 0, readBytes);
+       }
+       
+       // Pad to the end of the block with -1s
+       int usedInBlock = length % _block_size;
+       if (usedInBlock != 0 && usedInBlock != _block_size) {
+           int toBlockEnd = _block_size - usedInBlock;
+           byte[] padding = new byte[toBlockEnd];
+           Arrays.fill(padding, (byte)0xFF);
+           os.write(padding);
        }
        
        // Tidy and return the length
