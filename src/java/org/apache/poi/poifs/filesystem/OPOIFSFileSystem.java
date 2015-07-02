@@ -73,7 +73,7 @@ public class OPOIFSFileSystem
     }
 
     private PropertyTable _property_table;
-    private List<POIFSViewable>          _documents;
+    private List<OPOIFSDocument> _documents;
     private DirectoryNode _root;
 
     /**
@@ -90,7 +90,7 @@ public class OPOIFSFileSystem
     {
         HeaderBlock header_block = new HeaderBlock(bigBlockSize);
         _property_table = new PropertyTable(header_block);
-        _documents      = new ArrayList<POIFSViewable>();
+        _documents      = new ArrayList<OPOIFSDocument>();
         _root           = null;
     }
 
