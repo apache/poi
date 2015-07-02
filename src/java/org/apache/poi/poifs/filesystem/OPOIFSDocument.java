@@ -209,7 +209,7 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 	/**
 	 * @return array of SmallDocumentBlocks; may be empty, cannot be null
 	 */
-	public BlockWritable[] getSmallBlocks() {
+	public SmallDocumentBlock[] getSmallBlocks() {
 		return _small_store.getBlocks();
 	}
 
