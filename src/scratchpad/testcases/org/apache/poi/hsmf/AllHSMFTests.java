@@ -39,6 +39,7 @@ public final class AllHSMFTests {
       suite.addTestSuite(TestOutlookTextExtractor.class);
       suite.addTestSuite(TestPOIFSChunkParser.class);
       suite.addTestSuite(TestMessageSubmissionChunkY2KRead.class);
+      suite.addTestSuite(TestMessageSubmissionChunk.class);
 
       return suite;
    }
