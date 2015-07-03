@@ -77,7 +77,11 @@ public class MessageSubmissionChunk extends Chunk {
                Matcher m = datePatern.matcher(dateS);
                if(m.matches()) {
                   date = Calendar.getInstance();
-                  date.set(Calendar.YEAR,  Integer.parseInt(m.group(1)) + 2000);
+
+                  // work around issues with dates like 1989, which appear as "89" here
+                  int year = Integer.parseInt(m.group(1));
+                  date.set(Calendar.YEAR,  year + (year > 80 ? 1900 : 2000));
+
                   date.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1); // Java is 0 based
                   date.set(Calendar.DATE,  Integer.parseInt(m.group(3)));
                   date.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
