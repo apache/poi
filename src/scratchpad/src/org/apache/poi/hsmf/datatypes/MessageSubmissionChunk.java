@@ -69,10 +69,19 @@ public class MessageSubmissionChunk extends Chunk {
       for(String part : parts) {
          if(part.startsWith("l=")) {
             // Format of this bit appears to be l=<id>-<time>-<number>
-            if(part.indexOf('-') != -1 && 
-                  part.indexOf('-') != part.lastIndexOf('-')) {
-               String dateS = part.substring(part.indexOf('-')+1, part.lastIndexOf('-'));
-               
+            // ID may contain hyphens.
+
+            String dateS = null;
+            final int numberPartBegin = part.lastIndexOf('-');
+            if (numberPartBegin != -1) {
+                final int datePartBegin = part.lastIndexOf('-', numberPartBegin-1);
+                if (datePartBegin != -1 && 
+                        // cannot extract date if only one hyphen is in the string...
+                        numberPartBegin > datePartBegin) {
+                    dateS = part.substring(datePartBegin + 1, numberPartBegin);
+                }
+            }
+            if (dateS != null) {
                // Should be yymmddhhmmssZ
                Matcher m = datePatern.matcher(dateS);
                if(m.matches()) {
