@@ -766,6 +766,10 @@ public class NPOIFSFileSystem extends BlockStore
      *  to their backing blocks 
      */
     private void syncWithDataSource() throws IOException {
+        // Mini Stream + SBATs first, as mini-stream details have
+        //  to be stored in the Root Property
+        _mini_store.syncWithDataSource();
+        
         // Properties
         NPOIFSStream propStream = new NPOIFSStream(this, _header.getPropertyStart());
         _property_table.preWrite();
@@ -786,9 +790,6 @@ public class NPOIFSFileSystem extends BlockStore
            ByteBuffer block = getBlockAt(bat.getOurBlockIndex());
            BlockAllocationTableWriter.writeBlock(bat, block);
         }
-       
-       // SBATs
-       _mini_store.syncWithDataSource();
     }
     
     /**
