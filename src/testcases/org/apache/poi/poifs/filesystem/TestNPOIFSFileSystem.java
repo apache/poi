@@ -1428,6 +1428,10 @@ public final class TestNPOIFSFileSystem {
        emptyDoc = (DocumentEntry)testDir.getEntry("empty-3");
        assertContentsMatches(empty, emptyDoc);
        
+       // Check that a mini-stream was assigned, with one block used
+       assertEquals(3, testDir.getProperty().getStartBlock()); 
+       assertEquals(64, testDir.getProperty().getSize()); 
+       
        // All done
        fs.close();
    }

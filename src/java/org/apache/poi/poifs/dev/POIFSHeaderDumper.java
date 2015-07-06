@@ -160,6 +160,7 @@ public class POIFSHeaderDumper {
 
     public static void displayPropertiesSummary(PropertyTable properties) {
         System.out.println("Mini Stream starts at " + properties.getRoot().getStartBlock());
+        System.out.println("Mini Stream length is " + properties.getRoot().getSize());
         System.out.println();
         
         System.out.println("Properties and their block start:");
