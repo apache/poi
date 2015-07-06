@@ -99,9 +99,12 @@ public final class TempFile {
                 dir.mkdir();
                 if (System.getProperty("poi.keep.tmp.files") == null)
                     dir.deleteOnExit();
+            } else if (!dir.isDirectory()) {
+                // if the specified directory doesn't exist, create it
+                dir.mkdir();
             }
 
-            // Generate a unique new filename 
+            // Generate a unique new filename
             File newFile = File.createTempFile(prefix, suffix, dir);
 
             // Set the delete on exit flag, unless explicitly disabled
