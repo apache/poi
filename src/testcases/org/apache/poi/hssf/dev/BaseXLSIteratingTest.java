@@ -79,11 +79,11 @@ public abstract class BaseXLSIteratingTest {
 			try {
 				runOneFile(dir, file, failed);
 			} catch (Exception e) {
-				System.out.println("Failed: " + file);
 				if(SILENT_EXCLUDED.contains(file)) {
 					continue;
 				}
 
+				System.out.println("Failed: " + file);
 				e.printStackTrace();
 				
 				// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably can use SILENT_EXCLUDED instead

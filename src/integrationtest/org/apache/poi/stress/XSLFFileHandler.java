@@ -88,12 +88,14 @@ public class XSLFFileHandler extends AbstractFileHandler {
                 }
             }
         }
+        
+        ppt.close();
     }
 
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Test
 	public void test() throws Exception {
-		InputStream stream = new FileInputStream("test-data/slideshow/pptx2svg.pptx");
+		InputStream stream = new FileInputStream("test-data/slideshow/SampleShow.pptx");
 		try {
 			handleFile(stream);
 		} finally {
