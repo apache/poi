@@ -60,6 +60,8 @@ public final class TestOutlookTextExtractor extends POITestCase {
       String dateText = f.format(cal.getTime());
       assertContains(text, "Date: " + dateText + "\n");
       assertContains(text, "The quick brown fox jumps over the lazy dog");
+
+      ext.close();
    }
    
    public void testSimple() throws Exception {
@@ -77,21 +79,28 @@ public final class TestOutlookTextExtractor extends POITestCase {
       assertContains(text, "Subject: test message\n");
       assertContains(text, "Date: Fri, 6 Jul 2007 05:27:17 +0000\n");
       assertContains(text, "This is a test message.");
+
+      ext.close();
    }
 
    public void testConstructors() throws Exception {
-      String inp = (new OutlookTextExtactor(new FileInputStream(
-            samples.getFile("simple_test_msg.msg")
-      )).getText());
-      String poifs = (new OutlookTextExtactor(new POIFSFileSystem(new FileInputStream(
-            samples.getFile("simple_test_msg.msg")
-      ))).getText());
-      String mapi = (new OutlookTextExtactor(new MAPIMessage(new FileInputStream(
-            samples.getFile("simple_test_msg.msg")
-      ))).getText());
-      
-      assertEquals(inp, poifs);
-      assertEquals(inp, mapi);
+        OutlookTextExtactor ext = new OutlookTextExtactor(new FileInputStream(
+                samples.getFile("simple_test_msg.msg")));
+        String inp = ext.getText();
+        ext.close();
+
+        ext = new OutlookTextExtactor(new POIFSFileSystem(new FileInputStream(
+                samples.getFile("simple_test_msg.msg"))));
+        String poifs = ext.getText();
+        ext.close();
+
+        ext = new OutlookTextExtactor(new MAPIMessage(new FileInputStream(
+                samples.getFile("simple_test_msg.msg"))));
+        String mapi = ext.getText();
+        ext.close();
+
+        assertEquals(inp, poifs);
+        assertEquals(inp, mapi);
    }
    
    /**
@@ -128,6 +137,8 @@ public final class TestOutlookTextExtractor extends POITestCase {
          assertContains(text, "Subject: This is a test message please ignore\n");
          assertContains(text, "Date:");
          assertContains(text, "The quick brown fox jumps over the lazy dog");
+
+         ext.close();
       }
    }
    
@@ -164,6 +175,8 @@ public final class TestOutlookTextExtractor extends POITestCase {
          assertContains(text, "Subject: This is a test message please ignore\n");
          assertContains(text, "Date: Mon, 11 Jan 2010 16:2"); // Exact times differ slightly
          assertContains(text, "The quick brown fox jumps over the lazy dog");
+
+         ext.close();
       }
    }
    
@@ -192,6 +205,8 @@ public final class TestOutlookTextExtractor extends POITestCase {
       
       // Embeded bits are checked in
       //  TestExtractorFactory
+
+      ext.close();
    }
    
    public void testEncodings() throws Exception {
@@ -209,5 +224,7 @@ public final class TestOutlookTextExtractor extends POITestCase {
       // And check some chinese bits
       assertContains(text, "(\u5f35\u6bd3\u502b)");
       assertContains(text, "( MSG \u683c\u5f0f\u6e2c\u8a66 )");
+
+      ext.close();
    }
 }
