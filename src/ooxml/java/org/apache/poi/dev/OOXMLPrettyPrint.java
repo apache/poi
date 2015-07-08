@@ -108,6 +108,7 @@ public class OOXMLPrettyPrint {
             try {
                 if(name.endsWith(".xml") || name.endsWith(".rels")) {
                     Document document = documentBuilder.parse(new InputSource(file.getInputStream(entry)));
+                    document.setXmlStandalone(true);
                     pretty(document, out, 2);
                 } else {
                     System.out.println("Not pretty-printing non-XML file " + name);
