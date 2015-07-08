@@ -20,11 +20,7 @@ package org.apache.poi.sl.draw.binding;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -60,9 +56,7 @@ import org.xml.sax.Locator;
     "rect",
     "pathLst"
 })
-public class CTCustomGeometry2D
-    implements Locatable
-{
+public class CTCustomGeometry2D {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTGeomGuideList avLst;
@@ -76,9 +70,6 @@ public class CTCustomGeometry2D
     protected CTGeomRect rect;
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
     protected CTPath2DList pathLst;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the avLst property.
@@ -246,14 +237,6 @@ public class CTCustomGeometry2D
 
     public boolean isSetPathLst() {
         return (this.pathLst!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

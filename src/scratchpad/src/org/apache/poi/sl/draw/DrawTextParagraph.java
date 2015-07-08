@@ -10,8 +10,9 @@ import java.util.*;
 
 import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
-import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.sl.usermodel.TextRun.TextCap;
+import org.apache.poi.util.Units;
 
 public class DrawTextParagraph<T extends TextRun> implements Drawable {
     protected TextParagraph<T> paragraph;
@@ -20,6 +21,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
     protected String rawText;
     protected DrawTextFragment bullet;
+    protected int autoNbrIdx = 0;
 
     /**
      * the highest line in this paragraph. Used for line spacing.
@@ -47,6 +49,14 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     public double getY() {
         return y;
     }
+
+    /**
+     * Sets the auto numbering index of the handled paragraph
+     * @param index the auto numbering index
+     */
+    public void setAutoNumberingIdx(int index) {
+        autoNbrIdx = index;
+    }
     
     public void draw(Graphics2D graphics){
         if (lines.isEmpty()) return;
@@ -56,51 +66,45 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         double penY = y;
 
         boolean firstLine = true;
+        int indentLevel = paragraph.getIndentLevel();
         Double leftMargin = paragraph.getLeftMargin();
-        Double indent = paragraph.getIndent();
         if (leftMargin == null) {
-            leftMargin = (indent != null) ? -indent : 0;
+            // if the marL attribute is omitted, then a value of 347663 is implied
+            leftMargin = Units.toPoints(347663*(indentLevel+1));
         }
+        Double indent = paragraph.getIndent();
         if (indent == null) {
-            indent = (leftMargin != null) ? -leftMargin : 0;
+            indent = Units.toPoints(347663*indentLevel);
         }
-
+        Double rightMargin = paragraph.getRightMargin();
+        if (rightMargin == null) {
+            rightMargin = 0d;
+        }
 
         //The vertical line spacing
         Double spacing = paragraph.getLineSpacing();
         if (spacing == null) spacing = 100d;
         
         for(DrawTextFragment line : lines){
-            double penX = x + leftMargin;
+            double penX;
 
             if(firstLine) {
                 if (!isEmptyParagraph()) {
+                    // TODO: find out character style for empty, but bulleted/numbered lines
                     bullet = getBullet(graphics, line.getAttributedString().getIterator());
                 }
                 
-                if(bullet != null){
-                    if (indent < 0) {
-                        // a negative value means "Hanging" indentation and
-                        // indicates the position of the actual bullet character.
-                        // (the bullet is shifted to right relative to the text)
-                        bullet.setPosition(penX + indent, penY);
-                    } else if(indent > 0){
-                        // a positive value means the "First Line" indentation:
-                        // the first line is indented and other lines start at the bullet offset
-                        bullet.setPosition(penX, penY);
-                        penX += indent;
-                    } else {
-                        // a zero indent means that the bullet and text have the same offset
-                        bullet.setPosition(penX, penY);
-
-                        // don't let text overlay the bullet and advance by the bullet width
-                        penX += bullet.getLayout().getAdvance() + 1;
-                    }
-
+                if (bullet != null){
+                    bullet.setPosition(x + indent, penY);
                     bullet.draw(graphics);
+                    // don't let text overlay the bullet and advance by the bullet width
+                    double bulletWidth = bullet.getLayout().getAdvance() + 1;
+                    penX = x + Math.max(leftMargin, indent+bulletWidth);
                 } else {
-                    penX += indent;
+                    penX = x + indent;
                 }
+            } else {
+                penX = x + leftMargin;
             }
 
             Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
@@ -125,7 +129,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
                 // If linespacing >= 0, then linespacing is a percentage of normal line height.
                 penY += spacing*0.01* line.getHeight();
             } else {
-                // positive value means absolute spacing in points
+                // negative value means absolute spacing in points
                 penY += -spacing;
             }
 
@@ -219,7 +223,13 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
         BulletStyle bulletStyle = paragraph.getBulletStyle();
         if (bulletStyle == null) return null;
 
-        String buCharacter = bulletStyle.getBulletCharacter();
+        String buCharacter;
+        AutoNumberingScheme ans = bulletStyle.getAutoNumberingScheme();
+        if (ans != null) {
+            buCharacter = ans.format(autoNbrIdx);
+        } else {
+            buCharacter = bulletStyle.getBulletCharacter();
+        }
         if (buCharacter == null) return null;
 
         String buFont = bulletStyle.getBulletFont();
@@ -314,13 +324,19 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
 
         Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
 
+        int indentLevel = paragraph.getIndentLevel();
         Double leftMargin = paragraph.getLeftMargin();
-        Double indent = paragraph.getIndent();
         if (leftMargin == null) {
-            leftMargin = (indent != null) ? -indent : 0;
+            // if the marL attribute is omitted, then a value of 347663 is implied
+            leftMargin = Units.toPoints(347663*(indentLevel+1));
         }
+        Double indent = paragraph.getIndent();
         if (indent == null) {
-            indent = (leftMargin != null) ? -leftMargin : 0;
+            indent = Units.toPoints(347663*indentLevel);
+        }
+        Double rightMargin = paragraph.getRightMargin();
+        if (rightMargin == null) {
+            rightMargin = 0d;
         }
 
         double width;
@@ -329,7 +345,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
             // if wordWrap == false then we return the advance to the right border of the sheet
             width = ts.getSheet().getSlideShow().getPageSize().getWidth() - anchor.getX();
         } else {
-            width = anchor.getWidth() -  leftInset - rightInset - leftMargin;
+            width = anchor.getWidth() - leftInset - rightInset - leftMargin - rightMargin;
             if (firstLine) {
                 if (bullet != null){
                     if (indent > 0) width -= indent;

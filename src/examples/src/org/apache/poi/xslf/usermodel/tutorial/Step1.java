@@ -50,7 +50,7 @@ public class Step1 {
                 if(shape instanceof XSLFTextShape) {
                     XSLFTextShape tsh = (XSLFTextShape)shape;
                     for(XSLFTextParagraph p : tsh){
-                        System.out.println("Paragraph level: " + p.getLevel());
+                        System.out.println("Paragraph level: " + p.getIndentLevel());
                         for(XSLFTextRun r : p){
                             System.out.println(r.getRawText());
                             System.out.println("  bold: " + r.isBold());

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.*;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 
@@ -462,6 +465,13 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFSl
 			: slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
 	}
 
+    @Override
+    public void draw(Graphics2D graphics) {
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        Drawable draw = drawFact.getDrawable(this);
+        draw.draw(graphics);
+    }
+    
     public boolean getFollowMasterColourScheme() {
         // TODO Auto-generated method stub
         return false;

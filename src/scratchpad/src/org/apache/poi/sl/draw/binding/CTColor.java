@@ -20,11 +20,7 @@ package org.apache.poi.sl.draw.binding;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -55,9 +51,7 @@ import org.xml.sax.Locator;
     "schemeClr",
     "prstClr"
 })
-public class CTColor
-    implements Locatable
-{
+public class CTColor {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTScRgbColor scrgbClr;
@@ -71,9 +65,6 @@ public class CTColor
     protected CTSchemeColor schemeClr;
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTPresetColor prstClr;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the scrgbClr property.
@@ -241,14 +232,6 @@ public class CTColor
 
     public boolean isSetPrstClr() {
         return (this.prstClr!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

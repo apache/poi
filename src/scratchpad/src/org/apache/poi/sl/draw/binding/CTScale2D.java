@@ -20,11 +20,7 @@ package org.apache.poi.sl.draw.binding;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -52,17 +48,12 @@ import org.xml.sax.Locator;
     "sx",
     "sy"
 })
-public class CTScale2D
-    implements Locatable
-{
+public class CTScale2D {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
     protected CTRatio sx;
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
     protected CTRatio sy;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the sx property.
@@ -118,14 +109,6 @@ public class CTScale2D
 
     public boolean isSetSy() {
         return (this.sy!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

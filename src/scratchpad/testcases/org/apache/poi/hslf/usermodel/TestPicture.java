@@ -22,6 +22,7 @@ import static org.junit.Assert.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 import javax.imageio.ImageIO;
@@ -33,7 +34,6 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.JvmBugs;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.junit.Test;
 
 /**
@@ -145,8 +145,8 @@ public final class TestPicture {
 //            "54542_cropped_bitmap.pptx",
 //            "54541_cropped_bitmap.ppt",
 //            "54541_cropped_bitmap2.ppt",
-//            "alterman_security.ppt",
-            "alterman_security2.pptx",
+            "alterman_security.ppt",
+//            "alterman_security3.pptx",
         };
         
         BitSet pages = new BitSet();
@@ -154,7 +154,14 @@ public final class TestPicture {
         
         for (String file : files) {
             InputStream is = _slTests.openResourceAsStream(file);
-            SlideShow ss = file.endsWith("pptx") ? new XMLSlideShow(is) : new HSLFSlideShow(is);
+            SlideShow ss;
+            if (file.endsWith("pptx")) {
+                Class<?> cls = Class.forName("org.apache.poi.xslf.usermodel.XMLSlideShow");
+                Constructor<?> ct = cls.getDeclaredConstructor(InputStream.class);
+                ss = (SlideShow)ct.newInstance(is);
+            } else {
+                ss = new HSLFSlideShow(is);
+            }
             is.close();
             
             boolean debugOut = false;

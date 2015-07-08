@@ -21,11 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -56,23 +52,18 @@ import org.xml.sax.Locator;
     "off",
     "ext"
 })
-public class CTTransform2D
-    implements Locatable
-{
+public class CTTransform2D {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTPoint2D off;
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTPositiveSize2D ext;
-    @XmlAttribute(name = "rot")
+    @XmlAttribute
     protected Integer rot;
-    @XmlAttribute(name = "flipH")
+    @XmlAttribute
     protected Boolean flipH;
-    @XmlAttribute(name = "flipV")
+    @XmlAttribute
     protected Boolean flipV;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the off property.
@@ -236,14 +227,6 @@ public class CTTransform2D
 
     public void unsetFlipV() {
         this.flipV = null;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

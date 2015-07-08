@@ -20,11 +20,7 @@ package org.apache.poi.sl.draw.binding;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -47,17 +43,12 @@ import org.xml.sax.Locator;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CT_Ratio", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
-public class CTRatio
-    implements Locatable
-{
+public class CTRatio {
 
-    @XmlAttribute(name = "n", required = true)
+    @XmlAttribute(required = true)
     protected long n;
-    @XmlAttribute(name = "d", required = true)
+    @XmlAttribute(required = true)
     protected long d;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the n property.
@@ -97,14 +88,6 @@ public class CTRatio
 
     public boolean isSetD() {
         return true;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

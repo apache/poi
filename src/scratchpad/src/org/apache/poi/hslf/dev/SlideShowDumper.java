@@ -21,10 +21,9 @@ import java.io.*;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-
 import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.record.HSLFEscherRecordFactory;
 import org.apache.poi.hslf.record.RecordTypes;
-
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -274,7 +273,7 @@ public void walkTree(int depth, int startPos, int maxLen) {
 
 	byte[] contents = new byte[len];
 	System.arraycopy(_docstream,pos,contents,0,len);
-	DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
+	DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
 	EscherRecord record = erf.createRecord(contents,0);
 
 	// For now, try filling in the fields

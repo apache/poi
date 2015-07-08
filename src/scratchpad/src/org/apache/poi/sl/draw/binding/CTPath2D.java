@@ -24,11 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -64,32 +60,27 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_Path2D", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "closeOrMoveToOrLnTo"
 })
-public class CTPath2D
-    implements Locatable
-{
+public class CTPath2D {
 
     @XmlElements({
-        @XmlElement(name = "close", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DClose.class),
         @XmlElement(name = "moveTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DMoveTo.class),
-        @XmlElement(name = "lnTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DLineTo.class),
-        @XmlElement(name = "arcTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DArcTo.class),
         @XmlElement(name = "quadBezTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DQuadBezierTo.class),
-        @XmlElement(name = "cubicBezTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DCubicBezierTo.class)
+        @XmlElement(name = "cubicBezTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DCubicBezierTo.class),
+        @XmlElement(name = "arcTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DArcTo.class),
+        @XmlElement(name = "lnTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DLineTo.class),
+        @XmlElement(name = "close", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DClose.class)
     })
     protected List<Object> closeOrMoveToOrLnTo;
-    @XmlAttribute(name = "w")
+    @XmlAttribute
     protected Long w;
-    @XmlAttribute(name = "h")
+    @XmlAttribute
     protected Long h;
-    @XmlAttribute(name = "fill")
+    @XmlAttribute
     protected STPathFillMode fill;
-    @XmlAttribute(name = "stroke")
+    @XmlAttribute
     protected Boolean stroke;
-    @XmlAttribute(name = "extrusionOk")
+    @XmlAttribute
     protected Boolean extrusionOk;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the closeOrMoveToOrLnTo property.
@@ -109,12 +100,12 @@ public class CTPath2D
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link CTPath2DClose }
      * {@link CTPath2DMoveTo }
-     * {@link CTPath2DLineTo }
-     * {@link CTPath2DArcTo }
      * {@link CTPath2DQuadBezierTo }
      * {@link CTPath2DCubicBezierTo }
+     * {@link CTPath2DArcTo }
+     * {@link CTPath2DLineTo }
+     * {@link CTPath2DClose }
      * 
      * 
      */
@@ -307,14 +298,6 @@ public class CTPath2D
 
     public void unsetExtrusionOk() {
         this.extrusionOk = null;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

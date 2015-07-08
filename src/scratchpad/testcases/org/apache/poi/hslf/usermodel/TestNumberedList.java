@@ -27,6 +27,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.junit.Test;
 
 
@@ -61,9 +62,9 @@ public final class TestNumberedList {
 		assertTrue(4 == autoNumbers[0].getAutoNumberStartNumber());
 		assertNull(autoNumbers[1].getAutoNumberStartNumber());
 		assertTrue(3 == autoNumbers[2].getAutoNumberStartNumber());
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbers[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbers[0].getAutoNumberScheme());
 		assertNull(autoNumbers[1].getAutoNumberScheme());
-		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaLcParenRight == autoNumbers[2].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.alphaLcParenRight == autoNumbers[2].getAutoNumberScheme());
 			
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(2, textParass.size());
@@ -103,9 +104,9 @@ public final class TestNumberedList {
 		assertTrue(9 == autoNumbers[0].getAutoNumberStartNumber());
 		assertNull(autoNumbers[1].getAutoNumberStartNumber());
 		assertTrue(3 == autoNumbers[2].getAutoNumberStartNumber());
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicParenRight == autoNumbers[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicParenRight == autoNumbers[0].getAutoNumberScheme());
 		assertNull(autoNumbers[1].getAutoNumberScheme());
-		assertTrue(TextAutoNumberSchemeEnum.ANM_AlphaUcPeriod == autoNumbers[2].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.alphaUcPeriod == autoNumbers[2].getAutoNumberScheme());
 
 		final List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(2, textParass.size());

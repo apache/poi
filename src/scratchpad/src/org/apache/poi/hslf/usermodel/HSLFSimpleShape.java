@@ -263,7 +263,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape {
             if(r != null && !(r instanceof EscherClientDataRecord)){
                 byte[] data = r.serialize();
                 r = new EscherClientDataRecord();
-                r.fillFields(data, 0, new DefaultEscherRecordFactory());
+                r.fillFields(data, 0, new HSLFEscherRecordFactory());
             }
             _clientData = (EscherClientDataRecord)r;
         }

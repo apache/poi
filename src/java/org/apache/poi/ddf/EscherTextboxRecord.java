@@ -17,10 +17,7 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.*;
 
 /**
  * Holds data from the parent application. Most commonly used to store
@@ -33,7 +30,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 public class EscherTextboxRecord extends EscherRecord
 {
-    public static final short RECORD_ID = (short)RecordTypes.EscherClientTextbox;
+    public static final short RECORD_ID = (short)0xf00d;
     public static final String RECORD_DESCRIPTION = "msofbtClientTextbox";
 
     private static final byte[] NO_BYTES = new byte[0];

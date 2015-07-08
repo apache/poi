@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.util;
 
-import org.apache.poi.hslf.usermodel.HSLFShape;
-
 /**
  * @author Yegor Kozlov
  */
@@ -91,14 +89,14 @@ public class Units {
 
     public static double masterToPoints(int masterDPI) {
         double points = masterDPI;
-        points *= HSLFShape.POINT_DPI;
-        points /= HSLFShape.MASTER_DPI;
+        points *= POINT_DPI;
+        points /= MASTER_DPI;
         return points;
     }
     
     public static int pointsToMaster(double points) {
-        points *= HSLFShape.MASTER_DPI;
-        points /= HSLFShape.POINT_DPI;
+        points *= MASTER_DPI;
+        points /= POINT_DPI;
         return (int)points;
     }
 }

@@ -23,11 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -53,22 +49,17 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_ColorMRU", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "egColorChoice"
 })
-public class CTColorMRU
-    implements Locatable
-{
+public class CTColorMRU {
 
     @XmlElements({
-        @XmlElement(name = "scrgbClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTScRgbColor.class),
-        @XmlElement(name = "srgbClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSRgbColor.class),
         @XmlElement(name = "hslClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTHslColor.class),
-        @XmlElement(name = "sysClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSystemColor.class),
+        @XmlElement(name = "srgbClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSRgbColor.class),
         @XmlElement(name = "schemeClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSchemeColor.class),
-        @XmlElement(name = "prstClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPresetColor.class)
+        @XmlElement(name = "scrgbClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTScRgbColor.class),
+        @XmlElement(name = "prstClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPresetColor.class),
+        @XmlElement(name = "sysClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSystemColor.class)
     })
     protected List<Object> egColorChoice;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the egColorChoice property.
@@ -88,12 +79,12 @@ public class CTColorMRU
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link CTScRgbColor }
-     * {@link CTSRgbColor }
      * {@link CTHslColor }
-     * {@link CTSystemColor }
+     * {@link CTSRgbColor }
      * {@link CTSchemeColor }
+     * {@link CTScRgbColor }
      * {@link CTPresetColor }
+     * {@link CTSystemColor }
      * 
      * 
      */
@@ -110,14 +101,6 @@ public class CTColorMRU
 
     public void unsetEGColorChoice() {
         this.egColorChoice = null;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

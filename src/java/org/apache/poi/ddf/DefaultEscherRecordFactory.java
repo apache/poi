@@ -117,7 +117,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
      * @param recClasses The records to convert
      * @return The map containing the id/constructor pairs.
      */
-    private static Map<Short, Constructor<? extends EscherRecord>> recordsToMap(Class<?>[] recClasses) {
+    protected static Map<Short, Constructor<? extends EscherRecord>> recordsToMap(Class<?>[] recClasses) {
         Map<Short, Constructor<? extends EscherRecord>> result = new HashMap<Short, Constructor<? extends EscherRecord>>();
         final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
 

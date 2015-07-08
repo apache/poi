@@ -153,15 +153,30 @@ public final class HSLFTable extends HSLFGroupShape {
 
     protected void initTable(){
         List<HSLFShape> shapeList = getShapeList();
+
+        Iterator<HSLFShape> shapeIter = shapeList.iterator();
+        while (shapeIter.hasNext()) {
+            HSLFShape shape = shapeIter.next();
+            if (shape instanceof HSLFAutoShape) {
+                HSLFAutoShape autoShape = (HSLFAutoShape)shape;
+                EscherTextboxRecord etr = autoShape.getEscherChild(EscherTextboxRecord.RECORD_ID);
+                if (etr != null) continue;
+            }
+            shapeIter.remove();
+        }        
+        
         Collections.sort(shapeList, new Comparator<HSLFShape>(){
             public int compare( HSLFShape o1, HSLFShape o2 ) {
                 Rectangle anchor1 = o1.getAnchor();
                 Rectangle anchor2 = o2.getAnchor();
                 int delta = anchor1.y - anchor2.y;
-                if(delta == 0) delta = anchor1.x - anchor2.x;
+                if (delta == 0) delta = anchor1.x - anchor2.x;
+                // descending size
+                if (delta == 0) delta = (anchor2.width*anchor2.height)-(anchor1.width*anchor1.height);
                 return delta;
             }
         });
+        
         int y0 = -1;
         int maxrowlen = 0;
         List<List<HSLFShape>> lst = new ArrayList<List<HSLFShape>>();

@@ -27,10 +27,7 @@ import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hslf.record.EscherTextboxWrapper;
-import org.apache.poi.hslf.record.TextCharsAtom;
-import org.apache.poi.hslf.record.TextBytesAtom;
-import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 /**
@@ -263,7 +260,7 @@ public final class SlideShowRecordDumper {
 
 		// print additional information for drawings and atoms
 		if (optEscher && cname.equals("PPDrawing")) {
-			DefaultEscherRecordFactory factory = new DefaultEscherRecordFactory();
+			DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			r.writeOut(baos);

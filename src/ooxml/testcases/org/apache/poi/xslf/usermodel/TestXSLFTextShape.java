@@ -180,7 +180,7 @@ public class TestXSLFTextShape {
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(0, pr1.getParentParagraph().getLevel());
+        assertEquals(0, pr1.getParentParagraph().getIndentLevel());
         assertEquals("Content", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
         assertEquals(32.0, pr1.getFontSize(), 0);
@@ -189,7 +189,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr2 = shape2.getTextParagraphs().get(1).getTextRuns().get(0);
-        assertEquals(1, pr2.getParentParagraph().getLevel());
+        assertEquals(1, pr2.getParentParagraph().getIndentLevel());
         assertEquals("Level 2", pr2.getRawText());
         assertEquals("Calibri", pr2.getFontFamily());
         assertEquals(28.0, pr2.getFontSize(), 0);
@@ -198,7 +198,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr2.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr3 = shape2.getTextParagraphs().get(2).getTextRuns().get(0);
-        assertEquals(2, pr3.getParentParagraph().getLevel());
+        assertEquals(2, pr3.getParentParagraph().getIndentLevel());
         assertEquals("Level 3", pr3.getRawText());
         assertEquals("Calibri", pr3.getFontFamily());
         assertEquals(24.0, pr3.getFontSize(), 0);
@@ -207,7 +207,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr3.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr4 = shape2.getTextParagraphs().get(3).getTextRuns().get(0);
-        assertEquals(3, pr4.getParentParagraph().getLevel());
+        assertEquals(3, pr4.getParentParagraph().getIndentLevel());
         assertEquals("Level 4", pr4.getRawText());
         assertEquals("Calibri", pr4.getFontFamily());
         assertEquals(20.0, pr4.getFontSize(), 0);
@@ -216,7 +216,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr4.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr5 = shape2.getTextParagraphs().get(4).getTextRuns().get(0);
-        assertEquals(4, pr5.getParentParagraph().getLevel());
+        assertEquals(4, pr5.getParentParagraph().getIndentLevel());
         assertEquals("Level 5", pr5.getRawText());
         assertEquals("Calibri", pr5.getFontFamily());
         assertEquals(20.0, pr5.getFontSize(), 0);
@@ -362,7 +362,7 @@ public class TestXSLFTextShape {
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(0, pr1.getParentParagraph().getLevel());
+        assertEquals(0, pr1.getParentParagraph().getIndentLevel());
         assertEquals("Left", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
         assertEquals(28.0, pr1.getFontSize(), 0);
@@ -371,7 +371,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr2 = shape2.getTextParagraphs().get(1).getTextRuns().get(0);
-        assertEquals(1, pr2.getParentParagraph().getLevel());
+        assertEquals(1, pr2.getParentParagraph().getIndentLevel());
         assertEquals("Level 2", pr2.getParentParagraph().getText());
         assertEquals("Calibri", pr2.getFontFamily());
         assertEquals(24.0, pr2.getFontSize(), 0);
@@ -380,7 +380,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr2.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr3 = shape2.getTextParagraphs().get(2).getTextRuns().get(0);
-        assertEquals(2, pr3.getParentParagraph().getLevel());
+        assertEquals(2, pr3.getParentParagraph().getIndentLevel());
         assertEquals("Level 3", pr3.getParentParagraph().getText());
         assertEquals("Calibri", pr3.getFontFamily());
         assertEquals(20.0, pr3.getFontSize(), 0);
@@ -389,7 +389,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr3.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr4 = shape2.getTextParagraphs().get(3).getTextRuns().get(0);
-        assertEquals(3, pr4.getParentParagraph().getLevel());
+        assertEquals(3, pr4.getParentParagraph().getIndentLevel());
         assertEquals("Level 4", pr4.getParentParagraph().getText());
         assertEquals("Calibri", pr4.getFontFamily());
         assertEquals(18.0, pr4.getFontSize(), 0);
@@ -399,7 +399,7 @@ public class TestXSLFTextShape {
 
         XSLFTextShape shape3 = (XSLFTextShape)shapes.get(2);
         XSLFTextRun pr5 = shape3.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(0, pr5.getParentParagraph().getLevel());
+        assertEquals(0, pr5.getParentParagraph().getIndentLevel());
         assertEquals("Right", pr5.getRawText());
         assertEquals("Calibri", pr5.getFontFamily());
         assertEquals(Color.black, pr5.getFontColor());
@@ -461,7 +461,7 @@ public class TestXSLFTextShape {
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(0, pr1.getParentParagraph().getLevel());
+        assertEquals(0, pr1.getParentParagraph().getIndentLevel());
         assertEquals("Default Text", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
         assertEquals(18.0, pr1.getFontSize(), 0);
@@ -544,7 +544,7 @@ public class TestXSLFTextShape {
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
 
         XSLFTextRun pr1 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(0, pr1.getParentParagraph().getLevel());
+        assertEquals(0, pr1.getParentParagraph().getIndentLevel());
         assertEquals("Level 1", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
         assertEquals(32.0, pr1.getFontSize(), 0);
@@ -553,7 +553,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr2 = shape2.getTextParagraphs().get(1).getTextRuns().get(0);
-        assertEquals(1, pr2.getParentParagraph().getLevel());
+        assertEquals(1, pr2.getParentParagraph().getIndentLevel());
         assertEquals("Level 2", pr2.getParentParagraph().getText());
         assertEquals("Calibri", pr2.getFontFamily());
         assertEquals(28.0, pr2.getFontSize(), 0);
@@ -562,7 +562,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr2.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr3 = shape2.getTextParagraphs().get(2).getTextRuns().get(0);
-        assertEquals(2, pr3.getParentParagraph().getLevel());
+        assertEquals(2, pr3.getParentParagraph().getIndentLevel());
         assertEquals("Level 3", pr3.getParentParagraph().getText());
         assertEquals("Calibri", pr3.getFontFamily());
         assertEquals(24.0, pr3.getFontSize(), 0);
@@ -571,7 +571,7 @@ public class TestXSLFTextShape {
         assertEquals("Arial", pr3.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr4 = shape2.getTextParagraphs().get(3).getTextRuns().get(0);
-        assertEquals(3, pr4.getParentParagraph().getLevel());
+        assertEquals(3, pr4.getParentParagraph().getIndentLevel());
         assertEquals("Level 4", pr4.getParentParagraph().getText());
         assertEquals("Calibri", pr4.getFontFamily());
         assertEquals(20.0, pr4.getFontSize(), 0);
@@ -584,7 +584,7 @@ public class TestXSLFTextShape {
         assertEquals("Content with caption", shape3.getText());
 
         pr1 = shape3.getTextParagraphs().get(0).getTextRuns().get(0);
-        assertEquals(0, pr1.getParentParagraph().getLevel());
+        assertEquals(0, pr1.getParentParagraph().getIndentLevel());
         assertEquals("Content with caption", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
         assertEquals(14.0, pr1.getFontSize(), 0);
@@ -707,19 +707,19 @@ public class TestXSLFTextShape {
         tx1.clearText();
 
         XSLFTextParagraph p1 = tx1.addNewTextParagraph();
-        assertEquals(0, p1.getLevel());
+        assertEquals(0, p1.getIndentLevel());
         XSLFTextRun r1 = p1.addNewTextRun();
         r1.setText("Apache POI");
 
         XSLFTextParagraph p2 = tx1.addNewTextParagraph();
-        p2.setLevel(1);
-        assertEquals(1, p2.getLevel());
+        p2.setIndentLevel(1);
+        assertEquals(1, p2.getIndentLevel());
         XSLFTextRun r2 = p2.addNewTextRun();
         r2.setText("HSLF");
 
         XSLFTextParagraph p3 = tx1.addNewTextParagraph();
-        p3.setLevel(2);
-        assertEquals(2, p3.getLevel());
+        p3.setIndentLevel(2);
+        assertEquals(2, p3.getIndentLevel());
         XSLFTextRun r3 = p3.addNewTextRun();
         r3.setText("XSLF");
 

@@ -22,11 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -52,15 +48,10 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_Path2DList", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "path"
 })
-public class CTPath2DList
-    implements Locatable
-{
+public class CTPath2DList {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected List<CTPath2D> path;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the path property.
@@ -97,14 +88,6 @@ public class CTPath2DList
 
     public void unsetPath() {
         this.path = null;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

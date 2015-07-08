@@ -21,11 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -48,18 +44,13 @@ import org.xml.sax.Locator;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CT_Connection", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
-public class CTConnection
-    implements Locatable
-{
+public class CTConnection {
 
-    @XmlAttribute(name = "id", required = true)
+    @XmlAttribute(required = true)
     protected long id;
-    @XmlAttribute(name = "idx", required = true)
+    @XmlAttribute(required = true)
     @XmlSchemaType(name = "unsignedInt")
     protected long idx;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the id property.
@@ -99,14 +90,6 @@ public class CTConnection
 
     public boolean isSetIdx() {
         return true;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

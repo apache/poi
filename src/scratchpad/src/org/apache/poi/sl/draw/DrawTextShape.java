@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
 import org.apache.poi.sl.usermodel.*;
+import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 
 public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends TextRun>>> extends DrawSimpleShape<T> {
 
@@ -87,9 +88,19 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
         Iterator<? extends TextParagraph<? extends TextRun>> paragraphs = shape.iterator();
         
         boolean isFirstLine = true;
-        while (paragraphs.hasNext()){
+        for (int autoNbrIdx=0; paragraphs.hasNext(); autoNbrIdx++){
             TextParagraph<? extends TextRun> p = paragraphs.next();
             DrawTextParagraph<? extends TextRun> dp = fact.getDrawable(p);
+            BulletStyle bs = p.getBulletStyle();
+            if (bs == null || bs.getAutoNumberingScheme() == null) {
+                autoNbrIdx = -1;
+            } else {
+                Integer startAt = bs.getAutoNumberingStartAt();
+                if (startAt == null) startAt = 1;
+                // TODO: handle reset auto number indexes
+                if (startAt > autoNbrIdx) autoNbrIdx = startAt;
+            }
+            dp.setAutoNumberingIdx(autoNbrIdx);
             dp.setInsets(shapePadding);
             dp.breakText(graphics);
 

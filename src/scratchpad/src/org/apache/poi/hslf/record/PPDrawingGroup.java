@@ -49,7 +49,7 @@ public final class PPDrawingGroup extends RecordAtom {
         byte[] contents = new byte[len];
         System.arraycopy(source,start,contents,0,len);
 
-        DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
+        DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
         EscherRecord child = erf.createRecord(contents, 0);
         child.fillFields( contents, 0, erf );
         dggContainer = (EscherContainerRecord)child.getChild(0);

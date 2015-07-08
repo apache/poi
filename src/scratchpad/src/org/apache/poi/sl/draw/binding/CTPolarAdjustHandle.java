@@ -21,13 +21,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -59,28 +55,24 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_PolarAdjustHandle", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "pos"
 })
-public class CTPolarAdjustHandle implements Locatable
-{
+public class CTPolarAdjustHandle {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
     protected CTAdjPoint2D pos;
-    @XmlAttribute(name = "gdRefR")
+    @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String gdRefR;
-    @XmlAttribute(name = "minR")
+    @XmlAttribute
     protected String minR;
-    @XmlAttribute(name = "maxR")
+    @XmlAttribute
     protected String maxR;
-    @XmlAttribute(name = "gdRefAng")
+    @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String gdRefAng;
-    @XmlAttribute(name = "minAng")
+    @XmlAttribute
     protected String minAng;
-    @XmlAttribute(name = "maxAng")
+    @XmlAttribute
     protected String maxAng;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the pos property.
@@ -276,14 +268,6 @@ public class CTPolarAdjustHandle implements Locatable
 
     public boolean isSetMaxAng() {
         return (this.maxAng!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

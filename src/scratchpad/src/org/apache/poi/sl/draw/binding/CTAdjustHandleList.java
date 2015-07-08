@@ -23,11 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -54,18 +50,13 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_AdjustHandleList", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "ahXYOrAhPolar"
 })
-public class CTAdjustHandleList
-    implements Locatable
-{
+public class CTAdjustHandleList {
 
     @XmlElements({
-        @XmlElement(name = "ahXY", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTXYAdjustHandle.class),
-        @XmlElement(name = "ahPolar", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPolarAdjustHandle.class)
+        @XmlElement(name = "ahPolar", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPolarAdjustHandle.class),
+        @XmlElement(name = "ahXY", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTXYAdjustHandle.class)
     })
     protected List<Object> ahXYOrAhPolar;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the ahXYOrAhPolar property.
@@ -85,8 +76,8 @@ public class CTAdjustHandleList
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link CTXYAdjustHandle }
      * {@link CTPolarAdjustHandle }
+     * {@link CTXYAdjustHandle }
      * 
      * 
      */
@@ -103,14 +94,6 @@ public class CTAdjustHandleList
 
     public void unsetAhXYOrAhPolar() {
         this.ahXYOrAhPolar = null;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }
