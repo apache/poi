@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.poi.sl.draw.DrawTextFragment;
 import org.apache.poi.sl.draw.DrawTextParagraph;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -297,11 +298,11 @@ public class TestXSLFTextParagraph {
         p.setLeftMargin(-1.0); // the value of -1.0 resets to the defaults
         assertEquals(0.0, p.getLeftMargin(), 0);
 
-        assertEquals(0, p.getLevel());
-        p.setLevel(1);
-        assertEquals(1, p.getLevel());
-        p.setLevel(2);
-        assertEquals(2, p.getLevel());
+        assertEquals(0, p.getIndentLevel());
+        p.setIndentLevel(1);
+        assertEquals(1, p.getIndentLevel());
+        p.setIndentLevel(2);
+        assertEquals(2, p.getIndentLevel());
 
         assertEquals(100., p.getLineSpacing(), 0);
         p.setLineSpacing(200.);
@@ -328,7 +329,7 @@ public class TestXSLFTextParagraph {
         p.setBullet(false);
         assertFalse(p.isBullet());
 
-        p.setBulletAutoNumber(ListAutoNumber.ALPHA_LC_PARENT_BOTH, 1);
+        p.setBulletAutoNumber(AutoNumberingScheme.alphaLcParenBoth, 1);
 
         double tabStop = p.getTabStop(0);
         assertEquals(0.0, tabStop, 0);

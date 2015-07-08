@@ -21,13 +21,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -59,28 +55,24 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_XYAdjustHandle", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "pos"
 })
-public class CTXYAdjustHandle implements Locatable
-{
+public class CTXYAdjustHandle {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
     protected CTAdjPoint2D pos;
-    @XmlAttribute(name = "gdRefX")
+    @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String gdRefX;
-    @XmlAttribute(name = "minX")
+    @XmlAttribute
     protected String minX;
-    @XmlAttribute(name = "maxX")
+    @XmlAttribute
     protected String maxX;
-    @XmlAttribute(name = "gdRefY")
+    @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected String gdRefY;
-    @XmlAttribute(name = "minY")
+    @XmlAttribute
     protected String minY;
-    @XmlAttribute(name = "maxY")
+    @XmlAttribute
     protected String maxY;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the pos property.
@@ -276,14 +268,6 @@ public class CTXYAdjustHandle implements Locatable
 
     public boolean isSetMaxY() {
         return (this.maxY!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

@@ -22,11 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -52,14 +48,10 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_Path2DCubicBezierTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "pt"
 })
-public class CTPath2DCubicBezierTo implements Locatable
-{
+public class CTPath2DCubicBezierTo {
 
     @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
     protected List<CTAdjPoint2D> pt;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the pt property.
@@ -96,14 +88,6 @@ public class CTPath2DCubicBezierTo implements Locatable
 
     public void unsetPt() {
         this.pt = null;
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

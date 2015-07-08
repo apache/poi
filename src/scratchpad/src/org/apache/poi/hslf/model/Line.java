@@ -22,9 +22,6 @@ import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 
-import java.awt.geom.*;
-import java.util.ArrayList;
-
 /**
  * Represents a line in a PowerPoint drawing
  *
@@ -46,6 +43,8 @@ public final class Line extends HSLFSimpleShape {
 
     protected EscherContainerRecord createSpContainer(boolean isChild){
         _escherContainer = super.createSpContainer(isChild);
+        
+        setShapeType(ShapeType.LINE);
 
         EscherSpRecord spRecord = _escherContainer.getChildById(EscherSpRecord.RECORD_ID);
         short type = (short)((ShapeType.LINE.nativeId << 4) | 0x2);
@@ -64,68 +63,24 @@ public final class Line extends HSLFSimpleShape {
 
         return _escherContainer;
     }
-
-    public java.awt.Shape getOutline(){
-        Rectangle2D anchor = getLogicalAnchor2D();
-        return new Line2D.Double(anchor.getX(), anchor.getY(), anchor.getX() + anchor.getWidth(), anchor.getY() + anchor.getHeight());
+    
+    /**
+     * Sets the orientation of the line, if inverse is false, then line goes
+     * from top-left to bottom-right, otherwise use inverse equals true 
+     *
+     * @param inverse the orientation of the line
+     */
+    public void setInverse(boolean inverse) {
+        setShapeType(inverse ? ShapeType.LINE_INV : ShapeType.LINE);
     }
     
     /**
-    *
-    * @return 'absolute' anchor of this shape relative to the parent sheet
-    * 
-    * @deprecated TODO: remove the whole class, should work with preset geometries instead
-    */
-   public Rectangle2D getLogicalAnchor2D(){
-       Rectangle2D anchor = getAnchor2D();
-
-       //if it is a groupped shape see if we need to transform the coordinates
-       if (getParent() != null){
-           ArrayList<HSLFGroupShape> lst = new ArrayList<HSLFGroupShape>();
-           for (ShapeContainer<HSLFShape> parent=this.getParent();
-               parent instanceof HSLFGroupShape;
-               parent = ((HSLFGroupShape)parent).getParent()) {
-               lst.add(0, (HSLFGroupShape)parent);
-           }
-           
-           AffineTransform tx = new AffineTransform();
-           for(HSLFGroupShape prnt : lst) {
-               Rectangle2D exterior = prnt.getAnchor2D();
-               Rectangle2D interior = prnt.getInteriorAnchor();
-
-               double scaleX =  exterior.getWidth() / interior.getWidth();
-               double scaleY = exterior.getHeight() / interior.getHeight();
-
-               tx.translate(exterior.getX(), exterior.getY());
-               tx.scale(scaleX, scaleY);
-               tx.translate(-interior.getX(), -interior.getY());
-               
-           }
-           anchor = tx.createTransformedShape(anchor).getBounds2D();
-       }
-
-       double angle = getRotation();
-       if(angle != 0.){
-           double centerX = anchor.getX() + anchor.getWidth()/2;
-           double centerY = anchor.getY() + anchor.getHeight()/2;
-
-           AffineTransform trans = new AffineTransform();
-           trans.translate(centerX, centerY);
-           trans.rotate(Math.toRadians(angle));
-           trans.translate(-centerX, -centerY);
-
-           Rectangle2D rect = trans.createTransformedShape(anchor).getBounds2D();
-           if((anchor.getWidth() < anchor.getHeight() && rect.getWidth() > rect.getHeight()) ||
-               (anchor.getWidth() > anchor.getHeight() && rect.getWidth() < rect.getHeight())    ){
-               trans = new AffineTransform();
-               trans.translate(centerX, centerY);
-               trans.rotate(Math.PI/2);
-               trans.translate(-centerX, -centerY);
-               anchor = trans.createTransformedShape(anchor).getBounds2D();
-           }
-       }
-       return anchor;
-   }
-
-
+     * Gets the orientation of the line, if inverse is false, then line goes
+     * from top-left to bottom-right, otherwise inverse equals true 
+     *
+     * @return inverse the orientation of the line
+     */
+    public boolean isInverse() {
+        return (getShapeType() == ShapeType.LINE_INV);
+    }
 }

@@ -22,14 +22,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
 import org.w3c.dom.Element;
-import org.xml.sax.Locator;
 
 
 /**
@@ -56,27 +52,22 @@ import org.xml.sax.Locator;
 @XmlType(name = "CT_OfficeArtExtension", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
     "any"
 })
-public class CTOfficeArtExtension
-    implements Locatable
-{
+public class CTOfficeArtExtension {
 
     @XmlAnyElement(lax = true)
     protected Object any;
-    @XmlAttribute(name = "uri")
+    @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
     protected String uri;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the any property.
      * 
      * @return
      *     possible object is
-     *     {@link Object }
      *     {@link Element }
+     *     {@link Object }
      *     
      */
     public Object getAny() {
@@ -88,8 +79,8 @@ public class CTOfficeArtExtension
      * 
      * @param value
      *     allowed object is
-     *     {@link Object }
      *     {@link Element }
+     *     {@link Object }
      *     
      */
     public void setAny(Object value) {
@@ -126,14 +117,6 @@ public class CTOfficeArtExtension
 
     public boolean isSetUri() {
         return (this.uri!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

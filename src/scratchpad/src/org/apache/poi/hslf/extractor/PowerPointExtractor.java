@@ -328,13 +328,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
         }
 
         for (List<HSLFTextParagraph> lp : paragraphs) {
-            for (HSLFTextParagraph p : lp) {
-                for (HSLFTextRun r : p.getTextRuns()) {
-                    ret.append(r.getRawText());
-                }
-                if (ret.length() > 0 && ret.charAt(ret.length()-1) != '\n') {
-                    ret.append("\n");
-                }
+            ret.append(HSLFTextParagraph.getText(lp));
+            if (ret.length() > 0 && ret.charAt(ret.length()-1) != '\n') {
+                ret.append("\n");
             }
         }
     }

@@ -114,6 +114,13 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
          */
         Double getBulletFontSize();
         Color getBulletFontColor();
+        
+        AutoNumberingScheme getAutoNumberingScheme();
+        /**
+         * Index (1-based) of the first auto number value, or null if auto numbering scheme
+         * wasn't assigned.
+         */
+        Integer getAutoNumberingStartAt();
     }
 
     /**
@@ -218,13 +225,28 @@ public interface TextParagraph<T extends TextRun> extends Iterable<T> {
      *  or null, if unset
      */
     Double getIndent();
-
+    
     /**
      * Specifies the indent size that will be applied to the first line of text in the paragraph.   
      * 
      * @param indent the indent (in points) applied to the first line of text in the paragraph
      */
     void setIndent(Double indent);
+
+
+    /**
+     * @return the text level of this paragraph (0-based). Default is 0.
+     */    
+    int getIndentLevel();
+
+    /**
+     * Specifies the particular level text properties that this paragraph will follow.
+     * The value for this attribute formats the text according to the corresponding level
+     * paragraph properties defined in the SlideMaster.
+     *
+     * @param level the level (0 ... 4)
+     */
+    void setIndentLevel(int level);
     
     /**
      * Returns the vertical line spacing that is to be used within a paragraph.

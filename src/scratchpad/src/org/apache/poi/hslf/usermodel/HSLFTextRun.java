@@ -17,14 +17,13 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.setPropVal;
 import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getPropVal;
+import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.setPropVal;
 
 import java.awt.Color;
 
 import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -321,16 +320,8 @@ public final class HSLFTextRun implements TextRun {
 	 */
 	public Color getFontColor() {
 		TextProp tp = getPropVal(characterStyle, "font.color", parentParagraph);
-		if (tp == null) return null;
-		int rgb = tp.getValue();
-
-		int cidx = rgb >> 24;
-		if (rgb % 0x1000000 == 0){
-			ColorSchemeAtom ca = parentParagraph.getSheet().getColorScheme();
-			if(cidx >= 0 && cidx <= 7) rgb = ca.getColor(cidx);
-		}
-		Color tmp = new Color(rgb, true);
-		return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+		return (tp == null) ? null
+	        : HSLFTextParagraph.getColorFromColorIndexStruct(tp.getValue(), parentParagraph.getSheet());
 	}
 
 	/**

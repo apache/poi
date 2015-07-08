@@ -120,7 +120,7 @@ public class TestXSLFAutoShape {
         assertEquals(100., p.getLineSpacing(), 0);
         assertEquals(0., p.getSpaceAfter(), 0);
         assertEquals(0., p.getSpaceBefore(), 0);
-        assertEquals(0, p.getLevel());
+        assertEquals(0, p.getIndentLevel());
 
         p.setIndent(2.0);
         assertEquals(2.0, p.getIndent(), 0);
@@ -134,11 +134,11 @@ public class TestXSLFAutoShape {
 
 
         assertFalse(p.getXmlObject().getPPr().isSetLvl());
-        p.setLevel(1);
-        assertEquals(1, p.getLevel());
+        p.setIndentLevel(1);
+        assertEquals(1, p.getIndentLevel());
         assertTrue(p.getXmlObject().getPPr().isSetLvl());
-        p.setLevel(2);
-        assertEquals(2, p.getLevel());
+        p.setIndentLevel(2);
+        assertEquals(2, p.getIndentLevel());
 
         p.setLeftMargin(2.0);
         assertEquals(2.0, p.getLeftMargin(), 0);

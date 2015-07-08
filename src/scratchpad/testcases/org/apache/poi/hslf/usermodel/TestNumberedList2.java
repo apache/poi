@@ -27,6 +27,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.junit.Test;
 
 
@@ -62,11 +63,11 @@ public final class TestNumberedList2 {
 		final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox0.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		final TextPFException9[] autoNumbersOfTextBox1 = numberedListInfoForTextBox1.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox1[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)6), autoNumbersOfTextBox1[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox1[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox1[0].getAutoNumberScheme());
 
 		
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
@@ -97,7 +98,7 @@ public final class TestNumberedList2 {
 		final TextPFException9[] autoNumbersOfTextBox = numberedListInfoForTextBox.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(TextAutoNumberSchemeEnum.ANM_ArabicPeriod == autoNumbersOfTextBox[0].getAutoNumberScheme());
+		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox[0].getAutoNumberScheme());
 			
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(3, textParass.size());

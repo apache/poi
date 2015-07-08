@@ -20,22 +20,9 @@ package org.apache.poi.hslf.usermodel;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherClientDataRecord;
-import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherProperty;
-import org.apache.poi.ddf.EscherPropertyFactory;
-import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherSimpleProperty;
-import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.InteractiveInfo;
-import org.apache.poi.hslf.record.InteractiveInfoAtom;
-import org.apache.poi.hslf.record.OEShapeAtom;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.hslf.record.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogFactory;
@@ -116,16 +103,15 @@ public final class HSLFShapeFactory {
                 break;
             }
             case LINE:
-//                shape = new Line(spContainer, parent);
-//                break;
+                shape = new Line(spContainer, parent);
+                break;
             case NOT_PRIMITIVE: {
                 EscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
                 EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
                 if(prop != null)
                     shape = new HSLFFreeformShape(spContainer, parent);
                 else {
-
-                    logger.log(POILogger.WARN, "Creating AutoShape for a NotPrimitive shape");
+                    logger.log(POILogger.INFO, "Creating AutoShape for a NotPrimitive shape");
                     shape = new HSLFAutoShape(spContainer, parent);
                 }
                 break;

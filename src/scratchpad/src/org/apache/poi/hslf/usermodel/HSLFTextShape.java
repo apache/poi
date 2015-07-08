@@ -516,7 +516,7 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
     }
 
     /**
-      * @return the TextRun object for this text box
+      * @return the TextParagraphs for this text box
       */
     public List<HSLFTextParagraph> getTextParagraphs(){
         if (!_paragraphs.isEmpty()) return _paragraphs;
@@ -527,8 +527,13 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
             _txtbox = _paragraphs.get(0).getTextboxWrapper();
         } else {
             _paragraphs = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
-            if (_paragraphs == null || _paragraphs.isEmpty()) {
-                throw new RuntimeException("TextRecord didn't contained any text lines");
+            if (_paragraphs == null) {
+                // there are actually TextBoxRecords without extra data - see #54722
+                _paragraphs = HSLFTextParagraph.createEmptyParagraph(_txtbox);
+            }
+                
+            if (_paragraphs.isEmpty()) {
+                logger.log(POILogger.WARN, "TextRecord didn't contained any text lines");
             }
 //            initParagraphsFromSheetRecords();
 //            if (_paragraphs.isEmpty()) {
@@ -553,9 +558,12 @@ public abstract class HSLFTextShape extends HSLFSimpleShape implements TextShape
         // (We can't do it in the constructor because the sheet
         //  is not assigned then, it's only built once we have
         //  all the records)
-        for (HSLFTextParagraph htp : getTextParagraphs()) {
-            // Supply the sheet to our child RichTextRuns
-            htp.supplySheet(_sheet);
+        List<HSLFTextParagraph> paras = getTextParagraphs();
+        if (paras != null) {
+            for (HSLFTextParagraph htp : paras) {
+                // Supply the sheet to our child RichTextRuns
+                htp.supplySheet(_sheet);
+            }
         }
     }
 

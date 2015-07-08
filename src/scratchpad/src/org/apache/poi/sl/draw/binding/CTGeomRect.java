@@ -20,11 +20,7 @@ package org.apache.poi.sl.draw.binding;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.annotation.XmlLocation;
-import org.xml.sax.Locator;
 
 
 /**
@@ -49,21 +45,16 @@ import org.xml.sax.Locator;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CT_GeomRect", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
-public class CTGeomRect
-    implements Locatable
-{
+public class CTGeomRect {
 
-    @XmlAttribute(name = "l", required = true)
+    @XmlAttribute(required = true)
     protected String l;
-    @XmlAttribute(name = "t", required = true)
+    @XmlAttribute(required = true)
     protected String t;
-    @XmlAttribute(name = "r", required = true)
+    @XmlAttribute(required = true)
     protected String r;
-    @XmlAttribute(name = "b", required = true)
+    @XmlAttribute(required = true)
     protected String b;
-    @XmlLocation
-    @XmlTransient
-    protected Locator locator;
 
     /**
      * Gets the value of the l property.
@@ -175,14 +166,6 @@ public class CTGeomRect
 
     public boolean isSetB() {
         return (this.b!= null);
-    }
-
-    public Locator sourceLocation() {
-        return locator;
-    }
-
-    public void setSourceLocation(Locator newLocator) {
-        locator = newLocator;
     }
 
 }

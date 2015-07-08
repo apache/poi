@@ -275,15 +275,7 @@ public abstract class HSLFSheet implements Sheet<HSLFShape,HSLFSlideShow> {
             PPDrawing ppdrawing = getPPDrawing();
 
             EscherContainerRecord dg = (EscherContainerRecord) ppdrawing.getEscherRecords()[0];
-            EscherContainerRecord spContainer = null;
-
-            for (Iterator<EscherRecord> it = dg.getChildIterator(); it.hasNext();) {
-                EscherRecord rec = it.next();
-                if (rec.getRecordId() == EscherContainerRecord.SP_CONTAINER) {
-                    spContainer = (EscherContainerRecord) rec;
-                    break;
-                }
-            }
+            EscherContainerRecord spContainer = dg.getChildById(EscherContainerRecord.SP_CONTAINER);
             _background = new HSLFBackground(spContainer, null);
             _background.setSheet(this);
         }

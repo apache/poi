@@ -586,7 +586,7 @@ under the License.
                     <available file="${ooxml.xsds.jar}"/>
                     <available file="${ooxml.security.jar}"/>
                     <available file="${ooxml.xsds.src.jar}"/>
-                    <available file="${${ooxml.security.src.jar}"/>
+                    <available file="${ooxml.security.src.jar}"/>
             	</and>
                 <isset property="disconnected"/>
             </or>
@@ -710,7 +710,8 @@ under the License.
 			<arg value="-readOnly"/>
 			<arg value="-npa"/>
 			<arg value="-no-header"/>
-			<arg value="-Xlocator"/>
+			<!--arg value="-mark-generated"/ -->
+			<!--arg value="-Xlocator"/ -->
 			<arg file="${geometry.output.tmpdir}/dml-shapeGeometry.xsd"/>
 			<arg value="-d"/>
 			<arg file="${geometry.output.tmpdir}"/>

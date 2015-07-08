@@ -27,6 +27,7 @@ import org.apache.poi.hslf.model.PPFont;
 import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.*;
 
@@ -62,7 +63,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     private HSLFSheet _sheet;
     private int shapeId;
 
-    // private StyleTextPropAtom styleTextPropAtom;
     private StyleTextProp9Atom styleTextProp9Atom;
 
     /**
@@ -230,7 +230,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
         int length;
         for (length = 1; startIdx[0] + length < records.length; length++) {
-            if (records[startIdx[0]+length] instanceof TextHeaderAtom) break;
+            Record r = records[startIdx[0]+length];
+            if (r instanceof TextHeaderAtom || r instanceof SlidePersistAtom) break;
         }
 
         Record result[] = new Record[length];
@@ -359,26 +360,59 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         }
     }
 
+    public AutoNumberingScheme getAutoNumberingScheme() {
+        if (styleTextProp9Atom == null) return null;
+        TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
+        int level = getIndentLevel();
+        if (ant == null || level  >= ant.length) return null;
+        return ant[level].getAutoNumberScheme();
+    }
+
+    public Integer getAutoNumberingStartAt() {
+        if (styleTextProp9Atom == null) return null;
+        TextPFException9[] ant = styleTextProp9Atom.getAutoNumberTypes();
+        int level = getIndentLevel();
+        if (ant == null || level  >= ant.length) return null;
+        Short startAt = ant[level].getAutoNumberStartNumber();
+        assert(startAt != null);
+        return startAt.intValue();
+    }
+    
+    
     @Override
     public BulletStyle getBulletStyle() {
-        if (!isBullet()) return null;
+        if (!isBullet() && getAutoNumberingScheme() == null) return null;
 
         return new BulletStyle() {
+            @Override
             public String getBulletCharacter() {
                 Character chr = HSLFTextParagraph.this.getBulletChar();
                 return (chr == null || chr == 0) ? "" : "" + chr;
             }
 
+            @Override
             public String getBulletFont() {
                 return HSLFTextParagraph.this.getBulletFont();
             }
 
+            @Override
             public Double getBulletFontSize() {
                 return HSLFTextParagraph.this.getBulletSize();
             }
 
+            @Override
             public Color getBulletFontColor() {
                 return HSLFTextParagraph.this.getBulletColor();
+            }
+
+            @Override
+            public AutoNumberingScheme getAutoNumberingScheme() {
+                return HSLFTextParagraph.this.getAutoNumberingScheme();
+            }
+
+            @Override
+            public Integer getAutoNumberingStartAt() {
+                return HSLFTextParagraph.this.getAutoNumberingStartAt();
             }
         };
     }
@@ -392,19 +426,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         _parentShape = parentShape;
     }
 
-    /**
-     * 
-     * @return indentation level
-     */
+    @Override
     public int getIndentLevel() {
         return _paragraphStyle == null ? 0 : _paragraphStyle.getIndentLevel();
     }
 
-    /**
-     * Sets indentation level
-     * 
-    * @param level indentation level. Must be in the range [0, 4]
-     */
+    @Override
     public void setIndentLevel(int level) {
        if( _paragraphStyle != null ) _paragraphStyle.setIndentLevel((short)level);
     }
@@ -471,17 +498,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             return (_runs.isEmpty()) ? null : _runs.get(0).getFontColor();
         }
 
-        int rgb = tp.getValue();
-        int cidx = rgb >> 24;
-        if (rgb % 0x1000000 == 0) {
-            if (_sheet == null)
-                return null;
-            ColorSchemeAtom ca = _sheet.getColorScheme();
-            if (cidx >= 0 && cidx <= 7)
-                rgb = ca.getColor(cidx);
-        }
-        Color tmp = new Color(rgb, true);
-        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+        return getColorFromColorIndexStruct(tp.getValue(), _sheet);
     }
 
     /**
@@ -934,7 +951,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
    public static List<List<HSLFTextParagraph>> findTextParagraphs(PPDrawing ppdrawing, HSLFSheet sheet) {
         List<List<HSLFTextParagraph>> runsV = new ArrayList<List<HSLFTextParagraph>>();
         for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
-            runsV.add(findTextParagraphs(wrapper, sheet));
+            List<HSLFTextParagraph> p = findTextParagraphs(wrapper, sheet);
+            if (p != null) runsV.add(p);
         }
         return runsV;
     }
@@ -1189,7 +1207,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
     protected static List<HSLFTextParagraph> createEmptyParagraph() {
         EscherTextboxWrapper wrapper = new EscherTextboxWrapper();
-
+        return createEmptyParagraph(wrapper);
+    }
+    
+    protected static List<HSLFTextParagraph> createEmptyParagraph(EscherTextboxWrapper wrapper) {
         TextHeaderAtom tha = new TextHeaderAtom();
         tha.setParentRecord(wrapper);
         wrapper.appendChildRecord(tha);
@@ -1216,5 +1237,27 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
 
     public EscherTextboxWrapper getTextboxWrapper() {
         return (EscherTextboxWrapper) _headerAtom.getParentRecord();
+    }
+    
+    protected static Color getColorFromColorIndexStruct(int rgb, HSLFSheet sheet) {
+        int cidx = rgb >>> 24;
+        Color tmp; 
+        switch (cidx) {
+            // Background ... Accent 3 color
+            case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+                if (sheet == null) return null;
+                ColorSchemeAtom ca = sheet.getColorScheme();
+                tmp = new Color(ca.getColor(cidx), true);
+                break;
+            // Color is an sRGB value specified by red, green, and blue fields.
+            case 0xFE:
+                tmp = new Color(rgb, true);
+                break;
+            // Color is undefined.
+            default:
+            case 0xFF:
+                return null;
+        }
+        return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
     }
 }
