@@ -19,9 +19,9 @@ package org.apache.poi.sl.draw;
 
 import org.apache.poi.sl.usermodel.*;
 
-
-public class DrawAutoShape<T extends AutoShape<? extends TextParagraph<? extends TextRun>>> extends DrawTextShape<T> {
-    public DrawAutoShape(T shape) {
+public class DrawTableShape<T extends TableShape> extends DrawShape<T> {
+    // to be implemented ...
+    public DrawTableShape(T shape) {
         super(shape);
     }
 }

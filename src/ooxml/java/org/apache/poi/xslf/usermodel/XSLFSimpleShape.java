@@ -77,7 +77,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
     protected CTTransform2D getXfrm() {
         PropertyFetcher<CTTransform2D> fetcher = new PropertyFetcher<CTTransform2D>() {
             public boolean fetch(XSLFShape shape) {
-                CTShapeProperties pr = getSpPr();
+                CTShapeProperties pr = shape.getSpPr();
                 if (pr.isSetXfrm()) {
                     setValue(pr.getXfrm());
                     return true;

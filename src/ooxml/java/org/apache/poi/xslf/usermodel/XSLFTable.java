@@ -27,6 +27,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
@@ -45,7 +46,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
  *
  * @author Yegor Kozlov
  */
-public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow> {
+public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>, TableShape {
     static String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
 
     private CTTable _table;

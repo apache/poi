@@ -75,6 +75,10 @@ public class DrawFactory {
             return getDrawable((PictureShape)shape);
         } else if (shape instanceof Background) {
             return getDrawable((Background)shape);
+        } else if (shape instanceof ConnectorShape) {
+            return getDrawable((ConnectorShape)shape);
+        } else if (shape instanceof TableShape) {
+            return getDrawable((TableShape)shape);
         } else if (shape instanceof Slide) {
             return getDrawable((Slide<? extends Shape, ? extends SlideShow, ? extends Notes<?,?>>)shape);
         } else if (shape instanceof MasterSheet) {
@@ -106,6 +110,14 @@ public class DrawFactory {
         return new DrawFreeformShape<T>(shape);
     }
 
+    public <T extends ConnectorShape> DrawConnectorShape<T> getDrawable(T shape) {
+        return new DrawConnectorShape<T>(shape);
+    }
+    
+    public <T extends TableShape> DrawTableShape<T> getDrawable(T shape) {
+        return new DrawTableShape<T>(shape);
+    }
+    
     public <T extends TextShape<? extends TextParagraph<? extends TextRun>>> DrawTextShape<T> getDrawable(T shape) {
         return new DrawTextShape<T>(shape);
     }

@@ -21,6 +21,7 @@ import org.apache.poi.ddf.*;
 import org.apache.poi.hslf.model.Line;
 import org.apache.poi.hslf.usermodel.*;
 import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.*;
@@ -32,7 +33,7 @@ import java.awt.*;
  *
  * @author Yegor Kozlov
  */
-public final class HSLFTable extends HSLFGroupShape {
+public final class HSLFTable extends HSLFGroupShape implements TableShape {
 
     protected static final int BORDER_TOP = 1;
     protected static final int BORDER_RIGHT = 2;
