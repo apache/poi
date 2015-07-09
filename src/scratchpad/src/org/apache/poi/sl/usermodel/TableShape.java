@@ -15,13 +15,8 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.sl.draw;
+package org.apache.poi.sl.usermodel;
 
-import org.apache.poi.sl.usermodel.*;
-
-
-public class DrawAutoShape<T extends AutoShape<? extends TextParagraph<? extends TextRun>>> extends DrawTextShape<T> {
-    public DrawAutoShape(T shape) {
-        super(shape);
-    }
+public interface TableShape extends Shape {
+    // to be defined ...
 }
