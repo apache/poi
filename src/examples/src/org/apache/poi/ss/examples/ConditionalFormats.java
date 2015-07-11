@@ -46,6 +46,7 @@ public class ConditionalFormats {
 
         sameCell(wb.createSheet("Same Cell"));
         multiCell(wb.createSheet("MultiCell"));
+        overlapping(wb.createSheet("Overlapping"));
         errors(wb.createSheet("Errors"));
         hideDupplicates(wb.createSheet("Hide Dups"));
         formatDuplicates(wb.createSheet("Duplicates"));
@@ -60,7 +61,7 @@ public class ConditionalFormats {
         FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
-
+        System.out.println("Generated: " + file);
     }
 
     /**
@@ -138,6 +139,71 @@ public class ConditionalFormats {
         sheetCF.addConditionalFormatting(regions, rule1);
 
         sheet.getRow(2).createCell(4).setCellValue("<== Condition 1: Formula Is =$B2>75   (Blue Fill)");
+    }
+    
+    /**
+     * Multiple conditional formatting rules can apply to
+     *  one cell, some combining, some beating others.
+     * Done in order of the rules added to the 
+     *  SheetConditionalFormatting object
+     */
+    static void overlapping(Sheet sheet) {
+        for (int i=0; i<40; i++) {
+            int rn = i+1;
+            Row r = sheet.createRow(i);
+            r.createCell(0).setCellValue("This is row " + rn + " (" + i + ")");
+            String str = "";
+            if (rn%2 == 0) str = str + "even ";
+            if (rn%3 == 0) str = str + "x3 ";
+            if (rn%5 == 0) str = str + "x5 ";
+            if (rn%10 == 0) str = str + "x10 ";
+            if (str.length() == 0) str = "nothing special...";
+            r.createCell(1).setCellValue("It is " + str);
+        }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        
+        sheet.getRow(1).createCell(3).setCellValue("Even rows are blue");
+        sheet.getRow(2).createCell(3).setCellValue("Multiples of 3 have a grey background");
+        sheet.getRow(4).createCell(3).setCellValue("Multiples of 5 are bold");
+        sheet.getRow(9).createCell(3).setCellValue("Multiples of 10 are red (beats even)");
+        
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        
+        // Condition 1: Row divides by 10, red (will beat #1)
+        ConditionalFormattingRule rule1 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),10)=0");
+        FontFormatting font1 = rule1.createFontFormatting();
+        font1.setFontColorIndex(IndexedColors.RED.index);
+        
+        // Condition 2: Row is even, blue
+        ConditionalFormattingRule rule2 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),2)=0");
+        FontFormatting font2 = rule2.createFontFormatting();
+        font2.setFontColorIndex(IndexedColors.BLUE.index);
+        
+        // Condition 3: Row divides by 5, bold
+        ConditionalFormattingRule rule3 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),5)=0");
+        FontFormatting font3 = rule3.createFontFormatting();
+        font3.setFontStyle(false, true);
+        
+        // Condition 4: Row divides by 3, grey background
+        ConditionalFormattingRule rule4 = 
+                sheetCF.createConditionalFormattingRule("MOD(ROW(),3)=0");
+        PatternFormatting fill4 = rule4.createPatternFormatting();
+        fill4.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.index);
+        fill4.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
+        
+        // Apply
+        CellRangeAddress[] regions = {
+                CellRangeAddress.valueOf("A1:F41")
+        };
+
+        sheetCF.addConditionalFormatting(regions, rule1);
+        sheetCF.addConditionalFormatting(regions, rule2);
+        sheetCF.addConditionalFormatting(regions, rule3);
+        sheetCF.addConditionalFormatting(regions, rule4);
     }
 
     /**
