@@ -57,6 +57,34 @@ public abstract class CFRuleBase extends StandardRecord {
 
     private byte comparison_operator;
 
+    public static final int TEMPLATE_CELL_VALUE = 0x0000;
+    public static final int TEMPLATE_FORMULA = 0x0001;
+    public static final int TEMPLATE_COLOR_SCALE_FORMATTING = 0x0002;
+    public static final int TEMPLATE_DATA_BAR_FORMATTING = 0x0003;
+    public static final int TEMPLATE_ICON_SET_FORMATTING = 0x0004;
+    public static final int TEMPLATE_FILTER = 0x0005;
+    public static final int TEMPLATE_UNIQUE_VALUES = 0x0007;
+    public static final int TEMPLATE_CONTAINS_TEXT = 0x0008;
+    public static final int TEMPLATE_CONTAINS_BLANKS = 0x0009;
+    public static final int TEMPLATE_CONTAINS_NO_BLANKS = 0x000A;
+    public static final int TEMPLATE_CONTAINS_ERRORS = 0x000B;
+    public static final int TEMPLATE_CONTAINS_NO_ERRORS = 0x000C;
+    public static final int TEMPLATE_TODAY = 0x000F;
+    public static final int TEMPLATE_TOMORROW = 0x0010;
+    public static final int TEMPLATE_YESTERDAY = 0x0011;
+    public static final int TEMPLATE_LAST_7_DAYS = 0x0012;
+    public static final int TEMPLATE_LAST_MONTH = 0x0013;
+    public static final int TEMPLATE_NEXT_MONTH = 0x0014;
+    public static final int TEMPLATE_THIS_WEEK = 0x0015;
+    public static final int TEMPLATE_NEXT_WEEK = 0x0016;
+    public static final int TEMPLATE_LAST_WEEK = 0x0017;
+    public static final int TEMPLATE_THIS_MONTH = 0x0018;
+    public static final int TEMPLATE_ABOVE_AVERAGE = 0x0019;
+    public static final int TEMPLATE_BELOW_AVERAGE = 0x001A;
+    public static final int TEMPLATE_DUPLICATE_VALUES = 0x001B;
+    public static final int TEMPLATE_ABOVE_OR_EQUAL_TO_AVERAGE = 0x001D;
+    public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
+    
     private Formula formula1;
     private Formula formula2;
 
