@@ -160,8 +160,7 @@ public class TestXSLFSimpleShape {
             assertEquals("accent1", s.getSpStyle().getFillRef().getSchemeClr().getVal().toString());
             assertEquals(2.0, s.getLineWidth(), 0);
             assertEquals(LineCap.FLAT, s.getLineCap());
-            // YK: calculated color is slightly different from PowerPoint
-            assertEquals(new Color(39, 64, 94), s.getLineColor());
+            assertEquals(new Color(79,129,189), s.getLineColor());
         }
 
         XSLFSimpleShape s0 = (XSLFSimpleShape) shapes.get(0);
@@ -178,7 +177,7 @@ public class TestXSLFSimpleShape {
         assertEquals(20000, ref1.getLumModArray(0).getVal());
         assertEquals(80000, ref1.getLumOffArray(0).getVal());
         assertEquals("accent1", ref1.getVal().toString());
-        assertEquals(new Color(220, 230, 242), s1.getFillColor());
+        assertEquals(new Color(79, 129, 189), s1.getFillColor());
 
         // lighter 60%
         XSLFSimpleShape s2 = (XSLFSimpleShape)shapes.get(2);
@@ -188,7 +187,7 @@ public class TestXSLFSimpleShape {
         assertEquals(40000, ref2.getLumModArray(0).getVal());
         assertEquals(60000, ref2.getLumOffArray(0).getVal());
         assertEquals("accent1", ref2.getVal().toString());
-        assertEquals(new Color(185, 205, 229), s2.getFillColor());
+        assertEquals(new Color(79, 129, 189), s2.getFillColor());
 
         // lighter 40%
         XSLFSimpleShape s3 = (XSLFSimpleShape)shapes.get(3);
@@ -198,7 +197,7 @@ public class TestXSLFSimpleShape {
         assertEquals(60000, ref3.getLumModArray(0).getVal());
         assertEquals(40000, ref3.getLumOffArray(0).getVal());
         assertEquals("accent1", ref3.getVal().toString());
-        assertEquals(new Color(149, 179, 215), s3.getFillColor());
+        assertEquals(new Color(79, 129, 189), s3.getFillColor());
 
         // darker 25%
         XSLFSimpleShape s4 = (XSLFSimpleShape)shapes.get(4);
@@ -207,8 +206,7 @@ public class TestXSLFSimpleShape {
         assertEquals(0, ref4.sizeOfLumOffArray());
         assertEquals(75000, ref4.getLumModArray(0).getVal());
         assertEquals("accent1", ref3.getVal().toString());
-        // YK: calculated color is slightly different from PowerPoint
-        assertEquals(new Color(59, 97, 142), s4.getFillColor());
+        assertEquals(new Color(79, 129, 189), s4.getFillColor());
 
         XSLFSimpleShape s5 = (XSLFSimpleShape)shapes.get(5);
         CTSchemeColor ref5 = s5.getSpPr().getSolidFill().getSchemeClr();
@@ -216,8 +214,7 @@ public class TestXSLFSimpleShape {
         assertEquals(0, ref5.sizeOfLumOffArray());
         assertEquals(50000, ref5.getLumModArray(0).getVal());
         assertEquals("accent1", ref5.getVal().toString());
-        // YK: calculated color is slightly different from PowerPoint
-        assertEquals(new Color(40, 65, 95), s5.getFillColor());
+        assertEquals(new Color(79, 129, 189), s5.getFillColor());
     }
 
     @Test

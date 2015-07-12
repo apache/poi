@@ -20,11 +20,24 @@ package org.apache.poi.sl.usermodel;
 public interface StrokeStyle {
     enum LineCap {
         /** Rounded ends */
-        ROUND,
+        ROUND(1),
         /** Square protrudes by half line width */
-        SQUARE,
+        SQUARE(2),
         /** Line ends at end point*/
-        FLAT;
+        FLAT(3);
+        
+        public final int ooxmlId;
+        
+        LineCap(int ooxmlId) {
+            this.ooxmlId = ooxmlId;
+        }
+
+        public static LineCap fromOoxmlId(int ooxmlId) {
+            for (LineCap lc : values()) {
+                if (lc.ooxmlId == ooxmlId) return lc;
+            }
+            return null;
+        }
     }
 
     /**
@@ -34,39 +47,48 @@ public interface StrokeStyle {
      */
     enum LineDash {
         /** Solid (continuous) pen - native 1 */
-        SOLID(1, 1),
+        SOLID(1, 1, null),
         /** square dot style - native 6 */
-        DOT(6, 1,1),
+        DOT(6, 2, 1,1),
         /** dash style - native 7 */
-        DASH(7, 3,4),
+        DASH(7, 3, 3,4),
         /** dash short dash - native 9*/
-        DASH_DOT(9, 4,3,1,3),
+        DASH_DOT(9, 5, 4,3,1,3),
         /** long dash style - native 8 */
-        LG_DASH(8, 8,3),
+        LG_DASH(8, 4, 8,3),
         /** long dash short dash - native 10 */
-        LG_DASH_DOT(10, 8,3,1,3),
+        LG_DASH_DOT(10, 6, 8,3,1,3),
         /** long dash short dash short dash - native 11 */
-        LG_DASH_DOT_DOT(11, 8,3,1,3,1,3),
+        LG_DASH_DOT_DOT(11, 7, 8,3,1,3,1,3),
         /** PS_DASH system dash style - native 2 */
-        SYS_DASH(2, 2,2),
+        SYS_DASH(2, 8, 2,2),
         /** PS_DOT system dash style - native 3 */
-        SYS_DOT(3, 1,1),
+        SYS_DOT(3, 9, 1,1),
         /** PS_DASHDOT system dash style - native 4 */
-        SYS_DASH_DOT(4, 2,2,1,1),
+        SYS_DASH_DOT(4, 10, 2,2,1,1),
         /** PS_DASHDOTDOT system dash style / native 5 */
-        SYS_DASH_DOT_DOT(5, 2,2,1,1,1,1);
+        SYS_DASH_DOT_DOT(5, 11, 2,2,1,1,1,1);
 
         public final int pattern[];
         public final int nativeId;
+        public final int ooxmlId;
 
-        LineDash(int nativeId, int... pattern) {
+        LineDash(int nativeId, int ooxmlId, int... pattern) {
             this.nativeId = nativeId;
-            this.pattern = (pattern == null || pattern.length == 0) ? new int[]{1} : pattern;
+            this.ooxmlId = ooxmlId;
+            this.pattern = (pattern == null || pattern.length == 0) ? null : pattern;
         }
 
         public static LineDash fromNativeId(int nativeId) {
             for (LineDash ld : values()) {
                 if (ld.nativeId == nativeId) return ld;
+            }
+            return null;
+        }
+
+        public static LineDash fromOoxmlId(int ooxmlId) {
+            for (LineDash ld : values()) {
+                if (ld.ooxmlId == ooxmlId) return ld;
             }
             return null;
         }

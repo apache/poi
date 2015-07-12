@@ -16,11 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Graphics2D;
 import java.io.IOException;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
@@ -253,5 +256,17 @@ public final class XSLFSlide extends XSLFSheet implements Slide<XSLFShape, XMLSl
     public int getSlideNumber() {
         int idx = getSlideShow().getSlides().indexOf(this);
         return (idx == -1) ? idx : idx+1;
+    }
+
+    /**
+     * Render this sheet into the supplied graphics object
+     *
+     * @param graphics
+     */
+    @Override
+    public void draw(Graphics2D graphics){
+        DrawFactory drawFact = DrawFactory.getInstance(graphics);
+        Drawable draw = drawFact.getDrawable(this);
+        draw.draw(graphics);
     }
 }

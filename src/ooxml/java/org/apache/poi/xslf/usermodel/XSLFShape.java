@@ -435,6 +435,7 @@ public abstract class XSLFShape implements Shape {
         for (CTGradientStop cgs : gs) {
             cs[i] = new XSLFColor(cgs, theme, phClr).getColorStyle();
             fractions[i] = cgs.getPos() / 100000.f;
+            i++;
         }
         
         return new GradientPaint() {

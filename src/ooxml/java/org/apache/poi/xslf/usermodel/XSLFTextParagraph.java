@@ -379,7 +379,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     
     @Override
     public void setIndent(Double indent){
-        if (indent == null && !_p.isSetPPr()) return;
+        if ((indent == null || indent == -1d) && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         if(indent == -1) {
             if(pr.isSetIndent()) pr.unsetIndent();
@@ -653,11 +653,22 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         if(isBullet() == flag) return;
 
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(!flag) {
-            pr.addNewBuNone();
-        } else {
+        if(flag) {
             pr.addNewBuFont().setTypeface("Arial");
             pr.addNewBuChar().setChar("\u2022");
+        } else {
+            if (pr.isSetBuFont()) pr.unsetBuFont();
+            if (pr.isSetBuChar()) pr.unsetBuChar();
+            if (pr.isSetBuAutoNum()) pr.unsetBuAutoNum();
+            if (pr.isSetBuBlip()) pr.unsetBuBlip();
+            if (pr.isSetBuClr()) pr.unsetBuClr();
+            if (pr.isSetBuClrTx()) pr.unsetBuClrTx();
+            if (pr.isSetBuFont()) pr.unsetBuFont();
+            if (pr.isSetBuFontTx()) pr.unsetBuFontTx();
+            if (pr.isSetBuSzPct()) pr.unsetBuSzPct();
+            if (pr.isSetBuSzPts()) pr.unsetBuSzPts();
+            if (pr.isSetBuSzTx()) pr.unsetBuSzTx();
+            pr.addNewBuNone();
         }
     }
 
@@ -806,25 +817,27 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
             }
         }
 
-        double leftMargin = p.getLeftMargin();
+        Double leftMargin = p.getLeftMargin();
         if(leftMargin != getLeftMargin()){
             setLeftMargin(leftMargin);
         }
 
-        double indent = p.getIndent();
+        Double indent = p.getIndent();
         if(indent != getIndent()){
             setIndent(indent);
         }
 
-        double spaceAfter = p.getSpaceAfter();
+        Double spaceAfter = p.getSpaceAfter();
         if(spaceAfter != getSpaceAfter()){
             setSpaceAfter(spaceAfter);
         }
-        double spaceBefore = p.getSpaceBefore();
+        
+        Double spaceBefore = p.getSpaceBefore();
         if(spaceBefore != getSpaceBefore()){
             setSpaceBefore(spaceBefore);
         }
-        double lineSpacing = p.getLineSpacing();
+        
+        Double lineSpacing = p.getLineSpacing();
         if(lineSpacing != getLineSpacing()){
             setLineSpacing(lineSpacing);
         }

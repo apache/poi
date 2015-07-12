@@ -242,14 +242,16 @@ public class DrawSimpleShape<T extends SimpleShape> extends DrawShape<T> {
         LineDash lineDash = strokeStyle.getLineDash();
         if (lineDash == null) {
         	lineDash = LineDash.SOLID;
-        	lineWidth = 0.0f;
         }
 
         int dashPatI[] = lineDash.pattern;
-        float[] dashPatF = new float[dashPatI.length];
         final float dash_phase = 0;
-        for (int i=0; i<dashPatI.length; i++) {
-            dashPatF[i] = dashPatI[i]*Math.max(1, lineWidth);
+        float[] dashPatF = null;
+        if (dashPatI != null) {
+            dashPatF = new float[dashPatI.length];
+            for (int i=0; i<dashPatI.length; i++) {
+                dashPatF[i] = dashPatI[i]*Math.max(1, lineWidth);
+            }
         }
 
         LineCap lineCapE = strokeStyle.getLineCap();
