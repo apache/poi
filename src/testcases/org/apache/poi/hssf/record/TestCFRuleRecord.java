@@ -21,7 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
+import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
@@ -36,8 +36,7 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
  * class works correctly.
- *
- * @author Dmitriy Kumshayev
+ * TODO Add {@link CFRule12Record} tests
  */
 public final class TestCFRuleRecord extends TestCase {
     public void testConstructors () {
