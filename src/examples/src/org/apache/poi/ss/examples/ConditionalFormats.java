@@ -54,6 +54,8 @@ public class ConditionalFormats {
         expiry(wb.createSheet("Expiry"));
         shadeAlt(wb.createSheet("Shade Alt"));
         shadeBands(wb.createSheet("Shade Bands"));
+        
+        // TODO Add Icons, data bars etc, see bug #58130
 
         // Write the output to a file
         String file = "cf-poi.xls";

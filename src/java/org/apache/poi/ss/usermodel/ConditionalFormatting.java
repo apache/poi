@@ -72,9 +72,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * // Apply Conditional Formatting rule defined above to the regions
  * sheet.addConditionalFormatting(regions, rule);
  * </PRE>
- *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  */
 public interface ConditionalFormatting {
 
@@ -85,17 +82,18 @@ public interface ConditionalFormatting {
 
     /**
      * Replaces an existing Conditional Formatting rule at position idx.
-     * Excel allows to create up to 3 Conditional Formatting rules.
+     * Excel pre-2007 allows to create up to 3 Conditional Formatting rules,
+     *  2007 and later allow unlimited numbers.
      * This method can be useful to modify existing  Conditional Formatting rules.
      *
-     * @param idx position of the rule. Should be between 0 and 2.
+     * @param idx position of the rule. Should be between 0 and 2 for Excel before 2007, otherwise 0+.
      * @param cfRule - Conditional Formatting rule
      */
     void setRule(int idx, ConditionalFormattingRule cfRule);
 
     /**
      * Add a Conditional Formatting rule.
-     * Excel allows to create up to 3 Conditional Formatting rules.
+     * Excel pre-2007 allows to create up to 3 Conditional Formatting rules.
      *
      * @param cfRule - Conditional Formatting rule
      */
@@ -110,6 +108,4 @@ public interface ConditionalFormatting {
      * @return number of Conditional Formatting rules.
      */
     int getNumberOfRules();
-
-
 }
