@@ -17,138 +17,30 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.cf.CellRangeUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Conditional Formatting Header record CFHEADER (0x01B0).
  * Used to describe a {@link CFRuleRecord}.
  * @see CFHeader12Record
- * TODO Move most of the logic into a base class
  */
-public class CFHeaderRecord extends StandardRecord {
+public final class CFHeaderRecord extends CFHeaderBase {
     public static final short sid = 0x01B0;
-
-    private int field_1_numcf;
-    private int field_2_need_recalculation_and_id;
-    private CellRangeAddress field_3_enclosing_cell_range;
-    private CellRangeAddressList field_4_cell_ranges;
 
     /** Creates new CFHeaderRecord */
     public CFHeaderRecord() {
-        field_3_enclosing_cell_range = new CellRangeAddress(0, 0, 0, 0);
-        field_4_cell_ranges = new CellRangeAddressList();
+        createEmpty();
     }
     public CFHeaderRecord(CellRangeAddress[] regions, int nRules) {
-        CellRangeAddress[] unmergedRanges = regions;
-        CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(unmergedRanges);
-        setCellRanges(mergeCellRanges);
-        field_1_numcf = nRules;
+        super(regions, nRules);
     }
 
     public CFHeaderRecord(RecordInputStream in) {
         read(in);
     }
-    protected void read(RecordInputStream in) {
-        field_1_numcf = in.readShort();
-        field_2_need_recalculation_and_id = in.readShort();
-        field_3_enclosing_cell_range = new CellRangeAddress(in);
-        field_4_cell_ranges = new CellRangeAddressList(in);
-    }
-
-    public int getNumberOfConditionalFormats() {
-        return field_1_numcf;
-    }
-    public void setNumberOfConditionalFormats(int n) {
-        field_1_numcf=n;
-    }
-
-    public boolean getNeedRecalculation() {
-        // Held on the 1st bit
-        return field_2_need_recalculation_and_id % 2 == 1;
-    }
-    public void setNeedRecalculation(boolean b) {
-        // held on the first bit
-        if (b == getNeedRecalculation()) return;
-        if (b) field_2_need_recalculation_and_id++;
-        else   field_2_need_recalculation_and_id--;
-    }
-
-    public int getID() {
-        // Remaining 15 bits of field 2
-        return field_2_need_recalculation_and_id>>1;
-    }
-    public void setID(int id) {
-        // Remaining 15 bits of field 2
-        boolean needsRecalc = getNeedRecalculation();
-        field_2_need_recalculation_and_id = (id<<1);
-        if (needsRecalc) field_2_need_recalculation_and_id++;
-    }
-
-    public CellRangeAddress getEnclosingCellRange() {
-        return field_3_enclosing_cell_range;
-    }
-    public void setEnclosingCellRange(CellRangeAddress cr) {
-        field_3_enclosing_cell_range = cr;
-    }
-
-    /**
-     * Set cell ranges list to a single cell range and 
-     * modify the enclosing cell range accordingly.
-     * @param cellRanges - list of CellRange objects
-     */
-    public void setCellRanges(CellRangeAddress[] cellRanges) {
-        if(cellRanges == null) {
-            throw new IllegalArgumentException("cellRanges must not be null");
-        }
-        CellRangeAddressList cral = new CellRangeAddressList();
-        CellRangeAddress enclosingRange = null;
-        for (int i = 0; i < cellRanges.length; i++) {
-            CellRangeAddress cr = cellRanges[i];
-            enclosingRange = CellRangeUtil.createEnclosingCellRange(cr, enclosingRange);
-            cral.addCellRangeAddress(cr);
-        }
-        field_3_enclosing_cell_range = enclosingRange;
-        field_4_cell_ranges = cral;
-    }
-
-    public CellRangeAddress[] getCellRanges() {
-        return field_4_cell_ranges.getCellRangeAddresses();
-    }
 
     protected String getRecordName() {
         return "CFHEADER";
-    }
-    public String toString() {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[").append(getRecordName()).append("]\n");
-        buffer.append("	.id		= ").append(Integer.toHexString(sid)).append("\n");
-        buffer.append("	.numCF			= ").append(getNumberOfConditionalFormats()).append("\n");
-        buffer.append("	.needRecalc	   = ").append(getNeedRecalculation()).append("\n");
-        buffer.append("	.enclosingCellRange= ").append(getEnclosingCellRange()).append("\n");
-        buffer.append("	.cfranges=[");
-        for( int i=0; i<field_4_cell_ranges.countRanges(); i++) {
-            buffer.append(i==0?"":",").append(field_4_cell_ranges.getCellRangeAddress(i).toString());
-        }
-        buffer.append("]\n");
-        buffer.append("[/").append(getRecordName()).append("]\n");
-        return buffer.toString();
-    }
-
-    protected int getDataSize() {
-        return 4 // 2 short fields
-             + CellRangeAddress.ENCODED_SIZE
-             + field_4_cell_ranges.getSize();
-    }
-
-    public void serialize(LittleEndianOutput out) {
-        out.writeShort(field_1_numcf);
-        out.writeShort(field_2_need_recalculation_and_id);
-        field_3_enclosing_cell_range.serialize(out);
-        field_4_cell_ranges.serialize(out);
     }
 
     public short getSid() {
@@ -157,10 +49,7 @@ public class CFHeaderRecord extends StandardRecord {
 
     public Object clone() {
         CFHeaderRecord result = new CFHeaderRecord();
-        result.field_1_numcf = field_1_numcf;
-        result.field_2_need_recalculation_and_id = field_2_need_recalculation_and_id;
-        result.field_3_enclosing_cell_range = field_3_enclosing_cell_range.copy();
-        result.field_4_cell_ranges = field_4_cell_ranges.copy();
+        super.copyTo(result);
         return result;
     }
 }
