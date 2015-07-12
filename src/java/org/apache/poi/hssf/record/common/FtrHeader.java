@@ -32,7 +32,7 @@ public final class FtrHeader {
 	private short recordType;
 	/** This is a FrtFlags */
 	private short grbitFrt;
-	/** MUST be 8 bytes and all zero */
+	/** MUST be 8 bytes and all zero TODO Correct this! */
 	private byte[] reserved;
 
 	public FtrHeader() {
@@ -85,5 +85,13 @@ public final class FtrHeader {
 	}
 	public void setReserved(byte[] reserved) {
 		this.reserved = reserved;
+	}
+	
+	public Object clone() {
+	    FtrHeader result = new FtrHeader();
+	    result.recordType = recordType;
+	    result.grbitFrt = grbitFrt;
+	    result.reserved = reserved;
+	    return result;
 	}
 }

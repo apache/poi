@@ -26,12 +26,13 @@ import org.apache.poi.util.LittleEndianOutput;
  * Conditional Formatting Header record CFHEADER (0x01B0).
  * Used to describe a {@link CFRuleRecord}.
  * @see CFHeader12Record
+ * TODO Move most of the logic into a base class
  */
-public final class CFHeaderRecord extends StandardRecord {
+public class CFHeaderRecord extends StandardRecord {
 	public static final short sid = 0x01B0;
 
 	private int field_1_numcf;
-	private int field_2_need_recalculation;
+	private int field_2_need_recalculation_and_id;
 	private CellRangeAddress field_3_enclosing_cell_range;
 	private CellRangeAddressList field_4_cell_ranges;
 
@@ -47,40 +48,51 @@ public final class CFHeaderRecord extends StandardRecord {
 		field_1_numcf = nRules;
 	}
 
-	public CFHeaderRecord(RecordInputStream in)
-	{
+	public CFHeaderRecord(RecordInputStream in) {
+	    read(in);
+	}
+	protected void read(RecordInputStream in) {
 		field_1_numcf = in.readShort();
-		field_2_need_recalculation = in.readShort();
+		field_2_need_recalculation_and_id = in.readShort();
 		field_3_enclosing_cell_range = new CellRangeAddress(in);
 		field_4_cell_ranges = new CellRangeAddressList(in);
 	}
 	
-	public int getNumberOfConditionalFormats()
-	{
+	public int getNumberOfConditionalFormats() {
 		return field_1_numcf;
 	}
-	public void setNumberOfConditionalFormats(int n)
-	{
+	public void setNumberOfConditionalFormats(int n) {
 		field_1_numcf=n;
 	}
 	
-	public boolean getNeedRecalculation()
-	{
-		return field_2_need_recalculation==1?true:false;
+	public boolean getNeedRecalculation() {
+	    // Held on the 1st bit
+	    return field_2_need_recalculation_and_id % 2 == 1;
 	}
-
-	public void setNeedRecalculation(boolean b)
-	{
-		field_2_need_recalculation=b?1:0;
+	public void setNeedRecalculation(boolean b) {
+	    // held on the first bit
+	    if (b == getNeedRecalculation()) return;
+	    if (b) field_2_need_recalculation_and_id++;
+	    else   field_2_need_recalculation_and_id--;
 	}
 	
-	public CellRangeAddress getEnclosingCellRange()
+	public int getID()
 	{
+	    // Remaining 15 bits of field 2
+	    return field_2_need_recalculation_and_id>>1;
+	}
+	public void setID(int id)
+	{
+        // Remaining 15 bits of field 2
+	    boolean needsRecalc = getNeedRecalculation();
+	    field_2_need_recalculation_and_id = (id<<1);
+	    if (needsRecalc) field_2_need_recalculation_and_id++;
+	}
+	
+	public CellRangeAddress getEnclosingCellRange() {
 		return field_3_enclosing_cell_range;
 	}
-
-	public void setEnclosingCellRange(CellRangeAddress cr)
-	{
+	public void setEnclosingCellRange(CellRangeAddress cr) {
 		field_3_enclosing_cell_range = cr;
 	}
 
@@ -89,8 +101,7 @@ public final class CFHeaderRecord extends StandardRecord {
 	 * modify the enclosing cell range accordingly.
 	 * @param cellRanges - list of CellRange objects
 	 */
-	public void setCellRanges(CellRangeAddress[] cellRanges)
-	{
+	public void setCellRanges(CellRangeAddress[] cellRanges) {
 		if(cellRanges == null)
 		{
 			throw new IllegalArgumentException("cellRanges must not be null");
@@ -111,11 +122,13 @@ public final class CFHeaderRecord extends StandardRecord {
 		return field_4_cell_ranges.getCellRangeAddresses();
 	}
 
-	public String toString()
-	{
+	protected String getRecordName() {
+	    return "CFHEADER";
+	}
+	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 
-		buffer.append("[CFHEADER]\n");
+		buffer.append("[").append(getRecordName()).append("]\n");
 		buffer.append("	.id		= ").append(Integer.toHexString(sid)).append("\n");
 		buffer.append("	.numCF			= ").append(getNumberOfConditionalFormats()).append("\n");
 		buffer.append("	.needRecalc	   = ").append(getNeedRecalculation()).append("\n");
@@ -126,7 +139,7 @@ public final class CFHeaderRecord extends StandardRecord {
 			buffer.append(i==0?"":",").append(field_4_cell_ranges.getCellRangeAddress(i).toString());
 		}
 		buffer.append("]\n");
-		buffer.append("[/CFHEADER]\n");
+		buffer.append("[/").append(getRecordName()).append("]\n");
 		return buffer.toString();
 	}
 
@@ -137,9 +150,8 @@ public final class CFHeaderRecord extends StandardRecord {
 	}
 	
 	public void serialize(LittleEndianOutput out) {
-
 		out.writeShort(field_1_numcf);
-		out.writeShort(field_2_need_recalculation);
+		out.writeShort(field_2_need_recalculation_and_id);
 		field_3_enclosing_cell_range.serialize(out);
 		field_4_cell_ranges.serialize(out);
 	}
@@ -148,11 +160,10 @@ public final class CFHeaderRecord extends StandardRecord {
 		return sid;
 	}
 
-	public Object clone() 
-	{
+	public Object clone() {
 		CFHeaderRecord result = new CFHeaderRecord();
 		result.field_1_numcf = field_1_numcf;
-		result.field_2_need_recalculation = field_2_need_recalculation;
+		result.field_2_need_recalculation_and_id = field_2_need_recalculation_and_id;
 		result.field_3_enclosing_cell_range = field_3_enclosing_cell_range;
 		result.field_4_cell_ranges = field_4_cell_ranges.copy();
 		return result;

@@ -180,6 +180,7 @@ public final class BiffViewer {
 			case BottomMarginRecord.sid:   return new BottomMarginRecord(in);
 			case BoundSheetRecord.sid:     return new BoundSheetRecord(in);
 			case CFHeaderRecord.sid:       return new CFHeaderRecord(in);
+            case CFHeader12Record.sid:     return new CFHeader12Record(in);
 			case CFRuleRecord.sid:         return new CFRuleRecord(in);
 			case CalcCountRecord.sid:      return new CalcCountRecord(in);
 			case CalcModeRecord.sid:       return new CalcModeRecord(in);
