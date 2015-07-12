@@ -23,9 +23,9 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Conditional Formatting Header record CFHEADER (0x01B0)
- * 
- * @author Dmitriy Kumshayev
+ * Conditional Formatting Header record CFHEADER (0x01B0).
+ * Used to describe a {@link CFRuleRecord}.
+ * @see CFHeader12Record
  */
 public final class CFHeaderRecord extends StandardRecord {
 	public static final short sid = 0x01B0;
