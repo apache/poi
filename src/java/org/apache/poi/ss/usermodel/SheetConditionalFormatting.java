@@ -24,12 +24,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
 /**
  * The 'Conditional Formatting' facet of <tt>Sheet</tt>
  *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  * @since 3.8
  */
 public interface SheetConditionalFormatting {
-
     /**
      * Add a new Conditional Formatting to the sheet.
      *
@@ -58,7 +55,7 @@ public interface SheetConditionalFormatting {
      * Add a new Conditional Formatting set to the sheet.
      *
      * @param regions - list of rectangular regions to apply conditional formatting rules
-     * @param cfRules - set of up to three conditional formatting rules
+     * @param cfRules - set of up to conditional formatting rules (max 3 for Excel pre-2007)
      *
      * @return index of the newly created Conditional Formatting object
      */

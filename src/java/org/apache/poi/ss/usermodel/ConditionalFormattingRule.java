@@ -21,9 +21,6 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * Represents a description of a conditional formatting rule
- *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  */
 public interface ConditionalFormattingRule {
     /**
