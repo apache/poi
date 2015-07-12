@@ -32,7 +32,7 @@ public class DrawSlide<T extends Slide<? extends Shape, ? extends SlideShow, ? e
         Background bg = sheet.getBackground();
         if(bg != null) {
             DrawFactory drawFact = DrawFactory.getInstance(graphics);
-            DrawBackground<Background> db = drawFact.getDrawable(bg);
+            Drawable db = drawFact.getDrawable(bg);
             db.draw(graphics);
         }
 

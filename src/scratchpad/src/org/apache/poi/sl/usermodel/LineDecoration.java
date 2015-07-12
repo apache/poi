@@ -22,18 +22,44 @@ public interface LineDecoration {
      *  Represents the shape decoration that appears at the ends of lines.
      */
     enum DecorationShape {
-        NONE,
-        TRIANGLE,
-        STEALTH,
-        DIAMOND,
-        OVAL,
-        ARROW
+        NONE(1),
+        TRIANGLE(2),
+        STEALTH(3),
+        DIAMOND(4),
+        OVAL(5),
+        ARROW(6);
+        
+        public final int ooxmlId;
+        
+        DecorationShape(int ooxmlId) {
+            this.ooxmlId = ooxmlId;
+        }
+    
+        public static DecorationShape fromOoxmlId(int ooxmlId) {
+            for (DecorationShape ds : values()) {
+                if (ds.ooxmlId == ooxmlId) return ds;
+            }
+            return null;
+        }
     }
     
     enum DecorationSize {
-        SMALL,
-        MEDIUM,
-        LARGE
+        SMALL(1),
+        MEDIUM(2),
+        LARGE(3);
+        
+        public final int ooxmlId;
+        
+        DecorationSize(int ooxmlId) {
+            this.ooxmlId = ooxmlId;
+        }
+        
+        public static DecorationSize fromOoxmlId(int ooxmlId) {
+            for (DecorationSize ds : values()) {
+                if (ds.ooxmlId == ooxmlId) return ds;
+            }
+            return null;
+        }
     }
     
     /**

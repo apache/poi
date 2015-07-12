@@ -105,7 +105,7 @@ public class DrawPaint {
 
         int alpha = fill.getAlpha();
         if (alpha != -1) {
-            renderer.setAlpha(fill.getAlpha()/100000.f);
+            renderer.setAlpha(alpha/100000.f);
         }
         
         Dimension dim = renderer.getDimension();

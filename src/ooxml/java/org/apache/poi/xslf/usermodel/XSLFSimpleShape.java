@@ -162,15 +162,23 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
      * @return line propeties from the theme of null
      */
     CTLineProperties getDefaultLineProperties() {
-        CTLineProperties ln = null;
         CTShapeStyle style = getSpStyle();
-        if (style != null) {
-            // 1-based index of a line style within the style matrix
-            int idx = (int) style.getLnRef().getIdx();
-            CTStyleMatrix styleMatrix = getSheet().getTheme().getXmlObject().getThemeElements().getFmtScheme();
-            ln = styleMatrix.getLnStyleLst().getLnArray(idx - 1);
-        }
-        return ln;
+        if (style == null) return null;
+        CTStyleMatrixReference lnRef = style.getLnRef();
+        if (lnRef == null) return null;
+        // 1-based index of a line style within the style matrix
+        int idx = (int)lnRef.getIdx();
+        
+        XSLFTheme theme = getSheet().getTheme();
+        if (theme == null) return null;
+        CTBaseStyles styles = theme.getXmlObject().getThemeElements();
+        if (styles == null) return null;
+        CTStyleMatrix styleMatrix = styles.getFmtScheme();
+        if (styleMatrix == null) return null;
+        CTLineStyleList lineStyles = styleMatrix.getLnStyleLst();
+        if (lineStyles == null || lineStyles.sizeOfLnArray() < idx) return null;
+        
+        return lineStyles.getLnArray(idx - 1);
     }
 
     /**
@@ -370,7 +378,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         } else {
             CTPresetLineDashProperties val = CTPresetLineDashProperties.Factory
                     .newInstance();
-            val.setVal(STPresetLineDashVal.Enum.forInt(dash.ordinal() + 1));
+            val.setVal(STPresetLineDashVal.Enum.forInt(dash.ooxmlId));
             CTLineProperties ln = spPr.isSetLn() ? spPr.getLn() : spPr
                     .addNewLn();
             ln.setPrstDash(val);
@@ -389,7 +397,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
                 if (ln != null) {
                     CTPresetLineDashProperties ctDash = ln.getPrstDash();
                     if (ctDash != null) {
-                        setValue(LineDash.values()[ctDash.getVal().intValue() - 1]);
+                        setValue(LineDash.fromOoxmlId(ctDash.getVal().intValue()));
                         return true;
                     }
                 }
@@ -404,7 +412,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
             if (defaultLn != null) {
                 CTPresetLineDashProperties ctDash = defaultLn.getPrstDash();
                 if (ctDash != null) {
-                    dash = LineDash.values()[ctDash.getVal().intValue() - 1];
+                    dash = LineDash.fromOoxmlId(ctDash.getVal().intValue());
                 }
             }
         }
@@ -423,7 +431,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         } else {
             CTLineProperties ln = spPr.isSetLn() ? spPr.getLn() : spPr
                     .addNewLn();
-            ln.setCap(STLineCap.Enum.forInt(cap.ordinal() + 1));
+            ln.setCap(STLineCap.Enum.forInt(cap.ooxmlId));
         }
     }
 
@@ -439,7 +447,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
                 if (ln != null) {
                     STLineCap.Enum stCap = ln.getCap();
                     if (stCap != null) {
-                        setValue(LineCap.values()[stCap.intValue() - 1]);
+                        setValue(LineCap.fromOoxmlId(stCap.intValue()));
                         return true;
                     }
                 }
@@ -454,7 +462,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
             if (defaultLn != null) {
                 STLineCap.Enum stCap = defaultLn.getCap();
                 if (stCap != null) {
-                    cap = LineCap.values()[stCap.intValue() - 1];
+                    cap = LineCap.fromOoxmlId(stCap.intValue());
                 }
             }
         }
@@ -620,7 +628,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style == null) {
             if (lnEnd.isSetType()) lnEnd.unsetType();
         } else {
-            lnEnd.setType(STLineEndType.Enum.forInt(style.ordinal() + 1));
+            lnEnd.setType(STLineEndType.Enum.forInt(style.ooxmlId));
         }
     }
 
@@ -629,7 +637,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (ln == null || !ln.isSetHeadEnd()) return DecorationShape.NONE;
 
         STLineEndType.Enum end = ln.getHeadEnd().getType();
-        return end == null ? DecorationShape.NONE : DecorationShape.values()[end.intValue() - 1];
+        return end == null ? DecorationShape.NONE : DecorationShape.fromOoxmlId(end.intValue());
     }
 
     /**
@@ -641,7 +649,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style == null) {
             if (lnEnd.isSetW()) lnEnd.unsetW();
         } else {
-            lnEnd.setW(STLineEndWidth.Enum.forInt(style.ordinal() + 1));
+            lnEnd.setW(STLineEndWidth.Enum.forInt(style.ooxmlId));
         }
     }
 
@@ -650,7 +658,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (ln == null || !ln.isSetHeadEnd()) return DecorationSize.MEDIUM;
 
         STLineEndWidth.Enum w = ln.getHeadEnd().getW();
-        return w == null ? DecorationSize.MEDIUM : DecorationSize.values()[w.intValue() - 1];
+        return w == null ? DecorationSize.MEDIUM : DecorationSize.fromOoxmlId(w.intValue());
     }
 
     /**
@@ -663,7 +671,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style == null) {
             if (lnEnd.isSetLen()) lnEnd.unsetLen();
         } else {
-            lnEnd.setLen(STLineEndLength.Enum.forInt(style.ordinal() + 1));
+            lnEnd.setLen(STLineEndLength.Enum.forInt(style.ooxmlId));
         }
     }
 
@@ -672,7 +680,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (ln == null || !ln.isSetHeadEnd()) return DecorationSize.MEDIUM;
 
         STLineEndLength.Enum len = ln.getHeadEnd().getLen();
-        return len == null ? DecorationSize.MEDIUM : DecorationSize.values()[len.intValue() - 1];
+        return len == null ? DecorationSize.MEDIUM : DecorationSize.fromOoxmlId(len.intValue());
     }
 
     /**
@@ -684,7 +692,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style == null) {
             if (lnEnd.isSetType()) lnEnd.unsetType();
         } else {
-            lnEnd.setType(STLineEndType.Enum.forInt(style.ordinal() + 1));
+            lnEnd.setType(STLineEndType.Enum.forInt(style.ooxmlId));
         }
     }
 
@@ -693,7 +701,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (ln == null || !ln.isSetTailEnd()) return DecorationShape.NONE;
 
         STLineEndType.Enum end = ln.getTailEnd().getType();
-        return end == null ? DecorationShape.NONE : DecorationShape.values()[end.intValue() - 1];
+        return end == null ? DecorationShape.NONE : DecorationShape.fromOoxmlId(end.intValue());
     }
 
     /**
@@ -705,7 +713,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style == null) {
             if (lnEnd.isSetW()) lnEnd.unsetW();
         } else {
-            lnEnd.setW(STLineEndWidth.Enum.forInt(style.ordinal() + 1));
+            lnEnd.setW(STLineEndWidth.Enum.forInt(style.ooxmlId));
         }
     }
 
@@ -714,7 +722,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (ln == null || !ln.isSetTailEnd()) return DecorationSize.MEDIUM;
 
         STLineEndWidth.Enum w = ln.getTailEnd().getW();
-        return w == null ? DecorationSize.MEDIUM : DecorationSize.values()[w.intValue() - 1];
+        return w == null ? DecorationSize.MEDIUM : DecorationSize.fromOoxmlId(w.intValue());
     }
 
     /**
@@ -727,7 +735,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (style == null) {
             if (lnEnd.isSetLen()) lnEnd.unsetLen();
         } else {
-            lnEnd.setLen(STLineEndLength.Enum.forInt(style.ordinal() + 1));
+            lnEnd.setLen(STLineEndLength.Enum.forInt(style.ooxmlId));
         }
     }
 
@@ -736,7 +744,7 @@ public abstract class XSLFSimpleShape extends XSLFShape implements SimpleShape {
         if (ln == null || !ln.isSetTailEnd()) return DecorationSize.MEDIUM;
 
         STLineEndLength.Enum len = ln.getTailEnd().getLen();
-        return len == null ? DecorationSize.MEDIUM : DecorationSize.values()[len.intValue() - 1];
+        return len == null ? DecorationSize.MEDIUM : DecorationSize.fromOoxmlId(len.intValue());
     }
 
     public boolean isPlaceholder() {

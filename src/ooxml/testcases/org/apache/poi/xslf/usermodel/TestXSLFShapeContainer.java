@@ -30,7 +30,6 @@ import org.junit.Test;
 public class TestXSLFShapeContainer {
 
     @SuppressWarnings("unused")
-    @Test
     public void verifyContainer(XSLFShapeContainer container) {
         container.clear();
         assertEquals(0, container.getShapes().size());

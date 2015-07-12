@@ -20,8 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.poi.openxml4j.opc.*;
@@ -328,7 +327,8 @@ public class XSLFGroupShape extends XSLFShape implements XSLFShapeContainer, Gro
      * The container will be empty after this call returns.
      */
     public void clear() {
-        for(XSLFShape shape : getShapes()){
+        List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
+        for(XSLFShape shape : shapes){
             removeShape(shape);
         }
     }

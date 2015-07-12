@@ -115,18 +115,18 @@ public class TestXSLFAutoShape {
         XSLFTextParagraph p = shape.addNewTextParagraph();
         assertEquals(1, shape.getTextParagraphs().size());
 
-        assertEquals(0., p.getIndent(), 0);
-        assertEquals(0., p.getLeftMargin(), 0);
-        assertEquals(100., p.getLineSpacing(), 0);
-        assertEquals(0., p.getSpaceAfter(), 0);
-        assertEquals(0., p.getSpaceBefore(), 0);
+        assertNull(p.getIndent());
+        assertEquals(0, p.getLeftMargin(), 0);
+        assertNull(p.getLineSpacing());
+        assertNull(p.getSpaceAfter());
+        assertNull(p.getSpaceBefore());
         assertEquals(0, p.getIndentLevel());
 
         p.setIndent(2.0);
         assertEquals(2.0, p.getIndent(), 0);
         assertTrue(p.getXmlObject().getPPr().isSetIndent());
         p.setIndent(-1d);
-        assertEquals(0.0, p.getIndent(), 0);
+        assertNull(p.getIndent());
         assertFalse(p.getXmlObject().getPPr().isSetIndent());
         p.setIndent(10.0);
         assertEquals(10., p.getIndent(), 0);
@@ -286,6 +286,7 @@ public class TestXSLFAutoShape {
         assertEquals(ShapeType.TRIANGLE, shape.getShapeType());
 
         for(ShapeType tp : ShapeType.values()) {
+            if (tp.ooxmlId == -1 || tp == ShapeType.SEAL) continue;
             shape.setShapeType(tp);
             assertEquals(tp, shape.getShapeType());
         }

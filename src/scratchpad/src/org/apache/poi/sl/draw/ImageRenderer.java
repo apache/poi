@@ -86,7 +86,7 @@ public class ImageRenderer {
      * @param contentType the content type
      */
     public void loadImage(InputStream data, String contentType) throws IOException {
-        img = ImageIO.read(data);
+        img = convertBufferedImage(ImageIO.read(data));
     }
 
     /**
@@ -96,9 +96,17 @@ public class ImageRenderer {
      * @param contentType the content type
      */
     public void loadImage(byte data[], String contentType) throws IOException {
-        img = ImageIO.read(new ByteArrayInputStream(data));
+        img = convertBufferedImage(ImageIO.read(new ByteArrayInputStream(data)));
     }
 
+    protected static BufferedImage convertBufferedImage(BufferedImage img) {
+        BufferedImage bi = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bi.getGraphics();
+        g.drawImage(img, 0, 0, null);
+        g.dispose();
+        return bi;
+    }
+    
     
     /**
      * @return the buffered image

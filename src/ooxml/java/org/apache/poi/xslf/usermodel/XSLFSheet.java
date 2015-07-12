@@ -248,7 +248,8 @@ public abstract class XSLFSheet extends POIXMLDocumentPart implements XSLFShapeC
      * The container will be empty after this call returns.
      */
     public void clear() {
-        for(XSLFShape shape : getShapes()){
+        List<XSLFShape> shapes = new ArrayList<XSLFShape>(getShapes());
+        for(XSLFShape shape : shapes){
             removeShape(shape);
         }
     }
