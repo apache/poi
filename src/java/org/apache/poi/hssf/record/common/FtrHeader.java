@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.common;
 
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -32,19 +33,18 @@ public final class FtrHeader {
     private short recordType;
     /** This is a FrtFlags */
     private short grbitFrt;
-    /** MUST be 8 bytes and all zero TODO Correct this! */
-    private byte[] reserved;
+    /** The range of cells the parent record applies to, or 0 if N/A */
+    private CellRangeAddress associatedRange;
 
     public FtrHeader() {
-        reserved = new byte[8];
+        associatedRange = new CellRangeAddress(0, 0, 0, 0);
     }
 
     public FtrHeader(RecordInputStream in) {
         recordType = in.readShort();
         grbitFrt   = in.readShort();
 
-        reserved = new byte[8];
-        in.read(reserved, 0, 8);
+        associatedRange = new CellRangeAddress(in);
     }
 
     public String toString() {
@@ -59,7 +59,7 @@ public final class FtrHeader {
     public void serialize(LittleEndianOutput out) {
         out.writeShort(recordType);
         out.writeShort(grbitFrt);
-        out.write(reserved);
+        associatedRange.serialize(out);
     }
 
     public static int getDataSize() {
@@ -80,18 +80,18 @@ public final class FtrHeader {
         this.grbitFrt = grbitFrt;
     }
 
-    public byte[] getReserved() {
-        return reserved;
+    public CellRangeAddress getAssociatedRange() {
+        return associatedRange;
     }
-    public void setReserved(byte[] reserved) {
-        this.reserved = reserved;
+    public void setAssociatedRange(CellRangeAddress associatedRange) {
+        this.associatedRange = associatedRange;
     }
 
     public Object clone() {
         FtrHeader result = new FtrHeader();
         result.recordType = recordType;
         result.grbitFrt = grbitFrt;
-        result.reserved = reserved;
+        result.associatedRange = associatedRange.copy();
         return result;
     }
 }
