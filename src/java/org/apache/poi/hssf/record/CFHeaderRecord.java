@@ -38,6 +38,7 @@ public class CFHeaderRecord extends StandardRecord {
 
     /** Creates new CFHeaderRecord */
     public CFHeaderRecord() {
+        field_3_enclosing_cell_range = new CellRangeAddress(0, 0, 0, 0);
         field_4_cell_ranges = new CellRangeAddressList();
     }
     public CFHeaderRecord(CellRangeAddress[] regions, int nRules) {
@@ -158,7 +159,7 @@ public class CFHeaderRecord extends StandardRecord {
         CFHeaderRecord result = new CFHeaderRecord();
         result.field_1_numcf = field_1_numcf;
         result.field_2_need_recalculation_and_id = field_2_need_recalculation_and_id;
-        result.field_3_enclosing_cell_range = field_3_enclosing_cell_range;
+        result.field_3_enclosing_cell_range = field_3_enclosing_cell_range.copy();
         result.field_4_cell_ranges = field_4_cell_ranges.copy();
         return result;
     }
