@@ -19,13 +19,11 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 
-import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -38,28 +36,10 @@ import org.apache.poi.util.LittleEndianOutput;
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
  *  and {@link CFExRuleRecord} for their rules.
  */
-public final class CFRuleRecord extends StandardRecord {
+public final class CFRuleRecord extends CFRuleBase {
     public static final short sid = 0x01B1;
 
-    public static final class ComparisonOperator {
-        public static final byte NO_COMPARISON = 0;
-        public static final byte BETWEEN       = 1;
-        public static final byte NOT_BETWEEN   = 2;
-        public static final byte EQUAL         = 3;
-        public static final byte NOT_EQUAL     = 4;
-        public static final byte GT            = 5;
-        public static final byte LT            = 6;
-        public static final byte GE            = 7;
-        public static final byte LE            = 8;
-    }
-
-    private byte  field_1_condition_type;
-    public static final byte CONDITION_TYPE_CELL_VALUE_IS = 1;
-    public static final byte CONDITION_TYPE_FORMULA = 2;
-
-    private byte  field_2_comparison_operator;
-
-    private int   field_5_options;
+    private int field_5_options;
 
     private static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
     private static final BitField alignHor      = bf(0x00000001); // 0 = Horizontal alignment modified
@@ -104,15 +84,17 @@ public final class CFRuleRecord extends StandardRecord {
 
     private PatternFormatting _patternFormatting;
 
-    private Formula field_17_formula1;
-    private Formula field_18_formula2;
-
     /** Creates new CFRuleRecord */
-    private CFRuleRecord(byte conditionType, byte comparisonOperation)
-    {
-        field_1_condition_type=conditionType;
-        field_2_comparison_operator=comparisonOperation;
+    private CFRuleRecord(byte conditionType, byte comparisonOperation) {
+        super(conditionType, comparisonOperation);
+        setDefaults();
+    }
 
+    private CFRuleRecord(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
+        super(conditionType, comparisonOperation, formula1, formula2);
+        setDefaults();
+    }
+    private void setDefaults() {
         // Set modification flags to 1: by default options are not modified
         field_5_options = modificationBits.setValue(field_5_options, -1);
         // Set formatting block flags to 0 (no formatting blocks)
@@ -123,14 +105,6 @@ public final class CFRuleRecord extends StandardRecord {
         _fontFormatting=null;
         _borderFormatting=null;
         _patternFormatting=null;
-        field_17_formula1=Formula.create(Ptg.EMPTY_PTG_ARRAY);
-        field_18_formula2=Formula.create(Ptg.EMPTY_PTG_ARRAY);
-    }
-
-    private CFRuleRecord(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
-        this(conditionType, comparisonOperation);
-        field_17_formula1 = Formula.create(formula1);
-        field_18_formula2 = Formula.create(formula2);
     }
 
     /**
@@ -152,8 +126,8 @@ public final class CFRuleRecord extends StandardRecord {
     }
 
     public CFRuleRecord(RecordInputStream in) {
-        field_1_condition_type = in.readByte();
-        field_2_comparison_operator = in.readByte();
+        setConditionType(in.readByte());
+        setComparisonOperation(in.readByte());
         int field_3_formula1_len = in.readUShort();
         int field_4_formula2_len = in.readUShort();
         field_5_options = in.readInt();
@@ -172,12 +146,8 @@ public final class CFRuleRecord extends StandardRecord {
         }
 
         // "You may not use unions, intersections or array constants in Conditional Formatting criteria"
-        field_17_formula1 = Formula.read(field_3_formula1_len, in);
-        field_18_formula2 = Formula.read(field_4_formula2_len, in);
-    }
-
-    public byte getConditionType() {
-        return field_1_condition_type;
+        setFormula1(Formula.read(field_3_formula1_len, in));
+        setFormula2(Formula.read(field_4_formula2_len, in));
     }
 
     public boolean containsFontFormattingBlock() {
@@ -235,13 +205,6 @@ public final class CFRuleRecord extends StandardRecord {
     }
     public void setProtectionFormattingUnchanged() {
         setOptionFlag(false,prot);
-    }
-
-    public void setComparisonOperation(byte operation) {
-        field_2_comparison_operator = operation;
-    }
-    public byte getComparisonOperation() {
-        return field_2_comparison_operator;
     }
 
     /**
@@ -331,43 +294,8 @@ public final class CFRuleRecord extends StandardRecord {
         field_5_options = field.setBoolean(field_5_options, flag);
     }
 
-    /**
-     * get the stack of the 1st expression as a list
-     *
-     * @return list of tokens (casts stack to a list and returns it!)
-     * this method can return null is we are unable to create Ptgs from
-     *	 existing excel file
-     * callers should check for null!
-     */
-    public Ptg[] getParsedExpression1() {
-        return field_17_formula1.getTokens();
-    }
-    public void setParsedExpression1(Ptg[] ptgs) {
-        field_17_formula1 = Formula.create(ptgs);
-    }
-
-    /**
-     * get the stack of the 2nd expression as a list
-     *
-     * @return array of {@link Ptg}s, possibly <code>null</code>
-     */
-    public Ptg[] getParsedExpression2() {
-        return Formula.getTokens(field_18_formula2);
-    }
-    public void setParsedExpression2(Ptg[] ptgs) {
-        field_18_formula2 = Formula.create(ptgs);
-    }
-
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @param ptgs must not be <code>null</code>
-     * @return encoded size of the formula tokens (does not include 2 bytes for ushort length)
-     */
-    private static int getFormulaSize(Formula formula) {
-        return formula.getEncodedTokenSize();
     }
 
     /**
@@ -378,11 +306,11 @@ public final class CFRuleRecord extends StandardRecord {
      * @param out the stream to write to
      */
     public void serialize(LittleEndianOutput out) {
-        int formula1Len=getFormulaSize(field_17_formula1);
-        int formula2Len=getFormulaSize(field_18_formula2);
+        int formula1Len=getFormulaSize(getFormula1());
+        int formula2Len=getFormulaSize(getFormula2());
 
-        out.writeByte(field_1_condition_type);
-        out.writeByte(field_2_comparison_operator);
+        out.writeByte(getConditionType());
+        out.writeByte(getComparisonOperation());
         out.writeShort(formula1Len);
         out.writeShort(formula2Len);
         out.writeInt(field_5_options);
@@ -401,8 +329,8 @@ public final class CFRuleRecord extends StandardRecord {
             _patternFormatting.serialize(out);
         }
 
-        field_17_formula1.serializeTokens(out);
-        field_18_formula2.serializeTokens(out);
+        getFormula1().serializeTokens(out);
+        getFormula2().serializeTokens(out);
     }
 
     protected int getDataSize() {
@@ -410,15 +338,15 @@ public final class CFRuleRecord extends StandardRecord {
                 (containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
                 (containsBorderFormattingBlock()?8:0)+
                 (containsPatternFormattingBlock()?4:0)+
-                getFormulaSize(field_17_formula1)+
-                getFormulaSize(field_18_formula2);
+                getFormulaSize(getFormula1())+
+                getFormulaSize(getFormula2());
         return i;
     }
 
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("[CFRULE]\n");
-        buffer.append("    .condition_type   =").append(field_1_condition_type).append("\n");
+        buffer.append("    .condition_type   =").append(getConditionType()).append("\n");
         buffer.append("    OPTION FLAGS=0x").append(Integer.toHexString(getOptions())).append("\n");
         if (containsFontFormattingBlock()) {
             buffer.append(_fontFormatting.toString()).append("\n");
@@ -429,14 +357,14 @@ public final class CFRuleRecord extends StandardRecord {
         if (containsPatternFormattingBlock()) {
             buffer.append(_patternFormatting.toString()).append("\n");
         }
-        buffer.append("    Formula 1 =").append(Arrays.toString(field_17_formula1.getTokens())).append("\n");
-        buffer.append("    Formula 2 =").append(Arrays.toString(field_18_formula2.getTokens())).append("\n");
+        buffer.append("    Formula 1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
+        buffer.append("    Formula 2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");
         buffer.append("[/CFRULE]\n");
         return buffer.toString();
     }
 
     public Object clone() {
-        CFRuleRecord rec = new CFRuleRecord(field_1_condition_type, field_2_comparison_operator);
+        CFRuleRecord rec = new CFRuleRecord(getConditionType(), getComparisonOperation());
         rec.field_5_options = field_5_options;
         rec.field_6_not_used = field_6_not_used;
         if (containsFontFormattingBlock()) {
@@ -448,25 +376,9 @@ public final class CFRuleRecord extends StandardRecord {
         if (containsPatternFormattingBlock()) {
             rec._patternFormatting = (PatternFormatting) _patternFormatting.clone();
         }
-        rec.field_17_formula1 = field_17_formula1.copy();
-        rec.field_18_formula2 = field_18_formula2.copy();
+        rec.setFormula1(getFormula1().copy());
+        rec.setFormula2(getFormula2().copy());
 
         return rec;
-    }
-
-    /**
-     * TODO - parse conditional format formulas properly i.e. produce tRefN and tAreaN instead of tRef and tArea
-     * this call will produce the wrong results if the formula contains any cell references
-     * One approach might be to apply the inverse of SharedFormulaRecord.convertSharedFormulas(Stack, int, int)
-     * Note - two extra parameters (rowIx & colIx) will be required. They probably come from one of the Region objects.
-     *
-     * @return <code>null</code> if <tt>formula</tt> was null.
-     */
-    private static Ptg[] parseFormula(String formula, HSSFSheet sheet) {
-        if(formula == null) {
-            return null;
-        }
-        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        return HSSFFormulaParser.parse(formula, sheet.getWorkbook(), FormulaType.CELL, sheetIndex);
     }
 }

@@ -18,8 +18,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;

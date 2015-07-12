@@ -27,11 +27,11 @@ import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.CFRuleRecord.ComparisonOperator;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
 
