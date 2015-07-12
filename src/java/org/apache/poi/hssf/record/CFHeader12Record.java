@@ -42,34 +42,34 @@ public final class CFHeader12Record extends CFHeaderRecord {
         futureHeader.setRecordType(sid);
     }
 
-	public CFHeader12Record(RecordInputStream in)
-	{
-	    futureHeader = new FtrHeader(in);
-	    read(in);
-	}
+    public CFHeader12Record(RecordInputStream in)
+    {
+        futureHeader = new FtrHeader(in);
+        read(in);
+    }
 
-	@Override
-	protected String getRecordName() {
+    @Override
+    protected String getRecordName() {
         return "CFHEADER12";
     }
-	
+
     protected int getDataSize() {
-		return FtrHeader.getDataSize() + super.getDataSize();
-	}
-	
-	public void serialize(LittleEndianOutput out) {
-	    futureHeader.serialize(out);
-	    super.serialize(out);
-	}
+        return FtrHeader.getDataSize() + super.getDataSize();
+    }
 
-	public short getSid() {
-		return sid;
-	}
+    public void serialize(LittleEndianOutput out) {
+        futureHeader.serialize(out);
+        super.serialize(out);
+    }
 
-	public Object clone() {
-		CFHeader12Record result = new CFHeader12Record();
-		result.futureHeader = (FtrHeader)futureHeader.clone();
-		// TODO Clone the rest via the base
-		return result;
-	}
+    public short getSid() {
+        return sid;
+    }
+
+    public Object clone() {
+        CFHeader12Record result = new CFHeader12Record();
+        result.futureHeader = (FtrHeader)futureHeader.clone();
+        // TODO Clone the rest via the base
+        return result;
+    }
 }
