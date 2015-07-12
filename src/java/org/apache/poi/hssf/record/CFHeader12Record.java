@@ -56,7 +56,11 @@ public final class CFHeader12Record extends CFHeaderBase {
     }
 
     public void serialize(LittleEndianOutput out) {
+        // Sync the associated range
+        futureHeader.setAssociatedRange(getEnclosingCellRange());
+        // Write the future header first
         futureHeader.serialize(out);
+        // Then the rest of the CF Header details
         super.serialize(out);
     }
 
