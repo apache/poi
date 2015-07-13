@@ -89,6 +89,10 @@ public final class PatternFormatting implements Cloneable {
         field_16_pattern_color_indexes    = in.readUShort();
     }
     
+    public int getDataLength() {
+        return 4;
+    }
+    
     /**
      * setting fill pattern
      *

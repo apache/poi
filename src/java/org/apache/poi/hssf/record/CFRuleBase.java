@@ -18,10 +18,15 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.cf.BorderFormatting;
+import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 
 /**
  * Conditional Formatting Rules. This can hold old-style rules
@@ -85,6 +90,47 @@ public abstract class CFRuleBase extends StandardRecord {
     public static final int TEMPLATE_ABOVE_OR_EQUAL_TO_AVERAGE = 0x001D;
     public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
     
+    static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
+    static final BitField alignHor      = bf(0x00000001); // 0 = Horizontal alignment modified
+    static final BitField alignVer      = bf(0x00000002); // 0 = Vertical alignment modified
+    static final BitField alignWrap     = bf(0x00000004); // 0 = Text wrapped flag modified
+    static final BitField alignRot      = bf(0x00000008); // 0 = Text rotation modified
+    static final BitField alignJustLast = bf(0x00000010); // 0 = Justify last line flag modified
+    static final BitField alignIndent   = bf(0x00000020); // 0 = Indentation modified
+    static final BitField alignShrin    = bf(0x00000040); // 0 = Shrink to fit flag modified
+    static final BitField notUsed1      = bf(0x00000080); // Always 1
+    static final BitField protLocked    = bf(0x00000100); // 0 = Cell locked flag modified
+    static final BitField protHidden    = bf(0x00000200); // 0 = Cell hidden flag modified
+    static final BitField bordLeft      = bf(0x00000400); // 0 = Left border style and colour modified
+    static final BitField bordRight     = bf(0x00000800); // 0 = Right border style and colour modified
+    static final BitField bordTop       = bf(0x00001000); // 0 = Top border style and colour modified
+    static final BitField bordBot       = bf(0x00002000); // 0 = Bottom border style and colour modified
+    static final BitField bordTlBr      = bf(0x00004000); // 0 = Top-left to bottom-right border flag modified
+    static final BitField bordBlTr      = bf(0x00008000); // 0 = Bottom-left to top-right border flag modified
+    static final BitField pattStyle     = bf(0x00010000); // 0 = Pattern style modified
+    static final BitField pattCol       = bf(0x00020000); // 0 = Pattern colour modified
+    static final BitField pattBgCol     = bf(0x00040000); // 0 = Pattern background colour modified
+    static final BitField notUsed2      = bf(0x00380000); // Always 111
+    static final BitField undocumented  = bf(0x03C00000); // Undocumented bits
+    static final BitField fmtBlockBits  = bf(0x7C000000); // Bits: font,align,bord,patt,prot
+    static final BitField font          = bf(0x04000000); // 1 = Record contains font formatting block
+    static final BitField align         = bf(0x08000000); // 1 = Record contains alignment formatting block
+    static final BitField bord          = bf(0x10000000); // 1 = Record contains border formatting block
+    static final BitField patt          = bf(0x20000000); // 1 = Record contains pattern formatting block
+    static final BitField prot          = bf(0x40000000); // 1 = Record contains protection formatting block
+    static final BitField alignTextDir  = bf(0x80000000); // 0 = Text direction modified
+
+    private static BitField bf(int i) {
+        return BitFieldFactory.getInstance(i);
+    }
+
+    protected int field_5_options; // TODO Rename me
+    protected short field_6_not_used; // TODO Rename me
+
+    protected FontFormatting _fontFormatting;
+    protected BorderFormatting _borderFormatting;
+    protected PatternFormatting _patternFormatting;
+    
     private Formula formula1;
     private Formula formula2;
 
@@ -101,6 +147,30 @@ public abstract class CFRuleBase extends StandardRecord {
         this.formula2 = Formula.create(formula2);
     }
     protected CFRuleBase() {}
+    
+    protected int readFormatOptions(RecordInputStream in) {
+        field_5_options = in.readInt();
+        field_6_not_used = in.readShort();
+
+        int len = 6;
+        
+        if (containsFontFormattingBlock()) {
+            _fontFormatting = new FontFormatting(in);
+            len += _fontFormatting.getDataLength();
+        }
+
+        if (containsBorderFormattingBlock()) {
+            _borderFormatting = new BorderFormatting(in);
+            len += _borderFormatting.getDataLength();
+        }
+
+        if (containsPatternFormattingBlock()) {
+            _patternFormatting = new PatternFormatting(in);
+            len += _patternFormatting.getDataLength();
+        }
+        
+        return len;
+    }
 
     public byte getConditionType() {
         return condition_type;
@@ -128,6 +198,150 @@ public abstract class CFRuleBase extends StandardRecord {
         return comparison_operator;
     }
 
+    public boolean containsFontFormattingBlock() {
+        return getOptionFlag(font);
+    }
+    public void setFontFormatting(FontFormatting fontFormatting) {
+        _fontFormatting = fontFormatting;
+        setOptionFlag(fontFormatting != null, font);
+    }
+    public FontFormatting getFontFormatting() {
+        if( containsFontFormattingBlock()) {
+            return _fontFormatting;
+        }
+        return null;
+    }
+
+    public boolean containsAlignFormattingBlock() {
+        return getOptionFlag(align);
+    }
+    public void setAlignFormattingUnchanged() {
+        setOptionFlag(false,align);
+    }
+
+    public boolean containsBorderFormattingBlock() {
+        return getOptionFlag(bord);
+    }
+    public void setBorderFormatting(BorderFormatting borderFormatting) {
+        _borderFormatting = borderFormatting;
+        setOptionFlag(borderFormatting != null, bord);
+    }
+    public BorderFormatting getBorderFormatting() {
+        if( containsBorderFormattingBlock()) {
+            return _borderFormatting;
+        }
+        return null;
+    }
+
+    public boolean containsPatternFormattingBlock() {
+        return getOptionFlag(patt);
+    }
+    public void setPatternFormatting(PatternFormatting patternFormatting) {
+        _patternFormatting = patternFormatting;
+        setOptionFlag(patternFormatting!=null, patt);
+    }
+    public PatternFormatting getPatternFormatting() {
+        if( containsPatternFormattingBlock())
+        {
+            return _patternFormatting;
+        }
+        return null;
+    }
+
+    public boolean containsProtectionFormattingBlock() {
+        return getOptionFlag(prot);
+    }
+    public void setProtectionFormattingUnchanged() {
+        setOptionFlag(false,prot);
+    }
+
+    /**
+     * get the option flags
+     *
+     * @return bit mask
+     */
+    public int getOptions() {
+        return field_5_options;
+    }
+
+    private boolean isModified(BitField field) {
+        return !field.isSet(field_5_options);
+    }
+    private void setModified(boolean modified, BitField field) {
+        field_5_options = field.setBoolean(field_5_options, !modified);
+    }
+
+    public boolean isLeftBorderModified() {
+        return isModified(bordLeft);
+    }
+    public void setLeftBorderModified(boolean modified) {
+        setModified(modified,bordLeft);
+    }
+
+    public boolean isRightBorderModified() {
+        return isModified(bordRight);
+    }
+    public void setRightBorderModified(boolean modified)
+    {
+        setModified(modified,bordRight);
+    }
+
+    public boolean isTopBorderModified() {
+        return isModified(bordTop);
+    }
+    public void setTopBorderModified(boolean modified) {
+        setModified(modified,bordTop);
+    }
+
+    public boolean isBottomBorderModified() {
+        return isModified(bordBot);
+    }
+    public void setBottomBorderModified(boolean modified) {
+        setModified(modified,bordBot);
+    }
+
+    public boolean isTopLeftBottomRightBorderModified() {
+        return isModified(bordTlBr);
+    }
+    public void setTopLeftBottomRightBorderModified(boolean modified) {
+        setModified(modified,bordTlBr);
+    }
+
+    public boolean isBottomLeftTopRightBorderModified() {
+        return isModified(bordBlTr);
+    }
+    public void setBottomLeftTopRightBorderModified(boolean modified) {
+        setModified(modified,bordBlTr);
+    }
+
+    public boolean isPatternStyleModified() {
+        return isModified(pattStyle);
+    }
+    public void setPatternStyleModified(boolean modified) {
+        setModified(modified,pattStyle);
+    }
+
+    public boolean isPatternColorModified() {
+        return isModified(pattCol);
+    }
+    public void setPatternColorModified(boolean modified) {
+        setModified(modified,pattCol);
+    }
+
+    public boolean isPatternBackgroundColorModified() {
+        return isModified(pattBgCol);
+    }
+    public void setPatternBackgroundColorModified(boolean modified) {
+        setModified(modified,pattBgCol);
+    }
+
+    private boolean getOptionFlag(BitField field) {
+        return field.isSet(field_5_options);
+    }
+    private void setOptionFlag(boolean flag, BitField field) {
+        field_5_options = field.setBoolean(field_5_options, flag);
+    }
+    
     /**
      * get the stack of the 1st expression as a list
      *
@@ -189,5 +403,25 @@ public abstract class CFRuleBase extends StandardRecord {
         }
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         return HSSFFormulaParser.parse(formula, sheet.getWorkbook(), FormulaType.CELL, sheetIndex);
+    }
+    
+    protected void copyTo(CFRuleBase rec) {
+        rec.condition_type = condition_type;
+        rec.comparison_operator = comparison_operator;
+        
+        rec.field_5_options = field_5_options;
+        rec.field_6_not_used = field_6_not_used;
+        if (containsFontFormattingBlock()) {
+            rec._fontFormatting = (FontFormatting) _fontFormatting.clone();
+        }
+        if (containsBorderFormattingBlock()) {
+            rec._borderFormatting = (BorderFormatting) _borderFormatting.clone();
+        }
+        if (containsPatternFormattingBlock()) {
+            rec._patternFormatting = (PatternFormatting) _patternFormatting.clone();
+        }
+        
+        rec.setFormula1(getFormula1().copy());
+        rec.setFormula2(getFormula2().copy());
     }
 }

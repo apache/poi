@@ -38,7 +38,7 @@ import org.apache.poi.util.POILogger;
  * <p>Note that Excel versions before 2007 can only cope with a maximum of 3
  *  Conditional Formatting rules per sheet. Excel 2007 or newer can cope with
  *  unlimited numbers, as can Apache OpenOffice. This is an Excel limitation,
- *  not a file format one.</p> 
+ *  not a file format one.</p>
  */
 public final class CFRecordsAggregate extends RecordAggregate {
 	/** Excel 97-2003 allows up to 3 conditional formating rules */
