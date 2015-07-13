@@ -293,12 +293,25 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
 
     public Object clone() {
         CFRule12Record rec = new CFRule12Record(getConditionType(), getComparisonOperation());
+        rec.futureHeader.setAssociatedRange(futureHeader.getAssociatedRange().copy());
+        
         super.copyTo(rec);
         
-        // TODO The other fields
+        rec.ext_formatting_length = ext_formatting_length;
+        rec.ext_formatting_data = new byte[ext_formatting_length];
+        System.arraycopy(ext_formatting_data, 0, rec.ext_formatting_data, 0, ext_formatting_length);
         
         rec.formula_scale = formula_scale.copy();
+        
+        rec.ext_opts = ext_opts;
+        rec.priority = priority;
+        rec.template_type = template_type;
+        rec.template_param_length = template_param_length;
+        rec.template_params = new byte[template_param_length];
+        System.arraycopy(template_params, 0, rec.template_params, 0, template_param_length);
 
+        // TODO Clone the rgbCT data like Gradients, Databars etc
+        
         return rec;
     }
     
