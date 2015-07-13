@@ -51,8 +51,6 @@ import org.apache.poi.util.HexRead;
  * @author Evgeniy Berlog
  */
 public class TestDrawingAggregate extends TestCase {
-
-
     /**
      *  information about drawing aggregate in a worksheet
      */
@@ -189,7 +187,15 @@ public class TestDrawingAggregate extends TestCase {
                 // System.out.println("[WARN]  Cannot read " + file.getName());
                 continue;
             }
-            assertWriteAndReadBack(wb);
+            try {
+                assertWriteAndReadBack(wb);
+            } catch (Exception e) {
+                String filename = file.getName();
+                System.out.println("Drawing Aggregate re-write test failed for " + filename);
+                e.printStackTrace(System.out);
+                
+                fail("Error when writing and re-reading workbook " + filename + "\n" + e);
+            }
         }
     }
 
