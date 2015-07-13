@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
@@ -36,10 +37,10 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 {
 	private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
 
-	private final CFRuleRecord cfRuleRecord;
+	private final CFRuleBase cfRuleRecord;
 	private final HSSFWorkbook workbook;
 
-	HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleRecord pRuleRecord) {
+	HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleBase pRuleRecord) {
 		if (pWorkbook == null) {
 			throw new IllegalArgumentException("pWorkbook must not be null");
 		}
@@ -50,7 +51,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 		cfRuleRecord = pRuleRecord;
 	}
 
-	CFRuleRecord getCfRuleRecord()
+	CFRuleBase getCfRuleRecord()
 	{
 		return cfRuleRecord;
 	}

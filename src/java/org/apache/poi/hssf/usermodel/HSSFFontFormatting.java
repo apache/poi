@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 /**
  * High level representation for Font Formatting component
@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.cf.FontFormatting;
  */
 public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.FontFormatting
 {
-
 	/** Underline type - None */
 	public final static byte U_NONE              = FontFormatting.U_NONE;
 	/** Underline type - Single */
@@ -39,7 +38,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 
 	private final FontFormatting fontFormatting;
 	
-	protected HSSFFontFormatting(CFRuleRecord cfRuleRecord)
+	protected HSSFFontFormatting(CFRuleBase cfRuleRecord)
 	{
 		this.fontFormatting = cfRuleRecord.getFontFormatting();
 	}

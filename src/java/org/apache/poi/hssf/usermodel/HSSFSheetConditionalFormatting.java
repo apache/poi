@@ -17,14 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.SpreadsheetVersion;
 
 /**
  * The 'Conditional Formatting' facet of <tt>HSSFSheet</tt>
@@ -146,7 +147,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 			throw new IllegalArgumentException("Number of rules must not exceed 3");
 		}
 
-		CFRuleRecord[] rules = new CFRuleRecord[cfRules.length];
+		CFRuleBase[] rules = new CFRuleBase[cfRules.length];
 		for (int i = 0; i != cfRules.length; i++) {
 			rules[i] = cfRules[i].getCfRuleRecord();
 		}

@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
@@ -147,7 +147,7 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 	 */
 	public HSSFConditionalFormattingRule getRule(int idx)
 	{
-		CFRuleRecord ruleRecord = cfAggregate.getRule(idx);
+		CFRuleBase ruleRecord = cfAggregate.getRule(idx);
 		return new HSSFConditionalFormattingRule(_workbook, ruleRecord);
 	}
 

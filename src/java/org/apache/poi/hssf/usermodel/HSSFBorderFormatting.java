@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 
 /**
@@ -26,10 +26,10 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
  */
 public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.BorderFormatting
 {
-	private final CFRuleRecord cfRuleRecord;
+	private final CFRuleBase cfRuleRecord;
 	private final BorderFormatting borderFormatting;
 	
-	protected HSSFBorderFormatting(CFRuleRecord cfRuleRecord)
+	protected HSSFBorderFormatting(CFRuleBase cfRuleRecord)
 	{
 		this.cfRuleRecord = cfRuleRecord;
 		this.borderFormatting = cfRuleRecord.getBorderFormatting();

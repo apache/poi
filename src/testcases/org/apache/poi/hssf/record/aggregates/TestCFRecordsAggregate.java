@@ -28,6 +28,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderBase;
 import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
@@ -127,5 +128,31 @@ public final class TestCFRecordsAggregate extends TestCase {
             throw new AssertionFailedError("Identified bug 45682 b");
         }
         assertEquals(rules.length, nRules);
+    }
+    
+    public void testCantMixTypes() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        CellRangeAddress[] cellRanges = {
+                new CellRangeAddress(0,1,0,0),
+                new CellRangeAddress(0,1,2,2),
+        };
+        CFRuleBase[] rules = {
+                CFRuleRecord.create(sheet, "7"),
+                CFRule12Record.create(sheet, ComparisonOperator.BETWEEN, "2", "5"),
+        };
+        try {
+            new CFRecordsAggregate(cellRanges, rules);
+            fail("Shouldn't be able to mix between types");
+        } catch (IllegalArgumentException e) {}
+        
+        
+        rules = new CFRuleBase[] { CFRuleRecord.create(sheet, "7") };
+        CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
+        
+        try {
+            agg.addRule(CFRule12Record.create(sheet, "7"));
+            fail("Shouldn't be able to mix between types");
+        } catch (IllegalArgumentException e) {}
     }
 }

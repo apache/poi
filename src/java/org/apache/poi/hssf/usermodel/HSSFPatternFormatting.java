@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 
 /**
@@ -25,10 +25,10 @@ import org.apache.poi.hssf.record.cf.PatternFormatting;
  */
 public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.PatternFormatting
 {
-	private final CFRuleRecord cfRuleRecord;
+	private final CFRuleBase cfRuleRecord;
 	private final PatternFormatting patternFormatting;
 	
-	protected HSSFPatternFormatting(CFRuleRecord cfRuleRecord)
+	protected HSSFPatternFormatting(CFRuleBase cfRuleRecord)
 	{
 		this.cfRuleRecord = cfRuleRecord; 
 		this.patternFormatting = cfRuleRecord.getPatternFormatting();

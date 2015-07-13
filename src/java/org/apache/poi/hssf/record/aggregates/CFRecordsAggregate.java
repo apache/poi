@@ -21,7 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.record.CFHeader12Record;
+import org.apache.poi.hssf.record.CFHeaderBase;
 import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFRule12Record;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -45,12 +49,12 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	private static final int MAX_97_2003_CONDTIONAL_FORMAT_RULES = 3;
 	private static final POILogger logger = POILogFactory.getLogger(CFRecordsAggregate.class);
 
-	private final CFHeaderRecord header;
+	private final CFHeaderBase header;
 
 	/** List of CFRuleRecord objects */
-	private final List<CFRuleRecord> rules;
+	private final List<CFRuleBase> rules;
 
-	private CFRecordsAggregate(CFHeaderRecord pHeader, CFRuleRecord[] pRules) {
+	private CFRecordsAggregate(CFHeaderBase pHeader, CFRuleBase[] pRules) {
 		if(pHeader == null) {
 			throw new IllegalArgumentException("header must not be null");
 		}
@@ -67,14 +71,21 @@ public final class CFRecordsAggregate extends RecordAggregate {
 			throw new RuntimeException("Mismatch number of rules");
 		}
 		header = pHeader;
-		rules = new ArrayList<CFRuleRecord>(3);
+		rules = new ArrayList<CFRuleBase>(pRules.length);
 		for (int i = 0; i < pRules.length; i++) {
+		    checkRuleType(pRules[i]);
 			rules.add(pRules[i]);
 		}
 	}
 
-	public CFRecordsAggregate(CellRangeAddress[] regions, CFRuleRecord[] rules) {
-		this(new CFHeaderRecord(regions, rules.length), rules);
+	public CFRecordsAggregate(CellRangeAddress[] regions, CFRuleBase[] rules) {
+		this(createHeader(regions, rules), rules);
+	}
+	private static CFHeaderBase createHeader(CellRangeAddress[] regions, CFRuleBase[] rules) {
+	    if (rules.length == 0 || rules[0] instanceof CFRuleRecord) {
+	        return new CFHeaderRecord(regions, rules.length);
+	    }
+	    return new CFHeader12Record(regions, rules.length);
 	}
 
 	/**
@@ -84,17 +95,19 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	 */
 	public static CFRecordsAggregate createCFAggregate(RecordStream rs) {
 		Record rec = rs.getNext();
-		if (rec.getSid() != CFHeaderRecord.sid) {
+		if (rec.getSid() != CFHeaderRecord.sid &&
+		    rec.getSid() != CFHeader12Record.sid) {
 			throw new IllegalStateException("next record sid was " + rec.getSid() 
-					+ " instead of " + CFHeaderRecord.sid + " as expected");
+					+ " instead of " + CFHeaderRecord.sid + " or " +
+			        CFHeader12Record.sid + " as expected");
 		}
 
-		CFHeaderRecord header = (CFHeaderRecord)rec;
+		CFHeaderBase header = (CFHeaderBase)rec;
 		int nRules = header.getNumberOfConditionalFormats();
 
-		CFRuleRecord[] rules = new CFRuleRecord[nRules];
+		CFRuleBase[] rules = new CFRuleBase[nRules];
 		for (int i = 0; i < rules.length; i++) {
-			rules[i] = (CFRuleRecord) rs.getNext();
+			rules[i] = (CFRuleBase) rs.getNext();
 		}
 		
 		return new CFRecordsAggregate(header, rules);
@@ -105,18 +118,17 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	 */
 	public CFRecordsAggregate cloneCFAggregate()
 	{
-	  
-		CFRuleRecord[] newRecs = new CFRuleRecord[rules.size()];
+	    CFRuleBase[] newRecs = new CFRuleBase[rules.size()];
 		for (int i = 0; i < newRecs.length; i++) {
 			newRecs[i] = (CFRuleRecord) getRule(i).clone();
 		}
-		return new CFRecordsAggregate((CFHeaderRecord) header.clone(), newRecs);
+		return new CFRecordsAggregate((CFHeaderBase)header.clone(), newRecs);
 	}
 
 	/**
 	 * @return the header. Never <code>null</code>.
 	 */
-	public CFHeaderRecord getHeader()
+	public CFHeaderBase getHeader()
 	{
 		return header;
 	}
@@ -127,18 +139,31 @@ public final class CFRecordsAggregate extends RecordAggregate {
 					+ ") nRules=" + rules.size());
 		}
 	}
-	public CFRuleRecord getRule(int idx) {
+	private void checkRuleType(CFRuleBase r) {
+	    if (header instanceof CFHeaderRecord &&
+	             r instanceof CFRuleRecord) {
+	        return;
+	    }
+        if (header instanceof CFHeader12Record &&
+                 r instanceof CFRule12Record) {
+           return;
+        }
+        throw new IllegalArgumentException("Header and Rule must both be CF or both be CF12, can't mix");
+	}
+	
+	public CFRuleBase getRule(int idx) {
 		checkRuleIndex(idx);
 		return rules.get(idx);
 	}
-	public void setRule(int idx, CFRuleRecord r) {
+	public void setRule(int idx, CFRuleBase r) {
 		if (r == null) {
 			throw new IllegalArgumentException("r must not be null");
 		}
 		checkRuleIndex(idx);
+		checkRuleType(r);
 		rules.set(idx, r);
 	}
-	public void addRule(CFRuleRecord r) {
+	public void addRule(CFRuleBase r) {
 		if (r == null) {
 			throw new IllegalArgumentException("r must not be null");
 		}
@@ -147,6 +172,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 		            + " any more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES 
                     + " - this file will cause problems with old Excel versions");
 		}
+        checkRuleType(r);
 		rules.add(r);
 		header.setNumberOfConditionalFormats(rules.size());
 	}
@@ -160,25 +186,29 @@ public final class CFRecordsAggregate extends RecordAggregate {
 	public String toString()
 	{
 		StringBuffer buffer = new StringBuffer();
+		String type = "CF";
+		if (header instanceof CFHeader12Record) {
+		    type = "CF12";
+		}
 
-		buffer.append("[CF]\n");
+		buffer.append("[").append(type).append("]\n");
 		if( header != null )
 		{
 			buffer.append(header.toString());
 		}
 		for(int i=0; i<rules.size(); i++)
 		{
-			CFRuleRecord cfRule = rules.get(i);
+			CFRuleBase cfRule = rules.get(i);
 			buffer.append(cfRule.toString());
 		}
-		buffer.append("[/CF]\n");
+        buffer.append("[/").append(type).append("]\n");
 		return buffer.toString();
 	}
 
 	public void visitContainedRecords(RecordVisitor rv) {
 		rv.visitRecord(header);
 		for(int i=0; i<rules.size(); i++) {
-			CFRuleRecord rule = rules.get(i);
+			CFRuleBase rule = rules.get(i);
 			rv.visitRecord(rule);
 		}
 	}
@@ -214,7 +244,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 		}
 		
 		for(int i=0; i<rules.size(); i++) {
-			CFRuleRecord rule = rules.get(i);
+			CFRuleBase rule = rules.get(i);
 			Ptg[] ptgs;
 			ptgs = rule.getParsedExpression1();
 			if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
@@ -223,6 +253,13 @@ public final class CFRecordsAggregate extends RecordAggregate {
 			ptgs = rule.getParsedExpression2();
 			if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
 				rule.setParsedExpression2(ptgs);
+			}
+			if (rule instanceof CFRule12Record) {
+			    CFRule12Record rule12 = (CFRule12Record)rule;
+	            ptgs = rule12.getParsedExpressionScale();
+	            if (ptgs != null && shifter.adjustFormula(ptgs, currentExternSheetIx)) {
+	                rule12.setParsedExpressionScale(ptgs);
+	            }
 			}
 		}
 		return true;
