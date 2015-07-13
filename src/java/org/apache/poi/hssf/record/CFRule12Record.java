@@ -20,9 +20,12 @@ package org.apache.poi.hssf.record;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.record.common.FtrHeader;
+import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogger;
 
@@ -36,7 +39,7 @@ import org.apache.poi.util.POILogger;
  *  {@link #CONDITION_TYPE_CELL_VALUE_IS} or {@link #CONDITION_TYPE_FORMULA},
  *  this is only used for the other types
  */
-public final class CFRule12Record extends CFRuleBase {
+public final class CFRule12Record extends CFRuleBase implements FutureRecord {
     public static final short sid = 0x087A;
 
     private FtrHeader futureHeader;
@@ -259,11 +262,30 @@ public final class CFRule12Record extends CFRuleBase {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("[CFRULE12]\n");
-        buffer.append("    .condition_type   =").append(getConditionType()).append("\n");
-        buffer.append("    TODO The rest!\n"); // TODO The Rest
-        buffer.append("    Formula 1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
-        buffer.append("    Formula 2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");
-        buffer.append("    Formula S =").append(Arrays.toString(formula_scale.getTokens())).append("\n");
+        buffer.append("    .condition_type=").append(getConditionType()).append("\n");
+        buffer.append("    .dxfn12_length =0x").append(Integer.toHexString(ext_formatting_length)).append("\n");
+        buffer.append("    .option_flags  =0x").append(Integer.toHexString(getOptions())).append("\n");
+        if (containsFontFormattingBlock()) {
+            buffer.append(_fontFormatting.toString()).append("\n");
+        }
+        if (containsBorderFormattingBlock()) {
+            buffer.append(_borderFormatting.toString()).append("\n");
+        }
+        if (containsPatternFormattingBlock()) {
+            buffer.append(_patternFormatting.toString()).append("\n");
+        }
+        buffer.append("    .dxfn12_ext=").append(HexDump.toHex(ext_formatting_data)).append("\n");
+        buffer.append("    .formula_1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
+        buffer.append("    .formula_2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");
+        buffer.append("    .formula_S =").append(Arrays.toString(formula_scale.getTokens())).append("\n");
+        buffer.append("    .ext Opts  =").append(ext_opts).append("\n");
+        buffer.append("    .priority  =").append(priority).append("\n");
+        buffer.append("    .template_type  =").append(template_type).append("\n");
+        buffer.append("    .template_params=").append(HexDump.toHex(template_params)).append("\n");
+        buffer.append("    .gradient_data  =").append(HexDump.toHex(gradient_data)).append("\n");
+        buffer.append("    .databar_data   =").append(HexDump.toHex(databar_data)).append("\n");
+        buffer.append("    .filter_data    =").append(HexDump.toHex(filter_data)).append("\n");
+        buffer.append("    .multistate_data=").append(HexDump.toHex(multistate_data)).append("\n");
         buffer.append("[/CFRULE12]\n");
         return buffer.toString();
     }
@@ -277,5 +299,15 @@ public final class CFRule12Record extends CFRuleBase {
         rec.formula_scale = formula_scale.copy();
 
         return rec;
+    }
+    
+    public short getFutureRecordType() {
+        return futureHeader.getRecordType();
+    }
+    public FtrHeader getFutureHeader() {
+        return futureHeader;
+    }
+    public CellRangeAddress getAssociatedRange() {
+        return futureHeader.getAssociatedRange();
     }
 }
