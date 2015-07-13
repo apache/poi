@@ -26,9 +26,12 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.record.CFHeaderBase;
 import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,22 +41,20 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Tests the serialization and deserialization of the CFRecordsAggregate
  * class works correctly.  
- *
- * @author Dmitriy Kumshayev 
  */
+@SuppressWarnings("resource")
 public final class TestCFRecordsAggregate extends TestCase
 {
-
-	public void testCFRecordsAggregate() 
+    public void testCFRecordsAggregate() 
 	{
 		HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
-        List recs = new ArrayList();
-		CFHeaderRecord header = new CFHeaderRecord();
-		CFRuleRecord rule1 = CFRuleRecord.create(sheet, "7");
-		CFRuleRecord rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
-		CFRuleRecord rule3 = CFRuleRecord.create(sheet, ComparisonOperator.GE, "100", null);
+        List<Record> recs = new ArrayList<Record>();
+		CFHeaderBase header = new CFHeaderRecord();
+		CFRuleBase rule1 = CFRuleRecord.create(sheet, "7");
+		CFRuleBase rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
+		CFRuleBase rule3 = CFRuleRecord.create(sheet, ComparisonOperator.GE, "100", null);
 		header.setNumberOfConditionalFormats(3);
 		CellRangeAddress[] cellRanges = {
 				new CellRangeAddress(0,1,0,0),
