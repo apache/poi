@@ -102,7 +102,8 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         SheetConditionalFormatting sheetCF = sh.getSheetConditionalFormatting();
 
         ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("SUM(A1:A5)>10");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_FORMULA, rule1.getConditionType());
+        assertEquals(ConditionType.FORMULA.id, rule1.getConditionType());
+        assertEquals(ConditionType.FORMULA, rule1.getConditionTypeType());
         assertEquals("SUM(A1:A5)>10", rule1.getFormula1());
         int formatIndex1 = sheetCF.addConditionalFormatting(
                 new CellRangeAddress[]{
@@ -137,56 +138,65 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
 
         ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.EQUAL, "SUM(A1:A5)+10");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule1.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule1.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule1.getConditionTypeType());
         assertEquals("SUM(A1:A5)+10", rule1.getFormula1());
         assertEquals(ComparisonOperator.EQUAL, rule1.getComparisonOperation());
 
         ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.NOT_EQUAL, "15");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule2.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule2.getConditionTypeType());
         assertEquals("15", rule2.getFormula1());
         assertEquals(ComparisonOperator.NOT_EQUAL, rule2.getComparisonOperation());
 
         ConditionalFormattingRule rule3 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.NOT_EQUAL, "15");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule3.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule3.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule3.getConditionTypeType());
         assertEquals("15", rule3.getFormula1());
         assertEquals(ComparisonOperator.NOT_EQUAL, rule3.getComparisonOperation());
 
         ConditionalFormattingRule rule4 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.GT, "0");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule4.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule4.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule4.getConditionTypeType());
         assertEquals("0", rule4.getFormula1());
         assertEquals(ComparisonOperator.GT, rule4.getComparisonOperation());
 
         ConditionalFormattingRule rule5 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.LT, "0");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule5.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule5.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule5.getConditionTypeType());
         assertEquals("0", rule5.getFormula1());
         assertEquals(ComparisonOperator.LT, rule5.getComparisonOperation());
 
         ConditionalFormattingRule rule6 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.GE, "0");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule6.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule6.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule6.getConditionTypeType());
         assertEquals("0", rule6.getFormula1());
         assertEquals(ComparisonOperator.GE, rule6.getComparisonOperation());
 
         ConditionalFormattingRule rule7 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.LE, "0");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule7.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule7.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule7.getConditionTypeType());
         assertEquals("0", rule7.getFormula1());
         assertEquals(ComparisonOperator.LE, rule7.getComparisonOperation());
 
         ConditionalFormattingRule rule8 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.BETWEEN, "0", "5");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule8.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule8.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule8.getConditionTypeType());
         assertEquals("0", rule8.getFormula1());
         assertEquals("5", rule8.getFormula2());
         assertEquals(ComparisonOperator.BETWEEN, rule8.getComparisonOperation());
 
         ConditionalFormattingRule rule9 = sheetCF.createConditionalFormattingRule(
                 ComparisonOperator.NOT_BETWEEN, "0", "5");
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule9.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS.id, rule9.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule9.getConditionTypeType());
         assertEquals("0", rule9.getFormula1());
         assertEquals("5", rule9.getFormula2());
         assertEquals(ComparisonOperator.NOT_BETWEEN, rule9.getComparisonOperation());
@@ -456,7 +466,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
 
         // CF1 has two rules: values less than -3 are bold-italic red, values greater than 3 are green
         ConditionalFormattingRule rule1 = cf1.getRule(0);
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule1.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule1.getConditionTypeType());
         assertEquals(ComparisonOperator.GT, rule1.getComparisonOperation());
         assertEquals("3", rule1.getFormula1());
         assertNull(rule1.getFormula2());
@@ -470,7 +480,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertFalse(fmt1.isItalic());
 
         ConditionalFormattingRule rule2 = cf1.getRule(1);
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule2.getConditionTypeType());
         assertEquals(ComparisonOperator.LT, rule2.getComparisonOperation());
         assertEquals("-3", rule2.getFormula1());
         assertNull(rule2.getFormula2());
@@ -490,7 +500,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals("B9", regions2[0].formatAsString());
 
         ConditionalFormattingRule rule3 = cf2.getRule(0);
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_FORMULA, rule3.getConditionType());
+        assertEquals(ConditionType.FORMULA, rule3.getConditionTypeType());
         assertEquals(ComparisonOperator.NO_COMPARISON, rule3.getComparisonOperation());
         assertEquals("$A$8>5", rule3.getFormula1());
         assertNull(rule3.getFormula2());
@@ -514,13 +524,13 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(2, cf3.getNumberOfRules());
 
         ConditionalFormattingRule rule4 = cf3.getRule(0);
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule4.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule4.getConditionTypeType());
         assertEquals(ComparisonOperator.LE, rule4.getComparisonOperation());
         assertEquals("\"AAA\"", rule4.getFormula1());
         assertNull(rule4.getFormula2());
 
         ConditionalFormattingRule rule5 = cf3.getRule(1);
-        assertEquals(ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS, rule5.getConditionType());
+        assertEquals(ConditionType.CELL_VALUE_IS, rule5.getConditionTypeType());
         assertEquals(ComparisonOperator.BETWEEN, rule5.getComparisonOperation());
         assertEquals("\"A\"", rule5.getFormula1());
         assertEquals("\"AAA\"", rule5.getFormula2());
@@ -576,6 +586,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         
         assertEquals(1, cf.getNumberOfRules());
         cr = cf.getRule(0);
+        assertEquals(ConditionType.CELL_VALUE_IS, cr.getConditionTypeType());
         // TODO Check the rest of this
         
         // Highlight 10-30 - Column D
