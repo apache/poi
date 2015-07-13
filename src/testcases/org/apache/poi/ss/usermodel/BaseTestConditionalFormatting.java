@@ -22,6 +22,7 @@ package org.apache.poi.ss.usermodel;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.usermodel.HSSFConditionalFormatting;
+import org.apache.poi.hssf.usermodel.HSSFConditionalFormattingRule;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -579,6 +580,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         
         // Check the rules / values in detail
         
+        
         // Highlight Positive values - Column C
         cf = sheetCF.getConditionalFormattingAt(0);
         assertEquals(1, cf.getFormattingRanges().length);
@@ -587,10 +589,57 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(1, cf.getNumberOfRules());
         cr = cf.getRule(0);
         assertEquals(ConditionType.CELL_VALUE_IS, cr.getConditionTypeType());
-        // TODO Check the rest of this
+        assertEquals(ComparisonOperator.GT, cr.getComparisonOperation());
+        assertEquals("0", cr.getFormula1());
+        assertEquals(null, cr.getFormula2());
+//        assertColourGreen(cr);
+        // TODO Colour checking
+        
         
         // Highlight 10-30 - Column D
-        // TODO
+        cf = sheetCF.getConditionalFormattingAt(1);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("D2:D17", cf.getFormattingRanges()[0].formatAsString());
+        
+        assertEquals(1, cf.getNumberOfRules());
+        cr = cf.getRule(0);
+        assertEquals(ConditionType.CELL_VALUE_IS, cr.getConditionTypeType());
+        assertEquals(ComparisonOperator.BETWEEN, cr.getComparisonOperation());
+        assertEquals("10", cr.getFormula1());
+        assertEquals("30", cr.getFormula2());
+//        assertColourGreen(cr);
+//        assertColourRed(cr);
+        // TODO Colour checking
+
+        
+        // Data Bars - Column E
+        cf = sheetCF.getConditionalFormattingAt(2);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("E2:E17", cf.getFormattingRanges()[0].formatAsString());
+        
+        assertEquals(1, cf.getNumberOfRules());
+        cr = cf.getRule(0);
+        assertEquals(ConditionType.DATA_BAR, cr.getConditionTypeType());
+        // TODO Support then check the rest
+        
+        
+        // Colours R->G - Column F
+        // Colours BWR - Column G
+        // Icons : Default - Column H
+        // Icons : 3 signs - Column I
+        // Icons : 3 traffic lights 2 - Column J
+        // Icons : 4 traffic lights - Column K
+        // Icons : 3 symbols - Column L
+        // Icons : 3 flags - Column M
+        // Icons : 3 symbols 2 - Column N
+        // Icons : 3 arrows - Column O     
+        // Icons : 5 arrows grey - Column P    
+        // Icons : 3 stars (ext) - Column Q
+        // Icons : 4 ratings - Column R
+        // Icons : 5 ratings - Column S
+        // Custom Icon+Format - Column T
+        // Mixed icons - Column U
+
     }
 
     public void testCreateFontFormatting() {
