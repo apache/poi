@@ -27,6 +27,9 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Conditional Formatting Rules. This can hold old-style rules
@@ -49,6 +52,7 @@ public abstract class CFRuleBase extends StandardRecord {
         public static final byte LE            = 8;
         private static final byte max_operator = 8;
     }
+    protected static final POILogger logger = POILogFactory.getLogger(CFRuleBase.class);
 
     private byte condition_type;
     // The only kinds that CFRuleRecord handles
@@ -91,41 +95,41 @@ public abstract class CFRuleBase extends StandardRecord {
     public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
     
     static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
-    static final BitField alignHor      = bf(0x00000001); // 0 = Horizontal alignment modified
-    static final BitField alignVer      = bf(0x00000002); // 0 = Vertical alignment modified
-    static final BitField alignWrap     = bf(0x00000004); // 0 = Text wrapped flag modified
-    static final BitField alignRot      = bf(0x00000008); // 0 = Text rotation modified
-    static final BitField alignJustLast = bf(0x00000010); // 0 = Justify last line flag modified
-    static final BitField alignIndent   = bf(0x00000020); // 0 = Indentation modified
-    static final BitField alignShrin    = bf(0x00000040); // 0 = Shrink to fit flag modified
-    static final BitField notUsed1      = bf(0x00000080); // Always 1
-    static final BitField protLocked    = bf(0x00000100); // 0 = Cell locked flag modified
-    static final BitField protHidden    = bf(0x00000200); // 0 = Cell hidden flag modified
-    static final BitField bordLeft      = bf(0x00000400); // 0 = Left border style and colour modified
-    static final BitField bordRight     = bf(0x00000800); // 0 = Right border style and colour modified
-    static final BitField bordTop       = bf(0x00001000); // 0 = Top border style and colour modified
-    static final BitField bordBot       = bf(0x00002000); // 0 = Bottom border style and colour modified
-    static final BitField bordTlBr      = bf(0x00004000); // 0 = Top-left to bottom-right border flag modified
-    static final BitField bordBlTr      = bf(0x00008000); // 0 = Bottom-left to top-right border flag modified
-    static final BitField pattStyle     = bf(0x00010000); // 0 = Pattern style modified
-    static final BitField pattCol       = bf(0x00020000); // 0 = Pattern colour modified
-    static final BitField pattBgCol     = bf(0x00040000); // 0 = Pattern background colour modified
-    static final BitField notUsed2      = bf(0x00380000); // Always 111
-    static final BitField undocumented  = bf(0x03C00000); // Undocumented bits
-    static final BitField fmtBlockBits  = bf(0x7C000000); // Bits: font,align,bord,patt,prot
-    static final BitField font          = bf(0x04000000); // 1 = Record contains font formatting block
-    static final BitField align         = bf(0x08000000); // 1 = Record contains alignment formatting block
-    static final BitField bord          = bf(0x10000000); // 1 = Record contains border formatting block
-    static final BitField patt          = bf(0x20000000); // 1 = Record contains pattern formatting block
-    static final BitField prot          = bf(0x40000000); // 1 = Record contains protection formatting block
-    static final BitField alignTextDir  = bf(0x80000000); // 0 = Text direction modified
+    static final BitField alignHor         = bf(0x00000001); // 0 = Horizontal alignment modified
+    static final BitField alignVer         = bf(0x00000002); // 0 = Vertical alignment modified
+    static final BitField alignWrap        = bf(0x00000004); // 0 = Text wrapped flag modified
+    static final BitField alignRot         = bf(0x00000008); // 0 = Text rotation modified
+    static final BitField alignJustLast    = bf(0x00000010); // 0 = Justify last line flag modified
+    static final BitField alignIndent      = bf(0x00000020); // 0 = Indentation modified
+    static final BitField alignShrin       = bf(0x00000040); // 0 = Shrink to fit flag modified
+    static final BitField mergeCell        = bf(0x00000080); // Normally 1, 0 = Merge Cell flag modified
+    static final BitField protLocked       = bf(0x00000100); // 0 = Cell locked flag modified
+    static final BitField protHidden       = bf(0x00000200); // 0 = Cell hidden flag modified
+    static final BitField bordLeft         = bf(0x00000400); // 0 = Left border style and colour modified
+    static final BitField bordRight        = bf(0x00000800); // 0 = Right border style and colour modified
+    static final BitField bordTop          = bf(0x00001000); // 0 = Top border style and colour modified
+    static final BitField bordBot          = bf(0x00002000); // 0 = Bottom border style and colour modified
+    static final BitField bordTlBr         = bf(0x00004000); // 0 = Top-left to bottom-right border flag modified
+    static final BitField bordBlTr         = bf(0x00008000); // 0 = Bottom-left to top-right border flag modified
+    static final BitField pattStyle        = bf(0x00010000); // 0 = Pattern style modified
+    static final BitField pattCol          = bf(0x00020000); // 0 = Pattern colour modified
+    static final BitField pattBgCol        = bf(0x00040000); // 0 = Pattern background colour modified
+    static final BitField notUsed2         = bf(0x00380000); // Always 111 (ifmt / ifnt / 1)
+    static final BitField undocumented     = bf(0x03C00000); // Undocumented bits
+    static final BitField fmtBlockBits     = bf(0x7C000000); // Bits: font,align,bord,patt,prot
+    static final BitField font             = bf(0x04000000); // 1 = Record contains font formatting block
+    static final BitField align            = bf(0x08000000); // 1 = Record contains alignment formatting block
+    static final BitField bord             = bf(0x10000000); // 1 = Record contains border formatting block
+    static final BitField patt             = bf(0x20000000); // 1 = Record contains pattern formatting block
+    static final BitField prot             = bf(0x40000000); // 1 = Record contains protection formatting block
+    static final BitField alignTextDir     = bf(0x80000000); // 0 = Text direction modified
 
     private static BitField bf(int i) {
         return BitFieldFactory.getInstance(i);
     }
 
-    protected int field_5_options; // TODO Rename me
-    protected short field_6_not_used; // TODO Rename me
+    protected int formatting_options;
+    protected short formatting_not_used; // TODO Decode this properly
 
     protected FontFormatting _fontFormatting;
     protected BorderFormatting _borderFormatting;
@@ -149,8 +153,8 @@ public abstract class CFRuleBase extends StandardRecord {
     protected CFRuleBase() {}
     
     protected int readFormatOptions(RecordInputStream in) {
-        field_5_options = in.readInt();
-        field_6_not_used = in.readShort();
+        formatting_options = in.readInt();
+        formatting_not_used = in.readShort();
 
         int len = 6;
         
@@ -261,14 +265,14 @@ public abstract class CFRuleBase extends StandardRecord {
      * @return bit mask
      */
     public int getOptions() {
-        return field_5_options;
+        return formatting_options;
     }
 
     private boolean isModified(BitField field) {
-        return !field.isSet(field_5_options);
+        return !field.isSet(formatting_options);
     }
     private void setModified(boolean modified, BitField field) {
-        field_5_options = field.setBoolean(field_5_options, !modified);
+        formatting_options = field.setBoolean(formatting_options, !modified);
     }
 
     public boolean isLeftBorderModified() {
@@ -336,10 +340,34 @@ public abstract class CFRuleBase extends StandardRecord {
     }
 
     private boolean getOptionFlag(BitField field) {
-        return field.isSet(field_5_options);
+        return field.isSet(formatting_options);
     }
     private void setOptionFlag(boolean flag, BitField field) {
-        field_5_options = field.setBoolean(field_5_options, flag);
+        formatting_options = field.setBoolean(formatting_options, flag);
+    }
+    
+    protected int getFormattingBlockSize() {
+        return
+          (containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
+          (containsBorderFormattingBlock()?8:0)+
+          (containsPatternFormattingBlock()?4:0);
+    }
+    protected void serializeFormattingBlock(LittleEndianOutput out) {
+        out.writeInt(formatting_options);
+        out.writeShort(formatting_not_used);
+
+        if (containsFontFormattingBlock()) {
+            byte[] fontFormattingRawRecord  = _fontFormatting.getRawRecord();
+            out.write(fontFormattingRawRecord);
+        }
+
+        if (containsBorderFormattingBlock()) {
+            _borderFormatting.serialize(out);
+        }
+
+        if (containsPatternFormattingBlock()) {
+            _patternFormatting.serialize(out);
+        }
     }
     
     /**
@@ -409,8 +437,8 @@ public abstract class CFRuleBase extends StandardRecord {
         rec.condition_type = condition_type;
         rec.comparison_operator = comparison_operator;
         
-        rec.field_5_options = field_5_options;
-        rec.field_6_not_used = field_6_not_used;
+        rec.formatting_options = formatting_options;
+        rec.formatting_not_used = formatting_not_used;
         if (containsFontFormattingBlock()) {
             rec._fontFormatting = (FontFormatting) _fontFormatting.clone();
         }
