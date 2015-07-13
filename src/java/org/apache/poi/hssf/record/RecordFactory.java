@@ -151,6 +151,7 @@ public final class RecordFactory {
         CFHeaderRecord.class,
         CFHeader12Record.class,
         CFRuleRecord.class,
+        CFRule12Record.class,
         ChartRecord.class,
         ChartTitleFormatRecord.class,
         CodepageRecord.class,
