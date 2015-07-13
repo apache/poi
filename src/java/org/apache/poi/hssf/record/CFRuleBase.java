@@ -347,7 +347,7 @@ public abstract class CFRuleBase extends StandardRecord {
     }
     
     protected int getFormattingBlockSize() {
-        return
+        return 6 +
           (containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
           (containsBorderFormattingBlock()?8:0)+
           (containsPatternFormattingBlock()?4:0);

@@ -114,7 +114,7 @@ public final class CFRuleRecord extends CFRuleBase {
     }
 
     protected int getDataSize() {
-        return 12 + getFormattingBlockSize() +
+        return 6 + getFormattingBlockSize() +
                getFormulaSize(getFormula1())+
                getFormulaSize(getFormula2());
     }

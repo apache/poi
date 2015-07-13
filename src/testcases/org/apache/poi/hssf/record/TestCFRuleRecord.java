@@ -402,8 +402,7 @@ public final class TestCFRuleRecord extends TestCase {
         assertArrayEquals(serializedRecord, serializedClone);
     }
     
-    // TODO Fix this test!
-    public void IGNORED_testBug57231_rewrite() {
+    public void testBug57231_rewrite() {
         HSSFWorkbook wb = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls");
         assertEquals(7, wb.getNumberOfSheets());
         wb = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);

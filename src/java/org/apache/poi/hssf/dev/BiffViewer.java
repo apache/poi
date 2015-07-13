@@ -179,6 +179,8 @@ public final class BiffViewer {
             case CFHeaderRecord.sid:          return new CFHeaderRecord(in);
             case CFHeader12Record.sid:        return new CFHeader12Record(in);
             case CFRuleRecord.sid:            return new CFRuleRecord(in);
+            case CFRule12Record.sid:          return new CFRule12Record(in);
+            // TODO Add CF Ex, and remove from UnknownRecord 
             case CalcCountRecord.sid:         return new CalcCountRecord(in);
             case CalcModeRecord.sid:          return new CalcModeRecord(in);
             case CategorySeriesAxisRecord.sid:return new CategorySeriesAxisRecord(in);
