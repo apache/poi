@@ -214,6 +214,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         
         getFormula1().serializeTokens(out);
         getFormula2().serializeTokens(out);
+        out.writeShort(getFormulaSize(formula_scale));
         formula_scale.serializeTokens(out);
         
         out.writeByte(ext_opts);
@@ -243,7 +244,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         }
         len += getFormulaSize(getFormula1());
         len += getFormulaSize(getFormula2());
-        len += 4 + getFormulaSize(formula_scale);
+        len += 2 + getFormulaSize(formula_scale);
         len += 6 + template_params.length;
         
         byte type = getConditionType();
@@ -278,7 +279,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         buffer.append("    .formula_1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
         buffer.append("    .formula_2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");
         buffer.append("    .formula_S =").append(Arrays.toString(formula_scale.getTokens())).append("\n");
-        buffer.append("    .ext Opts  =").append(ext_opts).append("\n");
+        buffer.append("    .ext_opts  =").append(ext_opts).append("\n");
         buffer.append("    .priority  =").append(priority).append("\n");
         buffer.append("    .template_type  =").append(template_type).append("\n");
         buffer.append("    .template_params=").append(HexDump.toHex(template_params)).append("\n");

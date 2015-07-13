@@ -24,8 +24,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
+ * Base tests for Conditional Formatting, for both HSSF and XSSF
  */
 public abstract class BaseTestConditionalFormatting extends TestCase {
     private final ITestDataProvider _testDataProvider;
@@ -525,6 +524,31 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals("\"AAA\"", rule5.getFormula2());
     }
 
+    public void testReadOffice2007(String filename) {
+        Workbook wb = _testDataProvider.openSampleWorkbook(filename);
+        Sheet s = wb.getSheet("CF");
+        ConditionalFormatting cf = null;
+        
+        // Sanity check data
+        assertEquals("Values", s.getRow(0).getCell(0).toString());
+        assertEquals("10.0", s.getRow(2).getCell(0).toString());
+
+        // Check we found all the conditional formattings rules we should have
+        SheetConditionalFormatting sheetCF = s.getSheetConditionalFormatting();
+        assertEquals(1, sheetCF.getNumConditionalFormattings()); // TODO Should be more!
+        
+        cf = sheetCF.getConditionalFormattingAt(0);
+        //System.out.println(cf);
+        
+        
+        // Check the rules / values in detail
+        
+        // Highlight Positive values - Column C
+        // TODO
+        
+        // Highlight 10-30 - Column D
+        // TODO
+    }
 
     public void testCreateFontFormatting() {
         Workbook workbook = _testDataProvider.createWorkbook();

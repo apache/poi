@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
- * @author Yegor Kozlov
+ * XSSF-specific Conditional Formatting tests
  */
 public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
     public TestXSSFConditionalFormatting(){
@@ -31,5 +31,10 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
 
     public void testRead(){
         testRead("WithConditionalFormatting.xlsx");
+    }
+    
+    public void IGNORED_testReadOffice2007() {
+        // TODO Bring the XSSF support up to the same level
+        testReadOffice2007("NewStyleConditionalFormattings.xlsx");
     }
 }

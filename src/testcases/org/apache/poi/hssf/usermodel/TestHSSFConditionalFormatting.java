@@ -28,16 +28,19 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
- *
- * @author Dmitriy Kumshayev
+ * HSSF-specific Conditional Formatting tests
  */
 public final class TestHSSFConditionalFormatting extends BaseTestConditionalFormatting {
     public TestHSSFConditionalFormatting(){
         super(HSSFITestDataProvider.instance);
     }
 
-    public void testRead(){
+    public void testRead() {
         testRead("WithConditionalFormatting.xls");
+    }
+    
+    public void testReadOffice2007() {
+        testReadOffice2007("NewStyleConditionalFormattings.xls");
     }
 
     public void test53691() throws IOException {
