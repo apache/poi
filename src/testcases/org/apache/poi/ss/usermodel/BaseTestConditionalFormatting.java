@@ -552,7 +552,14 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
                 if (str.contains("[CF12]")) fCF12++;
                 if (str.contains("[CFEX]")) fCFEX++;
             } else {
-                fail("TODO!"); 
+                ConditionType type = cf.getRule(cf.getNumberOfRules()-1).getConditionTypeType();
+                if (type == ConditionType.CELL_VALUE_IS ||
+                    type == ConditionType.FORMULA) {
+                    fCF++;
+                } else {
+                    // TODO Detect Ext ones
+                    fCF12++;
+                }
             }
         }
         assertEquals(numCF, fCF);

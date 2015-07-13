@@ -73,6 +73,10 @@ public class ConditionType {
     public final byte id;
     public final String type;
 
+    public String toString() {
+        return id + " - " + type;
+    }
+    
     
     public static ConditionType forId(byte id) {
         return forId((int)id);
