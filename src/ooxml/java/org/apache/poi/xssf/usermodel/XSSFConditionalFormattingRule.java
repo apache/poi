@@ -34,7 +34,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 
 /**
- * @author Yegor Kozlov
+ * XSSF suport for Conditional Formatting rules
  */
 public class XSSFConditionalFormattingRule implements ConditionalFormattingRule {
     private final CTCfRule _cfRule;
@@ -63,6 +63,8 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         typeLookup.put(STCfType.TIME_PERIOD, ConditionType.FILTER);
         typeLookup.put(STCfType.ABOVE_AVERAGE, ConditionType.FILTER);
     }
+    
+    // TODO Support types beyond CELL_VALUE_IS and FORMULA
 
     /*package*/ XSSFConditionalFormattingRule(XSSFSheet sh){
         _cfRule = CTCfRule.Factory.newInstance();

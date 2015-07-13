@@ -81,6 +81,8 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 	// TODO Should this be assigning unique IDs to the rules
 	//  as they get added to the file?
 	
+    // TODO Support types beyond CELL_VALUE_IS and FORMULA
+
 	HSSFConditionalFormatting(HSSFWorkbook workbook, CFRecordsAggregate cfAggregate)
 	{
 		if(workbook == null) {
