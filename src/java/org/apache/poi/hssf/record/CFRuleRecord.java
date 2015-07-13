@@ -46,12 +46,12 @@ public final class CFRuleRecord extends CFRuleBase {
     }
     private void setDefaults() {
         // Set modification flags to 1: by default options are not modified
-        field_5_options = modificationBits.setValue(field_5_options, -1);
+        formatting_options = modificationBits.setValue(formatting_options, -1);
         // Set formatting block flags to 0 (no formatting blocks)
-        field_5_options = fmtBlockBits.setValue(field_5_options, 0);
-        field_5_options = undocumented.clear(field_5_options);
+        formatting_options = fmtBlockBits.setValue(formatting_options, 0);
+        formatting_options = undocumented.clear(formatting_options);
 
-        field_6_not_used = (short)0x8002; // Excel seems to write this value, but it doesn't seem to care what it reads
+        formatting_not_used = (short)0x8002; // Excel seems to write this value, but it doesn't seem to care what it reads
         _fontFormatting = null;
         _borderFormatting = null;
         _patternFormatting = null;
@@ -106,34 +106,17 @@ public final class CFRuleRecord extends CFRuleBase {
         out.writeByte(getComparisonOperation());
         out.writeShort(formula1Len);
         out.writeShort(formula2Len);
-        out.writeInt(field_5_options);
-        out.writeShort(field_6_not_used);
-
-        if (containsFontFormattingBlock()) {
-            byte[] fontFormattingRawRecord  = _fontFormatting.getRawRecord();
-            out.write(fontFormattingRawRecord);
-        }
-
-        if (containsBorderFormattingBlock()) {
-            _borderFormatting.serialize(out);
-        }
-
-        if (containsPatternFormattingBlock()) {
-            _patternFormatting.serialize(out);
-        }
+        
+        serializeFormattingBlock(out);
 
         getFormula1().serializeTokens(out);
         getFormula2().serializeTokens(out);
     }
 
     protected int getDataSize() {
-        int i = 12 +
-                (containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
-                (containsBorderFormattingBlock()?8:0)+
-                (containsPatternFormattingBlock()?4:0)+
-                getFormulaSize(getFormula1())+
-                getFormulaSize(getFormula2());
-        return i;
+        return 12 + getFormattingBlockSize() +
+               getFormulaSize(getFormula1())+
+               getFormulaSize(getFormula2());
     }
 
     public String toString() {
