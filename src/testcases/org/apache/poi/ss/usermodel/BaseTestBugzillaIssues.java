@@ -32,6 +32,7 @@ import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -419,16 +420,16 @@ public abstract class BaseTestBugzillaIssues {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("My sheet");
 
-        Row row = sheet.createRow( 0 );
-        Cell cell = row.createCell( 0 );
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
         cell.setCellFormula(hyperlinkF);
         
         assertEquals(hyperlinkF, cell.getCellFormula());
 
         wb = _testDataProvider.writeOutAndReadBack(wb);
         sheet = wb.getSheet("My Sheet");
-        row = sheet.getRow( 0 );
-        cell = row.getCell( 0 );
+        row = sheet.getRow(0);
+        cell = row.getCell(0);
         
         assertEquals(hyperlinkF, cell.getCellFormula());
     }
@@ -691,7 +692,8 @@ public abstract class BaseTestBugzillaIssues {
      * TODO Fix this to evaluate for XSSF
      * TODO Fix this to work at all for HSSF
      */
-//    @Test
+    @Ignore("Fix this to evaluate for XSSF, Fix this to work at all for HSSF")
+    @Test
     public void bug46670() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet s = wb.createSheet();
@@ -730,7 +732,7 @@ public abstract class BaseTestBugzillaIssues {
         assertEquals(refHttp,  c2.getCellFormula());
 
         
-        // Try to evalutate, without giving a way to get at the other file
+        // Try to evaluate, without giving a way to get at the other file
         try {
             evaluateCell(wb, c1);
             fail("Shouldn't be able to evaluate without the other file");
@@ -1002,5 +1004,45 @@ public abstract class BaseTestBugzillaIssues {
             cfs.getNumericCellValue();
             fail();
         } catch(IllegalStateException e) {}
+    }
+    
+    @Test
+    public void test58113() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet( "Test" );
+
+        Row row = sheet.createRow(0);
+
+        Cell cell = row.createCell(0);
+        // verify that null-values can be set, this was possible up to 3.11, but broken in 3.12 
+        cell.setCellValue((String)null);
+        String value = cell.getStringCellValue();
+        assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
+                value == null || value.length() == 0);
+        
+        cell = row.createCell(1);
+        // also verify that setting formulas to null works  
+        cell.setCellType(Cell.CELL_TYPE_FORMULA);
+        cell.setCellValue((String)null);
+        
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+        value = cell.getStringCellValue();
+        assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
+                value == null || value.length() == 0);
+        
+        // set some value
+        cell.setCellType(Cell.CELL_TYPE_STRING);
+        cell.setCellValue("somevalue");
+
+        value = cell.getStringCellValue();
+        assertTrue("can set value afterwards: " + value,
+                value.equals("somevalue"));
+
+        // verify that the null-value is actually set even if there was some value in the cell before  
+        cell.setCellValue((String)null);
+        value = cell.getStringCellValue();
+        assertTrue("HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value,
+                value == null || value.length() == 0);
     }
 }
