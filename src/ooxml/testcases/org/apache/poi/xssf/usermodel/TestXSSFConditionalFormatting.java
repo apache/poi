@@ -33,8 +33,7 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
         testRead("WithConditionalFormatting.xlsx");
     }
     
-    public void IGNORED_testReadOffice2007() {
-        // TODO Bring the XSSF support up to the same level
+    public void testReadOffice2007() {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");
     }
 }
