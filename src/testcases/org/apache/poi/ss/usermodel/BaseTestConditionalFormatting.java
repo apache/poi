@@ -20,6 +20,8 @@
 package org.apache.poi.ss.usermodel;
 
 import junit.framework.TestCase;
+
+import org.apache.poi.hssf.usermodel.HSSFConditionalFormatting;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -528,6 +530,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         Workbook wb = _testDataProvider.openSampleWorkbook(filename);
         Sheet s = wb.getSheet("CF");
         ConditionalFormatting cf = null;
+        ConditionalFormattingRule cr = null;
         
         // Sanity check data
         assertEquals("Values", s.getRow(0).getCell(0).toString());
@@ -535,16 +538,38 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
 
         // Check we found all the conditional formattings rules we should have
         SheetConditionalFormatting sheetCF = s.getSheetConditionalFormatting();
-        assertEquals(1, sheetCF.getNumConditionalFormattings()); // TODO Should be more!
+        int numCF = 3;
+        int numCF12 = 15;
+        int numCFEX = 0; // TODO This should be 1, but we don't support CFEX formattings yet
+        assertEquals(numCF+numCF12+numCFEX, sheetCF.getNumConditionalFormattings());
         
-        cf = sheetCF.getConditionalFormattingAt(0);
-        //System.out.println(cf);
+        int fCF = 0, fCF12 = 0, fCFEX = 0;
+        for (int i=0; i<sheetCF.getNumConditionalFormattings(); i++) {
+            cf = sheetCF.getConditionalFormattingAt(i);
+            if (cf instanceof HSSFConditionalFormatting) {
+                String str = cf.toString();
+                if (str.contains("[CF]")) fCF++;
+                if (str.contains("[CF12]")) fCF12++;
+                if (str.contains("[CFEX]")) fCFEX++;
+            } else {
+                fail("TODO!"); 
+            }
+        }
+        assertEquals(numCF, fCF);
+        assertEquals(numCF12, fCF12);
+        assertEquals(numCFEX, fCFEX);
         
         
         // Check the rules / values in detail
         
         // Highlight Positive values - Column C
-        // TODO
+        cf = sheetCF.getConditionalFormattingAt(0);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("C2:C17", cf.getFormattingRanges()[0].formatAsString());
+        
+        assertEquals(1, cf.getNumberOfRules());
+        cr = cf.getRule(0);
+        // TODO Check the rest of this
         
         // Highlight 10-30 - Column D
         // TODO
