@@ -134,7 +134,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             super.close();
             
             int oleStreamSize = (int)(fileOut.length()+LittleEndianConsts.LONG_SIZE);
-            calculateChecksum(fileOut, oleStreamSize);
+            calculateChecksum(fileOut, (int)_pos);
             dir.createDocument(DEFAULT_POIFS_ENTRY, oleStreamSize, new EncryptedPackageWriter());
             createEncryptionInfoEntry(dir, fileOut);
         } catch (GeneralSecurityException e) {
