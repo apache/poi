@@ -431,13 +431,26 @@ public class SXSSFSheet implements Sheet, Cloneable
     }
 
     /**
-     * Returns the merged region at the specified index
+     * Returns the merged region at the specified index. If you want multiple
+     * regions, it is faster to call {@link #getMergedRegions()} than to call
+     * this each time.
      *
      * @return the merged region at the specified index
      */
     public CellRangeAddress getMergedRegion(int index)
     {
         return _sh.getMergedRegion(index);
+    }
+
+    /**
+     * Returns the list of merged regions. If you want multiple regions, this is
+     * faster than calling {@link #getMergedRegion(int)} each time.
+     *
+     * @return the list of merged regions
+     */
+    @Override
+    public List<CellRangeAddress> getMergedRegions() {
+        return _sh.getMergedRegions();
     }
 
     /**

@@ -321,6 +321,13 @@ public interface Sheet extends Iterable<Row> {
     public CellRangeAddress getMergedRegion(int index);
 
     /**
+     * Returns the list of merged regions.
+     *
+     * @return the list of merged regions
+     */
+    public List<CellRangeAddress> getMergedRegions();
+
+    /**
      *  Returns an iterator of the physical rows
      *
      * @return an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
