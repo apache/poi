@@ -43,91 +43,89 @@ import org.apache.poi.util.LittleEndian;
  * class works correctly.  
  */
 @SuppressWarnings("resource")
-public final class TestCFRecordsAggregate extends TestCase
-{
-    public void testCFRecordsAggregate() 
-	{
-		HSSFWorkbook workbook = new HSSFWorkbook();
+public final class TestCFRecordsAggregate extends TestCase {
+    public void testCFRecordsAggregate() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
         List<Record> recs = new ArrayList<Record>();
-		CFHeaderBase header = new CFHeaderRecord();
-		CFRuleBase rule1 = CFRuleRecord.create(sheet, "7");
-		CFRuleBase rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
-		CFRuleBase rule3 = CFRuleRecord.create(sheet, ComparisonOperator.GE, "100", null);
-		header.setNumberOfConditionalFormats(3);
-		CellRangeAddress[] cellRanges = {
-				new CellRangeAddress(0,1,0,0),
-				new CellRangeAddress(0,1,2,2),
-		};
-		header.setCellRanges(cellRanges);
-		recs.add(header);
-		recs.add(rule1);
-		recs.add(rule2);
-		recs.add(rule3);
-		CFRecordsAggregate record;
-		record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
+        CFHeaderBase header = new CFHeaderRecord();
+        CFRuleBase rule1 = CFRuleRecord.create(sheet, "7");
+        CFRuleBase rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
+        CFRuleBase rule3 = CFRuleRecord.create(sheet, ComparisonOperator.GE, "100", null);
+        header.setNumberOfConditionalFormats(3);
+        CellRangeAddress[] cellRanges = {
+                new CellRangeAddress(0,1,0,0),
+                new CellRangeAddress(0,1,2,2),
+        };
+        header.setCellRanges(cellRanges);
+        recs.add(header);
+        recs.add(rule1);
+        recs.add(rule2);
+        recs.add(rule3);
+        CFRecordsAggregate record;
+        record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
-		// Serialize
-		byte [] serializedRecord = new byte[record.getRecordSize()];
-		record.serialize(0, serializedRecord);
-		InputStream in = new ByteArrayInputStream(serializedRecord);
+        // Serialize
+        byte [] serializedRecord = new byte[record.getRecordSize()];
+        record.serialize(0, serializedRecord);
+        InputStream in = new ByteArrayInputStream(serializedRecord);
 
-		//Parse
-		recs = RecordFactory.createRecords(in);
+        //Parse
+        recs = RecordFactory.createRecords(in);
 
-		// Verify
-		assertNotNull(recs);
-		assertEquals(4, recs.size());
+        // Verify
+        assertNotNull(recs);
+        assertEquals(4, recs.size());
 
-		header = (CFHeaderRecord)recs.get(0);
-		rule1 = (CFRuleRecord)recs.get(1);
-		rule2 = (CFRuleRecord)recs.get(2);
-		rule3 = (CFRuleRecord)recs.get(3);
-		cellRanges = header.getCellRanges();
+        header = (CFHeaderRecord)recs.get(0);
+        rule1 = (CFRuleRecord)recs.get(1);
+        rule2 = (CFRuleRecord)recs.get(2);
+        rule3 = (CFRuleRecord)recs.get(3);
+        cellRanges = header.getCellRanges();
 
-		assertEquals(2, cellRanges.length);
-		assertEquals(3, header.getNumberOfConditionalFormats());
+        assertEquals(2, cellRanges.length);
+        assertEquals(3, header.getNumberOfConditionalFormats());
 
-		record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
+        record = CFRecordsAggregate.createCFAggregate(new RecordStream(recs, 0));
 
-		record = record.cloneCFAggregate();
+        record = record.cloneCFAggregate();
 
-		assertNotNull(record.getHeader());
-		assertEquals(3,record.getNumberOfRules());
+        assertNotNull(record.getHeader());
+        assertEquals(3,record.getNumberOfRules());
 
-		header = record.getHeader();
-		rule1 = record.getRule(0);
-		rule2 = record.getRule(1);
-		rule3 = record.getRule(2);
-		cellRanges = header.getCellRanges();
+        header = record.getHeader();
+        rule1 = record.getRule(0);
+        rule2 = record.getRule(1);
+        rule3 = record.getRule(2);
+        cellRanges = header.getCellRanges();
 
-		assertEquals(2, cellRanges.length);
-		assertEquals(3, header.getNumberOfConditionalFormats());
-	}
-	
-	/**
-	 * Make sure that the CF Header record is properly updated with the number of rules
-	 */
-	public void testNRules() {
-		HSSFWorkbook workbook = new HSSFWorkbook();
+        assertEquals(2, cellRanges.length);
+        assertEquals(3, header.getNumberOfConditionalFormats());
+    }
+
+    /**
+     * Make sure that the CF Header record is properly updated with the number of rules
+     */
+    public void testNRules() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
-		CellRangeAddress[] cellRanges = {
-				new CellRangeAddress(0,1,0,0),
-				new CellRangeAddress(0,1,2,2),
-		};
-		CFRuleRecord[] rules = {
-			CFRuleRecord.create(sheet, "7"),
-			CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5"),
-		};
-		CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
-		byte[] serializedRecord = new byte[agg.getRecordSize()];
-		agg.serialize(0, serializedRecord);
-		
-		int nRules = LittleEndian.getUShort(serializedRecord, 4);
-		if (nRules == 0) {
-			throw new AssertionFailedError("Identified bug 45682 b");
-		}
-		assertEquals(rules.length, nRules);
-	}
+        CellRangeAddress[] cellRanges = {
+                new CellRangeAddress(0,1,0,0),
+                new CellRangeAddress(0,1,2,2),
+        };
+        CFRuleRecord[] rules = {
+                CFRuleRecord.create(sheet, "7"),
+                CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5"),
+        };
+        CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
+        byte[] serializedRecord = new byte[agg.getRecordSize()];
+        agg.serialize(0, serializedRecord);
+
+        int nRules = LittleEndian.getUShort(serializedRecord, 4);
+        if (nRules == 0) {
+            throw new AssertionFailedError("Identified bug 45682 b");
+        }
+        assertEquals(rules.length, nRules);
+    }
 }
