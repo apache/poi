@@ -253,12 +253,15 @@ public class HexDump {
     {
         StringBuffer retVal = new StringBuffer();
         retVal.append('[');
-        for(int x = 0; x < value.length; x++)
+        if (value != null && value.length > 0)
         {
-            if (x>0) {
-                retVal.append(", ");
+            for(int x = 0; x < value.length; x++)
+            {
+                if (x>0) {
+                    retVal.append(", ");
+                }
+                retVal.append(toHex(value[x]));
             }
-            retVal.append(toHex(value[x]));
         }
         retVal.append(']');
         return retVal.toString();
