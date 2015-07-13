@@ -281,7 +281,7 @@ public final class XSSFRelation extends POIXMLRelation {
         "application/vnd.ms-office.vbaProject",
         "http://schemas.microsoft.com/office/2006/relationships/vbaProject",
         "/xl/vbaProject.bin",
-        null
+        XSSFVBAPart.class
     );
 
     public static final XSSFRelation ACTIVEX_CONTROLS = new XSSFRelation(
