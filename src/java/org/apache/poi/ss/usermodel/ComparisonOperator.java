@@ -24,9 +24,6 @@ package org.apache.poi.ss.usermodel;
  * <p>
  * For example, "highlight cells that begin with "M2" and contain "Mountain Gear".
  * </p>
- *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  */
 public final class ComparisonOperator {
     public static final byte NO_COMPARISON = 0;

@@ -25,6 +25,7 @@ import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.ConditionType;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 
 /**
@@ -33,8 +34,7 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
  * It allows to specify formula based conditions for the Conditional Formatting
  * and the formatting settings such as font, border and pattern.
  */
-public final class HSSFConditionalFormattingRule implements ConditionalFormattingRule
-{
+public final class HSSFConditionalFormattingRule implements ConditionalFormattingRule {
 	private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
 
 	private final CFRuleBase cfRuleRecord;
@@ -171,6 +171,12 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 	 */
 	public byte getConditionType() {
 		return cfRuleRecord.getConditionType();
+	}
+    /**
+     * @return -  the conditiontype for the cfrule
+     */
+	public ConditionType getConditionTypeType() {
+	    return ConditionType.forId(getConditionType());
 	}
 
 	/**

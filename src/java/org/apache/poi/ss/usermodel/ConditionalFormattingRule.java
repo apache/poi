@@ -19,6 +19,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.ss.usermodel.ConditionType.*;
+
 /**
  * Represents a description of a conditional formatting rule
  */
@@ -26,14 +28,16 @@ public interface ConditionalFormattingRule {
     /**
      * This conditional formatting rule compares a cell value
      * to a formula calculated result, using an operator
+     * @deprecated Use {@link ConditionType#CELL_VALUE_IS}
      */
-    public static final byte CONDITION_TYPE_CELL_VALUE_IS = 1;
+    public static final byte CONDITION_TYPE_CELL_VALUE_IS = CELL_VALUE_IS.id;
 
     /**
      *  This conditional formatting rule contains a formula to evaluate.
      *  When the formula result is true, the cell is highlighted.
+     * @deprecated Use {@link ConditionType#FORMULA}
      */
-    public static final byte CONDITION_TYPE_FORMULA = 2;
+    public static final byte CONDITION_TYPE_FORMULA = FORMULA.id;
 
     /**
      * Create a new border formatting structure if it does not exist,
@@ -77,12 +81,20 @@ public interface ConditionalFormattingRule {
     /**
      * Type of conditional formatting rule.
      * <p>
-     * MUST be either {@link #CONDITION_TYPE_CELL_VALUE_IS} or  {@link #CONDITION_TYPE_FORMULA}
+     * MUST be one of the IDs of a {@link ConditionType}
      * </p>
      *
      * @return the type of condition
+     * @deprecated Use {@link #getConditionTypeType()}
      */
     byte getConditionType();
+    
+    /**
+     * Type of conditional formatting rule.
+     *
+     * @return the type of condition
+     */
+    ConditionType getConditionTypeType();
 
     /**
      * The comparison function used when the type of conditional formatting is set to
