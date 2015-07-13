@@ -215,7 +215,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
      * Create a new SpreadsheetML workbook.
      */
     public XSSFWorkbook() {
-        super(newPackage());
+        this(XSSFWorkbookType.XLSX);
+    }
+
+    /**
+     * Create a new SpreadsheetML workbook.
+     * @param workbookType The type of workbook to make (.xlsx or .xlsm).
+     */
+    public XSSFWorkbook(XSSFWorkbookType workbookType) {
+        super(newPackage(workbookType));
         onWorkbookCreate();
     }
 
@@ -429,7 +437,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     /**
      * Create a new SpreadsheetML package and setup the default minimal content
      */
-    protected static OPCPackage newPackage() {
+    protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
         try {
             OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());
             // Main part
@@ -437,7 +445,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
             // Create main part relationship
             pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT);
             // Create main document part
-            pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
+            pkg.createPart(corePartName, workbookType.getContentType());
 
             pkg.getPackageProperties().setCreatorProperty(DOCUMENT_CREATOR);
 
@@ -2043,5 +2051,68 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Iterable<X
     @Beta
     protected void setPivotTables(List<XSSFPivotTable> pivotTables) {
         this.pivotTables = pivotTables;
+    }
+
+    public XSSFWorkbookType getWorkbookType() {
+        return isMacroEnabled() ? XSSFWorkbookType.XLSM : XSSFWorkbookType.XLSX;
+    }
+
+    /**
+     * Sets whether the workbook will be an .xlsx or .xlsm (macro-enabled) file.
+     */
+    public void setWorkbookType(XSSFWorkbookType type) {
+        try {
+            getPackagePart().setContentType(type.getContentType());
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
+     * Adds a vbaProject.bin file to the workbook.  This will change the workbook
+     * type if necessary.
+     *
+     * @throws IOException
+     */
+    public void setVBAProject(InputStream vbaProjectStream) throws IOException {
+        if (!isMacroEnabled()) {
+            setWorkbookType(XSSFWorkbookType.XLSM);
+        }
+
+        PackagePartName ppName;
+        try {
+            ppName = PackagingURIHelper.createPartName(XSSFRelation.VBA_MACROS.getDefaultFileName());
+        } catch (InvalidFormatException e) {
+            throw new POIXMLException(e);
+        }
+        OPCPackage opc = getPackage();
+        OutputStream outputStream;
+        if (!opc.containPart(ppName)) {
+            POIXMLDocumentPart relationship = createRelationship(XSSFRelation.VBA_MACROS, XSSFFactory.getInstance());
+            outputStream = relationship.getPackagePart().getOutputStream();
+        } else {
+            PackagePart part = opc.getPart(ppName);
+            outputStream = part.getOutputStream();
+        }
+        try {
+            IOUtils.copy(vbaProjectStream, outputStream);
+        } finally {
+            IOUtils.closeQuietly(outputStream);
+        }
+    }
+
+    /**
+     * Adds a vbaProject.bin file taken from another, given workbook to this one.
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public void setVBAProject(XSSFWorkbook macroWorkbook) throws IOException, InvalidFormatException {
+        if (!macroWorkbook.isMacroEnabled()) {
+            return;
+        }
+        InputStream vbaProjectStream = XSSFRelation.VBA_MACROS.getContents(macroWorkbook.getCorePart());
+        if (vbaProjectStream != null) {
+            setVBAProject(vbaProjectStream);
+        }
     }
 }

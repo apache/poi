@@ -601,11 +601,14 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 */
 	public void setContentType(String contentType)
 			throws InvalidFormatException {
-		if (_container == null)
-			this._contentType = new ContentType(contentType);
-		else
-			throw new InvalidOperationException(
-					"You can't change the content type of a part.");
+		if (_container == null) {
+			_contentType = new ContentType(contentType);
+		}
+		else {
+		    _container.unregisterPartAndContentType(_partName);
+		    _contentType = new ContentType(contentType);
+		    _container.registerPartAndContentType(this);
+		}
 	}
 
 	public OPCPackage getPackage() {

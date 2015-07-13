@@ -1551,4 +1551,31 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
         return success;
     }
+
+    /**
+    * Add the specified part, and register its content type with the content
+    * type manager.
+    *
+    * @param part
+    *            The part to add.
+    */
+    public void registerPartAndContentType(PackagePart part) {
+        addPackagePart(part);
+        this.contentTypeManager.addContentType(part.getPartName(), part.getContentType());
+        this.isDirty = true;
+    }
+
+    /**
+     * Remove the specified part, and clear its content type from the content
+     * type manager.
+     *
+     * @param partName
+     *            The part name of the part to remove.
+     */
+    public void unregisterPartAndContentType(PackagePartName partName) {
+        removePart(partName);
+        this.contentTypeManager.removeContentType(partName);
+        this.isDirty = true;
+    }
+
 }
