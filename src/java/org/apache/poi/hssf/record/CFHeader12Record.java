@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.common.FtrHeader;
+import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -25,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * Conditional Formatting Header v12 record CFHEADER12 (0x0879),
  *  for conditional formattings introduced in Excel 2007 and newer.
  */
-public final class CFHeader12Record extends CFHeaderBase {
+public final class CFHeader12Record extends CFHeaderBase implements FutureRecord {
     public static final short sid = 0x0879;
 
     private FtrHeader futureHeader;
@@ -68,6 +69,16 @@ public final class CFHeader12Record extends CFHeaderBase {
         return sid;
     }
 
+    public short getFutureRecordType() {
+        return futureHeader.getRecordType();
+    }
+    public FtrHeader getFutureHeader() {
+        return futureHeader;
+    }
+    public CellRangeAddress getAssociatedRange() {
+        return futureHeader.getAssociatedRange();
+    }
+    
     public Object clone() {
         CFHeader12Record result = new CFHeader12Record();
         result.futureHeader = (FtrHeader)futureHeader.clone();
