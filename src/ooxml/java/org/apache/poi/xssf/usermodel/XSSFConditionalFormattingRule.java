@@ -19,6 +19,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.xssf.model.StylesTable;
@@ -36,6 +39,30 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 public class XSSFConditionalFormattingRule implements ConditionalFormattingRule {
     private final CTCfRule _cfRule;
     private XSSFSheet _sh;
+    
+    private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<STCfType.Enum, ConditionType>();
+    static {
+        typeLookup.put(STCfType.CELL_IS, ConditionType.CELL_VALUE_IS);
+        typeLookup.put(STCfType.EXPRESSION, ConditionType.FORMULA);
+        typeLookup.put(STCfType.COLOR_SCALE, ConditionType.COLOR_SCALE);
+        typeLookup.put(STCfType.DATA_BAR, ConditionType.DATA_BAR);
+        typeLookup.put(STCfType.ICON_SET, ConditionType.ICON_SET);
+        
+        // These are all subtypes of Filter, we think...
+        typeLookup.put(STCfType.TOP_10, ConditionType.FILTER);
+        typeLookup.put(STCfType.UNIQUE_VALUES, ConditionType.FILTER);
+        typeLookup.put(STCfType.DUPLICATE_VALUES, ConditionType.FILTER);
+        typeLookup.put(STCfType.CONTAINS_TEXT, ConditionType.FILTER);
+        typeLookup.put(STCfType.NOT_CONTAINS_TEXT, ConditionType.FILTER);
+        typeLookup.put(STCfType.BEGINS_WITH, ConditionType.FILTER);
+        typeLookup.put(STCfType.ENDS_WITH, ConditionType.FILTER);
+        typeLookup.put(STCfType.CONTAINS_BLANKS, ConditionType.FILTER);
+        typeLookup.put(STCfType.NOT_CONTAINS_BLANKS, ConditionType.FILTER);
+        typeLookup.put(STCfType.CONTAINS_ERRORS, ConditionType.FILTER);
+        typeLookup.put(STCfType.NOT_CONTAINS_ERRORS, ConditionType.FILTER);
+        typeLookup.put(STCfType.TIME_PERIOD, ConditionType.FILTER);
+        typeLookup.put(STCfType.ABOVE_AVERAGE, ConditionType.FILTER);
+    }
 
     /*package*/ XSSFConditionalFormattingRule(XSSFSheet sh){
         _cfRule = CTCfRule.Factory.newInstance();
@@ -153,18 +180,22 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     /**
      * Type of conditional formatting rule.
      * <p>
-     * MUST be either {@link ConditionalFormattingRule#CONDITION_TYPE_CELL_VALUE_IS}
-     * or  {@link ConditionalFormattingRule#CONDITION_TYPE_FORMULA}
+     * MUST be one of the IDs of a {@link ConditionType}
      * </p>
      *
      * @return the type of condition
      */
     public byte getConditionType(){
-        switch (_cfRule.getType().intValue()){
-            case STCfType.INT_EXPRESSION: return ConditionalFormattingRule.CONDITION_TYPE_FORMULA;
-            case STCfType.INT_CELL_IS: return ConditionalFormattingRule.CONDITION_TYPE_CELL_VALUE_IS;
-        }
+        ConditionType type = getConditionTypeType();
+        if (type != null) return type.id;
         return 0;
+    }
+    
+    /**
+     * Type of conditional formatting rule.
+     */
+    public ConditionType getConditionTypeType() {
+        return typeLookup.get(_cfRule.getType());
     }
 
     /**
