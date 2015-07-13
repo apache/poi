@@ -149,6 +149,10 @@ public final class FontFormatting
 	{
 		return _rawData;
 	}
+	
+	public int getDataLength() {
+	    return RAW_DATA_SIZE;
+	}
 
 	/**
 	 * sets the height of the font in 1/20th point units

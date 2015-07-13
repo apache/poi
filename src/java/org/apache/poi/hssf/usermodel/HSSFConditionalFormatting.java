@@ -78,6 +78,9 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting
 	private final HSSFWorkbook _workbook;
 	private final CFRecordsAggregate cfAggregate;
 
+	// TODO Should this be assigning unique IDs to the rules
+	//  as they get added to the file?
+	
 	HSSFConditionalFormatting(HSSFWorkbook workbook, CFRecordsAggregate cfAggregate)
 	{
 		if(workbook == null) {

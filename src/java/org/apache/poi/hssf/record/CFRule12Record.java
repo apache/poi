@@ -154,11 +154,10 @@ public final class CFRule12Record extends CFRuleBase {
 
     public Object clone() {
         CFRule12Record rec = new CFRule12Record(getConditionType(), getComparisonOperation());
+        super.copyTo(rec);
         
         // TODO The other fields
         
-        rec.setFormula1(getFormula1().copy());
-        rec.setFormula2(getFormula2().copy());
         rec.formulaScale = formulaScale.copy();
 
         return rec;

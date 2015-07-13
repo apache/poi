@@ -89,6 +89,9 @@ public final class BorderFormatting {
         field_14_border_styles2    = in.readInt();
     }
 
+    public int getDataLength() {
+        return 8;
+    }
 
     /**
      * set the type of border to use for the left border of the cell
