@@ -1082,6 +1082,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
     }
 
     /**
+     * Returns the merged region at the specified index. If you want multiple
+     * regions, it is faster to call {@link #getMergedRegions()} than to call
+     * this each time.
+     *
      * @return the merged region at the specified index
      * @throws IllegalStateException if this worksheet does not contain merged regions
      */
@@ -1093,6 +1097,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet {
         CTMergeCell ctMergeCell = ctMergeCells.getMergeCellArray(index);
         String ref = ctMergeCell.getRef();
         return CellRangeAddress.valueOf(ref);
+    }
+
+    /**
+     * Returns the list of merged regions. If you want multiple regions, this is
+     * faster than calling {@link #getMergedRegion(int)} each time.
+     *
+     * @return the list of merged regions
+     * @throws IllegalStateException if this worksheet does not contain merged regions
+     */
+    @SuppressWarnings("deprecation")
+    @Override
+    public List<CellRangeAddress> getMergedRegions() {
+        CTMergeCells ctMergeCells = worksheet.getMergeCells();
+        if(ctMergeCells == null) throw new IllegalStateException("This worksheet does not contain merged regions");
+
+        List<CellRangeAddress> addresses = new ArrayList<CellRangeAddress>();
+        for(CTMergeCell ctMergeCell : ctMergeCells.getMergeCellArray()) {
+            String ref = ctMergeCell.getRef();
+            addresses.add(CellRangeAddress.valueOf(ref));
+        }
+        return addresses;
     }
 
     /**
