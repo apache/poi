@@ -594,10 +594,15 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(ComparisonOperator.GT, cr.getComparisonOperation());
         assertEquals("0", cr.getFormula1());
         assertEquals(null, cr.getFormula2());
-        // TODO Should the colours be slightly different like this?
+        // When it matches:
+        //   Sets the font colour to dark green
+        //   Sets the background colour to lighter green
+        // TODO Should the colours be slightly different between formats?
         if (cr instanceof HSSFConditionalFormattingRule) {
+            assertColour("0:8080:0", cr.getFontFormatting().getFontColor());
             assertColour("CCCC:FFFF:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
         } else {
+            assertColour("006100", cr.getFontFormatting().getFontColor());
             assertColour("C6EFCE", cr.getPatternFormatting().getFillBackgroundColorColor());
         }
         
@@ -613,9 +618,17 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(ComparisonOperator.BETWEEN, cr.getComparisonOperation());
         assertEquals("10", cr.getFormula1());
         assertEquals("30", cr.getFormula2());
-//        assertColourGreen(cr);
-//        assertColourRed(cr);
-        // TODO Colour checking
+        // When it matches:
+        //   Sets the font colour to dark red
+        //   Sets the background colour to lighter red
+        // TODO Should the colours be slightly different between formats?
+        if (cr instanceof HSSFConditionalFormattingRule) {
+            assertColour("8080:0:8080", cr.getFontFormatting().getFontColor());
+            assertColour("FFFF:9999:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
+        } else {
+            assertColour("9C0006", cr.getFontFormatting().getFontColor());
+            assertColour("FFC7CE", cr.getPatternFormatting().getFillBackgroundColorColor());
+        }
 
         
         // Data Bars - Column E
