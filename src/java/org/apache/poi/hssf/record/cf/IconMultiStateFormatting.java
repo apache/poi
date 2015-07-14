@@ -82,7 +82,7 @@ public final class IconMultiStateFormatting implements Cloneable {
     
     private boolean getOptionFlag(BitField field) {
         int value = field.getValue(options);
-        return value==0? true : false ;
+        return value==0 ? false : true;
     }
     private void setOptionFlag(boolean option, BitField field) {
         options = field.setByteBoolean(options, option);
