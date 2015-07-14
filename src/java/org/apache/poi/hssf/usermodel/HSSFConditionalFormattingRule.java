@@ -99,13 +99,13 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         if ( borderFormatting != null)
         {
             cfRuleRecord.setBorderFormatting(borderFormatting);
-            return new HSSFBorderFormatting(cfRuleRecord);
+            return new HSSFBorderFormatting(cfRuleRecord, workbook);
         }
         else if( create )
         {
             borderFormatting = new BorderFormatting();
             cfRuleRecord.setBorderFormatting(borderFormatting);
-            return new HSSFBorderFormatting(cfRuleRecord);
+            return new HSSFBorderFormatting(cfRuleRecord, workbook);
         }
         else
         {
