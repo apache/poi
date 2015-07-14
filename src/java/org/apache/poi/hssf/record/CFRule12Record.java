@@ -166,6 +166,13 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
             multistate = new IconMultiStateFormatting(in);
         }
     }
+    
+    public boolean containsMultiStateBlock() {
+        return (multistate != null);
+    }
+    public IconMultiStateFormatting getMultiStateFormatting() {
+        return multistate;
+    }
 
     /**
      * get the stack of the scale expression as a list
