@@ -22,7 +22,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -33,6 +35,11 @@ import org.apache.poi.ss.usermodel.Workbook;
 public final class TestHSSFConditionalFormatting extends BaseTestConditionalFormatting {
     public TestHSSFConditionalFormatting(){
         super(HSSFITestDataProvider.instance);
+    }
+    protected void assertColour(String hexExpected, Color actual) {
+        assertNotNull("Colour must be given", actual);
+        HSSFColor colour = (HSSFColor)actual;
+        assertEquals(hexExpected, colour.getHexString());
     }
 
     public void testRead() {
