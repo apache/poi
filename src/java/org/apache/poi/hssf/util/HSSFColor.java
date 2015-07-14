@@ -204,6 +204,13 @@ public class HSSFColor implements Color {
     {
         return BLACK.hexString;
     }
+    
+    public static HSSFColor toHSSFColor(Color color) {
+        if (color != null && !(color instanceof HSSFColor)) {
+            throw new IllegalArgumentException("Only HSSFColor objects are supported");
+        }
+        return (HSSFColor)color;
+    }
 
     /**
      * Class BLACK

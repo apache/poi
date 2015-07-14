@@ -77,11 +77,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
     }
 
     public void setFontColor(Color color) {
-        if (color != null && !(color instanceof HSSFColor)) {
-            throw new IllegalArgumentException("Only HSSFColor objects are supported");
-        }
-
-        HSSFColor hcolor = (HSSFColor)color;
+        HSSFColor hcolor = HSSFColor.toHSSFColor(color);
         if (hcolor == null) {
             fontFormatting.setFontColorIndex((short)0);
         } else {

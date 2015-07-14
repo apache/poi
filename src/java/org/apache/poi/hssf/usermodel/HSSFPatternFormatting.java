@@ -74,10 +74,7 @@ public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.Patter
     }
 
     public void setFillBackgroundColor(Color bg) {
-        if (bg != null && !(bg instanceof HSSFColor)) {
-            throw new IllegalArgumentException("Only HSSFColor objects are supported");
-        }
-        HSSFColor hcolor = (HSSFColor)bg;
+        HSSFColor hcolor = HSSFColor.toHSSFColor(bg);
         if (hcolor == null) {
             setFillBackgroundColor((short)0);
         } else {
@@ -86,10 +83,7 @@ public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.Patter
     }
 
     public void setFillForegroundColor(Color fg) {
-        if (fg != null && !(fg instanceof HSSFColor)) {
-            throw new IllegalArgumentException("Only HSSFColor objects are supported");
-        }
-        HSSFColor hcolor = (HSSFColor)fg;
+        HSSFColor hcolor = HSSFColor.toHSSFColor(fg);
         if (hcolor == null) {
             setFillForegroundColor((short)0);
         } else {

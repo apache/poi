@@ -63,10 +63,7 @@ public class XSSFPatternFormatting implements PatternFormatting {
     }
 
     public void setFillBackgroundColor(Color bg) {
-        if (bg != null && !(bg instanceof XSSFColor)) {
-            throw new IllegalArgumentException("Only XSSFColor objects are supported");
-        }
-        XSSFColor xcolor = (XSSFColor)bg;
+        XSSFColor xcolor = XSSFColor.toXSSFColor(bg);
         setFillBackgroundColor(xcolor.getCTColor());
     }
     public void setFillBackgroundColor(short bg) {
@@ -80,10 +77,7 @@ public class XSSFPatternFormatting implements PatternFormatting {
     }
     
     public void setFillForegroundColor(Color fg) {
-        if (fg != null && !(fg instanceof XSSFColor)) {
-            throw new IllegalArgumentException("Only XSSFColor objects are supported");
-        }
-        XSSFColor xcolor = (XSSFColor)fg;
+        XSSFColor xcolor = XSSFColor.toXSSFColor(fg);
         setFillForegroundColor(xcolor.getCTColor());
     }
     public void setFillForegroundColor(short fg) {

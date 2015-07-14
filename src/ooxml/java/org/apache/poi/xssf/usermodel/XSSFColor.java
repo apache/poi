@@ -316,6 +316,13 @@ public class XSSFColor implements Color {
         return ctColor;
     }
 
+    public static XSSFColor toXSSFColor(Color color) {
+        if (color != null && !(color instanceof XSSFColor)) {
+            throw new IllegalArgumentException("Only XSSFColor objects are supported");
+        }
+        return (XSSFColor)color;
+    }
+    
     public int hashCode(){
         return ctColor.toString().hashCode();
     }
