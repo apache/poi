@@ -25,11 +25,8 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
- *
- * @author Dmitriy Kumshayev
  */
 public final class BorderFormatting {
-
     /** No border */
     public final static short    BORDER_NONE                = 0x0;
     /** Thin border */
