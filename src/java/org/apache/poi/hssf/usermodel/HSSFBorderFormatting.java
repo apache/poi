@@ -95,7 +95,7 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
 
     public void setBackwardDiagonalOn(boolean on) {
         borderFormatting.setBackwardDiagonalOn(on);
-        if (on ) {
+        if (on) {
             cfRuleRecord.setTopLeftBottomRightBorderModified(on);
         }
     }
@@ -114,6 +114,9 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         if (border != 0) {
             cfRuleRecord.setBottomLeftTopRightBorderModified(true);
             cfRuleRecord.setTopLeftBottomRightBorderModified(true);
+        } else {
+            cfRuleRecord.setBottomLeftTopRightBorderModified(false);
+            cfRuleRecord.setTopLeftBottomRightBorderModified(false);
         }
     }
 
@@ -121,6 +124,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setBorderLeft(border);
         if (border != 0) {
             cfRuleRecord.setLeftBorderModified(true);
+        } else {
+            cfRuleRecord.setLeftBorderModified(false);
         }
     }
 
@@ -128,6 +133,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setBorderRight(border);
         if (border != 0) {
             cfRuleRecord.setRightBorderModified(true);
+        } else {
+            cfRuleRecord.setRightBorderModified(false);
         }
     }
 
@@ -135,6 +142,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setBorderTop(border);
         if (border != 0) {
             cfRuleRecord.setTopBorderModified(true);
+        } else {
+            cfRuleRecord.setTopBorderModified(false);
         }
     }
 
@@ -142,6 +151,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setBottomBorderColor(color);
         if (color != 0) {
             cfRuleRecord.setBottomBorderModified(true);
+        } else {
+            cfRuleRecord.setBottomBorderModified(false);
         }
     }
 
@@ -150,12 +161,15 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         if (color != 0) {
             cfRuleRecord.setBottomLeftTopRightBorderModified(true);
             cfRuleRecord.setTopLeftBottomRightBorderModified(true);
+        } else {
+            cfRuleRecord.setBottomLeftTopRightBorderModified(false);
+            cfRuleRecord.setTopLeftBottomRightBorderModified(false);
         }
     }
 
     public void setForwardDiagonalOn(boolean on) {
         borderFormatting.setForwardDiagonalOn(on);
-        if (on ) {
+        if (on) {
             cfRuleRecord.setBottomLeftTopRightBorderModified(on);
         }
     }
@@ -164,6 +178,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setLeftBorderColor(color);
         if (color != 0) {
             cfRuleRecord.setLeftBorderModified(true);
+        } else {
+            cfRuleRecord.setLeftBorderModified(false);
         }
     }
 
@@ -171,6 +187,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setRightBorderColor(color);
         if (color != 0) {
             cfRuleRecord.setRightBorderModified(true);
+        } else {
+            cfRuleRecord.setRightBorderModified(false);
         }
     }
 
@@ -178,6 +196,8 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setTopBorderColor(color);
         if (color != 0) {
             cfRuleRecord.setTopBorderModified(true);
+        } else {
+            cfRuleRecord.setTopBorderModified(false);
         }
     }
 }
