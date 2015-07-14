@@ -19,17 +19,21 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Color;
 
 /**
  * High level representation for Conditional Formatting settings
  */
 public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.PatternFormatting
 {
+    private final HSSFWorkbook workbook;
 	private final CFRuleBase cfRuleRecord;
 	private final PatternFormatting patternFormatting;
 	
-	protected HSSFPatternFormatting(CFRuleBase cfRuleRecord)
+	protected HSSFPatternFormatting(CFRuleBase cfRuleRecord, HSSFWorkbook workbook)
 	{
+	    this.workbook = workbook;
 		this.cfRuleRecord = cfRuleRecord; 
 		this.patternFormatting = cfRuleRecord.getPatternFormatting();
 	}
@@ -39,7 +43,15 @@ public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.Patter
 		return patternFormatting;
 	}
 
-	/**
+	public HSSFColor getFillBackgroundColorColor() {
+        return workbook.getCustomPalette().getColor(getFillBackgroundColor());
+    }
+
+    public HSSFColor getFillForegroundColorColor() {
+        return workbook.getCustomPalette().getColor(getFillForegroundColor());
+    }
+
+    /**
 	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillBackgroundColor()
 	 */
 	public short getFillBackgroundColor()
@@ -63,7 +75,31 @@ public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.Patter
 		return (short)patternFormatting.getFillPattern();
 	}
 
-	/**
+	public void setFillBackgroundColor(Color bg) {
+	    if (bg != null && !(bg instanceof HSSFColor)) {
+	        throw new IllegalArgumentException("Only HSSFColor objects are supported");
+	    }
+	    HSSFColor hcolor = (HSSFColor)bg;
+	    if (hcolor == null) {
+	        setFillBackgroundColor((short)0);
+	    } else {
+	        setFillBackgroundColor(hcolor.getIndex());
+	    }
+	}
+
+    public void setFillForegroundColor(Color fg) {
+        if (fg != null && !(fg instanceof HSSFColor)) {
+            throw new IllegalArgumentException("Only HSSFColor objects are supported");
+        }
+        HSSFColor hcolor = (HSSFColor)fg;
+        if (hcolor == null) {
+            setFillForegroundColor((short)0);
+        } else {
+            setFillForegroundColor(hcolor.getIndex());
+        }
+    }
+
+    /**
 	 * @param bg
 	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(int)
 	 */

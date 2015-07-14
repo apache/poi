@@ -135,13 +135,13 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 		if ( patternFormatting != null)
 		{
 			cfRuleRecord.setPatternFormatting(patternFormatting);
-			return new HSSFPatternFormatting(cfRuleRecord);
+			return new HSSFPatternFormatting(cfRuleRecord, workbook);
 		}
 		else if( create )
 		{
 			patternFormatting = new PatternFormatting();
 			cfRuleRecord.setPatternFormatting(patternFormatting);
-			return new HSSFPatternFormatting(cfRuleRecord);
+			return new HSSFPatternFormatting(cfRuleRecord, workbook);
 		}
 		else
 		{
