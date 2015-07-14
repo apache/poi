@@ -36,9 +36,12 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
 
 /**
- * @author Yegor Kozlov
+ * XSSF Conditional Formattings
  */
 public class XSSFSheetConditionalFormatting implements SheetConditionalFormatting {
+    /** Office 2010 Conditional Formatting extensions namespace */
+    protected static final CF_EXT_2009_NS_X14 = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main";
+
     private final XSSFSheet _sheet;
 
     /* package */ XSSFSheetConditionalFormatting(XSSFSheet sheet) {
