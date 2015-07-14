@@ -20,6 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Color;
 
 /**
  * High level representation for Border Formatting component
@@ -72,23 +73,42 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
     public short getDiagonalBorderColor() {
         return (short)borderFormatting.getDiagonalBorderColor();
     }
+    public HSSFColor getDiagonalBorderColorColor() {
+        return workbook.getCustomPalette().getColor(
+                borderFormatting.getDiagonalBorderColor()
+        );
+    }
 
     public short getLeftBorderColor() {
         return (short)borderFormatting.getLeftBorderColor();
+    }
+    public HSSFColor getLeftBorderColorColor() {
+        return workbook.getCustomPalette().getColor(
+                borderFormatting.getLeftBorderColor()
+        );
     }
 
     public short getRightBorderColor() {
         return (short)borderFormatting.getRightBorderColor();
     }
+    public HSSFColor getRightBorderColorColor() {
+        return workbook.getCustomPalette().getColor(
+                borderFormatting.getRightBorderColor()
+        );
+    }
 
     public short getTopBorderColor() {
         return (short)borderFormatting.getTopBorderColor();
+    }
+    public HSSFColor getTopBorderColorColor() {
+        return workbook.getCustomPalette().getColor(
+                borderFormatting.getTopBorderColor()
+        );
     }
 
     public boolean isBackwardDiagonalOn() {
         return borderFormatting.isBackwardDiagonalOn();
     }
-
     public boolean isForwardDiagonalOn() {
         return borderFormatting.isForwardDiagonalOn();
     }
@@ -97,6 +117,12 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         borderFormatting.setBackwardDiagonalOn(on);
         if (on) {
             cfRuleRecord.setTopLeftBottomRightBorderModified(on);
+        }
+    }
+    public void setForwardDiagonalOn(boolean on) {
+        borderFormatting.setForwardDiagonalOn(on);
+        if (on) {
+            cfRuleRecord.setBottomLeftTopRightBorderModified(on);
         }
     }
 
@@ -155,6 +181,14 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
             cfRuleRecord.setBottomBorderModified(false);
         }
     }
+    public void setBottomBorderColor(Color color) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(color);
+        if (hcolor == null) {
+            setBottomBorderColor((short)0);
+        } else {
+            setBottomBorderColor(hcolor.getIndex());
+        }
+    }
 
     public void setDiagonalBorderColor(short color) {
         borderFormatting.setDiagonalBorderColor(color);
@@ -166,11 +200,12 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
             cfRuleRecord.setTopLeftBottomRightBorderModified(false);
         }
     }
-
-    public void setForwardDiagonalOn(boolean on) {
-        borderFormatting.setForwardDiagonalOn(on);
-        if (on) {
-            cfRuleRecord.setBottomLeftTopRightBorderModified(on);
+    public void setDiagonalBorderColor(Color color) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(color);
+        if (hcolor == null) {
+            setDiagonalBorderColor((short)0);
+        } else {
+            setDiagonalBorderColor(hcolor.getIndex());
         }
     }
 
@@ -182,6 +217,14 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
             cfRuleRecord.setLeftBorderModified(false);
         }
     }
+    public void setLeftBorderColor(Color color) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(color);
+        if (hcolor == null) {
+            setLeftBorderColor((short)0);
+        } else {
+            setLeftBorderColor(hcolor.getIndex());
+        }
+    }
 
     public void setRightBorderColor(short color) {
         borderFormatting.setRightBorderColor(color);
@@ -191,6 +234,14 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
             cfRuleRecord.setRightBorderModified(false);
         }
     }
+    public void setRightBorderColor(Color color) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(color);
+        if (hcolor == null) {
+            setRightBorderColor((short)0);
+        } else {
+            setRightBorderColor(hcolor.getIndex());
+        }
+    }
 
     public void setTopBorderColor(short color) {
         borderFormatting.setTopBorderColor(color);
@@ -198,6 +249,14 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
             cfRuleRecord.setTopBorderModified(true);
         } else {
             cfRuleRecord.setTopBorderModified(false);
+        }
+    }
+    public void setTopBorderColor(Color color) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(color);
+        if (hcolor == null) {
+            setTopBorderColor((short)0);
+        } else {
+            setTopBorderColor(hcolor.getIndex());
         }
     }
 }
