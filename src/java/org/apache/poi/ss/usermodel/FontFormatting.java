@@ -22,9 +22,6 @@ package org.apache.poi.ss.usermodel;
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
- *
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
  */
 public interface FontFormatting {
     /** Escapement type - None */
