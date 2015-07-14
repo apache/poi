@@ -62,13 +62,13 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 		if ( fontFormatting != null)
 		{
 			cfRuleRecord.setFontFormatting(fontFormatting);
-			return new HSSFFontFormatting(cfRuleRecord);
+			return new HSSFFontFormatting(cfRuleRecord, workbook);
 		}
 		else if( create )
 		{
 			fontFormatting = new FontFormatting();
 			cfRuleRecord.setFontFormatting(fontFormatting);
-			return new HSSFFontFormatting(cfRuleRecord);
+			return new HSSFFontFormatting(cfRuleRecord, workbook);
 		}
 		else
 		{

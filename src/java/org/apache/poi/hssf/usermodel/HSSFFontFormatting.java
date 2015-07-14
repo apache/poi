@@ -19,6 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Color;
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
@@ -37,10 +39,12 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 	public final static byte U_DOUBLE_ACCOUNTING = FontFormatting.U_DOUBLE_ACCOUNTING;
 
 	private final FontFormatting fontFormatting;
+	private final HSSFWorkbook workbook;
 	
-	protected HSSFFontFormatting(CFRuleBase cfRuleRecord)
+	protected HSSFFontFormatting(CFRuleBase cfRuleRecord, HSSFWorkbook workbook)
 	{
 		this.fontFormatting = cfRuleRecord.getFontFormatting();
+		this.workbook = workbook;
 	}
 	
 	protected FontFormatting getFontFormattingBlock()
@@ -69,7 +73,26 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
 		return fontFormatting.getFontColorIndex();
 	}
 
-	/**
+	public HSSFColor getFontColor() {
+	    return workbook.getCustomPalette().getColor(
+	            getFontColorIndex()
+        );
+    }
+
+    public void setFontColor(Color color) {
+        if (color != null && !(color instanceof HSSFColor)) {
+            throw new IllegalArgumentException("Only HSSFColor objects are supported");
+        }
+         
+        HSSFColor hcolor = (HSSFColor)color;
+        if (hcolor == null) {
+            fontFormatting.setFontColorIndex((short)0);
+        } else {
+            fontFormatting.setFontColorIndex(hcolor.getIndex());
+        }
+    }
+
+    /**
 	 * gets the height of the font in 1/20th point units
 	 *
 	 * @return fontheight (in points/20); or -1 if not modified

@@ -40,7 +40,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormatti
  */
 public class XSSFSheetConditionalFormatting implements SheetConditionalFormatting {
     /** Office 2010 Conditional Formatting extensions namespace */
-    protected static final CF_EXT_2009_NS_X14 = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main";
+    protected static final String CF_EXT_2009_NS_X14 = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main";
 
     private final XSSFSheet _sheet;
 
