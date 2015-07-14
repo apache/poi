@@ -170,10 +170,7 @@ public class XSSFColor implements Color {
           return null;
        }
        for(byte c : rgb) {
-          int i = (int)c;
-          if(i < 0) {
-             i += 256;
-          }
+          int i = c & 0xff;
           String cs = Integer.toHexString(i);
           if(cs.length() == 1) {
              sb.append('0');

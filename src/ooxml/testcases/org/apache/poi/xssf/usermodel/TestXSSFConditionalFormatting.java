@@ -19,6 +19,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
+import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 
 /**
@@ -27,6 +28,16 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
     public TestXSSFConditionalFormatting(){
         super(XSSFITestDataProvider.instance);
+    }
+
+    protected void assertColour(String hexExpected, Color actual) {
+        assertNotNull("Colour must be given", actual);
+        XSSFColor colour = (XSSFColor)actual;
+        if (hexExpected.length() == 8) {
+            assertEquals(hexExpected, colour.getARGBHex());
+        } else {
+            assertEquals(hexExpected, colour.getARGBHex().substring(2));
+        }
     }
 
     public void testRead(){

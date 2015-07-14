@@ -35,6 +35,8 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
     public BaseTestConditionalFormatting(ITestDataProvider testDataProvider){
         _testDataProvider = testDataProvider;
     }
+    
+    protected abstract void assertColour(String hexExpected, Color actual);
 
     public void testBasic() {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -592,8 +594,12 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(ComparisonOperator.GT, cr.getComparisonOperation());
         assertEquals("0", cr.getFormula1());
         assertEquals(null, cr.getFormula2());
-//        assertColourGreen(cr);
-        // TODO Colour checking
+        // TODO Should the colours be slightly different like this?
+        if (cr instanceof HSSFConditionalFormattingRule) {
+            assertColour("CCCC:FFFF:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
+        } else {
+            assertColour("C6EFCE", cr.getPatternFormatting().getFillBackgroundColorColor());
+        }
         
         
         // Highlight 10-30 - Column D
