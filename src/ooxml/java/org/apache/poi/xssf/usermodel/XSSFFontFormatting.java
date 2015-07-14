@@ -97,11 +97,7 @@ public class XSSFFontFormatting implements FontFormatting {
     }
 
     public void setFontColor(Color color) {
-        if (color != null && !(color instanceof XSSFColor)) {
-            throw new IllegalArgumentException("Only XSSFColor objects are supported");
-        }
-         
-        XSSFColor xcolor = (XSSFColor)color;
+        XSSFColor xcolor = XSSFColor.toXSSFColor(color);
         if (xcolor == null) {
             _font.getColorList().clear();
         } else {

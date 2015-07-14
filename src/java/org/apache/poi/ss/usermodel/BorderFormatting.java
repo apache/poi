@@ -20,8 +20,8 @@
 package org.apache.poi.ss.usermodel;
 
 /**
- * @author Dmitriy Kumshayev
- * @author Yegor Kozlov
+ * High level representation for Border Formatting component
+ * of Conditional Formatting settings
  */
 public interface BorderFormatting {
     /** No border */
