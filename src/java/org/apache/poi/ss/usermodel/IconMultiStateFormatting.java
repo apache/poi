@@ -19,17 +19,44 @@
 
 package org.apache.poi.ss.usermodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * High level representation for the Icon / Multi-State Formatting 
  *  component of Conditional Formatting settings
  */
 public interface IconMultiStateFormatting {
-    class IconSet {
+    public enum IconSet {
+        /** Green Up / Yellow Side / Red Down arrows */
+        GYR_3_ARROW(0, 3, "3Arrows"),
+        /** Grey Up / Side / Down arrows */
+        GREY_3_ARROWS(1, 3, "3ArrowsGray"),
+        /** Green / Yellow / Red flags */
+        GYR_3_FLAGS(2, 3, "3Flags"),
+        /** Green / Yellow / Red traffic lights (no background) */
+        GYR_3_TRAFFIC_LIGHTS(3, 3, null),
+        /** Green Circle / Yellow Triangle / Red Diamond */ 
+        GYR_3_SHAPES(4, 3, "3Signs"),
+        /** Green / Yellow / Red traffic lights on a black square background */
+        GYR_3_TRAFFIC_LIGHTS_BOX(5, 3, "3TrafficLights2"),
+        /** Green Tick / Yellow ! / Red Cross on a circle background */
+        GYR_3_SYMBOLS_CIRCLE(6, 3, "3Symbols"),
+        /** Green Tick / Yellow ! / Red Cross (no background) */
+        GYR_3_SYMBOLS(7, 3, "3Symbols2"),
+        /** Green Up / Yellow NE / Yellow SE / Red Down arrows */
+        GYR_4_ARROWS(8, 4, "4Arrows"),
+        /** Grey Up / NE / SE / Down arrows */
+        GREY_4_ARROWS(9, 4, "4ArrowsGray"),
+        /** Red / Light Red / Grey / Black traffic lights */
+        RB_4_TRAFFIC_LIGHTS(0xA, 4, "4RedToBlack"),
+        RATINGS_4(0xB, 4, "4Rating"),
+        /** Green / Yellow / Red / Black traffic lights */
+        GYRB_4_TRAFFIC_LIGHTS(0xC, 4, "4TrafficLights"),
+        GYYYR_5_ARROWS(0xD, 5, "5Arrows"),
+        GREY_5_ARROWS(0xE, 5, "5ArrowsGray"),
+        RATINGS_5(0xF, 5, "5Rating"),
+        QUARTERS_5(0x10, 5, "5Quarters");
+        
         /** Numeric ID of the icon set */
-        public final int id;
+        public int id;
         /** How many icons in the set */
         public final int num;
         /** Name (system) of the set */
@@ -42,46 +69,14 @@ public interface IconMultiStateFormatting {
             return (name==null?"default":name);
         }
         
-        public static IconSet byId(int id) { return byId[id]; }
-        public static IconSet byName(String name) { return byName.get(name); }
+        public static IconSet byId(int id) {
+            return values()[id];
+        }
         
-        private static final IconSet[] byId = new IconSet[0x10];
-        private static final Map<String,IconSet> byName = new HashMap<String, IconMultiStateFormatting.IconSet>();
         private IconSet(int id, int num, String name) {
             this.id = id; this.num = num; this.name = name;
-            byId[id] = this;
-            byName.put(getName(),this);
         }
     }
-    /** Green Up / Yellow Side / Red Down arrows */
-    static final IconSet GYR_3_ARROWS = new IconSet(0, 3, "3Arrows");
-    /** Grey Up / Side / Down arrows */
-    static final IconSet GREY_3_ARROWS = new IconSet(1, 3, "3ArrowsGray");
-    /** Green / Yellow / Red flags */
-    static final IconSet GYR_3_FLAGS = new IconSet(2, 3, "3Flags");
-    /** Green / Yellow / Red traffic lights (no background) */
-    static final IconSet GYR_3_TRAFFIC_LIGHTS = new IconSet(3, 3, null);
-    /** Green Circle / Yellow Triangle / Red Diamond */ 
-    static final IconSet GYR_3_SHAPES = new IconSet(4, 3, "3Signs");
-    /** Green / Yellow / Red traffic lights on a black square background */
-    static final IconSet GYR_3_TRAFFIC_LIGHTS_BOX = new IconSet(5, 3, "3TrafficLights2");
-    /** Green Tick / Yellow ! / Red Cross on a circle background */
-    static final IconSet GYR_3_SYMBOLS_CIRCLE = new IconSet(6, 3, "3Symbols");
-    /** Green Tick / Yellow ! / Red Cross (no background) */
-    static final IconSet GYR_3_SYMBOLS = new IconSet(7, 3, "3Symbols2");
-    /** Green Up / Yellow NE / Yellow SE / Red Down arrows */
-    static final IconSet GYR_4_ARROWS = new IconSet(8, 4, "4Arrows");
-    /** Grey Up / NE / SE / Down arrows */
-    static final IconSet GREY_4_ARROWS = new IconSet(9, 4, "4ArrowsGray");
-    /** Red / Light Red / Grey / Black traffic lights */
-    static final IconSet RB_4_TRAFFIC_LIGHTS = new IconSet(0xA, 4, "4RedToBlack");
-    static final IconSet RATINGS_4 = new IconSet(0xB, 4, "4Rating");
-    /** Green / Yellow / Red / Black traffic lights */
-    static final IconSet GYRB_4_TRAFFIC_LIGHTS = new IconSet(0xC, 4, "4TrafficLights");
-    static final IconSet GYYYR_5_ARROWS = new IconSet(0xD, 5, "5Arrows");
-    static final IconSet GREY_5_ARROWS = new IconSet(0xE, 5, "5ArrowsGray");
-    static final IconSet RATINGS_5 = new IconSet(0xF, 5, "5Rating");
-    static final IconSet QUARTERS_5 = new IconSet(0x10, 5, "5Quarters");
     
     /**
      * Get the Icon Set used

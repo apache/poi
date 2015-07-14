@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 
+import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -52,11 +53,12 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
     private byte template_param_length;
     private byte[] template_params;
     
+    private IconMultiStateFormatting multistate;
+    
     // TODO Parse these
     private byte[] gradient_data;
     private byte[] databar_data;
     private byte[] filter_data;
-    private byte[] multistate_data;
 
     /** Creates new CFRuleRecord */
     private CFRule12Record(byte conditionType, byte comparisonOperation) {
@@ -161,7 +163,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         } else if (type == CONDITION_TYPE_FILTER) {
             filter_data = in.readRemainder();
         } else if (type == CONDITION_TYPE_ICON_SET) {
-            multistate_data = in.readRemainder();
+            multistate = new IconMultiStateFormatting(in);
         }
     }
 
@@ -231,7 +233,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         } else if (type == CONDITION_TYPE_FILTER) {
             out.write(filter_data);
         } else if (type == CONDITION_TYPE_ICON_SET) {
-            out.write(multistate_data);
+            multistate.serialize(out);
         }
     }
 
@@ -255,7 +257,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         } else if (type == CONDITION_TYPE_FILTER) {
             len += filter_data.length;
         } else if (type == CONDITION_TYPE_ICON_SET) {
-            len += multistate_data.length;
+            len += multistate.getDataLength();
         }
         return len;
     }
@@ -286,7 +288,9 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         buffer.append("    .gradient_data  =").append(HexDump.toHex(gradient_data)).append("\n");
         buffer.append("    .databar_data   =").append(HexDump.toHex(databar_data)).append("\n");
         buffer.append("    .filter_data    =").append(HexDump.toHex(filter_data)).append("\n");
-        buffer.append("    .multistate_data=").append(HexDump.toHex(multistate_data)).append("\n");
+        if (multistate != null) {
+            buffer.append(multistate);
+        }
         buffer.append("[/CFRULE12]\n");
         return buffer.toString();
     }

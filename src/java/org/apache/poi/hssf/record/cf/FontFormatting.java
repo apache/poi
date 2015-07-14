@@ -368,8 +368,7 @@ public final class FontFormatting {
         setInt(OFFSET_FONT_COLOR_INDEX,fci);
     }
 
-    private boolean getOptionFlag(BitField field)
-    {
+    private boolean getOptionFlag(BitField field) {
         int optionFlags = getInt(OFFSET_OPTION_FLAGS);
         int value = field.getValue(optionFlags);
         return value==0? true : false ;
