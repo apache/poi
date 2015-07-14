@@ -64,14 +64,19 @@ public interface BorderFormatting {
     short getBorderTop();
 
     short getBottomBorderColor();
+    Color getBottomBorderColorColor();
 
     short getDiagonalBorderColor();
+    Color getDiagonalBorderColorColor();
 
     short getLeftBorderColor();
+    Color getLeftBorderColorColor();
 
     short getRightBorderColor();
+    Color getRightBorderColorColor();
 
     short getTopBorderColor();
+    Color getTopBorderColorColor();
 
     void setBorderBottom(short border);
 
@@ -104,12 +109,17 @@ public interface BorderFormatting {
     void setBorderTop(short border);
 
     void setBottomBorderColor(short color);
+    void setBottomBorderColor(Color color);
 
     void setDiagonalBorderColor(short color);
+    void setDiagonalBorderColor(Color color);
 
     void setLeftBorderColor(short color);
+    void setLeftBorderColor(Color color);
 
     void setRightBorderColor(short color);
+    void setRightBorderColor(Color color);
 
     void setTopBorderColor(short color);
+    void setTopBorderColor(Color color);
 }
