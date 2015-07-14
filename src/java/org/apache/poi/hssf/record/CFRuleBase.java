@@ -410,7 +410,7 @@ public abstract class CFRuleBase extends StandardRecord {
     }
 
     /**
-     * @param ptgs must not be <code>null</code>
+     * @param formula must not be <code>null</code>
      * @return encoded size of the formula tokens (does not include 2 bytes for ushort length)
      */
     protected static int getFormulaSize(Formula formula) {

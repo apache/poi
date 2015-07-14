@@ -83,7 +83,7 @@ public interface SheetConditionalFormatting {
      * <p>
      * The created conditional formatting rule compares a cell value
      * to a formula calculated result, using the specified operator.
-     * The type  of the created condition is {@link ConditionalFormattingRule#CONDITION_CELL_VALUE_IS}
+     * The type  of the created condition is {@link ConditionType#CELL_VALUE_IS}
      * </p>
      *
      * @param comparisonOperation - MUST be a constant value from
@@ -112,7 +112,7 @@ public interface SheetConditionalFormatting {
      * Create a conditional formatting rule that compares a cell value
      * to a formula calculated result, using an operator     *
      * <p>
-      * The type  of the created condition is {@link ConditionalFormattingRule#CONDITION_CELL_VALUE_IS}
+      * The type  of the created condition is {@link ConditionType#CELL_VALUE_IS}
      * </p>
      *
      * @param comparisonOperation  MUST be a constant value from
@@ -129,7 +129,7 @@ public interface SheetConditionalFormatting {
      *  When the formula result is true, the cell is highlighted.
      *
      * <p>
-     *  The type of the created format condition is  {@link ConditionalFormattingRule#CONDITION_FORMULA}
+     *  The type of the created format condition is  {@link ConditionType#FORMULA}
      * </p>
      * @param formula   the formula to evaluate. MUST be a Boolean function.
      */
