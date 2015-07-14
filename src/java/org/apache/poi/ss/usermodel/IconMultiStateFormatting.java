@@ -19,6 +19,9 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * High level representation for the Icon / Multi-State Formatting 
  *  component of Conditional Formatting settings
@@ -31,11 +34,23 @@ public interface IconMultiStateFormatting {
         public final int num;
         /** Name (system) of the set */
         public final String name;
+        
         public String toString() {
-            return id + " - " + (name==null?"default":name);
+            return id + " - " + getName();
         }
+        private String getName() {
+            return (name==null?"default":name);
+        }
+        
+        public static IconSet byId(int id) { return byId[id]; }
+        public static IconSet byName(String name) { return byName.get(name); }
+        
+        private static final IconSet[] byId = new IconSet[0x10];
+        private static final Map<String,IconSet> byName = new HashMap<String, IconMultiStateFormatting.IconSet>();
         private IconSet(int id, int num, String name) {
             this.id = id; this.num = num; this.name = name;
+            byId[id] = this;
+            byName.put(getName(),this);
         }
     }
     /** Green Up / Yellow Side / Red Down arrows */
@@ -92,7 +107,7 @@ public interface IconMultiStateFormatting {
     void setIconOnly(boolean only);
     
     boolean isReversed();
-    void setReversed();
+    void setReversed(boolean reversed);
     
     // TODO States
 }
