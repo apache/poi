@@ -35,182 +35,179 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
  * and the formatting settings such as font, border and pattern.
  */
 public final class HSSFConditionalFormattingRule implements ConditionalFormattingRule {
-	private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
+    private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
 
-	private final CFRuleBase cfRuleRecord;
-	private final HSSFWorkbook workbook;
+    private final CFRuleBase cfRuleRecord;
+    private final HSSFWorkbook workbook;
 
-	HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleBase pRuleRecord) {
-		if (pWorkbook == null) {
-			throw new IllegalArgumentException("pWorkbook must not be null");
-		}
-		if (pRuleRecord == null) {
-			throw new IllegalArgumentException("pRuleRecord must not be null");
-		}
-		workbook = pWorkbook;
-		cfRuleRecord = pRuleRecord;
-	}
+    HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleBase pRuleRecord) {
+        if (pWorkbook == null) {
+            throw new IllegalArgumentException("pWorkbook must not be null");
+        }
+        if (pRuleRecord == null) {
+            throw new IllegalArgumentException("pRuleRecord must not be null");
+        }
+        workbook = pWorkbook;
+        cfRuleRecord = pRuleRecord;
+    }
 
-	CFRuleBase getCfRuleRecord()
-	{
-		return cfRuleRecord;
-	}
+    CFRuleBase getCfRuleRecord()
+    {
+        return cfRuleRecord;
+    }
 
-	private HSSFFontFormatting getFontFormatting(boolean create)
-	{
-		FontFormatting fontFormatting = cfRuleRecord.getFontFormatting();
-		if ( fontFormatting != null)
-		{
-			cfRuleRecord.setFontFormatting(fontFormatting);
-			return new HSSFFontFormatting(cfRuleRecord, workbook);
-		}
-		else if( create )
-		{
-			fontFormatting = new FontFormatting();
-			cfRuleRecord.setFontFormatting(fontFormatting);
-			return new HSSFFontFormatting(cfRuleRecord, workbook);
-		}
-		else
-		{
-			return null;
-		}
-	}
+    private HSSFFontFormatting getFontFormatting(boolean create)
+    {
+        FontFormatting fontFormatting = cfRuleRecord.getFontFormatting();
+        if ( fontFormatting != null)
+        {
+            cfRuleRecord.setFontFormatting(fontFormatting);
+            return new HSSFFontFormatting(cfRuleRecord, workbook);
+        }
+        else if( create )
+        {
+            fontFormatting = new FontFormatting();
+            cfRuleRecord.setFontFormatting(fontFormatting);
+            return new HSSFFontFormatting(cfRuleRecord, workbook);
+        }
+        else
+        {
+            return null;
+        }
+    }
 
-	/**
-	 * @return - font formatting object  if defined,  <code>null</code> otherwise
-	 */
-	public HSSFFontFormatting getFontFormatting()
-	{
-		return getFontFormatting(false);
-	}
-	/**
-	 * create a new font formatting structure if it does not exist,
-	 * otherwise just return existing object.
-	 * @return - font formatting object, never returns <code>null</code>.
-	 */
-	public HSSFFontFormatting createFontFormatting()
-	{
-		return getFontFormatting(true);
-	}
+    /**
+     * @return - font formatting object  if defined,  <code>null</code> otherwise
+     */
+    public HSSFFontFormatting getFontFormatting()
+    {
+        return getFontFormatting(false);
+    }
+    /**
+     * create a new font formatting structure if it does not exist,
+     * otherwise just return existing object.
+     * @return - font formatting object, never returns <code>null</code>.
+     */
+    public HSSFFontFormatting createFontFormatting()
+    {
+        return getFontFormatting(true);
+    }
 
-	private HSSFBorderFormatting getBorderFormatting(boolean create)
-	{
-		BorderFormatting borderFormatting = cfRuleRecord.getBorderFormatting();
-		if ( borderFormatting != null)
-		{
-			cfRuleRecord.setBorderFormatting(borderFormatting);
-			return new HSSFBorderFormatting(cfRuleRecord);
-		}
-		else if( create )
-		{
-			borderFormatting = new BorderFormatting();
-			cfRuleRecord.setBorderFormatting(borderFormatting);
-			return new HSSFBorderFormatting(cfRuleRecord);
-		}
-		else
-		{
-			return null;
-		}
-	}
-	/**
-	 * @return - border formatting object  if defined,  <code>null</code> otherwise
-	 */
-	public HSSFBorderFormatting getBorderFormatting()
-	{
-		return getBorderFormatting(false);
-	}
-	/**
-	 * create a new border formatting structure if it does not exist,
-	 * otherwise just return existing object.
-	 * @return - border formatting object, never returns <code>null</code>.
-	 */
-	public HSSFBorderFormatting createBorderFormatting()
-	{
-		return getBorderFormatting(true);
-	}
+    private HSSFBorderFormatting getBorderFormatting(boolean create)
+    {
+        BorderFormatting borderFormatting = cfRuleRecord.getBorderFormatting();
+        if ( borderFormatting != null)
+        {
+            cfRuleRecord.setBorderFormatting(borderFormatting);
+            return new HSSFBorderFormatting(cfRuleRecord);
+        }
+        else if( create )
+        {
+            borderFormatting = new BorderFormatting();
+            cfRuleRecord.setBorderFormatting(borderFormatting);
+            return new HSSFBorderFormatting(cfRuleRecord);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    /**
+     * @return - border formatting object  if defined,  <code>null</code> otherwise
+     */
+    public HSSFBorderFormatting getBorderFormatting()
+    {
+        return getBorderFormatting(false);
+    }
+    /**
+     * create a new border formatting structure if it does not exist,
+     * otherwise just return existing object.
+     * @return - border formatting object, never returns <code>null</code>.
+     */
+    public HSSFBorderFormatting createBorderFormatting()
+    {
+        return getBorderFormatting(true);
+    }
 
-	private HSSFPatternFormatting getPatternFormatting(boolean create)
-	{
-		PatternFormatting patternFormatting = cfRuleRecord.getPatternFormatting();
-		if ( patternFormatting != null)
-		{
-			cfRuleRecord.setPatternFormatting(patternFormatting);
-			return new HSSFPatternFormatting(cfRuleRecord, workbook);
-		}
-		else if( create )
-		{
-			patternFormatting = new PatternFormatting();
-			cfRuleRecord.setPatternFormatting(patternFormatting);
-			return new HSSFPatternFormatting(cfRuleRecord, workbook);
-		}
-		else
-		{
-			return null;
-		}
-	}
+    private HSSFPatternFormatting getPatternFormatting(boolean create)
+    {
+        PatternFormatting patternFormatting = cfRuleRecord.getPatternFormatting();
+        if ( patternFormatting != null)
+        {
+            cfRuleRecord.setPatternFormatting(patternFormatting);
+            return new HSSFPatternFormatting(cfRuleRecord, workbook);
+        }
+        else if( create )
+        {
+            patternFormatting = new PatternFormatting();
+            cfRuleRecord.setPatternFormatting(patternFormatting);
+            return new HSSFPatternFormatting(cfRuleRecord, workbook);
+        }
+        else
+        {
+            return null;
+        }
+    }
 
-	/**
-	 * @return - pattern formatting object  if defined, <code>null</code> otherwise
-	 */
-	public HSSFPatternFormatting getPatternFormatting()
-	{
-		return getPatternFormatting(false);
-	}
-	/**
-	 * create a new pattern formatting structure if it does not exist,
-	 * otherwise just return existing object.
-	 * @return - pattern formatting object, never returns <code>null</code>.
-	 */
-	public HSSFPatternFormatting createPatternFormatting()
-	{
-		return getPatternFormatting(true);
-	}
+    /**
+     * @return - pattern formatting object  if defined, <code>null</code> otherwise
+     */
+    public HSSFPatternFormatting getPatternFormatting()
+    {
+        return getPatternFormatting(false);
+    }
+    /**
+     * create a new pattern formatting structure if it does not exist,
+     * otherwise just return existing object.
+     * @return - pattern formatting object, never returns <code>null</code>.
+     */
+    public HSSFPatternFormatting createPatternFormatting()
+    {
+        return getPatternFormatting(true);
+    }
 
-	/**
-	 * @return -  the conditiontype for the cfrule
-	 */
-	public byte getConditionType() {
-		return cfRuleRecord.getConditionType();
-	}
     /**
      * @return -  the conditiontype for the cfrule
      */
-	public ConditionType getConditionTypeType() {
-	    return ConditionType.forId(getConditionType());
-	}
+    public byte getConditionType() {
+        return cfRuleRecord.getConditionType();
+    }
+    /**
+     * @return -  the conditiontype for the cfrule
+     */
+    public ConditionType getConditionTypeType() {
+        return ConditionType.forId(getConditionType());
+    }
 
-	/**
-	 * @return - the comparisionoperatation for the cfrule
-	 */
-	public byte getComparisonOperation() {
-		return cfRuleRecord.getComparisonOperation();
-	}
+    /**
+     * @return - the comparisionoperatation for the cfrule
+     */
+    public byte getComparisonOperation() {
+        return cfRuleRecord.getComparisonOperation();
+    }
 
-	public String getFormula1()
-	{
-		return toFormulaString(cfRuleRecord.getParsedExpression1());
-	}
+    public String getFormula1()
+    {
+        return toFormulaString(cfRuleRecord.getParsedExpression1());
+    }
 
-	public String getFormula2()
-	{
-		byte conditionType = cfRuleRecord.getConditionType();
-		if (conditionType == CELL_COMPARISON) {
-			byte comparisonOperation = cfRuleRecord.getComparisonOperation();
-			switch(comparisonOperation)
-			{
-				case ComparisonOperator.BETWEEN:
-				case ComparisonOperator.NOT_BETWEEN:
-					return toFormulaString(cfRuleRecord.getParsedExpression2());
-			}
-		}
-		return null;
-	}
+    public String getFormula2() {
+        byte conditionType = cfRuleRecord.getConditionType();
+        if (conditionType == CELL_COMPARISON) {
+            byte comparisonOperation = cfRuleRecord.getComparisonOperation();
+            switch(comparisonOperation) {
+                case ComparisonOperator.BETWEEN:
+                case ComparisonOperator.NOT_BETWEEN:
+                    return toFormulaString(cfRuleRecord.getParsedExpression2());
+            }
+        }
+        return null;
+    }
 
-	private String toFormulaString(Ptg[] parsedExpression)
-	{
-		if(parsedExpression ==null) {
-			return null;
-		}
-		return HSSFFormulaParser.toFormulaString(workbook, parsedExpression);
-	}
+    private String toFormulaString(Ptg[] parsedExpression) {
+        if(parsedExpression ==null) {
+            return null;
+        }
+        return HSSFFormulaParser.toFormulaString(workbook, parsedExpression);
+    }
 }
