@@ -64,30 +64,40 @@ public class XSSFPatternFormatting implements PatternFormatting {
 
     public void setFillBackgroundColor(Color bg) {
         XSSFColor xcolor = XSSFColor.toXSSFColor(bg);
-        setFillBackgroundColor(xcolor.getCTColor());
+        if (xcolor == null) setFillBackgroundColor((CTColor)null);
+        else setFillBackgroundColor(xcolor.getCTColor());
     }
     public void setFillBackgroundColor(short bg) {
         CTColor bgColor = CTColor.Factory.newInstance();
         bgColor.setIndexed(bg);
         setFillBackgroundColor(bgColor);
     }
-    public void setFillBackgroundColor(CTColor color) {
+    private void setFillBackgroundColor(CTColor color) {
         CTPatternFill ptrn = _fill.isSetPatternFill() ? _fill.getPatternFill() : _fill.addNewPatternFill();
-        ptrn.setBgColor(color);
+        if (color == null) {
+            ptrn.unsetBgColor();
+        } else {
+            ptrn.setBgColor(color);
+        }
     }
     
     public void setFillForegroundColor(Color fg) {
         XSSFColor xcolor = XSSFColor.toXSSFColor(fg);
-        setFillForegroundColor(xcolor.getCTColor());
+        if (xcolor == null) setFillForegroundColor((CTColor)null);
+        else setFillForegroundColor(xcolor.getCTColor());
     }
     public void setFillForegroundColor(short fg) {
         CTColor fgColor = CTColor.Factory.newInstance();
         fgColor.setIndexed(fg);
         setFillForegroundColor(fgColor);
     }
-    public void setFillForegroundColor(CTColor color) {
+    private void setFillForegroundColor(CTColor color) {
         CTPatternFill ptrn = _fill.isSetPatternFill() ? _fill.getPatternFill() : _fill.addNewPatternFill();
-        ptrn.setFgColor(color);
+        if (color == null) {
+            ptrn.unsetFgColor();
+        } else {
+            ptrn.setFgColor(color);
+        }
     }
 
     public void setFillPattern(short fp){
