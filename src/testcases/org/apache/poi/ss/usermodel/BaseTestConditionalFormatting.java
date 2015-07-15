@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFConditionalFormatting;
 import org.apache.poi.hssf.usermodel.HSSFConditionalFormattingRule;
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -544,6 +545,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         Sheet s = wb.getSheet("CF");
         ConditionalFormatting cf = null;
         ConditionalFormattingRule cr = null;
+        IconMultiStateFormatting icon = null;
         
         // Sanity check data
         assertEquals("Values", s.getRow(0).getCell(0).toString());
@@ -644,7 +646,30 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         
         // Colours R->G - Column F
         // Colours BWR - Column G
+        
         // Icons : Default - Column H
+        cf = sheetCF.getConditionalFormattingAt(5);
+        assertEquals(1, cf.getFormattingRanges().length);
+        assertEquals("H2:H17", cf.getFormattingRanges()[0].formatAsString());
+        
+        assertEquals(1, cf.getNumberOfRules());
+        cr = cf.getRule(0);
+        assertEquals(ConditionType.ICON_SET, cr.getConditionTypeType());
+        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
+        assertEquals(null, cr.getFormula1());
+        assertEquals(null, cr.getFormula2());
+        if (cr instanceof HSSFConditionalFormattingRule) {
+            HSSFConditionalFormattingRule hcr = (HSSFConditionalFormattingRule)cr;
+            icon = hcr.getMultiStateFormatting();
+            assertNotNull(icon);
+            assertEquals(IconSet.GYR_3_TRAFFIC_LIGHTS, icon.getIconSet());
+            assertEquals(false, icon.isIconOnly());
+            assertEquals(false, icon.isReversed());
+            // TODO Check the rest
+        } else {
+            // TODO XSSF Support
+        }
+        
         // Icons : 3 signs - Column I
         // Icons : 3 traffic lights 2 - Column J
         // Icons : 4 traffic lights - Column K
@@ -832,6 +857,10 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(BorderFormatting.BORDER_THICK, r1fp.getBorderTop());
         assertEquals(BorderFormatting.BORDER_THIN, r1fp.getBorderLeft());
         assertEquals(BorderFormatting.BORDER_HAIR, r1fp.getBorderRight());
+    }
+    
+    public void testCreateIconFormatting() {
+        // TODO Implement for XSSF, then test here
     }
     
     public void testBug55380() {

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
@@ -24,6 +25,7 @@ import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -94,6 +96,20 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 		CFRuleRecord rr = CFRuleRecord.create(_sheet, formula);
 		return new HSSFConditionalFormattingRule(wb, rr);
 	}
+	
+	/**
+	 * A factory method allowing the creation of conditional formatting
+	 *  rules using an Icon Set / Multi-State formatting/
+	 */
+	// TODO Implement
+/*
+	public HSSFConditionalFormattingRule createConditionalFormattingRule(
+	        IconSet iconSet) { // TODO Multi-State data for it
+        HSSFWorkbook wb = _sheet.getWorkbook();
+        CFRule12Record rr = CFRule12Record.create(_sheet, iconSet);
+        return new HSSFConditionalFormattingRule(wb, rr);
+	}
+*/
 
 	/**
 	 * Adds a copy of HSSFConditionalFormatting object to the sheet
