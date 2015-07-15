@@ -34,7 +34,6 @@ import org.apache.poi.util.Units;
 public class DrawTextParagraph<T extends TextRun> implements Drawable {
     protected TextParagraph<T> paragraph;
     double x, y;
-    protected Insets2D insets = new Insets2D(0,0,0,0);
     protected List<DrawTextFragment> lines = new ArrayList<DrawTextFragment>();
     protected String rawText;
     protected DrawTextFragment bullet;
@@ -47,14 +46,6 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
 
     public DrawTextParagraph(TextParagraph<T> paragraph) {
         this.paragraph = paragraph;
-    }
-
-    public Insets2D getInsets() {
-        return insets;
-    }
-
-    public void setInsets(Insets2D insets) {
-        this.insets.set(insets.top, insets.left, insets.bottom, insets.right);
     }
 
     public void setPosition(double x, double y) {
@@ -78,6 +69,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     public void draw(Graphics2D graphics){
         if (lines.isEmpty()) return;
         
+        Insets2D insets = paragraph.getParentShape().getInsets();
         double leftInset = insets.left;
         double rightInset = insets.right;
         double penY = y;
@@ -336,6 +328,7 @@ public class DrawTextParagraph<T extends TextRun> implements Drawable {
     protected double getWrappingWidth(boolean firstLine, Graphics2D graphics){
         // internal margins for the text box
 
+        Insets2D insets = paragraph.getParentShape().getInsets();
         double leftInset = insets.left;
         double rightInset = insets.right;
 

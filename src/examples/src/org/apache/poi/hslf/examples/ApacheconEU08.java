@@ -74,7 +74,7 @@ public final class ApacheconEU08 {
         slide.addShape(box2);
 
         HSLFTextBox box3 = new HSLFTextBox();
-        box3.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(32);
+        box3.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(32d);
         box3.setText(
                 "Yegor Kozlov\r" +
                 "yegor - apache - org");
@@ -129,10 +129,10 @@ public final class ApacheconEU08 {
 
         List<HSLFTextParagraph> tp = box2.getTextParagraphs();
         for (int i : new byte[]{0,1,2,8}) {
-            tp.get(i).getTextRuns().get(0).setFontSize(28);
+            tp.get(i).getTextRuns().get(0).setFontSize(28d);
         }
         for (int i : new byte[]{3,4,5,6,7}) {
-            tp.get(i).getTextRuns().get(0).setFontSize(24);
+            tp.get(i).getTextRuns().get(0).setFontSize(24d);
             tp.get(i).setIndentLevel(1);
         }
         box2.setAnchor(new Rectangle(36, 80, 648, 400));
@@ -152,15 +152,15 @@ public final class ApacheconEU08 {
                 HSLFTableCell cell = table1.getCell(i, j);
                 cell.setText(txt1[i][j]);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
-                rt.setFontSize(10);
+                rt.setFontSize(10d);
                 rt.setFontFamily("Arial");
                 rt.setBold(true);
                 if(i == 0){
-                    rt.setFontSize(32);
+                    rt.setFontSize(32d);
                     rt.setFontColor(Color.white);
                     cell.getFill().setForegroundColor(new Color(0, 153, 204));
                 } else {
-                    rt.setFontSize(28);
+                    rt.setFontSize(28d);
                     cell.getFill().setForegroundColor(new Color(235, 239, 241));
                 }
                 cell.setVerticalAlignment(VerticalAlignment.MIDDLE);
@@ -186,7 +186,7 @@ public final class ApacheconEU08 {
 
         HSLFTextBox box1 = new HSLFTextBox();
         box1.setHorizontalCentered(true);
-        box1.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(24);
+        box1.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(24d);
         box1.setText("The source code is available at\r" +
                 "http://people.apache.org/~yegor/apachecon_eu08/");
         box1.setAnchor(new Rectangle(80, 356, 553, 65));
@@ -225,7 +225,7 @@ public final class ApacheconEU08 {
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(18);
+        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(18d);
         box2.setText("Creating a simple presentation from scratch");
         box2.setAnchor(new Rectangle(170, 100, 364, 30));
         slide.addShape(box2);
@@ -233,7 +233,7 @@ public final class ApacheconEU08 {
         HSLFTextBox box3 = new HSLFTextBox();
         HSLFTextRun rt3 = box3.getTextParagraphs().get(0).getTextRuns().get(0);
         rt3.setFontFamily("Courier New");
-        rt3.setFontSize(8);
+        rt3.setFontSize(8d);
         box3.setText(
                 "SlideShow ppt = new SlideShow();\u000b" +
                 "Slide slide = ppt.createSlide();\u000b" +
@@ -334,7 +334,7 @@ public final class ApacheconEU08 {
         slide.addShape(box1);
 
         HSLFTextBox box2 = new HSLFTextBox();
-        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(18);
+        box2.getTextParagraphs().get(0).getTextRuns().get(0).setFontSize(18d);
         box2.setText("PPGraphics2D: PowerPoint Graphics2D driver");
         box2.setAnchor(new Rectangle(178, 70, 387, 30));
         slide.addShape(box2);
@@ -342,7 +342,7 @@ public final class ApacheconEU08 {
         HSLFTextBox box3 = new HSLFTextBox();
         HSLFTextRun rt3 = box3.getTextParagraphs().get(0).getTextRuns().get(0);
         rt3.setFontFamily("Courier New");
-        rt3.setFontSize(8);
+        rt3.setFontSize(8d);
         box3.setText(
                 "//bar chart data. The first value is the bar color, the second is the width\u000b" +
                 "Object[] def = new Object[]{\u000b" +
@@ -446,10 +446,10 @@ public final class ApacheconEU08 {
 
         List<HSLFTextParagraph> tp = box2.getTextParagraphs();
         for (int i : new byte[]{0,1,3}) {
-            tp.get(i).getTextRuns().get(0).setFontSize(28);
+            tp.get(i).getTextRuns().get(0).setFontSize(28d);
         }
         for (int i : new byte[]{2,4,5}) {
-            tp.get(i).getTextRuns().get(0).setFontSize(24);
+            tp.get(i).getTextRuns().get(0).setFontSize(24d);
             tp.get(i).setIndentLevel(1);
         }
         

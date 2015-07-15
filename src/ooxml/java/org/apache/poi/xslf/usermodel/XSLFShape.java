@@ -143,6 +143,12 @@ public abstract class XSLFShape implements Shape {
                     pr = shape.getGrpSpPr();
                 }
                 if (pr == null) {
+                    if (shape.getXmlObject() instanceof CTBackground) {
+                        pr = shape.getXmlObject();
+                    }
+                }
+                
+                if (pr == null) {
                     setValue(PaintStyle.TRANSPARENT_PAINT);
                     return true;
                 }
@@ -174,29 +180,7 @@ public abstract class XSLFShape implements Shape {
         if (fillRef == null) {
             fillRef = getBgRef();
         }
-        if (fillRef == null) {
-            return PaintStyle.TRANSPARENT_PAINT;
-        }
-
-        // The idx attribute refers to the index of a fill style or
-        // background fill style within the presentation's style matrix, defined by the fmtScheme element.
-        // value of 0 or 1000 indicates no background,
-        // values 1-999 refer to the index of a fill style within the fillStyleLst element
-        // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
-        int idx = (int)fillRef.getIdx();
-        CTSchemeColor phClr = fillRef.getSchemeClr();
-        XSLFSheet sheet = getSheet();
-        XSLFTheme theme = sheet.getTheme();
-        XmlObject fillProps = null;
-        CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
-        if(idx >= 1 && idx <= 999){
-            fillProps = matrix.getFillStyleLst().selectPath("*")[idx - 1];
-        } else if (idx >= 1001 ){
-            fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
-        }
-        if(fillProps != null) {
-            paint = selectPaint(fillProps, phClr, sheet.getPackagePart());
-        }
+        paint = selectPaint(fillRef);
 
         return paint == null ? PaintStyle.TRANSPARENT_PAINT : paint;
     }
@@ -250,6 +234,28 @@ public abstract class XSLFShape implements Shape {
         }
         return _ph;
     }
+
+    /**
+     * Specifies that the corresponding shape should be represented by the generating application
+     * as a placeholder. When a shape is considered a placeholder by the generating application
+     * it can have special properties to alert the user that they may enter content into the shape.
+     * Different types of placeholders are allowed and can be specified by using the placeholder
+     * type attribute for this element
+     *
+     * @param placeholder
+     */
+    protected void setPlaceholder(Placeholder placeholder) {
+        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr";
+        CTApplicationNonVisualDrawingProps nv = selectProperty(CTApplicationNonVisualDrawingProps.class, xquery);
+        if (nv == null) return;
+        if(placeholder == null) {
+            if (nv.isSetPh()) nv.unsetPh();
+            _ph = null;
+        } else {
+            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
+        }
+    }
+    
     
     /**
      * As there's no xmlbeans hierarchy, but XSLF works with subclassing, not all
@@ -365,6 +371,8 @@ public abstract class XSLFShape implements Shape {
             return selectPaint((CTBlipFillProperties)obj, phClr, parentPart);
         } else if (obj instanceof CTGradientFillProperties) {
             return selectPaint((CTGradientFillProperties) obj, phClr, parentPart);
+        } else if (obj instanceof CTStyleMatrixReference) {
+            return selectPaint((CTStyleMatrixReference)obj);
         } else {
             return null;
         }
@@ -479,5 +487,25 @@ public abstract class XSLFShape implements Shape {
         };        
     }
     
-
+    protected PaintStyle selectPaint(CTStyleMatrixReference fillRef) {
+        if (fillRef == null) return null;
+        
+        // The idx attribute refers to the index of a fill style or
+        // background fill style within the presentation's style matrix, defined by the fmtScheme element.
+        // value of 0 or 1000 indicates no background,
+        // values 1-999 refer to the index of a fill style within the fillStyleLst element
+        // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
+        int idx = (int)fillRef.getIdx();
+        CTSchemeColor phClr = fillRef.getSchemeClr();
+        XSLFSheet sheet = getSheet();
+        XSLFTheme theme = sheet.getTheme();
+        XmlObject fillProps = null;
+        CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
+        if (idx >= 1 && idx <= 999) {
+            fillProps = matrix.getFillStyleLst().selectPath("*")[idx - 1];
+        } else if (idx >= 1001 ){
+            fillProps = matrix.getBgFillStyleLst().selectPath("*")[idx - 1001];
+        }
+        return (fillProps == null) ? null : selectPaint(fillProps, phClr, theme.getPackagePart());
+    }
 }

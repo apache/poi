@@ -143,7 +143,7 @@ public class TestXSLFSlide {
         assertFalse(r2.isItalic());
         assertEquals(Color.white, r2.getFontColor());
         assertEquals(new Color(148, 198, 0), sh2.getFillColor());
-        assertEquals(new Color(74, 99, 0), sh2.getLineColor()); // slightly different from PowerPoint!
+        assertEquals(new Color(148, 198, 0), sh2.getLineColor()); // slightly different from PowerPoint!
 
         // the 5th slide has a picture and a texture fill
         XSLFSlide slide2 = ppt.createSlide().importContent(src.getSlides().get(4));

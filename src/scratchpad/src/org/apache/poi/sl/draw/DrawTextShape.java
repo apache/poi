@@ -119,7 +119,6 @@ public class DrawTextShape<T extends TextShape<? extends TextParagraph<? extends
                 if (startAt > autoNbrIdx) autoNbrIdx = startAt;
             }
             dp.setAutoNumberingIdx(autoNbrIdx);
-            dp.setInsets(shapePadding);
             dp.breakText(graphics);
 
             if (!isFirstLine) {

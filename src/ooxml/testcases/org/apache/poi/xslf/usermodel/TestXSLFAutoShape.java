@@ -125,7 +125,7 @@ public class TestXSLFAutoShape {
         p.setIndent(2.0);
         assertEquals(2.0, p.getIndent(), 0);
         assertTrue(p.getXmlObject().getPPr().isSetIndent());
-        p.setIndent(-1d);
+        p.setIndent(null);
         assertNull(p.getIndent());
         assertFalse(p.getXmlObject().getPPr().isSetIndent());
         p.setIndent(10.0);
@@ -225,7 +225,7 @@ public class TestXSLFAutoShape {
         assertEquals(1000, r.getXmlObject().getRPr().getSz());
         r.setFontSize(12.5);
         assertEquals(1250, r.getXmlObject().getRPr().getSz());
-        r.setFontSize(-1);
+        r.setFontSize(null);
         assertFalse(r.getXmlObject().getRPr().isSetSz());
 
         assertFalse(r.getXmlObject().getRPr().isSetLatin());

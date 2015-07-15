@@ -194,7 +194,7 @@ public final class TestShapes {
         rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
         txtbox.setText(val);
         rt.setFontFamily("Arial");
-        rt.setFontSize(42);
+        rt.setFontSize(42d);
         rt.setBold(true);
         rt.setItalic(true);
         rt.setUnderlined(false);

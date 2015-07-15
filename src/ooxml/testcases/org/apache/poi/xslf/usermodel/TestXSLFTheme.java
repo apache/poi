@@ -59,7 +59,7 @@ public class TestXSLFTheme {
     }
 
     void slide1(XSLFSlide slide){
-        assertEquals(Color.white, slide.getBackground().getFillColor());
+        assertEquals(Color.WHITE, slide.getBackground().getFillColor());
 
         XSLFTheme theme = slide.getTheme();
         assertEquals("Office Theme", theme.getName());
@@ -75,7 +75,7 @@ public class TestXSLFTheme {
     void slide2(XSLFSlide slide){
         // Background 2, darker 10%
         // YK: PPT shows slightly different color: new Color(221, 217, 195)
-        assertEquals(new Color(214, 212, 203), slide.getBackground().getFillColor());
+        assertEquals(new Color(221, 217, 195), slide.getBackground().getFillColor());
     }
 
     void slide3(XSLFSlide slide){
@@ -133,7 +133,7 @@ public class TestXSLFTheme {
     void slide7(XSLFSlide slide){
 
         //YK: PPT reports a slightly different color: r=189,g=239,b=87
-        assertEquals(new Color(182, 218, 108), slide.getBackground().getFillColor());
+        assertEquals(new Color(189, 239, 87), slide.getBackground().getFillColor());
 
         assertFalse(slide.getFollowMasterGraphics());
     }

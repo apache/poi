@@ -433,6 +433,10 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
 
     protected abstract CTTextBody getTextBody(boolean create);
 
+    @Override
+    public void setPlaceholder(Placeholder placeholder) {
+        super.setPlaceholder(placeholder);
+    }
 
     public Placeholder getTextType(){
         CTPlaceholder ph = getCTPlaceholder();
@@ -440,27 +444,6 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
 
         int val = ph.getType().intValue();
         return Placeholder.values()[val - 1];
-    }
-
-
-    /**
-     * Specifies that the corresponding shape should be represented by the generating application
-     * as a placeholder. When a shape is considered a placeholder by the generating application
-     * it can have special properties to alert the user that they may enter content into the shape.
-     * Different types of placeholders are allowed and can be specified by using the placeholder
-     * type attribute for this element
-     *
-     * @param placeholder
-     */
-    public void setPlaceholder(Placeholder placeholder){
-        String xquery = "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:nvPr";
-        CTApplicationNonVisualDrawingProps nv = selectProperty(CTApplicationNonVisualDrawingProps.class, xquery);
-        if (nv == null) return;
-        if(placeholder == null) {
-            if (nv.isSetPh()) nv.unsetPh();
-        } else {
-            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ordinal() + 1));
-        }
     }
 
     @Override
@@ -490,45 +473,55 @@ public abstract class XSLFTextShape extends XSLFSimpleShape implements TextShape
     
 
     @Override
-    void copy(XSLFShape sh){
-        super.copy(sh);
+    void copy(XSLFShape other){
+        super.copy(other);
 
-        XSLFTextShape tsh = (XSLFTextShape)sh;
+        XSLFTextShape otherTS = (XSLFTextShape)other;
+        CTTextBody otherTB = otherTS.getTextBody(false);
+        CTTextBody thisTB = getTextBody(true);
+        if (otherTB == null) {
+            return;
+        }
+        
+        thisTB.setBodyPr((CTTextBodyProperties)otherTB.getBodyPr().copy());
 
-        boolean srcWordWrap = tsh.getWordWrap();
+        if (thisTB.isSetLstStyle()) thisTB.unsetLstStyle();
+        if (otherTB.isSetLstStyle()) {
+            thisTB.setLstStyle((CTTextListStyle)otherTB.getLstStyle().copy());
+        }
+        
+        boolean srcWordWrap = otherTS.getWordWrap();
         if(srcWordWrap != getWordWrap()){
             setWordWrap(srcWordWrap);
         }
 
-        double leftInset = tsh.getLeftInset();
+        double leftInset = otherTS.getLeftInset();
         if(leftInset != getLeftInset()) {
             setLeftInset(leftInset);
         }
-        double rightInset = tsh.getRightInset();
+        double rightInset = otherTS.getRightInset();
         if(rightInset != getRightInset()) {
             setRightInset(rightInset);
         }
-        double topInset = tsh.getTopInset();
+        double topInset = otherTS.getTopInset();
         if(topInset != getTopInset()) {
             setTopInset(topInset);
         }
-        double bottomInset = tsh.getBottomInset();
+        double bottomInset = otherTS.getBottomInset();
         if(bottomInset != getBottomInset()) {
             setBottomInset(bottomInset);
         }
 
-        VerticalAlignment vAlign = tsh.getVerticalAlignment();
+        VerticalAlignment vAlign = otherTS.getVerticalAlignment();
         if(vAlign != getVerticalAlignment()) {
             setVerticalAlignment(vAlign);
         }
 
-        List<XSLFTextParagraph> srcP = tsh.getTextParagraphs();
-        List<XSLFTextParagraph> tgtP = getTextParagraphs();
-        for(int i = 0; i < srcP.size(); i++){
-            XSLFTextParagraph p1 = srcP.get(i);
-            XSLFTextParagraph p2 = tgtP.get(i);
-            p2.copy(p1);
+        clearText();
+        
+        for (XSLFTextParagraph srcP : otherTS.getTextParagraphs()) {
+            XSLFTextParagraph tgtP = addNewTextParagraph();
+            tgtP.copy(srcP);
         }
-
     }
 }

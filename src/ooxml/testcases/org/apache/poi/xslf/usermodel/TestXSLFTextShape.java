@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
@@ -33,6 +34,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  */
 public class TestXSLFTextShape {
 
+    @Test
     public void testLayouts(){
         XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
 
@@ -612,7 +614,7 @@ public class TestXSLFTextShape {
         assertEquals("10", sldNum.getText());
     }
 
-
+    @Test
     public void testTitleStyles(){
         XMLSlideShow ppt = new XMLSlideShow();
 
@@ -693,6 +695,7 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
     }
 
+    @Test
     public void testBodyStyles(){
         XMLSlideShow ppt = new XMLSlideShow();
 
