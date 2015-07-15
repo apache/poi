@@ -133,7 +133,7 @@ public abstract class POILogger {
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param message The message to log.
-     * @param unflatParams... The objects to match against.
+     * @param unflatParams The objects to match against.
      */
     public void logFormatted(int level, String message, Object... unflatParams) {
         if (!check(level)) return;
