@@ -82,7 +82,8 @@ public class XSLFTextRun implements TextRun {
         return _r;
     }
 
-    public void setFontColor(Color color){
+    @Override
+    public void setFontColor(Color color) {
         CTTextCharacterProperties rPr = getRPr();
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
         CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
@@ -96,6 +97,7 @@ public class XSLFTextRun implements TextRun {
 
     }
 
+    @Override
     public Color getFontColor(){
         final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
         CTShapeStyle style = _p.getParentShape().getSpStyle();
@@ -119,17 +121,13 @@ public class XSLFTextRun implements TextRun {
         return fetcher.getValue();
     }
 
-    /**
-     *
-     * @param fontSize  font size in points.
-     * The value of <code>-1</code> unsets the Sz attribyte from the underlying xml bean
-     */
-    public void setFontSize(double fontSize){
+    @Override
+    public void setFontSize(Double fontSize){
         CTTextCharacterProperties rPr = getRPr();
-        if(fontSize == -1.0) {
-            if(rPr.isSetSz()) rPr.unsetSz();
+        if(fontSize == null) {
+            if (rPr.isSetSz()) rPr.unsetSz();
         } else {
-            if(fontSize < 1.0) {
+            if (fontSize < 1.0) {
                 throw new IllegalArgumentException("Minimum font size is 1pt but was " + fontSize);
             }
 
@@ -137,9 +135,6 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
-    /**
-     * @return font size in points or null if font size is not set.
-     */
     @Override
     public Double getFontSize(){
         double scale = 1;

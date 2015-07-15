@@ -256,7 +256,7 @@ public final class PPGraphics2D extends Graphics2D implements Cloneable {
         txt.setText(s);
 
         HSLFTextRun rt = txt.getTextParagraphs().get(0).getTextRuns().get(0);
-        rt.setFontSize(_font.getSize());
+        rt.setFontSize((double)_font.getSize());
         rt.setFontFamily(_font.getFamily());
 
         if (getColor() != null) rt.setFontColor(getColor());

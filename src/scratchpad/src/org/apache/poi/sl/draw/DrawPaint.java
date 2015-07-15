@@ -18,12 +18,11 @@
 package org.apache.poi.sl.draw;
 
 import static org.apache.poi.sl.usermodel.PaintStyle.TRANSPARENT_PAINT;
+
 import java.awt.*;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
 import java.awt.MultipleGradientPaint.CycleMethod;
-import java.awt.Shape;
 import java.awt.geom.*;
-import java.awt.image.*;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,7 +34,13 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 
+/**
+ * This class handles color transformations
+ * 
+ * @see HSL code taken from <a href="https://tips4java.wordpress.com/2009/07/05/hsl-color/">Java Tips Weblog</a>
+ */
 public class DrawPaint {
+    // HSL code is public domain - see https://tips4java.wordpress.com/contact-us/
     
     private final static POILogger LOG = POILogFactory.getLogger(DrawPaint.class);
 
@@ -126,7 +131,7 @@ public class DrawPaint {
         }
         
         result = applyAlpha(result, color);
-        result = applyLuminanace(result, color);
+        result = applyLuminance(result, color);
         result = applyShade(result, color);
         result = applyTint(result, color);
 
@@ -135,7 +140,7 @@ public class DrawPaint {
 
     protected static Color applyAlpha(Color c, ColorStyle fc) {
         int alpha = c.getAlpha();
-        return (alpha == 0 || alpha == -1) ? c : new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha); 
+        return (alpha == 255) ? c : new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha); 
     }
     
     /**
@@ -145,8 +150,10 @@ public class DrawPaint {
      * @param lumMod luminance modulation in the range [0..100000]
      * @param lumOff luminance offset in the range [0..100000]
      * @return  modified color
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/dd560821%28v=office.12%29.aspx">Using Office Open XML to Customize Document Formatting in the 2007 Office System</a>
      */
-    protected static Color applyLuminanace(Color c, ColorStyle fc) {
+    protected static Color applyLuminance(Color c, ColorStyle fc) {
         int lumMod = fc.getLumMod();
         if (lumMod == -1) lumMod = 100000;
 
@@ -155,24 +162,33 @@ public class DrawPaint {
         
         if (lumMod == 100000 && lumOff == 0) return c;
 
-        int r = c.getRed();
-        int g = c.getGreen();
-        int b = c.getBlue();
+        // The lumMod value is the percent luminance. A lumMod value of "60000",
+        // is 60% of the luminance of the original color.
+        // When the color is a shade of the original theme color, the lumMod
+        // attribute is the only one of the tags shown here that appears.
+        // The <a:lumOff> tag appears after the <a:lumMod> tag when the color is a
+        // tint of the original. The lumOff value always equals 1-lumMod, which is used in the tint calculation
+        //
+        // Despite having different ways to display the tint and shade percentages,
+        // all of the programs use the same method to calculate the resulting color.
+        // Convert the original RGB value to HSL ... and then adjust the luminance (L)
+        // with one of the following equations before converting the HSL value back to RGB.
+        // (The % tint in the following equations refers to the tint, themetint, themeshade,
+        // or lumMod values, as applicable.)
+        //
+        // For a shade, the equation is luminance * %tint.
+        //
+        // For a tint, the equation is luminance * %tint + (1-%tint).
+        // (Note that 1-%tint is equal to the lumOff value in DrawingML.)
         
-        float red,green,blue;
+        double fLumOff = lumOff / 100000d;
+        double fLumMod = lumMod / 100000d;
         
-        if (lumOff > 0) {
-            float flumOff = lumOff / 100000.f;
-            red = (255.f - r) * (1.f - flumOff) + r;
-            green = (255.f - g) * flumOff + g;
-            blue = (255.f - b) * flumOff + b;
-        } else {
-            float flumMod = lumMod / 100000.f;
-            red = r * flumMod;
-            green = g * flumMod;
-            blue = b * flumMod;
-        }
-        return new Color(Math.round(red), Math.round(green), Math.round(blue), c.getAlpha());
+        double hsl[] = RGB2HSL(c);
+        hsl[2] = hsl[2]*fLumMod+fLumOff;
+
+        Color c2 = HSL2RGB(hsl[0], hsl[1], hsl[2], c.getAlpha()/255d);
+        return c2;
     }
     
     /**
@@ -302,165 +318,127 @@ public class DrawPaint {
         }
     }
 
-    public static class PathGradientPaint implements Paint {
-
-        // http://asserttrue.blogspot.de/2010/01/how-to-iimplement-custom-paint-in-50.html
-        protected final Color colors[];
-        protected final float fractions[];
-        protected final int capStyle;
-        protected final int joinStyle;
-        protected final int transparency;
-
-        
-        public PathGradientPaint(Color colors[], float fractions[]) {
-            this(colors,fractions,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
-        }
-        
-        public PathGradientPaint(Color colors[], float fractions[], int capStyle, int joinStyle) {
-            this.colors = colors;
-            this.fractions = fractions;
-            this.capStyle = capStyle;
-            this.joinStyle = joinStyle;
-
-            // determine transparency
-            boolean opaque = true;
-            for (int i = 0; i < colors.length; i++){
-                opaque = opaque && (colors[i].getAlpha() == 0xff);
-            }
-            this.transparency = opaque ? OPAQUE : TRANSLUCENT;
-        }
-        
-        public PaintContext createContext(ColorModel cm,
-            Rectangle deviceBounds,
-            Rectangle2D userBounds,
-            AffineTransform transform,
-            RenderingHints hints) {
-            return new PathGradientContext(cm, deviceBounds, userBounds, transform, hints);
-        }
-        
-        public int getTransparency() {
-            return transparency;
+    /**
+     *  Convert HSL values to a RGB Color.
+     *
+     *  @param h Hue is specified as degrees in the range 0 - 360.
+     *  @param s Saturation is specified as a percentage in the range 1 - 100.
+     *  @param l Luminance is specified as a percentage in the range 1 - 100.
+     *  @param alpha  the alpha value between 0 - 1
+     *
+     *  @returns the RGB Color object
+     */
+    private static Color HSL2RGB(double h, double s, double l, double alpha) {
+        if (s <0.0f || s > 100.0f) {
+            String message = "Color parameter outside of expected range - Saturation";
+            throw new IllegalArgumentException( message );
         }
 
-        class PathGradientContext implements PaintContext {
-            protected final Rectangle deviceBounds;
-            protected final Rectangle2D userBounds;
-            protected final AffineTransform xform;
-            protected final RenderingHints hints;
-
-            /**
-             * for POI: the shape will be only known when the subclasses determines the concrete implementation 
-             * in the draw/-content method, so we need to postpone the setting/creation as long as possible
-             **/
-            protected final Shape shape;
-            protected final PaintContext pCtx;
-            protected final int gradientSteps;
-            WritableRaster raster;
-
-            public PathGradientContext(
-                  ColorModel cm
-                , Rectangle deviceBounds
-                , Rectangle2D userBounds
-                , AffineTransform xform
-                , RenderingHints hints
-            ) {
-                shape = (Shape)hints.get(Drawable.GRADIENT_SHAPE);
-                if (shape == null) {
-                    throw new IllegalPathStateException("PathGradientPaint needs a shape to be set via the rendering hint PathGradientPaint.GRADIANT_SHAPE.");
-                }
-
-                this.deviceBounds = deviceBounds;
-                this.userBounds = userBounds;
-                this.xform = xform;
-                this.hints = hints;
-
-                gradientSteps = getGradientSteps(shape);
-
-                Point2D start = new Point2D.Double(0, 0);
-                Point2D end = new Point2D.Double(gradientSteps, 0);
-                LinearGradientPaint gradientPaint = new LinearGradientPaint(start, end, fractions, colors, CycleMethod.NO_CYCLE, ColorSpaceType.SRGB, new AffineTransform());
-                
-                Rectangle bounds = new Rectangle(0, 0, gradientSteps, 1);
-                pCtx = gradientPaint.createContext(cm, bounds, bounds, new AffineTransform(), hints);
-            }
-
-            public void dispose() {}
-
-            public ColorModel getColorModel() {
-                return pCtx.getColorModel();
-            }
-
-            public Raster getRaster(int xOffset, int yOffset, int w, int h) {
-                ColorModel cm = getColorModel();
-                if (raster == null) createRaster();
-
-                // TODO: eventually use caching here
-                WritableRaster childRaster = cm.createCompatibleWritableRaster(w, h);
-                Rectangle2D childRect = new Rectangle2D.Double(xOffset, yOffset, w, h);
-                if (!childRect.intersects(deviceBounds)) {
-                    // usually doesn't happen ...
-                    return childRaster;
-                }
-                
-                Rectangle2D destRect = new Rectangle2D.Double();
-                Rectangle2D.intersect(childRect, deviceBounds, destRect);
-                int dx = (int)(destRect.getX()-deviceBounds.getX());
-                int dy = (int)(destRect.getY()-deviceBounds.getY());
-                int dw = (int)destRect.getWidth();
-                int dh = (int)destRect.getHeight();
-                Object data = raster.getDataElements(dx, dy, dw, dh, null);
-                dx = (int)(destRect.getX()-childRect.getX());
-                dy = (int)(destRect.getY()-childRect.getY());
-                childRaster.setDataElements(dx, dy, dw, dh, data);
-                
-                return childRaster;
-            }
-
-            protected int getGradientSteps(Shape shape) {
-                Rectangle rect = shape.getBounds();
-                int lower = 1;
-                int upper = (int)(Math.max(rect.getWidth(),rect.getHeight())/2.0);
-                while (lower < upper-1) {
-                    int mid = lower + (upper - lower) / 2;
-                    BasicStroke bs = new BasicStroke(mid, capStyle, joinStyle);
-                    Area area = new Area(bs.createStrokedShape(shape));
-                    if (area.isSingular()) {
-                        upper = mid;
-                    } else {
-                        lower = mid;
-                    }
-                }
-                return upper;
-            }
-            
-            
-            
-            protected void createRaster() {
-                ColorModel cm = getColorModel();
-                raster = cm.createCompatibleWritableRaster((int)deviceBounds.getWidth(), (int)deviceBounds.getHeight());
-                BufferedImage img = new BufferedImage(cm, raster, false, null);
-                Graphics2D graphics = img.createGraphics();
-                graphics.setRenderingHints(hints);
-                graphics.translate(-deviceBounds.getX(), -deviceBounds.getY());
-                graphics.transform(xform);
-
-                Raster img2 = pCtx.getRaster(0, 0, gradientSteps, 1);
-                int rgb[] = new int[cm.getNumComponents()];
-
-                for (int i = gradientSteps-1; i>=0; i--) {
-                    img2.getPixel(i, 0, rgb);
-                    Color c = new Color(rgb[0],rgb[1],rgb[2]);
-                    if (rgb.length == 4) {
-                        // it doesn't work to use just a color with transparency ...
-                        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, rgb[3]/255.0f));                           
-                    }
-                    graphics.setStroke(new BasicStroke(i+1, capStyle, joinStyle));
-                    graphics.setColor(c);
-                    graphics.draw(shape);
-                }
-                
-                graphics.dispose();
-            }
+        if (l <0.0f || l > 100.0f) {
+            String message = "Color parameter outside of expected range - Luminance";
+            throw new IllegalArgumentException( message );
         }
+
+        if (alpha <0.0f || alpha > 1.0f) {
+            String message = "Color parameter outside of expected range - Alpha";
+            throw new IllegalArgumentException( message );
+        }
+
+        //  Formula needs all values between 0 - 1.
+
+        h = h % 360.0f;
+        h /= 360f;
+        s /= 100f;
+        l /= 100f;
+
+        double q = (l < 0.5d)
+            ? l * (1d + s)
+            : (l + s) - (s * l);
+
+        double p = 2d * l - q;
+
+        double r = Math.max(0, HUE2RGB(p, q, h + (1.0d / 3.0d)));
+        double g = Math.max(0, HUE2RGB(p, q, h));
+        double b = Math.max(0, HUE2RGB(p, q, h - (1.0d / 3.0d)));
+
+        r = Math.min(r, 1.0d);
+        g = Math.min(g, 1.0d);
+        b = Math.min(b, 1.0d);
+
+        return new Color((float)r, (float)g, (float)b, (float)alpha);
     }
+
+    private static double HUE2RGB(double p, double q, double h) {
+        if (h < 0d) h += 1d;
+
+        if (h > 1d) h -= 1d;
+
+        if (6d * h < 1d) {
+            return p + ((q - p) * 6d * h);
+        }
+
+        if (2d * h < 1d) {
+            return q;
+        }
+
+        if (3d * h < 2d) {
+            return p + ( (q - p) * 6d * ((2.0d / 3.0d) - h) );
+        }
+
+        return p;
+    }
+
+
+    /**
+     *  Convert a RGB Color to it corresponding HSL values.
+     *
+     *  @return an array containing the 3 HSL values.
+     */
+    private static double[] RGB2HSL(Color color)
+    {
+        //  Get RGB values in the range 0 - 1
+
+        float[] rgb = color.getRGBColorComponents( null );
+        double r = rgb[0];
+        double g = rgb[1];
+        double b = rgb[2];
+
+        //  Minimum and Maximum RGB values are used in the HSL calculations
+
+        double min = Math.min(r, Math.min(g, b));
+        double max = Math.max(r, Math.max(g, b));
+
+        //  Calculate the Hue
+
+        double h = 0;
+
+        if (max == min) {
+            h = 0;
+        } else if (max == r) {
+            h = ((60d * (g - b) / (max - min)) + 360d) % 360d;
+        } else if (max == g) {
+            h = (60d * (b - r) / (max - min)) + 120d;
+        } else if (max == b) {
+            h = (60d * (r - g) / (max - min)) + 240d;
+        }
+
+        //  Calculate the Luminance
+
+        double l = (max + min) / 2d;
+
+        //  Calculate the Saturation
+
+        double s = 0;
+
+        if (max == min) {
+            s = 0;
+        } else if (l <= .5d) {
+            s = (max - min) / (max + min);
+        } else {
+            s = (max - min) / (2d - max - min);
+        }
+
+        return new double[] {h, s * 100, l * 100};
+    }
+
 }

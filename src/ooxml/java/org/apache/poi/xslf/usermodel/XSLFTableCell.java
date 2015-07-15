@@ -118,7 +118,7 @@ public class XSLFTableCell extends XSLFTextShape {
 
     private double getBorderWidth(char bltr) {
         CTLineProperties ln = getCTLine(bltr, false);
-        return (ln == null) ? defaultBorderWidth : Units.toPoints(ln.getW());
+        return (ln == null || !ln.isSetW()) ? defaultBorderWidth : Units.toPoints(ln.getW());
     }
 
     private void setBorderColor(char bltr, Color color) {

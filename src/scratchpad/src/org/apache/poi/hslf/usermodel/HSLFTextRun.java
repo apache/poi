@@ -141,7 +141,7 @@ public final class HSLFTextRun implements TextRun {
 	 * @param propName The name of the Paragraph TextProp
 	 * @param val The value to set for the TextProp
 	 */
-	public void setCharTextPropVal(String propName, int val) {
+	public void setCharTextPropVal(String propName, Integer val) {
 	    setPropVal(characterStyle, propName, val);
 	}
 
@@ -251,20 +251,17 @@ public final class HSLFTextRun implements TextRun {
 	    setPropVal(characterStyle, "superscript", val);
 	}
 
-	/**
-	 * Gets the font size
-	 */
+    @Override
 	public Double getFontSize() {
         TextProp tp = getPropVal(characterStyle, "font.size", parentParagraph);
         return tp == null ? null : (double)tp.getValue();
 	}
 
 
-	/**
-	 * Sets the font size
-	 */
-	public void setFontSize(int fontSize) {
-		setCharTextPropVal("font.size", fontSize);
+	@Override
+	public void setFontSize(Double fontSize) {
+	    Integer iFontSize = (fontSize == null) ? null : fontSize.intValue();
+		setCharTextPropVal("font.size", iFontSize);
 	}
 
 	/**

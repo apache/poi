@@ -78,7 +78,6 @@ public class TestXSLFTextBox {
         assertEquals(20.0, r.getFontSize(), 0);
 
         pPr.unsetSz();  // Should never be
-        assertEquals(-1.0, r.getFontSize(), 0);
-
+        assertNull(r.getFontSize());
     }
 }

@@ -35,7 +35,18 @@ public interface TextRun {
 	TextCap getTextCap();
 	
 	Color getFontColor();
+	void setFontColor(Color color);
+	
+	
+    /**
+     * @return font size in points or null if font size is not set.
+     */
 	Double getFontSize();
+
+    /**
+     * @param fontSize font size in points, if null the underlying fontsize will be unset
+     */
+	void setFontSize(Double fontSize);
 	String getFontFamily();
 	
 	boolean isBold();

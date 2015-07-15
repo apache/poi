@@ -47,7 +47,7 @@ public final class TestSetBoldItalic {
         HSLFTextBox txtbox = new HSLFTextBox();
         rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
         txtbox.setText(val);
-        rt.setFontSize(42);
+        rt.setFontSize(42d);
         rt.setBold(true);
         rt.setItalic(true);
         rt.setUnderlined(false);

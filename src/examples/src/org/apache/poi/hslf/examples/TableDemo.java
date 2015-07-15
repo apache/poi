@@ -55,7 +55,7 @@ public final class TableDemo {
                 HSLFTableCell cell = table1.getCell(i, j);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
                 rt.setFontFamily("Arial");
-                rt.setFontSize(10);
+                rt.setFontSize(10d);
                 if(i == 0){
                     cell.getFill().setForegroundColor(new Color(227, 227, 227));
                 } else {
@@ -93,17 +93,17 @@ public final class TableDemo {
             for (int j = 0; j < txt2[i].length; j++) {
                 HSLFTableCell cell = table2.getCell(i, j);
                 HSLFTextRun rt = cell.getTextParagraphs().get(0).getTextRuns().get(0);
-                rt.setFontSize(10);
+                rt.setFontSize(10d);
                 rt.setFontFamily("Arial");
                 if(i == 0){
                     cell.getFill().setForegroundColor(new Color(0, 51, 102));
                     rt.setFontColor(Color.white);
                     rt.setBold(true);
-                    rt.setFontSize(14);
+                    rt.setFontSize(14d);
                     cell.setHorizontalCentered(true);
                 } else {
                     rt.getTextParagraph().setBullet(true);
-                    rt.setFontSize(12);
+                    rt.setFontSize(12d);
                     rt.getTextParagraph().setAlignment(TextAlign.LEFT);
                     cell.setHorizontalCentered(false);
                 }

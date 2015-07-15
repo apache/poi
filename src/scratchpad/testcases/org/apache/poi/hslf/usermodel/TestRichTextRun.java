@@ -168,7 +168,7 @@ public final class TestRichTextRun {
 
 		// Change 2nd to different size and font
 		assertEquals(2, ssRichB.getFontCollection().getChildRecords().length); // Default + TNR
-		rtrRb.setFontSize(18);
+		rtrRb.setFontSize(18d);
 		rtrRb.setFontFamily("Courier");
 		assertEquals(3, ssRichB.getFontCollection().getChildRecords().length); // Default + TNR + Courier
 		assertEquals(18, rtrRb.getFontSize(), 0);
@@ -183,7 +183,7 @@ public final class TestRichTextRun {
 		assertNotNull(rtr.getTextParagraph().getParagraphStyle());
 
 		// Change Font size
-		rtr.setFontSize(99);
+		rtr.setFontSize(99d);
 		assertEquals(99, rtr.getFontSize(), 0);
 		assertEquals(defaultFont, rtr.getFontFamily());
 		assertNotNull(rtr.getCharacterStyle());
@@ -191,7 +191,7 @@ public final class TestRichTextRun {
 		assertEquals(1, ss.getFontCollection().getChildRecords().length); // Default
 
 		// Change Font size and name
-		rtr.setFontSize(25);
+		rtr.setFontSize(25d);
 		rtr.setFontFamily("Times New Roman");
 		assertEquals(25, rtr.getFontSize(), 0);
 		assertEquals("Times New Roman", rtr.getFontFamily());
@@ -209,7 +209,7 @@ public final class TestRichTextRun {
 			HSLFTextRun rtr = textParass.get(0).get(0).getTextRuns().get(0);
 			
 			rtr.setBold(true);
-			rtr.setFontSize(18);
+			rtr.setFontSize(18d);
 			rtr.setFontFamily("Courier");
             HSLFTextParagraph.storeText(textParass.get(0));
 
@@ -228,7 +228,7 @@ public final class TestRichTextRun {
 
 			// Tweak existing one again, to ensure really worked
 			rtr.setBold(false);
-			rtr.setFontSize(17);
+			rtr.setFontSize(17d);
 			rtr.setFontFamily("CourierZZ");
 
 			// Check it took those changes
@@ -511,7 +511,7 @@ public final class TestRichTextRun {
 				"Multiline text");
         HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
         HSLFTextRun tr = rt.getTextRuns().get(0);
-		tr.setFontSize(42);
+		tr.setFontSize(42d);
 		rt.setBullet(true);
 		rt.setLeftMargin(50d);
 		rt.setIndent(0d);

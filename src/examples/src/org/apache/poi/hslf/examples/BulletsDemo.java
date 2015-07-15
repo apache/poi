@@ -37,7 +37,7 @@ public final class BulletsDemo {
 
         HSLFTextBox shape = new HSLFTextBox();
         HSLFTextParagraph rt = shape.getTextParagraphs().get(0);
-        rt.getTextRuns().get(0).setFontSize(42);
+        rt.getTextRuns().get(0).setFontSize(42d);
         rt.setBullet(true);
         rt.setIndent(0d);  //bullet offset
         rt.setLeftMargin(50d);   //text offset (should be greater than bullet offset)

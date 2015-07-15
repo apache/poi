@@ -23,6 +23,7 @@ import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.*;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
@@ -379,9 +380,9 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     
     @Override
     public void setIndent(Double indent){
-        if ((indent == null || indent == -1d) && !_p.isSetPPr()) return;
+        if ((indent == null) && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(indent == -1) {
+        if(indent == null) {
             if(pr.isSetIndent()) pr.unsetIndent();
         } else {
             pr.setIndent(Units.toEMU(indent));
@@ -441,7 +442,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
     public void setRightMargin(Double rightMargin){
         if (rightMargin == null && !_p.isSetPPr()) return;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(rightMargin == -1) {
+        if(rightMargin == null) {
             if(pr.isSetMarR()) pr.unsetMarR();
         } else {
             pr.setMarR(Units.toEMU(rightMargin));
@@ -788,69 +789,102 @@ public class XSLFTextParagraph implements TextParagraph<XSLFTextRun> {
         return ok;
     }
 
-    void copy(XSLFTextParagraph p){
-        TextAlign srcAlign = p.getTextAlign();
+    void copy(XSLFTextParagraph other){
+        if (other == this) return;
+        
+        CTTextParagraph thisP = getXmlObject();
+        CTTextParagraph otherP = other.getXmlObject();
+        
+        if (thisP.isSetPPr()) thisP.unsetPPr();
+        if (thisP.isSetEndParaRPr()) thisP.unsetEndParaRPr();
+        
+        _runs.clear();
+        for (int i=thisP.sizeOfBrArray(); i>0; i--) {
+            thisP.removeBr(i-1);
+        }
+        for (int i=thisP.sizeOfRArray(); i>0; i--) {
+            thisP.removeR(i-1);
+        }
+        for (int i=thisP.sizeOfFldArray(); i>0; i--) {
+            thisP.removeFld(i-1);
+        }
+
+        XmlCursor thisC = thisP.newCursor();
+        thisC.toEndToken();
+        XmlCursor otherC = otherP.newCursor();
+        otherC.copyXmlContents(thisC);
+        otherC.dispose();
+        thisC.dispose();
+        
+        List<XSLFTextRun> otherRs = other.getTextRuns();
+        int i=0;
+        for(CTRegularTextRun rtr : thisP.getRArray()) {
+            XSLFTextRun run = new XSLFTextRun(rtr, this);
+            run.copy(otherRs.get(i++));
+            _runs.add(run);
+        }
+        
+        
+        // set properties again, in case we are based on a different
+        // template
+        TextAlign srcAlign = other.getTextAlign();
         if(srcAlign != getTextAlign()){
             setTextAlign(srcAlign);
         }
 
-        boolean isBullet = p.isBullet();
+        boolean isBullet = other.isBullet();
         if(isBullet != isBullet()){
             setBullet(isBullet);
             if(isBullet) {
-                String buFont = p.getBulletFont();
+                String buFont = other.getBulletFont();
                 if(buFont != null && !buFont.equals(getBulletFont())){
                     setBulletFont(buFont);
                 }
-                String buChar = p.getBulletCharacter();
+                String buChar = other.getBulletCharacter();
                 if(buChar != null && !buChar.equals(getBulletCharacter())){
                     setBulletCharacter(buChar);
                 }
-                Color buColor = p.getBulletFontColor();
+                Color buColor = other.getBulletFontColor();
                 if(buColor != null && !buColor.equals(getBulletFontColor())){
                     setBulletFontColor(buColor);
                 }
-                double buSize = p.getBulletFontSize();
-                if(buSize != getBulletFontSize()){
+                Double buSize = other.getBulletFontSize();
+                if(!doubleEquals(buSize, getBulletFontSize())){
                     setBulletFontSize(buSize);
                 }
             }
         }
 
-        Double leftMargin = p.getLeftMargin();
-        if(leftMargin != getLeftMargin()){
+        Double leftMargin = other.getLeftMargin();
+        if (!doubleEquals(leftMargin, getLeftMargin())){
             setLeftMargin(leftMargin);
         }
 
-        Double indent = p.getIndent();
-        if(indent != getIndent()){
+        Double indent = other.getIndent();
+        if (!doubleEquals(indent, getIndent())) {
             setIndent(indent);
         }
 
-        Double spaceAfter = p.getSpaceAfter();
-        if(spaceAfter != getSpaceAfter()){
+        Double spaceAfter = other.getSpaceAfter();
+        if (!doubleEquals(spaceAfter, getSpaceAfter())) {
             setSpaceAfter(spaceAfter);
         }
         
-        Double spaceBefore = p.getSpaceBefore();
-        if(spaceBefore != getSpaceBefore()){
+        Double spaceBefore = other.getSpaceBefore();
+        if (!doubleEquals(spaceBefore, getSpaceBefore())) {
             setSpaceBefore(spaceBefore);
         }
         
-        Double lineSpacing = p.getLineSpacing();
-        if(lineSpacing != getLineSpacing()){
+        Double lineSpacing = other.getLineSpacing();
+        if (!doubleEquals(lineSpacing, getLineSpacing())) {
             setLineSpacing(lineSpacing);
-        }
-
-        List<XSLFTextRun> srcR = p.getTextRuns();
-        List<XSLFTextRun> tgtR = getTextRuns();
-        for(int i = 0; i < srcR.size(); i++){
-            XSLFTextRun r1 = srcR.get(i);
-            XSLFTextRun r2 = tgtR.get(i);
-            r2.copy(r1);
         }
     }
 
+    private static boolean doubleEquals(Double d1, Double d2) {
+        return (d1 == d2 || (d1 != null && d1.equals(d2)));
+    }
+    
     @Override
     public Double getDefaultFontSize() {
         CTTextCharacterProperties endPr = _p.getEndParaRPr();

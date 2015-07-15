@@ -30,6 +30,7 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.Assume;
 import org.junit.Test;
 
 /**
@@ -74,16 +75,16 @@ public class TestXSLFTextParagraph {
         
         DrawTextParagraphProxy dtp = new DrawTextParagraphProxy(p);
 
-        double leftInset = sh.getLeftInset();
-        double rightInset = sh.getRightInset();
+        Double leftInset = sh.getLeftInset();
+        Double rightInset = sh.getRightInset();
         assertEquals(7.2, leftInset, 0);
         assertEquals(7.2, rightInset, 0);
 
-        double leftMargin = p.getLeftMargin();
+        Double leftMargin = p.getLeftMargin();
         assertEquals(0.0, leftMargin, 0);
 
-        double indent = p.getIndent();
-        assertEquals(0.0, indent, 0); // default
+        Double indent = p.getIndent();
+        assertNull(indent); // default
 
         double expectedWidth;
 
@@ -150,10 +151,7 @@ public class TestXSLFTextParagraph {
     @Test
     public void testBreakLines(){
         String os = System.getProperty("os.name");
-        if(os == null || !os.contains("Windows")) {
-            _logger.log(POILogger.WARN, "Skipping testBreakLines(), it is executed only on Windows machines");
-            return;
-        }
+        Assume.assumeTrue("Skipping testBreakLines(), it is executed only on Windows machines", (os != null && os.contains("Windows")));
 
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -162,7 +160,7 @@ public class TestXSLFTextParagraph {
         XSLFTextParagraph p = sh.addNewTextParagraph();
         XSLFTextRun r = p.addNewTextRun();
         r.setFontFamily("Arial"); // this should always be available
-        r.setFontSize(12);
+        r.setFontSize(12d);
         r.setText(
                 "Paragraph formatting allows for more granular control " +
                 "of text within a shape. Properties here apply to all text " +
@@ -179,13 +177,13 @@ public class TestXSLFTextParagraph {
         lines = dtp.getLines();
         assertEquals(4, lines.size());
 
-        // descrease the shape width from 300 pt to 100 pt
+        // decrease the shape width from 300 pt to 100 pt
         sh.setAnchor(new Rectangle(50, 50, 100, 200));
         dtp.breakText(graphics);
         lines = dtp.getLines();
         assertEquals(12, lines.size());
 
-        // descrease the shape width from 300 pt to 100 pt
+        // decrease the shape width from 300 pt to 100 pt
         sh.setAnchor(new Rectangle(50, 50, 600, 200));
         dtp.breakText(graphics);
         lines = dtp.getLines();
@@ -224,12 +222,13 @@ public class TestXSLFTextParagraph {
         XSLFTextParagraph p2 = sh2.addNewTextParagraph();
         XSLFTextRun r2 = p2.addNewTextRun();
         r2.setFontFamily("serif"); // this should always be available
-        r2.setFontSize(30);
+        r2.setFontSize(30d);
         r2.setText("Apache\n");
         XSLFTextRun r3 = p2.addNewTextRun();
         r3.setFontFamily("serif"); // this should always be available
-        r3.setFontSize(10);
+        r3.setFontSize(10d);
         r3.setText("POI");
+        dtp = new DrawTextParagraphProxy(p2);
         dtp.breakText(graphics);
         lines = dtp.getLines();
         assertEquals(2, lines.size());
@@ -278,7 +277,7 @@ public class TestXSLFTextParagraph {
         p.setBulletFontColor(Color.red);
         assertEquals(Color.red, p.getBulletFontColor());
 
-        assertEquals(100.0, p.getBulletFontSize(), 0);
+        assertNull(p.getBulletFontSize());
         p.setBulletFontSize(200.);
         assertEquals(200., p.getBulletFontSize(), 0);
         p.setBulletFontSize(-20.);
@@ -286,17 +285,21 @@ public class TestXSLFTextParagraph {
 
         assertEquals(72.0, p.getDefaultTabSize(), 0);
         
-        assertEquals(0.0, p.getIndent(), 0);
+        assertNull(p.getIndent());
         p.setIndent(72.0);
         assertEquals(72.0, p.getIndent(), 0);
-        p.setIndent(-1.0); // the value of -1.0 resets to the defaults
-        assertEquals(0.0, p.getIndent(), 0);
+        p.setIndent(-1d); // the value of -1.0 resets to the defaults (not any more ...)
+        assertEquals(-1d, p.getIndent(), 0);
+        p.setIndent(null); 
+        assertNull(p.getIndent());
 
         assertEquals(0.0, p.getLeftMargin(), 0);
         p.setLeftMargin(72.0);
         assertEquals(72.0, p.getLeftMargin(), 0);
         p.setLeftMargin(-1.0); // the value of -1.0 resets to the defaults
-        assertEquals(0.0, p.getLeftMargin(), 0);
+        assertEquals(-1.0, p.getLeftMargin(), 0);
+        p.setLeftMargin(null);
+        assertEquals(0d, p.getLeftMargin(), 0); // default will be taken from master
 
         assertEquals(0, p.getIndentLevel());
         p.setIndentLevel(1);
@@ -304,19 +307,19 @@ public class TestXSLFTextParagraph {
         p.setIndentLevel(2);
         assertEquals(2, p.getIndentLevel());
 
-        assertEquals(100., p.getLineSpacing(), 0);
+        assertNull(p.getLineSpacing());
         p.setLineSpacing(200.);
         assertEquals(200.0, p.getLineSpacing(), 0);
         p.setLineSpacing(-15.);
         assertEquals(-15.0, p.getLineSpacing(), 0);
 
-        assertEquals(0., p.getSpaceAfter(), 0);
+        assertNull(p.getSpaceAfter());
         p.setSpaceAfter(200.);
         assertEquals(200.0, p.getSpaceAfter(), 0);
         p.setSpaceAfter(-15.);
         assertEquals(-15.0, p.getSpaceAfter(), 0);
 
-        assertEquals(0., p.getSpaceBefore(), 0);
+        assertNull(p.getSpaceBefore());
         p.setSpaceBefore(200.);
         assertEquals(200.0, p.getSpaceBefore(), 0);
         p.setSpaceBefore(-15.);
