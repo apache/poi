@@ -18,11 +18,13 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
+import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.ConditionType;
@@ -165,7 +167,46 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     {
         return getPatternFormatting(true);
     }
+    
+    private HSSFIconMultiStateFormatting getMultiStateFormatting(boolean create) {
+        if (cfRuleRecord instanceof CFRule12Record) {
+            // Good
+        } else {
+            if (create) throw new IllegalArgumentException("Can't convert a CF into a CF12 record");
+            return null;
+        }
+        CFRule12Record cfRule12Record = (CFRule12Record)cfRuleRecord;
+        IconMultiStateFormatting iconFormatting = cfRule12Record.getMultiStateFormatting();
+        if (iconFormatting != null)
+        {
+            return new HSSFIconMultiStateFormatting(cfRule12Record);
+        }
+        else if( create )
+        {
+            iconFormatting = cfRule12Record.createMultiStateFormatting();
+            return new HSSFIconMultiStateFormatting(cfRule12Record);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    /**
+     * @return icon / multi-state formatting object if defined, <code>null</code> otherwise
+     */
+    public HSSFIconMultiStateFormatting getMultiStateFormatting() {
+        return getMultiStateFormatting(false);
+    }
 
+    /**
+     * create a new icon / multi-state formatting object if it does not exist,
+     * otherwise just return the existing object.
+     */
+    public HSSFIconMultiStateFormatting createMultiStateFormatting() {
+        return getMultiStateFormatting(true);
+    }
+    
     /**
      * @return -  the conditiontype for the cfrule
      */
@@ -205,7 +246,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
 
     private String toFormulaString(Ptg[] parsedExpression) {
-        if(parsedExpression ==null) {
+        if(parsedExpression == null || parsedExpression.length == 0) {
             return null;
         }
         return HSSFFormulaParser.toFormulaString(workbook, parsedExpression);
