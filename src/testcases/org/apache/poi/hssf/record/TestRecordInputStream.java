@@ -94,4 +94,12 @@ public final class TestRecordInputStream extends TestCase {
 		String actual = in.readString();
 		assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
 	}
+
+	public void testLeftoverDataException() {
+	    // just ensure that the exception is created correctly, even with unknown sids
+	    new RecordInputStream.LeftoverDataException(1, 200);
+	    new RecordInputStream.LeftoverDataException(0, 200);
+        new RecordInputStream.LeftoverDataException(999999999, 200);
+	    new RecordInputStream.LeftoverDataException(HeaderRecord.sid, 200);
+	}
 }

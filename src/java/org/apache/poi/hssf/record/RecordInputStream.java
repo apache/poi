@@ -52,9 +52,17 @@ public final class RecordInputStream implements LittleEndianInput {
 	public static final class LeftoverDataException extends RuntimeException {
 		public LeftoverDataException(int sid, int remainingByteCount) {
 			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase()
-					+ "(" + RecordFactory.getRecordClass(sid).getSimpleName() + ") left " + remainingByteCount 
+					+ "(" + getRecordName(sid) + ") left " + remainingByteCount 
 					+ " bytes remaining still to be read.");
 		}
+
+        private static String getRecordName(int sid) {
+            Class<? extends Record> recordClass = RecordFactory.getRecordClass(sid);
+            if(recordClass == null) {
+                return null;
+            }
+            return recordClass.getSimpleName();
+        }
 	}
 
 	/** Header {@link LittleEndianInput} facet of the wrapped {@link InputStream} */
