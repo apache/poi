@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.aggregates.CFRecordsAggregate;
@@ -25,7 +24,6 @@ import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
-import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
 
@@ -69,19 +67,15 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 			byte comparisonOperation,
 			String formula1,
 			String formula2) {
-
-		HSSFWorkbook wb = _sheet.getWorkbook();
 		CFRuleRecord rr = CFRuleRecord.create(_sheet, comparisonOperation, formula1, formula2);
-		return new HSSFConditionalFormattingRule(wb, rr);
+		return new HSSFConditionalFormattingRule(_sheet, rr);
 	}
 
     public HSSFConditionalFormattingRule createConditionalFormattingRule(
             byte comparisonOperation,
             String formula1) {
-
-        HSSFWorkbook wb = _sheet.getWorkbook();
         CFRuleRecord rr = CFRuleRecord.create(_sheet, comparisonOperation, formula1, null);
-        return new HSSFConditionalFormattingRule(wb, rr);
+        return new HSSFConditionalFormattingRule(_sheet, rr);
     }
 
 	/**
@@ -92,9 +86,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 	 * @param formula - formula for the valued, compared with the cell
 	 */
 	public HSSFConditionalFormattingRule createConditionalFormattingRule(String formula) {
-		HSSFWorkbook wb = _sheet.getWorkbook();
 		CFRuleRecord rr = CFRuleRecord.create(_sheet, formula);
-		return new HSSFConditionalFormattingRule(wb, rr);
+		return new HSSFConditionalFormattingRule(_sheet, rr);
 	}
 	
 	// TODO Support types beyond CELL_VALUE_IS and FORMULA
@@ -107,9 +100,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 /*
 	public HSSFConditionalFormattingRule createConditionalFormattingRule(
 	        IconSet iconSet) { // TODO Multi-State data for it
-        HSSFWorkbook wb = _sheet.getWorkbook();
         CFRule12Record rr = CFRule12Record.create(_sheet, iconSet);
-        return new HSSFConditionalFormattingRule(wb, rr);
+        return new HSSFConditionalFormattingRule(_sheet, rr);
 	}
 */
 
@@ -232,7 +224,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 		if (cf == null) {
 			return null;
 		}
-		return new HSSFConditionalFormatting(_sheet.getWorkbook(), cf);
+		return new HSSFConditionalFormatting(_sheet, cf);
 	}
 
 	/**

@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.Arrays;
+
 import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -42,19 +45,21 @@ public final class Threshold {
 
     public Threshold() {
         type = (byte)RangeType.NUMBER.id;
-        formula = null; // TODO SHould this be empty instead?
+        formula = Formula.create(null);
         value = 0d;
     }
 
     /** Creates new Threshold */
     public Threshold(LittleEndianInput in) {
         type = in.readByte();
-        short formuaLen = in.readShort();
-        if (formuaLen > 0) {
-            formula = Formula.read(formuaLen, in);
+        short formulaLen = in.readShort();
+        if (formulaLen > 0) {
+            formula = Formula.read(formulaLen, in);
+        } else {
+            formula = Formula.create(null);
         }
         // Value is only there for non-formula, non min/max thresholds
-        if (formula == null && type != RangeType.MIN.id &&
+        if (formulaLen == 0 && type != RangeType.MIN.id &&
                 type != RangeType.MAX.id) {
             value = in.readDouble();
         }
@@ -70,11 +75,14 @@ public final class Threshold {
         this.type = type;
     }
 
-    public Formula getFormula() {
+    protected Formula getFormula() {
         return formula;
     }
-    public void setFormula(Formula formula) {
-        this.formula = formula;
+    public Ptg[] getParsedExpression() {
+        return formula.getTokens();
+    }
+    public void setParsedExpression(Ptg[] ptgs) {
+        formula = Formula.create(ptgs);
     }
 
     public Double getValue() {
@@ -92,12 +100,7 @@ public final class Threshold {
     }
 
     public int getDataLength() {
-        int len = 1;
-        if (formula != null) {
-            len += formula.getEncodedSize();
-        } else {
-            len += 2;
-        }
+        int len = 1 + formula.getEncodedSize();
         if (value != null) {
             len += 8;
         }
@@ -105,13 +108,11 @@ public final class Threshold {
         return len;
     }
 
-
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("    [CF Threshold]\n");
         buffer.append("          .type    = ").append(Integer.toHexString(type)).append("\n");
-        // TODO Output the formula better
-        buffer.append("          .formula = ").append(formula).append("\n");
+        buffer.append("          .formula = ").append(Arrays.toString(formula.getTokens())).append("\n");
         buffer.append("          .value   = ").append(value).append("\n");
         buffer.append("    [/CF Threshold]\n");
         return buffer.toString();

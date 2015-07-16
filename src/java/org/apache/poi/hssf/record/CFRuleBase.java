@@ -425,7 +425,7 @@ public abstract class CFRuleBase extends StandardRecord {
      *
      * @return <code>null</code> if <tt>formula</tt> was null.
      */
-    protected static Ptg[] parseFormula(String formula, HSSFSheet sheet) {
+    public static Ptg[] parseFormula(String formula, HSSFSheet sheet) {
         if(formula == null) {
             return null;
         }

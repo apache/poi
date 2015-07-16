@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.record.CFRuleBase.parseFormula;
+import static org.apache.poi.hssf.usermodel.HSSFConditionalFormattingRule.toFormulaString;
+
 import org.apache.poi.hssf.record.cf.Threshold;
-import org.apache.poi.ss.formula.Formula;
 
 /**
  * High level representation for Icon / Multi-State / Databar /
@@ -26,9 +28,13 @@ import org.apache.poi.ss.formula.Formula;
  */
 public final class HSSFConditionalFormattingThreshold implements org.apache.poi.ss.usermodel.ConditionalFormattingThreshold {
     private final Threshold threshold;
+    private final HSSFSheet sheet;
+    private final HSSFWorkbook workbook;
 
-    protected HSSFConditionalFormattingThreshold(Threshold threshold) {
+    protected HSSFConditionalFormattingThreshold(Threshold threshold, HSSFSheet sheet) {
         this.threshold = threshold;
+        this.sheet = sheet;
+        this.workbook = sheet.getWorkbook();
     }
     protected Threshold getThreshold() {
         return threshold;
@@ -41,11 +47,11 @@ public final class HSSFConditionalFormattingThreshold implements org.apache.poi.
         threshold.setType((byte)type.id);
     }
 
-    public Formula getFormula() {
-        return threshold.getFormula();
+    public String getFormula() {
+        return toFormulaString(threshold.getParsedExpression(), workbook);
     }
-    public void setFormula(Formula formula) {
-        threshold.setFormula(formula);
+    public void setFormula(String formula) {
+        threshold.setParsedExpression(parseFormula(formula, sheet));
     }
 
     public Double getValue() {

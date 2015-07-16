@@ -74,20 +74,20 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * </PRE>
  */
 public final class HSSFConditionalFormatting  implements ConditionalFormatting {
-    private final HSSFWorkbook _workbook;
+    private final HSSFSheet sheet;
     private final CFRecordsAggregate cfAggregate;
 
     // TODO Should this be assigning unique IDs to the rules
     //  as they get added to the file?
 
-    HSSFConditionalFormatting(HSSFWorkbook workbook, CFRecordsAggregate cfAggregate) {
-        if(workbook == null) {
-            throw new IllegalArgumentException("workbook must not be null");
+    HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate) {
+        if(sheet == null) {
+            throw new IllegalArgumentException("sheet must not be null");
         }
         if(cfAggregate == null) {
             throw new IllegalArgumentException("cfAggregate must not be null");
         }
-        _workbook = workbook;
+        this.sheet = sheet; 
         this.cfAggregate = cfAggregate;
     }
     CFRecordsAggregate getCFRecordsAggregate() {
@@ -143,7 +143,7 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
      */
     public HSSFConditionalFormattingRule getRule(int idx) {
         CFRuleBase ruleRecord = cfAggregate.getRule(idx);
-        return new HSSFConditionalFormattingRule(_workbook, ruleRecord);
+        return new HSSFConditionalFormattingRule(sheet, ruleRecord);
     }
 
     /**
