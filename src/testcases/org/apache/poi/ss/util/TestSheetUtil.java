@@ -17,12 +17,15 @@
 
 package org.apache.poi.ss.util;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import junit.framework.TestCase;
 
 /**
  * Tests SheetUtil.
@@ -61,5 +64,86 @@ public final class TestSheetUtil extends TestCase {
         assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 2).getNumericCellValue());
         assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 3).getNumericCellValue());
         assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 4).getNumericCellValue());
+        
+        wb.close();
+    }
+    
+    public void testCanComputeWidthHSSF() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        
+        // cannot check on result because on some machines we get back false here!
+        SheetUtil.canComputeColumnWidht(wb.getFontAt((short)0));
+
+        wb.close();        
+    }
+
+    public void testGetCellWidthEmpty() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("sheet");
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        
+        // no contents: cell.setCellValue("sometext");
+        
+        assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1, null, true));
+        
+        wb.close();
+    }
+
+    public void testGetCellWidthString() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("sheet");
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        
+        cell.setCellValue("sometext");
+        
+        assertTrue(SheetUtil.getCellWidth(cell, 1, null, true) > 0);
+        
+        wb.close();
+    }
+
+    public void testGetCellWidthNumber() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("sheet");
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        
+        cell.setCellValue(88.234);
+        
+        assertTrue(SheetUtil.getCellWidth(cell, 1, null, true) > 0);
+        
+        wb.close();
+    }
+
+    public void testGetCellWidthBoolean() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("sheet");
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        
+        cell.setCellValue(false);
+        
+        assertTrue(SheetUtil.getCellWidth(cell, 1, null, false) > 0);
+        
+        wb.close();
+    }
+
+    public void testGetColumnWidthString() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet("sheet");
+        Row row = sheet.createRow(0);
+        sheet.createRow(1);
+        sheet.createRow(2);
+        Cell cell = row.createCell(0);
+        
+        cell.setCellValue("sometext");
+        
+        assertTrue("Having some width for rows with actual cells", 
+                SheetUtil.getColumnWidth(sheet, 0, true) > 0);
+        assertEquals("Not having any widht for rows with all empty cells", 
+                -1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2));
+        
+        wb.close();
     }
 }
