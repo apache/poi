@@ -17,8 +17,13 @@
 
 package org.apache.poi.ddf;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayInputStream;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.util.IOUtils;
 import org.junit.Test;
 
 public class TestEscherDump {
@@ -35,5 +40,19 @@ public class TestEscherDump {
     @Test
     public void testWithData() throws Exception {
         new EscherDump().dumpOld(8, new ByteArrayInputStream(new byte[] { 00, 00, 00, 00, 00, 00, 00, 00 }), System.out);
+    }
+
+    @Test
+    public  void testWithSamplefile() throws Exception {
+        //InputStream stream = HSSFTestDataSamples.openSampleFileStream(")
+        byte[] data = POIDataSamples.getDDFInstance().readFile("Container.dat");
+        new EscherDump().dump(data.length, data, System.out);
+        //new EscherDump().dumpOld(data.length, new ByteArrayInputStream(data), System.out);
+        
+        data = new byte[2586114];
+        int bytes = IOUtils.readFully(HSSFTestDataSamples.openSampleFileStream("44593.xls"), data);
+        assertTrue(bytes != -1);
+        //new EscherDump().dump(bytes, data, System.out);
+        //new EscherDump().dumpOld(bytes, new ByteArrayInputStream(data), System.out);
     }
 }
