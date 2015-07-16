@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.io.IOException;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.ss.usermodel.BaseTestFont;
 import org.apache.poi.ss.usermodel.Font;
@@ -25,6 +27,8 @@ import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
@@ -87,6 +91,8 @@ public final class TestXSSFFont extends BaseTestFont{
       assertEquals(FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
       // And set with the Charset index
       xssfFont.setCharSet(FontCharset.ARABIC.getValue());
+      assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+      xssfFont.setCharSet((byte)(FontCharset.ARABIC.getValue()));
       assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
       
       // This one isn't allowed
@@ -279,4 +285,23 @@ public final class TestXSSFFont extends BaseTestFont{
 		font.setTypeOffset(XSSFFont.SS_SUPER);
 		assertEquals(STVerticalAlignRun.SUPERSCRIPT,ctFont.getVertAlignArray(0).getVal());
 	}
+
+	// store test from TestSheetUtil here as it uses XSSF
+    public void testCanComputeWidthXSSF() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+
+        // cannot check on result because on some machines we get back false here!
+        SheetUtil.canComputeColumnWidht(wb.getFontAt((short)0));
+
+        wb.close();        
+    }
+
+    // store test from TestSheetUtil here as it uses XSSF
+    public void testCanComputeWidthInvalidFont() throws IOException {
+        Font font = new XSSFFont(CTFont.Factory.newInstance());
+        font.setFontName("some non existing font name");
+        
+        // Even with invalid fonts we still get back useful data most of the time... 
+        SheetUtil.canComputeColumnWidht(font);
+    }
 }
