@@ -361,6 +361,9 @@ public abstract class BaseTestBugzillaIssues {
         Assume.assumeTrue("Cannot verify auoSizeColumn() because the necessary Fonts are not installed on this machine: " + font, 
                 SheetUtil.canComputeColumnWidht(font));
         
+        double width = SheetUtil.getCellWidth(cell0, 8, null, false);
+        assertTrue("Expected to have cell width > 0 after auto-size, but had " + width, width > 0);
+        
         assertEquals(255*256, sheet.getColumnWidth(0)); // maximum column width is 255 characters
         sheet.setColumnWidth(0, sheet.getColumnWidth(0)); // Bug 506819 reports exception at this point
     }
