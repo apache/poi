@@ -103,12 +103,12 @@ public class TestAllFiles {
         HANDLERS.put(".vsd", new HDGFFileHandler());
         
         // Visio - ooxml (currently unsupported)
-        HANDLERS.put(".vsdm", new NullFileHandler());
-        HANDLERS.put(".vsdx", new NullFileHandler());
-        HANDLERS.put(".vssm", new NullFileHandler());
-        HANDLERS.put(".vssx", new NullFileHandler());
-        HANDLERS.put(".vstm", new NullFileHandler());
-        HANDLERS.put(".vstx", new NullFileHandler());
+        HANDLERS.put(".vsdm", new XDGFFileHandler());
+        HANDLERS.put(".vsdx", new XDGFFileHandler());
+        HANDLERS.put(".vssm", new XDGFFileHandler());
+        HANDLERS.put(".vssx", new XDGFFileHandler());
+        HANDLERS.put(".vstm", new XDGFFileHandler());
+        HANDLERS.put(".vstx", new XDGFFileHandler());
 
         // POIFS
         HANDLERS.put(".ole2", new POIFSFileHandler());
