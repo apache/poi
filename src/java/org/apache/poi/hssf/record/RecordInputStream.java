@@ -52,7 +52,8 @@ public final class RecordInputStream implements LittleEndianInput {
 	public static final class LeftoverDataException extends RuntimeException {
 		public LeftoverDataException(int sid, int remainingByteCount) {
 			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase()
-					+ " left " + remainingByteCount + " bytes remaining still to be read.");
+					+ "(" + RecordFactory.getRecordClass(sid).getSimpleName() + ") left " + remainingByteCount 
+					+ " bytes remaining still to be read.");
 		}
 	}
 
