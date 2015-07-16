@@ -19,6 +19,8 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
+import org.apache.poi.hssf.record.cf.Threshold;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
 
 /**
  * High level representation for Icon / Multi-State Formatting 
@@ -52,5 +54,22 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
     }
     public void setReversed(boolean reversed) {
         iconFormatting.setReversed(reversed);
+    }
+
+    public ConditionalFormattingThreshold[] getThresholds() {
+        Threshold[] t = iconFormatting.getThresholds();
+        HSSFConditionalFormattingThreshold[] ht = new HSSFConditionalFormattingThreshold[t.length];
+        for (int i=0; i<t.length; i++) {
+            ht[i] = new HSSFConditionalFormattingThreshold(t[i]);
+        }
+        return ht;
+    }
+
+    public void setThresholds(ConditionalFormattingThreshold[] thresholds) {
+        Threshold[] t = new Threshold[thresholds.length];
+        for (int i=0; i<t.length; i++) {
+            t[i] = ((HSSFConditionalFormattingThreshold)thresholds[i]).getThreshold();
+        }
+        iconFormatting.setThresholds(t);
     }
 }
