@@ -97,6 +97,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 		return new HSSFConditionalFormattingRule(wb, rr);
 	}
 	
+	// TODO Support types beyond CELL_VALUE_IS and FORMULA
+	
 	/**
 	 * A factory method allowing the creation of conditional formatting
 	 *  rules using an Icon Set / Multi-State formatting/

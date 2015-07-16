@@ -80,8 +80,6 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     // TODO Should this be assigning unique IDs to the rules
     //  as they get added to the file?
 
-    // TODO Support types beyond CELL_VALUE_IS and FORMULA
-
     HSSFConditionalFormatting(HSSFWorkbook workbook, CFRecordsAggregate cfAggregate) {
         if(workbook == null) {
             throw new IllegalArgumentException("workbook must not be null");
@@ -112,10 +110,11 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
 
     /**
      * Replaces an existing Conditional Formatting rule at position idx. 
-     * Excel allows to create up to 3 Conditional Formatting rules.
+     * Older versions of Excel only allow up to 3 Conditional Formatting rules,
+     *  and will ignore rules beyond that, while newer versions are fine.
      * This method can be useful to modify existing  Conditional Formatting rules.
      * 
-     * @param idx position of the rule. Should be between 0 and 2.
+     * @param idx position of the rule. Should be between 0 and 2 for older Excel versions
      * @param cfRule - Conditional Formatting rule
      */
     public void setRule(int idx, HSSFConditionalFormattingRule cfRule) {

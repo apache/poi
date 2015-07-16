@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.cf;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -34,7 +33,7 @@ public final class IconMultiStateFormatting implements Cloneable {
             
     private IconSet iconSet;
     private byte options;
-    private byte[] states; // TODO Decode
+    private Threshold[] thresholds;
     
     private static BitField iconOnly = BitFieldFactory.getInstance(0x01);
     private static BitField reversed = BitFieldFactory.getInstance(0x04);
@@ -42,7 +41,7 @@ public final class IconMultiStateFormatting implements Cloneable {
     public IconMultiStateFormatting() {
         iconSet = IconSet.GYR_3_TRAFFIC_LIGHTS;
         options = 0;
-        states = new byte[0];
+        thresholds = new Threshold[iconSet.num];
     }
     public IconMultiStateFormatting(LittleEndianInput in) {
         in.readShort(); // Ignored
@@ -54,9 +53,11 @@ public final class IconMultiStateFormatting implements Cloneable {
             log.log(POILogger.WARN, "Inconsistent Icon Set defintion, found " + iconSet + " but defined as " + num + " entries");
         }
         options = in.readByte();
-        // TODO Decode
-        states = new byte[in.available()];
-        in.readFully(states);
+        
+        thresholds = new Threshold[iconSet.num];
+        for (int i=0; i<thresholds.length; i++) {
+            thresholds[i] = new Threshold(in);
+        }
     }
     
     public IconSet getIconSet() {
@@ -66,6 +67,13 @@ public final class IconMultiStateFormatting implements Cloneable {
         this.iconSet = set;
     }
 
+    public Threshold[] getThresholds() {
+        return thresholds;
+    }
+    public void setThresholds(Threshold[] thresholds) {
+        this.thresholds = thresholds;
+    }
+    
     public boolean isIconOnly() {
         return getOptionFlag(iconOnly);
     }
@@ -94,7 +102,9 @@ public final class IconMultiStateFormatting implements Cloneable {
         buffer.append("          .icon_set = ").append(iconSet).append("\n");
         buffer.append("          .icon_only= ").append(isIconOnly()).append("\n");
         buffer.append("          .reversed = ").append(isReversed()).append("\n");
-        buffer.append("          .states   = ").append(HexDump.toHex(states)).append("\n");
+        for (Threshold t : thresholds) {
+            buffer.append(t.toString());
+        }
         buffer.append("    [/Icon Formatting]\n");
         return buffer.toString();
     }
@@ -103,13 +113,17 @@ public final class IconMultiStateFormatting implements Cloneable {
       IconMultiStateFormatting rec = new IconMultiStateFormatting();
       rec.iconSet = iconSet;
       rec.options = options;
-      rec.states = new byte[states.length];
-      System.arraycopy(states, 0, rec.states, 0, states.length);
+      rec.thresholds = new Threshold[thresholds.length];
+      System.arraycopy(thresholds, 0, rec.thresholds, 0, thresholds.length);
       return rec;
     }
     
     public int getDataLength() {
-        return 6 + states.length;
+        int len = 6;
+        for (Threshold t : thresholds) {
+            len += t.getDataLength();
+        }
+        return len;
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -118,6 +132,8 @@ public final class IconMultiStateFormatting implements Cloneable {
         out.writeByte(iconSet.num);
         out.writeByte(iconSet.id);
         out.writeByte(options);
-        out.write(states);
+        for (Threshold t : thresholds) {
+            t.serialize(out);
+        }
     }
 }

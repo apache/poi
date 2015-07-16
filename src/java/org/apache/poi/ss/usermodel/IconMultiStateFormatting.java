@@ -104,5 +104,13 @@ public interface IconMultiStateFormatting {
     boolean isReversed();
     void setReversed(boolean reversed);
     
-    // TODO States
+    /**
+     * Gets the list of thresholds
+     */
+    ConditionalFormattingThreshold[] getThresholds();
+    /**
+     * Sets the of thresholds. The number must match
+     *  {@link IconSet#num} for the current {@link #getIconSet()}
+     */
+    void setThresholds(ConditionalFormattingThreshold[] thresholds);
 }
