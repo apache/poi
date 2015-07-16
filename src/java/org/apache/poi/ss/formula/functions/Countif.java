@@ -491,7 +491,7 @@ public final class Countif extends Fixed2ArgFunction {
 	 */
 	private static ValueEval evaluateCriteriaArg(ValueEval arg, int srcRowIndex, int srcColumnIndex) {
 		try {
-			return OperandResolver.getSingleValue(arg, srcRowIndex, (short)srcColumnIndex);
+			return OperandResolver.getSingleValue(arg, srcRowIndex, srcColumnIndex);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

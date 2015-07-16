@@ -54,6 +54,7 @@ public final class Sumifs implements FreeRefFunction {
     public static final FreeRefFunction instance = new Sumifs();
 
 	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+	    // need at least 3 arguments and need to have an odd number of arguments (sum-range plus x*(criteria_range, criteria))
         if(args.length < 3 || args.length % 2 == 0) {
             return ErrorEval.VALUE_INVALID;
         }
