@@ -27,10 +27,12 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
  *  component of Conditional Formatting settings
  */
 public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.usermodel.IconMultiStateFormatting {
+    private final HSSFSheet sheet;
     private final CFRule12Record cfRule12Record;
     private final IconMultiStateFormatting iconFormatting;
 
-    protected HSSFIconMultiStateFormatting(CFRule12Record cfRule12Record) {
+    protected HSSFIconMultiStateFormatting(CFRule12Record cfRule12Record, HSSFSheet sheet) {
+        this.sheet = sheet;
         this.cfRule12Record = cfRule12Record;
         this.iconFormatting = this.cfRule12Record.getMultiStateFormatting();
     }
@@ -60,7 +62,7 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
         Threshold[] t = iconFormatting.getThresholds();
         HSSFConditionalFormattingThreshold[] ht = new HSSFConditionalFormattingThreshold[t.length];
         for (int i=0; i<t.length; i++) {
-            ht[i] = new HSSFConditionalFormattingThreshold(t[i]);
+            ht[i] = new HSSFConditionalFormattingThreshold(t[i], sheet);
         }
         return ht;
     }

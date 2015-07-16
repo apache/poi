@@ -41,15 +41,17 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     private final CFRuleBase cfRuleRecord;
     private final HSSFWorkbook workbook;
+    private final HSSFSheet sheet;
 
-    HSSFConditionalFormattingRule(HSSFWorkbook pWorkbook, CFRuleBase pRuleRecord) {
-        if (pWorkbook == null) {
-            throw new IllegalArgumentException("pWorkbook must not be null");
+    HSSFConditionalFormattingRule(HSSFSheet pSheet, CFRuleBase pRuleRecord) {
+        if (pSheet == null) {
+            throw new IllegalArgumentException("pSheet must not be null");
         }
         if (pRuleRecord == null) {
             throw new IllegalArgumentException("pRuleRecord must not be null");
         }
-        workbook = pWorkbook;
+        sheet = pSheet;
+        workbook = pSheet.getWorkbook();
         cfRuleRecord = pRuleRecord;
     }
 
@@ -179,12 +181,12 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         IconMultiStateFormatting iconFormatting = cfRule12Record.getMultiStateFormatting();
         if (iconFormatting != null)
         {
-            return new HSSFIconMultiStateFormatting(cfRule12Record);
+            return new HSSFIconMultiStateFormatting(cfRule12Record, sheet);
         }
         else if( create )
         {
             iconFormatting = cfRule12Record.createMultiStateFormatting();
-            return new HSSFIconMultiStateFormatting(cfRule12Record);
+            return new HSSFIconMultiStateFormatting(cfRule12Record, sheet);
         }
         else
         {
@@ -245,7 +247,10 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return null;
     }
 
-    private String toFormulaString(Ptg[] parsedExpression) {
+    protected String toFormulaString(Ptg[] parsedExpression) {
+        return toFormulaString(parsedExpression, workbook);
+    }
+    protected static String toFormulaString(Ptg[] parsedExpression, HSSFWorkbook workbook) {
         if(parsedExpression == null || parsedExpression.length == 0) {
             return null;
         }

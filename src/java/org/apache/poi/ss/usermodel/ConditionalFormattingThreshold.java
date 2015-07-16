@@ -19,7 +19,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.ss.formula.Formula;
 
 /**
  * The Threshold / CFVO / Conditional Formatting Value Object.
@@ -79,13 +78,13 @@ public interface ConditionalFormattingThreshold {
      * Formula to use to calculate the threshold,
      *  or <code>null</code> if no formula 
      */
-    Formula getFormula();
+    String getFormula();
 
     /**
      * Sets the formula used to calculate the threshold,
      *  or unsets it if <code>null</code> is given.
      */
-    void setFormula(Formula formula);
+    void setFormula(String formula);
     
     /**
      * Gets the value used for the threshold, or 
