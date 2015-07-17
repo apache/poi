@@ -23,15 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.xssf.usermodel.XSSFFontFormatting;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * XSSF suport for Conditional Formatting rules
@@ -179,12 +175,46 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         return new XSSFPatternFormatting(dxf.getFill());
     }
     
+    public XSSFIconMultiStateFormatting createMultiStateFormatting(IconSet iconSet) {
+        // Is it already there?
+        if (_cfRule.isSetIconSet() && _cfRule.getType() == STCfType.ICON_SET)
+            return getMultiStateFormatting();
+        
+        // Mark it as being an Icon Set
+        _cfRule.setType(STCfType.ICON_SET);
 
-    public IconMultiStateFormatting createMultiStateFormatting() {
-        throw new IllegalArgumentException("Not implemented yet"); // TODO 
+        // Ensure the right element
+        CTIconSet icons = null;
+        if (_cfRule.isSetIconSet()) {
+            icons = _cfRule.getIconSet();
+        } else {
+            icons = _cfRule.addNewIconSet();
+        }
+        // Set the type of the icon set
+        if (iconSet.name != null) {
+            STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(iconSet.name);
+            icons.setIconSet(xIconSet);
+        }
+        
+        // Add a default set of thresholds
+        int jump = 100 / iconSet.num;
+        STCfvoType.Enum type = STCfvoType.Enum.forString(RangeType.PERCENT.name);
+        for (int i=0; i<iconSet.num; i++) {
+            CTCfvo cfvo = icons.addNewCfvo();
+            cfvo.setType(type);
+            cfvo.setVal(Integer.toString(i*jump));
+        }
+        
+        // Wrap and return
+        return new XSSFIconMultiStateFormatting(icons);
     }
-    public IconMultiStateFormatting getMultiStateFormatting() {
-        throw new IllegalArgumentException("Not implemented yet"); // TODO 
+    public XSSFIconMultiStateFormatting getMultiStateFormatting() {
+        if (_cfRule.isSetIconSet()) {
+            CTIconSet icons = _cfRule.getIconSet();
+            return new XSSFIconMultiStateFormatting(icons);
+        } else {
+            return null;
+        }
     }
 
     /**

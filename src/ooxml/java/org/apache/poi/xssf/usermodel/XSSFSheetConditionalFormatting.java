@@ -27,19 +27,14 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
-import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfvo;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTConditionalFormatting;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIconSet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfvoType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STIconSetType;
 
 /**
  * XSSF Conditional Formattings
@@ -136,25 +131,8 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     public XSSFConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet) {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
         
-        // Mark it as being an Icon Set
-        CTCfRule cfRule = rule.getCTCfRule();
-        cfRule.setType(STCfType.ICON_SET);
-
-        // Set the type of the icon set
-        CTIconSet icons = cfRule.addNewIconSet();
-        if (iconSet.name != null) {
-            STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(iconSet.name);
-            icons.setIconSet(xIconSet);
-        }
-        
-        // Add a default set of thresholds
-        int jump = 100 / iconSet.num;
-        STCfvoType.Enum type = STCfvoType.Enum.forString(RangeType.PERCENT.name);
-        for (int i=0; i<iconSet.num; i++) {
-            CTCfvo cfvo = icons.addNewCfvo();
-            cfvo.setType(type);
-            cfvo.setVal(Integer.toString(i*jump));
-        }
+        // Have it setup, with suitable defaults
+        rule.createMultiStateFormatting(iconSet);
         
         // All done!
         return rule;
