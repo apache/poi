@@ -74,10 +74,15 @@ public interface ConditionalFormattingRule {
     PatternFormatting createPatternFormatting();
 
     /**
-     * @return - pattern formatting object  if defined,  <code>null</code> otherwise
+     * @return - pattern formatting object if defined, <code>null</code> otherwise
      */
     PatternFormatting getPatternFormatting();
 
+    /**
+     * @return - icon / multi-state formatting object if defined, <code>null</code> otherwise
+     */
+    IconMultiStateFormatting getMultiStateFormatting();
+    
     /**
      * Type of conditional formatting rule.
      * <p>

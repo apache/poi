@@ -178,6 +178,14 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
         return new XSSFPatternFormatting(dxf.getFill());
     }
+    
+
+    public IconMultiStateFormatting createMultiStateFormatting() {
+        throw new IllegalArgumentException("Not implemented yet"); // TODO 
+    }
+    public IconMultiStateFormatting getMultiStateFormatting() {
+        throw new IllegalArgumentException("Not implemented yet"); // TODO 
+    }
 
     /**
      * Type of conditional formatting rule.
