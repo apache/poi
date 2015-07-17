@@ -19,6 +19,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -135,6 +136,18 @@ public interface SheetConditionalFormatting {
      */
     ConditionalFormattingRule createConditionalFormattingRule(String formula);
 
+    /**
+     * Create an Icon Set / Multi-State conditional formatting rule.
+     * <p>The thresholds for it will be created, but will be empty
+     *  and require configuring with 
+     *  {@link ConditionalFormattingRule#getMultiStateFormatting()}
+     *  then
+     *  {@link IconMultiStateFormatting#getThresholds()}
+     */
+    ConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet);
+
+    // TODO Support types beyond CELL_VALUE_IS and FORMULA and ICONs
+    
     /**
     * Gets Conditional Formatting object at a particular index
     *

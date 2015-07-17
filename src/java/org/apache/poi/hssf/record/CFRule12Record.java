@@ -20,11 +20,13 @@ package org.apache.poi.hssf.record;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
+import org.apache.poi.hssf.record.cf.Threshold;
 import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
@@ -116,6 +118,22 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         return new CFRule12Record(CONDITION_TYPE_CELL_VALUE_IS, comparisonOperation, 
                 formula1, formula2, formula3);
     }
+    /**
+     * Creates a new Icon Set / Multi-State formatting
+     */
+    public static CFRule12Record create(HSSFSheet sheet, IconSet iconSet) {
+        Threshold[] ts = new Threshold[iconSet.num];
+        for (int i=0; i<ts.length; i++) {
+            ts[i] = new Threshold();
+        }
+        
+        CFRule12Record r = new CFRule12Record(CONDITION_TYPE_COLOR_SCALE, 
+                                              ComparisonOperator.NO_COMPARISON);
+        r.getMultiStateFormatting().setIconSet(iconSet);
+        r.getMultiStateFormatting().setThresholds(ts);
+        return r;
+    }
+    // TODO Static creators for the other record types
 
     public CFRule12Record(RecordInputStream in) {
         futureHeader = new FtrHeader(in);
