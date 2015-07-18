@@ -54,6 +54,12 @@ public interface ConditionalFormattingThreshold {
         public static RangeType byId(int id) {
             return values()[id-1]; // 1-based IDs
         }
+        public static RangeType byName(String name) {
+            for (RangeType t : values()) {
+                if (t.name.equals(name)) return t;
+            }
+            return null;
+        }
         
         private RangeType(int id, String name) {
             this.id = id; this.name = name;
