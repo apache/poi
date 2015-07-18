@@ -77,9 +77,6 @@ public final class HSSFConditionalFormatting  implements ConditionalFormatting {
     private final HSSFSheet sheet;
     private final CFRecordsAggregate cfAggregate;
 
-    // TODO Should this be assigning unique IDs to the rules
-    //  as they get added to the file?
-
     HSSFConditionalFormatting(HSSFSheet sheet, CFRecordsAggregate cfAggregate) {
         if(sheet == null) {
             throw new IllegalArgumentException("sheet must not be null");

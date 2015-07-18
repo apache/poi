@@ -61,6 +61,7 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 	 * @return index of the newly added CF header aggregate
 	 */
 	public int add(CFRecordsAggregate cfAggregate) {
+	    cfAggregate.getHeader().setID(_cfHeaders.size());
 		_cfHeaders.add(cfAggregate);
 		return _cfHeaders.size() - 1;
 	}

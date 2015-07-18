@@ -32,6 +32,8 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefNPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -119,6 +121,46 @@ public final class TestCFRuleRecord extends TestCase {
         }
     }
 
+    public void testCreateIconCFRule12Record() {
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet();
+        CFRule12Record record = CFRule12Record.create(sheet, IconSet.GREY_5_ARROWS);
+        record.getMultiStateFormatting().getThresholds()[1].setType(RangeType.PERCENT.id);
+        record.getMultiStateFormatting().getThresholds()[1].setValue(10d);
+        record.getMultiStateFormatting().getThresholds()[2].setType(RangeType.NUMBER.id);
+        record.getMultiStateFormatting().getThresholds()[2].setValue(-4d);
+        
+        // Check it 
+        testCFRule12Record(record);
+        assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
+        assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
+
+        // Serialize
+        byte [] serializedRecord = record.serialize();
+
+        // Strip header
+        byte [] recordData = new byte[serializedRecord.length-4];
+        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+
+        // Deserialize
+        record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
+        
+        // Check it has the icon, and the right number of thresholds
+        assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
+        assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
+
+        // Serialize again
+        byte[] output = record.serialize();
+
+        // Compare
+        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
+
+        for (int i = 0; i < recordData.length;i++)
+        {
+            assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
+        }
+    }
+    
     private void testCFRuleRecord(CFRuleRecord record) {
         testCFRuleBase(record);
         

@@ -74,6 +74,9 @@ public final class Threshold {
     public void setType(byte type) {
         this.type = type;
     }
+    public void setType(int type) {
+        this.type = (byte)type;
+    }
 
     protected Formula getFormula() {
         return formula;
@@ -129,7 +132,7 @@ public final class Threshold {
 
     public void serialize(LittleEndianOutput out) {
         out.writeByte(type);
-        if (formula == null) {
+        if (formula.getTokens().length == 0) {
             out.writeShort(0);
         } else {
             formula.serialize(out);

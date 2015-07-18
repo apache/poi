@@ -28,9 +28,17 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfvoType;
  */
 public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.usermodel.ConditionalFormattingThreshold {
     private CTCfvo cfvo;
+    
+    protected XSSFConditionalFormattingThreshold(CTCfvo cfvo) {
+        this.cfvo = cfvo;
+    }
+    
+    protected CTCfvo getCTCfvo() {
+        return cfvo;
+    }
 
     public RangeType getRangeType() {
-        return RangeType.valueOf(cfvo.getType().toString());
+        return RangeType.byName(cfvo.getType().toString());
     }
     public void setRangeType(RangeType type) {
         STCfvoType.Enum xtype = STCfvoType.Enum.forString(type.name);

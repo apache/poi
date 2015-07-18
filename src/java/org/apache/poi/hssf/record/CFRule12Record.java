@@ -129,8 +129,9 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         
         CFRule12Record r = new CFRule12Record(CONDITION_TYPE_COLOR_SCALE, 
                                               ComparisonOperator.NO_COMPARISON);
-        r.getMultiStateFormatting().setIconSet(iconSet);
-        r.getMultiStateFormatting().setThresholds(ts);
+        IconMultiStateFormatting imf = r.createMultiStateFormatting();
+        imf.setIconSet(iconSet);
+        imf.setThresholds(ts);
         return r;
     }
     // TODO Static creators for the other record types
