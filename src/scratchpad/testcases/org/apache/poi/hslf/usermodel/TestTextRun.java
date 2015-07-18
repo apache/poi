@@ -525,7 +525,7 @@ public final class TestTextRun {
                         rt.setFontColor(Color.RED);
                     }
                 }
-                tx.storeText();
+                // tx.storeText();
             }
         }
         ByteArrayOutputStream out = new ByteArrayOutputStream();

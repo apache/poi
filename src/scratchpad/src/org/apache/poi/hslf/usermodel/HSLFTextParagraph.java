@@ -64,6 +64,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     private int shapeId;
 
     private StyleTextProp9Atom styleTextProp9Atom;
+    
+    private boolean _dirty = false;
 
     /**
     * Constructs a Text Run from a Unicode text block.
@@ -265,7 +267,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     @Override
     public void setLeftMargin(Double leftMargin) {
         Integer val = (leftMargin == null) ? null : Units.pointsToMaster(leftMargin);
-        setPropVal(_paragraphStyle, "text.offset", val);
+        setParagraphTextPropVal("text.offset", val);
     }
 
     @Override
@@ -288,7 +290,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     @Override
     public void setIndent(Double indent) {
         Integer val = (indent == null) ? null : Units.pointsToMaster(indent);
-        setPropVal(_paragraphStyle, "bullet.offset", val);
+        setParagraphTextPropVal("bullet.offset", val);
     }
 
     @Override
@@ -327,7 +329,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             case JUSTIFY_LOW: alignInt = TextAlignmentProp.JUSTIFYLOW; break;
             case THAI_DIST: alignInt = TextAlignmentProp.THAIDISTRIBUTED; break;
         }
-        setPropVal(_paragraphStyle, "alignment", alignInt);
+        setParagraphTextPropVal("alignment", alignInt);
     }
 
     @Override
@@ -455,7 +457,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
      */
     public void setBulletChar(Character c) {
         Integer val = (c == null) ? null : (int)c.charValue();
-        setPropVal(_paragraphStyle, "bullet.char", val);
+        setParagraphTextPropVal("bullet.char", val);
     }
 
     /**
@@ -485,7 +487,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
      */
     public void setBulletColor(Color color) {
         Integer val = (color == null) ? null : new Color(color.getBlue(), color.getGreen(), color.getRed(), 254).getRGB();
-        setPropVal(_paragraphStyle, "bullet.color", val);
+        setParagraphTextPropVal("bullet.color", val);
     }
 
     /**
@@ -513,7 +515,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         FontCollection fc = getSheet().getSlideShow().getFontCollection();
         int idx = fc.addFont(typeface);
 
-        setPropVal(_paragraphStyle, "bullet.font", idx);
+        setParagraphTextPropVal("bullet.font", idx);
         setFlag(ParagraphFlagsTextProp.BULLET_HARDFONT_IDX, true);
     }
 
@@ -576,7 +578,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
         if (dval != null) {
             ival = (dval < 0) ? Units.pointsToMaster(dval) : dval.intValue();
         }
-        setPropVal(_paragraphStyle, propName, ival);
+        setParagraphTextPropVal(propName, ival);
     }
     
     private boolean getFlag(int index) {
@@ -587,6 +589,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
     private void setFlag(int index, boolean value) {
         BitMaskTextProp tp = (BitMaskTextProp)_paragraphStyle.addWithName(ParagraphFlagsTextProp.NAME);
         tp.setSubValue(value, index);
+        setDirty();
     }
 
     /**
@@ -812,6 +815,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
             } catch (IOException e) {
                 throw new RuntimeException("failed dummy write", e);
             }
+        }
+        
+        for (HSLFTextParagraph p : paragraphs) {
+            p._dirty = false;
         }
     }
 
@@ -1259,5 +1266,26 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFTextRun> {
                 return null;
         }
         return new Color(tmp.getBlue(), tmp.getGreen(), tmp.getRed());
+    }
+
+    /**
+     * Sets the value of the given Paragraph TextProp, add if required
+     * @param propName The name of the Paragraph TextProp
+     * @param val The value to set for the TextProp
+     */
+    public void setParagraphTextPropVal(String propName, Integer val) {
+        setPropVal(_paragraphStyle, propName, val);
+        setDirty();
+    }
+    
+    /**
+     * marks this paragraph dirty, so its records will be renewed on save
+     */
+    public void setDirty() {
+        _dirty = true;
+    }
+    
+    public boolean isDirty() {
+        return _dirty;
     }
 }

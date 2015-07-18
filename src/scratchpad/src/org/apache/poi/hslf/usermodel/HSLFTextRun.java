@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getPropVal;
-import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.setPropVal;
 
 import java.awt.Color;
 
@@ -133,7 +132,10 @@ public final class HSLFTextRun implements TextRun {
 	 */
 	private void setCharFlagsTextPropVal(int index, boolean value) {
 	    // TODO: check if paragraph/chars can be handled the same ...
-		if (getFlag(index) != value) setFlag(index, value);
+		if (getFlag(index) != value) {
+		    setFlag(index, value);
+		    parentParagraph.setDirty();
+		}
 	}
 
 	/**
@@ -142,7 +144,8 @@ public final class HSLFTextRun implements TextRun {
 	 * @param val The value to set for the TextProp
 	 */
 	public void setCharTextPropVal(String propName, Integer val) {
-	    setPropVal(characterStyle, propName, val);
+	    HSLFTextParagraph.setPropVal(characterStyle, propName, val);
+	    parentParagraph.setDirty();
 	}
 
 
@@ -248,7 +251,7 @@ public final class HSLFTextRun implements TextRun {
 	 * @param val the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
 	 */
 	public void setSuperscript(int val) {
-	    setPropVal(characterStyle, "superscript", val);
+	    setCharTextPropVal("superscript", val);
 	}
 
     @Override
