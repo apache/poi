@@ -31,12 +31,14 @@ public interface IconMultiStateFormatting {
         GREY_3_ARROWS(1, 3, "3ArrowsGray"),
         /** Green / Yellow / Red flags */
         GYR_3_FLAGS(2, 3, "3Flags"),
-        /** Green / Yellow / Red traffic lights (no background) */
-        GYR_3_TRAFFIC_LIGHTS(3, 3, null),
-        /** Green Circle / Yellow Triangle / Red Diamond */ 
-        GYR_3_SHAPES(4, 3, "3Signs"),
-        /** Green / Yellow / Red traffic lights on a black square background */
-        GYR_3_TRAFFIC_LIGHTS_BOX(5, 3, "3TrafficLights2"),
+        /** Green / Yellow / Red traffic lights (no background). Default */
+        GYR_3_TRAFFIC_LIGHTS(3, 3, "3TrafficLights1"),
+        /** Green / Yellow / Red traffic lights on a black square background. 
+         * Note, MS-XLS docs v20141018 say this is id=5 but seems to be id=4 */
+        GYR_3_TRAFFIC_LIGHTS_BOX(4, 3, "3TrafficLights2"),
+        /** Green Circle / Yellow Triangle / Red Diamond.
+         * Note, MS-XLS docs v20141018 say this is id=4 but seems to be id=5 */ 
+        GYR_3_SHAPES(5, 3, "3Signs"),
         /** Green Tick / Yellow ! / Red Cross on a circle background */
         GYR_3_SYMBOLS_CIRCLE(6, 3, "3Symbols"),
         /** Green Tick / Yellow ! / Red Cross (no background) */
@@ -55,6 +57,8 @@ public interface IconMultiStateFormatting {
         RATINGS_5(0xF, 5, "5Rating"),
         QUARTERS_5(0x10, 5, "5Quarters");
         
+        protected static final IconSet DEFAULT_ICONSET = IconSet.GYR_3_TRAFFIC_LIGHTS;
+        
         /** Numeric ID of the icon set */
         public int id;
         /** How many icons in the set */
@@ -63,14 +67,17 @@ public interface IconMultiStateFormatting {
         public final String name;
         
         public String toString() {
-            return id + " - " + getName();
-        }
-        private String getName() {
-            return (name==null?"default":name);
+            return id + " - " + name;
         }
         
         public static IconSet byId(int id) {
             return values()[id];
+        }
+        public static IconSet byName(String name) {
+            for (IconSet set : values()) {
+                if (set.name.equals(name)) return set;
+            }
+            return null;
         }
         
         private IconSet(int id, int num, String name) {
@@ -113,4 +120,8 @@ public interface IconMultiStateFormatting {
      *  {@link IconSet#num} for the current {@link #getIconSet()}
      */
     void setThresholds(ConditionalFormattingThreshold[] thresholds);
+    /**
+     * Creates a new, empty Threshold
+     */
+    ConditionalFormattingThreshold createThreshold();
 }
