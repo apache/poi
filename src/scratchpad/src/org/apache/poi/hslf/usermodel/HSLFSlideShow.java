@@ -442,6 +442,20 @@ public final class HSLFSlideShow implements SlideShow {
 	 *             OutputStream
 	 */
 	public void write(OutputStream out) throws IOException {
+	    // check for text paragraph modifications
+	    for (HSLFSlide sl : getSlides()) {
+	        for (HSLFShape sh : sl.getShapes()) {
+	            if (!(sh instanceof HSLFTextShape)) continue;
+	            HSLFTextShape hts = (HSLFTextShape)sh;
+                boolean isDirty = false;
+                for (HSLFTextParagraph p : hts.getTextParagraphs()) {
+                    isDirty |= p.isDirty();
+                }
+	            if (isDirty) hts.storeText();
+	        }
+	    }
+	    
+	    
 		_hslfSlideShow.write(out);
 	}
 
