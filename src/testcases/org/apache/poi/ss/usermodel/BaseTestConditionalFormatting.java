@@ -668,118 +668,32 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         // TODO Support Color Scales, then check the rest of this rule
 
         
-        // TODO Simplify asserts
-        
         // Icons : Default - Column H, percentage thresholds
         cf = sheetCF.getConditionalFormattingAt(5);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("H2:H17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertEquals(ConditionType.ICON_SET, cr.getConditionTypeType());
-        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
-        assertEquals(null, cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
-        
-        icon = cr.getMultiStateFormatting();
-        assertNotNull(icon);
-        assertEquals(IconSet.GYR_3_TRAFFIC_LIGHTS, icon.getIconSet());
-        assertEquals(false, icon.isIconOnly());
-        assertEquals(false, icon.isReversed());
-        
-        assertNotNull(icon.getThresholds());
-        assertEquals(3, icon.getThresholds().length);
-        th = icon.getThresholds()[0];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(0.0d, th.getValue());
-        assertEquals(null, th.getFormula());
-        th = icon.getThresholds()[1];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(33.0d, th.getValue());
-        assertEquals(null, th.getFormula());
-        th = icon.getThresholds()[2];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(67.0d, th.getValue());
-        assertEquals(null, th.getFormula());
+        assertIconSetPercentages(cf, IconSet.GYR_3_TRAFFIC_LIGHTS, 0d, 33d, 67d);
         
         
         // Icons : 3 signs - Column I
         cf = sheetCF.getConditionalFormattingAt(6);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("I2:I17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertEquals(ConditionType.ICON_SET, cr.getConditionTypeType());
-        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
-        assertEquals(null, cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
-        
-        icon = cr.getMultiStateFormatting();
-        assertNotNull(icon);
-        assertEquals(IconSet.GYR_3_SHAPES, icon.getIconSet());
-        assertEquals(false, icon.isIconOnly());
-        assertEquals(false, icon.isReversed());
-        
-        assertNotNull(icon.getThresholds());
-        assertEquals(3, icon.getThresholds().length);
-        th = icon.getThresholds()[0];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(0.0d, th.getValue());
-        assertEquals(null, th.getFormula());
-        th = icon.getThresholds()[1];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(33.0d, th.getValue());
-        assertEquals(null, th.getFormula());
-        th = icon.getThresholds()[2];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(67.0d, th.getValue());
-        assertEquals(null, th.getFormula());
+        assertIconSetPercentages(cf, IconSet.GYR_3_SHAPES, 0d, 33d, 67d);
         
         
         // Icons : 3 traffic lights 2 - Column J
         cf = sheetCF.getConditionalFormattingAt(7);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("J2:J17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertEquals(ConditionType.ICON_SET, cr.getConditionTypeType());
-        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
-        assertEquals(null, cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
-        
-        icon = cr.getMultiStateFormatting();
-        assertNotNull(icon);
-        assertEquals(IconSet.GYR_3_TRAFFIC_LIGHTS_BOX, icon.getIconSet());
-        assertEquals(false, icon.isIconOnly());
-        assertEquals(false, icon.isReversed());
-        
-        assertNotNull(icon.getThresholds());
-        assertEquals(3, icon.getThresholds().length);
-        th = icon.getThresholds()[0];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(0.0d, th.getValue());
-        assertEquals(null, th.getFormula());
-        th = icon.getThresholds()[1];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(33.0d, th.getValue());
-        assertEquals(null, th.getFormula());
-        th = icon.getThresholds()[2];
-        assertEquals(RangeType.PERCENT, th.getRangeType());
-        assertEquals(67.0d, th.getValue());
-        assertEquals(null, th.getFormula());
+        assertIconSetPercentages(cf, IconSet.GYR_3_TRAFFIC_LIGHTS_BOX, 0d, 33d, 67d);
         
         
         // Icons : 4 traffic lights - Column K
         cf = sheetCF.getConditionalFormattingAt(8);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("K2:K17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertIconSetPercentages(cr, IconSet.GYRB_4_TRAFFIC_LIGHTS, 0d, 25d, 50d, 75d);
+        assertIconSetPercentages(cf, IconSet.GYRB_4_TRAFFIC_LIGHTS, 0d, 25d, 50d, 75d);
 
         
         // Icons : 3 symbols - Column L
@@ -794,7 +708,10 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         // Mixed icons - Column U
 
     }
-    private void assertIconSetPercentages(ConditionalFormattingRule cr, IconSet iconset, Double...vals) {
+    private void assertIconSetPercentages(ConditionalFormatting cf, IconSet iconset, Double...vals) {
+        assertEquals(1, cf.getNumberOfRules());
+        ConditionalFormattingRule cr = cf.getRule(0);
+        
         assertEquals(ConditionType.ICON_SET, cr.getConditionTypeType());
         assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
         assertEquals(null, cr.getFormula1());
