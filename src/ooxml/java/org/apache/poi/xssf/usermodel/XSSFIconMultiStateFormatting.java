@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfvo;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIconSet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STIconSetType;
 
@@ -35,9 +36,8 @@ public class XSSFIconMultiStateFormatting implements IconMultiStateFormatting {
     }
 
     public IconSet getIconSet() {
-        return IconSet.valueOf(
-                _iconset.getIconSet().toString()
-        );
+        String set = _iconset.getIconSet().toString();
+        return IconSet.byName(set);
     }
     public void setIconSet(IconSet set) {
         STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(set.name);
@@ -62,11 +62,24 @@ public class XSSFIconMultiStateFormatting implements IconMultiStateFormatting {
         _iconset.setReverse(reversed);
     }
 
+    @SuppressWarnings("deprecation")
     public XSSFConditionalFormattingThreshold[] getThresholds() {
-        // TODO Implement
-        return null;
+        CTCfvo[] cfvos = _iconset.getCfvoArray();
+        XSSFConditionalFormattingThreshold[] t = 
+                new XSSFConditionalFormattingThreshold[cfvos.length];
+        for (int i=0; i<cfvos.length; i++) {
+            t[i] = new XSSFConditionalFormattingThreshold(cfvos[i]);
+        }
+        return t;
     }
     public void setThresholds(ConditionalFormattingThreshold[] thresholds) {
-        // TODO Implement
+        CTCfvo[] cfvos = new CTCfvo[thresholds.length];
+        for (int i=0; i<thresholds.length; i++) {
+            cfvos[i] = ((XSSFConditionalFormattingThreshold)thresholds[i]).getCTCfvo();
+        }
+        _iconset.setCfvoArray(cfvos);
+    }
+    public XSSFConditionalFormattingThreshold createThreshold() {
+        return new XSSFConditionalFormattingThreshold(_iconset.addNewCfvo());
     }
 }

@@ -58,7 +58,7 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
         iconFormatting.setReversed(reversed);
     }
 
-    public ConditionalFormattingThreshold[] getThresholds() {
+    public HSSFConditionalFormattingThreshold[] getThresholds() {
         Threshold[] t = iconFormatting.getThresholds();
         HSSFConditionalFormattingThreshold[] ht = new HSSFConditionalFormattingThreshold[t.length];
         for (int i=0; i<t.length; i++) {
@@ -73,5 +73,9 @@ public final class HSSFIconMultiStateFormatting implements org.apache.poi.ss.use
             t[i] = ((HSSFConditionalFormattingThreshold)thresholds[i]).getThreshold();
         }
         iconFormatting.setThresholds(t);
+    }
+
+    public HSSFConditionalFormattingThreshold createThreshold() {
+        return new HSSFConditionalFormattingThreshold(new Threshold(), sheet);
     }
 }

@@ -21,6 +21,8 @@ package org.apache.poi.ss.examples;
 
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -31,10 +33,9 @@ import java.io.IOException;
  * Excel Conditional Formatting -- Examples
  *
  * <p>
- *   Based on the code snippets from http://www.contextures.com/xlcondformat03.html
+ *   Partly based on the code snippets from 
+ *   http://www.contextures.com/xlcondformat03.html
  * </p>
- *
- * @author Yegor Kozlov
  */
 public class ConditionalFormats {
 
@@ -54,8 +55,9 @@ public class ConditionalFormats {
         expiry(wb.createSheet("Expiry"));
         shadeAlt(wb.createSheet("Shade Alt"));
         shadeBands(wb.createSheet("Shade Bands"));
+        iconSets(wb.createSheet("Icon Sets"));
         
-        // TODO Add Icons, data bars etc, see bug #58130
+        // TODO Add colour scales, data bars etc, see bug #58130
 
         // Write the output to a file
         String file = "cf-poi.xls";
@@ -413,5 +415,65 @@ public class ConditionalFormats {
 
         sheet.createRow(0).createCell(1).setCellValue("Shade Bands of Rows");
         sheet.createRow(1).createCell(1).setCellValue("Condition: Formula Is  =MOD(ROW(),6)<2   (Light Grey Fill)");
+    }
+    
+    /**
+     * Icon Sets / Multi-States allow you to have icons shown which vary
+     *  based on the values, eg Red traffic light / Yellow traffic light /
+     *  Green traffic light
+     */
+    static void iconSets(Sheet sheet) {
+        sheet.createRow(0).createCell(0).setCellValue("Icon Sets");
+        Row r = sheet.createRow(1);
+        r.createCell(0).setCellValue("Reds");
+        r.createCell(1).setCellValue(0);
+        r.createCell(2).setCellValue(0);
+        r.createCell(3).setCellValue(0);
+        r = sheet.createRow(2);
+        r.createCell(0).setCellValue("Yellows");
+        r.createCell(1).setCellValue(5);
+        r.createCell(2).setCellValue(5);
+        r.createCell(3).setCellValue(5);
+        r = sheet.createRow(3);
+        r.createCell(0).setCellValue("Greens");
+        r.createCell(1).setCellValue(10);
+        r.createCell(2).setCellValue(10);
+        r.createCell(3).setCellValue(10);
+                
+        SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
+        
+        CellRangeAddress[] regions = { CellRangeAddress.valueOf("B1:B4") };
+        ConditionalFormattingRule rule1 =
+                sheetCF.createConditionalFormattingRule(IconSet.GYR_3_TRAFFIC_LIGHTS);
+        IconMultiStateFormatting im1 = rule1.getMultiStateFormatting();
+        im1.getThresholds()[0].setRangeType(RangeType.MIN);
+        im1.getThresholds()[1].setRangeType(RangeType.PERCENT);
+        im1.getThresholds()[1].setValue(33d);
+        im1.getThresholds()[2].setRangeType(RangeType.MAX);
+        sheetCF.addConditionalFormatting(regions, rule1);
+        
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("C1:C4") };
+        ConditionalFormattingRule rule2 =
+                sheetCF.createConditionalFormattingRule(IconSet.GYR_3_FLAGS);
+        IconMultiStateFormatting im2 = rule1.getMultiStateFormatting();
+        im2.getThresholds()[0].setRangeType(RangeType.PERCENT);
+        im2.getThresholds()[0].setValue(0d);
+        im2.getThresholds()[1].setRangeType(RangeType.PERCENT);
+        im2.getThresholds()[1].setValue(33d);
+        im2.getThresholds()[2].setRangeType(RangeType.PERCENT);
+        im2.getThresholds()[2].setValue(67d);
+        sheetCF.addConditionalFormatting(regions, rule2);
+        
+        regions = new CellRangeAddress[] { CellRangeAddress.valueOf("D1:D4") };
+        ConditionalFormattingRule rule3 =
+                sheetCF.createConditionalFormattingRule(IconSet.GYR_3_SYMBOLS_CIRCLE);
+        IconMultiStateFormatting im3 = rule1.getMultiStateFormatting();
+        im3.setIconOnly(true);
+        im3.getThresholds()[0].setRangeType(RangeType.MIN);
+        im3.getThresholds()[1].setRangeType(RangeType.NUMBER);
+        im3.getThresholds()[1].setValue(3d);
+        im3.getThresholds()[2].setRangeType(RangeType.NUMBER);
+        im3.getThresholds()[2].setValue(7d);
+        sheetCF.addConditionalFormatting(regions, rule3);
     }
 }
