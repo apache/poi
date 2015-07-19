@@ -56,7 +56,7 @@ public final class IconMultiStateFormatting implements Cloneable {
         
         thresholds = new Threshold[iconSet.num];
         for (int i=0; i<thresholds.length; i++) {
-            thresholds[i] = new Threshold(in);
+            thresholds[i] = new IconMultiStateThreshold(in);
         }
     }
     

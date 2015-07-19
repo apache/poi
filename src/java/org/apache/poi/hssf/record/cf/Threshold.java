@@ -26,31 +26,21 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Threshold / value for changes in Conditional Formatting
+ * Threshold / value (CFVO) for changes in Conditional Formatting
  */
-public final class Threshold {
-    /**
-     * Cell values that are equal to the threshold value do not pass the threshold
-     */
-    public static final byte EQUALS_EXCLUDE = 0;
-    /**
-     * Cell values that are equal to the threshold value pass the threshold.
-     */
-    public static final byte EQUALS_INCLUDE = 1;
-    
+public abstract class Threshold {
     private byte type;
     private Formula formula;
     private Double value;
-    private byte equals;
 
-    public Threshold() {
+    protected Threshold() {
         type = (byte)RangeType.NUMBER.id;
         formula = Formula.create(null);
         value = 0d;
     }
 
     /** Creates new Threshold */
-    public Threshold(LittleEndianInput in) {
+    protected Threshold(LittleEndianInput in) {
         type = in.readByte();
         short formulaLen = in.readShort();
         if (formulaLen > 0) {
@@ -63,9 +53,6 @@ public final class Threshold {
                 type != RangeType.MAX.id) {
             value = in.readDouble();
         }
-        equals = in.readByte();
-        // Reserved, 4 bytes, all 0
-        in.readInt();
     }
 
     public byte getType() {
@@ -74,7 +61,7 @@ public final class Threshold {
     public void setType(byte type) {
         this.type = type;
 
-        // Ensure the value presense / absense is consistent for the new type
+        // Ensure the value presence / absence is consistent for the new type
         if (type == RangeType.MIN.id || type == RangeType.MAX.id ||
                type == RangeType.FORMULA.id) {
             this.value = null;
@@ -106,19 +93,11 @@ public final class Threshold {
         this.value = value;
     }
     
-    public byte getEquals() {
-        return equals;
-    }
-    public void setEquals(byte equals) {
-        this.equals = equals;
-    }
-
     public int getDataLength() {
         int len = 1 + formula.getEncodedSize();
         if (value != null) {
             len += 8;
         }
-        len += 5;
         return len;
     }
 
@@ -132,13 +111,10 @@ public final class Threshold {
         return buffer.toString();
     }
 
-    public Object clone() {
-      Threshold rec = new Threshold();
+    public void copyTo(Threshold rec) {
       rec.type = type;
       rec.formula = formula;
       rec.value = value;
-      rec.equals = equals;
-      return rec;
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -151,7 +127,5 @@ public final class Threshold {
         if (value != null) {
             out.writeDouble(value);
         }
-        out.writeByte(equals);
-        out.writeInt(0); // Reserved
     }
 }

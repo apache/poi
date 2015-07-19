@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
+import org.apache.poi.hssf.record.cf.IconMultiStateThreshold;
 import org.apache.poi.hssf.record.cf.Threshold;
 import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.FutureRecord;
@@ -125,7 +126,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
     public static CFRule12Record create(HSSFSheet sheet, IconSet iconSet) {
         Threshold[] ts = new Threshold[iconSet.num];
         for (int i=0; i<ts.length; i++) {
-            ts[i] = new Threshold();
+            ts[i] = new IconMultiStateThreshold();
         }
         
         CFRule12Record r = new CFRule12Record(CONDITION_TYPE_COLOR_SCALE, 
