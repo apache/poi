@@ -84,6 +84,11 @@ public interface ConditionalFormattingRule {
     IconMultiStateFormatting getMultiStateFormatting();
     
     /**
+     * @return color scale / color grate formatting object if defined, <code>null</code> otherwise
+     */
+    ColorScaleFormatting getColorScaleFormatting();
+    
+    /**
      * Type of conditional formatting rule.
      * <p>
      * MUST be one of the IDs of a {@link ConditionType}
