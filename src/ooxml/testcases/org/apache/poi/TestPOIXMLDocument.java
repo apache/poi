@@ -31,6 +31,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.PackageHelper;
 import org.apache.poi.util.TempFile;
 
@@ -43,6 +44,10 @@ public final class TestPOIXMLDocument extends TestCase {
 
         public OPCParser(OPCPackage pkg) {
             super(pkg);
+        }
+        
+        public OPCParser(OPCPackage pkg, String coreDocumentRel) {
+            super(pkg, coreDocumentRel);
         }
 
         @Override
@@ -180,5 +185,34 @@ public final class TestPOIXMLDocument extends TestCase {
         assertEquals("",part.toString());
         part.onDocumentCreate();
         //part.getTargetPart(null);
+    }
+    
+    public void testVSDX() throws Exception {
+        OPCPackage open = PackageHelper.open(POIDataSamples.getDiagramInstance().openResourceAsStream("test.vsdx"));
+        
+        POIXMLDocument part = new OPCParser(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
+        
+        assertNotNull(part);
+        assertEquals(0, part.getRelationCounter());
+    }
+    
+    public void testVSDXPart() throws Exception {
+        OPCPackage open = PackageHelper.open(POIDataSamples.getDiagramInstance().openResourceAsStream("test.vsdx"));
+        
+        POIXMLDocumentPart part = new POIXMLDocumentPart(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
+        
+        assertNotNull(part);
+        assertEquals(0, part.getRelationCounter());
+    }
+    
+    public void testInvalidCoreRel() throws Exception {
+        OPCPackage open = PackageHelper.open(POIDataSamples.getDiagramInstance().openResourceAsStream("test.vsdx"));
+        
+        try {
+            new POIXMLDocumentPart(open, "somethingillegal");
+            fail("Unknown core ref will throw exception");
+        } catch (POIXMLException e) {
+            // expected here
+        }
     }
 }
