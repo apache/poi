@@ -773,6 +773,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         // Mixed icons - Column U
         // TODO Support EXT formattings
     }
+    
     private void assertIconSetPercentages(ConditionalFormatting cf, IconSet iconset, Double...vals) {
         assertEquals(1, cf.getNumberOfRules());
         ConditionalFormattingRule cr = cf.getRule(0);
@@ -812,8 +813,9 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(null, cr.getFormula1());
         assertEquals(null, cr.getFormula2());
         
-        // TODO Implement
-/*
+// TODO Finish HSSF
+if (cr instanceof HSSFConditionalFormattingRule) return;
+        
         ColorScaleFormatting color = cr.getColorScaleFormatting();
         assertNotNull(color);
         assertNotNull(color.getColors());
@@ -831,18 +833,16 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
             } else if (i == colors.length-1) {
                 assertEquals(RangeType.MAX, th.getRangeType());
             } else {
-                assertEquals(RangeType.PERCENT, th.getRangeType());
-                assertEquals(steps*i, th.getValue());
+                assertEquals(RangeType.PERCENTILE, th.getRangeType());
+                assertEquals(steps*i, th.getValue().intValue());
             }
             assertEquals(null, th.getFormula());
         }
         
         // Colors should match
         for (int i=0; i<colors.length; i++) {
-            Color c = color.getColors()[i];
-            assertEquals(colors[i], c.toString());
+            assertColour(colors[i], color.getColors()[i]);
         }
-*/
     }
 
     public void testCreateFontFormatting() {
@@ -1066,6 +1066,13 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         assertEquals(10d,  iconFmt.getThresholds()[1].getValue());
         assertEquals(75d,  iconFmt.getThresholds()[2].getValue());
         assertEquals(null, iconFmt.getThresholds()[3].getValue());
+    }
+    
+    public void testCreateColorScaleFormatting() {
+        // TODO Implement then test
+    }
+    public void testCreateDataBarFormatting() {
+        // TODO Implement then test
     }
     
     public void testBug55380() {

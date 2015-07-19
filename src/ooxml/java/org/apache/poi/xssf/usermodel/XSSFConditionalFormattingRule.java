@@ -60,8 +60,6 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         typeLookup.put(STCfType.ABOVE_AVERAGE, ConditionType.FILTER);
     }
     
-    // TODO Support types beyond CELL_VALUE_IS and FORMULA
-
     /*package*/ XSSFConditionalFormattingRule(XSSFSheet sh){
         _cfRule = CTCfRule.Factory.newInstance();
         _sh = sh;
@@ -218,8 +216,39 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     }
     
     public XSSFColorScaleFormatting createColorScaleFormatting() {
-        // TODO Implement
-        return null;
+        // Is it already there?
+        if (_cfRule.isSetColorScale() && _cfRule.getType() == STCfType.COLOR_SCALE)
+            return getColorScaleFormatting();
+        
+        // Mark it as being a Color Scale
+        _cfRule.setType(STCfType.COLOR_SCALE);
+
+        // Ensure the right element
+        CTColorScale scale = null;
+        if (_cfRule.isSetColorScale()) {
+            scale = _cfRule.getColorScale();
+        } else {
+            scale = _cfRule.addNewColorScale();
+        }
+        
+        // Add a default set of thresholds and colors
+        if (scale.sizeOfCfvoArray() == 0) {
+            CTCfvo cfvo;
+            cfvo = scale.addNewCfvo();
+            cfvo.setType(STCfvoType.Enum.forString(RangeType.MIN.name));
+            cfvo = scale.addNewCfvo();
+            cfvo.setType(STCfvoType.Enum.forString(RangeType.PERCENTILE.name));
+            cfvo.setVal("50");
+            cfvo = scale.addNewCfvo();
+            cfvo.setType(STCfvoType.Enum.forString(RangeType.MAX.name));
+            
+            for (int i=0; i<3; i++) {
+                scale.addNewColor();
+            }
+        }
+        
+        // Wrap and return
+        return new XSSFColorScaleFormatting(scale);
     }
     public XSSFColorScaleFormatting getColorScaleFormatting() {
         if (_cfRule.isSetColorScale()) {
