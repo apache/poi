@@ -559,7 +559,7 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         SheetConditionalFormatting sheetCF = s.getSheetConditionalFormatting();
         int numCF = 3;
         int numCF12 = 15;
-        int numCFEX = 0; // TODO This should be 2, but we don't support CFEX formattings yet
+        int numCFEX = 0; // TODO This should be 2, but we don't support CFEX formattings yet, see #58149
         assertEquals(numCF+numCF12+numCFEX, sheetCF.getNumConditionalFormattings());
         
         int fCF = 0, fCF12 = 0, fCFEX = 0;
@@ -648,26 +648,18 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
         // TODO Support Data Bars, then check the rest of this rule
         
         
-        // Colours R->G - Column F
+        // Colours Red->Yellow->Green - Column F
         cf = sheetCF.getConditionalFormattingAt(3);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("F2:F17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertEquals(ConditionType.COLOR_SCALE, cr.getConditionTypeType());
-        // TODO Support Color Scales, then check the rest of this rule
+        assertColorScale(cf, "F8696B", "FFEB84", "63BE7B");
 
         
-        // Colours BWR - Column G
+        // Colours Blue->White->Red - Column G
         cf = sheetCF.getConditionalFormattingAt(4);
         assertEquals(1, cf.getFormattingRanges().length);
         assertEquals("G2:G17", cf.getFormattingRanges()[0].formatAsString());
-        
-        assertEquals(1, cf.getNumberOfRules());
-        cr = cf.getRule(0);
-        assertEquals(ConditionType.COLOR_SCALE, cr.getConditionTypeType());
-        // TODO Support Color Scales, then check the rest of this rule
+        assertColorScale(cf, "5A8AC6", "FCFCFF", "F8696B");
 
         
         // Icons : Default - Column H, percentage thresholds
@@ -807,6 +799,50 @@ public abstract class BaseTestConditionalFormatting extends TestCase {
             assertEquals(v, th.getValue());
             assertEquals(null, th.getFormula());
         }
+    }
+    
+    private void assertColorScale(ConditionalFormatting cf, String... colors) {
+        assertEquals(1, cf.getNumberOfRules());
+        ConditionalFormattingRule cr = cf.getRule(0);
+        assertColorScale(cr, colors);
+    }        
+    private void assertColorScale(ConditionalFormattingRule cr, String... colors) {
+        assertEquals(ConditionType.COLOR_SCALE, cr.getConditionTypeType());
+        assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
+        assertEquals(null, cr.getFormula1());
+        assertEquals(null, cr.getFormula2());
+        
+        // TODO Implement
+/*
+        ColorScaleFormatting color = cr.getColorScaleFormatting();
+        assertNotNull(color);
+        assertNotNull(color.getColors());
+        assertNotNull(color.getThresholds());
+        assertEquals(colors.length, color.getNumControlPoints());
+        assertEquals(colors.length, color.getColors().length);
+        assertEquals(colors.length, color.getThresholds().length);
+        
+        // Thresholds should be Min / (evenly spaced) / Max
+        int steps = 100 / (colors.length-1);
+        for (int i=0; i<colors.length; i++) {
+            ConditionalFormattingThreshold th = color.getThresholds()[i];
+            if (i == 0) {
+                assertEquals(RangeType.MIN, th.getRangeType());
+            } else if (i == colors.length-1) {
+                assertEquals(RangeType.MAX, th.getRangeType());
+            } else {
+                assertEquals(RangeType.PERCENT, th.getRangeType());
+                assertEquals(steps*i, th.getValue());
+            }
+            assertEquals(null, th.getFormula());
+        }
+        
+        // Colors should match
+        for (int i=0; i<colors.length; i++) {
+            Color c = color.getColors()[i];
+            assertEquals(colors[i], c.toString());
+        }
+*/
     }
 
     public void testCreateFontFormatting() {
