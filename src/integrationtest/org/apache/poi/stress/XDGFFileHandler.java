@@ -27,6 +27,7 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.PackageHelper;
 import org.junit.Test;
 
@@ -59,11 +60,8 @@ public class XDGFFileHandler extends AbstractFileHandler {
 
     // TODO: Get rid of this when full visio ooxml support is added
     private final static class TestXDGFXMLDocument extends POIXMLDocument {
-
-        public static String CORE_DOCUMENT = "http://schemas.microsoft.com/visio/2010/relationships/document";
-
         public TestXDGFXMLDocument(OPCPackage pkg) {
-            super(pkg, CORE_DOCUMENT);
+            super(pkg, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
         }
 
         public TestXDGFXMLDocument(InputStream is) throws IOException {
