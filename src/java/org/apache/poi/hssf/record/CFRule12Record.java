@@ -202,6 +202,21 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         return multistate;
     }
 
+    public boolean containsColorGradientBlock() {
+        return (color_gradient != null);
+    }
+    public ColorGradientFormatting getColorGradientFormatting() {
+        return color_gradient;
+    }
+    public ColorGradientFormatting createColorGradientFormatting() {
+        if (color_gradient != null) return color_gradient;
+        
+        // Convert, setup and return
+        setConditionType(CONDITION_TYPE_COLOR_SCALE);
+        color_gradient = new ColorGradientFormatting();
+        return color_gradient;
+    }
+
     /**
      * get the stack of the scale expression as a list
      *

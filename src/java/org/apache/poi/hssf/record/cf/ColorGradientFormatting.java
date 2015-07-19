@@ -64,6 +64,16 @@ public final class ColorGradientFormatting implements Cloneable {
         in.readFully(colors);
     }
     
+    public int getNumControlPoints() {
+        return thresholds.length;
+    }
+    public void setNumControlPoints(int num) {
+        if (num != thresholds.length) {
+            thresholds = new Threshold[num];
+            // TODO Colors
+        }
+    }
+    
     public Threshold[] getThresholds() {
         return thresholds;
     }

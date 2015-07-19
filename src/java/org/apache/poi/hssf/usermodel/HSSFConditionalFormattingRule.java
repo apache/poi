@@ -23,6 +23,7 @@ import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
+import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.record.cf.IconMultiStateFormatting;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
@@ -55,9 +56,17 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         cfRuleRecord = pRuleRecord;
     }
 
-    CFRuleBase getCfRuleRecord()
-    {
+    CFRuleBase getCfRuleRecord() {
         return cfRuleRecord;
+    }
+    private CFRule12Record getCFRule12Record(boolean create) {
+        if (cfRuleRecord instanceof CFRule12Record) {
+            // Good
+        } else {
+            if (create) throw new IllegalArgumentException("Can't convert a CF into a CF12 record");
+            return null;
+        }
+        return (CFRule12Record)cfRuleRecord;
     }
 
     private HSSFFontFormatting getFontFormatting(boolean create)
@@ -171,13 +180,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     }
     
     private HSSFIconMultiStateFormatting getMultiStateFormatting(boolean create) {
-        if (cfRuleRecord instanceof CFRule12Record) {
-            // Good
-        } else {
-            if (create) throw new IllegalArgumentException("Can't convert a CF into a CF12 record");
-            return null;
-        }
-        CFRule12Record cfRule12Record = (CFRule12Record)cfRuleRecord;
+        CFRule12Record cfRule12Record = getCFRule12Record(create);
         IconMultiStateFormatting iconFormatting = cfRule12Record.getMultiStateFormatting();
         if (iconFormatting != null)
         {
@@ -193,20 +196,49 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
             return null;
         }
     }
-    
     /**
      * @return icon / multi-state formatting object if defined, <code>null</code> otherwise
      */
     public HSSFIconMultiStateFormatting getMultiStateFormatting() {
         return getMultiStateFormatting(false);
     }
-
     /**
      * create a new icon / multi-state formatting object if it does not exist,
      * otherwise just return the existing object.
      */
     public HSSFIconMultiStateFormatting createMultiStateFormatting() {
         return getMultiStateFormatting(true);
+    }
+    
+    private HSSFColorScaleFormatting getColorScaleFormatting(boolean create) {
+        CFRule12Record cfRule12Record = getCFRule12Record(create);
+        ColorGradientFormatting colorFormatting = cfRule12Record.getColorGradientFormatting();
+        if (colorFormatting != null)
+        {
+            return new HSSFColorScaleFormatting(cfRule12Record, sheet);
+        }
+        else if( create )
+        {
+            colorFormatting = cfRule12Record.createColorGradientFormatting();
+            return new HSSFColorScaleFormatting(cfRule12Record, sheet);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    /**
+     * @return color scale / gradient formatting object if defined, <code>null</code> otherwise
+     */
+    public HSSFColorScaleFormatting getColorScaleFormatting() {
+        return getColorScaleFormatting(false);
+    }
+    /**
+     * create a new color scale / gradient formatting object if it does not exist,
+     * otherwise just return the existing object.
+     */
+    public HSSFColorScaleFormatting createColorScaleFormatting() {
+        return getColorScaleFormatting(true);
     }
     
     /**
