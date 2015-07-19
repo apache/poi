@@ -73,6 +73,14 @@ public final class Threshold {
     }
     public void setType(byte type) {
         this.type = type;
+
+        // Ensure the value presense / absense is consistent for the new type
+        if (type == RangeType.MIN.id || type == RangeType.MAX.id ||
+               type == RangeType.FORMULA.id) {
+            this.value = null;
+        } else if (value == null) {
+            this.value = 0d;
+        }
     }
     public void setType(int type) {
         this.type = (byte)type;
@@ -86,6 +94,9 @@ public final class Threshold {
     }
     public void setParsedExpression(Ptg[] ptgs) {
         formula = Formula.create(ptgs);
+        if (ptgs.length > 0) {
+            this.value = null;
+        }
     }
 
     public Double getValue() {

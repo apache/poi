@@ -63,7 +63,7 @@ public class POIXMLDocumentPart {
         DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
     }
 
-
+    private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
     private PackageRelationship packageRel;
     private POIXMLDocumentPart parent;
@@ -93,7 +93,16 @@ public class POIXMLDocumentPart {
      * Construct POIXMLDocumentPart representing a "core document" package part.
      */
     public POIXMLDocumentPart(OPCPackage pkg) {
-        PackageRelationship coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT).getRelationship(0);
+        this(pkg, PackageRelationshipTypes.CORE_DOCUMENT);
+    }
+    
+    /**
+     * Construct POIXMLDocumentPart representing a custom "core document" package part.
+     */
+    public POIXMLDocumentPart(OPCPackage pkg, String coreDocumentRel) {
+        this.coreDocumentRel = coreDocumentRel;
+        PackageRelationship coreRel = pkg.getRelationshipsByType(this.coreDocumentRel).getRelationship(0);
+
         if (coreRel == null) {
             coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
             if (coreRel != null) {
@@ -151,10 +160,10 @@ public class POIXMLDocumentPart {
      */
     protected final void rebase(OPCPackage pkg) throws InvalidFormatException {
         PackageRelationshipCollection cores =
-            packagePart.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
+            packagePart.getRelationshipsByType(coreDocumentRel);
         if(cores.size() != 1) {
             throw new IllegalStateException(
-                "Tried to rebase using " + PackageRelationshipTypes.CORE_DOCUMENT +
+                "Tried to rebase using " + coreDocumentRel +
                 " but found " + cores.size() + " parts of the right type"
             );
         }
