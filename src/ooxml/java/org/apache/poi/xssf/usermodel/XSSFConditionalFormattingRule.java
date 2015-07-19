@@ -216,6 +216,19 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             return null;
         }
     }
+    
+    public XSSFColorScaleFormatting createColorScaleFormatting() {
+        // TODO Implement
+        return null;
+    }
+    public XSSFColorScaleFormatting getColorScaleFormatting() {
+        if (_cfRule.isSetColorScale()) {
+            CTColorScale scale = _cfRule.getColorScale();
+            return new XSSFColorScaleFormatting(scale);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Type of conditional formatting rule.
