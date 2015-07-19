@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
+import org.apache.poi.hssf.record.cf.ColorGradientThreshold;
 import org.apache.poi.hssf.record.cf.Threshold;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
@@ -62,14 +63,15 @@ public final class HSSFColorScaleFormatting implements org.apache.poi.ss.usermod
     }
 
     public void setThresholds(ConditionalFormattingThreshold[] thresholds) {
-        Threshold[] t = new Threshold[thresholds.length];
+        ColorGradientThreshold[] t = new ColorGradientThreshold[thresholds.length];
         for (int i=0; i<t.length; i++) {
-            t[i] = ((HSSFConditionalFormattingThreshold)thresholds[i]).getThreshold();
+            HSSFConditionalFormattingThreshold hssfT = (HSSFConditionalFormattingThreshold)thresholds[i];
+            t[i] = (ColorGradientThreshold)hssfT.getThreshold();
         }
         colorFormatting.setThresholds(t);
     }
 
     public HSSFConditionalFormattingThreshold createThreshold() {
-        return new HSSFConditionalFormattingThreshold(new Threshold(), sheet);
+        return new HSSFConditionalFormattingThreshold(new ColorGradientThreshold(), sheet);
     }
 }
